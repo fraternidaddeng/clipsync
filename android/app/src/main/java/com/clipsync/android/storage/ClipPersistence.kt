@@ -1,6 +1,7 @@
 package com.clipsync.android.storage
 
 import androidx.room.withTransaction
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Transactional access to the Room tables. Tests in this package may supply an in-memory
@@ -10,6 +11,10 @@ internal interface ClipPersistence {
     suspend fun <T> transaction(block: suspend ClipSession.() -> T): T
 
     suspend fun <T> read(block: suspend ClipSession.() -> T): T
+
+    fun observeSearchVisible(query: String, limit: Int): Flow<List<ClipEntity>>
+
+    fun observeSetting(key: String): Flow<String?>
 }
 
 internal interface ClipSession {
@@ -51,6 +56,19 @@ internal class RoomClipPersistence(private val database: ClipDatabase) : ClipPer
         database.withTransaction { session.block() }
 
     override suspend fun <T> read(block: suspend ClipSession.() -> T): T = session.block()
+
+    override fun observeSearchVisible(query: String, limit: Int): Flow<List<ClipEntity>> =
+        if (query.isEmpty()) {
+            database.clipDao().observeSearchVisible(matchAll = 1, pattern = "", limit = limit)
+        } else {
+            database.clipDao().observeSearchVisible(
+                matchAll = 0,
+                pattern = "%${escapeLike(query)}%",
+                limit = limit,
+            )
+        }
+
+    override fun observeSetting(key: String): Flow<String?> = database.settingDao().observe(key)
 }
 
 private class RoomClipSession(private val database: ClipDatabase) : ClipSession {

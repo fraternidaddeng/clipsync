@@ -1,5 +1,10 @@
 package com.clipsync.android.ui.settings
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
+
 /**
  * Tiny status surface for settings/health cards. Agent D's WebSocket dialer does not
  * exist in this tree yet; [NoOpSyncStatusProvider] / [FixedSyncStatusProvider] stand in
@@ -16,6 +21,8 @@ data class SyncConnectionStatus(
 
 fun interface SyncStatusProvider {
     fun current(): SyncConnectionStatus
+
+    fun snapshots(): Flow<SyncConnectionStatus> = flow { emit(current()) }
 }
 
 class NoOpSyncStatusProvider : SyncStatusProvider {
@@ -27,6 +34,21 @@ class FixedSyncStatusProvider(
     private val status: SyncConnectionStatus,
 ) : SyncStatusProvider {
     override fun current(): SyncConnectionStatus = status
+}
+
+/** Test/live seam: History and Settings collect [snapshots] so READY is not a one-shot pull. */
+class MutableSyncStatusProvider(
+    initial: SyncConnectionStatus,
+) : SyncStatusProvider {
+    private val mutableStatus = MutableStateFlow(initial)
+
+    override fun current(): SyncConnectionStatus = mutableStatus.value
+
+    override fun snapshots(): Flow<SyncConnectionStatus> = mutableStatus.asStateFlow()
+
+    fun set(status: SyncConnectionStatus) {
+        mutableStatus.value = status
+    }
 }
 
 class PairingAwareSyncStatusProvider(

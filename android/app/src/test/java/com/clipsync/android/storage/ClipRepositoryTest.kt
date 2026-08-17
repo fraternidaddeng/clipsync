@@ -3,6 +3,9 @@ package com.clipsync.android.storage
 import com.clipsync.android.platform.clipboard.Sha256ContentHasher
 import java.nio.charset.StandardCharsets
 import java.util.UUID
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -286,6 +289,32 @@ class ClipRepositoryTest {
     }
 
     @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `observeSearch emits captured clips without a later search call`() = runTest(UnconfinedTestDispatcher()) {
+        val repo = repository()
+        val seen = mutableListOf<List<String>>()
+        val job = backgroundScope.launch {
+            repo.observeSearch("").collect { rows -> seen += rows.map { it.content } }
+        }
+        repo.captureLocalText("live observe", nowMs = NOW, peerId = PEER)
+        assertTrue(seen.any { "live observe" in it })
+        job.cancel()
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `observeSetting emits paired peer id`() = runTest(UnconfinedTestDispatcher()) {
+        val repo = repository()
+        val seen = mutableListOf<String?>()
+        val job = backgroundScope.launch {
+            repo.observeSetting(SETTING_PAIRED_PEER_ID).collect { seen += it }
+        }
+        repo.setSetting(SETTING_PAIRED_PEER_ID, PEER)
+        assertTrue(seen.contains(PEER))
+        job.cancel()
+    }
+
+    @Test
     fun `transaction rollback leaves no partial remote state`() = runTest {
         val store = InMemoryClipPersistence()
         val repo = ClipRepository(ThrowingAfterInsert(store), LOCAL, hasher)
@@ -335,6 +364,11 @@ class ClipRepositoryTest {
             }
 
         override suspend fun <T> read(block: suspend ClipSession.() -> T): T = inner.read(block)
+
+        override fun observeSearchVisible(query: String, limit: Int) =
+            inner.observeSearchVisible(query, limit)
+
+        override fun observeSetting(key: String) = inner.observeSetting(key)
     }
 
     companion object {

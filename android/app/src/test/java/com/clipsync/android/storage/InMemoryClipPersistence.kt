@@ -1,5 +1,9 @@
 package com.clipsync.android.storage
 
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -19,9 +23,18 @@ internal class InMemoryClipPersistence : ClipPersistence {
     private val settings = LinkedHashMap<String, String>()
     private var nextOutboxId = 1L
     private val session = InMemoryClipSession()
+    private val invalidations = MutableSharedFlow<Unit>(
+        replay = 1,
+        extraBufferCapacity = 16,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
-    override suspend fun <T> transaction(block: suspend ClipSession.() -> T): T =
-        mutex.withLock {
+    init {
+        invalidations.tryEmit(Unit)
+    }
+
+    override suspend fun <T> transaction(block: suspend ClipSession.() -> T): T {
+        val result = mutex.withLock {
             val snapshot = Snapshot(
                 clips = HashMap(clips),
                 originIndex = HashMap(originIndex),
@@ -39,9 +52,25 @@ internal class InMemoryClipPersistence : ClipPersistence {
                 throw error
             }
         }
+        // Emit only after the mutex is released so Unconfined collectors cannot deadlock.
+        invalidations.tryEmit(Unit)
+        return result
+    }
 
     override suspend fun <T> read(block: suspend ClipSession.() -> T): T =
         mutex.withLock { session.block() }
+
+    override fun observeSearchVisible(query: String, limit: Int): Flow<List<ClipEntity>> = flow {
+        invalidations.collect {
+            emit(mutex.withLock { session.searchVisible(query, limit) })
+        }
+    }
+
+    override fun observeSetting(key: String): Flow<String?> = flow {
+        invalidations.collect {
+            emit(mutex.withLock { session.getSetting(key) })
+        }
+    }
 
     private fun restore(snapshot: Snapshot) {
         clips.clear()

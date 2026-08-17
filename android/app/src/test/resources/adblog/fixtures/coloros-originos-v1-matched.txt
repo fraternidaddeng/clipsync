@@ -1,0 +1,5 @@
+# Anonymized ColorOS/OriginOS templates (coloros-originos-v1). Not real logcat.
+I OplusClipboardService: onPrimaryClipChanged
+I ColorClipboardService: notifyPrimaryClipChanged
+I ClipboardServiceExtImpl: setPrimaryClip
+01-01 00:00:00.000  1000  1000 I OplusClipboardService: setPrimaryClip

@@ -113,7 +113,7 @@ class ClipboardAccessCoordinator(
             val backend = backendsByMode[mode] ?: continue
             val report = backend.probe()
             reports += report
-            if (report.readState == CapabilityState.READY) {
+            if (report.readState == CapabilityState.READY || canStartWhileDegraded(mode, report)) {
                 lastSelectionReports = reports
                 return commitReadySwitch(backend, mode)
             }
@@ -245,6 +245,23 @@ class ClipboardAccessCoordinator(
 
     private fun ClipboardReadResult.successTextOrNull(): String? =
         (this as? ClipboardReadResult.Success)?.text
+
+    /**
+     * Shizuku [probe] can report DEGRADED while UserService bind is still
+     * in flight. If the user already authorized, [start] attaches on bind.
+     */
+    private fun canStartWhileDegraded(
+        mode: ClipboardReadMode,
+        report: CapabilityReport,
+    ): Boolean {
+        if (mode != ClipboardReadMode.SHIZUKU_EVENT) {
+            return false
+        }
+        if (report.readState != CapabilityState.DEGRADED) {
+            return false
+        }
+        return report.authorizations.any { it.name == "shizuku_authorized" && it.granted }
+    }
 
     private companion object {
         const val ERROR_MODE_SWITCH_FAILED = "CLIPBOARD_MODE_SWITCH_FAILED"

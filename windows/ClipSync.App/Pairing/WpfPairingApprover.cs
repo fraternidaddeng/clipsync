@@ -12,6 +12,14 @@ public sealed class WpfPairingApprover(Dispatcher dispatcher) : IPairingApprover
 {
     public Task<bool> ApproveAsync(PairingCandidate candidate, CancellationToken cancellationToken)
     {
+        if (string.Equals(
+                Environment.GetEnvironmentVariable("CLIPSYNC_AUTO_APPROVE"),
+                "1",
+                StringComparison.Ordinal))
+        {
+            return Task.FromResult(true);
+        }
+
         var completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         _ = dispatcher.InvokeAsync(() =>
         {

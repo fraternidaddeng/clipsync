@@ -1,0 +1,6 @@
+# Anonymized OneUI SemClipboardService templates (oneui-v1). Not real logcat.
+I SemClipboardService: setPrimaryClip
+I SemClipboardService: notifyChanged
+I SemClipboardService: updateClip
+I SemClipboardService: setPrimaryClipInternal
+01-01 00:00:00.000  1000  1000 I SemClipboardService: notifyChanged

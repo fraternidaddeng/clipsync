@@ -48,7 +48,9 @@ class ClipboardWriteCoordinator(
             contentHash = hasher.hash(text),
             expiresAtEpochMillis = nowEpochMillis() + suppressionWindowMillis,
         )
-        suppressionsByOrigin[originEventId] = suppression
+        synchronized(suppressionsByOrigin) {
+            suppressionsByOrigin[originEventId] = suppression
+        }
 
         val publicResult = publicWriter.writeText(text, originEventId)
         if (publicResult is ClipboardWriteResult.Success) {
@@ -80,16 +82,35 @@ class ClipboardWriteCoordinator(
     }
 
     fun shouldSuppress(originEventId: String?, text: String): Boolean {
-        purgeExpiredSuppressions()
-        if (originEventId == null) {
-            return false
+        synchronized(suppressionsByOrigin) {
+            purgeExpiredSuppressions()
+            if (originEventId == null) {
+                return false
+            }
+            val suppression = suppressionsByOrigin[originEventId] ?: return false
+            val matches = suppression.contentHash == hasher.hash(text)
+            if (matches) {
+                suppressionsByOrigin.remove(originEventId)
+            }
+            return matches
         }
-        val suppression = suppressionsByOrigin[originEventId] ?: return false
-        val matches = suppression.contentHash == hasher.hash(text)
-        if (matches) {
-            suppressionsByOrigin.remove(originEventId)
+    }
+
+    /**
+     * Capture-side loop guard. Clipboard change events carry no originEventId,
+     * so a captured text matching any live suppression marker (an inbound apply,
+     * a History copy, or a self-test token) is our own write echoing back, not a
+     * user copy. One-shot per marker, like [shouldSuppress].
+     */
+    fun shouldSuppressCapture(text: String): Boolean {
+        synchronized(suppressionsByOrigin) {
+            purgeExpiredSuppressions()
+            val hash = hasher.hash(text)
+            val entry = suppressionsByOrigin.entries.firstOrNull { it.value.contentHash == hash }
+                ?: return false
+            suppressionsByOrigin.remove(entry.key)
+            return true
         }
-        return matches
     }
 
     private fun resolveWriteMode(): ClipboardWriteMode {
@@ -122,9 +143,12 @@ class ClipboardWriteCoordinator(
     }
 
     private fun clearSuppression(originEventId: String) {
-        suppressionsByOrigin.remove(originEventId)
+        synchronized(suppressionsByOrigin) {
+            suppressionsByOrigin.remove(originEventId)
+        }
     }
 
+    /** Callers must hold the [suppressionsByOrigin] monitor or be single-threaded. */
     private fun purgeExpiredSuppressions() {
         val now = nowEpochMillis()
         suppressionsByOrigin.entries.removeAll { (_, suppression) ->

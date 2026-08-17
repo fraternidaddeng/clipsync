@@ -80,6 +80,26 @@ class ClipboardWriteCoordinatorTest {
     }
 
     @Test
+    fun `capture-side suppression matches by hash once and expires with the window`() {
+        var now = 1_000L
+        val coordinator = ClipboardWriteCoordinator(
+            publicWriter = FakeClipboardWriter(),
+            hasher = ContentHasher { "hash:$it" },
+            nowEpochMillis = { now },
+            suppressionWindowMillis = 500L,
+        )
+        coordinator.writeText("inbound text", "event-a")
+
+        assertFalse(coordinator.shouldSuppressCapture("other text"))
+        assertTrue(coordinator.shouldSuppressCapture("inbound text"))
+        assertFalse(coordinator.shouldSuppressCapture("inbound text"))
+
+        coordinator.writeText("late text", "event-b")
+        now = 2_000L
+        assertFalse(coordinator.shouldSuppressCapture("late text"))
+    }
+
+    @Test
     fun `public ready never reports manual only even if store has manual only`() {
         val keys = InMemoryCapabilityKeyValueStore()
         val store = KeyValueClipboardCapabilityStore(keys)

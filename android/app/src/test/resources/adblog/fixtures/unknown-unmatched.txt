@@ -1,0 +1,6 @@
+# Unknown format. Must never trigger a clipboard-change signal.
+I SystemServer: boot completed
+W WindowManager: Failed to find window
+I ActivityTaskManager: START u0
+hello world
+I ClipboardWatcher: user copied something

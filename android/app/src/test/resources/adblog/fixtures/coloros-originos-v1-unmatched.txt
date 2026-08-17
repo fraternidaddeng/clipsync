@@ -1,0 +1,5 @@
+# Anonymized ColorOS/OriginOS unmatched templates. Some OriginOS builds have no usable change log.
+I ClipboardService: notifyPrimaryClipChanged
+I ClipboardServiceExt: dumpState
+D OplusClipboard: getPrimaryClip skipped
+I SemClipboardService: notifyChanged

@@ -1,0 +1,5 @@
+# Anonymized OneUI unmatched templates.
+I ClipboardService: Copied to clipboard.
+D SemClipboardService: dumpInternal
+I SemClipboardService: getPrimaryClip
+I MiuiClipboardService: notifyClipChanged

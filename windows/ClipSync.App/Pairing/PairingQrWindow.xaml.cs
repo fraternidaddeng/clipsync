@@ -57,7 +57,9 @@ public partial class PairingQrWindow : Window
         var ticket = pairing.IssueTicket();
         expiresAt = ticket.ExpiresAt;
         var payload = pairing.BuildQrPayload(ticket, hosts, host.Port, host.CertificateFingerprint);
-        var png = PairingQrRenderer.RenderPng(PairingJson.Serialize(payload));
+        var json = PairingJson.Serialize(payload);
+        WritePayloadDump(json);
+        var png = PairingQrRenderer.RenderPng(json);
 
         var image = new BitmapImage();
         image.BeginInit();
@@ -100,6 +102,26 @@ public partial class PairingQrWindow : Window
     private void OnRegenerateClicked(object sender, RoutedEventArgs e) => RefreshTicket();
 
     private void OnCloseClicked(object sender, RoutedEventArgs e) => Close();
+
+    private static void WritePayloadDump(string json)
+    {
+        var path = Environment.GetEnvironmentVariable("CLIPSYNC_PAIRING_PAYLOAD_PATH");
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            path = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "ClipSync",
+                "last-pairing-qr.json");
+        }
+
+        var directory = Path.GetDirectoryName(path);
+        if (!string.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        File.WriteAllText(path, json);
+    }
 
     private void OnClosed(object? sender, EventArgs e)
     {

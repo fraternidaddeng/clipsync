@@ -96,6 +96,21 @@ public partial class App : Application
             await syncHost.StartAsync(viewModel.ExtraBindAddresses);
             viewModel.SyncStatus =
                 $"Peer endpoint on port {syncHost.Port}\nDevice {deviceId}\nCert {syncHost.CertificateFingerprint[..16]}…";
+            if (string.Equals(
+                    Environment.GetEnvironmentVariable("CLIPSYNC_SHOW_PAIRING"),
+                    "1",
+                    StringComparison.Ordinal))
+            {
+                _ = Dispatcher.InvokeAsync(() =>
+                {
+                    if (MainWindow is Window owner)
+                    {
+                        owner.Show();
+                        owner.Activate();
+                        ShowPairingWindow(owner);
+                    }
+                });
+            }
         }
         catch (Exception exception)
         {

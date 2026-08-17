@@ -1,0 +1,5 @@
+# Anonymized MIUI/HyperOS unmatched templates.
+I ClipboardService: setPrimaryClip
+D MiuiClipboardService: dumpState
+I MiuiClipboardManager: getPrimaryClip skipped
+I OplusClipboardService: onPrimaryClipChanged

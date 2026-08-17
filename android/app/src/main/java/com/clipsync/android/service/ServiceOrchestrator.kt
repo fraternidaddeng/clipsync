@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 class ServiceOrchestrator {
     private val mutableSnapshots = MutableStateFlow(ServiceSnapshot())
     val snapshots: StateFlow<ServiceSnapshot> = mutableSnapshots.asStateFlow()
+    private val mutableControllerTicks = MutableStateFlow(0)
+    val controllerTicks: StateFlow<Int> = mutableControllerTicks.asStateFlow()
 
     var processState: ServiceProcessState = ServiceProcessState.STOPPED
         private set
@@ -57,6 +59,7 @@ class ServiceOrchestrator {
         processState = ServiceProcessState.STARTING
         controllerOwner = ControllerOwner.NONE
         publish()
+        onControllerInstanceChanged()
         return ControllerHandover(
             releaseFrom = ControllerOwner.ACTIVITY,
             acquireBy = ControllerOwner.SERVICE,
@@ -70,6 +73,7 @@ class ServiceOrchestrator {
         processState = ServiceProcessState.STOPPED
         controllerOwner = ControllerOwner.ACTIVITY
         publish()
+        onControllerInstanceChanged()
         return ControllerHandover(
             releaseFrom = ControllerOwner.SERVICE,
             acquireBy = ControllerOwner.ACTIVITY,
@@ -92,6 +96,16 @@ class ServiceOrchestrator {
         controllerOwner = ControllerOwner.SERVICE
         processState = ServiceProcessState.RUNNING
         publish()
+        onControllerInstanceChanged()
+    }
+
+    fun onActivityControllerAttached() {
+        controllerOwner = ControllerOwner.ACTIVITY
+        onControllerInstanceChanged()
+    }
+
+    fun onControllerInstanceChanged() {
+        mutableControllerTicks.value += 1
     }
 
     fun markControllerReady() {
@@ -114,6 +128,7 @@ class ServiceOrchestrator {
         controllerOwner = ControllerOwner.NONE
         controllerReady = false
         publish()
+        onControllerInstanceChanged()
     }
 
     fun onProcessKilled() {
@@ -121,6 +136,7 @@ class ServiceOrchestrator {
         controllerReady = false
         processState = ServiceProcessState.NEEDS_RECOVERY
         publish()
+        onControllerInstanceChanged()
     }
 
     fun onStickyRestart() {
@@ -128,6 +144,7 @@ class ServiceOrchestrator {
         controllerOwner = ControllerOwner.NONE
         processState = ServiceProcessState.NEEDS_RECOVERY
         publish()
+        onControllerInstanceChanged()
     }
 
     fun onNetworkRegained(): Boolean =

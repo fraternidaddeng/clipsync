@@ -1,0 +1,7 @@
+# Anonymized AOSP unmatched templates. Denial and payload lines must never trigger.
+E ClipboardService: Denying clipboard access to pkg.app, application is not in focus nor is it a system service for user 0
+W ClipboardService: Clipboard access denied to 10123/pkg.app
+I ClipboardService: addPrimaryClipChangedListener invalid deviceId for userId:0
+I ClipboardService: Could not grant permission to primary clip. Clearing clipboard.
+I ClipboardService: setPrimaryClip: <redacted>
+I SemClipboardService: setPrimaryClip

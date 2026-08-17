@@ -10,10 +10,15 @@ import com.clipsync.android.storage.CaptureResult
 import com.clipsync.android.storage.ClipEntry
 import com.clipsync.android.storage.ClipRepository
 import com.clipsync.android.storage.SETTING_PAIRED_PEER_ID
+import com.clipsync.android.ui.settings.SyncConnectionStatus
 import com.clipsync.android.ui.settings.SyncStatusProvider
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -46,6 +51,7 @@ data class HistoryUiState(
     val notices: List<HistoryNotice> = listOf(HistoryNotice.EMPTY, HistoryNotice.UNPAIRED),
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class HistoryViewModel(
     private val repository: ClipRepository,
     private val writeCoordinator: ClipboardWriteCoordinator,
@@ -54,14 +60,47 @@ class HistoryViewModel(
 ) : ViewModel() {
     private val mutableState = MutableStateFlow(HistoryUiState())
     val state: StateFlow<HistoryUiState> = mutableState.asStateFlow()
+    private val queryFlow = MutableStateFlow("")
+    private val lastRejectFlow = MutableStateFlow<CaptureRejectReason?>(null)
 
     init {
-        refresh()
+        viewModelScope.launch {
+            combine(
+                queryFlow.flatMapLatest { query ->
+                    repository.observeSearch(query).map { entries -> query to entries }
+                },
+                repository.observeSetting(SETTING_PAIRED_PEER_ID),
+                syncStatus.snapshots(),
+                lastRejectFlow,
+            ) { queried, peerId, sync, reject ->
+                HistorySnapshot(queried.first, queried.second, peerId, sync, reject)
+            }.collect { snapshot ->
+                mutableState.update { previous ->
+                    val query = queryFlow.value
+                    if (snapshot.query != query) {
+                        previous.withConnectionNotices(
+                            peerId = snapshot.peerId,
+                            sync = snapshot.sync,
+                            reject = snapshot.reject,
+                            query = query,
+                        )
+                    } else {
+                        previous.withHistory(
+                            entries = snapshot.entries,
+                            peerId = snapshot.peerId,
+                            sync = snapshot.sync,
+                            reject = snapshot.reject,
+                            query = query,
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun search(query: String) {
+        queryFlow.value = query
         mutableState.update { it.copy(query = query) }
-        refresh()
     }
 
     fun refresh() {
@@ -81,21 +120,17 @@ class HistoryViewModel(
     fun delete(eventId: String) {
         viewModelScope.launch {
             repository.delete(eventId, nowMs())
-            reload()
         }
     }
 
     fun clear() {
         viewModelScope.launch {
             repository.clear(nowMs())
-            reload()
         }
     }
 
     fun noteCaptureResult(result: CaptureResult) {
-        val reject = (result as? CaptureResult.Rejected)?.reason
-        mutableState.update { it.copy(lastReject = reject) }
-        refresh()
+        lastRejectFlow.value = (result as? CaptureResult.Rejected)?.reason
     }
 
     fun close() {
@@ -103,29 +138,26 @@ class HistoryViewModel(
     }
 
     private suspend fun reload() {
-        val query = mutableState.value.query
+        val query = queryFlow.value
         val entries = repository.search(query)
-        val unpaired = repository.getSetting(SETTING_PAIRED_PEER_ID).isNullOrBlank()
-        val sync = syncStatus.current()
-        val windowsUnreachable = sync.paired && !sync.windowsReachable
-        val lastReject = mutableState.value.lastReject
-        val notices = buildList {
-            if (entries.isEmpty()) add(HistoryNotice.EMPTY)
-            if (lastReject == CaptureRejectReason.TOO_LARGE) add(HistoryNotice.OVERSIZED)
-            if (unpaired) add(HistoryNotice.UNPAIRED)
-            if (windowsUnreachable) add(HistoryNotice.WINDOWS_UNREACHABLE)
+        if (query != queryFlow.value) {
+            return
         }
-        mutableState.update {
-            it.copy(
-                items = entries.map { entry -> entry.toUi() },
-                empty = entries.isEmpty(),
-                unpaired = unpaired,
-                windowsUnreachable = windowsUnreachable,
-                lastReject = lastReject,
-                notices = notices,
-            )
+        val peerId = repository.getSetting(SETTING_PAIRED_PEER_ID)
+        val sync = syncStatus.current()
+        val reject = lastRejectFlow.value
+        mutableState.update { previous ->
+            previous.withHistory(entries, peerId, sync, reject, query)
         }
     }
+
+    private data class HistorySnapshot(
+        val query: String,
+        val entries: List<ClipEntry>,
+        val peerId: String?,
+        val sync: SyncConnectionStatus,
+        val reject: CaptureRejectReason?,
+    )
 
     companion object {
         const val PREVIEW_LIMIT = 160
@@ -140,6 +172,55 @@ class HistoryViewModel(
                 HistoryViewModel(repository, writeCoordinator, syncStatus) as T
         }
     }
+}
+
+private fun HistoryUiState.withHistory(
+    entries: List<ClipEntry>,
+    peerId: String?,
+    sync: SyncConnectionStatus,
+    reject: CaptureRejectReason?,
+    query: String,
+): HistoryUiState {
+    val unpaired = peerId.isNullOrBlank()
+    val windowsUnreachable = sync.paired && !sync.windowsReachable
+    val notices = buildList {
+        if (entries.isEmpty()) add(HistoryNotice.EMPTY)
+        if (reject == CaptureRejectReason.TOO_LARGE) add(HistoryNotice.OVERSIZED)
+        if (unpaired) add(HistoryNotice.UNPAIRED)
+        if (windowsUnreachable) add(HistoryNotice.WINDOWS_UNREACHABLE)
+    }
+    return copy(
+        query = query,
+        items = entries.map { entry -> entry.toUi() },
+        empty = entries.isEmpty(),
+        unpaired = unpaired,
+        windowsUnreachable = windowsUnreachable,
+        lastReject = reject,
+        notices = notices,
+    )
+}
+
+private fun HistoryUiState.withConnectionNotices(
+    peerId: String?,
+    sync: SyncConnectionStatus,
+    reject: CaptureRejectReason?,
+    query: String,
+): HistoryUiState {
+    val unpaired = peerId.isNullOrBlank()
+    val windowsUnreachable = sync.paired && !sync.windowsReachable
+    val notices = buildList {
+        if (empty) add(HistoryNotice.EMPTY)
+        if (reject == CaptureRejectReason.TOO_LARGE) add(HistoryNotice.OVERSIZED)
+        if (unpaired) add(HistoryNotice.UNPAIRED)
+        if (windowsUnreachable) add(HistoryNotice.WINDOWS_UNREACHABLE)
+    }
+    return copy(
+        query = query,
+        unpaired = unpaired,
+        windowsUnreachable = windowsUnreachable,
+        lastReject = reject,
+        notices = notices,
+    )
 }
 
 internal fun ClipEntry.toUi(): HistoryItemUi =

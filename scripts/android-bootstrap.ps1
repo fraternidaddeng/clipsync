@@ -36,13 +36,47 @@ $sdk = (& adb @adbArgs getprop ro.build.version.sdk).Trim()
 $release = (& adb @adbArgs getprop ro.build.version.release).Trim()
 $manufacturer = (& adb @adbArgs getprop ro.product.manufacturer).Trim()
 $model = (& adb @adbArgs getprop ro.product.model).Trim()
-$readLogs = (& adb @adbArgs dumpsys package $PackageName 2>$null | Select-String 'android.permission.READ_LOGS').Line
+$dumpsys = @(& adb @adbArgs dumpsys package $PackageName 2>$null)
+$readLogsLines = @($dumpsys | Select-String 'android.permission.READ_LOGS' | ForEach-Object { $_.Line.Trim() })
+
+$declared = $false
+$granted = $false
+foreach ($line in $readLogsLines) {
+    if ($line -match 'android\.permission\.READ_LOGS') {
+        $declared = $true
+    }
+    if ($line -match 'granted\s*=\s*true') {
+        $granted = $true
+    }
+}
+
+$grantState = if ($granted) {
+    'GRANTED'
+} elseif ($declared) {
+    'DECLARED_NOT_GRANTED'
+} elseif ($readLogsLines.Count -gt 0) {
+    'SEEN_NOT_GRANTED'
+} else {
+    'NOT_DECLARED'
+}
+
+$grantCommand = "adb -s $Serial shell pm grant $PackageName android.permission.READ_LOGS"
+$revokeCommand = "adb -s $Serial shell pm revoke $PackageName android.permission.READ_LOGS"
 
 Write-Host ''
 Write-Host "Selected: $Serial ($manufacturer $model, Android $release, API $sdk)"
-Write-Host "READ_LOGS declaration/grant line: $(if ($readLogs) { $readLogs.Trim() } else { 'not found' })"
+Write-Host "Package: $PackageName"
+Write-Host "READ_LOGS grant state: $grantState"
+if ($readLogsLines.Count -gt 0) {
+    Write-Host 'READ_LOGS dumpsys lines:'
+    $readLogsLines | ForEach-Object { Write-Host "  $_" }
+} else {
+    Write-Host 'READ_LOGS dumpsys lines: not found (package missing or permission not declared).'
+}
 Write-Host ''
-Write-Host 'No permissions were changed.'
-Write-Host 'Review and run one of these commands manually if you decide to grant or revoke READ_LOGS:'
-Write-Host "  adb -s $Serial shell pm grant $PackageName android.permission.READ_LOGS"
-Write-Host "  adb -s $Serial shell pm revoke $PackageName android.permission.READ_LOGS"
+Write-Host 'This script is read-only. It never runs grant or revoke.'
+Write-Host 'READ_LOGS cannot be granted by a normal in-app runtime dialog.'
+Write-Host 'Install, upgrade, or reboot invalidates the grant. Re-run this inspector and re-probe the app after those events.'
+Write-Host 'Copy and run one of these commands yourself if you decide to change the grant:'
+Write-Host "  $grantCommand"
+Write-Host "  $revokeCommand"

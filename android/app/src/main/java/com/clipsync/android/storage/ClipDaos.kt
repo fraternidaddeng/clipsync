@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ClipDao {
@@ -26,6 +27,17 @@ interface ClipDao {
         """,
     )
     suspend fun searchVisible(matchAll: Int, pattern: String, limit: Int): List<ClipEntity>
+
+    @Query(
+        """
+        SELECT * FROM clips
+        WHERE deleted_at IS NULL
+          AND (:matchAll = 1 OR content LIKE :pattern ESCAPE '\' )
+        ORDER BY created_at DESC, origin_seq DESC, origin_device_id ASC, event_id ASC
+        LIMIT :limit
+        """,
+    )
+    fun observeSearchVisible(matchAll: Int, pattern: String, limit: Int): Flow<List<ClipEntity>>
 
     @Query(
         """
@@ -166,6 +178,9 @@ interface LocalSequenceDao {
 interface SettingDao {
     @Query("SELECT value FROM settings WHERE `key` = :key LIMIT 1")
     suspend fun get(key: String): String?
+
+    @Query("SELECT value FROM settings WHERE `key` = :key LIMIT 1")
+    fun observe(key: String): Flow<String?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: SettingEntity)

@@ -138,6 +138,29 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun `network card turns connected when status becomes ready`() {
+        val repo = createTestClipRepository()
+        val sync = MutableSyncStatusProvider(
+            SyncConnectionStatus(paired = true, windowsReachable = false, serviceRunning = true),
+        )
+        val model = SettingsViewModel(
+            repository = repo,
+            syncStatus = sync,
+            capabilities = FixedCapabilityStatus(
+                read = HealthValue("Foreground only", HealthTone.NEUTRAL),
+                write = HealthValue("Not probed", HealthTone.NEUTRAL),
+            ),
+        )
+        assertEquals(HealthTone.WARNING, model.state.value.network.tone)
+        assertEquals("Windows unreachable", model.state.value.network.label)
+        sync.set(SyncConnectionStatus(paired = true, windowsReachable = true, serviceRunning = true))
+        assertEquals(HealthTone.GOOD, model.state.value.network.tone)
+        assertEquals("Connected", model.state.value.network.label)
+        assertEquals(HealthTone.NEUTRAL, model.state.value.read.tone)
+        model.close()
+    }
+
+    @Test
     fun `windows unreachable does not paint read or write green`() {
         val repo = createTestClipRepository()
         val model = SettingsViewModel(

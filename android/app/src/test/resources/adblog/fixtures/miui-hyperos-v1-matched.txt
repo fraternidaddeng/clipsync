@@ -1,0 +1,5 @@
+# Anonymized MIUI/HyperOS templates (miui-hyperos-v1). Not real logcat.
+I MiuiClipboardService: notifyClipChanged
+I HyperClipboardService: setPrimaryClip
+I MiuiClipboardManager: onPrimaryClipChanged
+01-01 00:00:00.000  1000  1000 I HyperClipboardService: notifyClipChanged

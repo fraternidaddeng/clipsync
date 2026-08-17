@@ -21,6 +21,9 @@ import com.clipsync.android.ui.HealthValue
 object ClipServices {
     @Volatile
     private var repository: ClipRepository? = null
+
+    @Volatile
+    private var writeCoordinator: ClipboardWriteCoordinator? = null
     private val lock = Any()
 
     fun pairingStore(context: Context): PairingStore =
@@ -42,11 +45,24 @@ object ClipServices {
         }
     }
 
+    /**
+     * Process singleton: the write-suppression markers must be visible to every
+     * capture path (Activity listener, service, History copy, self-test), so all
+     * writers and capture guards share one coordinator instance.
+     */
     fun writeCoordinator(context: Context): ClipboardWriteCoordinator {
-        val clipboard = clipboardManager(context) ?: return ClipboardWriteCoordinator(
-            publicWriter = UnavailableClipboardWriter,
-        )
-        return ClipboardWriteCoordinator(AndroidPublicClipboardWriter(clipboard))
+        writeCoordinator?.let { return it }
+        synchronized(lock) {
+            writeCoordinator?.let { return it }
+            val clipboard = clipboardManager(context)
+            val created = if (clipboard == null) {
+                ClipboardWriteCoordinator(publicWriter = UnavailableClipboardWriter)
+            } else {
+                ClipboardWriteCoordinator(AndroidPublicClipboardWriter(clipboard))
+            }
+            writeCoordinator = created
+            return created
+        }
     }
 
     fun foregroundBackend(context: Context, isVisible: () -> Boolean): ForegroundClipboardBackend? {

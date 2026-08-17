@@ -10,6 +10,7 @@ import com.clipsync.android.ui.HealthValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class SettingsUiState(
@@ -42,7 +43,10 @@ class SettingsViewModel(
     val state: StateFlow<SettingsUiState> = mutableState.asStateFlow()
 
     init {
-        refresh()
+        viewModelScope.launch { reload() }
+        viewModelScope.launch {
+            syncStatus.snapshots().collect { applyConnection(it) }
+        }
     }
 
     fun refresh() {
@@ -102,23 +106,33 @@ class SettingsViewModel(
             (serviceSettings?.bootRecoveryEnabled() == true)
         val sync = syncStatus.current()
         val caps = capabilities.snapshot()
-        mutableState.value = SettingsUiState(
-            paused = paused,
-            privateMode = privateMode,
-            autoApplyRemote = autoApply,
-            backgroundSync = backgroundSync,
-            bootRecoveryEnabled = bootRecovery,
-            notificationVisibilityNote = if (sync.serviceRunning && sync.notificationsHidden) {
-                NOTE_NOTIFICATIONS_HIDDEN
-            } else {
-                null
-            },
-            network = networkCard(sync),
-            service = serviceCard(sync),
-            read = caps.read,
-            write = caps.write,
-            pairedDeviceCount = if (sync.paired) 1 else 0,
-        )
+        mutableState.update { previous ->
+            previous.copy(
+                paused = paused,
+                privateMode = privateMode,
+                autoApplyRemote = autoApply,
+                backgroundSync = backgroundSync,
+                bootRecoveryEnabled = bootRecovery,
+                read = caps.read,
+                write = caps.write,
+            )
+        }
+        applyConnection(sync)
+    }
+
+    private fun applyConnection(sync: SyncConnectionStatus) {
+        mutableState.update { previous ->
+            previous.copy(
+                notificationVisibilityNote = if (sync.serviceRunning && sync.notificationsHidden) {
+                    NOTE_NOTIFICATIONS_HIDDEN
+                } else {
+                    null
+                },
+                network = networkCard(sync),
+                service = serviceCard(sync),
+                pairedDeviceCount = if (sync.paired) 1 else 0,
+            )
+        }
     }
 
     companion object {

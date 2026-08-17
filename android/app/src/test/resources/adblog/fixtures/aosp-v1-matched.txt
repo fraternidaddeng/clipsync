@@ -1,0 +1,8 @@
+# Anonymized AOSP/Pixel clipboard-change templates (aosp-v1). Not real logcat.
+I ClipboardService: Copied to clipboard.
+I ClipboardService: Copied to clipboard
+I ClipboardService: setPrimaryClip
+I ClipboardService: setPrimaryClip()
+I ClipboardService: notifyPrimaryClipChanged
+01-01 00:00:00.000  1000  1000 I ClipboardService: Copied to clipboard.
+I/ClipboardService( 1000): setPrimaryClip

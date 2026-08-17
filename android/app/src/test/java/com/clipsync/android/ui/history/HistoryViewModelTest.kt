@@ -3,12 +3,15 @@ package com.clipsync.android.ui.history
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
 import com.clipsync.android.platform.clipboard.FakeClipboardWriter
+import com.clipsync.android.platform.clipboard.Sha256ContentHasher
 import com.clipsync.android.storage.CaptureRejectReason
 import com.clipsync.android.storage.CaptureResult
+import com.clipsync.android.storage.RemoteClipEvent
 import com.clipsync.android.storage.SETTING_PAIRED_PEER_ID
 import com.clipsync.android.storage.TEST_PEER_DEVICE_ID
 import com.clipsync.android.storage.createTestClipRepository
 import com.clipsync.android.ui.settings.FixedSyncStatusProvider
+import com.clipsync.android.ui.settings.MutableSyncStatusProvider
 import com.clipsync.android.ui.settings.SyncConnectionStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -114,6 +117,61 @@ class HistoryViewModelTest {
         model.refresh()
         assertFalse(model.state.value.unpaired)
         assertFalse(HistoryNotice.UNPAIRED in model.state.value.notices)
+    }
+
+    @Test
+    fun `remote ingest appears without refresh`() = runTestModel { model, repo, _ ->
+        assertTrue(model.state.value.empty)
+        repo.ingestRemoteClip(
+            RemoteClipEvent(
+                eventId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+                originDeviceId = TEST_PEER_DEVICE_ID,
+                originSeq = 1,
+                content = "from windows",
+                contentHash = Sha256ContentHasher.hash("from windows"),
+                sourceApp = null,
+                createdAtMs = NOW,
+            ),
+            sourcePeerId = TEST_PEER_DEVICE_ID,
+        )
+        assertEquals(listOf("from windows"), model.state.value.items.map { it.preview })
+    }
+
+    @Test
+    fun `new local clip appears without refresh`() = runTestModel { model, repo, _ ->
+        assertTrue(model.state.value.empty)
+        repo.captureLocalText("live row", nowMs = NOW, peerId = TEST_PEER_DEVICE_ID)
+        assertEquals(listOf("live row"), model.state.value.items.map { it.preview })
+        assertFalse(model.state.value.empty)
+    }
+
+    @Test
+    fun `paired_peer_id appears without refresh`() = runTestModel { model, repo, _ ->
+        assertTrue(model.state.value.unpaired)
+        repo.setSetting(SETTING_PAIRED_PEER_ID, TEST_PEER_DEVICE_ID)
+        assertFalse(model.state.value.unpaired)
+        assertFalse(HistoryNotice.UNPAIRED in model.state.value.notices)
+    }
+
+    @Test
+    fun `ready status clears unreachable without refresh`() {
+        val repo = createTestClipRepository()
+        val writer = FakeClipboardWriter()
+        val sync = MutableSyncStatusProvider(
+            SyncConnectionStatus(paired = true, windowsReachable = false, serviceRunning = true),
+        )
+        val model = HistoryViewModel(
+            repository = repo,
+            writeCoordinator = ClipboardWriteCoordinator(writer),
+            syncStatus = sync,
+            nowMs = { NOW },
+        )
+        assertTrue(model.state.value.windowsUnreachable)
+        assertTrue(HistoryNotice.WINDOWS_UNREACHABLE in model.state.value.notices)
+        sync.set(SyncConnectionStatus(paired = true, windowsReachable = true, serviceRunning = true))
+        assertFalse(model.state.value.windowsUnreachable)
+        assertFalse(HistoryNotice.WINDOWS_UNREACHABLE in model.state.value.notices)
+        model.onClearedForTest()
     }
 
     @Test

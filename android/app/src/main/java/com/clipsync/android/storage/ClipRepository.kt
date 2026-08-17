@@ -5,6 +5,8 @@ import com.clipsync.android.platform.clipboard.ContentHasher
 import com.clipsync.android.platform.clipboard.Sha256ContentHasher
 import java.nio.charset.StandardCharsets
 import java.util.UUID
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 fun createClipRepository(context: Context, localDeviceId: String): ClipRepository =
     ClipRepository(ClipDatabase.persistent(context), localDeviceId)
@@ -184,6 +186,11 @@ class ClipRepository internal constructor(
         }
     }
 
+    fun observeSearch(query: String, limit: Int = MAX_SEARCH_LIMIT): Flow<List<ClipEntry>> {
+        require(limit in 1..MAX_SEARCH_LIMIT) { "Limit must be between 1 and $MAX_SEARCH_LIMIT." }
+        return persistence.observeSearchVisible(query, limit).map { rows -> rows.map { it.toEntry() } }
+    }
+
     suspend fun delete(eventId: String, nowMs: Long): Boolean =
         persistence.transaction {
             val deleted = softDelete(eventId, nowMs)
@@ -203,6 +210,11 @@ class ClipRepository internal constructor(
     suspend fun getSetting(key: String): String? {
         require(key.isNotBlank()) { "Setting key is required." }
         return persistence.read { getSetting(key) }
+    }
+
+    fun observeSetting(key: String): Flow<String?> {
+        require(key.isNotBlank()) { "Setting key is required." }
+        return persistence.observeSetting(key)
     }
 
     suspend fun setSetting(key: String, value: String) {
