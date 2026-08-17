@@ -1,0 +1,277 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clipsync.local/protocol/v1/envelope.schema.json",
+  "title": "ClipSync protocol v1 WebSocket envelope",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/hello"
+    },
+    {
+      "$ref": "#/$defs/challenge"
+    },
+    {
+      "$ref": "#/$defs/auth"
+    },
+    {
+      "$ref": "#/$defs/knownVector"
+    },
+    {
+      "$ref": "#/$defs/wantRanges"
+    },
+    {
+      "$ref": "#/$defs/clipAnnounce"
+    },
+    {
+      "$ref": "#/$defs/clipFetch"
+    },
+    {
+      "$ref": "#/$defs/clipPayload"
+    },
+    {
+      "$ref": "#/$defs/ackRanges"
+    },
+    {
+      "$ref": "#/$defs/error"
+    },
+    {
+      "$ref": "#/$defs/ping"
+    },
+    {
+      "$ref": "#/$defs/pong"
+    }
+  ],
+  "$defs": {
+    "requestId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "type",
+        "request_id",
+        "body"
+      ],
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "type": {
+          "$ref": "messages.schema.json#/$defs/messageType"
+        },
+        "request_id": {
+          "$ref": "#/$defs/requestId"
+        },
+        "body": {
+          "type": "object"
+        }
+      }
+    },
+    "hello": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "hello"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/helloBody"
+            }
+          }
+        }
+      ]
+    },
+    "challenge": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "challenge"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/challengeBody"
+            }
+          }
+        }
+      ]
+    },
+    "auth": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "auth"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/authBody"
+            }
+          }
+        }
+      ]
+    },
+    "knownVector": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "known_vector"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/knownVectorBody"
+            }
+          }
+        }
+      ]
+    },
+    "wantRanges": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "want_ranges"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/wantRangesBody"
+            }
+          }
+        }
+      ]
+    },
+    "clipAnnounce": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "clip_announce"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/clipAnnounceBody"
+            }
+          }
+        }
+      ]
+    },
+    "clipFetch": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "clip_fetch"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/clipFetchBody"
+            }
+          }
+        }
+      ]
+    },
+    "clipPayload": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "clip_payload"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/clipPayloadBody"
+            }
+          }
+        }
+      ]
+    },
+    "ackRanges": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "ack_ranges"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/ackRangesBody"
+            }
+          }
+        }
+      ]
+    },
+    "error": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "error"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/errorBody"
+            }
+          }
+        }
+      ]
+    },
+    "ping": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "ping"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/pingBody"
+            }
+          }
+        }
+      ]
+    },
+    "pong": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "properties": {
+            "type": {
+              "const": "pong"
+            },
+            "body": {
+              "$ref": "messages.schema.json#/$defs/pongBody"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

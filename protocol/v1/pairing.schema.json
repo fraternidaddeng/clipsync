@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clipsync.local/protocol/v1/pairing.schema.json",
+  "title": "ClipSync protocol v1 pairing documents (QR payload and /v1/pair/confirm bodies)",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/pairingQr"
+    },
+    {
+      "$ref": "#/$defs/confirmRequest"
+    },
+    {
+      "$ref": "#/$defs/confirmResponse"
+    },
+    {
+      "$ref": "#/$defs/pairingError"
+    }
+  ],
+  "$defs": {
+    "deviceId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "base64url256": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{43}$"
+    },
+    "sha256Hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "platform": {
+      "enum": [
+        "windows",
+        "android"
+      ]
+    },
+    "pairingQr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "version",
+        "hosts",
+        "port",
+        "device_id",
+        "display_name",
+        "cert_sha256",
+        "token",
+        "expires_at_ms"
+      ],
+      "properties": {
+        "kind": {
+          "const": "pairing_qr"
+        },
+        "version": {
+          "const": 1
+        },
+        "hosts": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 253
+          }
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "device_id": {
+          "$ref": "#/$defs/deviceId"
+        },
+        "display_name": {
+          "$ref": "#/$defs/displayName"
+        },
+        "cert_sha256": {
+          "$ref": "#/$defs/sha256Hex"
+        },
+        "token": {
+          "$ref": "#/$defs/base64url256"
+        },
+        "expires_at_ms": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "confirmRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "version",
+        "token",
+        "device_id",
+        "display_name",
+        "platform"
+      ],
+      "properties": {
+        "kind": {
+          "const": "pairing_confirm_request"
+        },
+        "version": {
+          "const": 1
+        },
+        "token": {
+          "$ref": "#/$defs/base64url256"
+        },
+        "device_id": {
+          "$ref": "#/$defs/deviceId"
+        },
+        "display_name": {
+          "$ref": "#/$defs/displayName"
+        },
+        "platform": {
+          "$ref": "#/$defs/platform"
+        }
+      }
+    },
+    "confirmResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "version",
+        "device_id",
+        "display_name",
+        "platform",
+        "pair_secret",
+        "trust_epoch"
+      ],
+      "properties": {
+        "kind": {
+          "const": "pairing_confirm_response"
+        },
+        "version": {
+          "const": 1
+        },
+        "device_id": {
+          "$ref": "#/$defs/deviceId"
+        },
+        "display_name": {
+          "$ref": "#/$defs/displayName"
+        },
+        "platform": {
+          "$ref": "#/$defs/platform"
+        },
+        "pair_secret": {
+          "$ref": "#/$defs/base64url256"
+        },
+        "trust_epoch": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "pairingError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "version",
+        "error"
+      ],
+      "properties": {
+        "kind": {
+          "const": "pairing_error"
+        },
+        "version": {
+          "const": 1
+        },
+        "error": {
+          "enum": [
+            "SCHEMA_VIOLATION",
+            "PAIRING_TOKEN_INVALID",
+            "PAIRING_TOKEN_EXPIRED",
+            "PAIRING_REJECTED",
+            "PAIRING_TIMEOUT"
+          ]
+        }
+      }
+    }
+  }
+}

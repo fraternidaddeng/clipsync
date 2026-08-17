@@ -1,0 +1,64 @@
+namespace ClipSync.Core.Storage;
+
+public sealed record ClipboardHistoryQuery(
+    string? SearchText = null,
+    int Limit = 2_000,
+    int Offset = 0);
+
+public sealed record ClipboardHistoryEntry(
+    Guid EventId,
+    string OriginDeviceId,
+    long OriginSequence,
+    string Text,
+    string ContentHash,
+    string? SourceProcess,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? ExpiresAt,
+    DateTimeOffset? DeletedAt)
+{
+    public bool IsDeleted => DeletedAt is not null;
+}
+
+public sealed class ClipboardRetentionPolicy
+{
+    public ClipboardRetentionPolicy(
+        int maximumEntries = 2_000,
+        TimeSpan? maximumAge = null)
+    {
+        if (maximumEntries <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maximumEntries), "The history limit must be positive.");
+        }
+
+        var age = maximumAge ?? TimeSpan.FromDays(30);
+        if (age <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maximumAge), "The retention period must be positive.");
+        }
+
+        MaximumEntries = maximumEntries;
+        MaximumAge = age;
+    }
+
+    public int MaximumEntries { get; }
+
+    public TimeSpan MaximumAge { get; }
+}
+
+public sealed record DatabaseState(
+    string JournalMode,
+    bool ForeignKeysEnabled,
+    int SchemaVersion);
+
+public enum StorageFaultPoint
+{
+    AfterSequenceAllocated,
+    BeforeCommit
+}
+
+public interface IStorageFaultInjector
+{
+    ValueTask InjectAsync(
+        StorageFaultPoint point,
+        CancellationToken cancellationToken = default);
+}

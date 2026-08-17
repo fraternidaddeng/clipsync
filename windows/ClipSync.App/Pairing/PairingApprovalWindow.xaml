@@ -1,0 +1,35 @@
+<Window x:Class="ClipSync.App.Pairing.PairingApprovalWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Pairing request"
+        Width="420"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Topmost="True"
+        ShowInTaskbar="True">
+    <StackPanel Margin="24" Background="White">
+        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Allow this device to pair?" />
+        <TextBlock Margin="0,14,0,0" TextWrapping="Wrap" Foreground="#3B424C">
+            A device asked to pair using the QR code shown by this computer.
+            Approve only if the name below matches the phone in your hand.
+        </TextBlock>
+        <Border Margin="0,16,0,0" Padding="14" Background="#F7F8FA" BorderBrush="#DDE1E7" BorderThickness="1" CornerRadius="6">
+            <StackPanel>
+                <TextBlock x:Name="DeviceNameText" FontSize="16" FontWeight="SemiBold" />
+                <TextBlock x:Name="PlatformText" Margin="0,4,0,0" Foreground="#5E6672" />
+            </StackPanel>
+        </Border>
+        <TextBlock x:Name="RepairWarningText"
+                   Margin="0,12,0,0"
+                   Foreground="#A4262C"
+                   FontWeight="SemiBold"
+                   TextWrapping="Wrap"
+                   Visibility="Collapsed"
+                   Text="This device is already paired. Approving replaces its previous pairing secret and invalidates the old installation." />
+        <StackPanel Margin="0,20,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Width="100" Height="32" Click="OnRejectClicked" Content="Reject" />
+            <Button Width="100" Height="32" Margin="10,0,0,0" Click="OnApproveClicked" Content="Approve" FontWeight="SemiBold" />
+        </StackPanel>
+    </StackPanel>
+</Window>

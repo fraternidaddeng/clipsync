@@ -1,0 +1,162 @@
+<Window x:Class="ClipSync.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ClipSync"
+        Width="980"
+        Height="640"
+        MinWidth="760"
+        MinHeight="500"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </Window.Resources>
+    <Grid Background="#F7F8FA">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Padding="24,18" Background="White" BorderBrush="#DDE1E7" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock FontSize="24" FontWeight="SemiBold" Text="ClipSync" />
+                    <TextBlock Margin="0,4,0,0" Foreground="#5E6672" Text="Local clipboard history" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <CheckBox Margin="0,0,20,0" Click="OnCaptureSettingToggled" Content="Pause capture" IsChecked="{Binding IsPaused}" />
+                    <CheckBox Click="OnCaptureSettingToggled" Content="Private mode" IsChecked="{Binding IsPrivateMode}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" MinWidth="430" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="300" />
+            </Grid.ColumnDefinitions>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="12" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="12" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Width="80" Margin="8,0,0,0" Command="{Binding SearchCommand}" Content="Search" />
+                    <TextBox Height="34" Padding="8,5" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+                <ListBox Grid.Row="2"
+                         ItemsSource="{Binding History}"
+                         SelectedItem="{Binding SelectedItem}"
+                         BorderBrush="#CBD1D9"
+                         BorderThickness="1"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="8" Width="520">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock MaxHeight="56" Text="{Binding Text}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Grid.Row="1" Margin="0,6,0,0" Foreground="#6D7580" FontSize="12">
+                                    <Run Text="{Binding Source}" /><Run Text="  " /><Run Text="{Binding CreatedAt}" />
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <Button Width="90" Command="{Binding CopySelectedCommand}" Content="Copy" />
+                    <Button Width="90" Margin="8,0,0,0" Command="{Binding DeleteSelectedCommand}" Content="Delete" />
+                    <Button Width="90" Margin="8,0,0,0" Command="{Binding ClearCommand}" Content="Clear all" />
+                    <Button Width="90" Margin="8,0,0,0" Command="{Binding RefreshCommand}" Content="Refresh" />
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Column="2" Padding="18" Background="White" BorderBrush="#CBD1D9" BorderThickness="1" CornerRadius="6">
+                <ScrollViewer Margin="-6,0" Padding="6,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="Capture settings" />
+                    <TextBlock Margin="0,18,0,6" Text="Retention days" />
+                    <TextBox Padding="8,5" Text="{Binding RetentionDays}" />
+                    <TextBlock Margin="0,18,0,6" Text="Blocked processes" />
+                    <TextBox Height="120"
+                             Padding="8"
+                             AcceptsReturn="True"
+                             Text="{Binding BlockedProcesses}"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto" />
+                    <Separator Margin="0,22,0,16" />
+                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="Sync" />
+                    <CheckBox Margin="0,14,0,0"
+                              Content="Apply remote clips to clipboard"
+                              IsChecked="{Binding AutoApplyRemote}" />
+                    <TextBlock Margin="0,14,0,6" Text="Extra bind addresses (e.g. Tailscale IP)" />
+                    <TextBox Padding="8,5" Text="{Binding ExtraBindAddresses}" />
+                    <TextBlock Margin="0,6,0,0"
+                               FontSize="11"
+                               Foreground="#6D7580"
+                               Text="Address changes take effect after restart."
+                               TextWrapping="Wrap" />
+                    <Button Height="34" Margin="0,18,0,0" Command="{Binding SaveSettingsCommand}" Content="Save settings" />
+                    <Separator Margin="0,22,0,16" />
+                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="Paired devices" />
+                    <Button Height="32" Margin="0,12,0,0" Click="OnPairNewDeviceClicked" Content="Pair new device…" />
+                    <ListBox MaxHeight="180"
+                             Margin="0,12,0,0"
+                             BorderBrush="#CBD1D9"
+                             BorderThickness="1"
+                             ItemsSource="{Binding Devices}"
+                             SelectedItem="{Binding SelectedDevice}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="4">
+                                    <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock FontSize="11" Foreground="#6D7580">
+                                        <Run Text="{Binding Platform, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding LastSeenText, Mode=OneWay}" />
+                                    </TextBlock>
+                                    <TextBlock FontSize="11" Foreground="#A4262C" Text="{Binding StateText}" Visibility="{Binding IsRevoked, Converter={StaticResource BoolToVisibility}}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock Margin="0,12,0,4" FontSize="12" Text="Rename selected device" />
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Width="70" Margin="8,0,0,0" Command="{Binding RenameDeviceCommand}" Content="Rename" />
+                        <TextBox Padding="6,4" Text="{Binding RenameText, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                    <Button Height="30"
+                            Margin="0,10,0,0"
+                            Command="{Binding RevokeDeviceCommand}"
+                            Content="Revoke selected device"
+                            Foreground="#A4262C" />
+                    <TextBlock Margin="0,6,0,0"
+                               FontSize="11"
+                               Foreground="#6D7580"
+                               Text="Revoking disconnects the device immediately and invalidates its pairing secret."
+                               TextWrapping="Wrap" />
+                    <Separator Margin="0,22,0,18" />
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="9" Height="9" Margin="0,0,9,0" Fill="#27844F" />
+                        <TextBlock VerticalAlignment="Center" Text="Local capture service running" />
+                    </StackPanel>
+                    <TextBlock Margin="0,10,0,0"
+                               FontSize="12"
+                               Foreground="#6D7580"
+                               Text="{Binding SyncStatus}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

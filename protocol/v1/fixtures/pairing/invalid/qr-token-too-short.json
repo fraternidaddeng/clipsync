@@ -1,0 +1,13 @@
+{
+  "kind": "pairing_qr",
+  "version": 1,
+  "hosts": [
+    "192.168.1.23"
+  ],
+  "port": 47654,
+  "device_id": "11111111-1111-4111-8111-111111111111",
+  "display_name": "DESKTOP-WIN",
+  "cert_sha256": "0f9a54e310154f2f4d6c2a01377549272117572a83a4d64d99a1d501bcda9c25",
+  "token": "shortToken",
+  "expires_at_ms": 1755064500000
+}

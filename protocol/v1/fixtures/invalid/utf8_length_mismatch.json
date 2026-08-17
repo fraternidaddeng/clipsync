@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "type": "clip_payload",
+  "request_id": "26262626-2626-4262-8262-262626262626",
+  "body": {
+    "clips": [
+      {
+        "event_id": "55555555-5555-4555-8555-555555555555",
+        "origin_device_id": "22222222-2222-4222-8222-222222222222",
+        "origin_seq": 6,
+        "kind": "text",
+        "content": "你好，ClipSync 👋",
+        "content_hash": "7ee46a9cda0560475782f6d67f83924d1aa6e5d1565e074d1c1b499fb48cdbd1",
+        "utf8_bytes": 15,
+        "created_at_ms": 1776000000000
+      }
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+# .NET
+**/bin/
+**/obj/
+*.user
+*.suo
+.vs/
+
+# Android / Gradle
+.gradle/
+**/build/
+local.properties
+*.iml
+.idea/
+
+# Signing and local secrets
+*.jks
+*.keystore
+*.pfx
+*.p12
+*.cer
+*.key
+*.pem
+secrets/
+
+# Runtime data and packages
+*.db
+*.db-shm
+*.db-wal
+artifacts/
+output/
+.tools/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*-diagnostics.log

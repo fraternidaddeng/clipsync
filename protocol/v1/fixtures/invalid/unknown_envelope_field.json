@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "type": "ping",
+  "request_id": "19191919-1919-4191-8191-191919191919",
+  "body": {
+    "sent_at_ms": 1776000000000
+  },
+  "debug_content": "must never be accepted"
+}

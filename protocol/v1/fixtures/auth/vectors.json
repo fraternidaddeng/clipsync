@@ -1,0 +1,36 @@
+{
+  "algorithm": "hmac-sha256",
+  "message_format": "UTF8('ClipSync/v1/auth\\n') || UTF8(challenge_request_id) || 0x00 || nonce_bytes || UUID_BYTES(challenger_device_id) || UUID_BYTES(responder_device_id) || INT64_BE(trust_epoch)",
+  "vectors": [
+    {
+      "name": "sequential secret, zero nonce, epoch 1",
+      "pair_secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "challenge_request_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "nonce_base64url": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "challenger_device_id": "11111111-1111-4111-8111-111111111111",
+      "responder_device_id": "22222222-2222-4222-8222-222222222222",
+      "trust_epoch": 1,
+      "proof_base64url": "D8wf0iwURb51Xcq-OX3uiHyDcmzqcVxvHkwX95KyJfA"
+    },
+    {
+      "name": "all-ones secret, sequential nonce, max epoch",
+      "pair_secret_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "challenge_request_id": "0f0e0d0c-0b0a-4908-8706-050403020100",
+      "nonce_base64url": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8",
+      "challenger_device_id": "fedcba98-7654-4321-8765-432187654321",
+      "responder_device_id": "01234567-89ab-4def-8123-456789abcdef",
+      "trust_epoch": 9223372036854775807,
+      "proof_base64url": "i9PMGU9mHQZXW8e7_QNPLTu-l7rd0IUjZNB_j32J_as"
+    },
+    {
+      "name": "mixed secret, epoch 42",
+      "pair_secret_hex": "86aec21e3225dc47f39800c0cc163ff8c429f45bc8a8926a820470b30a3d2cf9",
+      "challenge_request_id": "c0ffee00-1234-4abc-9def-000000000042",
+      "nonce_base64url": "4K8GEZcBd2Z4HOblxP_AcZ3D4JTMsyWgI4LVoaWbv_8",
+      "challenger_device_id": "aaaabbbb-cccc-4ddd-8eee-ffff00001111",
+      "responder_device_id": "99998888-7777-4666-b555-444433332222",
+      "trust_epoch": 42,
+      "proof_base64url": "sCi6wMaVEWI216kOmOV84_rKoJRx1n7VRHFYjiznTjo"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "pairing_confirm_request",
+  "version": 1,
+  "token": "vJ8kAqhFRWDdiWvUuJ9lPCS0jBSJ73dP9-b1JzW5Qk4",
+  "device_id": "22222222-2222-4222-8222-222222222222",
+  "display_name": "Old Phone",
+  "platform": "ios"
+}

@@ -1,0 +1,9 @@
+{
+  "kind": "pairing_confirm_request",
+  "version": 1,
+  "token": "vJ8kAqhFRWDdiWvUuJ9lPCS0jBSJ73dP9-b1JzW5Qk4",
+  "device_id": "22222222-2222-4222-8222-222222222222",
+  "device_id": "33333333-3333-4333-8333-333333333333",
+  "display_name": "Pixel 8",
+  "platform": "android"
+}

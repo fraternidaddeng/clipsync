@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipSync.App", "ClipSync.App\ClipSync.App.csproj", "{21DE3899-D7D3-49AF-9DEB-658EC67CA8E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipSync.Core", "ClipSync.Core\ClipSync.Core.csproj", "{B493D6EA-0B95-4B83-8A84-7D6F8A4A574B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipSync.Tests", "ClipSync.Tests\ClipSync.Tests.csproj", "{9C2B8F72-FC95-49D8-96E6-BFCE39A38E08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipSync.App.Tests", "ClipSync.App.Tests\ClipSync.App.Tests.csproj", "{7F6E37C7-0E55-4CD7-BD40-55DD6349CB01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipSync.Peer", "ClipSync.Peer\ClipSync.Peer.csproj", "{5A0DA4C1-6B14-4A5E-9E44-2A64C3E01F55}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21DE3899-D7D3-49AF-9DEB-658EC67CA8E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21DE3899-D7D3-49AF-9DEB-658EC67CA8E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21DE3899-D7D3-49AF-9DEB-658EC67CA8E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21DE3899-D7D3-49AF-9DEB-658EC67CA8E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B493D6EA-0B95-4B83-8A84-7D6F8A4A574B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B493D6EA-0B95-4B83-8A84-7D6F8A4A574B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B493D6EA-0B95-4B83-8A84-7D6F8A4A574B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B493D6EA-0B95-4B83-8A84-7D6F8A4A574B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C2B8F72-FC95-49D8-96E6-BFCE39A38E08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C2B8F72-FC95-49D8-96E6-BFCE39A38E08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C2B8F72-FC95-49D8-96E6-BFCE39A38E08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C2B8F72-FC95-49D8-96E6-BFCE39A38E08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F6E37C7-0E55-4CD7-BD40-55DD6349CB01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F6E37C7-0E55-4CD7-BD40-55DD6349CB01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F6E37C7-0E55-4CD7-BD40-55DD6349CB01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F6E37C7-0E55-4CD7-BD40-55DD6349CB01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A0DA4C1-6B14-4A5E-9E44-2A64C3E01F55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A0DA4C1-6B14-4A5E-9E44-2A64C3E01F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A0DA4C1-6B14-4A5E-9E44-2A64C3E01F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A0DA4C1-6B14-4A5E-9E44-2A64C3E01F55}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
