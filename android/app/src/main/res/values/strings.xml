@@ -29,6 +29,10 @@
     <string name="settings_private_hint">New clips are not stored or sent. Past clips are not backfilled later.</string>
     <string name="settings_auto_apply">Auto-apply remote clips</string>
     <string name="settings_auto_apply_hint">Write inbound Windows text to the system clipboard when public write works.</string>
+    <string name="settings_background_sync">Background sync</string>
+    <string name="settings_background_sync_hint">Keep a connected-device foreground service so the Windows link stays up. This is not clipboard permission.</string>
+    <string name="settings_boot_recovery">Resume after reboot</string>
+    <string name="settings_boot_recovery_hint">After the phone restarts, try to restore the sync service. Off by default.</string>
     <string name="settings_capabilities">Capability</string>
 
     <string name="capability_network">Network</string>
@@ -53,4 +57,14 @@
     <string name="notify_inbound_title">New clip from Windows</string>
     <string name="notify_inbound_text">Tap Copy to put it on this phone\'s clipboard.</string>
     <string name="notify_copy_action">Copy to clipboard</string>
+
+    <string name="service_notify_channel_name">Background sync</string>
+    <string name="service_notify_channel_description">Ongoing status for the Windows connection. Never includes clipboard text.</string>
+    <string name="service_notify_title">ClipSync background sync</string>
+    <string name="service_notify_text">Keeping the Windows connection alive. This is not clipboard permission.</string>
+    <string name="service_action_pause">Pause all</string>
+    <string name="service_action_sync_now">Sync now</string>
+    <string name="service_action_open_status">Open status</string>
+    <string name="service_recovery_title">ClipSync needs recovery</string>
+    <string name="service_recovery_text">Background sync stopped after a restart. Open the app to resume.</string>
 </resources>

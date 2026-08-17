@@ -2,6 +2,7 @@ package com.clipsync.android.platform.clipboard
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -76,5 +77,84 @@ class ClipboardWriteCoordinatorTest {
         coordinator.writeText("remote text", "event-5")
 
         assertFalse(coordinator.shouldSuppress("event-5", "remote text"))
+    }
+
+    @Test
+    fun `public ready never reports manual only even if store has manual only`() {
+        val keys = InMemoryCapabilityKeyValueStore()
+        val store = KeyValueClipboardCapabilityStore(keys)
+        store.saveWrite(WriteCapabilitySnapshot(writeMode = ClipboardWriteMode.MANUAL_ONLY))
+        val publicWriter = FakeClipboardWriter(state = CapabilityState.READY)
+        val coordinator = ClipboardWriteCoordinator(
+            publicWriter = publicWriter,
+            capabilityStore = store,
+        )
+
+        assertEquals(ClipboardWriteMode.PUBLIC_API, coordinator.writeMode())
+        assertTrue(coordinator.writeMode() != ClipboardWriteMode.MANUAL_ONLY)
+        assertEquals(ClipboardWriteMode.PUBLIC_API, store.loadWrite()?.writeMode)
+    }
+
+    @Test
+    fun `fallback probe and last error persist separately from public and never store clip text`() {
+        val keys = InMemoryCapabilityKeyValueStore()
+        val store = KeyValueClipboardCapabilityStore(keys)
+        val secret = "SECRET_WRITE_CLIP_TEXT"
+        val publicWriter = FakeClipboardWriter(state = CapabilityState.UNAVAILABLE).apply {
+            enqueue(ClipboardWriteResult.Failure("PUBLIC_WRITE_REJECTED"))
+        }
+        val fallbackWriter = FakeClipboardWriter(state = CapabilityState.READY).apply {
+            enqueue(ClipboardWriteResult.Failure("SHIZUKU_WRITE_DENIED"))
+        }
+        val coordinator = ClipboardWriteCoordinator(
+            publicWriter = publicWriter,
+            fallbackWriter = fallbackWriter,
+            capabilityStore = store,
+            fallbackWriteMode = ClipboardWriteMode.SHIZUKU_FALLBACK,
+            nowEpochMillis = { 2_000L },
+        )
+
+        val outcome = coordinator.writeText(secret, "event-6")
+
+        assertEquals(ClipboardWriteResult.Failure("SHIZUKU_WRITE_DENIED"), outcome.result)
+        val snapshot = store.loadWrite()
+        assertEquals(ClipboardWriteMode.SHIZUKU_FALLBACK, snapshot?.writeMode)
+        assertEquals("PUBLIC_WRITE_REJECTED", snapshot?.publicLastErrorCode)
+        assertEquals("SHIZUKU_WRITE_DENIED", snapshot?.fallbackLastErrorCode)
+        assertNull(snapshot?.publicLastSuccessAtEpochMillis)
+        assertNull(snapshot?.fallbackLastSuccessAtEpochMillis)
+        assertFalse(keys.map.values.any { it.contains(secret) })
+        assertFalse(coordinator.shouldSuppress("event-6", secret))
+    }
+
+    @Test
+    fun `public success persists last success independently of fallback error`() {
+        val keys = InMemoryCapabilityKeyValueStore()
+        val store = KeyValueClipboardCapabilityStore(keys)
+        store.saveWrite(
+            WriteCapabilitySnapshot(
+                writeMode = ClipboardWriteMode.MANUAL_ONLY,
+                fallbackLastErrorCode = "SHIZUKU_WRITE_DENIED",
+                fallbackLastSuccessAtEpochMillis = null,
+            ),
+        )
+        val coordinator = ClipboardWriteCoordinator(
+            publicWriter = FakeClipboardWriter(state = CapabilityState.READY),
+            fallbackWriter = FakeClipboardWriter(state = CapabilityState.UNAVAILABLE),
+            capabilityStore = store,
+            nowEpochMillis = { 3_000L },
+        )
+
+        val outcome = coordinator.writeText("ok text", "event-7")
+
+        assertEquals(ClipboardWriteResult.Success, outcome.result)
+        assertEquals(ClipboardWriterKind.PUBLIC_API, outcome.writerKind)
+        val snapshot = coordinator.writeCapability()
+        assertEquals(ClipboardWriteMode.PUBLIC_API, snapshot.writeMode)
+        assertEquals(3_000L, snapshot.publicLastSuccessAtEpochMillis)
+        assertNull(snapshot.publicLastErrorCode)
+        assertEquals("SHIZUKU_WRITE_DENIED", snapshot.fallbackLastErrorCode)
+        assertEquals(ClipboardWriteMode.PUBLIC_API, store.loadWrite()?.writeMode)
+        assertTrue(coordinator.shouldSuppress("event-7", "ok text"))
     }
 }

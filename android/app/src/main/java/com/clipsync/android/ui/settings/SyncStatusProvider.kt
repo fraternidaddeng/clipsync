@@ -9,6 +9,9 @@ data class SyncConnectionStatus(
     val paired: Boolean,
     val windowsReachable: Boolean,
     val serviceRunning: Boolean,
+    val serviceNeedsRecovery: Boolean = false,
+    val serviceErrorCode: String? = null,
+    val notificationsHidden: Boolean = false,
 )
 
 fun interface SyncStatusProvider {

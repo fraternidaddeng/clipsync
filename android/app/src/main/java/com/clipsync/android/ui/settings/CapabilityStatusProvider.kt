@@ -32,9 +32,20 @@ fun networkCard(status: SyncConnectionStatus): HealthValue = when {
     else -> HealthValue("Windows unreachable", HealthTone.WARNING)
 }
 
-fun serviceCard(status: SyncConnectionStatus): HealthValue =
-    if (status.serviceRunning) {
-        HealthValue("Running", HealthTone.GOOD)
-    } else {
-        HealthValue("Not running", HealthTone.NEUTRAL)
-    }
+fun serviceCard(status: SyncConnectionStatus): HealthValue = when {
+    status.serviceErrorCode != null -> HealthValue(
+        serviceErrorLabel(status.serviceErrorCode),
+        HealthTone.WARNING,
+    )
+    status.serviceNeedsRecovery -> HealthValue("Needs recovery", HealthTone.WARNING)
+    status.serviceRunning && status.notificationsHidden ->
+        HealthValue("Running (notification hidden)", HealthTone.GOOD)
+    status.serviceRunning -> HealthValue("Running", HealthTone.GOOD)
+    else -> HealthValue("Not running", HealthTone.NEUTRAL)
+}
+
+fun serviceErrorLabel(code: String): String = when (code) {
+    "missing_fgs_type" -> "Foreground service type missing"
+    "fgs_security" -> "Foreground service permission missing"
+    else -> "Service start denied"
+}

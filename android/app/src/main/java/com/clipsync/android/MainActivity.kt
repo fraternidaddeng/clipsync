@@ -1,6 +1,7 @@
 package com.clipsync.android
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -28,6 +29,12 @@ import com.clipsync.android.notify.InboundClip
 import com.clipsync.android.notify.InboundClipApplier
 import com.clipsync.android.notify.InboundClipNotifier
 import com.clipsync.android.pairing.PairingConfirmClient
+import com.clipsync.android.pairing.PairingStore
+import com.clipsync.android.service.ClipboardSyncRuntime
+import com.clipsync.android.service.ClipboardSyncService
+import com.clipsync.android.service.ControllerOwner
+import com.clipsync.android.service.ServiceNotificationActions
+import com.clipsync.android.storage.ClipRepository
 import com.clipsync.android.sync.SyncController
 import com.clipsync.android.sync.createSyncController
 import com.clipsync.android.ui.HealthScreen
@@ -44,6 +51,7 @@ import com.clipsync.android.ui.settings.SettingsViewModel
 import com.clipsync.android.ui.settings.SyncControllerStatusAdapter
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -53,39 +61,41 @@ class MainActivity : ComponentActivity() {
         }
 
     private var syncController: SyncController? = null
+    private val openTab = MutableStateFlow(0)
+    private var lastPaired: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         requestNotificationPermissionIfNeeded()
+        openTab.value = tabFrom(intent)
         val pairingStore = ClipServices.pairingStore(this)
         val repository = ClipServices.repository(this)
         val writeCoordinator = ClipServices.writeCoordinator(this)
-        val notifier = InboundClipNotifier(this)
-        val applier = InboundClipApplier(repository, writeCoordinator) { eventId ->
-            notifier.notifyCopyAction(eventId)
+        val serviceSettings = ClipServices.serviceSettings(this)
+        val backgroundWanted = serviceSettings.backgroundSyncEnabled()
+        ClipboardSyncRuntime.orchestrator.wantedRunning = backgroundWanted
+        ClipboardSyncRuntime.orchestrator.setBootRecoveryEnabled(serviceSettings.bootRecoveryEnabled())
+        if (backgroundWanted) {
+            val handover = ClipboardSyncRuntime.orchestrator.requestBackgroundStart()
+            check(handover.acquireBy == ControllerOwner.SERVICE)
+            ClipboardSyncService.start(this)
+        } else {
+            syncController = createActivityController(pairingStore, repository)
         }
-        val controller = createSyncController(
-            pairingStore = pairingStore,
-            repository = repository,
-            scope = lifecycleScope,
-            onRemoteClipsCommitted = { clips ->
-                lifecycleScope.launch(Dispatchers.IO) {
-                    applier.onCommitted(
-                        clips.map { InboundClip(eventId = it.eventId, content = it.content) },
-                    )
-                }
-            },
-        )
-        syncController = controller
         val syncStatus = SyncControllerStatusAdapter(
-            controller = { syncController },
+            controller = { ClipboardSyncRuntime.activeController(syncController) },
             isPaired = { pairingStore.peer() != null },
+            serviceSnapshot = { ClipboardSyncRuntime.orchestrator.snapshot() },
         )
         val capabilities = ClipServices.capabilities(this, isVisible = { hasWindowFocus() })
         setContent {
             ClipSyncTheme {
-                var tab by rememberSaveable { mutableIntStateOf(0) }
+                val requestedTab by openTab.collectAsState()
+                var tab by rememberSaveable { mutableIntStateOf(requestedTab) }
+                LaunchedEffect(requestedTab) {
+                    tab = requestedTab
+                }
                 val pairingViewModel: PairingViewModel = viewModel(
                     factory = PairingViewModel.factory(
                         pairingStore,
@@ -97,11 +107,22 @@ class MainActivity : ComponentActivity() {
                     factory = HistoryViewModel.factory(repository, writeCoordinator, syncStatus),
                 )
                 val settingsViewModel: SettingsViewModel = viewModel(
-                    factory = SettingsViewModel.factory(repository, syncStatus, capabilities),
+                    factory = SettingsViewModel.factory(
+                        repository,
+                        syncStatus,
+                        capabilities,
+                        serviceSettings = serviceSettings,
+                        onBackgroundSyncChanged = { enabled ->
+                            onBackgroundSyncToggled(enabled, pairingStore, repository)
+                        },
+                        onBootRecoveryChanged = { enabled ->
+                            ClipboardSyncRuntime.applyBootReceiverEnabled(this, enabled)
+                        },
+                    ),
                 )
                 val pairingState by pairingViewModel.state.collectAsState()
                 val settingsState by settingsViewModel.state.collectAsState()
-                val syncState by controller.state.collectAsState()
+                val serviceSnap by ClipboardSyncRuntime.orchestrator.snapshots.collectAsState()
                 LaunchedEffect(pairingState) {
                     val currentPairing = pairingState
                     PairedPeerIdSync.onPairingState(
@@ -111,15 +132,21 @@ class MainActivity : ComponentActivity() {
                     )
                     val paired = currentPairing is PairingUiState.Paired ||
                         (currentPairing is PairingUiState.Idle && currentPairing.pairedPeer != null)
-                    if (paired) {
-                        controller.start()
-                    } else if (currentPairing is PairingUiState.Idle) {
-                        controller.stop()
+                    lastPaired = paired
+                    val activityController = syncController
+                    if (ClipboardSyncRuntime.orchestrator.controllerOwner == ControllerOwner.ACTIVITY &&
+                        activityController != null
+                    ) {
+                        if (paired) {
+                            activityController.start()
+                        } else if (currentPairing is PairingUiState.Idle) {
+                            activityController.stop()
+                        }
                     }
                     historyViewModel.refresh()
                     settingsViewModel.refresh()
                 }
-                LaunchedEffect(syncState) {
+                LaunchedEffect(serviceSnap) {
                     historyViewModel.refresh()
                     settingsViewModel.refresh()
                 }
@@ -182,6 +209,67 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        openTab.value = tabFrom(intent)
+    }
+
+    private fun onBackgroundSyncToggled(
+        enabled: Boolean,
+        pairingStore: PairingStore,
+        repository: ClipRepository,
+    ) {
+        if (enabled) {
+            val handover = ClipboardSyncRuntime.orchestrator.requestBackgroundStart()
+            syncController?.stop()
+            syncController = null
+            check(handover.acquireBy == ControllerOwner.SERVICE)
+            ClipboardSyncService.start(this)
+        } else {
+            val handover = ClipboardSyncRuntime.orchestrator.requestBackgroundStop()
+            ClipboardSyncService.stop(this)
+            val controller = createActivityController(pairingStore, repository)
+            syncController = controller
+            check(handover.acquireBy == ControllerOwner.ACTIVITY)
+            if (lastPaired) {
+                controller.start()
+            }
+        }
+    }
+
+    private fun createActivityController(
+        pairingStore: PairingStore,
+        repository: ClipRepository,
+    ): SyncController {
+        val writeCoordinator = ClipServices.writeCoordinator(this)
+        val notifier = InboundClipNotifier(this)
+        val applier = InboundClipApplier(repository, writeCoordinator) { eventId ->
+            notifier.notifyCopyAction(eventId)
+        }
+        return createSyncController(
+            pairingStore = pairingStore,
+            repository = repository,
+            scope = lifecycleScope,
+            onRemoteClipsCommitted = { clips ->
+                lifecycleScope.launch(Dispatchers.IO) {
+                    applier.onCommitted(
+                        clips.map { InboundClip(eventId = it.eventId, content = it.content) },
+                    )
+                }
+            },
+        )
+    }
+
+    private fun tabFrom(intent: Intent?): Int =
+        if (intent?.getStringExtra(ServiceNotificationActions.EXTRA_OPEN_TAB) ==
+            ServiceNotificationActions.TAB_STATUS
+        ) {
+            1
+        } else {
+            0
+        }
+
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT < 33) {
             return
@@ -207,8 +295,10 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        syncController?.stop()
-        syncController = null
+        if (ClipboardSyncRuntime.orchestrator.controllerOwner == ControllerOwner.ACTIVITY) {
+            syncController?.stop()
+            syncController = null
+        }
         super.onDestroy()
     }
 }

@@ -1,6 +1,6 @@
 # Third-Party Dependency and License Inventory
 
-This inventory (Stage 0, updated through Stage 4) records direct build/runtime/test dependencies currently declared in the repository and major dependencies explicitly planned by `plan.md`. It is not a substitute for the release-time transitive dependency, notice, and source-offer review. Exact license texts and obligations must be collected from the resolved artifacts before distribution.
+This inventory (Stage 0, updated through Stage 5.3) records direct build/runtime/test dependencies currently declared in the repository and major dependencies explicitly planned by `plan.md`. It is not a substitute for the release-time transitive dependency, notice, and source-offer review. Exact license texts and obligations must be collected from the resolved artifacts before distribution.
 
 ## Currently declared dependencies
 
@@ -40,6 +40,8 @@ This inventory (Stage 0, updated through Stage 4) records direct build/runtime/t
 | kotlinx-coroutines-test | 1.9.0 | Android coroutine tests (test only) | Apache-2.0 |
 | AndroidX Room room-testing | 2.6.1 | Room test helpers (test only) | Apache-2.0 |
 | AndroidX Arch core-testing | 2.2.0 | Architecture Components test helpers (test only) | Apache-2.0 |
+| Shizuku API (`dev.rikka.shizuku:api`) | 13.1.5 | Privileged clipboard UserService / Binder client | MIT — verified 2026-08-17 from the Maven Central 13.1.5 POM (`<name>MIT License</name>`) and [RikkaApps/Shizuku-API LICENSE](https://github.com/RikkaApps/Shizuku-API/blob/master/LICENSE). The Shizuku *manager app* is Apache-2.0; the API/provider artifacts we depend on are MIT. |
+| Shizuku Provider (`dev.rikka.shizuku:provider`) | 13.1.5 | `ShizukuProvider` ContentProvider that receives the Shizuku binder | MIT — same artifact family and LICENSE as `dev.rikka.shizuku:api` 13.1.5 |
 
 ## Planned direct dependencies
 
@@ -48,7 +50,6 @@ These are architectural selections, not necessarily present in the current build
 | Component | Planned purpose | Expected license/status |
 |---|---|---|
 | AndroidX WorkManager | Bounded recovery | Apache-2.0 |
-| Shizuku API | User-authorized clipboard bridge | License and notice must be verified from the pinned artifact before addition |
 
 ## Reference projects are not dependencies
 

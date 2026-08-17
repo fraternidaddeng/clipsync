@@ -7,11 +7,22 @@ enum class ClipboardReadMode {
     FOREGROUND_ONLY,
 }
 
+/** Write path selection (plan stage 5.1). Public API first; fallbacks are opt-in. */
+enum class ClipboardWriteMode {
+    PUBLIC_API,
+    SHIZUKU_FALLBACK,
+    OVERLAY_FALLBACK,
+    MANUAL_ONLY,
+}
+
 enum class CapabilityState {
     UNKNOWN,
     READY,
     DEGRADED,
     UNAVAILABLE,
+
+    /** Blocked until the user grants or restores something (Shizuku, overlay, READ_LOGS). */
+    NEEDS_USER_ACTION,
 }
 
 data class ClipboardAuthorization(

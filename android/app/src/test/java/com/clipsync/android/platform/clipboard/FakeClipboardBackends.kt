@@ -9,6 +9,9 @@ class FakeBackgroundClipboardBackend(
         checkedAtEpochMillis = 1L,
     ),
     private val callLog: MutableList<String> = mutableListOf(),
+    var onStart: () -> Unit = {},
+    var onStop: () -> Unit = {},
+    var onRead: () -> Unit = {},
 ) : BackgroundClipboardBackend {
     private var callback: ((ClipboardChange) -> Unit)? = null
 
@@ -19,16 +22,19 @@ class FakeBackgroundClipboardBackend(
 
     override fun start(onChanged: (ClipboardChange) -> Unit) {
         callLog += "$mode.start"
+        onStart()
         callback = onChanged
     }
 
     override fun stop() {
         callLog += "$mode.stop"
         callback = null
+        onStop()
     }
 
     override fun readText(): ClipboardReadResult {
         callLog += "$mode.read"
+        onRead()
         return readResult
     }
 
@@ -80,4 +86,17 @@ class FakeClipboardWriter(
     }
 
     data class WriteCall(val text: String, val originEventId: String)
+}
+
+/** In-memory [com.clipsync.android.pairing.KeyValueStore] for capability persistence tests. */
+class InMemoryCapabilityKeyValueStore : com.clipsync.android.pairing.KeyValueStore {
+    val map = LinkedHashMap<String, String>()
+
+    override fun read(key: String): String? = map[key]
+
+    override fun write(values: Map<String, String?>) {
+        for ((key, value) in values) {
+            if (value == null) map.remove(key) else map[key] = value
+        }
+    }
 }

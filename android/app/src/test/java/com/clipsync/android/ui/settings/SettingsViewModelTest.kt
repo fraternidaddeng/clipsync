@@ -99,6 +99,45 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun `background sync and boot recovery persist and boot recovery defaults off`() {
+        val repo = createTestClipRepository()
+        val model = settingsModel(repo)
+        assertFalse(model.state.value.backgroundSync)
+        assertFalse(model.state.value.bootRecoveryEnabled)
+        model.setBackgroundSync(true)
+        model.setBootRecoveryEnabled(true)
+        assertTrue(model.state.value.backgroundSync)
+        assertTrue(model.state.value.bootRecoveryEnabled)
+        assertTrue(parseSettingFlag(repo.getSettingBlocking(SETTING_BACKGROUND_SYNC)))
+        assertTrue(parseSettingFlag(repo.getSettingBlocking(SETTING_BOOT_RECOVERY_ENABLED)))
+        model.close()
+    }
+
+    @Test
+    fun `service card shows needs recovery without painting network green`() {
+        val repo = createTestClipRepository()
+        val model = SettingsViewModel(
+            repository = repo,
+            syncStatus = FixedSyncStatusProvider(
+                SyncConnectionStatus(
+                    paired = true,
+                    windowsReachable = false,
+                    serviceRunning = false,
+                    serviceNeedsRecovery = true,
+                ),
+            ),
+            capabilities = FixedCapabilityStatus(
+                read = HealthValue("Foreground only", HealthTone.NEUTRAL),
+                write = HealthValue("Not probed", HealthTone.NEUTRAL),
+            ),
+        )
+        assertEquals("Needs recovery", model.state.value.service.label)
+        assertEquals(HealthTone.WARNING, model.state.value.service.tone)
+        assertNotEquals(HealthTone.GOOD, model.state.value.network.tone)
+        model.close()
+    }
+
+    @Test
     fun `windows unreachable does not paint read or write green`() {
         val repo = createTestClipRepository()
         val model = SettingsViewModel(

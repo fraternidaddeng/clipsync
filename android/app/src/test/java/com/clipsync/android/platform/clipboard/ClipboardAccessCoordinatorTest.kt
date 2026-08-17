@@ -2,6 +2,7 @@ package com.clipsync.android.platform.clipboard
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ClipboardAccessCoordinatorTest {
@@ -129,5 +130,150 @@ class ClipboardAccessCoordinatorTest {
         assertEquals(ClipboardReadMode.SHIZUKU_EVENT, state.activeReadMode)
         assertEquals("SHIZUKU_DISCONNECTED", state.lastErrorCode)
         assertEquals(50L, state.lastHealthAtEpochMillis)
+        assertEquals(CapabilityState.NEEDS_USER_ACTION, coordinator.lastReadState)
+    }
+
+    @Test
+    fun `needs user action probe is reported but never auto selected when fallback is allowed`() {
+        val shizuku = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            report = FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.NEEDS_USER_ACTION,
+                errorCode = "SHIZUKU_NOT_AUTHORIZED",
+            ),
+        )
+        val foreground = FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)
+        val coordinator = ClipboardAccessCoordinator(listOf(shizuku, foreground))
+
+        val state = coordinator.start { }
+
+        assertEquals(ClipboardReadMode.FOREGROUND_ONLY, state.activeReadMode)
+        assertTrue(
+            coordinator.lastSelectionReports.any { report ->
+                report.readMode == ClipboardReadMode.SHIZUKU_EVENT &&
+                    report.readState == CapabilityState.NEEDS_USER_ACTION &&
+                    report.errorCode == "SHIZUKU_NOT_AUTHORIZED"
+            },
+        )
+        assertTrue(
+            coordinator.lastSelectionReports.none { report ->
+                report.readMode == ClipboardReadMode.SHIZUKU_EVENT &&
+                    report.readState == CapabilityState.READY
+            },
+        )
+    }
+
+    @Test
+    fun `needs user action parks without selecting when fallback is disabled`() {
+        val shizuku = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            report = FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.NEEDS_USER_ACTION,
+                errorCode = "SHIZUKU_NOT_RUNNING",
+            ),
+        )
+        val foreground = FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)
+        val coordinator = ClipboardAccessCoordinator(
+            backends = listOf(shizuku, foreground),
+            autoFallbackAllowed = false,
+        )
+
+        val state = coordinator.start { }
+
+        assertNull(state.activeReadMode)
+        assertEquals(CapabilityState.NEEDS_USER_ACTION, coordinator.lastReadState)
+        assertEquals("SHIZUKU_NOT_RUNNING", state.lastErrorCode)
+        assertTrue(
+            coordinator.lastSelectionReports.any { it.readState == CapabilityState.NEEDS_USER_ACTION },
+        )
+    }
+
+    @Test
+    fun `needs user action is reported distinctly from unavailable`() {
+        val needsAction = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            report = FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.NEEDS_USER_ACTION,
+                errorCode = "SHIZUKU_NOT_INSTALLED",
+            ),
+        )
+        val unavailable = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            report = FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.UNAVAILABLE,
+                errorCode = "SHIZUKU_BINDER_DEAD",
+            ),
+        )
+
+        val parked = ClipboardAccessCoordinator(
+            backends = listOf(needsAction, FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)),
+            autoFallbackAllowed = false,
+        )
+        parked.start { }
+        assertEquals(CapabilityState.NEEDS_USER_ACTION, parked.lastReadState)
+        assertEquals("SHIZUKU_NOT_INSTALLED", parked.state.lastErrorCode)
+
+        val missing = ClipboardAccessCoordinator(
+            backends = listOf(unavailable, FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)),
+            autoFallbackAllowed = false,
+        )
+        missing.start { }
+        assertEquals(CapabilityState.UNAVAILABLE, missing.lastReadState)
+        assertEquals("SHIZUKU_BINDER_DEAD", missing.state.lastErrorCode)
+    }
+
+    @Test
+    fun `health tick with needs user action falls back only when allowed`() {
+        val shizuku = FakeBackgroundClipboardBackend(mode = ClipboardReadMode.SHIZUKU_EVENT)
+        val foreground = FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)
+        val coordinator = ClipboardAccessCoordinator(listOf(shizuku, foreground))
+        coordinator.start { }
+        shizuku.report = FakeBackgroundClipboardBackend.capabilityReport(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            state = CapabilityState.NEEDS_USER_ACTION,
+            errorCode = "SHIZUKU_NOT_AUTHORIZED",
+        )
+        shizuku.backendHealth = BackendHealth(
+            state = BackendHealthState.FAILED,
+            checkedAtEpochMillis = 80L,
+            errorCode = "SHIZUKU_NOT_AUTHORIZED",
+        )
+
+        val state = coordinator.checkHealth()
+
+        assertEquals(ClipboardReadMode.FOREGROUND_ONLY, state.activeReadMode)
+        assertEquals(CapabilityState.READY, coordinator.lastReadState)
+    }
+
+    @Test
+    fun `health tick parks at needs user action when fallback is disabled`() {
+        val shizuku = FakeBackgroundClipboardBackend(mode = ClipboardReadMode.SHIZUKU_EVENT)
+        val foreground = FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)
+        val coordinator = ClipboardAccessCoordinator(
+            backends = listOf(shizuku, foreground),
+            autoFallbackAllowed = false,
+        )
+        coordinator.start { }
+        shizuku.report = FakeBackgroundClipboardBackend.capabilityReport(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            state = CapabilityState.NEEDS_USER_ACTION,
+            errorCode = "SHIZUKU_NOT_AUTHORIZED",
+        )
+        shizuku.backendHealth = BackendHealth(
+            state = BackendHealthState.FAILED,
+            checkedAtEpochMillis = 80L,
+            errorCode = "SHIZUKU_NOT_AUTHORIZED",
+        )
+
+        val state = coordinator.checkHealth()
+
+        assertEquals(ClipboardReadMode.SHIZUKU_EVENT, state.activeReadMode)
+        assertEquals(CapabilityState.NEEDS_USER_ACTION, coordinator.lastReadState)
+        assertEquals("SHIZUKU_NOT_AUTHORIZED", state.lastErrorCode)
+        assertEquals(80L, state.lastHealthAtEpochMillis)
     }
 }

@@ -7,6 +7,12 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- Optional. Denial must not crash; inbound copy notifications stay hidden. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Stage 5 connectedDevice FGS: keeps the Windows network session, not clipboard access. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -19,7 +25,8 @@
         android:theme="@style/Theme.ClipSync">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,6 +64,31 @@
         <receiver
             android:name=".notify.CopyClipReceiver"
             android:exported="false" />
+
+        <service
+            android:name=".service.ClipboardSyncService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
+        <receiver
+            android:name=".service.BootCompletedReceiver"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Shizuku binder receiver. INTERACT_ACROSS_USERS_FULL is granted to
+             shell, not normal apps; exported so the Shizuku server can push
+             the binder. See RikkaApps/Shizuku-API README. -->
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:multiprocess="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
     </application>
 
 </manifest>

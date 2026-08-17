@@ -56,6 +56,26 @@ fun SettingsScreen(
             checked = state.autoApplyRemote,
             onCheckedChange = viewModel::setAutoApplyRemote,
         )
+        SettingSwitch(
+            title = stringResource(R.string.settings_background_sync),
+            subtitle = stringResource(R.string.settings_background_sync_hint),
+            checked = state.backgroundSync,
+            onCheckedChange = viewModel::setBackgroundSync,
+        )
+        SettingSwitch(
+            title = stringResource(R.string.settings_boot_recovery),
+            subtitle = stringResource(R.string.settings_boot_recovery_hint),
+            checked = state.bootRecoveryEnabled,
+            onCheckedChange = viewModel::setBootRecoveryEnabled,
+        )
+        val visibilityNote = state.notificationVisibilityNote
+        if (visibilityNote != null) {
+            Text(
+                text = visibilityNote,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         Text(
             text = stringResource(R.string.settings_capabilities),
             style = MaterialTheme.typography.titleMedium,

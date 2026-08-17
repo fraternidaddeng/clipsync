@@ -5,6 +5,7 @@ import android.content.Context
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.service.ServiceSettingsStore
 import com.clipsync.android.platform.clipboard.AndroidPublicClipboardWriter
 import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
@@ -15,8 +16,7 @@ import com.clipsync.android.ui.HealthTone
 import com.clipsync.android.ui.HealthValue
 
 /**
- * Process-scoped accessors for UI, share, tile, and notification entry points.
- * Does not start a ForegroundService.
+ * Process-scoped accessors for UI, share, tile, notification, and service entry points.
  */
 object ClipServices {
     @Volatile
@@ -25,6 +25,9 @@ object ClipServices {
 
     fun pairingStore(context: Context): PairingStore =
         PairingStore(SharedPrefsKeyValueStore(context.applicationContext), KeystoreSecretProtector())
+
+    fun serviceSettings(context: Context): ServiceSettingsStore =
+        ServiceSettingsStore(SharedPrefsKeyValueStore(context.applicationContext, "clipsync.service"))
 
     fun repository(context: Context): ClipRepository {
         repository?.let { return it }
@@ -65,6 +68,7 @@ object ClipServices {
                     CapabilityState.READY -> HealthValue("Foreground ready", HealthTone.GOOD)
                     CapabilityState.DEGRADED -> HealthValue("Degraded", HealthTone.WARNING)
                     CapabilityState.UNAVAILABLE -> HealthValue("Unavailable", HealthTone.WARNING)
+                    CapabilityState.NEEDS_USER_ACTION -> HealthValue("Needs your action", HealthTone.WARNING)
                     CapabilityState.UNKNOWN, null -> HealthValue("Foreground only", HealthTone.NEUTRAL)
                 }
             },
@@ -79,6 +83,7 @@ object ClipServices {
                     CapabilityState.READY -> HealthValue("Public write ready", HealthTone.GOOD)
                     CapabilityState.DEGRADED -> HealthValue("Degraded", HealthTone.WARNING)
                     CapabilityState.UNAVAILABLE -> HealthValue("Unavailable", HealthTone.WARNING)
+                    CapabilityState.NEEDS_USER_ACTION -> HealthValue("Needs your action", HealthTone.WARNING)
                     CapabilityState.UNKNOWN -> HealthValue("Not probed", HealthTone.NEUTRAL)
                 }
             },
