@@ -260,6 +260,8 @@ private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel) {
             PairingFailure.TIMEOUT -> "The computer did not approve in time. Show a fresh QR code and try again."
             PairingFailure.TOKEN_INVALID -> "This code was already used or cancelled. Show a fresh QR code."
             PairingFailure.TOKEN_EXPIRED -> "This code expired. Show a fresh QR code and scan it promptly."
+            PairingFailure.RATE_LIMITED ->
+                "Too many pairing attempts. Wait a minute, then show a fresh QR code and try again."
             PairingFailure.PROTOCOL -> "The computer answered outside the pairing protocol. Update both apps to matching versions."
         },
         color = if (reason == PairingFailure.CERTIFICATE_MISMATCH) {

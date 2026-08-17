@@ -99,6 +99,26 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun `blacklist toggle and extra list persist and reload`() {
+        val repo = createTestClipRepository()
+        val model = settingsModel(repo)
+        assertTrue(model.state.value.blacklistEnabled)
+        assertEquals("", model.state.value.blacklistExtra)
+        model.setBlacklistEnabled(false)
+        model.setBlacklistExtra("com.example.vault, com.ok.app")
+        assertFalse(model.state.value.blacklistEnabled)
+        assertEquals("com.example.vault, com.ok.app", model.state.value.blacklistExtra)
+        assertFalse(parseSettingFlag(repo.getSettingBlocking(SETTING_CAPTURE_BLACKLIST_ENABLED), default = true))
+        assertEquals("com.example.vault, com.ok.app", repo.getSettingBlocking(SETTING_CAPTURE_BLACKLIST_EXTRA))
+        model.close()
+
+        val reloaded = settingsModel(repo)
+        assertFalse(reloaded.state.value.blacklistEnabled)
+        assertEquals("com.example.vault, com.ok.app", reloaded.state.value.blacklistExtra)
+        reloaded.close()
+    }
+
+    @Test
     fun `background sync and boot recovery persist and boot recovery defaults off`() {
         val repo = createTestClipRepository()
         val model = settingsModel(repo)

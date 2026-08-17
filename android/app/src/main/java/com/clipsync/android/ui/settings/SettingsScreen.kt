@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,6 +68,21 @@ fun SettingsScreen(
             subtitle = stringResource(R.string.settings_boot_recovery_hint),
             checked = state.bootRecoveryEnabled,
             onCheckedChange = viewModel::setBootRecoveryEnabled,
+        )
+        SettingSwitch(
+            title = stringResource(R.string.settings_blacklist),
+            subtitle = stringResource(R.string.settings_blacklist_hint),
+            checked = state.blacklistEnabled,
+            onCheckedChange = viewModel::setBlacklistEnabled,
+        )
+        OutlinedTextField(
+            value = state.blacklistExtra,
+            onValueChange = viewModel::setBlacklistExtra,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = state.blacklistEnabled,
+            singleLine = true,
+            label = { Text(stringResource(R.string.settings_blacklist_extra)) },
+            supportingText = { Text(stringResource(R.string.settings_blacklist_extra_hint)) },
         )
         val visibilityNote = state.notificationVisibilityNote
         if (visibilityNote != null) {

@@ -190,6 +190,35 @@ class OverlayFocusControllerTest {
         assertTrue(platform.neverDroppedTouchable())
     }
 
+    @Test
+    fun `detach removes the window and is idempotent`() {
+        val platform = FakeOverlayPlatform()
+        platform.clip = OverlayClipRead.Text("held")
+        val controller = OverlayFocusController(platform)
+        controller.readText()
+        assertNotNull(platform.currentWindow())
+
+        controller.detach()
+        controller.detach()
+
+        assertEquals(null, platform.currentWindow())
+        assertEquals(2, platform.detachCount)
+        assertTrue(platform.neverDroppedTouchable())
+        assertEquals(FakeOverlayPlatform.EVENT_DETACH, platform.eventLog.last())
+    }
+
+    @Test
+    fun `detach without an attached window is a no-op besides the seam call`() {
+        val platform = FakeOverlayPlatform()
+        val controller = OverlayFocusController(platform)
+
+        controller.detach()
+
+        assertEquals(null, platform.currentWindow())
+        assertEquals(1, platform.detachCount)
+        assertTrue(platform.windowHistory.isEmpty())
+    }
+
     private fun assertIdleFlags(spec: OverlayWindowSpec?) {
         assertNotNull(spec)
         val flags = spec!!.flags

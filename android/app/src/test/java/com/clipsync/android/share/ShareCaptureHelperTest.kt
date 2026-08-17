@@ -1,5 +1,6 @@
 package com.clipsync.android.share
 
+import com.clipsync.android.storage.CapturePolicy
 import com.clipsync.android.storage.CaptureRejectReason
 import com.clipsync.android.storage.MAX_CLIP_UTF8_BYTES
 import com.clipsync.android.storage.SETTING_PAIRED_PEER_ID
@@ -64,6 +65,18 @@ class ShareCaptureHelperTest {
         val helper = ShareCaptureHelper(repo, nowMs = { NOW })
         assertEquals(ShareCaptureOutcome.SkippedPolicy, helper.capture("secret"))
         assertTrue(repo.search("").isEmpty())
+    }
+
+    @Test
+    fun `share from a blocked package is a distinct rejected outcome`() = runTest {
+        val repo = createTestClipRepository()
+        repo.setSetting(SETTING_PAIRED_PEER_ID, TEST_PEER_DEVICE_ID)
+        val helper = ShareCaptureHelper(repo, nowMs = { NOW })
+        val blocked = CapturePolicy.BUILTIN_BLOCKED_PACKAGES.first()
+        val outcome = helper.capture("from vault", sourceApp = blocked)
+        assertEquals(ShareCaptureOutcome.Rejected(CaptureRejectReason.BLOCKED_SOURCE), outcome)
+        assertTrue(repo.search("").isEmpty())
+        assertTrue(repo.outboxPending(TEST_PEER_DEVICE_ID).isEmpty())
     }
 
     private companion object {

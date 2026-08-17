@@ -56,12 +56,15 @@ import com.clipsync.android.ui.settings.SyncControllerStatusAdapter
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackends
+import com.clipsync.android.platform.clipboard.shizuku.ShizukuClipboardBackend
 import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
+import com.clipsync.android.platform.clipboard.ClipboardHealthLoop
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.clipboard.ClipboardSelfTest
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.KeyValueClipboardCapabilityStore
+import com.clipsync.android.platform.clipboard.overlay.OverlayFocusController
 import com.clipsync.android.storage.SETTING_PAIRED_PEER_ID
 import com.clipsync.android.ui.settings.LocalCapturePolicy
 import com.clipsync.android.service.ServiceProcessState
@@ -74,6 +77,7 @@ import com.clipsync.android.ui.wizard.WizardSettings
 import com.clipsync.android.ui.wizard.WizardViewModel
 import java.io.File
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -85,6 +89,8 @@ class MainActivity : ComponentActivity() {
 
     private var syncController: SyncController? = null
     private var clipboardAccess: ClipboardAccessCoordinator? = null
+    private var overlayFocus: OverlayFocusController? = null
+    private var clipboardHealthJob: Job? = null
     private val openTab = MutableStateFlow(0)
     private val pendingPairingPayload = MutableStateFlow<String?>(null)
     private var lastPaired: Boolean = false
@@ -129,10 +135,15 @@ class MainActivity : ComponentActivity() {
             capabilityStore = KeyValueClipboardCapabilityStore(settingsKeys),
             requestedReadMode = wizardChoices.preferredReadMode,
             autoFallbackAllowed = wizardChoices.autoFallbackAllowed,
+            overlayConsented = wizardChoices.overlayConsented,
             pollIntervalMillis = wizardChoices.pollingIntervalMs.toLong(),
         )
+        ClipServices.writeFallbackProvider = {
+            (clipboardBackends.shizuku as? ShizukuClipboardBackend)?.fallbackWriter()
+        }
         val access = clipboardBackends.coordinator()
         clipboardAccess = access
+        overlayFocus = clipboardBackends.overlayController
         access.requestMode(wizardChoices.preferredReadMode)
         val clipboardSelfTest = ClipboardSelfTest(
             writeCoordinator = writeCoordinator,
@@ -333,6 +344,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        startClipboardHealthLoop()
+    }
+
+    override fun onStop() {
+        cancelClipboardHealthLoop()
+        overlayFocus?.detach()
+        super.onStop()
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
@@ -497,6 +519,9 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        cancelClipboardHealthLoop()
+        overlayFocus?.detach()
+        overlayFocus = null
         clipboardAccess?.stop()
         clipboardAccess = null
         if (ClipboardSyncRuntime.orchestrator.controllerOwner == ControllerOwner.ACTIVITY) {
@@ -504,5 +529,16 @@ class MainActivity : ComponentActivity() {
             syncController = null
         }
         super.onDestroy()
+    }
+
+    private fun startClipboardHealthLoop() {
+        cancelClipboardHealthLoop()
+        val access = clipboardAccess ?: return
+        clipboardHealthJob = ClipboardHealthLoop { access.checkHealth() }.start(lifecycleScope)
+    }
+
+    private fun cancelClipboardHealthLoop() {
+        clipboardHealthJob?.cancel()
+        clipboardHealthJob = null
     }
 }

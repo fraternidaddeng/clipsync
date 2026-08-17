@@ -6,5 +6,12 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.25" />
+    <!-- Known finding CVE-2025-6965 (GHSA-2m69-gcr7-jv3q): the transitive
+         SQLitePCLRaw.lib.e_sqlite3 (whole 2.1.x line) bundles SQLite < 3.50.2.
+         Not pinned: every 2.1.x is affected, and the only patched native is the
+         3.x provider, an unsupported major bump for Microsoft.Data.Sqlite 8.0.x.
+         Not reachable here — all SQL is first-party and parameterized; no
+         attacker-controlled SQL reaches SQLite. Revisit when MS ships a patched
+         8.x native or we validate SQLitePCLRaw 3.53.3. See docs/stage-6-security-audit.md. -->
   </ItemGroup>
 </Project>

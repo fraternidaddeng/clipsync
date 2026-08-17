@@ -28,6 +28,7 @@ enum class PairingFailure {
     TIMEOUT,
     TOKEN_INVALID,
     TOKEN_EXPIRED,
+    RATE_LIMITED,
     PROTOCOL,
 }
 
@@ -139,6 +140,7 @@ class PairingViewModel(
         PairingErrorCodes.TIMEOUT -> PairingFailure.TIMEOUT
         PairingErrorCodes.TOKEN_INVALID -> PairingFailure.TOKEN_INVALID
         PairingErrorCodes.TOKEN_EXPIRED -> PairingFailure.TOKEN_EXPIRED
+        PairingErrorCodes.RATE_LIMITED -> PairingFailure.RATE_LIMITED
         else -> PairingFailure.PROTOCOL
     }
 

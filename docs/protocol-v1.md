@@ -10,6 +10,7 @@ Protocol v1 synchronizes text clipboard events directly between paired peers. It
 - WebSocket path: `/v1/peer/sync`.
 - Health path: `/v1/peer/health`; it may return only protocol version, port, and device ID.
 - Pairing confirmation path: `/v1/pair/confirm`.
+- Per-IP connection rate limits apply before pairing work or WebSocket upgrade (see section 9 and the limits below).
 - Every HTTP request sends `X-Protocol-Version: 1`. An unsupported HTTP version is rejected before WebSocket upgrade.
 - WebSocket messages are UTF-8 JSON text frames. Binary frames and fragmented messages larger than the configured frame limit are rejected.
 - Both directions use the same messages. Windows is the first listener implementation, not a privileged protocol authority.
@@ -147,6 +148,7 @@ An unavailable terminal marker participates in this calculation exactly like a p
 - Implementations set a 7 MiB WebSocket text-message limit because a 1 MiB JSON string can expand to six characters per code unit when escaped. Senders should emit normal UTF-8 rather than unnecessarily escaping non-ASCII text.
 - No v1 payload compression is negotiated. WebSocket per-message compression is disabled for frames containing clipboard content to avoid secret-dependent compression behavior and cross-stack ambiguity.
 - Rate, aggregate requested-sequence, and concurrent connection limits are implementation policy, but exceeding them returns `RATE_LIMITED` or `PAYLOAD_TOO_LARGE` without allocating unbounded memory.
+- Sync WebSocket accept is limited to 30 upgrades per remote IP per minute. Exceeding that returns HTTP 429 with `{"error":"RATE_LIMITED"}` and does not upgrade the connection.
 - Schema/authentication/version/event-conflict failures are fatal. Transient internal, rate, and missing-payload errors may remain connected when `retryable` is true.
 
 An implementation may close without sending `error` when JSON cannot be parsed safely. When it sends an error, the body must use the schema enum and must not echo attacker-controlled text.
@@ -187,5 +189,8 @@ The listener consumes the token on first use, shows the requester's name and pla
 - `400` with `pairing_error` code `SCHEMA_VIOLATION`: malformed or oversized body (limit 8 KiB).
 - `403` with `PAIRING_TOKEN_INVALID` (unknown, already used, or cancelled token), `PAIRING_REJECTED` (user declined), or `PAIRING_TIMEOUT` (approval window elapsed).
 - `410` with `PAIRING_TOKEN_EXPIRED`.
+- `429` with `PAIRING_RATE_LIMITED`: more than 10 confirm requests from the same remote IP in one minute. The listener rejects before consuming the token.
+
+The frozen `pairing_error.error` codes are `SCHEMA_VIOLATION`, `PAIRING_TOKEN_INVALID`, `PAIRING_TOKEN_EXPIRED`, `PAIRING_REJECTED`, `PAIRING_TIMEOUT`, and `PAIRING_RATE_LIMITED`.
 
 A confirm for an already-paired `device_id` is a re-pair: it replaces the secret, clears any revocation, and increments the trust epoch after the same explicit approval. Implementations must not log tokens or pair secrets, must compare tokens in constant time, and must zero plaintext secret buffers after protecting them.

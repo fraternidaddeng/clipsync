@@ -34,6 +34,18 @@ public sealed record PeerServerOptions
     public int Port { get; init; }
 
     public int MaxConcurrentSessions { get; init; } = 8;
+
+    public const int DefaultPairingConfirmsPerWindow = 10;
+
+    public const int DefaultSyncAcceptsPerWindow = 30;
+
+    /// <summary>Pairing confirm attempts admitted per remote address per <see cref="ConnectionRateLimitWindow"/>.</summary>
+    public int MaxPairingConfirmsPerWindow { get; init; } = DefaultPairingConfirmsPerWindow;
+
+    /// <summary>WebSocket accepts admitted per remote address per <see cref="ConnectionRateLimitWindow"/>.</summary>
+    public int MaxSyncAcceptsPerWindow { get; init; } = DefaultSyncAcceptsPerWindow;
+
+    public TimeSpan ConnectionRateLimitWindow { get; init; } = TimeSpan.FromMinutes(1);
 }
 
 /// <summary>
@@ -48,6 +60,8 @@ public sealed class PeerServer : IAsyncDisposable
     private readonly ILoggerFactory loggerFactory;
     private readonly ILogger logger;
     private readonly AuthThrottle authThrottle;
+    private readonly SlidingWindowRateLimiter pairingConfirmLimiter;
+    private readonly SlidingWindowRateLimiter syncAcceptLimiter;
     private readonly PairingService? pairing;
     private readonly ConcurrentDictionary<Guid, ActiveSession> sessions = new();
     private WebApplication? app;
@@ -64,7 +78,16 @@ public sealed class PeerServer : IAsyncDisposable
         this.options = options ?? throw new ArgumentNullException(nameof(options));
         this.loggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
         logger = this.loggerFactory.CreateLogger("ClipSync.Peer.Server");
-        authThrottle = new AuthThrottle(options.SessionOptions.TimeProvider);
+        var clock = options.SessionOptions.TimeProvider;
+        authThrottle = new AuthThrottle(clock);
+        pairingConfirmLimiter = new SlidingWindowRateLimiter(
+            clock,
+            options.MaxPairingConfirmsPerWindow,
+            options.ConnectionRateLimitWindow);
+        syncAcceptLimiter = new SlidingWindowRateLimiter(
+            clock,
+            options.MaxSyncAcceptsPerWindow,
+            options.ConnectionRateLimitWindow);
         pairing = pairingService;
     }
 
@@ -93,7 +116,10 @@ public sealed class PeerServer : IAsyncDisposable
                     listen.UseHttps(https =>
                     {
                         https.ServerCertificate = options.Certificate;
+                        // CA5398 wants SslProtocols.None (OS picks). We pin 1.2+ so TLS 1.0/1.1 cannot come back.
+#pragma warning disable CA5398
                         https.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
+#pragma warning restore CA5398
                     });
                 });
             }
@@ -143,6 +169,14 @@ public sealed class PeerServer : IAsyncDisposable
             return;
         }
 
+        if (!syncAcceptLimiter.TryAdmit(RemoteKey(context)))
+        {
+            PeerLog.ConnectionRateLimited(logger, "sync_accept");
+            context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+            await context.Response.WriteAsJsonAsync(new { error = ProtocolErrorCodes.RateLimited });
+            return;
+        }
+
         if (sessions.Count >= options.MaxConcurrentSessions)
         {
             PeerLog.SessionLimitReached(logger, options.MaxConcurrentSessions);
@@ -177,6 +211,14 @@ public sealed class PeerServer : IAsyncDisposable
 
     private async Task HandlePairConfirmAsync(HttpContext context)
     {
+        if (!pairingConfirmLimiter.TryAdmit(RemoteKey(context)))
+        {
+            PeerLog.ConnectionRateLimited(logger, "pairing_confirm");
+            await WritePairingErrorAsync(context, StatusCodes.Status429TooManyRequests, PairingErrorCodes.RateLimited)
+                .ConfigureAwait(false);
+            return;
+        }
+
         // The version middleware already enforced X-Protocol-Version. Read at most the
         // document limit plus one byte; anything longer is rejected without buffering it.
         var buffer = new byte[PairingJson.MaxDocumentBytes + 1];
@@ -232,6 +274,9 @@ public sealed class PeerServer : IAsyncDisposable
         };
         await context.Response.WriteAsync(PairingJson.Serialize(body), context.RequestAborted).ConfigureAwait(false);
     }
+
+    private static string RemoteKey(HttpContext context) =>
+        context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch) =>
         RemoteClipsCommitted?.Invoke(batch);

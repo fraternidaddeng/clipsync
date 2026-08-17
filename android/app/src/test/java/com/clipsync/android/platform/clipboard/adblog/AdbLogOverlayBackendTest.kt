@@ -149,10 +149,22 @@ class AdbLogOverlayBackendTest {
         assertEquals(emptyList<ClipboardChange>(), changes)
     }
 
+    @Test
+    fun `stop invokes the injected overlay closer`() {
+        var closeCount = 0
+        val env = Env(granted = true, releaseOverlay = { closeCount += 1 })
+        env.backend.start { }
+        env.backend.stop()
+        env.backend.stop()
+
+        assertEquals(2, closeCount)
+    }
+
     private class Env(
         granted: Boolean = true,
         now: Long = 0L,
         overlayText: String = "clip",
+        releaseOverlay: () -> Unit = {},
     ) {
         var granted: Boolean = granted
         var now: Long = now
@@ -175,6 +187,7 @@ class AdbLogOverlayBackendTest {
             hasher = ContentHasher { "hash:$it" },
             nowEpochMillis = { this.now },
             systemVersion = "35",
+            releaseOverlay = releaseOverlay,
         )
 
         fun feedMatch(line: String = ClipboardLogFixtures.AOSP_MATCHED.first().line) {

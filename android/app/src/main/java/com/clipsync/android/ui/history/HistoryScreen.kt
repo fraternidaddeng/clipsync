@@ -55,6 +55,11 @@ fun HistoryScreen(
                 Text(stringResource(R.string.history_clear))
             }
         }
+        Text(
+            text = stringResource(R.string.history_clear_hint),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         state.notices.forEach { notice ->
             NoticeCard(notice)
         }

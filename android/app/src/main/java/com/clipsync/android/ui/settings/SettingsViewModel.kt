@@ -19,6 +19,8 @@ data class SettingsUiState(
     val autoApplyRemote: Boolean = true,
     val backgroundSync: Boolean = false,
     val bootRecoveryEnabled: Boolean = false,
+    val blacklistEnabled: Boolean = true,
+    val blacklistExtra: String = "",
     val notificationVisibilityNote: String? = null,
     val network: HealthValue = networkCard(
         SyncConnectionStatus(paired = false, windowsReachable = false, serviceRunning = false),
@@ -92,6 +94,20 @@ class SettingsViewModel(
         onBootRecoveryChanged(value)
     }
 
+    fun setBlacklistEnabled(value: Boolean) {
+        mutableState.value = mutableState.value.copy(blacklistEnabled = value)
+        viewModelScope.launch {
+            repository.setSetting(SETTING_CAPTURE_BLACKLIST_ENABLED, formatSettingFlag(value))
+        }
+    }
+
+    fun setBlacklistExtra(value: String) {
+        mutableState.value = mutableState.value.copy(blacklistExtra = value)
+        viewModelScope.launch {
+            repository.setSetting(SETTING_CAPTURE_BLACKLIST_EXTRA, value)
+        }
+    }
+
     fun close() {
         onCleared()
     }
@@ -104,6 +120,11 @@ class SettingsViewModel(
             (serviceSettings?.backgroundSyncEnabled() == true)
         val bootRecovery = parseSettingFlag(repository.getSetting(SETTING_BOOT_RECOVERY_ENABLED)) ||
             (serviceSettings?.bootRecoveryEnabled() == true)
+        val blacklistEnabled = parseSettingFlag(
+            repository.getSetting(SETTING_CAPTURE_BLACKLIST_ENABLED),
+            default = true,
+        )
+        val blacklistExtra = repository.getSetting(SETTING_CAPTURE_BLACKLIST_EXTRA).orEmpty()
         val sync = syncStatus.current()
         val caps = capabilities.snapshot()
         mutableState.update { previous ->
@@ -113,6 +134,8 @@ class SettingsViewModel(
                 autoApplyRemote = autoApply,
                 backgroundSync = backgroundSync,
                 bootRecoveryEnabled = bootRecovery,
+                blacklistEnabled = blacklistEnabled,
+                blacklistExtra = blacklistExtra,
                 read = caps.read,
                 write = caps.write,
             )

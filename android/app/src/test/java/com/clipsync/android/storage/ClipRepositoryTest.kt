@@ -97,6 +97,65 @@ class ClipRepositoryTest {
     }
 
     @Test
+    fun `local capture rejects blocked source without allocating a sequence or outbox`() = runTest {
+        val repo = repository()
+        val blocked = CapturePolicy.BUILTIN_BLOCKED_PACKAGES.first()
+        val result = repo.captureLocalText("from vault", sourceApp = blocked, nowMs = NOW, peerId = PEER)
+        assertEquals(CaptureResult.Rejected(CaptureRejectReason.BLOCKED_SOURCE), result)
+        assertTrue(repo.search("").isEmpty())
+        assertTrue(repo.knownVector().origins.isEmpty())
+        assertTrue(repo.outboxPending(PEER).isEmpty())
+    }
+
+    @Test
+    fun `local capture rejects user extra blacklist without allocating a sequence or outbox`() = runTest {
+        val repo = repository()
+        repo.setSetting(SETTING_CAPTURE_BLACKLIST_EXTRA, "com.example.vault")
+        val result = repo.captureLocalText(
+            "from vault",
+            sourceApp = "com.example.vault",
+            nowMs = NOW,
+            peerId = PEER,
+        )
+        assertEquals(CaptureResult.Rejected(CaptureRejectReason.BLOCKED_SOURCE), result)
+        assertTrue(repo.search("").isEmpty())
+        assertTrue(repo.knownVector().origins.isEmpty())
+        assertTrue(repo.outboxPending(PEER).isEmpty())
+    }
+
+    @Test
+    fun `local capture allows a built-in package when blacklist is disabled`() = runTest {
+        val repo = repository()
+        repo.setSetting(SETTING_CAPTURE_BLACKLIST_ENABLED, "false")
+        val blocked = CapturePolicy.BUILTIN_BLOCKED_PACKAGES.first()
+        val stored = repo.captureLocalText("from vault", sourceApp = blocked, nowMs = NOW, peerId = PEER)
+        assertTrue(stored is CaptureResult.Stored)
+        assertEquals(1, (stored as CaptureResult.Stored).originSeq)
+        assertEquals(1, repo.outboxPending(PEER).size)
+    }
+
+    @Test
+    fun `local capture rejects paused mode without allocating a sequence or outbox`() = runTest {
+        val repo = repository()
+        repo.setSetting("is_paused", "true")
+        val result = repo.captureLocalText("paused body", nowMs = NOW, peerId = PEER)
+        assertEquals(CaptureResult.Rejected(CaptureRejectReason.POLICY_PAUSED), result)
+        assertTrue(repo.search("").isEmpty())
+        assertTrue(repo.knownVector().origins.isEmpty())
+        assertTrue(repo.outboxPending(PEER).isEmpty())
+    }
+
+    @Test
+    fun `remote ingest is not filtered by the local capture blacklist`() = runTest {
+        val repo = repository()
+        val blocked = CapturePolicy.BUILTIN_BLOCKED_PACKAGES.first()
+        val stored = repo.ingestRemoteClip(remote("from windows", 1).copy(sourceApp = blocked), PEER)
+        assertTrue(stored is RemoteStoreResult.Stored)
+        assertEquals(1, repo.search("").size)
+        assertEquals(blocked, repo.search("")[0].sourceApp)
+    }
+
+    @Test
     fun `remote ingest of seq 12 with 11 missing keeps contiguous at 10`() = runTest {
         val repo = repository()
         for (seq in 1L..10L) {

@@ -39,12 +39,14 @@ class ClipRepository internal constructor(
             return CaptureResult.Rejected(CaptureRejectReason.EMPTY_TEXT)
         }
         val utf8Bytes = text.toByteArray(StandardCharsets.UTF_8).size
-        if (utf8Bytes > MAX_CLIP_UTF8_BYTES) {
-            return CaptureResult.Rejected(CaptureRejectReason.TOO_LARGE)
-        }
         val contentHash = hasher.hash(text)
         val source = normalizeSource(sourceApp)
         return persistence.transaction {
+            val policy = CapturePolicy.load { getSetting(it) }
+            when (val decision = CapturePolicy.evaluate(source, utf8Bytes, policy)) {
+                is PolicyDecision.Reject -> return@transaction CaptureResult.Rejected(decision.reason)
+                PolicyDecision.Allow -> Unit
+            }
             val recent = findRecentLiveByHash(
                 localDeviceId,
                 contentHash,

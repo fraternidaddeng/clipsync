@@ -30,10 +30,12 @@ class AdbLogOverlayBackend(
     private val nowEpochMillis: () -> Long = System::currentTimeMillis,
     private val healthySignalTtlMillis: Long = HEALTHY_SIGNAL_TTL_MILLIS,
     private val systemVersion: String = "unknown",
+    private val releaseOverlay: () -> Unit = {},
 ) : BackgroundClipboardBackend {
     constructor(
         context: Context,
         readOverlayText: () -> ClipboardReadResult,
+        releaseOverlay: () -> Unit = {},
     ) : this(
         readOverlayText = readOverlayText,
         readLogsGranted = {
@@ -44,6 +46,7 @@ class AdbLogOverlayBackend(
             lineSourceFactory = ProcessLogcatLineSourceFactory(),
         ),
         systemVersion = Build.VERSION.SDK_INT.toString(),
+        releaseOverlay = releaseOverlay,
     )
 
     override val mode: ClipboardReadMode = ClipboardReadMode.ADB_LOG_OVERLAY
@@ -85,6 +88,7 @@ class AdbLogOverlayBackend(
         started = false
         callback = null
         reader.stop()
+        releaseOverlay()
     }
 
     override fun readText(): ClipboardReadResult = readOverlayText()

@@ -189,6 +189,19 @@ public sealed class PairingServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public void DeeplyNestedConfirmDocumentIsRejectedWithoutThrowing()
+    {
+        var nested = string.Concat(Enumerable.Repeat("""{"a":""", ProtocolLimits.MaxJsonDepth + 1))
+            + "1"
+            + new string('}', ProtocolLimits.MaxJsonDepth + 1);
+
+        var document = PairingJson.ParseConfirmRequest(System.Text.Encoding.UTF8.GetBytes(nested), out var error);
+
+        Assert.Null(document);
+        Assert.NotNull(error);
+    }
+
+    [Fact]
     public async Task ConfirmForOwnDeviceIdIsSchemaViolation()
     {
         var service = CreateService(AutoApprove());

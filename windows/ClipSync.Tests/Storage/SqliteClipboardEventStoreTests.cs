@@ -24,7 +24,33 @@ public sealed class SqliteClipboardEventStoreTests
         var state = await store.ReadDatabaseStateAsync();
         Assert.Equal("wal", state.JournalMode, ignoreCase: true);
         Assert.True(state.ForeignKeysEnabled);
-        Assert.Equal(2, state.SchemaVersion);
+        Assert.Equal(SqliteClipboardEventStore.SchemaVersion, state.SchemaVersion);
+        Assert.Equal(2, SqliteClipboardEventStore.SchemaVersion);
+    }
+
+    [Fact]
+    public async Task ReinitializeOnExistingFileIsIdempotentAndKeepsRows()
+    {
+        await using var database = new TemporaryDatabase();
+        Guid eventId;
+        await using (var first = database.CreateStore())
+        {
+            await first.InitializeAsync();
+            eventId = (await first.StoreAsync(Content("keep-across-reinit", BaseTime))).EventId;
+            Assert.Equal(SqliteClipboardEventStore.SchemaVersion, (await first.ReadDatabaseStateAsync()).SchemaVersion);
+        }
+
+        await using var reopened = database.CreateStore();
+        await reopened.InitializeAsync();
+        await reopened.InitializeAsync();
+
+        var state = await reopened.ReadDatabaseStateAsync();
+        Assert.Equal(SqliteClipboardEventStore.SchemaVersion, state.SchemaVersion);
+        var history = await reopened.SearchAsync(new ClipboardHistoryQuery());
+        Assert.Single(history);
+        Assert.Equal(eventId, history[0].EventId);
+        Assert.Equal("keep-across-reinit", history[0].Text);
+        Assert.Equal(1, history[0].OriginSequence);
     }
 
     [Fact]

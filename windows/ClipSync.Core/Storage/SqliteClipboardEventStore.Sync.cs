@@ -417,6 +417,10 @@ public sealed partial class SqliteClipboardEventStore
         return events;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Security",
+        "CA2100:Review SQL queries for security vulnerabilities",
+        Justification = "IN-list tokens are generated $id{n} names only; event id values are bound with Parameters.AddWithValue. Column list is a const.")]
     public async ValueTask<IReadOnlyList<SyncableClipEvent>> GetSyncableEventsByIdsAsync(
         IReadOnlyList<Guid> eventIds,
         CancellationToken cancellationToken = default)
@@ -479,15 +483,18 @@ public sealed partial class SqliteClipboardEventStore
 
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
-        command.CommandText = $"""
-            SELECT o.id, o.peer_id, o.state, o.attempts, {string.Join(", ", SyncableColumns.Split(',').Select(column => "c." + column.Trim()))}
+        command.CommandText = """
+            SELECT o.id, o.peer_id, o.state, o.attempts,
+                c.event_id, c.origin_device_id, c.origin_seq, c.content, c.content_hash,
+                c.source_app, c.created_at, c.expires_at, c.terminal_reason
             FROM outbox o
             JOIN clips c ON c.event_id = o.event_id
-            WHERE o.peer_id = $peer_id AND o.state = '{OutboxEntryStates.Pending}'
+            WHERE o.peer_id = $peer_id AND o.state = $state
             ORDER BY o.id
             LIMIT $limit;
             """;
         command.Parameters.AddWithValue("$peer_id", peerId);
+        command.Parameters.AddWithValue("$state", OutboxEntryStates.Pending);
         command.Parameters.AddWithValue("$limit", limit);
 
         var batch = new List<(OutboxEntry, SyncableClipEvent)>();
@@ -510,6 +517,10 @@ public sealed partial class SqliteClipboardEventStore
         return batch;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Security",
+        "CA2100:Review SQL queries for security vulnerabilities",
+        Justification = "IN-list tokens are generated $id{n} names only; outbox id values are bound with Parameters.AddWithValue. State is a const bound as $state.")]
     public async ValueTask MarkOutboxAnnouncedAsync(
         IReadOnlyList<long> outboxIds,
         CancellationToken cancellationToken = default)
@@ -532,9 +543,10 @@ public sealed partial class SqliteClipboardEventStore
 
         command.CommandText = $"""
             UPDATE outbox
-            SET state = '{OutboxEntryStates.Announced}', attempts = attempts + 1
+            SET state = $state, attempts = attempts + 1
             WHERE id IN ({string.Join(", ", parameterNames)});
             """;
+        command.Parameters.AddWithValue("$state", OutboxEntryStates.Announced);
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 

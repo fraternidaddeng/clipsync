@@ -23,6 +23,7 @@ class BackgroundClipboardBackends(
     val backends: List<BackgroundClipboardBackend>,
     val requestedReadMode: ClipboardReadMode = ClipboardReadMode.FOREGROUND_ONLY,
     val autoFallbackAllowed: Boolean = false,
+    val overlayConsented: Boolean = true,
     val capabilityStore: ClipboardCapabilityStore? = null,
 ) {
     val shizuku: BackgroundClipboardBackend? = backend(ClipboardReadMode.SHIZUKU_EVENT)
@@ -49,7 +50,13 @@ class BackgroundClipboardBackends(
     ): BackgroundClipboardBackend? {
         val start = FALLBACK_ORDER.indexOf(requestedReadMode)
         val modes = if (start < 0) FALLBACK_ORDER else FALLBACK_ORDER.drop(start)
-        return modes.firstNotNullOfOrNull { mode -> backend(mode) }
+        return modes.firstNotNullOfOrNull { mode ->
+            if (!overlayConsented && isOverlayReadMode(mode)) {
+                null
+            } else {
+                backend(mode)
+            }
+        }
     }
 
     fun selectedReadState(
@@ -62,13 +69,21 @@ class BackgroundClipboardBackends(
         requestedReadMode: ClipboardReadMode = this.requestedReadMode,
         autoFallbackAllowed: Boolean = this.autoFallbackAllowed,
         capabilityStore: ClipboardCapabilityStore? = this.capabilityStore,
+        overlayConsented: Boolean = this.overlayConsented,
     ): ClipboardAccessCoordinator = ClipboardAccessCoordinator(
-        backends = backends,
+        backends = selectableBackends(overlayConsented),
         requestedReadMode = requestedReadMode,
         autoFallbackAllowed = autoFallbackAllowed,
         capabilityStore = capabilityStore,
-        releaseFocusResource = overlayController::releaseFocus,
+        releaseFocusResource = overlayController::detach,
     )
+
+    private fun selectableBackends(overlayConsented: Boolean): List<BackgroundClipboardBackend> =
+        if (overlayConsented) {
+            backends
+        } else {
+            backends.filter { backend -> !isOverlayReadMode(backend.mode) }
+        }
 
     companion object {
         val FALLBACK_ORDER = listOf(
@@ -84,6 +99,7 @@ class BackgroundClipboardBackends(
             capabilityStore: ClipboardCapabilityStore? = null,
             requestedReadMode: ClipboardReadMode = ClipboardReadMode.FOREGROUND_ONLY,
             autoFallbackAllowed: Boolean = false,
+            overlayConsented: Boolean = true,
             pollIntervalMillis: Long = OverlayPollingBackend.DEFAULT_POLL_INTERVAL_MS,
             canPollNow: () -> Boolean = defaultCanPollNow(context),
             overlayController: OverlayFocusController = OverlayFocusController(
@@ -95,6 +111,7 @@ class BackgroundClipboardBackends(
             adbLog: BackgroundClipboardBackend = AdbLogOverlayBackend(
                 context.applicationContext,
                 overlayController::readText,
+                overlayController::detach,
             ),
             overlayPolling: BackgroundClipboardBackend = OverlayPollingBackend(
                 controller = overlayController,
@@ -113,6 +130,7 @@ class BackgroundClipboardBackends(
             capabilityStore = capabilityStore,
             requestedReadMode = requestedReadMode,
             autoFallbackAllowed = autoFallbackAllowed,
+            overlayConsented = overlayConsented,
         )
 
         fun build(
@@ -124,6 +142,7 @@ class BackgroundClipboardBackends(
             capabilityStore: ClipboardCapabilityStore? = null,
             requestedReadMode: ClipboardReadMode = ClipboardReadMode.FOREGROUND_ONLY,
             autoFallbackAllowed: Boolean = false,
+            overlayConsented: Boolean = true,
         ): BackgroundClipboardBackends {
             val byMode = listOfNotNull(shizuku, adbLog, overlayPolling, foreground)
                 .associateBy { it.mode }
@@ -133,9 +152,14 @@ class BackgroundClipboardBackends(
                 backends = ordered,
                 requestedReadMode = requestedReadMode,
                 autoFallbackAllowed = autoFallbackAllowed,
+                overlayConsented = overlayConsented,
                 capabilityStore = capabilityStore,
             )
         }
+
+        fun isOverlayReadMode(mode: ClipboardReadMode): Boolean =
+            mode == ClipboardReadMode.ADB_LOG_OVERLAY ||
+                mode == ClipboardReadMode.OVERLAY_POLLING
 
         fun defaultCanPollNow(context: Context): () -> Boolean {
             val app = context.applicationContext

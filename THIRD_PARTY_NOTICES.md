@@ -1,6 +1,6 @@
 # Third-Party Dependency and License Inventory
 
-This inventory (Stage 0, updated through Stage 5.3) records direct build/runtime/test dependencies currently declared in the repository and major dependencies explicitly planned by `plan.md`. It is not a substitute for the release-time transitive dependency, notice, and source-offer review. Exact license texts and obligations must be collected from the resolved artifacts before distribution.
+This inventory (Stage 0, updated through Stage 6 static analysis) records direct build/runtime/test dependencies currently declared in the repository and major dependencies explicitly planned by `plan.md`. It is not a substitute for the release-time transitive dependency, notice, and source-offer review. Exact license texts and obligations must be collected from the resolved artifacts before distribution.
 
 ## Currently declared dependencies
 
@@ -33,7 +33,11 @@ This inventory (Stage 0, updated through Stage 5.3) records direct build/runtime
 | AndroidX CameraX (camera2, lifecycle, view) | 1.4.1 | Camera preview for QR scanning | Apache-2.0 |
 | AndroidX Room runtime / room-ktx | 2.6.1 | Android clip/outbox/cursor persistence | Apache-2.0 |
 | AndroidX Room compiler (via KSP) | 2.6.1 | Room annotation processing (build only) | Apache-2.0 |
+| AndroidX WorkManager (`work-runtime-ktx`) | 2.10.5 | Android bounded boot/recovery work | Apache-2.0 |
 | com.google.devtools.ksp (Gradle plugin) | 2.0.21-1.0.28 | Kotlin Symbol Processing for Room (build only) | Apache-2.0 |
+| Detekt Gradle plugin | 1.23.8 | Kotlin static analysis (build only; `detekt` task + baseline) | Apache-2.0 |
+| ktlint-gradle (`org.jlleitschuh.gradle.ktlint`) | 14.2.0 | Gradle wrapper for ktlint check (build only) | Apache-2.0 |
+| ktlint (Pinterest) | 1.5.0 | Kotlin style check (build only; baseline, no repo-wide reformat) | MIT |
 | JUnit 4 | 4.13.2 | Android/JVM unit tests | EPL-1.0 |
 | OkHttp MockWebServer | 4.12.0 | Android pairing client tests (test only) | Apache-2.0 |
 | okhttp-tls | 4.12.0 | Test TLS certificates (test only) | Apache-2.0 |
@@ -47,9 +51,7 @@ This inventory (Stage 0, updated through Stage 5.3) records direct build/runtime
 
 These are architectural selections, not necessarily present in the current build. Versions and licenses must be rechecked when added.
 
-| Component | Planned purpose | Expected license/status |
-|---|---|---|
-| AndroidX WorkManager | Bounded recovery | Apache-2.0 |
+No remaining planned-but-undeclared direct dependencies from `plan.md` are outstanding in this inventory. AndroidX WorkManager is declared above.
 
 ## Reference projects are not dependencies
 

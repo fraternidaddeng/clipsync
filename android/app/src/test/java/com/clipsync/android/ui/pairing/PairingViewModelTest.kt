@@ -189,6 +189,7 @@ class PairingViewModelTest {
             PairingErrorCodes.TIMEOUT to PairingFailure.TIMEOUT,
             PairingErrorCodes.TOKEN_INVALID to PairingFailure.TOKEN_INVALID,
             PairingErrorCodes.TOKEN_EXPIRED to PairingFailure.TOKEN_EXPIRED,
+            PairingErrorCodes.RATE_LIMITED to PairingFailure.RATE_LIMITED,
             PairingErrorCodes.SCHEMA_VIOLATION to PairingFailure.PROTOCOL,
         )
         for ((code, expected) in expectations) {

@@ -3,6 +3,8 @@ package com.clipsync.android.storage
 /** Public repository types used by the later WebSocket client and history UI. */
 
 const val SETTING_PAIRED_PEER_ID = "paired_peer_id"
+const val SETTING_CAPTURE_BLACKLIST_ENABLED = CapturePolicy.SETTING_BLACKLIST_ENABLED
+const val SETTING_CAPTURE_BLACKLIST_EXTRA = CapturePolicy.SETTING_BLACKLIST_EXTRA
 const val CLIP_KIND_TEXT = "text"
 const val OUTBOX_PENDING = "pending"
 const val OUTBOX_ANNOUNCED = "announced"
@@ -24,6 +26,8 @@ enum class CaptureRejectReason {
     EMPTY_TEXT,
     TOO_LARGE,
     DUPLICATE,
+    BLOCKED_SOURCE,
+    POLICY_PAUSED,
 }
 
 sealed class CaptureResult {

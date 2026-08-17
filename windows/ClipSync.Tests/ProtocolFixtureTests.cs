@@ -32,4 +32,14 @@ public sealed class ProtocolFixtureTests
     {
         Assert.NotEmpty(ValidEnvelopeFixtures());
     }
+
+    [Fact]
+    public void DeeplyNestedEnvelopeThrowsJsonException()
+    {
+        var nested = string.Concat(Enumerable.Repeat("""{"a":""", ProtocolLimits.MaxJsonDepth + 1))
+            + "1"
+            + new string('}', ProtocolLimits.MaxJsonDepth + 1);
+
+        Assert.Throws<System.Text.Json.JsonException>(() => ProtocolJson.ParseEnvelope(nested));
+    }
 }

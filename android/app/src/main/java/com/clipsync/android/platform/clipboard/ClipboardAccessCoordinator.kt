@@ -1,5 +1,11 @@
 package com.clipsync.android.platform.clipboard
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+
 class ClipboardAccessCoordinator(
     backends: List<BackgroundClipboardBackend>,
     private val hasher: ContentHasher = Sha256ContentHasher,
@@ -100,6 +106,7 @@ class ClipboardAccessCoordinator(
         listener = null
         baselineHash = null
         state = state.copy(activeReadMode = null)
+        releaseFocusResource()
         persist()
     }
 
@@ -272,5 +279,28 @@ class ClipboardAccessCoordinator(
             ClipboardReadMode.OVERLAY_POLLING,
             ClipboardReadMode.FOREGROUND_ONLY,
         )
+    }
+}
+
+/**
+ * Periodic [ClipboardAccessCoordinator.checkHealth] driver. MainActivity
+ * starts this on resume and cancels the job on stop so paused activities
+ * do not spin.
+ */
+class ClipboardHealthLoop(
+    private val intervalMillis: Long = DEFAULT_INTERVAL_MS,
+    private val checkHealth: () -> Unit,
+) {
+    fun start(scope: CoroutineScope): Job =
+        scope.launch {
+            checkHealth()
+            while (isActive) {
+                delay(intervalMillis)
+                checkHealth()
+            }
+        }
+
+    companion object {
+        const val DEFAULT_INTERVAL_MS = 10_000L
     }
 }

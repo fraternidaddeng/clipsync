@@ -10,6 +10,7 @@
     <string name="history_title">Clipboard history</string>
     <string name="history_search">Search</string>
     <string name="history_clear">Clear local history</string>
+    <string name="history_clear_hint">Clearing only tombstones this phone\'s history and does not delete Windows history remotely.</string>
     <string name="history_copy">Copy</string>
     <string name="history_delete">Delete</string>
     <string name="history_empty">No clips yet. Share text, use the Quick Settings tile, or pair with Windows.</string>
@@ -33,6 +34,10 @@
     <string name="settings_background_sync_hint">Keep a connected-device foreground service so the Windows link stays up. This is not clipboard permission.</string>
     <string name="settings_boot_recovery">Resume after reboot</string>
     <string name="settings_boot_recovery_hint">After the phone restarts, try to restore the sync service. Off by default.</string>
+    <string name="settings_blacklist">Block known password apps</string>
+    <string name="settings_blacklist_hint">Skip captures from well-known password managers and authenticator apps. Does not apply to clips received from Windows.</string>
+    <string name="settings_blacklist_extra">Additional blocked packages</string>
+    <string name="settings_blacklist_extra_hint">Comma-separated Android package names. Entries with spaces are ignored.</string>
     <string name="settings_capabilities">Capability</string>
 
     <string name="capability_network">Network</string>
@@ -45,6 +50,7 @@
     <string name="share_empty">Nothing to send.</string>
     <string name="share_duplicate">Already captured.</string>
     <string name="share_paused">Capture is paused or private mode is on.</string>
+    <string name="share_blocked">That source app is blocked from capture.</string>
     <string name="share_label">Send to Windows</string>
 
     <string name="tile_send_clipboard">Send clipboard</string>

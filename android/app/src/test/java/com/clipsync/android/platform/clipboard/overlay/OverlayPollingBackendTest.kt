@@ -178,7 +178,7 @@ class OverlayPollingBackendTest {
     }
 
     @Test
-    fun `stop unregisters scheduler and releases focus`() {
+    fun `stop unregisters scheduler and detaches the window`() {
         val platform = FakeOverlayPlatform()
         platform.clip = OverlayClipRead.Text("held")
         val scheduler = ManualOverlayPollScheduler()
@@ -193,7 +193,62 @@ class OverlayPollingBackendTest {
         assertFalse(scheduler.started)
         assertEquals(1, scheduler.stopCount)
         assertEquals(emptyList<String>(), changes)
-        assertIdleOrReleased(platform)
+        assertEquals(null, platform.currentWindow())
+        assertTrue(platform.detachCount >= 1)
+        assertTrue(platform.neverDroppedTouchable())
+    }
+
+    @Test
+    fun `permission revoke on tick stops scheduling detaches and skips later reads`() {
+        val platform = FakeOverlayPlatform()
+        platform.clip = OverlayClipRead.Text("held")
+        val scheduler = ManualOverlayPollScheduler()
+        val backend = backend(platform = platform, scheduler = scheduler)
+        backend.start { }
+        val readsAfterStart = platform.readCount
+        assertTrue(scheduler.started)
+
+        platform.overlaysAllowed = false
+        scheduler.fire()
+
+        assertFalse(scheduler.started)
+        assertEquals(readsAfterStart, platform.readCount)
+        assertEquals(null, platform.currentWindow())
+        assertTrue(platform.detachCount >= 1)
+        assertEquals(CapabilityState.NEEDS_USER_ACTION, backend.probe().readState)
+        assertEquals(BackendHealthState.FAILED, backend.health().state)
+        assertEquals(OverlayFocusController.ERROR_PERMISSION_MISSING, backend.health().errorCode)
+
+        scheduler.fire()
+        assertEquals(readsAfterStart, platform.readCount)
+    }
+
+    @Test
+    fun `polling resumes only after a successful permission re-check`() {
+        val platform = FakeOverlayPlatform()
+        platform.clip = OverlayClipRead.Text("held")
+        val scheduler = ManualOverlayPollScheduler()
+        val backend = backend(platform = platform, scheduler = scheduler)
+        backend.start { }
+        val startsAfterStart = scheduler.startCount
+        platform.overlaysAllowed = false
+        scheduler.fire()
+        assertFalse(scheduler.started)
+        val readsWhileRevoked = platform.readCount
+
+        platform.overlaysAllowed = true
+        scheduler.fire()
+        assertEquals(readsWhileRevoked, platform.readCount)
+        assertFalse(scheduler.started)
+
+        val health = backend.health()
+        assertEquals(BackendHealthState.HEALTHY, health.state)
+        assertTrue(scheduler.started)
+        assertEquals(startsAfterStart + 1, scheduler.startCount)
+
+        platform.clip = OverlayClipRead.Text("restored")
+        scheduler.fire()
+        assertTrue(platform.readCount > readsWhileRevoked)
     }
 
     private fun backend(

@@ -19,6 +19,9 @@ import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -123,9 +126,32 @@ class PairingConfirmClient(
             } catch (_: SerializationException) {
                 PairingConfirmOutcome.ProtocolViolation("error body failed strict validation")
             }
+            429 -> mapTooManyRequests(bodyText)
             else -> PairingConfirmOutcome.ProtocolViolation("unexpected HTTP status $status")
         }
     }
+
+    /**
+     * HTTP 429 is a first-class pairing outcome: a `pairing_error` with
+     * `PAIRING_RATE_LIMITED`, or the compact `{"error":"RATE_LIMITED"}` used on
+     * the sync accept path, both surface as [PairingConfirmOutcome.Denied] with
+     * [PairingErrorCodes.RATE_LIMITED]. Anything else stays a protocol violation.
+     */
+    private fun mapTooManyRequests(bodyText: String): PairingConfirmOutcome {
+        try {
+            return PairingConfirmOutcome.Denied(PairingJson.parseError(bodyText).error)
+        } catch (_: SerializationException) {
+            if (isCompactRateLimited(bodyText)) {
+                return PairingConfirmOutcome.Denied(PairingErrorCodes.RATE_LIMITED)
+            }
+            return PairingConfirmOutcome.ProtocolViolation("error body failed strict validation")
+        }
+    }
+
+    private fun isCompactRateLimited(bodyText: String): Boolean = runCatching {
+        val root = COMPACT_ERROR_JSON.parseToJsonElement(bodyText).jsonObject
+        root.keys == setOf("error") && root.getValue("error").jsonPrimitive.content == "RATE_LIMITED"
+    }.getOrDefault(false)
 
     /** Reads at most the pairing document limit; longer or non-UTF-8 bodies become null. */
     private fun readBounded(response: okhttp3.Response): String? {
@@ -207,5 +233,6 @@ class PairingConfirmClient(
 
     private companion object {
         const val PIN_MISMATCH_MARKER = "clipsync.pin.mismatch"
+        private val COMPACT_ERROR_JSON = Json { ignoreUnknownKeys = false }
     }
 }

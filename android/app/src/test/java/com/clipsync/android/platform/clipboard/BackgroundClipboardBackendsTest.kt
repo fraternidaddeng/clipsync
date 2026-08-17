@@ -48,12 +48,12 @@ class BackgroundClipboardBackendsTest {
     }
 
     @Test
-    fun `coordinator uses overlay release hook on start`() {
+    fun `coordinator uses overlay detach hook on start`() {
         val platform = FakeOverlayPlatform()
         platform.clip = OverlayClipRead.Text("held")
         val controller = OverlayFocusController(platform)
         controller.readText()
-        val idleBefore = platform.eventLog.count { it == FakeOverlayPlatform.EVENT_IDLE_FLAGS }
+        assertNotNull(platform.currentWindow())
 
         val assembly = assembly(
             overlayController = controller,
@@ -61,15 +61,93 @@ class BackgroundClipboardBackendsTest {
         )
         assembly.coordinator().start { }
 
-        val idleAfter = platform.eventLog.count { it == FakeOverlayPlatform.EVENT_IDLE_FLAGS }
-        assertTrue(idleAfter > idleBefore)
-        val window = platform.currentWindow()
-        assertNotNull(window)
-        assertEquals(
-            OverlayFocusController.FLAG_NOT_FOCUSABLE or OverlayFocusController.FLAG_NOT_TOUCHABLE,
-            window!!.flags,
-        )
+        assertEquals(null, platform.currentWindow())
+        assertTrue(platform.detachCount >= 1)
         assertTrue(platform.neverDroppedTouchable())
+    }
+
+    @Test
+    fun `without overlay consent selected backends skip overlay and adb modes`() {
+        val assembly = assembly(
+            requestedReadMode = ClipboardReadMode.SHIZUKU_EVENT,
+            autoFallbackAllowed = true,
+            overlayConsented = false,
+        )
+        assertEquals(
+            ClipboardReadMode.SHIZUKU_EVENT,
+            assembly.selectedEligibleBackend(ClipboardReadMode.SHIZUKU_EVENT)?.mode,
+        )
+        assertEquals(
+            ClipboardReadMode.FOREGROUND_ONLY,
+            assembly.selectedEligibleBackend(ClipboardReadMode.ADB_LOG_OVERLAY)?.mode,
+        )
+        assertEquals(
+            ClipboardReadMode.FOREGROUND_ONLY,
+            assembly.selectedEligibleBackend(ClipboardReadMode.OVERLAY_POLLING)?.mode,
+        )
+        assertNotNull(assembly.overlayPolling)
+        assertNotNull(assembly.adbLog)
+
+        val coordinator = assembly.coordinator()
+        val state = coordinator.start { }
+        assertEquals(ClipboardReadMode.SHIZUKU_EVENT, state.activeReadMode)
+        coordinator.requestMode(ClipboardReadMode.OVERLAY_POLLING)
+        assertEquals(ClipboardReadMode.FOREGROUND_ONLY, coordinator.state.activeReadMode)
+    }
+
+    @Test
+    fun `without overlay consent fallback never starts overlay even when it is READY`() {
+        val calls = mutableListOf<String>()
+        val assembly = BackgroundClipboardBackends.build(
+            overlayController = OverlayFocusController(FakeOverlayPlatform()),
+            shizuku = FakeBackgroundClipboardBackend(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                report = FakeBackgroundClipboardBackend.capabilityReport(
+                    mode = ClipboardReadMode.SHIZUKU_EVENT,
+                    state = CapabilityState.UNAVAILABLE,
+                    errorCode = "SHIZUKU_NOT_RUNNING",
+                ),
+                callLog = calls,
+            ),
+            adbLog = FakeBackgroundClipboardBackend(
+                mode = ClipboardReadMode.ADB_LOG_OVERLAY,
+                callLog = calls,
+            ),
+            overlayPolling = FakeBackgroundClipboardBackend(
+                mode = ClipboardReadMode.OVERLAY_POLLING,
+                callLog = calls,
+            ),
+            foreground = FakeBackgroundClipboardBackend(
+                mode = ClipboardReadMode.FOREGROUND_ONLY,
+                callLog = calls,
+            ),
+            requestedReadMode = ClipboardReadMode.SHIZUKU_EVENT,
+            autoFallbackAllowed = true,
+            overlayConsented = false,
+        )
+
+        val state = assembly.coordinator().start { }
+
+        assertEquals(ClipboardReadMode.FOREGROUND_ONLY, state.activeReadMode)
+        assertTrue(calls.none { it.startsWith("OVERLAY_POLLING.") && it.endsWith(".start") })
+        assertTrue(calls.none { it.startsWith("ADB_LOG_OVERLAY.") && it.endsWith(".start") })
+        assertTrue(calls.none { it.startsWith("OVERLAY_POLLING.") && it.endsWith(".read") })
+        assertTrue(calls.none { it.startsWith("ADB_LOG_OVERLAY.") && it.endsWith(".read") })
+        assertTrue(calls.contains("FOREGROUND_ONLY.start"))
+    }
+
+    @Test
+    fun `with overlay consent fallback can select overlay polling`() {
+        val assembly = assembly(
+            requestedReadMode = ClipboardReadMode.OVERLAY_POLLING,
+            overlayConsented = true,
+        )
+        assertEquals(
+            ClipboardReadMode.OVERLAY_POLLING,
+            assembly.selectedEligibleBackend(ClipboardReadMode.OVERLAY_POLLING)?.mode,
+        )
+        val state = assembly.coordinator().start { }
+        assertEquals(ClipboardReadMode.OVERLAY_POLLING, state.activeReadMode)
     }
 
     @Test
@@ -118,6 +196,7 @@ class BackgroundClipboardBackendsTest {
         overlayController: OverlayFocusController = OverlayFocusController(FakeOverlayPlatform()),
         requestedReadMode: ClipboardReadMode = ClipboardReadMode.FOREGROUND_ONLY,
         autoFallbackAllowed: Boolean = false,
+        overlayConsented: Boolean = true,
         callLog: MutableList<String> = mutableListOf(),
     ): BackgroundClipboardBackends = BackgroundClipboardBackends.build(
         overlayController = overlayController,
@@ -139,5 +218,6 @@ class BackgroundClipboardBackendsTest {
         ),
         requestedReadMode = requestedReadMode,
         autoFallbackAllowed = autoFallbackAllowed,
+        overlayConsented = overlayConsented,
     )
 }

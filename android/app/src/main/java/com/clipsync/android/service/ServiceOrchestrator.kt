@@ -147,6 +147,21 @@ class ServiceOrchestrator {
         onControllerInstanceChanged()
     }
 
+    /**
+     * Bounded boot health-check exhausted and the FGS is still not RUNNING.
+     * Does not demote a service that came up between the decision and this call.
+     */
+    fun onBootHealthCheckFailed() {
+        if (processState == ServiceProcessState.RUNNING) {
+            return
+        }
+        controllerOwner = ControllerOwner.NONE
+        controllerReady = false
+        processState = ServiceProcessState.NEEDS_RECOVERY
+        publish()
+        onControllerInstanceChanged()
+    }
+
     fun onNetworkRegained(): Boolean =
         processState == ServiceProcessState.RUNNING &&
             controllerOwner == ControllerOwner.SERVICE

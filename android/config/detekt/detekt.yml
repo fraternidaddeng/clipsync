@@ -1,0 +1,12 @@
+# ClipSync Android detekt overlay (plugin 1.23.8).
+# buildUponDefaultConfig=true applies this on top of the official default config.
+# autoCorrect is off in the Gradle task — do not reformat the tree from here.
+# Existing findings are recorded in baseline.xml; new findings fail `detekt`.
+
+build:
+  maxIssues: 0
+  excludeCorrectable: false
+
+config:
+  validation: true
+  warningsAsErrors: false

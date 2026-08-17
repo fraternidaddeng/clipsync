@@ -47,6 +47,7 @@ class OverlayPollingBackend internal constructor(
 
     private var callback: ((ClipboardChange) -> Unit)? = null
     private var started: Boolean = false
+    private var awaitingPermissionRestore: Boolean = false
     private var lastHash: String? = null
     private var lastReadSuccessAtEpochMillis: Long? = null
 
@@ -54,6 +55,13 @@ class OverlayPollingBackend internal constructor(
         val permission = controller.canDrawOverlays()
         val touchableRequired = controller.requiresTouchableWindowToRead()
         val interactive = canPollNow()
+        if (started) {
+            if (!permission) {
+                pauseForPermissionLoss()
+            } else {
+                resumePollingIfRestored()
+            }
+        }
         val (state, code) = when {
             !permission -> CapabilityState.NEEDS_USER_ACTION to ERROR_PERMISSION_MISSING
             touchableRequired -> CapabilityState.UNAVAILABLE to ERROR_TOUCHABLE_REQUIRED
@@ -75,16 +83,20 @@ class OverlayPollingBackend internal constructor(
     override fun start(onChanged: (ClipboardChange) -> Unit) {
         callback = onChanged
         started = true
+        awaitingPermissionRestore = false
         refreshBaseline()
-        scheduler.start(pollIntervalMillis, ::onTick)
+        if (started && !awaitingPermissionRestore) {
+            scheduler.start(pollIntervalMillis, ::onTick)
+        }
     }
 
     override fun stop() {
         started = false
+        awaitingPermissionRestore = false
         scheduler.stop()
         callback = null
         lastHash = null
-        controller.releaseFocus()
+        controller.detach()
     }
 
     override fun readText(): ClipboardReadResult = controller.readText()
@@ -95,8 +107,10 @@ class OverlayPollingBackend internal constructor(
             return BackendHealth(BackendHealthState.STOPPED, checkedAt)
         }
         if (!controller.canDrawOverlays()) {
+            pauseForPermissionLoss()
             return BackendHealth(BackendHealthState.FAILED, checkedAt, ERROR_PERMISSION_MISSING)
         }
+        resumePollingIfRestored()
         if (controller.requiresTouchableWindowToRead()) {
             return BackendHealth(BackendHealthState.FAILED, checkedAt, ERROR_TOUCHABLE_REQUIRED)
         }
@@ -115,12 +129,25 @@ class OverlayPollingBackend internal constructor(
                 lastReadSuccessAtEpochMillis = nowEpochMillis()
                 hasher.hash(result.text)
             }
-            else -> lastHash
+            is ClipboardReadResult.Failure -> {
+                if (result.errorCode == ERROR_PERMISSION_MISSING) {
+                    pauseForPermissionLoss()
+                }
+                lastHash
+            }
+            ClipboardReadResult.Empty -> lastHash
         }
     }
 
     private fun onTick() {
         if (!started) {
+            return
+        }
+        if (awaitingPermissionRestore) {
+            return
+        }
+        if (!controller.canDrawOverlays()) {
+            pauseForPermissionLoss()
             return
         }
         if (!canPollNow()) {
@@ -143,8 +170,30 @@ class OverlayPollingBackend internal constructor(
                     )
                 }
             }
-            ClipboardReadResult.Empty, is ClipboardReadResult.Failure -> Unit
+            ClipboardReadResult.Empty -> Unit
+            is ClipboardReadResult.Failure -> {
+                if (result.errorCode == ERROR_PERMISSION_MISSING) {
+                    pauseForPermissionLoss()
+                }
+            }
         }
+    }
+
+    private fun pauseForPermissionLoss() {
+        awaitingPermissionRestore = true
+        scheduler.stop()
+        controller.detach()
+    }
+
+    private fun resumePollingIfRestored() {
+        if (!started || !awaitingPermissionRestore) {
+            return
+        }
+        if (!controller.canDrawOverlays() || controller.requiresTouchableWindowToRead()) {
+            return
+        }
+        awaitingPermissionRestore = false
+        scheduler.start(pollIntervalMillis, ::onTick)
     }
 
     companion object {

@@ -276,4 +276,24 @@ class ClipboardAccessCoordinatorTest {
         assertEquals("SHIZUKU_NOT_AUTHORIZED", state.lastErrorCode)
         assertEquals(80L, state.lastHealthAtEpochMillis)
     }
+
+    @Test
+    fun `stop invokes the overlay release hook after stopping the backend`() {
+        val calls = mutableListOf<String>()
+        val overlay = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.OVERLAY_POLLING,
+            callLog = calls,
+        )
+        val coordinator = ClipboardAccessCoordinator(
+            backends = listOf(overlay),
+            releaseFocusResource = { calls += "detach" },
+        )
+        coordinator.start { }
+        calls.clear()
+
+        coordinator.stop()
+
+        assertEquals(listOf("OVERLAY_POLLING.stop", "detach"), calls)
+        assertEquals(null, coordinator.state.activeReadMode)
+    }
 }

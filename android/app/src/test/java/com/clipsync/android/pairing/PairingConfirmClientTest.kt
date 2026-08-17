@@ -127,6 +127,27 @@ class PairingConfirmClientTest {
     }
 
     @Test
+    fun `http 429 maps to denied with PAIRING_RATE_LIMITED`() {
+        server.enqueue(
+            MockResponse().setResponseCode(429).setBody(
+                PairingJson.serialize(
+                    PairingErrorBody(
+                        kind = PairingDocumentKinds.ERROR,
+                        version = 1,
+                        error = PairingErrorCodes.RATE_LIMITED,
+                    ),
+                ),
+            ),
+        )
+        val pairingError = confirm(qr()) as PairingConfirmOutcome.Denied
+        assertEquals(PairingErrorCodes.RATE_LIMITED, pairingError.errorCode)
+
+        server.enqueue(MockResponse().setResponseCode(429).setBody("""{"error":"RATE_LIMITED"}"""))
+        val compact = confirm(qr()) as PairingConfirmOutcome.Denied
+        assertEquals(PairingErrorCodes.RATE_LIMITED, compact.errorCode)
+    }
+
+    @Test
     fun `unknown status codes and malformed bodies are protocol violations`() {
         server.enqueue(MockResponse().setResponseCode(500).setBody("boom"))
         assertTrue(confirm(qr()) is PairingConfirmOutcome.ProtocolViolation)

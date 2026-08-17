@@ -7,7 +7,7 @@ namespace ClipSync.Core.Storage;
 
 public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IAsyncDisposable
 {
-    private const int CurrentSchemaVersion = 2;
+    public const int SchemaVersion = 2;
     private const int MaximumQueryLimit = 2_000;
     private const int BusyTimeoutMilliseconds = 30_000;
     private const string TextKind = "text";
@@ -72,10 +72,10 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
                 null,
                 "PRAGMA user_version;",
                 cancellationToken).ConfigureAwait(false);
-            if (schemaVersion > CurrentSchemaVersion)
+            if (schemaVersion > SchemaVersion)
             {
                 throw new InvalidOperationException(
-                    $"Database schema version {schemaVersion} is newer than supported version {CurrentSchemaVersion}.");
+                    $"Database schema version {schemaVersion} is newer than supported version {SchemaVersion}.");
             }
 
             await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
@@ -83,24 +83,8 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
                 cancellationToken).ConfigureAwait(false);
             try
             {
-                if (schemaVersion < 1)
-                {
-                    await CreateBaselineSchemaAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
-                }
-
-                if (schemaVersion < 2)
-                {
-                    await ApplySyncSchemaAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
-                }
-
-                if (schemaVersion < CurrentSchemaVersion)
-                {
-                    await ExecuteNonQueryAsync(
-                        connection,
-                        transaction,
-                        $"PRAGMA user_version = {CurrentSchemaVersion};",
-                        cancellationToken).ConfigureAwait(false);
-                }
+                await ApplyOrderedMigrationsAsync(connection, transaction, schemaVersion, cancellationToken)
+                    .ConfigureAwait(false);
 
                 await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             }
@@ -458,6 +442,54 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
     private ValueTask InjectFaultAsync(StorageFaultPoint point, CancellationToken cancellationToken) =>
         faultInjector?.InjectAsync(point, cancellationToken) ?? ValueTask.CompletedTask;
 
+    /// <summary>
+    /// Applies schema steps in version order. Never DROP TABLE clips.
+    /// A future bump must add a named step here in the same change as <see cref="SchemaVersion"/>.
+    /// A gap with no step refuses to open rather than creating a fresh file.
+    /// </summary>
+    private static async ValueTask ApplyOrderedMigrationsAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        long schemaVersion,
+        CancellationToken cancellationToken)
+    {
+        for (var version = 1; version <= SchemaVersion; version++)
+        {
+            if (SchemaMigrations.All(step => step.TargetVersion != version))
+            {
+                throw new InvalidOperationException(
+                    $"Schema version {version} has no migration step. Refusing to open so history cannot be dropped.");
+            }
+        }
+
+        foreach (var step in SchemaMigrations)
+        {
+            if (schemaVersion < step.TargetVersion)
+            {
+                await step.Apply(connection, transaction, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        if (schemaVersion < SchemaVersion)
+        {
+            await ExecuteNonQueryAsync(
+                connection,
+                transaction,
+                $"PRAGMA user_version = {SchemaVersion};",
+                cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    private static readonly SchemaMigrationStep[] SchemaMigrations =
+    [
+        new(1, CreateBaselineSchemaAsync),
+        new(2, ApplySyncSchemaAsync),
+    ];
+
+    private readonly record struct SchemaMigrationStep(
+        int TargetVersion,
+        Func<SqliteConnection, SqliteTransaction, CancellationToken, ValueTask> Apply);
+
     private static async ValueTask CreateBaselineSchemaAsync(
         SqliteConnection connection,
         SqliteTransaction transaction,
@@ -614,6 +646,10 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         return entries;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Security",
+        "CA2100:Review SQL queries for security vulnerabilities",
+        Justification = "Helper assigns CommandText from this store's compile-time SQL/PRAGMA (literals or integer constants). Callers never pass user clipboard/query text as SQL.")]
     private static async ValueTask ExecuteNonQueryAsync(
         SqliteConnection connection,
         SqliteTransaction? transaction,
@@ -626,6 +662,10 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Security",
+        "CA2100:Review SQL queries for security vulnerabilities",
+        Justification = "Helper assigns CommandText from this store's compile-time SQL/PRAGMA (literals or integer constants). Callers never pass user clipboard/query text as SQL.")]
     private static async ValueTask<long> ReadScalarInt64Async(
         SqliteConnection connection,
         SqliteTransaction? transaction,
@@ -639,6 +679,10 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         return Convert.ToInt64(result, System.Globalization.CultureInfo.InvariantCulture);
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Security",
+        "CA2100:Review SQL queries for security vulnerabilities",
+        Justification = "Helper assigns CommandText from this store's compile-time SQL/PRAGMA (literals or integer constants). Callers never pass user clipboard/query text as SQL.")]
     private static async ValueTask<string> ReadScalarStringAsync(
         SqliteConnection connection,
         SqliteTransaction? transaction,

@@ -52,7 +52,7 @@ class OverlayFocusController internal constructor(
 
     /**
      * Restore idle flags (not-focusable + not-touchable). Used when polling
-     * pauses and as the coordinator `releaseFocusResource` hook.
+     * pauses. Does not remove the window; call [detach] for that.
      */
     fun releaseFocus() {
         synchronized(lock) {
@@ -63,9 +63,20 @@ class OverlayFocusController internal constructor(
         }
     }
 
+    /**
+     * Remove the overlay window. Idempotent and serialized on the same lock
+     * as [readText] / [releaseFocus].
+     */
+    fun detach() {
+        synchronized(lock) {
+            platform.detachWindow()
+        }
+    }
+
     private fun doReadText(): ClipboardReadResult {
         if (!platform.canDrawOverlays()) {
             lastError = ERROR_PERMISSION_MISSING
+            platform.detachWindow()
             return ClipboardReadResult.Failure(ERROR_PERMISSION_MISSING)
         }
         if (platform.requiresTouchableWindowToRead()) {

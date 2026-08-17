@@ -1,0 +1,255 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:AdbLogMinimizationInvariantTest.kt$AdbLogMinimizationInvariantTest$type == File::class.java || type == FileOutputStream::class.java || type == FileWriter::class.java || type == RandomAccessFile::class.java || type == FileChannel::class.java || type == Path::class.java</ID>
+    <ID>ComplexCondition:SyncSessionEngine.kt$SyncSessionEngine$item.originDeviceId != header.originDeviceId || item.originSeq != header.originSeq || item.contentHash != header.contentHash || item.utf8Bytes != header.utf8Bytes</ID>
+    <ID>CyclomaticComplexMethod:AdbLogTestSupport.kt$fun assertNoRetainedRawLine(target: Any, rawLine: String)</ID>
+    <ID>CyclomaticComplexMethod:MainActivity.kt$MainActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>CyclomaticComplexMethod:PairingJson.kt$PairingJson.StrictScanner$private fun scanNumber()</ID>
+    <ID>CyclomaticComplexMethod:ProtocolJson.kt$ProtocolJson$private fun validateBody(type: String, body: kotlinx.serialization.json.JsonObject)</ID>
+    <ID>CyclomaticComplexMethod:SyncSessionEngine.kt$SyncSessionEngine$private suspend fun dispatch(text: String): Boolean</ID>
+    <ID>CyclomaticComplexMethod:SyncSessionEngine.kt$SyncSessionEngine$private suspend fun handleClipAnnounce(announce: ClipAnnounceBody): Boolean</ID>
+    <ID>CyclomaticComplexMethod:SyncSessionEngine.kt$SyncSessionEngine$suspend fun run(sessionTransport: ISyncTransport): SyncSessionResult</ID>
+    <ID>FunctionNaming:CapabilityStatusCards.kt$@Composable fun CapabilityStatusCards( state: HealthScreenState, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:CapabilityStatusCards.kt$@Composable private fun CapabilityCard( title: String, value: HealthValue, )</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable fun HealthScreen( state: HealthScreenState, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Preview(showBackground = true) @Composable private fun HealthScreenPreview()</ID>
+    <ID>FunctionNaming:HistoryScreen.kt$@Composable fun HistoryScreen( viewModel: HistoryViewModel, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HistoryScreen.kt$@Composable private fun HistoryRow( item: HistoryItemUi, onCopy: () -&gt; Unit, onDelete: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:HistoryScreen.kt$@Composable private fun NoticeCard(message: String, warning: Boolean)</ID>
+    <ID>FunctionNaming:HistoryScreen.kt$@Composable private fun NoticeCard(notice: HistoryNotice)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable fun PairingScreen(viewModel: PairingViewModel, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun PairedContent(peer: PairedPeer, viewModel: PairingViewModel)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun PeerFacts(qr: PairingQrPayload)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun QrScannerView(onResult: (String) -&gt; Unit, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewModel)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun SubmittingContent(peerName: String)</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@Composable fun SettingsScreen( viewModel: SettingsViewModel, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:SettingsScreen.kt$@Composable private fun SettingSwitch( title: String, subtitle: String, checked: Boolean, onCheckedChange: (Boolean) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:Theme.kt$@Composable fun ClipSyncTheme( darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:WizardScreen.kt$@Composable fun WizardScreen( viewModel: WizardViewModel, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:WizardScreen.kt$@Composable private fun CapabilityStepCard( step: WizardStepStatus, onAction: () -&gt; Unit, onSkip: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:WizardScreen.kt$@Composable private fun ChoiceSwitch( title: String, subtitle: String, checked: Boolean, onCheckedChange: (Boolean) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:WizardScreen.kt$@Composable private fun ChoicesCard(state: WizardUiState, viewModel: WizardViewModel)</ID>
+    <ID>FunctionNaming:WizardScreen.kt$@Composable private fun IndicatorCard(title: String, state: CapabilityState)</ID>
+    <ID>FunctionNaming:WizardScreen.kt$@Composable private fun LiveIndicatorRow(indicators: LiveIndicators)</ID>
+    <ID>FunctionNaming:WizardScreen.kt$@Composable private fun SelfTestCard( state: SelfTestUiState, onReadTest: () -&gt; Unit, onWriteTest: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:WizardScreen.kt$@Composable private fun SelfTestResultLine(result: SelfTestResult)</ID>
+    <ID>LargeClass:SyncSessionEngine.kt$SyncSessionEngine</ID>
+    <ID>LongMethod:AckIdempotencyTest.kt$AckIdempotencyTest$@Test fun `applying the same ack ranges twice is a no-op for outbox and peer cursors`()</ID>
+    <ID>LongMethod:CrossClientSyncE2eTest.kt$CrossClientSyncE2eTest$@Test fun windowsListenerAndAndroidDialerConvergeBothWays()</ID>
+    <ID>LongMethod:LoopSuppressionStressTest.kt$LoopSuppressionStressTest$@Test fun `one thousand capture sync writeback cycles keep sequences contiguous and swallow each echo once`()</ID>
+    <ID>LongMethod:MainActivity.kt$MainActivity$override fun onCreate(savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:ModeSwitchIdempotencyTest.kt$ModeSwitchIdempotencyTest$@Test fun `one hundred mode switches suppress unchanged text and count only real emits`()</ID>
+    <ID>LongMethod:PairAuthProofTest.kt$PairAuthProofTest$@Test fun `verify accepts matching proof and rejects tampered inputs`()</ID>
+    <ID>LongMethod:PairingScreen.kt$@Composable private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel)</ID>
+    <ID>LongMethod:SettingsScreen.kt$@Composable fun SettingsScreen( viewModel: SettingsViewModel, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:SyncController.kt$SyncController$private suspend fun runLoop()</ID>
+    <ID>LongMethod:SyncSessionEngine.kt$SyncSessionEngine$private suspend fun dispatch(text: String): Boolean</ID>
+    <ID>LongMethod:SyncSessionEngine.kt$SyncSessionEngine$private suspend fun handleClipAnnounce(announce: ClipAnnounceBody): Boolean</ID>
+    <ID>LongMethod:SyncSessionEngine.kt$SyncSessionEngine$suspend fun run(sessionTransport: ISyncTransport): SyncSessionResult</ID>
+    <ID>LongMethod:WizardScreen.kt$@Composable fun WizardScreen( viewModel: WizardViewModel, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:WizardScreen.kt$@Composable private fun ChoicesCard(state: WizardUiState, viewModel: WizardViewModel)</ID>
+    <ID>LongParameterList:AdbLogOverlayBackend.kt$AdbLogOverlayBackend$( private val readOverlayText: () -&gt; ClipboardReadResult, private val readLogsGranted: () -&gt; Boolean, private val reader: LogcatClipboardEventReader, private val hasher: ContentHasher = Sha256ContentHasher, private val nowEpochMillis: () -&gt; Long = System::currentTimeMillis, private val healthySignalTtlMillis: Long = HEALTHY_SIGNAL_TTL_MILLIS, private val systemVersion: String = "unknown", private val releaseOverlay: () -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:BackgroundClipboardBackends.kt$BackgroundClipboardBackends.Companion$( context: Context, isVisible: () -&gt; Boolean, capabilityStore: ClipboardCapabilityStore? = null, requestedReadMode: ClipboardReadMode = ClipboardReadMode.FOREGROUND_ONLY, autoFallbackAllowed: Boolean = false, overlayConsented: Boolean = true, pollIntervalMillis: Long = OverlayPollingBackend.DEFAULT_POLL_INTERVAL_MS, canPollNow: () -&gt; Boolean = defaultCanPollNow(context), overlayController: OverlayFocusController = OverlayFocusController( context.applicationContext, ), shizuku: BackgroundClipboardBackend = ShizukuClipboardBackend( context.applicationContext, ), adbLog: BackgroundClipboardBackend = AdbLogOverlayBackend( context.applicationContext, overlayController::readText, overlayController::detach, ), overlayPolling: BackgroundClipboardBackend = OverlayPollingBackend( controller = overlayController, canPollNow = canPollNow, pollIntervalMillis = pollIntervalMillis, ), foreground: BackgroundClipboardBackend? = clipboardManagerOrNull(context)?.let { manager -&gt; ForegroundClipboardBackend(manager, isVisible) }, )</ID>
+    <ID>LongParameterList:BackgroundClipboardBackends.kt$BackgroundClipboardBackends.Companion$( overlayController: OverlayFocusController, shizuku: BackgroundClipboardBackend, adbLog: BackgroundClipboardBackend, overlayPolling: BackgroundClipboardBackend, foreground: BackgroundClipboardBackend?, capabilityStore: ClipboardCapabilityStore? = null, requestedReadMode: ClipboardReadMode = ClipboardReadMode.FOREGROUND_ONLY, autoFallbackAllowed: Boolean = false, overlayConsented: Boolean = true, )</ID>
+    <ID>LongParameterList:ClipExportTest.kt$ClipExportTest$( eventId: String = "11111111-1111-4111-8111-111111111111", originDeviceId: String = "android-local", originSeq: Long = 42, content: String = "plain", contentHash: String = "abc", sourceApp: String? = "com.example", createdAtMs: Long = 1_700_000_000_000, expiresAtMs: Long? = 1_700_000_100_000, )</ID>
+    <ID>LongParameterList:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator$( backends: List&lt;BackgroundClipboardBackend&gt;, private val hasher: ContentHasher = Sha256ContentHasher, requestedReadMode: ClipboardReadMode = ClipboardReadMode.SHIZUKU_EVENT, autoFallbackAllowed: Boolean = true, private val nowEpochMillis: () -&gt; Long = System::currentTimeMillis, private val capabilityStore: ClipboardCapabilityStore? = null, private val releaseFocusResource: () -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:ClipboardWriteCoordinator.kt$ClipboardWriteCoordinator$( private val publicWriter: PublicClipboardWriter, private val fallbackWriter: ClipboardWriter? = null, private val hasher: ContentHasher = Sha256ContentHasher, private val nowEpochMillis: () -&gt; Long = System::currentTimeMillis, private val suppressionWindowMillis: Long = 5_000L, private val capabilityStore: ClipboardCapabilityStore? = null, private val fallbackWriteMode: ClipboardWriteMode = ClipboardWriteMode.SHIZUKU_FALLBACK, )</ID>
+    <ID>LongParameterList:FakeClipboardBackends.kt$FakeBackgroundClipboardBackend$( override val mode: ClipboardReadMode, var report: CapabilityReport = capabilityReport(mode, CapabilityState.READY), var readResult: ClipboardReadResult = ClipboardReadResult.Empty, var backendHealth: BackendHealth = BackendHealth( state = BackendHealthState.HEALTHY, checkedAtEpochMillis = 1L, ), private val callLog: MutableList&lt;String&gt; = mutableListOf(), var onStart: () -&gt; Unit = {}, var onStop: () -&gt; Unit = {}, var onRead: () -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$( private val clipboard: Any, private val sdkInt: Int, private val callingPackage: String, private val userId: Int = 0, private val attributionTag: String? = null, private val deviceId: Int = 0, private val clipTextReader: ClipTextReader = ReflectiveClipTextReader, )</ID>
+    <ID>LongParameterList:OverlayPollingBackendTest.kt$OverlayPollingBackendTest$( platform: FakeOverlayPlatform = FakeOverlayPlatform(), canPollNow: () -&gt; Boolean = { true }, pollIntervalMillis: Long = OverlayPollingBackend.DEFAULT_POLL_INTERVAL_MS, scheduler: OverlayPollScheduler = ManualOverlayPollScheduler(), hasher: ContentHasher = ContentHasher { "hash:$it" }, nowEpochMillis: () -&gt; Long = { 1L }, )</ID>
+    <ID>LongParameterList:PairAuthProof.kt$PairAuthProof$( pairSecret: ByteArray, challengeRequestId: String, nonce: ByteArray, challengerDeviceId: String, responderDeviceId: String, trustEpoch: Long, )</ID>
+    <ID>LongParameterList:PairAuthProof.kt$PairAuthProof$( pairSecret: ByteArray, challengeRequestId: String, nonce: ByteArray, challengerDeviceId: String, responderDeviceId: String, trustEpoch: Long, proof: ByteArray, )</ID>
+    <ID>LongParameterList:SettingsViewModel.kt$SettingsViewModel.Companion$( repository: ClipRepository, syncStatus: SyncStatusProvider, capabilities: CapabilityStatusProvider, serviceSettings: ServiceSettingsStore? = null, onBackgroundSyncChanged: (Boolean) -&gt; Unit = {}, onBootRecoveryChanged: (Boolean) -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:SyncController.kt$SyncController$( private val pairingStore: PairingStore, private val repository: ClipRepository, private val connector: SyncConnector, private val scope: CoroutineScope, private val options: SyncSessionOptions = SyncSessionOptions(), private val logger: SyncLogger = SyncLogger.NoOp, private val onRemoteClipsCommitted: (List&lt;RemoteClipApplied&gt;) -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:SyncSessionEngine.kt$SyncSessionEngine$( private val repository: ClipRepository, private val localDeviceId: String, private val peer: PairedPeer, pairSecret: ByteArray, private val options: SyncSessionOptions = SyncSessionOptions(), private val logger: SyncLogger = SyncLogger.NoOp, private val isPeerTrusted: () -&gt; Boolean = { true }, private val onReady: () -&gt; Unit = {}, private val onRemoteClipsCommitted: (List&lt;RemoteClipApplied&gt;) -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:WizardFrameworkProbes.kt$WizardFrameworkProbes$( backends: BackgroundClipboardBackends, settings: WizardSettings, network: () -&gt; CapabilityState, service: () -&gt; CapabilityState, backgroundWrite: () -&gt; CapabilityState, notifications: () -&gt; CapabilityState, foregroundService: () -&gt; CapabilityState, ignoreBattery: () -&gt; CapabilityState, )</ID>
+    <ID>LongParameterList:WizardViewModelTest.kt$MutableProbes$( var notifications: CapabilityState = CapabilityState.UNKNOWN, var foregroundService: CapabilityState = CapabilityState.UNKNOWN, var ignoreBattery: CapabilityState = CapabilityState.UNKNOWN, var overlay: CapabilityState = CapabilityState.UNKNOWN, var readLogs: CapabilityState = CapabilityState.UNKNOWN, var shizukuBinder: CapabilityState = CapabilityState.UNKNOWN, var shizukuAuth: CapabilityState = CapabilityState.UNKNOWN, var network: CapabilityState = CapabilityState.UNKNOWN, var service: CapabilityState = CapabilityState.UNKNOWN, var backgroundRead: CapabilityState = CapabilityState.UNKNOWN, var backgroundWrite: CapabilityState = CapabilityState.UNKNOWN, )</ID>
+    <ID>LoopWithTooManyJumpStatements:AdbLogTestSupport.kt$for</ID>
+    <ID>LoopWithTooManyJumpStatements:AdbLogTestSupport.kt$while</ID>
+    <ID>LoopWithTooManyJumpStatements:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator$for</ID>
+    <ID>LoopWithTooManyJumpStatements:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$for</ID>
+    <ID>LoopWithTooManyJumpStatements:SyncRangeMath.kt$SyncRangeMath$for</ID>
+    <ID>LoopWithTooManyJumpStatements:SyncSessionEngine.kt$SyncSessionEngine$for</ID>
+    <ID>LoopWithTooManyJumpStatements:SyncSessionEngine.kt$SyncSessionEngine$while</ID>
+    <ID>MagicNumber:IClipboardReflectionAdapter.kt$IClipboardApiShape$3</ID>
+    <ID>MagicNumber:IClipboardReflectionAdapter.kt$IClipboardApiShape$4</ID>
+    <ID>MagicNumber:IClipboardReflectionAdapter.kt$IClipboardApiShape.Companion$29</ID>
+    <ID>MagicNumber:IClipboardReflectionAdapter.kt$IClipboardApiShape.Companion$34</ID>
+    <ID>MagicNumber:KeystoreSecretProtector.kt$KeystoreSecretProtector$256</ID>
+    <ID>MagicNumber:LogcatClipboardEventReader.kt$LogcatClipboardEventReader$5L</ID>
+    <ID>MagicNumber:MainActivity.kt$MainActivity$3</ID>
+    <ID>MagicNumber:MainActivity.kt$MainActivity$33</ID>
+    <ID>MagicNumber:NotificationPermission.kt$NotificationPermission$33</ID>
+    <ID>MagicNumber:PairAuthProof.kt$PairAuthProof$16</ID>
+    <ID>MagicNumber:PairAuthProof.kt$PairAuthProof$8</ID>
+    <ID>MagicNumber:PairingConfirmClient.kt$PairingConfirmClient$200</ID>
+    <ID>MagicNumber:PairingConfirmClient.kt$PairingConfirmClient$400</ID>
+    <ID>MagicNumber:PairingConfirmClient.kt$PairingConfirmClient$403</ID>
+    <ID>MagicNumber:PairingConfirmClient.kt$PairingConfirmClient$410</ID>
+    <ID>MagicNumber:PairingConfirmClient.kt$PairingConfirmClient$429</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson$253</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson$32</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson$64</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson$65535</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson$8</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson.StrictScanner$0x20</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson.StrictScanner$16</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson.StrictScanner$4</ID>
+    <ID>MagicNumber:PairingScreen.kt$19</ID>
+    <ID>MagicNumber:PairingScreen.kt$4</ID>
+    <ID>MagicNumber:PairingStore.kt$PairingStore$32</ID>
+    <ID>MagicNumber:PairingStore.kt$PairingStore$64</ID>
+    <ID>MagicNumber:PeerSyncDialer.kt$OkHttpSyncConnector.&lt;no name provided&gt;$1000</ID>
+    <ID>MagicNumber:ProtocolJson.kt$ProtocolJson$128</ID>
+    <ID>MagicNumber:ProtocolJson.kt$ProtocolJson$256</ID>
+    <ID>MagicNumber:ProtocolJson.kt$ProtocolJson$32</ID>
+    <ID>MagicNumber:SyncController.kt$SyncController.Companion$16_000</ID>
+    <ID>MagicNumber:SyncController.kt$SyncController.Companion$1_000</ID>
+    <ID>MagicNumber:SyncController.kt$SyncController.Companion$2_000</ID>
+    <ID>MagicNumber:SyncController.kt$SyncController.Companion$30_000</ID>
+    <ID>MagicNumber:SyncController.kt$SyncController.Companion$30_000L</ID>
+    <ID>MagicNumber:SyncController.kt$SyncController.Companion$4_000</ID>
+    <ID>MagicNumber:SyncController.kt$SyncController.Companion$8_000</ID>
+    <ID>MagicNumber:Theme.kt$0xFF00391F</ID>
+    <ID>MagicNumber:Theme.kt$0xFF111416</ID>
+    <ID>MagicNumber:Theme.kt$0xFF146C43</ID>
+    <ID>MagicNumber:Theme.kt$0xFF171A1C</ID>
+    <ID>MagicNumber:Theme.kt$0xFF53646F</ID>
+    <ID>MagicNumber:Theme.kt$0xFF5D6469</ID>
+    <ID>MagicNumber:Theme.kt$0xFF72D69E</ID>
+    <ID>MagicNumber:Theme.kt$0xFF7A858C</ID>
+    <ID>MagicNumber:Theme.kt$0xFF899399</ID>
+    <ID>MagicNumber:Theme.kt$0xFFB3261E</ID>
+    <ID>MagicNumber:Theme.kt$0xFFB8C8D2</ID>
+    <ID>MagicNumber:Theme.kt$0xFFBFC6CA</ID>
+    <ID>MagicNumber:Theme.kt$0xFFE2E5E7</ID>
+    <ID>MagicNumber:Theme.kt$0xFFF7F8FA</ID>
+    <ID>MagicNumber:Theme.kt$0xFFFFB4AB</ID>
+    <ID>MagicNumber:WizardFrameworkProbes.kt$WizardFrameworkProbes$33</ID>
+    <ID>MaxLineLength:ClipDatabase.kt$ClipDatabase.Companion$"ClipDatabase.VERSION=$VERSION requires at least ${VERSION - 1} Migration(s) before opening a persistent database."</ID>
+    <ID>MaxLineLength:ClipExportTest.kt$ClipExportTest$assertEquals(0, ClipExport::class.java.declaredFields.count { it.type.name.contains("Logger", ignoreCase = true) })</ID>
+    <ID>MaxLineLength:ClipboardLogFixtures.kt$ClipboardLogFixtures$"E ClipboardService: Denying clipboard access to pkg.app, application is not in focus nor is it a system service for user 0"</ID>
+    <ID>MaxLineLength:ClipboardLogFixtures.kt$ClipboardLogFixtures$fixture(ClipboardLogRomFamily.COLOROS_ORIGINOS, "coloros-originos-v1", "I ClipboardServiceExtImpl: setPrimaryClip")</ID>
+    <ID>MaxLineLength:ClipboardLogFixtures.kt$ClipboardLogFixtures$fixture(ClipboardLogRomFamily.COLOROS_ORIGINOS, "coloros-originos-v1", "I ColorClipboardService: notifyPrimaryClipChanged")</ID>
+    <ID>MaxLineLength:ClipboardLogFixtures.kt$ClipboardLogFixtures$fixture(ClipboardLogRomFamily.COLOROS_ORIGINOS, "coloros-originos-v1", "I OplusClipboardService: onPrimaryClipChanged")</ID>
+    <ID>MaxLineLength:ClipboardLogParsersTest.kt$ClipboardLogParsersTest$"E ClipboardService: Denying clipboard access to pkg.app, application is not in focus nor is it a system service for user 0"</ID>
+    <ID>MaxLineLength:OriginReceiveState.kt$OriginReceiveState$"Every received range must start above contiguous_seq + 1; adjacent sequences advance the cursor instead."</ID>
+    <ID>MaxLineLength:PairAuthProofTest.kt$PairAuthProofTest.Companion$fromProperty?.let { File(it).parentFile?.resolve("fixtures")?.resolve("auth")?.resolve("vectors.json") }</ID>
+    <ID>MaxLineLength:PairingJson.kt$PairingJson$fun serialize(request: PairingConfirmRequest): String</ID>
+    <ID>MaxLineLength:PairingJson.kt$PairingJson$fun serialize(response: PairingConfirmResponse): String</ID>
+    <ID>MaxLineLength:PairingJson.kt$PairingJson$requireDocument(decodeBase64Url256(response.pairSecret) != null) { "pair_secret is not 32 bytes of unpadded base64url" }</ID>
+    <ID>MaxLineLength:PairingScreen.kt$PairingFailure.PROTOCOL -&gt; "The computer answered outside the pairing protocol. Update both apps to matching versions."</ID>
+    <ID>MaxLineLength:PairingScreen.kt$Text("This phone is now paired with \"${peer.displayName}\". Clipboard sync starts in a later stage; the trust and secret are stored securely now.")</ID>
+    <ID>MaxLineLength:ProtocolFixtureTest.kt$ProtocolFixtureTest$"""{"version":1,"type":"ping","request_id":"9b24fc53-b75f-4bd3-9b24-127025de111a","body":{},"extra":true}"""</ID>
+    <ID>MaxLineLength:ProtocolJson.kt$ProtocolJson$"event_id"</ID>
+    <ID>MaxLineLength:ProtocolJson.kt$ProtocolJson$if (isString || content.contains('.') || content.contains('e', ignoreCase = true)) null else content.toLongOrNull()</ID>
+    <ID>MaxLineLength:ServiceModels.kt$ServiceNotificationSpec$actions.flatMap { listOf(it.id, it.intentAction, it.componentClass, it.title) + it.extras.keys + it.extras.values }</ID>
+    <ID>NestedBlockDepth:AdbLogTestSupport.kt$fun assertNoRetainedRawLine(target: Any, rawLine: String)</ID>
+    <ID>NestedBlockDepth:SyncController.kt$SyncController$private suspend fun runLoop()</ID>
+    <ID>NestedBlockDepth:SyncSessionEngine.kt$SyncSessionEngine$private suspend fun loadByEventIds(eventIds: Set&lt;String&gt;): Map&lt;String, SyncableClipEvent&gt;</ID>
+    <ID>NestedBlockDepth:SyncSessionEngine.kt$SyncSessionEngine$private suspend fun runPingLoop()</ID>
+    <ID>ReturnCount:AdbLogOverlayBackend.kt$AdbLogOverlayBackend$private fun diagnose(granted: Boolean): Pair&lt;CapabilityState, String?&gt;</ID>
+    <ID>ReturnCount:AndroidShizukuRuntime.kt$AndroidShizukuRuntime$override fun bindUserService(): BindResult</ID>
+    <ID>ReturnCount:CapturePolicy.kt$CapturePolicy$fun evaluate( sourceApp: String?, utf8Bytes: Int, settings: PolicySettings, ): PolicyDecision</ID>
+    <ID>ReturnCount:CapturePolicy.kt$CapturePolicy$private fun isSourceBlocked(sourceApp: String?, settings: PolicySettings): Boolean</ID>
+    <ID>ReturnCount:ClipRepository.kt$ClipRepository$private suspend fun ClipSession.checkIdentity( eventId: String, originDeviceId: String, originSeq: Long, expectedContentHash: String?, ): RemoteStoreResult?</ID>
+    <ID>ReturnCount:ClipServices.kt$ClipServices$fun repository(context: Context): ClipRepository</ID>
+    <ID>ReturnCount:ClipServices.kt$ClipServices$fun writeCoordinator( publicWriter: PublicClipboardWriter, fallbackWriter: ClipboardWriter? = DeferredWriteFallback, ): ClipboardWriteCoordinator</ID>
+    <ID>ReturnCount:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator$fun checkHealth(): ClipboardAccessState</ID>
+    <ID>ReturnCount:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator$private fun canStartWhileDegraded( mode: ClipboardReadMode, report: CapabilityReport, ): Boolean</ID>
+    <ID>ReturnCount:ClipboardLogParsers.kt$LogcatLineShape$fun parse(line: String): LogcatTagMessage?</ID>
+    <ID>ReturnCount:ClipboardLogParsers.kt$VersionedTagParser$override fun match(line: String): ClipboardLogMatch?</ID>
+    <ID>ReturnCount:ClipboardSelfTest.kt$ClipboardSelfTest$fun runReadTest(): SelfTestResult</ID>
+    <ID>ReturnCount:ClipboardSyncService.kt$ClipboardSyncService$override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int</ID>
+    <ID>ReturnCount:ClipboardUserService.kt$ClipboardUserService$override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean</ID>
+    <ID>ReturnCount:ClipboardUserService.kt$ClipboardUserService$private fun ensureAdapter(): IClipboardReflectionAdapter?</ID>
+    <ID>ReturnCount:ClipboardUserService.kt$ClipboardUserService$private fun registerSystemListener(): Boolean</ID>
+    <ID>ReturnCount:ClipboardUserService.kt$ClipboardUserService.&lt;no name provided&gt;$override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean</ID>
+    <ID>ReturnCount:ClipboardWriteCoordinator.kt$ClipboardWriteCoordinator$fun shouldSuppress(originEventId: String?, text: String): Boolean</ID>
+    <ID>ReturnCount:ClipboardWriteCoordinator.kt$ClipboardWriteCoordinator$fun writeText(text: String, originEventId: String): ClipboardWriteOutcome</ID>
+    <ID>ReturnCount:ClipboardWriteCoordinator.kt$ClipboardWriteCoordinator$private fun resolveWriteMode(): ClipboardWriteMode</ID>
+    <ID>ReturnCount:FakeShizukuRuntime.kt$FakeShizukuRuntime$override fun bindUserService(): BindResult</ID>
+    <ID>ReturnCount:ForegroundClipboardBackend.kt$AndroidClipboardOs$override fun readPrimaryText(): OsClip</ID>
+    <ID>ReturnCount:ForegroundClipboardBackend.kt$ForegroundClipboardBackend$override fun health(): BackendHealth</ID>
+    <ID>ReturnCount:ForegroundClipboardBackend.kt$ForegroundClipboardBackend$override fun readText(): ClipboardReadResult</ID>
+    <ID>ReturnCount:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$private fun resolve(name: String, kind: MethodKind): ResolvedMethod?</ID>
+    <ID>ReturnCount:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter.Companion$internal fun matches(method: Method, shape: IClipboardApiShape, kind: MethodKind): Boolean</ID>
+    <ID>ReturnCount:IClipboardReflectionAdapter.kt$ReflectiveClipTextReader$override fun readItemText(clip: Any?): String?</ID>
+    <ID>ReturnCount:InMemoryClipPersistence.kt$InMemoryClipPersistence.InMemoryClipSession$override suspend fun softDelete(eventId: String, nowMs: Long): Boolean</ID>
+    <ID>ReturnCount:LogcatClipboardEventReader.kt$LogcatClipboardEventReader$private fun runFlights()</ID>
+    <ID>ReturnCount:MainActivity.kt$MainActivity$private fun intentFlag(intent: Intent, key: String): Boolean</ID>
+    <ID>ReturnCount:OriginReceiveState.kt$OriginReceiveState$fun acceptRange(range: SequenceRange): OriginReceiveState</ID>
+    <ID>ReturnCount:OverlayFocusController.kt$AndroidOverlayPlatform$override fun currentWindow(): OverlayWindowSpec?</ID>
+    <ID>ReturnCount:OverlayFocusController.kt$AndroidOverlayPlatform$override fun readPrimaryText(): OverlayClipRead</ID>
+    <ID>ReturnCount:OverlayFocusController.kt$OverlayFocusController$private fun doReadText(): ClipboardReadResult</ID>
+    <ID>ReturnCount:OverlayPollingBackend.kt$OverlayPollingBackend$override fun health(): BackendHealth</ID>
+    <ID>ReturnCount:OverlayPollingBackend.kt$OverlayPollingBackend$private fun onTick()</ID>
+    <ID>ReturnCount:PairingConfirmClient.kt$PairingConfirmClient$private fun mapTooManyRequests(bodyText: String): PairingConfirmOutcome</ID>
+    <ID>ReturnCount:PairingConfirmClient.kt$PairingConfirmClient$private fun readBounded(response: okhttp3.Response): String?</ID>
+    <ID>ReturnCount:PairingJson.kt$PairingJson$fun decodeBase64Url256(value: String): ByteArray?</ID>
+    <ID>ReturnCount:PairingStore.kt$PairingStore$fun peer(): PairedPeer?</ID>
+    <ID>ReturnCount:PairingViewModel.kt$PairingViewModel$fun onPayload(text: String)</ID>
+    <ID>ReturnCount:PairingViewModel.kt$PairingViewModel$private fun saveApproved(qr: PairingQrPayload, outcome: PairingConfirmOutcome.Approved): PairingUiState</ID>
+    <ID>ReturnCount:ShizukuClipboardBackend.kt$ShizukuClipboardBackend$override fun health(): BackendHealth</ID>
+    <ID>ReturnCount:ShizukuClipboardBackend.kt$ShizukuClipboardBackend$override fun readText(): ClipboardReadResult</ID>
+    <ID>ReturnCount:ShizukuClipboardBinder.kt$ChangeCallbackBinder$override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean</ID>
+    <ID>ReturnCount:ShizukuClipboardWriter.kt$ShizukuClipboardWriter$override fun writeText(text: String, originEventId: String): ClipboardWriteResult</ID>
+    <ID>ReturnCount:SyncController.kt$SyncController$private suspend fun runLoop()</ID>
+    <ID>ReturnCount:SyncSessionEngine.kt$SyncSessionEngine$private suspend fun dispatch(text: String): Boolean</ID>
+    <ID>ReturnCount:SyncSessionEngine.kt$SyncSessionEngine$private suspend fun drainOutbox()</ID>
+    <ID>ReturnCount:SyncSessionEngine.kt$SyncSessionEngine$private suspend fun handleChallenge(body: ChallengeBody, requestId: String): Boolean</ID>
+    <ID>ReturnCount:SyncSessionEngine.kt$SyncSessionEngine$private suspend fun handleClipAnnounce(announce: ClipAnnounceBody): Boolean</ID>
+    <ID>ReturnCount:SyncSessionEngine.kt$SyncSessionEngine$private suspend fun handleClipPayload(payload: ClipPayloadBody): Boolean</ID>
+    <ID>ReturnCount:WizardSettings.kt$KeyValueWizardSettings$override fun loadSkippedSteps(): Set&lt;WizardStepId&gt;</ID>
+    <ID>SpreadOperator:ClipDatabase.kt$ClipDatabase.Companion$(*MIGRATIONS)</ID>
+    <ID>SpreadOperator:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$(clipboard, *argsForGet(resolved.shape))</ID>
+    <ID>SpreadOperator:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$(clipboard, *argsForListener(resolved.shape, listener))</ID>
+    <ID>SpreadOperator:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$(clipboard, *argsForSet(resolved.shape, clip))</ID>
+    <ID>SwallowedException:SyncController.kt$SyncController$cancelled: CancellationException</ID>
+    <ID>ThrowsCount:ProtocolJson.kt$ProtocolJson$fun parseEnvelope(source: String): ProtocolEnvelope</ID>
+    <ID>TooGenericExceptionCaught:ClipboardSyncService.kt$ClipboardSyncService$error: Exception</ID>
+    <ID>TooGenericExceptionCaught:ClipboardUserService.kt$ClipboardUserService$error: Exception</ID>
+    <ID>TooGenericExceptionCaught:ClipboardUserService.kt$ClipboardUserService$error: Throwable</ID>
+    <ID>TooGenericExceptionCaught:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$error: Throwable</ID>
+    <ID>TooGenericExceptionCaught:OriginReceiveState.kt$SequenceRangeJson$error: Exception</ID>
+    <ID>TooGenericExceptionCaught:PeerSyncDialer.kt$OkHttpSyncConnector$exception: Exception</ID>
+    <ID>TooGenericExceptionThrown:FakeOverlayPlatform.kt$FakeOverlayPlatform$throw RuntimeException("overlay-read-boom")</ID>
+    <ID>TooManyFunctions:AndroidShizukuRuntime.kt$AndroidShizukuRuntime : ShizukuRuntime</ID>
+    <ID>TooManyFunctions:ClipDaos.kt$ClipDao</ID>
+    <ID>TooManyFunctions:ClipPersistence.kt$ClipSession</ID>
+    <ID>TooManyFunctions:ClipPersistence.kt$RoomClipSession : ClipSession</ID>
+    <ID>TooManyFunctions:ClipRepository.kt$ClipRepository</ID>
+    <ID>TooManyFunctions:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator</ID>
+    <ID>TooManyFunctions:ClipboardSyncService.kt$ClipboardSyncService : Service</ID>
+    <ID>TooManyFunctions:ClipboardUserService.kt$ClipboardUserService : BinderDeathRecipient</ID>
+    <ID>TooManyFunctions:MainActivity.kt$MainActivity : ComponentActivity</ID>
+    <ID>TooManyFunctions:OverlayFocusController.kt$OverlayFocusController</ID>
+    <ID>TooManyFunctions:PairingJson.kt$PairingJson</ID>
+    <ID>TooManyFunctions:PairingJson.kt$PairingJson$StrictScanner</ID>
+    <ID>TooManyFunctions:ProtocolJson.kt$ProtocolJson</ID>
+    <ID>TooManyFunctions:ServiceOrchestrator.kt$ServiceOrchestrator</ID>
+    <ID>TooManyFunctions:SettingsViewModel.kt$SettingsViewModel : ViewModel</ID>
+    <ID>TooManyFunctions:ShizukuClipboardBackend.kt$ShizukuClipboardBackend : BackgroundClipboardBackend</ID>
+    <ID>TooManyFunctions:ShizukuRuntime.kt$ShizukuRuntime</ID>
+    <ID>TooManyFunctions:SyncSessionEngine.kt$SyncSessionEngine</ID>
+    <ID>TooManyFunctions:WizardFrameworkProbes.kt$WizardFrameworkProbes</ID>
+    <ID>TooManyFunctions:WizardScreen.kt$com.clipsync.android.ui.wizard.WizardScreen.kt</ID>
+    <ID>TooManyFunctions:WizardViewModel.kt$WizardViewModel : ViewModel</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClip$index: Int</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardApi34$attributionTag: String?</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardApi34$callingPackage: String</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardApi34$deviceId: Int</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardApi34$userId: Int</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardPkgAttributionUserId$pkg: String</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardPkgAttributionUserId$userId: Int</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardPkgUserId$callingPackage: String</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardPkgUserId$userId: Int</ID>
+    <ID>UnusedPrivateMember:HealthScreen.kt$@Preview(showBackground = true) @Composable private fun HealthScreenPreview()</ID>
+    <ID>UseRequire:OriginReceiveState.kt$OriginReceiveState$throw IllegalArgumentException( "Every received range must start above contiguous_seq + 1; adjacent sequences advance the cursor instead.", )</ID>
+  </CurrentIssues>
+</SmellBaseline>

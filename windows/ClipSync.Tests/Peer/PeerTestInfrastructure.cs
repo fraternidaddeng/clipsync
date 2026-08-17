@@ -109,7 +109,9 @@ public sealed class PeerPair : IAsyncDisposable
         int extraWindowsUpserts = 0,
         SyncSessionOptions? serverSessionOptions = null,
         bool useDifferentAndroidSecret = false,
-        IPairingApprover? pairingApprover = null)
+        IPairingApprover? pairingApprover = null,
+        int maxPairingConfirmsPerWindow = PeerServerOptions.DefaultPairingConfirmsPerWindow,
+        int maxSyncAcceptsPerWindow = PeerServerOptions.DefaultSyncAcceptsPerWindow)
     {
         var directory = Path.Combine(Path.GetTempPath(), "clipsync-peer-tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
@@ -164,7 +166,9 @@ public sealed class PeerPair : IAsyncDisposable
             {
                 Certificate = pair.certificate,
                 SessionOptions = serverSessionOptions ?? DefaultSessionOptions(),
-                Port = 0
+                Port = 0,
+                MaxPairingConfirmsPerWindow = maxPairingConfirmsPerWindow,
+                MaxSyncAcceptsPerWindow = maxSyncAcceptsPerWindow
             },
             pair.Logs,
             pair.Pairing);

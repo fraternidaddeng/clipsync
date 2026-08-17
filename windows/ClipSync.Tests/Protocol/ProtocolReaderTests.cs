@@ -239,4 +239,69 @@ public sealed class ProtocolReaderTests
             ProtocolErrorCodes.SchemaViolation,
             Assert.IsType<ProtocolParseOutcome.Failure>(outcome).ErrorCode);
     }
+
+    [Fact]
+    public void AnnounceUtf8BytesAboveOneMebibyteIsRejected()
+    {
+        var outcome = ProtocolReader.Parse(ProtocolWriter.Serialize(
+            ProtocolMessageTypes.ClipAnnounce,
+            Guid.NewGuid(),
+            new ClipAnnounceBody { Clips = [AvailableHeader(ProtocolLimits.MaxContentUtf8Bytes + 1)] }));
+
+        Assert.Equal(
+            ProtocolErrorCodes.SchemaViolation,
+            Assert.IsType<ProtocolParseOutcome.Failure>(outcome).ErrorCode);
+    }
+
+    [Fact]
+    public void AnnounceUtf8BytesAtOneMebibyteIsAccepted()
+    {
+        var outcome = ProtocolReader.Parse(ProtocolWriter.Serialize(
+            ProtocolMessageTypes.ClipAnnounce,
+            Guid.NewGuid(),
+            new ClipAnnounceBody { Clips = [AvailableHeader(ProtocolLimits.MaxContentUtf8Bytes)] }));
+
+        Assert.IsType<ProtocolParseOutcome.Success>(outcome);
+    }
+
+    [Fact]
+    public void SinglePayloadClipAboveOneMebibyteIsRejected()
+    {
+        var oversized = new string('x', ProtocolLimits.MaxContentUtf8Bytes + 1);
+        var body = new ClipPayloadBody
+        {
+            Clips =
+            [
+                new ClipPayloadItemDto
+                {
+                    EventId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+                    OriginDeviceId = "11111111-1111-4111-8111-111111111111",
+                    OriginSeq = 1,
+                    Kind = "text",
+                    Content = oversized,
+                    ContentHash = ProtocolValidation.ComputeContentHash(oversized),
+                    Utf8Bytes = oversized.Length,
+                    CreatedAtMs = 1
+                }
+            ]
+        };
+
+        var outcome = ProtocolReader.Parse(ProtocolWriter.Serialize(ProtocolMessageTypes.ClipPayload, Guid.NewGuid(), body));
+
+        Assert.Equal(
+            ProtocolErrorCodes.SchemaViolation,
+            Assert.IsType<ProtocolParseOutcome.Failure>(outcome).ErrorCode);
+    }
+
+    private static ClipHeaderDto AvailableHeader(long utf8Bytes) => new()
+    {
+        EventId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        OriginDeviceId = "11111111-1111-4111-8111-111111111111",
+        OriginSeq = 1,
+        Availability = ClipAvailability.Available,
+        Kind = "text",
+        ContentHash = new string('a', 64),
+        Utf8Bytes = utf8Bytes,
+        CreatedAtMs = 1
+    };
 }

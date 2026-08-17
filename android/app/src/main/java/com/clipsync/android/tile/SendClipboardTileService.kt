@@ -46,6 +46,8 @@ class SendClipboardTileService : TileService() {
                     CaptureRejectReason.TOO_LARGE -> getString(R.string.share_oversized)
                     CaptureRejectReason.EMPTY_TEXT -> getString(R.string.tile_empty)
                     CaptureRejectReason.DUPLICATE -> getString(R.string.share_duplicate)
+                    CaptureRejectReason.BLOCKED_SOURCE -> getString(R.string.share_blocked)
+                    CaptureRejectReason.POLICY_PAUSED -> getString(R.string.share_paused)
                 }
                 TileSendOutcome.SkippedPolicy -> getString(R.string.share_paused)
             }

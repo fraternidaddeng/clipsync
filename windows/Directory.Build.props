@@ -1,0 +1,14 @@
+<Project>
+  <Import Project="..\Directory.Build.props" />
+  <PropertyGroup>
+    <!-- Built-in .NET analyzers: Recommended for style/quality so TreatWarningsAsErrors
+         does not turn existing nits into a wall of errors. Security category is All. -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <AnalysisModeSecurity>All</AnalysisModeSecurity>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <!-- Keep CA security rules as errors even if a future AnalysisMode change downgrades them. -->
+    <WarningsAsErrors>$(WarningsAsErrors);CA2100;CA5350;CA5351;CA3075</WarningsAsErrors>
+  </PropertyGroup>
+</Project>

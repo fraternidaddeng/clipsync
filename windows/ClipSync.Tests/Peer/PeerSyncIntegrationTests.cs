@@ -261,6 +261,24 @@ public sealed class PeerSyncIntegrationTests
     }
 
     [Fact]
+    public async Task SyncAcceptsOverTheRateLimitAreRefused()
+    {
+        await using var pair = await PeerPair.CreateAsync(maxSyncAcceptsPerWindow: 1);
+        await using var admitted = await ClipSync.Peer.Client.PeerSyncClient.ConnectAsync(
+            "127.0.0.1",
+            pair.Server.Port,
+            pair.ServerFingerprint,
+            CancellationToken.None);
+
+        await Assert.ThrowsAnyAsync<WebSocketException>(() =>
+            ClipSync.Peer.Client.PeerSyncClient.ConnectAsync(
+                "127.0.0.1",
+                pair.Server.Port,
+                pair.ServerFingerprint,
+                CancellationToken.None));
+    }
+
+    [Fact]
     public async Task OversizedTextFrameIsRejectedWithPayloadTooLarge()
     {
         await using var pair = await PeerPair.CreateAsync();

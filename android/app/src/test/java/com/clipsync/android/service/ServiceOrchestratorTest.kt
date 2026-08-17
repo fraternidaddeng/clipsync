@@ -174,6 +174,37 @@ class ServiceOrchestratorTest {
     }
 
     @Test
+    fun `boot health check exhaustion flips to needs recovery and stays honest`() {
+        val orch = ServiceOrchestrator()
+        orch.wantedRunning = true
+        orch.setBootRecoveryEnabled(true)
+        assertEquals(ServiceProcessState.STOPPED, orch.processState)
+
+        orch.onBootHealthCheckFailed()
+
+        assertEquals(ServiceProcessState.NEEDS_RECOVERY, orch.processState)
+        assertEquals(ControllerOwner.NONE, orch.controllerOwner)
+        assertTrue(orch.wantedRunning)
+        assertFalse(orch.isOnline)
+        assertFalse(orch.isProcessAlive)
+        assertEquals(ServiceSnapshot.LABEL_NEEDS_RECOVERY, orch.statusLabel())
+    }
+
+    @Test
+    fun `boot health check failure does not demote a running service`() {
+        val activity = RecordingLease()
+        val service = RecordingLease()
+        val orch = startedService(activity, service)
+        orch.markControllerReady()
+        assertTrue(orch.isOnline)
+
+        orch.onBootHealthCheckFailed()
+
+        assertEquals(ServiceProcessState.RUNNING, orch.processState)
+        assertTrue(orch.isOnline)
+    }
+
+    @Test
     fun `network regain nudges a running service controller without a busy loop`() {
         val activity = RecordingLease()
         val service = RecordingLease()

@@ -17,8 +17,9 @@ object PairingErrorCodes {
     const val TOKEN_EXPIRED = "PAIRING_TOKEN_EXPIRED"
     const val REJECTED = "PAIRING_REJECTED"
     const val TIMEOUT = "PAIRING_TIMEOUT"
+    const val RATE_LIMITED = "PAIRING_RATE_LIMITED"
 
-    val ALL = setOf(SCHEMA_VIOLATION, TOKEN_INVALID, TOKEN_EXPIRED, REJECTED, TIMEOUT)
+    val ALL = setOf(SCHEMA_VIOLATION, TOKEN_INVALID, TOKEN_EXPIRED, REJECTED, TIMEOUT, RATE_LIMITED)
 }
 
 /** The JSON object rendered inside the pairing QR code. Never contains the pair secret. */
