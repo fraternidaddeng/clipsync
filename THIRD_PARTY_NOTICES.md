@@ -1,6 +1,6 @@
 # Third-Party Dependency and License Inventory
 
-This inventory (Stage 0, updated through Stage 3) records direct build/runtime/test dependencies currently declared in the repository and major dependencies explicitly planned by `plan.md`. It is not a substitute for the release-time transitive dependency, notice, and source-offer review. Exact license texts and obligations must be collected from the resolved artifacts before distribution.
+This inventory (Stage 0, updated through Stage 4) records direct build/runtime/test dependencies currently declared in the repository and major dependencies explicitly planned by `plan.md`. It is not a substitute for the release-time transitive dependency, notice, and source-offer review. Exact license texts and obligations must be collected from the resolved artifacts before distribution.
 
 ## Currently declared dependencies
 
@@ -31,10 +31,15 @@ This inventory (Stage 0, updated through Stage 3) records direct build/runtime/t
 | OkHttp | 4.12.0 | Android pinned-TLS pairing client (WebSocket sync in stage 4) | Apache-2.0 |
 | ML Kit Barcode Scanning | 17.3.0 | Android pairing QR scan | Closed-source Google library under Google APIs/Play Services terms, not an OSS license; camera-permission fallback (pasted payload) keeps pairing usable without it. Review distribution terms before release |
 | AndroidX CameraX (camera2, lifecycle, view) | 1.4.1 | Camera preview for QR scanning | Apache-2.0 |
+| AndroidX Room runtime / room-ktx | 2.6.1 | Android clip/outbox/cursor persistence | Apache-2.0 |
+| AndroidX Room compiler (via KSP) | 2.6.1 | Room annotation processing (build only) | Apache-2.0 |
+| com.google.devtools.ksp (Gradle plugin) | 2.0.21-1.0.28 | Kotlin Symbol Processing for Room (build only) | Apache-2.0 |
 | JUnit 4 | 4.13.2 | Android/JVM unit tests | EPL-1.0 |
 | OkHttp MockWebServer | 4.12.0 | Android pairing client tests (test only) | Apache-2.0 |
 | okhttp-tls | 4.12.0 | Test TLS certificates (test only) | Apache-2.0 |
 | kotlinx-coroutines-test | 1.9.0 | Android coroutine tests (test only) | Apache-2.0 |
+| AndroidX Room room-testing | 2.6.1 | Room test helpers (test only) | Apache-2.0 |
+| AndroidX Arch core-testing | 2.2.0 | Architecture Components test helpers (test only) | Apache-2.0 |
 
 ## Planned direct dependencies
 
@@ -42,7 +47,6 @@ These are architectural selections, not necessarily present in the current build
 
 | Component | Planned purpose | Expected license/status |
 |---|---|---|
-| Room | Android persistence | Apache-2.0 |
 | AndroidX WorkManager | Bounded recovery | Apache-2.0 |
 | Shizuku API | User-authorized clipboard bridge | License and notice must be verified from the pinned artifact before addition |
 

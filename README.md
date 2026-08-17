@@ -1,6 +1,6 @@
 # ClipSync
 
-ClipSync is a private, direct peer-to-peer clipboard synchronization project for Windows and Android. The repository has completed **Stage 1**: the Stage 0 protocol and client foundations plus a background Windows clipboard listener, transactional local history, privacy controls, and a tray-based WPF UI.
+ClipSync is a private, direct peer-to-peer clipboard synchronization project for Windows and Android. The repository has completed **Stage 3** (Windows peer endpoint, QR pairing, and device trust). **Stage 4** Android companion is implemented on `feature/stage-4`: OkHttp WebSocket sync, Room history UI, share target, Quick Settings tile, and inbound notifications. End-to-end pairing/sync is pending wave 3. Physical Android ROM coverage remains `NOT_TESTED`.
 
 No account service, cloud database, public relay, file transfer, telemetry, or clipboard-content logging is included.
 

@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipSync.App.Tests", "ClipS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipSync.Peer", "ClipSync.Peer\ClipSync.Peer.csproj", "{5A0DA4C1-6B14-4A5E-9E44-2A64C3E01F55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipSync.E2eHost", "ClipSync.E2eHost\ClipSync.E2eHost.csproj", "{8F3C1A20-9B47-4D6E-A1C2-5E7D9F0B3A14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,5 +41,9 @@ Global
 		{5A0DA4C1-6B14-4A5E-9E44-2A64C3E01F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A0DA4C1-6B14-4A5E-9E44-2A64C3E01F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A0DA4C1-6B14-4A5E-9E44-2A64C3E01F55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F3C1A20-9B47-4D6E-A1C2-5E7D9F0B3A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F3C1A20-9B47-4D6E-A1C2-5E7D9F0B3A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F3C1A20-9B47-4D6E-A1C2-5E7D9F0B3A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F3C1A20-9B47-4D6E-A1C2-5E7D9F0B3A14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ClipSync</string>
+
+    <string name="tab_history">History</string>
+    <string name="tab_status">Status</string>
+    <string name="tab_settings">Settings</string>
+    <string name="tab_pairing">Pairing</string>
+
+    <string name="history_title">Clipboard history</string>
+    <string name="history_search">Search</string>
+    <string name="history_clear">Clear local history</string>
+    <string name="history_copy">Copy</string>
+    <string name="history_delete">Delete</string>
+    <string name="history_empty">No clips yet. Share text, use the Quick Settings tile, or pair with Windows.</string>
+    <string name="history_oversized">That text is larger than 1 MiB and was not stored.</string>
+    <string name="history_unpaired">Not paired with Windows. Pairing is required before clips can sync.</string>
+    <string name="history_windows_unreachable">Windows is unreachable. Clips stay on this phone until the peer is online.</string>
+    <string name="history_copy_failed">Could not write to the system clipboard. Try again from the app.</string>
+
+    <string name="health_title">Device health</string>
+    <string name="health_no_peers">No paired devices</string>
+    <string name="health_peer_count">%d paired devices</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_pause">Pause sync</string>
+    <string name="settings_pause_hint">Stop capturing and sending clips. Existing history is kept.</string>
+    <string name="settings_private">Private mode</string>
+    <string name="settings_private_hint">New clips are not stored or sent. Past clips are not backfilled later.</string>
+    <string name="settings_auto_apply">Auto-apply remote clips</string>
+    <string name="settings_auto_apply_hint">Write inbound Windows text to the system clipboard when public write works.</string>
+    <string name="settings_capabilities">Capability</string>
+
+    <string name="capability_network">Network</string>
+    <string name="capability_service">Service</string>
+    <string name="capability_read">Clipboard read</string>
+    <string name="capability_write">Clipboard write</string>
+
+    <string name="share_captured">Sent to ClipSync</string>
+    <string name="share_oversized">Text is larger than 1 MiB and was not sent.</string>
+    <string name="share_empty">Nothing to send.</string>
+    <string name="share_duplicate">Already captured.</string>
+    <string name="share_paused">Capture is paused or private mode is on.</string>
+    <string name="share_label">Send to Windows</string>
+
+    <string name="tile_send_clipboard">Send clipboard</string>
+    <string name="tile_sent">Clipboard sent to ClipSync</string>
+    <string name="tile_empty">Clipboard is empty or not text.</string>
+    <string name="tile_read_failed">Could not read the clipboard.</string>
+
+    <string name="notify_channel_name">Inbound clips</string>
+    <string name="notify_channel_description">Copy inbound clips when they are not applied automatically.</string>
+    <string name="notify_inbound_title">New clip from Windows</string>
+    <string name="notify_inbound_text">Tap Copy to put it on this phone\'s clipboard.</string>
+    <string name="notify_copy_action">Copy to clipboard</string>
 </resources>
