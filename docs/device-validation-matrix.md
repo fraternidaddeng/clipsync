@@ -79,7 +79,7 @@
 | P10 | 2026-08-18 | AOSP 模拟器 API 30 | `OVERLAY_POLLING` | （编排器填） | **未开跑** | 见 P2。 |
 | P11 | 2026-08-18 | AOSP 模拟器 API 30 | `FOREGROUND_ONLY` | （编排器填） | **未开跑** | 见 P2。 |
 | P12 | 2026-08-18 | AOSP 模拟器 API 30 | （开机恢复） | 模拟器开机恢复 | **未开跑** | 见 P2。 |
-| P13 | 2026-08-18 | Redmi Note 11T Pro / MIUI 14 / API 33 | `OVERLAY_POLLING` | **真同步**（复制 → 落库 → Windows；非仅 probe） | **进行中** | stage-5 仅 probe READY；stage-8「仍未测：`OVERLAY_POLLING` 真同步」。本日有 agent 在该机尝试。 |
+| P13 | 2026-08-18 | Redmi Note 11T Pro / MIUI 14 / API 33 | `OVERLAY_POLLING` | **真同步**（复制 → 落库 → Windows；非仅 probe） | **FAIL（本机诚实结论）** | 悬浮窗授权 + 同意后模式达 READY、800ms 轮询确在跑，但**应用后台时 MIUI `ClipboardService` 逐次拒绝读取**（`Denying clipboard access … not in focus`，约 6s 内 27 次拒绝），后台复制零捕获；应用前台时同模式捕获约 1s 可同步（但那是前台焦点，不是悬浮窗抢焦点）。**该 MIUI 上悬浮窗模式实际仅前台可用。** 附带硬件确认：Shizuku 回归后 `tryRecoverRequestedMode` 约 21s 自动切回 `SHIZUKU_EVENT`。测后手机状态已全部还原（consent off / appops ignore / SHIZUKU READY / 末次令牌同步 PASS）。 |
 
 ### 无硬件 / 本机阻塞（不是进行中）
 

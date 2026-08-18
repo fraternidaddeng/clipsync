@@ -72,7 +72,8 @@
 - **Modern Standby `PowerModeChanged` 缺口已补**（`02ec63c`）：`PowerRegisterSuspendResumeNotification` 覆盖 S0 进出，单测锁行为；**运行期 S0 事件落盘待自然待机验证**。经典 S3 睡眠→唤醒→复制恰好一条未测。锁屏/解锁有代码与诊断，无实机。
 - **多 ROM / 模拟器**：实体 AOSP/Pixel、OneUI、ColorOS/OriginOS 仍 **NO_EVIDENCE**。**API 34 AOSP 模拟器全量 PASS**（google_apis x86_64：装机、英文 UI、前台捕获、Shizuku READY + 自测、隔离回环 E2eHost@10.0.2.2 双向同步、**原生开机恢复**——`BOOT_COMPLETED` → +28 s FGS → 未开应用即捕获并送达；见 `docs/device-validation-matrix.md` P1–P7）。API 30/35 未开跑（AVD 基建已留存：emulator 37.1.11、`clipsync_api34`、SDK 增量约 6.2 GB）。模拟器附带观察：QR 只广播 LAN 地址不含回环（模拟器需手工指 10.0.2.2）、`READ_LOGS` 授予后进程内刷新滞后、重绑瞬间短暂双 `:clipsync-clipboard`、通用 AVD 320×640 会把自测按钮裁到不可点。
 - **导出**：双端入口已接上；导入与 tombstone 字段仍缺。purge / 搜索 / 暂停无本日实机走查。
-- **仍未测**：运行中撤 Shizuku/overlay/`READ_LOGS` 且仅 FGS 存活、Android 强制停止、通知拒绝、电池优化长期驻留、`OVERLAY_POLLING` 真同步、`ADB_LOG_OVERLAY` READY 上行。
+- **`OVERLAY_POLLING` 真同步：本机 FAIL（诚实结论，2026-08-18 下午实测）**——模式可达 READY 且轮询在跑，但 MIUI 14 在应用后台时系统级拒绝剪贴板读（`ClipboardService: Denying clipboard access … not in focus`），后台零捕获；前台同模式可用。该机上的悬浮窗模式定位降级为「前台辅助」。附带硬件确认：Shizuku 回归后健康循环约 21s 自动升级回 `SHIZUKU_EVENT`。实测挖出三个待修：(1) **回归**：捕获栈进程化后健康回退跑在 IO 线程，无法 `WindowManager.addView`，Shizuku 死后自动降级到悬浮窗失败（`CLIPBOARD_MODE_SWITCH_FAILED`；重构前在主线程无此问题）；(2) 悬浮窗 probe/health 不感知读拒绝，READY 具有误导性；(3) 状态页能力卡恒显示前台 probe 结果。
+- **仍未测**：运行中撤 Shizuku/overlay/`READ_LOGS` 且仅 FGS 存活、Android 强制停止、通知拒绝、电池优化长期驻留、`ADB_LOG_OVERLAY` READY 上行。
 
 ## 对 DoD 审计的影响
 
