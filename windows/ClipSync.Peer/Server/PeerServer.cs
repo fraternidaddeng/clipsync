@@ -293,6 +293,15 @@ public sealed class PeerServer : IAsyncDisposable
         }
     }
 
+    /// <summary>Cancels every live session without stopping the listener (e.g. before sleep).</summary>
+    public void DisconnectAllSessions()
+    {
+        foreach (var session in sessions.Values)
+        {
+            session.Engine.RequestClose();
+        }
+    }
+
     private static int ResolveBoundPort(WebApplication host)
     {
         var feature = ((IServer)host.Services.GetRequiredService<IServer>()).Features.Get<IServerAddressesFeature>();
@@ -302,10 +311,7 @@ public sealed class PeerServer : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        foreach (var session in sessions.Values)
-        {
-            session.Engine.RequestClose();
-        }
+        DisconnectAllSessions();
 
         if (app is not null)
         {

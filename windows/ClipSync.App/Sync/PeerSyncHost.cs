@@ -122,6 +122,15 @@ public sealed class PeerSyncHost : IAsyncDisposable
 
     public void DisconnectDevice(string deviceId) => server?.DisconnectDevice(deviceId);
 
+    /// <summary>Closes every live peer session without stopping the listener (e.g. before sleep).</summary>
+    public void DisconnectAllSessions() => server?.DisconnectAllSessions();
+
+    /// <summary>
+    /// Re-broadcasts the discovery beacon so peers redial after wake. Same path as the
+    /// periodic timer and <see cref="NetworkChange.NetworkAddressChanged"/>.
+    /// </summary>
+    public void NudgeReconnect() => _ = BroadcastQuietlyAsync();
+
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch) =>
         RemoteClipsCommitted?.Invoke(batch);
 

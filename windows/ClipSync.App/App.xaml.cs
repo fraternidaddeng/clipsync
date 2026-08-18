@@ -1,6 +1,7 @@
 using ClipSync.App.Clipboard;
 using ClipSync.App.Diagnostics;
 using ClipSync.App.Pairing;
+using ClipSync.App.Power;
 using ClipSync.App.Security;
 using ClipSync.App.Sync;
 using ClipSync.App.Tray;
@@ -29,6 +30,8 @@ public partial class App : Application
     private PeerSyncHost? syncHost;
     private PairingService? pairingService;
     private PairingQrWindow? pairingWindow;
+    private SessionPowerMonitor? powerMonitor;
+    private SessionPowerCoordinator? powerCoordinator;
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -72,6 +75,7 @@ public partial class App : Application
         LocalDiagnostics.Write("listener_started");
 
         await StartPeerEndpointAsync(dataDirectory, deviceId, store, viewModel);
+        AttachSessionPowerAwareness(viewModel, deviceId);
     }
 
     private async Task StartPeerEndpointAsync(
@@ -94,10 +98,7 @@ public partial class App : Application
             syncHost = new PeerSyncHost(store, protector, certificate, pairingService);
             syncHost.RemoteClipsCommitted += OnRemoteClipsCommitted;
             await syncHost.StartAsync(viewModel.ExtraBindAddresses);
-            viewModel.SyncStatus = Strings.FormatSyncStatusRunning(
-                syncHost.Port,
-                deviceId,
-                syncHost.CertificateFingerprint[..16]);
+            ApplyRunningSyncStatus(viewModel, deviceId);
             if (string.Equals(
                     Environment.GetEnvironmentVariable("CLIPSYNC_SHOW_PAIRING"),
                     "1",
@@ -164,6 +165,33 @@ public partial class App : Application
         });
     }
 
+    private void AttachSessionPowerAwareness(MainViewModel viewModel, string deviceId)
+    {
+        powerMonitor = new SessionPowerMonitor();
+        powerCoordinator = new SessionPowerCoordinator(
+            powerMonitor,
+            tearDownSessions: () => syncHost?.DisconnectAllSessions(),
+            nudgeReconnect: () => syncHost?.NudgeReconnect(),
+            refreshStatus: () =>
+            {
+                _ = Dispatcher.InvokeAsync(() => ApplyRunningSyncStatus(viewModel, deviceId));
+            },
+            writeDiagnostics: LocalDiagnostics.Write);
+    }
+
+    private void ApplyRunningSyncStatus(MainViewModel viewModel, string deviceId)
+    {
+        if (syncHost is not { IsRunning: true })
+        {
+            return;
+        }
+
+        viewModel.SyncStatus = Strings.FormatSyncStatusRunning(
+            syncHost.Port,
+            deviceId,
+            syncHost.CertificateFingerprint[..16]);
+    }
+
     private void OnDeviceRevoked(string deviceId) => syncHost?.DisconnectDevice(deviceId);
 
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch)
@@ -200,6 +228,8 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        powerCoordinator?.Dispose();
+        powerMonitor?.Dispose();
         if (pairingService is not null)
         {
             pairingService.PairingCompleted -= OnPairingCompleted;
