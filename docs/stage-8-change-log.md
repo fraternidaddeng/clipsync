@@ -70,7 +70,7 @@
 
 - **MIUI 开机投递**：未授「自启动」时 MIUI 仍可能不投 `BOOT_COMPLETED`（阶段 6 已记）。授自启动后 FGS 可自行拉起捕获（`fb9347b`），但 Shizuku daemon 每次重启仍要 `start.sh`。
 - **Modern Standby `PowerModeChanged` 缺口已补**（`02ec63c`）：`PowerRegisterSuspendResumeNotification` 覆盖 S0 进出，单测锁行为；**运行期 S0 事件落盘待自然待机验证**。经典 S3 睡眠→唤醒→复制恰好一条未测。锁屏/解锁有代码与诊断，无实机。
-- **多 ROM / 模拟器**：AOSP/Pixel、OneUI、ColorOS/OriginOS、Android 10/12/14 仍 **NO_EVIDENCE**。API 34/30 AOSP 模拟器矩阵（含开机恢复）**进行中，不标完成**。
+- **多 ROM / 模拟器**：实体 AOSP/Pixel、OneUI、ColorOS/OriginOS 仍 **NO_EVIDENCE**。**API 34 AOSP 模拟器全量 PASS**（google_apis x86_64：装机、英文 UI、前台捕获、Shizuku READY + 自测、隔离回环 E2eHost@10.0.2.2 双向同步、**原生开机恢复**——`BOOT_COMPLETED` → +28 s FGS → 未开应用即捕获并送达；见 `docs/device-validation-matrix.md` P1–P7）。API 30/35 未开跑（AVD 基建已留存：emulator 37.1.11、`clipsync_api34`、SDK 增量约 6.2 GB）。模拟器附带观察：QR 只广播 LAN 地址不含回环（模拟器需手工指 10.0.2.2）、`READ_LOGS` 授予后进程内刷新滞后、重绑瞬间短暂双 `:clipsync-clipboard`、通用 AVD 320×640 会把自测按钮裁到不可点。
 - **导出**：双端入口已接上；导入与 tombstone 字段仍缺。purge / 搜索 / 暂停无本日实机走查。
 - **仍未测**：运行中撤 Shizuku/overlay/`READ_LOGS` 且仅 FGS 存活、Android 强制停止、通知拒绝、电池优化长期驻留、`OVERLAY_POLLING` 真同步、`ADB_LOG_OVERLAY` READY 上行。
 

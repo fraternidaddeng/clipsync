@@ -1,5 +1,6 @@
 [CmdletBinding()]
 param(
+    # Folder and artifact names only. Does not write gradle/csproj version fields.
     [string]$Version,
     [switch]$Prune
 )
@@ -105,6 +106,73 @@ Re-run this script. The keystore stays outside the repo; this script never gener
 "@
 }
 
+function Resolve-ReleaseVersion {
+    param(
+        [string]$Override,
+        [string]$AndroidVersion
+    )
+    if ($Override -and $Override.Trim()) {
+        return $Override.Trim()
+    }
+    return $AndroidVersion
+}
+
+function Clear-ReleaseOutputFolder {
+    param([string]$Path)
+    if (Test-Path -LiteralPath $Path) {
+        Write-Host "Cleaning existing output folder: $Path"
+        Get-ChildItem -LiteralPath $Path -Force | ForEach-Object {
+            Remove-Item -LiteralPath $_.FullName -Recurse -Force
+        }
+    }
+    New-Item -ItemType Directory -Force -Path $Path | Out-Null
+}
+
+function Get-WindowsPortableReadmeLines {
+    param(
+        [string]$ReleaseVersion,
+        [string]$WindowsComponentVersion
+    )
+    return @(
+        'ClipSync Windows 便携版',
+        "版本：$ReleaseVersion（Windows 组件 $WindowsComponentVersion）",
+        '',
+        '个人使用的 Windows ↔ Android P2P 剪贴板同步。无需安装、无需管理员、无云端。',
+        '',
+        '如何运行',
+        '  1. 将本文件夹解压到可写位置（例如 %LOCALAPPDATA%\Programs\ClipSync）。',
+        '  2. 双击 ClipSync.App.exe。托盘会出现图标；对端服务无需提权即可绑定。',
+        '  3. 从托盘选择「打开 ClipSync」，点「配对新设备…」，用 Android 扫描二维码。',
+        '',
+        '数据位置',
+        '  历史、配对密钥、设备 ID 和 TLS 证书在：',
+        '    %LOCALAPPDATA%\ClipSync',
+        '      clipsync.db          剪贴板历史 / 发件箱 / 已配对设备',
+        '      device-id            本机稳定身份',
+        '      peer-certificate.bin DPAPI 保护的 TLS 身份',
+        '  移动解压目录不会带走这些数据。',
+        '  测试可用临时目录：启动前设置 CLIPSYNC_DATA_DIR。',
+        '',
+        '开机自启（当前用户，无需管理员）',
+        '  在仓库中运行：  pwsh scripts/install-windows.ps1 -ZipPath <this-zip> -EnableAutostart',
+        '  或自行把 ClipSync.App.exe 加入 HKCU\Software\Microsoft\Windows\CurrentVersion\Run。',
+        '  不提供计划任务自启。',
+        '',
+        '如何卸载',
+        '  1. 从托盘选择「退出」。',
+        '  2. 运行：  pwsh scripts/uninstall-windows.ps1',
+        '  3. 脚本会删除 Run 项，删除 %LOCALAPPDATA%\ClipSync 前会询问。',
+        '     用 -ExportTo <folder> 可先复制 clipsync.db。不会静默删除数据。',
+        '  4. 不再需要程序时，删除解压目录即可。',
+        '',
+        '回滚',
+        '  保留上一份 ZIP。解压覆盖程序目录（或解压到旁边并改自启指向新 exe）。',
+        '  %LOCALAPPDATA%\ClipSync 不在 ZIP 里，换目录不会丢掉历史和配对。',
+        '',
+        '配对、Android 侧载与排错见源码树中的 docs/distribution.md。'
+    )
+}
+
 if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) {
     throw '.NET 8 SDK is required, but dotnet was not found on PATH. Set DOTNET_ROOT (e.g. D:\paste-tools\dotnet).'
 }
@@ -134,7 +202,7 @@ if (-not (Test-Path -LiteralPath $wrapper)) { throw "Gradle wrapper is missing: 
 
 $windowsVersion = Get-WindowsComponentVersion -CsprojPath $appCsproj
 $androidVersion = Get-AndroidVersionName -GradlePath $gradleFile
-$releaseVersion = if ($Version -and $Version.Trim()) { $Version.Trim() } else { $androidVersion }
+$releaseVersion = Resolve-ReleaseVersion -Override $Version -AndroidVersion $androidVersion
 
 Write-Host "Windows component version: $windowsVersion"
 Write-Host "Android versionName:       $androidVersion"
@@ -145,7 +213,7 @@ if ($windowsVersion -ne $androidVersion) {
 
 $releasesRoot = Join-Path $repoRoot 'releases'
 $versionDir = Join-Path $releasesRoot $releaseVersion
-New-Item -ItemType Directory -Force -Path $versionDir | Out-Null
+Clear-ReleaseOutputFolder -Path $versionDir
 
 $keystoreExists = Test-Path -LiteralPath $keystorePath
 $passwordSet = -not [string]::IsNullOrWhiteSpace($env:CLIPSYNC_KEYSTORE_PASSWORD)
@@ -183,44 +251,8 @@ if (-not (Test-Path -LiteralPath $exePath)) {
 }
 
 $readmePath = Join-Path $publishDir 'README.txt'
-@(
-    'ClipSync for Windows (portable)',
-    "Version: $releaseVersion (Windows component $windowsVersion)",
-    '',
-    'This is a personal-use P2P clipboard sync client. No installer, no admin, no cloud.',
-    '',
-    'How to run',
-    '  1. Unzip this folder anywhere you can write (for example %LOCALAPPDATA%\Programs\ClipSync).',
-    '  2. Double-click ClipSync.App.exe. A tray icon appears; the peer endpoint binds without elevation.',
-    '  3. Open the window from the tray, choose "Pair new device…", and scan the QR code from Android.',
-    '',
-    'Where data lives',
-    '  History, pairing keys, device id, and the TLS certificate live in:',
-    '    %LOCALAPPDATA%\ClipSync',
-    '      clipsync.db          clipboard history / outbox / paired devices',
-    '      device-id            stable local identity',
-    '      peer-certificate.bin DPAPI-protected TLS identity',
-    '  Moving the unzipped program folder does not move this data.',
-    '  To use a throwaway data directory (tests): set CLIPSYNC_DATA_DIR before launching.',
-    '',
-    'Autostart (current user, no admin)',
-    '  Run from the repo:  pwsh scripts/install-windows.ps1 -ZipPath <this-zip> -EnableAutostart',
-    '  Or add ClipSync.App.exe to HKCU\Software\Microsoft\Windows\CurrentVersion\Run yourself.',
-    '  Scheduled-task autostart is not provided.',
-    '',
-    'How to uninstall',
-    '  1. Exit ClipSync from the tray.',
-    '  2. Run:  pwsh scripts/uninstall-windows.ps1',
-    '  3. The script removes the Run key, then ASKS before deleting %LOCALAPPDATA%\ClipSync.',
-    '     Use -ExportTo <folder> to copy clipsync.db first. Data is never deleted silently.',
-    '  4. Delete the unzipped program folder if you no longer want the binaries.',
-    '',
-    'Rollback',
-    '  Keep the previous ZIP. Unzip it over the program folder (or beside it and point autostart at the new exe).',
-    '  %LOCALAPPDATA%\ClipSync is not inside the ZIP, so swapping folders leaves history and pairing intact.',
-    '',
-    'See docs/distribution.md in the source tree for pairing, Android sideload, and troubleshooting.'
-) | Set-Content -LiteralPath $readmePath -Encoding utf8
+Get-WindowsPortableReadmeLines -ReleaseVersion $releaseVersion -WindowsComponentVersion $windowsVersion |
+    Set-Content -LiteralPath $readmePath -Encoding utf8
 
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
