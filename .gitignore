@@ -30,6 +30,7 @@ secrets/
 artifacts/
 output/
 .tools/
+releases/
 
 # OS / editor
 .DS_Store

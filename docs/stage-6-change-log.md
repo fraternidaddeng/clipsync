@@ -128,10 +128,10 @@
 | Status 页 | **PASS**：Network=Connected，无 unreachable 残留 |
 | 故障注入：Windows 进程重启 | **PASS**：杀掉再启动 Windows 端，首次复制立即到达，恰好一次 |
 | 故障注入：手机 Wi‑Fi 断开→恢复 | **PASS**：`svc wifi disable/enable`，恢复后 11 秒重连到达，恰好一次 |
-| 整机重启 + 开机恢复 | **代码侧 PASS，MIUI 投递受限**：`BootCompletedReceiver` 已启用注册，但 MIUI 默认无「自启动」权限，BOOT_COMPLETED 从未投递（开机 70 秒后无进程/无通知，WorkManager 检查因此无从触发）。**兜底路径 PASS**：打开应用即恢复 FGS，随后双向 ~1 秒恰好一次。要真正开机自启需用户在 MIUI 设置手动授予自启动 |
+| 整机重启 + 开机恢复 | **PASS（两段验证）**。未授自启动时：MIUI 不投递 BOOT_COMPLETED（开机 70 秒无进程/无通知），打开应用即恢复的兜底 PASS。用户在 MIUI 授予「自启动」后再次重启：**BOOT_COMPLETED 投递 → receiver → FGS 自行拉起（全程未打开应用）**，仅靠开机自启的服务 Windows→Android ~1 秒恰好一次。WorkManager 兜底通知路径因 FGS 直接成功而未触发（该降级分支仅有 JVM 测试） |
 | Shizuku 13.5.4 | 授权在重启+重装后保留；重启后需 `adb shell sh .../start.sh` 重新拉起（既有已知项） |
 
-仍未测：Windows 睡眠/唤醒、断网 30 分钟长恢复、多 ROM、正式 P95 统计、MIUI 授予自启动后的 BOOT_COMPLETED→WorkManager 路径。
+仍未测：Windows 睡眠/唤醒、断网 30 分钟长恢复、多 ROM、正式 P95 统计、FGS 开机启动失败时的 WorkManager 恢复通知分支（真机上 FGS 直接成功，无法自然触发）。
 
 ## 已知限制 / 交接
 

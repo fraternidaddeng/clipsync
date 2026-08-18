@@ -73,8 +73,50 @@ if ($readLogsLines.Count -gt 0) {
 } else {
     Write-Host 'READ_LOGS dumpsys lines: not found (package missing or permission not declared).'
 }
+$deviceLine = ($devices | Where-Object { $_ -like "$Serial*" } | Select-Object -First 1)
+$adbAuth = if ($deviceLine -match '\sunauthorized\b') {
+    'UNAUTHORIZED'
+} elseif ($deviceLine -match '\soffline\b') {
+    'OFFLINE'
+} elseif ($deviceLine -match '\sdevice\b') {
+    'AUTHORIZED'
+} else {
+    'UNKNOWN'
+}
+$usbConfig = 'unknown'
+$persistUsb = 'unknown'
+$adbEnabled = 'unknown'
+$shizukuPackage = 'moe.shizuku.privileged.api'
+$shizukuPath = ''
+$previousNative = $PSNativeCommandUseErrorActionPreference
+$PSNativeCommandUseErrorActionPreference = $false
+try {
+    $usbConfig = (@(& adb @adbArgs getprop sys.usb.config 2>$null) -join '').Trim()
+    $persistUsb = (@(& adb @adbArgs getprop persist.sys.usb.config 2>$null) -join '').Trim()
+    $adbEnabled = (@(& adb @adbArgs settings get global adb_enabled 2>$null) -join '').Trim()
+    $shizukuPath = (@(& adb @adbArgs pm path $shizukuPackage 2>$null) -join '').Trim()
+} finally {
+    $PSNativeCommandUseErrorActionPreference = $previousNative
+}
+$shizukuInstalled = $shizukuPath -match '^package:'
+$shizukuStartCommand = "adb -s $Serial shell sh /storage/emulated/0/Android/data/$shizukuPackage/start.sh"
+
 Write-Host ''
-Write-Host 'This script is read-only. It never runs grant or revoke.'
+Write-Host "Developer / USB debugging: adb=$adbAuth, adb_enabled=$adbEnabled, sys.usb.config=$usbConfig, persist.sys.usb.config=$persistUsb"
+if ($adbAuth -eq 'UNAUTHORIZED') {
+    Write-Host 'Unlock the phone and accept the RSA fingerprint dialog, then re-run this script.'
+}
+Write-Host "Shizuku package ($shizukuPackage): $(if ($shizukuInstalled) { 'INSTALLED' } else { 'NOT_INSTALLED' })"
+if ($shizukuInstalled) {
+    Write-Host 'Shizuku start command (copy yourself; this script never runs it):'
+    Write-Host "  $shizukuStartCommand"
+    Write-Host 'Verified on MIUI 14 (stage 6): authorization survives reboot + reinstall; the daemon does not.'
+    Write-Host 'After each reboot, start Shizuku with the command above, then open Shizuku and confirm ClipSync is authorized.'
+}
+
+Write-Host ''
+Write-Host 'This script is read-only. It never runs grant, revoke, or Shizuku start.'
+Write-Host 'It never downloads or bundles Shizuku. Install Shizuku yourself if you want that mode.'
 Write-Host 'READ_LOGS cannot be granted by a normal in-app runtime dialog.'
 Write-Host 'Install, upgrade, or reboot invalidates the grant. Re-run this inspector and re-probe the app after those events.'
 Write-Host 'Copy and run one of these commands yourself if you decide to change the grant:'

@@ -8,6 +8,26 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint")
 }
 
+// Release signing is opt-in. Debug / testDebugUnitTest never read these values.
+// assembleRelease without a keystore+password keeps AGP's default (debug-keyed)
+// signing so a missing personal keystore cannot break the debug pipeline.
+val clipsyncKeystorePath = System.getenv("CLIPSYNC_KEYSTORE")
+    ?.trim()
+    ?.takeIf { it.isNotEmpty() }
+    ?: "D:\\paste-tools\\clipsync-release.keystore"
+val clipsyncKeystoreFile = file(clipsyncKeystorePath)
+val clipsyncKeystorePassword = System.getenv("CLIPSYNC_KEYSTORE_PASSWORD")
+    ?.takeIf { !it.isNullOrBlank() }
+val clipsyncKeyAlias = System.getenv("CLIPSYNC_KEY_ALIAS")
+    ?.trim()
+    ?.takeIf { it.isNotEmpty() }
+    ?: "clipsync"
+val clipsyncKeyPassword = System.getenv("CLIPSYNC_KEY_PASSWORD")
+    ?.takeIf { !it.isNullOrBlank() }
+    ?: clipsyncKeystorePassword
+val clipsyncReleaseSigningAvailable =
+    clipsyncKeystoreFile.isFile && clipsyncKeystorePassword != null
+
 android {
     namespace = "com.clipsync.android"
     compileSdk = 35
@@ -22,6 +42,17 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (clipsyncReleaseSigningAvailable) {
+            create("release") {
+                storeFile = clipsyncKeystoreFile
+                storePassword = clipsyncKeystorePassword
+                keyAlias = clipsyncKeyAlias
+                keyPassword = clipsyncKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -29,6 +60,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            if (clipsyncReleaseSigningAvailable) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

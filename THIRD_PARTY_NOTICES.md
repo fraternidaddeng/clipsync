@@ -1,6 +1,8 @@
 # Third-Party Dependency and License Inventory
 
-This inventory (Stage 0, updated through Stage 6 static analysis) records direct build/runtime/test dependencies currently declared in the repository and major dependencies explicitly planned by `plan.md`. It is not a substitute for the release-time transitive dependency, notice, and source-offer review. Exact license texts and obligations must be collected from the resolved artifacts before distribution.
+This inventory (Stage 0, updated through Stage 7 packaging, 2026-08-18) records direct build/runtime/test dependencies currently declared in the repository and major dependencies explicitly planned by `plan.md`. It is not a substitute for the release-time transitive dependency, notice, and source-offer review. Exact license texts and obligations must be collected from the resolved artifacts before distribution.
+
+Stage 7 review of files that actually ship (`releases/<version>/` ZIP + APK): every direct `implementation` / NuGet reference below is covered. Detekt, ktlint, KSP, Room compiler, and all `testImplementation` / .NET test packages are **build-time or test-only** and are not packaged. `debugImplementation` Compose UI tooling is debug-variant only and is not in `assembleRelease`. A workspace grep for `Syzygy` / `syzygy` hits only this file and `plan.md` (reference-project mentions); no Syzygy source, assets, protocol, or branding is referenced from application or test code.
 
 ## Currently declared dependencies
 
@@ -9,6 +11,7 @@ This inventory (Stage 0, updated through Stage 6 static analysis) records direct
 | .NET / WPF | .NET 8 | Windows application platform | MIT; platform components may carry additional notices |
 | ASP.NET Core (framework reference) | 8.x | Windows in-process HTTPS/WebSocket peer endpoint | MIT |
 | Microsoft.Data.Sqlite | 8.0.25 | Windows SQLite access (pulls SQLitePCLRaw + native SQLite) | MIT; SQLite is public domain, binding notices to verify at release |
+| SQLitePCLRaw.bundle / lib.e_sqlite3 (transitive) | 2.1.6 via Microsoft.Data.Sqlite 8.0.25 | Native SQLite shipped inside the Windows portable ZIP | Apache-2.0 (bindings); SQLite public domain. Tracked CVE-2025-6965 accepted in stage 6 (not attacker-reachable SQL) |
 | CommunityToolkit.Mvvm | 8.4.0 | Windows MVVM | MIT |
 | Microsoft.Extensions.DependencyInjection | 8.0.1 | Windows composition root | MIT |
 | Hardcodet.NotifyIcon.Wpf | 2.0.1 | Windows tray icon | CPOL-1.02 per upstream repository; confirm notice obligations before distribution |
