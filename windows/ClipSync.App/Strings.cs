@@ -29,6 +29,7 @@ internal static class Strings
     public const string AddressRestartHint = "修改地址后需重启才能生效。";
     public const string SaveSettings = "保存设置";
     public const string ExportHistory = "导出历史（JSONL）…";
+    public const string ImportHistory = "导入历史 (JSONL)…";
     public const string ExportPlaintextWarning = "导出文件包含明文剪贴板内容。";
     public const string PairedDevices = "已配对设备";
     public const string PairNewDevice = "配对新设备…";
@@ -76,6 +77,10 @@ internal static class Strings
     public const string ExportFailed = "导出失败";
     public const string ExportDialogTitle = "导出历史";
     public const string ExportDialogFilter = "JSON Lines 文件 (*.jsonl)|*.jsonl";
+    public const string ImportedClipsFormat = "已导入 {0} 条（跳过 {1} 条）";
+    public const string ImportFailed = "导入失败";
+    public const string ImportDialogTitle = "导入历史";
+    public const string ImportDialogFilter = "JSON Lines 文件 (*.jsonl)|*.jsonl";
     public const string PairingUnavailableMessage = "对端服务未运行，本次会话无法配对。";
     public const string UnknownSource = "未知来源";
     public const string LastSeenFormat = "最近在线 {0}";
@@ -92,6 +97,7 @@ internal static class Strings
     private static readonly CompositeFormat PairingCountdownComposite = CompositeFormat.Parse(PairingCountdownFormat);
     private static readonly CompositeFormat SyncStatusRunningComposite = CompositeFormat.Parse(SyncStatusRunningFormat);
     private static readonly CompositeFormat ExportedClipsComposite = CompositeFormat.Parse(ExportedClipsFormat);
+    private static readonly CompositeFormat ImportedClipsComposite = CompositeFormat.Parse(ImportedClipsFormat);
     private static readonly CompositeFormat LastSeenComposite = CompositeFormat.Parse(LastSeenFormat);
 
     internal static string FormatDetailSource(string source) =>
@@ -117,6 +123,9 @@ internal static class Strings
 
     internal static string FormatExportedClips(int count) =>
         string.Format(CultureInfo.CurrentCulture, ExportedClipsComposite, count);
+
+    internal static string FormatImportedClips(int imported, int skipped) =>
+        string.Format(CultureInfo.CurrentCulture, ImportedClipsComposite, imported, skipped);
 
     internal static string FormatLastSeen(string when) =>
         string.Format(CultureInfo.CurrentCulture, LastSeenComposite, when);

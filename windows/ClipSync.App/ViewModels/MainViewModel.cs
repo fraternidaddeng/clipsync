@@ -70,6 +70,12 @@ public partial class MainViewModel(
     /// </summary>
     public Func<string?> PickExportPath { get; set; } = PickExportPathWithDialog;
 
+    /// <summary>
+    /// Production opens an OpenFileDialog. Tests replace this with a temp path
+    /// (or null to simulate cancel) so the command never shows a real window.
+    /// </summary>
+    public Func<string?> PickImportPath { get; set; } = PickImportPathWithDialog;
+
     /// <summary>Raised after a device is revoked so the app layer can drop its live sessions.</summary>
     public event Action<string>? DeviceRevoked;
 
@@ -204,6 +210,39 @@ public partial class MainViewModel(
     }
 
     [RelayCommand]
+    private async Task ImportHistoryAsync()
+    {
+        var path = PickImportPath?.Invoke();
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        try
+        {
+            var imported = await Task.Run(async () =>
+            {
+                // Hard byte cap before reading: a hostile or wrong file must not
+                // OOM the app just because the user picked it.
+                if (new FileInfo(path).Length > ClipboardImport.MaximumImportBytes)
+                {
+                    throw new IOException("import file exceeds the maximum allowed size");
+                }
+
+                var jsonl = await File.ReadAllTextAsync(path).ConfigureAwait(false);
+                return await ClipboardImport.ImportJsonLinesAsync(store, jsonl).ConfigureAwait(false);
+            }).ConfigureAwait(true);
+
+            ExportStatus = Strings.FormatImportedClips(imported.Imported, imported.Skipped);
+            await RefreshAsync().ConfigureAwait(true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            ExportStatus = Strings.ImportFailed;
+        }
+    }
+
+    [RelayCommand]
     private async Task SaveSettingsAsync()
     {
         RetentionDays = Math.Clamp(RetentionDays, 1, 3650);
@@ -297,6 +336,19 @@ public partial class MainViewModel(
             Filter = Strings.ExportDialogFilter,
             DefaultExt = ".jsonl",
             AddExtension = true
+        };
+
+        return dialog.ShowDialog() == true ? dialog.FileName : null;
+    }
+
+    private static string? PickImportPathWithDialog()
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = Strings.ImportDialogTitle,
+            Filter = Strings.ImportDialogFilter,
+            DefaultExt = ".jsonl",
+            CheckFileExists = true
         };
 
         return dialog.ShowDialog() == true ? dialog.FileName : null;

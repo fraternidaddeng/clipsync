@@ -19,6 +19,25 @@ public sealed record ClipboardHistoryEntry(
     public bool IsDeleted => DeletedAt is not null;
 }
 
+/// <summary>
+/// One parsed export line ready to insert as a local-only history row.
+/// </summary>
+public sealed record ImportedClipboardRow(
+    Guid EventId,
+    string OriginDeviceId,
+    long OriginSequence,
+    string Content,
+    string ContentHash,
+    string? SourceApp,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? ExpiresAt);
+
+public readonly record struct ClipboardImportResult(int Imported, int Skipped);
+
+public readonly record struct ClipboardImportParseResult(
+    IReadOnlyList<ImportedClipboardRow> Rows,
+    int Skipped);
+
 public sealed class ClipboardRetentionPolicy
 {
     public ClipboardRetentionPolicy(

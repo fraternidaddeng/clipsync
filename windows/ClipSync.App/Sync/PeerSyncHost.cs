@@ -131,6 +131,23 @@ public sealed class PeerSyncHost : IAsyncDisposable
     /// </summary>
     public void NudgeReconnect() => _ = BroadcastQuietlyAsync();
 
+    /// <summary>
+    /// Suspend path: refuse new sessions first so a fast peer redial cannot open
+    /// a half-alive connection right before sleep, then close the live ones.
+    /// </summary>
+    public void EnterSuspend()
+    {
+        server?.SetRefuseNewSessions(true);
+        server?.DisconnectAllSessions();
+    }
+
+    /// <summary>Resume path: accept sessions again, then invite peers back.</summary>
+    public void ExitSuspendAndNudge()
+    {
+        server?.SetRefuseNewSessions(false);
+        NudgeReconnect();
+    }
+
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch) =>
         RemoteClipsCommitted?.Invoke(batch);
 

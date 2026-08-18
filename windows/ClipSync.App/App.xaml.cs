@@ -170,8 +170,8 @@ public partial class App : Application
         powerMonitor = new SessionPowerMonitor();
         powerCoordinator = new SessionPowerCoordinator(
             powerMonitor,
-            tearDownSessions: () => syncHost?.DisconnectAllSessions(),
-            nudgeReconnect: () => syncHost?.NudgeReconnect(),
+            tearDownSessions: () => syncHost?.EnterSuspend(),
+            nudgeReconnect: () => syncHost?.ExitSuspendAndNudge(),
             refreshStatus: () =>
             {
                 _ = Dispatcher.InvokeAsync(() => ApplyRunningSyncStatus(viewModel, deviceId));

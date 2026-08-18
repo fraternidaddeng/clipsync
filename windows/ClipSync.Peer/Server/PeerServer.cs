@@ -177,6 +177,15 @@ public sealed class PeerServer : IAsyncDisposable
             return;
         }
 
+        if (Volatile.Read(ref refusingNewSessions))
+        {
+            // Suspending: the machine is about to sleep. Refusing here keeps a
+            // fast Android redial from opening a session that would die half-open
+            // moments later; the resume nudge invites peers back.
+            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+            return;
+        }
+
         if (sessions.Count >= options.MaxConcurrentSessions)
         {
             PeerLog.SessionLimitReached(logger, options.MaxConcurrentSessions);
@@ -301,6 +310,14 @@ public sealed class PeerServer : IAsyncDisposable
             session.Engine.RequestClose();
         }
     }
+
+    /// <summary>
+    /// Gate for the suspend window: while true, new sync sessions are refused
+    /// with 503 so peers cannot open half-alive connections right before sleep.
+    /// </summary>
+    public void SetRefuseNewSessions(bool refuse) => Volatile.Write(ref refusingNewSessions, refuse);
+
+    private bool refusingNewSessions;
 
     private static int ResolveBoundPort(WebApplication host)
     {
