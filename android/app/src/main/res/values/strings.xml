@@ -54,6 +54,7 @@
     <string name="capability_service">Service</string>
     <string name="capability_read">Clipboard read</string>
     <string name="capability_write">Clipboard write</string>
+    <string name="capability_last_check">Last check %1$s</string>
 
     <string name="share_captured">Sent to ClipSync</string>
     <string name="share_oversized">Text is larger than 1 MiB and was not sent.</string>

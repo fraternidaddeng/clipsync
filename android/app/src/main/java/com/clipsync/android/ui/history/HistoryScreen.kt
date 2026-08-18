@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -91,12 +92,14 @@ private fun HistoryBody(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        HistoryNotices(state)
-        HistoryClipList(
-            state = state,
-            viewModel = viewModel,
-            modifier = Modifier.weight(1f),
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            HistoryNotices(state)
+            HistoryClipList(
+                state = state,
+                viewModel = viewModel,
+                modifier = Modifier.weight(1f),
+            )
+        }
     }
 }
 
@@ -227,13 +230,15 @@ private fun HistoryDetailDialog(
     onDelete: () -> Unit,
     onClose: () -> Unit,
 ) {
+    val maxDialogHeight =
+        (LocalConfiguration.current.screenHeightDp * DETAIL_DIALOG_MAX_HEIGHT_FRACTION).dp
     Dialog(onDismissRequest = onClose) {
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier =
                     Modifier
                         .padding(16.dp)
-                        .heightIn(max = 520.dp),
+                        .heightIn(max = maxDialogHeight),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
@@ -256,7 +261,7 @@ private fun HistoryDetailDialog(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .heightIn(max = 360.dp)
+                            .weight(1f, fill = false)
                             .verticalScroll(rememberScrollState()),
                 ) {
                     Text(
@@ -285,3 +290,5 @@ internal fun formatHistoryTime(createdAtMs: Long): String =
 
 private val HISTORY_TIME_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
+private const val DETAIL_DIALOG_MAX_HEIGHT_FRACTION = 0.7f

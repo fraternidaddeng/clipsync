@@ -13,6 +13,8 @@ import com.clipsync.android.storage.SETTING_PAIRED_PEER_ID
 import com.clipsync.android.ui.settings.SyncConnectionStatus
 import com.clipsync.android.ui.settings.SyncStatusProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -61,11 +63,14 @@ class HistoryViewModel(
     private val writeCoordinator: ClipboardWriteCoordinator,
     private val syncStatus: SyncStatusProvider,
     private val nowMs: () -> Long = System::currentTimeMillis,
+    private val copyFailureClearAfterMs: Long = COPY_FAILURE_NOTICE_MS,
+    private val delayMs: suspend (Long) -> Unit = { delay(it) },
 ) : ViewModel() {
     private val mutableState = MutableStateFlow(HistoryUiState())
     val state: StateFlow<HistoryUiState> = mutableState.asStateFlow()
     private val queryFlow = MutableStateFlow("")
     private val lastRejectFlow = MutableStateFlow<CaptureRejectReason?>(null)
+    private var copyFailureClearJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -115,8 +120,16 @@ class HistoryViewModel(
         viewModelScope.launch {
             val item = mutableState.value.items.find { it.eventId == eventId } ?: return@launch
             val outcome = writeCoordinator.writeText(item.content, eventId)
-            mutableState.update {
-                it.copy(copyFailed = outcome.result is ClipboardWriteResult.Failure)
+            val failed = outcome.result is ClipboardWriteResult.Failure
+            copyFailureClearJob?.cancel()
+            copyFailureClearJob = null
+            mutableState.update { it.copy(copyFailed = failed) }
+            if (failed) {
+                copyFailureClearJob =
+                    viewModelScope.launch {
+                        delayMs(copyFailureClearAfterMs)
+                        mutableState.update { it.copy(copyFailed = false) }
+                    }
             }
         }
     }
@@ -186,6 +199,7 @@ class HistoryViewModel(
 
     companion object {
         const val PREVIEW_LIMIT = 160
+        const val COPY_FAILURE_NOTICE_MS = 4_000L
 
         fun factory(
             repository: ClipRepository,

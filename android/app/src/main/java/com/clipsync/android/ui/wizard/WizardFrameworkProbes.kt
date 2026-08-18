@@ -87,6 +87,24 @@ object WizardFrameworkProbes {
 
     fun backgroundWrite(probe: () -> CapabilityState): () -> CapabilityState = probe
 
+    fun lastReadCheckAt(
+        backends: BackgroundClipboardBackends,
+        requestedReadMode: () -> ClipboardReadMode,
+    ): () -> Long? {
+        return {
+            readCheckedAtEpochMillis(backends, requestedReadMode())
+        }
+    }
+
+    fun lastWriteCheckAt(
+        backends: BackgroundClipboardBackends,
+        requestedReadMode: () -> ClipboardReadMode,
+    ): () -> Long? {
+        return {
+            writeCheckedAtEpochMillis(backends, requestedReadMode())
+        }
+    }
+
     fun bind(
         backends: BackgroundClipboardBackends,
         settings: WizardSettings,
@@ -108,8 +126,36 @@ object WizardFrameworkProbes {
         service = service,
         backgroundRead = backgroundRead(backends) { settings.load().preferredReadMode },
         backgroundWrite = backgroundWrite(backgroundWrite),
+        backgroundReadCheckedAt = lastReadCheckAt(backends) { settings.load().preferredReadMode },
+        backgroundWriteCheckedAt = lastWriteCheckAt(backends) { settings.load().preferredReadMode },
     )
 
     private fun backendProbeState(backend: BackgroundClipboardBackend?): CapabilityState =
         backend?.probe()?.readState ?: CapabilityState.NEEDS_USER_ACTION
+
+    private fun readCheckedAtEpochMillis(
+        backends: BackgroundClipboardBackends,
+        requestedReadMode: ClipboardReadMode,
+    ): Long? {
+        val stored = backends.capabilityStore?.loadRead()?.lastHealthAtEpochMillis
+        if (stored != null) {
+            return stored
+        }
+        val report = backends.selectedEligibleBackend(requestedReadMode)?.probe()
+        return report?.lastReadSuccessAtEpochMillis
+    }
+
+    private fun writeCheckedAtEpochMillis(
+        backends: BackgroundClipboardBackends,
+        requestedReadMode: ClipboardReadMode,
+    ): Long? {
+        val stored = backends.capabilityStore?.loadWrite()
+        val publicAt = stored?.publicLastSuccessAtEpochMillis
+        val fromStore = publicAt ?: stored?.fallbackLastSuccessAtEpochMillis
+        if (fromStore != null) {
+            return fromStore
+        }
+        val report = backends.selectedEligibleBackend(requestedReadMode)?.probe()
+        return report?.lastWriteSuccessAtEpochMillis
+    }
 }

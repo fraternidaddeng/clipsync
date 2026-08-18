@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:function-naming")
+
 package com.clipsync.android.ui.wizard
 
 import android.Manifest
@@ -214,13 +216,26 @@ private fun LiveIndicatorRow(indicators: LiveIndicators) {
         )
         IndicatorCard(stringResource(R.string.capability_network), indicators.network)
         IndicatorCard(stringResource(R.string.capability_service), indicators.service)
-        IndicatorCard(stringResource(R.string.wizard_indicator_read), indicators.backgroundRead)
-        IndicatorCard(stringResource(R.string.wizard_indicator_write), indicators.backgroundWrite)
+        IndicatorCard(
+            title = stringResource(R.string.wizard_indicator_read),
+            state = indicators.backgroundRead,
+            checkedAtEpochMillis = indicators.backgroundReadCheckedAtEpochMillis,
+        )
+        IndicatorCard(
+            title = stringResource(R.string.wizard_indicator_write),
+            state = indicators.backgroundWrite,
+            checkedAtEpochMillis = indicators.backgroundWriteCheckedAtEpochMillis,
+        )
     }
 }
 
+@Suppress("FunctionNaming") // Compose requires PascalCase identifiers.
 @Composable
-private fun IndicatorCard(title: String, state: CapabilityState) {
+private fun IndicatorCard(
+    title: String,
+    state: CapabilityState,
+    checkedAtEpochMillis: Long? = null,
+) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -236,6 +251,16 @@ private fun IndicatorCard(title: String, state: CapabilityState) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                checkedAtEpochMillis?.let { checkedAt ->
+                    Text(
+                        text = stringResource(
+                            R.string.capability_last_check,
+                            formatLastCheckClock(checkedAt),
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
             Box(
                 modifier = Modifier

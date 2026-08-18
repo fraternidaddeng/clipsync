@@ -4,6 +4,9 @@ import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.clipboard.ClipboardWriteMode
 import com.clipsync.android.platform.clipboard.SelfTestResult
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 enum class WizardStepId {
     NOTIFICATIONS,
@@ -69,6 +72,8 @@ data class LiveIndicators(
     val service: CapabilityState,
     val backgroundRead: CapabilityState,
     val backgroundWrite: CapabilityState,
+    val backgroundReadCheckedAtEpochMillis: Long? = null,
+    val backgroundWriteCheckedAtEpochMillis: Long? = null,
 ) {
     fun allReady(): Boolean =
         network == CapabilityState.READY &&
@@ -114,6 +119,8 @@ data class WizardProbes(
     val service: () -> CapabilityState,
     val backgroundRead: () -> CapabilityState,
     val backgroundWrite: () -> CapabilityState,
+    val backgroundReadCheckedAt: () -> Long? = { null },
+    val backgroundWriteCheckedAt: () -> Long? = { null },
 ) {
     fun forStep(id: WizardStepId): () -> CapabilityState = when (id) {
         WizardStepId.NOTIFICATIONS -> notifications
@@ -163,6 +170,13 @@ internal fun actionKindFor(id: WizardStepId): WizardActionKind = when (id) {
 
 internal fun offersInAppGrant(id: WizardStepId): Boolean =
     id == WizardStepId.NOTIFICATIONS
+
+fun formatLastCheckClock(
+    epochMillis: Long,
+    zone: ZoneId = ZoneId.systemDefault(),
+): String = LAST_CHECK_CLOCK.format(Instant.ofEpochMilli(epochMillis).atZone(zone))
+
+private val LAST_CHECK_CLOCK: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
 internal fun skipEffectsOf(skipped: Set<WizardStepId>): WizardSkipEffects {
     val modes = linkedSetOf<ClipboardReadMode>()

@@ -147,6 +147,8 @@ class WizardViewModel(
             service = probes.service(),
             backgroundRead = probes.backgroundRead(),
             backgroundWrite = probes.backgroundWrite(),
+            backgroundReadCheckedAtEpochMillis = probes.backgroundReadCheckedAt(),
+            backgroundWriteCheckedAtEpochMillis = probes.backgroundWriteCheckedAt(),
         )
         if (shown != probed) {
             return true
@@ -192,6 +194,8 @@ class WizardViewModel(
                 service = probes.service(),
                 backgroundRead = probes.backgroundRead(),
                 backgroundWrite = probes.backgroundWrite(),
+                backgroundReadCheckedAtEpochMillis = probes.backgroundReadCheckedAt(),
+                backgroundWriteCheckedAtEpochMillis = probes.backgroundWriteCheckedAt(),
             ),
             skipEffects = skipEffectsOf(skipped),
             overlayEnabled = choices.overlayConsented && overlayReady,

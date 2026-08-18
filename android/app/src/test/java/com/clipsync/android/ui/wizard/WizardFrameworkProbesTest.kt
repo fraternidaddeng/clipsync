@@ -4,8 +4,14 @@ import com.clipsync.android.platform.clipboard.BackgroundClipboardBackends
 import com.clipsync.android.platform.clipboard.CapabilityReport
 import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardAuthorization
+import com.clipsync.android.platform.clipboard.ClipboardCapabilityStore
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
+import com.clipsync.android.platform.clipboard.ClipboardWriteMode
 import com.clipsync.android.platform.clipboard.FakeBackgroundClipboardBackend
+import com.clipsync.android.platform.clipboard.InMemoryCapabilityKeyValueStore
+import com.clipsync.android.platform.clipboard.KeyValueClipboardCapabilityStore
+import com.clipsync.android.platform.clipboard.ReadCapabilitySnapshot
+import com.clipsync.android.platform.clipboard.WriteCapabilitySnapshot
 import com.clipsync.android.platform.clipboard.overlay.FakeOverlayPlatform
 import com.clipsync.android.platform.clipboard.overlay.OverlayFocusController
 import org.junit.Assert.assertEquals
@@ -171,6 +177,51 @@ class WizardFrameworkProbesTest {
     }
 
     @Test
+    fun `live read and write cards surface stored last-check timestamps`() {
+        val store = KeyValueClipboardCapabilityStore(InMemoryCapabilityKeyValueStore())
+        store.saveRead(
+            ReadCapabilitySnapshot(
+                requestedReadMode = ClipboardReadMode.SHIZUKU_EVENT,
+                activeReadMode = ClipboardReadMode.SHIZUKU_EVENT,
+                autoFallbackAllowed = true,
+                lastErrorCode = null,
+                lastHealthAtEpochMillis = 1_700_000_000_000L,
+            ),
+        )
+        store.saveWrite(
+            WriteCapabilitySnapshot(
+                writeMode = ClipboardWriteMode.PUBLIC_API,
+                publicLastSuccessAtEpochMillis = 1_700_000_060_000L,
+            ),
+        )
+        val settings =
+            InMemoryWizardSettings(
+                WizardChoices(preferredReadMode = ClipboardReadMode.SHIZUKU_EVENT),
+            )
+        val probes =
+            WizardFrameworkProbes.bind(
+                backends = assembly(
+                    fake(ClipboardReadMode.SHIZUKU_EVENT, CapabilityState.READY),
+                    fake(ClipboardReadMode.ADB_LOG_OVERLAY, CapabilityState.UNKNOWN),
+                    fake(ClipboardReadMode.OVERLAY_POLLING, CapabilityState.UNKNOWN),
+                    fake(ClipboardReadMode.FOREGROUND_ONLY, CapabilityState.READY),
+                    capabilityStore = store,
+                ),
+                settings = settings,
+                network = { CapabilityState.UNKNOWN },
+                service = { CapabilityState.UNKNOWN },
+                backgroundWrite = { CapabilityState.READY },
+                notifications = { CapabilityState.UNKNOWN },
+                foregroundService = { CapabilityState.UNKNOWN },
+                ignoreBattery = { CapabilityState.UNKNOWN },
+            )
+        val model = WizardViewModel(settings, probes)
+        val indicators = model.state.value.indicators
+        assertEquals(1_700_000_000_000L, indicators.backgroundReadCheckedAtEpochMillis)
+        assertEquals(1_700_000_060_000L, indicators.backgroundWriteCheckedAtEpochMillis)
+    }
+
+    @Test
     fun `background read follows the selected preferred backend not the others`() {
         val settings = InMemoryWizardSettings(
             WizardChoices(preferredReadMode = ClipboardReadMode.ADB_LOG_OVERLAY),
@@ -202,12 +253,14 @@ class WizardFrameworkProbesTest {
         adb: FakeBackgroundClipboardBackend,
         overlay: FakeBackgroundClipboardBackend,
         foreground: FakeBackgroundClipboardBackend,
+        capabilityStore: ClipboardCapabilityStore? = null,
     ): BackgroundClipboardBackends = BackgroundClipboardBackends.build(
         overlayController = OverlayFocusController(FakeOverlayPlatform()),
         shizuku = shizuku,
         adbLog = adb,
         overlayPolling = overlay,
         foreground = foreground,
+        capabilityStore = capabilityStore,
     )
 
     private fun fake(

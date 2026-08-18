@@ -54,6 +54,7 @@
     <string name="capability_service">服务</string>
     <string name="capability_read">读取剪贴板</string>
     <string name="capability_write">写入剪贴板</string>
+    <string name="capability_last_check">上次检查 %1$s</string>
 
     <string name="share_captured">已发送到 ClipSync</string>
     <string name="share_oversized">文本超过 1 MiB，未发送。</string>

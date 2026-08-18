@@ -259,6 +259,21 @@ class WizardViewModelTest {
     }
 
     @Test
+    fun `read and write indicator timestamps come from probe seams`() {
+        val probes =
+            MutableProbes(
+                backgroundRead = CapabilityState.READY,
+                backgroundWrite = CapabilityState.READY,
+            )
+        probes.backgroundReadCheckedAt = 1_700_000_000_000L
+        probes.backgroundWriteCheckedAt = 1_700_000_060_000L
+        val model = wizard(probes)
+        val indicators = model.state.value.indicators
+        assertEquals(1_700_000_000_000L, indicators.backgroundReadCheckedAtEpochMillis)
+        assertEquals(1_700_000_060_000L, indicators.backgroundWriteCheckedAtEpochMillis)
+    }
+
+    @Test
     fun `self test without a tester is a no-op`() {
         val model = wizard()
         model.runBackgroundReadTest()
@@ -325,17 +340,24 @@ private class MutableProbes(
     var backgroundRead: CapabilityState = CapabilityState.UNKNOWN,
     var backgroundWrite: CapabilityState = CapabilityState.UNKNOWN,
 ) {
-    fun toProbes(): WizardProbes = WizardProbes(
-        notifications = { notifications },
-        foregroundService = { foregroundService },
-        ignoreBattery = { ignoreBattery },
-        overlay = { overlay },
-        readLogs = { readLogs },
-        shizukuBinder = { shizukuBinder },
-        shizukuAuth = { shizukuAuth },
-        network = { network },
-        service = { service },
-        backgroundRead = { backgroundRead },
-        backgroundWrite = { backgroundWrite },
-    )
+    var backgroundReadCheckedAt: Long? = null
+    var backgroundWriteCheckedAt: Long? = null
+
+    fun toProbes(): WizardProbes {
+        return WizardProbes(
+            notifications = { notifications },
+            foregroundService = { foregroundService },
+            ignoreBattery = { ignoreBattery },
+            overlay = { overlay },
+            readLogs = { readLogs },
+            shizukuBinder = { shizukuBinder },
+            shizukuAuth = { shizukuAuth },
+            network = { network },
+            service = { service },
+            backgroundRead = { backgroundRead },
+            backgroundWrite = { backgroundWrite },
+            backgroundReadCheckedAt = { backgroundReadCheckedAt },
+            backgroundWriteCheckedAt = { backgroundWriteCheckedAt },
+        )
+    }
 }

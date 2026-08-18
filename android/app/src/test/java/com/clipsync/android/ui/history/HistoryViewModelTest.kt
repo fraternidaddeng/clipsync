@@ -76,6 +76,53 @@ class HistoryViewModelTest {
     }
 
     @Test
+    fun `copy failure notice clears after the timeout`() {
+        runTestModel(
+            writer = FakeClipboardWriter().apply {
+                enqueue(ClipboardWriteResult.Failure("PUBLIC_WRITE_REJECTED"))
+            },
+        ) { model, repo, _ ->
+            val stored = repo.captureLocalText(
+                "blocked",
+                nowMs = NOW,
+                peerId = TEST_PEER_DEVICE_ID,
+            ) as CaptureResult.Stored
+            model.refresh()
+            model.copy(stored.eventId)
+            assertTrue(model.state.value.copyFailed)
+            dispatcher.scheduler.advanceTimeBy(HistoryViewModel.COPY_FAILURE_NOTICE_MS - 1)
+            assertTrue(model.state.value.copyFailed)
+            dispatcher.scheduler.advanceTimeBy(1)
+            dispatcher.scheduler.runCurrent()
+            assertFalse(model.state.value.copyFailed)
+        }
+    }
+
+    @Test
+    fun `successful copy clears a pending failure notice`() {
+        runTestModel(
+            writer = FakeClipboardWriter().apply {
+                enqueue(ClipboardWriteResult.Failure("PUBLIC_WRITE_REJECTED"))
+            },
+        ) { model, repo, writer ->
+            val stored = repo.captureLocalText(
+                "retry me",
+                nowMs = NOW,
+                peerId = TEST_PEER_DEVICE_ID,
+            ) as CaptureResult.Stored
+            model.refresh()
+            model.copy(stored.eventId)
+            assertTrue(model.state.value.copyFailed)
+            model.copy(stored.eventId)
+            assertEquals(2, writer.writes.size)
+            assertFalse(model.state.value.copyFailed)
+            dispatcher.scheduler.advanceTimeBy(HistoryViewModel.COPY_FAILURE_NOTICE_MS)
+            dispatcher.scheduler.runCurrent()
+            assertFalse(model.state.value.copyFailed)
+        }
+    }
+
+    @Test
     fun `delete removes a clip from the list`() = runTestModel { model, repo, _ ->
         val stored = repo.captureLocalText("gone soon", nowMs = NOW, peerId = TEST_PEER_DEVICE_ID)
             as CaptureResult.Stored
