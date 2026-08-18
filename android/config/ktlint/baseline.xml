@@ -8,36 +8,35 @@
     </file>
     <file name="src/main/java/com/clipsync/android/MainActivity.kt">
         <error line="3" column="1" source="standard:import-ordering" />
-        <error line="64" column="1" source="standard:no-unused-imports" />
-        <error line="122" column="26" source="standard:multiline-expression-wrapping" />
-        <error line="133" column="33" source="standard:multiline-expression-wrapping" />
-        <error line="149" column="33" source="standard:multiline-expression-wrapping" />
-        <error line="186" column="58" source="standard:multiline-expression-wrapping" />
-        <error line="187" column="31" source="standard:multiline-expression-wrapping" />
-        <error line="193" column="58" source="standard:multiline-expression-wrapping" />
-        <error line="196" column="60" source="standard:multiline-expression-wrapping" />
-        <error line="197" column="31" source="standard:multiline-expression-wrapping" />
-        <error line="210" column="56" source="standard:multiline-expression-wrapping" />
-        <error line="211" column="31" source="standard:multiline-expression-wrapping" />
-        <error line="239" column="34" source="standard:multiline-expression-wrapping" />
-        <error line="307" column="30" source="standard:multiline-expression-wrapping" />
-        <error line="311" column="30" source="standard:multiline-expression-wrapping" />
-        <error line="312" column="37" source="standard:multiline-expression-wrapping" />
-        <error line="321" column="30" source="standard:multiline-expression-wrapping" />
-        <error line="322" column="40" source="standard:multiline-expression-wrapping" />
-        <error line="334" column="55" source="standard:multiline-expression-wrapping" />
-        <error line="338" column="33" source="standard:multiline-expression-wrapping" />
-        <error line="396" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="419" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="419" column="23" source="standard:function-signature" />
-        <error line="459" column="24" source="standard:multiline-expression-wrapping" />
-        <error line="459" column="30" source="standard:chain-method-continuation" />
-        <error line="459" column="65" source="standard:chain-method-continuation" />
-        <error line="471" column="28" source="standard:function-signature" />
-        <error line="471" column="44" source="standard:function-signature" />
-        <error line="471" column="55" source="standard:function-signature" />
-        <error line="496" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="508" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="114" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="135" column="33" source="standard:multiline-expression-wrapping" />
+        <error line="155" column="58" source="standard:multiline-expression-wrapping" />
+        <error line="156" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="162" column="58" source="standard:multiline-expression-wrapping" />
+        <error line="165" column="60" source="standard:multiline-expression-wrapping" />
+        <error line="166" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="179" column="56" source="standard:multiline-expression-wrapping" />
+        <error line="180" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="182" column="34" source="standard:multiline-expression-wrapping" />
+        <error line="213" column="34" source="standard:multiline-expression-wrapping" />
+        <error line="281" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="285" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="286" column="37" source="standard:multiline-expression-wrapping" />
+        <error line="295" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="296" column="40" source="standard:multiline-expression-wrapping" />
+        <error line="308" column="55" source="standard:multiline-expression-wrapping" />
+        <error line="312" column="33" source="standard:multiline-expression-wrapping" />
+        <error line="369" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="392" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="392" column="23" source="standard:function-signature" />
+        <error line="432" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="432" column="30" source="standard:chain-method-continuation" />
+        <error line="432" column="65" source="standard:chain-method-continuation" />
+        <error line="444" column="28" source="standard:function-signature" />
+        <error line="444" column="44" source="standard:function-signature" />
+        <error line="444" column="55" source="standard:function-signature" />
+        <error line="469" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="481" column="21" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/notify/CopyClipReceiver.kt">
         <error line="16" column="28" source="standard:function-signature" />
@@ -341,25 +340,25 @@
         <error line="247" column="54" source="standard:function-expression-body" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/shizuku/ClipboardUserService.kt">
-        <error line="14" column="32" source="standard:class-signature" />
-        <error line="14" column="42" source="standard:class-signature" />
-        <error line="31" column="40" source="standard:multiline-expression-wrapping" />
-        <error line="32" column="33" source="standard:function-signature" />
-        <error line="32" column="44" source="standard:function-signature" />
-        <error line="32" column="58" source="standard:function-signature" />
-        <error line="32" column="74" source="standard:function-signature" />
-        <error line="32" column="84" source="standard:function-signature" />
-        <error line="48" column="29" source="standard:function-signature" />
-        <error line="48" column="40" source="standard:function-signature" />
-        <error line="48" column="54" source="standard:function-signature" />
-        <error line="48" column="70" source="standard:function-signature" />
-        <error line="48" column="80" source="standard:function-signature" />
-        <error line="146" column="33" source="standard:function-signature" />
-        <error line="146" column="49" source="standard:function-signature" />
-        <error line="146" column="61" source="standard:function-signature" />
-        <error line="171" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="212" column="29" source="standard:multiline-expression-wrapping" />
-        <error line="219" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="15" column="32" source="standard:class-signature" />
+        <error line="15" column="42" source="standard:class-signature" />
+        <error line="35" column="40" source="standard:multiline-expression-wrapping" />
+        <error line="36" column="33" source="standard:function-signature" />
+        <error line="36" column="44" source="standard:function-signature" />
+        <error line="36" column="58" source="standard:function-signature" />
+        <error line="36" column="74" source="standard:function-signature" />
+        <error line="36" column="84" source="standard:function-signature" />
+        <error line="52" column="29" source="standard:function-signature" />
+        <error line="52" column="40" source="standard:function-signature" />
+        <error line="52" column="54" source="standard:function-signature" />
+        <error line="52" column="70" source="standard:function-signature" />
+        <error line="52" column="80" source="standard:function-signature" />
+        <error line="197" column="33" source="standard:function-signature" />
+        <error line="197" column="49" source="standard:function-signature" />
+        <error line="197" column="61" source="standard:function-signature" />
+        <error line="222" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="263" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="270" column="31" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/shizuku/IClipboardReflectionAdapter.kt">
         <error line="68" column="31" source="standard:function-expression-body" />
@@ -576,24 +575,24 @@
         <error line="37" column="21" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/service/ClipboardSyncService.kt">
-        <error line="46" column="33" source="standard:function-signature" />
-        <error line="46" column="50" source="standard:function-signature" />
-        <error line="46" column="62" source="standard:function-signature" />
-        <error line="46" column="74" source="standard:function-signature" />
-        <error line="57" column="33" source="standard:chain-method-continuation" />
-        <error line="121" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="124" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="154" column="24" source="standard:multiline-expression-wrapping" />
-        <error line="180" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="180" column="41" source="standard:chain-method-continuation" />
-        <error line="194" column="51" source="standard:multiline-expression-wrapping" />
-        <error line="194" column="51" source="standard:function-signature" />
-        <error line="200" column="28" source="standard:function-signature" />
-        <error line="200" column="42" source="standard:function-signature" />
-        <error line="200" column="75" source="standard:function-signature" />
-        <error line="215" column="22" source="standard:multiline-expression-wrapping" />
-        <error line="249" column="26" source="standard:multiline-expression-wrapping" />
-        <error line="256" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="47" column="33" source="standard:function-signature" />
+        <error line="47" column="50" source="standard:function-signature" />
+        <error line="47" column="62" source="standard:function-signature" />
+        <error line="47" column="74" source="standard:function-signature" />
+        <error line="58" column="33" source="standard:chain-method-continuation" />
+        <error line="125" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="128" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="158" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="184" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="184" column="41" source="standard:chain-method-continuation" />
+        <error line="198" column="51" source="standard:multiline-expression-wrapping" />
+        <error line="198" column="51" source="standard:function-signature" />
+        <error line="204" column="28" source="standard:function-signature" />
+        <error line="204" column="42" source="standard:function-signature" />
+        <error line="204" column="75" source="standard:function-signature" />
+        <error line="219" column="22" source="standard:multiline-expression-wrapping" />
+        <error line="253" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="260" column="26" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/service/ServiceModels.kt">
         <error line="30" column="5" source="standard:blank-line-before-declaration" />
@@ -667,14 +666,6 @@
         <error line="87" column="62" source="standard:function-signature" />
         <error line="87" column="83" source="standard:function-signature" />
         <error line="87" column="96" source="standard:function-signature" />
-        <error line="141" column="37" source="standard:function-signature" />
-        <error line="141" column="53" source="standard:function-signature" />
-        <error line="141" column="77" source="standard:function-signature" />
-        <error line="141" column="93" source="standard:function-signature" />
-        <error line="141" column="105" source="standard:function-signature" />
-        <error line="162" column="22" source="standard:function-signature" />
-        <error line="162" column="38" source="standard:function-signature" />
-        <error line="162" column="60" source="standard:function-signature" />
     </file>
     <file name="src/main/java/com/clipsync/android/storage/ClipDatabase.kt">
         <error line="23" column="5" source="standard:blank-line-before-declaration" />
@@ -697,108 +688,6 @@
         <error line="44" column="59" source="standard:class-signature" />
         <error line="48" column="33" source="standard:class-signature" />
         <error line="48" column="51" source="standard:class-signature" />
-    </file>
-    <file name="src/main/java/com/clipsync/android/storage/ClipPersistence.kt">
-        <error line="15" column="30" source="standard:function-signature" />
-        <error line="15" column="45" source="standard:function-signature" />
-        <error line="15" column="55" source="standard:function-signature" />
-        <error line="24" column="5" source="standard:blank-line-before-declaration" />
-        <error line="24" column="37" source="standard:function-signature" />
-        <error line="24" column="61" source="standard:function-signature" />
-        <error line="24" column="76" source="standard:function-signature" />
-        <error line="25" column="5" source="standard:blank-line-before-declaration" />
-        <error line="26" column="5" source="standard:blank-line-before-declaration" />
-        <error line="26" column="31" source="standard:function-signature" />
-        <error line="26" column="46" source="standard:function-signature" />
-        <error line="26" column="56" source="standard:function-signature" />
-        <error line="27" column="5" source="standard:blank-line-before-declaration" />
-        <error line="27" column="28" source="standard:function-signature" />
-        <error line="27" column="45" source="standard:function-signature" />
-        <error line="27" column="56" source="standard:function-signature" />
-        <error line="28" column="5" source="standard:blank-line-before-declaration" />
-        <error line="29" column="5" source="standard:blank-line-before-declaration" />
-        <error line="29" column="30" source="standard:function-signature" />
-        <error line="29" column="54" source="standard:function-signature" />
-        <error line="29" column="70" source="standard:function-signature" />
-        <error line="29" column="84" source="standard:function-signature" />
-        <error line="29" column="94" source="standard:function-signature" />
-        <error line="30" column="5" source="standard:blank-line-before-declaration" />
-        <error line="30" column="38" source="standard:function-signature" />
-        <error line="30" column="62" source="standard:function-signature" />
-        <error line="30" column="83" source="standard:function-signature" />
-        <error line="30" column="96" source="standard:function-signature" />
-        <error line="31" column="5" source="standard:blank-line-before-declaration" />
-        <error line="34" column="5" source="standard:blank-line-before-declaration" />
-        <error line="35" column="5" source="standard:blank-line-before-declaration" />
-        <error line="35" column="36" source="standard:function-signature" />
-        <error line="35" column="60" source="standard:function-signature" />
-        <error line="35" column="85" source="standard:function-signature" />
-        <error line="36" column="5" source="standard:blank-line-before-declaration" />
-        <error line="38" column="30" source="standard:function-signature" />
-        <error line="38" column="46" source="standard:function-signature" />
-        <error line="38" column="61" source="standard:function-signature" />
-        <error line="39" column="5" source="standard:blank-line-before-declaration" />
-        <error line="40" column="5" source="standard:blank-line-before-declaration" />
-        <error line="41" column="5" source="standard:blank-line-before-declaration" />
-        <error line="42" column="5" source="standard:blank-line-before-declaration" />
-        <error line="43" column="5" source="standard:blank-line-before-declaration" />
-        <error line="43" column="37" source="standard:function-signature" />
-        <error line="43" column="53" source="standard:function-signature" />
-        <error line="43" column="77" source="standard:function-signature" />
-        <error line="43" column="93" source="standard:function-signature" />
-        <error line="43" column="105" source="standard:function-signature" />
-        <error line="44" column="5" source="standard:blank-line-before-declaration" />
-        <error line="46" column="28" source="standard:function-signature" />
-        <error line="46" column="44" source="standard:function-signature" />
-        <error line="46" column="66" source="standard:function-signature" />
-        <error line="47" column="5" source="standard:blank-line-before-declaration" />
-        <error line="47" column="34" source="standard:function-signature" />
-        <error line="47" column="50" source="standard:function-signature" />
-        <error line="47" column="74" source="standard:function-signature" />
-        <error line="47" column="101" source="standard:function-signature" />
-        <error line="47" column="114" source="standard:function-signature" />
-        <error line="48" column="5" source="standard:blank-line-before-declaration" />
-        <error line="51" column="5" source="standard:blank-line-before-declaration" />
-        <error line="51" column="28" source="standard:function-signature" />
-        <error line="51" column="41" source="standard:function-signature" />
-        <error line="51" column="54" source="standard:function-signature" />
-        <error line="54" column="36" source="standard:class-signature" />
-        <error line="54" column="70" source="standard:class-signature" />
-        <error line="57" column="82" source="standard:function-signature" />
-        <error line="62" column="39" source="standard:function-signature" />
-        <error line="62" column="54" source="standard:function-signature" />
-        <error line="62" column="64" source="standard:function-signature" />
-        <error line="75" column="72" source="standard:function-signature" />
-        <error line="79" column="31" source="standard:class-signature" />
-        <error line="79" column="65" source="standard:class-signature" />
-        <error line="82" column="46" source="standard:function-signature" />
-        <error line="82" column="70" source="standard:function-signature" />
-        <error line="82" column="85" source="standard:function-signature" />
-        <error line="82" column="101" source="standard:function-signature" />
-        <error line="85" column="75" source="standard:function-signature" />
-        <error line="88" column="40" source="standard:function-signature" />
-        <error line="88" column="55" source="standard:function-signature" />
-        <error line="88" column="65" source="standard:function-signature" />
-        <error line="99" column="37" source="standard:function-signature" />
-        <error line="99" column="54" source="standard:function-signature" />
-        <error line="99" column="65" source="standard:function-signature" />
-        <error line="99" column="77" source="standard:function-signature" />
-        <error line="123" column="79" source="standard:function-signature" />
-        <error line="135" column="45" source="standard:function-signature" />
-        <error line="135" column="69" source="standard:function-signature" />
-        <error line="135" column="94" source="standard:function-signature" />
-        <error line="148" column="39" source="standard:function-signature" />
-        <error line="148" column="55" source="standard:function-signature" />
-        <error line="148" column="70" source="standard:function-signature" />
-        <error line="154" column="77" source="standard:function-signature" />
-        <error line="186" column="37" source="standard:function-signature" />
-        <error line="186" column="53" source="standard:function-signature" />
-        <error line="186" column="75" source="standard:function-signature" />
-        <error line="186" column="98" source="standard:function-signature" />
-        <error line="211" column="37" source="standard:function-signature" />
-        <error line="211" column="50" source="standard:function-signature" />
-        <error line="211" column="63" source="standard:function-signature" />
-        <error line="230" column="49" source="standard:function-signature" />
     </file>
     <file name="src/main/java/com/clipsync/android/storage/ClipRepository.kt">
         <error line="3" column="1" source="standard:import-ordering" />
@@ -1003,29 +892,8 @@
         <error line="84" column="28" source="standard:multiline-expression-wrapping" />
         <error line="98" column="13" source="standard:function-naming" />
     </file>
-    <file name="src/main/java/com/clipsync/android/ui/history/HistoryScreen.kt">
-        <error line="31" column="5" source="standard:function-naming" />
-        <error line="37" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="95" column="13" source="standard:function-naming" />
-        <error line="96" column="30" source="standard:multiline-expression-wrapping" />
-        <error line="106" column="13" source="standard:function-naming" />
-        <error line="106" column="24" source="standard:function-signature" />
-        <error line="106" column="41" source="standard:function-signature" />
-        <error line="106" column="57" source="standard:function-signature" />
-        <error line="109" column="18" source="standard:multiline-expression-wrapping" />
-        <error line="110" column="30" source="standard:multiline-expression-wrapping" />
-        <error line="126" column="13" source="standard:function-naming" />
-    </file>
     <file name="src/main/java/com/clipsync/android/ui/history/HistoryViewModel.kt">
         <error line="39" column="38" source="standard:function-signature" />
-        <error line="169" column="40" source="standard:multiline-expression-wrapping" />
-        <error line="169" column="40" source="standard:function-signature" />
-        <error line="171" column="75" source="standard:function-signature" />
-        <error line="186" column="19" source="standard:multiline-expression-wrapping" />
-        <error line="211" column="19" source="standard:multiline-expression-wrapping" />
-        <error line="235" column="26" source="standard:function-signature" />
-        <error line="235" column="43" source="standard:function-signature" />
-        <error line="235" column="86" source="standard:function-signature" />
     </file>
     <file name="src/main/java/com/clipsync/android/ui/pairing/PairingScreen.kt">
         <error line="3" column="1" source="standard:import-ordering" />
@@ -1139,22 +1007,6 @@
         <error line="14" column="22" source="standard:function-signature" />
         <error line="14" column="38" source="standard:function-signature" />
         <error line="14" column="62" source="standard:function-signature" />
-    </file>
-    <file name="src/main/java/com/clipsync/android/ui/settings/SettingsScreen.kt">
-        <error line="26" column="5" source="standard:function-naming" />
-        <error line="32" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="100" column="21" source="standard:multiline-expression-wrapping" />
-        <error line="112" column="13" source="standard:function-naming" />
-    </file>
-    <file name="src/main/java/com/clipsync/android/ui/settings/SettingsViewModel.kt">
-        <error line="25" column="32" source="standard:multiline-expression-wrapping" />
-        <error line="28" column="32" source="standard:multiline-expression-wrapping" />
-        <error line="119" column="30" source="standard:multiline-expression-wrapping" />
-        <error line="121" column="28" source="standard:multiline-expression-wrapping" />
-        <error line="123" column="32" source="standard:multiline-expression-wrapping" />
-        <error line="149" column="46" source="standard:multiline-expression-wrapping" />
-        <error line="172" column="40" source="standard:multiline-expression-wrapping" />
-        <error line="172" column="40" source="standard:function-signature" />
     </file>
     <file name="src/main/java/com/clipsync/android/ui/settings/SyncControllerStatusAdapter.kt">
         <error line="34" column="23" source="standard:multiline-expression-wrapping" />
@@ -1505,10 +1357,6 @@
         <error line="209" column="23" source="standard:multiline-expression-wrapping" />
         <error line="223" column="23" source="standard:multiline-expression-wrapping" />
         <error line="253" column="23" source="standard:multiline-expression-wrapping" />
-    </file>
-    <file name="src/test/java/com/clipsync/android/platform/clipboard/MainActivityOverlayHealthWiringTest.kt">
-        <error line="48" column="26" source="standard:multiline-expression-wrapping" />
-        <error line="54" column="20" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/adblog/AdbLogMinimizationInvariantTest.kt">
         <error line="3" column="1" source="standard:import-ordering" />

@@ -16,6 +16,7 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.clipsync.android.MainActivity
 import com.clipsync.android.R
+import com.clipsync.android.capture.ClipboardCaptureRuntime
 import com.clipsync.android.notify.InboundClip
 import com.clipsync.android.notify.InboundClipApplier
 import com.clipsync.android.notify.InboundClipNotifier
@@ -99,6 +100,9 @@ class ClipboardSyncService : Service() {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE,
             )
             orch.onForegroundStarted()
+            // Boot-started service must bring up local capture without the
+            // user ever opening the Activity (A->W direction after reboot).
+            ClipboardCaptureRuntime.ensureStarted(applicationContext)
             ensureController()
             registerNetworkCallback()
         } catch (error: Exception) {

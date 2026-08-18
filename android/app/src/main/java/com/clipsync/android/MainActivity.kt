@@ -29,6 +29,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.clipsync.android.capture.ClipboardCaptureManager
+import com.clipsync.android.capture.ClipboardCaptureRuntime
 import com.clipsync.android.notify.InboundClip
 import com.clipsync.android.notify.InboundClipApplier
 import com.clipsync.android.notify.InboundClipNotifier
@@ -57,19 +59,12 @@ import com.clipsync.android.ui.settings.SyncControllerStatusAdapter
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackends
-import com.clipsync.android.platform.clipboard.shizuku.ShizukuClipboardBackend
 import com.clipsync.android.platform.clipboard.CapabilityState
-import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
-import com.clipsync.android.platform.clipboard.ClipboardHealthLoop
-import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.clipboard.ClipboardSelfTest
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
-import com.clipsync.android.platform.clipboard.KeyValueClipboardCapabilityStore
-import com.clipsync.android.platform.clipboard.overlay.OverlayFocusController
-import com.clipsync.android.storage.SETTING_PAIRED_PEER_ID
-import com.clipsync.android.ui.settings.LocalCapturePolicy
 import com.clipsync.android.service.ServiceProcessState
 import com.clipsync.android.ui.wizard.KeyValueWizardSettings
+import com.clipsync.android.ui.wizard.WizardChoices
 import com.clipsync.android.ui.wizard.WizardFrameworkProbes
 import com.clipsync.android.ui.wizard.WizardNavigation
 import com.clipsync.android.ui.wizard.WizardProbes
@@ -78,7 +73,6 @@ import com.clipsync.android.ui.wizard.WizardSettings
 import com.clipsync.android.ui.wizard.WizardViewModel
 import java.io.File
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -89,9 +83,7 @@ class MainActivity : ComponentActivity() {
         }
 
     private var syncController: SyncController? = null
-    private var clipboardAccess: ClipboardAccessCoordinator? = null
-    private var overlayFocus: OverlayFocusController? = null
-    private var clipboardHealthJob: Job? = null
+    private var captureManager: ClipboardCaptureManager? = null
     private val openTab = MutableStateFlow(0)
     private val pendingPairingPayload = MutableStateFlow<String?>(null)
     private var lastPaired: Boolean = false
@@ -127,55 +119,32 @@ class MainActivity : ComponentActivity() {
             controllerTicks = ClipboardSyncRuntime.orchestrator.controllerTicks,
         )
         val capabilities = ClipServices.capabilities(this, isVisible = { hasWindowFocus() })
-        val settingsKeys = SharedPrefsKeyValueStore(applicationContext)
-        val wizardSettings = KeyValueWizardSettings(settingsKeys)
-        val wizardChoices = wizardSettings.load()
-        val clipboardBackends = BackgroundClipboardBackends.build(
-            context = this,
-            isVisible = { hasWindowFocus() },
-            capabilityStore = KeyValueClipboardCapabilityStore(settingsKeys),
-            requestedReadMode = wizardChoices.preferredReadMode,
-            autoFallbackAllowed = wizardChoices.autoFallbackAllowed,
-            overlayConsented = wizardChoices.overlayConsented,
-            pollIntervalMillis = wizardChoices.pollingIntervalMs.toLong(),
-        )
-        ClipServices.writeFallbackProvider = {
-            (clipboardBackends.shizuku as? ShizukuClipboardBackend)?.fallbackWriter()
-        }
-        val access = clipboardBackends.coordinator()
-        clipboardAccess = access
-        overlayFocus = clipboardBackends.overlayController
-        access.requestMode(wizardChoices.preferredReadMode)
+        // The capture stack (backends, coordinator, health loop) is process-owned
+        // so it survives this Activity being destroyed while the FGS keeps the
+        // process alive. The Activity only reports visibility and reads state.
+        val capture = ClipboardCaptureRuntime.ensureStarted(applicationContext)
+        captureManager = capture
+        val storedWizardSettings = KeyValueWizardSettings(SharedPrefsKeyValueStore(applicationContext))
+        val wizardSettings =
+            object : WizardSettings by storedWizardSettings {
+                override fun save(choices: WizardChoices) {
+                    storedWizardSettings.save(choices)
+                    capture.applyChoices(choices)
+                }
+            }
         val clipboardSelfTest = ClipboardSelfTest(
             writeCoordinator = writeCoordinator,
             readBackend = {
-                access.state.activeReadMode?.let(clipboardBackends::backend)
-                    ?: clipboardBackends.selectedEligibleBackend(wizardSettings.load().preferredReadMode)
+                val backends = capture.backends()
+                val activeMode = capture.access()?.state?.activeReadMode
+                activeMode?.let { mode -> backends?.backend(mode) }
+                    ?: backends?.selectedEligibleBackend(wizardSettings.load().preferredReadMode)
             },
             clearClipboard = {
                 val manager = getSystemService(ClipboardManager::class.java)
                 manager != null && runCatching { manager.clearPrimaryClip() }.isSuccess
             },
         )
-        access.start { change ->
-            lifecycleScope.launch(Dispatchers.IO) {
-                // Our own writes (inbound apply, History copy, self-test token)
-                // echo back through the change listener; they are not user copies.
-                if (writeCoordinator.shouldSuppressCapture(change.text)) {
-                    return@launch
-                }
-                if (LocalCapturePolicy.isBlocked(repository)) {
-                    return@launch
-                }
-                val peerId = repository.getSetting(SETTING_PAIRED_PEER_ID)?.takeIf { it.isNotBlank() }
-                repository.captureLocalText(
-                    change.text,
-                    "shizuku",
-                    change.observedAtEpochMillis,
-                    peerId,
-                )
-            }
-        }
         setContent {
             ClipSyncTheme {
                 val requestedTab by openTab.collectAsState()
@@ -210,7 +179,12 @@ class MainActivity : ComponentActivity() {
                 val wizardViewModel: WizardViewModel = viewModel(
                     factory = WizardViewModel.factory(
                         settings = wizardSettings,
-                        probes = wizardProbes(syncStatus, clipboardBackends, wizardSettings, writeCoordinator),
+                        probes = wizardProbes(
+                            syncStatus,
+                            checkNotNull(capture.backends()),
+                            wizardSettings,
+                            writeCoordinator,
+                        ),
                         selfTest = clipboardSelfTest,
                     ),
                 )
@@ -347,12 +321,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        startClipboardHealthLoop()
+        captureManager?.setActivityVisible(true)
     }
 
     override fun onStop() {
-        cancelClipboardHealthLoop()
-        overlayFocus?.detach()
+        captureManager?.setActivityVisible(false)
         super.onStop()
     }
 
@@ -521,26 +494,14 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        cancelClipboardHealthLoop()
-        overlayFocus?.detach()
-        overlayFocus = null
-        clipboardAccess?.stop()
-        clipboardAccess = null
+        // Deliberately NOT stopping the capture stack: it is process-owned
+        // (ClipboardCaptureRuntime) and must survive Activity destruction so
+        // background capture keeps working while the FGS holds the process.
+        captureManager = null
         if (ClipboardSyncRuntime.orchestrator.controllerOwner == ControllerOwner.ACTIVITY) {
             syncController?.stop()
             syncController = null
         }
         super.onDestroy()
-    }
-
-    private fun startClipboardHealthLoop() {
-        cancelClipboardHealthLoop()
-        val access = clipboardAccess ?: return
-        clipboardHealthJob = ClipboardHealthLoop { access.checkHealth() }.start(lifecycleScope)
-    }
-
-    private fun cancelClipboardHealthLoop() {
-        clipboardHealthJob?.cancel()
-        clipboardHealthJob = null
     }
 }

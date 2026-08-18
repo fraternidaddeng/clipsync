@@ -20,6 +20,11 @@ class ClipSyncApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // The Shizuku UserService host (":clipsync-clipboard") also instantiates
+        // this Application; Room and capture must only run in the main process.
+        if (getProcessName() != packageName) {
+            return
+        }
         retentionScope.launch {
             var lastRunMs: Long? = null
             while (isActive) {

@@ -6,6 +6,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.os.Parcel
 import android.util.Log
+import kotlin.system.exitProcess
 
 /**
  * Shizuku UserService running as shell. Binder surface is read/write/listener/health
@@ -25,7 +26,10 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
     private var clipboardBinder: IBinder? = null
     private var adapter: IClipboardReflectionAdapter? = null
     private var systemListener: Any? = null
+
+    @Volatile
     private var appCallback: IBinder? = null
+    private var appCallbackDeathRecipient: IBinder.DeathRecipient? = null
     private var lastHealthError: String? = ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD
 
     private val systemListenerBinder = object : Binder() {
@@ -64,7 +68,7 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
             }
             ShizukuClipboardBinderContract.TRANSACTION_ADD_LISTENER -> {
                 data.enforceInterface(ShizukuClipboardBinderContract.DESCRIPTOR)
-                appCallback = data.readStrongBinder()
+                replaceAppCallback(data.readStrongBinder())
                 val ok = registerSystemListener()
                 reply?.writeNoException()
                 reply?.writeInt(if (ok) 1 else 0)
@@ -73,7 +77,7 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
             ShizukuClipboardBinderContract.TRANSACTION_REMOVE_LISTENER -> {
                 data.enforceInterface(ShizukuClipboardBinderContract.DESCRIPTOR)
                 unregisterSystemListener()
-                appCallback = null
+                replaceAppCallback(null)
                 reply?.writeNoException()
                 return true
             }
@@ -96,13 +100,60 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
     @Suppress("unused")
     fun destroy() {
         unregisterSystemListener()
-        appCallback = null
+        replaceAppCallback(null)
         synchronized(adapterLock) {
             unlinkClipboardDeath()
             clipboard = null
             clipboardBinder = null
             adapter = null
         }
+    }
+
+    /**
+     * Swaps the app callback binder, tracking its death. When the app process
+     * dies without unbinding (reinstall, force kill), this service must not
+     * linger as an orphan shell process holding a system clipboard listener,
+     * so it unregisters and exits; Shizuku spawns a fresh one on next bind.
+     */
+    private fun replaceAppCallback(callback: IBinder?) {
+        val previous = appCallback
+        val previousRecipient = appCallbackDeathRecipient
+        if (previous != null && previousRecipient != null) {
+            try {
+                previous.unlinkToDeath(previousRecipient, 0)
+            } catch (_: Exception) {
+                // Already unlinked or dead.
+            }
+        }
+        appCallback = callback
+        appCallbackDeathRecipient = null
+        if (callback == null) {
+            return
+        }
+        val recipient =
+            object : IBinder.DeathRecipient {
+                override fun binderDied() {
+                    onAppCallbackDied(callback)
+                }
+            }
+        try {
+            callback.linkToDeath(recipient, 0)
+            appCallbackDeathRecipient = recipient
+        } catch (_: Exception) {
+            onAppCallbackDied(callback)
+        }
+    }
+
+    private fun onAppCallbackDied(dead: IBinder) {
+        if (appCallback !== dead) {
+            // A newer app instance already re-registered; keep serving it.
+            return
+        }
+        unregisterSystemListener()
+        appCallback = null
+        appCallbackDeathRecipient = null
+        Log.i(TAG, "app callback died; exiting user service to avoid orphan")
+        exitProcess(0)
     }
 
     override fun binderDied() {
