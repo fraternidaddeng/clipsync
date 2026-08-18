@@ -72,7 +72,20 @@ class ClipboardAccessCoordinator(
     }
 
     fun checkHealth(): ClipboardAccessState {
-        val backend = activeBackend ?: return state
+        val backend = activeBackend
+        if (backend == null) {
+            // Parked: nothing could start earlier (e.g. Shizuku was down at
+            // process start). The stack is process-owned and never rebuilt by
+            // Activity recreates, so the health loop is the only recovery path.
+            return if (listener != null) {
+                selectAndStart(fromMode = state.requestedReadMode)
+            } else {
+                state
+            }
+        }
+        tryRecoverRequestedMode(backend)?.let { recovered ->
+            return recovered
+        }
         val health = backend.health()
         val probe = backend.probe()
         state = state.copy(
@@ -237,6 +250,30 @@ class ClipboardAccessCoordinator(
         }
         baselineHash = change.contentHash
         listener?.invoke(change)
+    }
+
+    /**
+     * When running on a fallback backend, probe the requested (higher-ranked)
+     * mode and switch back the moment it reports READY. Returns null when no
+     * upgrade applies so [checkHealth] continues with the regular checks.
+     */
+    private fun tryRecoverRequestedMode(active: BackgroundClipboardBackend): ClipboardAccessState? {
+        val requested = state.requestedReadMode
+        val requestedRank = FALLBACK_ORDER.indexOf(requested)
+        val activeRank = FALLBACK_ORDER.indexOf(active.mode)
+        val candidate = backendsByMode[requested]
+        val canUpgrade =
+            requested != active.mode &&
+                requestedRank >= 0 &&
+                activeRank >= 0 &&
+                requestedRank < activeRank &&
+                candidate != null &&
+                candidate.probe().readState == CapabilityState.READY
+        return if (canUpgrade && candidate != null) {
+            commitReadySwitch(candidate, requested)
+        } else {
+            null
+        }
     }
 
     private fun fallbackModes(fromMode: ClipboardReadMode?): List<ClipboardReadMode> {

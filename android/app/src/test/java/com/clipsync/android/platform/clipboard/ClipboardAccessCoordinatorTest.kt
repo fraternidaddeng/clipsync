@@ -296,4 +296,84 @@ class ClipboardAccessCoordinatorTest {
         assertEquals(listOf("OVERLAY_POLLING.stop", "detach"), calls)
         assertEquals(null, coordinator.state.activeReadMode)
     }
+
+    @Test
+    fun `parked health check retries selection from the requested mode`() {
+        val shizuku =
+            FakeBackgroundClipboardBackend(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                report = FakeBackgroundClipboardBackend.capabilityReport(
+                    mode = ClipboardReadMode.SHIZUKU_EVENT,
+                    state = CapabilityState.UNAVAILABLE,
+                    errorCode = "SHIZUKU_NOT_RUNNING",
+                ),
+            )
+        val coordinator =
+            ClipboardAccessCoordinator(
+                backends = listOf(shizuku),
+                autoFallbackAllowed = false,
+            )
+        coordinator.start { }
+        assertEquals(null, coordinator.state.activeReadMode)
+
+        shizuku.report =
+            FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.READY,
+            )
+
+        val state = coordinator.checkHealth()
+
+        assertEquals(ClipboardReadMode.SHIZUKU_EVENT, state.activeReadMode)
+        assertEquals(CapabilityState.READY, coordinator.lastReadState)
+    }
+
+    @Test
+    fun `health check upgrades from fallback when requested mode becomes ready`() {
+        val shizuku =
+            FakeBackgroundClipboardBackend(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                report = FakeBackgroundClipboardBackend.capabilityReport(
+                    mode = ClipboardReadMode.SHIZUKU_EVENT,
+                    state = CapabilityState.UNAVAILABLE,
+                    errorCode = "SHIZUKU_NOT_RUNNING",
+                ),
+            )
+        val foreground = FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)
+        val coordinator = ClipboardAccessCoordinator(listOf(shizuku, foreground))
+        coordinator.start { }
+        assertEquals(ClipboardReadMode.FOREGROUND_ONLY, coordinator.state.activeReadMode)
+
+        shizuku.report =
+            FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.READY,
+            )
+
+        val state = coordinator.checkHealth()
+
+        assertEquals(ClipboardReadMode.SHIZUKU_EVENT, state.activeReadMode)
+        assertEquals(CapabilityState.READY, coordinator.lastReadState)
+    }
+
+    @Test
+    fun `health check stays on fallback when requested mode is still unavailable`() {
+        val shizuku =
+            FakeBackgroundClipboardBackend(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                report = FakeBackgroundClipboardBackend.capabilityReport(
+                    mode = ClipboardReadMode.SHIZUKU_EVENT,
+                    state = CapabilityState.UNAVAILABLE,
+                    errorCode = "SHIZUKU_NOT_RUNNING",
+                ),
+            )
+        val foreground = FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)
+        val coordinator = ClipboardAccessCoordinator(listOf(shizuku, foreground))
+        coordinator.start { }
+        assertEquals(ClipboardReadMode.FOREGROUND_ONLY, coordinator.state.activeReadMode)
+
+        val state = coordinator.checkHealth()
+
+        assertEquals(ClipboardReadMode.FOREGROUND_ONLY, state.activeReadMode)
+    }
 }

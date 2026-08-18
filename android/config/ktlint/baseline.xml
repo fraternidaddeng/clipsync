@@ -195,15 +195,15 @@
     <file name="src/main/java/com/clipsync/android/platform/clipboard/ClipboardAccessCoordinator.kt">
         <error line="32" column="17" source="standard:multiline-expression-wrapping" />
         <error line="44" column="21" source="standard:multiline-expression-wrapping" />
-        <error line="78" column="17" source="standard:multiline-expression-wrapping" />
-        <error line="83" column="30" source="standard:multiline-expression-wrapping" />
-        <error line="93" column="25" source="standard:multiline-expression-wrapping" />
-        <error line="139" column="17" source="standard:multiline-expression-wrapping" />
-        <error line="155" column="21" source="standard:multiline-expression-wrapping" />
-        <error line="164" column="17" source="standard:multiline-expression-wrapping" />
-        <error line="194" column="26" source="standard:multiline-expression-wrapping" />
-        <error line="253" column="67" source="standard:function-signature" />
-        <error line="276" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="91" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="96" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="106" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="152" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="168" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="177" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="207" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="290" column="67" source="standard:function-signature" />
+        <error line="313" column="30" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/ClipboardCapabilityStore.kt">
         <error line="38" column="25" source="standard:multiline-expression-wrapping" />
@@ -1264,6 +1264,9 @@
         <error line="266" column="33" source="standard:multiline-expression-wrapping" />
         <error line="283" column="23" source="standard:multiline-expression-wrapping" />
         <error line="287" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="305" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="336" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="364" column="26" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/ClipboardCapabilityStoreTest.kt">
         <error line="78" column="23" source="standard:multiline-expression-wrapping" />

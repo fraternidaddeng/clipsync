@@ -256,6 +256,6 @@ class AndroidShizukuRuntime(
     companion object {
         const val SHIZUKU_MANAGER_PACKAGE = "moe.shizuku.privileged.api"
         const val REQUEST_CODE = 0xC11
-        const val USER_SERVICE_VERSION = 1
+        const val USER_SERVICE_VERSION = 2
     }
 }
