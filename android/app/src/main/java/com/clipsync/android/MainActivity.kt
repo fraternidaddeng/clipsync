@@ -27,23 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.clipsync.android.capture.ClipboardCaptureManager
 import com.clipsync.android.capture.ClipboardCaptureRuntime
-import com.clipsync.android.notify.InboundClip
-import com.clipsync.android.notify.InboundClipApplier
-import com.clipsync.android.notify.InboundClipNotifier
 import com.clipsync.android.pairing.PairingConfirmClient
-import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.service.ClipboardSyncRuntime
 import com.clipsync.android.service.ClipboardSyncService
-import com.clipsync.android.service.ControllerOwner
 import com.clipsync.android.service.ServiceNotificationActions
-import com.clipsync.android.storage.ClipRepository
-import com.clipsync.android.sync.AndroidSyncLogger
-import com.clipsync.android.sync.SyncController
-import com.clipsync.android.sync.createSyncController
 import com.clipsync.android.ui.HealthScreen
 import com.clipsync.android.ui.HealthScreenState
 import com.clipsync.android.ui.history.HistoryScreen
@@ -72,9 +62,7 @@ import com.clipsync.android.ui.wizard.WizardScreen
 import com.clipsync.android.ui.wizard.WizardSettings
 import com.clipsync.android.ui.wizard.WizardViewModel
 import java.io.File
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private val notificationPermissionLauncher =
@@ -82,7 +70,6 @@ class MainActivity : ComponentActivity() {
             // Denial is fine: inbound copy notifications stay off; the app must not crash.
         }
 
-    private var syncController: SyncController? = null
     private var captureManager: ClipboardCaptureManager? = null
     private val openTab = MutableStateFlow(0)
     private val pendingPairingPayload = MutableStateFlow<String?>(null)
@@ -101,22 +88,21 @@ class MainActivity : ComponentActivity() {
         val writeCoordinator = ClipServices.writeCoordinator(this)
         val serviceSettings = ClipServices.serviceSettings(this)
         val backgroundWanted = serviceSettings.backgroundSyncEnabled()
+        ClipboardSyncRuntime.noteActivityCreated()
         ClipboardSyncRuntime.orchestrator.wantedRunning = backgroundWanted
         ClipboardSyncRuntime.orchestrator.setBootRecoveryEnabled(serviceSettings.bootRecoveryEnabled())
+        // Single process-scoped controller: Activity and Service share it, so
+        // there is no ownership handover and no resubscription tick machinery.
+        val syncController = ClipboardSyncRuntime.controller(applicationContext)
         if (backgroundWanted) {
-            val handover = ClipboardSyncRuntime.orchestrator.requestBackgroundStart()
-            check(handover.acquireBy == ControllerOwner.SERVICE)
+            ClipboardSyncRuntime.orchestrator.requestBackgroundStart()
             ClipboardSyncService.start(this)
-        } else {
-            syncController = createActivityController(pairingStore, repository)
-            ClipboardSyncRuntime.orchestrator.onActivityControllerAttached()
         }
         val syncStatus = SyncControllerStatusAdapter(
-            controller = { ClipboardSyncRuntime.activeController(syncController) },
+            controller = { syncController },
             isPaired = { pairingStore.peer() != null },
             serviceSnapshot = { ClipboardSyncRuntime.orchestrator.snapshot() },
             serviceSnapshots = ClipboardSyncRuntime.orchestrator.snapshots,
-            controllerTicks = ClipboardSyncRuntime.orchestrator.controllerTicks,
         )
         val capabilities = ClipServices.capabilities(this, isVisible = { hasWindowFocus() })
         // The capture stack (backends, coordinator, health loop) is process-owned
@@ -169,7 +155,7 @@ class MainActivity : ComponentActivity() {
                         capabilities,
                         serviceSettings = serviceSettings,
                         onBackgroundSyncChanged = { enabled ->
-                            onBackgroundSyncToggled(enabled, pairingStore, repository)
+                            onBackgroundSyncToggled(enabled)
                         },
                         onBootRecoveryChanged = { enabled ->
                             ClipboardSyncRuntime.applyBootReceiverEnabled(this, enabled)
@@ -213,15 +199,10 @@ class MainActivity : ComponentActivity() {
                     val paired = currentPairing is PairingUiState.Paired ||
                         (currentPairing is PairingUiState.Idle && currentPairing.pairedPeer != null)
                     lastPaired = paired
-                    val activityController = syncController
-                    if (ClipboardSyncRuntime.orchestrator.controllerOwner == ControllerOwner.ACTIVITY &&
-                        activityController != null
-                    ) {
-                        if (paired) {
-                            activityController.start()
-                        } else if (currentPairing is PairingUiState.Idle) {
-                            activityController.stop()
-                        }
+                    if (paired) {
+                        syncController.start()
+                    } else if (currentPairing is PairingUiState.Idle) {
+                        syncController.stop()
                     }
                     if (currentPairing is PairingUiState.Paired) {
                         tab = WizardNavigation.TAB_INDEX
@@ -336,52 +317,19 @@ class MainActivity : ComponentActivity() {
         openTab.value = tabFrom(intent)
     }
 
-    private fun onBackgroundSyncToggled(
-        enabled: Boolean,
-        pairingStore: PairingStore,
-        repository: ClipRepository,
-    ) {
+    private fun onBackgroundSyncToggled(enabled: Boolean) {
+        // The controller is process-scoped and keeps running across the toggle;
+        // only the foreground service comes and goes.
         if (enabled) {
-            val handover = ClipboardSyncRuntime.orchestrator.requestBackgroundStart()
-            syncController?.stop()
-            syncController = null
-            check(handover.acquireBy == ControllerOwner.SERVICE)
+            ClipboardSyncRuntime.orchestrator.requestBackgroundStart()
             ClipboardSyncService.start(this)
         } else {
-            val handover = ClipboardSyncRuntime.orchestrator.requestBackgroundStop()
+            ClipboardSyncRuntime.orchestrator.requestBackgroundStop()
             ClipboardSyncService.stop(this)
-            val controller = createActivityController(pairingStore, repository)
-            syncController = controller
-            check(handover.acquireBy == ControllerOwner.ACTIVITY)
-            ClipboardSyncRuntime.orchestrator.onActivityControllerAttached()
             if (lastPaired) {
-                controller.start()
+                ClipboardSyncRuntime.controller(applicationContext).start()
             }
         }
-    }
-
-    private fun createActivityController(
-        pairingStore: PairingStore,
-        repository: ClipRepository,
-    ): SyncController {
-        val writeCoordinator = ClipServices.writeCoordinator(this)
-        val notifier = InboundClipNotifier(this)
-        val applier = InboundClipApplier(repository, writeCoordinator) { eventId ->
-            notifier.notifyCopyAction(eventId)
-        }
-        return createSyncController(
-            pairingStore = pairingStore,
-            repository = repository,
-            scope = lifecycleScope,
-            logger = AndroidSyncLogger,
-            onRemoteClipsCommitted = { clips ->
-                lifecycleScope.launch(Dispatchers.IO) {
-                    applier.onCommitted(
-                        clips.map { InboundClip(eventId = it.eventId, content = it.content) },
-                    )
-                }
-            },
-        )
     }
 
     private fun wizardProbes(
@@ -498,10 +446,10 @@ class MainActivity : ComponentActivity() {
         // (ClipboardCaptureRuntime) and must survive Activity destruction so
         // background capture keeps working while the FGS holds the process.
         captureManager = null
-        if (ClipboardSyncRuntime.orchestrator.controllerOwner == ControllerOwner.ACTIVITY) {
-            syncController?.stop()
-            syncController = null
-        }
+        ClipboardSyncRuntime.noteActivityDestroyed()
+        // Without background sync the process-scoped controller has no owner
+        // left; stopping preserves the old "sync dies with the UI" behavior.
+        ClipboardSyncRuntime.stopControllerIfUnneeded()
         super.onDestroy()
     }
 }

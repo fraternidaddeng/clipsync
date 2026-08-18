@@ -53,6 +53,30 @@ class CaptureOwnershipWiringTest {
     }
 
     @Test
+    fun `capture targets the pairing store peer, not the room mirror`() {
+        val source = source("capture/ClipboardCaptureRuntime.kt")
+        assertTrue(source.contains(".pairingStore(app)"))
+        assertFalse(source.contains("SETTING_PAIRED_PEER_ID"))
+    }
+
+    @Test
+    fun `application reconciles the room peer mirror at process start`() {
+        val source = source("ClipSyncApplication.kt")
+        assertTrue(source.contains("SETTING_PAIRED_PEER_ID"))
+        assertTrue(source.contains("pairingStore"))
+    }
+
+    @Test
+    fun `sync controller is a single process-scoped instance`() {
+        val runtime = source("service/ClipboardSyncRuntime.kt")
+        assertTrue(runtime.contains("fun controller(context: Context): SyncController"))
+        val activity = source("MainActivity.kt")
+        assertFalse(activity.contains("createSyncController"))
+        val service = source("service/ClipboardSyncService.kt")
+        assertFalse(service.contains("createSyncController"))
+    }
+
+    @Test
     fun `user service exits when the app callback binder dies`() {
         val source = source("platform/clipboard/shizuku/ClipboardUserService.kt")
         assertTrue(source.contains("linkToDeath"))

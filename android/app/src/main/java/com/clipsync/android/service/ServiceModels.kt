@@ -8,32 +8,14 @@ enum class ServiceProcessState {
     NEEDS_RECOVERY,
 }
 
-enum class ControllerOwner {
-    NONE,
-    ACTIVITY,
-    SERVICE,
-}
-
-data class ControllerHandover(
-    val releaseFrom: ControllerOwner,
-    val acquireBy: ControllerOwner,
-)
-
 enum class BootOutcome {
     Ignored,
     Started,
     RequestUserRecovery,
 }
 
-interface SyncControllerLease {
-    val started: Boolean
-    fun start()
-    fun stop()
-}
-
 data class ServiceSnapshot(
     val processState: ServiceProcessState = ServiceProcessState.STOPPED,
-    val controllerOwner: ControllerOwner = ControllerOwner.NONE,
     val errorCode: String? = null,
     val wantedRunning: Boolean = false,
     val notificationsVisible: Boolean = true,
@@ -41,9 +23,7 @@ data class ServiceSnapshot(
 ) {
     val isProcessAlive: Boolean get() = processState == ServiceProcessState.RUNNING
     val isOnline: Boolean
-        get() = processState == ServiceProcessState.RUNNING &&
-            controllerOwner == ControllerOwner.SERVICE &&
-            controllerReady
+        get() = processState == ServiceProcessState.RUNNING && controllerReady
 
     fun statusLabel(): String = when (processState) {
         ServiceProcessState.RUNNING ->

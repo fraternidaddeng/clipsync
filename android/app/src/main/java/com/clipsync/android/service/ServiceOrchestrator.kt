@@ -5,21 +5,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
- * JVM-testable owner of ForegroundService start/stop, Activity↔Service controller
- * handover, and honest process status. The Android [ClipboardSyncService] shell
- * stays thin and calls into this class.
+ * JVM-testable owner of ForegroundService start/stop and honest process status.
+ * The Android [ClipboardSyncService] shell stays thin and calls into this class.
+ * The sync controller itself is a single process-scoped instance owned by
+ * [ClipboardSyncRuntime]; this class only tracks the FGS process lifecycle.
  *
  * Foreground service alive ≠ clipboard permission (plan 0.1.2 rule 6).
  */
 class ServiceOrchestrator {
     private val mutableSnapshots = MutableStateFlow(ServiceSnapshot())
     val snapshots: StateFlow<ServiceSnapshot> = mutableSnapshots.asStateFlow()
-    private val mutableControllerTicks = MutableStateFlow(0)
-    val controllerTicks: StateFlow<Int> = mutableControllerTicks.asStateFlow()
 
     var processState: ServiceProcessState = ServiceProcessState.STOPPED
-        private set
-    var controllerOwner: ControllerOwner = ControllerOwner.ACTIVITY
         private set
     var errorCode: String? = null
         private set
@@ -43,7 +40,6 @@ class ServiceOrchestrator {
 
     fun snapshot(): ServiceSnapshot = ServiceSnapshot(
         processState = processState,
-        controllerOwner = controllerOwner,
         errorCode = errorCode,
         wantedRunning = wantedRunning,
         notificationsVisible = notificationsVisible,
@@ -52,32 +48,20 @@ class ServiceOrchestrator {
 
     fun statusLabel(): String = snapshot().statusLabel()
 
-    fun requestBackgroundStart(): ControllerHandover {
+    fun requestBackgroundStart() {
         wantedRunning = true
         controllerReady = false
         errorCode = null
         processState = ServiceProcessState.STARTING
-        controllerOwner = ControllerOwner.NONE
         publish()
-        onControllerInstanceChanged()
-        return ControllerHandover(
-            releaseFrom = ControllerOwner.ACTIVITY,
-            acquireBy = ControllerOwner.SERVICE,
-        )
     }
 
-    fun requestBackgroundStop(): ControllerHandover {
+    fun requestBackgroundStop() {
         wantedRunning = false
         controllerReady = false
         errorCode = null
         processState = ServiceProcessState.STOPPED
-        controllerOwner = ControllerOwner.ACTIVITY
         publish()
-        onControllerInstanceChanged()
-        return ControllerHandover(
-            releaseFrom = ControllerOwner.SERVICE,
-            acquireBy = ControllerOwner.ACTIVITY,
-        )
     }
 
     fun onForegroundStarted() {
@@ -93,25 +77,12 @@ class ServiceOrchestrator {
         if (processState == ServiceProcessState.ERROR) {
             return
         }
-        controllerOwner = ControllerOwner.SERVICE
         processState = ServiceProcessState.RUNNING
         publish()
-        onControllerInstanceChanged()
-    }
-
-    fun onActivityControllerAttached() {
-        controllerOwner = ControllerOwner.ACTIVITY
-        onControllerInstanceChanged()
-    }
-
-    fun onControllerInstanceChanged() {
-        mutableControllerTicks.value += 1
     }
 
     fun markControllerReady() {
-        if (processState == ServiceProcessState.RUNNING &&
-            controllerOwner == ControllerOwner.SERVICE
-        ) {
+        if (processState == ServiceProcessState.RUNNING) {
             controllerReady = true
             publish()
         }
@@ -125,26 +96,20 @@ class ServiceOrchestrator {
     fun onForegroundStartFailed(throwable: Throwable) {
         errorCode = ForegroundStartErrors.map(throwable)
         processState = ServiceProcessState.ERROR
-        controllerOwner = ControllerOwner.NONE
         controllerReady = false
         publish()
-        onControllerInstanceChanged()
     }
 
     fun onProcessKilled() {
-        controllerOwner = ControllerOwner.NONE
         controllerReady = false
         processState = ServiceProcessState.NEEDS_RECOVERY
         publish()
-        onControllerInstanceChanged()
     }
 
     fun onStickyRestart() {
         controllerReady = false
-        controllerOwner = ControllerOwner.NONE
         processState = ServiceProcessState.NEEDS_RECOVERY
         publish()
-        onControllerInstanceChanged()
     }
 
     /**
@@ -155,16 +120,12 @@ class ServiceOrchestrator {
         if (processState == ServiceProcessState.RUNNING) {
             return
         }
-        controllerOwner = ControllerOwner.NONE
         controllerReady = false
         processState = ServiceProcessState.NEEDS_RECOVERY
         publish()
-        onControllerInstanceChanged()
     }
 
-    fun onNetworkRegained(): Boolean =
-        processState == ServiceProcessState.RUNNING &&
-            controllerOwner == ControllerOwner.SERVICE
+    fun onNetworkRegained(): Boolean = processState == ServiceProcessState.RUNNING
 
     fun setBootRecoveryEnabled(enabled: Boolean) {
         bootRecoveryEnabled = enabled
@@ -189,30 +150,6 @@ class ServiceOrchestrator {
             }
         } catch (_: Exception) {
             BootOutcome.RequestUserRecovery
-        }
-    }
-
-    fun applyRelease(
-        handover: ControllerHandover,
-        activity: SyncControllerLease,
-        service: SyncControllerLease,
-    ) {
-        when (handover.releaseFrom) {
-            ControllerOwner.ACTIVITY -> activity.stop()
-            ControllerOwner.SERVICE -> service.stop()
-            ControllerOwner.NONE -> Unit
-        }
-    }
-
-    fun applyAcquire(
-        handover: ControllerHandover,
-        activity: SyncControllerLease,
-        service: SyncControllerLease,
-    ) {
-        when (handover.acquireBy) {
-            ControllerOwner.ACTIVITY -> activity.start()
-            ControllerOwner.SERVICE -> service.start()
-            ControllerOwner.NONE -> Unit
         }
     }
 

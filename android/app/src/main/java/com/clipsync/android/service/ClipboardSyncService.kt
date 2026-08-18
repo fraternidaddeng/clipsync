@@ -17,13 +17,7 @@ import androidx.core.content.ContextCompat
 import com.clipsync.android.MainActivity
 import com.clipsync.android.R
 import com.clipsync.android.capture.ClipboardCaptureRuntime
-import com.clipsync.android.notify.InboundClip
-import com.clipsync.android.notify.InboundClipApplier
-import com.clipsync.android.notify.InboundClipNotifier
 import com.clipsync.android.notify.NotificationPermission
-import com.clipsync.android.sync.AndroidSyncLogger
-import com.clipsync.android.sync.SyncController
-import com.clipsync.android.sync.createSyncController
 import com.clipsync.android.ui.settings.ClipServices
 import com.clipsync.android.ui.settings.SETTING_IS_PAUSED
 import com.clipsync.android.ui.settings.formatSettingFlag
@@ -39,7 +33,6 @@ import kotlinx.coroutines.launch
  */
 class ClipboardSyncService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-    private var controller: SyncController? = null
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -48,7 +41,7 @@ class ClipboardSyncService : Service() {
         val orch = ClipboardSyncRuntime.orchestrator
         when (intent?.action) {
             ServiceNotificationActions.ACTION_STOP -> {
-                stopOwnedController()
+                ClipboardSyncRuntime.stopControllerIfUnneeded()
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()
                 return START_NOT_STICKY
@@ -58,12 +51,13 @@ class ClipboardSyncService : Service() {
                     ClipServices.repository(this@ClipboardSyncService)
                         .setSetting(SETTING_IS_PAUSED, formatSettingFlag(true))
                 }
-                controller?.stop()
+                ClipboardSyncRuntime.controllerOrNull()?.stop()
                 orch.clearControllerReady()
                 return START_STICKY
             }
             ServiceNotificationActions.ACTION_SYNC_NOW -> {
-                if (orch.onNetworkRegained() || orch.controllerOwner == ControllerOwner.SERVICE) {
+                if (orch.onNetworkRegained()) {
+                    val controller = ClipboardSyncRuntime.controllerOrNull()
                     controller?.start()
                     controller?.status()
                 }
@@ -80,11 +74,10 @@ class ClipboardSyncService : Service() {
     override fun onDestroy() {
         unregisterNetworkCallback()
         val orch = ClipboardSyncRuntime.orchestrator
-        val wanted = orch.wantedRunning
-        stopOwnedController()
-        if (wanted && orch.processState != ServiceProcessState.ERROR) {
+        if (orch.wantedRunning && orch.processState != ServiceProcessState.ERROR) {
             orch.onProcessKilled()
         }
+        ClipboardSyncRuntime.stopControllerIfUnneeded()
         scope.cancel()
         super.onDestroy()
     }
@@ -113,41 +106,8 @@ class ClipboardSyncService : Service() {
     }
 
     private fun ensureController() {
-        if (controller != null) {
-            ClipboardSyncRuntime.orchestrator.onServiceControllerStarted()
-            controller?.start()
-            return
-        }
-        val pairingStore = ClipServices.pairingStore(this)
-        val repository = ClipServices.repository(this)
-        val writeCoordinator = ClipServices.writeCoordinator(this)
-        val notifier = InboundClipNotifier(this)
-        val applier = InboundClipApplier(repository, writeCoordinator) { eventId ->
-            notifier.notifyCopyAction(eventId)
-        }
-        val created = createSyncController(
-            pairingStore = pairingStore,
-            repository = repository,
-            scope = scope,
-            logger = AndroidSyncLogger,
-            onRemoteClipsCommitted = { clips ->
-                scope.launch(Dispatchers.IO) {
-                    applier.onCommitted(
-                        clips.map { InboundClip(eventId = it.eventId, content = it.content) },
-                    )
-                }
-            },
-        )
-        controller = created
-        ClipboardSyncRuntime.attachServiceController(created)
         ClipboardSyncRuntime.orchestrator.onServiceControllerStarted()
-        created.start()
-    }
-
-    private fun stopOwnedController() {
-        controller?.stop()
-        controller = null
-        ClipboardSyncRuntime.detachServiceController()
+        ClipboardSyncRuntime.controller(this).start()
     }
 
     private fun registerNetworkCallback() {
@@ -158,6 +118,7 @@ class ClipboardSyncService : Service() {
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 if (ClipboardSyncRuntime.orchestrator.onNetworkRegained()) {
+                    val controller = ClipboardSyncRuntime.controllerOrNull()
                     controller?.start()
                     controller?.status()
                 }

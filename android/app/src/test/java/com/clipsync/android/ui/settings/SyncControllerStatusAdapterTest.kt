@@ -1,6 +1,5 @@
 package com.clipsync.android.ui.settings
 
-import com.clipsync.android.service.ControllerOwner
 import com.clipsync.android.service.ServiceProcessState
 import com.clipsync.android.service.ServiceSnapshot
 import com.clipsync.android.sync.SyncControllerState
@@ -44,7 +43,6 @@ class SyncControllerStatusAdapterTest {
             status = SyncStatus.READY,
             service = ServiceSnapshot(
                 processState = ServiceProcessState.NEEDS_RECOVERY,
-                controllerOwner = ControllerOwner.SERVICE,
             ),
         )
         assertFalse(adapter.current().windowsReachable)
@@ -66,10 +64,7 @@ class SyncControllerStatusAdapterTest {
     fun `READY without a service snapshot change becomes reachable`() = runTest(UnconfinedTestDispatcher()) {
         val controllerState = MutableStateFlow(SyncControllerState(SyncStatus.CONNECTING))
         val service = MutableStateFlow(
-            ServiceSnapshot(
-                processState = ServiceProcessState.RUNNING,
-                controllerOwner = ControllerOwner.SERVICE,
-            ),
+            ServiceSnapshot(processState = ServiceProcessState.RUNNING),
         )
         val adapter = SyncControllerStatusAdapter(
             isPaired = { true },
@@ -89,30 +84,29 @@ class SyncControllerStatusAdapterTest {
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun `controller tick resubscribes after a null controller`() = runTest(UnconfinedTestDispatcher()) {
-        val ticks = MutableStateFlow(0)
-        var stateFlow: MutableStateFlow<SyncControllerState>? = null
+    fun `service snapshot change alone re-emits status`() = runTest(UnconfinedTestDispatcher()) {
+        val controllerState = MutableStateFlow(
+            SyncControllerState(SyncStatus.READY, authenticated = true),
+        )
         val service = MutableStateFlow(
-            ServiceSnapshot(
-                processState = ServiceProcessState.STOPPED,
-                controllerOwner = ControllerOwner.ACTIVITY,
-            ),
+            ServiceSnapshot(processState = ServiceProcessState.RUNNING),
         )
         val adapter = SyncControllerStatusAdapter(
             isPaired = { true },
             serviceSnapshot = { service.value },
             serviceSnapshots = service,
-            controllerTicks = ticks,
-            controllerState = { stateFlow },
+            controllerState = { controllerState },
         )
         val seen = mutableListOf<SyncConnectionStatus>()
         val job = backgroundScope.launch {
             adapter.snapshots().collect { seen += it }
         }
-        assertFalse(seen.last().windowsReachable)
-        stateFlow = MutableStateFlow(SyncControllerState(SyncStatus.READY, authenticated = true))
-        ticks.value += 1
         assertTrue(seen.last().windowsReachable)
+
+        service.value = ServiceSnapshot(processState = ServiceProcessState.NEEDS_RECOVERY)
+
+        assertFalse(seen.last().windowsReachable)
+        assertTrue(seen.last().serviceNeedsRecovery)
         job.cancel()
     }
 
@@ -121,7 +115,6 @@ class SyncControllerStatusAdapterTest {
         status: SyncStatus,
         service: ServiceSnapshot = ServiceSnapshot(
             processState = ServiceProcessState.RUNNING,
-            controllerOwner = ControllerOwner.SERVICE,
         ),
     ): SyncControllerStatusAdapter {
         val controllerState = MutableStateFlow(SyncControllerState(status))

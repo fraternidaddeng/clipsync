@@ -2,6 +2,7 @@ package com.clipsync.android
 
 import android.app.Application
 import com.clipsync.android.storage.RETENTION_PURGE_INTERVAL_MS
+import com.clipsync.android.storage.SETTING_PAIRED_PEER_ID
 import com.clipsync.android.storage.isRetentionPurgeDue
 import com.clipsync.android.ui.settings.ClipServices
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +25,17 @@ class ClipSyncApplication : Application() {
         // this Application; Room and capture must only run in the main process.
         if (getProcessName() != packageName) {
             return
+        }
+        retentionScope.launch {
+            // PairingStore (SharedPreferences) is the source of truth for peer
+            // identity; reconcile the Room mirror once per process start so a
+            // crash between pairing and the UI-driven sync cannot leave it stale.
+            runCatching {
+                val peerId = ClipServices.pairingStore(this@ClipSyncApplication)
+                    .peer()?.deviceId.orEmpty()
+                ClipServices.repository(this@ClipSyncApplication)
+                    .setSetting(SETTING_PAIRED_PEER_ID, peerId)
+            }
         }
         retentionScope.launch {
             var lastRunMs: Long? = null

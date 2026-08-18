@@ -5,7 +5,6 @@ import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackends
 import com.clipsync.android.platform.clipboard.KeyValueClipboardCapabilityStore
 import com.clipsync.android.platform.clipboard.shizuku.ShizukuClipboardBackend
-import com.clipsync.android.storage.SETTING_PAIRED_PEER_ID
 import com.clipsync.android.sync.AndroidSyncLogger
 import com.clipsync.android.ui.settings.ClipServices
 import com.clipsync.android.ui.settings.LocalCapturePolicy
@@ -66,9 +65,13 @@ object ClipboardCaptureRuntime {
                 // back through the change listener; they are not user copies.
                 val suppressed = writeCoordinator.shouldSuppressCapture(change.text)
                 if (!suppressed && !LocalCapturePolicy.isBlocked(repository)) {
+                    // PairingStore is the source of truth for peer identity; the
+                    // Room mirror is only a UI convenience and can lag it.
                     val peerId =
-                        repository
-                            .getSetting(SETTING_PAIRED_PEER_ID)
+                        ClipServices
+                            .pairingStore(app)
+                            .peer()
+                            ?.deviceId
                             ?.takeIf { it.isNotBlank() }
                     repository.captureLocalText(
                         change.text,

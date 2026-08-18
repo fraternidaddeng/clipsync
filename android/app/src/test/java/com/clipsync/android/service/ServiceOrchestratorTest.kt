@@ -8,48 +8,32 @@ import org.junit.Test
 
 class ServiceOrchestratorTest {
     @Test
-    fun `start hands the controller from Activity to Service`() {
-        val activity = RecordingLease().also { it.start() }
-        val service = RecordingLease()
+    fun `background start marks starting and wants running`() {
         val orch = ServiceOrchestrator()
 
-        val handover = orch.requestBackgroundStart()
-        assertEquals(ControllerOwner.ACTIVITY, handover.releaseFrom)
-        assertEquals(ControllerOwner.SERVICE, handover.acquireBy)
-        orch.applyRelease(handover, activity, service)
+        orch.requestBackgroundStart()
 
-        assertFalse(activity.started)
-        assertEquals(ControllerOwner.NONE, orch.controllerOwner)
         assertEquals(ServiceProcessState.STARTING, orch.processState)
         assertTrue(orch.wantedRunning)
+        assertFalse(orch.isProcessAlive)
+        assertFalse(orch.isOnline)
 
         orch.onForegroundStarted()
-        orch.applyAcquire(handover, activity, service)
         orch.onServiceControllerStarted()
 
-        assertTrue(service.started)
-        assertFalse(activity.started)
-        assertEquals(ControllerOwner.SERVICE, orch.controllerOwner)
         assertEquals(ServiceProcessState.RUNNING, orch.processState)
         assertTrue(orch.isProcessAlive)
         assertFalse(orch.isOnline)
     }
 
     @Test
-    fun `stop returns the controller from Service to Activity`() {
-        val activity = RecordingLease()
-        val service = RecordingLease()
-        val orch = startedService(activity, service)
+    fun `background stop marks stopped and clears readiness`() {
+        val orch = startedService()
+        orch.markControllerReady()
+        assertTrue(orch.isOnline)
 
-        val handover = orch.requestBackgroundStop()
-        assertEquals(ControllerOwner.SERVICE, handover.releaseFrom)
-        assertEquals(ControllerOwner.ACTIVITY, handover.acquireBy)
-        orch.applyRelease(handover, activity, service)
-        orch.applyAcquire(handover, activity, service)
+        orch.requestBackgroundStop()
 
-        assertFalse(service.started)
-        assertTrue(activity.started)
-        assertEquals(ControllerOwner.ACTIVITY, orch.controllerOwner)
         assertEquals(ServiceProcessState.STOPPED, orch.processState)
         assertFalse(orch.wantedRunning)
         assertFalse(orch.isOnline)
@@ -57,18 +41,13 @@ class ServiceOrchestratorTest {
 
     @Test
     fun `MissingForegroundServiceTypeException becomes a stable error and is not online`() {
-        val activity = RecordingLease().also { it.start() }
-        val service = RecordingLease()
         val orch = ServiceOrchestrator()
-        val handover = orch.requestBackgroundStart()
-        orch.applyRelease(handover, activity, service)
+        orch.requestBackgroundStart()
 
         orch.onForegroundStartFailed(MissingForegroundServiceTypeException("type missing"))
 
         assertEquals(ServiceProcessState.ERROR, orch.processState)
         assertEquals(ForegroundStartErrors.MISSING_TYPE, orch.errorCode)
-        assertEquals(ControllerOwner.NONE, orch.controllerOwner)
-        assertFalse(service.started)
         assertFalse(orch.isOnline)
         assertFalse(orch.isProcessAlive)
         assertTrue(orch.wantedRunning)
@@ -86,17 +65,13 @@ class ServiceOrchestratorTest {
 
     @Test
     fun `killed process shows needs recovery and never fakes online`() {
-        val activity = RecordingLease()
-        val service = RecordingLease()
-        val orch = startedService(activity, service)
+        val orch = startedService()
         orch.markControllerReady()
         assertTrue(orch.isOnline)
 
         orch.onProcessKilled()
-        service.stop()
 
         assertEquals(ServiceProcessState.NEEDS_RECOVERY, orch.processState)
-        assertEquals(ControllerOwner.NONE, orch.controllerOwner)
         assertTrue(orch.wantedRunning)
         assertFalse(orch.isOnline)
         assertFalse(orch.isProcessAlive)
@@ -106,6 +81,22 @@ class ServiceOrchestratorTest {
         assertEquals(ServiceProcessState.NEEDS_RECOVERY, orch.processState)
         assertFalse(orch.isOnline)
         assertEquals("Needs recovery", orch.statusLabel())
+    }
+
+    @Test
+    fun `controller readiness only sticks while the process is running`() {
+        val orch = ServiceOrchestrator()
+        orch.markControllerReady()
+        assertFalse(orch.isOnline)
+
+        orch.requestBackgroundStart()
+        orch.onForegroundStarted()
+        orch.onServiceControllerStarted()
+        orch.markControllerReady()
+        assertTrue(orch.isOnline)
+
+        orch.clearControllerReady()
+        assertFalse(orch.isOnline)
     }
 
     @Test
@@ -183,7 +174,6 @@ class ServiceOrchestratorTest {
         orch.onBootHealthCheckFailed()
 
         assertEquals(ServiceProcessState.NEEDS_RECOVERY, orch.processState)
-        assertEquals(ControllerOwner.NONE, orch.controllerOwner)
         assertTrue(orch.wantedRunning)
         assertFalse(orch.isOnline)
         assertFalse(orch.isProcessAlive)
@@ -192,9 +182,7 @@ class ServiceOrchestratorTest {
 
     @Test
     fun `boot health check failure does not demote a running service`() {
-        val activity = RecordingLease()
-        val service = RecordingLease()
-        val orch = startedService(activity, service)
+        val orch = startedService()
         orch.markControllerReady()
         assertTrue(orch.isOnline)
 
@@ -205,28 +193,18 @@ class ServiceOrchestratorTest {
     }
 
     @Test
-    fun `network regain nudges a running service controller without a busy loop`() {
-        val activity = RecordingLease()
-        val service = RecordingLease()
-        val orch = startedService(activity, service)
-        val startsBefore = service.startCount
-
+    fun `network regain nudges only a running service`() {
+        val orch = startedService()
         assertTrue(orch.onNetworkRegained())
-        service.start()
-        assertEquals(startsBefore + 1, service.startCount)
-        assertFalse(orch.onNetworkRegained() && orch.processState == ServiceProcessState.STOPPED)
+
+        orch.requestBackgroundStop()
+        assertFalse(orch.onNetworkRegained())
     }
 
-    private fun startedService(
-        activity: RecordingLease,
-        service: RecordingLease,
-    ): ServiceOrchestrator {
+    private fun startedService(): ServiceOrchestrator {
         val orch = ServiceOrchestrator()
-        activity.start()
-        val handover = orch.requestBackgroundStart()
-        orch.applyRelease(handover, activity, service)
+        orch.requestBackgroundStart()
         orch.onForegroundStarted()
-        orch.applyAcquire(handover, activity, service)
         orch.onServiceControllerStarted()
         return orch
     }
@@ -234,22 +212,3 @@ class ServiceOrchestratorTest {
 
 /** Mirrors the platform exception simple name so JVM tests can exercise the mapper. */
 class MissingForegroundServiceTypeException(message: String) : RuntimeException(message)
-
-class RecordingLease : SyncControllerLease {
-    override var started: Boolean = false
-        private set
-    var startCount: Int = 0
-        private set
-    var stopCount: Int = 0
-        private set
-
-    override fun start() {
-        started = true
-        startCount += 1
-    }
-
-    override fun stop() {
-        started = false
-        stopCount += 1
-    }
-}
