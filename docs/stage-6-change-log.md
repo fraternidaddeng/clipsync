@@ -1,7 +1,7 @@
 # 阶段 6 变更记录
 
-日期：2026-08-17
-状态：**代码面完成，全部 JVM/单测绿；实机与故障注入验收待人工**。基线提交 `f436520`（阶段 5 wave 2）。本阶段用 Grok 4.6 多子代理并行完成，编排端合并、消解冲突、收口。
+日期：2026-08-17（代码面）/ 2026-08-18（实机验证轮，见文末）
+状态：**代码面完成，全部 JVM/单测绿；MIUI 单机实机验证通过主链路与故障注入**。基线提交 `f436520`（阶段 5 wave 2）。本阶段用 Grok 4.6 多子代理并行完成，编排端合并、消解冲突、收口。
 
 - Android `:app:testDebugUnitTest`：**411 tests / 0 failures / 1 skipped**（skipped 为门控 E2E 用例本体）；`assembleDebug` 成功；`detekt` / `ktlintCheck` 基线通过（exit 0）。
 - Windows Debug：**0 警告 0 错误**（`TreatWarningsAsErrors` + .NET analyzers 开启）；Tests **191/191**、App.Tests **33/33**。
@@ -104,7 +104,7 @@
 | 一键暂停 + 一键清空本机历史 + 提示 | **done**（暂停在设置/通知；清空 + 不远程删除提示） |
 | 密码/银行/自定义黑名单 | **done**（Agent P；内置 12 项 + 用户可加） |
 | 数据库迁移与导出格式 | **done（脚手架）**（版本机制 + JSONL 导出 + 设计文档；真实 Migration 步骤待首次升版） |
-| Windows 睡眠/唤醒、Android 切网、任一 peer 重启故障注入 | **NOT_TESTED**（需人工/实机） |
+| Windows 睡眠/唤醒、Android 切网、任一 peer 重启故障注入 | **partially（实机 2026-08-18）**：Windows 进程重启、手机 Wi‑Fi 断开恢复、手机整机重启均恰好一次恢复；Windows 睡眠/唤醒未测 |
 | 静态分析（.NET analyzers、Ktlint/Detekt、依赖扫描） | **done** |
 | SQLCipher 评估 | **deferred**（plan 允许；见迁移文档，native 构建风险，不阻塞 MVP） |
 
@@ -115,6 +115,23 @@
 - 撤销/清空/过期/黑名单有自动化测试：**done**。
 - 安全测试不能伪造设备 ID/旧令牌/错证书读取：**done**（阶段 3/4 配对与 pin 测试 + 本阶段限流）。
 - 撤销 Shizuku/overlay/READ_LOGS 后一个健康周期内更新：**done（Activity 前台）**；仅 FGS 存活时的撤销降级待未来 service 侧健康循环。
+
+## 实机验证轮（2026-08-18，Redmi Note 11T Pro / MIUI 14 / API 33）
+
+手机重启过一次（Shizuku 需重跑 `start.sh`，符合预期）。安装含全部阶段 6 改动的 debug APK 后逐项验证，全部只核对 content hash，不读正文：
+
+| 项目 | 结果 |
+|---|---|
+| 回声抑制修复（阶段 5 遗留缺陷） | **PASS**：Windows→Android 恰好 1 行（远端 ingest），6 秒窗口后 **0 条 `shizuku` 回声行**（修复前为重复行） |
+| 双向同步回归 | **PASS**：两个方向均 ~1 秒、恰好一次 |
+| 5.7 自测按钮 | **PASS**：`Test background read: OK · SHIZUKU_EVENT`（真实 Shizuku binder 往返随机令牌）；`Test background write: OK · PUBLIC_API`；令牌未落库、未上传 |
+| Status 页 | **PASS**：Network=Connected，无 unreachable 残留 |
+| 故障注入：Windows 进程重启 | **PASS**：杀掉再启动 Windows 端，首次复制立即到达，恰好一次 |
+| 故障注入：手机 Wi‑Fi 断开→恢复 | **PASS**：`svc wifi disable/enable`，恢复后 11 秒重连到达，恰好一次 |
+| 整机重启 + 开机恢复 | **代码侧 PASS，MIUI 投递受限**：`BootCompletedReceiver` 已启用注册，但 MIUI 默认无「自启动」权限，BOOT_COMPLETED 从未投递（开机 70 秒后无进程/无通知，WorkManager 检查因此无从触发）。**兜底路径 PASS**：打开应用即恢复 FGS，随后双向 ~1 秒恰好一次。要真正开机自启需用户在 MIUI 设置手动授予自启动 |
+| Shizuku 13.5.4 | 授权在重启+重装后保留；重启后需 `adb shell sh .../start.sh` 重新拉起（既有已知项） |
+
+仍未测：Windows 睡眠/唤醒、断网 30 分钟长恢复、多 ROM、正式 P95 统计、MIUI 授予自启动后的 BOOT_COMPLETED→WorkManager 路径。
 
 ## 已知限制 / 交接
 
