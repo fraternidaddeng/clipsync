@@ -31,10 +31,13 @@ class ClipSyncApplication : Application() {
             // identity; reconcile the Room mirror once per process start so a
             // crash between pairing and the UI-driven sync cannot leave it stale.
             runCatching {
+                // Open Room FIRST: reading the peer before the (slow) DB init
+                // could sample a pre-pairing null and then overwrite an id that
+                // an auto-confirm pairing wrote while Room was initializing.
+                val repository = ClipServices.repository(this@ClipSyncApplication)
                 val peerId = ClipServices.pairingStore(this@ClipSyncApplication)
                     .peer()?.deviceId.orEmpty()
-                ClipServices.repository(this@ClipSyncApplication)
-                    .setSetting(SETTING_PAIRED_PEER_ID, peerId)
+                repository.setSetting(SETTING_PAIRED_PEER_ID, peerId)
             }
         }
         retentionScope.launch {

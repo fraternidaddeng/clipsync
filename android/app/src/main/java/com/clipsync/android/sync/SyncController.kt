@@ -32,6 +32,10 @@ class SyncController(
 
     fun status(): SyncControllerState = _state.value
 
+    // Synchronized: the process-scoped instance is started from the main thread
+    // (Activity, service) and the connectivity callback thread concurrently; an
+    // unsynchronized check-then-launch could orphan a second run loop.
+    @Synchronized
     fun start() {
         if (loopJob?.isActive == true) {
             return
@@ -39,6 +43,7 @@ class SyncController(
         loopJob = scope.launch { runLoop() }
     }
 
+    @Synchronized
     fun stop() {
         loopJob?.cancel()
         loopJob = null

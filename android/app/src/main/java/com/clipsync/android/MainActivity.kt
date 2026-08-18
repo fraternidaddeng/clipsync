@@ -94,7 +94,10 @@ class MainActivity : ComponentActivity() {
         // Single process-scoped controller: Activity and Service share it, so
         // there is no ownership handover and no resubscription tick machinery.
         val syncController = ClipboardSyncRuntime.controller(applicationContext)
-        if (backgroundWanted) {
+        // Guard on isProcessAlive: Activity recreation (rotation, theme change)
+        // must not demote a RUNNING foreground service back to STARTING or
+        // clear a latched error just by re-requesting.
+        if (backgroundWanted && !ClipboardSyncRuntime.orchestrator.isProcessAlive) {
             ClipboardSyncRuntime.orchestrator.requestBackgroundStart()
             ClipboardSyncService.start(this)
         }
@@ -449,7 +452,11 @@ class MainActivity : ComponentActivity() {
         ClipboardSyncRuntime.noteActivityDestroyed()
         // Without background sync the process-scoped controller has no owner
         // left; stopping preserves the old "sync dies with the UI" behavior.
-        ClipboardSyncRuntime.stopControllerIfUnneeded()
+        // Configuration changes recreate the Activity immediately, so don't
+        // bounce the TCP session for a rotation.
+        if (!isChangingConfigurations) {
+            ClipboardSyncRuntime.stopControllerIfUnneeded()
+        }
         super.onDestroy()
     }
 }

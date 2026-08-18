@@ -7,6 +7,8 @@ import com.clipsync.android.platform.clipboard.FakeBackgroundClipboardBackend
 import com.clipsync.android.ui.wizard.WizardChoices
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -17,6 +19,7 @@ import org.junit.Test
 class ClipboardCaptureManagerTest {
     private class Harness(
         rebuildDebounceMs: Long = 0L,
+        scope: CoroutineScope = CoroutineScope(UnconfinedTestDispatcher()),
     ) {
         val callLog = mutableListOf<String>()
         val captured = mutableListOf<String>()
@@ -53,7 +56,7 @@ class ClipboardCaptureManagerTest {
                     )
                 },
                 onCapture = { change: ClipboardChange -> captured += change.text },
-                scope = CoroutineScope(UnconfinedTestDispatcher()),
+                scope = scope,
                 rebuildDebounceMs = rebuildDebounceMs,
             )
     }
@@ -136,5 +139,37 @@ class ClipboardCaptureManagerTest {
         harness.manager.applyChoices(WizardChoices())
 
         assertEquals(1, harness.buildCount)
+    }
+
+    @Test
+    fun `mode change during the debounce window folds into the rebuild`() {
+        val scheduler = TestCoroutineScheduler()
+        val harness = Harness(
+            rebuildDebounceMs = 1000L,
+            scope = CoroutineScope(StandardTestDispatcher(scheduler)),
+        )
+        harness.manager.ensureStarted()
+        scheduler.runCurrent()
+        val base = WizardChoices()
+
+        harness.manager.applyChoices(
+            base.copy(pollingIntervalMs = base.pollingIntervalMs + 500),
+        )
+        harness.manager.applyChoices(
+            base.copy(
+                pollingIntervalMs = base.pollingIntervalMs + 500,
+                preferredReadMode = ClipboardReadMode.FOREGROUND_ONLY,
+            ),
+        )
+        assertEquals(1, harness.buildCount)
+
+        scheduler.advanceTimeBy(1001L)
+        scheduler.runCurrent()
+
+        assertEquals(2, harness.buildCount)
+        assertEquals(
+            ClipboardReadMode.FOREGROUND_ONLY,
+            harness.manager.access()?.state?.requestedReadMode,
+        )
     }
 }

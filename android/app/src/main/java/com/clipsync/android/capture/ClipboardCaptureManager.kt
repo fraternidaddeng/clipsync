@@ -51,6 +51,11 @@ class ClipboardCaptureManager(
     @Volatile
     private var appliedChoices: WizardChoices? = null
 
+    // Guarded by [lock]: the newest requested choices and whether a debounced
+    // rebuild is waiting to consume them.
+    private var latestChoices: WizardChoices? = null
+    private var rebuildScheduled: Boolean = false
+
     fun backends(): BackgroundClipboardBackends? = currentStack?.backends
 
     fun access(): ClipboardAccessCoordinator? = currentStack?.access
@@ -82,27 +87,33 @@ class ClipboardCaptureManager(
      * Applies new wizard choices. A read-mode-only change re-targets the live
      * coordinator; structural changes (fallback policy, overlay consent, poll
      * interval) rebuild the stack after a short debounce so slider drags do
-     * not thrash Shizuku rebinds.
+     * not thrash Shizuku rebinds. The debounced job always applies the LATEST
+     * requested choices, so a mode change arriving during the debounce window
+     * is folded into the rebuild instead of retargeting the dying stack.
      */
     fun applyChoices(choices: WizardChoices) {
         synchronized(lock) {
-            if (currentStack == null) {
-                startLocked(choices)
-                return
-            }
+            latestChoices = choices
             val applied = appliedChoices
-            if (applied == null || structural(applied) != structural(choices)) {
-                scheduleRebuildLocked(choices)
-                return
+            when {
+                currentStack == null -> startLocked(choices)
+                applied == null || structural(applied) != structural(choices) ->
+                    scheduleRebuildLocked()
+                // A structural rebuild is pending; it will pick up these
+                // choices (including any mode change) when it fires.
+                rebuildScheduled -> Unit
+                else -> {
+                    if (applied.preferredReadMode != choices.preferredReadMode) {
+                        currentStack?.access?.requestMode(choices.preferredReadMode)
+                    }
+                    appliedChoices = choices
+                }
             }
-            if (applied.preferredReadMode != choices.preferredReadMode) {
-                currentStack?.access?.requestMode(choices.preferredReadMode)
-            }
-            appliedChoices = choices
         }
     }
 
-    private fun scheduleRebuildLocked(choices: WizardChoices) {
+    private fun scheduleRebuildLocked() {
+        rebuildScheduled = true
         val epoch = rebuildEpoch.incrementAndGet()
         scope.launch {
             if (rebuildDebounceMs > 0) {
@@ -112,6 +123,8 @@ class ClipboardCaptureManager(
                 if (rebuildEpoch.get() != epoch) {
                     return@launch
                 }
+                rebuildScheduled = false
+                val choices = latestChoices ?: return@launch
                 stopLocked()
                 startLocked(choices)
             }
@@ -124,7 +137,13 @@ class ClipboardCaptureManager(
         stack.access.start { change ->
             scope.launch { onCapture(change) }
         }
-        healthJob = ClipboardHealthLoop { stack.access.checkHealth() }.start(scope)
+        // Health ticks take the same lock as rebuilds: a tick must never probe
+        // a stack that a concurrent applyChoices is tearing down.
+        healthJob = ClipboardHealthLoop {
+            synchronized(lock) {
+                currentStack?.access?.checkHealth()
+            }
+        }.start(scope)
         currentStack = stack
         appliedChoices = choices
     }

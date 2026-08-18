@@ -22,6 +22,7 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
     }
 
     private val adapterLock = Any()
+    private val callbackLock = Any()
     private var clipboard: Any? = null
     private var clipboardBinder: IBinder? = null
     private var adapter: IClipboardReflectionAdapter? = null
@@ -114,44 +115,56 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
      * dies without unbinding (reinstall, force kill), this service must not
      * linger as an orphan shell process holding a system clipboard listener,
      * so it unregisters and exits; Shizuku spawns a fresh one on next bind.
+     *
+     * [callbackLock] orders swaps against death dispatches: a stale death that
+     * lost the race to a newer ADD_LISTENER must never kill the live service.
      */
     private fun replaceAppCallback(callback: IBinder?) {
-        val previous = appCallback
-        val previousRecipient = appCallbackDeathRecipient
-        if (previous != null && previousRecipient != null) {
-            try {
-                previous.unlinkToDeath(previousRecipient, 0)
-            } catch (_: Exception) {
-                // Already unlinked or dead.
-            }
-        }
-        appCallback = callback
-        appCallbackDeathRecipient = null
-        if (callback == null) {
-            return
-        }
-        val recipient =
-            object : IBinder.DeathRecipient {
-                override fun binderDied() {
-                    onAppCallbackDied(callback)
+        val exitAsDead: IBinder?
+        synchronized(callbackLock) {
+            val previous = appCallback
+            val previousRecipient = appCallbackDeathRecipient
+            if (previous != null && previousRecipient != null) {
+                try {
+                    previous.unlinkToDeath(previousRecipient, 0)
+                } catch (_: Exception) {
+                    // Already unlinked or dead.
                 }
             }
-        try {
-            callback.linkToDeath(recipient, 0)
-            appCallbackDeathRecipient = recipient
-        } catch (_: Exception) {
-            onAppCallbackDied(callback)
+            appCallback = callback
+            appCallbackDeathRecipient = null
+            if (callback == null) {
+                return
+            }
+            val recipient =
+                object : IBinder.DeathRecipient {
+                    override fun binderDied() {
+                        onAppCallbackDied(callback)
+                    }
+                }
+            exitAsDead = try {
+                callback.linkToDeath(recipient, 0)
+                appCallbackDeathRecipient = recipient
+                null
+            } catch (_: Exception) {
+                callback
+            }
+        }
+        if (exitAsDead != null) {
+            onAppCallbackDied(exitAsDead)
         }
     }
 
     private fun onAppCallbackDied(dead: IBinder) {
-        if (appCallback !== dead) {
-            // A newer app instance already re-registered; keep serving it.
-            return
+        synchronized(callbackLock) {
+            if (appCallback !== dead) {
+                // A newer app instance already re-registered; keep serving it.
+                return
+            }
+            appCallback = null
+            appCallbackDeathRecipient = null
         }
         unregisterSystemListener()
-        appCallback = null
-        appCallbackDeathRecipient = null
         Log.i(TAG, "app callback died; exiting user service to avoid orphan")
         exitProcess(0)
     }
