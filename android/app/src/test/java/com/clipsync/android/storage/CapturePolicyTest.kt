@@ -125,4 +125,14 @@ class CapturePolicyTest {
         assertEquals(false, loaded.blacklistEnabled)
         assertEquals(setOf("com.example.vault"), loaded.userBlacklist)
     }
+
+    @Test
+    fun `read-mode source tags are on the internal allowlist`() {
+        val readModeTags = setOf("shizuku", "adb", "overlay", "foreground")
+        assertTrue(CapturePolicy.INTERNAL_SOURCE_TAGS.containsAll(readModeTags))
+        val settings = PolicySettings(userBlacklist = readModeTags)
+        for (tag in readModeTags) {
+            assertEquals(PolicyDecision.Allow, CapturePolicy.evaluate(tag, 8, settings))
+        }
+    }
 }

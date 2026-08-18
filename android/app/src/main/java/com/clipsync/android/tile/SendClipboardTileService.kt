@@ -37,7 +37,7 @@ class SendClipboardTileService : TileService() {
             readText = { backend.readText() },
         )
         scope.launch {
-            val outcome = sender.send()
+            val outcome = sender.send(ClipServices.pairingStore(this@SendClipboardTileService).peer()?.deviceId)
             val message = when (outcome) {
                 is TileSendOutcome.Stored -> getString(R.string.tile_sent)
                 TileSendOutcome.EmptyClipboard -> getString(R.string.tile_empty)

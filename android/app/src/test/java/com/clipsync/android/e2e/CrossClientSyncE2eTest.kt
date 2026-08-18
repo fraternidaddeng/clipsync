@@ -102,7 +102,7 @@ class CrossClientSyncE2eTest {
                     )
                 }
 
-                val captured = repository.captureLocalText(ANDROID_TEXT, nowMs = System.currentTimeMillis())
+                val captured = androidCapture(repository, windowsDeviceId)
                 assertTrue("android capture rejected: $captured", captured is CaptureResult.Stored)
 
                 val acked = awaitUntil(TIMEOUT_MS) {
@@ -145,6 +145,16 @@ class CrossClientSyncE2eTest {
         }
         return condition()
     }
+
+    private suspend fun androidCapture(
+        repository: com.clipsync.android.storage.ClipRepository,
+        peerId: String,
+    ) = repository.captureLocalText(
+        ANDROID_TEXT,
+        null,
+        System.currentTimeMillis(),
+        peerId,
+    )
 
     private companion object {
         const val PROP_ENABLED = "clipsync.e2e.enabled"

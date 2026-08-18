@@ -6,6 +6,7 @@ import com.clipsync.android.platform.clipboard.ClipboardChange
 import com.clipsync.android.platform.clipboard.ClipboardHealthLoop
 import com.clipsync.android.ui.wizard.WizardChoices
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -135,7 +136,9 @@ class ClipboardCaptureManager(
         val stack = buildStack(choices) { activityVisible.get() }
         stack.access.requestMode(choices.preferredReadMode)
         stack.access.start { change ->
-            scope.launch { onCapture(change) }
+            // Persistence and policy checks run on IO even when the manager
+            // scope is main-thread (overlay window operations need main).
+            scope.launch(Dispatchers.IO) { onCapture(change) }
         }
         // Health ticks take the same lock as rebuilds: a tick must never probe
         // a stack that a concurrent applyChoices is tearing down.

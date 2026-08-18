@@ -10,6 +10,7 @@ import com.clipsync.android.storage.ClipRepository
 import com.clipsync.android.storage.DEFAULT_RETENTION_DAYS
 import com.clipsync.android.storage.MAX_SEARCH_LIMIT
 import com.clipsync.android.storage.parseRetentionDays
+import com.clipsync.android.ui.HealthStatus
 import com.clipsync.android.ui.HealthTone
 import com.clipsync.android.ui.HealthValue
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +32,7 @@ data class SettingsUiState(
     val bootRecoveryEnabled: Boolean = false,
     val blacklistEnabled: Boolean = true,
     val blacklistExtra: String = "",
-    val notificationVisibilityNote: String? = null,
+    val notificationVisibilityNote: SettingsVisibilityNote? = null,
     val network: HealthValue =
         networkCard(
             SyncConnectionStatus(paired = false, windowsReachable = false, serviceRunning = false),
@@ -40,8 +41,8 @@ data class SettingsUiState(
         serviceCard(
             SyncConnectionStatus(paired = false, windowsReachable = false, serviceRunning = false),
         ),
-    val read: HealthValue = HealthValue("Foreground only", HealthTone.NEUTRAL),
-    val write: HealthValue = HealthValue("Not probed", HealthTone.NEUTRAL),
+    val read: HealthValue = HealthValue(HealthStatus.FOREGROUND_ONLY, HealthTone.NEUTRAL),
+    val write: HealthValue = HealthValue(HealthStatus.NOT_PROBED, HealthTone.NEUTRAL),
     val pairedDeviceCount: Int = 0,
     val retentionDays: Int = DEFAULT_RETENTION_DAYS,
     val exportNotice: SettingsExportNotice = SettingsExportNotice.NONE,
@@ -60,6 +61,10 @@ enum class SettingsImportNotice {
     NONE,
     DONE,
     FAILED,
+}
+
+enum class SettingsVisibilityNote {
+    NOTIFICATIONS_HIDDEN,
 }
 
 class SettingsViewModel(
@@ -224,7 +229,7 @@ class SettingsViewModel(
             previous.copy(
                 notificationVisibilityNote =
                     if (sync.serviceRunning && sync.notificationsHidden) {
-                        NOTE_NOTIFICATIONS_HIDDEN
+                        SettingsVisibilityNote.NOTIFICATIONS_HIDDEN
                     } else {
                         null
                     },
@@ -236,9 +241,6 @@ class SettingsViewModel(
     }
 
     companion object {
-        const val NOTE_NOTIFICATIONS_HIDDEN =
-            "Notifications are hidden. The sync service can still run; clipboard access is separate."
-
         private val exportDayFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
 
         internal fun exportFilenameFor(

@@ -74,7 +74,7 @@ class ClipRepository internal constructor(
             )
             val nextState = receiveState(localDeviceId).accept(originSeq)
             upsertReceiveState(localDeviceId, nextState)
-            fanOutOutbox(eventId, originDeviceId = localDeviceId, excludedPeerId = null, peerIdOverride = peerId)
+            fanOutOutbox(eventId, originDeviceId = localDeviceId, excludedPeerId = null, peerId = peerId)
             CaptureResult.Stored(eventId, originSeq, contentHash)
         }
     }
@@ -114,7 +114,7 @@ class ClipRepository internal constructor(
             )
             val state = receiveState(event.originDeviceId).accept(event.originSeq)
             upsertReceiveState(event.originDeviceId, state)
-            fanOutOutbox(event.eventId, event.originDeviceId, excludedPeerId = sourcePeerId, peerIdOverride = null)
+            fanOutOutbox(event.eventId, event.originDeviceId, excludedPeerId = sourcePeerId, peerId = null)
             RemoteStoreResult.Stored(state)
         }
     }
@@ -148,7 +148,7 @@ class ClipRepository internal constructor(
             )
             val state = receiveState(marker.originDeviceId).accept(marker.originSeq)
             upsertReceiveState(marker.originDeviceId, state)
-            fanOutOutbox(marker.eventId, marker.originDeviceId, excludedPeerId = sourcePeerId, peerIdOverride = null)
+            fanOutOutbox(marker.eventId, marker.originDeviceId, excludedPeerId = sourcePeerId, peerId = null)
             RemoteStoreResult.Stored(state)
         }
     }
@@ -296,9 +296,9 @@ class ClipRepository internal constructor(
         eventId: String,
         originDeviceId: String,
         excludedPeerId: String?,
-        peerIdOverride: String?,
+        peerId: String?,
     ) {
-        val target = peerIdOverride?.takeIf { it.isNotBlank() } ?: getSetting(SETTING_PAIRED_PEER_ID)
+        val target = peerId?.takeIf { it.isNotBlank() }
         if (target.isNullOrBlank()) {
             return
         }
@@ -352,8 +352,8 @@ class ClipRepository internal constructor(
         )
 
     /**
-     * Hard-deletes expired live clips (no pending outbox) and expired tombstones
-     * in one transaction. Receive coverage is untouched.
+     * Hard-deletes expired live clips (no outbox row in any state) and expired
+     * tombstones in one transaction. Receive coverage is untouched.
      */
     suspend fun purgeExpired(nowMs: Long): PurgeCounts =
         persistence.transaction {
@@ -389,6 +389,9 @@ class ClipRepository internal constructor(
                         )
                 if (entry != null && !exists) {
                     insertClip(ClipImport.toLiveEntity(entry))
+                    if (entry.originDeviceId == localDeviceId) {
+                        advanceOriginSeq(localDeviceId, entry.originSeq)
+                    }
                     imported++
                 } else {
                     skipped++
@@ -396,4 +399,23 @@ class ClipRepository internal constructor(
             }
             ClipImportCounts(imported, skipped)
         }
+
+    /**
+     * Drops every outbox row for [peerId] and clears the Room peer-id mirror.
+     * PairingStore remains the pairing source of truth; call this after
+     * [com.clipsync.android.pairing.PairingStore.forgetPeer].
+     */
+    suspend fun clearPeerState(peerId: String) {
+        require(peerId.isNotBlank()) { "Peer id is required." }
+        persistence.transaction {
+            deleteOutboxForPeer(peerId)
+            setSetting(SETTING_PAIRED_PEER_ID, "")
+        }
+    }
+
+    /** Clears outbox + mirror when the Room peer-id mirror still names a forgotten peer. */
+    suspend fun clearForgottenPeerState() {
+        val previous = getSetting(SETTING_PAIRED_PEER_ID)?.takeIf { it.isNotBlank() } ?: return
+        clearPeerState(previous)
+    }
 }

@@ -202,10 +202,9 @@ fun SettingsScreen(
                 )
             SettingsImportNotice.NONE -> Unit
         }
-        val visibilityNote = state.notificationVisibilityNote
-        if (visibilityNote != null) {
+        if (state.notificationVisibilityNote == SettingsVisibilityNote.NOTIFICATIONS_HIDDEN) {
             Text(
-                text = visibilityNote,
+                text = stringResource(R.string.settings_note_notifications_hidden),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

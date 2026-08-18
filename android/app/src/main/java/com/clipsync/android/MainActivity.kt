@@ -205,7 +205,7 @@ class MainActivity : ComponentActivity() {
                     if (paired) {
                         syncController.start()
                     } else if (currentPairing is PairingUiState.Idle) {
-                        syncController.stop()
+                        repository.clearForgottenPeerState().also { syncController.stop() }
                     }
                     if (currentPairing is PairingUiState.Paired) {
                         tab = WizardNavigation.TAB_INDEX

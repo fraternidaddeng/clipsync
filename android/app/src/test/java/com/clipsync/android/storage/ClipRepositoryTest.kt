@@ -83,7 +83,7 @@ class ClipRepositoryTest {
         repo.setSetting(SETTING_PAIRED_PEER_ID, PEER)
         repo.captureLocalText("via-setting", nowMs = NOW)
         val pending = repo.outboxPending(PEER)
-        assertEquals(1, pending.size)
+        assertEquals(0, pending.size)
         assertEquals("via-setting", repo.search("")[0].content)
     }
 
@@ -327,7 +327,7 @@ class ClipRepositoryTest {
         val first = ClipRepository(store, LOCAL, hasher)
         first.initialize()
         first.setSetting(SETTING_PAIRED_PEER_ID, PEER)
-        val stored = first.captureLocalText("persist-me", sourceApp = "app", nowMs = NOW) as CaptureResult.Stored
+        val stored = first.captureLocalText("persist-me", "app", NOW, PEER) as CaptureResult.Stored
 
         val reopened = ClipRepository(store, LOCAL, hasher)
         reopened.initialize()
@@ -619,6 +619,76 @@ class ClipRepositoryTest {
             assertEquals(1, counts.skipped)
             assertEquals(1, dest.search("").size)
             assertEquals("fits", dest.search("")[0].content)
+        }
+    }
+
+    @Test
+    fun `import of own-device rows advances the sequence so the next capture does not collide`() {
+        runTest {
+            val dest = repository()
+            val imported =
+                ClipEntry(
+                    eventId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+                    originDeviceId = LOCAL,
+                    originSeq = 5,
+                    content = "restored own row",
+                    contentHash = hasher.hash("restored own row"),
+                    sourceApp = "overlay",
+                    createdAtMs = NOW,
+                    expiresAtMs = null,
+                )
+            val counts = dest.importJsonLines(ClipExport.encodeJsonLines(listOf(imported)))
+            assertEquals(1, counts.imported)
+
+            val stored =
+                dest.captureLocalText("after import", nowMs = NOW + 10, peerId = PEER)
+                    as CaptureResult.Stored
+            assertEquals(6, stored.originSeq)
+            assertEquals(2, dest.search("").size)
+            assertEquals(
+                setOf(5L, 6L),
+                dest.search("").map { it.originSeq }.toSet(),
+            )
+        }
+    }
+
+    @Test
+    fun `forgetting the peer removes its pending outbox rows`() {
+        runTest {
+            val repo = repository()
+            repo.setSetting(SETTING_PAIRED_PEER_ID, PEER)
+            repo.captureLocalText("queued for old peer", nowMs = NOW, peerId = PEER)
+            assertEquals(1, repo.outboxPending(PEER).size)
+
+            repo.clearPeerState(PEER)
+
+            assertTrue(repo.outboxPending(PEER).isEmpty())
+            assertEquals("", repo.getSetting(SETTING_PAIRED_PEER_ID))
+            assertEquals("queued for old peer", repo.search("")[0].content)
+            repo.resetOutboxToPending(PEER)
+            assertTrue(repo.outboxPending(PEER).isEmpty())
+        }
+    }
+
+    @Test
+    fun `purgeExpired keeps an old clip with an announced outbox row`() {
+        runTest {
+            val repo = repository()
+            repo.captureLocalText("old announced", nowMs = NOW - FORTY_DAYS_MS, peerId = PEER)
+            val pending = repo.outboxPending(PEER)
+            assertEquals(1, pending.size)
+            repo.markAnnounced(listOf(pending[0].id))
+            assertTrue(repo.outboxPending(PEER).isEmpty())
+
+            val counts = repo.purgeExpired(NOW)
+            assertEquals(0, counts.liveClipsDeleted)
+            assertEquals(0, counts.tombstonesDeleted)
+            assertEquals(1, repo.search("").size)
+            assertEquals("old announced", repo.search("")[0].content)
+
+            repo.resetOutboxToPending(PEER)
+            assertEquals(1, repo.outboxPending(PEER).size)
+            assertEquals("old announced", repo.search("")[0].content)
         }
     }
 

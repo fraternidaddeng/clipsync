@@ -60,6 +60,14 @@ class CaptureOwnershipWiringTest {
     }
 
     @Test
+    fun `capture records the active read-mode tag not a hardcoded shizuku source`() {
+        val source = source("capture/ClipboardCaptureRuntime.kt")
+        assertTrue(source.contains("captureSourceTag"))
+        assertTrue(source.contains("activeReadMode"))
+        assertFalse(source.contains("\"shizuku\","))
+    }
+
+    @Test
     fun `application reconciles the room peer mirror at process start`() {
         val source = source("ClipSyncApplication.kt")
         assertTrue(source.contains("SETTING_PAIRED_PEER_ID"))

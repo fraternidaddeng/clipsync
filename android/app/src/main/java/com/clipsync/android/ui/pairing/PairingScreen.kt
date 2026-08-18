@@ -1,3 +1,9 @@
+@file:Suppress(
+    "ktlint:standard:function-naming",
+    "ktlint:standard:function-signature",
+    "ktlint:standard:chain-method-continuation",
+)
+
 package com.clipsync.android.ui.pairing
 
 import android.Manifest
@@ -14,7 +20,6 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,10 +46,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.clipsync.android.R
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingQrPayload
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
@@ -52,16 +60,16 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.atomic.AtomicBoolean
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun PairingScreen(viewModel: PairingViewModel, modifier: Modifier = Modifier) {
     val state by viewModel.state.collectAsState()
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         when (val current = state) {
@@ -80,38 +88,44 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
     var manualPayload by remember { mutableStateOf("") }
     val context = LocalContext.current
     var cameraDenied by remember { mutableStateOf(false) }
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { granted ->
-        cameraDenied = !granted
-        scanning = granted
-    }
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { granted ->
+            cameraDenied = !granted
+            scanning = granted
+        }
 
-    Text("Pair with Windows", style = MaterialTheme.typography.headlineSmall)
+    Text(stringResource(R.string.pairing_title), style = MaterialTheme.typography.headlineSmall)
 
     if (peer != null) {
         Card(colors = CardDefaults.cardColors()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(peer.displayName, fontWeight = FontWeight.SemiBold)
                 Text(
-                    "Certificate ${groupFingerprint(peer.certSha256).take(19)}…",
+                    stringResource(
+                        R.string.pairing_certificate,
+                        groupFingerprint(peer.certSha256).take(19),
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     fontFamily = FontFamily.Monospace,
                 )
                 Text(
-                    "Trust epoch ${peer.trustEpoch}",
+                    stringResource(R.string.pairing_trust_epoch, peer.trustEpoch),
                     style = MaterialTheme.typography.bodySmall,
                 )
-                TextButton(onClick = viewModel::forgetPeer) { Text("Forget this pairing") }
+                TextButton(onClick = viewModel::forgetPeer) {
+                    Text(stringResource(R.string.pairing_forget))
+                }
             }
         }
         Text(
-            "Scanning a new code replaces the current pairing after your confirmation.",
+            stringResource(R.string.pairing_replace_hint),
             style = MaterialTheme.typography.bodySmall,
         )
     } else {
         Text(
-            "Open ClipSync on your computer, choose \"Pair new device\", then scan the QR code it shows.",
+            stringResource(R.string.pairing_scan_intro),
             style = MaterialTheme.typography.bodyMedium,
         )
     }
@@ -122,18 +136,20 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
                 scanning = false
                 viewModel.onPayload(raw)
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(320.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(320.dp),
         )
         OutlinedButton(onClick = { scanning = false }, modifier = Modifier.fillMaxWidth()) {
-            Text("Stop scanning")
+            Text(stringResource(R.string.pairing_stop_scanning))
         }
     } else {
         Button(
             onClick = {
-                val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
-                    PackageManager.PERMISSION_GRANTED
+                val granted =
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+                        PackageManager.PERMISSION_GRANTED
                 if (granted) {
                     scanning = true
                 } else {
@@ -142,11 +158,11 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
             },
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Scan QR code")
+            Text(stringResource(R.string.pairing_scan_qr))
         }
         if (cameraDenied) {
             Text(
-                "Camera permission was denied. You can still pair by pasting the payload below.",
+                stringResource(R.string.pairing_camera_denied),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -157,7 +173,7 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
         value = manualPayload,
         onValueChange = { manualPayload = it },
         modifier = Modifier.fillMaxWidth(),
-        label = { Text("Or paste the pairing payload") },
+        label = { Text(stringResource(R.string.pairing_paste_label)) },
         minLines = 2,
     )
     OutlinedButton(
@@ -168,15 +184,15 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
         enabled = manualPayload.isNotBlank(),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Text("Use pasted payload")
+        Text(stringResource(R.string.pairing_use_pasted))
     }
 }
 
 @Composable
 private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewModel) {
-    Text("Confirm this computer", style = MaterialTheme.typography.headlineSmall)
+    Text(stringResource(R.string.pairing_confirm_title), style = MaterialTheme.typography.headlineSmall)
     Text(
-        "Only continue if the name and certificate fingerprint below match what the Windows app shows.",
+        stringResource(R.string.pairing_confirm_hint),
         style = MaterialTheme.typography.bodyMedium,
     )
     PeerFacts(review.qr)
@@ -185,8 +201,7 @@ private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewM
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
         ) {
             Text(
-                "Warning: this computer's certificate CHANGED since the last pairing. " +
-                    "If you did not reinstall ClipSync on Windows, stop and check the computer.",
+                stringResource(R.string.pairing_cert_changed),
                 modifier = Modifier.padding(16.dp),
                 color = MaterialTheme.colorScheme.onErrorContainer,
                 fontWeight = FontWeight.SemiBold,
@@ -194,10 +209,18 @@ private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewM
         }
     }
     Button(onClick = viewModel::confirm, modifier = Modifier.fillMaxWidth()) {
-        Text(if (review.certificateChanged) "I verified it — replace pairing" else "Fingerprint matches — pair")
+        Text(
+            stringResource(
+                if (review.certificateChanged) {
+                    R.string.pairing_replace
+                } else {
+                    R.string.pairing_fingerprint_match
+                },
+            ),
+        )
     }
     OutlinedButton(onClick = viewModel::cancelReview, modifier = Modifier.fillMaxWidth()) {
-        Text("Cancel")
+        Text(stringResource(R.string.pairing_cancel))
     }
 }
 
@@ -207,7 +230,7 @@ private fun PeerFacts(qr: PairingQrPayload) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(qr.displayName, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.titleMedium)
             Text(
-                "Certificate fingerprint",
+                stringResource(R.string.pairing_fingerprint_label),
                 style = MaterialTheme.typography.labelMedium,
             )
             Text(
@@ -216,7 +239,7 @@ private fun PeerFacts(qr: PairingQrPayload) {
                 style = MaterialTheme.typography.bodySmall,
             )
             Text(
-                "Address ${qr.hosts.joinToString()} : ${qr.port}",
+                stringResource(R.string.pairing_address, qr.hosts.joinToString(), qr.port),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -228,9 +251,9 @@ private fun SubmittingContent(peerName: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         CircularProgressIndicator(Modifier.padding(end = 16.dp))
         Column {
-            Text("Waiting for approval…", fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.pairing_waiting), fontWeight = FontWeight.SemiBold)
             Text(
-                "Approve this phone in the ClipSync window on \"$peerName\".",
+                stringResource(R.string.pairing_waiting_hint, peerName),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -239,39 +262,43 @@ private fun SubmittingContent(peerName: String) {
 
 @Composable
 private fun PairedContent(peer: PairedPeer, viewModel: PairingViewModel) {
-    Text("Paired", style = MaterialTheme.typography.headlineSmall)
-    Text("This phone is now paired with \"${peer.displayName}\". Clipboard sync starts in a later stage; the trust and secret are stored securely now.")
-    Button(onClick = viewModel::reset, modifier = Modifier.fillMaxWidth()) { Text("Done") }
+    Text(stringResource(R.string.pairing_success_title), style = MaterialTheme.typography.headlineSmall)
+    Text(stringResource(R.string.pairing_success_body, peer.displayName))
+    Button(onClick = viewModel::reset, modifier = Modifier.fillMaxWidth()) {
+        Text(stringResource(R.string.pairing_done))
+    }
 }
 
 @Composable
 private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel) {
-    Text("Pairing failed", style = MaterialTheme.typography.headlineSmall)
+    Text(stringResource(R.string.pairing_failed_title), style = MaterialTheme.typography.headlineSmall)
     Text(
-        when (reason) {
-            PairingFailure.INVALID_PAYLOAD -> "That is not a valid ClipSync pairing code."
-            PairingFailure.OWN_DEVICE -> "This code identifies this device itself."
-            PairingFailure.CERTIFICATE_MISMATCH ->
-                "The computer presented a DIFFERENT certificate than the QR code promised. " +
-                    "Pairing was blocked. Check the network and re-open the QR window on Windows."
-            PairingFailure.UNREACHABLE ->
-                "The computer could not be reached. Make sure both devices are on the same network."
-            PairingFailure.REJECTED -> "The request was rejected on the computer."
-            PairingFailure.TIMEOUT -> "The computer did not approve in time. Show a fresh QR code and try again."
-            PairingFailure.TOKEN_INVALID -> "This code was already used or cancelled. Show a fresh QR code."
-            PairingFailure.TOKEN_EXPIRED -> "This code expired. Show a fresh QR code and scan it promptly."
-            PairingFailure.RATE_LIMITED ->
-                "Too many pairing attempts. Wait a minute, then show a fresh QR code and try again."
-            PairingFailure.PROTOCOL -> "The computer answered outside the pairing protocol. Update both apps to matching versions."
-        },
-        color = if (reason == PairingFailure.CERTIFICATE_MISMATCH) {
-            MaterialTheme.colorScheme.error
-        } else {
-            MaterialTheme.colorScheme.onSurface
-        },
+        stringResource(pairingFailureRes(reason)),
+        color =
+            if (reason == PairingFailure.CERTIFICATE_MISMATCH) {
+                MaterialTheme.colorScheme.error
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
     )
-    Button(onClick = viewModel::reset, modifier = Modifier.fillMaxWidth()) { Text("Start over") }
+    Button(onClick = viewModel::reset, modifier = Modifier.fillMaxWidth()) {
+        Text(stringResource(R.string.pairing_start_over))
+    }
 }
+
+private fun pairingFailureRes(reason: PairingFailure): Int =
+    when (reason) {
+        PairingFailure.INVALID_PAYLOAD -> R.string.pairing_fail_invalid_payload
+        PairingFailure.OWN_DEVICE -> R.string.pairing_fail_own_device
+        PairingFailure.CERTIFICATE_MISMATCH -> R.string.pairing_fail_cert_mismatch
+        PairingFailure.UNREACHABLE -> R.string.pairing_fail_unreachable
+        PairingFailure.REJECTED -> R.string.pairing_fail_rejected
+        PairingFailure.TIMEOUT -> R.string.pairing_fail_timeout
+        PairingFailure.TOKEN_INVALID -> R.string.pairing_fail_token_invalid
+        PairingFailure.TOKEN_EXPIRED -> R.string.pairing_fail_token_expired
+        PairingFailure.RATE_LIMITED -> R.string.pairing_fail_rate_limited
+        PairingFailure.PROTOCOL -> R.string.pairing_fail_protocol
+    }
 
 @Composable
 private fun QrScannerView(onResult: (String) -> Unit, modifier: Modifier = Modifier) {
@@ -283,12 +310,14 @@ private fun QrScannerView(onResult: (String) -> Unit, modifier: Modifier = Modif
             val providerFuture = ProcessCameraProvider.getInstance(viewContext)
             providerFuture.addListener({
                 val provider = providerFuture.get()
-                val preview = Preview.Builder().build().also {
-                    it.setSurfaceProvider(previewView.surfaceProvider)
-                }
-                val analysis = ImageAnalysis.Builder()
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
+                val preview =
+                    Preview.Builder().build().also {
+                        it.setSurfaceProvider(previewView.surfaceProvider)
+                    }
+                val analysis =
+                    ImageAnalysis.Builder()
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build()
                 analysis.setAnalyzer(ContextCompat.getMainExecutor(viewContext), QrAnalyzer(onResult))
                 provider.unbindAll()
                 provider.bindToLifecycle(
@@ -309,10 +338,13 @@ private fun QrScannerView(onResult: (String) -> Unit, modifier: Modifier = Modif
     }
 }
 
-private class QrAnalyzer(private val onResult: (String) -> Unit) : ImageAnalysis.Analyzer {
-    private val scanner = BarcodeScanning.getClient(
-        BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build(),
-    )
+private class QrAnalyzer(
+    private val onResult: (String) -> Unit,
+) : ImageAnalysis.Analyzer {
+    private val scanner =
+        BarcodeScanning.getClient(
+            BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build(),
+        )
     private val delivered = AtomicBoolean(false)
 
     @androidx.annotation.OptIn(ExperimentalGetImage::class)
@@ -334,5 +366,4 @@ private class QrAnalyzer(private val onResult: (String) -> Unit) : ImageAnalysis
     }
 }
 
-private fun groupFingerprint(fingerprint: String): String =
-    fingerprint.chunked(4).joinToString(separator = " ")
+private fun groupFingerprint(fingerprint: String): String = fingerprint.chunked(4).joinToString(separator = " ")

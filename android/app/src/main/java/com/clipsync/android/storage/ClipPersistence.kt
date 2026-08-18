@@ -40,6 +40,7 @@ internal interface ClipSession : ClipRetentionSession {
     suspend fun findLiveContentByHash(contentHash: String): String?
 
     suspend fun allocateOriginSeq(deviceId: String): Long
+    suspend fun advanceOriginSeq(deviceId: String, originSeq: Long)
     suspend fun receiveState(originDeviceId: String): OriginReceiveState
     suspend fun upsertReceiveState(originDeviceId: String, state: OriginReceiveState)
     suspend fun allReceiveStates(): Map<String, OriginReceiveState>
@@ -51,6 +52,7 @@ internal interface ClipSession : ClipRetentionSession {
     suspend fun deleteOutboxForEvents(eventIds: List<String>)
     suspend fun deleteOutboxInRange(peerId: String, originDeviceId: String, startSeq: Long, endSeq: Long)
     suspend fun resetOutboxToPending(peerId: String)
+    suspend fun deleteOutboxForPeer(peerId: String)
 
     suspend fun peerCursor(peerId: String, originDeviceId: String): OriginReceiveState
     suspend fun upsertPeerCursor(peerId: String, originDeviceId: String, state: OriginReceiveState, ackedAt: Long)
@@ -137,6 +139,12 @@ private class RoomClipSession(private val database: ClipDatabase) : ClipSession 
         return next
     }
 
+    override suspend fun advanceOriginSeq(deviceId: String, originSeq: Long) {
+        val current = database.localSequenceDao().getNextSeq(deviceId) ?: 1L
+        val next = maxOf(current, originSeq + 1)
+        database.localSequenceDao().upsert(LocalSequenceEntity(deviceId, next))
+    }
+
     override suspend fun receiveState(originDeviceId: String): OriginReceiveState =
         database.originReceiveStateDao().find(originDeviceId).toState()
 
@@ -189,6 +197,10 @@ private class RoomClipSession(private val database: ClipDatabase) : ClipSession 
 
     override suspend fun resetOutboxToPending(peerId: String) {
         database.outboxDao().resetAnnouncedToPending(peerId)
+    }
+
+    override suspend fun deleteOutboxForPeer(peerId: String) {
+        database.outboxDao().deleteByPeerId(peerId)
     }
 
     override suspend fun peerCursor(peerId: String, originDeviceId: String): OriginReceiveState =

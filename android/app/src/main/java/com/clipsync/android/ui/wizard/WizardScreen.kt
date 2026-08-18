@@ -369,6 +369,10 @@ private fun ChoicesCard(state: WizardUiState, viewModel: WizardViewModel) {
                 onCheckedChange = viewModel::setOverlayConsented,
             )
             Text(
+                text = stringResource(R.string.wizard_overlay_background_hint),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
                 text = stringResource(R.string.wizard_polling_interval, choices.pollingIntervalMs),
                 style = MaterialTheme.typography.bodyLarge,
             )

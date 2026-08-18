@@ -33,7 +33,7 @@ object CapturePolicy {
         "shizuku",
         "tile",
         "qs_tile",
-    )
+    ) + setOf("adb", "overlay", "foreground")
 
     /**
      * Conservative built-in denylist of password managers and authenticator apps.

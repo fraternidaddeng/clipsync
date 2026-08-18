@@ -100,7 +100,7 @@ interface ClipDao {
         DELETE FROM clips
         WHERE deleted_at IS NULL
           AND created_at < :cutoffMs
-          AND event_id NOT IN (SELECT event_id FROM outbox WHERE state = 'pending')
+          AND event_id NOT IN (SELECT event_id FROM outbox)
         """,
     )
     suspend fun hardDeleteExpiredLive(cutoffMs: Long): Int
@@ -110,7 +110,7 @@ interface ClipDao {
         DELETE FROM clips
         WHERE deleted_at IS NOT NULL
           AND deleted_at < :cutoffMs
-          AND event_id NOT IN (SELECT event_id FROM outbox WHERE state = 'pending')
+          AND event_id NOT IN (SELECT event_id FROM outbox)
         """,
     )
     suspend fun hardDeleteExpiredTombstones(cutoffMs: Long): Int
@@ -167,6 +167,9 @@ interface OutboxDao {
 
     @Query("UPDATE outbox SET state = 'pending' WHERE peer_id = :peerId AND state = 'announced'")
     suspend fun resetAnnouncedToPending(peerId: String)
+
+    @Query("DELETE FROM outbox WHERE peer_id = :peerId")
+    suspend fun deleteByPeerId(peerId: String)
 }
 
 @Dao

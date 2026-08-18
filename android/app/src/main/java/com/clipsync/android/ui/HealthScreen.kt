@@ -29,17 +29,17 @@ data class HealthScreenState(
 ) {
     companion object {
         fun initial() = HealthScreenState(
-            network = HealthValue("Unpaired", HealthTone.NEUTRAL),
-            service = HealthValue("Not running", HealthTone.NEUTRAL),
-            read = HealthValue("Foreground only", HealthTone.NEUTRAL),
-            write = HealthValue("Not probed", HealthTone.NEUTRAL),
+            network = HealthValue(HealthStatus.UNPAIRED, HealthTone.NEUTRAL),
+            service = HealthValue(HealthStatus.NOT_RUNNING, HealthTone.NEUTRAL),
+            read = HealthValue(HealthStatus.FOREGROUND_ONLY, HealthTone.NEUTRAL),
+            write = HealthValue(HealthStatus.NOT_PROBED, HealthTone.NEUTRAL),
             pairedDeviceCount = 0,
         )
     }
 }
 
 data class HealthValue(
-    val label: String,
+    val label: HealthStatus,
     val tone: HealthTone,
 )
 
@@ -99,4 +99,27 @@ private fun HealthScreenPreview() {
     ClipSyncTheme {
         HealthScreen(state = HealthScreenState.initial())
     }
+}
+
+enum class HealthStatus {
+    UNPAIRED,
+    CONNECTED,
+    WINDOWS_UNREACHABLE,
+    NEEDS_RECOVERY,
+    RUNNING_HIDDEN,
+    RUNNING,
+    NOT_RUNNING,
+    FGS_TYPE_MISSING,
+    FGS_PERMISSION_MISSING,
+    SERVICE_START_DENIED,
+    FOREGROUND_READY,
+    READ_READY_SHIZUKU,
+    READ_READY_ADB,
+    READ_READY_OVERLAY,
+    DEGRADED,
+    UNAVAILABLE,
+    NEEDS_ACTION,
+    FOREGROUND_ONLY,
+    PUBLIC_WRITE_READY,
+    NOT_PROBED,
 }

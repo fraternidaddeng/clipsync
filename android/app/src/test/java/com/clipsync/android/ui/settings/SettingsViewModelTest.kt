@@ -84,8 +84,8 @@ class SettingsViewModelTest {
                 SyncConnectionStatus(paired = true, windowsReachable = true, serviceRunning = false),
             ),
             capabilities = FixedCapabilityStatus(
-                read = HealthValue("Foreground only", HealthTone.NEUTRAL),
-                write = HealthValue("Ready", HealthTone.GOOD),
+                read = HealthValue(com.clipsync.android.ui.HealthStatus.FOREGROUND_ONLY, HealthTone.NEUTRAL),
+                write = HealthValue(com.clipsync.android.ui.HealthStatus.PUBLIC_WRITE_READY, HealthTone.GOOD),
             ),
         )
         val cards = model.state.value
@@ -147,11 +147,11 @@ class SettingsViewModelTest {
                 ),
             ),
             capabilities = FixedCapabilityStatus(
-                read = HealthValue("Foreground only", HealthTone.NEUTRAL),
-                write = HealthValue("Not probed", HealthTone.NEUTRAL),
+                read = HealthValue(com.clipsync.android.ui.HealthStatus.FOREGROUND_ONLY, HealthTone.NEUTRAL),
+                write = HealthValue(com.clipsync.android.ui.HealthStatus.NOT_PROBED, HealthTone.NEUTRAL),
             ),
         )
-        assertEquals("Needs recovery", model.state.value.service.label)
+        assertEquals(com.clipsync.android.ui.HealthStatus.NEEDS_RECOVERY, model.state.value.service.label)
         assertEquals(HealthTone.WARNING, model.state.value.service.tone)
         assertNotEquals(HealthTone.GOOD, model.state.value.network.tone)
         model.close()
@@ -167,15 +167,15 @@ class SettingsViewModelTest {
             repository = repo,
             syncStatus = sync,
             capabilities = FixedCapabilityStatus(
-                read = HealthValue("Foreground only", HealthTone.NEUTRAL),
-                write = HealthValue("Not probed", HealthTone.NEUTRAL),
+                read = HealthValue(com.clipsync.android.ui.HealthStatus.FOREGROUND_ONLY, HealthTone.NEUTRAL),
+                write = HealthValue(com.clipsync.android.ui.HealthStatus.NOT_PROBED, HealthTone.NEUTRAL),
             ),
         )
         assertEquals(HealthTone.WARNING, model.state.value.network.tone)
-        assertEquals("Windows unreachable", model.state.value.network.label)
+        assertEquals(com.clipsync.android.ui.HealthStatus.WINDOWS_UNREACHABLE, model.state.value.network.label)
         sync.set(SyncConnectionStatus(paired = true, windowsReachable = true, serviceRunning = true))
         assertEquals(HealthTone.GOOD, model.state.value.network.tone)
-        assertEquals("Connected", model.state.value.network.label)
+        assertEquals(com.clipsync.android.ui.HealthStatus.CONNECTED, model.state.value.network.label)
         assertEquals(HealthTone.NEUTRAL, model.state.value.read.tone)
         model.close()
     }
@@ -189,8 +189,8 @@ class SettingsViewModelTest {
                 SyncConnectionStatus(paired = true, windowsReachable = false, serviceRunning = false),
             ),
             capabilities = FixedCapabilityStatus(
-                read = HealthValue("Foreground only", HealthTone.NEUTRAL),
-                write = HealthValue("Not probed", HealthTone.NEUTRAL),
+                read = HealthValue(com.clipsync.android.ui.HealthStatus.FOREGROUND_ONLY, HealthTone.NEUTRAL),
+                write = HealthValue(com.clipsync.android.ui.HealthStatus.NOT_PROBED, HealthTone.NEUTRAL),
             ),
         )
         assertEquals(HealthTone.WARNING, model.state.value.network.tone)
@@ -207,8 +207,8 @@ class SettingsViewModelTest {
             SyncConnectionStatus(paired = false, windowsReachable = false, serviceRunning = false),
         ),
         capabilities = FixedCapabilityStatus(
-            read = HealthValue("Foreground only", HealthTone.NEUTRAL),
-            write = HealthValue("Not probed", HealthTone.NEUTRAL),
+            read = HealthValue(com.clipsync.android.ui.HealthStatus.FOREGROUND_ONLY, HealthTone.NEUTRAL),
+            write = HealthValue(com.clipsync.android.ui.HealthStatus.NOT_PROBED, HealthTone.NEUTRAL),
         ),
     )
 

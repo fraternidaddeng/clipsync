@@ -3,6 +3,8 @@ package com.clipsync.android.capture
 import android.content.Context
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackends
+import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
+import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.clipboard.KeyValueClipboardCapabilityStore
 import com.clipsync.android.platform.clipboard.shizuku.ShizukuClipboardBackend
 import com.clipsync.android.sync.AndroidSyncLogger
@@ -34,6 +36,9 @@ object ClipboardCaptureRuntime {
         current.ensureStarted()
         return current
     }
+
+    /** Live coordinator of the process capture stack, if started. UI status reads it. */
+    fun currentAccess(): ClipboardAccessCoordinator? = manager?.access()
 
     private fun createManager(app: Context): ClipboardCaptureManager =
         ClipboardCaptureManager(
@@ -73,15 +78,30 @@ object ClipboardCaptureRuntime {
                             .peer()
                             ?.deviceId
                             ?.takeIf { it.isNotBlank() }
+                    val sourceTag =
+                        captureSourceTag(manager?.access()?.state?.activeReadMode)
                     repository.captureLocalText(
                         change.text,
-                        "shizuku",
+                        sourceTag,
                         change.observedAtEpochMillis,
                         peerId,
                     )
                     AndroidSyncLogger.event("capture_stored", "background")
                 }
             },
-            scope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+            // Main.immediate on purpose: rebuilds and health-loop fallbacks may
+            // start the overlay backend, and WindowManager.addView requires the
+            // main thread (device-verified MIUI regression when this ran on IO).
+            // Capture persistence itself hops to IO inside the manager.
+            scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
         )
 }
+
+/** Stable lowercase tag for the active listener backend; never a package name. */
+internal fun captureSourceTag(activeReadMode: ClipboardReadMode?): String =
+    when (activeReadMode) {
+        ClipboardReadMode.SHIZUKU_EVENT, null -> "shizuku"
+        ClipboardReadMode.ADB_LOG_OVERLAY -> "adb"
+        ClipboardReadMode.OVERLAY_POLLING -> "overlay"
+        ClipboardReadMode.FOREGROUND_ONLY -> "foreground"
+    }

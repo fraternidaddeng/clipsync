@@ -19,7 +19,7 @@ class ShareCaptureHelperTest {
         val repo = createTestClipRepository()
         repo.setSetting(SETTING_PAIRED_PEER_ID, TEST_PEER_DEVICE_ID)
         val helper = ShareCaptureHelper(repo, nowMs = { NOW })
-        val outcome = helper.capture("hello from share", sourceApp = "share")
+        val outcome = helper.capture("hello from share", sourceApp = "share", peerId = TEST_PEER_DEVICE_ID)
         assertTrue(outcome is ShareCaptureOutcome.Stored)
         assertEquals(1, repo.outboxPending(TEST_PEER_DEVICE_ID).size)
         assertEquals("hello from share", repo.search("").single().content)

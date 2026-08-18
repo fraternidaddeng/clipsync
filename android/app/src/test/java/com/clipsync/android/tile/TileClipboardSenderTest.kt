@@ -21,7 +21,7 @@ class TileClipboardSenderTest {
             readText = { ClipboardReadResult.Success("from tile") },
             nowMs = { NOW },
         )
-        val outcome = sender.send()
+        val outcome = sender.send(TEST_PEER_DEVICE_ID)
         assertTrue(outcome is TileSendOutcome.Stored)
         assertEquals("from tile", repo.search("").single().content)
         assertEquals(1, repo.outboxPending(TEST_PEER_DEVICE_ID).size)

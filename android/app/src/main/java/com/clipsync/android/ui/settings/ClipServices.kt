@@ -2,6 +2,7 @@ package com.clipsync.android.ui.settings
 
 import android.content.ClipboardManager
 import android.content.Context
+import com.clipsync.android.capture.ClipboardCaptureRuntime
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
@@ -16,7 +17,6 @@ import com.clipsync.android.platform.clipboard.ForegroundClipboardBackend
 import com.clipsync.android.platform.clipboard.PublicClipboardWriter
 import com.clipsync.android.storage.ClipRepository
 import com.clipsync.android.storage.createClipRepository
-import com.clipsync.android.ui.HealthTone
 import com.clipsync.android.ui.HealthValue
 
 /**
@@ -28,6 +28,7 @@ object ClipServices {
 
     @Volatile
     private var writeCoordinator: ClipboardWriteCoordinator? = null
+
     private val lock = Any()
 
     /**
@@ -124,14 +125,23 @@ object ClipServices {
     fun capabilities(context: Context, isVisible: () -> Boolean): CapabilityStatusProvider =
         LiveCapabilityStatus(
             read = {
-                val backend = foregroundBackend(context, isVisible)
-                val report = backend?.probe()
-                when (report?.readState) {
-                    CapabilityState.READY -> HealthValue("Foreground ready", HealthTone.GOOD)
-                    CapabilityState.DEGRADED -> HealthValue("Degraded", HealthTone.WARNING)
-                    CapabilityState.UNAVAILABLE -> HealthValue("Unavailable", HealthTone.WARNING)
-                    CapabilityState.NEEDS_USER_ACTION -> HealthValue("Needs your action", HealthTone.WARNING)
-                    CapabilityState.UNKNOWN, null -> HealthValue("Foreground only", HealthTone.NEUTRAL)
+                // Prefer the live process capture stack: the card must name the
+                // ACTIVE backend (Shizuku/ADB/overlay/foreground), not always the
+                // foreground probe (device finding on MIUI).
+                val access = ClipboardCaptureRuntime.currentAccess()
+                val activeMode = access?.state?.activeReadMode
+                if (access != null && activeMode != null) {
+                    healthReadForActiveMode(activeMode, access.lastReadState)
+                } else {
+                    val backend = foregroundBackend(context, isVisible)
+                    val report = backend?.probe()
+                    when (report?.readState) {
+                        CapabilityState.READY -> healthRead(CapabilityState.READY) as HealthValue
+                        CapabilityState.DEGRADED -> healthRead(CapabilityState.DEGRADED)
+                        CapabilityState.UNAVAILABLE -> healthRead(CapabilityState.UNAVAILABLE)
+                        CapabilityState.NEEDS_USER_ACTION -> healthRead(CapabilityState.NEEDS_USER_ACTION)
+                        CapabilityState.UNKNOWN, null -> healthRead(null)
+                    }
                 }
             },
             write = {
@@ -142,11 +152,11 @@ object ClipServices {
                     AndroidPublicClipboardWriter(clipboard).probe()
                 }
                 when (state) {
-                    CapabilityState.READY -> HealthValue("Public write ready", HealthTone.GOOD)
-                    CapabilityState.DEGRADED -> HealthValue("Degraded", HealthTone.WARNING)
-                    CapabilityState.UNAVAILABLE -> HealthValue("Unavailable", HealthTone.WARNING)
-                    CapabilityState.NEEDS_USER_ACTION -> HealthValue("Needs your action", HealthTone.WARNING)
-                    CapabilityState.UNKNOWN -> HealthValue("Not probed", HealthTone.NEUTRAL)
+                    CapabilityState.READY -> healthWrite(CapabilityState.READY)
+                    CapabilityState.DEGRADED -> healthWrite(CapabilityState.DEGRADED)
+                    CapabilityState.UNAVAILABLE -> healthWrite(CapabilityState.UNAVAILABLE)
+                    CapabilityState.NEEDS_USER_ACTION -> healthWrite(CapabilityState.NEEDS_USER_ACTION)
+                    CapabilityState.UNKNOWN -> healthWrite(CapabilityState.UNKNOWN)
                 }
             },
         )

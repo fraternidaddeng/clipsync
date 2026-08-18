@@ -308,9 +308,20 @@ internal class InMemoryClipPersistence : ClipPersistence {
 
         private fun pendingOutboxEventIds(): Set<String> =
             outbox.values
-                .filter { it.state == OUTBOX_PENDING }
                 .map { it.eventId }
                 .toSet()
+
+        override suspend fun advanceOriginSeq(
+            deviceId: String,
+            originSeq: Long,
+        ) {
+            val current = sequences[deviceId] ?: 1L
+            sequences[deviceId] = maxOf(current, originSeq + 1)
+        }
+
+        override suspend fun deleteOutboxForPeer(peerId: String) {
+            outbox.entries.removeAll { it.value.peerId == peerId }
+        }
 
         private fun removeClip(row: ClipEntity) {
             clips.remove(row.eventId)

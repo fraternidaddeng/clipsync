@@ -21,10 +21,10 @@ class ShareReceiverActivity : ComponentActivity() {
             return
         }
         val repository = ClipServices.repository(this)
-        val helper = ShareCaptureHelper(repository)
+        val (helper, peerId) = ShareCaptureHelper(repository) to ClipServices.pairingStore(this).peer()?.deviceId
         val source = callingPackage?.takeIf { it.isNotBlank() } ?: ShareCaptureHelper.SOURCE_SHARE
         lifecycleScope.launch {
-            val outcome = withContext(Dispatchers.IO) { helper.capture(text, source) }
+            val outcome = withContext(Dispatchers.IO) { helper.capture(text, source, peerId) }
             val message = when (outcome) {
                 is ShareCaptureOutcome.Stored -> getString(R.string.share_captured)
                 is ShareCaptureOutcome.Rejected -> when (outcome.reason) {
