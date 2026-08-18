@@ -94,8 +94,10 @@ public partial class App : Application
             syncHost = new PeerSyncHost(store, protector, certificate, pairingService);
             syncHost.RemoteClipsCommitted += OnRemoteClipsCommitted;
             await syncHost.StartAsync(viewModel.ExtraBindAddresses);
-            viewModel.SyncStatus =
-                $"Peer endpoint on port {syncHost.Port}\nDevice {deviceId}\nCert {syncHost.CertificateFingerprint[..16]}…";
+            viewModel.SyncStatus = Strings.FormatSyncStatusRunning(
+                syncHost.Port,
+                deviceId,
+                syncHost.CertificateFingerprint[..16]);
             if (string.Equals(
                     Environment.GetEnvironmentVariable("CLIPSYNC_SHOW_PAIRING"),
                     "1",
@@ -115,7 +117,7 @@ public partial class App : Application
         catch (Exception exception)
         {
             LocalDiagnostics.Write($"peer_start_failed_{exception.GetType().Name}");
-            viewModel.SyncStatus = "Peer endpoint failed to start; sync is off this session.";
+            viewModel.SyncStatus = Strings.SyncStatusStartFailed;
         }
     }
 
@@ -133,8 +135,8 @@ public partial class App : Application
         {
             MessageBox.Show(
                 owner,
-                "The peer endpoint is not running, so pairing is unavailable this session.",
-                "ClipSync",
+                Strings.PairingUnavailableMessage,
+                Strings.AppTitle,
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;

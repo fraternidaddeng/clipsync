@@ -1,3 +1,4 @@
+using ClipSync.App;
 using ClipSync.Core.Storage;
 
 namespace ClipSync.App.ViewModels;
@@ -13,10 +14,10 @@ public sealed record PairedDeviceViewModel(
     public static PairedDeviceViewModel FromDevice(PairedDevice device) => new(
         device.DeviceId,
         device.DisplayName,
-        device.Platform switch { "android" => "Android", "windows" => "Windows", _ => device.Platform },
+        Strings.PlatformLabel(device.Platform),
         device.LastSeenAt is { } seen
-            ? $"Last seen {seen.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture)}"
-            : "Never connected",
-        device.IsRevoked ? "Revoked — scan a new QR code to re-pair" : "Paired",
+            ? Strings.FormatLastSeen(seen.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture))
+            : Strings.NeverConnected,
+        device.IsRevoked ? Strings.DeviceRevokedState : Strings.DevicePairedState,
         device.IsRevoked);
 }

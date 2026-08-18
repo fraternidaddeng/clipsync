@@ -1,7 +1,8 @@
 <Window x:Class="ClipSync.App.Pairing.PairingApprovalWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Pairing request"
+        xmlns:app="clr-namespace:ClipSync.App"
+        Title="{x:Static app:Strings.PairingRequestTitle}"
         Width="420"
         SizeToContent="Height"
         ResizeMode="NoResize"
@@ -9,11 +10,9 @@
         Topmost="True"
         ShowInTaskbar="True">
     <StackPanel Margin="24" Background="White">
-        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Allow this device to pair?" />
-        <TextBlock Margin="0,14,0,0" TextWrapping="Wrap" Foreground="#3B424C">
-            A device asked to pair using the QR code shown by this computer.
-            Approve only if the name below matches the phone in your hand.
-        </TextBlock>
+        <TextBlock FontSize="18" FontWeight="SemiBold" Text="{x:Static app:Strings.PairingAllowHeader}" />
+        <TextBlock Margin="0,14,0,0" TextWrapping="Wrap" Foreground="#3B424C"
+                   Text="{x:Static app:Strings.PairingAllowBody}" />
         <Border Margin="0,16,0,0" Padding="14" Background="#F7F8FA" BorderBrush="#DDE1E7" BorderThickness="1" CornerRadius="6">
             <StackPanel>
                 <TextBlock x:Name="DeviceNameText" FontSize="16" FontWeight="SemiBold" />
@@ -26,10 +25,10 @@
                    FontWeight="SemiBold"
                    TextWrapping="Wrap"
                    Visibility="Collapsed"
-                   Text="This device is already paired. Approving replaces its previous pairing secret and invalidates the old installation." />
+                   Text="{x:Static app:Strings.PairingRepairWarning}" />
         <StackPanel Margin="0,20,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Width="100" Height="32" Click="OnRejectClicked" Content="Reject" />
-            <Button Width="100" Height="32" Margin="10,0,0,0" Click="OnApproveClicked" Content="Approve" FontWeight="SemiBold" />
+            <Button Width="100" Height="32" Click="OnRejectClicked" Content="{x:Static app:Strings.PairingReject}" />
+            <Button Width="100" Height="32" Margin="10,0,0,0" Click="OnApproveClicked" Content="{x:Static app:Strings.PairingApprove}" FontWeight="SemiBold" />
         </StackPanel>
     </StackPanel>
 </Window>

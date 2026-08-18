@@ -19,8 +19,8 @@ public partial class DetailWindow : Window
 
         InitializeComponent();
         this.copy = copy;
-        SourceText.Text = detail.Source;
-        CreatedAtText.Text = detail.CreatedAt;
+        SourceText.Text = Strings.FormatDetailSource(detail.Source);
+        CreatedAtText.Text = Strings.FormatDetailTime(detail.CreatedAt);
         BodyText.Text = detail.Text;
         PreviewKeyDown += OnPreviewKeyDown;
     }

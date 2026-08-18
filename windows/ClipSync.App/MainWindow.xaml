@@ -1,7 +1,8 @@
 <Window x:Class="ClipSync.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="ClipSync"
+        xmlns:app="clr-namespace:ClipSync.App"
+        Title="{x:Static app:Strings.AppTitle}"
         Width="980"
         Height="640"
         MinWidth="760"
@@ -23,12 +24,12 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock FontSize="24" FontWeight="SemiBold" Text="ClipSync" />
-                    <TextBlock Margin="0,4,0,0" Foreground="#5E6672" Text="Local clipboard history" />
+                    <TextBlock FontSize="24" FontWeight="SemiBold" Text="{x:Static app:Strings.AppTitle}" />
+                    <TextBlock Margin="0,4,0,0" Foreground="#5E6672" Text="{x:Static app:Strings.HistorySubtitle}" />
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <CheckBox Margin="0,0,20,0" Click="OnCaptureSettingToggled" Content="Pause capture" IsChecked="{Binding IsPaused}" />
-                    <CheckBox Click="OnCaptureSettingToggled" Content="Private mode" IsChecked="{Binding IsPrivateMode}" />
+                    <CheckBox Margin="0,0,20,0" Click="OnCaptureSettingToggled" Content="{x:Static app:Strings.PauseCapture}" IsChecked="{Binding IsPaused}" />
+                    <CheckBox Click="OnCaptureSettingToggled" Content="{x:Static app:Strings.PrivateMode}" IsChecked="{Binding IsPrivateMode}" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -49,7 +50,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <DockPanel>
-                    <Button DockPanel.Dock="Right" Width="80" Margin="8,0,0,0" Command="{Binding SearchCommand}" Content="Search" />
+                    <Button DockPanel.Dock="Right" Width="80" Margin="8,0,0,0" Command="{Binding SearchCommand}" Content="{x:Static app:Strings.Search}" />
                     <TextBox Height="34" Padding="8,5" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
                 <ListBox Grid.Row="2"
@@ -75,21 +76,21 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
-                    <Button Width="90" Command="{Binding CopySelectedCommand}" Content="Copy" />
-                    <Button Width="90" Margin="8,0,0,0" Command="{Binding ViewSelectedCommand}" Content="View" />
-                    <Button Width="90" Margin="8,0,0,0" Command="{Binding DeleteSelectedCommand}" Content="Delete" />
-                    <Button Width="90" Margin="8,0,0,0" Command="{Binding ClearCommand}" Content="Clear all" />
-                    <Button Width="90" Margin="8,0,0,0" Command="{Binding RefreshCommand}" Content="Refresh" />
+                    <Button Width="90" Command="{Binding CopySelectedCommand}" Content="{x:Static app:Strings.Copy}" />
+                    <Button Width="90" Margin="8,0,0,0" Command="{Binding ViewSelectedCommand}" Content="{x:Static app:Strings.View}" />
+                    <Button Width="90" Margin="8,0,0,0" Command="{Binding DeleteSelectedCommand}" Content="{x:Static app:Strings.Delete}" />
+                    <Button Width="90" Margin="8,0,0,0" Command="{Binding ClearCommand}" Content="{x:Static app:Strings.ClearAll}" />
+                    <Button Width="90" Margin="8,0,0,0" Command="{Binding RefreshCommand}" Content="{x:Static app:Strings.Refresh}" />
                 </StackPanel>
             </Grid>
 
             <Border Grid.Column="2" Padding="18" Background="White" BorderBrush="#CBD1D9" BorderThickness="1" CornerRadius="6">
                 <ScrollViewer Margin="-6,0" Padding="6,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="Capture settings" />
-                    <TextBlock Margin="0,18,0,6" Text="Retention days" />
+                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="{x:Static app:Strings.CaptureSettings}" />
+                    <TextBlock Margin="0,18,0,6" Text="{x:Static app:Strings.RetentionDays}" />
                     <TextBox Padding="8,5" Text="{Binding RetentionDays}" />
-                    <TextBlock Margin="0,18,0,6" Text="Blocked processes" />
+                    <TextBlock Margin="0,18,0,6" Text="{x:Static app:Strings.BlockedProcesses}" />
                     <TextBox Height="120"
                              Padding="8"
                              AcceptsReturn="True"
@@ -97,23 +98,23 @@
                              TextWrapping="Wrap"
                              VerticalScrollBarVisibility="Auto" />
                     <Separator Margin="0,22,0,16" />
-                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="Sync" />
+                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="{x:Static app:Strings.Sync}" />
                     <CheckBox Margin="0,14,0,0"
-                              Content="Apply remote clips to clipboard"
+                              Content="{x:Static app:Strings.AutoApplyRemote}"
                               IsChecked="{Binding AutoApplyRemote}" />
-                    <TextBlock Margin="0,14,0,6" Text="Extra bind addresses (e.g. Tailscale IP)" />
+                    <TextBlock Margin="0,14,0,6" Text="{x:Static app:Strings.ExtraBindAddresses}" />
                     <TextBox Padding="8,5" Text="{Binding ExtraBindAddresses}" />
                     <TextBlock Margin="0,6,0,0"
                                FontSize="11"
                                Foreground="#6D7580"
-                               Text="Address changes take effect after restart."
+                               Text="{x:Static app:Strings.AddressRestartHint}"
                                TextWrapping="Wrap" />
-                    <Button Height="34" Margin="0,18,0,0" Command="{Binding SaveSettingsCommand}" Content="Save settings" />
-                    <Button Height="34" Margin="0,12,0,0" Command="{Binding ExportHistoryCommand}" Content="Export history (JSONL)…" />
+                    <Button Height="34" Margin="0,18,0,0" Command="{Binding SaveSettingsCommand}" Content="{x:Static app:Strings.SaveSettings}" />
+                    <Button Height="34" Margin="0,12,0,0" Command="{Binding ExportHistoryCommand}" Content="{x:Static app:Strings.ExportHistory}" />
                     <TextBlock Margin="0,6,0,0"
                                FontSize="11"
                                Foreground="#6D7580"
-                               Text="The file contains clipboard bodies in plaintext."
+                               Text="{x:Static app:Strings.ExportPlaintextWarning}"
                                TextWrapping="Wrap" />
                     <TextBlock Margin="0,6,0,0"
                                FontSize="12"
@@ -121,8 +122,8 @@
                                Text="{Binding ExportStatus}"
                                TextWrapping="Wrap" />
                     <Separator Margin="0,22,0,16" />
-                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="Paired devices" />
-                    <Button Height="32" Margin="0,12,0,0" Click="OnPairNewDeviceClicked" Content="Pair new device…" />
+                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="{x:Static app:Strings.PairedDevices}" />
+                    <Button Height="32" Margin="0,12,0,0" Click="OnPairNewDeviceClicked" Content="{x:Static app:Strings.PairNewDevice}" />
                     <ListBox MaxHeight="180"
                              Margin="0,12,0,0"
                              BorderBrush="#CBD1D9"
@@ -142,25 +143,25 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <TextBlock Margin="0,12,0,4" FontSize="12" Text="Rename selected device" />
+                    <TextBlock Margin="0,12,0,4" FontSize="12" Text="{x:Static app:Strings.RenameSelectedDevice}" />
                     <DockPanel>
-                        <Button DockPanel.Dock="Right" Width="70" Margin="8,0,0,0" Command="{Binding RenameDeviceCommand}" Content="Rename" />
+                        <Button DockPanel.Dock="Right" Width="70" Margin="8,0,0,0" Command="{Binding RenameDeviceCommand}" Content="{x:Static app:Strings.Rename}" />
                         <TextBox Padding="6,4" Text="{Binding RenameText, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                     <Button Height="30"
                             Margin="0,10,0,0"
                             Command="{Binding RevokeDeviceCommand}"
-                            Content="Revoke selected device"
+                            Content="{x:Static app:Strings.RevokeSelectedDevice}"
                             Foreground="#A4262C" />
                     <TextBlock Margin="0,6,0,0"
                                FontSize="11"
                                Foreground="#6D7580"
-                               Text="Revoking disconnects the device immediately and invalidates its pairing secret."
+                               Text="{x:Static app:Strings.RevokeWarning}"
                                TextWrapping="Wrap" />
                     <Separator Margin="0,22,0,18" />
                     <StackPanel Orientation="Horizontal">
                         <Ellipse Width="9" Height="9" Margin="0,0,9,0" Fill="#27844F" />
-                        <TextBlock VerticalAlignment="Center" Text="Local capture service running" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static app:Strings.LocalCaptureRunning}" />
                     </StackPanel>
                     <TextBlock Margin="0,10,0,0"
                                FontSize="12"

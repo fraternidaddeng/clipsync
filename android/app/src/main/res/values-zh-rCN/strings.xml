@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ClipSync</string>
+
+    <string name="tab_history">历史</string>
+    <string name="tab_status">状态</string>
+    <string name="tab_settings">设置</string>
+    <string name="tab_pairing">配对</string>
+
+    <string name="history_title">剪贴板历史</string>
+    <string name="history_search">搜索</string>
+    <string name="history_clear">清除本机历史</string>
+    <string name="history_clear_hint">仅清除本机历史，不会远程删除 Windows 端历史。</string>
+    <string name="history_copy">复制</string>
+    <string name="history_delete">删除</string>
+    <string name="history_empty">暂无记录。可分享文本、使用快捷设置磁贴，或与 Windows 配对。</string>
+    <string name="history_oversized">文本超过 1 MiB，未存储。</string>
+    <string name="history_unpaired">尚未与 Windows 配对。必须先配对才能同步。</string>
+    <string name="history_windows_unreachable">无法连接 Windows。片段会留在本机，直到对端上线。</string>
+    <string name="history_copy_failed">无法写入系统剪贴板。请从应用内再试一次。</string>
+    <string name="history_close">关闭</string>
+    <string name="history_detail_title">片段详情</string>
+    <string name="history_detail_source">来源：%1$s</string>
+    <string name="history_detail_created">创建于 %1$s</string>
+
+    <string name="health_title">设备状况</string>
+    <string name="health_no_peers">没有已配对设备</string>
+    <string name="health_peer_count">%d 台已配对设备</string>
+
+    <string name="settings_title">设置</string>
+    <string name="settings_pause">暂停同步</string>
+    <string name="settings_pause_hint">停止捕获和发送。已有历史会保留。</string>
+    <string name="settings_private">隐私模式</string>
+    <string name="settings_private_hint">新片段既不存储也不发送。之后也不会补传过去的记录。</string>
+    <string name="settings_auto_apply">自动应用远端片段</string>
+    <string name="settings_auto_apply_hint">公开写入可用时，将 Windows 发来的文本写入系统剪贴板。</string>
+    <string name="settings_background_sync">后台同步</string>
+    <string name="settings_background_sync_hint">保持「已连接设备」前台服务，以维持与 Windows 的连接。这不代表剪贴板权限。</string>
+    <string name="settings_boot_recovery">重启后恢复</string>
+    <string name="settings_boot_recovery_hint">手机重启后尝试恢复同步服务。默认关闭。</string>
+    <string name="settings_blacklist">屏蔽已知密码类应用</string>
+    <string name="settings_blacklist_hint">跳过知名密码管理器和验证器应用的捕获。不影响从 Windows 收到的片段。</string>
+    <string name="settings_blacklist_extra">额外屏蔽的包名</string>
+    <string name="settings_blacklist_extra_hint">逗号分隔的 Android 包名。含空格的条目会被忽略。</string>
+    <string name="settings_capabilities">能力</string>
+    <string name="settings_retention">历史保留</string>
+    <string name="settings_retention_hint">仅删除本机较旧的片段。Windows 有独立的保留设置。</string>
+    <string name="settings_export">导出历史（JSONL）</string>
+    <string name="settings_export_warning">导出文件以明文包含剪贴板内容。</string>
+    <string name="settings_export_done">导出完成。</string>
+    <string name="settings_export_failed">导出失败。</string>
+
+    <string name="capability_network">网络</string>
+    <string name="capability_service">服务</string>
+    <string name="capability_read">读取剪贴板</string>
+    <string name="capability_write">写入剪贴板</string>
+
+    <string name="share_captured">已发送到 ClipSync</string>
+    <string name="share_oversized">文本超过 1 MiB，未发送。</string>
+    <string name="share_empty">没有可发送的内容。</string>
+    <string name="share_duplicate">已经捕获过。</string>
+    <string name="share_paused">捕获已暂停，或已开启隐私模式。</string>
+    <string name="share_blocked">该来源应用已被屏蔽，不会捕获。</string>
+    <string name="share_label">发送到 Windows</string>
+
+    <string name="tile_send_clipboard">发送剪贴板</string>
+    <string name="tile_sent">剪贴板已发送到 ClipSync</string>
+    <string name="tile_empty">剪贴板为空或不是文本。</string>
+    <string name="tile_read_failed">无法读取剪贴板。</string>
+
+    <string name="notify_channel_name">入站片段</string>
+    <string name="notify_channel_description">未自动应用时，用于复制入站片段。</string>
+    <string name="notify_inbound_title">来自 Windows 的新片段</string>
+    <string name="notify_inbound_text">点按「复制」写入本机剪贴板。</string>
+    <string name="notify_copy_action">复制到剪贴板</string>
+
+    <string name="service_notify_channel_name">后台同步</string>
+    <string name="service_notify_channel_description">Windows 连接的持续状态。从不包含剪贴板文本。</string>
+    <string name="service_notify_title">ClipSync 后台同步</string>
+    <string name="service_notify_text">正在保持与 Windows 的连接。这不代表剪贴板权限。</string>
+    <string name="service_action_pause">全部暂停</string>
+    <string name="service_action_sync_now">立即同步</string>
+    <string name="service_action_open_status">打开状态</string>
+    <string name="service_recovery_title">ClipSync 需要恢复</string>
+    <string name="service_recovery_text">重启后后台同步已停止。打开应用即可恢复。</string>
+
+    <string name="overlay_polling_enabled">悬浮窗(overlay)轮询已开启</string>
+    <string name="overlay_permission_missing">要从悬浮窗读取剪贴板，需要「显示在其他应用上层」权限。这不会启动后台服务。</string>
+    <string name="overlay_touchable_unavailable">此设备需要可触摸的悬浮窗才能读取剪贴板。ClipSync 不会启用这种方式。</string>
+
+    <string name="capability_read_logs">READ_LOGS（仅 adb）</string>
+    <string name="capability_read_logs_hint">此权限无法在应用内授予。请用 android-bootstrap.ps1 打印所选设备的精确 adb 授予与撤销命令。脚本绝不会替你授权。安装、升级或重启会使授权失效；这些事件之后请重新检查。</string>
+    <string name="capability_read_logs_not_granted">尚未授予 READ_LOGS。请复制打印出的 adb 命令并自行执行。</string>
+
+    <string name="tab_wizard">向导</string>
+    <string name="wizard_title">后台能力设置</string>
+    <string name="wizard_subtitle">每项权限单独一张卡片。可独立授予、跳过或重新检查。分享、快捷设置磁贴和前台捕获始终可用。</string>
+    <string name="wizard_open_from_settings">打开能力向导</string>
+    <string name="wizard_indicators_title">实时状态</string>
+    <string name="wizard_indicator_read">后台读取</string>
+    <string name="wizard_indicator_write">后台写入</string>
+    <string name="wizard_manual_fallback">手动备选始终可用：分享面板、快捷设置磁贴和前台捕获。</string>
+    <string name="wizard_steps_title">权限</string>
+    <string name="wizard_choices_title">读写选择</string>
+    <string name="wizard_finish">完成设置</string>
+    <string name="wizard_skip">跳过</string>
+    <string name="wizard_skipped">已跳过</string>
+    <string name="wizard_purpose">用途：%1$s</string>
+    <string name="wizard_risk">风险：%1$s</string>
+    <string name="wizard_skip_consequence">若跳过：%1$s</string>
+    <string name="wizard_state_ready">就绪</string>
+    <string name="wizard_state_degraded">降级</string>
+    <string name="wizard_state_unavailable">不可用</string>
+    <string name="wizard_state_needs_action">需要你操作</string>
+    <string name="wizard_state_unknown">未探测</string>
+    <string name="wizard_step_notifications">通知</string>
+    <string name="wizard_step_fgs">前台服务</string>
+    <string name="wizard_step_battery">忽略电池优化</string>
+    <string name="wizard_step_overlay">悬浮窗(overlay)（SYSTEM_ALERT_WINDOW）</string>
+    <string name="wizard_step_read_logs">READ_LOGS</string>
+    <string name="wizard_step_shizuku_binder">Shizuku binder</string>
+    <string name="wizard_step_shizuku_auth">Shizuku 授权</string>
+    <string name="wizard_purpose_notifications">显示入站复制操作和持续同步通知。</string>
+    <string name="wizard_purpose_fgs">以「已连接设备」服务保持与 Windows 的连接。这不代表剪贴板权限。</string>
+    <string name="wizard_purpose_battery">减少厂商杀进程，以便空闲后后台同步能恢复。</string>
+    <string name="wizard_purpose_overlay">短暂聚焦 1×1 不可触摸窗口，以便悬浮窗轮询或 ADB 日志读取能复制文本。</string>
+    <string name="wizard_purpose_read_logs">监视系统剪贴板变更日志作为事件信号。正文仍通过悬浮窗读取。</string>
+    <string name="wizard_purpose_shizuku_binder">连接到 Shizuku 服务，以便 ClipSync 使用特权剪贴板 binder。</string>
+    <string name="wizard_purpose_shizuku_auth">在 Shizuku 中授权本应用。首选的事件驱动读取模式。</string>
+    <string name="wizard_risk_notifications">服务运行期间会显示持续的同步通知。</string>
+    <string name="wizard_risk_fgs">长驻服务会多用一点电，并出现在通知栏。</string>
+    <string name="wizard_risk_battery">系统可能更频繁地保持 ClipSync 唤醒。</string>
+    <string name="wizard_risk_overlay">读取时透明窗口会短暂获取焦点。窗口保持不可触摸。</string>
+    <string name="wizard_risk_read_logs">日志访问是特权 adb 授权。ClipSync 从不存储或上传原始日志行。</string>
+    <string name="wizard_risk_shizuku_binder">Shizuku 必须已安装，且每次重启后都要启动。</string>
+    <string name="wizard_risk_shizuku_auth">Shizuku 以受限的 shell 权限运行，仅用于剪贴板 binder 调用。</string>
+    <string name="wizard_skip_notifications">通知操作和入站复制提示将保持隐藏。服务仍可运行。</string>
+    <string name="wizard_skip_fgs">后台连接不会保持。请在前台使用应用。</string>
+    <string name="wizard_skip_battery">厂商可能会杀进程。你需要重新打开应用。</string>
+    <string name="wizard_skip_overlay">悬浮窗轮询和 ADB 日志读取模式将不可用。未经同意绝不会启用悬浮窗。</string>
+    <string name="wizard_skip_read_logs">ADB 日志事件模式将不可用。若稍后授予，请在安装、升级或重启后重新检查。</string>
+    <string name="wizard_skip_shizuku_binder">Shizuku 事件模式将不可用。</string>
+    <string name="wizard_skip_shizuku_auth">在授权本应用之前，Shizuku 事件模式将不可用。</string>
+    <string name="wizard_read_logs_adb_only">READ_LOGS 只能通过 adb（android-bootstrap.ps1）授予。应用内绝不会弹出授权对话框。安装、升级或重启后请重新检查。</string>
+    <string name="wizard_action_notifications">请求通知权限</string>
+    <string name="wizard_action_fgs">打开应用设置</string>
+    <string name="wizard_action_battery">打开电池设置</string>
+    <string name="wizard_action_overlay">打开悬浮窗设置</string>
+    <string name="wizard_action_read_logs">重新检查 READ_LOGS</string>
+    <string name="wizard_action_shizuku_binder">打开 Shizuku</string>
+    <string name="wizard_action_shizuku_auth">在 Shizuku 中授权</string>
+    <string name="wizard_preferred_mode">首选读取模式</string>
+    <string name="wizard_mode_shizuku">Shizuku 事件</string>
+    <string name="wizard_mode_adb">ADB 日志 + 悬浮窗</string>
+    <string name="wizard_mode_overlay">悬浮窗轮询</string>
+    <string name="wizard_mode_foreground">前台 / 手动</string>
+    <string name="wizard_auto_fallback">允许自动降级</string>
+    <string name="wizard_auto_fallback_hint">首选模式失败时，尝试下一个允许的模式。悬浮窗仍需明确同意。</string>
+    <string name="wizard_overlay_consent">启用悬浮窗读取模式</string>
+    <string name="wizard_overlay_consent_hint">默认关闭。悬浮窗不用于写入。公开剪贴板写入仍是默认方式。</string>
+    <string name="wizard_polling_interval">轮询间隔：%d ms</string>
+    <string name="wizard_auto_upload">后台自动上传</string>
+    <string name="wizard_auto_upload_hint">应用在后台时上传已捕获的剪贴板文本。</string>
+    <string name="wizard_auto_apply">后台自动应用</string>
+    <string name="wizard_auto_apply_hint">用公开剪贴板 API 写入 Windows 发来的文本。不需要悬浮窗。</string>
+    <string name="wizard_write_default">写入默认使用公开剪贴板 API。写入不需要悬浮窗。</string>
+
+    <string name="wizard_selftest_title">后台自测</string>
+    <string name="wizard_selftest_hint">写入应用生成的随机文本，验证后清除。绝不读取、保留或上传你自己的剪贴板内容。</string>
+    <string name="wizard_selftest_read">测试后台读取</string>
+    <string name="wizard_selftest_write">测试后台写入</string>
+    <string name="wizard_selftest_running">测试中…</string>
+    <string name="wizard_selftest_pass">%1$s：通过 · %2$s</string>
+    <string name="wizard_selftest_fail">%1$s：失败 · %2$s</string>
+</resources>

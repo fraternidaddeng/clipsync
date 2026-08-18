@@ -1,4 +1,5 @@
 using System.IO;
+using ClipSync.App;
 using ClipSync.App.Clipboard;
 using ClipSync.App.ViewModels;
 using ClipSync.Core.Clipboard;
@@ -34,9 +35,9 @@ public sealed class DeviceManagementViewModelTests : IAsyncDisposable
         var device = Assert.Single(viewModel.Devices);
         Assert.Equal(PeerDeviceId, device.DeviceId);
         Assert.Equal("Pixel 8", device.DisplayName);
-        Assert.Equal("Android", device.Platform);
+        Assert.Equal(Strings.PlatformAndroid, device.Platform);
         Assert.False(device.IsRevoked);
-        Assert.Equal("Never connected", device.LastSeenText);
+        Assert.Equal(Strings.NeverConnected, device.LastSeenText);
     }
 
     [Fact]

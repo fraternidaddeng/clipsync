@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using ClipSync.App.Sync;
+using ClipSync.App;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Pairing;
 
@@ -26,8 +27,8 @@ public partial class PairingQrWindow : Window
         this.pairing = pairing;
         this.host = host;
 
-        DeviceNameText.Text = $"Computer name: {Environment.MachineName}";
-        FingerprintText.Text = $"Certificate: {PairingQrRenderer.FormatFingerprint(host.CertificateFingerprint)}";
+        DeviceNameText.Text = Strings.FormatComputerName(Environment.MachineName);
+        FingerprintText.Text = Strings.FormatCertificate(PairingQrRenderer.FormatFingerprint(host.CertificateFingerprint));
 
         countdown = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         countdown.Tick += OnCountdownTick;
@@ -93,7 +94,7 @@ public partial class PairingQrWindow : Window
             remaining = TimeSpan.Zero;
         }
 
-        CountdownText.Text = $"Code refreshes in {remaining:m\\:ss}";
+        CountdownText.Text = Strings.FormatPairingCountdown(remaining);
     }
 
     private void OnPairingCompleted(PairedDevice device) =>

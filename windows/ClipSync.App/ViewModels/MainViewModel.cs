@@ -1,3 +1,4 @@
+using ClipSync.App;
 using ClipSync.Core.Clipboard;
 using ClipSync.Core.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -48,7 +49,7 @@ public partial class MainViewModel(
     private string extraBindAddresses = string.Empty;
 
     [ObservableProperty]
-    private string syncStatus = "Peer endpoint not running";
+    private string syncStatus = Strings.SyncStatusNotRunning;
 
     [ObservableProperty]
     private string exportStatus = string.Empty;
@@ -194,11 +195,11 @@ public partial class MainViewModel(
                 return jsonl.Length == 0 ? 0 : jsonl.AsSpan().Count('\n');
             }).ConfigureAwait(false);
 
-            ExportStatus = $"Exported {exported} clips";
+            ExportStatus = Strings.FormatExportedClips(exported);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
         {
-            ExportStatus = "Export failed";
+            ExportStatus = Strings.ExportFailed;
         }
     }
 
@@ -291,9 +292,9 @@ public partial class MainViewModel(
     {
         var dialog = new SaveFileDialog
         {
-            Title = "Export history",
+            Title = Strings.ExportDialogTitle,
             FileName = $"clipsync-export-{DateTime.Now:yyyyMMdd}.jsonl",
-            Filter = "JSON Lines (*.jsonl)|*.jsonl",
+            Filter = Strings.ExportDialogFilter,
             DefaultExt = ".jsonl",
             AddExtension = true
         };

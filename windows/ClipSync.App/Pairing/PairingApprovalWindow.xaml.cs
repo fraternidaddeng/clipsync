@@ -1,4 +1,5 @@
 using System.Windows;
+using ClipSync.App;
 using ClipSync.Peer.Pairing;
 
 namespace ClipSync.App.Pairing;
@@ -13,12 +14,7 @@ public partial class PairingApprovalWindow : Window
     {
         InitializeComponent();
         DeviceNameText.Text = candidate.DisplayName;
-        PlatformText.Text = candidate.Platform switch
-        {
-            "android" => "Android device",
-            "windows" => "Windows device",
-            _ => candidate.Platform
-        };
+        PlatformText.Text = Strings.PlatformDeviceLabel(candidate.Platform);
         RepairWarningText.Visibility = candidate.IsRepair ? Visibility.Visible : Visibility.Collapsed;
     }
 

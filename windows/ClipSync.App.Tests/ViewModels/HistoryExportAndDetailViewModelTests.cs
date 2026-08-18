@@ -1,6 +1,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using ClipSync.App;
 using ClipSync.App.Clipboard;
 using ClipSync.App.ViewModels;
 using ClipSync.Core.Clipboard;
@@ -62,7 +63,7 @@ public sealed class HistoryExportAndDetailViewModelTests : IAsyncDisposable
         var written = await File.ReadAllTextAsync(path);
         Assert.Equal(expected, written);
         Assert.Equal(2, written.AsSpan().Count('\n'));
-        Assert.Equal("Exported 2 clips", viewModel.ExportStatus);
+        Assert.Equal(Strings.FormatExportedClips(2), viewModel.ExportStatus);
     }
 
     [Fact]
@@ -77,7 +78,7 @@ public sealed class HistoryExportAndDetailViewModelTests : IAsyncDisposable
 
         Assert.True(File.Exists(path));
         Assert.Equal(string.Empty, await File.ReadAllTextAsync(path));
-        Assert.Equal("Exported 0 clips", viewModel.ExportStatus);
+        Assert.Equal(Strings.FormatExportedClips(0), viewModel.ExportStatus);
     }
 
     [Fact]
@@ -99,7 +100,7 @@ public sealed class HistoryExportAndDetailViewModelTests : IAsyncDisposable
 
         await viewModel.ExportHistoryCommand.ExecuteAsync(null);
 
-        Assert.Equal("Export failed", viewModel.ExportStatus);
+        Assert.Equal(Strings.ExportFailed, viewModel.ExportStatus);
     }
 
     private static AcceptedClipboardContent Content(string text, DateTimeOffset capturedAt)
