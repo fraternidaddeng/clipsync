@@ -110,6 +110,9 @@ interface OutboxDao {
     )
     suspend fun pending(peerId: String): List<OutboxEntity>
 
+    @Query("SELECT COUNT(*) FROM outbox WHERE peer_id = :peerId AND state = 'pending'")
+    fun observePendingCount(peerId: String): Flow<Int>
+
     @Query(
         """
         UPDATE outbox

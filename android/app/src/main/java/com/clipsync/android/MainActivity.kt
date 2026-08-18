@@ -39,6 +39,7 @@ import com.clipsync.android.service.ClipboardSyncService
 import com.clipsync.android.service.ControllerOwner
 import com.clipsync.android.service.ServiceNotificationActions
 import com.clipsync.android.storage.ClipRepository
+import com.clipsync.android.sync.AndroidSyncLogger
 import com.clipsync.android.sync.SyncController
 import com.clipsync.android.sync.createSyncController
 import com.clipsync.android.ui.HealthScreen
@@ -399,6 +400,7 @@ class MainActivity : ComponentActivity() {
             pairingStore = pairingStore,
             repository = repository,
             scope = lifecycleScope,
+            logger = AndroidSyncLogger,
             onRemoteClipsCommitted = { clips ->
                 lifecycleScope.launch(Dispatchers.IO) {
                     applier.onCommitted(

@@ -72,6 +72,16 @@ internal class InMemoryClipPersistence : ClipPersistence {
         }
     }
 
+    override fun observeOutboxPendingCount(peerId: String): Flow<Int> = flow {
+        invalidations.collect {
+            emit(
+                mutex.withLock {
+                    outbox.values.count { it.peerId == peerId && it.state == OUTBOX_PENDING }
+                },
+            )
+        }
+    }
+
     private fun restore(snapshot: Snapshot) {
         clips.clear()
         clips.putAll(snapshot.clips)

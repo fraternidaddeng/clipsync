@@ -219,6 +219,12 @@ class ClipRepository internal constructor(
         return persistence.observeSetting(key)
     }
 
+    /** Live pending-outbox count for [peerId]; the sync engine drains on emission. */
+    fun observeOutboxPending(peerId: String): Flow<Int> {
+        require(peerId.isNotBlank()) { "Peer id is required." }
+        return persistence.observeOutboxPendingCount(peerId)
+    }
+
     suspend fun setSetting(key: String, value: String) {
         require(key.isNotBlank()) { "Setting key is required." }
         persistence.transaction { setSetting(key, value) }

@@ -15,6 +15,8 @@ internal interface ClipPersistence {
     fun observeSearchVisible(query: String, limit: Int): Flow<List<ClipEntity>>
 
     fun observeSetting(key: String): Flow<String?>
+
+    fun observeOutboxPendingCount(peerId: String): Flow<Int>
 }
 
 internal interface ClipSession {
@@ -69,6 +71,9 @@ internal class RoomClipPersistence(private val database: ClipDatabase) : ClipPer
         }
 
     override fun observeSetting(key: String): Flow<String?> = database.settingDao().observe(key)
+
+    override fun observeOutboxPendingCount(peerId: String): Flow<Int> =
+        database.outboxDao().observePendingCount(peerId)
 }
 
 private class RoomClipSession(private val database: ClipDatabase) : ClipSession {

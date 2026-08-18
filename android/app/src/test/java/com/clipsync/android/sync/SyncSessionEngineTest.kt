@@ -23,11 +23,15 @@ import com.clipsync.android.protocol.SyncMessageWriter
 import com.clipsync.android.protocol.SyncStateDto
 import com.clipsync.android.protocol.WantRangesBody
 import com.clipsync.android.storage.CaptureResult
+import com.clipsync.android.storage.ClipPersistence
 import com.clipsync.android.storage.ClipRepository
+import com.clipsync.android.storage.ClipSession
 import com.clipsync.android.storage.InMemoryClipPersistence
 import com.clipsync.android.storage.OUTBOX_PENDING
 import com.clipsync.android.storage.RemoteClipEvent
 import com.clipsync.android.storage.TerminalReasons
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.coroutines.CancellationException
 import java.util.Base64
 import java.util.UUID
 import java.nio.charset.StandardCharsets
@@ -35,6 +39,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -385,6 +390,84 @@ class SyncSessionEngineTest {
         val pending = repo.outboxPending(PEER)
         assertEquals(1, pending.size)
         assertEquals(OUTBOX_PENDING, pending.single().state)
+    }
+
+    @Test
+    fun `a new local capture announces immediately without waiting for the drain timer`() = runTest {
+        val repo = repository()
+        val transport = FakeSyncTransport()
+        val finished = launchEngine(
+            repo,
+            transport,
+            // One day: if the announce below rode the timer, virtual time would jump.
+            options = SyncSessionOptions(nowMs = { NOW }, outboxDrainIntervalMs = 86_400_000),
+        )
+        completeAuth(transport)
+        transport.peerSends(knownVector(contiguous = 0))
+        runCurrent()
+
+        repo.captureLocalText("signal-driven announce", nowMs = NOW, peerId = PEER)
+        val announce = transport.awaitSent().body as ClipAnnounceBody
+        assertEquals(1, announce.clips.size)
+        assertTrue(
+            "announce must be signal-driven, not timer-driven (virtual time ${currentTime}ms)",
+            currentTime < 60_000,
+        )
+
+        transport.peerSendsFrame(TransportFrame.Closed)
+        val result = finished.await()
+        assertTrue(result.authenticated)
+    }
+
+    @Test
+    fun `a cancellation escaping the outbox loop fails the session instead of stalling`() = runTest {
+        val inner = InMemoryClipPersistence()
+        val armed = AtomicBoolean(false)
+        val throwingPersistence = object : ClipPersistence by inner {
+            override suspend fun <T> read(block: suspend ClipSession.() -> T): T {
+                if (armed.getAndSet(false)) {
+                    throw CancellationException("swallowed timeout-style cancellation")
+                }
+                return inner.read(block)
+            }
+        }
+        val repo = ClipRepository(throwingPersistence, LOCAL, hasher)
+        val transport = FakeSyncTransport()
+        val engine = SyncSessionEngine(
+            repository = repo,
+            localDeviceId = LOCAL,
+            peer = pairedPeer(),
+            pairSecret = SECRET.copyOf(),
+            options = SyncSessionOptions(nowMs = { NOW }, outboxDrainIntervalMs = 60_000),
+            logger = logger,
+        )
+        // Mirror SyncController: requestClose() self-cancels the session job, so
+        // run() ends in CancellationException that the controller maps to a retry.
+        val ended = CompletableDeferred<String>()
+        launch {
+            val detail = try {
+                engine.run(transport).detail
+            } catch (_: CancellationException) {
+                "session_closed"
+            }
+            ended.complete(detail)
+        }
+        completeAuth(transport)
+        transport.peerSends(knownVector(contiguous = 0))
+        runCurrent()
+
+        armed.set(true)
+        repo.captureLocalText("must not stall", nowMs = NOW, peerId = PEER)
+
+        val detail = ended.await()
+        assertTrue(
+            "session must end (got: $detail), not stall with a dead outbox loop",
+            detail == "send_failed" || detail == "session_closed",
+        )
+        assertTrue(
+            "the dead loop must be visible in the log tags",
+            logs.any { it.startsWith("background_loop_stopped") },
+        )
     }
 
     private fun TestScope.launchEngine(

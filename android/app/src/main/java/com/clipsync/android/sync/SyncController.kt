@@ -179,11 +179,15 @@ class SyncController(
     }
 }
 
+// Named-args factory mirroring the SyncController constructor; every extra
+// parameter is an optional seam with a safe default.
+@Suppress("LongParameterList")
 fun createSyncController(
     pairingStore: PairingStore,
     repository: ClipRepository,
     scope: CoroutineScope,
     options: SyncSessionOptions = SyncSessionOptions(),
+    logger: SyncLogger = SyncLogger.NoOp,
     onRemoteClipsCommitted: (List<RemoteClipApplied>) -> Unit = {},
 ): SyncController = SyncController(
     pairingStore = pairingStore,
@@ -191,5 +195,6 @@ fun createSyncController(
     connector = OkHttpSyncConnector(),
     scope = scope,
     options = options,
+    logger = logger,
     onRemoteClipsCommitted = onRemoteClipsCommitted,
 )

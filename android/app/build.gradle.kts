@@ -11,20 +11,24 @@ plugins {
 // Release signing is opt-in. Debug / testDebugUnitTest never read these values.
 // assembleRelease without a keystore+password keeps AGP's default (debug-keyed)
 // signing so a missing personal keystore cannot break the debug pipeline.
-val clipsyncKeystorePath = System.getenv("CLIPSYNC_KEYSTORE")
-    ?.trim()
-    ?.takeIf { it.isNotEmpty() }
-    ?: "D:\\paste-tools\\clipsync-release.keystore"
+val clipsyncKeystorePath =
+    System.getenv("CLIPSYNC_KEYSTORE")
+        ?.trim()
+        ?.takeIf { it.isNotEmpty() }
+        ?: "D:\\paste-tools\\clipsync-release.keystore"
 val clipsyncKeystoreFile = file(clipsyncKeystorePath)
-val clipsyncKeystorePassword = System.getenv("CLIPSYNC_KEYSTORE_PASSWORD")
-    ?.takeIf { !it.isNullOrBlank() }
-val clipsyncKeyAlias = System.getenv("CLIPSYNC_KEY_ALIAS")
-    ?.trim()
-    ?.takeIf { it.isNotEmpty() }
-    ?: "clipsync"
-val clipsyncKeyPassword = System.getenv("CLIPSYNC_KEY_PASSWORD")
-    ?.takeIf { !it.isNullOrBlank() }
-    ?: clipsyncKeystorePassword
+val clipsyncKeystorePassword =
+    System.getenv("CLIPSYNC_KEYSTORE_PASSWORD")
+        ?.takeIf { !it.isNullOrBlank() }
+val clipsyncKeyAlias =
+    System.getenv("CLIPSYNC_KEY_ALIAS")
+        ?.trim()
+        ?.takeIf { it.isNotEmpty() }
+        ?: "clipsync"
+val clipsyncKeyPassword =
+    System.getenv("CLIPSYNC_KEY_PASSWORD")
+        ?.takeIf { !it.isNullOrBlank() }
+        ?: clipsyncKeystorePassword
 val clipsyncReleaseSigningAvailable =
     clipsyncKeystoreFile.isFile && clipsyncKeystorePassword != null
 
@@ -82,7 +86,6 @@ android {
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
-
 }
 
 ksp {
@@ -94,7 +97,9 @@ tasks.withType<Test>().configureEach {
         "protocol.fixtures.dir",
         rootProject.file("../protocol/v1/fixtures").absolutePath,
     )
-    System.getProperties().stringPropertyNames()
+    System
+        .getProperties()
+        .stringPropertyNames()
         .filter { it.startsWith("clipsync.e2e.") }
         .forEach { name ->
             val value = System.getProperty(name) ?: return@forEach
@@ -180,11 +185,12 @@ ktlint {
 tasks.named("check").configure {
     setDependsOn(
         dependsOn.filterNot { dep ->
-            val name = when (dep) {
-                is TaskProvider<*> -> dep.name
-                is Task -> dep.name
-                else -> ""
-            }
+            val name =
+                when (dep) {
+                    is TaskProvider<*> -> dep.name
+                    is Task -> dep.name
+                    else -> ""
+                }
             name.startsWith("detekt") || name.contains("ktlint", ignoreCase = true)
         },
     )

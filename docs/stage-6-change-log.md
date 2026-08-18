@@ -131,7 +131,17 @@
 | 整机重启 + 开机恢复 | **PASS（两段验证）**。未授自启动时：MIUI 不投递 BOOT_COMPLETED（开机 70 秒无进程/无通知），打开应用即恢复的兜底 PASS。用户在 MIUI 授予「自启动」后再次重启：**BOOT_COMPLETED 投递 → receiver → FGS 自行拉起（全程未打开应用）**，仅靠开机自启的服务 Windows→Android ~1 秒恰好一次。WorkManager 兜底通知路径因 FGS 直接成功而未触发（该降级分支仅有 JVM 测试） |
 | Shizuku 13.5.4 | 授权在重启+重装后保留；重启后需 `adb shell sh .../start.sh` 重新拉起（既有已知项） |
 
-仍未测：Windows 睡眠/唤醒、断网 30 分钟长恢复、多 ROM、正式 P95 统计、FGS 开机启动失败时的 WorkManager 恢复通知分支（真机上 FGS 直接成功，无法自然触发）。
+仍未测：Windows 睡眠/唤醒、多 ROM、FGS 开机启动失败时的 WorkManager 恢复通知分支（真机上 FGS 直接成功，无法自然触发）。
+
+## 延迟修复与 P95 验收轮（2026-08-18 上午，同一台 MIUI）
+
+- **断网 30 分钟浸泡 PASS**：离线期间注入 5 个事件（Windows 3、手机 2），恢复后全部到达、恰好一次、零回声（阶段 6 验收「断网 30 分钟恢复只出现一次」实机通过）。
+- **真实潜伏缺陷修复（JVM 测试修前为红）**：`ShizukuClipboardBackend.probe()` 的 Bound 分支在 `started` 时裸赋值 `session = bind.session` 而不挂监听——UserService 进程被杀重生时，10 秒健康探针若赢过重绑回调，会话 READY 但事件永远不再到达。现在统一走 `attachSession`（监听为替换语义、幂等）。
+- **出站改为事件驱动**：`runOutboxLoop` 增加 Room `observeOutboxPending` 信号通道，新捕获立即 announce（原 2 秒轮询为兜底保留）。同时 outbox/ping 循环不再吞非真取消的 `CancellationException`（活跃会话内的取消视为故障：结束会话让控制器重连，不允许静默停摆），并接入生产 `AndroidSyncLogger`（logcat 仅事件标签，无正文）。
+- **测量乌龙的更正**：上午一度判断「出站循环死亡/捕获死亡」，均为**测量假象**——测试用 `input text` 注入的字母令牌被搜狗输入法拼音联想改写（库里是中文串，数字幸存），哈希比对永远落空；logcat（新日志）显示复制后 60ms 内 announce/fetch/payload/ack 全链路完成。改用纯数字令牌后测量恢复正常。
+- **P95 正式统计（plan 5.7 验收，MIUI 14 / SHIZUKU_EVENT，30 样本）**：**Android→Windows p50 0.27s / p95 0.37s / max 0.52s**（验收线 1.5s，通过）；Windows→Android p50 1.69s / p95 2.07s（含 ~0.4s 拉库轮询粒度，真实值约 1.3–1.7s；阶段 4 的 2 秒收件箱目标以 p50 达成）。全部样本双侧恰好一次、零回声行。
+- **孤儿 UserService 发现**：重装 APK 后旧 `:clipsync-clipboard` 进程可能残留（`.version(1)` 不变时 Shizuku 复用/并存），残留进程占资源但不影响新绑定的捕获；已手工清理。后续可选：按 versionCode 提升 UserService 版本或在 app 回调死亡时自毁。
+- Android 全量：**415 用例 / 0 失败 / 1 skipped**（新增 probe 收养、信号驱动、取消硬化、outbox 观察 4 测）。
 
 ## 已知限制 / 交接
 

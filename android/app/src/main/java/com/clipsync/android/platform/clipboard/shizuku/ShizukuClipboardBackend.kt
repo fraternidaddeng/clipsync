@@ -61,7 +61,14 @@ class ShizukuClipboardBackend internal constructor(
                 if (!started) {
                     runtime.unbindUserService()
                 } else {
-                    session = bind.session
+                    // Adopting a session here must go through attachSession: after a
+                    // UserService restart the periodic probe can win the race against
+                    // the rebind callback, and a bare `session = bind.session` leaves
+                    // the change listener unregistered — READY health, zero events
+                    // (observed on MIUI when the :clipsync-clipboard process was
+                    // killed by the OS). Re-adding the listener is replace-semantics
+                    // idempotent; the baseline refresh only runs on identity change.
+                    attachSession(bind.session, refreshBaseline = session !== bind.session)
                 }
                 if (ping != null) {
                     lastErrorCode = ping
@@ -152,6 +159,12 @@ class ShizukuClipboardBackend internal constructor(
         return BackendHealth(BackendHealthState.HEALTHY, checkedAt)
     }
 
+    /**
+     * Adopt [bound] as the active session and (re-)register the change listener.
+     * Registration is replace-semantics on the UserService side, so calling this
+     * repeatedly (start, rebind callback, scheduled rebind, periodic probe) is safe
+     * and self-heals a lost registration.
+     */
     private fun attachSession(bound: ShizukuClipboardSession, refreshBaseline: Boolean) {
         session = bound
         lastErrorCode = null

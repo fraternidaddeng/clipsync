@@ -41,11 +41,14 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.SerializationException
 
 /**
@@ -694,6 +697,7 @@ class SyncSessionEngine(
                 send(ProtocolMessageTypes.PING, PingBody(sentAtMs = options.nowMs()))
             }
         } catch (_: CancellationException) {
+            failLoopUnlessShuttingDown("ping_cancellation")
         } catch (_: Exception) {
             logger.event("background_loop_stopped", "ping")
             complete(SyncSessionResult(true, null, "send_failed"))
@@ -707,16 +711,45 @@ class SyncSessionEngine(
             // coverage can prune the reset outbox before the first announce.
             peerVectorArrived.await()
             drainOutbox()
-            while (true) {
-                options.delayMs(options.outboxDrainIntervalMs)
-                drainOutbox()
+            coroutineScope {
+                // New local captures must announce immediately (plan 5.7 P95), not on
+                // the next poll tick. The interval stays as a fallback re-check.
+                val signals = Channel<Unit>(Channel.CONFLATED)
+                launch {
+                    repository.observeOutboxPending(peer.deviceId).collect { pending ->
+                        if (pending > 0) {
+                            signals.trySend(Unit)
+                        }
+                    }
+                }
+                while (true) {
+                    withTimeoutOrNull(options.outboxDrainIntervalMs) { signals.receive() }
+                    drainOutbox()
+                }
             }
         } catch (_: CancellationException) {
+            failLoopUnlessShuttingDown("outbox_cancellation")
         } catch (_: Exception) {
             logger.event("background_loop_stopped", "outbox")
             complete(SyncSessionResult(true, null, "send_failed"))
             requestClose()
         }
+    }
+
+    /**
+     * A CancellationException reaching a background loop while the session job is
+     * still active is not a shutdown: it is a swallowed timeout-style cancellation
+     * from inside the loop body (observed on device as a READY session whose outbox
+     * loop had silently died — captures piled up until the next reconnect). Fail the
+     * session so the controller reconnects and enterReady() re-drains.
+     */
+    private suspend fun failLoopUnlessShuttingDown(tag: String) {
+        if (!currentCoroutineContext().isActive) {
+            return
+        }
+        logger.event("background_loop_stopped", tag)
+        complete(SyncSessionResult(true, null, "send_failed"))
+        requestClose()
     }
 
     private suspend fun drainOutbox() {

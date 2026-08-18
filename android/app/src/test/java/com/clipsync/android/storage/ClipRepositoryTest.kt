@@ -362,6 +362,21 @@ class ClipRepositoryTest {
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
+    fun `observeOutboxPending emits on capture and after announce`() = runTest(UnconfinedTestDispatcher()) {
+        val repo = repository()
+        val seen = mutableListOf<Int>()
+        val job = backgroundScope.launch {
+            repo.observeOutboxPending(PEER).collect { seen += it }
+        }
+        repo.captureLocalText("outbox observe", nowMs = NOW, peerId = PEER)
+        assertTrue("capture must raise the pending count", seen.contains(1))
+        repo.markAnnounced(repo.outboxPending(PEER).map { it.id })
+        assertEquals(0, seen.last())
+        job.cancel()
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun `observeSetting emits paired peer id`() = runTest(UnconfinedTestDispatcher()) {
         val repo = repository()
         val seen = mutableListOf<String?>()
@@ -428,6 +443,9 @@ class ClipRepositoryTest {
             inner.observeSearchVisible(query, limit)
 
         override fun observeSetting(key: String) = inner.observeSetting(key)
+
+        override fun observeOutboxPendingCount(peerId: String) =
+            inner.observeOutboxPendingCount(peerId)
     }
 
     companion object {

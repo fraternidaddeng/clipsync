@@ -19,6 +19,33 @@ class ShizukuClipboardBackendTest {
     }
 
     @Test
+    fun `probe adopting a rebound session re-registers the change listener`() {
+        // Device-observed failure: the UserService process is killed by the OS, the
+        // periodic health probe wins the race against the rebind callback and adopts
+        // the fresh session bare — READY health, but no listener, so no events ever.
+        val runtime = FakeShizukuRuntime()
+        val backend = ShizukuClipboardBackend(runtime)
+        val changes = mutableListOf<ClipboardChange>()
+        backend.start { changes += it }
+
+        runtime.fireDeath(BinderDeathKind.USER_SERVICE)
+        val reborn = FakeShizukuClipboardSession()
+        runtime.session = reborn
+        // Health-loop path: probe() finds the new session before the scheduled
+        // rebind or onBound ever runs.
+        runtime.capturedOnBound = null
+        runtime.pendingRebind = null
+        val report = backend.probe()
+        assertEquals(CapabilityState.READY, report.readState)
+        assertTrue("probe must re-register the listener", reborn.addListenerCount >= 1)
+
+        reborn.clip = SessionRead.Text("after-rebirth")
+        reborn.emitChanged()
+        assertEquals(1, changes.size)
+        assertEquals("after-rebirth", changes.single().text)
+    }
+
+    @Test
     fun `probe maps all seven error codes`() {
         val cases = listOf(
             ProbeCase(

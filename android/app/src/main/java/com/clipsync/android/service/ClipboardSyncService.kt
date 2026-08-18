@@ -20,6 +20,7 @@ import com.clipsync.android.notify.InboundClip
 import com.clipsync.android.notify.InboundClipApplier
 import com.clipsync.android.notify.InboundClipNotifier
 import com.clipsync.android.notify.NotificationPermission
+import com.clipsync.android.sync.AndroidSyncLogger
 import com.clipsync.android.sync.SyncController
 import com.clipsync.android.sync.createSyncController
 import com.clipsync.android.ui.settings.ClipServices
@@ -124,6 +125,7 @@ class ClipboardSyncService : Service() {
             pairingStore = pairingStore,
             repository = repository,
             scope = scope,
+            logger = AndroidSyncLogger,
             onRemoteClipsCommitted = { clips ->
                 scope.launch(Dispatchers.IO) {
                     applier.onCommitted(
