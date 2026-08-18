@@ -49,6 +49,10 @@
     <string name="settings_export_warning">The export file contains clipboard bodies in plaintext.</string>
     <string name="settings_export_done">Export finished.</string>
     <string name="settings_export_failed">Export failed.</string>
+    <string name="settings_import">Import history (JSONL)…</string>
+    <string name="settings_import_warning">Import restores local history only. Imported clips are not synced to Windows.</string>
+    <string name="settings_import_done">Imported %1$d clips / skipped %2$d clips</string>
+    <string name="settings_import_failed">Import failed.</string>
 
     <string name="capability_network">Network</string>
     <string name="capability_service">Service</string>

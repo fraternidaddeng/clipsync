@@ -49,6 +49,10 @@
     <string name="settings_export_warning">导出文件以明文包含剪贴板内容。</string>
     <string name="settings_export_done">导出完成。</string>
     <string name="settings_export_failed">导出失败。</string>
+    <string name="settings_import">导入历史 (JSONL)…</string>
+    <string name="settings_import_warning">导入仅恢复本机历史，不会同步到 Windows。</string>
+    <string name="settings_import_done">已导入 %1$d 条 / 跳过 %2$d 条</string>
+    <string name="settings_import_failed">失败</string>
 
     <string name="capability_network">网络</string>
     <string name="capability_service">服务</string>

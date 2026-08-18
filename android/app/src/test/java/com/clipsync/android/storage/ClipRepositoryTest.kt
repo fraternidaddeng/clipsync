@@ -517,6 +517,111 @@ class ClipRepositoryTest {
         }
     }
 
+    @Test
+    fun `export then import into empty store restores eventId content and timestamps`() {
+        runTest {
+            val source = repository()
+            source.captureLocalText("first body", sourceApp = "app", nowMs = NOW)
+            source.captureLocalText("second body", nowMs = NOW + 10)
+            val exported = source.search("")
+            val jsonl = ClipExport.encodeJsonLines(exported)
+
+            val dest = repository()
+            val counts = dest.importJsonLines(jsonl)
+            assertEquals(2, counts.imported)
+            assertEquals(0, counts.skipped)
+
+            val restored = dest.search("").associateBy { it.eventId }
+            assertEquals(2, restored.size)
+            for (row in exported) {
+                val got = restored[row.eventId] ?: error("missing ${row.eventId}")
+                assertEquals(row.content, got.content)
+                assertEquals(row.contentHash, got.contentHash)
+                assertEquals(row.originDeviceId, got.originDeviceId)
+                assertEquals(row.originSeq, got.originSeq)
+                assertEquals(row.sourceApp, got.sourceApp)
+                assertEquals(row.createdAtMs, got.createdAtMs)
+                assertEquals(row.expiresAtMs, got.expiresAtMs)
+            }
+        }
+    }
+
+    @Test
+    fun `re-import skips all existing event ids`() {
+        runTest {
+            val source = repository()
+            source.captureLocalText("keep", nowMs = NOW)
+            val jsonl = ClipExport.encodeJsonLines(source.search(""))
+
+            val dest = repository()
+            assertEquals(ClipImportCounts(1, 0), dest.importJsonLines(jsonl))
+            assertEquals(ClipImportCounts(0, 1), dest.importJsonLines(jsonl))
+            assertEquals(1, dest.search("").size)
+            assertEquals("keep", dest.search("")[0].content)
+        }
+    }
+
+    @Test
+    fun `malformed line is skipped and good lines land`() {
+        runTest {
+            val source = repository()
+            source.captureLocalText("good one", nowMs = NOW)
+            source.captureLocalText("good two", nowMs = NOW + 10)
+            val jsonl = "not-json\n${ClipExport.encodeJsonLines(source.search(""))}{]\n"
+
+            val dest = repository()
+            val counts = dest.importJsonLines(jsonl)
+            assertEquals(2, counts.imported)
+            assertEquals(2, counts.skipped)
+            assertEquals(setOf("good one", "good two"), dest.search("").map { it.content }.toSet())
+        }
+    }
+
+    @Test
+    fun `imported rows create no outbox entries`() {
+        runTest {
+            val source = repository()
+            source.captureLocalText("offline history", nowMs = NOW)
+            val jsonl = ClipExport.encodeJsonLines(source.search(""))
+
+            val dest = repository()
+            dest.setSetting(SETTING_PAIRED_PEER_ID, PEER)
+            dest.importJsonLines(jsonl)
+            assertEquals(1, dest.search("").size)
+            assertTrue(dest.outboxPending(PEER).isEmpty())
+            assertTrue(dest.knownVector().origins.isEmpty())
+        }
+    }
+
+    @Test
+    fun `oversized line is skipped`() {
+        runTest {
+            val source = repository()
+            source.captureLocalText("fits", nowMs = NOW)
+            val good = ClipExport.encodeJsonLines(source.search(""))
+            val oversized = "a".repeat(MAX_CLIP_UTF8_BYTES + 1)
+            val huge =
+                ClipEntry(
+                    eventId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+                    originDeviceId = LOCAL,
+                    originSeq = 99,
+                    content = oversized,
+                    contentHash = hasher.hash(oversized),
+                    sourceApp = null,
+                    createdAtMs = NOW,
+                    expiresAtMs = null,
+                )
+            val jsonl = good + ClipExport.encodeJsonLines(listOf(huge))
+
+            val dest = repository()
+            val counts = dest.importJsonLines(jsonl)
+            assertEquals(1, counts.imported)
+            assertEquals(1, counts.skipped)
+            assertEquals(1, dest.search("").size)
+            assertEquals("fits", dest.search("")[0].content)
+        }
+    }
+
     companion object {
         private const val LOCAL = "11111111-1111-4111-8111-111111111111"
         private const val PEER = "22222222-2222-4222-8222-222222222222"

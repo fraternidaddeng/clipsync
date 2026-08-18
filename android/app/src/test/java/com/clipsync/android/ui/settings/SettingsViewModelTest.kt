@@ -259,6 +259,63 @@ class SettingsViewModelTest {
         assertEquals(SettingsExportNotice.DONE, model.state.value.exportNotice)
         model.close()
     }
+
+    @Test
+    fun `importFrom restores exported clips through the seam and reports counts`() {
+        val source = createTestClipRepository()
+        kotlinx.coroutines.runBlocking {
+            source.captureLocalText("first import", nowMs = 1L)
+            source.captureLocalText("second import", nowMs = 2L)
+        }
+        val exporter = settingsModel(source)
+        var encoded = ""
+        kotlinx.coroutines.runBlocking { exporter.exportTo { encoded = it } }
+        exporter.close()
+
+        val dest = createTestClipRepository()
+        val importer = settingsModel(dest)
+        kotlinx.coroutines.runBlocking { importer.importFrom { encoded } }
+        assertEquals(SettingsImportNotice.DONE, importer.state.value.importNotice)
+        assertEquals(2, importer.state.value.importImported)
+        assertEquals(0, importer.state.value.importSkipped)
+        val restored =
+            kotlinx.coroutines.runBlocking { dest.search("") }
+                .map { it.content }
+                .toSet()
+        assertEquals(setOf("first import", "second import"), restored)
+        importer.close()
+    }
+
+    @Test
+    fun `importFrom reports failed when the source throws`() {
+        val dest = createTestClipRepository()
+        val importer = settingsModel(dest)
+        kotlinx.coroutines.runBlocking {
+            importer.importFrom { error("read failed") }
+        }
+        assertEquals(SettingsImportNotice.FAILED, importer.state.value.importNotice)
+        importer.close()
+    }
+
+    @Test
+    fun `re-import through the seam skips existing event ids`() {
+        val source = createTestClipRepository()
+        kotlinx.coroutines.runBlocking { source.captureLocalText("once", nowMs = 1L) }
+        val exporter = settingsModel(source)
+        var encoded = ""
+        kotlinx.coroutines.runBlocking { exporter.exportTo { encoded = it } }
+        exporter.close()
+
+        val dest = createTestClipRepository()
+        val importer = settingsModel(dest)
+        kotlinx.coroutines.runBlocking { importer.importFrom { encoded } }
+        kotlinx.coroutines.runBlocking { importer.importFrom { encoded } }
+        assertEquals(SettingsImportNotice.DONE, importer.state.value.importNotice)
+        assertEquals(0, importer.state.value.importImported)
+        assertEquals(1, importer.state.value.importSkipped)
+        assertEquals(1, kotlinx.coroutines.runBlocking { dest.search("") }.size)
+        importer.close()
+    }
 }
 
 private fun com.clipsync.android.storage.ClipRepository.getSettingBlocking(key: String): String? =

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.clipsync.android.service.ServiceSettingsStore
 import com.clipsync.android.storage.ClipExport
+import com.clipsync.android.storage.ClipImportCounts
 import com.clipsync.android.storage.ClipRepository
 import com.clipsync.android.storage.DEFAULT_RETENTION_DAYS
 import com.clipsync.android.storage.MAX_SEARCH_LIMIT
@@ -44,9 +45,18 @@ data class SettingsUiState(
     val pairedDeviceCount: Int = 0,
     val retentionDays: Int = DEFAULT_RETENTION_DAYS,
     val exportNotice: SettingsExportNotice = SettingsExportNotice.NONE,
+    val importNotice: SettingsImportNotice = SettingsImportNotice.NONE,
+    val importImported: Int = 0,
+    val importSkipped: Int = 0,
 )
 
 enum class SettingsExportNotice {
+    NONE,
+    DONE,
+    FAILED,
+}
+
+enum class SettingsImportNotice {
     NONE,
     DONE,
     FAILED,
@@ -147,6 +157,25 @@ class SettingsViewModel(
             mutableState.update { it.copy(exportNotice = SettingsExportNotice.DONE) }
         } catch (_: Exception) {
             mutableState.update { it.copy(exportNotice = SettingsExportNotice.FAILED) }
+        }
+    }
+
+    suspend fun importFrom(readSource: () -> String?) {
+        try {
+            val counts: ClipImportCounts =
+                withContext(Dispatchers.IO) {
+                    val payload = readSource() ?: error("missing import payload")
+                    repository.importJsonLines(payload)
+                }
+            mutableState.update {
+                it.copy(
+                    importNotice = SettingsImportNotice.DONE,
+                    importImported = counts.imported,
+                    importSkipped = counts.skipped,
+                )
+            }
+        } catch (_: Exception) {
+            mutableState.update { it.copy(importNotice = SettingsImportNotice.FAILED) }
         }
     }
 

@@ -59,6 +59,24 @@ fun SettingsScreen(
                 }
             }
         }
+    val importLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.OpenDocument(),
+        ) { uri ->
+            if (uri == null) {
+                return@rememberLauncherForActivityResult
+            }
+            scope.launch {
+                viewModel.importFrom {
+                    val stream =
+                        context.contentResolver.openInputStream(uri)
+                            ?: error("missing input stream")
+                    stream.use { input ->
+                        input.readBytes().toString(StandardCharsets.UTF_8)
+                    }
+                }
+            }
+        }
     Column(
         modifier =
             modifier
@@ -149,6 +167,40 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.error,
                 )
             SettingsExportNotice.NONE -> Unit
+        }
+        OutlinedButton(
+            onClick = {
+                importLauncher.launch(
+                    arrayOf("application/x-ndjson", "text/plain", "*/*"),
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(stringResource(R.string.settings_import))
+        }
+        Text(
+            text = stringResource(R.string.settings_import_warning),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        when (state.importNotice) {
+            SettingsImportNotice.DONE ->
+                Text(
+                    text =
+                        stringResource(
+                            R.string.settings_import_done,
+                            state.importImported,
+                            state.importSkipped,
+                        ),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            SettingsImportNotice.FAILED ->
+                Text(
+                    text = stringResource(R.string.settings_import_failed),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            SettingsImportNotice.NONE -> Unit
         }
         val visibilityNote = state.notificationVisibilityNote
         if (visibilityNote != null) {

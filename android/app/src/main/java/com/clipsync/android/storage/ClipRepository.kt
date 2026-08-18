@@ -367,4 +367,33 @@ class ClipRepository internal constructor(
                 tombstonesDeleted = hardDeleteExpiredTombstones(cutoffMs),
             )
         }
+
+    /**
+     * Restores live clip rows from a [ClipExport] JSONL snapshot.
+     * Insert-if-absent by `event_id`. Does not write outbox, receive state, or cursors.
+     */
+    suspend fun importJsonLines(jsonl: String): ClipImportCounts =
+        persistence.transaction {
+            var imported = 0
+            var skipped = 0
+            for (line in jsonl.lineSequence()) {
+                if (line.isBlank()) {
+                    continue
+                }
+                val entry = ClipImport.decodeLine(line)
+                val exists =
+                    entry != null &&
+                        (
+                            findClipByEventId(entry.eventId) != null ||
+                                findClipByOriginSeq(entry.originDeviceId, entry.originSeq) != null
+                        )
+                if (entry != null && !exists) {
+                    insertClip(ClipImport.toLiveEntity(entry))
+                    imported++
+                } else {
+                    skipped++
+                }
+            }
+            ClipImportCounts(imported, skipped)
+        }
 }
