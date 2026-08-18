@@ -210,11 +210,11 @@ Sort: `origin_device_id ASC`, `origin_seq ASC` for stable diffs.
 
 Do not export `outbox`, `peer_cursors`, `devices`, or settings. Those are device-local sync / trust state. A later “move device” feature can add a separate, secret-bearing archive with its own warning; it is out of scope here.
 
-### 2.3 Triggers and API sketch (next stage)
+### 2.3 Triggers and API sketch (landed in `f847281`, 2026-08-18)
 
-- Android: Settings action → SAF `CreateDocument` → `ClipDao` query all rows (including deleted) → write lines on `Dispatchers.IO`. Gate on an explicit button, not wizard finish, not boot.
-- Windows: Settings / File menu → `SaveFileDialog` → `SELECT` all `clips` columns → write lines.
-- Progress: count of lines written, never a preview of `content`.
+- Android: Settings action → SAF `CreateDocument` → `ClipDao` query all rows (including deleted) → write lines on `Dispatchers.IO`. Gate on an explicit button, not wizard finish, not boot. **Shipped**: `SettingsViewModel.exportTo` seam + `CreateDocument("application/x-ndjson")`.
+- Windows: Settings / File menu → `SaveFileDialog` → `SELECT` all `clips` columns → write lines. **Shipped**: export button in settings, "已导出 N 条" status.
+- Progress: count of lines written, never a preview of `content`. Import and tombstone header fields remain future work.
 - Failure: delete the partial file if the write did not finish; do not leave a truncated JSONL that looks complete (write to `*.tmp` then replace).
 
 Import is **not** required for this design. If added later: verify `content_hash` against `content` for non-empty bodies; skip rows whose `(origin_device_id, origin_seq)` already exist; never overwrite a live body with an empty tombstone from an older export without user confirmation.

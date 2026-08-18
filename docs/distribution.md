@@ -2,7 +2,7 @@
 
 Personal-use Windows ↔ Android P2P clipboard sync. No cloud, no stores, sideload only. Artifacts live in `releases/<version>/` after `scripts/package-release.ps1`.
 
-This page is the 10-minute install path and the 3-minute “capability unavailable” lookup. It does not ask you to pipe `curl` into a shell or to bundle third-party APKs.
+This page is the 10-minute install path and the 3-minute “capability unavailable” lookup. It does not ask you to pipe `curl` into a shell or to bundle third-party APKs. In-app UI: Android follows the system locale (English default, Simplified Chinese `zh-rCN`); Windows strings are Simplified Chinese (`Strings.cs`).
 
 ## Windows install (10 minutes, no admin)
 
@@ -46,7 +46,7 @@ A signed release APK needs your own keystore at `D:\paste-tools\clipsync-release
 | Mode | What it needs | After reboot | How to stop |
 |---|---|---|---|
 | `FOREGROUND_ONLY` (share / tile / open the app) | Nothing special | Works as soon as you open the app | Disable background sync in settings, or uninstall |
-| `SHIZUKU_EVENT` (preferred) | Shizuku installed, started, and ClipSync authorized in Shizuku | **Manual.** Stage 6 on Redmi Note 11T Pro / MIUI 14: authorization survived reboot + reinstall; the daemon did not. After each reboot run `adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh`, then confirm ClipSync is still authorized. MIUI also needs **自启动** if you want `BOOT_COMPLETED` to launch ClipSync at all (see below). | Revoke ClipSync in Shizuku, or uninstall Shizuku. ClipSync then stops using the binder (health cycle while the activity is resumed). |
+| `SHIZUKU_EVENT` (preferred) | Shizuku installed, started, and ClipSync authorized in Shizuku | **Manual.** Stage 6 on Redmi Note 11T Pro / MIUI 14: authorization survived reboot + reinstall; the daemon did not. After each reboot run `adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh`, then confirm ClipSync is still authorized. MIUI also needs **自启动** if you want `BOOT_COMPLETED` to launch ClipSync at all (see below). | Revoke ClipSync in Shizuku, or uninstall Shizuku. ClipSync then stops using the binder (process-level health cycle, no Activity needed). |
 | `ADB_LOG_OVERLAY` | `READ_LOGS` via adb **and** overlay consent | `READ_LOGS` is invalidated by install / upgrade / reboot. Re-run `scripts/android-bootstrap.ps1` (print-only) and grant again yourself. Overlay permission usually persists. | `adb shell pm revoke com.clipsync.android android.permission.READ_LOGS`, or turn overlay consent off in the wizard |
 | `OVERLAY_POLLING` | Overlay permission **and** in-app overlay consent (`overlayConsented`) | Overlay permission usually persists; consent is stored in app settings. Screen-off / lock pauses polling. | Turn off overlay in system settings or un-check consent in ClipSync |
 

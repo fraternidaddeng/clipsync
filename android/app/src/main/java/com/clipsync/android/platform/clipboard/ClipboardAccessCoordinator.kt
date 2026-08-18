@@ -320,9 +320,9 @@ class ClipboardAccessCoordinator(
 }
 
 /**
- * Periodic [ClipboardAccessCoordinator.checkHealth] driver. MainActivity
- * starts this on resume and cancels the job on stop so paused activities
- * do not spin.
+ * Periodic [ClipboardAccessCoordinator.checkHealth] driver. Owned by the
+ * process-scoped ClipboardCaptureManager for the whole process lifetime, so
+ * recovery (parked retry, fallback upgrade) works without any Activity.
  */
 class ClipboardHealthLoop(
     private val intervalMillis: Long = DEFAULT_INTERVAL_MS,
