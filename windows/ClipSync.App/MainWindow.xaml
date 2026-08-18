@@ -57,7 +57,8 @@
                          SelectedItem="{Binding SelectedItem}"
                          BorderBrush="#CBD1D9"
                          BorderThickness="1"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         MouseDoubleClick="OnHistoryItemDoubleClick">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="8" Width="520">
@@ -75,6 +76,7 @@
                 </ListBox>
                 <StackPanel Grid.Row="4" Orientation="Horizontal">
                     <Button Width="90" Command="{Binding CopySelectedCommand}" Content="Copy" />
+                    <Button Width="90" Margin="8,0,0,0" Command="{Binding ViewSelectedCommand}" Content="View" />
                     <Button Width="90" Margin="8,0,0,0" Command="{Binding DeleteSelectedCommand}" Content="Delete" />
                     <Button Width="90" Margin="8,0,0,0" Command="{Binding ClearCommand}" Content="Clear all" />
                     <Button Width="90" Margin="8,0,0,0" Command="{Binding RefreshCommand}" Content="Refresh" />
@@ -107,6 +109,17 @@
                                Text="Address changes take effect after restart."
                                TextWrapping="Wrap" />
                     <Button Height="34" Margin="0,18,0,0" Command="{Binding SaveSettingsCommand}" Content="Save settings" />
+                    <Button Height="34" Margin="0,12,0,0" Command="{Binding ExportHistoryCommand}" Content="Export history (JSONL)…" />
+                    <TextBlock Margin="0,6,0,0"
+                               FontSize="11"
+                               Foreground="#6D7580"
+                               Text="The file contains clipboard bodies in plaintext."
+                               TextWrapping="Wrap" />
+                    <TextBlock Margin="0,6,0,0"
+                               FontSize="12"
+                               Foreground="#3B424C"
+                               Text="{Binding ExportStatus}"
+                               TextWrapping="Wrap" />
                     <Separator Margin="0,22,0,16" />
                     <TextBlock FontSize="17" FontWeight="SemiBold" Text="Paired devices" />
                     <Button Height="32" Margin="0,12,0,0" Click="OnPairNewDeviceClicked" Content="Pair new device…" />

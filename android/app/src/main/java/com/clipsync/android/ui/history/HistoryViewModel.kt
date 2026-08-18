@@ -49,7 +49,11 @@ data class HistoryUiState(
     val copyFailed: Boolean = false,
     val lastReject: CaptureRejectReason? = null,
     val notices: List<HistoryNotice> = listOf(HistoryNotice.EMPTY, HistoryNotice.UNPAIRED),
-)
+    val selectedEventId: String? = null,
+) {
+    val selectedItem: HistoryItemUi?
+        get() = selectedEventId?.let { id -> items.find { it.eventId == id } }
+}
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HistoryViewModel(
@@ -117,9 +121,30 @@ class HistoryViewModel(
         }
     }
 
+    fun openDetail(eventId: String) {
+        mutableState.update { previous ->
+            if (previous.items.none { it.eventId == eventId }) {
+                previous
+            } else {
+                previous.copy(selectedEventId = eventId)
+            }
+        }
+    }
+
+    fun closeDetail() {
+        mutableState.update { it.copy(selectedEventId = null) }
+    }
+
     fun delete(eventId: String) {
         viewModelScope.launch {
             repository.delete(eventId, nowMs())
+            mutableState.update { previous ->
+                if (previous.selectedEventId == eventId) {
+                    previous.copy(selectedEventId = null)
+                } else {
+                    previous
+                }
+            }
         }
     }
 
@@ -166,11 +191,16 @@ class HistoryViewModel(
             repository: ClipRepository,
             writeCoordinator: ClipboardWriteCoordinator,
             syncStatus: SyncStatusProvider,
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                HistoryViewModel(repository, writeCoordinator, syncStatus) as T
-        }
+        ): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                    HistoryViewModel(
+                        repository,
+                        writeCoordinator,
+                        syncStatus,
+                    ) as T
+            }
     }
 }
 
@@ -183,20 +213,24 @@ private fun HistoryUiState.withHistory(
 ): HistoryUiState {
     val unpaired = peerId.isNullOrBlank()
     val windowsUnreachable = sync.paired && !sync.windowsReachable
-    val notices = buildList {
-        if (entries.isEmpty()) add(HistoryNotice.EMPTY)
-        if (reject == CaptureRejectReason.TOO_LARGE) add(HistoryNotice.OVERSIZED)
-        if (unpaired) add(HistoryNotice.UNPAIRED)
-        if (windowsUnreachable) add(HistoryNotice.WINDOWS_UNREACHABLE)
-    }
+    val mapped = entries.map { entry -> entry.toUi() }
+    val notices =
+        buildList {
+            if (entries.isEmpty()) add(HistoryNotice.EMPTY)
+            if (reject == CaptureRejectReason.TOO_LARGE) add(HistoryNotice.OVERSIZED)
+            if (unpaired) add(HistoryNotice.UNPAIRED)
+            if (windowsUnreachable) add(HistoryNotice.WINDOWS_UNREACHABLE)
+        }
+    val keptSelection = selectedEventId?.takeIf { id -> mapped.any { it.eventId == id } }
     return copy(
         query = query,
-        items = entries.map { entry -> entry.toUi() },
+        items = mapped,
         empty = entries.isEmpty(),
         unpaired = unpaired,
         windowsUnreachable = windowsUnreachable,
         lastReject = reject,
         notices = notices,
+        selectedEventId = keptSelection,
     )
 }
 
@@ -208,12 +242,13 @@ private fun HistoryUiState.withConnectionNotices(
 ): HistoryUiState {
     val unpaired = peerId.isNullOrBlank()
     val windowsUnreachable = sync.paired && !sync.windowsReachable
-    val notices = buildList {
-        if (empty) add(HistoryNotice.EMPTY)
-        if (reject == CaptureRejectReason.TOO_LARGE) add(HistoryNotice.OVERSIZED)
-        if (unpaired) add(HistoryNotice.UNPAIRED)
-        if (windowsUnreachable) add(HistoryNotice.WINDOWS_UNREACHABLE)
-    }
+    val notices =
+        buildList {
+            if (empty) add(HistoryNotice.EMPTY)
+            if (reject == CaptureRejectReason.TOO_LARGE) add(HistoryNotice.OVERSIZED)
+            if (unpaired) add(HistoryNotice.UNPAIRED)
+            if (windowsUnreachable) add(HistoryNotice.WINDOWS_UNREACHABLE)
+        }
     return copy(
         query = query,
         unpaired = unpaired,
@@ -232,7 +267,10 @@ internal fun ClipEntry.toUi(): HistoryItemUi =
         sourceApp = sourceApp,
     )
 
-internal fun previewText(content: String, limit: Int = HistoryViewModel.PREVIEW_LIMIT): String {
+internal fun previewText(
+    content: String,
+    limit: Int = HistoryViewModel.PREVIEW_LIMIT,
+): String {
     val collapsed = content.replace(Regex("\\s+"), " ").trim()
     return if (collapsed.length <= limit) collapsed else collapsed.take(limit) + "…"
 }

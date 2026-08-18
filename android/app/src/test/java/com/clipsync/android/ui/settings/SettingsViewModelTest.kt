@@ -211,6 +211,54 @@ class SettingsViewModelTest {
             write = HealthValue("Not probed", HealthTone.NEUTRAL),
         ),
     )
+
+    @Test
+    fun `retention days default to 30 and clamp to 1 through 3650`() {
+        val repo = createTestClipRepository()
+        val model = settingsModel(repo)
+        assertEquals(30, model.state.value.retentionDays)
+        assertEquals(null, repo.getSettingBlocking(SETTING_RETENTION_DAYS))
+
+        model.setRetentionDays("0")
+        assertEquals(1, model.state.value.retentionDays)
+        assertEquals("1", repo.getSettingBlocking(SETTING_RETENTION_DAYS))
+
+        model.setRetentionDays("3651")
+        assertEquals(3650, model.state.value.retentionDays)
+        assertEquals("3650", repo.getSettingBlocking(SETTING_RETENTION_DAYS))
+
+        model.setRetentionDays("45")
+        assertEquals(45, model.state.value.retentionDays)
+        assertEquals("45", repo.getSettingBlocking(SETTING_RETENTION_DAYS))
+        model.close()
+    }
+
+    @Test
+    fun `export of two clips writes two jsonl lines through the seam`() {
+        val repo = createTestClipRepository()
+        kotlinx.coroutines.runBlocking {
+            repo.captureLocalText("first export", nowMs = 1L)
+            repo.captureLocalText("second export", nowMs = 2L)
+        }
+        val model = settingsModel(repo)
+        var written = "unset"
+        kotlinx.coroutines.runBlocking { model.exportTo { written = it } }
+        val lines = written.trimEnd('\n').lines().filter { it.isNotEmpty() }
+        assertEquals(2, lines.size)
+        assertEquals(SettingsExportNotice.DONE, model.state.value.exportNotice)
+        model.close()
+    }
+
+    @Test
+    fun `export of an empty repository writes an empty string and succeeds`() {
+        val repo = createTestClipRepository()
+        val model = settingsModel(repo)
+        var written = "unset"
+        kotlinx.coroutines.runBlocking { model.exportTo { written = it } }
+        assertEquals("", written)
+        assertEquals(SettingsExportNotice.DONE, model.state.value.exportNotice)
+        model.close()
+    }
 }
 
 private fun com.clipsync.android.storage.ClipRepository.getSettingBlocking(key: String): String? =

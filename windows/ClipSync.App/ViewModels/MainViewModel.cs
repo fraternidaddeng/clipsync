@@ -2,10 +2,19 @@ using ClipSync.Core.Clipboard;
 using ClipSync.Core.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 
 namespace ClipSync.App.ViewModels;
+
+/// <summary>
+/// Full clip body plus metadata for the detail window. The history list only
+/// shows a trimmed preview; this shape is also the unit-test seam so payload
+/// mapping can be checked without opening WPF UI.
+/// </summary>
+public sealed record ClipDetailPayload(string Text, string Source, string CreatedAt);
 
 public partial class MainViewModel(
     SqliteClipboardEventStore store,
@@ -42,6 +51,9 @@ public partial class MainViewModel(
     private string syncStatus = "Peer endpoint not running";
 
     [ObservableProperty]
+    private string exportStatus = string.Empty;
+
+    [ObservableProperty]
     private PairedDeviceViewModel? selectedDevice;
 
     [ObservableProperty]
@@ -51,8 +63,17 @@ public partial class MainViewModel(
 
     public ObservableCollection<PairedDeviceViewModel> Devices { get; } = new();
 
+    /// <summary>
+    /// Production opens a SaveFileDialog. Tests replace this with a temp path
+    /// (or null to simulate cancel) so the command never shows a real window.
+    /// </summary>
+    public Func<string?> PickExportPath { get; set; } = PickExportPathWithDialog;
+
     /// <summary>Raised after a device is revoked so the app layer can drop its live sessions.</summary>
     public event Action<string>? DeviceRevoked;
+
+    /// <summary>Raised when the user asks to see the full body of the selected clip.</summary>
+    public event Action? DetailRequested;
 
     public async Task InitializeAsync()
     {
@@ -99,6 +120,27 @@ public partial class MainViewModel(
     [RelayCommand]
     private async Task SearchAsync() => await RefreshAsync();
 
+    /// <summary>
+    /// Maps the current selection to the detail payload. Returns null when
+    /// nothing is selected so the window layer can no-op without extra state.
+    /// </summary>
+    public ClipDetailPayload? GetSelectedDetail()
+    {
+        var item = SelectedItem;
+        return item is null ? null : new ClipDetailPayload(item.Text, item.Source, item.CreatedAt);
+    }
+
+    /// <summary>
+    /// Copies through the same suppression + adapter path as the history Copy
+    /// button so the capture loop does not treat the write as a new clip.
+    /// </summary>
+    public void CopyText(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        capturePolicy.SuppressNextWrite(text, DateTimeOffset.UtcNow);
+        clipboardAdapter.WriteText(text);
+    }
+
     [RelayCommand(CanExecute = nameof(HasSelection))]
     private void CopySelected()
     {
@@ -107,9 +149,11 @@ public partial class MainViewModel(
             return;
         }
 
-        capturePolicy.SuppressNextWrite(SelectedItem.Text, DateTimeOffset.UtcNow);
-        clipboardAdapter.WriteText(SelectedItem.Text);
+        CopyText(SelectedItem.Text);
     }
+
+    [RelayCommand(CanExecute = nameof(HasSelection))]
+    private void ViewSelected() => DetailRequested?.Invoke();
 
     [RelayCommand(CanExecute = nameof(HasSelection))]
     private async Task DeleteSelectedAsync()
@@ -128,6 +172,34 @@ public partial class MainViewModel(
     {
         await store.ClearAsync(DateTimeOffset.UtcNow);
         await RefreshAsync();
+    }
+
+    [RelayCommand]
+    private async Task ExportHistoryAsync()
+    {
+        var path = PickExportPath?.Invoke();
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        try
+        {
+            // Encode + write off the UI thread. The JSONL string holds plaintext
+            // bodies and must not be logged, traced, or copied to diagnostics.
+            var exported = await Task.Run(async () =>
+            {
+                var jsonl = await ClipboardExport.EncodeJsonLinesAsync(store).ConfigureAwait(false);
+                await File.WriteAllTextAsync(path, jsonl).ConfigureAwait(false);
+                return jsonl.Length == 0 ? 0 : jsonl.AsSpan().Count('\n');
+            }).ConfigureAwait(false);
+
+            ExportStatus = $"Exported {exported} clips";
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            ExportStatus = "Export failed";
+        }
     }
 
     [RelayCommand]
@@ -210,9 +282,24 @@ public partial class MainViewModel(
     {
         CopySelectedCommand.NotifyCanExecuteChanged();
         DeleteSelectedCommand.NotifyCanExecuteChanged();
+        ViewSelectedCommand.NotifyCanExecuteChanged();
     }
 
     private bool HasSelection() => SelectedItem is not null;
+
+    private static string? PickExportPathWithDialog()
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = "Export history",
+            FileName = $"clipsync-export-{DateTime.Now:yyyyMMdd}.jsonl",
+            Filter = "JSON Lines (*.jsonl)|*.jsonl",
+            DefaultExt = ".jsonl",
+            AddExtension = true
+        };
+
+        return dialog.ShowDialog() == true ? dialog.FileName : null;
+    }
 
     private void ApplySettings()
     {

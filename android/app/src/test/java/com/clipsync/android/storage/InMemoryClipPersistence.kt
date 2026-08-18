@@ -276,6 +276,46 @@ internal class InMemoryClipPersistence : ClipPersistence {
         override suspend fun setSetting(key: String, value: String) {
             settings[key] = value
         }
+
+        override suspend fun hardDeleteExpiredLive(cutoffMs: Long): Int {
+            val pendingIds = pendingOutboxEventIds()
+            val victims =
+                clips.values.filter { row ->
+                    row.deletedAt == null &&
+                        row.createdAt < cutoffMs &&
+                        row.eventId !in pendingIds
+                }
+            for (row in victims) {
+                removeClip(row)
+            }
+            return victims.size
+        }
+
+        override suspend fun hardDeleteExpiredTombstones(cutoffMs: Long): Int {
+            val pendingIds = pendingOutboxEventIds()
+            val victims =
+                clips.values.filter { row ->
+                    val deletedAt = row.deletedAt
+                    deletedAt != null &&
+                        deletedAt < cutoffMs &&
+                        row.eventId !in pendingIds
+                }
+            for (row in victims) {
+                removeClip(row)
+            }
+            return victims.size
+        }
+
+        private fun pendingOutboxEventIds(): Set<String> =
+            outbox.values
+                .filter { it.state == OUTBOX_PENDING }
+                .map { it.eventId }
+                .toSet()
+
+        private fun removeClip(row: ClipEntity) {
+            clips.remove(row.eventId)
+            originIndex.remove(row.originDeviceId to row.originSeq)
+        }
     }
 
     private data class Snapshot(

@@ -220,6 +220,48 @@ class HistoryViewModelTest {
         }
     }
 
+    @Test
+    fun `selecting a row exposes it as the selected item`() {
+        runTestModel { model, repo, _ ->
+            val stored =
+                repo.captureLocalText("full detail body", nowMs = NOW, peerId = TEST_PEER_DEVICE_ID)
+                    as CaptureResult.Stored
+            model.openDetail(stored.eventId)
+            val selected = model.state.value.selectedItem
+            assertEquals(stored.eventId, model.state.value.selectedEventId)
+            assertEquals(stored.eventId, selected?.eventId)
+            assertEquals("full detail body", selected?.content)
+        }
+    }
+
+    @Test
+    fun `close detail clears the selected item`() {
+        runTestModel { model, repo, _ ->
+            val stored =
+                repo.captureLocalText("closable", nowMs = NOW, peerId = TEST_PEER_DEVICE_ID)
+                    as CaptureResult.Stored
+            model.openDetail(stored.eventId)
+            assertEquals(stored.eventId, model.state.value.selectedEventId)
+            model.closeDetail()
+            assertEquals(null, model.state.value.selectedEventId)
+            assertEquals(null, model.state.value.selectedItem)
+        }
+    }
+
+    @Test
+    fun `selected item clears when the row disappears from the live list`() {
+        runTestModel { model, repo, _ ->
+            val stored =
+                repo.captureLocalText("will vanish", nowMs = NOW, peerId = TEST_PEER_DEVICE_ID)
+                    as CaptureResult.Stored
+            model.openDetail(stored.eventId)
+            assertEquals(stored.eventId, model.state.value.selectedEventId)
+            repo.delete(stored.eventId, NOW + 1)
+            assertEquals(null, model.state.value.selectedItem)
+            assertTrue(model.state.value.empty)
+        }
+    }
+
     private companion object {
         const val NOW = 1_700_000_000_000L
     }

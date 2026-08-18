@@ -1,0 +1,38 @@
+<Window x:Class="ClipSync.App.DetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Clip detail"
+        Width="560"
+        Height="480"
+        MinWidth="420"
+        MinHeight="320"
+        WindowStartupLocation="CenterOwner">
+    <Grid Background="#F7F8FA" Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="16" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <TextBlock x:Name="SourceText" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+            <TextBlock x:Name="CreatedAtText" Margin="0,4,0,0" FontSize="12" Foreground="#6D7580" />
+        </StackPanel>
+        <TextBox x:Name="BodyText"
+                 Grid.Row="2"
+                 Padding="10,8"
+                 AcceptsReturn="True"
+                 BorderBrush="#CBD1D9"
+                 BorderThickness="1"
+                 HorizontalScrollBarVisibility="Disabled"
+                 IsReadOnly="True"
+                 IsReadOnlyCaretVisible="True"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto" />
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Width="90" Height="32" Click="OnCopyClicked" Content="Copy" />
+            <Button Width="90" Height="32" Margin="8,0,0,0" IsCancel="True" Click="OnCloseClicked" Content="Close" />
+        </StackPanel>
+    </Grid>
+</Window>

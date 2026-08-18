@@ -17,3 +17,5 @@ fun parseSettingFlag(value: String?, default: Boolean = false): Boolean {
 }
 
 fun formatSettingFlag(value: Boolean): String = if (value) "true" else "false"
+
+const val SETTING_RETENTION_DAYS = "retention_days"

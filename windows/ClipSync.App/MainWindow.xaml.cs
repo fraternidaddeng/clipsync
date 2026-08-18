@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 using ClipSync.App.ViewModels;
 
 namespace ClipSync.App;
@@ -12,6 +13,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         this.viewModel = viewModel;
         DataContext = viewModel;
+        viewModel.DetailRequested += OpenSelectedDetail;
         Loaded += OnLoaded;
         Closing += OnClosing;
     }
@@ -36,4 +38,27 @@ public partial class MainWindow : Window
 
     private void OnPairNewDeviceClicked(object sender, RoutedEventArgs e) =>
         ((App)Application.Current).ShowPairingWindow(this);
+
+    private void OnHistoryItemDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (viewModel.ViewSelectedCommand.CanExecute(null))
+        {
+            viewModel.ViewSelectedCommand.Execute(null);
+        }
+    }
+
+    private void OpenSelectedDetail()
+    {
+        var detail = viewModel.GetSelectedDetail();
+        if (detail is null)
+        {
+            return;
+        }
+
+        var window = new DetailWindow(detail, () => viewModel.CopyText(detail.Text))
+        {
+            Owner = this
+        };
+        window.Show();
+    }
 }

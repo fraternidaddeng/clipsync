@@ -4,14 +4,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.clipsync.android.service.ServiceSettingsStore
+import com.clipsync.android.storage.ClipExport
 import com.clipsync.android.storage.ClipRepository
+import com.clipsync.android.storage.DEFAULT_RETENTION_DAYS
+import com.clipsync.android.storage.MAX_SEARCH_LIMIT
+import com.clipsync.android.storage.parseRetentionDays
 import com.clipsync.android.ui.HealthTone
 import com.clipsync.android.ui.HealthValue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 data class SettingsUiState(
     val paused: Boolean = false,
@@ -22,16 +31,26 @@ data class SettingsUiState(
     val blacklistEnabled: Boolean = true,
     val blacklistExtra: String = "",
     val notificationVisibilityNote: String? = null,
-    val network: HealthValue = networkCard(
-        SyncConnectionStatus(paired = false, windowsReachable = false, serviceRunning = false),
-    ),
-    val service: HealthValue = serviceCard(
-        SyncConnectionStatus(paired = false, windowsReachable = false, serviceRunning = false),
-    ),
+    val network: HealthValue =
+        networkCard(
+            SyncConnectionStatus(paired = false, windowsReachable = false, serviceRunning = false),
+        ),
+    val service: HealthValue =
+        serviceCard(
+            SyncConnectionStatus(paired = false, windowsReachable = false, serviceRunning = false),
+        ),
     val read: HealthValue = HealthValue("Foreground only", HealthTone.NEUTRAL),
     val write: HealthValue = HealthValue("Not probed", HealthTone.NEUTRAL),
     val pairedDeviceCount: Int = 0,
+    val retentionDays: Int = DEFAULT_RETENTION_DAYS,
+    val exportNotice: SettingsExportNotice = SettingsExportNotice.NONE,
 )
+
+enum class SettingsExportNotice {
+    NONE,
+    DONE,
+    FAILED,
+}
 
 class SettingsViewModel(
     private val repository: ClipRepository,
@@ -108,6 +127,29 @@ class SettingsViewModel(
         }
     }
 
+    fun setRetentionDays(raw: String) {
+        val days = parseRetentionDays(raw)
+        mutableState.update { it.copy(retentionDays = days) }
+        viewModelScope.launch {
+            repository.setSetting(SETTING_RETENTION_DAYS, days.toString())
+        }
+    }
+
+    fun suggestedExportFilename(nowMs: Long = System.currentTimeMillis()): String = exportFilenameFor(nowMs)
+
+    suspend fun exportTo(writeTarget: (String) -> Unit) {
+        try {
+            withContext(Dispatchers.IO) {
+                val rows = repository.search("", MAX_SEARCH_LIMIT)
+                val encoded = ClipExport.encodeJsonLines(rows)
+                writeTarget(encoded)
+            }
+            mutableState.update { it.copy(exportNotice = SettingsExportNotice.DONE) }
+        } catch (_: Exception) {
+            mutableState.update { it.copy(exportNotice = SettingsExportNotice.FAILED) }
+        }
+    }
+
     fun close() {
         onCleared()
     }
@@ -116,15 +158,19 @@ class SettingsViewModel(
         val paused = parseSettingFlag(repository.getSetting(SETTING_IS_PAUSED))
         val privateMode = parseSettingFlag(repository.getSetting(SETTING_IS_PRIVATE_MODE))
         val autoApply = parseSettingFlag(repository.getSetting(SETTING_AUTO_APPLY_REMOTE), default = true)
-        val backgroundSync = parseSettingFlag(repository.getSetting(SETTING_BACKGROUND_SYNC)) ||
-            (serviceSettings?.backgroundSyncEnabled() == true)
-        val bootRecovery = parseSettingFlag(repository.getSetting(SETTING_BOOT_RECOVERY_ENABLED)) ||
-            (serviceSettings?.bootRecoveryEnabled() == true)
-        val blacklistEnabled = parseSettingFlag(
-            repository.getSetting(SETTING_CAPTURE_BLACKLIST_ENABLED),
-            default = true,
-        )
+        val backgroundSync =
+            parseSettingFlag(repository.getSetting(SETTING_BACKGROUND_SYNC)) ||
+                (serviceSettings?.backgroundSyncEnabled() == true)
+        val bootRecovery =
+            parseSettingFlag(repository.getSetting(SETTING_BOOT_RECOVERY_ENABLED)) ||
+                (serviceSettings?.bootRecoveryEnabled() == true)
+        val blacklistEnabled =
+            parseSettingFlag(
+                repository.getSetting(SETTING_CAPTURE_BLACKLIST_ENABLED),
+                default = true,
+            )
         val blacklistExtra = repository.getSetting(SETTING_CAPTURE_BLACKLIST_EXTRA).orEmpty()
+        val retentionDays = parseRetentionDays(repository.getSetting(SETTING_RETENTION_DAYS))
         val sync = syncStatus.current()
         val caps = capabilities.snapshot()
         mutableState.update { previous ->
@@ -136,6 +182,7 @@ class SettingsViewModel(
                 bootRecoveryEnabled = bootRecovery,
                 blacklistEnabled = blacklistEnabled,
                 blacklistExtra = blacklistExtra,
+                retentionDays = retentionDays,
                 read = caps.read,
                 write = caps.write,
             )
@@ -146,11 +193,12 @@ class SettingsViewModel(
     private fun applyConnection(sync: SyncConnectionStatus) {
         mutableState.update { previous ->
             previous.copy(
-                notificationVisibilityNote = if (sync.serviceRunning && sync.notificationsHidden) {
-                    NOTE_NOTIFICATIONS_HIDDEN
-                } else {
-                    null
-                },
+                notificationVisibilityNote =
+                    if (sync.serviceRunning && sync.notificationsHidden) {
+                        NOTE_NOTIFICATIONS_HIDDEN
+                    } else {
+                        null
+                    },
                 network = networkCard(sync),
                 service = serviceCard(sync),
                 pairedDeviceCount = if (sync.paired) 1 else 0,
@@ -162,6 +210,16 @@ class SettingsViewModel(
         const val NOTE_NOTIFICATIONS_HIDDEN =
             "Notifications are hidden. The sync service can still run; clipboard access is separate."
 
+        private val exportDayFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+
+        internal fun exportFilenameFor(
+            nowMs: Long,
+            zone: ZoneId = ZoneId.systemDefault(),
+        ): String {
+            val day = Instant.ofEpochMilli(nowMs).atZone(zone).toLocalDate()
+            return "clipsync-export-${day.format(exportDayFormat)}.jsonl"
+        }
+
         fun factory(
             repository: ClipRepository,
             syncStatus: SyncStatusProvider,
@@ -169,17 +227,18 @@ class SettingsViewModel(
             serviceSettings: ServiceSettingsStore? = null,
             onBackgroundSyncChanged: (Boolean) -> Unit = {},
             onBootRecoveryChanged: (Boolean) -> Unit = {},
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                SettingsViewModel(
-                    repository,
-                    syncStatus,
-                    capabilities,
-                    serviceSettings,
-                    onBackgroundSyncChanged,
-                    onBootRecoveryChanged,
-                ) as T
-        }
+        ): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                    SettingsViewModel(
+                        repository,
+                        syncStatus,
+                        capabilities,
+                        serviceSettings,
+                        onBackgroundSyncChanged,
+                        onBootRecoveryChanged,
+                    ) as T
+            }
     }
 }

@@ -18,6 +18,10 @@
     <string name="history_unpaired">Not paired with Windows. Pairing is required before clips can sync.</string>
     <string name="history_windows_unreachable">Windows is unreachable. Clips stay on this phone until the peer is online.</string>
     <string name="history_copy_failed">Could not write to the system clipboard. Try again from the app.</string>
+    <string name="history_close">Close</string>
+    <string name="history_detail_title">Clip detail</string>
+    <string name="history_detail_source">Source: %1$s</string>
+    <string name="history_detail_created">Created %1$s</string>
 
     <string name="health_title">Device health</string>
     <string name="health_no_peers">No paired devices</string>
@@ -39,6 +43,12 @@
     <string name="settings_blacklist_extra">Additional blocked packages</string>
     <string name="settings_blacklist_extra_hint">Comma-separated Android package names. Entries with spaces are ignored.</string>
     <string name="settings_capabilities">Capability</string>
+    <string name="settings_retention">History retention</string>
+    <string name="settings_retention_hint">Older clips are deleted on this device only. Windows keeps its own retention setting.</string>
+    <string name="settings_export">Export history (JSONL)</string>
+    <string name="settings_export_warning">The export file contains clipboard bodies in plaintext.</string>
+    <string name="settings_export_done">Export finished.</string>
+    <string name="settings_export_failed">Export failed.</string>
 
     <string name="capability_network">Network</string>
     <string name="capability_service">Service</string>

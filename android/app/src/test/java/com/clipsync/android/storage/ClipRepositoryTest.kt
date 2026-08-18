@@ -448,10 +448,81 @@ class ClipRepositoryTest {
             inner.observeOutboxPendingCount(peerId)
     }
 
+    @Test
+    fun `purgeExpired hard-deletes an old synced clip and returns the live count`() {
+        runTest {
+            val repo = repository()
+            val stored =
+                repo.captureLocalText("old synced", nowMs = NOW - FORTY_DAYS_MS, peerId = PEER)
+                    as CaptureResult.Stored
+            repo.ackRanges(
+                PEER,
+                listOf(OriginSequenceRanges(LOCAL, listOf(SequenceRange(1, 1)))),
+                NOW,
+            )
+            assertTrue(repo.outboxPending(PEER).isEmpty())
+
+            val counts = repo.purgeExpired(NOW)
+            assertEquals(1, counts.liveClipsDeleted)
+            assertEquals(0, counts.tombstonesDeleted)
+            assertTrue(repo.search("").isEmpty())
+            assertTrue(repo.getSyncableEvents(LOCAL, listOf(SequenceRange(1, 1)), 10).isEmpty())
+            assertTrue(repo.search("").none { it.eventId == stored.eventId })
+        }
+    }
+
+    @Test
+    fun `purgeExpired keeps an old clip that still has a pending outbox row`() {
+        runTest {
+            val repo = repository()
+            repo.captureLocalText("old pending", nowMs = NOW - FORTY_DAYS_MS, peerId = PEER)
+            assertEquals(1, repo.outboxPending(PEER).size)
+
+            val counts = repo.purgeExpired(NOW)
+            assertEquals(0, counts.liveClipsDeleted)
+            assertEquals(0, counts.tombstonesDeleted)
+            assertEquals(1, repo.search("").size)
+            assertEquals(1, repo.outboxPending(PEER).size)
+            assertEquals("old pending", repo.search("")[0].content)
+        }
+    }
+
+    @Test
+    fun `purgeExpired keeps a fresh clip`() {
+        runTest {
+            val repo = repository()
+            repo.captureLocalText("fresh", nowMs = NOW, peerId = PEER)
+
+            val counts = repo.purgeExpired(NOW)
+            assertEquals(0, counts.liveClipsDeleted)
+            assertEquals(1, repo.search("").size)
+            assertEquals("fresh", repo.search("")[0].content)
+        }
+    }
+
+    @Test
+    fun `purgeExpired hard-deletes an old tombstone and returns the tombstone count`() {
+        runTest {
+            val repo = repository()
+            val stored =
+                repo.captureLocalText("old deleted", nowMs = NOW - TEN_DAYS_MS) as CaptureResult.Stored
+            assertTrue(repo.delete(stored.eventId, NOW - FORTY_DAYS_MS))
+            assertEquals(1, repo.getSyncableEvents(LOCAL, listOf(SequenceRange(1, 1)), 10).size)
+
+            val counts = repo.purgeExpired(NOW)
+            assertEquals(0, counts.liveClipsDeleted)
+            assertEquals(1, counts.tombstonesDeleted)
+            assertTrue(repo.search("").isEmpty())
+            assertTrue(repo.getSyncableEvents(LOCAL, listOf(SequenceRange(1, 1)), 10).isEmpty())
+        }
+    }
+
     companion object {
         private const val LOCAL = "11111111-1111-4111-8111-111111111111"
         private const val PEER = "22222222-2222-4222-8222-222222222222"
         private const val OTHER_PEER = "33333333-3333-4333-8333-333333333333"
         private const val NOW = 1_700_000_000_000L
+        private const val TEN_DAYS_MS = 10L * 24 * 60 * 60 * 1000
+        private const val FORTY_DAYS_MS = 40L * 24 * 60 * 60 * 1000
     }
 }

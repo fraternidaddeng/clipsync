@@ -350,4 +350,21 @@ class ClipRepository internal constructor(
             nextAttemptAt = nextAttemptAt,
             lastError = lastError,
         )
+
+    /**
+     * Hard-deletes expired live clips (no pending outbox) and expired tombstones
+     * in one transaction. Receive coverage is untouched.
+     */
+    suspend fun purgeExpired(nowMs: Long): PurgeCounts =
+        persistence.transaction {
+            val cutoffMs =
+                retentionCutoffMs(
+                    nowMs,
+                    parseRetentionDays(getSetting(SETTING_RETENTION_DAYS)),
+                )
+            PurgeCounts(
+                liveClipsDeleted = hardDeleteExpiredLive(cutoffMs),
+                tombstonesDeleted = hardDeleteExpiredTombstones(cutoffMs),
+            )
+        }
 }

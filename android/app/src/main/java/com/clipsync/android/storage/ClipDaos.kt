@@ -94,6 +94,26 @@ interface ClipDao {
         """,
     )
     suspend fun findLiveContentByHash(contentHash: String): String?
+
+    @Query(
+        """
+        DELETE FROM clips
+        WHERE deleted_at IS NULL
+          AND created_at < :cutoffMs
+          AND event_id NOT IN (SELECT event_id FROM outbox WHERE state = 'pending')
+        """,
+    )
+    suspend fun hardDeleteExpiredLive(cutoffMs: Long): Int
+
+    @Query(
+        """
+        DELETE FROM clips
+        WHERE deleted_at IS NOT NULL
+          AND deleted_at < :cutoffMs
+          AND event_id NOT IN (SELECT event_id FROM outbox WHERE state = 'pending')
+        """,
+    )
+    suspend fun hardDeleteExpiredTombstones(cutoffMs: Long): Int
 }
 
 @Dao
@@ -138,7 +158,12 @@ interface OutboxDao {
         )
         """,
     )
-    suspend fun deleteInOriginRange(peerId: String, originDeviceId: String, startSeq: Long, endSeq: Long)
+    suspend fun deleteInOriginRange(
+        peerId: String,
+        originDeviceId: String,
+        startSeq: Long,
+        endSeq: Long,
+    )
 
     @Query("UPDATE outbox SET state = 'pending' WHERE peer_id = :peerId AND state = 'announced'")
     suspend fun resetAnnouncedToPending(peerId: String)
@@ -159,7 +184,10 @@ interface OriginReceiveStateDao {
 @Dao
 interface PeerCursorDao {
     @Query("SELECT * FROM peer_cursors WHERE peer_id = :peerId AND origin_device_id = :originDeviceId LIMIT 1")
-    suspend fun find(peerId: String, originDeviceId: String): PeerCursorEntity?
+    suspend fun find(
+        peerId: String,
+        originDeviceId: String,
+    ): PeerCursorEntity?
 
     @Query("SELECT * FROM peer_cursors WHERE peer_id = :peerId")
     suspend fun allForPeer(peerId: String): List<PeerCursorEntity>

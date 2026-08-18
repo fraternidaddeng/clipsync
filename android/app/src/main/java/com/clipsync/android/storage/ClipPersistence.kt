@@ -1,3 +1,11 @@
+@file:Suppress(
+    "ktlint:standard:function-signature",
+    "ktlint:standard:blank-line-before-declaration",
+    "ktlint:standard:class-signature",
+    "ktlint:standard:function-expression-body",
+    "ktlint:standard:max-line-length",
+)
+
 package com.clipsync.android.storage
 
 import androidx.room.withTransaction
@@ -19,7 +27,8 @@ internal interface ClipPersistence {
     fun observeOutboxPendingCount(peerId: String): Flow<Int>
 }
 
-internal interface ClipSession {
+@Suppress("TooManyFunctions") // Room session; detekt baseline ID includes the supertype.
+internal interface ClipSession : ClipRetentionSession {
     suspend fun insertClip(entity: ClipEntity)
     suspend fun findClipByOriginSeq(originDeviceId: String, originSeq: Long): ClipEntity?
     suspend fun findClipByEventId(eventId: String): ClipEntity?
@@ -46,7 +55,6 @@ internal interface ClipSession {
     suspend fun peerCursor(peerId: String, originDeviceId: String): OriginReceiveState
     suspend fun upsertPeerCursor(peerId: String, originDeviceId: String, state: OriginReceiveState, ackedAt: Long)
     suspend fun peerCursors(peerId: String): Map<String, OriginReceiveState>
-
     suspend fun getSetting(key: String): String?
     suspend fun setSetting(key: String, value: String)
 }
@@ -211,6 +219,11 @@ private class RoomClipSession(private val database: ClipDatabase) : ClipSession 
     override suspend fun setSetting(key: String, value: String) {
         database.settingDao().upsert(SettingEntity(key, value))
     }
+
+    override suspend fun hardDeleteExpiredLive(cutoffMs: Long): Int = database.clipDao().hardDeleteExpiredLive(cutoffMs)
+
+    @Suppress("MaxLineLength")
+    override suspend fun hardDeleteExpiredTombstones(cutoffMs: Long): Int = database.clipDao().hardDeleteExpiredTombstones(cutoffMs)
 }
 
 private fun OriginReceiveStateEntity?.toState(): OriginReceiveState =
@@ -227,5 +240,4 @@ private fun PeerCursorEntity?.toPeerState(): OriginReceiveState =
         OriginReceiveState(receivedSeq, SequenceRangeJson.deserialize(receivedRanges))
     }
 
-internal fun escapeLike(value: String): String =
-    value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+internal fun escapeLike(value: String): String = value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
