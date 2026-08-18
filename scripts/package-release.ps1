@@ -134,7 +134,7 @@ function Get-WindowsPortableReadmeLines {
         [string]$WindowsComponentVersion
     )
     return @(
-        'ClipSync Windows 便携版',
+        '剪剪相传（Clip It Forward，代号 ClipSync）Windows 便携版',
         "版本：$ReleaseVersion（Windows 组件 $WindowsComponentVersion）",
         '',
         '个人使用的 Windows ↔ Android P2P 剪贴板同步。无需安装、无需管理员、无云端。',
@@ -142,7 +142,7 @@ function Get-WindowsPortableReadmeLines {
         '如何运行',
         '  1. 将本文件夹解压到可写位置（例如 %LOCALAPPDATA%\Programs\ClipSync）。',
         '  2. 双击 ClipSync.App.exe。托盘会出现图标；对端服务无需提权即可绑定。',
-        '  3. 从托盘选择「打开 ClipSync」，点「配对新设备…」，用 Android 扫描二维码。',
+        '  3. 从托盘选择「打开剪剪相传」，点「配对新设备…」，用 Android 扫描二维码。',
         '',
         '数据位置',
         '  历史、配对密钥、设备 ID 和 TLS 证书在：',
@@ -328,7 +328,7 @@ $signingNotes = if ($apkSigned) {
 }
 
 @(
-    "ClipSync $releaseVersion",
+    "剪剪相传 (Clip It Forward, code name ClipSync) $releaseVersion",
     "Built: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
     "Windows component: $windowsVersion",
     "Android versionName: $androidVersion",

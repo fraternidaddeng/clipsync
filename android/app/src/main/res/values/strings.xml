@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ClipSync</string>
+    <string name="app_name">Clip It Forward</string>
 
     <string name="tab_history">History</string>
     <string name="tab_status">Status</string>
@@ -60,7 +60,7 @@
     <string name="capability_write">Clipboard write</string>
     <string name="capability_last_check">Last check %1$s</string>
 
-    <string name="share_captured">Sent to ClipSync</string>
+    <string name="share_captured">Sent to Clip It Forward</string>
     <string name="share_oversized">Text is larger than 1 MiB and was not sent.</string>
     <string name="share_empty">Nothing to send.</string>
     <string name="share_duplicate">Already captured.</string>
@@ -69,7 +69,7 @@
     <string name="share_label">Send to Windows</string>
 
     <string name="tile_send_clipboard">Send clipboard</string>
-    <string name="tile_sent">Clipboard sent to ClipSync</string>
+    <string name="tile_sent">Clipboard sent to Clip It Forward</string>
     <string name="tile_empty">Clipboard is empty or not text.</string>
     <string name="tile_read_failed">Could not read the clipboard.</string>
 
@@ -81,17 +81,17 @@
 
     <string name="service_notify_channel_name">Background sync</string>
     <string name="service_notify_channel_description">Ongoing status for the Windows connection. Never includes clipboard text.</string>
-    <string name="service_notify_title">ClipSync background sync</string>
+    <string name="service_notify_title">Clip It Forward background sync</string>
     <string name="service_notify_text">Keeping the Windows connection alive. This is not clipboard permission.</string>
     <string name="service_action_pause">Pause all</string>
     <string name="service_action_sync_now">Sync now</string>
     <string name="service_action_open_status">Open status</string>
-    <string name="service_recovery_title">ClipSync needs recovery</string>
+    <string name="service_recovery_title">Clip It Forward needs recovery</string>
     <string name="service_recovery_text">Background sync stopped after a restart. Open the app to resume.</string>
 
     <string name="overlay_polling_enabled">Overlay polling is on</string>
     <string name="overlay_permission_missing">Display-over-other-apps permission is required to read the clipboard from an overlay. This does not start a background service.</string>
-    <string name="overlay_touchable_unavailable">This device would need a touchable overlay to read the clipboard. ClipSync will not enable that.</string>
+    <string name="overlay_touchable_unavailable">This device would need a touchable overlay to read the clipboard. Clip It Forward will not enable that.</string>
 
     <string name="capability_read_logs">READ_LOGS (adb only)</string>
     <string name="capability_read_logs_hint">This permission cannot be granted in-app. Use android-bootstrap.ps1 to print the exact adb grant and revoke commands for the selected device. The script never grants it for you. Install, upgrade, or reboot invalidates the grant; re-check after those events.</string>
@@ -130,13 +130,13 @@
     <string name="wizard_purpose_battery">Reduce OEM kills so background sync can resume after idle.</string>
     <string name="wizard_purpose_overlay">Briefly focus a 1x1 untouchable window so overlay polling or ADB-log reads can copy text.</string>
     <string name="wizard_purpose_read_logs">Watch system clipboard-change logs as an event signal. The body is still read through overlay.</string>
-    <string name="wizard_purpose_shizuku_binder">Connect to the Shizuku service so ClipSync can use the privileged clipboard binder.</string>
+    <string name="wizard_purpose_shizuku_binder">Connect to the Shizuku service so Clip It Forward can use the privileged clipboard binder.</string>
     <string name="wizard_purpose_shizuku_auth">Authorize this app in Shizuku. Preferred event-driven read mode.</string>
     <string name="wizard_risk_notifications">A persistent sync notification is visible while the service runs.</string>
     <string name="wizard_risk_fgs">A long-running service uses a little battery and stays in the notification shade.</string>
-    <string name="wizard_risk_battery">The system may keep ClipSync awake more often.</string>
+    <string name="wizard_risk_battery">The system may keep Clip It Forward awake more often.</string>
     <string name="wizard_risk_overlay">A transparent window briefly takes focus during a read. It stays untouchable.</string>
-    <string name="wizard_risk_read_logs">Log access is a privileged adb grant. ClipSync never stores or uploads raw log lines.</string>
+    <string name="wizard_risk_read_logs">Log access is a privileged adb grant. Clip It Forward never stores or uploads raw log lines.</string>
     <string name="wizard_risk_shizuku_binder">Shizuku must be installed and started after each reboot.</string>
     <string name="wizard_risk_shizuku_auth">Shizuku runs with shell privileges limited to clipboard binder calls.</string>
     <string name="wizard_skip_notifications">Notification actions and inbound copy prompts stay hidden. The service can still run.</string>
@@ -163,7 +163,7 @@
     <string name="wizard_auto_fallback_hint">If the preferred mode fails, try the next allowed mode. Overlay still requires explicit consent.</string>
     <string name="wizard_overlay_consent">Enable overlay read mode</string>
     <string name="wizard_overlay_consent_hint">Off by default. Overlay is not used for write. Public clipboard write stays the default.</string>
-    <string name="wizard_overlay_background_hint">Some ROMs (e.g. MIUI) deny background clipboard reads system-side, so overlay polling may only capture while ClipSync is in the foreground. Run the self-test to verify on this device.</string>
+    <string name="wizard_overlay_background_hint">Some ROMs (e.g. MIUI) deny background clipboard reads system-side, so overlay polling may only capture while Clip It Forward is in the foreground. Run the self-test to verify on this device.</string>
     <string name="wizard_polling_interval">Polling interval: %d ms</string>
     <string name="wizard_auto_upload">Background auto-upload</string>
     <string name="wizard_auto_upload_hint">Upload captured clipboard text while the app is in the background.</string>
@@ -206,7 +206,7 @@
     <string name="pairing_trust_epoch">Trust epoch %1$d</string>
     <string name="pairing_forget">Forget this pairing</string>
     <string name="pairing_replace_hint">Scanning a new code replaces the current pairing after your confirmation.</string>
-    <string name="pairing_scan_intro">Open ClipSync on your computer, choose \"Pair new device\", then scan the QR code it shows.</string>
+    <string name="pairing_scan_intro">Open Clip It Forward on your computer, choose \"Pair new device\", then scan the QR code it shows.</string>
     <string name="pairing_stop_scanning">Stop scanning</string>
     <string name="pairing_scan_qr">Scan QR code</string>
     <string name="pairing_camera_denied">Camera permission was denied. You can still pair by pasting the payload below.</string>
@@ -214,19 +214,19 @@
     <string name="pairing_use_pasted">Use pasted payload</string>
     <string name="pairing_confirm_title">Confirm this computer</string>
     <string name="pairing_confirm_hint">Only continue if the name and certificate fingerprint below match what the Windows app shows.</string>
-    <string name="pairing_cert_changed">Warning: this computer\'s certificate CHANGED since the last pairing. If you did not reinstall ClipSync on Windows, stop and check the computer.</string>
+    <string name="pairing_cert_changed">Warning: this computer\'s certificate CHANGED since the last pairing. If you did not reinstall Clip It Forward on Windows, stop and check the computer.</string>
     <string name="pairing_replace">I verified it — replace pairing</string>
     <string name="pairing_fingerprint_match">Fingerprint matches — pair</string>
     <string name="pairing_cancel">Cancel</string>
     <string name="pairing_fingerprint_label">Certificate fingerprint</string>
     <string name="pairing_address">Address %1$s : %2$d</string>
     <string name="pairing_waiting">Waiting for approval…</string>
-    <string name="pairing_waiting_hint">Approve this phone in the ClipSync window on \"%1$s\".</string>
+    <string name="pairing_waiting_hint">Approve this phone in the Clip It Forward window on \"%1$s\".</string>
     <string name="pairing_success_title">Paired</string>
     <string name="pairing_success_body">This phone is now paired with \"%1$s\". Clipboard sync starts in a later stage; the trust and secret are stored securely now.</string>
     <string name="pairing_done">Done</string>
     <string name="pairing_failed_title">Pairing failed</string>
-    <string name="pairing_fail_invalid_payload">That is not a valid ClipSync pairing code.</string>
+    <string name="pairing_fail_invalid_payload">That is not a valid Clip It Forward pairing code.</string>
     <string name="pairing_fail_own_device">This code identifies this device itself.</string>
     <string name="pairing_fail_cert_mismatch">The computer presented a DIFFERENT certificate than the QR code promised. Pairing was blocked. Check the network and re-open the QR window on Windows.</string>
     <string name="pairing_fail_unreachable">The computer could not be reached. Make sure both devices are on the same network.</string>

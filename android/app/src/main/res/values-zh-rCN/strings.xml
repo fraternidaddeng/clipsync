@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ClipSync</string>
+    <string name="app_name">剪剪相传</string>
 
     <string name="tab_history">历史</string>
     <string name="tab_status">状态</string>
@@ -60,7 +60,7 @@
     <string name="capability_write">写入剪贴板</string>
     <string name="capability_last_check">上次检查 %1$s</string>
 
-    <string name="share_captured">已发送到 ClipSync</string>
+    <string name="share_captured">已发送到剪剪相传</string>
     <string name="share_oversized">文本超过 1 MiB，未发送。</string>
     <string name="share_empty">没有可发送的内容。</string>
     <string name="share_duplicate">已经捕获过。</string>
@@ -69,7 +69,7 @@
     <string name="share_label">发送到 Windows</string>
 
     <string name="tile_send_clipboard">发送剪贴板</string>
-    <string name="tile_sent">剪贴板已发送到 ClipSync</string>
+    <string name="tile_sent">剪贴板已发送到剪剪相传</string>
     <string name="tile_empty">剪贴板为空或不是文本。</string>
     <string name="tile_read_failed">无法读取剪贴板。</string>
 
@@ -81,17 +81,17 @@
 
     <string name="service_notify_channel_name">后台同步</string>
     <string name="service_notify_channel_description">Windows 连接的持续状态。从不包含剪贴板文本。</string>
-    <string name="service_notify_title">ClipSync 后台同步</string>
+    <string name="service_notify_title">剪剪相传后台同步</string>
     <string name="service_notify_text">正在保持与 Windows 的连接。这不代表剪贴板权限。</string>
     <string name="service_action_pause">全部暂停</string>
     <string name="service_action_sync_now">立即同步</string>
     <string name="service_action_open_status">打开状态</string>
-    <string name="service_recovery_title">ClipSync 需要恢复</string>
+    <string name="service_recovery_title">剪剪相传需要恢复</string>
     <string name="service_recovery_text">重启后后台同步已停止。打开应用即可恢复。</string>
 
     <string name="overlay_polling_enabled">悬浮窗(overlay)轮询已开启</string>
     <string name="overlay_permission_missing">要从悬浮窗读取剪贴板，需要「显示在其他应用上层」权限。这不会启动后台服务。</string>
-    <string name="overlay_touchable_unavailable">此设备需要可触摸的悬浮窗才能读取剪贴板。ClipSync 不会启用这种方式。</string>
+    <string name="overlay_touchable_unavailable">此设备需要可触摸的悬浮窗才能读取剪贴板。剪剪相传不会启用这种方式。</string>
 
     <string name="capability_read_logs">READ_LOGS（仅 adb）</string>
     <string name="capability_read_logs_hint">此权限无法在应用内授予。请用 android-bootstrap.ps1 打印所选设备的精确 adb 授予与撤销命令。脚本绝不会替你授权。安装、升级或重启会使授权失效；这些事件之后请重新检查。</string>
@@ -130,13 +130,13 @@
     <string name="wizard_purpose_battery">减少厂商杀进程，以便空闲后后台同步能恢复。</string>
     <string name="wizard_purpose_overlay">短暂聚焦 1×1 不可触摸窗口，以便悬浮窗轮询或 ADB 日志读取能复制文本。</string>
     <string name="wizard_purpose_read_logs">监视系统剪贴板变更日志作为事件信号。正文仍通过悬浮窗读取。</string>
-    <string name="wizard_purpose_shizuku_binder">连接到 Shizuku 服务，以便 ClipSync 使用特权剪贴板 binder。</string>
+    <string name="wizard_purpose_shizuku_binder">连接到 Shizuku 服务，以便剪剪相传使用特权剪贴板 binder。</string>
     <string name="wizard_purpose_shizuku_auth">在 Shizuku 中授权本应用。首选的事件驱动读取模式。</string>
     <string name="wizard_risk_notifications">服务运行期间会显示持续的同步通知。</string>
     <string name="wizard_risk_fgs">长驻服务会多用一点电，并出现在通知栏。</string>
-    <string name="wizard_risk_battery">系统可能更频繁地保持 ClipSync 唤醒。</string>
+    <string name="wizard_risk_battery">系统可能更频繁地保持剪剪相传唤醒。</string>
     <string name="wizard_risk_overlay">读取时透明窗口会短暂获取焦点。窗口保持不可触摸。</string>
-    <string name="wizard_risk_read_logs">日志访问是特权 adb 授权。ClipSync 从不存储或上传原始日志行。</string>
+    <string name="wizard_risk_read_logs">日志访问是特权 adb 授权。剪剪相传从不存储或上传原始日志行。</string>
     <string name="wizard_risk_shizuku_binder">Shizuku 必须已安装，且每次重启后都要启动。</string>
     <string name="wizard_risk_shizuku_auth">Shizuku 以受限的 shell 权限运行，仅用于剪贴板 binder 调用。</string>
     <string name="wizard_skip_notifications">通知操作和入站复制提示将保持隐藏。服务仍可运行。</string>
@@ -163,7 +163,7 @@
     <string name="wizard_auto_fallback_hint">首选模式失败时，尝试下一个允许的模式。悬浮窗仍需明确同意。</string>
     <string name="wizard_overlay_consent">启用悬浮窗读取模式</string>
     <string name="wizard_overlay_consent_hint">默认关闭。悬浮窗不用于写入。公开剪贴板写入仍是默认方式。</string>
-    <string name="wizard_overlay_background_hint">部分 ROM（如 MIUI）会在系统层拒绝后台读取剪贴板，悬浮窗轮询可能仅在 ClipSync 处于前台时有效。请以本机自测结果为准。</string>
+    <string name="wizard_overlay_background_hint">部分 ROM（如 MIUI）会在系统层拒绝后台读取剪贴板，悬浮窗轮询可能仅在剪剪相传处于前台时有效。请以本机自测结果为准。</string>
     <string name="wizard_polling_interval">轮询间隔：%d ms</string>
     <string name="wizard_auto_upload">后台自动上传</string>
     <string name="wizard_auto_upload_hint">应用在后台时上传已捕获的剪贴板文本。</string>
@@ -206,7 +206,7 @@
     <string name="pairing_trust_epoch">信任纪元 %1$d</string>
     <string name="pairing_forget">忘记此配对</string>
     <string name="pairing_replace_hint">扫描新二维码会在你确认后替换当前配对。</string>
-    <string name="pairing_scan_intro">在电脑上打开 ClipSync，选择「配对新设备」，然后扫描它显示的二维码。</string>
+    <string name="pairing_scan_intro">在电脑上打开「剪剪相传」，选择「配对新设备」，然后扫描它显示的二维码。</string>
     <string name="pairing_stop_scanning">停止扫描</string>
     <string name="pairing_scan_qr">扫描二维码</string>
     <string name="pairing_camera_denied">相机权限已被拒绝。你仍可通过下方粘贴配对内容来配对。</string>
@@ -214,19 +214,19 @@
     <string name="pairing_use_pasted">使用粘贴的内容</string>
     <string name="pairing_confirm_title">确认此电脑</string>
     <string name="pairing_confirm_hint">仅当下方名称和证书指纹与 Windows 应用显示的一致时再继续。</string>
-    <string name="pairing_cert_changed">警告：此电脑的证书自上次配对后已变更。若你没有在 Windows 上重装 ClipSync，请停止并检查该电脑。</string>
+    <string name="pairing_cert_changed">警告：此电脑的证书自上次配对后已变更。若你没有在 Windows 上重装「剪剪相传」，请停止并检查该电脑。</string>
     <string name="pairing_replace">我已核实 — 替换配对</string>
     <string name="pairing_fingerprint_match">指纹一致 — 配对</string>
     <string name="pairing_cancel">取消</string>
     <string name="pairing_fingerprint_label">证书指纹</string>
     <string name="pairing_address">地址 %1$s : %2$d</string>
     <string name="pairing_waiting">等待批准…</string>
-    <string name="pairing_waiting_hint">请在「%1$s」上的 ClipSync 窗口中批准此手机。</string>
+    <string name="pairing_waiting_hint">请在「%1$s」上的「剪剪相传」窗口中批准此手机。</string>
     <string name="pairing_success_title">已配对</string>
     <string name="pairing_success_body">此手机已与「%1$s」配对。剪贴板同步将在后续阶段启动；信任关系和密钥现已安全存储。</string>
     <string name="pairing_done">完成</string>
     <string name="pairing_failed_title">配对失败</string>
-    <string name="pairing_fail_invalid_payload">这不是有效的 ClipSync 配对码。</string>
+    <string name="pairing_fail_invalid_payload">这不是有效的剪剪相传配对码。</string>
     <string name="pairing_fail_own_device">此码标识的是本机自身。</string>
     <string name="pairing_fail_cert_mismatch">电脑出示的证书与二维码承诺的不同。配对已阻止。请检查网络，并在 Windows 上重新打开二维码窗口。</string>
     <string name="pairing_fail_unreachable">无法连接该电脑。请确保两台设备在同一网络。</string>

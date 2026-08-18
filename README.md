@@ -1,6 +1,6 @@
-# ClipSync
+# 剪剪相传 · Clip It Forward (code name: ClipSync)
 
-ClipSync is a private, direct peer-to-peer clipboard synchronization project for Windows and Android. The repository has completed **Stage 3** (Windows peer endpoint, QR pairing, and device trust). **Stage 4** Android companion is implemented on `feature/stage-4`: OkHttp WebSocket sync, Room history UI, share target, Quick Settings tile, and inbound notifications. End-to-end pairing/sync is pending wave 3. Physical Android ROM coverage remains `NOT_TESTED`.
+剪剪相传（English: Clip It Forward; code name ClipSync — all namespaces, packages, and artifact file names keep the code name) is a private, direct peer-to-peer clipboard synchronization project for Windows and Android. The repository has completed **Stage 3** (Windows peer endpoint, QR pairing, and device trust). **Stage 4** Android companion is implemented on `feature/stage-4`: OkHttp WebSocket sync, Room history UI, share target, Quick Settings tile, and inbound notifications. End-to-end pairing/sync is pending wave 3. Physical Android ROM coverage remains `NOT_TESTED`.
 
 No account service, cloud database, public relay, file transfer, telemetry, or clipboard-content logging is included. Android UI ships English (`values`) plus Simplified Chinese (`values-zh-rCN`); Windows UI copy is Simplified Chinese in `ClipSync.App/Strings.cs`.
 

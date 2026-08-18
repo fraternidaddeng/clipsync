@@ -10,7 +10,7 @@ namespace ClipSync.App;
 internal static class Strings
 {
     // --- MainWindow ---
-    public const string AppTitle = "ClipSync";
+    public const string AppTitle = "剪剪相传";
     public const string HistorySubtitle = "本地剪贴板历史";
     public const string PauseCapture = "暂停捕获";
     public const string PrivateMode = "隐私模式";
@@ -47,7 +47,7 @@ internal static class Strings
 
     // --- Pairing ---
     public const string PairingQrTitle = "配对新设备";
-    public const string PairingQrHeader = "请用 ClipSync Android 应用扫描";
+    public const string PairingQrHeader = "请用「剪剪相传」Android 应用扫描";
     public const string PairingQrHint = "二维码包含本机地址、证书指纹和一次性令牌，绝不包含配对密钥。";
     public const string PairingNoHosts = "未检测到局域网地址。请将本机与手机连到同一网络（或在设置中添加 Tailscale 地址），然后重新打开此窗口。";
     public const string PairingVerifyHeader = "确认前请在手机上核对：";
@@ -65,9 +65,9 @@ internal static class Strings
     public const string PlatformWindowsDevice = "Windows 设备";
 
     // --- Tray ---
-    public const string TrayOpen = "打开 ClipSync";
+    public const string TrayOpen = "打开剪剪相传";
     public const string TrayExit = "退出";
-    public const string TrayTooltip = "ClipSync";
+    public const string TrayTooltip = "剪剪相传";
 
     // --- Status ---
     public const string SyncStatusNotRunning = "对端服务未运行";
