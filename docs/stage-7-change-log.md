@@ -1,7 +1,7 @@
 # 阶段 7 变更记录
 
 日期：2026-08-18
-状态：**无密钥部分完成并实测；签名 APK 待用户建 keystore**。打包由 Grok 4.6 子代理完成，编排端收口。两套测试保持全绿（Android 411/0/1 skipped；Windows 191 + 33，0 警告）。
+状态：**完成（含签名 APK）**。打包由 Grok 4.6 子代理完成，编排端收口并完成签名。两套测试保持全绿（Android 411/0/1 skipped；Windows 191 + 33，0 警告）。
 
 ## 交付内容
 
@@ -19,9 +19,13 @@
 - 便携包从临时解压目录用一次性 `CLIPSYNC_DATA_DIR` 启动成功（`listener_started` → `peer_server_started_port_4107`，47654 被正在运行的实例占用故落到临时端口，符合设计），只杀了自己启动的 PID，未碰正在跑的实例与真实数据目录。
 - 版本号：Windows 组件 0.2.0、Android versionName 0.1.0；产物目录当前以 0.1.0 命名，可 `-Version` 覆盖（后续建议统一两端版本号）。
 
-## 待人工 / 未做
+## 签名（2026-08-18，用户授权后由编排端执行）
 
-- **签名 APK**：等你跑一次打印出的 `keytool` 命令生成 `D:\paste-tools\clipsync-release.keystore` 并设置 `$env:CLIPSYNC_KEYSTORE_PASSWORD`，再跑 `package-release.ps1` 即出签名包并记录指纹。keystore 是你的签名身份，务必备份；仓库永不保存。
+- keystore：`D:\paste-tools\clipsync-release.keystore`（PKCS12，RSA 2048，有效期 10000 天，CN=ClipSync Personal）；随机高强度密码存于仓库外 `D:\paste-tools\clipsync-release-keystore.password.txt`（keytool 经 `-storepass:env` 读取，命令行与日志均不含密码）。**两个文件都必须备份**；丢失即无法再用同一身份签名升级包。
+- 签名产物：`releases/0.1.0/ClipSync-Android-0.1.0.apk`（48.3 MB，sha256 `97b456360582a7ed…`）。`apksigner verify --print-certs` 确认签名者 CN=ClipSync Personal，证书 SHA-256 `1ad02d4ff32a5a6dd8b25adf70dc78e0430c34439886f5e41a96f871fdba32dd`，与 keystore 指纹一致，已写入 RELEASE_NOTES。
+- 注意：测试机上现装的是 debug 签名包；release 包签名不同，不能直接覆盖安装（需卸载，会丢手机侧历史与配对）。release 包用于全新安装。
+
+## 待人工 / 未做
 - **MSIX、计划任务开机启动**：plan 允许二选一，已选便携 ZIP + Run 键。
 - **10 分钟全新机安装验收**：文档就绪，未在一台全新 Windows 上计时演练。
 - 自动静默更新：明确不做（plan）。
