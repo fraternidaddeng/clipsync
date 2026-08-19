@@ -86,37 +86,40 @@ $adbAuth = if ($deviceLine -match '\sunauthorized\b') {
 $usbConfig = 'unknown'
 $persistUsb = 'unknown'
 $adbEnabled = 'unknown'
-$shizukuPackage = 'moe.shizuku.privileged.api'
-$shizukuPath = ''
+$officialShizukuPackage = 'moe.shizuku.privileged.api'
+$officialShizukuPath = ''
 $previousNative = $PSNativeCommandUseErrorActionPreference
 $PSNativeCommandUseErrorActionPreference = $false
 try {
     $usbConfig = (@(& adb @adbArgs getprop sys.usb.config 2>$null) -join '').Trim()
     $persistUsb = (@(& adb @adbArgs getprop persist.sys.usb.config 2>$null) -join '').Trim()
     $adbEnabled = (@(& adb @adbArgs settings get global adb_enabled 2>$null) -join '').Trim()
-    $shizukuPath = (@(& adb @adbArgs pm path $shizukuPackage 2>$null) -join '').Trim()
+    $officialShizukuPath = (@(& adb @adbArgs pm path $officialShizukuPackage 2>$null) -join '').Trim()
 } finally {
     $PSNativeCommandUseErrorActionPreference = $previousNative
 }
-$shizukuInstalled = $shizukuPath -match '^package:'
-$shizukuStartCommand = "adb -s $Serial shell sh /storage/emulated/0/Android/data/$shizukuPackage/start.sh"
+$officialShizukuInstalled = $officialShizukuPath -match '^package:'
+$hostStartCommand = "adb -s $Serial shell sh /storage/emulated/0/Android/data/$PackageName/start.sh"
+$officialStartCommand = "adb -s $Serial shell sh /storage/emulated/0/Android/data/$officialShizukuPackage/start.sh"
 
 Write-Host ''
 Write-Host "Developer / USB debugging: adb=$adbAuth, adb_enabled=$adbEnabled, sys.usb.config=$usbConfig, persist.sys.usb.config=$persistUsb"
 if ($adbAuth -eq 'UNAUTHORIZED') {
     Write-Host 'Unlock the phone and accept the RSA fingerprint dialog, then re-run this script.'
 }
-Write-Host "Shizuku package ($shizukuPackage): $(if ($shizukuInstalled) { 'INSTALLED' } else { 'NOT_INSTALLED' })"
-if ($shizukuInstalled) {
-    Write-Host 'Shizuku start command (copy yourself; this script never runs it):'
-    Write-Host "  $shizukuStartCommand"
-    Write-Host 'Verified on MIUI 14 (stage 6): authorization survives reboot + reinstall; the daemon does not.'
-    Write-Host 'After each reboot, start Shizuku with the command above, then open Shizuku and confirm ClipSync is authorized.'
+Write-Host "Bundled privileged host start command (copy yourself; this script never runs it):"
+Write-Host "  $hostStartCommand"
+Write-Host 'Open ClipSync once first so it can write start.sh, then run the command as shell.'
+Write-Host 'After each reboot, start the host again. The wizard Authorize card confirms ClipSync may use it.'
+Write-Host "Official Shizuku package ($officialShizukuPackage): $(if ($officialShizukuInstalled) { 'INSTALLED (optional fallback)' } else { 'NOT_INSTALLED (optional)' })"
+if ($officialShizukuInstalled) {
+    Write-Host 'Optional official Shizuku start command if you prefer that already-running daemon:'
+    Write-Host "  $officialStartCommand"
 }
 
 Write-Host ''
-Write-Host 'This script is read-only. It never runs grant, revoke, or Shizuku start.'
-Write-Host 'It never downloads or bundles Shizuku. Install Shizuku yourself if you want that mode.'
+Write-Host 'This script is read-only. It never runs grant, revoke, or host start.'
+Write-Host 'It never downloads Shizuku. The clipboard host is bundled in the ClipSync APK.'
 Write-Host 'READ_LOGS cannot be granted by a normal in-app runtime dialog.'
 Write-Host 'Install, upgrade, or reboot invalidates the grant. Re-run this inspector and re-probe the app after those events.'
 Write-Host 'Copy and run one of these commands yourself if you decide to change the grant:'

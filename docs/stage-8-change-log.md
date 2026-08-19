@@ -1,5 +1,11 @@
 # 阶段 8 变更记录
 
+日期：2026-08-19（内置特权宿主）/ 2026-08-18
+
+## 内置特权宿主（2026-08-19）
+
+`SHIZUKU_EVENT` 不再要求安装官方 Shizuku 应用。ClipSync APK 自带 `clipsync_priv_server`（`PrivilegedHostService`）：用户用已是 shell 的 adb/root 执行本包 `start.sh` 后，宿主把 binder 推进 `ClipSyncShizukuProvider`，再孵化 `:clipsync-clipboard`。官方 Shizuku 若已在运行仍作回退。未实现 `newProcess` / `transactRemote` / rish。向导改为「重新检查 / 授权特权宿主」；`android-bootstrap.ps1` 只打印本包启动命令。UserService `destroy` 事务码改为官方约定 `16777115`。本机未再跑实体 ROM 验证。
+
 日期：2026-08-18
 状态：**post-audit wave 已合入；MIUI 14 / `SHIZUKU_EVENT` 单机实机通过本日清单。** 模拟器矩阵 **进行中，不标完成**。本记录覆盖 `f847281`、`fb9347b`、`abf3ef3`、`8735345`、`1ef53ab`、`eb07a9f`、`528cf17`，以及后补的 `02ec63c`（Modern Standby Win32 回调）。阶段 7 文档写完之后落地，不改阶段 0–7 合同。
 

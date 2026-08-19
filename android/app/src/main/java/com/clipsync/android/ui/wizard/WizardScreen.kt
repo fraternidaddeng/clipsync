@@ -111,9 +111,10 @@ fun WizardScreen(
                             runCatching {
                                 context.startActivity(systemSettingsIntent(step.id, context.packageName))
                             }
-                        WizardActionKind.RECHECK_ADB -> viewModel.refresh()
-                        WizardActionKind.OPEN_SHIZUKU ->
-                            runCatching { context.startActivity(shizukuIntent(context)) }
+                        WizardActionKind.RECHECK_ADB,
+                        WizardActionKind.START_PRIVILEGED_HOST,
+                        WizardActionKind.AUTHORIZE_PRIVILEGED_HOST,
+                        -> viewModel.refresh()
                     }
                 },
                 onSkip = { viewModel.skip(step.id) },
@@ -319,6 +320,13 @@ private fun CapabilityStepCard(
             if (step.id == WizardStepId.READ_LOGS) {
                 Text(
                     text = stringResource(R.string.wizard_read_logs_adb_only),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+            if (step.id == WizardStepId.SHIZUKU_BINDER) {
+                Text(
+                    text = stringResource(R.string.wizard_privileged_host_adb_only),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -533,14 +541,4 @@ private fun systemSettingsIntent(id: WizardStepId, packageName: String): Intent 
     }
 }
 
-private fun shizukuIntent(context: android.content.Context): Intent {
-    val launch = context.packageManager.getLaunchIntentForPackage(SHIZUKU_PACKAGE)
-    if (launch != null) {
-        return launch
-    }
-    return Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-        data = Uri.parse("package:$SHIZUKU_PACKAGE")
-    }
-}
 
-private const val SHIZUKU_PACKAGE = "moe.shizuku.privileged.api"

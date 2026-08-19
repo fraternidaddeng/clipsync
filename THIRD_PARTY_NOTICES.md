@@ -47,8 +47,9 @@ Stage 7 review of files that actually ship (`releases/<version>/` ZIP + APK): ev
 | kotlinx-coroutines-test | 1.9.0 | Android coroutine tests (test only) | Apache-2.0 |
 | AndroidX Room room-testing | 2.6.1 | Room test helpers (test only) | Apache-2.0 |
 | AndroidX Arch core-testing | 2.2.0 | Architecture Components test helpers (test only) | Apache-2.0 |
-| Shizuku API (`dev.rikka.shizuku:api`) | 13.1.5 | Privileged clipboard UserService / Binder client | MIT — verified 2026-08-17 from the Maven Central 13.1.5 POM (`<name>MIT License</name>`) and [RikkaApps/Shizuku-API LICENSE](https://github.com/RikkaApps/Shizuku-API/blob/master/LICENSE). The Shizuku *manager app* is Apache-2.0; the API/provider artifacts we depend on are MIT. |
-| Shizuku Provider (`dev.rikka.shizuku:provider`) | 13.1.5 | `ShizukuProvider` ContentProvider that receives the Shizuku binder | MIT — same artifact family and LICENSE as `dev.rikka.shizuku:api` 13.1.5 |
+| Shizuku API (`dev.rikka.shizuku:api`) | 13.1.5 | Privileged clipboard UserService / Binder client | MIT — verified 2026-08-17 from the Maven Central 13.1.5 POM (`<name>MIT License</name>`) and [RikkaApps/Shizuku-API LICENSE](https://github.com/RikkaApps/Shizuku-API/blob/master/LICENSE). |
+| Shizuku Provider (`dev.rikka.shizuku:provider`) | 13.1.5 | `ShizukuProvider` ContentProvider that receives the privileged-host binder | MIT — same artifact family and LICENSE as `dev.rikka.shizuku:api` 13.1.5 |
+| ClipSync privileged host (`platform/clipboard/shizuku/host`) | in-tree | In-APK shell-uid host + UserService starter for `SHIZUKU_EVENT` | Original ClipSync code. The *mechanism* (app_process daemon, provider binder push, UserService spawn) follows the publicly documented design of [RikkaApps/Shizuku](https://github.com/RikkaApps/Shizuku) v13.5.4 (`0e53409`), Apache-2.0. This tree does not ship the official manager APK, icons, name “Shizuku” as a product, package id `moe.shizuku.privileged.api`, or `moe.shizuku.manager.permission.*`. Binder extra key `moe.shizuku.privileged.api.intent.extra.BINDER` is the Shizuku-API client protocol string required by `rikka.shizuku.ShizukuProvider`. |
 
 ## Planned direct dependencies
 

@@ -22,7 +22,8 @@ enum class WizardActionKind {
     REQUEST_RUNTIME_PERMISSION,
     OPEN_SYSTEM_SETTINGS,
     RECHECK_ADB,
-    OPEN_SHIZUKU,
+    START_PRIVILEGED_HOST,
+    AUTHORIZE_PRIVILEGED_HOST,
 }
 
 data class WizardChoices(
@@ -163,13 +164,12 @@ internal fun actionKindFor(id: WizardStepId): WizardActionKind = when (id) {
     WizardStepId.OVERLAY,
     -> WizardActionKind.OPEN_SYSTEM_SETTINGS
     WizardStepId.READ_LOGS -> WizardActionKind.RECHECK_ADB
-    WizardStepId.SHIZUKU_BINDER,
-    WizardStepId.SHIZUKU_AUTH,
-    -> WizardActionKind.OPEN_SHIZUKU
+    WizardStepId.SHIZUKU_BINDER -> WizardActionKind.START_PRIVILEGED_HOST
+    WizardStepId.SHIZUKU_AUTH -> WizardActionKind.AUTHORIZE_PRIVILEGED_HOST
 }
 
 internal fun offersInAppGrant(id: WizardStepId): Boolean =
-    id == WizardStepId.NOTIFICATIONS
+    id == WizardStepId.NOTIFICATIONS || id == WizardStepId.SHIZUKU_AUTH
 
 fun formatLastCheckClock(
     epochMillis: Long,

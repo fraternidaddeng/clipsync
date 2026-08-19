@@ -22,6 +22,7 @@ class WizardViewModel(
     private val probes: WizardProbes,
     private val selfTest: ClipboardSelfTest? = null,
     private val selfTestContext: CoroutineContext = Dispatchers.IO,
+    private val requestPrivilegedAuthorization: (((Boolean) -> Unit) -> Unit)? = null,
 ) : ViewModel() {
     private var skipped: Set<WizardStepId> = settings.loadSkippedSteps()
     private val mutableState = MutableStateFlow(buildState(settings.load()))
@@ -63,6 +64,9 @@ class WizardViewModel(
     fun onStepAction(id: WizardStepId) {
         lastActionKind = actionKindFor(id)
         lastActionOfferedInAppGrant = offersInAppGrant(id) && id != WizardStepId.READ_LOGS
+        if (id == WizardStepId.SHIZUKU_AUTH) {
+            requestPrivilegedAuthorization?.invoke { refresh() }
+        }
         refresh()
     }
 
@@ -209,10 +213,16 @@ class WizardViewModel(
             settings: WizardSettings,
             probes: WizardProbes,
             selfTest: ClipboardSelfTest? = null,
+            requestPrivilegedAuthorization: (((Boolean) -> Unit) -> Unit)? = null,
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                WizardViewModel(settings, probes, selfTest) as T
+                WizardViewModel(
+                    settings,
+                    probes,
+                    selfTest,
+                    requestPrivilegedAuthorization = requestPrivilegedAuthorization,
+                ) as T
         }
     }
 }

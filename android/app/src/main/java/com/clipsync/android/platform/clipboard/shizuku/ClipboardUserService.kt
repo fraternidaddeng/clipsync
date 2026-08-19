@@ -88,8 +88,9 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
                 reply?.writeInt(pingCode())
                 return true
             }
-            ShizukuClipboardBinderContract.TRANSACTION_DESTROY -> {
-                data.enforceInterface(ShizukuClipboardBinderContract.DESCRIPTOR)
+            ShizukuClipboardBinderContract.TRANSACTION_DESTROY,
+            -> {
+                runCatching { data.enforceInterface(ShizukuClipboardBinderContract.DESCRIPTOR) }
                 destroy()
                 reply?.writeNoException()
                 return true
@@ -108,6 +109,7 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
             clipboardBinder = null
             adapter = null
         }
+        exitProcess(0)
     }
 
     /**

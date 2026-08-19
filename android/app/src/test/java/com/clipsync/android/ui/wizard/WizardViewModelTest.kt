@@ -223,6 +223,27 @@ class WizardViewModelTest {
     }
 
     @Test
+    fun `privileged host auth is an in-app grant and binder is a recheck`() {
+        var authCalls = 0
+        val model = WizardViewModel(
+            InMemoryWizardSettings(),
+            MutableProbes().toProbes(),
+            requestPrivilegedAuthorization = { onResult ->
+                authCalls += 1
+                onResult(true)
+            },
+        )
+        model.onStepAction(WizardStepId.SHIZUKU_BINDER)
+        assertEquals(WizardActionKind.START_PRIVILEGED_HOST, model.lastActionKind)
+        assertFalse(model.lastActionOfferedInAppGrant)
+        assertEquals(0, authCalls)
+        model.onStepAction(WizardStepId.SHIZUKU_AUTH)
+        assertEquals(WizardActionKind.AUTHORIZE_PRIVILEGED_HOST, model.lastActionKind)
+        assertTrue(model.lastActionOfferedInAppGrant)
+        assertEquals(1, authCalls)
+    }
+
+    @Test
     fun `choices persist through the injected WizardSettings seam`() {
         val store = InMemoryWizardSettings()
         val first = wizard(settings = store)

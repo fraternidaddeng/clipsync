@@ -112,17 +112,13 @@ class AndroidShizukuRuntime(
         return try {
             if (Shizuku.pingBinder()) {
                 ShizukuPresence.RUNNING
-            } else if (isShizukuPackageInstalled()) {
-                ShizukuPresence.NOT_RUNNING
             } else {
-                ShizukuPresence.NOT_INSTALLED
+                // The privileged host is bundled in this APK. Official Shizuku
+                // is an optional already-running backend, not a required install.
+                ShizukuPresence.NOT_RUNNING
             }
         } catch (_: Exception) {
-            if (isShizukuPackageInstalled()) {
-                ShizukuPresence.NOT_RUNNING
-            } else {
-                ShizukuPresence.NOT_INSTALLED
-            }
+            ShizukuPresence.NOT_RUNNING
         }
     }
 
@@ -244,17 +240,7 @@ class AndroidShizukuRuntime(
         }
     }
 
-    private fun isShizukuPackageInstalled(): Boolean {
-        return try {
-            context.packageManager.getPackageInfo(SHIZUKU_MANAGER_PACKAGE, 0)
-            true
-        } catch (_: PackageManager.NameNotFoundException) {
-            false
-        }
-    }
-
     companion object {
-        const val SHIZUKU_MANAGER_PACKAGE = "moe.shizuku.privileged.api"
         const val REQUEST_CODE = 0xC11
         const val USER_SERVICE_VERSION = 2
     }

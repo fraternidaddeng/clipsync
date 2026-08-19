@@ -95,7 +95,7 @@
              shell, not normal apps; exported so the Shizuku server can push
              the binder. See RikkaApps/Shizuku-API README. -->
         <provider
-            android:name="rikka.shizuku.ShizukuProvider"
+            android:name=".platform.clipboard.shizuku.ClipSyncShizukuProvider"
             android:authorities="${applicationId}.shizuku"
             android:multiprocess="false"
             android:enabled="true"

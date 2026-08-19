@@ -46,6 +46,11 @@ class ShizukuUserServiceSurfaceAuditTest {
     }
 
     @Test
+    fun `destroy opcode matches the Shizuku UserService teardown contract`() {
+        assertEquals(16777115, ShizukuClipboardBinderContract.TRANSACTION_DESTROY)
+    }
+
+    @Test
     fun `binder contract transaction names stay on the allow-list`() {
         val actual = ShizukuClipboardBinderContract::class.java.declaredFields
             .filter { field ->

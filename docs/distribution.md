@@ -2,7 +2,7 @@
 
 Personal-use Windows ↔ Android P2P clipboard sync. No cloud, no stores, sideload only. Artifacts live in `releases/<version>/` after `scripts/package-release.ps1`.
 
-This page is the 10-minute install path and the 3-minute “capability unavailable” lookup. It does not ask you to pipe `curl` into a shell or to bundle third-party APKs. In-app UI: Android follows the system locale (English default, Simplified Chinese `zh-rCN`); Windows strings are Simplified Chinese (`Strings.cs`).
+This page is the 10-minute install path and the 3-minute “capability unavailable” lookup. It does not ask you to pipe `curl` into a shell. The Android APK includes a ClipSync-owned privileged host for `SHIZUKU_EVENT`; official Shizuku is optional if it is already running. In-app UI: Android follows the system locale (English default, Simplified Chinese `zh-rCN`); Windows strings are Simplified Chinese (`Strings.cs`).
 
 ## Windows install (10 minutes, no admin)
 
@@ -46,7 +46,7 @@ A signed release APK needs your own keystore at `D:\paste-tools\clipsync-release
 | Mode | What it needs | After reboot | How to stop |
 |---|---|---|---|
 | `FOREGROUND_ONLY` (share / tile / open the app) | Nothing special | Works as soon as you open the app | Disable background sync in settings, or uninstall |
-| `SHIZUKU_EVENT` (preferred) | Shizuku installed, started, and ClipSync authorized in Shizuku | **Manual.** Stage 6 on Redmi Note 11T Pro / MIUI 14: authorization survived reboot + reinstall; the daemon did not. After each reboot run `adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh`, then confirm ClipSync is still authorized. MIUI also needs **自启动** if you want `BOOT_COMPLETED` to launch ClipSync at all (see below). | Revoke ClipSync in Shizuku, or uninstall Shizuku. ClipSync then stops using the binder (process-level health cycle, no Activity needed). |
+| `SHIZUKU_EVENT` (preferred) | Bundled privileged host started as shell, then authorized in the wizard | **Manual host start.** Open ClipSync once so it writes `Android/data/com.clipsync.android/start.sh`, then run the printed adb command yourself. After each reboot start the host again. Official Shizuku already running is also accepted. MIUI also needs **自启动** if you want `BOOT_COMPLETED` to launch ClipSync at all (see below). | Skip the Shizuku cards or revoke the in-app authorization. ClipSync then stops using the binder (process-level health cycle, no Activity needed). |
 | `ADB_LOG_OVERLAY` | `READ_LOGS` via adb **and** overlay consent | `READ_LOGS` is invalidated by install / upgrade / reboot. Re-run `scripts/android-bootstrap.ps1` (print-only) and grant again yourself. Overlay permission usually persists. | `adb shell pm revoke com.clipsync.android android.permission.READ_LOGS`, or turn overlay consent off in the wizard |
 | `OVERLAY_POLLING` | Overlay permission **and** in-app overlay consent (`overlayConsented`) | Overlay permission usually persists; consent is stored in app settings. Screen-off / lock pauses polling. | Turn off overlay in system settings or un-check consent in ClipSync |
 
@@ -68,17 +68,17 @@ System `SYSTEM_ALERT_WINDOW` is not enough. Stage 6 gates `OVERLAY_POLLING` and 
 pwsh scripts/android-bootstrap.ps1
 ```
 
-The script lists devices, checks USB-debugging / adb authorization, inspects whether Shizuku is installed, and **prints** grant, revoke, and Shizuku start commands. It never executes them, never downloads Shizuku, and never bundles a Shizuku APK. Do not pipe `curl` (or any download) into a shell to obtain Shizuku.
+The script lists devices, checks USB-debugging / adb authorization, and **prints** grant, revoke, and privileged-host start commands. It never executes them and never downloads a third-party APK. Do not pipe `curl` (or any download) into a shell.
 
-### Shizuku
+### Privileged host (bundled)
 
-Install and start Shizuku yourself. This project does not ship it.
+The host lives in the ClipSync APK (`clipsync_priv_server`). It is not the official Shizuku manager and does not use that name, icon, or package id.
 
-Verified (stage 6, 2026-08-18, Redmi Note 11T Pro / MIUI 14 / API 33, Shizuku 13.5.4):
+1. Open ClipSync once so it can write `start.sh`.
+2. Copy the command printed by `scripts/android-bootstrap.ps1` and run it yourself as shell.
+3. In the wizard, use **Authorize privileged host**.
 
-- Authorize ClipSync in Shizuku → 已授权应用.
-- After reboot: re-run `start.sh` via adb (command above). Authorization was kept.
-- Shizuku 13.6.0 failed to start a UserService on that MediaTek + MIUI device (upstream); 13.5.4 worked.
+Official Shizuku already running is still accepted as a fallback. Stage 6 verified official 13.5.4 on Redmi Note 11T Pro / MIUI 14; 13.6.0 failed to start a UserService on that MediaTek + MIUI device (upstream).
 
 ### MIUI 自启动 (boot recovery)
 
@@ -93,8 +93,8 @@ To recover automatically after reboot on MIUI: Settings → ClipSync → **自�
 | Pairing keys / history | Stay on device | Stay in `%LOCALAPPDATA%\ClipSync` |
 | Windows peer endpoint | — | Starts with the app (or HKCU Run if you enabled it) |
 | Android foreground service | Needs `BOOT_COMPLETED` (MIUI: grant **自启动**) **or** you open the app | — |
-| Shizuku daemon | Manual `start.sh` after every reboot (verified) | — |
-| Shizuku authorization of ClipSync | Kept across reboot + reinstall (verified on that MIUI) | — |
+| Privileged host / official Shizuku daemon | Manual `start.sh` after every reboot | — |
+| Privileged-host authorization | In-app confirm after the host is running | — |
 | `READ_LOGS` | Re-grant after reboot / upgrade / reinstall | — |
 | Overlay permission | Usually kept | — |
 | Overlay consent / wizard choices | Kept in app settings | — |
@@ -116,9 +116,9 @@ Open ClipSync → Status / wizard. Match the visible label to one row. You shoul
 |---|---|---|
 | **Windows unreachable** / Network not Connected | Phone cannot reach the PC peer | Confirm both on the same LAN/VPN; Windows ClipSync is running (tray icon); Windows firewall allows inbound TCP on the advertised port (default `47654`); pairing QR hosts still match the PC’s current IPs. On the PC, Pair new device… and scan again if the address changed. |
 | **Needs recovery** | Android sync process was killed | Open ClipSync (this alone recovered FGS on MIUI). Then: battery unrestricted, MIUI **自启动**, optional ignore-battery-optimizations. Do not treat this as a clipboard-permission failure. |
-| **Shizuku not running** / `SHIZUKU_NOT_RUNNING` / binder card not ready | Shizuku daemon is down | `pwsh scripts/android-bootstrap.ps1` prints the start command. Run it yourself: `adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh`. Then open Shizuku and confirm it is running. After every reboot, do this again. |
-| **Shizuku not authorized** / `SHIZUKU_NOT_AUTHORIZED` | ClipSync is not in Shizuku’s authorized list | Open Shizuku → 已授权应用 → authorize ClipSync. The wizard “Open Shizuku” card jumps there. |
-| **Shizuku not installed** | No Shizuku package | Install Shizuku yourself (not from this repo). Or skip Shizuku and use overlay / foreground-only. |
+| **Shizuku not running** / `SHIZUKU_NOT_RUNNING` / binder card not ready | Privileged host is down | `pwsh scripts/android-bootstrap.ps1` prints the start command. Open ClipSync once, then run `adb shell sh /storage/emulated/0/Android/data/com.clipsync.android/start.sh` yourself. After every reboot, do this again. Official Shizuku already running also satisfies this card. |
+| **Shizuku not authorized** / `SHIZUKU_NOT_AUTHORIZED` | Host is running but ClipSync has not confirmed use | Wizard → Authorize privileged host. |
+| **Shizuku not installed** | Legacy label; the host is bundled | Treat as not running: start the bundled host, or skip and use overlay / foreground-only. |
 | **READ_LOGS not granted** / `ADB_LOG_READ_LOGS_NOT_GRANTED` | Privilege missing | `pwsh scripts/android-bootstrap.ps1` then copy the printed `adb … pm grant … READ_LOGS` command. There is no in-app dialog. Re-check after install, upgrade, or reboot. |
 | **Overlay not consented** / overlay mode missing even though the system toggle is on | In-app consent is off | Complete the overlay wizard card (consent + system “display over other apps”). Stage 6 will not start overlay or ADB-log-overlay without `overlayConsented`. |
 | **Overlay permission missing** | System `SYSTEM_ALERT_WINDOW` off | Open the wizard overlay card → system settings → allow ClipSync to draw over other apps. |

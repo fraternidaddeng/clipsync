@@ -1,6 +1,7 @@
 package com.clipsync.android
 
 import android.app.Application
+import com.clipsync.android.platform.clipboard.shizuku.host.PrivilegedHostStarter
 import com.clipsync.android.storage.RETENTION_PURGE_INTERVAL_MS
 import com.clipsync.android.storage.SETTING_PAIRED_PEER_ID
 import com.clipsync.android.storage.isRetentionPurgeDue
@@ -26,6 +27,7 @@ class ClipSyncApplication : Application() {
         if (getProcessName() != packageName) {
             return
         }
+        PrivilegedHostStarter.writeScript(this)
         retentionScope.launch {
             // PairingStore (SharedPreferences) is the source of truth for peer
             // identity; reconcile the Room mirror once per process start so a

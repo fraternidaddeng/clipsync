@@ -52,6 +52,7 @@ import com.clipsync.android.platform.clipboard.BackgroundClipboardBackends
 import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardSelfTest
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
+import com.clipsync.android.platform.clipboard.shizuku.ShizukuClipboardBackend
 import com.clipsync.android.service.ServiceProcessState
 import com.clipsync.android.ui.wizard.KeyValueWizardSettings
 import com.clipsync.android.ui.wizard.WizardChoices
@@ -175,6 +176,11 @@ class MainActivity : ComponentActivity() {
                             writeCoordinator,
                         ),
                         selfTest = clipboardSelfTest,
+                        requestPrivilegedAuthorization = { onResult ->
+                            (capture.backends()?.shizuku as? ShizukuClipboardBackend)
+                                ?.requestAuthorization(onResult)
+                                ?: onResult(false)
+                        },
                     ),
                 )
                 LaunchedEffect(Unit) {
