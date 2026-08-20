@@ -244,6 +244,27 @@ class WizardViewModelTest {
     }
 
     @Test
+    fun `privileged host auth card becomes ready when the grant callback fires`() {
+        var complete: ((Boolean) -> Unit)? = null
+        val probes = MutableProbes(shizukuAuth = CapabilityState.NEEDS_USER_ACTION)
+        val model = WizardViewModel(
+            InMemoryWizardSettings(),
+            probes.toProbes(),
+            requestPrivilegedAuthorization = { onResult ->
+                complete = onResult
+            },
+        )
+        assertEquals(CapabilityState.NEEDS_USER_ACTION, model.step(WizardStepId.SHIZUKU_AUTH).state)
+        model.onStepAction(WizardStepId.SHIZUKU_AUTH)
+        assertEquals(CapabilityState.NEEDS_USER_ACTION, model.step(WizardStepId.SHIZUKU_AUTH).state)
+        probes.shizukuAuth = CapabilityState.READY
+        val finish = complete
+        assertNotNull(finish)
+        finish!!.invoke(true)
+        assertEquals(CapabilityState.READY, model.step(WizardStepId.SHIZUKU_AUTH).state)
+    }
+
+    @Test
     fun `choices persist through the injected WizardSettings seam`() {
         val store = InMemoryWizardSettings()
         val first = wizard(settings = store)

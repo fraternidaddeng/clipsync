@@ -30,8 +30,10 @@ class PrivilegedHostService : IShizukuService.Stub() {
     private val handler = Handler(Looper.getMainLooper())
     private val executor = Executors.newSingleThreadExecutor()
     private val clients = mutableListOf<Client>()
+    private val pendingPermissionCodes = mutableMapOf<Int, MutableSet<Int>>()
     private var userService: UserServiceSlot? = null
     private var resendTicks = 0
+    private val clipSyncApplicationInfo: Any? by lazy { loadApplicationInfo() }
     private val resend = object : Runnable {
         override fun run() {
             sendBinderToApp()
@@ -145,19 +147,32 @@ class PrivilegedHostService : IShizukuService.Stub() {
     }
 
     override fun requestPermission(requestCode: Int) {
-        val client = requireClient()
-        client.application.dispatchRequestPermissionResult(
-            requestCode,
-            allowedBundle(true),
-        )
+        val uid = Binder.getCallingUid()
+        val client = findClient()
+        if (client == null) {
+            if (!uidMayUseHost(uid)) {
+                throw SecurityException("requestPermission: uid $uid is not ClipSync")
+            }
+            Log.w(TAG, "requestPermission: no attached client uid=$uid code=$requestCode")
+            synchronized(this) {
+                pendingPermissionCodes.getOrPut(uid) { mutableSetOf() }.add(requestCode)
+            }
+            handler.post { sendBinderToApp(forceReattach = true) }
+            return
+        }
+        Log.i(TAG, "requestPermission uid=${client.uid} code=$requestCode")
+        // bindApplication writes the client's local permissionGranted flag.
+        // dispatchRequestPermissionResult only notifies listeners. Post both
+        // so we never nest a binder call on the attach/requestPermission thread.
+        handler.post { grantClient(client, requestCode) }
     }
 
     override fun checkSelfPermission(): Boolean {
-        if (Binder.getCallingUid() == Os.getuid() || Binder.getCallingPid() == Os.getpid()) {
+        val uid = Binder.getCallingUid()
+        if (uid == Os.getuid() || Binder.getCallingPid() == Os.getpid()) {
             return true
         }
-        requireClient()
-        return true
+        return uidMayUseHost(uid)
     }
 
     override fun shouldShowRequestPermissionRationale(): Boolean = false
@@ -167,19 +182,30 @@ class PrivilegedHostService : IShizukuService.Stub() {
             return
         }
         val packageName = args.getString(ShizukuApiConstants.ATTACH_APPLICATION_PACKAGE_NAME)
-        if (packageName != PrivilegedHostConstants.PACKAGE_NAME) {
+        if (!PrivilegedHostAccess.packageAllowed(packageName)) {
             throw SecurityException("package not owned")
         }
         val uid = Binder.getCallingUid()
-        if (uid != Os.getuid() && packageName !in packagesForUid(uid)) {
+        val owned = packagesForUid(uid)
+        if (!PrivilegedHostAccess.callerOwnsPackage(
+                packageName = packageName!!,
+                callingUid = uid,
+                hostUid = Os.getuid(),
+                packagesForUid = owned,
+                clipSyncUid = clipSyncUid(),
+            )
+        ) {
+            Log.w(TAG, "attach rejected uid=$uid packages=$owned")
             throw SecurityException("package not owned by caller")
         }
         val apiVersion = args.getInt(ShizukuApiConstants.ATTACH_APPLICATION_API_VERSION, -1)
         val pid = Binder.getCallingPid()
         val client = Client(uid, pid, application, apiVersion)
-        synchronized(this) {
+        val queuedCodes = synchronized(this) {
             clients.removeAll { it.uid == uid && it.pid == pid }
             clients.add(client)
+            resendTicks = 0
+            pendingPermissionCodes.remove(uid)?.toList().orEmpty()
         }
         runCatching {
             application.asBinder().linkToDeath(
@@ -189,26 +215,13 @@ class PrivilegedHostService : IShizukuService.Stub() {
                 0,
             )
         }
-        val reply = Bundle()
-        reply.putInt(ShizukuApiConstants.BIND_APPLICATION_SERVER_UID, Os.getuid())
-        reply.putInt(
-            ShizukuApiConstants.BIND_APPLICATION_SERVER_VERSION,
-            if (apiVersion == -1) 12 else PrivilegedHostConstants.SERVER_VERSION,
-        )
-        reply.putInt(
-            ShizukuApiConstants.BIND_APPLICATION_SERVER_PATCH_VERSION,
-            PrivilegedHostConstants.SERVER_PATCH_VERSION,
-        )
-        reply.putString(
-            ShizukuApiConstants.BIND_APPLICATION_SERVER_SECONTEXT,
-            getSELinuxContext(),
-        )
-        reply.putBoolean(ShizukuApiConstants.BIND_APPLICATION_PERMISSION_GRANTED, true)
-        reply.putBoolean(
-            ShizukuApiConstants.BIND_APPLICATION_SHOULD_SHOW_REQUEST_PERMISSION_RATIONALE,
-            false,
-        )
-        application.bindApplication(reply)
+        Log.i(TAG, "attach uid=$uid pid=$pid api=$apiVersion packages=$owned")
+        handler.post {
+            grantClient(client, requestCode = null)
+            for (code in queuedCodes) {
+                dispatchPermissionResult(client, code)
+            }
+        }
     }
 
     override fun exit() {
@@ -288,7 +301,7 @@ class PrivilegedHostService : IShizukuService.Stub() {
         }
     }
 
-    private fun sendBinderToApp() {
+    private fun sendBinderToApp(forceReattach: Boolean = false) {
         HiddenApis.addPowerSaveTempWhitelist(
             PrivilegedHostConstants.PACKAGE_NAME,
             30_000L,
@@ -304,6 +317,9 @@ class PrivilegedHostService : IShizukuService.Stub() {
             }
             val extra = Bundle()
             extra.putParcelable(PrivilegedHostConstants.EXTRA_BINDER, BinderContainer(this))
+            if (forceReattach) {
+                extra.putBoolean(PrivilegedHostConstants.EXTRA_FORCE_REATTACH, true)
+            }
             HiddenApis.callProvider(provider, name, PrivilegedHostConstants.METHOD_SEND_BINDER, extra)
         } catch (error: Exception) {
             Log.w(TAG, "sendBinder: ${error.javaClass.simpleName}")
@@ -319,49 +335,92 @@ class PrivilegedHostService : IShizukuService.Stub() {
         requireClient(func)
     }
 
+    private fun grantClient(client: Client, requestCode: Int?) {
+        runCatching { client.application.bindApplication(bindApplicationReply()) }
+            .onFailure { error ->
+                Log.w(TAG, "bindApplication: ${error.javaClass.simpleName}")
+            }
+        if (requestCode != null) {
+            dispatchPermissionResult(client, requestCode)
+        }
+    }
+
+    private fun dispatchPermissionResult(client: Client, requestCode: Int) {
+        runCatching {
+            client.application.dispatchRequestPermissionResult(
+                requestCode,
+                allowedBundle(true),
+            )
+        }.onFailure { error ->
+            Log.w(TAG, "requestPermission reply: ${error.javaClass.simpleName}")
+        }
+    }
+
+    private fun bindApplicationReply(): Bundle {
+        val reply = Bundle()
+        reply.putInt(ShizukuApiConstants.BIND_APPLICATION_SERVER_UID, Os.getuid())
+        reply.putInt(
+            ShizukuApiConstants.BIND_APPLICATION_SERVER_VERSION,
+            PrivilegedHostConstants.SERVER_VERSION,
+        )
+        reply.putInt(
+            ShizukuApiConstants.BIND_APPLICATION_SERVER_PATCH_VERSION,
+            PrivilegedHostConstants.SERVER_PATCH_VERSION,
+        )
+        reply.putString(
+            ShizukuApiConstants.BIND_APPLICATION_SERVER_SECONTEXT,
+            getSELinuxContext(),
+        )
+        reply.putBoolean(ShizukuApiConstants.BIND_APPLICATION_PERMISSION_GRANTED, true)
+        reply.putBoolean(
+            ShizukuApiConstants.BIND_APPLICATION_SHOULD_SHOW_REQUEST_PERMISSION_RATIONALE,
+            false,
+        )
+        return reply
+    }
+
     private fun requireClient(func: String = "call"): Client {
+        return findClient()
+            ?: throw SecurityException("Permission Denial: $func is not an attached client")
+    }
+
+    private fun findClient(): Client? {
         val uid = Binder.getCallingUid()
         val pid = Binder.getCallingPid()
         synchronized(this) {
-            return clients.firstOrNull { it.uid == uid && it.pid == pid }
-                ?: throw SecurityException("Permission Denial: $func is not an attached client")
+            val key = PrivilegedHostAccess.matchClient(
+                uid,
+                pid,
+                clients.map { PrivilegedHostAccess.ClientKey(it.uid, it.pid) },
+            ) ?: return null
+            return clients.firstOrNull { it.uid == key.uid && it.pid == key.pid }
         }
     }
 
-    private fun packagesForUid(uid: Int): Set<String> {
-        return runCatching {
-            val sm = Class.forName("android.os.ServiceManager")
-            val raw = sm.getMethod("getService", String::class.java)
-                .invoke(null, "package") as? IBinder ?: return emptySet()
-            val stub = Class.forName("android.content.pm.IPackageManager\$Stub")
-            val pm = stub.getMethod("asInterface", IBinder::class.java).invoke(null, raw)
-                ?: return emptySet()
-            val method = pm.javaClass.methods.first {
-                it.name == "getPackagesForUid" && it.parameterTypes.size == 1
+    private fun uidMayUseHost(uid: Int): Boolean {
+        return PrivilegedHostAccess.uidMayUseHost(
+            callingUid = uid,
+            hostUid = Os.getuid(),
+            packagesForUid = packagesForUid(uid),
+            clipSyncUid = clipSyncUid(),
+        )
+    }
+
+    private fun clipSyncUid(): Int? {
+        val info = clipSyncApplicationInfo
+        if (info != null) {
+            runCatching { info.javaClass.getField("uid").getInt(info) }.getOrNull()?.let {
+                return it
             }
-            (method.invoke(pm, uid) as? Array<*>)
-                ?.filterIsInstance<String>()
-                ?.toSet()
-                ?: emptySet()
-        }.getOrDefault(emptySet())
+        }
+        return packageUid(PrivilegedHostConstants.PACKAGE_NAME)
     }
 
-    private fun hostApkPath(): String? {
-        val fromClasspath = System.getProperty("java.class.path")
-            ?.split(':', ';')
-            ?.firstOrNull { it.endsWith(".apk") && File(it).isFile }
-        if (fromClasspath != null) {
-            return fromClasspath
-        }
+    private fun loadApplicationInfo(): Any? {
+        val pm = packageManager() ?: return null
         return runCatching {
-            val sm = Class.forName("android.os.ServiceManager")
-            val raw = sm.getMethod("getService", String::class.java)
-                .invoke(null, "package") as? IBinder ?: return null
-            val stub = Class.forName("android.content.pm.IPackageManager\$Stub")
-            val pm = stub.getMethod("asInterface", IBinder::class.java).invoke(null, raw)
-                ?: return null
             val methods = pm.javaClass.methods.filter { it.name == "getApplicationInfo" }
-            val info = when {
+            when {
                 methods.any {
                     it.parameterTypes.size == 3 &&
                         it.parameterTypes[1] == Long::class.javaPrimitiveType
@@ -377,7 +436,80 @@ class PrivilegedHostService : IShizukuService.Stub() {
                     methods.first { it.parameterTypes.size == 2 }
                         .invoke(pm, PrivilegedHostConstants.PACKAGE_NAME, 0)
                 else -> null
-            } ?: return null
+            }
+        }.getOrNull()
+    }
+
+    private fun packageUid(packageName: String): Int? {
+        val pm = packageManager() ?: return null
+        return runCatching {
+            val methods = pm.javaClass.methods.filter { it.name == "getPackageUid" }
+            val raw = when {
+                methods.any {
+                    it.parameterTypes.size == 3 &&
+                        it.parameterTypes[1] == Long::class.javaPrimitiveType
+                } ->
+                    methods.first {
+                        it.parameterTypes.size == 3 &&
+                            it.parameterTypes[1] == Long::class.javaPrimitiveType
+                    }.invoke(pm, packageName, 0L, 0)
+                methods.any { it.parameterTypes.size == 3 } ->
+                    methods.first { it.parameterTypes.size == 3 }
+                        .invoke(pm, packageName, 0, 0)
+                methods.any { it.parameterTypes.size == 2 } ->
+                    methods.first { it.parameterTypes.size == 2 }
+                        .invoke(pm, packageName, 0)
+                else -> null
+            }
+            when (raw) {
+                is Int -> raw.takeIf { it >= 0 }
+                is Long -> raw.toInt().takeIf { it >= 0 }
+                else -> null
+            }
+        }.getOrNull()
+    }
+
+    private fun packagesForUid(uid: Int): Set<String> {
+        val pm = packageManager() ?: return emptySet()
+        return runCatching {
+            val method = pm.javaClass.methods.first {
+                it.name == "getPackagesForUid" && it.parameterTypes.size == 1
+            }
+            (method.invoke(pm, uid) as? Array<*>)
+                ?.filterIsInstance<String>()
+                ?.toSet()
+                ?: emptySet()
+        }.getOrDefault(emptySet())
+    }
+
+    private fun packageManager(): Any? {
+        return runCatching {
+            val sm = Class.forName("android.os.ServiceManager")
+            val raw = sm.getMethod("getService", String::class.java)
+                .invoke(null, "package") as? IBinder ?: return null
+            val stub = Class.forName("android.content.pm.IPackageManager\$Stub")
+            stub.getMethod("asInterface", IBinder::class.java).invoke(null, raw)
+        }.getOrNull()
+    }
+
+    private fun killUserServiceProcess(processNameSuffix: String) {
+        val processName = "${PrivilegedHostConstants.PACKAGE_NAME}:$processNameSuffix"
+        runCatching {
+            Runtime.getRuntime().exec(
+                arrayOf("sh", "-c", PrivilegedHostScript.killByNiceNameCommand(processName)),
+            ).waitFor()
+        }
+    }
+
+    private fun hostApkPath(): String? {
+        val fromClasspath = System.getProperty("java.class.path")
+            ?.split(':', ';')
+            ?.firstOrNull { it.endsWith(".apk") && File(it).isFile }
+        if (fromClasspath != null) {
+            return fromClasspath
+        }
+        val info = clipSyncApplicationInfo ?: return null
+        return runCatching {
             info.javaClass.getField("sourceDir").get(info) as? String
         }.getOrNull()
     }
@@ -406,13 +538,22 @@ class PrivilegedHostService : IShizukuService.Stub() {
         var binder: IBinder? = null
         private var starting = false
         private val timeout = Runnable {
-            if (starting) {
-                synchronized(this@PrivilegedHostService) {
-                    if (userService === this@UserServiceSlot) {
-                        destroy()
-                        userService = null
-                    }
+            synchronized(this@PrivilegedHostService) {
+                if (userService !== this@UserServiceSlot) {
+                    return@synchronized
                 }
+                // Re-check under the same lock as attachBinder. Reading
+                // [starting] outside it can destroy a slot that attached
+                // between the snapshot and this critical section.
+                if (!UserServiceStartTimeoutPolicy.shouldDestroy(
+                        starting = starting,
+                        binderAttached = binder != null,
+                    )
+                ) {
+                    return@synchronized
+                }
+                destroy()
+                userService = null
             }
         }
         private val death = IBinder.DeathRecipient {
@@ -471,6 +612,8 @@ class PrivilegedHostService : IShizukuService.Stub() {
             }
             callbacks.kill()
             binder = null
+            val suffix = processNameSuffix
+            executor.execute { killUserServiceProcess(suffix) }
         }
     }
 

@@ -32,6 +32,16 @@ class CaptureOwnershipWiringTest {
     }
 
     @Test
+    fun `notification copy starts the capture stack before writing`() {
+        val source = source("notify/CopyClipReceiver.kt")
+        assertTrue(source.contains("ClipboardCaptureRuntime.ensureStarted"))
+        assertTrue(source.contains("writeCoordinator(context).writeText"))
+        val ensureAt = source.indexOf("ClipboardCaptureRuntime.ensureStarted")
+        val writeAt = source.indexOf("writeCoordinator(context).writeText")
+        assertTrue(ensureAt in 0 until writeAt)
+    }
+
+    @Test
     fun `foreground service starts capture for the boot path`() {
         val source = source("service/ClipboardSyncService.kt")
         assertTrue(source.contains("ClipboardCaptureRuntime.ensureStarted(applicationContext)"))

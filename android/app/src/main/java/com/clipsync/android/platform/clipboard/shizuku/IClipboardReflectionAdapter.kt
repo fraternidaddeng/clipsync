@@ -7,11 +7,13 @@ import java.lang.reflect.Method
  * Versioned hidden [android.content.IClipboard] reflection adapter for API 29–35.
  *
  * Official AOSP shapes (verified from IClipboard.aidl):
- * - API 29–33: getPrimaryClip(pkg, userId) / setPrimaryClip(clip, pkg, userId)
- * - API 34–35: adds attributionTag + deviceId
+ * - API 29: get(pkg, userId); set/add(clip/listener, pkg, userId)
+ * - API 30–33: get(pkg, attributionTag, userId); set/add(..., pkg, attributionTag, userId);
+ *   removePrimaryClipChangedListener(listener) is listener-only
+ * - API 34–35: adds deviceId on get/set/add/remove
  *
- * An intermediate (pkg, attributionTag, userId) shape is retained as a fallback
- * for OEM / preview binders that do not match the two AOSP families.
+ * resolve() still falls back across shapes when the preferred arity is missing
+ * (MIUI and other OEMs may expose only one family).
  *
  * Isolated here so JVM tests can reflect against fake interfaces; the real
  * system binder is only used from [ClipboardUserService] on device.
@@ -58,8 +60,13 @@ class IClipboardReflectionAdapter(
     }
 
     fun removePrimaryClipChangedListener(listener: Any): ClipboardAdapterResult {
-        val resolved = resolve(REMOVE_LISTENER, MethodKind.LISTENER) ?: return mismatch()
-        return invokeListener(resolved, listener)
+        val resolved = resolve(REMOVE_LISTENER, MethodKind.REMOVE) ?: return mismatch()
+        return try {
+            resolved.method.invoke(clipboard, *argsForRemove(resolved, listener))
+            ClipboardAdapterResult.Empty
+        } catch (error: Throwable) {
+            ClipboardAdapterResult.Failed(mapInvokeError(error))
+        }
     }
 
     private fun invokeListener(
@@ -67,8 +74,20 @@ class IClipboardReflectionAdapter(
         listener: Any,
     ): ClipboardAdapterResult {
         return try {
-            resolved.method.invoke(clipboard, *argsForListener(resolved.shape, listener))
-            ClipboardAdapterResult.Empty
+            val raw = resolved.method.invoke(clipboard, *argsForListener(resolved.shape, listener))
+            when (raw) {
+                is Boolean -> if (raw) {
+                    ClipboardAdapterResult.Empty
+                } else {
+                    ClipboardAdapterResult.Failed(ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD)
+                }
+                is Int -> if (raw != 0) {
+                    ClipboardAdapterResult.Empty
+                } else {
+                    ClipboardAdapterResult.Failed(ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD)
+                }
+                else -> ClipboardAdapterResult.Empty
+            }
         } catch (error: Throwable) {
             ClipboardAdapterResult.Failed(mapInvokeError(error))
         }
@@ -119,6 +138,13 @@ class IClipboardReflectionAdapter(
                 arrayOf(listener, callingPackage, attributionTag, userId, deviceId)
         }
 
+    private fun argsForRemove(resolved: ResolvedMethod, listener: Any): Array<Any?> {
+        if (resolved.method.parameterTypes.size == 1) {
+            return arrayOf(listener)
+        }
+        return argsForListener(resolved.shape, listener)
+    }
+
     private fun mismatch(): ClipboardAdapterResult =
         ClipboardAdapterResult.Failed(ShizukuErrorCodes.API_MISMATCH)
 
@@ -141,6 +167,10 @@ class IClipboardReflectionAdapter(
 
         internal fun matches(method: Method, shape: IClipboardApiShape, kind: MethodKind): Boolean {
             val params = method.parameterTypes
+            if (kind == MethodKind.REMOVE && params.size == 1) {
+                // API 29–33: removePrimaryClipChangedListener(listener) only.
+                return !isInt(params[0]) && params[0] != String::class.java
+            }
             val expected = shape.paramCount(kind)
             if (params.size != expected) {
                 return false
@@ -173,10 +203,10 @@ class IClipboardReflectionAdapter(
 }
 
 enum class IClipboardApiShape {
-    /** AOSP API 29–33: (pkg, userId). */
+    /** AOSP API 29: (pkg, userId). */
     PKG_USERID,
 
-    /** Fallback: (pkg, attributionTag, userId). */
+    /** AOSP API 30–33: (pkg, attributionTag, userId). */
     PKG_ATTRIBUTION_USERID,
 
     /** AOSP API 34–35: (pkg, attributionTag, userId, deviceId). */
@@ -195,7 +225,7 @@ enum class IClipboardApiShape {
     companion object {
         fun forSdk(sdkInt: Int): IClipboardApiShape = when {
             sdkInt >= 34 -> PKG_ATTRIBUTION_USERID_DEVICE
-            sdkInt >= 29 -> PKG_USERID
+            sdkInt >= 30 -> PKG_ATTRIBUTION_USERID
             else -> PKG_USERID
         }
     }
@@ -205,6 +235,7 @@ enum class MethodKind {
     GET,
     SET,
     LISTENER,
+    REMOVE,
 }
 
 sealed interface ClipboardAdapterResult {

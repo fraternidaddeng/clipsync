@@ -1,5 +1,6 @@
 package com.clipsync.android.ui.wizard
 
+import android.content.Intent
 import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.clipboard.ClipboardWriteMode
@@ -170,6 +171,18 @@ internal fun actionKindFor(id: WizardStepId): WizardActionKind = when (id) {
 
 internal fun offersInAppGrant(id: WizardStepId): Boolean =
     id == WizardStepId.NOTIFICATIONS || id == WizardStepId.SHIZUKU_AUTH
+
+internal object NotificationSettingsTarget {
+    const val ACTION = "android.settings.APP_NOTIFICATION_SETTINGS"
+    const val EXTRA_PACKAGE = "android.provider.extra.APP_PACKAGE"
+}
+
+internal fun appNotificationSettingsIntent(packageName: String): Intent =
+    Intent(NotificationSettingsTarget.ACTION).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        putExtra(NotificationSettingsTarget.EXTRA_PACKAGE, packageName)
+        putExtra("app_package", packageName)
+    }
 
 fun formatLastCheckClock(
     epochMillis: Long,

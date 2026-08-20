@@ -37,14 +37,23 @@ internal object PrivilegedHostScript {
             fi
             echo "info: apk ${'$'}APK"
             self=${'$'}${'$'}
+            US_NAME="${'$'}PACKAGE:clipsync-clipboard"
             for c in /proc/[0-9]*/cmdline; do
               [ -r "${'$'}c" ] || continue
               pid=${'$'}{c#/proc/}
               pid=${'$'}{pid%/cmdline}
               [ "${'$'}pid" = "${'$'}self" ] && continue
               name=${'$'}(tr '\0' ' ' < "${'$'}c" 2>/dev/null)
+              comm=${'$'}(tr -d '\r\n' < "/proc/${'$'}pid/comm" 2>/dev/null)
               case "${'$'}name" in
-                "${'$'}PROCESS_NAME"|*" ${'$'}PROCESS_NAME "*|"${'$'}PROCESS_NAME "*)
+                "${'$'}PROCESS_NAME"|*" ${'$'}PROCESS_NAME "*|"${'$'}PROCESS_NAME "*|*--nice-name=${'$'}PROCESS_NAME*|*--nice-name=${'$'}US_NAME*|*" ${'$'}US_NAME "*|"${'$'}US_NAME "*)
+                  kill -9 "${'$'}pid" 2>/dev/null
+                  echo "info: killed ${'$'}pid"
+                  continue
+                  ;;
+              esac
+              case "${'$'}comm" in
+                clipsync_priv_se*|clipsync_priv_server)
                   kill -9 "${'$'}pid" 2>/dev/null
                   echo "info: killed ${'$'}pid"
                   ;;
@@ -75,10 +84,31 @@ internal object PrivilegedHostScript {
     ): String {
         val processName = "$packageName:$processNameSuffix"
         val starter = PrivilegedHostConstants.USER_SERVICE_STARTER_CLASS
-        return "(CLASSPATH='$apkPath' /system/bin/app_process " +
-            "-Djava.class.path='$apkPath' /system/bin " +
-            "--nice-name='$processName' $starter " +
-            "--token='$token' --package='$packageName' --class='$className' " +
-            "--uid=$callingUid --debug-name='$processName')&"
+        // setsid's first operand is the program. `setsid CLASSPATH=... cmd`
+        // tries to exec the assignment and the child never starts.
+        val spawn =
+            "/system/bin/app_process " +
+                "-Djava.class.path='$apkPath' /system/bin " +
+                "--nice-name='$processName' $starter " +
+                "--token='$token' --package='$packageName' --class='$className' " +
+                "--uid=$callingUid --debug-name='$processName' " +
+                "</dev/null >/dev/null 2>&1"
+        return killByNiceNameCommand(processName) +
+            "export CLASSPATH='$apkPath'; " +
+            "if command -v setsid >/dev/null 2>&1; then " +
+            "setsid $spawn & " +
+            "else $spawn & fi"
+    }
+
+    fun killByNiceNameCommand(processName: String): String {
+        return "self=\$\$; " +
+            "for c in /proc/[0-9]*/cmdline; do " +
+            "[ -r \"\$c\" ] || continue; " +
+            "pid=\${c#/proc/}; pid=\${pid%/cmdline}; " +
+            "[ \"\$pid\" = \"\$self\" ] && continue; " +
+            "name=\$(tr '\\0' ' ' < \"\$c\" 2>/dev/null); " +
+            "case \"\$name\" in *--nice-name=$processName*|*$processName*) " +
+            "kill -9 \"\$pid\" 2>/dev/null ;; esac; " +
+            "done; "
     }
 }

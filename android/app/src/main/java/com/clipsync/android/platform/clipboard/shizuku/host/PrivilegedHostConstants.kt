@@ -15,6 +15,7 @@ internal object PrivilegedHostConstants {
     const val PROVIDER_AUTHORITY = "com.clipsync.android.shizuku"
     const val SCRIPT_FILE_NAME = "start.sh"
     const val EXTRA_BINDER = "moe.shizuku.privileged.api.intent.extra.BINDER"
+    const val EXTRA_FORCE_REATTACH = "com.clipsync.android.extra.FORCE_REATTACH"
     const val METHOD_SEND_BINDER = "sendBinder"
     const val METHOD_SEND_USER_SERVICE = "sendUserService"
     const val SHELL_PACKAGE = "com.android.shell"

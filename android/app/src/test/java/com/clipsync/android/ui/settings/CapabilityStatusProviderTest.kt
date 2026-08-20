@@ -33,6 +33,22 @@ class CapabilityStatusProviderTest {
     }
 
     @Test
+    fun `parked last read state uses the shared state mapping`() {
+        assertEquals(
+            HealthStatus.UNAVAILABLE,
+            healthRead(CapabilityState.UNAVAILABLE).label,
+        )
+        assertEquals(
+            HealthStatus.NEEDS_ACTION,
+            healthRead(CapabilityState.NEEDS_USER_ACTION).label,
+        )
+        assertEquals(
+            HealthStatus.FOREGROUND_ONLY,
+            healthRead(null).label,
+        )
+    }
+
+    @Test
     fun `non-ready read card falls back to the shared state mapping`() {
         assertEquals(
             HealthStatus.DEGRADED,

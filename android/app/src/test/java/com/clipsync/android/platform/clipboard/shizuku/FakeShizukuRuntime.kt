@@ -9,6 +9,7 @@ internal class FakeShizukuRuntime(
     var preV11: Boolean = false
     var session: FakeShizukuClipboardSession? = FakeShizukuClipboardSession()
     var bindError: String? = null
+    var binding: Boolean = false
     var bindCount: Int = 0
     var unbindCount: Int = 0
     var authRequests: Int = 0
@@ -58,6 +59,9 @@ internal class FakeShizukuRuntime(
             return BindResult.Failed(ShizukuErrorCodes.NOT_AUTHORIZED)
         }
         bindError?.let { return BindResult.Failed(it) }
+        if (binding) {
+            return BindResult.Binding
+        }
         val bound = session ?: return BindResult.Failed(ShizukuErrorCodes.USERSERVICE_DEAD)
         return BindResult.Bound(bound)
     }
@@ -104,6 +108,7 @@ internal class FakeShizukuClipboardSession : ShizukuClipboardSession {
     var listener: (() -> Unit)? = null
     var addListenerCount: Int = 0
     var removeListenerCount: Int = 0
+    var addListenerOk: Boolean = true
     val writes = mutableListOf<String>()
 
     override fun readText(): SessionRead = clip
@@ -113,9 +118,13 @@ internal class FakeShizukuClipboardSession : ShizukuClipboardSession {
         return writeResult
     }
 
-    override fun addChangedListener(onChanged: () -> Unit) {
+    override fun addChangedListener(onChanged: () -> Unit): Boolean {
         addListenerCount += 1
+        if (!addListenerOk) {
+            return false
+        }
         listener = onChanged
+        return true
     }
 
     override fun removeChangedListener() {

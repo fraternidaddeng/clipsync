@@ -130,7 +130,7 @@
     <string name="wizard_purpose_battery">Reduce OEM kills so background sync can resume after idle.</string>
     <string name="wizard_purpose_overlay">Briefly focus a 1x1 untouchable window so overlay polling or ADB-log reads can copy text.</string>
     <string name="wizard_purpose_read_logs">Watch system clipboard-change logs as an event signal. The body is still read through overlay.</string>
-    <string name="wizard_purpose_shizuku_binder">Start Clip It Forward\'s bundled privileged host so the clipboard UserService can run as shell. Official Shizuku already running is also accepted.</string>
+    <string name="wizard_purpose_shizuku_binder">Start Clip It Forward\'s bundled privileged host so the clipboard UserService can run as shell.</string>
     <string name="wizard_purpose_shizuku_auth">Confirm this app may use the privileged host. Preferred event-driven read mode.</string>
     <string name="wizard_risk_notifications">A persistent sync notification is visible while the service runs.</string>
     <string name="wizard_risk_fgs">A long-running service uses a little battery and stays in the notification shade.</string>
@@ -147,7 +147,8 @@
     <string name="wizard_skip_shizuku_binder">Privileged event mode stays unavailable.</string>
     <string name="wizard_skip_shizuku_auth">Privileged event mode stays unavailable until you authorize the app.</string>
     <string name="wizard_read_logs_adb_only">READ_LOGS is granted only via adb (android-bootstrap.ps1). There is never an in-app dialog. Re-check after install, upgrade, or reboot.</string>
-    <string name="wizard_privileged_host_adb_only">The bundled host is started only via adb/root already running as shell (android-bootstrap.ps1). Clip It Forward never runs that command. After each reboot, start it again. Official Shizuku already running is also accepted.</string>
+    <string name="wizard_notifications_settings_fallback">If no system dialog appears, Android already recorded an answer. The button then opens this app\'s notification settings.</string>
+    <string name="wizard_privileged_host_adb_only">The bundled host is started only via adb/root already running as shell (android-bootstrap.ps1). Clip It Forward never runs that command. After each reboot, start it again.</string>
     <string name="wizard_action_notifications">Request notification permission</string>
     <string name="wizard_action_fgs">Open app settings</string>
     <string name="wizard_action_battery">Open battery settings</string>

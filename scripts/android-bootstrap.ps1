@@ -86,21 +86,16 @@ $adbAuth = if ($deviceLine -match '\sunauthorized\b') {
 $usbConfig = 'unknown'
 $persistUsb = 'unknown'
 $adbEnabled = 'unknown'
-$officialShizukuPackage = 'moe.shizuku.privileged.api'
-$officialShizukuPath = ''
 $previousNative = $PSNativeCommandUseErrorActionPreference
 $PSNativeCommandUseErrorActionPreference = $false
 try {
     $usbConfig = (@(& adb @adbArgs getprop sys.usb.config 2>$null) -join '').Trim()
     $persistUsb = (@(& adb @adbArgs getprop persist.sys.usb.config 2>$null) -join '').Trim()
     $adbEnabled = (@(& adb @adbArgs settings get global adb_enabled 2>$null) -join '').Trim()
-    $officialShizukuPath = (@(& adb @adbArgs pm path $officialShizukuPackage 2>$null) -join '').Trim()
 } finally {
     $PSNativeCommandUseErrorActionPreference = $previousNative
 }
-$officialShizukuInstalled = $officialShizukuPath -match '^package:'
 $hostStartCommand = "adb -s $Serial shell sh /storage/emulated/0/Android/data/$PackageName/start.sh"
-$officialStartCommand = "adb -s $Serial shell sh /storage/emulated/0/Android/data/$officialShizukuPackage/start.sh"
 
 Write-Host ''
 Write-Host "Developer / USB debugging: adb=$adbAuth, adb_enabled=$adbEnabled, sys.usb.config=$usbConfig, persist.sys.usb.config=$persistUsb"
@@ -111,15 +106,11 @@ Write-Host "Bundled privileged host start command (copy yourself; this script ne
 Write-Host "  $hostStartCommand"
 Write-Host 'Open ClipSync once first so it can write start.sh, then run the command as shell.'
 Write-Host 'After each reboot, start the host again. The wizard Authorize card confirms ClipSync may use it.'
-Write-Host "Official Shizuku package ($officialShizukuPackage): $(if ($officialShizukuInstalled) { 'INSTALLED (optional fallback)' } else { 'NOT_INSTALLED (optional)' })"
-if ($officialShizukuInstalled) {
-    Write-Host 'Optional official Shizuku start command if you prefer that already-running daemon:'
-    Write-Host "  $officialStartCommand"
-}
+Write-Host 'Official Shizuku is not used. The clipboard host is bundled in the ClipSync APK.'
 
 Write-Host ''
 Write-Host 'This script is read-only. It never runs grant, revoke, or host start.'
-Write-Host 'It never downloads Shizuku. The clipboard host is bundled in the ClipSync APK.'
+Write-Host 'It never downloads a third-party host. The clipboard host is bundled in the ClipSync APK.'
 Write-Host 'READ_LOGS cannot be granted by a normal in-app runtime dialog.'
 Write-Host 'Install, upgrade, or reboot invalidates the grant. Re-run this inspector and re-probe the app after those events.'
 Write-Host 'Copy and run one of these commands yourself if you decide to change the grant:'

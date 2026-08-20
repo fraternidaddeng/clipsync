@@ -1,15 +1,12 @@
 package com.clipsync.android
 
-import android.Manifest
 import android.content.ClipboardManager
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -26,7 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.clipsync.android.capture.ClipboardCaptureManager
 import com.clipsync.android.capture.ClipboardCaptureRuntime
@@ -43,9 +40,11 @@ import com.clipsync.android.ui.pairing.PairingUiState
 import com.clipsync.android.ui.pairing.PairingViewModel
 import com.clipsync.android.ui.settings.ClipServices
 import com.clipsync.android.ui.settings.PairedPeerIdSync
+import com.clipsync.android.ui.settings.SETTING_AUTO_APPLY_REMOTE
 import com.clipsync.android.ui.settings.SettingsScreen
 import com.clipsync.android.ui.settings.SettingsViewModel
 import com.clipsync.android.ui.settings.SyncControllerStatusAdapter
+import com.clipsync.android.ui.settings.formatSettingFlag
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackends
@@ -63,14 +62,11 @@ import com.clipsync.android.ui.wizard.WizardScreen
 import com.clipsync.android.ui.wizard.WizardSettings
 import com.clipsync.android.ui.wizard.WizardViewModel
 import java.io.File
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    private val notificationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
-            // Denial is fine: inbound copy notifications stay off; the app must not crash.
-        }
-
     private var captureManager: ClipboardCaptureManager? = null
     private val openTab = MutableStateFlow(0)
     private val pendingPairingPayload = MutableStateFlow<String?>(null)
@@ -81,11 +77,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        requestNotificationPermissionIfNeeded()
         consumePairingPayload(intent)
         openTab.value = tabFrom(intent)
         val pairingStore = ClipServices.pairingStore(this)
         val repository = ClipServices.repository(this)
+        val capture = ClipboardCaptureRuntime.ensureStarted(applicationContext)
+        captureManager = capture
         val writeCoordinator = ClipServices.writeCoordinator(this)
         val serviceSettings = ClipServices.serviceSettings(this)
         val backgroundWanted = serviceSettings.backgroundSyncEnabled()
@@ -112,14 +109,23 @@ class MainActivity : ComponentActivity() {
         // The capture stack (backends, coordinator, health loop) is process-owned
         // so it survives this Activity being destroyed while the FGS keeps the
         // process alive. The Activity only reports visibility and reads state.
-        val capture = ClipboardCaptureRuntime.ensureStarted(applicationContext)
-        captureManager = capture
         val storedWizardSettings = KeyValueWizardSettings(SharedPrefsKeyValueStore(applicationContext))
         val wizardSettings =
             object : WizardSettings by storedWizardSettings {
                 override fun save(choices: WizardChoices) {
+                    val previousUpload = serviceSettings.backgroundSyncEnabled()
                     storedWizardSettings.save(choices)
                     capture.applyChoices(choices)
+                    serviceSettings.setBackgroundSyncEnabled(choices.backgroundAutoUpload)
+                    if (previousUpload != choices.backgroundAutoUpload) {
+                        onBackgroundSyncToggled(choices.backgroundAutoUpload)
+                    }
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        repository.setSetting(
+                            SETTING_AUTO_APPLY_REMOTE,
+                            formatSettingFlag(choices.backgroundAutoApply),
+                        )
+                    }
                 }
             }
         val clipboardSelfTest = ClipboardSelfTest(
@@ -177,9 +183,17 @@ class MainActivity : ComponentActivity() {
                         ),
                         selfTest = clipboardSelfTest,
                         requestPrivilegedAuthorization = { onResult ->
-                            (capture.backends()?.shizuku as? ShizukuClipboardBackend)
-                                ?.requestAuthorization(onResult)
-                                ?: onResult(false)
+                            val backend = capture.backends()?.shizuku as? ShizukuClipboardBackend
+                            if (backend == null) {
+                                onResult(false)
+                            } else {
+                                backend.requestAuthorization { granted ->
+                                    if (granted) {
+                                        capture.access()?.checkHealth()
+                                    }
+                                    onResult(granted)
+                                }
+                            }
                         },
                     ),
                 )
@@ -418,19 +432,6 @@ class MainActivity : ComponentActivity() {
         } else {
             0
         }
-
-    private fun requestNotificationPermissionIfNeeded() {
-        if (Build.VERSION.SDK_INT < 33) {
-            return
-        }
-        val granted = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.POST_NOTIFICATIONS,
-        ) == PackageManager.PERMISSION_GRANTED
-        if (!granted) {
-            runCatching { notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) }
-        }
-    }
 
     private fun deviceLabel(): String {
         val manufacturer = Build.MANUFACTURER.trim()

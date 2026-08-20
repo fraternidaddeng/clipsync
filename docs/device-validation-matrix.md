@@ -58,6 +58,7 @@
 | 18 | 2026-08-18 | `SHIZUKU_EVENT` | 后台同步开关 OFF/ON 连续性 | **DEVICE-VERIFIED** | 同上：双向不中断（单一 `SyncController`，`1ef53ab`）。 |
 | 19 | 2026-08-18 | `SHIZUKU_EVENT` | 孤儿 UserService 跨重装计数 | **DEVICE-VERIFIED** | 同上：计数保持 **1**（`USER_SERVICE_VERSION=2` + callback 死亡退出）。阶段 6 曾在 version=1 下发现残留进程（手工清理）；本行是 version=2 后的复验。 |
 | 20 | 2026-08-18 | Windows 对端 | Modern Standby / S0 idle | **PARTIAL**（观察，**不是通过**） | 同上 + `02ec63c`：本机 S0 idle **不**抬 `PowerModeChanged`（内核 506/507 于 13:43–13:45，应用 0 条电源事件）；短 S0 期间 TCP 仍在（ping 未断）。Win32 `PowerRegisterSuspendResumeNotification` 已落地；**运行期 S0 事件落盘待自然待机**。经典 S3 睡眠→唤醒→复制恰好一条 **NOT_TESTED**。 |
+| 21 | 2026-08-20 | `SHIZUKU_EVENT` | 内置特权宿主：`start.sh`、授权、本机落库 | **DEVICE-VERIFIED**（单机） | `docs/stage-8-change-log.md` §「真机复测（2026-08-20）」：本包 `start.sh` 拉起 `clipsync_priv_server` + `:clipsync-clipboard`；`attach uid=10417 api=13`；运行时 `active_read_mode=SHIZUKU_EVENT` / `READY`；本机 `origin_seq=184` `source_app=shizuku` `content_hash=359799ce9511a3276648bdb8456a65f4d2c08ba2a5a24d399ef1a9e91176316d`。不是官方 Shizuku 13.5.4。未覆盖重启后再跑 `start.sh`、杀 UserService 后恢复。 |
 
 ## 待完成 / 缺口
 

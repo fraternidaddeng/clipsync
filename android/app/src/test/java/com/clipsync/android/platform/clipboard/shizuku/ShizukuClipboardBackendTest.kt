@@ -67,11 +67,13 @@ class ShizukuClipboardBackendTest {
                 mutate = { bindError = ShizukuErrorCodes.BINDER_DEAD },
                 state = CapabilityState.UNAVAILABLE,
                 code = ShizukuErrorCodes.BINDER_DEAD,
+                start = true,
             ),
             ProbeCase(
                 mutate = { session = null },
                 state = CapabilityState.DEGRADED,
                 code = ShizukuErrorCodes.USERSERVICE_DEAD,
+                start = true,
             ),
             ProbeCase(
                 mutate = { session!!.healthError = ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD },
@@ -87,7 +89,11 @@ class ShizukuClipboardBackendTest {
         for (case in cases) {
             val runtime = FakeShizukuRuntime()
             case.mutate(runtime)
-            val report = ShizukuClipboardBackend(runtime).probe()
+            val backend = ShizukuClipboardBackend(runtime)
+            if (case.start) {
+                backend.start { }
+            }
+            val report = backend.probe()
             assertEquals(case.code, report.errorCode)
             assertEquals(case.state, report.readState)
             assertEquals(ClipboardReadMode.SHIZUKU_EVENT, report.readMode)
@@ -100,11 +106,68 @@ class ShizukuClipboardBackendTest {
         runtime.session!!.healthError = null
         val backend = ShizukuClipboardBackend(runtime)
 
-        val report = backend.probe()
-        assertEquals(CapabilityState.READY, report.readState)
-        assertNull(report.errorCode)
+        val unstarted = backend.probe()
+        assertEquals(CapabilityState.READY, unstarted.readState)
+        assertNull(unstarted.errorCode)
+        assertEquals(0, runtime.bindCount)
+        assertEquals(0, runtime.unbindCount)
+
+        backend.start { }
         assertEquals(1, runtime.bindCount)
-        assertEquals(1, runtime.unbindCount)
+        assertEquals(0, runtime.unbindCount)
+        assertTrue(runtime.session!!.addListenerCount >= 1)
+
+        val started = backend.probe()
+        assertEquals(CapabilityState.READY, started.readState)
+        assertNull(started.errorCode)
+        assertEquals(2, runtime.bindCount)
+        assertEquals(0, runtime.unbindCount)
+        assertTrue(runtime.session!!.addListenerCount >= 2)
+    }
+
+    @Test
+    fun `started probe is not ready when addChangedListener fails`() {
+        val runtime = FakeShizukuRuntime()
+        runtime.session!!.addListenerOk = false
+        val backend = ShizukuClipboardBackend(
+            runtime,
+            rebindDelaysMillis = longArrayOf(1_000L, 2_000L),
+        )
+        backend.start { }
+        assertEquals(1_000L, runtime.lastRebindDelayMillis)
+
+        val report = backend.probe()
+        assertEquals(CapabilityState.DEGRADED, report.readState)
+        assertEquals(ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD, report.errorCode)
+        assertEquals(BackendHealthState.DEGRADED, backend.health().state)
+        assertEquals(ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD, backend.health().errorCode)
+        assertEquals(2_000L, runtime.lastRebindDelayMillis)
+
+        runtime.session!!.addListenerOk = true
+        runtime.fireRebind()
+        assertEquals(CapabilityState.READY, backend.probe().readState)
+        assertTrue(runtime.session!!.addListenerCount >= 3)
+    }
+
+    @Test
+    fun `in-flight bind is degraded not user-service dead`() {
+        val runtime = FakeShizukuRuntime()
+        runtime.binding = true
+        val backend = ShizukuClipboardBackend(runtime)
+        backend.start { }
+
+        val report = backend.probe()
+        assertEquals(CapabilityState.DEGRADED, report.readState)
+        assertNull(report.errorCode)
+        val health = backend.health()
+        assertEquals(BackendHealthState.DEGRADED, health.state)
+        assertNull(health.errorCode)
+        assertEquals(0, runtime.rebindScheduleCount)
+
+        runtime.binding = false
+        runtime.capturedOnBound?.invoke(runtime.session!!)
+        assertEquals(CapabilityState.READY, backend.probe().readState)
+        assertEquals(BackendHealthState.HEALTHY, backend.health().state)
     }
 
     @Test
@@ -293,5 +356,6 @@ class ShizukuClipboardBackendTest {
         val mutate: FakeShizukuRuntime.() -> Unit,
         val state: CapabilityState,
         val code: String,
+        val start: Boolean = false,
     )
 }

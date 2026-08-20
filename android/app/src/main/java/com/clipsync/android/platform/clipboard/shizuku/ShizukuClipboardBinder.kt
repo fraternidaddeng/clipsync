@@ -85,18 +85,27 @@ internal class ShizukuClipboardSessionProxy(
         }
     }
 
-    override fun addChangedListener(onChanged: () -> Unit) {
+    override fun addChangedListener(onChanged: () -> Unit): Boolean {
         val callback = ChangeCallbackBinder(onChanged, onClipboardDied)
-        callbackBinder = callback
+        // Keep [previous] reachable until this transact returns.
+        // ClipboardUserService.linkToDeath on the old binder and treats
+        // binderDied as "app process gone" (exitProcess). Dropping the
+        // Java object before the server unlinks it lets GC fire death
+        // and kill :clipsync-clipboard during probe/refresh re-register.
+        val previous = callbackBinder
         val data = Parcel.obtain()
         val reply = Parcel.obtain()
-        try {
+        return try {
             data.writeInterfaceToken(ShizukuClipboardBinderContract.DESCRIPTOR)
             data.writeStrongBinder(callback)
             remote.transact(ShizukuClipboardBinderContract.TRANSACTION_ADD_LISTENER, data, reply, 0)
             reply.readException()
+            val ok = reply.readInt() == 1
+            callbackBinder = if (ok) callback else previous
+            ok
         } catch (_: Exception) {
-            // Health / death path will surface the failure.
+            callbackBinder = previous
+            false
         } finally {
             data.recycle()
             reply.recycle()

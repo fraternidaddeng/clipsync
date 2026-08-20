@@ -1,11 +1,9 @@
 package com.clipsync.android.notify
 
 import android.content.BroadcastReceiver
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import com.clipsync.android.platform.clipboard.AndroidPublicClipboardWriter
-import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
+import com.clipsync.android.capture.ClipboardCaptureRuntime
 import com.clipsync.android.ui.settings.ClipServices
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,12 +16,10 @@ class CopyClipReceiver : BroadcastReceiver() {
         val pending = goAsync()
         scope.launch {
             try {
+                ClipboardCaptureRuntime.ensureStarted(context.applicationContext)
                 val repository = ClipServices.repository(context)
-                val entry = repository.search("").firstOrNull { it.eventId == eventId } ?: return@launch
-                val clipboard = context.applicationContext.getSystemService(ClipboardManager::class.java)
-                    ?: return@launch
-                val coordinator = ClipboardWriteCoordinator(AndroidPublicClipboardWriter(clipboard))
-                coordinator.writeText(entry.content, eventId)
+                val entry = repository.findVisibleEntry(eventId) ?: return@launch
+                ClipServices.writeCoordinator(context).writeText(entry.content, eventId)
             } finally {
                 pending.finish()
             }

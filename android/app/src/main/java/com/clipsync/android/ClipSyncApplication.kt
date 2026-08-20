@@ -27,7 +27,16 @@ class ClipSyncApplication : Application() {
         if (getProcessName() != packageName) {
             return
         }
-        PrivilegedHostStarter.writeScript(this)
+        if (PrivilegedHostStarter.writeScript(this) == null) {
+            retentionScope.launch {
+                repeat(6) {
+                    delay(5_000)
+                    if (PrivilegedHostStarter.writeScript(this@ClipSyncApplication) != null) {
+                        return@launch
+                    }
+                }
+            }
+        }
         retentionScope.launch {
             // PairingStore (SharedPreferences) is the source of truth for peer
             // identity; reconcile the Room mirror once per process start so a

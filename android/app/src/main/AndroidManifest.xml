@@ -25,10 +25,6 @@
         android:name="android.hardware.camera.any"
         android:required="false" />
 
-    <queries>
-        <package android:name="moe.shizuku.privileged.api" />
-    </queries>
-
     <application
         android:name=".ClipSyncApplication"
         android:allowBackup="false"

@@ -17,7 +17,6 @@ import com.clipsync.android.platform.clipboard.ForegroundClipboardBackend
 import com.clipsync.android.platform.clipboard.PublicClipboardWriter
 import com.clipsync.android.storage.ClipRepository
 import com.clipsync.android.storage.createClipRepository
-import com.clipsync.android.ui.HealthValue
 
 /**
  * Process-scoped accessors for UI, share, tile, notification, and service entry points.
@@ -122,6 +121,7 @@ object ClipServices {
             isPaired = { pairingStore(context).peer() != null },
         )
 
+    @Suppress("UNUSED_PARAMETER") // Signature kept for callers; parked stacks must not probe foreground.
     fun capabilities(context: Context, isVisible: () -> Boolean): CapabilityStatusProvider =
         LiveCapabilityStatus(
             read = {
@@ -130,18 +130,14 @@ object ClipServices {
                 // foreground probe (device finding on MIUI).
                 val access = ClipboardCaptureRuntime.currentAccess()
                 val activeMode = access?.state?.activeReadMode
-                if (access != null && activeMode != null) {
-                    healthReadForActiveMode(activeMode, access.lastReadState)
-                } else {
-                    val backend = foregroundBackend(context, isVisible)
-                    val report = backend?.probe()
-                    when (report?.readState) {
-                        CapabilityState.READY -> healthRead(CapabilityState.READY) as HealthValue
-                        CapabilityState.DEGRADED -> healthRead(CapabilityState.DEGRADED)
-                        CapabilityState.UNAVAILABLE -> healthRead(CapabilityState.UNAVAILABLE)
-                        CapabilityState.NEEDS_USER_ACTION -> healthRead(CapabilityState.NEEDS_USER_ACTION)
-                        CapabilityState.UNKNOWN, null -> healthRead(null)
-                    }
+                when {
+                    access != null && activeMode != null ->
+                        healthReadForActiveMode(activeMode, access.lastReadState)
+                    // Parked stack: do not probe ForegroundClipboardBackend or the
+                    // card claims "Foreground ready" while capture is waiting.
+                    access != null && activeMode == null ->
+                        healthRead(access.lastReadState)
+                    else -> healthRead(null)
                 }
             },
             write = {

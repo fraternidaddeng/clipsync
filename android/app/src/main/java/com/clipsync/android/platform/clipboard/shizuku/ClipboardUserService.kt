@@ -69,8 +69,12 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
             }
             ShizukuClipboardBinderContract.TRANSACTION_ADD_LISTENER -> {
                 data.enforceInterface(ShizukuClipboardBinderContract.DESCRIPTOR)
-                replaceAppCallback(data.readStrongBinder())
+                val callback = data.readStrongBinder()
+                replaceAppCallback(callback)
                 val ok = registerSystemListener()
+                if (!ok) {
+                    replaceAppCallback(null)
+                }
                 reply?.writeNoException()
                 reply?.writeInt(if (ok) 1 else 0)
                 return true

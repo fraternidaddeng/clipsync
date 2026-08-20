@@ -60,52 +60,123 @@ class PrivilegedUserServiceStarter {
             uid: Int,
             debugName: String?,
         ): IBinder? {
-            return try {
-                val threadClass = Class.forName("android.app.ActivityThread")
-                val activityThread = threadClass.getMethod("systemMain").invoke(null)
-                val systemContext = threadClass.getMethod("getSystemContext").invoke(activityThread)
-                    as Context
-                val userId = if (uid >= 0) uid / 100_000 else 0
-                HiddenApis.setDdmAppName(debugName ?: "$pkg:user_service", userId)
-                val userHandle = if (uid >= 0) {
-                    UserHandle.getUserHandleForUid(uid)
-                } else {
-                    UserHandle.getUserHandleForUid(android.os.Process.myUid())
+            val userId = if (uid >= 0) uid / 100_000 else 0
+            HiddenApis.setDdmAppName(debugName ?: "$pkg:user_service", userId)
+            val viaFramework = runCatching { createServiceWithActivityThread(pkg, cls, uid) }
+                .onFailure { error ->
+                    Log.w(TAG, "activity-thread path failed: ${rootCauseName(error)}")
                 }
-                val context = systemContext.javaClass.methods.first {
-                    it.name == "createPackageContextAsUser"
-                }.invoke(
+                .getOrNull()
+            if (viaFramework != null) {
+                return viaFramework
+            }
+            // CLASSPATH is already this APK. ClipboardUserService does not need
+            // an Application; MIUI 14's ActivityThread.systemMain() throws while
+            // reading theme_compatibility.xml as shell.
+            return runCatching { instantiateService(Class.forName(cls), context = null) }
+                .onFailure { error ->
+                    Log.w(TAG, "unable to start $pkg/$cls: ${rootCauseName(error)}")
+                }
+                .getOrNull()
+        }
+
+        private fun createServiceWithActivityThread(
+            pkg: String,
+            cls: String,
+            uid: Int,
+        ): IBinder {
+            val threadClass = Class.forName("android.app.ActivityThread")
+            val activityThread = activityThreadInstance(threadClass)
+            val systemContext = threadClass.getMethod("getSystemContext").invoke(activityThread)
+                as Context
+            val userHandle = if (uid >= 0) {
+                UserHandle.getUserHandleForUid(uid)
+            } else {
+                UserHandle.getUserHandleForUid(android.os.Process.myUid())
+            }
+            val asUser = systemContext.javaClass.methods.firstOrNull {
+                it.name == "createPackageContextAsUser"
+            }
+            val context = if (asUser != null) {
+                asUser.invoke(
                     systemContext,
                     pkg,
                     Context.CONTEXT_INCLUDE_CODE or Context.CONTEXT_IGNORE_SECURITY,
                     userHandle,
                 ) as Context
-                val packageInfoField = context.javaClass.getDeclaredField("mPackageInfo")
-                packageInfoField.isAccessible = true
-                val loadedApk = packageInfoField.get(context)
-                val instrumentationClass = Class.forName("android.app.Instrumentation")
-                val makeApplication = loadedApk.javaClass.getDeclaredMethod(
-                    "makeApplication",
-                    Boolean::class.javaPrimitiveType,
-                    instrumentationClass,
+            } else {
+                systemContext.createPackageContext(
+                    pkg,
+                    Context.CONTEXT_INCLUDE_CODE or Context.CONTEXT_IGNORE_SECURITY,
                 )
-                val application = makeApplication.invoke(loadedApk, false, null) as Application
-                val initial = threadClass.getDeclaredField("mInitialApplication")
-                initial.isAccessible = true
-                initial.set(activityThread, application)
-                val serviceClass = application.classLoader.loadClass(cls)
+            }
+            val packageInfoField = context.javaClass.getDeclaredField("mPackageInfo")
+            packageInfoField.isAccessible = true
+            val loadedApk = packageInfoField.get(context)
+            val instrumentationClass = Class.forName("android.app.Instrumentation")
+            val makeApplication = loadedApk.javaClass.getDeclaredMethod(
+                "makeApplication",
+                Boolean::class.javaPrimitiveType,
+                instrumentationClass,
+            )
+            val application = makeApplication.invoke(loadedApk, false, null) as Application
+            val initial = threadClass.getDeclaredField("mInitialApplication")
+            initial.isAccessible = true
+            initial.set(activityThread, application)
+            return instantiateService(application.classLoader.loadClass(cls), application)
+        }
+
+        /**
+         * Avoid `ActivityThread.systemMain()`: on this MIUI 14 image it calls
+         * `Resources.getSystem()` and throws when
+         * `/data/system/theme_config/theme_compatibility.xml` is missing.
+         * Construct + `attach(true)` is enough for `getSystemContext()`.
+         */
+        private fun activityThreadInstance(threadClass: Class<*>): Any {
+            val ctor = threadClass.getDeclaredConstructor()
+            ctor.isAccessible = true
+            val thread = ctor.newInstance()
+            val attach = threadClass.declaredMethods.filter { it.name == "attach" }
+            val two = attach.firstOrNull { it.parameterTypes.size == 2 }
+            if (two != null) {
+                two.isAccessible = true
+                val second = two.parameterTypes[1]
+                when {
+                    second == Long::class.javaPrimitiveType -> two.invoke(thread, true, 0L)
+                    second == Int::class.javaPrimitiveType -> two.invoke(thread, true, 0)
+                    else -> two.invoke(thread, true, 0)
+                }
+                return thread
+            }
+            val one = attach.firstOrNull {
+                it.parameterTypes.size == 1 &&
+                    it.parameterTypes[0] == Boolean::class.javaPrimitiveType
+            }
+            if (one != null) {
+                one.isAccessible = true
+                one.invoke(thread, true)
+            }
+            return thread
+        }
+
+        private fun instantiateService(serviceClass: Class<*>, context: Context?): IBinder {
+            if (context != null) {
                 val withContext = runCatching {
                     serviceClass.getConstructor(Context::class.java)
                 }.getOrNull()
                 if (withContext != null) {
-                    withContext.newInstance(application) as IBinder
-                } else {
-                    serviceClass.getDeclaredConstructor().newInstance() as IBinder
+                    return withContext.newInstance(context) as IBinder
                 }
-            } catch (error: Throwable) {
-                Log.w(TAG, "unable to start $pkg/$cls: ${error.javaClass.simpleName}")
-                null
             }
+            return serviceClass.getDeclaredConstructor().newInstance() as IBinder
+        }
+
+        private fun rootCauseName(error: Throwable): String {
+            var current = error
+            while (current.cause != null && current.cause !== current) {
+                current = current.cause!!
+            }
+            return current.javaClass.simpleName
         }
 
         private fun sendBinder(binder: IBinder, token: String): Boolean {

@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import rikka.shizuku.Shizuku
 
 /**
@@ -25,6 +26,7 @@ class AndroidShizukuRuntime(
     private var deathListener: ((BinderDeathKind) -> Unit)? = null
     private var onBound: ((ShizukuClipboardSession) -> Unit)? = null
     private var rebindRunnable: Runnable? = null
+    private var bindTimeoutRunnable: Runnable? = null
     private var binding: Boolean = false
     private var shizukuDeathLinked: Boolean = false
 
@@ -41,17 +43,19 @@ class AndroidShizukuRuntime(
             if (requestCode != REQUEST_CODE) {
                 return@OnRequestPermissionResultListener
             }
-            pendingAuthResult?.invoke(grantResult == PackageManager.PERMISSION_GRANTED)
-            pendingAuthResult = null
+            finishAuth(grantResult == PackageManager.PERMISSION_GRANTED)
         }
 
     private var pendingAuthResult: ((Boolean) -> Unit)? = null
+    private var authSettleRunnable: Runnable? = null
+    private var authBinderListener: Shizuku.OnBinderReceivedListener? = null
 
     private val binderDeadListener = Shizuku.OnBinderDeadListener {
         synchronized(lock) {
             session = null
             binding = false
         }
+        cancelBindTimeout()
         deathListener?.invoke(BinderDeathKind.SHIZUKU)
     }
 
@@ -60,11 +64,13 @@ class AndroidShizukuRuntime(
             session = null
             binding = false
         }
+        cancelBindTimeout()
         deathListener?.invoke(BinderDeathKind.SHIZUKU)
     }
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            cancelBindTimeout()
             if (service == null || !service.pingBinder()) {
                 synchronized(lock) { binding = false }
                 deathListener?.invoke(BinderDeathKind.USER_SERVICE)
@@ -83,6 +89,7 @@ class AndroidShizukuRuntime(
                             }
                             binding = false
                         }
+                        cancelBindTimeout()
                         deathListener?.invoke(BinderDeathKind.USER_SERVICE)
                     },
                     0,
@@ -104,6 +111,7 @@ class AndroidShizukuRuntime(
                 session = null
                 binding = false
             }
+            cancelBindTimeout()
             deathListener?.invoke(BinderDeathKind.USER_SERVICE)
         }
     }
@@ -113,8 +121,7 @@ class AndroidShizukuRuntime(
             if (Shizuku.pingBinder()) {
                 ShizukuPresence.RUNNING
             } else {
-                // The privileged host is bundled in this APK. Official Shizuku
-                // is an optional already-running backend, not a required install.
+                // The privileged host is bundled in this APK.
                 ShizukuPresence.NOT_RUNNING
             }
         } catch (_: Exception) {
@@ -143,21 +150,35 @@ class AndroidShizukuRuntime(
     }
 
     override fun requestAuthorization(onResult: (granted: Boolean) -> Unit) {
+        cancelAuthSettle()
         try {
             if (!Shizuku.pingBinder()) {
                 onResult(false)
                 return
             }
-            if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) {
+            if (permissionGranted()) {
                 onResult(true)
                 return
             }
+            // Do not call onBinderReceived(null) here. That tears down the
+            // living host binder, fires dead listeners, and makes
+            // requestPermission throw before the host can reply.
             pendingAuthResult = onResult
             Shizuku.addRequestPermissionResultListener(permissionListener)
             Shizuku.requestPermission(REQUEST_CODE)
-        } catch (_: Exception) {
-            onResult(false)
+            Log.i(TAG, "requestPermission sent")
+        } catch (error: Exception) {
+            Log.w(TAG, "requestPermission: ${error.javaClass.simpleName}")
+            pendingAuthResult = onResult
         }
+        if (completeAuthIfGranted()) {
+            return
+        }
+        if (pendingAuthResult !== onResult) {
+            return
+        }
+        watchBinderForAuth()
+        scheduleAuthPoll(onResult)
     }
 
     override fun bindUserService(): BindResult {
@@ -177,19 +198,22 @@ class AndroidShizukuRuntime(
         linkShizukuDeath()
         synchronized(lock) {
             session?.let { return BindResult.Bound(it) }
-            if (!binding) {
-                binding = true
-                try {
-                    Shizuku.bindUserService(userServiceArgs, connection)
-                } catch (_: Exception) {
-                    binding = false
-                    return BindResult.Failed(ShizukuErrorCodes.USERSERVICE_DEAD)
-                }
+            if (binding) {
+                return BindResult.Binding
             }
+            binding = true
+        }
+        scheduleBindTimeout()
+        try {
+            Shizuku.bindUserService(userServiceArgs, connection)
+        } catch (_: Exception) {
+            synchronized(lock) { binding = false }
+            cancelBindTimeout()
+            return BindResult.Failed(ShizukuErrorCodes.USERSERVICE_DEAD)
         }
         synchronized(lock) {
             session?.let { return BindResult.Bound(it) }
-            return BindResult.Failed(ShizukuErrorCodes.USERSERVICE_DEAD)
+            return BindResult.Binding
         }
     }
 
@@ -198,6 +222,7 @@ class AndroidShizukuRuntime(
             session = null
             binding = false
         }
+        cancelBindTimeout()
         try {
             Shizuku.unbindUserService(userServiceArgs, connection, true)
         } catch (_: Exception) {
@@ -227,21 +252,126 @@ class AndroidShizukuRuntime(
         rebindRunnable = null
     }
 
-    private fun linkShizukuDeath() {
-        if (shizukuDeathLinked) {
+    private fun permissionGranted(): Boolean =
+        Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED
+
+    private fun permissionGrantedOrFalse(): Boolean =
+        try {
+            permissionGranted()
+        } catch (_: Exception) {
+            false
+        }
+
+    private fun completeAuthIfGranted(): Boolean {
+        if (pendingAuthResult == null || !permissionGrantedOrFalse()) {
+            return false
+        }
+        finishAuth(true)
+        return true
+    }
+
+    private fun finishAuth(granted: Boolean) {
+        cancelAuthSettle()
+        val pending = pendingAuthResult
+        pendingAuthResult = null
+        pending?.invoke(granted)
+    }
+
+    private fun watchBinderForAuth() {
+        if (authBinderListener != null) {
             return
         }
+        val listener = Shizuku.OnBinderReceivedListener {
+            completeAuthIfGranted()
+        }
+        authBinderListener = listener
+        Shizuku.addBinderReceivedListenerSticky(listener)
+    }
+
+    private fun scheduleAuthPoll(onResult: (granted: Boolean) -> Unit) {
+        val deadline = System.currentTimeMillis() + AUTH_SETTLE_MS
+        val poll = object : Runnable {
+            override fun run() {
+                if (pendingAuthResult !== onResult) {
+                    return
+                }
+                if (permissionGrantedOrFalse()) {
+                    finishAuth(true)
+                    return
+                }
+                if (!runCatching { Shizuku.pingBinder() }.getOrDefault(false)) {
+                    finishAuth(false)
+                    return
+                }
+                if (System.currentTimeMillis() >= deadline) {
+                    finishAuth(false)
+                    return
+                }
+                mainHandler.postDelayed(this, AUTH_POLL_MS)
+            }
+        }
+        authSettleRunnable = poll
+        mainHandler.postDelayed(poll, AUTH_POLL_MS)
+    }
+
+    private fun cancelAuthSettle() {
+        authSettleRunnable?.let { mainHandler.removeCallbacks(it) }
+        authSettleRunnable = null
+        runCatching { Shizuku.removeRequestPermissionResultListener(permissionListener) }
+        authBinderListener?.let { listener ->
+            runCatching { Shizuku.removeBinderReceivedListener(listener) }
+        }
+        authBinderListener = null
+    }
+
+    private fun scheduleBindTimeout() {
+        cancelBindTimeout()
+        val timeout = Runnable {
+            val timedOut = synchronized(lock) {
+                if (session == null && binding) {
+                    binding = false
+                    true
+                } else {
+                    false
+                }
+            }
+            if (timedOut) {
+                runCatching { Shizuku.unbindUserService(userServiceArgs, connection, true) }
+                deathListener?.invoke(BinderDeathKind.USER_SERVICE)
+            }
+        }
+        bindTimeoutRunnable = timeout
+        mainHandler.postDelayed(timeout, BIND_TIMEOUT_MS)
+    }
+
+    private fun cancelBindTimeout() {
+        bindTimeoutRunnable?.let { mainHandler.removeCallbacks(it) }
+        bindTimeoutRunnable = null
+    }
+
+    private fun linkShizukuDeath() {
+        if (!shizukuDeathLinked) {
+            try {
+                Shizuku.addBinderDeadListener(binderDeadListener)
+                shizukuDeathLinked = true
+            } catch (_: Exception) {
+                shizukuDeathLinked = false
+                return
+            }
+        }
         try {
-            Shizuku.addBinderDeadListener(binderDeadListener)
             Shizuku.getBinder()?.linkToDeath(shizukuDeathRecipient, 0)
-            shizukuDeathLinked = true
         } catch (_: Exception) {
-            shizukuDeathLinked = false
+            // Binder already died or was replaced; bindUserService will retry.
         }
     }
 
     companion object {
         const val REQUEST_CODE = 0xC11
         const val USER_SERVICE_VERSION = 2
+        const val AUTH_SETTLE_MS = 12_000L
+        const val AUTH_POLL_MS = 100L
+        const val BIND_TIMEOUT_MS = 35_000L
+        private const val TAG = "ClipSyncShizuku"
     }
 }

@@ -5,6 +5,7 @@ import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardChange
 import com.clipsync.android.platform.clipboard.ClipboardHealthLoop
 import com.clipsync.android.ui.wizard.WizardChoices
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,6 +31,7 @@ class ClipboardCaptureManager(
     private val onCapture: suspend (ClipboardChange) -> Unit,
     private val scope: CoroutineScope,
     private val rebuildDebounceMs: Long = REBUILD_DEBOUNCE_MS,
+    private val captureDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
     /**
      * One built generation of the capture stack. [backends] is null only in
@@ -78,9 +80,17 @@ class ClipboardCaptureManager(
      * old Activity onStop behavior.
      */
     fun setActivityVisible(visible: Boolean) {
-        activityVisible.set(visible)
+        val becameVisible = !activityVisible.getAndSet(visible) && visible
         if (!visible) {
             currentStack?.releaseOverlayFocus?.invoke()
+            return
+        }
+        if (becameVisible) {
+            // Cold start parks FOREGROUND_ONLY until the Activity is visible;
+            // recover immediately instead of waiting for the 10s health tick.
+            synchronized(lock) {
+                currentStack?.access?.checkHealth()
+            }
         }
     }
 
@@ -134,11 +144,15 @@ class ClipboardCaptureManager(
 
     private fun startLocked(choices: WizardChoices) {
         val stack = buildStack(choices) { activityVisible.get() }
+        // Assign before the health loop: the first tick is immediate and would
+        // no-op (then wait 10s) if currentStack were still null.
+        currentStack = stack
+        appliedChoices = choices
         stack.access.requestMode(choices.preferredReadMode)
         stack.access.start { change ->
             // Persistence and policy checks run on IO even when the manager
             // scope is main-thread (overlay window operations need main).
-            scope.launch(Dispatchers.IO) { onCapture(change) }
+            scope.launch(captureDispatcher) { onCapture(change) }
         }
         // Health ticks take the same lock as rebuilds: a tick must never probe
         // a stack that a concurrent applyChoices is tearing down.
@@ -147,8 +161,6 @@ class ClipboardCaptureManager(
                 currentStack?.access?.checkHealth()
             }
         }.start(scope)
-        currentStack = stack
-        appliedChoices = choices
     }
 
     private fun stopLocked() {

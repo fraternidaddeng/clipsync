@@ -20,6 +20,12 @@ class PrivilegedHostScriptTest {
     }
 
     @Test
+    fun `kill loop matches app_process nice-name without requiring surrounding spaces`() {
+        val script = PrivilegedHostScript.render()
+        assertTrue(script.contains("*--nice-name=\$PROCESS_NAME*"))
+    }
+
+    @Test
     fun `user service command loads ClipSync classes from this apk`() {
         val cmd = PrivilegedHostScript.userServiceCommand(
             apkPath = "/data/app/com.clipsync.android/base.apk",
@@ -29,12 +35,23 @@ class PrivilegedHostScriptTest {
             processNameSuffix = "clipsync-clipboard",
             callingUid = 10123,
         )
-        assertTrue(cmd.startsWith("(CLASSPATH='/data/app/com.clipsync.android/base.apk'"))
+        assertTrue(cmd.contains("export CLASSPATH='/data/app/com.clipsync.android/base.apk'"))
         assertTrue(cmd.contains("-Djava.class.path='/data/app/com.clipsync.android/base.apk'"))
         assertTrue(cmd.contains(PrivilegedHostConstants.USER_SERVICE_STARTER_CLASS))
         assertTrue(cmd.contains("--class='com.clipsync.android.platform.clipboard.shizuku.ClipboardUserService'"))
         assertTrue(cmd.contains("--nice-name='com.clipsync.android:clipsync-clipboard'"))
+        assertTrue(cmd.contains("setsid /system/bin/app_process"))
+        assertFalse(cmd.contains("setsid CLASSPATH="))
+        assertTrue(cmd.contains("*--nice-name=com.clipsync.android:clipsync-clipboard*"))
         assertFalse(cmd.contains("moe.shizuku.privileged.api"))
+    }
+
+    @Test
+    fun `host script also kills leftover clipboard user services`() {
+        val script = PrivilegedHostScript.render()
+        assertTrue(script.contains("US_NAME=\"\$PACKAGE:clipsync-clipboard\""))
+        assertTrue(script.contains("*--nice-name=\$US_NAME*"))
+        assertTrue(script.contains("clipsync_priv_se*"))
     }
 
     @Test

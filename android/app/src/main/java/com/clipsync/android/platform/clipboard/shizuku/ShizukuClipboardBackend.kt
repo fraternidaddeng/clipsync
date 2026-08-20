@@ -51,31 +51,36 @@ class ShizukuClipboardBackend internal constructor(
             lastErrorCode = blocked
             return report(ShizukuErrorCodes.probeReadState(blocked), blocked)
         }
+        if (!started) {
+            val existing = runtime.currentSession()
+            if (existing != null) {
+                return reportPing(existing.pingHealth())
+            }
+            lastErrorCode = null
+            return report(CapabilityState.READY, errorCode = null)
+        }
         return when (val bind = runtime.bindUserService()) {
             is BindResult.Failed -> {
                 lastErrorCode = bind.errorCode
                 report(ShizukuErrorCodes.probeReadState(bind.errorCode), bind.errorCode)
             }
+            BindResult.Binding -> {
+                report(CapabilityState.DEGRADED, errorCode = null)
+            }
             is BindResult.Bound -> {
                 val ping = bind.session.pingHealth()
-                if (!started) {
-                    runtime.unbindUserService()
+                // After UserService restart the probe can win the race against
+                // onBound; attachSession re-registers the change listener.
+                val attached = attachSession(
+                    bind.session,
+                    refreshBaseline = session !== bind.session,
+                )
+                if (!attached) {
+                    val code = lastErrorCode ?: ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD
+                    scheduleRebind()
+                    report(ShizukuErrorCodes.probeReadState(code), code)
                 } else {
-                    // Adopting a session here must go through attachSession: after a
-                    // UserService restart the periodic probe can win the race against
-                    // the rebind callback, and a bare `session = bind.session` leaves
-                    // the change listener unregistered — READY health, zero events
-                    // (observed on MIUI when the :clipsync-clipboard process was
-                    // killed by the OS). Re-adding the listener is replace-semantics
-                    // idempotent; the baseline refresh only runs on identity change.
-                    attachSession(bind.session, refreshBaseline = session !== bind.session)
-                }
-                if (ping != null) {
-                    lastErrorCode = ping
-                    report(ShizukuErrorCodes.probeReadState(ping), ping)
-                } else {
-                    lastErrorCode = null
-                    report(CapabilityState.READY, errorCode = null)
+                    reportPing(ping)
                 }
             }
         }
@@ -89,10 +94,17 @@ class ShizukuClipboardBackend internal constructor(
             if (!started) {
                 return@setOnBound
             }
-            attachSession(bound, refreshBaseline = true)
+            if (!attachSession(bound, refreshBaseline = true)) {
+                scheduleRebind()
+            }
         }
         when (val bind = runtime.bindUserService()) {
-            is BindResult.Bound -> attachSession(bind.session, refreshBaseline = true)
+            is BindResult.Bound -> {
+                if (!attachSession(bind.session, refreshBaseline = true)) {
+                    scheduleRebind()
+                }
+            }
+            BindResult.Binding -> Unit
             is BindResult.Failed -> {
                 lastErrorCode = bind.errorCode
                 scheduleRebind()
@@ -119,7 +131,15 @@ class ShizukuClipboardBackend internal constructor(
             return ClipboardReadResult.Failure(blocked)
         }
         val active = session ?: when (val bind = runtime.bindUserService()) {
-            is BindResult.Bound -> bind.session.also { if (started) session = it }
+            is BindResult.Bound -> {
+                if (started) {
+                    attachSession(bind.session, refreshBaseline = true)
+                }
+                session ?: bind.session
+            }
+            BindResult.Binding -> {
+                return ClipboardReadResult.Failure(ShizukuErrorCodes.USERSERVICE_DEAD)
+            }
             is BindResult.Failed -> {
                 lastErrorCode = bind.errorCode
                 return ClipboardReadResult.Failure(bind.errorCode)
@@ -150,12 +170,22 @@ class ShizukuClipboardBackend internal constructor(
         }
         val ping = session?.pingHealth()
         if (session == null) {
-            val code = lastErrorCode ?: ShizukuErrorCodes.USERSERVICE_DEAD
-            return BackendHealth(degradedOrFailed(code), checkedAt, code)
+            val code = lastErrorCode
+            return if (code == null || !isCurrentDeath(code)) {
+                BackendHealth(BackendHealthState.DEGRADED, checkedAt)
+            } else {
+                BackendHealth(degradedOrFailed(code), checkedAt, code)
+            }
         }
         if (ping != null) {
+            lastErrorCode = ping
             return BackendHealth(degradedOrFailed(ping), checkedAt, ping)
         }
+        val listenerError = lastErrorCode
+        if (listenerError == ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD) {
+            return BackendHealth(degradedOrFailed(listenerError), checkedAt, listenerError)
+        }
+        lastErrorCode = null
         return BackendHealth(BackendHealthState.HEALTHY, checkedAt)
     }
 
@@ -165,15 +195,19 @@ class ShizukuClipboardBackend internal constructor(
      * repeatedly (start, rebind callback, scheduled rebind, periodic probe) is safe
      * and self-heals a lost registration.
      */
-    private fun attachSession(bound: ShizukuClipboardSession, refreshBaseline: Boolean) {
+    private fun attachSession(bound: ShizukuClipboardSession, refreshBaseline: Boolean): Boolean {
         session = bound
+        if (!bound.addChangedListener(::onChangeSignal)) {
+            lastErrorCode = ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD
+            return false
+        }
         lastErrorCode = null
         rebindAttempt = 0
         runtime.cancelRebind()
-        bound.addChangedListener(::onChangeSignal)
         if (refreshBaseline) {
             refreshHashBaseline()
         }
+        return true
     }
 
     private fun onChangeSignal() {
@@ -237,7 +271,12 @@ class ShizukuClipboardBackend internal constructor(
                 return@scheduleRebind
             }
             when (val bind = runtime.bindUserService()) {
-                is BindResult.Bound -> attachSession(bind.session, refreshBaseline = true)
+                is BindResult.Bound -> {
+                    if (!attachSession(bind.session, refreshBaseline = true)) {
+                        scheduleRebind()
+                    }
+                }
+                BindResult.Binding -> Unit
                 is BindResult.Failed -> {
                     lastErrorCode = bind.errorCode
                     scheduleRebind()
@@ -256,6 +295,15 @@ class ShizukuClipboardBackend internal constructor(
             ShizukuPresence.RUNNING ->
                 if (runtime.isAuthorized()) null else ShizukuErrorCodes.NOT_AUTHORIZED
         }
+    }
+
+    private fun reportPing(ping: String?): CapabilityReport {
+        if (ping != null) {
+            lastErrorCode = ping
+            return report(ShizukuErrorCodes.probeReadState(ping), ping)
+        }
+        lastErrorCode = null
+        return report(CapabilityState.READY, errorCode = null)
     }
 
     private fun report(readState: CapabilityState, errorCode: String?): CapabilityReport {
@@ -280,6 +328,11 @@ class ShizukuClipboardBackend internal constructor(
             errorCode = errorCode,
         )
     }
+
+    private fun isCurrentDeath(errorCode: String): Boolean =
+        errorCode == ShizukuErrorCodes.BINDER_DEAD ||
+            errorCode == ShizukuErrorCodes.USERSERVICE_DEAD ||
+            errorCode == ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD
 
     private fun degradedOrFailed(errorCode: String): BackendHealthState =
         if (ShizukuErrorCodes.probeReadState(errorCode) == CapabilityState.DEGRADED) {

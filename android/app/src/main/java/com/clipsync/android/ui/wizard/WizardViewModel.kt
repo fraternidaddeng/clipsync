@@ -66,6 +66,7 @@ class WizardViewModel(
         lastActionOfferedInAppGrant = offersInAppGrant(id) && id != WizardStepId.READ_LOGS
         if (id == WizardStepId.SHIZUKU_AUTH) {
             requestPrivilegedAuthorization?.invoke { refresh() }
+            return
         }
         refresh()
     }

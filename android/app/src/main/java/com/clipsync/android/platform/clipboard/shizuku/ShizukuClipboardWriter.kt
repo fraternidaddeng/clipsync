@@ -22,6 +22,7 @@ class ShizukuClipboardWriter internal constructor(
         }
         return when (val bind = runtime.bindUserService()) {
             is BindResult.Failed -> ShizukuErrorCodes.probeReadState(bind.errorCode)
+            BindResult.Binding -> CapabilityState.DEGRADED
             is BindResult.Bound -> {
                 val ping = bind.session.pingHealth()
                 if (ping != null) {
@@ -40,6 +41,8 @@ class ShizukuClipboardWriter internal constructor(
         }
         val session = when (val bind = runtime.bindUserService()) {
             is BindResult.Bound -> bind.session
+            BindResult.Binding ->
+                return ClipboardWriteResult.Failure(ShizukuErrorCodes.USERSERVICE_DEAD)
             is BindResult.Failed -> return ClipboardWriteResult.Failure(bind.errorCode)
         }
         return when (val written = session.writeText(text)) {

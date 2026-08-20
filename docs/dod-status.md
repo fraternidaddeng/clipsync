@@ -83,7 +83,7 @@
 | ColorOS / OriginOS | **NO_EVIDENCE** | 矩阵 D4 空。阶段 0 已提醒 OriginOS 日志可能不可用，从未实测。 |
 | 干净安装 | **DEVICE-VERIFIED** | 阶段 5 侧载 debug APK；MIUI 需手点「继续安装」（`INSTALL_FAILED_USER_RESTRICTED`）。 |
 | 首次配对 | **DEVICE-VERIFIED** | 阶段 5：测试钩子 payload + 自动确认，Windows `devices` 出现 `Xiaomi 22041216C`。钩子默认关闭（`CLIPSYNC_AUTO_APPROVE`）。扫码 UI 无 instrumentation（阶段 3）。 |
-| Shizuku 启动 / 授权 | **DEVICE-VERIFIED** | 13.5.4 授权后事件落库 `source_app=shizuku`；重启后授权保留、daemon 需 `start.sh`（阶段 5/6）。`scripts/android-bootstrap.ps1` 只打印命令。 |
+| Shizuku 启动 / 授权 | **DEVICE-VERIFIED** | 内置特权宿主（2026-08-20）：本包 `start.sh` 后 `clipsync_priv_server` + `:clipsync-clipboard` 存活，`attach api=13`，运行时 `SHIZUKU_EVENT`/`READY`，本机落库 `source_app=shizuku` `content_hash=359799ce9511a3276648bdb8456a65f4d2c08ba2a5a24d399ef1a9e91176316d`（`docs/stage-8-change-log.md`）。历史：官方 13.5.4 授权后落库（阶段 5/6），官方回退已不再维护。重启后 daemon 仍须用户再跑 `start.sh`。`scripts/android-bootstrap.ps1` 只打印命令。 |
 | Shizuku 断连 | **PARTIAL** | 重启后 daemon 消失已观察。本日：进程启动时 Shizuku 未就绪、随后拉起 → 一个 10 s `checkHealth` tick 内自动绑定（`8735345` parked 重选 + 回升到请求模式；`USER_SERVICE_VERSION=2`）。孤儿 UserService 跨重装保持 1 个（UserService 在 app callback binder 死亡时退出，`fb9347b`）。「运行中撤授权、仅 FGS 存活」仍无单独实机记录。JVM：`ShizukuClipboardBackendTest`、`ClipboardAccessCoordinatorTest`。 |
 | adb `READ_LOGS` 授予 | **DEVICE-VERIFIED**（降级） | 授予后 probe 仍 `DEGRADED` / `ADB_LOG_NO_HEALTHY_SIGNAL`：该 ROM 只有 `Denying clipboard access…`，解析器按设计不触发（阶段 5）。这是有效设备结论，不是 READY。 |
 | adb `READ_LOGS` 撤销 | **NOT_TESTED** | JVM：`AdbLogOverlayBackendTest`、`AdbLogMinimizationInvariantTest`。实机未做 revoke 后 10 s 内状态翻转。 |

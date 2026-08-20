@@ -3,12 +3,15 @@
 package com.clipsync.android.ui.wizard
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,7 +60,20 @@ fun WizardScreen(
     val context = LocalContext.current
     val notificationLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
-    ) { viewModel.refresh() }
+    ) { granted ->
+        viewModel.refresh()
+        // Android 13+ will silently return false after the first denial
+        // (or after MainActivity already consumed the dialog). Open the
+        // app notification page so the button is never a no-op.
+        if (!granted &&
+            Build.VERSION.SDK_INT >= 33 &&
+            !canAskNotificationPermissionAgain(context)
+        ) {
+            runCatching {
+                context.startActivity(appNotificationSettingsIntent(context.packageName))
+            }
+        }
+    }
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -101,11 +117,15 @@ fun WizardScreen(
                     viewModel.onStepAction(step.id)
                     when (step.actionKind) {
                         WizardActionKind.REQUEST_RUNTIME_PERMISSION -> {
-                            if (Build.VERSION.SDK_INT >= 33) {
-                                notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                            } else {
-                                viewModel.refresh()
-                            }
+                            requestNotificationPermission(
+                                context = context,
+                                launchDialog = {
+                                    notificationLauncher.launch(
+                                        Manifest.permission.POST_NOTIFICATIONS,
+                                    )
+                                },
+                                onAlreadySettled = { viewModel.refresh() },
+                            )
                         }
                         WizardActionKind.OPEN_SYSTEM_SETTINGS ->
                             runCatching {
@@ -113,8 +133,8 @@ fun WizardScreen(
                             }
                         WizardActionKind.RECHECK_ADB,
                         WizardActionKind.START_PRIVILEGED_HOST,
-                        WizardActionKind.AUTHORIZE_PRIVILEGED_HOST,
                         -> viewModel.refresh()
+                        WizardActionKind.AUTHORIZE_PRIVILEGED_HOST -> Unit
                     }
                 },
                 onSkip = { viewModel.skip(step.id) },
@@ -317,6 +337,13 @@ private fun CapabilityStepCard(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            if (step.id == WizardStepId.NOTIFICATIONS) {
+                Text(
+                    text = stringResource(R.string.wizard_notifications_settings_fallback),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             if (step.id == WizardStepId.READ_LOGS) {
                 Text(
                     text = stringResource(R.string.wizard_read_logs_adb_only),
@@ -539,6 +566,33 @@ private fun systemSettingsIntent(id: WizardStepId, packageName: String): Intent 
     else -> Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
         data = Uri.parse("package:$packageName")
     }
+}
+
+private fun notificationPermissionGranted(context: android.content.Context): Boolean {
+    if (Build.VERSION.SDK_INT < 33) {
+        return true
+    }
+    return ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.POST_NOTIFICATIONS,
+    ) == PackageManager.PERMISSION_GRANTED
+}
+
+private fun canAskNotificationPermissionAgain(context: android.content.Context): Boolean {
+    val activity = context as? Activity ?: return false
+    return activity.shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
+}
+
+private fun requestNotificationPermission(
+    context: android.content.Context,
+    launchDialog: () -> Unit,
+    onAlreadySettled: () -> Unit,
+) {
+    if (Build.VERSION.SDK_INT < 33 || notificationPermissionGranted(context)) {
+        onAlreadySettled()
+        return
+    }
+    launchDialog()
 }
 
 

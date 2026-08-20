@@ -4,7 +4,97 @@
 
 ## 内置特权宿主（2026-08-19）
 
-`SHIZUKU_EVENT` 不再要求安装官方 Shizuku 应用。ClipSync APK 自带 `clipsync_priv_server`（`PrivilegedHostService`）：用户用已是 shell 的 adb/root 执行本包 `start.sh` 后，宿主把 binder 推进 `ClipSyncShizukuProvider`，再孵化 `:clipsync-clipboard`。官方 Shizuku 若已在运行仍作回退。未实现 `newProcess` / `transactRemote` / rish。向导改为「重新检查 / 授权特权宿主」；`android-bootstrap.ps1` 只打印本包启动命令。UserService `destroy` 事务码改为官方约定 `16777115`。本机未再跑实体 ROM 验证。
+`SHIZUKU_EVENT` 不再要求安装官方 Shizuku 应用。ClipSync APK 自带 `clipsync_priv_server`（`PrivilegedHostService`）：用户用已是 shell 的 adb/root 执行本包 `start.sh` 后，宿主把 binder 推进 `ClipSyncShizukuProvider`，再孵化 `:clipsync-clipboard`。官方 Shizuku 回退**不再维护**。未实现 `newProcess` / `transactRemote` / rish。向导改为「重新检查 / 授权特权宿主」；`android-bootstrap.ps1` 只打印本包启动命令。UserService `destroy` 事务码改为官方约定 `16777115`。
+
+初版合入 `eff1a4a`。其后未提交的实机修补见下一节。内置宿主授权卡与本机 `SHIZUKU_EVENT` 落库的真机结论见「真机复测（2026-08-20）」，不要把 08-19 各节的「仍未复测」抄成当日结论。
+
+## 内置宿主实机修补（2026-08-19，未提交）
+
+设备：Redmi Note 11T Pro `22041216C` / xaga / Android 13 / MIUI 14。**当日**：宿主进程 `clipsync_priv_server` 与 `:clipsync-clipboard` 曾拉起；向导 binder 卡可到「就绪」；用户点「授权特权宿主」卡片不变；编排端不能代跑 `adb shell` 重启宿主。真机结论见「真机复测（2026-08-20）」。
+
+### UserService：避开 MIUI `ActivityThread.systemMain()`
+
+`PrivilegedUserServiceStarter` 不再走 `ActivityThread.systemMain()`。该 ROM 作为 shell 读 `/data/system/theme_config/theme_compatibility.xml` 会 `FileNotFoundException`，子进程退出。现路径：构造 `ActivityThread` + `attach(true)`；失败则 `Class.forName` 无 Application 实例化 `ClipboardUserService`（该类不依赖 Application）。
+
+### 授权按钮无反应
+
+Shizuku 客户端 `checkSelfPermission()` 只读本地 `permissionGranted`，该字段只在 `bindApplication` 回包 `shizuku:attach-reply-permission-granted` 写入。宿主原先：
+
+1. `attachApplication` 用 `getPackagesForUid` 校验；查询空集则抛 `package not owned by caller`。客户端缓存 binder，不再重试 attach。
+2. 未 attach 时 `checkSelfPermission` / `requestPermission` 再抛 `Permission Denial`。`AndroidShizukuRuntime` 整段吞掉后 `onResult(false)`，向导刷新仍是「需要你操作」。内置宿主不弹官方确认框，看起来像按钮坏了。
+
+修补：
+
+- `PrivilegedHostAccess`：仅本包包名可 attach。空 `getPackagesForUid` **不再**放行任意应用 uid；须为本包 / 宿主自身 / 已解析的 ClipSync `ApplicationInfo.uid`（见下一节）。
+- `checkSelfPermission` 按 uid 判定，不再因未 attach 抛异常。
+- `requestPermission` / `bindApplication` 经宿主主线程 `Handler.post` 回结果，避免嵌套 binder。
+- `requestAuthorization` 在 `requestPermission` 之后再读一次 `checkSelfPermission`；未立刻成功则等 binder 重试，最多 2 s。
+- 向导 `AUTHORIZE_PRIVILEGED_HOST` 不再在点击时额外 `refresh()`（`onStepAction` 已 refresh，授权结果仍走回调再 refresh）。
+- `ClipSyncShizukuProvider`：官方 Provider 在 binder 仍存活时丢掉后续 `sendBinder`。首次 attach 失败后同一对象会永远不再 attach。现对「换了 binder」或「同一 binder 仍未授权」先 `onBinderReceived(null)` 再交给官方路径重试。
+
+JVM：`PrivilegedHostAccessTest`、`WizardViewModelTest`（含授权回调后卡片变 READY）、`PrivilegedHostScriptTest`、`ShizukuClipboardBackendTest` 已过。debug APK 已覆盖安装到 `22041216C`。**当日**不能代跑 `adb shell` 重启宿主，授权卡片与剪贴板事件当时未复测。旧 `clipsync_priv_server` 必须重新执行本包 `start.sh` 才加载新宿主。真机结论见「真机复测（2026-08-20）」。
+
+### 宿主策略与向导接运行时（2026-08-19，未提交）
+
+官方 Shizuku 回退**不再维护**；内置特权宿主是唯一打算支持的后端。2026-08-18 的 0.2.0 冒烟仍是当时官方 Shizuku 路径上的历史记录，不代表本后端仍在跟。
+
+- ACL 现为 **fail-closed**：`getPackagesForUid` 空集不再放行所有应用 uid（须为本包 / 宿主自身 / 已解析的 ClipSync uid）。上一节「空查询仍放行 ≥10000」已作废。
+- `ClipSyncShizukuProvider`：权限已授予时不再丢掉存活 binder（避免授权后约 1 s 被拆掉）；未授予才 `onBinderReceived(null)` 以便下一次 `sendBinder` 重新 attach。
+- `bindUserService` 在绑定进行中报告 in-flight `Binding`；未 start 的 probe 不得再 spawn + unbind UserService。
+- 授权 settle 已拉长（等宿主主线程 `bindApplication` / 再投 binder）。**当日**不把授权卡或剪贴板事件标 DEVICE-VERIFIED；真机结论见「真机复测（2026-08-20）」。
+- `CopyClipReceiver` 走进程级 write coordinator；捕获栈先赋给 `currentStack` 再开健康循环。
+- 向导 auto-apply / auto-upload 现写入运行时：Room `SETTING_AUTO_APPLY_REMOTE`（入站 apply 读此键）与 `ServiceSettingsStore`（FGS / 开机读此后台开关）。upload 布尔相对上次持久化值变化才调用与设置页相同的 `onBackgroundSyncToggled`，避免无关保存重启 FGS。
+
+本条不含阶段 9 图像工作。授权卡与本机落库的真机结论见「真机复测（2026-08-20）」。
+
+### 后端逻辑收口（2026-08-19，未提交）
+
+官方 Shizuku 回退已从运行路径、向导文案、`queries`、bootstrap 打印中拿掉；内置宿主是唯一特权后端。
+
+- 点「授权特权宿主」**不再** `onBinderReceived(null)`。Shizuku 客户端对此会拆掉活 binder、触发 dead listener，随后 `requestPermission` 因 `requireService()` 失败。
+- `ClipSyncShizukuProvider` 对同一 binder 的周期 `sendBinder` 不再拆缓存；仅未授权且 binder 对象不同，或宿主 `requestPermission` 无 client 时带 `FORCE_REATTACH` 才允许重 attach。
+- `bindUserService` 超时（35 s）现在清 `binding`、unbind、并通知 `USER_SERVICE` 死亡，后端才能指数退避重绑。宿主 binder death 后允许再次 `linkToDeath`。
+- `attachSession` 在 `addChangedListener` 失败时**不再** `cancelRebind()`；probe 同样失败时排队重绑。
+- 宿主 `clipSyncUid()` 在 `getApplicationInfo` 失败时回退 `getPackageUid`，避免 MIUI 空查询把本包永久拒掉。
+- 向导授权成功后立刻 `checkHealth()`，不等 10 s 健康 tick。
+- 宿主 `requestPermission` 现在同时 `bindApplication(PERMISSION_GRANTED=true)` 与 `dispatchRequestPermissionResult`。客户端 `checkSelfPermission()` 只读前者写入的本地缓存；只回权限回调时向导卡会一直「需要你操作」。无 client 时按 uid 排队 requestCode，attach 后再派发。
+- `clipSyncUid` 不再覆盖 `getPackagesForUid`：uid 匹配或包名在查询结果里都可放行。`matchClient` 不再回退到「同 uid 任意 pid」。
+- UserService 用 `setsid` 拉起，启动前按 nice-name 清残留；`start.sh` 同时杀 `clipsync_priv_server` 与 `:clipsync-clipboard`。
+- `addPrimaryClipChangedListener` 先挂 app callback 再注册系统监听；OEM 返回 `false`/`0` 视为失败。
+- 进行中的 `Binding` 不再写成 `USERSERVICE_DEAD`。`health()` 在 ping 成功后清旧错误码。`readText` 采纳新 session 时会 `attachSession`。
+- 通知「复制」先 `ClipboardCaptureRuntime.ensureStarted`，再走写协调器。向导授权点击不再立刻 `refresh()`。
+- UserService 启动命令改为先 `export CLASSPATH=...` 再 `setsid /system/bin/app_process ...`。原先 `setsid CLASSPATH=... app_process` 会把赋值当成可执行文件，子进程立刻失败，`:clipsync-clipboard` 永远起不来。`UserServiceSlot.destroy()` 里扫 `/proc` 杀进程改到线程池，避免主线程持锁卡住 `sendBinder`/`findClient`。
+- `addChangedListener` 在 ADD_LISTENER 事务返回前一直持有旧 `ChangeCallbackBinder`。UserService 把旧 callback 的 `binderDied` 当成应用进程退出并 `exitProcess`；probe/refresh 重注册时若先丢掉 Java 对象，GC 会误杀 `:clipsync-clipboard`。
+- UserService 30s 启动超时在同一把锁里重读 `starting` 和 `binder`，避免刚 `attachBinder` 的槽被迟到的 timeout 拆掉。
+
+### AOSP 模拟器 API 34（2026-08-19，未提交）
+
+AVD `clipsync_pixel34`（`google_apis/x86_64`，无窗口 + `swiftshader_indirect`）。debug APK 覆盖安装后打开应用写出 `start.sh`，以 uid 2000 执行 `adb shell sh /storage/emulated/0/Android/data/com.clipsync.android/start.sh`。
+
+实测：
+
+- `clipsync_priv_server` 与 `com.clipsync.android:clipsync-clipboard` 均存活。
+- 宿主 `attach uid=10192 pid=<app> api=13 packages=[com.clipsync.android]`。
+- 向导「Shizuku binder」「Shizuku authorization」均为 Ready；后台读/写 Ready。
+- 自测：`Test background read: OK · SHIZUKU_EVENT`；`Test background write: OK · PUBLIC_API`。
+- 系统设置搜索框复制 `emu_full_token_9921` 后，Room `clips` 落库 `source_app=shizuku`，正文完整。
+
+这只是模拟器结果，**不标 DEVICE-VERIFIED**。真机见下一节。装过新 APK 后仍须用户自行再跑本包 `start.sh`。
+
+### 真机复测（2026-08-20）
+
+设备：Redmi Note 11T Pro `22041216C` / xaga / Android 13 / MIUI 14，serial `HUHYEYDQDMVONZDU`。覆盖安装当日 debug APK，打开应用写出 `start.sh`，以 uid 2000 执行本包 `adb -s HUHYEYDQDMVONZDU shell sh /storage/emulated/0/Android/data/com.clipsync.android/start.sh`。用户确认向导/授权路径无问题。
+
+实测：
+
+- `start.sh` 退出码 0：`info: spawned`。
+- `clipsync_priv_server` PID 8608、`com.clipsync.android:clipsync-clipboard` PID 9656 在复测窗口内持续存活。
+- 宿主 `attach uid=10417 pid=6231 api=13 packages=[com.clipsync.android]`。
+- 运行时 `capability.read.active_read_mode=SHIZUKU_EVENT`、`last_read_state=READY`（健康 tick 持续到复测结束）。`bindUserService` 仅在 `isAuthorized()` 之后才会孵化 UserService，故 UserService 存活即授权已生效。
+- 本机捕获：`origin_device_id=80d29726-3f49-427b-aa9b-08db70908351`，`origin_seq=184`，`source_app=shizuku`，`content_hash=359799ce9511a3276648bdb8456a65f4d2c08ba2a5a24d399ef1a9e91176316d`，`event_id=a7598940-82a3-4d00-a33f-f05dd6537b36`。logcat `ClipSyncSync: capture_stored background` 于 09:43:11。
+- UserService 启动仍打 `activity-thread path failed: NullPointerException`，已走无 Application 备用路径，进程未退出。
+
+本条标 **DEVICE-VERIFIED**（单机、内置特权宿主、`SHIZUKU_EVENT` 监听落库）。未覆盖：整机重启后再跑 `start.sh`、杀 `:clipsync-clipboard` 后监听恢复、运行中撤授权。官方 Shizuku 13.5.4 的阶段 5/6 记录仍是历史路径，不代表本后端。
 
 日期：2026-08-18
 状态：**post-audit wave 已合入；MIUI 14 / `SHIZUKU_EVENT` 单机实机通过本日清单。** 模拟器矩阵 **进行中，不标完成**。本记录覆盖 `f847281`、`fb9347b`、`abf3ef3`、`8735345`、`1ef53ab`、`eb07a9f`、`528cf17`，以及后补的 `02ec63c`（Modern Standby Win32 回调）。阶段 7 文档写完之后落地，不改阶段 0–7 合同。

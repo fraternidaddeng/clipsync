@@ -27,4 +27,16 @@ class WizardModelsTest {
         assertTrue(offersInAppGrant(WizardStepId.SHIZUKU_AUTH))
         assertFalse(offersInAppGrant(WizardStepId.SHIZUKU_BINDER))
     }
+
+    @Test
+    fun `notification fallback targets this app notification settings`() {
+        assertEquals(
+            "android.settings.APP_NOTIFICATION_SETTINGS",
+            NotificationSettingsTarget.ACTION,
+        )
+        assertEquals(
+            "android.provider.extra.APP_PACKAGE",
+            NotificationSettingsTarget.EXTRA_PACKAGE,
+        )
+    }
 }

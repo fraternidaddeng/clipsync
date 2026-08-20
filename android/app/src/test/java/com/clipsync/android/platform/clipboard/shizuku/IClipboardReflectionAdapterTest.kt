@@ -6,11 +6,16 @@ import org.junit.Test
 
 class IClipboardReflectionAdapterTest {
     @Test
-    fun `sdk 29 through 33 select pkg plus userId shape`() {
-        for (sdk in 29..33) {
+    fun `sdk 29 selects pkg plus userId shape`() {
+        assertEquals(IClipboardApiShape.PKG_USERID, IClipboardApiShape.forSdk(29))
+    }
+
+    @Test
+    fun `sdk 30 through 33 select pkg attribution userId shape`() {
+        for (sdk in 30..33) {
             assertEquals(
                 "sdk $sdk",
-                IClipboardApiShape.PKG_USERID,
+                IClipboardApiShape.PKG_ATTRIBUTION_USERID,
                 IClipboardApiShape.forSdk(sdk),
             )
         }
@@ -51,18 +56,58 @@ class IClipboardReflectionAdapterTest {
     }
 
     @Test
-    fun `api 30 through 33 invoke the same pkg userId methods`() {
+    fun `api 30 through 33 invoke attribution tag methods and one-arg remove`() {
         for (sdk in 30..33) {
-            val clipboard = FakeClipboardPkgUserId(clip = FakeClip("sdk$sdk"))
+            val clipboard = FakeClipboardApi30(clip = FakeClip("sdk$sdk"))
             val adapter = IClipboardReflectionAdapter(
                 clipboard = clipboard,
                 sdkInt = sdk,
                 callingPackage = "com.android.shell",
                 userId = 10,
+                attributionTag = "tag",
             )
+            assertEquals(IClipboardApiShape.PKG_ATTRIBUTION_USERID, adapter.selectedShape)
             assertEquals(ClipboardAdapterResult.Text("sdk$sdk"), adapter.getPrimaryClipText())
+            assertEquals("com.android.shell", clipboard.lastGetPkg)
+            assertEquals("tag", clipboard.lastGetAttribution)
             assertEquals(10, clipboard.lastGetUser)
+
+            val clip = Any()
+            assertEquals(ClipboardAdapterResult.Empty, adapter.setPrimaryClip(clip))
+            assertEquals(clip, clipboard.lastSetClip)
+            assertEquals("com.android.shell", clipboard.lastSetPkg)
+            assertEquals("tag", clipboard.lastSetAttribution)
+            assertEquals(10, clipboard.lastSetUser)
+
+            val listener = Any()
+            assertEquals(ClipboardAdapterResult.Empty, adapter.addPrimaryClipChangedListener(listener))
+            assertEquals(listener, clipboard.addedListener)
+            assertEquals("com.android.shell", clipboard.lastAddPkg)
+            assertEquals("tag", clipboard.lastAddAttribution)
+            assertEquals(10, clipboard.lastAddUser)
+            assertEquals(ClipboardAdapterResult.Empty, adapter.removePrimaryClipChangedListener(listener))
+            assertEquals(listener, clipboard.removedListener)
         }
+    }
+
+    @Test
+    fun `adapter on sdk 33 uses FakeClipboardApi33 three-arg get and one-arg remove`() {
+        val clipboard = FakeClipboardApi33(clip = FakeClip("api33"))
+        val adapter = IClipboardReflectionAdapter(
+            clipboard = clipboard,
+            sdkInt = 33,
+            callingPackage = "com.android.shell",
+            userId = 0,
+            attributionTag = null,
+        )
+        assertEquals(IClipboardApiShape.PKG_ATTRIBUTION_USERID, adapter.selectedShape)
+        assertEquals(ClipboardAdapterResult.Text("api33"), adapter.getPrimaryClipText())
+        assertEquals(null, clipboard.lastGetAttribution)
+
+        val listener = Any()
+        assertEquals(ClipboardAdapterResult.Empty, adapter.addPrimaryClipChangedListener(listener))
+        assertEquals(ClipboardAdapterResult.Empty, adapter.removePrimaryClipChangedListener(listener))
+        assertEquals(listener, clipboard.removedListener)
     }
 
     @Test
@@ -113,6 +158,25 @@ class IClipboardReflectionAdapterTest {
     }
 
     @Test
+    fun `boolean false add listener is a clipboard failure`() {
+        val clipboard = FakeClipboardBooleanListener(ok = false)
+        val adapter = IClipboardReflectionAdapter(
+            clipboard = clipboard,
+            sdkInt = 29,
+            callingPackage = "com.android.shell",
+        )
+        assertEquals(
+            ClipboardAdapterResult.Failed(ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD),
+            adapter.addPrimaryClipChangedListener(Any()),
+        )
+        clipboard.ok = true
+        assertEquals(
+            ClipboardAdapterResult.Empty,
+            adapter.addPrimaryClipChangedListener(Any()),
+        )
+    }
+
+    @Test
     fun `missing methods map to api mismatch`() {
         val adapter = IClipboardReflectionAdapter(
             clipboard = Any(),
@@ -130,6 +194,10 @@ class IClipboardReflectionAdapterTest {
         assertEquals(
             ClipboardAdapterResult.Failed(ShizukuErrorCodes.API_MISMATCH),
             adapter.addPrimaryClipChangedListener(Any()),
+        )
+        assertEquals(
+            ClipboardAdapterResult.Failed(ShizukuErrorCodes.API_MISMATCH),
+            adapter.removePrimaryClipChangedListener(Any()),
         )
     }
 
@@ -152,7 +220,7 @@ class IClipboardReflectionAdapterTest {
         val clipboard = FakeClipboardPkgUserId(clip = FakeClip(null))
         val adapter = IClipboardReflectionAdapter(
             clipboard = clipboard,
-            sdkInt = 31,
+            sdkInt = 29,
             callingPackage = "com.android.shell",
         )
         assertEquals(ClipboardAdapterResult.Empty, adapter.getPrimaryClipText())
@@ -164,6 +232,7 @@ class IClipboardReflectionAdapterTest {
         assertEquals(3, IClipboardApiShape.PKG_USERID.paramCount(MethodKind.SET))
         assertEquals(4, IClipboardApiShape.PKG_ATTRIBUTION_USERID.paramCount(MethodKind.LISTENER))
         assertEquals(5, IClipboardApiShape.PKG_ATTRIBUTION_USERID_DEVICE.paramCount(MethodKind.SET))
+        assertEquals(5, IClipboardApiShape.PKG_ATTRIBUTION_USERID_DEVICE.paramCount(MethodKind.REMOVE))
         assertTrue(IClipboardApiShape.entries.size >= 3)
     }
 
@@ -213,6 +282,59 @@ class IClipboardReflectionAdapterTest {
             removedListener = listener
         }
     }
+
+    /** AOSP API 30–33: 3-arg get/set/add and listener-only remove. */
+    open class FakeClipboardApi30(var clip: Any? = null) {
+        var lastGetPkg: String? = null
+        var lastGetAttribution: String? = null
+        var lastGetUser: Int? = null
+        var lastSetClip: Any? = null
+        var lastSetPkg: String? = null
+        var lastSetAttribution: String? = null
+        var lastSetUser: Int? = null
+        var addedListener: Any? = null
+        var lastAddPkg: String? = null
+        var lastAddAttribution: String? = null
+        var lastAddUser: Int? = null
+        var removedListener: Any? = null
+
+        fun getPrimaryClip(pkg: String, attributionTag: String?, userId: Int): Any? {
+            lastGetPkg = pkg
+            lastGetAttribution = attributionTag
+            lastGetUser = userId
+            return clip
+        }
+
+        fun setPrimaryClip(
+            clip: Any,
+            callingPackage: String,
+            attributionTag: String?,
+            userId: Int,
+        ) {
+            lastSetClip = clip
+            lastSetPkg = callingPackage
+            lastSetAttribution = attributionTag
+            lastSetUser = userId
+        }
+
+        fun addPrimaryClipChangedListener(
+            listener: Any,
+            callingPackage: String,
+            attributionTag: String?,
+            userId: Int,
+        ) {
+            addedListener = listener
+            lastAddPkg = callingPackage
+            lastAddAttribution = attributionTag
+            lastAddUser = userId
+        }
+
+        fun removePrimaryClipChangedListener(listener: Any) {
+            removedListener = listener
+        }
+    }
+
+    class FakeClipboardApi33(clip: Any? = null) : FakeClipboardApi30(clip)
 
     class FakeClipboardPkgAttributionUserId(var clip: Any? = null) {
         var lastGetAttribution: String? = null
@@ -275,6 +397,12 @@ class IClipboardReflectionAdapterTest {
             deviceId: Int,
         ) {
             removedListener = listener
+        }
+    }
+
+    class FakeClipboardBooleanListener(var ok: Boolean) {
+        fun addPrimaryClipChangedListener(listener: Any, callingPackage: String, userId: Int): Boolean {
+            return ok
         }
     }
 }

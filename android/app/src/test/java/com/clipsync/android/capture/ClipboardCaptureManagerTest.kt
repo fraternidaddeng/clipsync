@@ -5,6 +5,7 @@ import com.clipsync.android.platform.clipboard.ClipboardChange
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.clipboard.FakeBackgroundClipboardBackend
 import com.clipsync.android.ui.wizard.WizardChoices
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -12,6 +13,7 @@ import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -20,6 +22,7 @@ class ClipboardCaptureManagerTest {
     private class Harness(
         rebuildDebounceMs: Long = 0L,
         scope: CoroutineScope = CoroutineScope(UnconfinedTestDispatcher()),
+        captureDispatcher: CoroutineDispatcher = UnconfinedTestDispatcher(),
     ) {
         val callLog = mutableListOf<String>()
         val captured = mutableListOf<String>()
@@ -58,6 +61,7 @@ class ClipboardCaptureManagerTest {
                 onCapture = { change: ClipboardChange -> captured += change.text },
                 scope = scope,
                 rebuildDebounceMs = rebuildDebounceMs,
+                captureDispatcher = captureDispatcher,
             )
     }
 
@@ -71,6 +75,16 @@ class ClipboardCaptureManagerTest {
         assertTrue(harness.manager.isStarted())
         assertEquals(1, harness.buildCount)
         assertEquals(1, harness.callLog.count { it == "SHIZUKU_EVENT.start" })
+    }
+
+    @Test
+    fun `ensureStarted assigns the stack before the health loop`() {
+        val harness = Harness()
+
+        harness.manager.ensureStarted()
+
+        assertNotNull(harness.manager.access())
+        assertTrue(harness.manager.isStarted())
     }
 
     @Test
@@ -94,6 +108,19 @@ class ClipboardCaptureManagerTest {
         harness.manager.setActivityVisible(false)
         assertFalse(harness.lastIsVisible?.invoke() == true)
         assertEquals(1, harness.releaseOverlayCount)
+    }
+
+    @Test
+    fun `becoming visible is safe and keeps the stack started`() {
+        val harness = Harness()
+        harness.manager.ensureStarted()
+
+        harness.manager.setActivityVisible(true)
+
+        assertTrue(harness.manager.isStarted())
+        assertNotNull(harness.manager.access())
+        assertEquals(1, harness.buildCount)
+        assertTrue(harness.lastIsVisible?.invoke() == true)
     }
 
     @Test

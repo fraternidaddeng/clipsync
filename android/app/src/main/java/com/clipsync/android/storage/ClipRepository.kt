@@ -188,6 +188,20 @@ class ClipRepository internal constructor(
         }
     }
 
+    /**
+     * Visible history row for [eventId], or null if missing, tombstoned, or body-less.
+     * Used by notification copy so it is not capped by [search]'s 2000-row window.
+     */
+    suspend fun findVisibleEntry(eventId: String): ClipEntry? =
+        persistence.read {
+            val entity = findClipByEventId(eventId)
+            if (entity == null || entity.deletedAt != null || entity.content == null) {
+                null
+            } else {
+                entity.toEntry()
+            }
+        }
+
     fun observeSearch(query: String, limit: Int = MAX_SEARCH_LIMIT): Flow<List<ClipEntry>> {
         require(limit in 1..MAX_SEARCH_LIMIT) { "Limit must be between 1 and $MAX_SEARCH_LIMIT." }
         return persistence.observeSearchVisible(query, limit).map { rows -> rows.map { it.toEntry() } }

@@ -46,6 +46,8 @@ enum class BinderDeathKind {
 sealed interface BindResult {
     data class Bound(val session: ShizukuClipboardSession) : BindResult
 
+    data object Binding : BindResult
+
     data class Failed(val errorCode: String) : BindResult
 }
 
@@ -54,7 +56,7 @@ interface ShizukuClipboardSession {
 
     fun writeText(text: String): SessionWrite
 
-    fun addChangedListener(onChanged: () -> Unit)
+    fun addChangedListener(onChanged: () -> Unit): Boolean
 
     fun removeChangedListener()
 
