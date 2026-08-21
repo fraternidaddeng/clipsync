@@ -97,6 +97,10 @@ tasks.withType<Test>().configureEach {
         "protocol.fixtures.dir",
         rootProject.file("../protocol/v1/fixtures").absolutePath,
     )
+    systemProperty(
+        "protocol.fixtures.v2.dir",
+        rootProject.file("../protocol/v2/fixtures").absolutePath,
+    )
     System
         .getProperties()
         .stringPropertyNames()

@@ -550,6 +550,7 @@ class SyncSessionEngineTest {
         SyncMessageWriter.encode(
             ClipAnnounceBody(
                 events.map { event ->
+                    val text = requireNotNull(event.content) { "text announce requires content" }
                     ClipHeaderDto(
                         eventId = event.eventId,
                         originDeviceId = event.originDeviceId,
@@ -557,7 +558,7 @@ class SyncSessionEngineTest {
                         availability = ClipAvailability.AVAILABLE,
                         kind = "text",
                         contentHash = event.contentHash,
-                        utf8Bytes = event.content.toByteArray(StandardCharsets.UTF_8).size.toLong(),
+                        utf8Bytes = text.toByteArray(StandardCharsets.UTF_8).size.toLong(),
                         sourceApp = event.sourceApp,
                         createdAtMs = event.createdAtMs,
                         expiresAtMs = event.expiresAtMs,
@@ -570,14 +571,15 @@ class SyncSessionEngineTest {
         SyncMessageWriter.encode(
             ClipPayloadBody(
                 events.map { event ->
+                    val text = requireNotNull(event.content) { "text payload requires content" }
                     ClipPayloadItemDto(
                         eventId = event.eventId,
                         originDeviceId = event.originDeviceId,
                         originSeq = event.originSeq,
                         kind = "text",
-                        content = event.content,
+                        content = text,
                         contentHash = event.contentHash,
-                        utf8Bytes = event.content.toByteArray(StandardCharsets.UTF_8).size.toLong(),
+                        utf8Bytes = text.toByteArray(StandardCharsets.UTF_8).size.toLong(),
                         sourceApp = event.sourceApp,
                         createdAtMs = event.createdAtMs,
                         expiresAtMs = event.expiresAtMs,

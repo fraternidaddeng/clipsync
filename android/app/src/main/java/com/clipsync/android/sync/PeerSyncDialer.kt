@@ -37,6 +37,7 @@ import okio.ByteString
 class OkHttpSyncConnector(
     private val connectTimeoutMs: Long = 6_000,
     private val ioContext: CoroutineContext = Dispatchers.IO,
+    private val protocolVersion: Int = ProtocolLimits.PROTOCOL_VERSION,
 ) : SyncConnector {
     override suspend fun connect(
         hosts: List<String>,
@@ -62,9 +63,14 @@ class OkHttpSyncConnector(
         val incoming = Channel<TransportFrame>(Channel.UNLIMITED)
         val opened = CompletableDeferred<WebSocket>()
         val failed = CompletableDeferred<Throwable>()
+        val path = if (protocolVersion == ProtocolLimits.PROTOCOL_VERSION_V2) {
+            "/v2/peer/sync"
+        } else {
+            "/v1/peer/sync"
+        }
         val request = Request.Builder()
-            .url("wss://$host:$port/v1/peer/sync")
-            .header("X-Protocol-Version", "1")
+            .url("wss://$host:$port$path")
+            .header("X-Protocol-Version", protocolVersion.toString())
             .build()
         val webSocket = client.newWebSocket(
             request,

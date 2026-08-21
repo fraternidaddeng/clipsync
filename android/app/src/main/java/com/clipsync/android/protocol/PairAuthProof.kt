@@ -21,7 +21,8 @@ object PairAuthProof {
     const val NONCE_LENGTH = 32
     const val PROOF_LENGTH = 32
 
-    private val PREFIX = "ClipSync/v1/auth\n".toByteArray(Charsets.UTF_8)
+    private val PREFIX_V1 = "ClipSync/v1/auth\n".toByteArray(Charsets.UTF_8)
+    private val PREFIX_V2 = "ClipSync/v2/auth\n".toByteArray(Charsets.UTF_8)
 
     fun compute(
         pairSecret: ByteArray,
@@ -30,17 +31,21 @@ object PairAuthProof {
         challengerDeviceId: String,
         responderDeviceId: String,
         trustEpoch: Long,
+        protocolVersion: Int = 1,
     ): ByteArray {
         require(pairSecret.size == SECRET_LENGTH) { "The pair secret must be exactly 32 bytes." }
         require(nonce.size == NONCE_LENGTH) { "The challenge nonce must be exactly 32 bytes." }
+        require(protocolVersion == 1 || protocolVersion == 2) { "Protocol version must be 1 or 2." }
 
+        val prefix = if (protocolVersion == 2) PREFIX_V2 else PREFIX_V1
         val requestIdBytes = canonicalUuid(challengeRequestId).toByteArray(Charsets.UTF_8)
+        val extra = if (protocolVersion == 2) 1 + 8 else 0
         val message = ByteArray(
-            PREFIX.size + requestIdBytes.size + 1 + NONCE_LENGTH + 16 + 16 + 8,
+            prefix.size + requestIdBytes.size + 1 + NONCE_LENGTH + 16 + 16 + 8 + extra,
         )
         var offset = 0
-        PREFIX.copyInto(message, offset)
-        offset += PREFIX.size
+        prefix.copyInto(message, offset)
+        offset += prefix.size
         requestIdBytes.copyInto(message, offset)
         offset += requestIdBytes.size
         message[offset] = 0x00
@@ -52,6 +57,12 @@ object PairAuthProof {
         uuidBytes(responderDeviceId).copyInto(message, offset)
         offset += 16
         ByteBuffer.wrap(message, offset, 8).order(ByteOrder.BIG_ENDIAN).putLong(trustEpoch)
+        offset += 8
+        if (protocolVersion == 2) {
+            message[offset] = 0x00
+            offset += 1
+            ByteBuffer.wrap(message, offset, 8).order(ByteOrder.BIG_ENDIAN).putLong(protocolVersion.toLong())
+        }
 
         val mac = Mac.getInstance("HmacSHA256")
         mac.init(SecretKeySpec(pairSecret, "HmacSHA256"))
@@ -66,6 +77,7 @@ object PairAuthProof {
         responderDeviceId: String,
         trustEpoch: Long,
         proof: ByteArray,
+        protocolVersion: Int = 1,
     ): Boolean {
         if (proof.size != PROOF_LENGTH) {
             return false
@@ -77,6 +89,7 @@ object PairAuthProof {
             challengerDeviceId,
             responderDeviceId,
             trustEpoch,
+            protocolVersion,
         )
         return MessageDigest.isEqual(expected, proof)
     }

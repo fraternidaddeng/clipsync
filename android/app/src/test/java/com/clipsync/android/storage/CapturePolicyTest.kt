@@ -112,6 +112,7 @@ class CapturePolicyTest {
         assertEquals(false, defaults.paused)
         assertEquals(false, defaults.privateMode)
         assertEquals(true, defaults.blacklistEnabled)
+        assertEquals(false, defaults.imageSyncEnabled)
         assertTrue(defaults.userBlacklist.isEmpty())
 
         val loaded = CapturePolicy.loadSettings(
@@ -124,6 +125,25 @@ class CapturePolicyTest {
         assertEquals(true, loaded.privateMode)
         assertEquals(false, loaded.blacklistEnabled)
         assertEquals(setOf("com.example.vault"), loaded.userBlacklist)
+    }
+
+    @Test
+    fun `image capture is rejected when image sync is off`() {
+        val off = PolicySettings()
+        assertEquals(
+            PolicyDecision.Reject(CaptureRejectReason.UNSUPPORTED_MEDIA),
+            CapturePolicy.evaluateImage(null, encodedBytes = 128, off),
+        )
+        val on = PolicySettings(imageSyncEnabled = true)
+        assertEquals(PolicyDecision.Allow, CapturePolicy.evaluateImage(null, encodedBytes = 128, on))
+        assertEquals(
+            PolicyDecision.Reject(CaptureRejectReason.TOO_LARGE),
+            CapturePolicy.evaluateImage(
+                null,
+                encodedBytes = com.clipsync.android.media.MediaLimits.MAX_ENCODED_BYTES + 1,
+                on,
+            ),
+        )
     }
 
     @Test

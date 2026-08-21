@@ -24,7 +24,12 @@ internal static class Strings
     public const string RetentionDays = "保留天数";
     public const string BlockedProcesses = "屏蔽进程";
     public const string Sync = "同步";
-    public const string AutoApplyRemote = "将远程剪贴内容写入剪贴板";
+    public const string AutoApplyRemote = "将远程文本写入剪贴板";
+    public const string ImageSync = "同步剪贴板图片（默认关闭）";
+    public const string AutoApplyImages = "将远程图片写入剪贴板";
+    public const string ImageSyncHint = "仅 PNG/JPEG；原始字节含 EXIF。未实测的 ROM 不会标为可用。";
+    public const string ImagePreviewFormat = "{0} {1}×{2}，{3}";
+    public const string ImagePreviewUnknown = "图片";
     public const string ExtraBindAddresses = "额外绑定地址（例如 Tailscale IP）";
     public const string AddressRestartHint = "修改地址后需重启才能生效。";
     public const string SaveSettings = "保存设置";
@@ -99,6 +104,7 @@ internal static class Strings
     private static readonly CompositeFormat ExportedClipsComposite = CompositeFormat.Parse(ExportedClipsFormat);
     private static readonly CompositeFormat ImportedClipsComposite = CompositeFormat.Parse(ImportedClipsFormat);
     private static readonly CompositeFormat LastSeenComposite = CompositeFormat.Parse(LastSeenFormat);
+    private static readonly CompositeFormat ImagePreviewComposite = CompositeFormat.Parse(ImagePreviewFormat);
 
     internal static string FormatDetailSource(string source) =>
         string.Format(CultureInfo.CurrentCulture, DetailSourceComposite, source);
@@ -126,6 +132,21 @@ internal static class Strings
 
     internal static string FormatImportedClips(int imported, int skipped) =>
         string.Format(CultureInfo.CurrentCulture, ImportedClipsComposite, imported, skipped);
+
+    internal static string FormatImagePreview(string mime, int? width, int? height, int? encodedBytes)
+    {
+        if (width is null || height is null)
+        {
+            return string.IsNullOrEmpty(mime) ? ImagePreviewUnknown : mime;
+        }
+
+        var size = encodedBytes is null
+            ? "?"
+            : encodedBytes.Value < 1024
+                ? $"{encodedBytes.Value} B"
+                : $"{encodedBytes.Value / 1024.0:0.#} KiB";
+        return string.Format(CultureInfo.CurrentCulture, ImagePreviewComposite, mime, width.Value, height.Value, size);
+    }
 
     internal static string FormatLastSeen(string when) =>
         string.Format(CultureInfo.CurrentCulture, LastSeenComposite, when);

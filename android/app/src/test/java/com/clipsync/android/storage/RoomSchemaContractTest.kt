@@ -9,10 +9,10 @@ import org.junit.Test
 
 class RoomSchemaContractTest {
     @Test
-    fun `schema version stays at 1 and migrations are wired without destructive fallback`() {
-        assertEquals(1, ClipDatabase.VERSION)
+    fun `schema version stays at 2 and migrations are wired without destructive fallback`() {
+        assertEquals(2, ClipDatabase.VERSION)
         assertEquals(
-            "version 1 needs no Migration objects; bumping VERSION requires one per step",
+            "version 2 needs one Migration object; bumping VERSION requires one per step",
             ClipDatabase.VERSION - 1,
             ClipDatabase.MIGRATIONS.size,
         )
@@ -20,17 +20,26 @@ class RoomSchemaContractTest {
 
         val source = databaseSource()
         assertTrue(source.contains("exportSchema = true"))
-        assertTrue(source.contains("version = 1"))
+        assertTrue(source.contains("version = 2"))
         assertTrue(source.contains("addMigrations(*MIGRATIONS)"))
         assertFalse(source.contains(".fallbackToDestructiveMigration("))
+        assertFalse(source.contains("DROP TABLE `clips`"))
+        assertFalse(source.contains("DROP TABLE clips"))
 
-        val schema = exportedSchemaFile()
-        assertTrue(schema.isFile)
-        assertTrue(schema.readText().contains("\"version\": 1"))
+        val schemaV1 = exportedSchemaFile(1)
+        val schemaV2 = exportedSchemaFile(2)
+        assertTrue(schemaV1.isFile)
+        assertTrue(schemaV2.isFile)
+        assertTrue(schemaV1.readText().contains("\"version\": 1"))
+        val schemaV2Text = schemaV2.readText()
+        assertTrue(schemaV2Text.contains("\"version\": 2"))
+        assertTrue(schemaV2Text.contains("\"identityHash\": \"d36e686738aca1b8cdfaf42518fde865\""))
+        assertTrue(schemaV2Text.contains("\"tableName\": \"media_blobs\""))
+        assertTrue(schemaV2Text.contains("\"tableName\": \"clip_media\""))
     }
 
     @Test
-    fun `database declares the six contract tables and no tombstones table`() {
+    fun `database declares the eight contract tables and no tombstones table`() {
         val entityNames = setOf(
             ClipEntity::class.java.simpleName,
             OutboxEntity::class.java.simpleName,
@@ -38,6 +47,8 @@ class RoomSchemaContractTest {
             PeerCursorEntity::class.java.simpleName,
             LocalSequenceEntity::class.java.simpleName,
             SettingEntity::class.java.simpleName,
+            MediaBlobEntity::class.java.simpleName,
+            ClipMediaEntity::class.java.simpleName,
         )
         assertEquals(
             setOf(
@@ -47,6 +58,8 @@ class RoomSchemaContractTest {
                 "PeerCursorEntity",
                 "LocalSequenceEntity",
                 "SettingEntity",
+                "MediaBlobEntity",
+                "ClipMediaEntity",
             ),
             entityNames,
         )
@@ -77,10 +90,10 @@ class RoomSchemaContractTest {
         return candidates.first { it.isFile }.readText()
     }
 
-    private fun exportedSchemaFile(): File {
+    private fun exportedSchemaFile(version: Int): File {
         val candidates = listOf(
-            File("schemas/com.clipsync.android.storage.ClipDatabase/1.json"),
-            File("app/schemas/com.clipsync.android.storage.ClipDatabase/1.json"),
+            File("schemas/com.clipsync.android.storage.ClipDatabase/$version.json"),
+            File("app/schemas/com.clipsync.android.storage.ClipDatabase/$version.json"),
         )
         return candidates.first { it.isFile }
     }

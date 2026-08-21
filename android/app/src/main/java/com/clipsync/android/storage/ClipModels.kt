@@ -6,6 +6,12 @@ const val SETTING_PAIRED_PEER_ID = "paired_peer_id"
 const val SETTING_CAPTURE_BLACKLIST_ENABLED = CapturePolicy.SETTING_BLACKLIST_ENABLED
 const val SETTING_CAPTURE_BLACKLIST_EXTRA = CapturePolicy.SETTING_BLACKLIST_EXTRA
 const val CLIP_KIND_TEXT = "text"
+const val CLIP_KIND_IMAGE = "image"
+const val CLIP_MEDIA_READY = "ready"
+const val CLIP_MEDIA_PENDING = "pending"
+const val CLIP_MEDIA_MISSING = "missing"
+const val SETTING_IMAGE_SYNC_ENABLED = "image_sync_enabled"
+const val SETTING_AUTO_APPLY_IMAGES = "auto_apply_images"
 const val OUTBOX_PENDING = "pending"
 const val OUTBOX_ANNOUNCED = "announced"
 const val MAX_CLIP_UTF8_BYTES = 1_048_576
@@ -18,8 +24,9 @@ object TerminalReasons {
     const val EXPIRED = "expired"
     const val POLICY_FILTERED = "policy_filtered"
     const val NOT_FOUND = "not_found"
+    const val UNSUPPORTED_MEDIA = "unsupported_media"
 
-    val ALL: Set<String> = setOf(LOCAL_ONLY, DELETED, EXPIRED, POLICY_FILTERED, NOT_FOUND)
+    val ALL: Set<String> = setOf(LOCAL_ONLY, DELETED, EXPIRED, POLICY_FILTERED, NOT_FOUND, UNSUPPORTED_MEDIA)
 }
 
 enum class CaptureRejectReason {
@@ -28,6 +35,8 @@ enum class CaptureRejectReason {
     DUPLICATE,
     BLOCKED_SOURCE,
     POLICY_PAUSED,
+    UNSUPPORTED_MEDIA,
+    DECODE_FAILED,
 }
 
 sealed class CaptureResult {
@@ -35,6 +44,7 @@ sealed class CaptureResult {
         val eventId: String,
         val originSeq: Long,
         val contentHash: String,
+        val kind: String = CLIP_KIND_TEXT,
     ) : CaptureResult()
 
     data class Rejected(val reason: CaptureRejectReason) : CaptureResult()
@@ -52,12 +62,19 @@ data class RemoteClipEvent(
     val eventId: String,
     val originDeviceId: String,
     val originSeq: Long,
-    val content: String,
+    val content: String?,
     val contentHash: String,
     val sourceApp: String?,
     val createdAtMs: Long,
     val expiresAtMs: Long? = null,
-)
+    val kind: String = CLIP_KIND_TEXT,
+    val mimeType: String? = null,
+    val encodedBytes: Int? = null,
+    val pixelWidth: Int? = null,
+    val pixelHeight: Int? = null,
+) {
+    val isImage: Boolean get() = kind == CLIP_KIND_IMAGE
+}
 
 data class RemoteTerminalMarker(
     val eventId: String,
@@ -94,7 +111,14 @@ data class ClipEntry(
     val sourceApp: String?,
     val createdAtMs: Long,
     val expiresAtMs: Long?,
-)
+    val kind: String = CLIP_KIND_TEXT,
+    val mimeType: String? = null,
+    val encodedBytes: Int? = null,
+    val pixelWidth: Int? = null,
+    val pixelHeight: Int? = null,
+) {
+    val isImage: Boolean get() = kind == CLIP_KIND_IMAGE
+}
 
 data class SyncableClipEvent(
     val eventId: String,
@@ -106,6 +130,12 @@ data class SyncableClipEvent(
     val createdAtMs: Long,
     val expiresAtMs: Long?,
     val terminalReason: String?,
+    val kind: String = CLIP_KIND_TEXT,
+    val mimeType: String? = null,
+    val encodedBytes: Int? = null,
+    val pixelWidth: Int? = null,
+    val pixelHeight: Int? = null,
 ) {
     val isTerminal: Boolean get() = terminalReason != null
+    val isImage: Boolean get() = kind == CLIP_KIND_IMAGE
 }

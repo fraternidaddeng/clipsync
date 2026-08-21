@@ -127,6 +127,7 @@ public static class ProtocolReader
 
         if (typeElement.Value.ValueKind != JsonValueKind.String
             || typeElement.Value.GetString() is not { } type
+            || !ProtocolMessageTypes.V1.Contains(type)
             || !BodyTypes.TryGetValue(type, out var bodyType))
         {
             return new ProtocolParseOutcome.Failure(ProtocolErrorCodes.SchemaViolation, "message type is unknown");
@@ -241,11 +242,23 @@ public static class ProtocolWriter
             throw new ArgumentException("A sender generates a fresh non-nil request ID.", nameof(requestId));
         }
 
+        return Serialize(ProtocolLimits.ProtocolVersion, type, requestId, body);
+    }
+
+    public static string Serialize(int version, string type, Guid requestId, object body)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(type);
+        ArgumentNullException.ThrowIfNull(body);
+        if (requestId == Guid.Empty)
+        {
+            throw new ArgumentException("A sender generates a fresh non-nil request ID.", nameof(requestId));
+        }
+
         using var stream = new MemoryStream();
         using (var writer = new Utf8JsonWriter(stream))
         {
             writer.WriteStartObject();
-            writer.WriteNumber("version", ProtocolLimits.ProtocolVersion);
+            writer.WriteNumber("version", version);
             writer.WriteString("type", type);
             writer.WriteString("request_id", requestId.ToString("D"));
             writer.WritePropertyName("body");

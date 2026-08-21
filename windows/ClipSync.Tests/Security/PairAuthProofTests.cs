@@ -14,11 +14,12 @@ public sealed class PairAuthProofTests
         string ChallengerDeviceId,
         string ResponderDeviceId,
         long TrustEpoch,
-        string ProofBase64Url);
+        string ProofBase64Url,
+        int ProtocolVersion = 1);
 
-    private static AuthVector[] LoadVectors()
+    private static AuthVector[] LoadVectors(string fixtureFolder = "protocol-fixtures")
     {
-        var path = Path.Combine(AppContext.BaseDirectory, "protocol-fixtures", "auth", "vectors.json");
+        var path = Path.Combine(AppContext.BaseDirectory, fixtureFolder, "auth", "vectors.json");
         Assert.True(File.Exists(path), $"Shared auth vectors are missing: {path}");
 
         using var document = JsonDocument.Parse(File.ReadAllText(path));
@@ -32,7 +33,8 @@ public sealed class PairAuthProofTests
             element.GetProperty("challenger_device_id").GetString()!,
             element.GetProperty("responder_device_id").GetString()!,
             element.GetProperty("trust_epoch").GetInt64(),
-            element.GetProperty("proof_base64url").GetString()!)).ToArray();
+            element.GetProperty("proof_base64url").GetString()!,
+            element.TryGetProperty("protocol_version", out var version) ? version.GetInt32() : 1)).ToArray();
     }
 
     [Fact]
@@ -54,7 +56,8 @@ public sealed class PairAuthProofTests
                 nonce,
                 Guid.ParseExact(vector.ChallengerDeviceId, "D"),
                 Guid.ParseExact(vector.ResponderDeviceId, "D"),
-                vector.TrustEpoch);
+                vector.TrustEpoch,
+                vector.ProtocolVersion);
 
             Assert.Equal(vector.ProofBase64Url, ProtocolValidation.EncodeBase64Url(proof));
         }
@@ -71,7 +74,7 @@ public sealed class PairAuthProofTests
         var challenger = Guid.ParseExact(vector.ChallengerDeviceId, "D");
         var responder = Guid.ParseExact(vector.ResponderDeviceId, "D");
 
-        Assert.True(PairAuthProof.Verify(secret, requestId, nonce, challenger, responder, vector.TrustEpoch, proof));
+        Assert.True(PairAuthProof.Verify(secret, requestId, nonce, challenger, responder, vector.TrustEpoch, proof, vector.ProtocolVersion));
 
         Assert.False(PairAuthProof.Verify(secret, requestId, nonce, challenger, responder, vector.TrustEpoch + 1, proof));
         Assert.False(PairAuthProof.Verify(secret, Guid.NewGuid(), nonce, challenger, responder, vector.TrustEpoch, proof));
@@ -86,6 +89,27 @@ public sealed class PairAuthProofTests
         Assert.False(PairAuthProof.Verify(secret, requestId, wrongNonce, challenger, responder, vector.TrustEpoch, proof));
 
         Assert.False(PairAuthProof.Verify(secret, requestId, nonce, challenger, responder, vector.TrustEpoch, proof.AsSpan(0, 16)));
+    }
+
+    [Fact]
+    public void ComputeReproducesEverySharedV2Vector()
+    {
+        var vectors = LoadVectors("protocol-fixtures-v2");
+        Assert.True(vectors.Length >= 3);
+        foreach (var vector in vectors)
+        {
+            Assert.Equal(2, vector.ProtocolVersion);
+            Assert.True(ProtocolValidation.TryDecodeBase64Url256(vector.NonceBase64Url, out var nonce), vector.Name);
+            var proof = PairAuthProof.Compute(
+                Convert.FromHexString(vector.PairSecretHex),
+                Guid.ParseExact(vector.ChallengeRequestId, "D"),
+                nonce,
+                Guid.ParseExact(vector.ChallengerDeviceId, "D"),
+                Guid.ParseExact(vector.ResponderDeviceId, "D"),
+                vector.TrustEpoch,
+                vector.ProtocolVersion);
+            Assert.Equal(vector.ProofBase64Url, ProtocolValidation.EncodeBase64Url(proof));
+        }
     }
 
     [Fact]

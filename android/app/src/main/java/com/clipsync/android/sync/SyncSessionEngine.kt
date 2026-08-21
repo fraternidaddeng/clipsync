@@ -8,8 +8,12 @@ import com.clipsync.android.protocol.ClipAnnounceBody
 import com.clipsync.android.protocol.ClipAvailability
 import com.clipsync.android.protocol.ClipFetchBody
 import com.clipsync.android.protocol.ClipHeaderDto
+import com.clipsync.android.protocol.ClipPayloadBeginBody
 import com.clipsync.android.protocol.ClipPayloadBody
+import com.clipsync.android.protocol.ClipPayloadChunkBody
+import com.clipsync.android.protocol.ClipPayloadEndBody
 import com.clipsync.android.protocol.ClipPayloadItemDto
+import com.clipsync.android.protocol.ClipUnavailableReasons
 import com.clipsync.android.protocol.ErrorBody
 import com.clipsync.android.protocol.HelloBody
 import com.clipsync.android.protocol.OriginRangesDto
@@ -28,6 +32,11 @@ import com.clipsync.android.protocol.WantRangesBody
 import com.clipsync.android.storage.ClipRepository
 import com.clipsync.android.storage.OriginReceiveState
 import com.clipsync.android.storage.OriginSequenceRanges
+import com.clipsync.android.media.ImageChunks
+import com.clipsync.android.media.MediaLimits
+import com.clipsync.android.media.MediaStoreException
+import com.clipsync.android.media.PendingMediaWrite
+import com.clipsync.android.storage.CLIP_KIND_IMAGE
 import com.clipsync.android.storage.RemoteClipEvent
 import com.clipsync.android.storage.RemoteStoreResult
 import com.clipsync.android.storage.RemoteTerminalMarker
@@ -72,6 +81,13 @@ class SyncSessionEngine(
     private val sendLock = Mutex()
     private val outstandingFetches = LinkedHashMap<String, ClipHeaderDto>()
     private val fetchPermittedIds = HashSet<String>()
+    private val incomingImages = LinkedHashMap<String, IncomingImageTransfer>()
+    private val protocolVersion: Int =
+        if (options.protocolVersion == ProtocolLimits.PROTOCOL_VERSION_V2) {
+            ProtocolLimits.PROTOCOL_VERSION_V2
+        } else {
+            ProtocolLimits.PROTOCOL_VERSION
+        }
     private val peerVectorArrived = CompletableDeferred<Unit>()
     private val replayWindow = ReplayWindow(capacity = 512)
     private val unansweredPings = AtomicInteger(0)
@@ -192,6 +208,11 @@ class SyncSessionEngine(
                 clientVersion = options.clientVersion,
                 trustEpoch = peer.trustEpoch,
                 knownVector = buildKnownVector(),
+                capabilities = if (protocolVersion == ProtocolLimits.PROTOCOL_VERSION_V2) {
+                    listOf(ProtocolLimits.CAPABILITY_IMAGE_CLIP_V2)
+                } else {
+                    null
+                },
             ),
         )
         return true
@@ -199,7 +220,7 @@ class SyncSessionEngine(
 
     private suspend fun dispatch(text: String): Boolean {
         val message = try {
-            SyncMessages.parse(text)
+            SyncMessages.parse(text, protocolVersion)
         } catch (error: SerializationException) {
             logger.event("frame_rejected", "invalid_frame")
             val code = if (error.message?.contains("parse", ignoreCase = true) == true) {
@@ -266,6 +287,12 @@ class SyncSessionEngine(
             ProtocolMessageTypes.CLIP_ANNOUNCE -> handleClipAnnounce(message.body as ClipAnnounceBody)
             ProtocolMessageTypes.CLIP_FETCH -> handleClipFetch(message.body as ClipFetchBody)
             ProtocolMessageTypes.CLIP_PAYLOAD -> handleClipPayload(message.body as ClipPayloadBody)
+            ProtocolMessageTypes.CLIP_PAYLOAD_BEGIN ->
+                handleClipPayloadBegin(message.body as ClipPayloadBeginBody)
+            ProtocolMessageTypes.CLIP_PAYLOAD_CHUNK ->
+                handleClipPayloadChunk(message.body as ClipPayloadChunkBody)
+            ProtocolMessageTypes.CLIP_PAYLOAD_END ->
+                handleClipPayloadEnd(message.body as ClipPayloadEndBody)
             ProtocolMessageTypes.ACK_RANGES -> handleAckRanges(message.body as AckRangesBody)
             else -> {
                 fail(ProtocolErrorCodes.MESSAGE_OUT_OF_ORDER, "unexpected_type")
@@ -323,6 +350,7 @@ class SyncSessionEngine(
             challengerDeviceId = peer.deviceId,
             responderDeviceId = localDeviceId,
             trustEpoch = body.trustEpoch,
+            protocolVersion = protocolVersion,
         )
         send(
             ProtocolMessageTypes.AUTH,
@@ -497,6 +525,25 @@ class SyncSessionEngine(
                 continue
             }
 
+            if (header.kind == CLIP_KIND_IMAGE) {
+                if (protocolVersion != ProtocolLimits.PROTOCOL_VERSION_V2) {
+                    fail(ProtocolErrorCodes.UNSUPPORTED_MEDIA, "image_on_v1")
+                    return false
+                }
+                val hash = header.contentHash
+                if (hash != null && repository.findLiveImageByHash(hash)) {
+                    val stored = ingestAvailableImage(header, committed)
+                    if (!stored) {
+                        return false
+                    }
+                    acks.add(origin to header.originSeq)
+                    continue
+                }
+                outstandingFetches[header.eventId] = header
+                fetchIds.add(header.eventId)
+                continue
+            }
+
             val known = header.contentHash?.let { repository.findLiveContentByHash(it) }
             val utf8Bytes = header.utf8Bytes
             if (known != null && utf8Bytes != null &&
@@ -559,6 +606,50 @@ class SyncSessionEngine(
         return true
     }
 
+    private suspend fun ingestAvailableImage(
+        header: ClipHeaderDto,
+        committed: MutableList<RemoteClipApplied>,
+    ): Boolean {
+        val stored = repository.ingestRemoteClip(
+            RemoteClipEvent(
+                eventId = header.eventId,
+                originDeviceId = header.originDeviceId,
+                originSeq = header.originSeq,
+                content = null,
+                contentHash = header.contentHash!!,
+                sourceApp = header.sourceApp,
+                createdAtMs = header.createdAtMs ?: options.nowMs(),
+                expiresAtMs = header.expiresAtMs,
+                kind = CLIP_KIND_IMAGE,
+                mimeType = header.mimeType,
+                encodedBytes = header.encodedBytes?.toInt(),
+                pixelWidth = header.pixelWidth?.toInt(),
+                pixelHeight = header.pixelHeight?.toInt(),
+            ),
+            sourcePeerId = peer.deviceId,
+        )
+        if (stored is RemoteStoreResult.IdentityConflict) {
+            logger.event("store_conflict", "announce")
+            fail(ProtocolErrorCodes.EVENT_CONFLICT, "announce_conflict")
+            return false
+        }
+        if (stored is RemoteStoreResult.Stored) {
+            committed.add(
+                RemoteClipApplied(
+                    eventId = header.eventId,
+                    originDeviceId = header.originDeviceId,
+                    originSeq = header.originSeq,
+                    content = "",
+                    createdAtMs = header.createdAtMs ?: options.nowMs(),
+                    kind = CLIP_KIND_IMAGE,
+                    contentHash = header.contentHash,
+                    mimeType = header.mimeType,
+                ),
+            )
+        }
+        return true
+    }
+
     private suspend fun handleClipFetch(fetch: ClipFetchBody): Boolean {
         fetchPermittedIds.addAll(fetch.eventIds)
         val events = loadByEventIds(fetch.eventIds.toSet())
@@ -573,6 +664,16 @@ class SyncSessionEngine(
             }
             if (item.isTerminal) {
                 terminalHeaders.add(buildHeader(item))
+                continue
+            }
+            if (item.isImage) {
+                if (protocolVersion != ProtocolLimits.PROTOCOL_VERSION_V2) {
+                    terminalHeaders.add(buildHeader(item))
+                    continue
+                }
+                if (!sendImagePayload(item)) {
+                    return false
+                }
                 continue
             }
             val content = item.content ?: continue
@@ -852,14 +953,38 @@ class SyncSessionEngine(
         )
     }
 
-    private fun buildHeader(item: SyncableClipEvent): ClipHeaderDto {
-        if (item.isTerminal) {
+    private suspend fun buildHeader(item: SyncableClipEvent): ClipHeaderDto {
+        if (item.isTerminal || (item.isImage && protocolVersion != ProtocolLimits.PROTOCOL_VERSION_V2)) {
+            if (item.isImage && protocolVersion != ProtocolLimits.PROTOCOL_VERSION_V2) {
+                repository.markLocalUnsupportedMedia(item.eventId, item.originDeviceId, item.originSeq)
+            }
             return ClipHeaderDto(
                 eventId = item.eventId,
                 originDeviceId = item.originDeviceId,
                 originSeq = item.originSeq,
                 availability = ClipAvailability.UNAVAILABLE,
-                reason = item.terminalReason,
+                reason = if (item.isImage && protocolVersion != ProtocolLimits.PROTOCOL_VERSION_V2) {
+                    ClipUnavailableReasons.LOCAL_ONLY
+                } else {
+                    item.terminalReason
+                },
+            )
+        }
+        if (item.isImage) {
+            return ClipHeaderDto(
+                eventId = item.eventId,
+                originDeviceId = item.originDeviceId,
+                originSeq = item.originSeq,
+                availability = ClipAvailability.AVAILABLE,
+                kind = CLIP_KIND_IMAGE,
+                contentHash = item.contentHash,
+                mimeType = item.mimeType,
+                encodedBytes = item.encodedBytes?.toLong(),
+                pixelWidth = item.pixelWidth?.toLong(),
+                pixelHeight = item.pixelHeight?.toLong(),
+                sourceApp = item.sourceApp,
+                createdAtMs = item.createdAtMs,
+                expiresAtMs = item.expiresAtMs,
             )
         }
         val content = item.content ?: ""
@@ -935,7 +1060,12 @@ class SyncSessionEngine(
                 return
             }
         }
-        val json = SyncMessageWriter.encode(type, SyncMessageWriter.newRequestId(), body)
+        val json = SyncMessageWriter.encode(
+            type,
+            SyncMessageWriter.newRequestId(),
+            body,
+            protocolVersion,
+        )
         sendLock.withLock {
             if (!sendsEnabled) {
                 return
@@ -944,6 +1074,198 @@ class SyncSessionEngine(
         }
         logger.event("sent", type)
     }
+
+    private suspend fun sendImagePayload(item: SyncableClipEvent): Boolean {
+        val hash = item.contentHash ?: return failAndFalse(
+            ProtocolErrorCodes.MEDIA_STORAGE_FAILED,
+            "blob_missing",
+        )
+        val bytes = try {
+            repository.media.readAllBytes(hash)
+        } catch (_: Exception) {
+            fail(ProtocolErrorCodes.MEDIA_STORAGE_FAILED, "blob_missing")
+            return false
+        }
+        val chunks = ImageChunks.split(bytes)
+        val transferId = SyncMessageWriter.newRequestId()
+        send(
+            ProtocolMessageTypes.CLIP_PAYLOAD_BEGIN,
+            ClipPayloadBeginBody(
+                transferId = transferId,
+                eventId = item.eventId,
+                chunkCount = chunks.size.toLong(),
+                encodedBytes = bytes.size.toLong(),
+                contentHash = hash,
+                mimeType = item.mimeType ?: MediaLimits.MIME_PNG,
+            ),
+        )
+        for (chunk in chunks) {
+            send(
+                ProtocolMessageTypes.CLIP_PAYLOAD_CHUNK,
+                ClipPayloadChunkBody(
+                    transferId = transferId,
+                    eventId = item.eventId,
+                    chunkIndex = chunk.index.toLong(),
+                    chunkCount = chunk.count.toLong(),
+                    chunkBytes = chunk.byteCount.toLong(),
+                    data = chunk.data,
+                ),
+            )
+        }
+        send(
+            ProtocolMessageTypes.CLIP_PAYLOAD_END,
+            ClipPayloadEndBody(
+                transferId = transferId,
+                eventId = item.eventId,
+                contentHash = hash,
+            ),
+        )
+        return true
+    }
+
+    private suspend fun handleClipPayloadBegin(begin: ClipPayloadBeginBody): Boolean {
+        if (protocolVersion != ProtocolLimits.PROTOCOL_VERSION_V2) {
+            fail(ProtocolErrorCodes.MESSAGE_OUT_OF_ORDER, "image_on_v1")
+            return false
+        }
+        val header = outstandingFetches[begin.eventId]
+        if (header == null ||
+            header.contentHash != begin.contentHash ||
+            header.mimeType != begin.mimeType ||
+            header.encodedBytes != begin.encodedBytes
+        ) {
+            fail(ProtocolErrorCodes.MESSAGE_OUT_OF_ORDER, "payload_without_fetch")
+            return false
+        }
+        if (incomingImages.size >= MediaLimits.MAX_CONCURRENT_DOWNLOADS) {
+            fail(ProtocolErrorCodes.RATE_LIMITED, "too_many_image_downloads")
+            return false
+        }
+        val pending = try {
+            repository.media.beginWrite()
+        } catch (_: Exception) {
+            fail(ProtocolErrorCodes.MEDIA_STORAGE_FAILED, "temp_open_failed")
+            return false
+        }
+        incomingImages[begin.eventId] = IncomingImageTransfer(
+            transferId = begin.transferId,
+            eventId = begin.eventId,
+            header = header,
+            pending = pending,
+            chunkCount = begin.chunkCount.toInt(),
+            encodedBytes = begin.encodedBytes.toInt(),
+            contentHash = begin.contentHash,
+        )
+        return true
+    }
+
+    private suspend fun handleClipPayloadChunk(chunk: ClipPayloadChunkBody): Boolean {
+        val transfer = incomingImages[chunk.eventId]
+        if (transfer == null ||
+            transfer.transferId != chunk.transferId ||
+            transfer.chunkCount.toLong() != chunk.chunkCount
+        ) {
+            fail(ProtocolErrorCodes.MEDIA_OUT_OF_ORDER, "chunk_unbound")
+            return false
+        }
+        if (chunk.chunkIndex != transfer.nextIndex.toLong()) {
+            if (chunk.chunkIndex < transfer.nextIndex.toLong()) {
+                return true
+            }
+            fail(ProtocolErrorCodes.MEDIA_OUT_OF_ORDER, "chunk_out_of_order")
+            return false
+        }
+        val bytes = ImageChunks.tryDecodeChunk(chunk.data, chunk.chunkBytes.toInt())
+        if (bytes == null) {
+            fail(ProtocolErrorCodes.MEDIA_DECODE_FAILED, "chunk_decode")
+            return false
+        }
+        try {
+            repository.media.append(transfer.pending, bytes)
+        } catch (_: MediaStoreException) {
+            fail(ProtocolErrorCodes.MEDIA_TOO_LARGE, "chunk_overflow")
+            return false
+        }
+        transfer.nextIndex += 1
+        return true
+    }
+
+    private suspend fun handleClipPayloadEnd(end: ClipPayloadEndBody): Boolean {
+        val transfer = incomingImages.remove(end.eventId)
+        if (transfer == null ||
+            transfer.transferId != end.transferId ||
+            transfer.contentHash != end.contentHash ||
+            transfer.nextIndex != transfer.chunkCount
+        ) {
+            fail(ProtocolErrorCodes.MEDIA_OUT_OF_ORDER, "end_unbound")
+            return false
+        }
+        outstandingFetches.remove(end.eventId)
+        val validated = try {
+            repository.media.commit(transfer.pending, transfer.contentHash, transfer.header.mimeType)
+        } catch (error: MediaStoreException) {
+            fail(error.code, "image_commit_failed")
+            return false
+        } catch (_: Exception) {
+            fail(ProtocolErrorCodes.MEDIA_STORAGE_FAILED, "image_commit_failed")
+            return false
+        }
+        val stored = repository.ingestRemoteClip(
+            RemoteClipEvent(
+                eventId = end.eventId,
+                originDeviceId = transfer.header.originDeviceId,
+                originSeq = transfer.header.originSeq,
+                content = null,
+                contentHash = validated.contentHash,
+                sourceApp = transfer.header.sourceApp,
+                createdAtMs = transfer.header.createdAtMs ?: options.nowMs(),
+                expiresAtMs = transfer.header.expiresAtMs,
+                kind = CLIP_KIND_IMAGE,
+                mimeType = validated.mimeType,
+                encodedBytes = validated.encodedBytes,
+                pixelWidth = validated.pixelWidth,
+                pixelHeight = validated.pixelHeight,
+            ),
+            sourcePeerId = peer.deviceId,
+        )
+        if (stored is RemoteStoreResult.IdentityConflict) {
+            logger.event("store_conflict", "image_payload")
+            fail(ProtocolErrorCodes.EVENT_CONFLICT, "image_payload_conflict")
+            return false
+        }
+        sendAcks(listOf(transfer.header.originDeviceId to transfer.header.originSeq))
+        if (stored is RemoteStoreResult.Stored) {
+            raiseCommitted(
+                listOf(
+                    RemoteClipApplied(
+                        eventId = end.eventId,
+                        originDeviceId = transfer.header.originDeviceId,
+                        originSeq = transfer.header.originSeq,
+                        content = "",
+                        createdAtMs = transfer.header.createdAtMs ?: options.nowMs(),
+                        kind = CLIP_KIND_IMAGE,
+                        contentHash = validated.contentHash,
+                        mimeType = validated.mimeType,
+                    ),
+                ),
+            )
+        }
+        if (wantBacklogPending) {
+            sendWants()
+        }
+        return true
+    }
+
+    private class IncomingImageTransfer(
+        val transferId: String,
+        val eventId: String,
+        val header: ClipHeaderDto,
+        val pending: PendingMediaWrite,
+        val chunkCount: Int,
+        val encodedBytes: Int,
+        val contentHash: String,
+        var nextIndex: Int = 0,
+    )
 
     private enum class SessionState {
         ExpectChallenge,

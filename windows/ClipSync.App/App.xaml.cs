@@ -206,15 +206,30 @@ public partial class App : Application
             try
             {
                 var viewModel = services.GetRequiredService<MainViewModel>();
-                if (viewModel.AutoApplyRemote)
+                if (viewModel.AutoApplyRemote || viewModel.AutoApplyImages)
                 {
                     // Only the newest body of the batch reaches the system clipboard; the
                     // suppression window keeps our own listener from re-capturing it.
                     var latest = batch[^1];
-                    services.GetRequiredService<ClipboardCapturePolicy>()
-                        .SuppressNextWrite(latest.Content, DateTimeOffset.UtcNow);
-                    services.GetRequiredService<Win32ClipboardAdapter>().WriteText(latest.Content);
-                    LocalDiagnostics.Write("remote_applied");
+                    var policy = services.GetRequiredService<ClipboardCapturePolicy>();
+                    var adapter = services.GetRequiredService<Win32ClipboardAdapter>();
+                    if (latest.IsImage)
+                    {
+                        if (viewModel.AutoApplyImages)
+                        {
+                            var store = services.GetRequiredService<SqliteClipboardEventStore>();
+                            var bytes = store.Media.ReadAllBytes(latest.ContentHash!);
+                            policy.SuppressNextImage(latest.ContentHash!, DateTimeOffset.UtcNow, pixelDigest: null);
+                            adapter.WriteImage(bytes);
+                            LocalDiagnostics.Write("remote_image_applied");
+                        }
+                    }
+                    else if (viewModel.AutoApplyRemote)
+                    {
+                        policy.SuppressNextWrite(latest.Content, DateTimeOffset.UtcNow);
+                        adapter.WriteText(latest.Content);
+                        LocalDiagnostics.Write("remote_applied");
+                    }
                 }
 
                 await viewModel.RefreshFromCaptureAsync();
@@ -262,10 +277,17 @@ public partial class App : Application
         {
             LocalDiagnostics.Write("text_changed");
             var captureService = services.GetRequiredService<ClipboardCaptureService>();
-            var result = await captureService.CaptureAsync(new ClipboardCandidate(e.Text, e.SourceProcess, e.CapturedAt));
-            if (result is CaptureResult.Stored && MainWindow?.DataContext is MainViewModel viewModel)
+            var result = await captureService.CaptureAsync(new ClipboardCandidate(
+                e.Text,
+                e.SourceProcess,
+                e.CapturedAt,
+                e.ImageBytes,
+                e.ImageMimeType,
+                e.PixelDigest));
+            if (result is CaptureResult.Stored or CaptureResult.StoredImage
+                && MainWindow?.DataContext is MainViewModel viewModel)
             {
-                LocalDiagnostics.Write("capture_stored");
+                LocalDiagnostics.Write(result is CaptureResult.StoredImage ? "capture_image_stored" : "capture_stored");
                 await viewModel.RefreshFromCaptureAsync();
             }
             else if (result is CaptureResult.Rejected rejected)

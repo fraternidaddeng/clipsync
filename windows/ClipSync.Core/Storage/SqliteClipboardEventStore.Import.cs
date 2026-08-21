@@ -45,7 +45,7 @@ public sealed partial class SqliteClipboardEventStore
                         $event_id,
                         $origin,
                         $seq,
-                        'text',
+                        $kind,
                         $content,
                         $hash,
                         $source_app,
@@ -57,7 +57,12 @@ public sealed partial class SqliteClipboardEventStore
                 command.Parameters.AddWithValue("$event_id", row.EventId.ToString("D"));
                 command.Parameters.AddWithValue("$origin", row.OriginDeviceId);
                 command.Parameters.AddWithValue("$seq", row.OriginSequence);
-                command.Parameters.AddWithValue("$content", row.Content);
+                command.Parameters.AddWithValue("$kind", row.Kind);
+                command.Parameters.AddWithValue(
+                    "$content",
+                    string.Equals(row.Kind, "image", StringComparison.Ordinal)
+                        ? DBNull.Value
+                        : (object?)row.Content ?? string.Empty);
                 command.Parameters.AddWithValue("$hash", row.ContentHash);
                 command.Parameters.AddWithValue("$source_app", (object?)row.SourceApp ?? DBNull.Value);
                 command.Parameters.AddWithValue("$created_at", row.CreatedAt.ToUnixTimeMilliseconds());
@@ -65,6 +70,41 @@ public sealed partial class SqliteClipboardEventStore
                     "$expires_at",
                     (object?)row.ExpiresAt?.ToUnixTimeMilliseconds() ?? DBNull.Value);
                 inserted = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            if (inserted == 1 && string.Equals(row.Kind, "image", StringComparison.Ordinal))
+            {
+                if (row.MimeType is null || row.EncodedBytes is null
+                    || row.PixelWidth is null || row.PixelHeight is null)
+                {
+                    throw new InvalidDataException("Imported image row is missing media metadata.");
+                }
+
+                await using var blob = connection.CreateCommand();
+                blob.Transaction = transaction;
+                blob.CommandText = """
+                    INSERT INTO media_blobs (
+                        content_hash, mime_type, encoded_bytes, pixel_width, pixel_height, state, created_at)
+                    VALUES ($hash, $mime, $bytes, $width, $height, 'ready', $created_at)
+                    ON CONFLICT(content_hash) DO UPDATE SET state = 'ready';
+                    """;
+                blob.Parameters.AddWithValue("$hash", row.ContentHash);
+                blob.Parameters.AddWithValue("$mime", row.MimeType);
+                blob.Parameters.AddWithValue("$bytes", row.EncodedBytes.Value);
+                blob.Parameters.AddWithValue("$width", row.PixelWidth.Value);
+                blob.Parameters.AddWithValue("$height", row.PixelHeight.Value);
+                blob.Parameters.AddWithValue("$created_at", row.CreatedAt.ToUnixTimeMilliseconds());
+                await blob.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+
+                await using var mediaRef = connection.CreateCommand();
+                mediaRef.Transaction = transaction;
+                mediaRef.CommandText = """
+                    INSERT INTO clip_media (event_id, content_hash, state)
+                    VALUES ($event_id, $hash, 'ready');
+                    """;
+                mediaRef.Parameters.AddWithValue("$event_id", row.EventId.ToString("D"));
+                mediaRef.Parameters.AddWithValue("$hash", row.ContentHash);
+                await mediaRef.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
 
             if (inserted == 1

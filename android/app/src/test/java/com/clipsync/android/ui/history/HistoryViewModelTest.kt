@@ -7,6 +7,7 @@ import com.clipsync.android.platform.clipboard.Sha256ContentHasher
 import com.clipsync.android.storage.CaptureRejectReason
 import com.clipsync.android.storage.CaptureResult
 import com.clipsync.android.storage.RemoteClipEvent
+import com.clipsync.android.storage.SETTING_IMAGE_SYNC_ENABLED
 import com.clipsync.android.storage.SETTING_PAIRED_PEER_ID
 import com.clipsync.android.storage.TEST_PEER_DEVICE_ID
 import com.clipsync.android.storage.createTestClipRepository
@@ -246,6 +247,37 @@ class HistoryViewModelTest {
         assertTrue(HistoryNotice.OVERSIZED in model.state.value.notices)
     }
 
+    @Test
+    fun `image history rows keep content hash and image preview instead of a text body`() = runTestModel { model, repo, _ ->
+        repo.setSetting(SETTING_IMAGE_SYNC_ENABLED, "true")
+        val stored = repo.captureLocalImage(TINY_PNG, nowMs = NOW, peerId = TEST_PEER_DEVICE_ID)
+            as CaptureResult.Stored
+        model.refresh()
+        val item = model.state.value.items.single()
+        assertEquals(stored.eventId, item.eventId)
+        assertTrue(item.isImage)
+        assertEquals(stored.contentHash, item.contentHash)
+        assertEquals("image/png", item.mimeType)
+        assertEquals(8, item.pixelWidth)
+        assertEquals(8, item.pixelHeight)
+        assertEquals("Image image/png 8×8", item.preview)
+        assertEquals("Image image/png 8×8", item.content)
+    }
+
+    @Test
+    fun `copy of an image writes bytes through the coordinator`() = runTestModel { model, repo, writer ->
+        repo.setSetting(SETTING_IMAGE_SYNC_ENABLED, "true")
+        val stored = repo.captureLocalImage(TINY_PNG, nowMs = NOW, peerId = TEST_PEER_DEVICE_ID)
+            as CaptureResult.Stored
+        model.refresh()
+        model.copy(stored.eventId)
+        assertEquals(1, writer.writes.size)
+        assertEquals(stored.eventId, writer.writes.single().originEventId)
+        assertTrue(TINY_PNG.contentEquals(writer.writes.single().imageBytes))
+        assertEquals("image/png", writer.writes.single().mimeType)
+        assertFalse(model.state.value.copyFailed)
+    }
+
     private fun runTestModel(
         writer: FakeClipboardWriter = FakeClipboardWriter(),
         sync: FixedSyncStatusProvider = FixedSyncStatusProvider(
@@ -311,6 +343,22 @@ class HistoryViewModelTest {
 
     private companion object {
         const val NOW = 1_700_000_000_000L
+
+        val TINY_PNG: ByteArray =
+            hex(
+                "89504e470d0a1a0a0000000d49484452000000080000000808020000004b6d29dc" +
+                    "000000114944415478da63f8cfc08015310c2d090028ff3fc1ce77c84f0000000049454e44ae426082",
+            )
+
+        fun hex(value: String): ByteArray {
+            val out = ByteArray(value.length / 2)
+            var index = 0
+            while (index < value.length) {
+                out[index / 2] = value.substring(index, index + 2).toInt(16).toByte()
+                index += 2
+            }
+            return out
+        }
     }
 }
 

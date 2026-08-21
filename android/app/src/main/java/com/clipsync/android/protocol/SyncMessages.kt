@@ -15,6 +15,9 @@ object ProtocolMessageTypes {
     const val CLIP_ANNOUNCE = "clip_announce"
     const val CLIP_FETCH = "clip_fetch"
     const val CLIP_PAYLOAD = "clip_payload"
+    const val CLIP_PAYLOAD_BEGIN = "clip_payload_begin"
+    const val CLIP_PAYLOAD_CHUNK = "clip_payload_chunk"
+    const val CLIP_PAYLOAD_END = "clip_payload_end"
     const val ACK_RANGES = "ack_ranges"
     const val ERROR = "error"
     const val PING = "ping"
@@ -24,10 +27,13 @@ object ProtocolMessageTypes {
         HELLO, CHALLENGE, AUTH, KNOWN_VECTOR, WANT_RANGES, CLIP_ANNOUNCE,
         CLIP_FETCH, CLIP_PAYLOAD, ACK_RANGES, ERROR, PING, PONG,
     )
+
+    val ALL_V2 = ALL + setOf(CLIP_PAYLOAD_BEGIN, CLIP_PAYLOAD_CHUNK, CLIP_PAYLOAD_END)
 }
 
 object ProtocolLimits {
     const val PROTOCOL_VERSION = 1
+    const val PROTOCOL_VERSION_V2 = 2
     const val MAX_JSON_DEPTH = 16
     const val MAX_CONTENT_UTF8_BYTES = 1_048_576
     const val MAX_PAYLOAD_BATCH_CONTENT_BYTES = 1_048_576
@@ -40,6 +46,14 @@ object ProtocolLimits {
     const val MAX_SOURCE_APP_LENGTH = 256
     const val MAX_CLIENT_VERSION_LENGTH = 64
     const val MAX_RETRY_AFTER_MS = 300_000L
+    const val MAX_CAPABILITIES = 16
+    const val MAX_ENCODED_IMAGE_BYTES = 16 * 1024 * 1024
+    const val MAX_IMAGE_PIXELS = 32 * 1024 * 1024
+    const val MAX_IMAGE_SIDE = 8_192
+    const val MAX_CHUNK_BYTES = 256 * 1024
+    const val MAX_CHUNK_COUNT = 64
+    const val MAX_CONCURRENT_IMAGE_DOWNLOADS = 2
+    const val CAPABILITY_IMAGE_CLIP_V2 = "image_clip_v2"
 }
 
 object ProtocolErrorCodes {
@@ -60,12 +74,23 @@ object ProtocolErrorCodes {
     const val PAYLOAD_TOO_LARGE = "PAYLOAD_TOO_LARGE"
     const val RATE_LIMITED = "RATE_LIMITED"
     const val INTERNAL_ERROR = "INTERNAL_ERROR"
+    const val UNSUPPORTED_MEDIA = "UNSUPPORTED_MEDIA"
+    const val MEDIA_TOO_LARGE = "MEDIA_TOO_LARGE"
+    const val MEDIA_DECODE_FAILED = "MEDIA_DECODE_FAILED"
+    const val MEDIA_HASH_MISMATCH = "MEDIA_HASH_MISMATCH"
+    const val MEDIA_OUT_OF_ORDER = "MEDIA_OUT_OF_ORDER"
+    const val MEDIA_STORAGE_FAILED = "MEDIA_STORAGE_FAILED"
 
     val ALL = setOf(
         MALFORMED_JSON, SCHEMA_VIOLATION, UNSUPPORTED_VERSION, AUTH_REQUIRED, AUTH_FAILED,
         CHALLENGE_EXPIRED, REPLAY_DETECTED, DEVICE_REVOKED, TRUST_EPOCH_MISMATCH, MESSAGE_OUT_OF_ORDER,
         INVALID_RANGE, EVENT_CONFLICT, PAYLOAD_NOT_FOUND, HASH_MISMATCH, PAYLOAD_TOO_LARGE,
         RATE_LIMITED, INTERNAL_ERROR,
+    )
+
+    val ALL_V2 = ALL + setOf(
+        UNSUPPORTED_MEDIA, MEDIA_TOO_LARGE, MEDIA_DECODE_FAILED, MEDIA_HASH_MISMATCH,
+        MEDIA_OUT_OF_ORDER, MEDIA_STORAGE_FAILED,
     )
 }
 
@@ -80,8 +105,10 @@ object ClipUnavailableReasons {
     const val EXPIRED = "expired"
     const val POLICY_FILTERED = "policy_filtered"
     const val NOT_FOUND = "not_found"
+    const val UNSUPPORTED_MEDIA = "unsupported_media"
 
     val ALL = setOf(LOCAL_ONLY, DELETED, EXPIRED, POLICY_FILTERED, NOT_FOUND)
+    val ALL_V2 = ALL + setOf(UNSUPPORTED_MEDIA)
 }
 
 sealed interface SyncMessageBody
@@ -111,6 +138,7 @@ data class HelloBody(
     @SerialName("client_version") val clientVersion: String,
     @SerialName("trust_epoch") val trustEpoch: Long,
     @SerialName("known_vector") val knownVector: SyncStateDto,
+    val capabilities: List<String>? = null,
 ) : SyncMessageBody
 
 @Serializable
@@ -156,6 +184,10 @@ data class ClipHeaderDto(
     @SerialName("created_at_ms") val createdAtMs: Long? = null,
     @SerialName("expires_at_ms") val expiresAtMs: Long? = null,
     val reason: String? = null,
+    @SerialName("mime_type") val mimeType: String? = null,
+    @SerialName("encoded_bytes") val encodedBytes: Long? = null,
+    @SerialName("pixel_width") val pixelWidth: Long? = null,
+    @SerialName("pixel_height") val pixelHeight: Long? = null,
 )
 
 @Serializable
@@ -185,6 +217,33 @@ data class ClipPayloadItemDto(
 @Serializable
 data class ClipPayloadBody(
     val clips: List<ClipPayloadItemDto>,
+) : SyncMessageBody
+
+@Serializable
+data class ClipPayloadBeginBody(
+    @SerialName("transfer_id") val transferId: String,
+    @SerialName("event_id") val eventId: String,
+    @SerialName("chunk_count") val chunkCount: Long,
+    @SerialName("encoded_bytes") val encodedBytes: Long,
+    @SerialName("content_hash") val contentHash: String,
+    @SerialName("mime_type") val mimeType: String,
+) : SyncMessageBody
+
+@Serializable
+data class ClipPayloadChunkBody(
+    @SerialName("transfer_id") val transferId: String,
+    @SerialName("event_id") val eventId: String,
+    @SerialName("chunk_index") val chunkIndex: Long,
+    @SerialName("chunk_count") val chunkCount: Long,
+    @SerialName("chunk_bytes") val chunkBytes: Long,
+    val data: String,
+) : SyncMessageBody
+
+@Serializable
+data class ClipPayloadEndBody(
+    @SerialName("transfer_id") val transferId: String,
+    @SerialName("event_id") val eventId: String,
+    @SerialName("content_hash") val contentHash: String,
 ) : SyncMessageBody
 
 @Serializable
@@ -230,8 +289,15 @@ object SyncMessages {
         explicitNulls = false
     }
 
-    fun parse(source: String): ParsedSyncMessage {
-        val envelope = ProtocolJson.parseEnvelope(source)
+    fun parse(source: String): ParsedSyncMessage =
+        parse(source, ProtocolLimits.PROTOCOL_VERSION)
+
+    fun parse(source: String, version: Int): ParsedSyncMessage {
+        val envelope = if (version == ProtocolLimits.PROTOCOL_VERSION_V2) {
+            ProtocolJson.parseEnvelopeV2(source)
+        } else {
+            ProtocolJson.parseEnvelope(source)
+        }
         return ParsedSyncMessage(
             version = envelope.version,
             type = envelope.type,
@@ -249,6 +315,9 @@ object SyncMessages {
         ProtocolMessageTypes.CLIP_ANNOUNCE -> json.decodeFromJsonElement<ClipAnnounceBody>(body)
         ProtocolMessageTypes.CLIP_FETCH -> json.decodeFromJsonElement<ClipFetchBody>(body)
         ProtocolMessageTypes.CLIP_PAYLOAD -> json.decodeFromJsonElement<ClipPayloadBody>(body)
+        ProtocolMessageTypes.CLIP_PAYLOAD_BEGIN -> json.decodeFromJsonElement<ClipPayloadBeginBody>(body)
+        ProtocolMessageTypes.CLIP_PAYLOAD_CHUNK -> json.decodeFromJsonElement<ClipPayloadChunkBody>(body)
+        ProtocolMessageTypes.CLIP_PAYLOAD_END -> json.decodeFromJsonElement<ClipPayloadEndBody>(body)
         ProtocolMessageTypes.ACK_RANGES -> json.decodeFromJsonElement<AckRangesBody>(body)
         ProtocolMessageTypes.ERROR -> json.decodeFromJsonElement<ErrorBody>(body)
         ProtocolMessageTypes.PING -> json.decodeFromJsonElement<PingBody>(body)

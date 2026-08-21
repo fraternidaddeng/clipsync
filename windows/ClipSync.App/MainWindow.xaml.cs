@@ -55,7 +55,20 @@ public partial class MainWindow : Window
             return;
         }
 
-        var window = new DetailWindow(detail, () => viewModel.CopyText(detail.Text))
+        var window = new DetailWindow(detail, () =>
+        {
+            if (detail.IsImage)
+            {
+                if (detail.ContentHash is not null)
+                {
+                    viewModel.CopyImage(detail.ContentHash);
+                }
+            }
+            else
+            {
+                viewModel.CopyText(detail.Text);
+            }
+        })
         {
             Owner = this
         };

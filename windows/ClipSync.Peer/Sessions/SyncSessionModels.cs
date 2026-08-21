@@ -1,3 +1,5 @@
+using ClipSync.Core.Protocol;
+
 namespace ClipSync.Peer.Sessions;
 
 public enum SyncSessionRole
@@ -37,6 +39,11 @@ public sealed record SyncSessionOptions
     public long MaxRequestedSequencesPerMessage { get; init; } = 16384;
 
     public TimeProvider TimeProvider { get; init; } = TimeProvider.System;
+
+    /// <summary>1 keeps the frozen text contract; 2 enables image_clip_v2.</summary>
+    public int ProtocolVersion { get; init; } = ProtocolLimits.ProtocolVersion;
+
+    public bool ImageClipEnabled => ProtocolVersion >= ProtocolLimits.ProtocolVersionV2;
 }
 
 /// <summary>Why the session ended; <see cref="ErrorCode"/> is a protocol code when one applies.</summary>
@@ -48,4 +55,10 @@ public sealed record RemoteClipApplied(
     string OriginDeviceId,
     long OriginSeq,
     string Content,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    string Kind = "text",
+    string? ContentHash = null,
+    string? MimeType = null)
+{
+    public bool IsImage => string.Equals(Kind, "image", StringComparison.Ordinal);
+}

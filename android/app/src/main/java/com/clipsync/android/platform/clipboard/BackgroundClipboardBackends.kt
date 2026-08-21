@@ -119,7 +119,7 @@ class BackgroundClipboardBackends(
                 pollIntervalMillis = pollIntervalMillis,
             ),
             foreground: BackgroundClipboardBackend? = clipboardManagerOrNull(context)?.let { manager ->
-                ForegroundClipboardBackend(manager, isVisible)
+                ForegroundClipboardBackend(context.applicationContext, manager, isVisible)
             },
         ): BackgroundClipboardBackends = build(
             overlayController = overlayController,

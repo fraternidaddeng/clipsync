@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Validate ClipSync protocol v1 schemas and shared fixtures."""
+"""Validate ClipSync protocol v1/v2 schemas and shared fixtures."""
 
 from __future__ import annotations
 
 import hashlib
 import json
 import sys
+import base64
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -14,11 +15,19 @@ from referencing import Registry, Resource
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTOCOL = ROOT / "protocol" / "v1"
-VALID = PROTOCOL / "fixtures" / "valid"
-INVALID = PROTOCOL / "fixtures" / "invalid"
-PAIRING_VALID = PROTOCOL / "fixtures" / "pairing" / "valid"
-PAIRING_INVALID = PROTOCOL / "fixtures" / "pairing" / "invalid"
+PROTOCOL_V1 = ROOT / "protocol" / "v1"
+PROTOCOL_V2 = ROOT / "protocol" / "v2"
+VALID = PROTOCOL_V1 / "fixtures" / "valid"
+INVALID = PROTOCOL_V1 / "fixtures" / "invalid"
+PAIRING_VALID = PROTOCOL_V1 / "fixtures" / "pairing" / "valid"
+PAIRING_INVALID = PROTOCOL_V1 / "fixtures" / "pairing" / "invalid"
+VALID_V2 = PROTOCOL_V2 / "fixtures" / "valid"
+INVALID_V2 = PROTOCOL_V2 / "fixtures" / "invalid"
+
+MAX_IMAGE_ENCODED_BYTES = 16 * 1024 * 1024
+MAX_IMAGE_PIXELS = 32 * 1024 * 1024
+MAX_IMAGE_SIDE = 8192
+MAX_CHUNK_BYTES = 256 * 1024
 
 
 class SemanticError(ValueError):
@@ -92,6 +101,19 @@ def validate_uniqueness(message: dict[str, Any]) -> None:
             ((entry["origin_device_id"], entry["origin_seq"]) for entry in body["clips"]),
             "origin sequence",
         )
+    elif message_type == "hello" and "capabilities" in body:
+        unique(body["capabilities"], "capability")
+
+
+def _b64url_decode(value: str) -> bytes:
+    padding = "=" * ((4 - len(value) % 4) % 4)
+    try:
+        decoded = base64.urlsafe_b64decode(value + padding)
+    except Exception as exc:
+        raise SemanticError("data is not unpadded base64url") from exc
+    if base64.urlsafe_b64encode(decoded).decode("ascii").rstrip("=") != value:
+        raise SemanticError("data is not canonical unpadded base64url")
+    return decoded
 
 
 def validate_clips(message: dict[str, Any]) -> None:
@@ -104,6 +126,16 @@ def validate_clips(message: dict[str, Any]) -> None:
         expires = clip.get("expires_at_ms")
         if created is not None and expires is not None and expires <= created:
             raise SemanticError("expires_at_ms must be greater than created_at_ms")
+        if message_type == "clip_announce" and clip.get("availability") == "available":
+            if clip.get("kind") == "image":
+                width = clip["pixel_width"]
+                height = clip["pixel_height"]
+                if width * height > MAX_IMAGE_PIXELS:
+                    raise SemanticError("image pixel count exceeds 32 MP")
+                if clip["encoded_bytes"] > MAX_IMAGE_ENCODED_BYTES:
+                    raise SemanticError("image encoded_bytes exceeds 16 MiB")
+                if width > MAX_IMAGE_SIDE or height > MAX_IMAGE_SIDE:
+                    raise SemanticError("image side exceeds 8192 px")
         if message_type != "clip_payload":
             continue
         encoded = clip["content"].encode("utf-8", errors="strict")
@@ -119,10 +151,33 @@ def validate_clips(message: dict[str, Any]) -> None:
         raise SemanticError("aggregate clip_payload text exceeds 1 MiB")
 
 
+def validate_image_chunks(message: dict[str, Any]) -> None:
+    message_type = message["type"]
+    body = message["body"]
+    if message_type == "clip_payload_begin":
+        if body["encoded_bytes"] > MAX_IMAGE_ENCODED_BYTES:
+            raise SemanticError("begin encoded_bytes exceeds 16 MiB")
+        if body["chunk_count"] < 1:
+            raise SemanticError("chunk_count must be at least 1")
+        return
+    if message_type != "clip_payload_chunk":
+        return
+    if body["chunk_index"] >= body["chunk_count"]:
+        raise SemanticError("chunk_index must be less than chunk_count")
+    if "=" in body["data"] or "+" in body["data"] or "/" in body["data"]:
+        raise SemanticError("chunk data must be unpadded base64url")
+    decoded = _b64url_decode(body["data"])
+    if len(decoded) != body["chunk_bytes"]:
+        raise SemanticError("chunk_bytes does not match decoded data length")
+    if len(decoded) > MAX_CHUNK_BYTES:
+        raise SemanticError("chunk exceeds 256 KiB")
+
+
 def validate_semantics(message: dict[str, Any]) -> None:
     validate_ranges(message)
     validate_uniqueness(message)
     validate_clips(message)
+    validate_image_chunks(message)
 
 
 def check_fixtures(
@@ -158,26 +213,39 @@ def check_fixtures(
     return len(valid_paths), len(invalid_paths)
 
 
+def build_validator(protocol_dir: Path) -> Draft202012Validator:
+    envelope_schema = load_json(protocol_dir / "envelope.schema.json")
+    messages_schema = load_json(protocol_dir / "messages.schema.json")
+    resources = [
+        (envelope_schema["$id"], Resource.from_contents(envelope_schema)),
+        (messages_schema["$id"], Resource.from_contents(messages_schema)),
+    ]
+    pairing_path = protocol_dir / "pairing.schema.json"
+    if pairing_path.exists():
+        pairing_schema = load_json(pairing_path)
+        resources.append((pairing_schema["$id"], Resource.from_contents(pairing_schema)))
+    registry = Registry().with_resources(resources)
+    return Draft202012Validator(envelope_schema, registry=registry)
+
+
 def main() -> int:
-    envelope_schema = load_json(PROTOCOL / "envelope.schema.json")
-    messages_schema = load_json(PROTOCOL / "messages.schema.json")
-    pairing_schema = load_json(PROTOCOL / "pairing.schema.json")
-    registry = Registry().with_resources(
-        [
-            (envelope_schema["$id"], Resource.from_contents(envelope_schema)),
-            (messages_schema["$id"], Resource.from_contents(messages_schema)),
-            (pairing_schema["$id"], Resource.from_contents(pairing_schema)),
-        ]
+    envelope_validator = build_validator(PROTOCOL_V1)
+    envelope_v2_validator = build_validator(PROTOCOL_V2)
+    pairing_schema = load_json(PROTOCOL_V1 / "pairing.schema.json")
+    pairing_registry = Registry().with_resources(
+        [(pairing_schema["$id"], Resource.from_contents(pairing_schema))]
     )
-    envelope_validator = Draft202012Validator(envelope_schema, registry=registry)
-    pairing_validator = Draft202012Validator(pairing_schema, registry=registry)
+    pairing_validator = Draft202012Validator(pairing_schema, registry=pairing_registry)
 
     failures: list[str] = []
     valid_count, invalid_count = check_fixtures(
-        "envelope", envelope_validator, VALID, INVALID, validate_semantics, failures
+        "envelope v1", envelope_validator, VALID, INVALID, validate_semantics, failures
     )
     pairing_valid, pairing_invalid = check_fixtures(
         "pairing", pairing_validator, PAIRING_VALID, PAIRING_INVALID, lambda _: None, failures
+    )
+    valid_v2, invalid_v2 = check_fixtures(
+        "envelope v2", envelope_v2_validator, VALID_V2, INVALID_V2, validate_semantics, failures
     )
 
     if failures:
@@ -186,6 +254,7 @@ def main() -> int:
         return 1
     print(
         f"Validated {valid_count} valid and {invalid_count} invalid protocol v1 fixtures, "
+        f"{valid_v2} valid and {invalid_v2} invalid protocol v2 fixtures, "
         f"plus {pairing_valid} valid and {pairing_invalid} invalid pairing fixtures."
     )
     return 0

@@ -105,3 +105,36 @@ data class SettingEntity(
     @ColumnInfo(name = "value")
     val value: String,
 )
+
+@Entity(tableName = "media_blobs")
+data class MediaBlobEntity(
+    @PrimaryKey
+    @ColumnInfo(name = "content_hash")
+    val contentHash: String,
+    @ColumnInfo(name = "mime_type")
+    val mimeType: String,
+    @ColumnInfo(name = "encoded_bytes")
+    val encodedBytes: Int,
+    @ColumnInfo(name = "pixel_width")
+    val pixelWidth: Int,
+    @ColumnInfo(name = "pixel_height")
+    val pixelHeight: Int,
+    @ColumnInfo(name = "state")
+    val state: String,
+    @ColumnInfo(name = "created_at")
+    val createdAt: Long,
+)
+
+@Entity(
+    tableName = "clip_media",
+    indices = [Index(value = ["content_hash"])],
+)
+data class ClipMediaEntity(
+    @PrimaryKey
+    @ColumnInfo(name = "event_id")
+    val eventId: String,
+    @ColumnInfo(name = "content_hash")
+    val contentHash: String,
+    @ColumnInfo(name = "state")
+    val state: String = CLIP_MEDIA_READY,
+)

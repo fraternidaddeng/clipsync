@@ -1,4 +1,5 @@
 using System.Data;
+using ClipSync.Core.Media;
 using ClipSync.Core.Sync;
 using Microsoft.Data.Sqlite;
 
@@ -9,15 +10,20 @@ public sealed record OriginSequenceRanges(string OriginDeviceId, IReadOnlyList<S
 public sealed partial class SqliteClipboardEventStore
 {
     private const string SyncableColumns = """
-        event_id,
-        origin_device_id,
-        origin_seq,
-        content,
-        content_hash,
-        source_app,
-        created_at,
-        expires_at,
-        terminal_reason
+        c.event_id,
+        c.origin_device_id,
+        c.origin_seq,
+        c.content,
+        c.content_hash,
+        c.source_app,
+        c.created_at,
+        c.expires_at,
+        c.terminal_reason,
+        c.kind,
+        b.mime_type,
+        b.encoded_bytes,
+        b.pixel_width,
+        b.pixel_height
         """;
 
     public string LocalDeviceId => localDeviceId;
@@ -251,8 +257,37 @@ public sealed partial class SqliteClipboardEventStore
                 return conflict;
             }
 
-            await using (var insert = connection.CreateCommand())
+            if (remoteEvent.IsImage)
             {
+                if (!media.Exists(remoteEvent.ContentHash))
+                {
+                    throw new InvalidOperationException("MEDIA_STORAGE_FAILED");
+                }
+
+                var inspect = ImageCodec.TryInspectFile(
+                    media.RequirePath(remoteEvent.ContentHash),
+                    out var validated,
+                    remoteEvent.ContentHash);
+                if (inspect != ImageCodecError.Ok || validated is null)
+                {
+                    throw new InvalidOperationException("MEDIA_DECODE_FAILED");
+                }
+
+                await InsertImageClipAsync(
+                    connection,
+                    transaction,
+                    remoteEvent.EventId,
+                    remoteEvent.OriginDeviceId,
+                    remoteEvent.OriginSeq,
+                    validated,
+                    remoteEvent.SourceApp,
+                    remoteEvent.CreatedAt,
+                    remoteEvent.ExpiresAt,
+                    cancellationToken).ConfigureAwait(false);
+            }
+            else
+            {
+                await using var insert = connection.CreateCommand();
                 insert.Transaction = transaction;
                 insert.CommandText = """
                     INSERT INTO clips (
@@ -263,7 +298,7 @@ public sealed partial class SqliteClipboardEventStore
                 insert.Parameters.AddWithValue("$event_id", remoteEvent.EventId.ToString("D"));
                 insert.Parameters.AddWithValue("$origin", remoteEvent.OriginDeviceId);
                 insert.Parameters.AddWithValue("$seq", remoteEvent.OriginSeq);
-                insert.Parameters.AddWithValue("$content", remoteEvent.Content);
+                insert.Parameters.AddWithValue("$content", remoteEvent.Content ?? string.Empty);
                 insert.Parameters.AddWithValue("$hash", remoteEvent.ContentHash);
                 insert.Parameters.AddWithValue("$source_app", (object?)remoteEvent.SourceApp ?? DBNull.Value);
                 insert.Parameters.AddWithValue("$created_at", remoteEvent.CreatedAt.ToUnixTimeMilliseconds());
@@ -402,9 +437,11 @@ public sealed partial class SqliteClipboardEventStore
             await using var command = connection.CreateCommand();
             command.CommandText = $"""
                 SELECT {SyncableColumns}
-                FROM clips
-                WHERE origin_device_id = $origin AND origin_seq >= $start AND origin_seq <= $end
-                ORDER BY origin_seq
+                FROM clips c
+                LEFT JOIN clip_media m ON m.event_id = c.event_id
+                LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
+                WHERE c.origin_device_id = $origin AND c.origin_seq >= $start AND c.origin_seq <= $end
+                ORDER BY c.origin_seq
                 LIMIT $limit;
                 """;
             command.Parameters.AddWithValue("$origin", originDeviceId);
@@ -443,9 +480,11 @@ public sealed partial class SqliteClipboardEventStore
 
         command.CommandText = $"""
             SELECT {SyncableColumns}
-            FROM clips
-            WHERE event_id IN ({string.Join(", ", parameterNames)})
-            ORDER BY origin_device_id, origin_seq;
+            FROM clips c
+            LEFT JOIN clip_media m ON m.event_id = c.event_id
+            LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
+            WHERE c.event_id IN ({string.Join(", ", parameterNames)})
+            ORDER BY c.origin_device_id, c.origin_seq;
             """;
 
         var events = new List<SyncableClipEvent>();
@@ -465,7 +504,7 @@ public sealed partial class SqliteClipboardEventStore
         await using var command = connection.CreateCommand();
         command.CommandText = """
             SELECT content FROM clips
-            WHERE content_hash = $hash AND deleted_at IS NULL
+            WHERE content_hash = $hash AND deleted_at IS NULL AND kind = 'text'
             LIMIT 1;
             """;
         command.Parameters.AddWithValue("$hash", contentHash);
@@ -486,9 +525,12 @@ public sealed partial class SqliteClipboardEventStore
         command.CommandText = """
             SELECT o.id, o.peer_id, o.state, o.attempts,
                 c.event_id, c.origin_device_id, c.origin_seq, c.content, c.content_hash,
-                c.source_app, c.created_at, c.expires_at, c.terminal_reason
+                c.source_app, c.created_at, c.expires_at, c.terminal_reason,
+                c.kind, b.mime_type, b.encoded_bytes, b.pixel_width, b.pixel_height
             FROM outbox o
             JOIN clips c ON c.event_id = o.event_id
+            LEFT JOIN clip_media m ON m.event_id = c.event_id
+            LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
             WHERE o.peer_id = $peer_id AND o.state = $state
             ORDER BY o.id
             LIMIT $limit;
@@ -871,15 +913,79 @@ public sealed partial class SqliteClipboardEventStore
     private static SyncableClipEvent ReadSyncableEvent(SqliteDataReader reader, int columnOffset)
     {
         var terminalReason = reader.IsDBNull(columnOffset + 8) ? null : reader.GetString(columnOffset + 8);
+        var kind = reader.FieldCount > columnOffset + 9 && !reader.IsDBNull(columnOffset + 9)
+            ? reader.GetString(columnOffset + 9)
+            : "text";
+        var content = terminalReason is null && !reader.IsDBNull(columnOffset + 3)
+            ? reader.GetString(columnOffset + 3)
+            : null;
         return new SyncableClipEvent(
             Guid.Parse(reader.GetString(columnOffset)),
             reader.GetString(columnOffset + 1),
             reader.GetInt64(columnOffset + 2),
-            terminalReason is null ? reader.GetString(columnOffset + 3) : null,
+            content,
             terminalReason is null ? reader.GetString(columnOffset + 4) : null,
             reader.IsDBNull(columnOffset + 5) ? null : reader.GetString(columnOffset + 5),
             DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(columnOffset + 6)),
             reader.IsDBNull(columnOffset + 7) ? null : DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(columnOffset + 7)),
-            terminalReason);
+            terminalReason,
+            kind,
+            reader.FieldCount > columnOffset + 10 && !reader.IsDBNull(columnOffset + 10)
+                ? reader.GetString(columnOffset + 10)
+                : null,
+            reader.FieldCount > columnOffset + 11 && !reader.IsDBNull(columnOffset + 11)
+                ? reader.GetInt32(columnOffset + 11)
+                : null,
+            reader.FieldCount > columnOffset + 12 && !reader.IsDBNull(columnOffset + 12)
+                ? reader.GetInt32(columnOffset + 12)
+                : null,
+            reader.FieldCount > columnOffset + 13 && !reader.IsDBNull(columnOffset + 13)
+                ? reader.GetInt32(columnOffset + 13)
+                : null);
+    }
+
+    public async ValueTask<bool> FindLiveBlobByHashAsync(
+        string contentHash,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(contentHash);
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        if (!media.Exists(contentHash))
+        {
+            return false;
+        }
+
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT 1 FROM clip_media m
+            JOIN clips c ON c.event_id = m.event_id
+            WHERE m.content_hash = $hash AND c.deleted_at IS NULL AND m.state = 'ready'
+            LIMIT 1;
+            """;
+        command.Parameters.AddWithValue("$hash", contentHash);
+        return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is not null;
+    }
+
+    public async ValueTask StoreLocalUnsupportedMediaAsync(
+        Guid eventId,
+        string originDeviceId,
+        long originSeq,
+        DateTimeOffset at,
+        CancellationToken cancellationToken = default)
+    {
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            UPDATE clips
+            SET terminal_reason = 'unsupported_media'
+            WHERE event_id = $event_id AND origin_device_id = $origin AND origin_seq = $seq;
+            """;
+        command.Parameters.AddWithValue("$event_id", eventId.ToString("D"));
+        command.Parameters.AddWithValue("$origin", originDeviceId);
+        command.Parameters.AddWithValue("$seq", originSeq);
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        _ = at;
     }
 }

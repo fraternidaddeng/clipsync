@@ -66,7 +66,11 @@ data class ClipboardChange(
     val text: String,
     val contentHash: String,
     val observedAtEpochMillis: Long,
-)
+    val imageBytes: ByteArray? = null,
+    val imageMimeType: String? = null,
+) {
+    val isImage: Boolean get() = imageBytes != null
+}
 
 sealed interface ClipboardWriteResult {
     data object Success : ClipboardWriteResult

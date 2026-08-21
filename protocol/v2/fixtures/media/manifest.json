@@ -1,0 +1,10 @@
+{
+  "png_1x1_sha256": "f2bb5bbaca678ecad746b1fa5ecfa2c8a81dd18817be19f0187c036d25326317",
+  "png_1x1_bytes": 70,
+  "png_8x8_sha256": "f01b4410259e54a460c9feec225c25c24a066c5c5f11c0bfe505037a22f34d6d",
+  "png_8x8_bytes": 83,
+  "jpeg_1x1_sha256": "6839e66422a5be75690f3a721f8ecc3bcfad7885e7f7f46ee19a4f2ebb43a7c2",
+  "jpeg_1x1_bytes": 634,
+  "png_8x8_chunk0_bytes": 41,
+  "png_8x8_chunk1_bytes": 42
+}

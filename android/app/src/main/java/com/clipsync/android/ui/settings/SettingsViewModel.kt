@@ -28,6 +28,8 @@ data class SettingsUiState(
     val paused: Boolean = false,
     val privateMode: Boolean = false,
     val autoApplyRemote: Boolean = true,
+    val imageSyncEnabled: Boolean = false,
+    val autoApplyImages: Boolean = false,
     val backgroundSync: Boolean = false,
     val bootRecoveryEnabled: Boolean = false,
     val blacklistEnabled: Boolean = true,
@@ -107,6 +109,20 @@ class SettingsViewModel(
         mutableState.value = mutableState.value.copy(autoApplyRemote = value)
         viewModelScope.launch {
             repository.setSetting(SETTING_AUTO_APPLY_REMOTE, formatSettingFlag(value))
+        }
+    }
+
+    fun setImageSyncEnabled(value: Boolean) {
+        mutableState.value = mutableState.value.copy(imageSyncEnabled = value)
+        viewModelScope.launch {
+            repository.setSetting(SETTING_IMAGE_SYNC_ENABLED, formatSettingFlag(value))
+        }
+    }
+
+    fun setAutoApplyImages(value: Boolean) {
+        mutableState.value = mutableState.value.copy(autoApplyImages = value)
+        viewModelScope.launch {
+            repository.setSetting(SETTING_AUTO_APPLY_IMAGES, formatSettingFlag(value))
         }
     }
 
@@ -192,6 +208,8 @@ class SettingsViewModel(
         val paused = parseSettingFlag(repository.getSetting(SETTING_IS_PAUSED))
         val privateMode = parseSettingFlag(repository.getSetting(SETTING_IS_PRIVATE_MODE))
         val autoApply = parseSettingFlag(repository.getSetting(SETTING_AUTO_APPLY_REMOTE), default = true)
+        val imageSyncEnabled = parseSettingFlag(repository.getSetting(SETTING_IMAGE_SYNC_ENABLED))
+        val autoApplyImages = parseSettingFlag(repository.getSetting(SETTING_AUTO_APPLY_IMAGES))
         val backgroundSync =
             parseSettingFlag(repository.getSetting(SETTING_BACKGROUND_SYNC)) ||
                 (serviceSettings?.backgroundSyncEnabled() == true)
@@ -212,6 +230,8 @@ class SettingsViewModel(
                 paused = paused,
                 privateMode = privateMode,
                 autoApplyRemote = autoApply,
+                imageSyncEnabled = imageSyncEnabled,
+                autoApplyImages = autoApplyImages,
                 backgroundSync = backgroundSync,
                 bootRecoveryEnabled = bootRecovery,
                 blacklistEnabled = blacklistEnabled,

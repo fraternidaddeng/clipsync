@@ -3,13 +3,22 @@ namespace ClipSync.App.Clipboard;
 public sealed class ClipboardTextChangedEventArgs(
     string text,
     string? sourceProcess,
-    DateTimeOffset capturedAt) : EventArgs
+    DateTimeOffset capturedAt,
+    byte[]? imageBytes = null,
+    string? imageMimeType = null,
+    string? pixelDigest = null) : EventArgs
 {
     public string Text { get; } = text;
 
     public string? SourceProcess { get; } = sourceProcess;
 
     public DateTimeOffset CapturedAt { get; } = capturedAt;
+
+    public byte[]? ImageBytes { get; } = imageBytes;
+
+    public string? ImageMimeType { get; } = imageMimeType;
+
+    public string? PixelDigest { get; } = pixelDigest;
 }
 
 public enum ClipboardAdapterOperation

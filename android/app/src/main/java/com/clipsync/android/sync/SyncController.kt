@@ -197,7 +197,7 @@ fun createSyncController(
 ): SyncController = SyncController(
     pairingStore = pairingStore,
     repository = repository,
-    connector = OkHttpSyncConnector(),
+    connector = OkHttpSyncConnector(protocolVersion = options.protocolVersion),
     scope = scope,
     options = options,
     logger = logger,

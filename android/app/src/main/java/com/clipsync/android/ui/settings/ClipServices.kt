@@ -77,7 +77,7 @@ object ClipServices {
         val publicWriter = if (clipboard == null) {
             UnavailableClipboardWriter
         } else {
-            AndroidPublicClipboardWriter(clipboard)
+            AndroidPublicClipboardWriter(clipboard, context = context.applicationContext)
         }
         return writeCoordinator(publicWriter)
     }
@@ -113,7 +113,7 @@ object ClipServices {
 
     fun foregroundBackend(context: Context, isVisible: () -> Boolean): ForegroundClipboardBackend? {
         val clipboard = clipboardManager(context) ?: return null
-        return ForegroundClipboardBackend(clipboard, isVisible)
+        return ForegroundClipboardBackend(context.applicationContext, clipboard, isVisible)
     }
 
     fun syncStatus(context: Context): SyncStatusProvider =
@@ -169,6 +169,13 @@ private object UnavailableClipboardWriter : ClipboardWriter {
         originEventId: String,
     ): ClipboardWriteResult =
         ClipboardWriteResult.Failure(AndroidPublicClipboardWriter.ERROR_UNAVAILABLE)
+
+    override fun writeImage(
+        encoded: ByteArray,
+        mimeType: String,
+        originEventId: String,
+    ): ClipboardWriteResult =
+        ClipboardWriteResult.Failure(AndroidPublicClipboardWriter.ERROR_UNAVAILABLE)
 }
 
 /**
@@ -182,5 +189,13 @@ internal object DeferredWriteFallback : ClipboardWriter {
 
     override fun writeText(text: String, originEventId: String): ClipboardWriteResult =
         ClipServices.writeFallbackProvider?.invoke()?.writeText(text, originEventId)
+            ?: ClipboardWriteResult.Failure(AndroidPublicClipboardWriter.ERROR_UNAVAILABLE)
+
+    override fun writeImage(
+        encoded: ByteArray,
+        mimeType: String,
+        originEventId: String,
+    ): ClipboardWriteResult =
+        ClipServices.writeFallbackProvider?.invoke()?.writeImage(encoded, mimeType, originEventId)
             ?: ClipboardWriteResult.Failure(AndroidPublicClipboardWriter.ERROR_UNAVAILABLE)
 }

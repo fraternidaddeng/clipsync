@@ -12,6 +12,7 @@ data class PolicySettings(
     val privateMode: Boolean = false,
     val blacklistEnabled: Boolean = true,
     val userBlacklist: Set<String> = emptySet(),
+    val imageSyncEnabled: Boolean = false,
 )
 
 sealed class PolicyDecision {
@@ -26,6 +27,7 @@ object CapturePolicy {
 
     private const val KEY_PAUSED = "is_paused"
     private const val KEY_PRIVATE = "is_private_mode"
+    private const val KEY_IMAGE_SYNC = SETTING_IMAGE_SYNC_ENABLED
 
     /** Internal capture tags — never treated as Android package names. */
     val INTERNAL_SOURCE_TAGS: Set<String> = setOf(
@@ -69,12 +71,14 @@ object CapturePolicy {
         privateModeRaw: String?,
         blacklistEnabledRaw: String?,
         extraRaw: String?,
+        imageSyncRaw: String? = null,
     ): PolicySettings =
         PolicySettings(
             paused = parseFlag(pausedRaw),
             privateMode = parseFlag(privateModeRaw),
             blacklistEnabled = parseFlag(blacklistEnabledRaw, default = true),
             userBlacklist = parseUserBlacklist(extraRaw),
+            imageSyncEnabled = parseFlag(imageSyncRaw, default = false),
         )
 
     suspend fun load(getSetting: suspend (String) -> String?): PolicySettings =
@@ -83,6 +87,7 @@ object CapturePolicy {
             privateModeRaw = getSetting(KEY_PRIVATE),
             blacklistEnabledRaw = getSetting(SETTING_BLACKLIST_ENABLED),
             extraRaw = getSetting(SETTING_BLACKLIST_EXTRA),
+            imageSyncRaw = getSetting(KEY_IMAGE_SYNC),
         )
 
     fun evaluate(
@@ -97,6 +102,26 @@ object CapturePolicy {
             return PolicyDecision.Reject(CaptureRejectReason.BLOCKED_SOURCE)
         }
         if (utf8Bytes > MAX_CLIP_UTF8_BYTES) {
+            return PolicyDecision.Reject(CaptureRejectReason.TOO_LARGE)
+        }
+        return PolicyDecision.Allow
+    }
+
+    fun evaluateImage(
+        sourceApp: String?,
+        encodedBytes: Int,
+        settings: PolicySettings,
+    ): PolicyDecision {
+        if (settings.paused || settings.privateMode) {
+            return PolicyDecision.Reject(CaptureRejectReason.POLICY_PAUSED)
+        }
+        if (isSourceBlocked(sourceApp, settings)) {
+            return PolicyDecision.Reject(CaptureRejectReason.BLOCKED_SOURCE)
+        }
+        if (!settings.imageSyncEnabled) {
+            return PolicyDecision.Reject(CaptureRejectReason.UNSUPPORTED_MEDIA)
+        }
+        if (encodedBytes > com.clipsync.android.media.MediaLimits.MAX_ENCODED_BYTES) {
             return PolicyDecision.Reject(CaptureRejectReason.TOO_LARGE)
         }
         return PolicyDecision.Allow

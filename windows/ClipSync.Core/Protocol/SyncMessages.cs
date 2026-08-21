@@ -12,12 +12,22 @@ public static class ProtocolMessageTypes
     public const string ClipAnnounce = "clip_announce";
     public const string ClipFetch = "clip_fetch";
     public const string ClipPayload = "clip_payload";
+    public const string ClipPayloadBegin = "clip_payload_begin";
+    public const string ClipPayloadChunk = "clip_payload_chunk";
+    public const string ClipPayloadEnd = "clip_payload_end";
     public const string AckRanges = "ack_ranges";
     public const string Error = "error";
     public const string Ping = "ping";
     public const string Pong = "pong";
 
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
+    {
+        Hello, Challenge, Auth, KnownVector, WantRanges, ClipAnnounce,
+        ClipFetch, ClipPayload, ClipPayloadBegin, ClipPayloadChunk, ClipPayloadEnd,
+        AckRanges, Error, Ping, Pong
+    };
+
+    public static readonly IReadOnlySet<string> V1 = new HashSet<string>(StringComparer.Ordinal)
     {
         Hello, Challenge, Auth, KnownVector, WantRanges, ClipAnnounce,
         ClipFetch, ClipPayload, AckRanges, Error, Ping, Pong
@@ -27,6 +37,7 @@ public static class ProtocolMessageTypes
 public static class ProtocolLimits
 {
     public const int ProtocolVersion = 1;
+    public const int ProtocolVersionV2 = 2;
     public const int MaxJsonDepth = 16;
     public const int MaxContentUtf8Bytes = 1_048_576;
     public const int MaxPayloadBatchContentBytes = 1_048_576;
@@ -39,6 +50,14 @@ public static class ProtocolLimits
     public const int MaxSourceAppLength = 256;
     public const int MaxClientVersionLength = 64;
     public const long MaxRetryAfterMs = 300_000;
+    public const int MaxCapabilities = 16;
+    public const int MaxEncodedImageBytes = 16 * 1024 * 1024;
+    public const int MaxImagePixels = 32 * 1024 * 1024;
+    public const int MaxImageSide = 8_192;
+    public const int MaxChunkBytes = 256 * 1024;
+    public const int MaxChunkCount = 64;
+    public const int MaxConcurrentImageDownloads = 2;
+    public const string CapabilityImageClipV2 = "image_clip_v2";
 }
 
 public static class ProtocolErrorCodes
@@ -60,6 +79,12 @@ public static class ProtocolErrorCodes
     public const string PayloadTooLarge = "PAYLOAD_TOO_LARGE";
     public const string RateLimited = "RATE_LIMITED";
     public const string InternalError = "INTERNAL_ERROR";
+    public const string UnsupportedMedia = "UNSUPPORTED_MEDIA";
+    public const string MediaTooLarge = "MEDIA_TOO_LARGE";
+    public const string MediaDecodeFailed = "MEDIA_DECODE_FAILED";
+    public const string MediaHashMismatch = "MEDIA_HASH_MISMATCH";
+    public const string MediaOutOfOrder = "MEDIA_OUT_OF_ORDER";
+    public const string MediaStorageFailed = "MEDIA_STORAGE_FAILED";
 
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
     {
@@ -67,6 +92,15 @@ public static class ProtocolErrorCodes
         ChallengeExpired, ReplayDetected, DeviceRevoked, TrustEpochMismatch, MessageOutOfOrder,
         InvalidRange, EventConflict, PayloadNotFound, HashMismatch, PayloadTooLarge,
         RateLimited, InternalError
+    };
+
+    public static readonly IReadOnlySet<string> V2 = new HashSet<string>(StringComparer.Ordinal)
+    {
+        MalformedJson, SchemaViolation, UnsupportedVersion, AuthRequired, AuthFailed,
+        ChallengeExpired, ReplayDetected, DeviceRevoked, TrustEpochMismatch, MessageOutOfOrder,
+        InvalidRange, EventConflict, PayloadNotFound, HashMismatch, PayloadTooLarge,
+        RateLimited, InternalError, UnsupportedMedia, MediaTooLarge, MediaDecodeFailed,
+        MediaHashMismatch, MediaOutOfOrder, MediaStorageFailed
     };
 }
 
@@ -113,6 +147,9 @@ public sealed record HelloBody
 
     [JsonPropertyName("known_vector")]
     public required SyncStateDto KnownVector { get; init; }
+
+    [JsonPropertyName("capabilities")]
+    public IReadOnlyList<string>? Capabilities { get; init; }
 }
 
 public sealed record ChallengeBody
@@ -183,9 +220,16 @@ public static class ClipUnavailableReasons
     public const string PolicyFiltered = "policy_filtered";
     public const string NotFound = "not_found";
 
+    public const string UnsupportedMedia = "unsupported_media";
+
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
     {
         LocalOnly, Deleted, Expired, PolicyFiltered, NotFound
+    };
+
+    public static readonly IReadOnlySet<string> V2 = new HashSet<string>(StringComparer.Ordinal)
+    {
+        LocalOnly, Deleted, Expired, PolicyFiltered, NotFound, UnsupportedMedia
     };
 }
 
@@ -223,6 +267,18 @@ public sealed record ClipHeaderDto
 
     [JsonPropertyName("reason")]
     public string? Reason { get; init; }
+
+    [JsonPropertyName("mime_type")]
+    public string? MimeType { get; init; }
+
+    [JsonPropertyName("encoded_bytes")]
+    public long? EncodedBytes { get; init; }
+
+    [JsonPropertyName("pixel_width")]
+    public long? PixelWidth { get; init; }
+
+    [JsonPropertyName("pixel_height")]
+    public long? PixelHeight { get; init; }
 }
 
 public sealed record ClipAnnounceBody
@@ -274,6 +330,60 @@ public sealed record ClipPayloadBody
 {
     [JsonPropertyName("clips")]
     public required IReadOnlyList<ClipPayloadItemDto> Clips { get; init; }
+}
+
+public sealed record ClipPayloadBeginBody
+{
+    [JsonPropertyName("transfer_id")]
+    public required string TransferId { get; init; }
+
+    [JsonPropertyName("event_id")]
+    public required string EventId { get; init; }
+
+    [JsonPropertyName("chunk_count")]
+    public required long ChunkCount { get; init; }
+
+    [JsonPropertyName("encoded_bytes")]
+    public required long EncodedBytes { get; init; }
+
+    [JsonPropertyName("content_hash")]
+    public required string ContentHash { get; init; }
+
+    [JsonPropertyName("mime_type")]
+    public required string MimeType { get; init; }
+}
+
+public sealed record ClipPayloadChunkBody
+{
+    [JsonPropertyName("transfer_id")]
+    public required string TransferId { get; init; }
+
+    [JsonPropertyName("event_id")]
+    public required string EventId { get; init; }
+
+    [JsonPropertyName("chunk_index")]
+    public required long ChunkIndex { get; init; }
+
+    [JsonPropertyName("chunk_count")]
+    public required long ChunkCount { get; init; }
+
+    [JsonPropertyName("chunk_bytes")]
+    public required long ChunkBytes { get; init; }
+
+    [JsonPropertyName("data")]
+    public required string Data { get; init; }
+}
+
+public sealed record ClipPayloadEndBody
+{
+    [JsonPropertyName("transfer_id")]
+    public required string TransferId { get; init; }
+
+    [JsonPropertyName("event_id")]
+    public required string EventId { get; init; }
+
+    [JsonPropertyName("content_hash")]
+    public required string ContentHash { get; init; }
 }
 
 public sealed record AckRangesBody

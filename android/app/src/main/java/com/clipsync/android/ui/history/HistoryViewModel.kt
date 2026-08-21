@@ -37,9 +37,14 @@ data class HistoryItemUi(
     val content: String,
     val createdAtMs: Long,
     val sourceApp: String?,
+    val isImage: Boolean = false,
+    val mimeType: String? = null,
+    val pixelWidth: Int? = null,
+    val pixelHeight: Int? = null,
+    val contentHash: String = "",
 ) {
     override fun toString(): String =
-        "HistoryItemUi(eventId=$eventId, createdAtMs=$createdAtMs, sourceApp=$sourceApp)"
+        "HistoryItemUi(eventId=$eventId, createdAtMs=$createdAtMs, sourceApp=$sourceApp, isImage=$isImage)"
 }
 
 data class HistoryUiState(
@@ -118,9 +123,13 @@ class HistoryViewModel(
 
     fun copy(eventId: String) {
         viewModelScope.launch {
-            val item = mutableState.value.items.find { it.eventId == eventId } ?: return@launch
-            val outcome = writeCoordinator.writeText(item.content, eventId)
-            val failed = outcome.result is ClipboardWriteResult.Failure
+            val entry = repository.findVisibleEntry(eventId) ?: return@launch
+            val result = if (entry.isImage) {
+                copyImage(entry)
+            } else {
+                writeCoordinator.writeText(entry.content, eventId).result
+            }
+            val failed = result is ClipboardWriteResult.Failure
             copyFailureClearJob?.cancel()
             copyFailureClearJob = null
             mutableState.update { it.copy(copyFailed = failed) }
@@ -132,6 +141,17 @@ class HistoryViewModel(
                     }
             }
         }
+    }
+
+    private fun copyImage(entry: ClipEntry): ClipboardWriteResult {
+        val mime = entry.mimeType
+        val bytes = runCatching { repository.media.readAllBytes(entry.contentHash) }.getOrNull()
+        if (mime == null || bytes == null) {
+            return ClipboardWriteResult.Failure(
+                com.clipsync.android.platform.clipboard.ClipboardWriter.IMAGE_WRITE_UNAVAILABLE,
+            )
+        }
+        return writeCoordinator.writeImage(bytes, mime, entry.eventId).result
     }
 
     fun openDetail(eventId: String) {
@@ -272,14 +292,34 @@ private fun HistoryUiState.withConnectionNotices(
     )
 }
 
-internal fun ClipEntry.toUi(): HistoryItemUi =
-    HistoryItemUi(
+internal fun ClipEntry.toUi(): HistoryItemUi {
+    val imagePreview = imagePreviewText(mimeType, pixelWidth, pixelHeight)
+    return HistoryItemUi(
         eventId = eventId,
-        preview = previewText(content),
-        content = content,
+        preview = if (isImage) imagePreview else previewText(content),
+        content = if (isImage) imagePreview else content,
         createdAtMs = createdAtMs,
         sourceApp = sourceApp,
+        isImage = isImage,
+        mimeType = mimeType,
+        pixelWidth = pixelWidth,
+        pixelHeight = pixelHeight,
+        contentHash = contentHash,
     )
+}
+
+internal fun imagePreviewText(
+    mimeType: String?,
+    pixelWidth: Int?,
+    pixelHeight: Int?,
+): String {
+    val mime = mimeType ?: "image"
+    return if (pixelWidth != null && pixelHeight != null) {
+        "Image $mime ${pixelWidth}×$pixelHeight"
+    } else {
+        "Image $mime"
+    }
+}
 
 internal fun previewText(
     content: String,

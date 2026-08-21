@@ -22,5 +22,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\protocol\v1\fixtures\**\*.json" Link="protocol-fixtures\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\protocol\v2\fixtures\**\*.json" Link="protocol-fixtures-v2\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

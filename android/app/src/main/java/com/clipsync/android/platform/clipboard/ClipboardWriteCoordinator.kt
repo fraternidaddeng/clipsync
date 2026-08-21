@@ -42,6 +42,50 @@ class ClipboardWriteCoordinator(
         return snapshot
     }
 
+    fun writeImage(
+        encoded: ByteArray,
+        mimeType: String,
+        originEventId: String,
+    ): ClipboardWriteOutcome {
+        require(originEventId.isNotBlank()) { "originEventId must not be blank." }
+        val hash = Sha256ContentHasher.hashBytes(encoded)
+        val suppression = WriteSuppression(
+            contentHash = hash,
+            expiresAtEpochMillis = nowEpochMillis() + suppressionWindowMillis,
+        )
+        synchronized(suppressionsByOrigin) {
+            suppressionsByOrigin[originEventId] = suppression
+        }
+
+        val publicResult = publicWriter.writeImage(encoded, mimeType, originEventId)
+        if (publicResult is ClipboardWriteResult.Success) {
+            publicLastSuccessAt = nowEpochMillis()
+            publicLastError = null
+            persistWrite()
+            return ClipboardWriteOutcome(publicResult, ClipboardWriterKind.PUBLIC_API)
+        }
+        publicLastError = (publicResult as ClipboardWriteResult.Failure).errorCode
+
+        val fallback = fallbackWriter
+        if (fallback != null && fallback.probe() == CapabilityState.READY) {
+            val fallbackResult = fallback.writeImage(encoded, mimeType, originEventId)
+            if (fallbackResult is ClipboardWriteResult.Success) {
+                fallbackLastSuccessAt = nowEpochMillis()
+                fallbackLastError = null
+                persistWrite()
+                return ClipboardWriteOutcome(fallbackResult, ClipboardWriterKind.PRIVILEGED_FALLBACK)
+            }
+            fallbackLastError = (fallbackResult as ClipboardWriteResult.Failure).errorCode
+            persistWrite()
+            clearSuppression(originEventId)
+            return ClipboardWriteOutcome(fallbackResult, ClipboardWriterKind.PRIVILEGED_FALLBACK)
+        }
+
+        persistWrite()
+        clearSuppression(originEventId)
+        return ClipboardWriteOutcome(publicResult, ClipboardWriterKind.PUBLIC_API)
+    }
+
     fun writeText(text: String, originEventId: String): ClipboardWriteOutcome {
         require(originEventId.isNotBlank()) { "originEventId must not be blank." }
         val suppression = WriteSuppression(
@@ -102,11 +146,20 @@ class ClipboardWriteCoordinator(
      * a History copy, or a self-test token) is our own write echoing back, not a
      * user copy. One-shot per marker, like [shouldSuppress].
      */
-    fun shouldSuppressCapture(text: String): Boolean {
+    fun shouldSuppressCapture(text: String): Boolean =
+        shouldSuppressCaptureHash(hasher.hash(text))
+
+    fun shouldSuppressCapture(change: ClipboardChange): Boolean =
+        if (change.imageBytes != null) {
+            shouldSuppressCaptureHash(change.contentHash)
+        } else {
+            shouldSuppressCapture(change.text)
+        }
+
+    fun shouldSuppressCaptureHash(contentHash: String): Boolean {
         synchronized(suppressionsByOrigin) {
             purgeExpiredSuppressions()
-            val hash = hasher.hash(text)
-            val entry = suppressionsByOrigin.entries.firstOrNull { it.value.contentHash == hash }
+            val entry = suppressionsByOrigin.entries.firstOrNull { it.value.contentHash == contentHash }
                 ?: return false
             suppressionsByOrigin.remove(entry.key)
             return true

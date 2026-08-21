@@ -20,17 +20,21 @@
             <TextBlock x:Name="SourceText" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
             <TextBlock x:Name="CreatedAtText" Margin="0,4,0,0" FontSize="12" Foreground="#6D7580" />
         </StackPanel>
-        <TextBox x:Name="BodyText"
-                 Grid.Row="2"
-                 Padding="10,8"
-                 AcceptsReturn="True"
-                 BorderBrush="#CBD1D9"
-                 BorderThickness="1"
-                 HorizontalScrollBarVisibility="Disabled"
-                 IsReadOnly="True"
-                 IsReadOnlyCaretVisible="True"
-                 TextWrapping="Wrap"
-                 VerticalScrollBarVisibility="Auto" />
+        <Grid Grid.Row="2">
+            <TextBox x:Name="BodyText"
+                     Padding="10,8"
+                     AcceptsReturn="True"
+                     BorderBrush="#CBD1D9"
+                     BorderThickness="1"
+                     HorizontalScrollBarVisibility="Disabled"
+                     IsReadOnly="True"
+                     IsReadOnlyCaretVisible="True"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto" />
+            <Image x:Name="PreviewImage"
+                   Stretch="Uniform"
+                   Visibility="Collapsed" />
+        </Grid>
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Width="90" Height="32" Click="OnCopyClicked" Content="{x:Static app:Strings.Copy}" />
             <Button Width="90" Height="32" Margin="8,0,0,0" IsCancel="True" Click="OnCloseClicked" Content="{x:Static app:Strings.Close}" />

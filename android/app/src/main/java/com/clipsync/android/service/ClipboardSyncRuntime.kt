@@ -6,8 +6,10 @@ import android.content.pm.PackageManager
 import com.clipsync.android.notify.InboundClip
 import com.clipsync.android.notify.InboundClipApplier
 import com.clipsync.android.notify.InboundClipNotifier
+import com.clipsync.android.protocol.ProtocolLimits
 import com.clipsync.android.sync.AndroidSyncLogger
 import com.clipsync.android.sync.SyncController
+import com.clipsync.android.sync.SyncSessionOptions
 import com.clipsync.android.sync.createSyncController
 import com.clipsync.android.ui.settings.ClipServices
 import java.util.concurrent.atomic.AtomicInteger
@@ -71,11 +73,20 @@ object ClipboardSyncRuntime {
             pairingStore = ClipServices.pairingStore(app),
             repository = repository,
             scope = scope,
+            options = SyncSessionOptions(protocolVersion = ProtocolLimits.PROTOCOL_VERSION_V2),
             logger = AndroidSyncLogger,
             onRemoteClipsCommitted = { clips ->
                 scope.launch(Dispatchers.IO) {
                     applier.onCommitted(
-                        clips.map { InboundClip(eventId = it.eventId, content = it.content) },
+                        clips.map {
+                            InboundClip(
+                                eventId = it.eventId,
+                                content = it.content,
+                                kind = it.kind,
+                                contentHash = it.contentHash,
+                                mimeType = it.mimeType,
+                            )
+                        },
                     )
                 }
             },

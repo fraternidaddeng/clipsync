@@ -68,7 +68,7 @@ object ClipboardCaptureRuntime {
                 val writeCoordinator = ClipServices.writeCoordinator(app)
                 // Our own writes (inbound apply, History copy, self-test token) echo
                 // back through the change listener; they are not user copies.
-                val suppressed = writeCoordinator.shouldSuppressCapture(change.text)
+                val suppressed = writeCoordinator.shouldSuppressCapture(change)
                 if (!suppressed && !LocalCapturePolicy.isBlocked(repository)) {
                     // PairingStore is the source of truth for peer identity; the
                     // Room mirror is only a UI convenience and can lag it.
@@ -80,12 +80,23 @@ object ClipboardCaptureRuntime {
                             ?.takeIf { it.isNotBlank() }
                     val sourceTag =
                         captureSourceTag(manager?.access()?.state?.activeReadMode)
-                    repository.captureLocalText(
-                        change.text,
-                        sourceTag,
-                        change.observedAtEpochMillis,
-                        peerId,
-                    )
+                    val imageBytes = change.imageBytes
+                    if (imageBytes != null) {
+                        repository.captureLocalImage(
+                            encoded = imageBytes,
+                            sourceApp = sourceTag,
+                            nowMs = change.observedAtEpochMillis,
+                            peerId = peerId,
+                            expectedHash = change.contentHash,
+                        )
+                    } else {
+                        repository.captureLocalText(
+                            change.text,
+                            sourceTag,
+                            change.observedAtEpochMillis,
+                            peerId,
+                        )
+                    }
                     AndroidSyncLogger.event("capture_stored", "background")
                 }
             },

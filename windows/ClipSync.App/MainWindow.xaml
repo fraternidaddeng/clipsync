@@ -10,6 +10,8 @@
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <app:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility" />
+        <app:FilePathToImageConverter x:Key="FilePathToImage" />
     </Window.Resources>
     <Grid Background="#F7F8FA">
         <Grid.RowDefinitions>
@@ -63,14 +65,35 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="8" Width="520">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <TextBlock MaxHeight="56" Text="{Binding Text}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
-                                <TextBlock Grid.Row="1" Margin="0,6,0,0" Foreground="#6D7580" FontSize="12">
-                                    <Run Text="{Binding Source}" /><Run Text="  " /><Run Text="{Binding CreatedAt}" />
-                                </TextBlock>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="56"
+                                        Height="56"
+                                        Margin="0,0,12,0"
+                                        CornerRadius="4"
+                                        ClipToBounds="True"
+                                        Background="#EEF1F5"
+                                        Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}">
+                                    <Image Stretch="UniformToFill"
+                                           Source="{Binding ThumbnailPath, Converter={StaticResource FilePathToImage}}" />
+                                </Border>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock MaxHeight="56"
+                                               Text="{Binding Preview}"
+                                               TextWrapping="Wrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               Visibility="{Binding IsImage, Converter={StaticResource InverseBoolToVisibility}}" />
+                                    <TextBlock FontSize="13"
+                                               Foreground="#3D4450"
+                                               Text="{Binding Preview}"
+                                               TextWrapping="Wrap"
+                                               Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}" />
+                                    <TextBlock Margin="0,6,0,0" Foreground="#6D7580" FontSize="12">
+                                        <Run Text="{Binding Source}" /><Run Text="  " /><Run Text="{Binding CreatedAt}" />
+                                    </TextBlock>
+                                </StackPanel>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -102,6 +125,17 @@
                     <CheckBox Margin="0,14,0,0"
                               Content="{x:Static app:Strings.AutoApplyRemote}"
                               IsChecked="{Binding AutoApplyRemote}" />
+                    <CheckBox Margin="0,10,0,0"
+                              Content="{x:Static app:Strings.ImageSync}"
+                              IsChecked="{Binding ImageSyncEnabled}" />
+                    <TextBlock Margin="0,4,0,0"
+                               FontSize="11"
+                               Foreground="#6D7580"
+                               Text="{x:Static app:Strings.ImageSyncHint}"
+                               TextWrapping="Wrap" />
+                    <CheckBox Margin="0,10,0,0"
+                              Content="{x:Static app:Strings.AutoApplyImages}"
+                              IsChecked="{Binding AutoApplyImages}" />
                     <TextBlock Margin="0,14,0,6" Text="{x:Static app:Strings.ExtraBindAddresses}" />
                     <TextBox Padding="8,5" Text="{Binding ExtraBindAddresses}" />
                     <TextBlock Margin="0,6,0,0"

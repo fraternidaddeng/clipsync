@@ -21,7 +21,11 @@ interface ClipDao {
         """
         SELECT * FROM clips
         WHERE deleted_at IS NULL
-          AND (:matchAll = 1 OR content LIKE :pattern ESCAPE '\' )
+          AND (
+            :matchAll = 1
+            OR content LIKE :pattern ESCAPE '\'
+            OR (kind = 'image' AND ('image' LIKE :pattern ESCAPE '\' OR content_hash LIKE :pattern ESCAPE '\'))
+          )
         ORDER BY created_at DESC, origin_seq DESC, origin_device_id ASC, event_id ASC
         LIMIT :limit
         """,
@@ -32,7 +36,11 @@ interface ClipDao {
         """
         SELECT * FROM clips
         WHERE deleted_at IS NULL
-          AND (:matchAll = 1 OR content LIKE :pattern ESCAPE '\' )
+          AND (
+            :matchAll = 1
+            OR content LIKE :pattern ESCAPE '\'
+            OR (kind = 'image' AND ('image' LIKE :pattern ESCAPE '\' OR content_hash LIKE :pattern ESCAPE '\'))
+          )
         ORDER BY created_at DESC, origin_seq DESC, origin_device_id ASC, event_id ASC
         LIMIT :limit
         """,
@@ -42,7 +50,8 @@ interface ClipDao {
     @Query(
         """
         UPDATE clips
-        SET content = '', content_hash = '', source_app = NULL,
+        SET content = CASE WHEN kind = 'image' THEN NULL ELSE '' END,
+            content_hash = '', source_app = NULL,
             deleted_at = :nowMs, terminal_reason = 'deleted'
         WHERE event_id = :eventId AND deleted_at IS NULL
         """,
@@ -52,7 +61,8 @@ interface ClipDao {
     @Query(
         """
         UPDATE clips
-        SET content = '', content_hash = '', source_app = NULL,
+        SET content = CASE WHEN kind = 'image' THEN NULL ELSE '' END,
+            content_hash = '', source_app = NULL,
             deleted_at = :nowMs, terminal_reason = 'deleted'
         WHERE deleted_at IS NULL
         """,
@@ -61,6 +71,22 @@ interface ClipDao {
 
     @Query("SELECT event_id FROM clips WHERE deleted_at IS NULL")
     suspend fun visibleEventIds(): List<String>
+
+    @Query(
+        """
+        UPDATE clips
+        SET terminal_reason = :reason
+        WHERE event_id = :eventId
+          AND origin_device_id = :originDeviceId
+          AND origin_seq = :originSeq
+        """,
+    )
+    suspend fun setTerminalReason(
+        eventId: String,
+        originDeviceId: String,
+        originSeq: Long,
+        reason: String,
+    ): Int
 
     @Query(
         """
@@ -218,4 +244,44 @@ interface SettingDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: SettingEntity)
+}
+
+@Dao
+interface MediaBlobDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(entity: MediaBlobEntity)
+
+    @Query("SELECT * FROM media_blobs WHERE content_hash = :contentHash LIMIT 1")
+    suspend fun find(contentHash: String): MediaBlobEntity?
+
+    @Query("SELECT content_hash FROM media_blobs")
+    suspend fun allHashes(): List<String>
+
+    @Query("DELETE FROM media_blobs WHERE content_hash = :contentHash")
+    suspend fun delete(contentHash: String)
+}
+
+@Dao
+interface ClipMediaDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(entity: ClipMediaEntity)
+
+    @Query("SELECT * FROM clip_media WHERE event_id = :eventId LIMIT 1")
+    suspend fun find(eventId: String): ClipMediaEntity?
+
+    @Query("SELECT DISTINCT content_hash FROM clip_media")
+    suspend fun referencedHashes(): List<String>
+
+    @Query("DELETE FROM clip_media WHERE event_id = :eventId")
+    suspend fun deleteByEventId(eventId: String)
+
+    @Query(
+        """
+        DELETE FROM clip_media
+        WHERE event_id IN (
+            SELECT event_id FROM clips WHERE deleted_at IS NOT NULL OR content_hash = ''
+        )
+        """,
+    )
+    suspend fun deleteOrphaned()
 }

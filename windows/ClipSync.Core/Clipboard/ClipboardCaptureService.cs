@@ -5,6 +5,10 @@ public interface IClipboardEventStore
     ValueTask<StoredClipboardEvent> StoreAsync(
         AcceptedClipboardContent content,
         CancellationToken cancellationToken = default);
+
+    ValueTask<StoredImageEvent> StoreImageAsync(
+        AcceptedImageContent image,
+        CancellationToken cancellationToken = default);
 }
 
 public interface IClipboardEventPublisher
@@ -27,6 +31,12 @@ public sealed class ClipboardCaptureService(
         if (decision is CaptureDecision.Reject reject)
         {
             return new CaptureResult.Rejected(reject.Reason);
+        }
+
+        if (decision is CaptureDecision.AcceptImage acceptImage)
+        {
+            var storedImage = await store.StoreImageAsync(acceptImage.Image, cancellationToken).ConfigureAwait(false);
+            return new CaptureResult.StoredImage(storedImage);
         }
 
         var accepted = (CaptureDecision.Accept)decision;

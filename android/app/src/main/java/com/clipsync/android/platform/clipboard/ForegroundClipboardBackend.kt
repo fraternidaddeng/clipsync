@@ -1,7 +1,9 @@
 package com.clipsync.android.platform.clipboard
 
+import android.content.ClipData
 import android.content.ClipDescription
 import android.content.ClipboardManager
+import android.content.Context
 import android.os.Build
 
 /**
@@ -14,6 +16,7 @@ class ForegroundClipboardBackend internal constructor(
     private val isVisible: () -> Boolean,
     private val hasher: ContentHasher = Sha256ContentHasher,
     private val nowEpochMillis: () -> Long = System::currentTimeMillis,
+    private val imageChange: (() -> ClipboardChange?)? = null,
 ) : BackgroundClipboardBackend {
     constructor(
         clipboardManager: ClipboardManager,
@@ -25,6 +28,20 @@ class ForegroundClipboardBackend internal constructor(
         isVisible = isVisible,
         hasher = hasher,
         nowEpochMillis = nowEpochMillis,
+    )
+
+    constructor(
+        context: Context,
+        clipboardManager: ClipboardManager,
+        isVisible: () -> Boolean,
+        hasher: ContentHasher = Sha256ContentHasher,
+        nowEpochMillis: () -> Long = System::currentTimeMillis,
+    ) : this(
+        os = AndroidClipboardOs(clipboardManager),
+        isVisible = isVisible,
+        hasher = hasher,
+        nowEpochMillis = nowEpochMillis,
+        imageChange = { ClipboardMediaReader.readPreferred(context, clipboardManager) },
     )
 
     override val mode: ClipboardReadMode = ClipboardReadMode.FOREGROUND_ONLY
@@ -108,6 +125,12 @@ class ForegroundClipboardBackend internal constructor(
         if (!isVisible()) {
             return
         }
+        val image = imageChange?.invoke()
+        if (image != null) {
+            lastReadSuccessAtEpochMillis = image.observedAtEpochMillis
+            callback?.invoke(image)
+            return
+        }
         val text = (os.readPrimaryText() as? OsClip.Text)?.value
         if (text.isNullOrEmpty()) {
             return
@@ -139,6 +162,8 @@ internal interface ClipboardOs {
     fun removePrimaryClipChangedListener()
 
     fun readPrimaryText(): OsClip
+
+    fun readPrimaryClip(): ClipData? = null
 }
 
 internal sealed interface OsClip {
@@ -194,4 +219,17 @@ internal class AndroidClipboardOs(
             OsClip.Failed(ForegroundClipboardBackend.ERROR_FAILED)
         }
     }
+
+    override fun readPrimaryClip(): ClipData? =
+        try {
+            if (!clipboardManager.hasPrimaryClip()) {
+                null
+            } else {
+                clipboardManager.primaryClip
+            }
+        } catch (_: SecurityException) {
+            null
+        } catch (_: RuntimeException) {
+            null
+        }
 }

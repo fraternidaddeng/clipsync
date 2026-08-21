@@ -14,9 +14,16 @@ public sealed record ClipboardHistoryEntry(
     string? SourceProcess,
     DateTimeOffset CreatedAt,
     DateTimeOffset? ExpiresAt,
-    DateTimeOffset? DeletedAt)
+    DateTimeOffset? DeletedAt,
+    string Kind = "text",
+    string? MimeType = null,
+    int? EncodedBytes = null,
+    int? PixelWidth = null,
+    int? PixelHeight = null)
 {
     public bool IsDeleted => DeletedAt is not null;
+
+    public bool IsImage => string.Equals(Kind, "image", StringComparison.Ordinal);
 }
 
 /// <summary>
@@ -26,11 +33,17 @@ public sealed record ImportedClipboardRow(
     Guid EventId,
     string OriginDeviceId,
     long OriginSequence,
-    string Content,
+    string? Content,
     string ContentHash,
     string? SourceApp,
     DateTimeOffset CreatedAt,
-    DateTimeOffset? ExpiresAt);
+    DateTimeOffset? ExpiresAt,
+    string Kind = "text",
+    string? MimeType = null,
+    int? EncodedBytes = null,
+    int? PixelWidth = null,
+    int? PixelHeight = null,
+    string? MediaFileName = null);
 
 public readonly record struct ClipboardImportResult(int Imported, int Skipped);
 

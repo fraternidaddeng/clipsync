@@ -2,8 +2,11 @@
 
 package com.clipsync.android.ui.history
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,10 +15,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
@@ -29,15 +35,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.clipsync.android.R
+import com.clipsync.android.media.ImageThumbnail
+import com.clipsync.android.ui.settings.ClipServices
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun HistoryScreen(
@@ -194,20 +210,33 @@ private fun HistoryRow(
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp)) {
-            Column(
+            Row(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .clickable(onClick = onOpen),
             ) {
-                Text(text = item.preview, style = MaterialTheme.typography.bodyLarge)
-                item.sourceApp?.let { source ->
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = source,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                if (item.isImage) {
+                    HistoryImageThumb(
+                        item = item,
+                        modifier =
+                            Modifier
+                                .size(HISTORY_THUMB_SIZE)
+                                .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop,
                     )
+                    Spacer(modifier = Modifier.width(12.dp))
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = historyPreview(item), style = MaterialTheme.typography.bodyLarge)
+                    item.sourceApp?.let { source ->
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = source,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
             }
             Row {
@@ -257,6 +286,17 @@ private fun HistoryDetailDialog(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                if (item.isImage) {
+                    HistoryImageThumb(
+                        item = item,
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .heightIn(min = 120.dp, max = 320.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Fit,
+                    )
+                }
                 SelectionContainer(
                     modifier =
                         Modifier
@@ -265,7 +305,7 @@ private fun HistoryDetailDialog(
                             .verticalScroll(rememberScrollState()),
                 ) {
                     Text(
-                        text = item.content,
+                        text = historyPreview(item),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
@@ -285,6 +325,60 @@ private fun HistoryDetailDialog(
     }
 }
 
+@Composable
+private fun historyPreview(item: HistoryItemUi): String =
+    if (item.isImage) {
+        stringResource(
+            R.string.history_image_preview,
+            item.mimeType ?: "image",
+            item.pixelWidth ?: 0,
+            item.pixelHeight ?: 0,
+        )
+    } else {
+        item.preview
+    }
+
+@Composable
+private fun HistoryImageThumb(
+    item: HistoryItemUi,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
+) {
+    val context = LocalContext.current
+    val description =
+        stringResource(
+            R.string.history_image_preview,
+            item.mimeType ?: "image",
+            item.pixelWidth ?: 0,
+            item.pixelHeight ?: 0,
+        )
+    val bitmap by produceState<ImageBitmap?>(initialValue = null, item.contentHash) {
+        value =
+            withContext(Dispatchers.IO) {
+                val hash = item.contentHash
+                if (hash.isEmpty()) {
+                    null
+                } else {
+                    ImageThumbnail.decodePreview(ClipServices.repository(context).media, hash)
+                        ?.asImageBitmap()
+                }
+            }
+    }
+    Box(
+        modifier = modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+    ) {
+        val preview = bitmap
+        if (preview != null) {
+            Image(
+                bitmap = preview,
+                contentDescription = description,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = contentScale,
+            )
+        }
+    }
+}
+
 internal fun formatHistoryTime(createdAtMs: Long): String =
     HISTORY_TIME_FORMAT.format(Instant.ofEpochMilli(createdAtMs).atZone(ZoneId.systemDefault()))
 
@@ -292,3 +386,5 @@ private val HISTORY_TIME_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
 private const val DETAIL_DIALOG_MAX_HEIGHT_FRACTION = 0.7f
+
+private val HISTORY_THUMB_SIZE = 72.dp

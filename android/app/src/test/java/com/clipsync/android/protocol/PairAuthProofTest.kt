@@ -36,6 +36,7 @@ class PairAuthProofTest {
                 challengerDeviceId = vector.challengerDeviceId,
                 responderDeviceId = vector.responderDeviceId,
                 trustEpoch = vector.trustEpoch,
+                protocolVersion = vector.protocolVersion,
             )
             assertEquals(
                 "proof mismatch for ${vector.name}",
@@ -47,6 +48,28 @@ class PairAuthProofTest {
                 decodeBase64Url(vector.proofBase64Url),
                 proof,
             )
+        }
+    }
+
+    @Test
+    fun `compute reproduces every shared v2 vector`() {
+        val file = resolveV2AuthVectors()
+        assertTrue("Shared v2 auth vectors are missing: $file", file.isFile)
+        val document = Json { ignoreUnknownKeys = true }
+            .decodeFromString(AuthVectorsDocument.serializer(), file.readText())
+        assertTrue(document.vectors.size >= 3)
+        for (vector in document.vectors) {
+            assertEquals(2, vector.protocolVersion)
+            val proof = PairAuthProof.compute(
+                pairSecret = hexToBytes(vector.pairSecretHex),
+                challengeRequestId = vector.challengeRequestId,
+                nonce = decodeBase64Url(vector.nonceBase64Url),
+                challengerDeviceId = vector.challengerDeviceId,
+                responderDeviceId = vector.responderDeviceId,
+                trustEpoch = vector.trustEpoch,
+                protocolVersion = vector.protocolVersion,
+            )
+            assertEquals(vector.proofBase64Url, PairAuthProof.encodeBase64Url(proof))
         }
     }
 
@@ -66,6 +89,7 @@ class PairAuthProofTest {
                 vector.responderDeviceId,
                 vector.trustEpoch,
                 proof,
+                protocolVersion = vector.protocolVersion,
             ),
         )
 
@@ -196,6 +220,18 @@ class PairAuthProofTest {
                 ?: error("Cannot resolve protocol/v1/fixtures/auth/vectors.json")
         }
 
+        private fun resolveV2AuthVectors(): File {
+            val fromProperty = System.getProperty("protocol.fixtures.v2.dir")
+            val candidates = listOfNotNull(
+                fromProperty?.let { File(it).resolve("auth").resolve("vectors.json") },
+                File("protocol/v2/fixtures/auth/vectors.json"),
+                File("../protocol/v2/fixtures/auth/vectors.json"),
+                File("../../protocol/v2/fixtures/auth/vectors.json"),
+            )
+            return candidates.firstOrNull { it.isFile }
+                ?: error("Cannot resolve protocol/v2/fixtures/auth/vectors.json")
+        }
+
         private fun hexToBytes(hex: String): ByteArray =
             hex.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
 
@@ -220,4 +256,5 @@ private data class AuthVector(
     @SerialName("responder_device_id") val responderDeviceId: String,
     @SerialName("trust_epoch") val trustEpoch: Long,
     @SerialName("proof_base64url") val proofBase64Url: String,
+    @SerialName("protocol_version") val protocolVersion: Int = 1,
 )

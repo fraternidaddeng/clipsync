@@ -1,15 +1,22 @@
 package com.clipsync.android.storage
 
 import android.content.Context
+import com.clipsync.android.media.MediaBlobStore
+import com.clipsync.android.media.ValidatedImage
 import com.clipsync.android.platform.clipboard.ContentHasher
 import com.clipsync.android.platform.clipboard.Sha256ContentHasher
+import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.UUID
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transform
 
-fun createClipRepository(context: Context, localDeviceId: String): ClipRepository =
-    ClipRepository(ClipDatabase.persistent(context), localDeviceId)
+fun createClipRepository(context: Context, localDeviceId: String): ClipRepository {
+    val app = context.applicationContext
+    val database = ClipDatabase.persistent(app)
+    val media = MediaBlobStore(File(app.filesDir, "media"))
+    return ClipRepository(RoomClipPersistence(database), localDeviceId, Sha256ContentHasher, media)
+}
 
 /**
  * Local clip history, outbox, and origin cursors. Clipboard bodies are never written to logs.
@@ -18,15 +25,22 @@ class ClipRepository internal constructor(
     private val persistence: ClipPersistence,
     private val localDeviceId: String,
     private val hasher: ContentHasher = Sha256ContentHasher,
+    val media: MediaBlobStore = MediaBlobStore(
+        File(System.getProperty("java.io.tmpdir"), "clipsync-media-$localDeviceId"),
+    ),
 ) {
     constructor(
         database: ClipDatabase,
         localDeviceId: String,
         hasher: ContentHasher = Sha256ContentHasher,
-    ) : this(RoomClipPersistence(database), localDeviceId, hasher)
+        media: MediaBlobStore = MediaBlobStore(
+            File(System.getProperty("java.io.tmpdir"), "clipsync-media-$localDeviceId"),
+        ),
+    ) : this(RoomClipPersistence(database), localDeviceId, hasher, media)
 
     suspend fun initialize() {
         persistence.read { /* force first open / no-op for in-memory */ }
+        media.recoverTemps(System.currentTimeMillis())
     }
 
     suspend fun captureLocalText(
@@ -79,39 +93,103 @@ class ClipRepository internal constructor(
         }
     }
 
+    suspend fun captureLocalImage(
+        encoded: ByteArray,
+        sourceApp: String? = null,
+        nowMs: Long,
+        peerId: String? = null,
+        expectedHash: String? = null,
+    ): CaptureResult {
+        if (encoded.isEmpty()) {
+            return CaptureResult.Rejected(CaptureRejectReason.EMPTY_TEXT)
+        }
+        val source = normalizeSource(sourceApp)
+        val policy = persistence.read { CapturePolicy.load { getSetting(it) } }
+        when (val decision = CapturePolicy.evaluateImage(source, encoded.size, policy)) {
+            is PolicyDecision.Reject -> return CaptureResult.Rejected(decision.reason)
+            PolicyDecision.Allow -> Unit
+        }
+        val validated = try {
+            media.commitBytes(encoded, expectedHash)
+        } catch (_: Exception) {
+            return CaptureResult.Rejected(CaptureRejectReason.DECODE_FAILED)
+        }
+        return persistence.transaction {
+            val recent = findRecentLiveByHash(
+                localDeviceId,
+                validated.contentHash,
+                nowMs - LOCAL_DEDUP_WINDOW_MS,
+            )
+            if (recent != null && nowMs - recent.createdAt < LOCAL_DEDUP_WINDOW_MS) {
+                return@transaction CaptureResult.Rejected(CaptureRejectReason.DUPLICATE)
+            }
+            val originSeq = allocateOriginSeq(localDeviceId)
+            val eventId = newEventId()
+            insertImageClip(eventId, localDeviceId, originSeq, validated, source, nowMs, expiresAt = null)
+            val nextState = receiveState(localDeviceId).accept(originSeq)
+            upsertReceiveState(localDeviceId, nextState)
+            fanOutOutbox(eventId, originDeviceId = localDeviceId, excludedPeerId = null, peerId = peerId)
+            CaptureResult.Stored(eventId, originSeq, validated.contentHash, CLIP_KIND_IMAGE)
+        }
+    }
+
     suspend fun ingestRemoteClip(
         event: RemoteClipEvent,
         sourcePeerId: String? = null,
     ): RemoteStoreResult {
         require(event.originDeviceId != localDeviceId) { "Remote events cannot claim this device as origin." }
         require(event.originSeq >= 1) { "Sequences begin at 1." }
-        require(event.content.isNotEmpty()) { "Empty text is not a clipboard event." }
-        val utf8Bytes = event.content.toByteArray(StandardCharsets.UTF_8).size
-        require(utf8Bytes <= MAX_CLIP_UTF8_BYTES) { "Remote clip exceeds 1 MiB UTF-8." }
-        val computed = hasher.hash(event.content)
-        require(computed == event.contentHash) { "content_hash does not match content." }
         if (event.expiresAtMs != null) {
             require(event.expiresAtMs > event.createdAtMs) { "expires_at_ms must be greater than created_at_ms." }
+        }
+        if (event.isImage) {
+            require(event.content == null) { "Image events must not carry a text body." }
+            require(media.exists(event.contentHash)) { "MEDIA_STORAGE_FAILED" }
+        } else {
+            val content = event.content
+            require(!content.isNullOrEmpty()) { "Empty text is not a clipboard event." }
+            val utf8Bytes = content.toByteArray(StandardCharsets.UTF_8).size
+            require(utf8Bytes <= MAX_CLIP_UTF8_BYTES) { "Remote clip exceeds 1 MiB UTF-8." }
+            val computed = hasher.hash(content)
+            require(computed == event.contentHash) { "content_hash does not match content." }
         }
         return persistence.transaction {
             checkIdentity(event.eventId, event.originDeviceId, event.originSeq, event.contentHash)?.let {
                 return@transaction it
             }
-            insertClip(
-                ClipEntity(
-                    eventId = event.eventId,
-                    originDeviceId = event.originDeviceId,
-                    originSeq = event.originSeq,
-                    kind = CLIP_KIND_TEXT,
-                    content = event.content,
-                    contentHash = event.contentHash,
-                    sourceApp = normalizeSource(event.sourceApp),
-                    createdAt = event.createdAtMs,
-                    expiresAt = event.expiresAtMs,
-                    deletedAt = null,
-                    terminalReason = null,
-                ),
-            )
+            if (event.isImage) {
+                val blob = media.requirePath(event.contentHash)
+                val inspect = com.clipsync.android.media.ImageCodec.tryInspectFile(blob, event.contentHash)
+                val validated = inspect.second
+                require(inspect.first == com.clipsync.android.media.ImageCodecError.OK && validated != null) {
+                    "MEDIA_DECODE_FAILED"
+                }
+                insertImageClip(
+                    event.eventId,
+                    event.originDeviceId,
+                    event.originSeq,
+                    validated,
+                    normalizeSource(event.sourceApp),
+                    event.createdAtMs,
+                    event.expiresAtMs,
+                )
+            } else {
+                insertClip(
+                    ClipEntity(
+                        eventId = event.eventId,
+                        originDeviceId = event.originDeviceId,
+                        originSeq = event.originSeq,
+                        kind = CLIP_KIND_TEXT,
+                        content = event.content,
+                        contentHash = event.contentHash,
+                        sourceApp = normalizeSource(event.sourceApp),
+                        createdAt = event.createdAtMs,
+                        expiresAt = event.expiresAtMs,
+                        deletedAt = null,
+                        terminalReason = null,
+                    ),
+                )
+            }
             val state = receiveState(event.originDeviceId).accept(event.originSeq)
             upsertReceiveState(event.originDeviceId, state)
             fanOutOutbox(event.eventId, event.originDeviceId, excludedPeerId = sourcePeerId, peerId = null)
@@ -184,7 +262,9 @@ class ClipRepository internal constructor(
     suspend fun search(query: String, limit: Int = MAX_SEARCH_LIMIT): List<ClipEntry> {
         require(limit in 1..MAX_SEARCH_LIMIT) { "Limit must be between 1 and $MAX_SEARCH_LIMIT." }
         return persistence.read {
-            searchVisible(query, limit).map { it.toEntry() }
+            searchVisible(query, limit).map { row ->
+                row.toEntry(if (row.kind == CLIP_KIND_IMAGE) findMediaBlob(row.contentHash) else null)
+            }
         }
     }
 
@@ -195,7 +275,11 @@ class ClipRepository internal constructor(
     suspend fun findVisibleEntry(eventId: String): ClipEntry? =
         persistence.read {
             val entity = findClipByEventId(eventId)
-            if (entity == null || entity.deletedAt != null || entity.content == null) {
+            if (entity == null || entity.deletedAt != null) {
+                null
+            } else if (entity.kind == CLIP_KIND_IMAGE) {
+                entity.toEntry(findMediaBlob(entity.contentHash))
+            } else if (entity.content == null) {
                 null
             } else {
                 entity.toEntry()
@@ -204,7 +288,15 @@ class ClipRepository internal constructor(
 
     fun observeSearch(query: String, limit: Int = MAX_SEARCH_LIMIT): Flow<List<ClipEntry>> {
         require(limit in 1..MAX_SEARCH_LIMIT) { "Limit must be between 1 and $MAX_SEARCH_LIMIT." }
-        return persistence.observeSearchVisible(query, limit).map { rows -> rows.map { it.toEntry() } }
+        return persistence.observeSearchVisible(query, limit).transform { rows ->
+            emit(
+                persistence.read {
+                    rows.map { row ->
+                        row.toEntry(if (row.kind == CLIP_KIND_IMAGE) findMediaBlob(row.contentHash) else null)
+                    }
+                },
+            )
+        }
     }
 
     suspend fun delete(eventId: String, nowMs: Long): Boolean =
@@ -262,7 +354,9 @@ class ClipRepository internal constructor(
                     range.endSeq,
                     maximumEvents - events.size,
                 )
-                events += rows.map { it.toSyncable() }
+                events += rows.map { row ->
+                    row.toSyncable(if (row.kind == CLIP_KIND_IMAGE) findMediaBlob(row.contentHash) else null)
+                }
             }
             events
         }
@@ -270,6 +364,15 @@ class ClipRepository internal constructor(
 
     suspend fun findLiveContentByHash(contentHash: String): String? =
         persistence.read { findLiveContentByHash(contentHash) }
+
+    suspend fun findLiveImageByHash(contentHash: String): Boolean =
+        media.exists(contentHash) && persistence.read { findLiveImageByHash(contentHash) }
+
+    suspend fun markLocalUnsupportedMedia(eventId: String, originDeviceId: String, originSeq: Long) {
+        persistence.transaction {
+            setTerminalReason(eventId, originDeviceId, originSeq, TerminalReasons.UNSUPPORTED_MEDIA)
+        }
+    }
 
     suspend fun resetOutboxToPending(peerId: String) {
         persistence.transaction { resetOutboxToPending(peerId) }
@@ -327,7 +430,51 @@ class ClipRepository internal constructor(
     private fun normalizeSource(sourceApp: String?): String? =
         sourceApp?.trim()?.takeIf { it.isNotEmpty() }
 
-    private fun ClipEntity.toEntry(): ClipEntry =
+    private suspend fun ClipSession.insertImageClip(
+        eventId: String,
+        originDeviceId: String,
+        originSeq: Long,
+        image: ValidatedImage,
+        sourceApp: String?,
+        createdAtMs: Long,
+        expiresAt: Long?,
+    ) {
+        insertClip(
+            ClipEntity(
+                eventId = eventId,
+                originDeviceId = originDeviceId,
+                originSeq = originSeq,
+                kind = CLIP_KIND_IMAGE,
+                content = null,
+                contentHash = image.contentHash,
+                sourceApp = sourceApp,
+                createdAt = createdAtMs,
+                expiresAt = expiresAt,
+                deletedAt = null,
+                terminalReason = null,
+            ),
+        )
+        upsertMediaBlob(
+            MediaBlobEntity(
+                contentHash = image.contentHash,
+                mimeType = image.mimeType,
+                encodedBytes = image.encodedBytes,
+                pixelWidth = image.pixelWidth,
+                pixelHeight = image.pixelHeight,
+                state = CLIP_MEDIA_READY,
+                createdAt = createdAtMs,
+            ),
+        )
+        upsertClipMedia(
+            ClipMediaEntity(
+                eventId = eventId,
+                contentHash = image.contentHash,
+                state = CLIP_MEDIA_READY,
+            ),
+        )
+    }
+
+    private fun ClipEntity.toEntry(blob: MediaBlobEntity? = null): ClipEntry =
         ClipEntry(
             eventId = eventId,
             originDeviceId = originDeviceId,
@@ -337,9 +484,14 @@ class ClipRepository internal constructor(
             sourceApp = sourceApp,
             createdAtMs = createdAt,
             expiresAtMs = expiresAt,
+            kind = kind,
+            mimeType = blob?.mimeType,
+            encodedBytes = blob?.encodedBytes,
+            pixelWidth = blob?.pixelWidth,
+            pixelHeight = blob?.pixelHeight,
         )
 
-    private fun ClipEntity.toSyncable(): SyncableClipEvent {
+    private fun ClipEntity.toSyncable(blob: MediaBlobEntity? = null): SyncableClipEvent {
         val terminal = terminalReason
         return SyncableClipEvent(
             eventId = eventId,
@@ -351,6 +503,11 @@ class ClipRepository internal constructor(
             createdAtMs = createdAt,
             expiresAtMs = expiresAt,
             terminalReason = terminal,
+            kind = kind,
+            mimeType = blob?.mimeType,
+            encodedBytes = blob?.encodedBytes,
+            pixelWidth = blob?.pixelWidth,
+            pixelHeight = blob?.pixelHeight,
         )
     }
 
@@ -386,7 +543,10 @@ class ClipRepository internal constructor(
      * Restores live clip rows from a [ClipExport] JSONL snapshot.
      * Insert-if-absent by `event_id`. Does not write outbox, receive state, or cursors.
      */
-    suspend fun importJsonLines(jsonl: String): ClipImportCounts =
+    suspend fun importJsonLines(
+        jsonl: String,
+        mediaDirectory: File? = null,
+    ): ClipImportCounts =
         persistence.transaction {
             var imported = 0
             var skipped = 0
@@ -395,21 +555,42 @@ class ClipRepository internal constructor(
                     continue
                 }
                 val entry = ClipImport.decodeLine(line)
-                val exists =
-                    entry != null &&
-                        (
-                            findClipByEventId(entry.eventId) != null ||
-                                findClipByOriginSeq(entry.originDeviceId, entry.originSeq) != null
-                        )
-                if (entry != null && !exists) {
-                    insertClip(ClipImport.toLiveEntity(entry))
-                    if (entry.originDeviceId == localDeviceId) {
-                        advanceOriginSeq(localDeviceId, entry.originSeq)
-                    }
-                    imported++
-                } else {
+                if (entry == null) {
                     skipped++
+                    continue
                 }
+                val exists =
+                    findClipByEventId(entry.eventId) != null ||
+                        findClipByOriginSeq(entry.originDeviceId, entry.originSeq) != null
+                if (exists) {
+                    skipped++
+                    continue
+                }
+                if (entry.isImage) {
+                    val blobFile = ClipImport.resolveMediaFile(entry, mediaDirectory)
+                    if (blobFile == null || !ClipImport.commitImportedImage(media, entry, blobFile)) {
+                        skipped++
+                        continue
+                    }
+                    insertClip(ClipImport.toLiveEntity(entry))
+                    val blob = ClipImport.toMediaBlob(entry)
+                    if (blob != null) {
+                        upsertMediaBlob(blob)
+                        upsertClipMedia(
+                            ClipMediaEntity(
+                                eventId = entry.eventId,
+                                contentHash = entry.contentHash,
+                                state = CLIP_MEDIA_READY,
+                            ),
+                        )
+                    }
+                } else {
+                    insertClip(ClipImport.toLiveEntity(entry))
+                }
+                if (entry.originDeviceId == localDeviceId) {
+                    advanceOriginSeq(localDeviceId, entry.originSeq)
+                }
+                imported++
             }
             ClipImportCounts(imported, skipped)
         }

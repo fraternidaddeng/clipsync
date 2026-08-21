@@ -131,7 +131,19 @@ public sealed class PeerServer : IAsyncDisposable
         host.Use(async (context, next) =>
         {
             var version = context.Request.Headers["X-Protocol-Version"];
-            if (version.Count != 1 || version[0] != "1")
+            var path = context.Request.Path.Value ?? string.Empty;
+            var expected = path.StartsWith("/v2/", StringComparison.Ordinal)
+                ? "2"
+                : path.StartsWith("/v1/", StringComparison.Ordinal)
+                    ? "1"
+                    : null;
+            if (expected is null)
+            {
+                await next();
+                return;
+            }
+
+            if (version.Count != 1 || version[0] != expected)
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 await context.Response.WriteAsJsonAsync(new { error = ProtocolErrorCodes.UnsupportedVersion });
@@ -148,7 +160,8 @@ public sealed class PeerServer : IAsyncDisposable
             port = Port
         }));
 
-        host.Map("/v1/peer/sync", HandleSyncAsync);
+        host.Map("/v1/peer/sync", context => HandleSyncAsync(context, ProtocolLimits.ProtocolVersion));
+        host.Map("/v2/peer/sync", context => HandleSyncAsync(context, ProtocolLimits.ProtocolVersionV2));
 
         if (pairing is not null)
         {
@@ -161,7 +174,7 @@ public sealed class PeerServer : IAsyncDisposable
         PeerLog.ServerListening(logger, Port, options.BindAddresses.Count);
     }
 
-    private async Task HandleSyncAsync(HttpContext context)
+    private async Task HandleSyncAsync(HttpContext context, int protocolVersion)
     {
         if (!context.WebSockets.IsWebSocketRequest)
         {
@@ -194,11 +207,12 @@ public sealed class PeerServer : IAsyncDisposable
         }
 
         using var socket = await context.WebSockets.AcceptWebSocketAsync().ConfigureAwait(false);
+        var sessionOptions = options.SessionOptions with { ProtocolVersion = protocolVersion };
         var engine = new SyncSessionEngine(
             SyncSessionRole.Listener,
             store,
             secretProtector,
-            options.SessionOptions,
+            sessionOptions,
             authThrottle,
             loggerFactory.CreateLogger("ClipSync.Peer.Session"));
         engine.RemoteClipsCommitted += OnRemoteClipsCommitted;

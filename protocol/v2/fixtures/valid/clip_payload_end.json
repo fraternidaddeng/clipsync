@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "type": "clip_payload_end",
+  "request_id": "1a1a1a1a-1a1a-41a1-81a1-1a1a1a1a1a1a",
+  "body": {
+    "transfer_id": "66666666-6666-4666-8666-666666666666",
+    "event_id": "55555555-5555-4555-8555-555555555555",
+    "content_hash": "f01b4410259e54a460c9feec225c25c24a066c5c5f11c0bfe505037a22f34d6d"
+  }
+}

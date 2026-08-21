@@ -21,6 +21,8 @@ internal class InMemoryClipPersistence : ClipPersistence {
     private val peerCursors = LinkedHashMap<Pair<String, String>, PeerCursorEntity>()
     private val sequences = LinkedHashMap<String, Long>()
     private val settings = LinkedHashMap<String, String>()
+    private val mediaBlobs = LinkedHashMap<String, MediaBlobEntity>()
+    private val clipMedia = LinkedHashMap<String, ClipMediaEntity>()
     private var nextOutboxId = 1L
     private val session = InMemoryClipSession()
     private val invalidations = MutableSharedFlow<Unit>(
@@ -43,6 +45,8 @@ internal class InMemoryClipPersistence : ClipPersistence {
                 peerCursors = HashMap(peerCursors),
                 sequences = HashMap(sequences),
                 settings = HashMap(settings),
+                mediaBlobs = HashMap(mediaBlobs),
+                clipMedia = HashMap(clipMedia),
                 nextOutboxId = nextOutboxId,
             )
             try {
@@ -62,7 +66,8 @@ internal class InMemoryClipPersistence : ClipPersistence {
 
     override fun observeSearchVisible(query: String, limit: Int): Flow<List<ClipEntity>> = flow {
         invalidations.collect {
-            emit(mutex.withLock { session.searchVisible(query, limit) })
+            val rows = mutex.withLock { session.searchVisible(query, limit) }
+            emit(rows)
         }
     }
 
@@ -97,6 +102,10 @@ internal class InMemoryClipPersistence : ClipPersistence {
         sequences.putAll(snapshot.sequences)
         settings.clear()
         settings.putAll(snapshot.settings)
+        mediaBlobs.clear()
+        mediaBlobs.putAll(snapshot.mediaBlobs)
+        clipMedia.clear()
+        clipMedia.putAll(snapshot.clipMedia)
         nextOutboxId = snapshot.nextOutboxId
     }
 
@@ -119,7 +128,13 @@ internal class InMemoryClipPersistence : ClipPersistence {
         override suspend fun searchVisible(query: String, limit: Int): List<ClipEntity> =
             clips.values
                 .filter { it.deletedAt == null }
-                .filter { query.isEmpty() || it.content?.contains(query, ignoreCase = true) == true }
+                .filter {
+                    query.isEmpty() ||
+                        it.content?.contains(query, ignoreCase = true) == true ||
+                        (it.kind == CLIP_KIND_IMAGE &&
+                            ("image".contains(query, ignoreCase = true) ||
+                                it.contentHash.contains(query, ignoreCase = true)))
+                }
                 .sortedWith(
                     compareByDescending<ClipEntity> { it.createdAt }
                         .thenByDescending { it.originSeq }
@@ -134,12 +149,13 @@ internal class InMemoryClipPersistence : ClipPersistence {
                 return false
             }
             clips[eventId] = existing.copy(
-                content = "",
+                content = if (existing.kind == CLIP_KIND_IMAGE) null else "",
                 contentHash = "",
                 sourceApp = null,
                 deletedAt = nowMs,
                 terminalReason = TerminalReasons.DELETED,
             )
+            clipMedia.remove(eventId)
             return true
         }
 
@@ -177,7 +193,61 @@ internal class InMemoryClipPersistence : ClipPersistence {
                 .maxByOrNull { it.createdAt }
 
         override suspend fun findLiveContentByHash(contentHash: String): String? =
-            clips.values.firstOrNull { it.contentHash == contentHash && it.deletedAt == null }?.content
+            clips.values.firstOrNull {
+                it.contentHash == contentHash && it.deletedAt == null && it.kind == CLIP_KIND_TEXT
+            }?.content
+
+        override suspend fun findLiveImageByHash(contentHash: String): Boolean =
+            mediaBlobs[contentHash]?.state == CLIP_MEDIA_READY &&
+                clips.values.any {
+                    it.contentHash == contentHash && it.deletedAt == null && it.kind == CLIP_KIND_IMAGE
+                }
+
+        override suspend fun upsertMediaBlob(entity: MediaBlobEntity) {
+            mediaBlobs[entity.contentHash] = entity
+        }
+
+        override suspend fun findMediaBlob(contentHash: String): MediaBlobEntity? = mediaBlobs[contentHash]
+
+        override suspend fun upsertClipMedia(entity: ClipMediaEntity) {
+            clipMedia[entity.eventId] = entity
+        }
+
+        override suspend fun findClipMedia(eventId: String): ClipMediaEntity? = clipMedia[eventId]
+
+        override suspend fun deleteClipMedia(eventId: String) {
+            clipMedia.remove(eventId)
+        }
+
+        override suspend fun deleteOrphanedClipMedia() {
+            val keep = clips.values
+                .filter { it.deletedAt == null && it.contentHash.isNotEmpty() }
+                .map { it.eventId }
+                .toSet()
+            clipMedia.keys.removeAll { it !in keep }
+        }
+
+        override suspend fun allBlobHashes(): List<String> = mediaBlobs.keys.toList()
+
+        override suspend fun referencedBlobHashes(): List<String> =
+            clipMedia.values.map { it.contentHash }.distinct()
+
+        override suspend fun deleteMediaBlob(contentHash: String) {
+            mediaBlobs.remove(contentHash)
+        }
+
+        override suspend fun setTerminalReason(
+            eventId: String,
+            originDeviceId: String,
+            originSeq: Long,
+            reason: String,
+        ) {
+            val existing = clips[eventId] ?: return
+            if (existing.originDeviceId != originDeviceId || existing.originSeq != originSeq) {
+                return
+            }
+            clips[eventId] = existing.copy(terminalReason = reason)
+        }
 
         override suspend fun allocateOriginSeq(deviceId: String): Long {
             val next = sequences[deviceId] ?: 1L
@@ -326,6 +396,7 @@ internal class InMemoryClipPersistence : ClipPersistence {
         private fun removeClip(row: ClipEntity) {
             clips.remove(row.eventId)
             originIndex.remove(row.originDeviceId to row.originSeq)
+            clipMedia.remove(row.eventId)
         }
     }
 
@@ -337,6 +408,8 @@ internal class InMemoryClipPersistence : ClipPersistence {
         val peerCursors: Map<Pair<String, String>, PeerCursorEntity>,
         val sequences: Map<String, Long>,
         val settings: Map<String, String>,
+        val mediaBlobs: Map<String, MediaBlobEntity>,
+        val clipMedia: Map<String, ClipMediaEntity>,
         val nextOutboxId: Long,
     )
 }

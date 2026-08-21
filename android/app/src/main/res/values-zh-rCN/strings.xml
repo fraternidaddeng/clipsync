@@ -13,7 +13,7 @@
     <string name="history_clear_hint">仅清除本机历史，不会远程删除 Windows 端历史。</string>
     <string name="history_copy">复制</string>
     <string name="history_delete">删除</string>
-    <string name="history_empty">暂无记录。可分享文本、使用快捷设置磁贴，或与 Windows 配对。</string>
+    <string name="history_empty">暂无记录。可分享文本或 PNG/JPEG、使用快捷设置磁贴，或与 Windows 配对。</string>
     <string name="history_oversized">文本超过 1 MiB，未存储。</string>
     <string name="history_unpaired">尚未与 Windows 配对。必须先配对才能同步。</string>
     <string name="history_windows_unreachable">无法连接 Windows。片段会留在本机，直到对端上线。</string>
@@ -34,6 +34,12 @@
     <string name="settings_private_hint">新片段既不存储也不发送。之后也不会补传过去的记录。</string>
     <string name="settings_auto_apply">自动应用远端片段</string>
     <string name="settings_auto_apply_hint">公开写入可用时，将 Windows 发来的文本写入系统剪贴板。</string>
+    <string name="settings_image_sync">同步剪贴板图片</string>
+    <string name="settings_image_sync_hint">默认关闭。仅 PNG/JPEG。原始字节含 EXIF。没有设备实测的图片后端不会标为可用。</string>
+    <string name="settings_auto_apply_images">自动应用远端图片</string>
+    <string name="settings_auto_apply_images_hint">与文本自动应用独立。将入站 PNG/JPEG 写入系统剪贴板。</string>
+    <string name="history_image_preview">图片 %1$s %2$d×%3$d</string>
+    <string name="history_image_unavailable">此设备上图片不可用。</string>
     <string name="settings_background_sync">后台同步</string>
     <string name="settings_background_sync_hint">保持「已连接设备」前台服务，以维持与 Windows 的连接。这不代表剪贴板权限。</string>
     <string name="settings_boot_recovery">重启后恢复</string>
@@ -66,6 +72,9 @@
     <string name="share_duplicate">已经捕获过。</string>
     <string name="share_paused">捕获已暂停，或已开启隐私模式。</string>
     <string name="share_blocked">该来源应用已被屏蔽，不会捕获。</string>
+    <string name="share_image_disabled">未开启图片同步。请先在设置里打开「同步剪贴板图片」。</string>
+    <string name="share_image_failed">无法读取这张图片。仅支持 PNG 和 JPEG。</string>
+    <string name="share_image_oversized">图片超过 16 MiB，未发送。</string>
     <string name="share_label">发送到 Windows</string>
 
     <string name="tile_send_clipboard">发送剪贴板</string>

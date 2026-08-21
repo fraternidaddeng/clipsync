@@ -19,7 +19,15 @@ class CopyClipReceiver : BroadcastReceiver() {
                 ClipboardCaptureRuntime.ensureStarted(context.applicationContext)
                 val repository = ClipServices.repository(context)
                 val entry = repository.findVisibleEntry(eventId) ?: return@launch
-                ClipServices.writeCoordinator(context).writeText(entry.content, eventId)
+                val coordinator = ClipServices.writeCoordinator(context)
+                if (entry.isImage) {
+                    val mime = entry.mimeType ?: return@launch
+                    val bytes = runCatching { repository.media.readAllBytes(entry.contentHash) }.getOrNull()
+                        ?: return@launch
+                    coordinator.writeImage(bytes, mime, eventId)
+                } else {
+                    coordinator.writeText(entry.content, eventId)
+                }
             } finally {
                 pending.finish()
             }

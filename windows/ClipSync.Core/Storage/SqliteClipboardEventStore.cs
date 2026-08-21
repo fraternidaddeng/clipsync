@@ -1,16 +1,18 @@
 using System.Collections.Concurrent;
 using System.Data;
 using ClipSync.Core.Clipboard;
+using ClipSync.Core.Media;
 using Microsoft.Data.Sqlite;
 
 namespace ClipSync.Core.Storage;
 
 public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IAsyncDisposable
 {
-    public const int SchemaVersion = 2;
+    public const int SchemaVersion = 3;
     private const int MaximumQueryLimit = 2_000;
     private const int BusyTimeoutMilliseconds = 30_000;
     private const string TextKind = "text";
+    private const string ImageKind = "image";
     private static readonly ConcurrentDictionary<string, SemaphoreSlim> InitializationLocks =
         new(StringComparer.OrdinalIgnoreCase);
 
@@ -18,13 +20,15 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
     private readonly string localDeviceId;
     private readonly string connectionString;
     private readonly IStorageFaultInjector? faultInjector;
+    private readonly MediaBlobStore media;
     private bool initialized;
     private bool disposed;
 
     public SqliteClipboardEventStore(
         string databasePath,
         string localDeviceId,
-        IStorageFaultInjector? faultInjector = null)
+        IStorageFaultInjector? faultInjector = null,
+        MediaBlobStore? media = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(databasePath);
         ArgumentException.ThrowIfNullOrWhiteSpace(localDeviceId);
@@ -32,6 +36,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         this.databasePath = Path.GetFullPath(databasePath);
         this.localDeviceId = localDeviceId;
         this.faultInjector = faultInjector;
+        this.media = media ?? new MediaBlobStore(MediaBlobStore.DefaultRootForDatabase(this.databasePath));
         connectionString = new SqliteConnectionStringBuilder
         {
             DataSource = this.databasePath,
@@ -40,6 +45,8 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             DefaultTimeout = BusyTimeoutMilliseconds / 1_000
         }.ToString();
     }
+
+    public MediaBlobStore Media => media;
 
     public async ValueTask InitializeAsync(CancellationToken cancellationToken = default)
     {
@@ -94,6 +101,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
                 throw;
             }
 
+            media.RecoverTemps(DateTimeOffset.UtcNow);
             initialized = true;
         }
         finally
@@ -179,6 +187,65 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         }
     }
 
+    public async ValueTask<StoredImageEvent> StoreImageAsync(
+        AcceptedImageContent image,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+
+        var validated = media.CommitBytes(image.EncodedBytes, image.ContentHash);
+        var eventId = Guid.NewGuid();
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken).ConfigureAwait(false);
+
+        try
+        {
+            var originSequence = await AllocateSequenceAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
+            await InjectFaultAsync(StorageFaultPoint.AfterSequenceAllocated, cancellationToken).ConfigureAwait(false);
+
+            await InsertImageClipAsync(
+                connection,
+                transaction,
+                eventId,
+                localDeviceId,
+                originSequence,
+                validated,
+                image.SourceProcess,
+                image.CapturedAt,
+                expiresAt: null,
+                cancellationToken).ConfigureAwait(false);
+
+            await AdvanceLocalReceiveStateAsync(connection, transaction, originSequence, cancellationToken).ConfigureAwait(false);
+            await EnqueueOutboxFanOutAsync(
+                connection,
+                transaction,
+                eventId,
+                localDeviceId,
+                originSequence,
+                excludedPeerId: null,
+                cancellationToken).ConfigureAwait(false);
+
+            await InjectFaultAsync(StorageFaultPoint.BeforeCommit, cancellationToken).ConfigureAwait(false);
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            return new StoredImageEvent(eventId, originSequence, image with
+            {
+                ContentHash = validated.ContentHash,
+                MimeType = validated.MimeType,
+                EncodedBytes = image.EncodedBytes,
+                PixelWidth = validated.PixelWidth,
+                PixelHeight = validated.PixelHeight
+            });
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
+            throw;
+        }
+    }
+
     public async ValueTask<IReadOnlyList<ClipboardHistoryEntry>> SearchAsync(
         ClipboardHistoryQuery query,
         CancellationToken cancellationToken = default)
@@ -191,19 +258,33 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         await using var command = connection.CreateCommand();
         command.CommandText = """
             SELECT
-                event_id,
-                origin_device_id,
-                origin_seq,
-                content,
-                content_hash,
-                source_app,
-                created_at,
-                expires_at,
-                deleted_at
-            FROM clips
-            WHERE deleted_at IS NULL
-              AND ($search IS NULL OR content LIKE $pattern ESCAPE '\' COLLATE NOCASE)
-            ORDER BY created_at DESC, origin_seq DESC, origin_device_id ASC, event_id ASC
+                c.event_id,
+                c.origin_device_id,
+                c.origin_seq,
+                c.content,
+                c.content_hash,
+                c.source_app,
+                c.created_at,
+                c.expires_at,
+                c.deleted_at,
+                c.kind,
+                b.mime_type,
+                b.encoded_bytes,
+                b.pixel_width,
+                b.pixel_height
+            FROM clips c
+            LEFT JOIN clip_media m ON m.event_id = c.event_id
+            LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
+            WHERE c.deleted_at IS NULL
+              AND (
+                    $search IS NULL
+                    OR c.content LIKE $pattern ESCAPE '\' COLLATE NOCASE
+                    OR (c.kind = 'image' AND (
+                        'image' LIKE $pattern ESCAPE '\' COLLATE NOCASE
+                        OR IFNULL(b.mime_type, '') LIKE $pattern ESCAPE '\' COLLATE NOCASE
+                    ))
+                  )
+            ORDER BY c.created_at DESC, c.origin_seq DESC, c.origin_device_id ASC, c.event_id ASC
             LIMIT $limit OFFSET $offset;
             """;
         var search = string.IsNullOrEmpty(query.SearchText) ? null : query.SearchText;
@@ -226,18 +307,25 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         await using var command = connection.CreateCommand();
         command.CommandText = """
             SELECT
-                event_id,
-                origin_device_id,
-                origin_seq,
-                content,
-                content_hash,
-                source_app,
-                created_at,
-                expires_at,
-                deleted_at
-            FROM clips
-            WHERE event_id = $event_id
-              AND ($include_deleted = 1 OR deleted_at IS NULL)
+                c.event_id,
+                c.origin_device_id,
+                c.origin_seq,
+                c.content,
+                c.content_hash,
+                c.source_app,
+                c.created_at,
+                c.expires_at,
+                c.deleted_at,
+                c.kind,
+                b.mime_type,
+                b.encoded_bytes,
+                b.pixel_width,
+                b.pixel_height
+            FROM clips c
+            LEFT JOIN clip_media m ON m.event_id = c.event_id
+            LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
+            WHERE c.event_id = $event_id
+              AND ($include_deleted = 1 OR c.deleted_at IS NULL)
             LIMIT 1;
             """;
         command.Parameters.AddWithValue("$event_id", eventId.ToString("D"));
@@ -255,10 +343,34 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
 
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var command = CreateSoftDeleteCommand(connection, transaction: null, deletedAt);
-        command.CommandText += " AND event_id = $event_id;";
-        command.Parameters.AddWithValue("$event_id", eventId.ToString("D"));
-        return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) == 1;
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await using var command = CreateSoftDeleteCommand(connection, transaction, deletedAt);
+            command.CommandText += " AND event_id = $event_id;";
+            command.Parameters.AddWithValue("$event_id", eventId.ToString("D"));
+            var deleted = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) == 1;
+            if (deleted)
+            {
+                await DetachClipMediaAsync(connection, transaction, eventId.ToString("D"), cancellationToken)
+                    .ConfigureAwait(false);
+            }
+
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            if (deleted)
+            {
+                await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            return deleted;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
+            throw;
+        }
     }
 
     public async ValueTask<int> ClearAsync(
@@ -268,9 +380,24 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
 
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var command = CreateSoftDeleteCommand(connection, transaction: null, deletedAt);
-        command.CommandText += ";";
-        return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await using var command = CreateSoftDeleteCommand(connection, transaction, deletedAt);
+            command.CommandText += ";";
+            var removed = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            await DetachOrphanedClipMediaAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
+            return removed;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
+            throw;
+        }
     }
 
     public async ValueTask<int> CleanupAsync(
@@ -306,7 +433,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
                     )
                 )
                 UPDATE clips
-                SET content = '',
+                SET content = CASE WHEN kind = 'image' THEN NULL ELSE '' END,
                     content_hash = '',
                     source_app = NULL,
                     deleted_at = $deleted_at,
@@ -318,7 +445,9 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             command.Parameters.AddWithValue("$maximum_entries", policy.MaximumEntries);
             command.Parameters.AddWithValue("$deleted_at", now.ToUnixTimeMilliseconds());
             var removed = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            await DetachOrphanedClipMediaAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
             return removed;
         }
         catch
@@ -484,6 +613,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
     [
         new(1, CreateBaselineSchemaAsync),
         new(2, ApplySyncSchemaAsync),
+        new(3, ApplyImageSchemaAsync),
     ];
 
     private readonly record struct SchemaMigrationStep(
@@ -585,6 +715,80 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         await ExecuteNonQueryAsync(connection, transaction, sql, cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// Adjacent v2→v3 step. Copies clips into a table that allows kind=image and
+    /// NULL content, then adds media_blobs/clip_media. Never truncates history.
+    /// </summary>
+    private static async ValueTask ApplyImageSchemaAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        const string sql = """
+            CREATE TABLE clips_v3 (
+                event_id TEXT PRIMARY KEY,
+                origin_device_id TEXT NOT NULL,
+                origin_seq INTEGER NOT NULL CHECK (origin_seq >= 1),
+                kind TEXT NOT NULL CHECK (kind IN ('text', 'image')),
+                content TEXT,
+                content_hash TEXT NOT NULL,
+                source_app TEXT,
+                created_at INTEGER NOT NULL,
+                expires_at INTEGER,
+                deleted_at INTEGER,
+                terminal_reason TEXT
+                    CHECK (terminal_reason IN (
+                        'local_only', 'deleted', 'expired', 'policy_filtered',
+                        'not_found', 'unsupported_media')),
+                UNIQUE(origin_device_id, origin_seq),
+                CHECK (
+                    (kind = 'text' AND content IS NOT NULL)
+                    OR (kind = 'image' AND content IS NULL)
+                )
+            );
+
+            INSERT INTO clips_v3 (
+                event_id, origin_device_id, origin_seq, kind, content, content_hash,
+                source_app, created_at, expires_at, deleted_at, terminal_reason)
+            SELECT
+                event_id, origin_device_id, origin_seq, kind, content, content_hash,
+                source_app, created_at, expires_at, deleted_at, terminal_reason
+            FROM clips;
+
+            DROP TABLE clips;
+            ALTER TABLE clips_v3 RENAME TO clips;
+
+            CREATE INDEX clips_visible_history_idx
+                ON clips(deleted_at, created_at DESC, origin_seq DESC);
+
+            CREATE TABLE media_blobs (
+                content_hash TEXT PRIMARY KEY,
+                mime_type TEXT NOT NULL CHECK (mime_type IN ('image/png', 'image/jpeg')),
+                encoded_bytes INTEGER NOT NULL
+                    CHECK (encoded_bytes >= 1 AND encoded_bytes <= 16777216),
+                pixel_width INTEGER NOT NULL
+                    CHECK (pixel_width >= 1 AND pixel_width <= 8192),
+                pixel_height INTEGER NOT NULL
+                    CHECK (pixel_height >= 1 AND pixel_height <= 8192),
+                state TEXT NOT NULL CHECK (state IN ('ready', 'pending', 'failed')),
+                created_at INTEGER NOT NULL,
+                CHECK ((pixel_width * 1.0) * pixel_height <= 33554432)
+            );
+
+            CREATE TABLE clip_media (
+                event_id TEXT PRIMARY KEY,
+                content_hash TEXT NOT NULL,
+                state TEXT NOT NULL DEFAULT 'ready'
+                    CHECK (state IN ('ready', 'pending', 'missing')),
+                FOREIGN KEY (event_id) REFERENCES clips(event_id),
+                FOREIGN KEY (content_hash) REFERENCES media_blobs(content_hash)
+            );
+
+            CREATE INDEX clip_media_hash_idx ON clip_media(content_hash);
+            """;
+        await ExecuteNonQueryAsync(connection, transaction, sql, cancellationToken).ConfigureAwait(false);
+    }
+
     private async ValueTask AdvanceLocalReceiveStateAsync(
         SqliteConnection connection,
         SqliteTransaction transaction,
@@ -612,7 +816,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         command.Transaction = transaction;
         command.CommandText = """
             UPDATE clips
-            SET content = '',
+            SET content = CASE WHEN kind = 'image' THEN NULL ELSE '' END,
                 content_hash = '',
                 source_app = NULL,
                 deleted_at = $deleted_at,
@@ -631,19 +835,175 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
+            var kind = reader.FieldCount > 9 && !reader.IsDBNull(9) ? reader.GetString(9) : TextKind;
             entries.Add(new ClipboardHistoryEntry(
                 Guid.Parse(reader.GetString(0)),
                 reader.GetString(1),
                 reader.GetInt64(2),
-                reader.GetString(3),
+                reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
                 reader.GetString(4),
                 reader.IsDBNull(5) ? null : reader.GetString(5),
                 DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(6)),
                 reader.IsDBNull(7) ? null : DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(7)),
-                reader.IsDBNull(8) ? null : DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(8))));
+                reader.IsDBNull(8) ? null : DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(8)),
+                kind,
+                reader.FieldCount > 10 && !reader.IsDBNull(10) ? reader.GetString(10) : null,
+                reader.FieldCount > 11 && !reader.IsDBNull(11) ? reader.GetInt32(11) : null,
+                reader.FieldCount > 12 && !reader.IsDBNull(12) ? reader.GetInt32(12) : null,
+                reader.FieldCount > 13 && !reader.IsDBNull(13) ? reader.GetInt32(13) : null));
         }
 
         return entries;
+    }
+
+    private static async ValueTask InsertImageClipAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        Guid eventId,
+        string originDeviceId,
+        long originSeq,
+        ValidatedImage image,
+        string? sourceApp,
+        DateTimeOffset createdAt,
+        DateTimeOffset? expiresAt,
+        CancellationToken cancellationToken)
+    {
+        await using (var insert = connection.CreateCommand())
+        {
+            insert.Transaction = transaction;
+            insert.CommandText = """
+                INSERT INTO clips (
+                    event_id, origin_device_id, origin_seq, kind, content, content_hash,
+                    source_app, created_at, expires_at, deleted_at, terminal_reason)
+                VALUES (
+                    $event_id, $origin, $seq, 'image', NULL, $hash,
+                    $source_app, $created_at, $expires_at, NULL, NULL);
+                """;
+            insert.Parameters.AddWithValue("$event_id", eventId.ToString("D"));
+            insert.Parameters.AddWithValue("$origin", originDeviceId);
+            insert.Parameters.AddWithValue("$seq", originSeq);
+            insert.Parameters.AddWithValue("$hash", image.ContentHash);
+            insert.Parameters.AddWithValue("$source_app", (object?)sourceApp ?? DBNull.Value);
+            insert.Parameters.AddWithValue("$created_at", createdAt.ToUnixTimeMilliseconds());
+            insert.Parameters.AddWithValue(
+                "$expires_at",
+                (object?)expiresAt?.ToUnixTimeMilliseconds() ?? DBNull.Value);
+            await insert.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await using (var blob = connection.CreateCommand())
+        {
+            blob.Transaction = transaction;
+            blob.CommandText = """
+                INSERT INTO media_blobs (
+                    content_hash, mime_type, encoded_bytes, pixel_width, pixel_height, state, created_at)
+                VALUES ($hash, $mime, $bytes, $width, $height, 'ready', $created_at)
+                ON CONFLICT(content_hash) DO UPDATE SET state = 'ready';
+                """;
+            blob.Parameters.AddWithValue("$hash", image.ContentHash);
+            blob.Parameters.AddWithValue("$mime", image.MimeType);
+            blob.Parameters.AddWithValue("$bytes", image.EncodedBytes);
+            blob.Parameters.AddWithValue("$width", image.PixelWidth);
+            blob.Parameters.AddWithValue("$height", image.PixelHeight);
+            blob.Parameters.AddWithValue("$created_at", createdAt.ToUnixTimeMilliseconds());
+            await blob.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await using var mediaRef = connection.CreateCommand();
+        mediaRef.Transaction = transaction;
+        mediaRef.CommandText = """
+            INSERT INTO clip_media (event_id, content_hash, state)
+            VALUES ($event_id, $hash, 'ready');
+            """;
+        mediaRef.Parameters.AddWithValue("$event_id", eventId.ToString("D"));
+        mediaRef.Parameters.AddWithValue("$hash", image.ContentHash);
+        await mediaRef.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async ValueTask DetachClipMediaAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        string eventId,
+        CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "DELETE FROM clip_media WHERE event_id = $event_id;";
+        command.Parameters.AddWithValue("$event_id", eventId);
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async ValueTask DetachOrphanedClipMediaAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        await ExecuteNonQueryAsync(
+            connection,
+            transaction,
+            """
+            DELETE FROM clip_media
+            WHERE event_id IN (
+                SELECT event_id FROM clips WHERE deleted_at IS NOT NULL OR content_hash = '');
+            """,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask CollectUnreferencedBlobsAsync(CancellationToken cancellationToken)
+    {
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT content_hash FROM media_blobs;";
+        var live = new List<string>();
+        await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
+        {
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                live.Add(reader.GetString(0));
+            }
+        }
+
+        await using var referenced = connection.CreateCommand();
+        referenced.CommandText = "SELECT DISTINCT content_hash FROM clip_media;";
+        var keep = new HashSet<string>(StringComparer.Ordinal);
+        await using (var reader = await referenced.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
+        {
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                keep.Add(reader.GetString(0));
+            }
+        }
+
+        var stale = live.Where(hash => !keep.Contains(hash)).ToArray();
+        if (stale.Length == 0)
+        {
+            media.DeleteUnreferenced(keep);
+            return;
+        }
+
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken).ConfigureAwait(false);
+        try
+        {
+            foreach (var hash in stale)
+            {
+                await using var delete = connection.CreateCommand();
+                delete.Transaction = transaction;
+                delete.CommandText = "DELETE FROM media_blobs WHERE content_hash = $hash;";
+                delete.Parameters.AddWithValue("$hash", hash);
+                await delete.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
+            throw;
+        }
+
+        media.DeleteUnreferenced(keep);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(

@@ -29,6 +29,7 @@ class SendClipboardTileService : TileService() {
     override fun onClick() {
         val clipboard = getSystemService(ClipboardManager::class.java) ?: return
         val backend = ForegroundClipboardBackend(
+            context = applicationContext,
             clipboardManager = clipboard,
             isVisible = { true },
         )
@@ -48,6 +49,9 @@ class SendClipboardTileService : TileService() {
                     CaptureRejectReason.DUPLICATE -> getString(R.string.share_duplicate)
                     CaptureRejectReason.BLOCKED_SOURCE -> getString(R.string.share_blocked)
                     CaptureRejectReason.POLICY_PAUSED -> getString(R.string.share_paused)
+                    CaptureRejectReason.UNSUPPORTED_MEDIA,
+                    CaptureRejectReason.DECODE_FAILED,
+                    -> getString(R.string.tile_empty)
                 }
                 TileSendOutcome.SkippedPolicy -> getString(R.string.share_paused)
             }

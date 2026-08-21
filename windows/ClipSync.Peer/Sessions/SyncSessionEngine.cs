@@ -1,6 +1,7 @@
 using System.Net.WebSockets;
 using System.Security.Cryptography;
 using System.Text;
+using ClipSync.Core.Media;
 using ClipSync.Core.Protocol;
 using ClipSync.Core.Security;
 using ClipSync.Core.Storage;
@@ -31,8 +32,11 @@ public sealed class SyncSessionEngine : IDisposable
     private readonly TimeProvider clock;
     private readonly SemaphoreSlim sendLock = new(1, 1);
     private readonly Dictionary<Guid, ClipHeaderDto> outstandingFetches = [];
+    private readonly Dictionary<Guid, IncomingImageTransfer> incomingImages = [];
+    private readonly SemaphoreSlim imageDownloadSlots = new(MediaLimits.MaxConcurrentDownloads, MediaLimits.MaxConcurrentDownloads);
     private readonly ReplayWindow replayWindow = new(capacity: 512);
     private readonly object completionLock = new();
+    private int protocolVersion;
 
     private ISyncTransport transport = null!;
     private CancellationTokenSource sessionCts = null!;
@@ -62,6 +66,7 @@ public sealed class SyncSessionEngine : IDisposable
         authFailures = authFailureSink;
         this.logger = logger ?? NullLogger.Instance;
         clock = options.TimeProvider;
+        protocolVersion = options.ProtocolVersion is 1 or 2 ? options.ProtocolVersion : ProtocolLimits.ProtocolVersion;
 
         if (role == SyncSessionRole.Dialer && string.IsNullOrWhiteSpace(options.ExpectedPeerDeviceId))
         {
@@ -205,7 +210,10 @@ public sealed class SyncSessionEngine : IDisposable
             Platform = options.Platform,
             ClientVersion = options.ClientVersion,
             TrustEpoch = device.TrustEpoch,
-            KnownVector = await BuildKnownVectorAsync(token).ConfigureAwait(false)
+            KnownVector = await BuildKnownVectorAsync(token).ConfigureAwait(false),
+            Capabilities = protocolVersion == ProtocolLimits.ProtocolVersionV2
+                ? [ProtocolLimits.CapabilityImageClipV2]
+                : null
         }, token).ConfigureAwait(false);
         return true;
     }
@@ -213,7 +221,9 @@ public sealed class SyncSessionEngine : IDisposable
     /// <summary>Returns false when the session must stop.</summary>
     private async Task<bool> DispatchAsync(string text, CancellationToken token)
     {
-        var outcome = ProtocolReader.Parse(text);
+        var outcome = protocolVersion == ProtocolLimits.ProtocolVersionV2
+            ? ProtocolReaderV2.Parse(text)
+            : ProtocolReader.Parse(text);
         if (outcome is ProtocolParseOutcome.Failure failure)
         {
             PeerLog.FrameRejected(logger, failure.ErrorCode, failure.Reason);
@@ -278,6 +288,9 @@ public sealed class SyncSessionEngine : IDisposable
             ProtocolMessageTypes.ClipAnnounce => await HandleClipAnnounceAsync((ClipAnnounceBody)message.Body, token).ConfigureAwait(false),
             ProtocolMessageTypes.ClipFetch => await HandleClipFetchAsync((ClipFetchBody)message.Body, token).ConfigureAwait(false),
             ProtocolMessageTypes.ClipPayload => await HandleClipPayloadAsync((ClipPayloadBody)message.Body, token).ConfigureAwait(false),
+            ProtocolMessageTypes.ClipPayloadBegin => await HandleClipPayloadBeginAsync((ClipPayloadBeginBody)message.Body, token).ConfigureAwait(false),
+            ProtocolMessageTypes.ClipPayloadChunk => await HandleClipPayloadChunkAsync((ClipPayloadChunkBody)message.Body, token).ConfigureAwait(false),
+            ProtocolMessageTypes.ClipPayloadEnd => await HandleClipPayloadEndAsync((ClipPayloadEndBody)message.Body, token).ConfigureAwait(false),
             ProtocolMessageTypes.AckRanges => await HandleAckRangesAsync((AckRangesBody)message.Body, token).ConfigureAwait(false),
             _ => await UnexpectedAsync(token).ConfigureAwait(false)
         };
@@ -408,7 +421,8 @@ public sealed class SyncSessionEngine : IDisposable
             nonce,
             Guid.Parse(peerDevice.DeviceId),
             Guid.Parse(store.LocalDeviceId),
-            body.TrustEpoch);
+            body.TrustEpoch,
+            protocolVersion);
 
         await SendAsync(ProtocolMessageTypes.Auth, new AuthBody
         {
@@ -463,7 +477,8 @@ public sealed class SyncSessionEngine : IDisposable
             Guid.Parse(store.LocalDeviceId),
             Guid.Parse(peerDevice.DeviceId),
             outstanding.TrustEpoch,
-            proof);
+            proof,
+            protocolVersion);
         if (!valid)
         {
             authFailures?.RecordAuthFailure(peerDevice.DeviceId);
@@ -595,9 +610,15 @@ public sealed class SyncSessionEngine : IDisposable
                     break;
                 }
 
+                var headers = new List<ClipHeaderDto>(events.Count);
+                foreach (var item in events)
+                {
+                    headers.Add(await BuildHeaderAsync(item, token).ConfigureAwait(false));
+                }
+
                 await SendAsync(ProtocolMessageTypes.ClipAnnounce, new ClipAnnounceBody
                 {
-                    Clips = events.Select(BuildHeader).ToArray()
+                    Clips = headers.ToArray()
                 }, token).ConfigureAwait(false);
 
                 if (events.Count < ProtocolLimits.MaxAnnounceClips)
@@ -658,6 +679,60 @@ public sealed class SyncSessionEngine : IDisposable
                 }
 
                 acks.Add((origin, header.OriginSeq));
+                continue;
+            }
+
+            if (string.Equals(header.Kind, "image", StringComparison.Ordinal))
+            {
+                if (protocolVersion != ProtocolLimits.ProtocolVersionV2)
+                {
+                    await FailAsync(ProtocolErrorCodes.UnsupportedMedia, "image_on_v1", token).ConfigureAwait(false);
+                    return false;
+                }
+
+                if (await store.FindLiveBlobByHashAsync(header.ContentHash!, token).ConfigureAwait(false))
+                {
+                    var replayImage = new RemoteClipEvent(
+                        Guid.Parse(header.EventId),
+                        origin,
+                        header.OriginSeq,
+                        Content: null,
+                        header.ContentHash!,
+                        header.SourceApp,
+                        DateTimeOffset.FromUnixTimeMilliseconds(header.CreatedAtMs!.Value),
+                        header.ExpiresAtMs is null ? null : DateTimeOffset.FromUnixTimeMilliseconds(header.ExpiresAtMs.Value),
+                        Kind: "image",
+                        MimeType: header.MimeType,
+                        EncodedBytes: header.EncodedBytes is null ? null : (int)header.EncodedBytes.Value,
+                        PixelWidth: header.PixelWidth is null ? null : (int)header.PixelWidth.Value,
+                        PixelHeight: header.PixelHeight is null ? null : (int)header.PixelHeight.Value);
+                    var storedImage = await store.StoreRemoteEventAsync(replayImage, peerDevice.DeviceId, token).ConfigureAwait(false);
+                    if (storedImage is RemoteStoreResult.IdentityConflict imageConflict)
+                    {
+                        PeerLog.StoreConflict(logger, "announce", imageConflict.Detail);
+                        await FailAsync(ProtocolErrorCodes.EventConflict, "announce_conflict", token).ConfigureAwait(false);
+                        return false;
+                    }
+
+                    acks.Add((origin, header.OriginSeq));
+                    if (storedImage is RemoteStoreResult.Stored)
+                    {
+                        committed.Add(new RemoteClipApplied(
+                            replayImage.EventId,
+                            origin,
+                            header.OriginSeq,
+                            string.Empty,
+                            replayImage.CreatedAt,
+                            "image",
+                            replayImage.ContentHash,
+                            replayImage.MimeType));
+                    }
+
+                    continue;
+                }
+
+                outstandingFetches[Guid.Parse(header.EventId)] = header;
+                fetchIds.Add(header.EventId);
                 continue;
             }
 
@@ -728,7 +803,23 @@ public sealed class SyncSessionEngine : IDisposable
 
             if (item.IsTerminal)
             {
-                terminalHeaders.Add(BuildHeader(item));
+                terminalHeaders.Add(await BuildHeaderAsync(item, token).ConfigureAwait(false));
+                continue;
+            }
+
+            if (item.IsImage)
+            {
+                if (protocolVersion != ProtocolLimits.ProtocolVersionV2)
+                {
+                    terminalHeaders.Add(await BuildHeaderAsync(item, token).ConfigureAwait(false));
+                    continue;
+                }
+
+                if (!await SendImagePayloadAsync(item, token).ConfigureAwait(false))
+                {
+                    return false;
+                }
+
                 continue;
             }
 
@@ -908,9 +999,15 @@ public sealed class SyncSessionEngine : IDisposable
                 return;
             }
 
+            var headers = new List<ClipHeaderDto>(batch.Count);
+            foreach (var row in batch)
+            {
+                headers.Add(await BuildHeaderAsync(row.Event, token).ConfigureAwait(false));
+            }
+
             await SendAsync(ProtocolMessageTypes.ClipAnnounce, new ClipAnnounceBody
             {
-                Clips = batch.Select(row => BuildHeader(row.Event)).ToArray()
+                Clips = headers.ToArray()
             }, token).ConfigureAwait(false);
             await store.MarkOutboxAnnouncedAsync(batch.Select(row => row.Entry.Id).ToArray(), token).ConfigureAwait(false);
 
@@ -988,17 +1085,50 @@ public sealed class SyncSessionEngine : IDisposable
         };
     }
 
-    private static ClipHeaderDto BuildHeader(SyncableClipEvent item)
+    private async ValueTask<ClipHeaderDto> BuildHeaderAsync(SyncableClipEvent item, CancellationToken token)
     {
-        if (item.IsTerminal)
+        if (item.IsTerminal || (item.IsImage && protocolVersion != ProtocolLimits.ProtocolVersionV2))
         {
+            var reason = item.IsImage && protocolVersion != ProtocolLimits.ProtocolVersionV2
+                ? ClipUnavailableReasons.LocalOnly
+                : item.TerminalReason;
+            if (item.IsImage && protocolVersion != ProtocolLimits.ProtocolVersionV2)
+            {
+                await store.StoreLocalUnsupportedMediaAsync(
+                    item.EventId,
+                    item.OriginDeviceId,
+                    item.OriginSeq,
+                    clock.GetUtcNow(),
+                    token).ConfigureAwait(false);
+            }
+
             return new ClipHeaderDto
             {
                 EventId = item.EventId.ToString("D"),
                 OriginDeviceId = item.OriginDeviceId,
                 OriginSeq = item.OriginSeq,
                 Availability = ClipAvailability.Unavailable,
-                Reason = item.TerminalReason
+                Reason = reason
+            };
+        }
+
+        if (item.IsImage)
+        {
+            return new ClipHeaderDto
+            {
+                EventId = item.EventId.ToString("D"),
+                OriginDeviceId = item.OriginDeviceId,
+                OriginSeq = item.OriginSeq,
+                Availability = ClipAvailability.Available,
+                Kind = "image",
+                ContentHash = item.ContentHash,
+                MimeType = item.MimeType,
+                EncodedBytes = item.EncodedBytes,
+                PixelWidth = item.PixelWidth,
+                PixelHeight = item.PixelHeight,
+                SourceApp = item.SourceApp,
+                CreatedAtMs = item.CreatedAt.ToUnixTimeMilliseconds(),
+                ExpiresAtMs = item.ExpiresAt?.ToUnixTimeMilliseconds()
             };
         }
 
@@ -1015,6 +1145,230 @@ public sealed class SyncSessionEngine : IDisposable
             CreatedAtMs = item.CreatedAt.ToUnixTimeMilliseconds(),
             ExpiresAtMs = item.ExpiresAt?.ToUnixTimeMilliseconds()
         };
+    }
+
+    private async Task<bool> SendImagePayloadAsync(SyncableClipEvent item, CancellationToken token)
+    {
+        byte[] bytes;
+        try
+        {
+            bytes = store.Media.ReadAllBytes(item.ContentHash!);
+        }
+        catch (Exception exception) when (exception is FileNotFoundException or InvalidDataException)
+        {
+            await FailAsync(ProtocolErrorCodes.MediaStorageFailed, "blob_missing", token).ConfigureAwait(false);
+            return false;
+        }
+
+        var chunks = ImageChunks.Split(bytes);
+        var transferId = Guid.NewGuid().ToString("D");
+        await SendAsync(ProtocolMessageTypes.ClipPayloadBegin, new ClipPayloadBeginBody
+        {
+            TransferId = transferId,
+            EventId = item.EventId.ToString("D"),
+            ChunkCount = chunks.Count,
+            EncodedBytes = bytes.Length,
+            ContentHash = item.ContentHash!,
+            MimeType = item.MimeType ?? MediaLimits.MimePng
+        }, token).ConfigureAwait(false);
+
+        foreach (var chunk in chunks)
+        {
+            await SendAsync(ProtocolMessageTypes.ClipPayloadChunk, new ClipPayloadChunkBody
+            {
+                TransferId = transferId,
+                EventId = item.EventId.ToString("D"),
+                ChunkIndex = chunk.Index,
+                ChunkCount = chunk.Count,
+                ChunkBytes = chunk.ByteCount,
+                Data = chunk.Data
+            }, token).ConfigureAwait(false);
+        }
+
+        await SendAsync(ProtocolMessageTypes.ClipPayloadEnd, new ClipPayloadEndBody
+        {
+            TransferId = transferId,
+            EventId = item.EventId.ToString("D"),
+            ContentHash = item.ContentHash!
+        }, token).ConfigureAwait(false);
+        return true;
+    }
+
+    private async Task<bool> HandleClipPayloadBeginAsync(ClipPayloadBeginBody begin, CancellationToken token)
+    {
+        if (protocolVersion != ProtocolLimits.ProtocolVersionV2)
+        {
+            await FailAsync(ProtocolErrorCodes.MessageOutOfOrder, "image_on_v1", token).ConfigureAwait(false);
+            return false;
+        }
+
+        var eventId = Guid.Parse(begin.EventId);
+        if (!outstandingFetches.TryGetValue(eventId, out var header)
+            || header.ContentHash != begin.ContentHash
+            || header.MimeType != begin.MimeType
+            || header.EncodedBytes != begin.EncodedBytes)
+        {
+            await FailAsync(ProtocolErrorCodes.MessageOutOfOrder, "payload_without_fetch", token).ConfigureAwait(false);
+            return false;
+        }
+
+        if (incomingImages.Count >= MediaLimits.MaxConcurrentDownloads)
+        {
+            await FailAsync(ProtocolErrorCodes.RateLimited, "too_many_image_downloads", token).ConfigureAwait(false);
+            return false;
+        }
+
+        if (!await imageDownloadSlots.WaitAsync(0, token).ConfigureAwait(false))
+        {
+            await FailAsync(ProtocolErrorCodes.RateLimited, "too_many_image_downloads", token).ConfigureAwait(false);
+            return false;
+        }
+
+        PendingMediaWrite pending;
+        try
+        {
+            pending = store.Media.BeginWrite();
+        }
+        catch
+        {
+            imageDownloadSlots.Release();
+            await FailAsync(ProtocolErrorCodes.MediaStorageFailed, "temp_open_failed", token).ConfigureAwait(false);
+            return false;
+        }
+
+        incomingImages[eventId] = new IncomingImageTransfer(
+            Guid.Parse(begin.TransferId),
+            eventId,
+            header,
+            pending,
+            (int)begin.ChunkCount,
+            (int)begin.EncodedBytes,
+            begin.ContentHash);
+        return true;
+    }
+
+    private async Task<bool> HandleClipPayloadChunkAsync(ClipPayloadChunkBody chunk, CancellationToken token)
+    {
+        var eventId = Guid.Parse(chunk.EventId);
+        if (!incomingImages.TryGetValue(eventId, out var transfer)
+            || transfer.TransferId != Guid.Parse(chunk.TransferId)
+            || transfer.ChunkCount != chunk.ChunkCount)
+        {
+            await FailAsync(ProtocolErrorCodes.MediaOutOfOrder, "chunk_unbound", token).ConfigureAwait(false);
+            return false;
+        }
+
+        if (chunk.ChunkIndex != transfer.NextIndex)
+        {
+            if (chunk.ChunkIndex < transfer.NextIndex)
+            {
+                return true;
+            }
+
+            await FailAsync(ProtocolErrorCodes.MediaOutOfOrder, "chunk_out_of_order", token).ConfigureAwait(false);
+            return false;
+        }
+
+        if (!ImageChunks.TryDecodeChunk(chunk.Data, (int)chunk.ChunkBytes, out var bytes))
+        {
+            await FailAsync(ProtocolErrorCodes.MediaDecodeFailed, "chunk_decode", token).ConfigureAwait(false);
+            return false;
+        }
+
+        try
+        {
+            MediaBlobStore.Append(transfer.Pending, bytes);
+        }
+        catch (InvalidDataException)
+        {
+            await FailAsync(ProtocolErrorCodes.MediaTooLarge, "chunk_overflow", token).ConfigureAwait(false);
+            return false;
+        }
+
+        transfer.NextIndex++;
+        return true;
+    }
+
+    private async Task<bool> HandleClipPayloadEndAsync(ClipPayloadEndBody end, CancellationToken token)
+    {
+        var eventId = Guid.Parse(end.EventId);
+        if (!incomingImages.Remove(eventId, out var transfer)
+            || transfer.TransferId != Guid.Parse(end.TransferId)
+            || transfer.ContentHash != end.ContentHash
+            || transfer.NextIndex != transfer.ChunkCount)
+        {
+            await FailAsync(ProtocolErrorCodes.MediaOutOfOrder, "end_unbound", token).ConfigureAwait(false);
+            return false;
+        }
+
+        imageDownloadSlots.Release();
+        outstandingFetches.Remove(eventId);
+        ValidatedImage validated;
+        try
+        {
+            validated = store.Media.Commit(transfer.Pending, transfer.ContentHash, transfer.Header.MimeType);
+        }
+        catch (InvalidDataException exception)
+        {
+            var code = exception.Message switch
+            {
+                "MEDIA_HASH_MISMATCH" => ProtocolErrorCodes.MediaHashMismatch,
+                "MEDIA_TOO_LARGE" => ProtocolErrorCodes.MediaTooLarge,
+                "UNSUPPORTED_MEDIA" => ProtocolErrorCodes.UnsupportedMedia,
+                "MEDIA_DECODE_FAILED" => ProtocolErrorCodes.MediaDecodeFailed,
+                _ => ProtocolErrorCodes.MediaStorageFailed
+            };
+            await FailAsync(code, "image_commit_failed", token).ConfigureAwait(false);
+            return false;
+        }
+
+        var remoteEvent = new RemoteClipEvent(
+            eventId,
+            transfer.Header.OriginDeviceId,
+            transfer.Header.OriginSeq,
+            Content: null,
+            validated.ContentHash,
+            transfer.Header.SourceApp,
+            DateTimeOffset.FromUnixTimeMilliseconds(transfer.Header.CreatedAtMs!.Value),
+            transfer.Header.ExpiresAtMs is null
+                ? null
+                : DateTimeOffset.FromUnixTimeMilliseconds(transfer.Header.ExpiresAtMs.Value),
+            Kind: "image",
+            MimeType: validated.MimeType,
+            EncodedBytes: validated.EncodedBytes,
+            PixelWidth: validated.PixelWidth,
+            PixelHeight: validated.PixelHeight);
+        var stored = await store.StoreRemoteEventAsync(remoteEvent, peerDevice!.DeviceId, token).ConfigureAwait(false);
+        if (stored is RemoteStoreResult.IdentityConflict conflict)
+        {
+            PeerLog.StoreConflict(logger, "image_payload", conflict.Detail);
+            await FailAsync(ProtocolErrorCodes.EventConflict, "image_payload_conflict", token).ConfigureAwait(false);
+            return false;
+        }
+
+        await SendAcksAsync([(transfer.Header.OriginDeviceId, transfer.Header.OriginSeq)], token).ConfigureAwait(false);
+        if (stored is RemoteStoreResult.Stored)
+        {
+            RaiseCommitted(
+            [
+                new RemoteClipApplied(
+                    eventId,
+                    transfer.Header.OriginDeviceId,
+                    transfer.Header.OriginSeq,
+                    string.Empty,
+                    remoteEvent.CreatedAt,
+                    "image",
+                    validated.ContentHash,
+                    validated.MimeType)
+            ]);
+        }
+
+        if (wantBacklogPending)
+        {
+            await SendWantsAsync(token).ConfigureAwait(false);
+        }
+
+        return true;
     }
 
     private static IEnumerable<IReadOnlyList<ClipPayloadItemDto>> ChunkPayloads(IReadOnlyList<ClipPayloadItemDto> items)
@@ -1107,7 +1461,7 @@ public sealed class SyncSessionEngine : IDisposable
 
     private async Task SendWithRequestIdAsync(string type, Guid requestId, object body, CancellationToken token)
     {
-        var json = ProtocolWriter.Serialize(type, requestId, body);
+        var json = ProtocolWriter.Serialize(protocolVersion, type, requestId, body);
         await sendLock.WaitAsync(token).ConfigureAwait(false);
         try
         {
@@ -1160,7 +1514,17 @@ public sealed class SyncSessionEngine : IDisposable
         }
     }
 
-    public void Dispose() => sendLock.Dispose();
+    public void Dispose()
+    {
+        sendLock.Dispose();
+        imageDownloadSlots.Dispose();
+        foreach (var transfer in incomingImages.Values)
+        {
+            transfer.Pending.Dispose();
+        }
+
+        incomingImages.Clear();
+    }
 
     private enum SessionState
     {
@@ -1171,6 +1535,32 @@ public sealed class SyncSessionEngine : IDisposable
     }
 
     private sealed record OutstandingChallenge(Guid RequestId, byte[] Nonce, long TrustEpoch, DateTimeOffset ExpiresAt);
+
+    private sealed class IncomingImageTransfer(
+        Guid transferId,
+        Guid eventId,
+        ClipHeaderDto header,
+        PendingMediaWrite pending,
+        int chunkCount,
+        int encodedBytes,
+        string contentHash)
+    {
+        public Guid TransferId { get; } = transferId;
+
+        public Guid EventId { get; } = eventId;
+
+        public ClipHeaderDto Header { get; } = header;
+
+        public PendingMediaWrite Pending { get; } = pending;
+
+        public int ChunkCount { get; } = chunkCount;
+
+        public int EncodedBytes { get; } = encodedBytes;
+
+        public string ContentHash { get; } = contentHash;
+
+        public int NextIndex { get; set; }
+    }
 
     private enum ReplayVerdict
     {

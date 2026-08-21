@@ -77,7 +77,20 @@ class FakeClipboardWriter(
     override fun probe(): CapabilityState = state
 
     override fun writeText(text: String, originEventId: String): ClipboardWriteResult {
-        writes += WriteCall(text, originEventId)
+        writes += WriteCall(text = text, originEventId = originEventId)
+        return if (results.isEmpty()) ClipboardWriteResult.Success else results.removeFirst()
+    }
+
+    override fun writeImage(
+        encoded: ByteArray,
+        mimeType: String,
+        originEventId: String,
+    ): ClipboardWriteResult {
+        writes += WriteCall(
+            originEventId = originEventId,
+            imageBytes = encoded.copyOf(),
+            mimeType = mimeType,
+        )
         return if (results.isEmpty()) ClipboardWriteResult.Success else results.removeFirst()
     }
 
@@ -85,7 +98,12 @@ class FakeClipboardWriter(
         results.addLast(result)
     }
 
-    data class WriteCall(val text: String, val originEventId: String)
+    data class WriteCall(
+        val text: String? = null,
+        val originEventId: String,
+        val imageBytes: ByteArray? = null,
+        val mimeType: String? = null,
+    )
 }
 
 /** In-memory [com.clipsync.android.pairing.KeyValueStore] for capability persistence tests. */

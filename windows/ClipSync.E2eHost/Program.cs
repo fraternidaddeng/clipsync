@@ -59,6 +59,7 @@ internal static class Program
                     SessionOptions = new SyncSessionOptions
                     {
                         ClientVersion = "0.2.0",
+                        ProtocolVersion = ClipSync.Core.Protocol.ProtocolLimits.ProtocolVersionV2,
                         OutboxDrainInterval = TimeSpan.FromMilliseconds(100),
                         PingInterval = TimeSpan.FromSeconds(60)
                     },

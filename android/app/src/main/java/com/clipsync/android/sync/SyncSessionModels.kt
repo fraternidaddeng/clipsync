@@ -15,7 +15,10 @@ data class SyncSessionOptions(
     val maxRequestedSequencesPerMessage: Long = 16_384,
     val nowMs: () -> Long = { System.currentTimeMillis() },
     val delayMs: suspend (Long) -> Unit = { kotlinx.coroutines.delay(it) },
+    val protocolVersion: Int = com.clipsync.android.protocol.ProtocolLimits.PROTOCOL_VERSION,
 ) {
+    val imageClipEnabled: Boolean
+        get() = protocolVersion >= com.clipsync.android.protocol.ProtocolLimits.PROTOCOL_VERSION_V2
     companion object {
         const val DEFAULT_CLIENT_VERSION = "0.1.0"
         const val PLATFORM_ANDROID = "android"
@@ -37,7 +40,12 @@ data class RemoteClipApplied(
     val originSeq: Long,
     val content: String,
     val createdAtMs: Long,
-)
+    val kind: String = "text",
+    val contentHash: String? = null,
+    val mimeType: String? = null,
+) {
+    val isImage: Boolean get() = kind == "image"
+}
 
 /** Safe session diagnostics. Callers must never pass content, nonce, proof, or secret. */
 fun interface SyncLogger {

@@ -13,7 +13,7 @@
     <string name="history_clear_hint">Clearing only tombstones this phone\'s history and does not delete Windows history remotely.</string>
     <string name="history_copy">Copy</string>
     <string name="history_delete">Delete</string>
-    <string name="history_empty">No clips yet. Share text, use the Quick Settings tile, or pair with Windows.</string>
+    <string name="history_empty">No clips yet. Share text or a PNG/JPEG, use the Quick Settings tile, or pair with Windows.</string>
     <string name="history_oversized">That text is larger than 1 MiB and was not stored.</string>
     <string name="history_unpaired">Not paired with Windows. Pairing is required before clips can sync.</string>
     <string name="history_windows_unreachable">Windows is unreachable. Clips stay on this phone until the peer is online.</string>
@@ -34,6 +34,12 @@
     <string name="settings_private_hint">New clips are not stored or sent. Past clips are not backfilled later.</string>
     <string name="settings_auto_apply">Auto-apply remote clips</string>
     <string name="settings_auto_apply_hint">Write inbound Windows text to the system clipboard when public write works.</string>
+    <string name="settings_image_sync">Sync clipboard images</string>
+    <string name="settings_image_sync_hint">Off by default. Only PNG/JPEG. Original bytes keep EXIF. Image backends are not marked READY without a device test.</string>
+    <string name="settings_auto_apply_images">Auto-apply remote images</string>
+    <string name="settings_auto_apply_images_hint">Independent of text auto-apply. Writes inbound PNG/JPEG to the system clipboard.</string>
+    <string name="history_image_preview">Image %1$s %2$d×%3$d</string>
+    <string name="history_image_unavailable">Image is unavailable on this device.</string>
     <string name="settings_background_sync">Background sync</string>
     <string name="settings_background_sync_hint">Keep a connected-device foreground service so the Windows link stays up. This is not clipboard permission.</string>
     <string name="settings_boot_recovery">Resume after reboot</string>
@@ -66,6 +72,9 @@
     <string name="share_duplicate">Already captured.</string>
     <string name="share_paused">Capture is paused or private mode is on.</string>
     <string name="share_blocked">That source app is blocked from capture.</string>
+    <string name="share_image_disabled">Image sync is off. Turn on “Sync clipboard images” in Settings first.</string>
+    <string name="share_image_failed">Could not read that image. Only PNG and JPEG are supported.</string>
+    <string name="share_image_oversized">Image is larger than 16 MiB and was not sent.</string>
     <string name="share_label">Send to Windows</string>
 
     <string name="tile_send_clipboard">Send clipboard</string>

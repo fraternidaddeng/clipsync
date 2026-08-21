@@ -108,6 +108,18 @@ fun SettingsScreen(
             onCheckedChange = viewModel::setAutoApplyRemote,
         )
         SettingSwitch(
+            title = stringResource(R.string.settings_image_sync),
+            subtitle = stringResource(R.string.settings_image_sync_hint),
+            checked = state.imageSyncEnabled,
+            onCheckedChange = viewModel::setImageSyncEnabled,
+        )
+        SettingSwitch(
+            title = stringResource(R.string.settings_auto_apply_images),
+            subtitle = stringResource(R.string.settings_auto_apply_images_hint),
+            checked = state.autoApplyImages,
+            onCheckedChange = viewModel::setAutoApplyImages,
+        )
+        SettingSwitch(
             title = stringResource(R.string.settings_background_sync),
             subtitle = stringResource(R.string.settings_background_sync_hint),
             checked = state.backgroundSync,

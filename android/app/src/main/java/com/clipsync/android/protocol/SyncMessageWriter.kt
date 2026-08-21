@@ -22,9 +22,14 @@ object SyncMessageWriter {
 
     fun newRequestId(): String = UUID.randomUUID().toString()
 
-    fun encode(type: String, requestId: String, body: SyncMessageBody): String {
+    fun encode(
+        type: String,
+        requestId: String,
+        body: SyncMessageBody,
+        version: Int = ProtocolLimits.PROTOCOL_VERSION,
+    ): String {
         val envelope = buildJsonObject {
-            put("version", ProtocolLimits.PROTOCOL_VERSION)
+            put("version", version)
             put("type", type)
             put("request_id", requestId)
             put("body", encodeBody(type, body))
@@ -32,10 +37,16 @@ object SyncMessageWriter {
         return json.encodeToString(JsonObject.serializer(), envelope)
     }
 
-    fun encode(requestId: String, body: SyncMessageBody): String =
-        encode(typeOf(body), requestId, body)
+    fun encode(
+        requestId: String,
+        body: SyncMessageBody,
+        version: Int = ProtocolLimits.PROTOCOL_VERSION,
+    ): String = encode(typeOf(body), requestId, body, version)
 
-    fun encode(body: SyncMessageBody): String = encode(newRequestId(), body)
+    fun encode(
+        body: SyncMessageBody,
+        version: Int = ProtocolLimits.PROTOCOL_VERSION,
+    ): String = encode(newRequestId(), body, version)
 
     private fun typeOf(body: SyncMessageBody): String = when (body) {
         is HelloBody -> ProtocolMessageTypes.HELLO
@@ -46,6 +57,9 @@ object SyncMessageWriter {
         is ClipAnnounceBody -> ProtocolMessageTypes.CLIP_ANNOUNCE
         is ClipFetchBody -> ProtocolMessageTypes.CLIP_FETCH
         is ClipPayloadBody -> ProtocolMessageTypes.CLIP_PAYLOAD
+        is ClipPayloadBeginBody -> ProtocolMessageTypes.CLIP_PAYLOAD_BEGIN
+        is ClipPayloadChunkBody -> ProtocolMessageTypes.CLIP_PAYLOAD_CHUNK
+        is ClipPayloadEndBody -> ProtocolMessageTypes.CLIP_PAYLOAD_END
         is AckRangesBody -> ProtocolMessageTypes.ACK_RANGES
         is ErrorBody -> ProtocolMessageTypes.ERROR
         is PingBody -> ProtocolMessageTypes.PING
@@ -67,6 +81,12 @@ object SyncMessageWriter {
             json.encodeToJsonElement(ClipFetchBody.serializer(), body as ClipFetchBody)
         ProtocolMessageTypes.CLIP_PAYLOAD ->
             json.encodeToJsonElement(ClipPayloadBody.serializer(), body as ClipPayloadBody)
+        ProtocolMessageTypes.CLIP_PAYLOAD_BEGIN ->
+            json.encodeToJsonElement(ClipPayloadBeginBody.serializer(), body as ClipPayloadBeginBody)
+        ProtocolMessageTypes.CLIP_PAYLOAD_CHUNK ->
+            json.encodeToJsonElement(ClipPayloadChunkBody.serializer(), body as ClipPayloadChunkBody)
+        ProtocolMessageTypes.CLIP_PAYLOAD_END ->
+            json.encodeToJsonElement(ClipPayloadEndBody.serializer(), body as ClipPayloadEndBody)
         ProtocolMessageTypes.ACK_RANGES ->
             json.encodeToJsonElement(AckRangesBody.serializer(), body as AckRangesBody)
         ProtocolMessageTypes.ERROR -> json.encodeToJsonElement(ErrorBody.serializer(), body as ErrorBody)

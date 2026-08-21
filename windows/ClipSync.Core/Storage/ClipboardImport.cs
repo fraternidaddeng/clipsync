@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using ClipSync.Core.Clipboard;
+using ClipSync.Core.Media;
 using Microsoft.Data.Sqlite;
 
 namespace ClipSync.Core.Storage;
@@ -68,6 +69,7 @@ public static class ClipboardImport
     public static async ValueTask<ClipboardImportResult> ImportJsonLinesAsync(
         SqliteClipboardEventStore store,
         string jsonl,
+        string? mediaDirectory = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(store);
@@ -79,6 +81,13 @@ public static class ClipboardImport
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
+                if (string.Equals(row.Kind, "image", StringComparison.Ordinal)
+                    && !TryCommitImportedImage(store, row, mediaDirectory))
+                {
+                    skipped++;
+                    continue;
+                }
+
                 if (await store.TryInsertImportedLocalAsync(row, cancellationToken).ConfigureAwait(false))
                 {
                     imported++;
@@ -88,13 +97,46 @@ public static class ClipboardImport
                     skipped++;
                 }
             }
-            catch (SqliteException)
+            catch (Exception exception) when (exception is SqliteException or InvalidDataException or IOException)
             {
                 skipped++;
             }
         }
 
         return new ClipboardImportResult(imported, skipped);
+    }
+
+    private static bool TryCommitImportedImage(
+        SqliteClipboardEventStore store,
+        ImportedClipboardRow row,
+        string? mediaDirectory)
+    {
+        if (string.IsNullOrWhiteSpace(mediaDirectory) || string.IsNullOrWhiteSpace(row.MediaFileName))
+        {
+            return false;
+        }
+
+        var fileName = Path.GetFileName(row.MediaFileName);
+        if (fileName.Length != 64 || fileName != row.ContentHash)
+        {
+            return false;
+        }
+
+        var path = Path.Combine(mediaDirectory, fileName);
+        if (!File.Exists(path))
+        {
+            return false;
+        }
+
+        var bytes = File.ReadAllBytes(path);
+        var inspect = ImageCodec.TryInspect(bytes, out var image, row.ContentHash);
+        return inspect == ImageCodecError.Ok
+            && image is not null
+            && image.MimeType == row.MimeType
+            && image.PixelWidth == row.PixelWidth
+            && image.PixelHeight == row.PixelHeight
+            && image.EncodedBytes == row.EncodedBytes
+            && store.Media.CommitBytes(bytes, row.ContentHash).ContentHash == row.ContentHash;
     }
 
     private static LineKind ClassifyLine(string line, out ImportedClipboardRow? row)
@@ -143,8 +185,6 @@ public static class ClipboardImport
             || !TryReadInt64(root, "origin_seq", out var originSeq)
             || originSeq < 1
             || !TryReadString(root, "kind", out var kind)
-            || !string.Equals(kind, "text", StringComparison.Ordinal)
-            || !TryReadString(root, "content", out var content)
             || !TryReadString(root, "content_hash", out var contentHash)
             || !TryReadInt64(root, "created_at", out var createdAtMs)
             || !TryReadOptionalString(root, "source_app", out var sourceApp)
@@ -153,14 +193,63 @@ public static class ClipboardImport
             return false;
         }
 
-        if (Encoding.UTF8.GetByteCount(content) > ClipboardCapturePolicy.MaximumUtf8Bytes)
+        if (string.Equals(kind, "text", StringComparison.Ordinal))
         {
-            oversized = true;
+            if (!TryReadString(root, "content", out var content))
+            {
+                return false;
+            }
+
+            if (Encoding.UTF8.GetByteCount(content) > ClipboardCapturePolicy.MaximumUtf8Bytes)
+            {
+                oversized = true;
+                return true;
+            }
+
+            if (content.Length > 0
+                && !string.Equals(contentHash, Hash(content), StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            row = new ImportedClipboardRow(
+                eventId,
+                originDeviceId,
+                originSeq,
+                content,
+                contentHash,
+                sourceApp,
+                DateTimeOffset.FromUnixTimeMilliseconds(createdAtMs),
+                expiresAtMs is null ? null : DateTimeOffset.FromUnixTimeMilliseconds(expiresAtMs.Value));
             return true;
         }
 
-        if (content.Length > 0
-            && !string.Equals(contentHash, Hash(content), StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(kind, "image", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        if (!TryReadOptionalString(root, "content", out var imageContent) || imageContent is not null)
+        {
+            return false;
+        }
+
+        if (!TryReadString(root, "mime_type", out var mime)
+            || !MediaLimits.IsSupportedMime(mime)
+            || !TryReadInt64(root, "encoded_bytes", out var encodedBytes)
+            || encodedBytes is < 1 or > MediaLimits.MaxEncodedBytes
+            || !TryReadInt64(root, "pixel_width", out var width)
+            || !TryReadInt64(root, "pixel_height", out var height)
+            || width > int.MaxValue
+            || height > int.MaxValue
+            || !MediaLimits.FitsPixelBudget((int)width, (int)height)
+            || !TryReadOptionalString(root, "media_file", out var mediaFile)
+            || !ProtocolValidationHash(contentHash))
+        {
+            return false;
+        }
+
+        if (mediaFile is not null && (mediaFile != contentHash || mediaFile.Contains('/', StringComparison.Ordinal) || mediaFile.Contains('\\', StringComparison.Ordinal)))
         {
             return false;
         }
@@ -169,11 +258,35 @@ public static class ClipboardImport
             eventId,
             originDeviceId,
             originSeq,
-            content,
+            null,
             contentHash,
             sourceApp,
             DateTimeOffset.FromUnixTimeMilliseconds(createdAtMs),
-            expiresAtMs is null ? null : DateTimeOffset.FromUnixTimeMilliseconds(expiresAtMs.Value));
+            expiresAtMs is null ? null : DateTimeOffset.FromUnixTimeMilliseconds(expiresAtMs.Value),
+            "image",
+            mime,
+            (int)encodedBytes,
+            (int)width,
+            (int)height,
+            mediaFile ?? contentHash);
+        return true;
+    }
+
+    private static bool ProtocolValidationHash(string value)
+    {
+        if (value.Length != 64)
+        {
+            return false;
+        }
+
+        foreach (var character in value)
+        {
+            if (character is not ((>= '0' and <= '9') or (>= 'a' and <= 'f')))
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 

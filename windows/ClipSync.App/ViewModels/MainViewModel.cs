@@ -15,7 +15,17 @@ namespace ClipSync.App.ViewModels;
 /// shows a trimmed preview; this shape is also the unit-test seam so payload
 /// mapping can be checked without opening WPF UI.
 /// </summary>
-public sealed record ClipDetailPayload(string Text, string Source, string CreatedAt);
+public sealed record ClipDetailPayload(
+    string Text,
+    string Source,
+    string CreatedAt,
+    bool IsImage = false,
+    string? MimeType = null,
+    int? PixelWidth = null,
+    int? PixelHeight = null,
+    int? EncodedBytes = null,
+    string? ContentHash = null,
+    string? ThumbnailPath = null);
 
 public partial class MainViewModel(
     SqliteClipboardEventStore store,
@@ -23,6 +33,8 @@ public partial class MainViewModel(
     ClipSync.App.Clipboard.Win32ClipboardAdapter clipboardAdapter) : ObservableObject
 {
     private bool initialized;
+    private bool refreshRunning;
+    private bool refreshQueued;
 
     [ObservableProperty]
     private string searchText = string.Empty;
@@ -44,6 +56,12 @@ public partial class MainViewModel(
 
     [ObservableProperty]
     private bool autoApplyRemote = true;
+
+    [ObservableProperty]
+    private bool imageSyncEnabled;
+
+    [ObservableProperty]
+    private bool autoApplyImages;
 
     [ObservableProperty]
     private string extraBindAddresses = string.Empty;
@@ -99,6 +117,8 @@ public partial class MainViewModel(
 
         BlockedProcesses = await store.GetSettingAsync("blocked_processes") ?? BlockedProcesses;
         AutoApplyRemote = !bool.TryParse(await store.GetSettingAsync("auto_apply_remote"), out var autoApply) || autoApply;
+        ImageSyncEnabled = bool.TryParse(await store.GetSettingAsync("image_sync"), out var imageSync) && imageSync;
+        AutoApplyImages = bool.TryParse(await store.GetSettingAsync("auto_apply_images"), out var autoApplyImages) && autoApplyImages;
         ExtraBindAddresses = await store.GetSettingAsync("extra_bind_addresses") ?? string.Empty;
         ApplySettings();
         await store.CleanupAsync(
@@ -116,11 +136,36 @@ public partial class MainViewModel(
     [RelayCommand]
     private async Task RefreshAsync()
     {
-        var entries = await store.SearchAsync(new ClipboardHistoryQuery(SearchText));
-        History.Clear();
-        foreach (var entry in entries)
+        if (refreshRunning)
         {
-            History.Add(HistoryItemViewModel.FromEntry(entry));
+            refreshQueued = true;
+            return;
+        }
+
+        refreshRunning = true;
+        try
+        {
+            do
+            {
+                refreshQueued = false;
+                var entries = await store.SearchAsync(new ClipboardHistoryQuery(SearchText));
+                var items = new List<HistoryItemViewModel>(entries.Count);
+                foreach (var entry in entries)
+                {
+                    items.Add(HistoryItemViewModel.FromEntry(entry, store.Media));
+                }
+
+                History.Clear();
+                foreach (var item in items)
+                {
+                    History.Add(item);
+                }
+            }
+            while (refreshQueued);
+        }
+        finally
+        {
+            refreshRunning = false;
         }
     }
 
@@ -134,7 +179,19 @@ public partial class MainViewModel(
     public ClipDetailPayload? GetSelectedDetail()
     {
         var item = SelectedItem;
-        return item is null ? null : new ClipDetailPayload(item.Text, item.Source, item.CreatedAt);
+        return item is null
+            ? null
+            : new ClipDetailPayload(
+                item.Text,
+                item.Source,
+                item.CreatedAt,
+                item.IsImage,
+                item.MimeType,
+                item.PixelWidth,
+                item.PixelHeight,
+                item.EncodedBytes,
+                item.ContentHash,
+                item.ThumbnailPath);
     }
 
     /// <summary>
@@ -148,11 +205,29 @@ public partial class MainViewModel(
         clipboardAdapter.WriteText(text);
     }
 
+    public void CopyImage(string contentHash)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(contentHash);
+        var bytes = store.Media.ReadAllBytes(contentHash);
+        capturePolicy.SuppressNextImage(contentHash, DateTimeOffset.UtcNow);
+        clipboardAdapter.WriteImage(bytes);
+    }
+
     [RelayCommand(CanExecute = nameof(HasSelection))]
     private void CopySelected()
     {
         if (SelectedItem is null)
         {
+            return;
+        }
+
+        if (SelectedItem.IsImage)
+        {
+            if (SelectedItem.ContentHash is not null)
+            {
+                CopyImage(SelectedItem.ContentHash);
+            }
+
             return;
         }
 
@@ -196,9 +271,12 @@ public partial class MainViewModel(
             // bodies and must not be logged, traced, or copied to diagnostics.
             var exported = await Task.Run(async () =>
             {
-                var jsonl = await ClipboardExport.EncodeJsonLinesAsync(store).ConfigureAwait(false);
+                var mediaDirectory = Path.Combine(
+                    Path.GetDirectoryName(path) ?? ".",
+                    Path.GetFileNameWithoutExtension(path) + "-media");
+                var jsonl = await ClipboardExport.EncodeJsonLinesAsync(store, mediaDirectory).ConfigureAwait(false);
                 await File.WriteAllTextAsync(path, jsonl).ConfigureAwait(false);
-                return jsonl.Length == 0 ? 0 : jsonl.AsSpan().Count('\n');
+                return ClipboardExport.CountExportedRows(jsonl);
             }).ConfigureAwait(false);
 
             ExportStatus = Strings.FormatExportedClips(exported);
@@ -230,7 +308,10 @@ public partial class MainViewModel(
                 }
 
                 var jsonl = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-                return await ClipboardImport.ImportJsonLinesAsync(store, jsonl).ConfigureAwait(false);
+                var mediaDirectory = Path.Combine(
+                    Path.GetDirectoryName(path) ?? ".",
+                    Path.GetFileNameWithoutExtension(path) + "-media");
+                return await ClipboardImport.ImportJsonLinesAsync(store, jsonl, mediaDirectory).ConfigureAwait(false);
             }).ConfigureAwait(true);
 
             ExportStatus = Strings.FormatImportedClips(imported.Imported, imported.Skipped);
@@ -251,6 +332,8 @@ public partial class MainViewModel(
         await store.SetSettingAsync("retention_days", RetentionDays.ToString(System.Globalization.CultureInfo.InvariantCulture));
         await store.SetSettingAsync("blocked_processes", BlockedProcesses);
         await store.SetSettingAsync("auto_apply_remote", AutoApplyRemote.ToString());
+        await store.SetSettingAsync("image_sync", ImageSyncEnabled.ToString());
+        await store.SetSettingAsync("auto_apply_images", AutoApplyImages.ToString());
         await store.SetSettingAsync("extra_bind_addresses", ExtraBindAddresses);
         ApplySettings();
         await store.CleanupAsync(
@@ -362,6 +445,7 @@ public partial class MainViewModel(
             IsPaused,
             IsPrivateMode,
             blocked,
-            TimeSpan.FromDays(RetentionDays)));
+            TimeSpan.FromDays(RetentionDays),
+            ImageSyncEnabled));
     }
 }

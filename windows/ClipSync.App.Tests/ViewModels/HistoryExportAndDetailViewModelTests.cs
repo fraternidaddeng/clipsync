@@ -5,6 +5,7 @@ using ClipSync.App;
 using ClipSync.App.Clipboard;
 using ClipSync.App.ViewModels;
 using ClipSync.Core.Clipboard;
+using ClipSync.Core.Media;
 using ClipSync.Core.Storage;
 using Microsoft.Data.Sqlite;
 
@@ -44,6 +45,38 @@ public sealed class HistoryExportAndDetailViewModelTests : IAsyncDisposable
         Assert.Equal(body, detail.Text);
         Assert.Equal(viewModel.SelectedItem.Source, detail.Source);
         Assert.Equal(viewModel.SelectedItem.CreatedAt, detail.CreatedAt);
+        Assert.False(detail.IsImage);
+        Assert.Null(detail.ThumbnailPath);
+    }
+
+    [Fact]
+    public async Task GetSelectedDetailForImageIncludesThumbnailPath()
+    {
+        await store.InitializeAsync();
+        var png = ImageCodec.EncodePngBgra(8, 8, new byte[8 * 8 * 4]);
+        var hash = ImageCodec.HashBytes(png);
+        await store.StoreImageAsync(new AcceptedImageContent(
+            png,
+            hash,
+            MediaLimits.MimePng,
+            8,
+            8,
+            "paint",
+            DateTimeOffset.UtcNow));
+        await viewModel.InitializeAsync();
+
+        viewModel.SelectedItem = Assert.Single(viewModel.History);
+        Assert.True(viewModel.SelectedItem.IsImage);
+        Assert.False(string.IsNullOrWhiteSpace(viewModel.SelectedItem.ThumbnailPath));
+        Assert.True(File.Exists(viewModel.SelectedItem.ThumbnailPath));
+
+        var detail = viewModel.GetSelectedDetail();
+        Assert.NotNull(detail);
+        Assert.True(detail.IsImage);
+        Assert.Equal(hash, detail.ContentHash);
+        Assert.Equal(viewModel.SelectedItem.ThumbnailPath, detail.ThumbnailPath);
+        Assert.Equal("image/png", detail.MimeType);
+        Assert.Equal(8, detail.PixelWidth);
     }
 
     [Fact]

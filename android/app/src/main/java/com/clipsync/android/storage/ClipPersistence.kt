@@ -38,6 +38,22 @@ internal interface ClipSession : ClipRetentionSession {
     suspend fun clipsInRange(originDeviceId: String, startSeq: Long, endSeq: Long, limit: Int): List<ClipEntity>
     suspend fun findRecentLiveByHash(originDeviceId: String, contentHash: String, afterMs: Long): ClipEntity?
     suspend fun findLiveContentByHash(contentHash: String): String?
+    suspend fun findLiveImageByHash(contentHash: String): Boolean
+    suspend fun upsertMediaBlob(entity: MediaBlobEntity)
+    suspend fun findMediaBlob(contentHash: String): MediaBlobEntity?
+    suspend fun upsertClipMedia(entity: ClipMediaEntity)
+    suspend fun findClipMedia(eventId: String): ClipMediaEntity?
+    suspend fun deleteClipMedia(eventId: String)
+    suspend fun deleteOrphanedClipMedia()
+    suspend fun allBlobHashes(): List<String>
+    suspend fun referencedBlobHashes(): List<String>
+    suspend fun deleteMediaBlob(contentHash: String)
+    suspend fun setTerminalReason(
+        eventId: String,
+        originDeviceId: String,
+        originSeq: Long,
+        reason: String,
+    )
 
     suspend fun allocateOriginSeq(deviceId: String): Long
     suspend fun advanceOriginSeq(deviceId: String, originSeq: Long)
@@ -106,8 +122,13 @@ private class RoomClipSession(private val database: ClipDatabase) : ClipSession 
         )
     }
 
-    override suspend fun softDelete(eventId: String, nowMs: Long): Boolean =
-        database.clipDao().softDelete(eventId, nowMs) == 1
+    override suspend fun softDelete(eventId: String, nowMs: Long): Boolean {
+        val deleted = database.clipDao().softDelete(eventId, nowMs) == 1
+        if (deleted) {
+            database.clipMediaDao().deleteByEventId(eventId)
+        }
+        return deleted
+    }
 
     override suspend fun softDeleteAllVisible(nowMs: Long): List<String> {
         val ids = database.clipDao().visibleEventIds()
@@ -132,6 +153,44 @@ private class RoomClipSession(private val database: ClipDatabase) : ClipSession 
 
     override suspend fun findLiveContentByHash(contentHash: String): String? =
         database.clipDao().findLiveContentByHash(contentHash)
+
+    override suspend fun findLiveImageByHash(contentHash: String): Boolean =
+        database.mediaBlobDao().find(contentHash)?.state == CLIP_MEDIA_READY
+
+    override suspend fun upsertMediaBlob(entity: MediaBlobEntity) =
+        database.mediaBlobDao().upsert(entity)
+
+    override suspend fun findMediaBlob(contentHash: String): MediaBlobEntity? =
+        database.mediaBlobDao().find(contentHash)
+
+    override suspend fun upsertClipMedia(entity: ClipMediaEntity) =
+        database.clipMediaDao().upsert(entity)
+
+    override suspend fun findClipMedia(eventId: String): ClipMediaEntity? =
+        database.clipMediaDao().find(eventId)
+
+    override suspend fun deleteClipMedia(eventId: String) =
+        database.clipMediaDao().deleteByEventId(eventId)
+
+    override suspend fun deleteOrphanedClipMedia() =
+        database.clipMediaDao().deleteOrphaned()
+
+    override suspend fun allBlobHashes(): List<String> = database.mediaBlobDao().allHashes()
+
+    override suspend fun referencedBlobHashes(): List<String> =
+        database.clipMediaDao().referencedHashes()
+
+    override suspend fun deleteMediaBlob(contentHash: String) =
+        database.mediaBlobDao().delete(contentHash)
+
+    override suspend fun setTerminalReason(
+        eventId: String,
+        originDeviceId: String,
+        originSeq: Long,
+        reason: String,
+    ) {
+        database.clipDao().setTerminalReason(eventId, originDeviceId, originSeq, reason)
+    }
 
     override suspend fun allocateOriginSeq(deviceId: String): Long {
         val next = database.localSequenceDao().getNextSeq(deviceId) ?: 1L

@@ -74,7 +74,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
         var sessionOptions = new SyncSessionOptions
         {
             ClientVersion = typeof(PeerSyncHost).Assembly.GetName().Version?.ToString(3) ?? "0.2.0",
-            Platform = "windows"
+            Platform = "windows",
+            ProtocolVersion = ClipSync.Core.Protocol.ProtocolLimits.ProtocolVersionV2
         };
 
         var addresses = ResolveBindAddresses(extraBindAddresses);
