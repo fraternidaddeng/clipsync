@@ -329,7 +329,11 @@ class MainActivity : ComponentActivity() {
     private fun handleRouteAction(route: ReadRouteUi, action: RouteActionId) {
         when (action) {
             RouteActionId.REQUEST_PRIVILEGED_PERMISSION ->
-                runCatching { Shizuku.requestPermission(REQUEST_CODE_PRIVILEGED_READ) }
+                realReaders.requestShizukuAuthorization { granted ->
+                    if (granted) {
+                        healthViewModel.refresh()
+                    }
+                }
             RouteActionId.COPY_ADB_READ_LOGS_COMMAND -> {
                 val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 manager.setPrimaryClip(
@@ -371,10 +375,6 @@ class MainActivity : ComponentActivity() {
             "$manufacturer $model".trim()
         }
         return label.ifBlank { "Android phone" }
-    }
-
-    private companion object {
-        const val REQUEST_CODE_PRIVILEGED_READ = 4310
     }
 }
 

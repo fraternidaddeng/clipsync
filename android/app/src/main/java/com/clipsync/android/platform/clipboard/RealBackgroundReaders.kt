@@ -16,6 +16,10 @@ import com.clipsync.android.platform.clipboard.shizuku.ShizukuClipboardBackend a
  *
  * Construction alone starts nothing, probes nothing, and flips no capability to READY — the
  * flat adapters gate start/READY on the honest prerequisite probe plus a device-verified read.
+ *
+ * Physical device still required to validate: PrivilegedHostService binder attach,
+ * PrivilegedUserServiceStarter → ClipboardUserService, logcat parsers per ROM, and overlay
+ * focus on real WindowManager implementations. JVM fakes cover coordinator wiring only.
  */
 class RealBackgroundReaders private constructor(
     val shizuku: BackgroundClipboardBackend,

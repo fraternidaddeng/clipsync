@@ -8,6 +8,10 @@ import android.content.Context
  * inbound auto-apply, capability write test) and the foreground capture pipeline share one
  * suppression table: a clip this app wrote itself must never be re-captured and echoed back
  * to the paired peer.
+ *
+ * The privileged write fallback shares the same Shizuku UserService as background reads
+ * ([RealBackgroundReaders.shizukuWriter]); only exercised after a public write failure on
+ * device — Robolectric cannot validate the Binder path.
  */
 object SharedClipboardWrites {
     @Volatile
@@ -15,15 +19,19 @@ object SharedClipboardWrites {
 
     fun coordinator(context: Context): ClipboardWriteCoordinator =
         instance ?: synchronized(this) {
-            instance ?: ClipboardWriteCoordinator(
-                publicWriter = AndroidPublicClipboardWriter(
-                    clipboardManager = context.applicationContext.getSystemService(
-                        Context.CLIPBOARD_SERVICE,
-                    ) as ClipboardManager,
-                    context = context.applicationContext,
-                ),
-            ).also { instance = it }
+            instance ?: buildCoordinator(context.applicationContext).also { instance = it }
         }
+
+    private fun buildCoordinator(appContext: Context): ClipboardWriteCoordinator {
+        val readers = RealBackgroundReaders.build(appContext)
+        return ClipboardWriteCoordinator(
+            publicWriter = AndroidPublicClipboardWriter(
+                clipboardManager = appContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager,
+                context = appContext,
+            ),
+            fallbackWriter = readers.shizukuWriter(),
+        )
+    }
 
     /** Test hook: Robolectric recreates the application per test, so drop the cached instance. */
     fun reset() {

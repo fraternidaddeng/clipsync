@@ -11,13 +11,20 @@ import rikka.shizuku.Shizuku
  * Real prerequisite probes for the three wizard routes. Every value is re-checked on each
  * probe — a grant observed once is never assumed permanent (plan §5.4): installs, reboots and
  * ROM policy changes can all revoke these silently.
+ *
+ * The privileged route uses ClipSync's in-APK [PrivilegedHostService] (not the official manager
+ * APK). [RoutePrerequisites.shizukuInstalled] therefore means "the bundled host is available
+ * with this install" (always true here); [RoutePrerequisites.shizukuRunning] is true only after
+ * the operator starts the host via adb/wireless-debug shell. Physical-device validation of the
+ * full binder chain still belongs in instrumentation tests — JVM fakes cannot exercise it.
  */
 class AndroidRouteProbes(context: Context) : RouteProbes {
     private val appContext = context.applicationContext
 
     override fun probe(): RoutePrerequisites {
-        val shizukuInstalled = isPackageInstalled(SHIZUKU_PACKAGE)
-        val shizukuRunning = shizukuInstalled && runCatching { Shizuku.pingBinder() }.getOrDefault(false)
+        // Bundled in this APK; no separate manager install step.
+        val shizukuInstalled = true
+        val shizukuRunning = runCatching { Shizuku.pingBinder() }.getOrDefault(false)
         val shizukuAuthorized = shizukuRunning && runCatching {
             !Shizuku.isPreV11() && Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED
         }.getOrDefault(false)
@@ -31,14 +38,5 @@ class AndroidRouteProbes(context: Context) : RouteProbes {
             batteryUnrestricted = (appContext.getSystemService(Context.POWER_SERVICE) as PowerManager)
                 .isIgnoringBatteryOptimizations(appContext.packageName),
         )
-    }
-
-    private fun isPackageInstalled(packageName: String): Boolean = runCatching {
-        appContext.packageManager.getPackageInfo(packageName, 0)
-        true
-    }.getOrDefault(false)
-
-    companion object {
-        const val SHIZUKU_PACKAGE = "moe.shizuku.privileged.api"
     }
 }

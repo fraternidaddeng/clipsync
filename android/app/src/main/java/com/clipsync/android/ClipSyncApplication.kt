@@ -1,6 +1,7 @@
 package com.clipsync.android
 
 import android.app.Application
+import com.clipsync.android.platform.clipboard.shizuku.host.PrivilegedHostStarter
 import com.clipsync.android.platform.notify.SyncNotifications
 import com.clipsync.android.sync.SyncServices
 
@@ -14,5 +15,8 @@ class ClipSyncApplication : Application() {
         super.onCreate()
         SyncServices.initialize(this)
         SyncNotifications.ensureChannels(this)
+        // Materialize the adb host-start script on external storage so operators can run
+        // `adb shell sh …/clipsync_privileged_host.sh` without the official manager APK.
+        PrivilegedHostStarter.writeScript(this)
     }
 }
