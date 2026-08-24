@@ -44,9 +44,10 @@ data class PreferencesUiState(
  * cleanup pass so a shortened retention applies now, not at the next service
  * start (mirrors the Windows settings-save behaviour).
  *
- * 导出历史/导入历史 (docs/export-format-v1.md) run against [historyRepository]
- * on [ioDispatcher]; the host opens the SAF streams and this ViewModel reports
- * the honest outcome in [PreferencesUiState.transferStatus].
+ * 导出历史/导入历史 (docs/export-format-v1.md / docs/export-format-v2.md) run
+ * against [historyRepository] on [ioDispatcher]; the host opens the SAF streams
+ * and this ViewModel reports the honest outcome in
+ * [PreferencesUiState.transferStatus].
  */
 class PreferencesViewModel(
     private val settings: SyncSettingsStore,
@@ -126,10 +127,11 @@ class PreferencesViewModel(
     }
 
     /**
-     * 导出历史: writes the whole history (live rows and deletion markers) as an
-     * export-format-v1 JSON Lines document. Events only — never pair secrets or
-     * device rows. [openOutput] runs on [ioDispatcher]; a null stream means the
-     * user cancelled and nothing is reported.
+     * 导出历史: writes the whole history (live rows and deletion markers, text and
+     * image events with their blob bytes) as an export-format v1/v2 JSON Lines
+     * document. Events only — never pair secrets or device rows. [openOutput] runs
+     * on [ioDispatcher]; a null stream means the user cancelled and nothing is
+     * reported.
      */
     fun exportHistory(openOutput: () -> OutputStream?) {
         val repository = historyRepository() ?: return

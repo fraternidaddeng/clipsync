@@ -388,21 +388,31 @@ class ClipSyncRepository(
     suspend fun peerCursors(peerId: String): Map<String, OriginReceiveState> =
         cursors.listForPeer(peerId).associate { it.originDeviceId to it.toState() }
 
-    // ---- History export/import (docs/export-format-v1.md) ----
+    // ---- History export/import (docs/export-format-v1.md / docs/export-format-v2.md) ----
 
     /**
-     * Streams the whole clips table — live rows and terminal tombstones — as an
-     * export-format-v1 JSON Lines document. Read-only; returns the exported event count.
-     * The stream is flushed but not closed (the caller owns it).
+     * Streams the whole clips table — text and image, live rows and terminal tombstones —
+     * as an export-format JSON Lines document. The header declares format_version 1 when
+     * nothing needs v2 (so older builds keep importing) and 2 when image rows or
+     * unsupported_media tombstones exist. Live image records embed the encoded blob bytes
+     * as base64 when they are on disk and within the 16 MiB cap; a missing blob degrades
+     * that record to metadata-only instead of failing the export. Read-only; returns the
+     * exported event count. The stream is flushed but not closed (the caller owns it).
      */
     suspend fun exportHistory(output: java.io.OutputStream, exportedAtMs: Long): Int {
-        // export-format-v1 is text-only: image rows are skipped rather than written as a
-        // lossy shape a re-import would misread. Their blobs stay local by design.
-        val rows = clips.exportAll().filter { it.kind != ClipKinds.IMAGE }
+        val rows = clips.exportAll()
+        val needsV2 = rows.any {
+            it.kind == ClipKinds.IMAGE || it.terminalReason == TerminalReasons.UNSUPPORTED_MEDIA
+        }
+        val formatVersion = if (needsV2) {
+            HistoryExportFormat.FORMAT_VERSION
+        } else {
+            HistoryExportFormat.TEXT_ONLY_FORMAT_VERSION
+        }
         val writer = output.bufferedWriter(Charsets.UTF_8)
         writer.write(
             HistoryExportFormat.writeHeaderLine(
-                HistoryExportHeader(exportedAtMs, localDeviceId, "android", rows.size),
+                HistoryExportHeader(formatVersion, exportedAtMs, localDeviceId, "android", rows.size),
             ),
         )
         writer.write("\n")
@@ -415,10 +425,11 @@ class ClipSyncRepository(
     }
 
     /**
-     * Merge-imports an export-format-v1 document. The whole file is parsed and validated
-     * first, then applied in one transaction: idempotent on (origin_device_id, origin_seq),
-     * no outbox fan-out, receive vector advanced, and the local sequence allocator bumped
-     * past any restored own-origin events. A validation failure changes nothing.
+     * Merge-imports an export-format v1/v2 document. The whole file is parsed and validated
+     * first (including embedded image bytes: base64, size cap, hash, magic/dimensions), then
+     * applied in one transaction: idempotent on (origin_device_id, origin_seq), no outbox
+     * fan-out, receive vector advanced, and the local sequence allocator bumped past any
+     * restored own-origin events. A validation failure changes nothing.
      */
     suspend fun importHistory(input: java.io.InputStream): HistoryImportResult {
         val reader = input.bufferedReader(Charsets.UTF_8)
@@ -437,7 +448,7 @@ class ClipSyncRepository(
             if (line.isBlank()) {
                 continue
             }
-            records.add(HistoryExportFormat.parseClipLine(line, lineNumber))
+            records.add(HistoryExportFormat.parseClipLine(line, lineNumber, header.formatVersion))
         }
         if (records.size != header.eventCount) {
             throw HistoryTransferException(
@@ -472,6 +483,7 @@ class ClipSyncRepository(
                         eventId = record.eventId,
                         originDeviceId = record.originDeviceId,
                         originSeq = record.originSeq,
+                        kind = record.kind,
                         content = record.content ?: "",
                         contentHash = record.contentHash ?: "",
                         sourceApp = record.sourceApp,
@@ -482,6 +494,9 @@ class ClipSyncRepository(
                         appliedAtMs = null,
                     ),
                 )
+                if (record.isImage && !record.isTerminal) {
+                    record.media?.let { importMediaRows(record, it) }
+                }
                 advanceReceiveState(record.originDeviceId, record.originSeq)
                 if (record.originDeviceId == localDeviceId) {
                     maxOwnOriginSeq = maxOf(maxOwnOriginSeq, record.originSeq)
@@ -497,18 +512,80 @@ class ClipSyncRepository(
             HistoryImportResult(imported, skipped, conflicts)
         }
 
-    private fun ClipEventEntity.toExportedClip(): HistoryExportedClip = HistoryExportedClip(
+    /**
+     * Restores the blob and its rows for one imported live image record. Embedded bytes are
+     * committed into the content-addressed [media] store (idempotent by hash; re-validated
+     * exactly like the sync ingress). The blob-metadata row never downgrades from ready; the
+     * event-to-blob link is ready exactly when the bytes are on disk, missing otherwise
+     * (metadata-only records, or a repository built without a blob store).
+     */
+    private suspend fun importMediaRows(record: HistoryExportedClip, blob: HistoryExportedMedia) {
+        val hash = requireNotNull(record.contentHash)
+        val store = media
+        if (store != null && blob.encodedData != null && !store.exists(hash)) {
+            store.commitBytes(blob.encodedData, hash)
+        }
+        val bytesOnDisk = store?.exists(hash) == true
+        val existing = mediaBlobs.find(hash)
+        if (existing == null || (existing.state != MediaLimits.BLOB_STATE_READY && bytesOnDisk)) {
+            mediaBlobs.upsert(
+                MediaBlobEntity(
+                    contentHash = hash,
+                    mimeType = blob.mimeType,
+                    encodedBytes = blob.encodedBytes,
+                    pixelWidth = blob.pixelWidth,
+                    pixelHeight = blob.pixelHeight,
+                    state = if (bytesOnDisk) MediaLimits.BLOB_STATE_READY else MediaLimits.BLOB_STATE_PENDING,
+                    createdAtMs = record.createdAtMs,
+                ),
+            )
+        }
+        clipMedia.upsert(
+            ClipMediaEntity(
+                eventId = record.eventId,
+                contentHash = hash,
+                state = if (bytesOnDisk) MediaLimits.CLIP_MEDIA_READY else MediaLimits.CLIP_MEDIA_MISSING,
+            ),
+        )
+    }
+
+    private suspend fun ClipEventEntity.toExportedClip(): HistoryExportedClip = HistoryExportedClip(
         eventId = eventId,
         originDeviceId = originDeviceId,
         originSeq = originSeq,
-        content = if (terminalReason == null) content else null,
+        kind = kind,
+        content = if (terminalReason == null && kind == ClipKinds.TEXT) content else null,
         contentHash = if (terminalReason == null) contentHash else null,
         sourceApp = if (terminalReason == null) sourceApp else null,
         createdAtMs = createdAtMs,
         expiresAtMs = expiresAtMs,
         deletedAtMs = deletedAtMs,
         terminalReason = terminalReason,
+        media = if (kind == ClipKinds.IMAGE && terminalReason == null) {
+            val ref = checkNotNull(mediaRefFor(eventId)) { "A live image clip has no media metadata row." }
+            HistoryExportedMedia(
+                mimeType = ref.mimeType,
+                encodedBytes = ref.encodedBytes,
+                pixelWidth = ref.pixelWidth,
+                pixelHeight = ref.pixelHeight,
+                encodedData = readBlobForEmbedding(contentHash),
+            )
+        } else {
+            null
+        },
     )
+
+    /** Encoded blob bytes for embedding, or null when the file is missing/unreadable/over the cap. */
+    private fun readBlobForEmbedding(contentHash: String): ByteArray? {
+        val store = media ?: return null
+        return runCatching {
+            if (!store.exists(contentHash)) {
+                return null
+            }
+            store.readAllBytes(contentHash)
+                .takeIf { it.size <= HistoryExportFormat.MAX_EMBEDDED_MEDIA_BYTES }
+        }.getOrNull()
+    }
 
     /** Drops all queue and cursor state for a revoked/unpaired peer; history is untouched. */
     suspend fun forgetPeer(peerId: String) = database.withTransaction {

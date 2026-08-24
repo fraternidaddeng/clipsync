@@ -409,9 +409,10 @@ public partial class MainViewModel(
     }
 
     /// <summary>
-    /// 导出历史: writes the whole clips table (live rows and deletion markers) as an
-    /// export-format-v1 JSON Lines file. Events only — never pair secrets, certificates,
-    /// or device rows. The status line states the plaintext nature honestly.
+    /// 导出历史: writes the whole clips table (live rows and deletion markers, text and
+    /// image events with their blob bytes) as an export-format v1/v2 JSON Lines file.
+    /// Events only — never pair secrets, certificates, or device rows. The status line
+    /// states the plaintext nature honestly.
     /// </summary>
     [RelayCommand]
     private async Task ExportHistoryAsync()
@@ -479,7 +480,7 @@ public partial class MainViewModel(
         HistoryTransferErrorCodes.MalformedRecord => "文件内容损坏（记录格式错误）",
         HistoryTransferErrorCodes.HashMismatch => "文件内容损坏（哈希校验失败）",
         HistoryTransferErrorCodes.CountMismatch => "文件不完整（条数与头部不符）",
-        HistoryTransferErrorCodes.ContentTooLarge => "文件包含超过 1 MiB 的条目",
+        HistoryTransferErrorCodes.ContentTooLarge => "文件包含超出大小上限的条目（文本 1 MiB / 图片 16 MiB）",
         _ => "未知错误"
     };
 

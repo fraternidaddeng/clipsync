@@ -78,7 +78,7 @@ derived from the same plan.md stage-6 requirement. Not a merge gap per se.
 |---|---|---|---|
 | Text history JSONL export/import, Android | `android/.../storage/ClipExport.kt`, `ClipImport.kt` (SAF picker in settings) | **Present** — own impl: `storage/HistoryTransfer.kt` + 偏好 数据 card (commit `3c53350`) | None — verify field-level compat if users migrate between branch builds |
 | Text history JSONL export/import, Windows | `windows/ClipSync.Core/Storage/ClipboardExport.cs`, `ClipboardImport.cs`, `SqliteClipboardEventStore.Import.cs` | **Present** — own impl: `HistoryExportFormat.cs` + `SqliteClipboardEventStore.Transfer.cs` + `docs/export-format-v1.md` (fuller spec than stage-4's) | None |
-| Image-aware export/import (media blobs in transfer) | `28e354a` extensions to the four files above | **Closed (descoped by documented decision)** — `48e0a14`: `docs/export-format-v1.md` states image rows are excluded from export v1 entirely (live and import both reject non-`text` kinds); missing image ranges re-arrive over normal sync (`known_vector`/`want_ranges`), so no data loss. An image-aware `format_version: 2` remains tracked future work, not a stage-4 port gap | Done (descoped; future format v2) |
+| Image-aware export/import (media blobs in transfer) | `28e354a` extensions to the four files above | **Present** — first descoped by documented decision (`48e0a14`), then implemented for real: `docs/export-format-v2.md` (`format_version: 2` — image records with blob metadata + capped embedded base64, image tombstones, metadata-only fallback), wired through `HistoryExportFormat.cs`/`SqliteClipboardEventStore.Transfer.cs` and `HistoryTransfer.kt`/`ClipSyncRepository.kt`; writers still emit v1 for text-only databases | Done |
 
 ## 3. Boot restore — exists on BOTH branches (ported)
 
@@ -136,6 +136,6 @@ derived from the same plan.md stage-6 requirement. Not a merge gap per se.
 4. ~~§1 capture/share/UI surfaces, restyled to the charter~~ — done (`81db525` Windows; `8275ffa` Android).
 5. ~~§4 Modern Standby power source (drop-in alongside existing resilience controller)~~ — done (`25d2788`).
 6. ~~§4 rate limiter~~ (done `25d2788`), ~~v1 strict-parse fixtures~~ (done `fed1b6f`+`bd0d780`), ~~E2E harness~~ (done `f5c1efb`), ~~static analysis~~ (done `f21c6cb`…`c6adf20`), ~~audit docs~~ — closed as superseded (final integration; see §4).
-7. ~~§2 image-aware export/import~~ — closed as a documented descope (`48e0a14`, `docs/export-format-v1.md`); an image-aware `format_version: 2` stays tracked as future work.
+7. ~~§2 image-aware export/import~~ — done for real (`docs/export-format-v2.md` + both clients' transfer layers), superseding the earlier documented descope (`48e0a14`).
 
 **All items closed — the stage-4 port campaign is complete.**

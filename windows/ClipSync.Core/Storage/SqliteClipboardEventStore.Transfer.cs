@@ -1,4 +1,5 @@
 using System.Data;
+using ClipSync.Core.Media;
 using Microsoft.Data.Sqlite;
 
 namespace ClipSync.Core.Storage;
@@ -6,8 +7,13 @@ namespace ClipSync.Core.Storage;
 public sealed partial class SqliteClipboardEventStore
 {
     /// <summary>
-    /// Streams the whole clips table — live rows and terminal tombstones — as an
-    /// export-format-v1 JSON Lines document. Read-only; returns the exported event count.
+    /// Streams the whole clips table — text and image, live rows and terminal tombstones —
+    /// as an export-format JSON Lines document (docs/export-format-v1.md / v2). The header
+    /// declares format_version 1 when nothing needs v2 (so older builds keep importing) and
+    /// 2 when image rows or unsupported_media tombstones exist. Live image records embed the
+    /// encoded blob bytes as base64 when they are on disk and within the 16 MiB cap; a
+    /// missing blob degrades that record to metadata-only instead of failing the export.
+    /// Read-only; returns the exported event count.
     /// </summary>
     public async ValueTask<int> ExportHistoryAsync(
         TextWriter writer,
@@ -18,16 +24,21 @@ public sealed partial class SqliteClipboardEventStore
         await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
 
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        // Export format v1 carries text bodies only; image clips (schema 3) stay local.
         var eventCount = checked((int)await ReadScalarInt64Async(
             connection,
             null,
-            "SELECT COUNT(*) FROM clips WHERE kind = 'text';",
+            "SELECT COUNT(*) FROM clips;",
             cancellationToken).ConfigureAwait(false));
+        var needsV2 = await ReadScalarInt64Async(
+            connection,
+            null,
+            "SELECT EXISTS(SELECT 1 FROM clips WHERE kind = 'image' OR terminal_reason = 'unsupported_media');",
+            cancellationToken).ConfigureAwait(false) == 1;
 
         await WriteLineAsync(
             writer,
             HistoryExportFormat.WriteHeaderLine(new HistoryExportHeader(
+                needsV2 ? HistoryExportFormat.FormatVersion : HistoryExportFormat.TextOnlyFormatVersion,
                 exportedAt.ToUnixTimeMilliseconds(),
                 localDeviceId,
                 "windows",
@@ -36,27 +47,51 @@ public sealed partial class SqliteClipboardEventStore
 
         await using var command = connection.CreateCommand();
         command.CommandText = """
-            SELECT event_id, origin_device_id, origin_seq, content, content_hash,
-                   source_app, created_at, expires_at, deleted_at, terminal_reason
-            FROM clips
-            WHERE kind = 'text'
-            ORDER BY origin_device_id, origin_seq;
+            SELECT c.event_id, c.origin_device_id, c.origin_seq, c.kind, c.content, c.content_hash,
+                   c.source_app, c.created_at, c.expires_at, c.deleted_at, c.terminal_reason,
+                   b.mime_type, b.encoded_bytes, b.pixel_width, b.pixel_height
+            FROM clips c
+            LEFT JOIN clip_media m ON m.event_id = c.event_id
+            LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
+            ORDER BY c.origin_device_id, c.origin_seq;
             """;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
-            var terminalReason = reader.IsDBNull(9) ? null : reader.GetString(9);
+            var kind = reader.GetString(3);
+            var terminalReason = reader.IsDBNull(10) ? null : reader.GetString(10);
+            var contentHash = reader.GetString(5);
+            HistoryExportedMedia? exportedMedia = null;
+            if (kind == MediaLimits.KindImage && terminalReason is null)
+            {
+                if (reader.IsDBNull(11))
+                {
+                    // Live image rows always reference their blob metadata; assert rather
+                    // than silently exporting a shape a re-import would misread.
+                    throw new InvalidOperationException("A live image clip has no media metadata row.");
+                }
+
+                exportedMedia = new HistoryExportedMedia(
+                    reader.GetString(11),
+                    reader.GetInt32(12),
+                    reader.GetInt32(13),
+                    reader.GetInt32(14),
+                    TryReadBlobForEmbedding(contentHash));
+            }
+
             var clip = new HistoryExportedClip(
                 Guid.Parse(reader.GetString(0)),
                 reader.GetString(1),
                 reader.GetInt64(2),
-                terminalReason is null ? reader.GetString(3) : null,
-                terminalReason is null ? reader.GetString(4) : null,
-                terminalReason is null && !reader.IsDBNull(5) ? reader.GetString(5) : null,
-                reader.GetInt64(6),
-                reader.IsDBNull(7) ? null : reader.GetInt64(7),
+                kind,
+                terminalReason is null && kind == MediaLimits.KindText ? reader.GetString(4) : null,
+                terminalReason is null ? contentHash : null,
+                terminalReason is null && !reader.IsDBNull(6) ? reader.GetString(6) : null,
+                reader.GetInt64(7),
                 reader.IsDBNull(8) ? null : reader.GetInt64(8),
-                terminalReason);
+                reader.IsDBNull(9) ? null : reader.GetInt64(9),
+                terminalReason,
+                exportedMedia);
             await WriteLineAsync(writer, HistoryExportFormat.WriteClipLine(clip), cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -65,11 +100,37 @@ public sealed partial class SqliteClipboardEventStore
         return eventCount;
     }
 
+    /// <summary>Encoded blob bytes for embedding, or null when the file is missing/unreadable/over the cap.</summary>
+    private byte[]? TryReadBlobForEmbedding(string contentHash)
+    {
+        try
+        {
+            if (!media.Exists(contentHash))
+            {
+                return null;
+            }
+
+            var bytes = media.ReadAllBytes(contentHash);
+            return bytes.Length <= HistoryExportFormat.MaxEmbeddedMediaBytes ? bytes : null;
+        }
+        catch (IOException)
+        {
+            return null;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return null;
+        }
+    }
+
     /// <summary>
-    /// Merge-imports an export-format-v1 document. The whole file is parsed and validated
-    /// first, then applied in one transaction: idempotent on (origin_device_id, origin_seq),
-    /// no outbox fan-out, receive vector advanced, and the local sequence allocator bumped
-    /// past any restored own-origin events. A validation failure changes nothing.
+    /// Merge-imports an export-format v1/v2 document. The whole file is parsed and validated
+    /// first (including embedded image bytes: base64, size cap, hash, magic/dimensions), then
+    /// applied in one transaction: idempotent on (origin_device_id, origin_seq), no outbox
+    /// fan-out, receive vector advanced, and the local sequence allocator bumped past any
+    /// restored own-origin events. Embedded image bytes are committed into the content-addressed
+    /// blob store; metadata-only image records restore the row with a missing-media link.
+    /// A validation failure changes nothing.
     /// </summary>
     public async ValueTask<HistoryImportResult> ImportHistoryAsync(
         TextReader reader,
@@ -86,64 +147,77 @@ public sealed partial class SqliteClipboardEventStore
                 $"The header announces {header.EventCount} events but the file carries {clips.Count}.");
         }
 
-        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
-            IsolationLevel.Serializable,
-            cancellationToken).ConfigureAwait(false);
+        // Blob writes and the row transaction happen under the media lifecycle lock, like
+        // every other image ingress, so concurrent GC cannot race a half-imported blob.
+        await mediaLifecycle.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            var imported = 0;
-            var skipped = 0;
-            var conflicts = 0;
-            long maxOwnOriginSeq = 0;
-            foreach (var clip in clips)
+            await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+            await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
+                IsolationLevel.Serializable,
+                cancellationToken).ConfigureAwait(false);
+            try
             {
-                var existing = await CheckRemoteIdentityAsync(
-                    connection,
-                    transaction,
-                    clip.EventId,
-                    clip.OriginDeviceId,
-                    clip.OriginSeq,
-                    clip.ContentHash,
-                    cancellationToken).ConfigureAwait(false);
-                switch (existing)
+                var imported = 0;
+                var skipped = 0;
+                var conflicts = 0;
+                long maxOwnOriginSeq = 0;
+                foreach (var clip in clips)
                 {
-                    case RemoteStoreResult.AlreadyPersisted:
-                        skipped++;
-                        continue;
-                    case RemoteStoreResult.IdentityConflict:
-                        conflicts++;
-                        continue;
+                    var existing = await CheckRemoteIdentityAsync(
+                        connection,
+                        transaction,
+                        clip.EventId,
+                        clip.OriginDeviceId,
+                        clip.OriginSeq,
+                        clip.ContentHash,
+                        cancellationToken).ConfigureAwait(false);
+                    switch (existing)
+                    {
+                        case RemoteStoreResult.AlreadyPersisted:
+                            skipped++;
+                            continue;
+                        case RemoteStoreResult.IdentityConflict:
+                            conflicts++;
+                            continue;
+                    }
+
+                    await InsertImportedClipAsync(connection, transaction, clip, cancellationToken).ConfigureAwait(false);
+                    await AdvanceRemoteReceiveStateAsync(
+                        connection,
+                        transaction,
+                        clip.OriginDeviceId,
+                        clip.OriginSeq,
+                        cancellationToken).ConfigureAwait(false);
+                    if (string.Equals(clip.OriginDeviceId, localDeviceId, StringComparison.Ordinal))
+                    {
+                        maxOwnOriginSeq = Math.Max(maxOwnOriginSeq, clip.OriginSeq);
+                    }
+
+                    imported++;
                 }
 
-                await InsertImportedClipAsync(connection, transaction, clip, cancellationToken).ConfigureAwait(false);
-                await AdvanceRemoteReceiveStateAsync(
-                    connection,
-                    transaction,
-                    clip.OriginDeviceId,
-                    clip.OriginSeq,
-                    cancellationToken).ConfigureAwait(false);
-                if (string.Equals(clip.OriginDeviceId, localDeviceId, StringComparison.Ordinal))
+                if (maxOwnOriginSeq > 0)
                 {
-                    maxOwnOriginSeq = Math.Max(maxOwnOriginSeq, clip.OriginSeq);
+                    await BumpLocalSequenceAsync(connection, transaction, maxOwnOriginSeq + 1, cancellationToken)
+                        .ConfigureAwait(false);
                 }
 
-                imported++;
+                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                return new HistoryImportResult(imported, skipped, conflicts);
             }
-
-            if (maxOwnOriginSeq > 0)
+            catch
             {
-                await BumpLocalSequenceAsync(connection, transaction, maxOwnOriginSeq + 1, cancellationToken)
-                    .ConfigureAwait(false);
+                // Blobs committed for rows this transaction did not keep are unreferenced
+                // files with fresh timestamps; the ordinary blob GC reclaims them after its
+                // grace period.
+                await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
+                throw;
             }
-
-            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-            return new HistoryImportResult(imported, skipped, conflicts);
         }
-        catch
+        finally
         {
-            await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
-            throw;
+            mediaLifecycle.Release();
         }
     }
 
@@ -175,38 +249,107 @@ public sealed partial class SqliteClipboardEventStore
                 continue;
             }
 
-            clips.Add(HistoryExportFormat.ParseClipLine(line, lineNumber));
+            clips.Add(HistoryExportFormat.ParseClipLine(line, lineNumber, header.FormatVersion));
         }
 
         return (header, clips);
     }
 
-    private static async ValueTask InsertImportedClipAsync(
+    private async ValueTask InsertImportedClipAsync(
         SqliteConnection connection,
         SqliteTransaction transaction,
         HistoryExportedClip clip,
         CancellationToken cancellationToken)
     {
-        await using var insert = connection.CreateCommand();
-        insert.Transaction = transaction;
-        insert.CommandText = """
-            INSERT INTO clips (
-                event_id, origin_device_id, origin_seq, kind, content, content_hash,
-                source_app, created_at, expires_at, deleted_at, terminal_reason)
-            VALUES ($event_id, $origin, $seq, 'text', $content, $hash, $source_app,
-                    $created_at, $expires_at, $deleted_at, $reason);
+        await using (var insert = connection.CreateCommand())
+        {
+            insert.Transaction = transaction;
+            insert.CommandText = """
+                INSERT INTO clips (
+                    event_id, origin_device_id, origin_seq, kind, content, content_hash,
+                    source_app, created_at, expires_at, deleted_at, terminal_reason)
+                VALUES ($event_id, $origin, $seq, $kind, $content, $hash, $source_app,
+                        $created_at, $expires_at, $deleted_at, $reason);
+                """;
+            insert.Parameters.AddWithValue("$event_id", clip.EventId.ToString("D"));
+            insert.Parameters.AddWithValue("$origin", clip.OriginDeviceId);
+            insert.Parameters.AddWithValue("$seq", clip.OriginSeq);
+            insert.Parameters.AddWithValue("$kind", clip.Kind);
+            // The schema requires image rows to keep content NULL and text rows non-NULL.
+            insert.Parameters.AddWithValue(
+                "$content",
+                clip.IsImage ? DBNull.Value : (object?)(clip.Content ?? string.Empty));
+            insert.Parameters.AddWithValue("$hash", clip.ContentHash ?? string.Empty);
+            insert.Parameters.AddWithValue("$source_app", (object?)clip.SourceApp ?? DBNull.Value);
+            insert.Parameters.AddWithValue("$created_at", clip.CreatedAtMs);
+            insert.Parameters.AddWithValue("$expires_at", (object?)clip.ExpiresAtMs ?? DBNull.Value);
+            insert.Parameters.AddWithValue("$deleted_at", (object?)clip.DeletedAtMs ?? DBNull.Value);
+            insert.Parameters.AddWithValue("$reason", (object?)clip.TerminalReason ?? DBNull.Value);
+            await insert.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        // Media rows come second: clip_media's foreign key references the clips row above.
+        if (clip.IsImage && !clip.IsTerminal && clip.Media is { } importedMedia)
+        {
+            if (importedMedia.EncodedData is not null)
+            {
+                // Content-addressed and idempotent; re-validates magic, dimensions,
+                // size, and hash exactly like the sync ingress.
+                media.CommitBytes(importedMedia.EncodedData, clip.ContentHash);
+            }
+
+            await InsertImportedMediaRowsAsync(connection, transaction, clip, importedMedia, cancellationToken)
+                .ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// Writes the blob metadata and the event-to-blob link for one imported live image.
+    /// A metadata row never downgrades from ready; the link is ready exactly when the
+    /// bytes are on disk (embedded in the file, or already present by content address).
+    /// </summary>
+    private async ValueTask InsertImportedMediaRowsAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        HistoryExportedClip clip,
+        HistoryExportedMedia importedMedia,
+        CancellationToken cancellationToken)
+    {
+        var bytesOnDisk = media.Exists(clip.ContentHash!);
+        await using (var blob = connection.CreateCommand())
+        {
+            blob.Transaction = transaction;
+            blob.CommandText = """
+                INSERT INTO media_blobs (
+                    content_hash, mime_type, encoded_bytes, pixel_width, pixel_height, state, created_at)
+                VALUES ($hash, $mime, $bytes, $width, $height, $state, $created_at)
+                ON CONFLICT(content_hash) DO UPDATE
+                    SET state = CASE WHEN excluded.state = 'ready' THEN 'ready' ELSE media_blobs.state END;
+                """;
+            blob.Parameters.AddWithValue("$hash", clip.ContentHash);
+            blob.Parameters.AddWithValue("$mime", importedMedia.MimeType);
+            blob.Parameters.AddWithValue("$bytes", importedMedia.EncodedBytes);
+            blob.Parameters.AddWithValue("$width", importedMedia.PixelWidth);
+            blob.Parameters.AddWithValue("$height", importedMedia.PixelHeight);
+            blob.Parameters.AddWithValue(
+                "$state",
+                bytesOnDisk ? MediaLimits.BlobStateReady : MediaLimits.BlobStatePending);
+            blob.Parameters.AddWithValue("$created_at", clip.CreatedAtMs);
+            await blob.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await using var mediaRef = connection.CreateCommand();
+        mediaRef.Transaction = transaction;
+        mediaRef.CommandText = """
+            INSERT INTO clip_media (event_id, content_hash, state)
+            VALUES ($event_id, $hash, $state);
             """;
-        insert.Parameters.AddWithValue("$event_id", clip.EventId.ToString("D"));
-        insert.Parameters.AddWithValue("$origin", clip.OriginDeviceId);
-        insert.Parameters.AddWithValue("$seq", clip.OriginSeq);
-        insert.Parameters.AddWithValue("$content", clip.Content ?? string.Empty);
-        insert.Parameters.AddWithValue("$hash", clip.ContentHash ?? string.Empty);
-        insert.Parameters.AddWithValue("$source_app", (object?)clip.SourceApp ?? DBNull.Value);
-        insert.Parameters.AddWithValue("$created_at", clip.CreatedAtMs);
-        insert.Parameters.AddWithValue("$expires_at", (object?)clip.ExpiresAtMs ?? DBNull.Value);
-        insert.Parameters.AddWithValue("$deleted_at", (object?)clip.DeletedAtMs ?? DBNull.Value);
-        insert.Parameters.AddWithValue("$reason", (object?)clip.TerminalReason ?? DBNull.Value);
-        await insert.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        mediaRef.Parameters.AddWithValue("$event_id", clip.EventId.ToString("D"));
+        mediaRef.Parameters.AddWithValue("$hash", clip.ContentHash);
+        mediaRef.Parameters.AddWithValue(
+            "$state",
+            bytesOnDisk ? MediaLimits.ClipMediaReady : MediaLimits.ClipMediaMissing);
+        await mediaRef.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>Never lowers the allocator: restored own-origin events must not collide with future captures.</summary>

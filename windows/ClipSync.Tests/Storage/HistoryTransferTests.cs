@@ -1,15 +1,17 @@
 using System.Security.Cryptography;
 using System.Text;
 using ClipSync.Core.Clipboard;
+using ClipSync.Core.Media;
 using ClipSync.Core.Storage;
 using Microsoft.Data.Sqlite;
 
 namespace ClipSync.Tests.Storage;
 
 /// <summary>
-/// Export/import per docs/export-format-v1.md: JSON Lines out, whole-file validation in,
-/// merge idempotent on (origin_device_id, origin_seq), no outbox fan-out, and the local
-/// sequence allocator always ahead of restored own-origin events.
+/// Export/import per docs/export-format-v1.md and docs/export-format-v2.md: JSON Lines out,
+/// whole-file validation in, merge idempotent on (origin_device_id, origin_seq), no outbox
+/// fan-out, the local sequence allocator always ahead of restored own-origin events, and
+/// image records (v2) restored blob-and-all when the bytes are embedded.
 /// </summary>
 public sealed class HistoryTransferTests
 {
@@ -32,6 +34,7 @@ public sealed class HistoryTransferTests
 
         Assert.Equal(3, lines.Length);
         var header = HistoryExportFormat.ParseHeaderLine(lines[0]);
+        Assert.Equal(HistoryExportFormat.TextOnlyFormatVersion, header.FormatVersion);
         Assert.Equal(2, header.EventCount);
         Assert.Equal(LocalDeviceId, header.ExportingDeviceId);
         Assert.Equal("windows", header.Platform);
@@ -248,7 +251,7 @@ public sealed class HistoryTransferTests
         await using var target = targetDatabase.CreateStore(OtherDeviceId);
 
         var wrongVersion =
-            """{"type":"header","format":"clipsync-history","format_version":2,"exported_at_ms":1,"exporting_device_id":"x","platform":"windows","event_count":0}"""
+            """{"type":"header","format":"clipsync-history","format_version":3,"exported_at_ms":1,"exporting_device_id":"x","platform":"windows","event_count":0}"""
             + "\n";
         var versionError = await Assert.ThrowsAsync<HistoryTransferException>(
             () => ImportAsync(target, wrongVersion).AsTask());
@@ -295,6 +298,153 @@ public sealed class HistoryTransferTests
         Assert.Equal(new HistoryImportResult(1, 0, 0), await ImportAsync(target, document));
     }
 
+    // ---- Image records (docs/export-format-v2.md) ----
+
+    [Fact]
+    public async Task ImageEventsExportAsFormatVersion2WithEmbeddedBytes()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore(LocalDeviceId);
+        await store.StoreAsync(Content("text before image", BaseTime));
+        var (png, hash) = TinyPng(255, 0, 0);
+        await store.StoreImageAsync(Image(png, hash, BaseTime.AddSeconds(1)));
+
+        var lines = (await ExportAsync(store)).TrimEnd('\n').Split('\n');
+
+        var header = HistoryExportFormat.ParseHeaderLine(lines[0]);
+        Assert.Equal(HistoryExportFormat.FormatVersion, header.FormatVersion);
+        Assert.Equal(2, header.EventCount);
+
+        var image = HistoryExportFormat.ParseClipLine(lines[2], 3, header.FormatVersion);
+        Assert.Equal("image", image.Kind);
+        Assert.Null(image.Content);
+        Assert.Equal(hash, image.ContentHash);
+        Assert.NotNull(image.Media);
+        Assert.Equal(MediaLimits.MimePng, image.Media!.MimeType);
+        Assert.Equal(png.Length, image.Media.EncodedBytes);
+        Assert.Equal(1, image.Media.PixelWidth);
+        Assert.Equal(1, image.Media.PixelHeight);
+        Assert.Equal(png, image.Media.EncodedData);
+    }
+
+    [Fact]
+    public async Task ImportRestoresImageEventsBlobAndAllAndStaysIdempotent()
+    {
+        await using var sourceDatabase = new TemporaryDatabase();
+        await using var source = sourceDatabase.CreateStore(LocalDeviceId);
+        await source.StoreAsync(Content("alongside", BaseTime));
+        var (png, hash) = TinyPng(0, 128, 255);
+        await source.StoreImageAsync(Image(png, hash, BaseTime.AddSeconds(1)));
+        var document = await ExportAsync(source);
+
+        await using var targetDatabase = new TemporaryDatabase();
+        await using var target = targetDatabase.CreateStore(OtherDeviceId);
+        Assert.Equal(new HistoryImportResult(2, 0, 0), await ImportAsync(target, document));
+        Assert.Equal(new HistoryImportResult(0, 2, 0), await ImportAsync(target, document));
+
+        var history = await target.SearchAsync(new ClipboardHistoryQuery());
+        var imageEntry = Assert.Single(history, entry => entry.Kind == "image");
+        Assert.Equal(hash, imageEntry.ContentHash);
+        Assert.Equal(MediaLimits.MimePng, imageEntry.MimeType);
+        Assert.Equal(png.Length, imageEntry.EncodedBytes);
+        Assert.True(target.Media.Exists(hash));
+        Assert.Equal(png, target.Media.ReadAllBytes(hash));
+        Assert.Equal(2, (await target.GetKnownVectorAsync())[LocalDeviceId].ContiguousSeq);
+    }
+
+    [Fact]
+    public async Task ImageTombstonesRoundTripWithoutResurrectingBytes()
+    {
+        await using var sourceDatabase = new TemporaryDatabase();
+        await using var source = sourceDatabase.CreateStore(LocalDeviceId);
+        var (png, hash) = TinyPng(9, 9, 9);
+        var stored = await source.StoreImageAsync(Image(png, hash, BaseTime));
+        await source.DeleteAsync(stored.EventId, BaseTime.AddSeconds(1));
+        var document = await ExportAsync(source);
+
+        var lines = document.TrimEnd('\n').Split('\n');
+        var tombstone = HistoryExportFormat.ParseClipLine(lines[1], 2, HistoryExportFormat.FormatVersion);
+        Assert.Equal("image", tombstone.Kind);
+        Assert.True(tombstone.IsTerminal);
+        Assert.Null(tombstone.ContentHash);
+        Assert.Null(tombstone.Media);
+        Assert.DoesNotContain(hash, document, StringComparison.Ordinal);
+
+        await using var targetDatabase = new TemporaryDatabase();
+        await using var target = targetDatabase.CreateStore(OtherDeviceId);
+        Assert.Equal(new HistoryImportResult(1, 0, 0), await ImportAsync(target, document));
+        Assert.Empty(await target.SearchAsync(new ClipboardHistoryQuery()));
+        Assert.False(target.Media.Exists(hash));
+    }
+
+    [Fact]
+    public async Task MissingBlobExportsMetadataOnlyAndImportsAsMissingMedia()
+    {
+        await using var sourceDatabase = new TemporaryDatabase();
+        await using var source = sourceDatabase.CreateStore(LocalDeviceId);
+        var (png, hash) = TinyPng(1, 2, 3);
+        await source.StoreImageAsync(Image(png, hash, BaseTime));
+        source.Media.DeleteBlob(hash);
+        var document = await ExportAsync(source);
+
+        var lines = document.TrimEnd('\n').Split('\n');
+        var record = HistoryExportFormat.ParseClipLine(lines[1], 2, HistoryExportFormat.FormatVersion);
+        Assert.NotNull(record.Media);
+        Assert.Null(record.Media!.EncodedData);
+        Assert.Equal(png.Length, record.Media.EncodedBytes);
+
+        await using var targetDatabase = new TemporaryDatabase();
+        await using var target = targetDatabase.CreateStore(OtherDeviceId);
+        Assert.Equal(new HistoryImportResult(1, 0, 0), await ImportAsync(target, document));
+
+        var entry = Assert.Single(await target.SearchAsync(new ClipboardHistoryQuery()));
+        Assert.Equal("image", entry.Kind);
+        Assert.Equal(MediaLimits.MimePng, entry.MimeType);
+        Assert.False(target.Media.Exists(hash));
+    }
+
+    [Fact]
+    public async Task TamperedImageBytesFailTheWholeFileBeforeAnyWrite()
+    {
+        await using var sourceDatabase = new TemporaryDatabase();
+        await using var source = sourceDatabase.CreateStore(LocalDeviceId);
+        var (png, hash) = TinyPng(200, 100, 50);
+        await source.StoreImageAsync(Image(png, hash, BaseTime));
+        var document = await ExportAsync(source);
+
+        var marker = "\"data_base64\":\"";
+        var start = document.IndexOf(marker, StringComparison.Ordinal) + marker.Length;
+        var flipped = document[start + 20] == 'A' ? 'B' : 'A';
+        var tampered = document[..(start + 20)] + flipped + document[(start + 21)..];
+
+        await using var targetDatabase = new TemporaryDatabase();
+        await using var target = targetDatabase.CreateStore(OtherDeviceId);
+        var exception = await Assert.ThrowsAsync<HistoryTransferException>(
+            () => ImportAsync(target, tampered).AsTask());
+
+        Assert.Equal(HistoryTransferErrorCodes.HashMismatch, exception.ErrorCode);
+        Assert.Empty(await target.SearchAsync(new ClipboardHistoryQuery()));
+        Assert.False(target.Media.Exists(hash));
+    }
+
+    [Fact]
+    public async Task ImageRecordsInsideAVersion1FileAreRejected()
+    {
+        var document =
+            """{"type":"header","format":"clipsync-history","format_version":1,"exported_at_ms":1,"exporting_device_id":"x","platform":"windows","event_count":1}"""
+            + "\n"
+            + """{"type":"clip","event_id":"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb","origin_device_id":"x","origin_seq":1,"kind":"image","content":null,"content_hash":null,"source_app":null,"created_at_ms":1,"expires_at_ms":null,"deleted_at_ms":1,"terminal_reason":"deleted"}"""
+            + "\n";
+
+        await using var targetDatabase = new TemporaryDatabase();
+        await using var target = targetDatabase.CreateStore(OtherDeviceId);
+        var exception = await Assert.ThrowsAsync<HistoryTransferException>(
+            () => ImportAsync(target, document).AsTask());
+
+        Assert.Equal(HistoryTransferErrorCodes.MalformedRecord, exception.ErrorCode);
+        Assert.Empty(await target.SearchAsync(new ClipboardHistoryQuery()));
+    }
+
     private static async Task<string> ExportAsync(SqliteClipboardEventStore store)
     {
         await using var writer = new StringWriter();
@@ -319,6 +469,15 @@ public sealed class HistoryTransferTests
         var bytes = Encoding.UTF8.GetBytes(text);
         return new AcceptedClipboardContent(text, Hash(text), bytes.Length, "notepad", capturedAt);
     }
+
+    private static (byte[] Png, string Hash) TinyPng(byte blue, byte green, byte red)
+    {
+        var png = ImageCodec.EncodePngBgra(1, 1, [blue, green, red, 255]);
+        return (png, ImageCodec.HashBytes(png));
+    }
+
+    private static AcceptedImageContent Image(byte[] png, string hash, DateTimeOffset capturedAt) =>
+        new(png, hash, MediaLimits.MimePng, 1, 1, "paint", capturedAt);
 
     private sealed class TemporaryDatabase : IAsyncDisposable
     {
