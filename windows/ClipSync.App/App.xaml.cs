@@ -10,8 +10,9 @@ using ClipSync.Core.Security;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Pairing;
 using ClipSync.Peer.Sessions;
-using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 
@@ -24,11 +25,13 @@ namespace ClipSync.App;
 public partial class App : Application
 {
     private ServiceProvider? services;
-    private TaskbarIcon? trayIcon;
+    private TrayIconController? trayIcon;
+    private MainViewModel? mainViewModel;
     private Win32ClipboardAdapter? clipboardAdapter;
     private PeerSyncHost? syncHost;
     private PairingService? pairingService;
     private PairingQrWindow? pairingWindow;
+    private bool peerEndpointUnavailable;
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -63,7 +66,11 @@ public partial class App : Application
         await viewModel.InitializeAsync();
         var mainWindow = services.GetRequiredService<MainWindow>();
         MainWindow = mainWindow;
-        trayIcon = TrayIconFactory.Create(mainWindow, Shutdown);
+        trayIcon = TrayIconController.Create(mainWindow, Shutdown);
+        mainViewModel = viewModel;
+        viewModel.PropertyChanged += OnViewModelPropertyChanged;
+        viewModel.Devices.CollectionChanged += OnDevicesChanged;
+        UpdateTrayState();
 
         clipboardAdapter = services.GetRequiredService<Win32ClipboardAdapter>();
         clipboardAdapter.TextChanged += OnClipboardTextChanged;
@@ -72,6 +79,39 @@ public partial class App : Application
         LocalDiagnostics.Write("listener_started");
 
         await StartPeerEndpointAsync(dataDirectory, deviceId, store, viewModel);
+        UpdateTrayState();
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(MainViewModel.IsPaused) or nameof(MainViewModel.IsPrivateMode))
+        {
+            UpdateTrayState();
+        }
+    }
+
+    private void OnDevicesChanged(object? sender, NotifyCollectionChangedEventArgs e) => UpdateTrayState();
+
+    /// <summary>
+    /// Recomputes the tray state from the current app state. Priority (see
+    /// <see cref="TrayStateMapper"/>): private &gt; paused &gt; attention &gt; flow.
+    /// Attention covers the "needs your action" cases detectable on the PC side:
+    /// the peer endpoint failed to start, or no usable device is paired yet.
+    /// </summary>
+    private void UpdateTrayState()
+    {
+        if (trayIcon is null || mainViewModel is null)
+        {
+            return;
+        }
+
+        var hasUsableDevice = mainViewModel.Devices.Any(device => !device.IsRevoked);
+        var attentionReason =
+            peerEndpointUnavailable ? "sync is off this session (endpoint failed to start)"
+            : !hasUsableDevice ? "pair a device to start syncing"
+            : null;
+        var state = TrayStateMapper.Map(mainViewModel.IsPrivateMode, mainViewModel.IsPaused, attentionReason is not null);
+        trayIcon.SetState(state, attentionReason);
     }
 
     private async Task StartPeerEndpointAsync(
@@ -101,6 +141,7 @@ public partial class App : Application
         {
             LocalDiagnostics.Write($"peer_start_failed_{exception.GetType().Name}");
             viewModel.SyncStatus = "Peer endpoint failed to start; sync is off this session.";
+            peerEndpointUnavailable = true;
         }
     }
 
@@ -198,6 +239,11 @@ public partial class App : Application
             clipboardAdapter.TextChanged -= OnClipboardTextChanged;
             clipboardAdapter.Faulted -= OnClipboardFaulted;
             clipboardAdapter.Dispose();
+        }
+        if (mainViewModel is not null)
+        {
+            mainViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+            mainViewModel.Devices.CollectionChanged -= OnDevicesChanged;
         }
         trayIcon?.Dispose();
         services?.DisposeAsync().AsTask().GetAwaiter().GetResult();
