@@ -106,7 +106,7 @@ internal static class ImageThumbnail
         return loaded ?? DecodeWithDecoder(blobPath);
     }
 
-    private static BitmapFrame? DecodeWithDecoder(string blobPath)
+    private static BitmapSource? DecodeWithDecoder(string blobPath)
     {
         try
         {
@@ -123,7 +123,7 @@ internal static class ImageThumbnail
 
             var frame = decoder.Frames[0];
             frame.Freeze();
-            return frame;
+            return BoundToThumbnailSide(frame);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
             or NotSupportedException or InvalidOperationException or ArgumentException
@@ -131,5 +131,24 @@ internal static class ImageThumbnail
         {
             return null;
         }
+    }
+
+    /// <summary>
+    /// The fallback decoder has no DecodePixelWidth/Height, so an oversized frame
+    /// would otherwise be re-encoded at full size and bound by every history row.
+    /// Scale it down so the written "thumbnail" honours the 512 px contract too.
+    /// </summary>
+    private static BitmapSource BoundToThumbnailSide(BitmapSource source)
+    {
+        var longest = Math.Max(source.PixelWidth, source.PixelHeight);
+        if (longest <= MediaLimits.ThumbnailMaxSide)
+        {
+            return source;
+        }
+
+        var scale = (double)MediaLimits.ThumbnailMaxSide / longest;
+        var scaled = new TransformedBitmap(source, new System.Windows.Media.ScaleTransform(scale, scale));
+        scaled.Freeze();
+        return scaled;
     }
 }

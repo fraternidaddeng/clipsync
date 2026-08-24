@@ -36,6 +36,25 @@ public sealed class ImageThumbnailTests : IDisposable
     }
 
     [Fact]
+    public void EnsureBoundsOversizedSourcesToTheThumbnailSide()
+    {
+        var store = new MediaBlobStore(root);
+        var png = ImageCodec.EncodePngBgra(700, 300, new byte[700 * 300 * 4]);
+        var image = store.CommitBytes(png);
+
+        var path = ImageThumbnail.Ensure(store, image.ContentHash);
+
+        Assert.NotNull(path);
+        var inspect = ImageCodec.TryInspectFile(path!, out var thumb);
+        Assert.Equal(ImageCodecError.Ok, inspect);
+        Assert.NotNull(thumb);
+        Assert.InRange(thumb!.PixelWidth, 1, MediaLimits.ThumbnailMaxSide);
+        Assert.InRange(thumb.PixelHeight, 1, MediaLimits.ThumbnailMaxSide);
+        // Aspect survives the bound: 700x300 shrinks by width, height follows.
+        Assert.Equal(MediaLimits.ThumbnailMaxSide, thumb.PixelWidth);
+    }
+
+    [Fact]
     public void EnsureReturnsNullWhenBlobIsMissing()
     {
         var store = new MediaBlobStore(root);
