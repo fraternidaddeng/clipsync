@@ -541,6 +541,70 @@ class SyncEngineTest {
     }
 
     @Test
+    fun `a re-announced clip with a fetch in flight is not fetched twice`() = runTest {
+        // The peer's outbox drain and its want_ranges serving can both announce the same
+        // event; a second fetch would make the second payload look out-of-order and kill
+        // the session (found by the Windows pause integration test, fixed on both engines).
+        val repository = InMemorySyncRepository(LOCAL_ID)
+        val committed = mutableListOf<RemoteClipApplied>()
+        val engine = SyncEngine(repository, config(), SECRET) { committed.addAll(it) }
+        val transport = FakeTransport()
+        val result = CompletableDeferred<SyncSessionResult>()
+        backgroundScope.launchEngine(engine, transport, result)
+
+        transport.awaitSent(SyncMessageTypes.HELLO)
+        transport.deliver(SyncMessageTypes.CHALLENGE, challengeBody())
+        transport.awaitSent(SyncMessageTypes.AUTH)
+        transport.awaitSent(SyncMessageTypes.KNOWN_VECTOR)
+
+        val eventId = "66666666-6666-4666-8666-666666666666"
+        val content = "announced twice"
+        val header = ClipHeaderDto(
+            eventId = eventId,
+            originDeviceId = PEER_ID,
+            originSeq = 1,
+            availability = ClipAvailability.AVAILABLE,
+            kind = "text",
+            contentHash = sha256Hex(content),
+            utf8Bytes = content.toByteArray(StandardCharsets.UTF_8).size.toLong(),
+            createdAtMs = 1_776_000_000_000,
+        )
+        transport.deliver(SyncMessageTypes.CLIP_ANNOUNCE, ClipAnnounceBody(listOf(header)))
+        val fetch = transport.awaitSent(SyncMessageTypes.CLIP_FETCH).body as ClipFetchBody
+        assertEquals(listOf(eventId), fetch.eventIds)
+
+        // Second announce for the same event while the payload is still in flight.
+        transport.deliver(SyncMessageTypes.CLIP_ANNOUNCE, ClipAnnounceBody(listOf(header)))
+        transport.deliver(SyncMessageTypes.PING, PingBody(sentAtMs = 1)) // fence
+        transport.awaitSent(SyncMessageTypes.PONG) // no second clip_fetch was sent
+
+        // The single payload commits normally and the session stays healthy.
+        transport.deliver(
+            SyncMessageTypes.CLIP_PAYLOAD,
+            ClipPayloadBody(
+                listOf(
+                    ClipPayloadItemDto(
+                        eventId = eventId,
+                        originDeviceId = PEER_ID,
+                        originSeq = 1,
+                        kind = "text",
+                        content = content,
+                        contentHash = sha256Hex(content),
+                        utf8Bytes = content.toByteArray(StandardCharsets.UTF_8).size.toLong(),
+                        createdAtMs = 1_776_000_000_000,
+                    ),
+                ),
+            ),
+        )
+        val ack = transport.awaitSent(SyncMessageTypes.ACK_RANGES).body as AckRangesBody
+        assertEquals(listOf(OriginRangesDto(PEER_ID, listOf(RangeDto(1, 1)))), ack.acks)
+        assertEquals(listOf(content), committed.map { it.content })
+
+        transport.peerCloses()
+        assertTrue(result.await().authenticated)
+    }
+
+    @Test
     fun `inbound want_ranges above the cap is rate limited but not fatal`() = runTest {
         val engine = SyncEngine(InMemorySyncRepository(LOCAL_ID), config(), SECRET)
         val transport = FakeTransport()

@@ -705,7 +705,16 @@ public sealed class SyncSessionEngine : IDisposable
                 continue;
             }
 
-            outstandingFetches[Guid.Parse(header.EventId)] = header;
+            var eventId = Guid.Parse(header.EventId);
+            if (outstandingFetches.ContainsKey(eventId))
+            {
+                // Already fetching this event: the outbox drain and want_ranges serving can
+                // both announce the same clip, and a second fetch would make the second
+                // payload look out-of-order and kill the session.
+                continue;
+            }
+
+            outstandingFetches[eventId] = header;
             fetchIds.Add(header.EventId);
         }
 

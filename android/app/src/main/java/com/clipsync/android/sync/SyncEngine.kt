@@ -455,6 +455,12 @@ class SyncEngine(
                 continue
             }
 
+            if (outstandingFetches.containsKey(header.eventId)) {
+                // Already fetching this event: the outbox drain and want_ranges serving can
+                // both announce the same clip, and a second fetch would make the second
+                // payload look out-of-order and kill the session.
+                continue
+            }
             outstandingFetches[header.eventId] = header
             fetchIds.add(header.eventId)
         }
