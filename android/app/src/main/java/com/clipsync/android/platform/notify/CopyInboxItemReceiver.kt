@@ -1,13 +1,12 @@
 package com.clipsync.android.platform.notify
 
 import android.content.BroadcastReceiver
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import com.clipsync.android.R
-import com.clipsync.android.platform.clipboard.AndroidPublicClipboardWriter
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
+import com.clipsync.android.platform.clipboard.SharedClipboardWrites
 import com.clipsync.android.sync.SyncServices
 
 /**
@@ -25,12 +24,10 @@ class CopyInboxItemReceiver : BroadcastReceiver() {
         val messageRes = if (text == null) {
             R.string.toast_copy_missing
         } else {
-            when (
-                AndroidPublicClipboardWriter(
-                    clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager,
-                    context = context.applicationContext,
-                ).writeText(text, eventId)
-            ) {
+            // Must go through the process-shared write coordinator: a direct writer would
+            // skip the suppression table, and the foreground capture pipeline would re-capture
+            // this remote clip and echo it back to the peer as a new local event.
+            when (SharedClipboardWrites.coordinator(context).writeText(text, eventId).result) {
                 is ClipboardWriteResult.Success -> {
                     SyncNotifications.cancelInboxItem(context, eventId)
                     R.string.toast_copied
