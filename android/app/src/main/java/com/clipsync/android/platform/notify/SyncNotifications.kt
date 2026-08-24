@@ -20,8 +20,12 @@ object SyncNotifications {
     const val CHANNEL_INBOX = "clipsync.inbox"
     const val CHANNEL_RECOVERY = "clipsync.recovery"
     private const val INBOX_NOTIFICATION_ID_BASE = 41_000
-    const val RECOVERY_NOTIFICATION_ID = 42_001
-    const val AUTH_THROTTLE_NOTIFICATION_ID = 42_002
+
+    // The per-event inbox ids span [41_000, 41_000 + 0x7FFF] = [41_000, 73_767]; the fixed
+    // ids below must stay outside that range or an unlucky event-id hash replaces (and
+    // cancelInboxItem cancels) the recovery / auth-throttle notification.
+    const val RECOVERY_NOTIFICATION_ID = 74_001
+    const val AUTH_THROTTLE_NOTIFICATION_ID = 74_002
 
     /** Idempotent; called from Application.onCreate so receivers can post right away. */
     fun ensureChannels(context: Context) {
