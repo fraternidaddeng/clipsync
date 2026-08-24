@@ -23,6 +23,12 @@ Protocol v2 clipboard image sync for PNG/JPEG with gallery share and history pre
 active chain exists on this branch (this branch's own docs commit `1fe5c07` acknowledges the full v2
 implementation lives on `feature/stage-4`).
 
+> **Update (2026-08-24, after this audit):** the **Windows half of this chain has since been ported onto
+> this branch** — Core media stack, SQLite schema 3 media storage, session-engine v2 chunked image
+> transfer (server `/v2/peer/sync` route), CF_DIB capture, history/detail thumbnails, and the image-sync
+> settings (default off), with the stage-4 tests merged and passing. The Windows rows below are updated;
+> the **Android rows remain the open gap**.
+
 | Feature | stage-4 location | implement status | merge priority |
 |---|---|---|---|
 | Protocol v2 spec: envelope/messages schemas, 38 fixtures (incl. media samples, auth vectors), generator script | `protocol/v2/**`, `scripts/generate-protocol-v2-fixtures.py`, `docs/protocol-v2.md`, `docs/adr/0003-clipboard-image-v2.md` | **Present** — ported by `c2f2bd1` (ADR renumbered 0004, `validate-protocol.py` extended); no client code consumes it yet | Done — was the P0 prerequisite |
@@ -31,9 +37,9 @@ implementation lives on `feature/stage-4`).
 | Android DB v1→v2 migration: image/blob columns, thumbnail refs | `android/app/schemas/.../ClipDatabase/2.json`, `storage/ClipEntities.kt`, `ClipDatabase.kt`, `ClipDaos.kt` | Missing; `ClipSyncDatabase` still schema v1 | **P0** — must be rewritten against this branch's Room schema |
 | Gallery image share into sync | `android/.../share/ShareCaptureHelper.kt`, `ShareReceiverActivity.kt` (image path), `res/xml/file_paths.xml` (FileProvider), manifest entries | This branch's `platform/entry/ShareTextIntentHandler.kt` is text-only | **P1** |
 | Android history image previews + image settings (size cap, toggle) | `android/.../ui/history/HistoryScreen.kt`, `HistoryViewModel.kt`, `ui/settings/*` (image keys) | Missing; `ui/home/` has no image rendering | **P1** — restyle to charter, don't port UI verbatim |
-| Windows media pipeline: DIB↔PNG/JPEG codecs, chunking, blob store, limits | `windows/ClipSync.Core/Media/DibCodec.cs`, `ImageChunks.cs`, `ImageCodec.cs`, `MediaBlobStore.cs`, `MediaLimits.cs` + `windows/ClipSync.Tests/Media/MediaBlobStoreTests.cs` | Missing entirely (no `Media/` folder) | **P0** |
-| Windows v2 reader + image capture | `windows/ClipSync.Core/Protocol/ProtocolReaderV2.cs`, `Win32ClipboardAdapter.cs` (CF_DIB capture), `ClipboardDataAccessor.cs` | Missing; adapter is text-only | **P0** |
-| Windows image UI: thumbnails, preview converter, detail image view | `windows/ClipSync.App/Media/BitmapFile.cs`, `ImageThumbnail.cs`, `Converters/FilePathToImageConverter.cs`, `DetailWindow.xaml(.cs)` | Missing | **P1** — restyle to charter tokens |
+| Windows media pipeline: DIB↔PNG/JPEG codecs, chunking, blob store, limits | `windows/ClipSync.Core/Media/DibCodec.cs`, `ImageChunks.cs`, `ImageCodec.cs`, `MediaBlobStore.cs`, `MediaLimits.cs` + `windows/ClipSync.Tests/Media/MediaBlobStoreTests.cs` | **Present** — ported with schema-3 media storage and tests | Done |
+| Windows v2 reader + image capture | `windows/ClipSync.Core/Protocol/ProtocolReaderV2.cs`, `Win32ClipboardAdapter.cs` (CF_DIB capture), `ClipboardDataAccessor.cs` | **Present** — ported incl. session-engine v2 image transfer and `/v2/peer/sync` route (this branch's SessionReady/OutboundAllowed gates preserved) | Done |
+| Windows image UI: thumbnails, preview converter, detail image view | `windows/ClipSync.App/Media/BitmapFile.cs`, `ImageThumbnail.cs`, `Converters/FilePathToImageConverter.cs`, `DetailWindow.xaml(.cs)` | **Present** — restyled to charter tokens (history-card thumbnails, 查看详情 detail window, 偏好·同步 image toggles, default off) | Done |
 
 ## 2. Export / import — exists on BOTH branches
 
