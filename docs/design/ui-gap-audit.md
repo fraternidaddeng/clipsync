@@ -2,7 +2,7 @@
 
 > 从属于《设计纲领》（`DESIGN-CHARTER.md`）与 `tokens.md`。
 > 本文件记录「章程 → 实现」尚未合拢的差距，按影响排序；每完成一轮打磨更新一次。
-> 最后更新：2026-08-24（应用图标 / Windows 自绘 chrome / 配对界面 / 通知语汇 打磨轮之后）
+> 最后更新：2026-08-24（WPF 夜间主题 / Windows 随包字体 打磨轮之后）
 
 ---
 
@@ -17,6 +17,8 @@
 | Android 配对页 | 全中文文案（与 `ui_preview.html` 逐字一致）；证书变更 = 赭黄整块警示 + 「我已核实 — 替换配对」责任按钮（全应用唯一）；指纹两行分组；扫码取景框 = charter 卡 + 流动蓝四角；幽灵按钮族对齐章程 |
 | Android 系统表面 | 通知/QS 磁贴小图标换折线标记（单色、2.4 线宽，对齐 16 网格托盘视觉重量）；`setColor` 接流动蓝；同步通道补描述、去角标；前台通知状态文案全中文并入 `strings.xml` |
 | 托盘/杂项中文化 | 托盘菜单、气泡提示、「需要你操作」缘由、配对不可用弹窗全部转中文 |
+| WPF 夜间主题 | `CharterTokensNight.xaml` 同键夜间字典（tokens §2 夜值，夜间抬起 = 提亮面色）；`CharterThemeManager` 读 `SystemUsesLightTheme`（与托盘同一取值，缺省视为深色）、监听 `SystemEvents.UserPreferenceChanged` 运行时整体替换字典；三个窗口约 170 处 `StaticResource` 刷成 `DynamicResource`，切主题无需重启 |
+| Windows 随包字体（Sans/Mono） | `Resources/Fonts/` 打包 Noto Sans SC 400/500、Plus Jakarta Sans 400/500/600、JetBrains Mono 400/500（OFL 许可证随文件）；`CsSans`/`CsMono` 改指随包字体，三窗口不再落 `Segoe UI / 微软雅黑`，Mono 链中文回落到随包 Noto Sans SC；`Consolas` 仅作加载失败兜底 |
 
 ---
 
@@ -26,8 +28,7 @@
 
 | 差距 | 现状 | 需要做 |
 |---|---|---|
-| **三个声音的字体未随包分发** | Windows 落 `Segoe UI / 微软雅黑` 近似、衬线落 `SimSun`；Android 落系统 serif/mono。**双端在占比最高的文字上是断裂的**（tokens §6 明言硬性要求） | 打包 `NotoSerifSC-SemiBold`、`PlusJakartaSans`、`NotoSansSC-Regular/Medium`、`JetBrainsMono-Regular` 共 5–6 个文件；WPF `Fonts/#...` 引用、Compose `FontFamily(Font(...))` |
-| **WPF 夜间主题** | `CharterTokens.xaml` 只有日间字典；Android 夜间已随系统 | 建同键夜间字典 + 运行时整体替换；共享控件已用 `DynamicResource`，但 `MainWindow.xaml` 内约 200 处 `StaticResource` 需转 `DynamicResource` 才能热切换 |
+| **字体随包分发（剩余部分）** | Windows Sans/Mono 已随包（见上）；衬线仍落 `SimSun`（Noto Serif SC 单字重 ~11MB，暂缓）；**Android 三个声音仍全部落系统/OEM 字体** | Android 打包 `NotoSansSC`、`JetBrainsMono`（Compose `FontFamily(Font(...))`）；衬线两端一起裁决：要么接受体积打包 `NotoSerifSC-SemiBold`，要么改章程 |
 | **空状态 / 首次运行** | 历史空列表是空白区域；首次运行没有「去配对」的引导 | 空状态是三处衬线时刻之一（纲领 3.5）：Serif 短句 + 幽灵配对按钮；两端都缺 |
 | **卡片深度不足**（Windows） | 主窗卡片是 1px 边框平面卡，无 `sh-1` 阴影、无 `sf-grad` 受光 | tokens §8：最外层挂一次 `DropShadowEffect`，内层 1px 边框，最内 2px 顶部高光渐变 |
 
