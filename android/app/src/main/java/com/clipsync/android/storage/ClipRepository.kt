@@ -2,6 +2,7 @@ package com.clipsync.android.storage
 
 import android.content.Context
 import com.clipsync.android.media.MediaBlobStore
+import com.clipsync.android.media.MediaLimits
 import com.clipsync.android.media.ValidatedImage
 import com.clipsync.android.platform.clipboard.ContentHasher
 import com.clipsync.android.platform.clipboard.Sha256ContentHasher
@@ -205,7 +206,23 @@ class ClipRepository internal constructor(
         require(marker.originDeviceId != localDeviceId) { "Terminal markers cannot claim this device as origin." }
         require(marker.originSeq >= 1) { "Sequences begin at 1." }
         require(marker.reason in TerminalReasons.ALL) { "Unknown terminal_reason." }
-        return persistence.transaction {
+        val result = persistence.transaction {
+            val existing = findClipByOriginSeq(marker.originDeviceId, marker.originSeq)
+            if (existing != null) {
+                if (existing.eventId != marker.eventId) {
+                    return@transaction RemoteStoreResult.IdentityConflict(
+                        "origin sequence maps to a different event id",
+                    )
+                }
+                val state = receiveState(marker.originDeviceId).accept(marker.originSeq)
+                upsertReceiveState(marker.originDeviceId, state)
+                if (existing.deletedAt != null || marker.reason != TerminalReasons.DELETED) {
+                    return@transaction RemoteStoreResult.AlreadyPersisted
+                }
+                softDelete(existing.eventId, receivedAtMs)
+                fanOutOutbox(existing.eventId, marker.originDeviceId, excludedPeerId = sourcePeerId, peerId = null)
+                return@transaction RemoteStoreResult.Stored(state)
+            }
             checkIdentity(marker.eventId, marker.originDeviceId, marker.originSeq, expectedContentHash = null)?.let {
                 return@transaction it
             }
@@ -229,10 +246,26 @@ class ClipRepository internal constructor(
             fanOutOutbox(marker.eventId, marker.originDeviceId, excludedPeerId = sourcePeerId, peerId = null)
             RemoteStoreResult.Stored(state)
         }
+        if (result is RemoteStoreResult.Stored) {
+            collectUnreferencedMedia()
+        }
+        return result
     }
 
     suspend fun knownVector(): KnownVector =
         KnownVector(persistence.read { allReceiveStates() })
+
+    /**
+     * Raises the local allocator so the next capture is above [highestSeq].
+     * Used when a peer's known_vector shows it already holds our origin
+     * further than this database (same device id after a local reset).
+     */
+    suspend fun adoptPeerCoverageOfLocalOrigin(highestSeq: Long) {
+        if (highestSeq < 1) {
+            return
+        }
+        persistence.transaction { advanceOriginSeq(localDeviceId, highestSeq) }
+    }
 
     suspend fun outboxPending(peerId: String): List<OutboxEntry> =
         persistence.read { pendingOutbox(peerId).map { it.toEntry() } }
@@ -241,7 +274,12 @@ class ClipRepository internal constructor(
         persistence.transaction { markOutboxAnnounced(outboxIds) }
     }
 
-    suspend fun ackRanges(peerId: String, acks: List<OriginSequenceRanges>, nowMs: Long) {
+    suspend fun ackRanges(
+        peerId: String,
+        acks: List<OriginSequenceRanges>,
+        nowMs: Long,
+        dropTerminalOutbox: Boolean = true,
+    ) {
         if (acks.isEmpty()) {
             return
         }
@@ -253,16 +291,23 @@ class ClipRepository internal constructor(
                 }
                 upsertPeerCursor(peerId, ack.originDeviceId, cursor, nowMs)
                 for (range in ack.ranges) {
-                    deleteOutboxInRange(peerId, ack.originDeviceId, range.startSeq, range.endSeq)
+                    deleteOutboxInRange(
+                        peerId,
+                        ack.originDeviceId,
+                        range.startSeq,
+                        range.endSeq,
+                        dropTerminalOutbox,
+                    )
                 }
             }
         }
     }
 
-    suspend fun search(query: String, limit: Int = MAX_SEARCH_LIMIT): List<ClipEntry> {
+    suspend fun search(query: String, limit: Int = MAX_SEARCH_LIMIT, offset: Int = 0): List<ClipEntry> {
         require(limit in 1..MAX_SEARCH_LIMIT) { "Limit must be between 1 and $MAX_SEARCH_LIMIT." }
+        require(offset >= 0) { "Offset must be >= 0." }
         return persistence.read {
-            searchVisible(query, limit).map { row ->
+            searchVisible(query, limit, offset).map { row ->
                 row.toEntry(if (row.kind == CLIP_KIND_IMAGE) findMediaBlob(row.contentHash) else null)
             }
         }
@@ -275,7 +320,10 @@ class ClipRepository internal constructor(
     suspend fun findVisibleEntry(eventId: String): ClipEntry? =
         persistence.read {
             val entity = findClipByEventId(eventId)
+            val nowMs = System.currentTimeMillis()
             if (entity == null || entity.deletedAt != null) {
+                null
+            } else if (entity.expiresAt != null && entity.expiresAt <= nowMs) {
                 null
             } else if (entity.kind == CLIP_KIND_IMAGE) {
                 entity.toEntry(findMediaBlob(entity.contentHash))
@@ -299,21 +347,79 @@ class ClipRepository internal constructor(
         }
     }
 
-    suspend fun delete(eventId: String, nowMs: Long): Boolean =
-        persistence.transaction {
-            val deleted = softDelete(eventId, nowMs)
-            if (deleted) {
-                deleteOutboxForEvent(eventId)
+    suspend fun delete(eventId: String, nowMs: Long): Boolean {
+        val deleted = persistence.transaction {
+            val ok = softDelete(eventId, nowMs)
+            if (ok) {
+                enqueueTombstone(eventId)
             }
-            deleted
+            ok
         }
+        if (deleted) {
+            collectUnreferencedMedia()
+        }
+        return deleted
+    }
 
-    suspend fun clear(nowMs: Long): Int =
-        persistence.transaction {
-            val ids = softDeleteAllVisible(nowMs)
-            deleteOutboxForEvents(ids)
-            ids.size
+    suspend fun clear(nowMs: Long): Int {
+        val removed = persistence.transaction {
+            softDeleteAllVisible(nowMs).size
         }
+        collectUnreferencedMedia()
+        return removed
+    }
+
+    suspend fun searchAllVisible(): List<ClipEntry> {
+        val all = mutableListOf<ClipEntry>()
+        var offset = 0
+        while (true) {
+            val page = search("", MAX_SEARCH_LIMIT, offset)
+            if (page.isEmpty()) {
+                break
+            }
+            all += page
+            if (page.size < MAX_SEARCH_LIMIT) {
+                break
+            }
+            offset += page.size
+        }
+        return all
+    }
+
+    suspend fun exportJsonLines(mediaDirectory: File? = null): String {
+        val rows = searchAllVisible()
+        if (mediaDirectory != null) {
+            mediaDirectory.mkdirs()
+            for (row in rows) {
+                if (!row.isImage) {
+                    continue
+                }
+                val source = media.blobPath(row.contentHash)
+                if (source.isFile) {
+                    source.copyTo(File(mediaDirectory, row.contentHash), overwrite = true)
+                }
+            }
+        }
+        return ClipExport.encodeJsonLines(rows, includeHeader = false, originDeviceId = localDeviceId)
+    }
+
+    suspend fun getSyncableEventsByIds(eventIds: Collection<String>): List<SyncableClipEvent> {
+        if (eventIds.isEmpty()) {
+            return emptyList()
+        }
+        return persistence.read {
+            findClipsByEventIds(eventIds.toList()).map { row ->
+                row.toSyncable(if (row.kind == CLIP_KIND_IMAGE) findMediaBlob(row.contentHash) else null)
+            }
+        }
+    }
+
+    suspend fun deleteOrphanOutbox(eventIds: Collection<String>) {
+        if (eventIds.isEmpty()) {
+            return
+        }
+        persistence.transaction { deleteOutboxForEvents(eventIds.toList()) }
+    }
 
     suspend fun getSetting(key: String): String? {
         require(key.isNotBlank()) { "Setting key is required." }
@@ -399,6 +505,8 @@ class ClipRepository internal constructor(
             ) {
                 return RemoteStoreResult.IdentityConflict("origin sequence maps to different content")
             }
+            val state = receiveState(originDeviceId).accept(originSeq)
+            upsertReceiveState(originDeviceId, state)
             return RemoteStoreResult.AlreadyPersisted
         }
         val byEvent = findClipByEventId(eventId)
@@ -407,6 +515,11 @@ class ClipRepository internal constructor(
         } else {
             RemoteStoreResult.IdentityConflict("event id maps to a different origin sequence")
         }
+    }
+
+    private suspend fun ClipSession.enqueueTombstone(eventId: String) {
+        val peerId = getSetting(SETTING_PAIRED_PEER_ID)?.takeIf { it.isNotBlank() } ?: return
+        insertOutbox(peerId, eventId)
     }
 
     private suspend fun ClipSession.fanOutOutbox(
@@ -537,23 +650,58 @@ class ClipRepository internal constructor(
                 liveClipsDeleted = hardDeleteExpiredLive(cutoffMs),
                 tombstonesDeleted = hardDeleteExpiredTombstones(cutoffMs),
             )
+        }.also {
+            collectUnreferencedMedia()
         }
 
     /**
      * Restores live clip rows from a [ClipExport] JSONL snapshot.
-     * Insert-if-absent by `event_id`. Does not write outbox, receive state, or cursors.
+     * Insert-if-absent by `event_id`. Does not write outbox or peer cursors.
+     * Receive coverage is advanced so a later reconnect does not re-request
+     * already-imported sequences.
      */
     suspend fun importJsonLines(
         jsonl: String,
         mediaDirectory: File? = null,
+    ): ClipImportCounts {
+        if (jsonl.length > ClipImport.MAX_IMPORT_CHARS) {
+            throw IllegalArgumentException("import exceeds the size limit")
+        }
+        var imported = 0
+        var skipped = 0
+        val pending = mutableListOf<String>()
+        for (line in jsonl.lineSequence()) {
+            if (line.isBlank()) {
+                continue
+            }
+            if (line.length > ClipImport.MAX_LINE_CHARS) {
+                skipped++
+                continue
+            }
+            pending += line
+            if (pending.size >= ClipImport.IMPORT_BATCH_LINES) {
+                val batch = importLineBatch(pending, mediaDirectory)
+                imported += batch.imported
+                skipped += batch.skipped
+                pending.clear()
+            }
+        }
+        if (pending.isNotEmpty()) {
+            val batch = importLineBatch(pending, mediaDirectory)
+            imported += batch.imported
+            skipped += batch.skipped
+        }
+        return ClipImportCounts(imported, skipped)
+    }
+
+    private suspend fun importLineBatch(
+        lines: List<String>,
+        mediaDirectory: File?,
     ): ClipImportCounts =
         persistence.transaction {
             var imported = 0
             var skipped = 0
-            for (line in jsonl.lineSequence()) {
-                if (line.isBlank()) {
-                    continue
-                }
+            for (line in lines) {
                 val entry = ClipImport.decodeLine(line)
                 if (entry == null) {
                     skipped++
@@ -587,6 +735,8 @@ class ClipRepository internal constructor(
                 } else {
                     insertClip(ClipImport.toLiveEntity(entry))
                 }
+                val nextState = receiveState(entry.originDeviceId).accept(entry.originSeq)
+                upsertReceiveState(entry.originDeviceId, nextState)
                 if (entry.originDeviceId == localDeviceId) {
                     advanceOriginSeq(localDeviceId, entry.originSeq)
                 }
@@ -612,5 +762,24 @@ class ClipRepository internal constructor(
     suspend fun clearForgottenPeerState() {
         val previous = getSetting(SETTING_PAIRED_PEER_ID)?.takeIf { it.isNotBlank() } ?: return
         clearPeerState(previous)
+    }
+
+    private suspend fun collectUnreferencedMedia() {
+        val keep = persistence.transaction {
+            deleteOrphanedClipMedia()
+            referencedBlobHashes().toSet()
+        }
+        val stale = persistence.read { allBlobHashes() }.filter { it !in keep }
+        if (stale.isNotEmpty()) {
+            persistence.transaction {
+                for (hash in stale) {
+                    deleteMediaBlob(hash)
+                }
+            }
+            for (hash in stale) {
+                media.deleteBlob(hash)
+            }
+        }
+        media.deleteUnreferenced(keep, gracePeriodMs = MediaLimits.BLOB_GC_GRACE_MS)
     }
 }

@@ -40,13 +40,13 @@ class ShizukuErrorCodesTest {
     }
 
     @Test
-    fun `probe maps recoverable binder deaths to degraded`() {
+    fun `probe maps dead user-service and clipboard binder to unavailable`() {
         assertEquals(
-            CapabilityState.DEGRADED,
+            CapabilityState.UNAVAILABLE,
             ShizukuErrorCodes.probeReadState(ShizukuErrorCodes.USERSERVICE_DEAD),
         )
         assertEquals(
-            CapabilityState.DEGRADED,
+            CapabilityState.UNAVAILABLE,
             ShizukuErrorCodes.probeReadState(ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD),
         )
     }

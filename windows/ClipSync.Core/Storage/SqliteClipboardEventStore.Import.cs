@@ -7,8 +7,9 @@ public sealed partial class SqliteClipboardEventStore
 {
     /// <summary>
     /// Inserts a history row if <paramref name="row"/>.EventId is absent.
-    /// Local-only: no outbox fan-out, no receive-state or peer-cursor updates,
-    /// and no live clipboard write. A unique origin-sequence collision is a skip.
+    /// Local-only: no outbox fan-out and no live clipboard write. A unique
+    /// origin-sequence collision is a skip. Receive coverage is advanced so a
+    /// later reconnect does not re-request already-imported sequences.
     /// </summary>
     public async ValueTask<bool> TryInsertImportedLocalAsync(
         ImportedClipboardRow row,
@@ -107,20 +108,29 @@ public sealed partial class SqliteClipboardEventStore
                 await mediaRef.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            if (inserted == 1
-                && string.Equals(row.OriginDeviceId, localDeviceId, StringComparison.Ordinal))
+            if (inserted == 1)
             {
-                await using var sequence = connection.CreateCommand();
-                sequence.Transaction = transaction;
-                sequence.CommandText = """
-                    INSERT INTO local_sequences (device_id, next_seq)
-                    VALUES ($device_id, $next)
-                    ON CONFLICT(device_id) DO UPDATE SET
-                        next_seq = MAX(local_sequences.next_seq, excluded.next_seq);
-                    """;
-                sequence.Parameters.AddWithValue("$device_id", localDeviceId);
-                sequence.Parameters.AddWithValue("$next", row.OriginSequence + 1);
-                await sequence.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                await AdvanceRemoteReceiveStateAsync(
+                    connection,
+                    transaction,
+                    row.OriginDeviceId,
+                    row.OriginSequence,
+                    cancellationToken).ConfigureAwait(false);
+
+                if (string.Equals(row.OriginDeviceId, localDeviceId, StringComparison.Ordinal))
+                {
+                    await using var sequence = connection.CreateCommand();
+                    sequence.Transaction = transaction;
+                    sequence.CommandText = """
+                        INSERT INTO local_sequences (device_id, next_seq)
+                        VALUES ($device_id, $next)
+                        ON CONFLICT(device_id) DO UPDATE SET
+                            next_seq = MAX(local_sequences.next_seq, excluded.next_seq);
+                        """;
+                    sequence.Parameters.AddWithValue("$device_id", localDeviceId);
+                    sequence.Parameters.AddWithValue("$next", row.OriginSequence + 1);
+                    await sequence.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                }
             }
 
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);

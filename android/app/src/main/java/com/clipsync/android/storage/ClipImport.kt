@@ -21,6 +21,10 @@ import java.nio.charset.StandardCharsets
  * every successfully decoded row is a live clip.
  */
 object ClipImport {
+    const val MAX_IMPORT_CHARS = 128 * 1024 * 1024
+    const val MAX_LINE_CHARS = 8 * 1024 * 1024
+    const val IMPORT_BATCH_LINES = 100
+
     private val json =
         Json {
             prettyPrint = false

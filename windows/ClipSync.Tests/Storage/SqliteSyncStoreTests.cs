@@ -97,6 +97,7 @@ public sealed class SqliteSyncStoreTests
         Assert.IsType<RemoteStoreResult.Stored>(await store.StoreRemoteEventAsync(original, PhoneDeviceId));
 
         Assert.IsType<RemoteStoreResult.AlreadyPersisted>(await store.StoreRemoteEventAsync(original, PhoneDeviceId));
+        Assert.True((await store.GetKnownVectorAsync())[PhoneDeviceId].Contains(1));
 
         // Same idempotency key with a different event identity.
         Assert.IsType<RemoteStoreResult.IdentityConflict>(await store.StoreRemoteEventAsync(
@@ -115,7 +116,56 @@ public sealed class SqliteSyncStoreTests
     }
 
     [Fact]
-    public async Task TerminalMarkerAdvancesCursorAndNeverReplacesStoredBody()
+    public async Task CleanupDoesNotExpireClipsStillWaitingInOutbox()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+
+        for (var index = 0; index < 5; index++)
+        {
+            await store.StoreAsync(Content($"queued-{index}", BaseTime.AddSeconds(index)));
+        }
+
+        var removed = await store.CleanupAsync(
+            new ClipboardRetentionPolicy(maximumEntries: 2, maximumAge: TimeSpan.FromDays(30)),
+            BaseTime.AddDays(1));
+
+        Assert.Equal(0, removed);
+        var batch = await store.GetOutboxBatchAsync(PhoneDeviceId, 10);
+        Assert.Equal(5, batch.Count);
+        Assert.All(batch, row => Assert.False(string.IsNullOrEmpty(row.Event.Content)));
+        Assert.Equal(5, (await store.SearchAsync(new ClipboardHistoryQuery())).Count);
+    }
+
+    [Fact]
+    public async Task AlreadyPersistedRestoresReceiveCoverageAfterStateLoss()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+        var original = RemoteEvent("original", 1);
+        Assert.IsType<RemoteStoreResult.Stored>(await store.StoreRemoteEventAsync(original, PhoneDeviceId));
+
+        await using (var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = database.Path
+        }.ToString()))
+        {
+            await connection.OpenAsync();
+            await using var wipe = connection.CreateCommand();
+            wipe.CommandText = "DELETE FROM origin_receive_state;";
+            await wipe.ExecuteNonQueryAsync();
+        }
+
+        Assert.False((await store.GetKnownVectorAsync()).ContainsKey(PhoneDeviceId));
+        Assert.IsType<RemoteStoreResult.AlreadyPersisted>(
+            await store.StoreRemoteEventAsync(original, PhoneDeviceId));
+        Assert.True((await store.GetKnownVectorAsync())[PhoneDeviceId].Contains(1));
+    }
+
+    [Fact]
+    public async Task DeletedTerminalMarkerTombstonesStoredBody()
     {
         await using var database = new TemporaryDatabase();
         await using var store = database.CreateStore();
@@ -124,14 +174,37 @@ public sealed class SqliteSyncStoreTests
         var stored = RemoteEvent("kept body", 1);
         Assert.IsType<RemoteStoreResult.Stored>(await store.StoreRemoteEventAsync(stored, PhoneDeviceId));
 
-        // A marker for an event we already hold keeps the body.
+        Assert.IsType<RemoteStoreResult.Stored>(await store.StoreRemoteTerminalAsync(
+            new RemoteTerminalMarker(stored.EventId, PhoneDeviceId, 1, "deleted"),
+            PhoneDeviceId,
+            BaseTime.AddSeconds(1)));
+        Assert.Null(await store.GetByIdAsync(stored.EventId));
+        var tombstone = await store.GetByIdAsync(stored.EventId, includeDeleted: true);
+        Assert.NotNull(tombstone);
+        Assert.True(tombstone.IsDeleted);
+
         Assert.IsType<RemoteStoreResult.AlreadyPersisted>(await store.StoreRemoteTerminalAsync(
             new RemoteTerminalMarker(stored.EventId, PhoneDeviceId, 1, "deleted"),
+            PhoneDeviceId,
+            BaseTime.AddSeconds(2)));
+    }
+
+    [Fact]
+    public async Task NonDeleteTerminalMarkerAdvancesCursorAndNeverReplacesStoredBody()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+
+        var stored = RemoteEvent("kept body", 1);
+        Assert.IsType<RemoteStoreResult.Stored>(await store.StoreRemoteEventAsync(stored, PhoneDeviceId));
+
+        Assert.IsType<RemoteStoreResult.AlreadyPersisted>(await store.StoreRemoteTerminalAsync(
+            new RemoteTerminalMarker(stored.EventId, PhoneDeviceId, 1, "local_only"),
             PhoneDeviceId,
             BaseTime.AddSeconds(1)));
         Assert.Equal("kept body", (await store.GetByIdAsync(stored.EventId))!.Text);
 
-        // A marker for an unseen sequence advances the cursor without content.
         var marker = new RemoteTerminalMarker(Guid.NewGuid(), PhoneDeviceId, 2, "local_only");
         var result = Assert.IsType<RemoteStoreResult.Stored>(
             await store.StoreRemoteTerminalAsync(marker, PhoneDeviceId, BaseTime.AddSeconds(2)));
@@ -143,7 +216,6 @@ public sealed class SqliteSyncStoreTests
         Assert.Equal("local_only", syncable[0].TerminalReason);
         Assert.Null(syncable[0].Content);
 
-        // Markers do not surface in the visible history.
         Assert.Null(await store.GetByIdAsync(marker.EventId));
     }
 
@@ -193,6 +265,77 @@ public sealed class SqliteSyncStoreTests
         Assert.Single(remaining);
         Assert.Equal(keptEventId, remaining[0].Entry.EventId);
         Assert.Equal(3, remaining[0].Entry.OriginSeq);
+    }
+
+    [Fact]
+    public async Task DeleteAfterAckRequeuesTombstoneOnOutbox()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+        var stored = await store.StoreAsync(Content("synced-secret", BaseTime));
+        await store.ApplyPeerAckRangesAsync(
+            PhoneDeviceId,
+            [new OriginSequenceRanges(LocalDeviceId, [new SequenceRange(stored.OriginSequence, stored.OriginSequence)])],
+            BaseTime.AddSeconds(1));
+        Assert.Empty(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
+
+        Assert.True(await store.DeleteAsync(stored.EventId, BaseTime.AddSeconds(2)));
+        var batch = await store.GetOutboxBatchAsync(PhoneDeviceId, 10);
+        Assert.Single(batch);
+        Assert.Equal(stored.EventId, batch[0].Entry.EventId);
+        Assert.True(batch[0].Event.IsTerminal);
+        Assert.Equal("deleted", batch[0].Event.TerminalReason);
+        Assert.Null(batch[0].Event.Content);
+    }
+
+    [Fact]
+    public async Task PersistedAckCoverageDoesNotDropTombstoneOutbox()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+        var stored = await store.StoreAsync(Content("synced-secret", BaseTime));
+        await store.ApplyPeerAckRangesAsync(
+            PhoneDeviceId,
+            [new OriginSequenceRanges(LocalDeviceId, [new SequenceRange(stored.OriginSequence, stored.OriginSequence)])],
+            BaseTime.AddSeconds(1));
+        Assert.Empty(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
+
+        Assert.True(await store.DeleteAsync(stored.EventId, BaseTime.AddSeconds(2)));
+        Assert.Single(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
+
+        await store.ApplyPeerAckRangesAsync(
+            PhoneDeviceId,
+            [new OriginSequenceRanges(LocalDeviceId, [new SequenceRange(stored.OriginSequence, stored.OriginSequence)])],
+            BaseTime.AddSeconds(3),
+            dropTerminalOutbox: false);
+        Assert.Single(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
+
+        await store.ApplyPeerAckRangesAsync(
+            PhoneDeviceId,
+            [new OriginSequenceRanges(LocalDeviceId, [new SequenceRange(stored.OriginSequence, stored.OriginSequence)])],
+            BaseTime.AddSeconds(4));
+        Assert.Empty(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
+    }
+
+    [Fact]
+    public async Task DeleteWhileAnnouncedRependsTombstoneOnOutbox()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+        var stored = await store.StoreAsync(Content("in-flight-secret", BaseTime));
+        var announced = await store.GetOutboxBatchAsync(PhoneDeviceId, 10);
+        await store.MarkOutboxAnnouncedAsync([announced[0].Entry.Id]);
+        Assert.Empty(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
+
+        Assert.True(await store.DeleteAsync(stored.EventId, BaseTime.AddSeconds(1)));
+        var batch = await store.GetOutboxBatchAsync(PhoneDeviceId, 10);
+        Assert.Single(batch);
+        Assert.Equal(stored.EventId, batch[0].Entry.EventId);
+        Assert.True(batch[0].Event.IsTerminal);
+        Assert.Equal("deleted", batch[0].Event.TerminalReason);
     }
 
     [Fact]

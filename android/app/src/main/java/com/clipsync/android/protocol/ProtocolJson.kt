@@ -24,20 +24,28 @@ object ProtocolJson {
 
     fun parseEnvelope(source: String): ProtocolEnvelope {
         require(source.isNotBlank()) { "Protocol envelope must not be blank." }
+        ProtocolStrictJson.scan(source)
         val element = json.parseToJsonElement(source)
-        rejectExcessiveDepth(element.toString())
         val envelope = json.decodeFromJsonElement<ProtocolEnvelope>(element)
 
-        if (envelope.version != PROTOCOL_VERSION) {
-            throw SerializationException("Unsupported protocol version: ${envelope.version}")
+        if (envelope.version != ProtocolLimits.PROTOCOL_VERSION) {
+            throw ProtocolParseException(
+                ProtocolErrorCodes.UNSUPPORTED_VERSION,
+                "Unsupported protocol version: ${envelope.version}",
+            )
         }
-        if (envelope.type !in MESSAGE_TYPES) {
-            throw SerializationException("Unsupported message type: ${envelope.type}")
+        if (envelope.type !in ProtocolMessageTypes.ALL) {
+            throw ProtocolParseException(
+                ProtocolErrorCodes.SCHEMA_VIOLATION,
+                "Unsupported message type: ${envelope.type}",
+            )
         }
         val requestId = runCatching { UUID.fromString(envelope.requestId) }
-            .getOrElse { throw SerializationException("request_id must be a UUID.", it) }
+            .getOrElse {
+                throw ProtocolParseException(ProtocolErrorCodes.SCHEMA_VIOLATION, "request_id must be a UUID.")
+            }
         if (!UUID_PATTERN.matches(envelope.requestId) || requestId == ZERO_UUID) {
-            throw SerializationException("request_id must not be the zero UUID.")
+            throw ProtocolParseException(ProtocolErrorCodes.SCHEMA_VIOLATION, "request_id must not be the zero UUID.")
         }
         validateBody(envelope.type, envelope.body)
         return envelope
@@ -45,20 +53,28 @@ object ProtocolJson {
 
     fun parseEnvelopeV2(source: String): ProtocolEnvelope {
         require(source.isNotBlank()) { "Protocol envelope must not be blank." }
+        ProtocolStrictJson.scan(source)
         val element = json.parseToJsonElement(source)
-        rejectExcessiveDepth(element.toString())
         val envelope = json.decodeFromJsonElement<ProtocolEnvelope>(element)
 
-        if (envelope.version != PROTOCOL_VERSION_V2) {
-            throw SerializationException("Unsupported protocol version: ${envelope.version}")
+        if (envelope.version != ProtocolLimits.PROTOCOL_VERSION_V2) {
+            throw ProtocolParseException(
+                ProtocolErrorCodes.UNSUPPORTED_VERSION,
+                "Unsupported protocol version: ${envelope.version}",
+            )
         }
-        if (envelope.type !in MESSAGE_TYPES_V2) {
-            throw SerializationException("Unsupported message type: ${envelope.type}")
+        if (envelope.type !in ProtocolMessageTypes.ALL_V2) {
+            throw ProtocolParseException(
+                ProtocolErrorCodes.SCHEMA_VIOLATION,
+                "Unsupported message type: ${envelope.type}",
+            )
         }
         val requestId = runCatching { UUID.fromString(envelope.requestId) }
-            .getOrElse { throw SerializationException("request_id must be a UUID.", it) }
+            .getOrElse {
+                throw ProtocolParseException(ProtocolErrorCodes.SCHEMA_VIOLATION, "request_id must be a UUID.")
+            }
         if (!UUID_PATTERN.matches(envelope.requestId) || requestId == ZERO_UUID) {
-            throw SerializationException("request_id must not be the zero UUID.")
+            throw ProtocolParseException(ProtocolErrorCodes.SCHEMA_VIOLATION, "request_id must not be the zero UUID.")
         }
         validateBodyV2(envelope.type, envelope.body)
         return envelope
@@ -70,15 +86,22 @@ object ProtocolJson {
                 body.requireKeys("device_id", "platform", "client_version", "trust_epoch", "known_vector")
                 validateUuid(body.string("device_id"))
                 body.string("platform").requireOneOf("windows", "android")
+                validateClientVersion(body.string("client_version"))
                 body.long("trust_epoch").requireAtLeast(1)
                 validateSyncState(body.objectValue("known_vector"))
             }
-            "challenge" -> body.requireKeys(
-                "algorithm", "nonce", "challenger_device_id", "responder_device_id", "trust_epoch", "expires_at_ms",
-            )
-            "auth" -> body.requireKeys(
-                "algorithm", "challenge_request_id", "responder_device_id", "trust_epoch", "proof",
-            )
+            "challenge" -> {
+                body.requireKeys(
+                    "algorithm", "nonce", "challenger_device_id", "responder_device_id", "trust_epoch", "expires_at_ms",
+                )
+                validateChallenge(body)
+            }
+            "auth" -> {
+                body.requireKeys(
+                    "algorithm", "challenge_request_id", "responder_device_id", "trust_epoch", "proof",
+                )
+                validateAuth(body)
+            }
             "known_vector" -> validateSyncState(body)
             "want_ranges" -> validateOriginRanges(body, "requests")
             "ack_ranges" -> validateOriginRanges(body, "acks")
@@ -86,11 +109,15 @@ object ProtocolJson {
             "clip_fetch" -> {
                 body.requireKeys("event_ids")
                 val ids = body.array("event_ids").map { it.stringValue() }
-                requireProtocol(ids.isNotEmpty() && ids.size <= 128 && ids.distinct().size == ids.size)
+                requireProtocol(
+                    ids.isNotEmpty() &&
+                        ids.size <= ProtocolLimits.MAX_FETCH_EVENT_IDS &&
+                        ids.distinct().size == ids.size,
+                )
                 ids.forEach(::validateUuid)
             }
             "clip_payload" -> validateClipPayload(body)
-            "error" -> body.requireKeys("code", "retryable", optional = setOf("failed_type", "retry_after_ms"))
+            "error" -> validateError(body, v2 = false)
             "ping" -> body.requireKeys("sent_at_ms")
             "pong" -> body.requireKeys("ping_sent_at_ms", "sent_at_ms")
         }
@@ -104,16 +131,23 @@ object ProtocolJson {
                 )
                 validateUuid(body.string("device_id"))
                 body.string("platform").requireOneOf("windows", "android")
+                validateClientVersion(body.string("client_version"))
                 body.long("trust_epoch").requireAtLeast(1)
                 validateCapabilities(body.array("capabilities"))
                 validateSyncState(body.objectValue("known_vector"))
             }
-            "challenge" -> body.requireKeys(
-                "algorithm", "nonce", "challenger_device_id", "responder_device_id", "trust_epoch", "expires_at_ms",
-            )
-            "auth" -> body.requireKeys(
-                "algorithm", "challenge_request_id", "responder_device_id", "trust_epoch", "proof",
-            )
+            "challenge" -> {
+                body.requireKeys(
+                    "algorithm", "nonce", "challenger_device_id", "responder_device_id", "trust_epoch", "expires_at_ms",
+                )
+                validateChallenge(body)
+            }
+            "auth" -> {
+                body.requireKeys(
+                    "algorithm", "challenge_request_id", "responder_device_id", "trust_epoch", "proof",
+                )
+                validateAuth(body)
+            }
             "known_vector" -> validateSyncState(body)
             "want_ranges" -> validateOriginRanges(body, "requests")
             "ack_ranges" -> validateOriginRanges(body, "acks")
@@ -121,17 +155,18 @@ object ProtocolJson {
             "clip_fetch" -> {
                 body.requireKeys("event_ids")
                 val ids = body.array("event_ids").map { it.stringValue() }
-                requireProtocol(ids.isNotEmpty() && ids.size <= 128 && ids.distinct().size == ids.size)
+                requireProtocol(
+                    ids.isNotEmpty() &&
+                        ids.size <= ProtocolLimits.MAX_FETCH_EVENT_IDS &&
+                        ids.distinct().size == ids.size,
+                )
                 ids.forEach(::validateUuid)
             }
             "clip_payload" -> validateClipPayload(body)
             "clip_payload_begin" -> validatePayloadBegin(body)
             "clip_payload_chunk" -> validatePayloadChunk(body)
             "clip_payload_end" -> validatePayloadEnd(body)
-            "error" -> {
-                body.requireKeys("code", "retryable", optional = setOf("failed_type", "retry_after_ms"))
-                requireProtocol(body.string("code") in ProtocolErrorCodes.ALL_V2)
-            }
+            "error" -> validateError(body, v2 = true)
             "ping" -> body.requireKeys("sent_at_ms")
             "pong" -> body.requireKeys("ping_sent_at_ms", "sent_at_ms")
         }
@@ -150,7 +185,7 @@ object ProtocolJson {
     private fun validateClipHeadersV2(body: kotlinx.serialization.json.JsonObject) {
         body.requireKeys("clips")
         val clips = body.array("clips")
-        requireProtocol(clips.isNotEmpty() && clips.size <= 256)
+        requireProtocol(clips.isNotEmpty() && clips.size <= ProtocolLimits.MAX_ANNOUNCE_CLIPS)
         val eventIds = mutableSetOf<String>()
         val originSequences = mutableSetOf<Pair<String, Long>>()
         clips.forEach { element ->
@@ -172,6 +207,7 @@ object ProtocolJson {
                             "content_hash", "utf8_bytes", "created_at_ms",
                             optional = setOf("source_app", "expires_at_ms"),
                         )
+                        requireProtocol(isLowercaseSha256(clip.string("content_hash")))
                     } else {
                         requireProtocol(kind == "image")
                         clip.requireKeys(
@@ -181,7 +217,7 @@ object ProtocolJson {
                             optional = setOf("source_app", "expires_at_ms"),
                         )
                         requireProtocol(clip.string("mime_type") in setOf("image/png", "image/jpeg"))
-                        requireProtocol(clip.string("content_hash").length == 64)
+                        requireProtocol(isLowercaseSha256(clip.string("content_hash")))
                         val encoded = clip.long("encoded_bytes")
                         requireProtocol(encoded in 1..ProtocolLimits.MAX_ENCODED_IMAGE_BYTES)
                         val width = clip.long("pixel_width")
@@ -213,6 +249,7 @@ object ProtocolJson {
         requireProtocol(chunkCount in 1..ProtocolLimits.MAX_CHUNK_COUNT)
         requireProtocol(encodedBytes in 1..ProtocolLimits.MAX_ENCODED_IMAGE_BYTES)
         requireProtocol(body.string("mime_type") in setOf("image/png", "image/jpeg"))
+        requireProtocol(isLowercaseSha256(body.string("content_hash")))
         val minChunks =
             (encodedBytes + ProtocolLimits.MAX_CHUNK_BYTES - 1) / ProtocolLimits.MAX_CHUNK_BYTES
         requireProtocol(chunkCount >= minChunks)
@@ -242,13 +279,13 @@ object ProtocolJson {
         body.requireKeys("transfer_id", "event_id", "content_hash")
         validateUuid(body.string("transfer_id"))
         validateUuid(body.string("event_id"))
-        requireProtocol(body.string("content_hash").length == 64)
+        requireProtocol(isLowercaseSha256(body.string("content_hash")))
     }
 
     private fun validateSyncState(body: kotlinx.serialization.json.JsonObject) {
         body.requireKeys("origins")
         val origins = body.array("origins")
-        requireProtocol(origins.size <= 128)
+        requireProtocol(origins.size <= ProtocolLimits.MAX_ORIGINS_PER_MESSAGE)
         val ids = mutableSetOf<String>()
         origins.forEach { element ->
             val origin = element.jsonObject
@@ -265,7 +302,7 @@ object ProtocolJson {
     private fun validateOriginRanges(body: kotlinx.serialization.json.JsonObject, key: String) {
         body.requireKeys(key)
         val requests = body.array(key)
-        requireProtocol(requests.isNotEmpty() && requests.size <= 128)
+        requireProtocol(requests.isNotEmpty() && requests.size <= ProtocolLimits.MAX_ORIGINS_PER_MESSAGE)
         val originIds = mutableSetOf<String>()
         requests.forEach { element ->
             val request = element.jsonObject
@@ -278,7 +315,7 @@ object ProtocolJson {
     }
 
     private fun validateRanges(ranges: JsonArray, contiguousCursor: Long? = null) {
-        requireProtocol(ranges.isNotEmpty() && ranges.size <= 256)
+        requireProtocol(ranges.isNotEmpty() && ranges.size <= ProtocolLimits.MAX_RANGES_PER_ORIGIN)
         var previousEnd: Long? = null
         ranges.forEach { element ->
             val range = element.jsonObject
@@ -295,17 +332,39 @@ object ProtocolJson {
     private fun validateClipHeaders(body: kotlinx.serialization.json.JsonObject) {
         body.requireKeys("clips")
         val clips = body.array("clips")
-        requireProtocol(clips.isNotEmpty() && clips.size <= 256)
+        requireProtocol(clips.isNotEmpty() && clips.size <= ProtocolLimits.MAX_ANNOUNCE_CLIPS)
+        val eventIds = mutableSetOf<String>()
+        val originSequences = mutableSetOf<Pair<String, Long>>()
         clips.forEach { element ->
             val clip = element.jsonObject
+            val eventId = clip.string("event_id")
+            val originId = clip.string("origin_device_id")
+            val originSequence = clip.long("origin_seq")
+            validateUuid(eventId)
+            validateUuid(originId)
+            requireProtocol(eventIds.add(eventId))
+            requireProtocol(originSequences.add(originId to originSequence))
+            requireProtocol(originSequence >= 1)
             when (clip.string("availability")) {
-                "available" -> clip.requireKeys(
-                    "event_id", "origin_device_id", "origin_seq", "availability", "kind", "content_hash", "utf8_bytes", "created_at_ms",
-                    optional = setOf("source_app", "expires_at_ms"),
-                )
-                "unavailable" -> clip.requireKeys(
-                    "event_id", "origin_device_id", "origin_seq", "availability", "reason",
-                )
+                "available" -> {
+                    clip.requireKeys(
+                        "event_id", "origin_device_id", "origin_seq", "availability", "kind",
+                        "content_hash", "utf8_bytes", "created_at_ms",
+                        optional = setOf("source_app", "expires_at_ms"),
+                    )
+                    requireProtocol(clip.string("kind") == "text")
+                    requireProtocol(isLowercaseSha256(clip.string("content_hash")))
+                    val utf8 = clip.long("utf8_bytes")
+                    requireProtocol(utf8 in 1..ProtocolLimits.MAX_CONTENT_UTF8_BYTES)
+                    requireProtocol(clip.long("created_at_ms") >= 0)
+                    validateOptionalMetadata(clip)
+                }
+                "unavailable" -> {
+                    clip.requireKeys(
+                        "event_id", "origin_device_id", "origin_seq", "availability", "reason",
+                    )
+                    requireProtocol(clip.string("reason") in ClipUnavailableReasons.ALL)
+                }
                 else -> throw SerializationException("Invalid clip availability.")
             }
         }
@@ -314,9 +373,10 @@ object ProtocolJson {
     private fun validateClipPayload(body: kotlinx.serialization.json.JsonObject) {
         body.requireKeys("clips")
         val clips = body.array("clips")
-        requireProtocol(clips.isNotEmpty() && clips.size <= 32)
+        requireProtocol(clips.isNotEmpty() && clips.size <= ProtocolLimits.MAX_PAYLOAD_CLIPS)
         val eventIds = mutableSetOf<String>()
         val originSequences = mutableSetOf<Pair<String, Long>>()
+        var totalContentBytes = 0
         clips.forEach { element ->
             val clip = element.jsonObject
             clip.requireKeys(
@@ -334,13 +394,14 @@ object ProtocolJson {
             requireProtocol(clip.string("kind") == "text")
             val content = clip.string("content")
             val utf8Bytes = content.toByteArray(Charsets.UTF_8)
-            requireProtocol(utf8Bytes.isNotEmpty() && utf8Bytes.size <= MAX_PAYLOAD_BYTES)
+            requireProtocol(utf8Bytes.isNotEmpty() && utf8Bytes.size <= ProtocolLimits.MAX_CONTENT_UTF8_BYTES)
             requireProtocol(clip.long("utf8_bytes") == utf8Bytes.size.toLong())
+            requireProtocol(isLowercaseSha256(clip.string("content_hash")))
             requireProtocol(clip.string("content_hash") == sha256(utf8Bytes))
-            val createdAt = clip.long("created_at_ms")
-            clip["expires_at_ms"]?.jsonPrimitive?.longOrNullStrict()?.let { expiresAt ->
-                requireProtocol(expiresAt > createdAt)
-            }
+            requireProtocol(clip.long("created_at_ms") >= 0)
+            validateOptionalMetadata(clip)
+            totalContentBytes += utf8Bytes.size
+            requireProtocol(totalContentBytes <= ProtocolLimits.MAX_PAYLOAD_BATCH_CONTENT_BYTES)
         }
     }
 
@@ -393,65 +454,81 @@ object ProtocolJson {
         requireProtocol(this >= minimum)
     }
 
+    private fun validateChallenge(body: kotlinx.serialization.json.JsonObject) {
+        requireProtocol(body.string("algorithm") == "hmac-sha256")
+        requireProtocol(isUnpaddedBase64Url256(body.string("nonce")))
+        validateUuid(body.string("challenger_device_id"))
+        validateUuid(body.string("responder_device_id"))
+        body.long("trust_epoch").requireAtLeast(1)
+        requireProtocol(body.long("expires_at_ms") >= 0)
+    }
+
+    private fun validateAuth(body: kotlinx.serialization.json.JsonObject) {
+        requireProtocol(body.string("algorithm") == "hmac-sha256")
+        validateUuid(body.string("challenge_request_id"))
+        validateUuid(body.string("responder_device_id"))
+        body.long("trust_epoch").requireAtLeast(1)
+        requireProtocol(isUnpaddedBase64Url256(body.string("proof")))
+    }
+
+    private fun validateError(body: kotlinx.serialization.json.JsonObject, v2: Boolean) {
+        body.requireKeys("code", "retryable", optional = setOf("failed_type", "retry_after_ms"))
+        val codes = if (v2) ProtocolErrorCodes.ALL_V2 else ProtocolErrorCodes.ALL
+        requireProtocol(body.string("code") in codes)
+        body["failed_type"]?.let { failed ->
+            val types = if (v2) ProtocolMessageTypes.ALL_V2 else ProtocolMessageTypes.ALL
+            requireProtocol(failed.stringValue() in types)
+        }
+        body["retry_after_ms"]?.let {
+            val retry = it.jsonPrimitive.longOrNullStrict()
+                ?: throw ProtocolParseException(ProtocolErrorCodes.SCHEMA_VIOLATION, "retry_after_ms")
+            requireProtocol(retry in 1..ProtocolLimits.MAX_RETRY_AFTER_MS)
+        }
+    }
+
+    private fun validateClientVersion(value: String) {
+        requireProtocol(value.length <= ProtocolLimits.MAX_CLIENT_VERSION_LENGTH)
+        requireProtocol(CLIENT_VERSION.matches(value))
+    }
+
+    private fun validateOptionalMetadata(clip: kotlinx.serialization.json.JsonObject) {
+        clip["source_app"]?.let { source ->
+            val value = source.stringValue()
+            requireProtocol(value.length in 1..ProtocolLimits.MAX_SOURCE_APP_LENGTH)
+        }
+        val createdAt = clip["created_at_ms"]?.jsonPrimitive?.longOrNullStrict()
+        clip["expires_at_ms"]?.jsonPrimitive?.longOrNullStrict()?.let { expiresAt ->
+            requireProtocol(expiresAt >= 0)
+            if (createdAt != null) {
+                requireProtocol(expiresAt > createdAt)
+            }
+        }
+    }
+
+    private fun isLowercaseSha256(value: String): Boolean = SHA256_HEX.matches(value)
+
+    private fun isUnpaddedBase64Url256(value: String): Boolean {
+        if (!BASE64_URL_256.matches(value)) {
+            return false
+        }
+        return runCatching { java.util.Base64.getUrlDecoder().decode(value).size == 32 }.getOrDefault(false)
+    }
+
     private fun requireProtocol(condition: Boolean) {
-        if (!condition) throw SerializationException("Protocol schema constraint failed.")
+        if (!condition) {
+            throw ProtocolParseException(ProtocolErrorCodes.SCHEMA_VIOLATION, "Protocol schema constraint failed.")
+        }
     }
 
     private fun sha256(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256")
         .digest(bytes)
         .joinToString(separator = "") { byte -> "%02x".format(byte) }
 
-    private fun rejectExcessiveDepth(source: String) {
-        var depth = 0
-        var inString = false
-        var escaped = false
-        for (character in source) {
-            if (inString) {
-                when {
-                    escaped -> escaped = false
-                    character == '\\' -> escaped = true
-                    character == '"' -> inString = false
-                }
-                continue
-            }
-            when (character) {
-                '"' -> inString = true
-                '{', '[' -> {
-                    depth += 1
-                    if (depth > MAX_DEPTH) {
-                        throw SerializationException("Protocol envelope exceeds maximum depth.")
-                    }
-                }
-                '}', ']' -> depth -= 1
-            }
-        }
-    }
-
-    private const val PROTOCOL_VERSION = 1
-    private const val PROTOCOL_VERSION_V2 = 2
-    private const val MAX_DEPTH = 16
-    private const val MAX_PAYLOAD_BYTES = 1_048_576
     private val ZERO_UUID = UUID(0L, 0L)
     private val UUID_PATTERN = Regex(
         "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
     )
-    private val MESSAGE_TYPES = setOf(
-        "hello",
-        "challenge",
-        "auth",
-        "known_vector",
-        "want_ranges",
-        "clip_announce",
-        "clip_fetch",
-        "clip_payload",
-        "ack_ranges",
-        "error",
-        "ping",
-        "pong",
-    )
-    private val MESSAGE_TYPES_V2 = MESSAGE_TYPES + setOf(
-        "clip_payload_begin",
-        "clip_payload_chunk",
-        "clip_payload_end",
-    )
+    private val SHA256_HEX = Regex("^[0-9a-f]{64}$")
+    private val BASE64_URL_256 = Regex("^[A-Za-z0-9_-]{43}$")
+    private val CLIENT_VERSION = Regex("^[0-9A-Za-z][0-9A-Za-z._+-]{0,63}$")
 }

@@ -1,5 +1,6 @@
 package com.clipsync.android.pairing
 
+import com.clipsync.android.sync.PinMismatchException
 import java.io.IOException
 import java.net.ConnectException
 import java.net.NoRouteToHostException
@@ -99,7 +100,7 @@ class PairingConfirmClient(
             }
         } catch (exception: IOException) {
             when {
-                isPinRejection(exception) -> HostOutcome.PinRejected
+                isPinRejection(exception) || isTlsFailure(exception) -> HostOutcome.PinRejected
                 isConnectivityFailure(exception) -> HostOutcome.NotReachable
                 else -> HostOutcome.Answered(
                     PairingConfirmOutcome.ProtocolViolation("transport failed: ${exception.javaClass.simpleName}"),
@@ -195,7 +196,18 @@ class PairingConfirmClient(
     private fun isPinRejection(exception: Throwable): Boolean {
         var current: Throwable? = exception
         while (current != null) {
-            if (current is CertificateException && current.message == PIN_MISMATCH_MARKER) {
+            if (current is PinMismatchException) {
+                return true
+            }
+            current = current.cause
+        }
+        return false
+    }
+
+    private fun isTlsFailure(exception: Throwable): Boolean {
+        var current: Throwable? = exception
+        while (current != null) {
+            if (current is SSLException || current is CertificateException) {
                 return true
             }
             current = current.cause
@@ -220,11 +232,11 @@ class PairingConfirmClient(
             throw CertificateException("client certificates are not used")
 
         override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-            val leaf = chain.firstOrNull() ?: throw CertificateException(PIN_MISMATCH_MARKER)
+            val leaf = chain.firstOrNull() ?: throw PinMismatchException()
             val digest = MessageDigest.getInstance("SHA-256").digest(leaf.encoded)
             val fingerprint = digest.joinToString(separator = "") { byte -> "%02x".format(byte) }
             if (fingerprint != expected) {
-                throw CertificateException(PIN_MISMATCH_MARKER)
+                throw PinMismatchException()
             }
         }
 
@@ -232,7 +244,6 @@ class PairingConfirmClient(
     }
 
     private companion object {
-        const val PIN_MISMATCH_MARKER = "clipsync.pin.mismatch"
         private val COMPACT_ERROR_JSON = Json { ignoreUnknownKeys = false }
     }
 }

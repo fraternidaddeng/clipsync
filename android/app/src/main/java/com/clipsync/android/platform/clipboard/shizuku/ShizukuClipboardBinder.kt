@@ -3,6 +3,8 @@ package com.clipsync.android.platform.clipboard.shizuku
 import android.os.Binder
 import android.os.IBinder
 import android.os.Parcel
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * Minimal UserService binder surface: read text, write text, add/remove
@@ -45,7 +47,9 @@ internal class ShizukuClipboardSessionProxy(
         val reply = Parcel.obtain()
         return try {
             data.writeInterfaceToken(ShizukuClipboardBinderContract.DESCRIPTOR)
-            remote.transact(ShizukuClipboardBinderContract.TRANSACTION_READ, data, reply, 0)
+            if (!transactTimed(ShizukuClipboardBinderContract.TRANSACTION_READ, data, reply)) {
+                return SessionRead.Failed(ShizukuErrorCodes.USERSERVICE_DEAD)
+            }
             reply.readException()
             when (reply.readInt()) {
                 ShizukuClipboardBinderContract.READ_TEXT -> SessionRead.Text(reply.readString().orEmpty())
@@ -68,7 +72,9 @@ internal class ShizukuClipboardSessionProxy(
         return try {
             data.writeInterfaceToken(ShizukuClipboardBinderContract.DESCRIPTOR)
             data.writeString(text)
-            remote.transact(ShizukuClipboardBinderContract.TRANSACTION_WRITE, data, reply, 0)
+            if (!transactTimed(ShizukuClipboardBinderContract.TRANSACTION_WRITE, data, reply)) {
+                return SessionWrite.Failed(ShizukuErrorCodes.USERSERVICE_DEAD)
+            }
             reply.readException()
             if (reply.readInt() == ShizukuClipboardBinderContract.WRITE_OK) {
                 SessionWrite.Success
@@ -98,7 +104,10 @@ internal class ShizukuClipboardSessionProxy(
         return try {
             data.writeInterfaceToken(ShizukuClipboardBinderContract.DESCRIPTOR)
             data.writeStrongBinder(callback)
-            remote.transact(ShizukuClipboardBinderContract.TRANSACTION_ADD_LISTENER, data, reply, 0)
+            if (!transactTimed(ShizukuClipboardBinderContract.TRANSACTION_ADD_LISTENER, data, reply)) {
+                callbackBinder = previous
+                return false
+            }
             reply.readException()
             val ok = reply.readInt() == 1
             callbackBinder = if (ok) callback else previous
@@ -117,7 +126,7 @@ internal class ShizukuClipboardSessionProxy(
         val reply = Parcel.obtain()
         try {
             data.writeInterfaceToken(ShizukuClipboardBinderContract.DESCRIPTOR)
-            remote.transact(ShizukuClipboardBinderContract.TRANSACTION_REMOVE_LISTENER, data, reply, 0)
+            transactTimed(ShizukuClipboardBinderContract.TRANSACTION_REMOVE_LISTENER, data, reply)
             reply.readException()
         } catch (_: Exception) {
             // Best-effort unregister.
@@ -136,7 +145,9 @@ internal class ShizukuClipboardSessionProxy(
             if (!remote.pingBinder()) {
                 return ShizukuErrorCodes.USERSERVICE_DEAD
             }
-            remote.transact(ShizukuClipboardBinderContract.TRANSACTION_PING, data, reply, 0)
+            if (!transactTimed(ShizukuClipboardBinderContract.TRANSACTION_PING, data, reply)) {
+                return ShizukuErrorCodes.USERSERVICE_DEAD
+            }
             reply.readException()
             when (reply.readInt()) {
                 ShizukuClipboardBinderContract.PING_OK -> null
@@ -155,6 +166,25 @@ internal class ShizukuClipboardSessionProxy(
     }
 
     fun asBinder(): IBinder = remote
+
+    private fun transactTimed(code: Int, data: Parcel, reply: Parcel): Boolean {
+        val task = transactExecutor.submit<Boolean> {
+            remote.transact(code, data, reply, 0)
+        }
+        return try {
+            task.get(TRANSACT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+        } catch (_: Exception) {
+            task.cancel(true)
+            false
+        }
+    }
+
+    private companion object {
+        const val TRANSACT_TIMEOUT_MS = 3_000L
+        val transactExecutor = Executors.newCachedThreadPool { runnable ->
+            Thread(runnable, "clipsync-shizuku-transact").apply { isDaemon = true }
+        }
+    }
 }
 
 internal class ChangeCallbackBinder(

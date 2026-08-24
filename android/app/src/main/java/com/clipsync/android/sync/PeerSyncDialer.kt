@@ -130,7 +130,7 @@ class OkHttpSyncConnector(
             webSocket.cancel()
             shutdownClient(client)
             when {
-                isPinRejection(exception) -> HostOutcome.PinRejected
+                isPinRejection(exception) || isTlsFailure(exception) -> HostOutcome.PinRejected
                 isConnectivityFailure(exception) -> HostOutcome.NotReachable
                 else -> HostOutcome.NotReachable
             }
@@ -162,7 +162,18 @@ class OkHttpSyncConnector(
     private fun isPinRejection(exception: Throwable): Boolean {
         var current: Throwable? = exception
         while (current != null) {
-            if (current is CertificateException && current.message == PIN_MISMATCH_MARKER) {
+            if (current is PinMismatchException) {
+                return true
+            }
+            current = current.cause
+        }
+        return false
+    }
+
+    private fun isTlsFailure(exception: Throwable): Boolean {
+        var current: Throwable? = exception
+        while (current != null) {
+            if (current is SSLException || current is CertificateException) {
                 return true
             }
             current = current.cause
@@ -194,21 +205,21 @@ class OkHttpSyncConnector(
             throw CertificateException("client certificates are not used")
 
         override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-            val leaf = chain.firstOrNull() ?: throw CertificateException(PIN_MISMATCH_MARKER)
+            val leaf = chain.firstOrNull() ?: throw PinMismatchException()
             val digest = MessageDigest.getInstance("SHA-256").digest(leaf.encoded)
             val fingerprint = digest.joinToString(separator = "") { byte -> "%02x".format(byte) }
             if (fingerprint != expected) {
-                throw CertificateException(PIN_MISMATCH_MARKER)
+                throw PinMismatchException()
             }
         }
 
         override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
     }
 
-    private companion object {
-        const val PIN_MISMATCH_MARKER = "clipsync.pin.mismatch"
-    }
 }
+
+/** Dedicated pin-failure type so TLS wrappers cannot hide a certificate mismatch. */
+class PinMismatchException : CertificateException("certificate pin mismatch")
 
 internal class OkHttpSyncTransport(
     private val webSocket: WebSocket,

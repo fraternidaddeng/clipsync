@@ -18,6 +18,9 @@ const val MAX_CLIP_UTF8_BYTES = 1_048_576
 const val LOCAL_DEDUP_WINDOW_MS = 2_000L
 const val MAX_SEARCH_LIMIT = 2_000
 
+/** SQLite host-parameter cap is 999 on Android 10–13; stay well under it. */
+const val SQLITE_SAFE_IN_CLAUSE = 900
+
 object TerminalReasons {
     const val LOCAL_ONLY = "local_only"
     const val DELETED = "deleted"

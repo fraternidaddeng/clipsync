@@ -1,82 +1,71 @@
 # 剪剪相传 · Clip It Forward (code name: ClipSync)
 
-剪剪相传（English: Clip It Forward; code name ClipSync — all namespaces, packages, and artifact file names keep the code name) is a private, direct peer-to-peer clipboard synchronization project for Windows and Android. The repository has completed **Stage 3** (Windows peer endpoint, QR pairing, and device trust). **Stage 4** Android companion is implemented on `feature/stage-4`: OkHttp WebSocket sync, Room history UI, share target, Quick Settings tile, and inbound notifications. End-to-end pairing/sync is pending wave 3. Physical Android ROM coverage remains `NOT_TESTED`.
+剪剪相传（English: Clip It Forward; code name ClipSync — namespaces, packages, and artifact names keep the code name）is a private, direct peer-to-peer clipboard sync project for Windows and Android. There is no account service, cloud database, public relay, file transfer, telemetry, or clipboard-content logging.
 
-No account service, cloud database, public relay, file transfer, telemetry, or clipboard-content logging is included. Android UI ships English (`values`) plus Simplified Chinese (`values-zh-rCN`); Windows UI copy is Simplified Chinese in `ClipSync.App/Strings.cs`.
+The repository has completed Stages 0–8 (text sync, pairing, capture modes, signed 0.2.0) and Stage 9 image protocol v2 (`/v2/peer/sync`, `image_clip_v2`). Progress and device evidence live in [`docs/dod-status.md`](docs/dod-status.md) and [`docs/device-validation-matrix.md`](docs/device-validation-matrix.md). `plan.md` is the historical plan, not the live tracker.
+
+Android UI ships English (`values`) plus Simplified Chinese (`values-zh-rCN`). Windows UI copy is Simplified Chinese in `ClipSync.App/Strings.cs`.
 
 ## Prerequisites
 
 - Windows 10 22H2 or Windows 11
 - Git
-- .NET 8 SDK (the repository is pinned by `global.json`)
+- .NET 8 SDK (pinned by `global.json` to 8.0.419)
 - JDK 17
 - Android Studio with Android SDK Platform 35 and Platform Tools
-- PowerShell 7 is recommended; Windows PowerShell 5.1 is also supported by the bootstrap scripts
+- PowerShell 7 is recommended; Windows PowerShell 5.1 is also supported
+- Protocol validation: `pip install -r requirements.txt` (`jsonschema`, `referencing`)
 
-The development machine used for the recorded validation has a repository-local .NET 8 SDK, JDK 17, and a repository-local Android SDK. These tool directories are ignored and are not project dependencies. Android JVM tests, APK assembly, and an API 35 emulator launch were verified; physical Android ROM coverage remains explicitly `NOT_TESTED`.
+Release APK signing requires `CLIPSYNC_KEYSTORE` and `CLIPSYNC_KEYSTORE_PASSWORD`. Missing credentials fail `assembleRelease` instead of emitting a debug-signed “release” APK.
 
 ## Build and test
 
-Windows:
-
 ```powershell
 pwsh .\scripts\build-windows.ps1
-```
-
-Android:
-
-```powershell
 pwsh .\scripts\build-android.ps1
-```
-
-Protocol fixtures:
-
-```powershell
 pwsh .\scripts\validate-protocol.ps1
 ```
 
-The Windows app starts in the notification area without opening its main window. It captures pure text locally, persists it in SQLite, and exposes history/search/delete/clear and pause/private/retention/source-block settings. Pairing and networking intentionally begin in Stage 2; the Android app remains the Stage 0 capability shell.
+The Windows app starts in the notification area. It captures text (and, when enabled, images), persists them in SQLite, and exposes history/search/delete/clear plus pause/private/retention settings. Pairing is QR + TLS certificate pin; Android is always the dialer and Windows is always the listener.
 
-Windows Stage 1 acceptance checks:
+## Protocol
 
-```powershell
-pwsh .\scripts\run-windows-stage1-smoke.ps1
-pwsh .\scripts\run-windows-stage1-stress.ps1 -Count 100
-```
+- [`docs/protocol-v1.md`](docs/protocol-v1.md) — normative text sync (`/v1/peer/sync`)
+- [`docs/protocol-v2.md`](docs/protocol-v2.md) — image clips (`/v2/peer/sync`)
+- [`docs/adr/0003-clipboard-image-v2.md`](docs/adr/0003-clipboard-image-v2.md) — accepted image design
+- Shared schemas and fixtures: `protocol/v1/`, `protocol/v2/`
 
 ## Android device inspection
-
-The bootstrap script is read-only by default. It lists adb devices, reports basic platform information, and prints grant/revoke commands for review. It never grants `READ_LOGS` automatically.
 
 ```powershell
 pwsh .\scripts\android-bootstrap.ps1 -PackageName com.clipsync.android
 ```
 
+The bootstrap script is read-only by default. It never grants `READ_LOGS` automatically.
+
 ## Repository layout
 
-- `docs/`: frozen product, security, protocol, Android capability, ADR, and verification records.
-- `protocol/v1/`: JSON Schema and shared cross-language fixtures.
-- `windows/`: .NET 8 WPF shell and xUnit tests.
-- `android/`: Kotlin/Compose shell and JVM unit tests.
-- `scripts/`: repeatable build, validation, and explicit adb inspection commands.
+- `docs/`: product, security, protocol, ADRs, and verification records
+- `protocol/v1/` and `protocol/v2/`: JSON Schema and shared fixtures
+- `windows/`: .NET 8 WPF shell, peer endpoint, and xUnit tests
+- `android/`: Kotlin/Compose app, Room storage, WebSocket sync, and JVM tests
+- `scripts/`: repeatable build, validation, and adb inspection commands
 
 ## Branch policy
 
-- `main`: releasable, reviewed stages only.
-- `develop`: integration branch for the current stage.
-- `feature/<short-name>`: scoped work branches merged into `develop`.
-
-Stage completion requires its tests and acceptance checks to pass before merging `develop` into `main`. This repository was initialized on `main`; branches are created when the first commit exists so they point at an auditable baseline.
+- `main`: releasable, reviewed stages only
+- `develop`: integration branch for the current stage
+- `feature/<short-name>`: scoped work branches merged into `develop`
 
 ## Privacy and security baseline
 
-- Only pure text is in scope for v1.
-- Clipboard text must never enter ordinary logs or telemetry.
-- Android special capabilities require visible, revocable user action.
-- Network reachability is required; there is no NAT traversal service or public relay.
-- TLS certificate pinning and per-pair secrets are mandatory in the pairing/network stages.
+- Clipboard bodies, blobs, nonces, proofs, pair secrets, tokens, and keys must never enter ordinary logs
+- Android special capabilities require visible, revocable user action
+- Network reachability is required; there is no NAT traversal service or public relay
+- TLS certificate pinning and per-pair secrets are mandatory
+- Image sync is explicit and off by default
 
-See [product scope](docs/product-scope.md), [threat model](docs/threat-model.md), [protocol v1](docs/protocol-v1.md), and the [Stage 1 change log](docs/stage-1-change-log.md) for the normative boundaries and recorded validation.
+See [product scope](docs/product-scope.md), [threat model](docs/threat-model.md), and the protocol docs above.
 
 ## License
 

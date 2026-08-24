@@ -101,7 +101,8 @@ public sealed class ClipboardImportTests
         Assert.Equal(new ClipboardImportResult(1, 0), result);
 
         Assert.Empty(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
-        Assert.Empty(await store.GetKnownVectorAsync());
+        var vector = await store.GetKnownVectorAsync();
+        Assert.True(vector["foreign-device"].Contains(7));
         Assert.Empty(await store.GetPeerCursorsAsync(PhoneDeviceId));
         Assert.Equal(
             "imported-local-only",

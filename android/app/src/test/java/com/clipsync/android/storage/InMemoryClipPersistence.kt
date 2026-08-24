@@ -125,9 +125,14 @@ internal class InMemoryClipPersistence : ClipPersistence {
 
         override suspend fun findClipByEventId(eventId: String): ClipEntity? = clips[eventId]
 
-        override suspend fun searchVisible(query: String, limit: Int): List<ClipEntity> =
-            clips.values
+        override suspend fun findClipsByEventIds(eventIds: List<String>): List<ClipEntity> =
+            eventIds.mapNotNull { clips[it] }
+
+        override suspend fun searchVisible(query: String, limit: Int, offset: Int): List<ClipEntity> {
+            val nowMs = System.currentTimeMillis()
+            return clips.values
                 .filter { it.deletedAt == null }
+                .filter { it.expiresAt == null || it.expiresAt > nowMs }
                 .filter {
                     query.isEmpty() ||
                         it.content?.contains(query, ignoreCase = true) == true ||
@@ -141,7 +146,9 @@ internal class InMemoryClipPersistence : ClipPersistence {
                         .thenBy { it.originDeviceId }
                         .thenBy { it.eventId },
                 )
+                .drop(offset)
                 .take(limit)
+        }
 
         override suspend fun softDelete(eventId: String, nowMs: Long): Boolean {
             val existing = clips[eventId] ?: return false
@@ -162,7 +169,14 @@ internal class InMemoryClipPersistence : ClipPersistence {
         override suspend fun softDeleteAllVisible(nowMs: Long): List<String> {
             val ids = clips.values.filter { it.deletedAt == null }.map { it.eventId }
             for (id in ids) {
-                softDelete(id, nowMs)
+                val existing = clips[id] ?: continue
+                clips[id] = existing.copy(
+                    content = if (existing.kind == CLIP_KIND_IMAGE) null else "",
+                    contentHash = "",
+                    sourceApp = null,
+                    deletedAt = nowMs,
+                    terminalReason = TerminalReasons.DELETED,
+                )
             }
             return ids
         }
@@ -194,14 +208,11 @@ internal class InMemoryClipPersistence : ClipPersistence {
 
         override suspend fun findLiveContentByHash(contentHash: String): String? =
             clips.values.firstOrNull {
-                it.contentHash == contentHash && it.deletedAt == null && it.kind == CLIP_KIND_TEXT
+                it.contentHash == contentHash && it.deletedAt == null
             }?.content
 
         override suspend fun findLiveImageByHash(contentHash: String): Boolean =
-            mediaBlobs[contentHash]?.state == CLIP_MEDIA_READY &&
-                clips.values.any {
-                    it.contentHash == contentHash && it.deletedAt == null && it.kind == CLIP_KIND_IMAGE
-                }
+            mediaBlobs[contentHash]?.state == CLIP_MEDIA_READY
 
         override suspend fun upsertMediaBlob(entity: MediaBlobEntity) {
             mediaBlobs[entity.contentHash] = entity
@@ -270,8 +281,13 @@ internal class InMemoryClipPersistence : ClipPersistence {
             receiveStates.mapValues { it.value.toState() }
 
         override suspend fun insertOutbox(peerId: String, eventId: String) {
-            val duplicate = outbox.values.any { it.peerId == peerId && it.eventId == eventId }
-            if (duplicate) {
+            val existing = outbox.values.firstOrNull { it.peerId == peerId && it.eventId == eventId }
+            if (existing != null) {
+                outbox[existing.id] = existing.copy(
+                    state = OUTBOX_PENDING,
+                    attempts = 0,
+                    nextAttemptAt = 0,
+                )
                 return
             }
             val id = nextOutboxId++
@@ -302,9 +318,14 @@ internal class InMemoryClipPersistence : ClipPersistence {
             originDeviceId: String,
             startSeq: Long,
             endSeq: Long,
+            dropTerminal: Boolean,
         ) {
             val eventIds = clips.values
-                .filter { it.originDeviceId == originDeviceId && it.originSeq in startSeq..endSeq }
+                .filter {
+                    it.originDeviceId == originDeviceId &&
+                        it.originSeq in startSeq..endSeq &&
+                        (dropTerminal || (it.deletedAt == null && it.terminalReason == null))
+                }
                 .map { it.eventId }
                 .toSet()
             outbox.entries.removeAll { it.value.peerId == peerId && it.value.eventId in eventIds }
@@ -352,8 +373,9 @@ internal class InMemoryClipPersistence : ClipPersistence {
             val victims =
                 clips.values.filter { row ->
                     row.deletedAt == null &&
-                        row.createdAt < cutoffMs &&
-                        row.eventId !in pendingIds
+                        row.eventId !in pendingIds &&
+                        (row.createdAt < cutoffMs ||
+                            (row.expiresAt != null && row.expiresAt <= System.currentTimeMillis()))
                 }
             for (row in victims) {
                 removeClip(row)
@@ -396,7 +418,6 @@ internal class InMemoryClipPersistence : ClipPersistence {
         private fun removeClip(row: ClipEntity) {
             clips.remove(row.eventId)
             originIndex.remove(row.originDeviceId to row.originSeq)
-            clipMedia.remove(row.eventId)
         }
     }
 

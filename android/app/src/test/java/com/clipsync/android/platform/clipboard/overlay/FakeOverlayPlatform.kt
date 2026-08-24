@@ -15,6 +15,7 @@ internal class FakeOverlayPlatform(
     var touchableRequired: Boolean = false
     var clip: OverlayClipRead = OverlayClipRead.Empty
     var throwOnRead: Boolean = false
+    var throwOnAttach: Boolean = false
     var readResults: ArrayDeque<OverlayClipRead> = ArrayDeque()
     var readEntered: CountDownLatch? = null
     var blockRead: CountDownLatch? = null
@@ -35,6 +36,9 @@ internal class FakeOverlayPlatform(
     override fun requiresTouchableWindowToRead(): Boolean = touchableRequired
 
     override fun attachOrUpdateWindow(spec: OverlayWindowSpec) {
+        if (throwOnAttach) {
+            throw RuntimeException("overlay-attach-boom")
+        }
         synchronized(eventLog) {
             window = spec
             windowHistory += spec

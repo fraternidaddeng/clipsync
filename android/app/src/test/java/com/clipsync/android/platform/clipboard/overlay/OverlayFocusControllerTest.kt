@@ -140,6 +140,21 @@ class OverlayFocusControllerTest {
     }
 
     @Test
+    fun `attach throw is caught and does not crash the process`() {
+        val platform = FakeOverlayPlatform()
+        platform.throwOnAttach = true
+        val controller = OverlayFocusController(platform)
+
+        val result = controller.readText()
+
+        assertEquals(
+            ClipboardReadResult.Failure(OverlayFocusController.ERROR_READ_FAILED),
+            result,
+        )
+        assertEquals(OverlayFocusController.ERROR_READ_FAILED, controller.lastErrorCode())
+    }
+
+    @Test
     fun `idle window is 1x1 alpha 0 with both safety flags`() {
         val platform = FakeOverlayPlatform()
         platform.clip = OverlayClipRead.Text("x")

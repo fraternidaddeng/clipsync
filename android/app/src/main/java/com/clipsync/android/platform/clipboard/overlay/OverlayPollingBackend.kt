@@ -1,6 +1,7 @@
 package com.clipsync.android.platform.clipboard.overlay
 
 import android.os.Handler
+import android.os.HandlerThread
 import android.os.Looper
 import com.clipsync.android.platform.clipboard.BackendHealth
 import com.clipsync.android.platform.clipboard.BackendHealthState
@@ -216,25 +217,33 @@ interface OverlayPollScheduler {
     fun stop()
 }
 
-internal class HandlerOverlayPollScheduler(
-    private val handler: Handler = Handler(Looper.getMainLooper()),
-) : OverlayPollScheduler {
+internal class HandlerOverlayPollScheduler : OverlayPollScheduler {
+    private var thread: HandlerThread? = null
+    private var handler: Handler? = null
     private var runnable: Runnable? = null
 
     override fun start(intervalMillis: Long, onTick: () -> Unit) {
         stop()
+        val worker = HandlerThread("clipsync-overlay-poll").apply { start() }
+        thread = worker
+        val looper = worker.looper
+        val workerHandler = Handler(looper)
+        handler = workerHandler
         val task = object : Runnable {
             override fun run() {
                 onTick()
-                handler.postDelayed(this, intervalMillis)
+                workerHandler.postDelayed(this, intervalMillis)
             }
         }
         runnable = task
-        handler.post(task)
+        workerHandler.post(task)
     }
 
     override fun stop() {
-        runnable?.let { handler.removeCallbacks(it) }
+        runnable?.let { handler?.removeCallbacks(it) }
         runnable = null
+        handler = null
+        thread?.quitSafely()
+        thread = null
     }
 }

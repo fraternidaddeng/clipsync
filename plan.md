@@ -1,10 +1,10 @@
 # Windows-Android Clipboard Sync 实施计划
 
-> 状态：文本第一版基线已落地；内置特权宿主代码已落地，MIUI 14 单机已复测授权与本机 `SHIZUKU_EVENT` 落库（见 `docs/stage-8-change-log.md` 2026-08-20）；剪贴板图片扩展仅完成计划，尚未实施
+> **进度真相源是 [`docs/dod-status.md`](docs/dod-status.md) 与 [`docs/device-validation-matrix.md`](docs/device-validation-matrix.md)。** 本文件保留为历史规划；复选框不再维护。
+>
+> 状态：Stages 0–8 文本同步与捆绑特权宿主已落地（见 `docs/stage-8-change-log.md`）。Stage 9 图片协议 v2、`MediaBlobStore`、Room v2 与 `begin→chunk*→end` 状态机已在仓库中实现（`protocol/v2/`、`docs/protocol-v2.md`、`docs/adr/0003-clipboard-image-v2.md`）。
 >
 > 目标：创建一个仅面向 Windows 和 Android、个人小范围使用、无需账号和云服务的“复制即同步”工具。安装、配对并完成一次 Android 后台能力引导后，Windows 和 Android 都能在支持的权限模式下后台捕获剪贴板并近实时同步；没有特殊权限时仍可通过分享面板、快捷磁贴或前台模式发送。工具保留可搜索的剪贴板历史，并能在断线后自动补同步。
->
-> 本文件新增的 Stage 9 只定义静态剪贴板图片扩展；在该阶段完成前，现有协议 v1、数据库和客户端仍按纯文本契约运行。
 
 ## 0. 先冻结产品边界
 
@@ -526,7 +526,8 @@ v1/v2 混连时继续同步文本。v2 peer 使用 `unsupported_media` 原因；
 | 5 | 3～5 周 | 4 | Android 自动上行/自动应用在至少三种能力档和实体机矩阵上通过 |
 | 6 | 2～3 周 | 5 | 故障、隐私和安全测试通过 |
 | 7 | 2～3 天 | 6 | 可重复安装、升级、回滚和个人分发 |
-| 9 | 4～6 周 | 7；协议 v2 和媒体模型设计冻结 | 图片捕获、存储、跨端同步、写回和迁移验收通过；未声明支持的 ROM/格式保持明确降级 |
+| 8 | 1～2 周 | 7 | 捆绑 PrivilegedHostService / Shizuku 特权读路径可安装、可撤销、有表面审计；见 `docs/stage-8-change-log.md` |
+| 9 | 4～6 周 | 8；协议 v2 和媒体模型设计冻结 | 图片捕获、存储、跨端同步、写回和迁移验收通过；未声明支持的 ROM/格式保持明确降级 |
 
 核心 MVP（阶段 0～5）预计 8～14 周。阶段 4 先确保协议和手动入口完整，阶段 5 才交付本项目真正区别于 LocalSend 的“手机复制即同步”；它不是可随意砍掉的实验性附加项。
 

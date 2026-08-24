@@ -29,6 +29,7 @@ class AndroidShizukuRuntime(
     private var bindTimeoutRunnable: Runnable? = null
     private var binding: Boolean = false
     private var shizukuDeathLinked: Boolean = false
+    private var shizukuDeathRecipientLinked: Boolean = false
 
     private val userServiceArgs = Shizuku.UserServiceArgs(
         ComponentName(context.packageName, ClipboardUserService::class.java.name),
@@ -54,6 +55,7 @@ class AndroidShizukuRuntime(
         synchronized(lock) {
             session = null
             binding = false
+            shizukuDeathRecipientLinked = false
         }
         cancelBindTimeout()
         deathListener?.invoke(BinderDeathKind.SHIZUKU)
@@ -63,6 +65,7 @@ class AndroidShizukuRuntime(
         synchronized(lock) {
             session = null
             binding = false
+            shizukuDeathRecipientLinked = false
         }
         cancelBindTimeout()
         deathListener?.invoke(BinderDeathKind.SHIZUKU)
@@ -223,6 +226,7 @@ class AndroidShizukuRuntime(
             binding = false
         }
         cancelBindTimeout()
+        unlinkShizukuDeath()
         try {
             Shizuku.unbindUserService(userServiceArgs, connection, true)
         } catch (_: Exception) {
@@ -359,10 +363,32 @@ class AndroidShizukuRuntime(
                 return
             }
         }
+        if (shizukuDeathRecipientLinked) {
+            return
+        }
         try {
-            Shizuku.getBinder()?.linkToDeath(shizukuDeathRecipient, 0)
+            val binder = Shizuku.getBinder() ?: return
+            binder.linkToDeath(shizukuDeathRecipient, 0)
+            shizukuDeathRecipientLinked = true
         } catch (_: Exception) {
             // Binder already died or was replaced; bindUserService will retry.
+        }
+    }
+
+    private fun unlinkShizukuDeath() {
+        if (shizukuDeathLinked) {
+            try {
+                Shizuku.removeBinderDeadListener(binderDeadListener)
+            } catch (_: Exception) {
+            }
+            shizukuDeathLinked = false
+        }
+        if (shizukuDeathRecipientLinked) {
+            try {
+                Shizuku.getBinder()?.unlinkToDeath(shizukuDeathRecipient, 0)
+            } catch (_: Exception) {
+            }
+            shizukuDeathRecipientLinked = false
         }
     }
 

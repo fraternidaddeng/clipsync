@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "type": "challenge",
+  "request_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  "body": {
+    "algorithm": "hmac-sha256",
+    "nonce": "AA",
+    "challenger_device_id": "11111111-1111-4111-8111-111111111111",
+    "responder_device_id": "22222222-2222-4222-8222-222222222222",
+    "trust_epoch": 1,
+    "expires_at_ms": 1776000000000
+  }
+}

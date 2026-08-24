@@ -73,7 +73,8 @@ class SyncSessionEngine(
     pairSecret: ByteArray,
     private val options: SyncSessionOptions = SyncSessionOptions(),
     private val logger: SyncLogger = SyncLogger.NoOp,
-    private val isPeerTrusted: () -> Boolean = { true },
+    private val isPeerTrusted: () -> Boolean = { false },
+    private val isTrustedOrigin: (String) -> Boolean = { origin -> origin == peer.deviceId },
     private val onReady: () -> Unit = {},
     private val onRemoteClipsCommitted: (List<RemoteClipApplied>) -> Unit = {},
 ) {
@@ -82,6 +83,7 @@ class SyncSessionEngine(
     private val outstandingFetches = LinkedHashMap<String, ClipHeaderDto>()
     private val fetchPermittedIds = HashSet<String>()
     private val incomingImages = LinkedHashMap<String, IncomingImageTransfer>()
+    private val sessionUnsupportedMedia = HashSet<String>()
     private val protocolVersion: Int =
         if (options.protocolVersion == ProtocolLimits.PROTOCOL_VERSION_V2) {
             ProtocolLimits.PROTOCOL_VERSION_V2
@@ -181,6 +183,10 @@ class SyncSessionEngine(
                 transport.close("session_end")
             } catch (_: Exception) {
             }
+            for (transfer in incomingImages.values) {
+                repository.media.abort(transfer.pending)
+            }
+            incomingImages.clear()
             pairSecret.fill(0)
         }
 
@@ -383,7 +389,7 @@ class SyncSessionEngine(
             .map { (origin, state) -> OriginSequenceRanges(origin, SyncRangeMath.coverage(state)) }
             .filter { it.ranges.isNotEmpty() }
         if (covered.isNotEmpty()) {
-            repository.ackRanges(peer.deviceId, covered, options.nowMs())
+            repository.ackRanges(peer.deviceId, covered, options.nowMs(), dropTerminalOutbox = false)
         }
     }
 
@@ -401,13 +407,18 @@ class SyncSessionEngine(
             return false
         }
         peerVector = parsed
+        parsed[localDeviceId]?.highestCoveredSeq()?.let { high ->
+            if (high >= 1) {
+                repository.adoptPeerCoverageOfLocalOrigin(high)
+            }
+        }
 
         val covered = parsed
             .filter { it.key != peer.deviceId }
             .map { (origin, state) -> OriginSequenceRanges(origin, SyncRangeMath.coverage(state)) }
             .filter { it.ranges.isNotEmpty() }
         if (covered.isNotEmpty()) {
-            repository.ackRanges(peer.deviceId, covered, options.nowMs())
+            repository.ackRanges(peer.deviceId, covered, options.nowMs(), dropTerminalOutbox = false)
         }
         if (!peerVectorArrived.isCompleted) {
             peerVectorArrived.complete(Unit)
@@ -493,12 +504,12 @@ class SyncSessionEngine(
             if (origin == localDeviceId) {
                 continue
             }
-            if (!isTrustedOrigin(origin)) {
+            if (!originAllowed(origin)) {
                 logger.event("untrusted_origin_skipped", "origin")
                 continue
             }
             val localState = mine[origin] ?: OriginReceiveState.EMPTY
-            if (localState.contains(header.originSeq)) {
+            if (localState.contains(header.originSeq) && header.availability != ClipAvailability.UNAVAILABLE) {
                 acks.add(origin to header.originSeq)
                 continue
             }
@@ -539,8 +550,9 @@ class SyncSessionEngine(
                     acks.add(origin to header.originSeq)
                     continue
                 }
-                outstandingFetches[header.eventId] = header
-                fetchIds.add(header.eventId)
+                if (outstandingFetches.put(header.eventId, header) == null) {
+                    fetchIds.add(header.eventId)
+                }
                 continue
             }
 
@@ -557,8 +569,9 @@ class SyncSessionEngine(
                 continue
             }
 
-            outstandingFetches[header.eventId] = header
-            fetchIds.add(header.eventId)
+            if (outstandingFetches.put(header.eventId, header) == null) {
+                fetchIds.add(header.eventId)
+            }
         }
 
         for (chunk in fetchIds.chunked(ProtocolLimits.MAX_FETCH_EVENT_IDS)) {
@@ -863,13 +876,24 @@ class SyncSessionEngine(
             val events = loadByEventIds(batch.map { it.eventId }.toSet())
             val announced = mutableListOf<Long>()
             val headers = mutableListOf<ClipHeaderDto>()
+            val orphanIds = mutableListOf<String>()
             for (entry in batch) {
-                val event = events[entry.eventId] ?: continue
+                val event = events[entry.eventId]
+                if (event == null) {
+                    orphanIds.add(entry.eventId)
+                    continue
+                }
                 headers.add(buildHeader(event))
                 announced.add(entry.id)
             }
+            if (orphanIds.isNotEmpty()) {
+                repository.deleteOrphanOutbox(orphanIds)
+            }
             if (headers.isEmpty()) {
-                return
+                if (orphanIds.isEmpty()) {
+                    return
+                }
+                continue
             }
             send(ProtocolMessageTypes.CLIP_ANNOUNCE, ClipAnnounceBody(headers))
             repository.markAnnounced(announced)
@@ -879,40 +903,11 @@ class SyncSessionEngine(
         }
     }
 
-    /**
-     * ClipRepository has no get-by-event-id. Resolve IDs through knownVector coverage
-     * plus [ClipRepository.getSyncableEvents] — no second Room schema.
-     */
-    private suspend fun loadByEventIds(eventIds: Set<String>): Map<String, SyncableClipEvent> {
-        if (eventIds.isEmpty()) {
-            return emptyMap()
-        }
-        val found = LinkedHashMap<String, SyncableClipEvent>()
-        val vector = repository.knownVector()
-        for ((origin, state) in vector.origins) {
-            if (found.size >= eventIds.size) {
-                break
-            }
-            var remaining = SyncRangeMath.coverage(state)
-            while (remaining.isNotEmpty() && found.size < eventIds.size) {
-                val batch = repository.getSyncableEvents(origin, remaining, ProtocolLimits.MAX_ANNOUNCE_CLIPS)
-                if (batch.isEmpty()) {
-                    break
-                }
-                for (event in batch) {
-                    if (event.eventId in eventIds) {
-                        found[event.eventId] = event
-                    }
-                }
-                val served = SequenceRangeMath.normalize(batch.map { SequenceRange(it.originSeq, it.originSeq) })
-                remaining = SyncRangeMath.subtract(remaining, served)
-            }
-        }
-        return found
-    }
+    private suspend fun loadByEventIds(eventIds: Set<String>): Map<String, SyncableClipEvent> =
+        repository.getSyncableEventsByIds(eventIds).associateBy { it.eventId }
 
-    private fun isTrustedOrigin(originDeviceId: String): Boolean =
-        originDeviceId == peer.deviceId
+    private fun originAllowed(originDeviceId: String): Boolean =
+        isTrustedOrigin(originDeviceId)
 
     private suspend fun sendAcks(acks: List<Pair<String, Long>>) {
         if (acks.isEmpty()) {
@@ -954,16 +949,17 @@ class SyncSessionEngine(
     }
 
     private suspend fun buildHeader(item: SyncableClipEvent): ClipHeaderDto {
-        if (item.isTerminal || (item.isImage && protocolVersion != ProtocolLimits.PROTOCOL_VERSION_V2)) {
-            if (item.isImage && protocolVersion != ProtocolLimits.PROTOCOL_VERSION_V2) {
-                repository.markLocalUnsupportedMedia(item.eventId, item.originDeviceId, item.originSeq)
-            }
+        val v1Image = item.isImage && protocolVersion != ProtocolLimits.PROTOCOL_VERSION_V2
+        if (v1Image) {
+            sessionUnsupportedMedia.add(item.eventId)
+        }
+        if (item.isTerminal || v1Image) {
             return ClipHeaderDto(
                 eventId = item.eventId,
                 originDeviceId = item.originDeviceId,
                 originSeq = item.originSeq,
                 availability = ClipAvailability.UNAVAILABLE,
-                reason = if (item.isImage && protocolVersion != ProtocolLimits.PROTOCOL_VERSION_V2) {
+                reason = if (v1Image) {
                     ClipUnavailableReasons.LOCAL_ONLY
                 } else {
                     item.terminalReason

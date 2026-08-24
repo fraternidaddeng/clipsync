@@ -11,8 +11,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Process-scoped owner of the local capture stack: backends, read coordinator,
@@ -66,10 +69,50 @@ class ClipboardCaptureManager(
     fun isStarted(): Boolean = currentStack != null
 
     fun ensureStarted() {
+        if (!needsMainHop()) {
+            startNow()
+            return
+        }
+        val error = AtomicReference<Throwable?>(null)
+        val done = CountDownLatch(1)
+        scope.launch {
+            try {
+                startNow()
+            } catch (thrown: Throwable) {
+                error.set(thrown)
+            } finally {
+                done.countDown()
+            }
+        }
+        if (!done.await(10, TimeUnit.SECONDS)) {
+            throw IllegalStateException("ensureStarted timed out hopping to the manager scope")
+        }
+        error.get()?.let { throw it }
+    }
+
+    private fun startNow() {
         synchronized(lock) {
             if (currentStack == null) {
                 startLocked(loadChoices())
             }
+        }
+    }
+
+    private fun needsMainHop(): Boolean {
+        return try {
+            val main = android.os.Looper.getMainLooper()
+            main != null && main.thread.isAlive && android.os.Looper.myLooper() != main
+        } catch (_: Throwable) {
+            false
+        }
+    }
+
+    fun stop() {
+        synchronized(lock) {
+            stopLocked()
+            appliedChoices = null
+            latestChoices = null
+            rebuildScheduled = false
         }
     }
 
@@ -157,9 +200,7 @@ class ClipboardCaptureManager(
         // Health ticks take the same lock as rebuilds: a tick must never probe
         // a stack that a concurrent applyChoices is tearing down.
         healthJob = ClipboardHealthLoop {
-            synchronized(lock) {
-                currentStack?.access?.checkHealth()
-            }
+            currentStack?.access?.checkHealth()
         }.start(scope)
     }
 

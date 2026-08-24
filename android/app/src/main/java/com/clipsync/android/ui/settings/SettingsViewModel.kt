@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.clipsync.android.service.ServiceSettingsStore
-import com.clipsync.android.storage.ClipExport
 import com.clipsync.android.storage.ClipImportCounts
 import com.clipsync.android.storage.ClipRepository
 import com.clipsync.android.storage.DEFAULT_RETENTION_DAYS
-import com.clipsync.android.storage.MAX_SEARCH_LIMIT
 import com.clipsync.android.storage.parseRetentionDays
 import com.clipsync.android.ui.HealthStatus
 import com.clipsync.android.ui.HealthTone
@@ -171,8 +169,7 @@ class SettingsViewModel(
     suspend fun exportTo(writeTarget: (String) -> Unit) {
         try {
             withContext(Dispatchers.IO) {
-                val rows = repository.search("", MAX_SEARCH_LIMIT)
-                val encoded = ClipExport.encodeJsonLines(rows)
+                val encoded = repository.exportJsonLines()
                 writeTarget(encoded)
             }
             mutableState.update { it.copy(exportNotice = SettingsExportNotice.DONE) }

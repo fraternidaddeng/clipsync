@@ -33,6 +33,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
     private UdpDiscoveryBroadcaster? broadcaster;
     private Timer? beaconTimer;
     private NetworkAddressChangedEventHandler? networkChangedHandler;
+    private string? extraBindAddresses;
+    private readonly SemaphoreSlim lifecycle = new(1, 1);
 
     public PeerSyncHost(
         SqliteClipboardEventStore store,
@@ -66,59 +68,25 @@ public sealed class PeerSyncHost : IAsyncDisposable
 
     public async Task StartAsync(string? extraBindAddresses, CancellationToken cancellationToken = default)
     {
-        if (server is not null)
-        {
-            return;
-        }
-
-        var sessionOptions = new SyncSessionOptions
-        {
-            ClientVersion = typeof(PeerSyncHost).Assembly.GetName().Version?.ToString(3) ?? "0.2.0",
-            Platform = "windows",
-            ProtocolVersion = ClipSync.Core.Protocol.ProtocolLimits.ProtocolVersionV2
-        };
-
-        var addresses = ResolveBindAddresses(extraBindAddresses);
-        ReachableHosts = addresses
-            .Where(address => !IPAddress.IsLoopback(address))
-            .Select(address => address.ToString())
-            .Take(8)
-            .ToList();
-        var candidate = new PeerServer(store, secretProtector, new PeerServerOptions
-        {
-            Certificate = certificate,
-            SessionOptions = sessionOptions,
-            BindAddresses = addresses,
-            Port = DefaultPort
-        }, pairingService: pairingService);
+        this.extraBindAddresses = extraBindAddresses;
+        await lifecycle.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            await candidate.StartAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (IOException)
-        {
-            // The preferred port is taken; fall back to an ephemeral one. Discovery and the
-            // health endpoint both advertise the actual port, so peers still find us.
-            await candidate.DisposeAsync().ConfigureAwait(false);
-            candidate = new PeerServer(store, secretProtector, new PeerServerOptions
+            if (server is not null)
             {
-                Certificate = certificate,
-                SessionOptions = sessionOptions,
-                BindAddresses = addresses,
-                Port = 0
-            }, pairingService: pairingService);
-            await candidate.StartAsync(cancellationToken).ConfigureAwait(false);
+                return;
+            }
+
+            await BindListenerAsync(cancellationToken).ConfigureAwait(false);
+            beaconTimer = new Timer(_ => _ = BroadcastQuietlyAsync(), null, BeaconInterval, BeaconInterval);
+            networkChangedHandler = (_, _) => _ = OnNetworkChangedAsync();
+            NetworkChange.NetworkAddressChanged += networkChangedHandler;
+            LocalDiagnostics.Write($"peer_server_started_port_{server!.Port}");
         }
-
-        candidate.RemoteClipsCommitted += OnRemoteClipsCommitted;
-        server = candidate;
-
-        broadcaster = new UdpDiscoveryBroadcaster(store.LocalDeviceId, server.Port, CertificateFingerprint);
-        await BroadcastQuietlyAsync().ConfigureAwait(false);
-        beaconTimer = new Timer(_ => _ = BroadcastQuietlyAsync(), null, BeaconInterval, BeaconInterval);
-        networkChangedHandler = (_, _) => _ = BroadcastQuietlyAsync();
-        NetworkChange.NetworkAddressChanged += networkChangedHandler;
-        LocalDiagnostics.Write($"peer_server_started_port_{server.Port}");
+        finally
+        {
+            lifecycle.Release();
+        }
     }
 
     public void DisconnectDevice(string deviceId) => server?.DisconnectDevice(deviceId);
@@ -151,6 +119,103 @@ public sealed class PeerSyncHost : IAsyncDisposable
 
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch) =>
         RemoteClipsCommitted?.Invoke(batch);
+
+    private async Task OnNetworkChangedAsync()
+    {
+        await BroadcastQuietlyAsync().ConfigureAwait(false);
+        if (!await lifecycle.WaitAsync(0).ConfigureAwait(false))
+        {
+            return;
+        }
+
+        try
+        {
+            if (server is null)
+            {
+                return;
+            }
+
+            var addresses = ResolveBindAddresses(extraBindAddresses);
+            var nextHosts = HostCandidates(addresses);
+            if (ReachableHosts.SequenceEqual(nextHosts))
+            {
+                return;
+            }
+
+            await StopListenerAsync().ConfigureAwait(false);
+            await BindListenerAsync(CancellationToken.None).ConfigureAwait(false);
+            LocalDiagnostics.Write($"peer_server_rebound_port_{server.Port}");
+        }
+        catch (Exception)
+        {
+            LocalDiagnostics.Write("peer_server_rebind_failed");
+        }
+        finally
+        {
+            lifecycle.Release();
+        }
+    }
+
+    private async Task BindListenerAsync(CancellationToken cancellationToken)
+    {
+        var sessionOptions = new SyncSessionOptions
+        {
+            ClientVersion = typeof(PeerSyncHost).Assembly.GetName().Version?.ToString(3) ?? "0.2.0",
+            Platform = "windows",
+            ProtocolVersion = ClipSync.Core.Protocol.ProtocolLimits.ProtocolVersionV2
+        };
+
+        var addresses = ResolveBindAddresses(extraBindAddresses);
+        ReachableHosts = HostCandidates(addresses);
+        var candidate = new PeerServer(store, secretProtector, new PeerServerOptions
+        {
+            Certificate = certificate,
+            SessionOptions = sessionOptions,
+            BindAddresses = addresses,
+            Port = DefaultPort
+        }, pairingService: pairingService);
+        try
+        {
+            await candidate.StartAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (IOException)
+        {
+            await candidate.DisposeAsync().ConfigureAwait(false);
+            candidate = new PeerServer(store, secretProtector, new PeerServerOptions
+            {
+                Certificate = certificate,
+                SessionOptions = sessionOptions,
+                BindAddresses = addresses,
+                Port = 0
+            }, pairingService: pairingService);
+            await candidate.StartAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        candidate.RemoteClipsCommitted += OnRemoteClipsCommitted;
+        server = candidate;
+        broadcaster = new UdpDiscoveryBroadcaster(store.LocalDeviceId, server.Port, CertificateFingerprint);
+        await BroadcastQuietlyAsync().ConfigureAwait(false);
+    }
+
+    private async Task StopListenerAsync()
+    {
+        if (server is not null)
+        {
+            server.RemoteClipsCommitted -= OnRemoteClipsCommitted;
+            await server.DisposeAsync().ConfigureAwait(false);
+            server = null;
+        }
+
+        broadcaster?.Dispose();
+        broadcaster = null;
+    }
+
+    private static List<string> HostCandidates(IReadOnlyList<IPAddress> addresses) =>
+        addresses
+            .Where(address => !IPAddress.IsLoopback(address))
+            .Select(address => address.ToString())
+            .Take(8)
+            .ToList();
 
     private async Task BroadcastQuietlyAsync()
     {
@@ -185,9 +250,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
             foreach (var unicast in networkInterface.GetIPProperties().UnicastAddresses)
             {
                 var address = unicast.Address;
-                if (address.AddressFamily == AddressFamily.InterNetwork
-                    && IsPrivateIpv4(address)
-                    && !addresses.Contains(address))
+                if (IsAdvertisableAddress(address) && !addresses.Contains(address))
                 {
                     addresses.Add(address);
                 }
@@ -211,6 +274,16 @@ public sealed class PeerSyncHost : IAsyncDisposable
         return addresses;
     }
 
+    private static bool IsAdvertisableAddress(IPAddress address)
+    {
+        if (address.AddressFamily == AddressFamily.InterNetwork)
+        {
+            return IsPrivateIpv4(address) || IsCgnatIpv4(address);
+        }
+
+        return address.AddressFamily == AddressFamily.InterNetworkV6 && IsUniqueLocalIpv6(address);
+    }
+
     private static bool IsPrivateIpv4(IPAddress address)
     {
         var bytes = address.GetAddressBytes();
@@ -223,28 +296,40 @@ public sealed class PeerSyncHost : IAsyncDisposable
         };
     }
 
+    private static bool IsCgnatIpv4(IPAddress address)
+    {
+        var bytes = address.GetAddressBytes();
+        return bytes[0] == 100 && bytes[1] >= 64 && bytes[1] <= 127;
+    }
+
+    private static bool IsUniqueLocalIpv6(IPAddress address)
+    {
+        var bytes = address.GetAddressBytes();
+        return bytes.Length == 16 && (bytes[0] & 0xfe) == 0xfc;
+    }
+
     public async ValueTask DisposeAsync()
     {
-        if (networkChangedHandler is not null)
+        await lifecycle.WaitAsync().ConfigureAwait(false);
+        try
         {
-            NetworkChange.NetworkAddressChanged -= networkChangedHandler;
-            networkChangedHandler = null;
+            if (networkChangedHandler is not null)
+            {
+                NetworkChange.NetworkAddressChanged -= networkChangedHandler;
+                networkChangedHandler = null;
+            }
+
+            if (beaconTimer is not null)
+            {
+                await beaconTimer.DisposeAsync().ConfigureAwait(false);
+                beaconTimer = null;
+            }
+
+            await StopListenerAsync().ConfigureAwait(false);
         }
-
-        if (beaconTimer is not null)
+        finally
         {
-            await beaconTimer.DisposeAsync().ConfigureAwait(false);
-            beaconTimer = null;
-        }
-
-        broadcaster?.Dispose();
-        broadcaster = null;
-
-        if (server is not null)
-        {
-            server.RemoteClipsCommitted -= OnRemoteClipsCommitted;
-            await server.DisposeAsync().ConfigureAwait(false);
-            server = null;
+            lifecycle.Release();
         }
     }
 }

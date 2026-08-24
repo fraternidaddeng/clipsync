@@ -62,11 +62,17 @@ class LogcatClipboardEventReader(
     private var debounceHandle: CancelHandle? = null
     private var inFlight: Boolean = false
     private var pendingFlight: Boolean = false
-    private val flightExecutor: ExecutorService = Executors.newSingleThreadExecutor { runnable ->
-        Thread(runnable, "adblog-flight").apply { isDaemon = true }
-    }
+    private var ownedScheduler: ThreadTaskScheduler? = null
+    private var flightExecutor: ExecutorService? = null
+    private val injectedFlightDispatcher = flightDispatcher
     private val flightDispatcher: (Runnable) -> Unit =
-        flightDispatcher ?: { runnable -> this.flightExecutor.execute(runnable) }
+        injectedFlightDispatcher ?: { runnable ->
+            val executor = flightExecutor
+            if (executor == null || executor.isShutdown) {
+                throw java.util.concurrent.RejectedExecutionException("adblog-flight stopped")
+            }
+            executor.execute(runnable)
+        }
 
     fun start(onSignal: (ClipboardLogMatch) -> Unit) {
         synchronized(lock) {
@@ -76,6 +82,17 @@ class LogcatClipboardEventReader(
             }
             started = true
             this.onSignal = onSignal
+            if (injectedFlightDispatcher == null &&
+                (flightExecutor == null || flightExecutor?.isShutdown == true)
+            ) {
+                flightExecutor = Executors.newSingleThreadExecutor { runnable ->
+                    Thread(runnable, "adblog-flight").apply { isDaemon = true }
+                }
+            }
+            if (scheduler is ThreadTaskScheduler) {
+                ownedScheduler?.shutdown()
+                ownedScheduler = ThreadTaskScheduler()
+            }
             val opened = lineSourceFactory.open()
             source = opened
             val thread = Thread({ drain(opened) }, "adblog-logcat").apply { isDaemon = true }
@@ -101,10 +118,15 @@ class LogcatClipboardEventReader(
         opened?.close()
         thread?.interrupt()
         if (scheduler is ThreadTaskScheduler) {
+            ownedScheduler?.shutdown()
+            ownedScheduler = null
             scheduler.shutdown()
         }
-        flightExecutor.shutdownNow()
+        flightExecutor?.shutdownNow()
+        flightExecutor = null
     }
+
+    private fun activeScheduler(): TaskScheduler = ownedScheduler ?: scheduler
 
     fun acceptLine(line: String) {
         acceptedLines.incrementAndGet()
@@ -117,7 +139,11 @@ class LogcatClipboardEventReader(
                 return
             }
             debounceHandle?.cancel()
-            debounceHandle = scheduler.schedule(debounceMillis, ::requestFlight)
+            debounceHandle = try {
+                activeScheduler().schedule(debounceMillis, ::requestFlight)
+            } catch (_: java.util.concurrent.RejectedExecutionException) {
+                null
+            }
         }
     }
 
@@ -139,6 +165,8 @@ class LogcatClipboardEventReader(
             }
         } catch (_: InterruptedException) {
             Thread.currentThread().interrupt()
+        } catch (_: java.util.concurrent.RejectedExecutionException) {
+            // stop() tore down the scheduler while a line was being accepted.
         }
     }
 

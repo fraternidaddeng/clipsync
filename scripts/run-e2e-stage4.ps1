@@ -4,9 +4,19 @@ param()
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 
-$env:PATH = 'D:\paste-tools\dotnet;' + $env:PATH
-$env:DOTNET_ROOT = 'D:\paste-tools\dotnet'
-$env:ANDROID_HOME = 'D:\paste-tools\android-sdk'
+if ($env:DOTNET_ROOT) {
+    $env:PATH = $env:DOTNET_ROOT + ';' + $env:PATH
+}
+elseif (Test-Path -LiteralPath 'D:\paste-tools\dotnet') {
+    $env:PATH = 'D:\paste-tools\dotnet;' + $env:PATH
+    $env:DOTNET_ROOT = 'D:\paste-tools\dotnet'
+}
+
+if (-not $env:ANDROID_HOME -and -not $env:ANDROID_SDK_ROOT) {
+    if (Test-Path -LiteralPath 'D:\paste-tools\android-sdk') {
+        $env:ANDROID_HOME = 'D:\paste-tools\android-sdk'
+    }
+}
 
 $hostExe = Join-Path $repoRoot 'windows\ClipSync.E2eHost\bin\Debug\net8.0\ClipSync.E2eHost.exe'
 $solution = Join-Path $repoRoot 'windows\ClipSync.sln'

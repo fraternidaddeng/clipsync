@@ -88,8 +88,10 @@ class PairingStore(
         require(pairSecret.size == 32) { "pair secret must be 32 bytes" }
         val protected = protector.protect(pairSecret)
         pairSecret.fill(0)
+        val trusted = rememberedTrustedOrigins() + response.deviceId
         keyValues.write(
             mapOf(
+                KEY_TRUSTED_ORIGINS to trusted.joinToString(separator = "\n"),
                 KEY_PEER_DEVICE_ID to response.deviceId,
                 KEY_PEER_DISPLAY_NAME to response.displayName,
                 KEY_PEER_PLATFORM to response.platform,
@@ -119,10 +121,20 @@ class PairingStore(
         return pinned.equals(presentedSha256, ignoreCase = true)
     }
 
+    /** True when [originDeviceId] is the local device or a remembered paired origin. */
+    fun isTrustedOrigin(originDeviceId: String): Boolean {
+        if (originDeviceId == localDeviceId()) {
+            return true
+        }
+        return originDeviceId in rememberedTrustedOrigins() || originDeviceId == peer()?.deviceId
+    }
+
     /** Removes the pairing and its protected secret; local history is untouched. */
     fun forgetPeer() {
+        val remaining = rememberedTrustedOrigins() - setOfNotNull(peer()?.deviceId)
         keyValues.write(
             mapOf(
+                KEY_TRUSTED_ORIGINS to remaining.joinToString(separator = "\n").ifEmpty { null },
                 KEY_PEER_DEVICE_ID to null,
                 KEY_PEER_DISPLAY_NAME to null,
                 KEY_PEER_PLATFORM to null,
@@ -135,6 +147,13 @@ class PairingStore(
             ),
         )
     }
+
+    private fun rememberedTrustedOrigins(): Set<String> =
+        keyValues.read(KEY_TRUSTED_ORIGINS)
+            ?.split('\n')
+            ?.filter { it.isNotEmpty() }
+            ?.toSet()
+            ?: emptySet()
 
     private fun encodeBase64(bytes: ByteArray): String =
         java.util.Base64.getEncoder().encodeToString(bytes)
@@ -154,5 +173,6 @@ class PairingStore(
         const val KEY_PEER_PORT = "peer.port"
         const val KEY_PEER_PAIRED_AT = "peer.paired_at_ms"
         const val KEY_PEER_SECRET = "peer.secret_protected"
+        const val KEY_TRUSTED_ORIGINS = "trusted.origin_ids"
     }
 }

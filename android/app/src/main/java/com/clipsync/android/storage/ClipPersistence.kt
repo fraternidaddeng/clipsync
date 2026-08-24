@@ -32,7 +32,8 @@ internal interface ClipSession : ClipRetentionSession {
     suspend fun insertClip(entity: ClipEntity)
     suspend fun findClipByOriginSeq(originDeviceId: String, originSeq: Long): ClipEntity?
     suspend fun findClipByEventId(eventId: String): ClipEntity?
-    suspend fun searchVisible(query: String, limit: Int): List<ClipEntity>
+    suspend fun findClipsByEventIds(eventIds: List<String>): List<ClipEntity>
+    suspend fun searchVisible(query: String, limit: Int, offset: Int = 0): List<ClipEntity>
     suspend fun softDelete(eventId: String, nowMs: Long): Boolean
     suspend fun softDeleteAllVisible(nowMs: Long): List<String>
     suspend fun clipsInRange(originDeviceId: String, startSeq: Long, endSeq: Long, limit: Int): List<ClipEntity>
@@ -66,7 +67,13 @@ internal interface ClipSession : ClipRetentionSession {
     suspend fun markOutboxAnnounced(ids: List<Long>)
     suspend fun deleteOutboxForEvent(eventId: String)
     suspend fun deleteOutboxForEvents(eventIds: List<String>)
-    suspend fun deleteOutboxInRange(peerId: String, originDeviceId: String, startSeq: Long, endSeq: Long)
+    suspend fun deleteOutboxInRange(
+        peerId: String,
+        originDeviceId: String,
+        startSeq: Long,
+        endSeq: Long,
+        dropTerminal: Boolean = true,
+    )
     suspend fun resetOutboxToPending(peerId: String)
     suspend fun deleteOutboxForPeer(peerId: String)
 
@@ -111,14 +118,26 @@ private class RoomClipSession(private val database: ClipDatabase) : ClipSession 
     override suspend fun findClipByEventId(eventId: String): ClipEntity? =
         database.clipDao().findByEventId(eventId)
 
-    override suspend fun searchVisible(query: String, limit: Int): List<ClipEntity> {
+    override suspend fun findClipsByEventIds(eventIds: List<String>): List<ClipEntity> {
+        if (eventIds.isEmpty()) {
+            return emptyList()
+        }
+        val found = mutableListOf<ClipEntity>()
+        for (chunk in eventIds.chunked(SQLITE_SAFE_IN_CLAUSE)) {
+            found += database.clipDao().findByEventIds(chunk)
+        }
+        return found
+    }
+
+    override suspend fun searchVisible(query: String, limit: Int, offset: Int): List<ClipEntity> {
         if (query.isEmpty()) {
-            return database.clipDao().searchVisible(matchAll = 1, pattern = "", limit = limit)
+            return database.clipDao().searchVisible(matchAll = 1, pattern = "", limit = limit, offset = offset)
         }
         return database.clipDao().searchVisible(
             matchAll = 0,
             pattern = "%${escapeLike(query)}%",
             limit = limit,
+            offset = offset,
         )
     }
 
@@ -131,11 +150,16 @@ private class RoomClipSession(private val database: ClipDatabase) : ClipSession 
     }
 
     override suspend fun softDeleteAllVisible(nowMs: Long): List<String> {
-        val ids = database.clipDao().visibleEventIds()
-        if (ids.isNotEmpty()) {
-            database.clipDao().softDeleteAllVisible(nowMs)
+        val allIds = mutableListOf<String>()
+        while (true) {
+            val ids = database.clipDao().visibleEventIds(SQLITE_SAFE_IN_CLAUSE)
+            if (ids.isEmpty()) {
+                break
+            }
+            database.clipDao().softDeleteByEventIds(ids, nowMs)
+            allIds += ids
         }
-        return ids
+        return allIds
     }
 
     override suspend fun clipsInRange(
@@ -224,6 +248,7 @@ private class RoomClipSession(private val database: ClipDatabase) : ClipSession 
         database.outboxDao().insert(
             OutboxEntity(peerId = peerId, eventId = eventId, state = OUTBOX_PENDING),
         )
+        database.outboxDao().repend(peerId, eventId)
     }
 
     override suspend fun pendingOutbox(peerId: String): List<OutboxEntity> =
@@ -240,8 +265,10 @@ private class RoomClipSession(private val database: ClipDatabase) : ClipSession 
     }
 
     override suspend fun deleteOutboxForEvents(eventIds: List<String>) {
-        if (eventIds.isNotEmpty()) {
-            database.outboxDao().deleteByEventIds(eventIds)
+        for (chunk in eventIds.chunked(SQLITE_SAFE_IN_CLAUSE)) {
+            if (chunk.isNotEmpty()) {
+                database.outboxDao().deleteByEventIds(chunk)
+            }
         }
     }
 
@@ -250,8 +277,13 @@ private class RoomClipSession(private val database: ClipDatabase) : ClipSession 
         originDeviceId: String,
         startSeq: Long,
         endSeq: Long,
+        dropTerminal: Boolean,
     ) {
-        database.outboxDao().deleteInOriginRange(peerId, originDeviceId, startSeq, endSeq)
+        if (dropTerminal) {
+            database.outboxDao().deleteInOriginRange(peerId, originDeviceId, startSeq, endSeq)
+        } else {
+            database.outboxDao().deleteLiveInOriginRange(peerId, originDeviceId, startSeq, endSeq)
+        }
     }
 
     override suspend fun resetOutboxToPending(peerId: String) {

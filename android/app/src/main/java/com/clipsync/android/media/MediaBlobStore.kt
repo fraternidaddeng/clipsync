@@ -133,6 +133,11 @@ class MediaBlobStore(rootDirectory: File) {
         thumbnailPath(contentHash).delete()
     }
 
+    fun abort(pending: PendingMediaWrite) {
+        pending.close()
+        pending.tempPath.delete()
+    }
+
     fun recoverTemps(nowMs: Long, maximumDeletes: Int = 256): Int {
         val cutoff = nowMs - MediaLimits.UNFINISHED_DOWNLOAD_HOURS * 60L * 60L * 1000L
         if (!temps.isDirectory) {
@@ -151,11 +156,16 @@ class MediaBlobStore(rootDirectory: File) {
         return removed
     }
 
-    fun deleteUnreferenced(liveHashes: Collection<String>, maximumDeletes: Int = 256): Int {
+    fun deleteUnreferenced(
+        liveHashes: Collection<String>,
+        maximumDeletes: Int = 256,
+        gracePeriodMs: Long = 0L,
+    ): Int {
         val live = liveHashes.toHashSet()
         if (!blobs.isDirectory) {
             return 0
         }
+        val cutoff = System.currentTimeMillis() - gracePeriodMs
         var removed = 0
         blobs.walkTopDown().filter { it.isFile }.forEach { file ->
             if (removed >= maximumDeletes) {
@@ -163,6 +173,9 @@ class MediaBlobStore(rootDirectory: File) {
             }
             val name = file.name
             if (name.length != 64 || name in live) {
+                return@forEach
+            }
+            if (gracePeriodMs > 0L && file.lastModified() > cutoff) {
                 return@forEach
             }
             file.delete()

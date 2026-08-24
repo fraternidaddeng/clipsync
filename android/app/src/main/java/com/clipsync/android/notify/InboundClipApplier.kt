@@ -38,10 +38,13 @@ class InboundClipApplier(
             repository.getSetting(SETTING_AUTO_APPLY_IMAGES),
             default = false,
         )
+        val lastText = clips.lastOrNull { !it.isImage }
+        val lastImage = clips.lastOrNull { it.isImage }
         for (clip in clips) {
             var writeSucceeded = false
             val autoApply = if (clip.isImage) autoApplyImages else autoApplyText
-            if (autoApply) {
+            val applyTarget = clip === lastText || clip === lastImage
+            if (autoApply && applyTarget) {
                 val outcome = if (clip.isImage) {
                     applyImage(clip)
                 } else {

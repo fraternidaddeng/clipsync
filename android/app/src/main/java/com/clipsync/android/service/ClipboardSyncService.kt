@@ -41,6 +41,7 @@ class ClipboardSyncService : Service() {
         val orch = ClipboardSyncRuntime.orchestrator
         when (intent?.action) {
             ServiceNotificationActions.ACTION_STOP -> {
+                ClipboardCaptureRuntime.stop()
                 ClipboardSyncRuntime.stopControllerIfUnneeded()
                 stopForeground(STOP_FOREGROUND_REMOVE)
                 stopSelf()

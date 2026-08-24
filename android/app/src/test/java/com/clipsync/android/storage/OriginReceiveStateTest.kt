@@ -42,6 +42,13 @@ class OriginReceiveStateTest {
     }
 
     @Test
+    fun `highest covered seq uses isolated ranges above the cursor`() {
+        assertEquals(0, OriginReceiveState.EMPTY.highestCoveredSeq())
+        assertEquals(10, OriginReceiveState(10, emptyList()).highestCoveredSeq())
+        assertEquals(14, OriginReceiveState(10, listOf(SequenceRange(13, 14))).highestCoveredSeq())
+    }
+
+    @Test
     fun `range json round-trips protocol field names`() {
         val ranges = listOf(SequenceRange(5, 6), SequenceRange(9, 12))
         val restored = SequenceRangeJson.deserialize(SequenceRangeJson.serialize(ranges))

@@ -496,8 +496,29 @@ public sealed class SyncSessionEngine : IDisposable
     {
         state = SessionState.Ready;
         await store.ResetOutboxToPendingAsync(peerDevice!.DeviceId, token).ConfigureAwait(false);
+        await ApplyPersistedPeerAcksAsync(token).ConfigureAwait(false);
         await SendAsync(ProtocolMessageTypes.KnownVector, await BuildKnownVectorAsync(token).ConfigureAwait(false), token).ConfigureAwait(false);
         PeerLog.SessionReady(logger, role.ToString(), peerDevice.DeviceId);
+    }
+
+    private async Task ApplyPersistedPeerAcksAsync(CancellationToken token)
+    {
+        var cursors = await store.GetPeerCursorsAsync(peerDevice!.DeviceId, token).ConfigureAwait(false);
+        var covered = cursors
+            .Where(entry => entry.Key != peerDevice.DeviceId)
+            .Select(entry => new OriginSequenceRanges(entry.Key, entry.Value.ToCoverage()))
+            .Where(entry => entry.Ranges.Count > 0)
+            .ToArray();
+        if (covered.Length > 0)
+        {
+            await store.ApplyPeerAckRangesAsync(
+                    peerDevice.DeviceId,
+                    covered,
+                    clock.GetUtcNow(),
+                    dropTerminalOutbox: false,
+                    token)
+                .ConfigureAwait(false);
+        }
     }
 
     private async Task<bool> HandleKnownVectorAsync(SyncStateDto vector, CancellationToken token)
@@ -521,6 +542,14 @@ public sealed class SyncSessionEngine : IDisposable
         }
 
         peerVector = parsed;
+        if (parsed.TryGetValue(store.LocalDeviceId, out var ours))
+        {
+            var high = ours.HighestCoveredSeq();
+            if (high >= 1)
+            {
+                await store.AdoptPeerCoverageOfLocalOriginAsync(high, token).ConfigureAwait(false);
+            }
+        }
 
         // Their persisted coverage is acknowledgment evidence: prune what they already hold.
         var covered = parsed
@@ -530,7 +559,13 @@ public sealed class SyncSessionEngine : IDisposable
             .ToArray();
         if (covered.Length > 0)
         {
-            await store.ApplyPeerAckRangesAsync(peerDevice!.DeviceId, covered, clock.GetUtcNow(), token).ConfigureAwait(false);
+            await store.ApplyPeerAckRangesAsync(
+                    peerDevice!.DeviceId,
+                    covered,
+                    clock.GetUtcNow(),
+                    dropTerminalOutbox: false,
+                    token)
+                .ConfigureAwait(false);
         }
 
         await SendWantsAsync(token).ConfigureAwait(false);
@@ -613,7 +648,7 @@ public sealed class SyncSessionEngine : IDisposable
                 var headers = new List<ClipHeaderDto>(events.Count);
                 foreach (var item in events)
                 {
-                    headers.Add(await BuildHeaderAsync(item, token).ConfigureAwait(false));
+                    headers.Add(BuildHeader(item));
                 }
 
                 await SendAsync(ProtocolMessageTypes.ClipAnnounce, new ClipAnnounceBody
@@ -657,7 +692,7 @@ public sealed class SyncSessionEngine : IDisposable
             }
 
             var localState = mine.TryGetValue(origin, out var found) ? found : OriginReceiveState.Empty;
-            if (localState.Contains(header.OriginSeq))
+            if (localState.Contains(header.OriginSeq) && header.Availability != ClipAvailability.Unavailable)
             {
                 acks.Add((origin, header.OriginSeq));
                 continue;
@@ -731,8 +766,11 @@ public sealed class SyncSessionEngine : IDisposable
                     continue;
                 }
 
-                outstandingFetches[Guid.Parse(header.EventId)] = header;
-                fetchIds.Add(header.EventId);
+                if (outstandingFetches.TryAdd(Guid.Parse(header.EventId), header))
+                {
+                    fetchIds.Add(header.EventId);
+                }
+
                 continue;
             }
 
@@ -770,8 +808,10 @@ public sealed class SyncSessionEngine : IDisposable
                 continue;
             }
 
-            outstandingFetches[Guid.Parse(header.EventId)] = header;
-            fetchIds.Add(header.EventId);
+            if (outstandingFetches.TryAdd(Guid.Parse(header.EventId), header))
+            {
+                fetchIds.Add(header.EventId);
+            }
         }
 
         foreach (var chunk in fetchIds.Chunk(ProtocolLimits.MaxFetchEventIds))
@@ -803,7 +843,7 @@ public sealed class SyncSessionEngine : IDisposable
 
             if (item.IsTerminal)
             {
-                terminalHeaders.Add(await BuildHeaderAsync(item, token).ConfigureAwait(false));
+                terminalHeaders.Add(BuildHeader(item));
                 continue;
             }
 
@@ -811,7 +851,7 @@ public sealed class SyncSessionEngine : IDisposable
             {
                 if (protocolVersion != ProtocolLimits.ProtocolVersionV2)
                 {
-                    terminalHeaders.Add(await BuildHeaderAsync(item, token).ConfigureAwait(false));
+                    terminalHeaders.Add(BuildHeader(item));
                     continue;
                 }
 
@@ -1000,16 +1040,41 @@ public sealed class SyncSessionEngine : IDisposable
             }
 
             var headers = new List<ClipHeaderDto>(batch.Count);
+            var dropped = new List<long>();
             foreach (var row in batch)
             {
-                headers.Add(await BuildHeaderAsync(row.Event, token).ConfigureAwait(false));
+                var origin = row.Event.OriginDeviceId;
+                if (origin != store.LocalDeviceId && origin != peerDevice!.DeviceId)
+                {
+                    dropped.Add(row.Entry.Id);
+                    continue;
+                }
+
+                headers.Add(BuildHeader(row.Event));
+            }
+
+            if (dropped.Count > 0)
+            {
+                await store.DeleteOutboxIdsAsync(dropped, token).ConfigureAwait(false);
+            }
+
+            if (headers.Count == 0)
+            {
+                if (dropped.Count == 0)
+                {
+                    return;
+                }
+
+                continue;
             }
 
             await SendAsync(ProtocolMessageTypes.ClipAnnounce, new ClipAnnounceBody
             {
                 Clips = headers.ToArray()
             }, token).ConfigureAwait(false);
-            await store.MarkOutboxAnnouncedAsync(batch.Select(row => row.Entry.Id).ToArray(), token).ConfigureAwait(false);
+            await store.MarkOutboxAnnouncedAsync(
+                batch.Where(row => !dropped.Contains(row.Entry.Id)).Select(row => row.Entry.Id).ToArray(),
+                token).ConfigureAwait(false);
 
             if (batch.Count < ProtocolLimits.MaxAnnounceClips)
             {
@@ -1085,22 +1150,13 @@ public sealed class SyncSessionEngine : IDisposable
         };
     }
 
-    private async ValueTask<ClipHeaderDto> BuildHeaderAsync(SyncableClipEvent item, CancellationToken token)
+    private ClipHeaderDto BuildHeader(SyncableClipEvent item)
     {
         if (item.IsTerminal || (item.IsImage && protocolVersion != ProtocolLimits.ProtocolVersionV2))
         {
             var reason = item.IsImage && protocolVersion != ProtocolLimits.ProtocolVersionV2
                 ? ClipUnavailableReasons.LocalOnly
                 : item.TerminalReason;
-            if (item.IsImage && protocolVersion != ProtocolLimits.ProtocolVersionV2)
-            {
-                await store.StoreLocalUnsupportedMediaAsync(
-                    item.EventId,
-                    item.OriginDeviceId,
-                    item.OriginSeq,
-                    clock.GetUtcNow(),
-                    token).ConfigureAwait(false);
-            }
 
             return new ClipHeaderDto
             {

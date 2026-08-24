@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ClipSync.Core.Protocol;
 
 namespace ClipSync.Tests.Protocol;
@@ -32,7 +33,8 @@ public sealed class ProtocolReaderV2Tests
         var outcome = ProtocolReaderV2.Parse(File.ReadAllText(path));
 
         var failure = Assert.IsType<ProtocolParseOutcome.Failure>(outcome);
-        Assert.Contains(failure.ErrorCode, ProtocolErrorCodes.All);
+        var expected = ExpectedErrors()[Path.GetFileName(path)];
+        Assert.Equal(expected, failure.ErrorCode);
     }
 
     [Theory]
@@ -63,5 +65,23 @@ public sealed class ProtocolReaderV2Tests
     {
         Assert.NotEmpty(ValidFixtures());
         Assert.NotEmpty(InvalidFixtures());
+    }
+
+    [Fact]
+    public void ValidFixturesCoverEveryV2MessageType()
+    {
+        var types = Directory.EnumerateFiles(FixtureRoot("valid"), "*.json")
+            .Select(Path.GetFileNameWithoutExtension)
+            .ToHashSet(StringComparer.Ordinal);
+        Assert.Equal(ProtocolMessageTypes.All.Count, types.Count);
+        Assert.True(types.SetEquals(ProtocolMessageTypes.All));
+    }
+
+    private static Dictionary<string, string> ExpectedErrors()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "protocol-fixtures-v2", "expected_errors.json");
+        using var document = JsonDocument.Parse(File.ReadAllText(path));
+        return document.RootElement.EnumerateObject()
+            .ToDictionary(property => property.Name, property => property.Value.GetString()!, StringComparer.Ordinal);
     }
 }

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ClipSync.Core.Protocol;
 
 namespace ClipSync.Tests.Protocol;
@@ -32,7 +33,8 @@ public sealed class ProtocolReaderTests
         var outcome = ProtocolReader.Parse(File.ReadAllText(path));
 
         var failure = Assert.IsType<ProtocolParseOutcome.Failure>(outcome);
-        Assert.Contains(failure.ErrorCode, ProtocolErrorCodes.All);
+        var expected = ExpectedErrors()[Path.GetFileName(path)];
+        Assert.Equal(expected, failure.ErrorCode);
     }
 
     [Theory]
@@ -291,6 +293,14 @@ public sealed class ProtocolReaderTests
         Assert.Equal(
             ProtocolErrorCodes.SchemaViolation,
             Assert.IsType<ProtocolParseOutcome.Failure>(outcome).ErrorCode);
+    }
+
+    private static Dictionary<string, string> ExpectedErrors()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "protocol-fixtures", "expected_errors.json");
+        using var document = JsonDocument.Parse(File.ReadAllText(path));
+        return document.RootElement.EnumerateObject()
+            .ToDictionary(property => property.Name, property => property.Value.GetString()!, StringComparer.Ordinal);
     }
 
     private static ClipHeaderDto AvailableHeader(long utf8Bytes) => new()

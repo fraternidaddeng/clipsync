@@ -24,7 +24,7 @@ object ShizukuErrorCodes {
 
     fun probeReadState(errorCode: String): CapabilityState = when (errorCode) {
         NOT_INSTALLED, NOT_RUNNING, NOT_AUTHORIZED -> CapabilityState.NEEDS_USER_ACTION
-        USERSERVICE_DEAD, CLIPBOARD_BINDER_DEAD -> CapabilityState.DEGRADED
+        USERSERVICE_DEAD, CLIPBOARD_BINDER_DEAD -> CapabilityState.UNAVAILABLE
         BINDER_DEAD, API_MISMATCH -> CapabilityState.UNAVAILABLE
         else -> CapabilityState.UNAVAILABLE
     }

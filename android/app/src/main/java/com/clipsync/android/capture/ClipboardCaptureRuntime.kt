@@ -40,6 +40,14 @@ object ClipboardCaptureRuntime {
     /** Live coordinator of the process capture stack, if started. UI status reads it. */
     fun currentAccess(): ClipboardAccessCoordinator? = manager?.access()
 
+    /** Stops capture backends (overlay, logcat, Shizuku) and drops the process stack. */
+    fun stop() {
+        synchronized(lock) {
+            manager?.stop()
+            manager = null
+        }
+    }
+
     private fun createManager(app: Context): ClipboardCaptureManager =
         ClipboardCaptureManager(
             loadChoices = { KeyValueWizardSettings(SharedPrefsKeyValueStore(app)).load() },

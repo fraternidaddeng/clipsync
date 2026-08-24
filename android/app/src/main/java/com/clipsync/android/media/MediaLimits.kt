@@ -8,6 +8,7 @@ object MediaLimits {
     const val MAX_CHUNK_BYTES = 256 * 1024
     const val MAX_CONCURRENT_DOWNLOADS = 2
     const val UNFINISHED_DOWNLOAD_HOURS = 24
+    const val BLOB_GC_GRACE_MS = 5L * 60L * 1000L
     const val THUMBNAIL_MAX_SIDE = 512
     const val MAX_CHUNK_COUNT = 64
 

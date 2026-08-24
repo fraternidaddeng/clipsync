@@ -10,10 +10,11 @@ class ClipboardWriteCoordinator(
     private val fallbackWriteMode: ClipboardWriteMode = ClipboardWriteMode.SHIZUKU_FALLBACK,
 ) {
     private val suppressionsByOrigin = mutableMapOf<String, WriteSuppression>()
-    private var publicLastSuccessAt: Long? = null
-    private var publicLastError: String? = null
-    private var fallbackLastSuccessAt: Long? = null
-    private var fallbackLastError: String? = null
+    private val writeGate = Any()
+    @Volatile private var publicLastSuccessAt: Long? = null
+    @Volatile private var publicLastError: String? = null
+    @Volatile private var fallbackLastSuccessAt: Long? = null
+    @Volatile private var fallbackLastError: String? = null
 
     init {
         capabilityStore?.loadWrite()?.let { saved ->
@@ -46,7 +47,7 @@ class ClipboardWriteCoordinator(
         encoded: ByteArray,
         mimeType: String,
         originEventId: String,
-    ): ClipboardWriteOutcome {
+    ): ClipboardWriteOutcome = synchronized(writeGate) {
         require(originEventId.isNotBlank()) { "originEventId must not be blank." }
         val hash = Sha256ContentHasher.hashBytes(encoded)
         val suppression = WriteSuppression(
@@ -77,16 +78,20 @@ class ClipboardWriteCoordinator(
             }
             fallbackLastError = (fallbackResult as ClipboardWriteResult.Failure).errorCode
             persistWrite()
-            clearSuppression(originEventId)
+            if (!isTimeoutFailure(fallbackResult)) {
+                clearSuppression(originEventId)
+            }
             return ClipboardWriteOutcome(fallbackResult, ClipboardWriterKind.PRIVILEGED_FALLBACK)
         }
 
         persistWrite()
-        clearSuppression(originEventId)
+        if (!isTimeoutFailure(publicResult)) {
+            clearSuppression(originEventId)
+        }
         return ClipboardWriteOutcome(publicResult, ClipboardWriterKind.PUBLIC_API)
     }
 
-    fun writeText(text: String, originEventId: String): ClipboardWriteOutcome {
+    fun writeText(text: String, originEventId: String): ClipboardWriteOutcome = synchronized(writeGate) {
         require(originEventId.isNotBlank()) { "originEventId must not be blank." }
         val suppression = WriteSuppression(
             contentHash = hasher.hash(text),
@@ -116,12 +121,16 @@ class ClipboardWriteCoordinator(
             }
             fallbackLastError = (fallbackResult as ClipboardWriteResult.Failure).errorCode
             persistWrite()
-            clearSuppression(originEventId)
+            if (!isTimeoutFailure(fallbackResult)) {
+                clearSuppression(originEventId)
+            }
             return ClipboardWriteOutcome(fallbackResult, ClipboardWriterKind.PRIVILEGED_FALLBACK)
         }
 
         persistWrite()
-        clearSuppression(originEventId)
+        if (!isTimeoutFailure(publicResult)) {
+            clearSuppression(originEventId)
+        }
         return ClipboardWriteOutcome(publicResult, ClipboardWriterKind.PUBLIC_API)
     }
 
@@ -194,6 +203,10 @@ class ClipboardWriteCoordinator(
     private fun persistWrite(mode: ClipboardWriteMode = resolveWriteMode()) {
         capabilityStore?.saveWrite(currentWriteSnapshot(mode))
     }
+
+    private fun isTimeoutFailure(result: ClipboardWriteResult): Boolean =
+        result is ClipboardWriteResult.Failure &&
+            result.errorCode == AndroidPublicClipboardWriter.ERROR_TIMEOUT
 
     private fun clearSuppression(originEventId: String) {
         synchronized(suppressionsByOrigin) {

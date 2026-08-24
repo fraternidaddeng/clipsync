@@ -22,14 +22,13 @@ class AdbLogOverlayBackendTest {
     }
 
     @Test
-    fun `probe is not ready when read logs is granted but no match has occurred`() {
+    fun `probe is ready when read logs is granted even before the reader starts`() {
         val env = Env(granted = true)
         val report = env.backend.probe()
 
-        assertEquals(CapabilityState.DEGRADED, report.readState)
-        assertEquals(AdbLogOverlayBackend.ERROR_NO_HEALTHY_SIGNAL, report.errorCode)
+        assertEquals(CapabilityState.READY, report.readState)
+        assertNull(report.errorCode)
         assertTrue(report.authorizations.any { it.name == "read_logs" && it.granted })
-        assertTrue(report.readState != CapabilityState.READY)
     }
 
     @Test

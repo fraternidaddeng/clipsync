@@ -119,6 +119,7 @@ class SyncController(
                                 current.deviceId == peer.deviceId &&
                                 current.trustEpoch == peer.trustEpoch
                         },
+                        isTrustedOrigin = { origin -> pairingStore.isTrustedOrigin(origin) },
                         onReady = {
                             publish(
                                 SyncControllerState(
@@ -131,6 +132,7 @@ class SyncController(
                         onRemoteClipsCommitted = onRemoteClipsCommitted,
                     )
                     secret.fill(0)
+                    val startedAtMs = options.nowMs()
                     val result = try {
                         engine.run(connect.transport)
                     } catch (cancelled: CancellationException) {
@@ -148,8 +150,14 @@ class SyncController(
                     if (!currentCoroutineContext().isActive) {
                         return
                     }
-                    failures += 1
-                    val wait = reconnectBackoffMs(failures - 1)
+                    if (result.authenticated &&
+                        options.nowMs() - startedAtMs >= HEALTHY_SESSION_RESET_MS
+                    ) {
+                        failures = 0
+                    } else {
+                        failures += 1
+                    }
+                    val wait = reconnectBackoffMs((failures - 1).coerceAtLeast(0))
                     publish(
                         SyncControllerState(
                             status = SyncStatus.BACKING_OFF,
@@ -171,6 +179,8 @@ class SyncController(
     }
 
     companion object {
+        internal const val HEALTHY_SESSION_RESET_MS = 30_000L
+
         /**
          * 1, 2, 4, 8, 16, 30s then stay at 30s, never above 5 minutes.
          * [failureIndex] is zero for the first reconnect after a failure.

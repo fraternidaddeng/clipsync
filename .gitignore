@@ -37,3 +37,8 @@ releases/
 Thumbs.db
 *.swp
 *-diagnostics.log
+*.log
+uidump*.xml
+
+# Local device dumps / clipboard fixtures (must never be committed)
+tmp-img-test/

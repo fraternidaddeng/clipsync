@@ -1,6 +1,8 @@
 package com.clipsync.android.protocol
 
 import java.io.File
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -157,9 +159,16 @@ class SyncMessageParseTest {
     @Test
     fun `all shared invalid fixtures stay rejected by ProtocolJson`() {
         val files = fixtureFiles("invalid")
+        val expected = loadExpectedErrors()
         files.forEach { fixture ->
-            val rejected = runCatching { ProtocolJson.parseEnvelope(fixture.readText()) }.isFailure
-            assertTrue("Invalid fixture was accepted: ${fixture.name}", rejected)
+            val error = runCatching { ProtocolJson.parseEnvelope(fixture.readText()) }.exceptionOrNull()
+            assertTrue("Invalid fixture was accepted: ${fixture.name}", error != null)
+            val code = when (error) {
+                is ProtocolParseException -> error.errorCode
+                is kotlinx.serialization.SerializationException -> ProtocolErrorCodes.SCHEMA_VIOLATION
+                else -> error("unexpected ${error!!::class.java.name} for ${fixture.name}")
+            }
+            assertEquals("Wrong error for ${fixture.name}", expected[fixture.name], code)
             val typedRejected = runCatching { SyncMessages.parse(fixture.readText()) }.isFailure
             assertTrue("Typed parse accepted invalid fixture: ${fixture.name}", typedRejected)
         }
@@ -200,5 +209,11 @@ class SyncMessageParseTest {
         )
         return candidates.firstOrNull { it.isDirectory }
             ?: error("Cannot resolve protocol/v1/fixtures")
+    }
+
+    private fun loadExpectedErrors(): Map<String, String> {
+        val file = fixtureRoot().resolve("expected_errors.json")
+        val obj = kotlinx.serialization.json.Json.parseToJsonElement(file.readText()).jsonObject
+        return obj.mapValues { it.value.jsonPrimitive.content }
     }
 }

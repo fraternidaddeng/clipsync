@@ -51,7 +51,7 @@ class ShizukuClipboardWriterTest {
             WriteCase(
                 mutate = { session = null },
                 code = ShizukuErrorCodes.USERSERVICE_DEAD,
-                probe = CapabilityState.DEGRADED,
+                probe = CapabilityState.UNAVAILABLE,
             ),
             WriteCase(
                 mutate = {
@@ -60,7 +60,7 @@ class ShizukuClipboardWriterTest {
                     session!!.healthError = ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD
                 },
                 code = ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD,
-                probe = CapabilityState.DEGRADED,
+                probe = CapabilityState.UNAVAILABLE,
             ),
             WriteCase(
                 mutate = { preV11 = true },

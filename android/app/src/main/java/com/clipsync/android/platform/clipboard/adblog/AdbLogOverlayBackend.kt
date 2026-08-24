@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import com.clipsync.android.platform.clipboard.BackendHealth
 import com.clipsync.android.platform.clipboard.BackendHealthState
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackend
@@ -44,6 +46,14 @@ class AdbLogOverlayBackend(
         },
         reader = LogcatClipboardEventReader(
             lineSourceFactory = ProcessLogcatLineSourceFactory(),
+            flightDispatcher = { runnable ->
+                val main = Looper.getMainLooper()
+                if (Looper.myLooper() == main) {
+                    runnable.run()
+                } else {
+                    Handler(main).post(runnable)
+                }
+            },
         ),
         systemVersion = Build.VERSION.SDK_INT.toString(),
         releaseOverlay = releaseOverlay,
@@ -146,6 +156,11 @@ class AdbLogOverlayBackend(
             val code = if (sawGrant) ERROR_READ_LOGS_REVOKED else ERROR_READ_LOGS_NOT_GRANTED
             val state = if (sawGrant) CapabilityState.DEGRADED else CapabilityState.NEEDS_USER_ACTION
             return state to code
+        }
+        if (!started) {
+            // Granted READ_LOGS is enough to offer this backend as an upgrade
+            // target; a live match can only exist while the reader is running.
+            return CapabilityState.READY to null
         }
         val matchedAt = reader.lastMatchAtEpochMillis
         if (matchedAt == null || nowEpochMillis() - matchedAt > healthySignalTtlMillis) {

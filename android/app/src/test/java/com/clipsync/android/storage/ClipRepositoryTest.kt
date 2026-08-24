@@ -198,13 +198,34 @@ class ClipRepositoryTest {
     }
 
     @Test
-    fun `terminal marker advances the cursor and never replaces a stored body`() = runTest {
+    fun `deleted terminal marker tombstones a stored body with the same identity`() = runTest {
+        val repo = repository()
+        val stored = remote("kept body", 1)
+        assertTrue(repo.ingestRemoteClip(stored, PEER) is RemoteStoreResult.Stored)
+
+        val tombstone = repo.ingestTerminalMarker(
+            RemoteTerminalMarker(stored.eventId, PEER, 1, TerminalReasons.DELETED),
+            sourcePeerId = PEER,
+            receivedAtMs = NOW + 1,
+        )
+        assertTrue(tombstone is RemoteStoreResult.Stored)
+        assertTrue(repo.search("").isEmpty())
+        val replay = repo.ingestTerminalMarker(
+            RemoteTerminalMarker(stored.eventId, PEER, 1, TerminalReasons.DELETED),
+            sourcePeerId = PEER,
+            receivedAtMs = NOW + 2,
+        )
+        assertTrue(replay is RemoteStoreResult.AlreadyPersisted)
+    }
+
+    @Test
+    fun `non-delete terminal marker advances the cursor and never replaces a stored body`() = runTest {
         val repo = repository()
         val stored = remote("kept body", 1)
         assertTrue(repo.ingestRemoteClip(stored, PEER) is RemoteStoreResult.Stored)
 
         val replay = repo.ingestTerminalMarker(
-            RemoteTerminalMarker(stored.eventId, PEER, 1, TerminalReasons.DELETED),
+            RemoteTerminalMarker(stored.eventId, PEER, 1, TerminalReasons.LOCAL_ONLY),
             sourcePeerId = PEER,
             receivedAtMs = NOW + 1,
         )
@@ -236,7 +257,7 @@ class ClipRepositoryTest {
     }
 
     @Test
-    fun `delete writes a tombstone cancels unacked outbox and keeps the terminal marker`() = runTest {
+    fun `delete writes a tombstone keeps outbox so the tombstone can be announced`() = runTest {
         val repo = repository()
         val stored = repo.captureLocalText("secret", nowMs = NOW, peerId = PEER) as CaptureResult.Stored
         assertEquals(1, repo.outboxPending(PEER).size)
@@ -244,7 +265,7 @@ class ClipRepositoryTest {
         assertTrue(repo.delete(stored.eventId, NOW + 5))
         assertTrue(repo.search("").isEmpty())
         assertTrue(repo.search("secret").isEmpty())
-        assertTrue(repo.outboxPending(PEER).isEmpty())
+        assertEquals(1, repo.outboxPending(PEER).size)
 
         val marker = repo.getSyncableEvents(LOCAL, listOf(SequenceRange(1, 1)), 1).single()
         assertTrue(marker.isTerminal)
@@ -255,16 +276,93 @@ class ClipRepositoryTest {
     }
 
     @Test
-    fun `clear tombstones every visible row and cancels unacked outbox`() = runTest {
+    fun `delete of an already-acked clip re-enqueues a tombstone`() = runTest {
+        val repo = repository()
+        repo.setSetting(SETTING_PAIRED_PEER_ID, PEER)
+        val stored = repo.captureLocalText("acked-secret", nowMs = NOW, peerId = PEER) as CaptureResult.Stored
+        repo.ackRanges(
+            PEER,
+            listOf(OriginSequenceRanges(LOCAL, listOf(SequenceRange(stored.originSeq, stored.originSeq)))),
+            NOW + 1,
+        )
+        assertTrue(repo.outboxPending(PEER).isEmpty())
+
+        assertTrue(repo.delete(stored.eventId, NOW + 5))
+        assertEquals(1, repo.outboxPending(PEER).size)
+        assertEquals(stored.eventId, repo.outboxPending(PEER).single().eventId)
+        val marker = repo.getSyncableEvents(LOCAL, listOf(SequenceRange(stored.originSeq, stored.originSeq)), 1).single()
+        assertTrue(marker.isTerminal)
+        assertEquals(TerminalReasons.DELETED, marker.terminalReason)
+    }
+
+    @Test
+    fun `persisted ack coverage does not drop a tombstone outbox row`() = runTest {
+        val repo = repository()
+        repo.setSetting(SETTING_PAIRED_PEER_ID, PEER)
+        val stored = repo.captureLocalText("synced-secret", nowMs = NOW, peerId = PEER) as CaptureResult.Stored
+        repo.ackRanges(PEER, listOf(OriginSequenceRanges(LOCAL, listOf(SequenceRange(stored.originSeq, stored.originSeq)))), NOW + 1)
+        assertTrue(repo.outboxPending(PEER).isEmpty())
+        assertTrue(repo.delete(stored.eventId, NOW + 2))
+        assertEquals(1, repo.outboxPending(PEER).size)
+
+        repo.ackRanges(
+            PEER,
+            listOf(OriginSequenceRanges(LOCAL, listOf(SequenceRange(stored.originSeq, stored.originSeq)))),
+            NOW + 3,
+            dropTerminalOutbox = false,
+        )
+        assertEquals(1, repo.outboxPending(PEER).size)
+
+        repo.ackRanges(
+            PEER,
+            listOf(OriginSequenceRanges(LOCAL, listOf(SequenceRange(stored.originSeq, stored.originSeq)))),
+            NOW + 4,
+        )
+        assertTrue(repo.outboxPending(PEER).isEmpty())
+    }
+
+    @Test
+    fun `delete of an announced clip repends the outbox row as a tombstone`() = runTest {
+        val repo = repository()
+        repo.setSetting(SETTING_PAIRED_PEER_ID, PEER)
+        val stored = repo.captureLocalText("announced-secret", nowMs = NOW, peerId = PEER) as CaptureResult.Stored
+        repo.markAnnounced(repo.outboxPending(PEER).map { it.id })
+        assertTrue(repo.outboxPending(PEER).isEmpty())
+
+        assertTrue(repo.delete(stored.eventId, NOW + 5))
+        assertEquals(1, repo.outboxPending(PEER).size)
+        assertEquals(stored.eventId, repo.outboxPending(PEER).single().eventId)
+        val marker = repo.getSyncableEvents(LOCAL, listOf(SequenceRange(stored.originSeq, stored.originSeq)), 1).single()
+        assertTrue(marker.isTerminal)
+        assertEquals(TerminalReasons.DELETED, marker.terminalReason)
+    }
+
+    @Test
+    fun `clear tombstones every visible row and keeps outbox for announcement`() = runTest {
         val repo = repository()
         repo.captureLocalText("first", nowMs = NOW, peerId = PEER)
         repo.captureLocalText("second", nowMs = NOW + 10, peerId = PEER)
         assertEquals(2, repo.clear(NOW + 20))
         assertTrue(repo.search("").isEmpty())
-        assertTrue(repo.outboxPending(PEER).isEmpty())
+        assertEquals(2, repo.outboxPending(PEER).size)
         assertEquals(2, (repo.knownVector().origins[LOCAL] ?: error("missing")).contiguousSeq)
         val markers = repo.getSyncableEvents(LOCAL, listOf(SequenceRange(1, 2)), 10)
         assertEquals(2, markers.size)
+        assertTrue(markers.all { it.isTerminal && it.terminalReason == TerminalReasons.DELETED })
+    }
+
+    @Test
+    fun `clear soft-deletes more than 999 visible clips`() = runTest {
+        val repo = repository()
+        repeat(1_500) { index ->
+            repo.captureLocalText("row-$index", nowMs = NOW + index, peerId = PEER)
+        }
+        assertEquals(1_500, repo.search("", MAX_SEARCH_LIMIT).size)
+        assertEquals(1_500, repo.clear(NOW + 10_000))
+        assertTrue(repo.search("").isEmpty())
+        assertEquals(1_500, repo.outboxPending(PEER).size)
+        val markers = repo.getSyncableEvents(LOCAL, listOf(SequenceRange(1, 1_500)), 1_500)
+        assertEquals(1_500, markers.size)
         assertTrue(markers.all { it.isTerminal && it.terminalReason == TerminalReasons.DELETED })
     }
 
@@ -589,7 +687,8 @@ class ClipRepositoryTest {
             dest.importJsonLines(jsonl)
             assertEquals(1, dest.search("").size)
             assertTrue(dest.outboxPending(PEER).isEmpty())
-            assertTrue(dest.knownVector().origins.isEmpty())
+            val local = dest.knownVector().origins[LOCAL] ?: error("imported local origin missing")
+            assertTrue(local.contains(1))
         }
     }
 
@@ -644,12 +743,47 @@ class ClipRepositoryTest {
                 dest.captureLocalText("after import", nowMs = NOW + 10, peerId = PEER)
                     as CaptureResult.Stored
             assertEquals(6, stored.originSeq)
+            val coverage = dest.knownVector().origins[LOCAL] ?: error("missing")
+            assertTrue(coverage.contains(5))
+            assertTrue(coverage.contains(6))
             assertEquals(2, dest.search("").size)
             assertEquals(
                 setOf(5L, 6L),
                 dest.search("").map { it.originSeq }.toSet(),
             )
         }
+    }
+
+    @Test
+    fun `peer coverage of local origin raises the next capture sequence`() = runTest {
+        val dest = repository()
+        dest.captureLocalText("local-1", nowMs = NOW, peerId = PEER) as CaptureResult.Stored
+        dest.adoptPeerCoverageOfLocalOrigin(185)
+        val stored = dest.captureLocalText("local-after-vector", nowMs = NOW + 10, peerId = PEER)
+            as CaptureResult.Stored
+        assertEquals(186, stored.originSeq)
+    }
+
+    @Test
+    fun `import of remote-origin rows advances known vector coverage`() = runTest {
+        val dest = repository()
+        val rows = (1L..5L).map { seq ->
+            ClipEntry(
+                eventId = UUID.randomUUID().toString(),
+                originDeviceId = PEER,
+                originSeq = seq,
+                content = "peer-$seq",
+                contentHash = hasher.hash("peer-$seq"),
+                sourceApp = null,
+                createdAtMs = NOW + seq,
+                expiresAtMs = null,
+            )
+        }
+        val counts = dest.importJsonLines(ClipExport.encodeJsonLines(rows))
+        assertEquals(5, counts.imported)
+        val state = dest.knownVector().origins[PEER] ?: error("missing peer origin")
+        assertEquals(5, state.contiguousSeq)
+        assertTrue((1L..5L).all { state.contains(it) })
     }
 
     @Test

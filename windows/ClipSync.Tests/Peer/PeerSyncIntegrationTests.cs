@@ -140,6 +140,24 @@ public sealed class PeerSyncIntegrationTests
     }
 
     [Fact]
+    public async Task DeletedAfterAckTravelsAsTombstone()
+    {
+        await using var pair = await PeerPair.CreateAsync();
+        var stored = await PeerPair.CaptureAsync(pair.WindowsStore, "later-deleted");
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("later-deleted"));
+        await session.CloseAsync();
+
+        Assert.True(await pair.WindowsStore.DeleteAsync(stored.EventId, DateTimeOffset.UtcNow));
+
+        session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+            !(await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("later-deleted"));
+        await session.CloseAsync();
+    }
+
+    [Fact]
     public async Task BacklogIsServedThroughWantRangesInCappedRounds()
     {
         await using var pair = await PeerPair.CreateAsync();

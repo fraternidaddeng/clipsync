@@ -2,6 +2,8 @@ package com.clipsync.android.protocol
 
 import java.io.File
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -11,6 +13,11 @@ class ProtocolFixtureV2Test {
     fun `all shared valid v2 envelope fixtures parse strictly`() {
         val fixtureFiles = validFixtures()
         assertTrue("Valid protocol v2 fixture set must not be empty.", fixtureFiles.isNotEmpty())
+        assertEquals(
+            "valid v2 fixtures must cover every v2 message type",
+            ProtocolMessageTypes.ALL_V2,
+            fixtureFiles.map { it.nameWithoutExtension }.toSet(),
+        )
         fixtureFiles.forEach { fixture ->
             val envelope = ProtocolJson.parseEnvelopeV2(fixture.readText())
             assertEquals(2, envelope.version)
@@ -22,13 +29,17 @@ class ProtocolFixtureV2Test {
     fun `all shared invalid v2 envelope fixtures are rejected`() {
         val fixtureFiles = invalidFixtures()
         assertTrue("Invalid protocol v2 fixture set must not be empty.", fixtureFiles.isNotEmpty())
-        val accepted = fixtureFiles.filter { fixture ->
-            runCatching { ProtocolJson.parseEnvelopeV2(fixture.readText()) }.isSuccess
+        val expected = loadExpectedErrors(fixtureRoot())
+        fixtureFiles.forEach { fixture ->
+            val error = runCatching { ProtocolJson.parseEnvelopeV2(fixture.readText()) }.exceptionOrNull()
+            assertTrue("Invalid v2 fixture was accepted: ${fixture.name}", error != null)
+            val code = when (error) {
+                is ProtocolParseException -> error.errorCode
+                is SerializationException -> ProtocolErrorCodes.SCHEMA_VIOLATION
+                else -> error("unexpected ${error!!::class.java.name} for ${fixture.name}")
+            }
+            assertEquals("Wrong error for ${fixture.name}", expected[fixture.name], code)
         }
-        assertTrue(
-            "Invalid v2 fixtures were accepted: ${accepted.joinToString { it.name }}",
-            accepted.isEmpty(),
-        )
     }
 
     @Test
@@ -69,5 +80,12 @@ class ProtocolFixtureV2Test {
             ?: error("Cannot resolve protocol/v2/fixtures")
         assertTrue("Protocol v2 fixture directory is missing: $root", root.isDirectory)
         return root
+    }
+
+    private fun loadExpectedErrors(fixtureRoot: File): Map<String, String> {
+        val file = fixtureRoot.resolve("expected_errors.json")
+        assertTrue("expected_errors.json is missing: $file", file.isFile)
+        val obj = kotlinx.serialization.json.Json.parseToJsonElement(file.readText()).jsonObject
+        return obj.mapValues { it.value.jsonPrimitive.content }
     }
 }

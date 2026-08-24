@@ -29,6 +29,7 @@ import com.clipsync.android.storage.ClipSession
 import com.clipsync.android.storage.InMemoryClipPersistence
 import com.clipsync.android.storage.OUTBOX_PENDING
 import com.clipsync.android.storage.RemoteClipEvent
+import com.clipsync.android.storage.RemoteStoreResult
 import com.clipsync.android.storage.TerminalReasons
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CancellationException
@@ -237,6 +238,24 @@ class SyncSessionEngineTest {
     }
 
     @Test
+    fun `peer known_vector of local origin raises the next capture sequence`() = runTest {
+        val repo = repository()
+        repo.captureLocalText("before-vector", nowMs = NOW, peerId = PEER) as CaptureResult.Stored
+        val transport = FakeSyncTransport()
+        val finished = launchEngine(repo, transport)
+        completeAuth(transport)
+        transport.peerSends(knownVectorCoveringLocal(185))
+        runCurrent()
+
+        val stored = repo.captureLocalText("after-vector", nowMs = NOW + 10, peerId = PEER)
+            as CaptureResult.Stored
+        assertEquals(186, stored.originSeq)
+
+        transport.peerSendsFrame(TransportFrame.Closed)
+        finished.await()
+    }
+
+    @Test
     fun `identity conflict on ingest closes with EVENT_CONFLICT`() = runTest {
         val repo = repository()
         val first = remote("original", 1)
@@ -282,6 +301,38 @@ class SyncSessionEngineTest {
         val ack = transport.awaitSent().body as AckRangesBody
         assertEquals(1L, ack.acks.single().ranges.single().endSeq)
         assertEquals(1L, repo.knownVector().origins.getValue(PEER).contiguousSeq)
+        assertTrue(repo.search("").isEmpty())
+
+        transport.peerSendsFrame(TransportFrame.Closed)
+        finished.await()
+    }
+
+    @Test
+    fun `unavailable announce tombstones an already stored clip`() = runTest {
+        val repo = repository()
+        val stored = remote("later-deleted", 1)
+        assertTrue(repo.ingestRemoteClip(stored, PEER) is RemoteStoreResult.Stored)
+        val transport = FakeSyncTransport()
+        val finished = launchEngine(repo, transport)
+        completeAuth(transport)
+
+        transport.peerSends(
+            SyncMessageWriter.encode(
+                ClipAnnounceBody(
+                    listOf(
+                        ClipHeaderDto(
+                            eventId = stored.eventId,
+                            originDeviceId = PEER,
+                            originSeq = 1,
+                            availability = ClipAvailability.UNAVAILABLE,
+                            reason = TerminalReasons.DELETED,
+                        ),
+                    ),
+                ),
+            ),
+        )
+        val ack = transport.awaitSent().body as AckRangesBody
+        assertEquals(1L, ack.acks.single().ranges.single().endSeq)
         assertTrue(repo.search("").isEmpty())
 
         transport.peerSendsFrame(TransportFrame.Closed)
@@ -440,6 +491,7 @@ class SyncSessionEngineTest {
             pairSecret = SECRET.copyOf(),
             options = SyncSessionOptions(nowMs = { NOW }, outboxDrainIntervalMs = 60_000),
             logger = logger,
+            isPeerTrusted = { true },
         )
         // Mirror SyncController: requestClose() self-cancels the session job, so
         // run() ends in CancellationException that the controller maps to a retry.
@@ -482,6 +534,7 @@ class SyncSessionEngineTest {
             pairSecret = SECRET.copyOf(),
             options = options,
             logger = logger,
+            isPeerTrusted = { true },
         )
         val done = CompletableDeferred<SyncSessionResult>()
         launch { done.complete(engine.run(transport)) }

@@ -90,6 +90,10 @@ data class OriginReceiveState(
     fun contains(seq: Long): Boolean =
         seq <= contiguousSeq || receivedRanges.any { it.contains(seq) }
 
+    /** Highest sequence this state claims, including isolated ranges above a gap. */
+    fun highestCoveredSeq(): Long =
+        maxOf(contiguousSeq, receivedRanges.maxOfOrNull { it.endSeq } ?: 0L)
+
     fun accept(seq: Long): OriginReceiveState {
         require(seq >= 1) { "Sequences begin at 1." }
         return acceptRange(SequenceRange(seq, seq))

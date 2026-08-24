@@ -21,6 +21,8 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
     private readonly string connectionString;
     private readonly IStorageFaultInjector? faultInjector;
     private readonly MediaBlobStore media;
+    private readonly SemaphoreSlim mediaLifecycle = new(1, 1);
+    private static readonly TimeSpan BlobGcGrace = TimeSpan.FromMinutes(5);
     private bool initialized;
     private bool disposed;
 
@@ -193,7 +195,9 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
     {
         ArgumentNullException.ThrowIfNull(image);
         await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
-
+        await mediaLifecycle.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
         var validated = media.CommitBytes(image.EncodedBytes, image.ContentHash);
         var eventId = Guid.NewGuid();
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -244,6 +248,11 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
             throw;
         }
+        }
+        finally
+        {
+            mediaLifecycle.Release();
+        }
     }
 
     public async ValueTask<IReadOnlyList<ClipboardHistoryEntry>> SearchAsync(
@@ -276,6 +285,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             LEFT JOIN clip_media m ON m.event_id = c.event_id
             LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
             WHERE c.deleted_at IS NULL
+              AND (c.expires_at IS NULL OR c.expires_at > $now)
               AND (
                     $search IS NULL
                     OR c.content LIKE $pattern ESCAPE '\' COLLATE NOCASE
@@ -290,6 +300,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         var search = string.IsNullOrEmpty(query.SearchText) ? null : query.SearchText;
         command.Parameters.AddWithValue("$search", (object?)search ?? DBNull.Value);
         command.Parameters.AddWithValue("$pattern", search is null ? DBNull.Value : $"%{EscapeLikePattern(search)}%");
+        command.Parameters.AddWithValue("$now", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
         command.Parameters.AddWithValue("$limit", query.Limit);
         command.Parameters.AddWithValue("$offset", query.Offset);
 
@@ -356,6 +367,32 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             {
                 await DetachClipMediaAsync(connection, transaction, eventId.ToString("D"), cancellationToken)
                     .ConfigureAwait(false);
+                string? origin = null;
+                long seq = 0;
+                await using (var lookup = connection.CreateCommand())
+                {
+                    lookup.Transaction = transaction;
+                    lookup.CommandText = "SELECT origin_device_id, origin_seq FROM clips WHERE event_id = $event_id;";
+                    lookup.Parameters.AddWithValue("$event_id", eventId.ToString("D"));
+                    await using var reader = await lookup.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                    if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+                    {
+                        origin = reader.GetString(0);
+                        seq = reader.GetInt64(1);
+                    }
+                }
+
+                if (origin is not null)
+                {
+                    await EnqueueOutboxFanOutAsync(
+                        connection,
+                        transaction,
+                        eventId,
+                        origin,
+                        seq,
+                        excludedPeerId: null,
+                        cancellationToken).ConfigureAwait(false);
+                }
             }
 
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
@@ -421,13 +458,19 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
                     SELECT event_id
                     FROM clips
                     WHERE deleted_at IS NULL
-                      AND created_at < $oldest_created_at
+                      AND (
+                            created_at < $oldest_created_at
+                            OR (expires_at IS NOT NULL AND expires_at <= $now)
+                          )
+                      AND event_id NOT IN (SELECT event_id FROM outbox)
                     UNION
                     SELECT event_id
                     FROM (
                         SELECT event_id
                         FROM clips
                         WHERE deleted_at IS NULL
+                          AND (expires_at IS NULL OR expires_at > $now)
+                          AND event_id NOT IN (SELECT event_id FROM outbox)
                         ORDER BY created_at DESC, origin_seq DESC, origin_device_id ASC, event_id ASC
                         LIMIT -1 OFFSET $maximum_entries
                     )
@@ -444,7 +487,18 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             command.Parameters.AddWithValue("$oldest_created_at", (now - policy.MaximumAge).ToUnixTimeMilliseconds());
             command.Parameters.AddWithValue("$maximum_entries", policy.MaximumEntries);
             command.Parameters.AddWithValue("$deleted_at", now.ToUnixTimeMilliseconds());
+            command.Parameters.AddWithValue("$now", now.ToUnixTimeMilliseconds());
             var removed = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            await using var hardDelete = connection.CreateCommand();
+            hardDelete.Transaction = transaction;
+            hardDelete.CommandText = """
+                DELETE FROM clips
+                WHERE deleted_at IS NOT NULL
+                  AND deleted_at < $tombstone_cutoff
+                  AND event_id NOT IN (SELECT event_id FROM outbox);
+                """;
+            hardDelete.Parameters.AddWithValue("$tombstone_cutoff", (now - policy.MaximumAge).ToUnixTimeMilliseconds());
+            await hardDelete.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             await DetachOrphanedClipMediaAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
@@ -795,16 +849,12 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         long originSequence,
         CancellationToken cancellationToken)
     {
-        await using var command = connection.CreateCommand();
-        command.Transaction = transaction;
-        command.CommandText = """
-            INSERT INTO origin_receive_state (origin_device_id, contiguous_seq)
-            VALUES ($device_id, $seq)
-            ON CONFLICT(origin_device_id) DO UPDATE SET contiguous_seq = excluded.contiguous_seq;
-            """;
-        command.Parameters.AddWithValue("$device_id", localDeviceId);
-        command.Parameters.AddWithValue("$seq", originSequence);
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        await AdvanceRemoteReceiveStateAsync(
+            connection,
+            transaction,
+            localDeviceId,
+            originSequence,
+            cancellationToken).ConfigureAwait(false);
     }
 
     private static SqliteCommand CreateSoftDeleteCommand(
@@ -943,7 +993,8 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             transaction,
             """
             DELETE FROM clip_media
-            WHERE event_id IN (
+            WHERE event_id NOT IN (SELECT event_id FROM clips)
+               OR event_id IN (
                 SELECT event_id FROM clips WHERE deleted_at IS NOT NULL OR content_hash = '');
             """,
             cancellationToken).ConfigureAwait(false);
@@ -951,6 +1002,9 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
 
     private async ValueTask CollectUnreferencedBlobsAsync(CancellationToken cancellationToken)
     {
+        await mediaLifecycle.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
         command.CommandText = "SELECT content_hash FROM media_blobs;";
@@ -977,7 +1031,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         var stale = live.Where(hash => !keep.Contains(hash)).ToArray();
         if (stale.Length == 0)
         {
-            media.DeleteUnreferenced(keep);
+            media.DeleteUnreferenced(keep, gracePeriod: BlobGcGrace);
             return;
         }
 
@@ -1003,7 +1057,17 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             throw;
         }
 
-        media.DeleteUnreferenced(keep);
+        foreach (var hash in stale)
+        {
+            media.DeleteBlob(hash);
+        }
+
+        media.DeleteUnreferenced(keep, gracePeriod: BlobGcGrace);
+        }
+        finally
+        {
+            mediaLifecycle.Release();
+        }
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(

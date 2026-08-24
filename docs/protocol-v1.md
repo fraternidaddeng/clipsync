@@ -122,7 +122,7 @@ Application messages measure liveness and use epoch milliseconds. Send `ping` ev
 - `content_hash` is lowercase hexadecimal SHA-256 over the exact strict UTF-8 bytes of `content`, with no BOM, Unicode normalization, or newline conversion. `utf8_bytes` must equal their length.
 - Empty text is not a clipboard event and is not sent. One event is at most 1,048,576 UTF-8 bytes. A payload batch is also capped at 1,048,576 decoded content bytes.
 - `source_app` is optional process/package metadata used by local policy. It must not be treated as authenticated evidence about the originating application.
-- `expires_at_ms`, when present, must be greater than `created_at_ms`. Expiry is local retention policy; already persisted content is not remotely deleted.
+- `expires_at_ms`, when present, must be greater than `created_at_ms`. Receivers hide and expire the row once that timestamp is reached. Expiry is local retention; already delivered copies are not remotely deleted.
 
 ## 6. Range and cursor invariants
 

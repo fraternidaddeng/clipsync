@@ -6,7 +6,7 @@
 已知可引用的当场事实（编排端，2026-08-18）：Android `testDebugUnitTest` 450/0/1 skipped；Windows Tests 191 + App.Tests 51，0 警告；detekt / ktlint 基线通过；实机轮已验证配对、双向同步、回声抑制、自测按钮（`SHIZUKU_EVENT` 读 OK、`PUBLIC_API` 写 OK）、Windows 进程重启与 Wi‑Fi 开关故障注入恰好一次、MIUI 自启动授权后的开机全链路；已签名 release APK 与 keystore 指纹已记录；**断网 30 分钟浸泡 PASS**（`docs/stage-6-change-log.md`「延迟修复与 P95 验收轮」：离线注入 5 事件，恢复后恰好一次、零回声）；**P95 正式统计已有**（同上：A→W p95 0.37 s，W→A p50 1.69 s 含轮询粒度）。  
 本日 wave 实机（同一台 MIUI 14 / `SHIZUKU_EVENT`）：中文 UI 与详情对话框可用；W→A / A→W 令牌同步 PASS；`am stack remove` 后无 Activity 仍捕获并送达 Windows；Shizuku 在进程启动后才拉起时一个 10 s 健康周期内自动绑定；后台同步开关 OFF/ON 双向不中断；重装后孤儿 UserService 保持 1 个。Modern Standby `PowerRegisterSuspendResumeNotification` 已落地（`02ec63c`，App.Tests 51/51；运行期 S0 落盘待自然待机）。模拟器矩阵 **进行中，不标完成**。
 
-结论只表示仓库能证明到哪一步。JVM / xUnit 绿不写成实机；模拟器不写成 ROM 覆盖。`docs/device-validation-matrix.md` 仍停在阶段 0「尚未提供任何实体设备」，与阶段 5/6 变更记录不一致，**不以该矩阵为实机证据**。
+结论只表示仓库能证明到哪一步。JVM / xUnit 绿不写成实机；模拟器不写成 ROM 覆盖。`docs/device-validation-matrix.md` 已于 2026-08-18 按阶段变更记录回填（Redmi Note 11T Pro / MIUI 14 **DEVICE-VERIFIED** 行），**以该矩阵 + 其证据列指向的变更记录为实机证据**。未出现在矩阵「已验证」表中的组合不是兼容性声明。
 
 ## 结论定义
 

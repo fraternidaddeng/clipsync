@@ -5,7 +5,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -83,15 +87,19 @@ class OverlayFocusController internal constructor(
             lastError = ERROR_TOUCHABLE_REQUIRED
             return ClipboardReadResult.Failure(ERROR_TOUCHABLE_REQUIRED)
         }
-        applyWindow(idleSpec())
-        try {
+        return try {
+            applyWindow(idleSpec())
             applyWindow(readSpec())
-            return readWithRetries()
+            readWithRetries()
         } catch (_: RuntimeException) {
             lastError = ERROR_READ_FAILED
-            return ClipboardReadResult.Failure(ERROR_READ_FAILED)
+            ClipboardReadResult.Failure(ERROR_READ_FAILED)
         } finally {
-            applyWindow(idleSpec())
+            try {
+                applyWindow(idleSpec())
+            } catch (_: RuntimeException) {
+                // Best-effort restore; detach() is the hard cleanup.
+            }
         }
     }
 
@@ -126,7 +134,34 @@ class OverlayFocusController internal constructor(
         require(spec.flags and FLAG_NOT_TOUCHABLE != 0) {
             "FLAG_NOT_TOUCHABLE must stay set"
         }
-        platform.attachOrUpdateWindow(spec)
+        runOnMainIfNeeded { platform.attachOrUpdateWindow(spec) }
+    }
+
+    private fun runOnMainIfNeeded(block: () -> Unit) {
+        val main = try {
+            Looper.getMainLooper()
+        } catch (_: Throwable) {
+            null
+        }
+        if (main == null || Looper.myLooper() == main || !main.thread.isAlive) {
+            block()
+            return
+        }
+        val done = CountDownLatch(1)
+        var thrown: RuntimeException? = null
+        Handler(main).post {
+            try {
+                block()
+            } catch (error: RuntimeException) {
+                thrown = error
+            } finally {
+                done.countDown()
+            }
+        }
+        if (!done.await(2, TimeUnit.SECONDS)) {
+            throw RuntimeException("overlay window hop timed out")
+        }
+        thrown?.let { throw it }
     }
 
     private fun idleSpec(): OverlayWindowSpec = OverlayWindowSpec(

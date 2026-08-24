@@ -8,9 +8,10 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint")
 }
 
-// Release signing is opt-in. Debug / testDebugUnitTest never read these values.
-// assembleRelease without a keystore+password keeps AGP's default (debug-keyed)
-// signing so a missing personal keystore cannot break the debug pipeline.
+// Release signing is opt-in via CLIPSYNC_KEYSTORE + CLIPSYNC_KEYSTORE_PASSWORD.
+// assembleRelease / bundleRelease fail hard when those are missing so a
+// debug-signed artifact cannot be mistaken for a release build.
+// Debug / testDebugUnitTest never read these values.
 val clipsyncKeystorePath =
     System.getenv("CLIPSYNC_KEYSTORE")
         ?.trim()
@@ -86,6 +87,10 @@ android {
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
+
+    sourceSets {
+        getByName("androidTest").assets.srcDir("$projectDir/schemas")
+    }
 }
 
 ksp {
@@ -141,6 +146,23 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
     testImplementation("androidx.room:room-testing:2.6.1")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.room:room-testing:2.6.1")
+}
+
+afterEvaluate {
+    tasks.matching { it.name.contains("assembleRelease", ignoreCase = true) || it.name.contains("bundleRelease", ignoreCase = true) }
+        .configureEach {
+            doFirst {
+                if (!clipsyncReleaseSigningAvailable) {
+                    throw GradleException(
+                        "Release builds require CLIPSYNC_KEYSTORE and CLIPSYNC_KEYSTORE_PASSWORD; refusing to emit a debug-signed release APK.",
+                    )
+                }
+            }
+        }
 }
 
 // Static analysis is opt-in (`detekt`, `ktlintCheck`). Do not fail assemble/test.

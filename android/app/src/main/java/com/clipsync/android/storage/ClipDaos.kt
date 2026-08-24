@@ -17,25 +17,30 @@ interface ClipDao {
     @Query("SELECT * FROM clips WHERE event_id = :eventId LIMIT 1")
     suspend fun findByEventId(eventId: String): ClipEntity?
 
+    @Query("SELECT * FROM clips WHERE event_id IN (:eventIds)")
+    suspend fun findByEventIds(eventIds: List<String>): List<ClipEntity>
+
     @Query(
         """
         SELECT * FROM clips
         WHERE deleted_at IS NULL
+          AND (expires_at IS NULL OR expires_at > (CAST(strftime('%s', 'now') AS INTEGER) * 1000))
           AND (
             :matchAll = 1
             OR content LIKE :pattern ESCAPE '\'
             OR (kind = 'image' AND ('image' LIKE :pattern ESCAPE '\' OR content_hash LIKE :pattern ESCAPE '\'))
           )
         ORDER BY created_at DESC, origin_seq DESC, origin_device_id ASC, event_id ASC
-        LIMIT :limit
+        LIMIT :limit OFFSET :offset
         """,
     )
-    suspend fun searchVisible(matchAll: Int, pattern: String, limit: Int): List<ClipEntity>
+    suspend fun searchVisible(matchAll: Int, pattern: String, limit: Int, offset: Int): List<ClipEntity>
 
     @Query(
         """
         SELECT * FROM clips
         WHERE deleted_at IS NULL
+          AND (expires_at IS NULL OR expires_at > (CAST(strftime('%s', 'now') AS INTEGER) * 1000))
           AND (
             :matchAll = 1
             OR content LIKE :pattern ESCAPE '\'
@@ -69,8 +74,19 @@ interface ClipDao {
     )
     suspend fun softDeleteAllVisible(nowMs: Long): Int
 
-    @Query("SELECT event_id FROM clips WHERE deleted_at IS NULL")
-    suspend fun visibleEventIds(): List<String>
+    @Query("SELECT event_id FROM clips WHERE deleted_at IS NULL LIMIT :limit")
+    suspend fun visibleEventIds(limit: Int): List<String>
+
+    @Query(
+        """
+        UPDATE clips
+        SET content = CASE WHEN kind = 'image' THEN NULL ELSE '' END,
+            content_hash = '', source_app = NULL,
+            deleted_at = :nowMs, terminal_reason = 'deleted'
+        WHERE event_id IN (:eventIds) AND deleted_at IS NULL
+        """,
+    )
+    suspend fun softDeleteByEventIds(eventIds: List<String>, nowMs: Long): Int
 
     @Query(
         """
@@ -125,8 +141,11 @@ interface ClipDao {
         """
         DELETE FROM clips
         WHERE deleted_at IS NULL
-          AND created_at < :cutoffMs
           AND event_id NOT IN (SELECT event_id FROM outbox)
+          AND (
+            created_at < :cutoffMs
+            OR (expires_at IS NOT NULL AND expires_at <= (CAST(strftime('%s', 'now') AS INTEGER) * 1000))
+          )
         """,
     )
     suspend fun hardDeleteExpiredLive(cutoffMs: Long): Int
@@ -190,6 +209,34 @@ interface OutboxDao {
         startSeq: Long,
         endSeq: Long,
     )
+
+    @Query(
+        """
+        DELETE FROM outbox
+        WHERE peer_id = :peerId AND event_id IN (
+            SELECT event_id FROM clips
+            WHERE origin_device_id = :originDeviceId
+              AND origin_seq >= :startSeq AND origin_seq <= :endSeq
+              AND deleted_at IS NULL
+              AND terminal_reason IS NULL
+        )
+        """,
+    )
+    suspend fun deleteLiveInOriginRange(
+        peerId: String,
+        originDeviceId: String,
+        startSeq: Long,
+        endSeq: Long,
+    )
+
+    @Query(
+        """
+        UPDATE outbox
+        SET state = 'pending', attempts = 0, next_attempt_at = 0
+        WHERE peer_id = :peerId AND event_id = :eventId
+        """,
+    )
+    suspend fun repend(peerId: String, eventId: String): Int
 
     @Query("UPDATE outbox SET state = 'pending' WHERE peer_id = :peerId AND state = 'announced'")
     suspend fun resetAnnouncedToPending(peerId: String)
@@ -278,7 +325,8 @@ interface ClipMediaDao {
     @Query(
         """
         DELETE FROM clip_media
-        WHERE event_id IN (
+        WHERE event_id NOT IN (SELECT event_id FROM clips)
+           OR event_id IN (
             SELECT event_id FROM clips WHERE deleted_at IS NOT NULL OR content_hash = ''
         )
         """,

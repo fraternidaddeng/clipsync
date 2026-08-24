@@ -16,8 +16,15 @@ class ClipboardAccessCoordinator(
     private val releaseFocusResource: () -> Unit = {},
 ) {
     private val backendsByMode = backends.associateBy { it.mode }
+    private val gate = Any()
+
+    @Volatile
     private var listener: ((ClipboardChange) -> Unit)? = null
+
+    @Volatile
     private var activeBackend: BackgroundClipboardBackend? = null
+
+    @Volatile
     private var baselineHash: String? = null
 
     var modeEpoch: Long = 0L
@@ -114,11 +121,15 @@ class ClipboardAccessCoordinator(
     }
 
     fun stop() {
-        activeBackend?.stop()
-        activeBackend = null
-        listener = null
-        baselineHash = null
-        state = state.copy(activeReadMode = null)
+        val backend = synchronized(gate) {
+            val current = activeBackend
+            activeBackend = null
+            listener = null
+            baselineHash = null
+            state = state.copy(activeReadMode = null)
+            current
+        }
+        backend?.stop()
         releaseFocusResource()
         persist()
     }
@@ -184,14 +195,19 @@ class ClipboardAccessCoordinator(
     }
 
     private fun switchTo(nextBackend: BackgroundClipboardBackend): Boolean {
-        val previous = activeBackend
+        val previous = synchronized(gate) { activeBackend }
         return try {
             previous?.stop()
             releaseFocusResource()
-            baselineHash = nextBackend.readText().successTextOrNull()?.let(hasher::hash)
+            val nextBaseline = nextBackend.readText().successTextOrNull()?.let(hasher::hash)
+            synchronized(gate) {
+                baselineHash = nextBaseline
+            }
             nextBackend.start(::handleChange)
-            activeBackend = nextBackend
-            modeEpoch += 1L
+            synchronized(gate) {
+                activeBackend = nextBackend
+                modeEpoch += 1L
+            }
             true
         } catch (_: Exception) {
             runCatching { nextBackend.stop() }
@@ -244,12 +260,17 @@ class ClipboardAccessCoordinator(
     }
 
     private fun handleChange(change: ClipboardChange) {
-        if (change.contentHash == baselineHash) {
-            baselineHash = null
-            return
+        val emit = synchronized(gate) {
+            if (change.contentHash == baselineHash) {
+                false
+            } else {
+                baselineHash = change.contentHash
+                true
+            }
         }
-        baselineHash = change.contentHash
-        listener?.invoke(change)
+        if (emit) {
+            listener?.invoke(change)
+        }
     }
 
     /**
@@ -261,15 +282,14 @@ class ClipboardAccessCoordinator(
         val requested = state.requestedReadMode
         val requestedRank = FALLBACK_ORDER.indexOf(requested)
         val activeRank = FALLBACK_ORDER.indexOf(active.mode)
-        val candidate = backendsByMode[requested]
+        val candidate = backendsByMode[requested] ?: return null
         val canUpgrade =
             requested != active.mode &&
                 requestedRank >= 0 &&
                 activeRank >= 0 &&
                 requestedRank < activeRank &&
-                candidate != null &&
                 candidate.probe().readState == CapabilityState.READY
-        return if (canUpgrade && candidate != null) {
+        return if (canUpgrade) {
             commitReadySwitch(candidate, requested)
         } else {
             null

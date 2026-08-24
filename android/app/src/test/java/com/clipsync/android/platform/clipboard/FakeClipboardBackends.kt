@@ -53,6 +53,18 @@ class FakeBackgroundClipboardBackend(
         )
     }
 
+    fun emitImage(bytes: ByteArray, hash: String, mimeType: String, observedAtEpochMillis: Long = 1L) {
+        callback?.invoke(
+            ClipboardChange(
+                text = "",
+                contentHash = hash,
+                observedAtEpochMillis = observedAtEpochMillis,
+                imageBytes = bytes,
+                imageMimeType = mimeType,
+            ),
+        )
+    }
+
     companion object {
         fun capabilityReport(
             mode: ClipboardReadMode,

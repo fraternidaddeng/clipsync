@@ -71,13 +71,13 @@ class ShizukuClipboardBackendTest {
             ),
             ProbeCase(
                 mutate = { session = null },
-                state = CapabilityState.DEGRADED,
+                state = CapabilityState.UNAVAILABLE,
                 code = ShizukuErrorCodes.USERSERVICE_DEAD,
                 start = true,
             ),
             ProbeCase(
                 mutate = { session!!.healthError = ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD },
-                state = CapabilityState.DEGRADED,
+                state = CapabilityState.UNAVAILABLE,
                 code = ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD,
             ),
             ProbeCase(
@@ -137,9 +137,9 @@ class ShizukuClipboardBackendTest {
         assertEquals(1_000L, runtime.lastRebindDelayMillis)
 
         val report = backend.probe()
-        assertEquals(CapabilityState.DEGRADED, report.readState)
+        assertEquals(CapabilityState.UNAVAILABLE, report.readState)
         assertEquals(ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD, report.errorCode)
-        assertEquals(BackendHealthState.DEGRADED, backend.health().state)
+        assertEquals(BackendHealthState.FAILED, backend.health().state)
         assertEquals(ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD, backend.health().errorCode)
         assertEquals(2_000L, runtime.lastRebindDelayMillis)
 
@@ -189,7 +189,7 @@ class ShizukuClipboardBackendTest {
 
         runtime.session!!.healthError = ShizukuErrorCodes.USERSERVICE_DEAD
         val grantedButUnhealthy = backend.probe()
-        assertEquals(CapabilityState.DEGRADED, grantedButUnhealthy.readState)
+        assertEquals(CapabilityState.UNAVAILABLE, grantedButUnhealthy.readState)
         assertEquals(ShizukuErrorCodes.USERSERVICE_DEAD, grantedButUnhealthy.errorCode)
 
         runtime.session!!.healthError = null

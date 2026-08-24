@@ -231,7 +231,10 @@ public sealed class MediaBlobStore
         return removed;
     }
 
-    public int DeleteUnreferenced(IReadOnlyCollection<string> liveHashes, int maximumDeletes = 256)
+    public int DeleteUnreferenced(
+        IReadOnlyCollection<string> liveHashes,
+        int maximumDeletes = 256,
+        TimeSpan? gracePeriod = null)
     {
         ArgumentNullException.ThrowIfNull(liveHashes);
         var live = new HashSet<string>(liveHashes, StringComparer.Ordinal);
@@ -241,6 +244,7 @@ public sealed class MediaBlobStore
             return 0;
         }
 
+        var cutoff = DateTime.UtcNow - (gracePeriod ?? TimeSpan.Zero);
         foreach (var file in Directory.EnumerateFiles(blobs, "*", SearchOption.AllDirectories))
         {
             if (removed >= maximumDeletes)
@@ -250,6 +254,11 @@ public sealed class MediaBlobStore
 
             var name = Path.GetFileName(file);
             if (name.Length != 64 || live.Contains(name))
+            {
+                continue;
+            }
+
+            if (gracePeriod is not null && File.GetLastWriteTimeUtc(file) > cutoff)
             {
                 continue;
             }
