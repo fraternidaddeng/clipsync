@@ -34,6 +34,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
     private readonly PairingService? pairingService;
     private readonly ISystemStateEvents? systemEventsOverride;
     private readonly SyncResilienceOptions? resilienceOptions;
+    private readonly Func<bool> outboundAllowed;
     private PeerServer? server;
     private UdpDiscoveryBroadcaster? broadcaster;
     private Timer? beaconTimer;
@@ -49,7 +50,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
         X509Certificate2 certificate,
         PairingService? pairingService = null,
         ISystemStateEvents? systemEvents = null,
-        SyncResilienceOptions? resilienceOptions = null)
+        SyncResilienceOptions? resilienceOptions = null,
+        Func<bool>? outboundAllowed = null)
     {
         this.store = store ?? throw new ArgumentNullException(nameof(store));
         this.secretProtector = secretProtector ?? throw new ArgumentNullException(nameof(secretProtector));
@@ -57,6 +59,9 @@ public sealed class PeerSyncHost : IAsyncDisposable
         this.pairingService = pairingService;
         systemEventsOverride = systemEvents;
         this.resilienceOptions = resilienceOptions;
+        // Pause/private gate for outbound content in every session; re-read per drain tick
+        // and per want_ranges pull so a toggle applies immediately (mirrors Android).
+        this.outboundAllowed = outboundAllowed ?? (static () => true);
         CertificateFingerprint = PeerCertificate.Fingerprint(certificate);
     }
 
@@ -247,7 +252,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
         var sessionOptions = new SyncSessionOptions
         {
             ClientVersion = typeof(PeerSyncHost).Assembly.GetName().Version?.ToString(3) ?? "0.2.0",
-            Platform = "windows"
+            Platform = "windows",
+            OutboundAllowed = outboundAllowed
         };
 
         var candidate = new PeerServer(store, secretProtector, new PeerServerOptions

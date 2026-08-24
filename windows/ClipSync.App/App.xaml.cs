@@ -175,7 +175,14 @@ public partial class App : Application
                 new PairingServiceOptions { LocalDisplayName = LocalDisplayName() });
             pairingService.PairingCompleted += OnPairingCompleted;
             viewModel.DeviceRevoked += OnDeviceRevoked;
-            syncHost = new PeerSyncHost(store, protector, certificate, pairingService);
+            // 一键暂停/私密模式 must stop outbound content immediately, not only capture:
+            // the gate is re-read inside every session, so the tray toggle applies live.
+            syncHost = new PeerSyncHost(
+                store,
+                protector,
+                certificate,
+                pairingService,
+                outboundAllowed: () => !viewModel.IsPaused && !viewModel.IsPrivateMode);
             syncHost.RemoteClipsCommitted += OnRemoteClipsCommitted;
             syncHost.SessionsChanged += OnPeerSessionsChanged;
             syncHost.DeviceLockedOut += OnDeviceLockedOut;
@@ -310,7 +317,9 @@ public partial class App : Application
             try
             {
                 var viewModel = services.GetRequiredService<MainViewModel>();
-                if (viewModel.AutoApplyRemote)
+                // Paused sync still receives into history but never auto-applies, matching
+                // the Android InboxDelivery.autoApplyAllowed gate.
+                if (viewModel.AutoApplyRemote && !viewModel.IsPaused)
                 {
                     // Only the newest body of the batch reaches the system clipboard; the
                     // suppression window keeps our own listener from re-capturing it.

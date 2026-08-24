@@ -588,6 +588,13 @@ public sealed class SyncSessionEngine : IDisposable
             return true;
         }
 
+        if (!options.OutboundAllowed())
+        {
+            // Paused/private: the peer's pull is not served. It re-requests on the next
+            // vector exchange, and the outbox drain announces backlog once the gate reopens.
+            return true;
+        }
+
         foreach (var request in wants.Requests)
         {
             var remaining = request.Ranges
@@ -921,6 +928,13 @@ public sealed class SyncSessionEngine : IDisposable
     {
         while (!token.IsCancellationRequested)
         {
+            if (!options.OutboundAllowed())
+            {
+                // Entries stay pending (never marked announced), so nothing is lost: the
+                // next drain tick after unpausing announces them.
+                return;
+            }
+
             var batch = await store.GetOutboxBatchAsync(peerDevice!.DeviceId, ProtocolLimits.MaxAnnounceClips, token).ConfigureAwait(false);
             if (batch.Count == 0)
             {

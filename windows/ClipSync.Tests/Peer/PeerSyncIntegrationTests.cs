@@ -398,6 +398,48 @@ public sealed class PeerSyncIntegrationTests
     }
 
     [Fact]
+    public async Task PausedListenerHoldsOutboundContentAndReleasesItOnResume()
+    {
+        // Mirrors the Android engine's outboundAllowed gate test: 一键暂停 must stop
+        // outbound content immediately at every serving path, while inbound and the
+        // already-persisted queue stay intact.
+        var outboundAllowed = true;
+        await using var pair = await PeerPair.CreateAsync(
+            serverSessionOptions: PeerPair.DefaultSessionOptions() with
+            {
+                OutboundAllowed = () => Volatile.Read(ref outboundAllowed)
+            });
+
+        await PeerPair.CaptureAsync(pair.WindowsStore, "before-pause");
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("before-pause"));
+
+        // Pause on the Windows side: the new capture is neither announced by the outbox
+        // drain nor served through want_ranges while the gate is closed.
+        Volatile.Write(ref outboundAllowed, false);
+        await PeerPair.CaptureAsync(pair.WindowsStore, "while-paused");
+        await Task.Delay(500); // several 100 ms drain ticks
+        Assert.DoesNotContain("while-paused", await PeerPair.VisibleTextsAsync(pair.AndroidStore));
+
+        // The entry stayed pending instead of being announced into the void.
+        Assert.True((await pair.WindowsStore.GetOutboxStatusAsync()).PendingCount >= 1);
+
+        // Inbound is untouched by the pause: the phone's clip still reaches Windows history.
+        await PeerPair.CaptureAsync(pair.AndroidStore, "phone-clip");
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.WindowsStore)).Contains("phone-clip"));
+        Assert.DoesNotContain("while-paused", await PeerPair.VisibleTextsAsync(pair.AndroidStore));
+
+        // Resume: the pending entry flows on the next drain tick; nothing was lost.
+        Volatile.Write(ref outboundAllowed, true);
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("while-paused"));
+
+        await session.CloseAsync();
+    }
+
+    [Fact]
     public async Task OversizedTextFrameIsRejectedWithPayloadTooLarge()
     {
         await using var pair = await PeerPair.CreateAsync();

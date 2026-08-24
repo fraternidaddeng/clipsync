@@ -36,6 +36,16 @@ public sealed record SyncSessionOptions
     /// <summary>Aggregate requested sequences we accept in one incoming want_ranges before RATE_LIMITED.</summary>
     public long MaxRequestedSequencesPerMessage { get; init; } = 16384;
 
+    /// <summary>
+    /// Re-checked before every outbound content announce (outbox drain) and before serving a
+    /// peer's want_ranges pull, so pausing sync or turning private mode on stops outbound
+    /// content immediately — mirroring the Android engine's outboundAllowed gate. Inbound
+    /// stays untouched, in-flight clip_fetch replies for clips announced earlier still
+    /// complete, and pending outbox entries flow again on the first drain tick after the
+    /// gate reopens.
+    /// </summary>
+    public Func<bool> OutboundAllowed { get; init; } = static () => true;
+
     public TimeProvider TimeProvider { get; init; } = TimeProvider.System;
 }
 
