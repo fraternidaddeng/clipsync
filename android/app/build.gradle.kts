@@ -71,6 +71,11 @@ android {
             isIncludeAndroidResources = true
         }
     }
+
+    sourceSets {
+        // MigrationTestHelper reads the exported Room schemas as instrumentation assets.
+        getByName("androidTest").assets.srcDir("$projectDir/schemas")
+    }
 }
 
 ksp {
@@ -120,6 +125,12 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
     testImplementation("org.robolectric:robolectric:4.14.1")
     testImplementation("androidx.test:core:1.6.1")
+
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test:rules:1.6.1")
+    androidTestImplementation("androidx.test:core-ktx:1.6.1")
+    androidTestImplementation("androidx.room:room-testing:2.6.1")
 }
 
 // Static analysis is opt-in (`detekt`, `ktlintCheck`). Do not fail assemble/test.
