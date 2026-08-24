@@ -2,7 +2,7 @@
 
 > 从属于《设计纲领》（`DESIGN-CHARTER.md`）与 `tokens.md`。
 > 本文件记录「章程 → 实现」尚未合拢的差距，按影响排序；每完成一轮打磨更新一次。
-> 最后更新：2026-08-24（Android 字体随包 / 卡片深度 / 动效令牌 / 超椭圆 / 设备邻近色 打磨轮之后）
+> 最后更新：2026-08-24（并行打磨轮之后：Android 字体随包 / 卡片深度 / 动效令牌 / 超椭圆 / 设备邻近色 + Windows 卡片深度 / 托盘浮窗 / 设备邻近色顺位 / 赭色脉动）
 
 ---
 
@@ -28,6 +28,10 @@
 | Android 首次运行引导 | `OnboardingScreen`（仅首次、未配对安装展示一次，`FirstRunStore` 落盘）：衬线品牌问候、三个 tab 各一句诚实说明、配对入口明确指向通路网络段、「先说清楚」能力限制卡（后台读取需授权、以实测为准）；实心「去配对」+ 幽灵「先看看」；文案为纯数据 `OnboardingContent`，有测试锁定承诺 |
 | Android 通知关闭状态行 | 通路页「通知已关闭」诚实条（stage-gap A9 收尾）：`areNotificationsEnabled` 每次 refresh/回到前台重探，false 时灰面事实条陈述后果（收到内容/需要恢复通知不会出现）+ 「去系统设置开启」深链；非赭非红——用户的选择是事实不是错误 |
 | Android 配对页次级状态 | 等待批准/已配对/失败三态脱离默认外观：charter 卡面 + 流动蓝进度环；证书不匹配 = 全应用唯一 err 着色盒，其余失败为灰面事实卡 |
+| Windows 卡片深度 | 历史卡与通路四段改 tokens §8 三层嵌套：最外层 `DropShadowEffect`（sh-1 近似，文字不进 Effect 子树）、中层 1px 边框、最内 2px 顶部高光 + `sf-grad` 受光；悬停 1px 上移 + 阴影跳 sh-2（`CsSh1Effect`/`CsSh2Effect`/`CsEdgeBrush` 入 `CharterTokens.xaml`，含夜间字典同键对应） |
+| Windows 托盘浮窗 | tokens §12.6 落地：左键 = 440px 浮窗（最近 4 条 + 四段 rail + 页脚状态条 + 暂停提级），双击/菜单 = 主窗口；约 3 秒自动退场、指针悬停驻留；不铺颗粒、无时间性动效；点卡片即复制 |
+| 设备邻近色按配对顺位（Windows） | `ListDevicesAsync` 的 created_at 顺位 → dev-1..dev-5 循环（`DeviceAccent`）；历史来源盒、浮窗来源盒、设备行着色盒全部按顺位取色；本机/已不在册来源退灰盒 |
+| 赭色「需要你操作」脉动（Windows） | 通路捕获段降级态改状态编码 §10 正形：act-bg 轨道 + 1.5px act 描边空填充 + 2.6s 外扩 5px 渐隐光环（`Storyboard` + KeySpline `.16,1,.3,1`） |
 
 ---
 
@@ -38,17 +42,16 @@
 | 差距 | 现状 | 需要做 |
 |---|---|---|
 | **字体随包分发（剩余部分）** | Windows Sans/Mono 已随包（见上）；Android 三个声音已随包（本轮，含衬线 `NotoSerifSC-SemiBold` ~11MB）；仅剩 Windows 衬线仍落 `SimSun` | Windows 打包同款 `NotoSerifSC-SemiBold`（体积裁决已在 Android 侧接受），`Fonts/#Noto Serif SC` 引用 |
-| **空状态 / 首次运行（Windows 侧）** | Android 空状态与首次运行引导已合拢（见上）；Windows 历史空列表仍是空白区域，首次运行没有「去配对」引导 | 空状态是三处衬线时刻之一（纲领 3.5）：Serif 短句 + 幽灵配对按钮；建议首启直接落「通路」页（`pc-ui-inventory` #14/#15） |
-| **卡片深度不足**（Windows） | 主窗卡片是 1px 边框平面卡，无 `sh-1` 阴影、无 `sf-grad` 受光 | tokens §8：最外层挂一次 `DropShadowEffect`，内层 1px 边框，最内 2px 顶部高光渐变 |
+| **空状态 / 首次运行（Windows 侧）** | Android 空状态与首次运行引导已合拢（见上）；Windows 主窗历史空列表仍是空白区域（托盘浮窗已有安静空状态一句），首次运行没有「去配对」引导 | 空状态是三处衬线时刻之一（纲领 3.5）：Serif 短句 + 幽灵配对按钮；建议首启直接落「通路」页（`pc-ui-inventory` #14/#15） |
+| **卡片深度不足**（Windows，部分收敛） | 历史卡、通路四段、托盘浮窗已换三层嵌套（见上表）；偏好页 `GroupCard`、设备清单卡仍是 1px 平面卡 | 把 `GroupCard` 一族也换成 sh-1 + 受光 + 顶部高光（结构同历史卡） |
 
 ### P2 · 章程规定但未接线
 
 | 差距 | 现状 | 需要做 |
 |---|---|---|
-| 设备邻近色按配对顺序分配（Windows 侧） | Android 已按顺位取色（本轮）；Windows 历史来源盒仍硬编码 `dev2`、设备行硬编码 `dev1` | Windows 按配对顺位 1..5 取 `dev-N`，存储在设备记录上、允许手动改 |
-| 动效令牌（Windows 侧） | Android 已接令牌（本轮）；Windows 仍无统一缓动/时长档；配对成功的一次性镜面流光两端均未做 | WPF `Storyboard` 接 `cubic-bezier(.16,1,.3,1)` + 180–220ms 档 |
+| 设备邻近色手动改色 | 两端都已按配对顺位取 `dev-1..dev-5`（Android、Windows 本轮各自合拢）；顺位是推导值，尚不支持手动改色 | 两端补「手动改色」存储（顺位仅作默认值） |
+| 动效令牌（Windows 剩余部分） | Android 已接令牌（本轮）；Windows 已做「需要你操作」2.6s 脉动（KeySpline 逐位对齐），其余交互过渡仍无统一缓动/时长档；配对成功的一次性镜面流光两端均未做 | WPF `Storyboard` 接 `cubic-bezier(.16,1,.3,1)` + 180–220ms 档到其余过渡 |
 | 超椭圆（Windows 侧） | Android 已用 n≈4.4 超椭圆（本轮）；Windows 仍是普通圆角矩形 | WPF 自绘 `Geometry`，与 Android 共享指数 n |
-| Windows 托盘浮窗 | tokens §12.6 规格已定（440px、3 秒、无颗粒无时间性动效、标题栏右侧 rail），未实现 | 独立 `Popup`/无边框窗 + 最近条目 + rail |
 | QS 磁贴状态 | 磁贴常为可用态，未随服务/暂停状态切 active/inactive | `TileService.qsTile.state` 接 `ClipboardSyncService.connectionStates` |
 | 托盘主题只采样一次 | 深浅任务栏切换后托盘图标不换套（启动时读一次注册表） | 监听 `SystemEvents.UserPreferenceChanged` 重载图标 |
 
