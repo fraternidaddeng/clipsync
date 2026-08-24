@@ -65,21 +65,12 @@ import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.pairing.PeerHealthClient
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
-import com.clipsync.android.platform.clipboard.AdbLogOverlayBackend
-import com.clipsync.android.platform.clipboard.AndroidRouteProbes
-import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
-import com.clipsync.android.platform.clipboard.ClipboardCapabilityStore
-import com.clipsync.android.platform.clipboard.ClipboardReadMode
-import com.clipsync.android.platform.clipboard.ForegroundClipboardBackend
-import com.clipsync.android.platform.clipboard.OverlayPollingBackend
-import com.clipsync.android.platform.clipboard.RealBackgroundReaders
+import com.clipsync.android.platform.clipboard.ClipboardCaptureSession
 import com.clipsync.android.platform.clipboard.SharedClipboardWrites
-import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
 import com.clipsync.android.storage.SyncSettingsStore
 import com.clipsync.android.sync.BootCompletedReceiver
-import com.clipsync.android.sync.ClipboardCaptureManager
 import com.clipsync.android.sync.ClipboardSyncService
-import com.clipsync.android.sync.ImageClipSink
+import com.clipsync.android.sync.SharedClipboardCapture
 import com.clipsync.android.sync.SyncConnectionState
 import com.clipsync.android.sync.SyncStore
 import com.clipsync.android.ui.HealthScreen
@@ -133,72 +124,19 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private val capabilityStore by lazy {
-        ClipboardCapabilityStore(SharedPrefsKeyValueStore(this, name = "clipsync.capability"))
-    }
-
-    private val routeProbes by lazy { AndroidRouteProbes(this) }
-
-    private val foregroundBackend by lazy {
-        ForegroundClipboardBackend(
-            this,
-            systemVersion = systemVersion(),
-            // Re-read per clipboard change so the preference toggle applies immediately.
-            imageCaptureEnabled = { syncSettings.imageSyncEnabled },
-        )
-    }
-
-    // The real device read backends (privileged Shizuku channel, logcat+overlay, overlay polling).
-    // The flat capability-ladder adapters below wrap these and gate them on the honest probe.
-    private val realReaders by lazy { RealBackgroundReaders.build(applicationContext) }
-
-    private val clipboardCoordinator by lazy {
-        ClipboardAccessCoordinator(
-            backends = listOf(
-                ShizukuClipboardBackend(
-                    probes = routeProbes,
-                    systemVersion = systemVersion(),
-                    delegate = realReaders.shizuku,
-                    readVerified = { capabilityStore.isReadVerified(ClipboardReadMode.SHIZUKU_EVENT) },
-                ),
-                AdbLogOverlayBackend(
-                    probes = routeProbes,
-                    systemVersion = systemVersion(),
-                    delegate = realReaders.adbLog,
-                    readVerified = { capabilityStore.isReadVerified(ClipboardReadMode.ADB_LOG_OVERLAY) },
-                ),
-                OverlayPollingBackend(
-                    probes = routeProbes,
-                    systemVersion = systemVersion(),
-                    delegate = realReaders.overlayPolling,
-                    readVerified = { capabilityStore.isReadVerified(ClipboardReadMode.OVERLAY_POLLING) },
-                ),
-                foregroundBackend,
-            ),
-            requestedReadMode = capabilityStore.preferredReadMode(),
-            autoFallbackAllowed = capabilityStore.autoFallbackAllowed(),
-        )
-    }
+    // The process-wide capture stack (ladder backends, coordinator, policy engine, session).
+    // Shared with ClipboardSyncService so the service can own the coordinator while promoted
+    // (plan 5.2) and the conduit page probes the very objects that are actually capturing.
+    private val captureStack by lazy { SharedClipboardCapture.stack(applicationContext) }
 
     // One process-wide write coordinator: history copy, auto-apply, and the write test all
     // share the suppression table the capture pipeline consults, so self-writes never echo.
     private val writeCoordinator by lazy { SharedClipboardWrites.coordinator(applicationContext) }
 
-    private val captureManager by lazy {
-        ClipboardCaptureManager(
-            settings = syncSettings,
-            writeCoordinator = writeCoordinator,
-            imageSink = { bytes ->
-                ImageClipSink.submit(applicationContext, bytes, "android.app") is
-                    ImageClipSink.Outcome.Accepted
-            },
-        )
-    }
-
     private val healthViewModel: HealthViewModel by viewModels {
         HealthViewModel.factory(
             pairingStore = pairingStore,
-            clipboard = clipboardCoordinator,
+            clipboard = captureStack.coordinator,
             // Live facts from the sync foreground service: alive + authenticated session.
             syncHealthSource = SyncHealthSource {
                 combine(
@@ -216,11 +154,11 @@ class MainActivity : ComponentActivity() {
                 }
             },
             capability = CapabilityWiring(
-                routeProbes = routeProbes,
-                capabilityStore = capabilityStore,
+                routeProbes = captureStack.routeProbes,
+                capabilityStore = captureStack.capabilityStore,
                 writeCoordinator = writeCoordinator,
-                foregroundBackend = foregroundBackend,
-                clearClipboard = foregroundBackend::clear,
+                foregroundBackend = captureStack.foregroundBackend,
+                clearClipboard = captureStack.foregroundBackend::clear,
                 peerHealth = PeerHealthClient(),
                 // Covers both the API 33+ runtime denial and the surface being
                 // switched off in Settings on any API level.
@@ -254,22 +192,29 @@ class MainActivity : ComponentActivity() {
     private val preferencesViewModel: PreferencesViewModel by viewModels {
         PreferencesViewModel.factory(
             syncSettings,
-            onBootRestoreChanged = { enabled ->
-                BootCompletedReceiver.setReceiverEnabled(this, enabled)
-                if (enabled) {
-                    // The recovery path speaks through a notification; ask honestly up front.
-                    requestNotificationsPermissionIfMissing()
-                }
-            },
-            onRetentionChanged = {
-                // Mirror Windows: a changed retention applies now, not at the next service start.
-                lifecycleScope.launch(Dispatchers.IO) {
-                    runCatching {
-                        SyncStore.repository(applicationContext)
-                            .cleanup(syncSettings.effectiveRetentionPolicy(), System.currentTimeMillis())
-                    }
-                }
-            },
+            sideEffects =
+                PreferencesViewModel.SideEffects(
+                    onBootRestoreChanged = { enabled ->
+                        BootCompletedReceiver.setReceiverEnabled(this, enabled)
+                        if (enabled) {
+                            // The recovery path speaks through a notification; ask honestly up front.
+                            requestNotificationsPermissionIfMissing()
+                        }
+                    },
+                    onRetentionChanged = {
+                        // Mirror Windows: a changed retention applies now, not at the next service start.
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            runCatching {
+                                SyncStore.repository(applicationContext)
+                                    .cleanup(syncSettings.effectiveRetentionPolicy(), System.currentTimeMillis())
+                            }
+                        }
+                    },
+                    // 暂停同步/私密模式 gate the read backends themselves, not just the per-event
+                    // policy: re-evaluate the capture session so a background reader stops (or
+                    // resumes) on the very toggle, without waiting for the next lifecycle edge.
+                    onCaptureGatesChanged = { captureStack.session.refreshGates() },
+                ),
             historyRepository = { SyncStore.repository(applicationContext) },
         )
     }
@@ -391,16 +336,18 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        // Stage-4 acceptance: while the app is visible, the capability ladder captures copies
-        // automatically (today that resolves to the FOREGROUND_ONLY backend; a privileged
-        // backend upgrades this without any change here). The manager gates on pause/private
-        // and on self-writes before enqueueing into the same outbox the share sheet uses.
-        clipboardCoordinator.start { change -> captureManager.onClipboardChanged(change) }
+        // While the app is visible, the capability ladder captures copies automatically
+        // (stage-4 acceptance). Ownership, not a raw start: when the foreground service is
+        // promoted it already holds the same session, and acquiring is then a no-op.
+        captureStack.session.acquire(ClipboardCaptureSession.Owner.ACTIVITY)
     }
 
     override fun onStop() {
-        // Android 10+ denies background reads anyway; stopping keeps the listener honest.
-        clipboardCoordinator.stop()
+        // Release only this owner's stake. With the foreground service promoted, the verified
+        // background routes keep capturing (plan 5.2/5.5); without it, the coordinator stops —
+        // Android 10+ denies the foreground-only backend's reads to backgrounded apps, and the
+        // privileged routes must not run with no service accountable for them.
+        captureStack.session.release(ClipboardCaptureSession.Owner.ACTIVITY)
         super.onStop()
     }
 
@@ -419,7 +366,7 @@ class MainActivity : ComponentActivity() {
     private fun handleRouteAction(route: ReadRouteUi, action: RouteActionId) {
         when (action) {
             RouteActionId.REQUEST_PRIVILEGED_PERMISSION ->
-                realReaders.requestShizukuAuthorization { granted ->
+                captureStack.realReaders.requestShizukuAuthorization { granted ->
                     if (granted) {
                         healthViewModel.refresh()
                     }
@@ -461,8 +408,6 @@ class MainActivity : ComponentActivity() {
                 .putExtra(Settings.EXTRA_APP_PACKAGE, packageName),
         )
     }
-
-    private fun systemVersion(): String = "android-${Build.VERSION.SDK_INT}"
 
     private fun deviceLabel(): String {
         val manufacturer = Build.MANUFACTURER.trim()

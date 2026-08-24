@@ -39,10 +39,13 @@ data class PreferencesUiState(
  * 过期, 开机恢复) through [SyncSettingsStore] — the single authority for setting
  * keys, so the sync engine and retention cleanup read exactly what the user
  * toggled. Every change lands on disk immediately; this ViewModel only mirrors
- * it. Two side effects are delegated to the host: [onBootRestoreChanged] flips
- * the BOOT_COMPLETED receiver component, and [onRetentionChanged] runs one
- * cleanup pass so a shortened retention applies now, not at the next service
- * start (mirrors the Windows settings-save behaviour).
+ * it. Three side effects are delegated to the host via [SideEffects]:
+ * [SideEffects.onBootRestoreChanged] flips the BOOT_COMPLETED receiver
+ * component, [SideEffects.onRetentionChanged] runs one cleanup pass so a
+ * shortened retention applies now, not at the next service start (mirrors the
+ * Windows settings-save behaviour), and [SideEffects.onCaptureGatesChanged]
+ * re-evaluates the capture session after 暂停同步 or 私密模式 flips so
+ * background read backends stop or resume on the toggle.
  *
  * 导出历史/导入历史 (docs/export-format-v1.md / docs/export-format-v2.md) run
  * against [historyRepository] on [ioDispatcher]; the host opens the SAF streams
@@ -51,12 +54,18 @@ data class PreferencesUiState(
  */
 class PreferencesViewModel(
     private val settings: SyncSettingsStore,
-    private val onBootRestoreChanged: (Boolean) -> Unit = {},
-    private val onRetentionChanged: () -> Unit = {},
+    private val sideEffects: SideEffects = SideEffects(),
     private val historyRepository: () -> ClipSyncRepository? = { null },
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val nowMs: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
+    /** The host-owned reactions to toggles; each defaults to a no-op for tests. */
+    data class SideEffects(
+        val onBootRestoreChanged: (Boolean) -> Unit = {},
+        val onRetentionChanged: () -> Unit = {},
+        val onCaptureGatesChanged: () -> Unit = {},
+    )
+
     private val mutableState = MutableStateFlow(
         PreferencesUiState(
             pauseSync = settings.syncPaused,
@@ -73,14 +82,18 @@ class PreferencesViewModel(
 
     val state: StateFlow<PreferencesUiState> = mutableState.asStateFlow()
 
+    /** The setting is persisted first so the session's gate re-check reads the new value. */
     fun setPauseSync(paused: Boolean) {
         settings.syncPaused = paused
         mutableState.update { it.copy(pauseSync = paused) }
+        sideEffects.onCaptureGatesChanged()
     }
 
+    /** The setting is persisted first so the session's gate re-check reads the new value. */
     fun setPrivateMode(enabled: Boolean) {
         settings.privateMode = enabled
         mutableState.update { it.copy(privateMode = enabled) }
+        sideEffects.onCaptureGatesChanged()
     }
 
     fun setAutoApplyRemote(enabled: Boolean) {
@@ -92,20 +105,20 @@ class PreferencesViewModel(
     fun setAutoExpire(enabled: Boolean) {
         settings.autoExpireEnabled = enabled
         mutableState.update { it.copy(autoExpire = enabled) }
-        onRetentionChanged()
+        sideEffects.onRetentionChanged()
     }
 
     fun setRetentionDays(days: Int) {
         settings.retentionMaxAgeDays = days
         mutableState.update { it.copy(retentionDays = days) }
-        onRetentionChanged()
+        sideEffects.onRetentionChanged()
     }
 
     /** The preference is written first so the receiver's boot-time re-check agrees. */
     fun setBootRestore(enabled: Boolean) {
         settings.bootRestoreEnabled = enabled
         mutableState.update { it.copy(bootRestore = enabled) }
-        onBootRestoreChanged(enabled)
+        sideEffects.onBootRestoreChanged(enabled)
     }
 
     /**
@@ -185,8 +198,7 @@ class PreferencesViewModel(
 
         fun factory(
             settings: SyncSettingsStore,
-            onBootRestoreChanged: (Boolean) -> Unit = {},
-            onRetentionChanged: () -> Unit = {},
+            sideEffects: SideEffects = SideEffects(),
             historyRepository: () -> ClipSyncRepository? = { null },
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
@@ -194,8 +206,7 @@ class PreferencesViewModel(
                 override fun <T : ViewModel> create(modelClass: Class<T>): T =
                     PreferencesViewModel(
                         settings,
-                        onBootRestoreChanged,
-                        onRetentionChanged,
+                        sideEffects,
                         historyRepository,
                     ) as T
             }

@@ -99,7 +99,11 @@ class PreferencesViewModelTest {
     @Test
     fun `boot restore defaults off, persists, and notifies the host to flip the receiver`() {
         val receiverStates = mutableListOf<Boolean>()
-        val model = PreferencesViewModel(settings, onBootRestoreChanged = receiverStates::add)
+        val model =
+            PreferencesViewModel(
+                settings,
+                PreferencesViewModel.SideEffects(onBootRestoreChanged = receiverStates::add),
+            )
         assertFalse(model.state.value.bootRestore)
 
         model.setBootRestore(true)
@@ -117,7 +121,11 @@ class PreferencesViewModelTest {
     @Test
     fun `retention changes trigger one immediate cleanup pass`() {
         var cleanups = 0
-        val model = PreferencesViewModel(settings, onRetentionChanged = { cleanups++ })
+        val model =
+            PreferencesViewModel(
+                settings,
+                PreferencesViewModel.SideEffects(onRetentionChanged = { cleanups++ }),
+            )
 
         model.setRetentionDays(7)
         model.setAutoExpire(false)
@@ -126,5 +134,29 @@ class PreferencesViewModelTest {
         // Unrelated toggles never trigger cleanup.
         model.setPauseSync(true)
         assertEquals(2, cleanups)
+    }
+
+    @Test
+    fun `pause and private toggles re-evaluate the capture session gates after persisting`() {
+        val gateChecks = mutableListOf<Pair<Boolean, Boolean>>()
+        val model =
+            PreferencesViewModel(
+                settings,
+                // Record what the session's gate lambda would read at refresh time: the
+                // setting must already be persisted when the re-check runs.
+                PreferencesViewModel.SideEffects(
+                    onCaptureGatesChanged = { gateChecks += settings.syncPaused to settings.privateMode },
+                ),
+            )
+
+        model.setPauseSync(true)
+        model.setPrivateMode(true)
+        model.setPauseSync(false)
+
+        assertEquals(listOf(true to false, true to true, false to true), gateChecks)
+        // Unrelated toggles never touch the capture gates.
+        model.setAutoApplyRemote(false)
+        model.setImageSync(true)
+        assertEquals(3, gateChecks.size)
     }
 }

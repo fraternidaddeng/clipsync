@@ -20,6 +20,7 @@ import com.clipsync.android.R
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.platform.clipboard.ClipboardCaptureSession
 import com.clipsync.android.platform.notify.SyncNotifications
 import com.clipsync.android.storage.ClipSyncRepository
 import com.clipsync.android.storage.SyncSettingsStore
@@ -45,6 +46,12 @@ import kotlinx.coroutines.launch
  * through [InboxDelivery]: inbox first, then auto-apply to the system clipboard when the
  * auto_apply_remote preference is on. A [ConnectivityManager] network callback nudges the
  * supervisor when a network comes up so reconnects do not wait out the full backoff.
+ *
+ * The service also holds the clipboard read coordinator while promoted (plan 5.2: "服务持有
+ * OkHttp WebSocket、网络回调、backend 协调器"): it acquires the process-wide
+ * [ClipboardCaptureSession], so verified background read routes (Shizuku / adb-log / overlay)
+ * keep capturing copies after the main UI leaves the foreground, and drives the periodic
+ * backend health check that lets the coordinator fall down the capability ladder on failure.
  */
 class ClipboardSyncService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -53,6 +60,7 @@ class ClipboardSyncService : Service() {
     private var supervisor: SyncSupervisor? = null
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
     private lateinit var settings: SyncSettingsStore
+    private var captureSession: ClipboardCaptureSession? = null
 
     // Strong reference: SharedPreferences keeps listeners weakly. Fires when a settings
     // write actually changed a value — from the notification actions or the preferences
@@ -68,6 +76,9 @@ class ClipboardSyncService : Service() {
             SharedPrefsKeyValueStore(applicationContext, name = SyncSettingsStore.PREFERENCES_NAME),
         )
         val listener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+            // A pause/private gate may have flipped (notification action or preferences
+            // screen): the capture session re-checks whether backends may run at all.
+            captureSession?.refreshGates()
             if (started) {
                 updateNotification(mutableConnectionStates.value)
             }
@@ -117,6 +128,11 @@ class ClipboardSyncService : Service() {
                 .unregisterOnSharedPreferenceChangeListener(listener)
         }
         settingsListener = null
+        // Hand the capture session back: if the activity is visible it keeps the coordinator
+        // running; otherwise the backends stop with the service. A no-op on the FGS-denied
+        // teardown path, where the session was never acquired.
+        captureSession?.release(ClipboardCaptureSession.Owner.FOREGROUND_SERVICE)
+        captureSession = null
         unregisterNetworkCallback()
         mutableServiceRunning.value = false
         mutableConnectionStates.value = SyncConnectionState.NotPaired
@@ -194,6 +210,23 @@ class ClipboardSyncService : Service() {
             },
         )
         this.supervisor = supervisor
+        // Own the read coordinator for as long as the service is promoted (plan 5.2). The
+        // session arbitrates with the activity's visibility ownership, selects the backend by
+        // the persisted preferred mode + device-verified state, and gates on 暂停/私密 before
+        // any backend reads. onStartCommand runs on the main thread — the same thread the
+        // activity's lifecycle used to drive the coordinator from.
+        val captureSession = SharedClipboardCapture.session(appContext)
+        this.captureSession = captureSession
+        captureSession.acquire(ClipboardCaptureSession.Owner.FOREGROUND_SERVICE)
+        scope.launch {
+            // Periodic active-backend health check: a dead privileged binder or a revoked
+            // grant makes the coordinator fall down the capability ladder (when the user
+            // allows fallback) instead of silently capturing nothing until the next launch.
+            while (true) {
+                delay(BACKEND_HEALTH_CHECK_INTERVAL_MS)
+                mainHandler.post { captureSession.checkHealth() }
+            }
+        }
         // Network-available events cut the reconnect backoff short (plan: "网络恢复后立即触发
         // 一次重连") instead of letting a fresh link sit out a wait that can reach 60 s.
         registerNetworkCallback()
@@ -342,6 +375,9 @@ class ClipboardSyncService : Service() {
 
         /** How often the retention policy is enforced while the service is alive. */
         private const val RETENTION_CLEANUP_INTERVAL_MS = 6L * 60 * 60 * 1_000
+
+        /** How often the active read backend's health is checked while the service is alive. */
+        private const val BACKEND_HEALTH_CHECK_INTERVAL_MS = 30_000L
 
         private val mutableServiceRunning = MutableStateFlow(false)
         private val mutableConnectionStates = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)
