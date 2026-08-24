@@ -52,4 +52,16 @@ public partial class MainWindow : Window
 
     private void OnPairNewDeviceClicked(object sender, RoutedEventArgs e) =>
         ((App)Application.Current).ShowPairingWindow(this);
+
+    // 自绘 chrome 的窗控三钮（WindowChrome 去掉了系统标题栏）。
+    private void OnMinimizeClicked(object sender, RoutedEventArgs e) =>
+        WindowState = WindowState.Minimized;
+
+    private void OnMaxRestoreClicked(object sender, RoutedEventArgs e) =>
+        WindowState = WindowState == WindowState.Maximized
+            ? WindowState.Normal
+            : WindowState.Maximized;
+
+    // 与系统关闭按钮同路径：OnClosing 把它变成「隐藏到托盘」。
+    private void OnCloseClicked(object sender, RoutedEventArgs e) => Close();
 }
