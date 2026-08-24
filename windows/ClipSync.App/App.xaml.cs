@@ -182,7 +182,10 @@ public partial class App : Application
                 protector,
                 certificate,
                 pairingService,
-                outboundAllowed: () => !viewModel.IsPaused && !viewModel.IsPrivateMode);
+                outboundAllowed: () => !viewModel.IsPaused && !viewModel.IsPrivateMode,
+                // 图片同步 governs inbound acceptance too, not only capture: while off, the
+                // /v2 route is refused and live sessions take no image bodies (audit §3 P1).
+                imageSyncEnabled: () => viewModel.ImageSyncEnabled);
             syncHost.RemoteClipsCommitted += OnRemoteClipsCommitted;
             syncHost.SessionsChanged += OnPeerSessionsChanged;
             syncHost.DeviceLockedOut += OnDeviceLockedOut;

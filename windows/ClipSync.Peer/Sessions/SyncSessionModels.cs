@@ -53,7 +53,16 @@ public sealed record SyncSessionOptions
     /// <summary>1 keeps the frozen text contract; 2 enables image_clip_v2.</summary>
     public int ProtocolVersion { get; init; } = ProtocolLimits.ProtocolVersion;
 
-    public bool ImageClipEnabled => ProtocolVersion >= ProtocolLimits.ProtocolVersionV2;
+    /// <summary>
+    /// The local image_sync policy gate. Protocol v2 §3 allows image bodies only when both
+    /// peers opted into image_clip_v2, so the listener refuses the /v2 upgrade while this is
+    /// off (the dialer falls back to /v1), and a live session re-reads the gate before every
+    /// inbound or outbound image so flipping the setting applies without waiting for the
+    /// session to end. Text sync is never affected.
+    /// </summary>
+    public Func<bool> ImageSyncEnabled { get; init; } = static () => true;
+
+    public bool ImageClipEnabled => ProtocolVersion >= ProtocolLimits.ProtocolVersionV2 && ImageSyncEnabled();
 }
 
 /// <summary>Why the session ended; <see cref="ErrorCode"/> is a protocol code when one applies.</summary>

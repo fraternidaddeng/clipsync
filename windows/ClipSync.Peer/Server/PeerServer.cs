@@ -220,6 +220,18 @@ public sealed class PeerServer : IAsyncDisposable
             return;
         }
 
+        if (protocolVersion == ProtocolLimits.ProtocolVersionV2 && !options.SessionOptions.ImageSyncEnabled())
+        {
+            // Image sync is off locally: do not advertise image_clip_v2 by accepting the
+            // /v2 route (protocol v2 §3 requires both peers to opt in before image bodies
+            // may flow). Refusing before the upgrade makes the dialer fall back to
+            // /v1/peer/sync, so text sync continues on the frozen v1 contract.
+            PeerLog.V2RefusedImageSyncDisabled(logger);
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            await context.Response.WriteAsJsonAsync(new { error = ProtocolErrorCodes.UnsupportedMedia });
+            return;
+        }
+
         if (Volatile.Read(ref refusingNewSessions))
         {
             // Suspending: the machine is about to sleep. Refusing here keeps a

@@ -95,6 +95,12 @@ public sealed class SyncSessionEngine : IDisposable
     /// </summary>
     private bool IsAuthenticated => state == SessionState.Ready && peerConfirmed;
 
+    /// <summary>
+    /// Both-ends opt-in for image bodies (protocol v2 §3): a v2 session and the local
+    /// image_sync gate. Re-evaluated per image so a settings flip applies mid-session.
+    /// </summary>
+    private bool ImageClipAllowed => protocolVersion == ProtocolLimits.ProtocolVersionV2 && options.ImageSyncEnabled();
+
     /// <summary>Asks the session to stop; used on revocation and shutdown.</summary>
     public void RequestClose()
     {
@@ -742,6 +748,16 @@ public sealed class SyncSessionEngine : IDisposable
                     return false;
                 }
 
+                if (!options.ImageSyncEnabled())
+                {
+                    // The route gate keeps new v2 sessions from opening while image sync is
+                    // off, but a live session can still see an image when the toggle flips
+                    // mid-session: refuse instead of committing content the user opted out
+                    // of. The peer's redial falls back to /v1 and text sync continues.
+                    await FailAsync(ProtocolErrorCodes.UnsupportedMedia, "image_sync_disabled", token).ConfigureAwait(false);
+                    return false;
+                }
+
                 if (await store.FindLiveBlobByHashAsync(header.ContentHash!, token).ConfigureAwait(false))
                 {
                     var replayImage = new RemoteClipEvent(
@@ -866,7 +882,7 @@ public sealed class SyncSessionEngine : IDisposable
 
             if (item.IsImage)
             {
-                if (protocolVersion != ProtocolLimits.ProtocolVersionV2)
+                if (!ImageClipAllowed)
                 {
                     terminalHeaders.Add(BuildHeader(item));
                     continue;
@@ -1176,9 +1192,11 @@ public sealed class SyncSessionEngine : IDisposable
 
     private ClipHeaderDto BuildHeader(SyncableClipEvent item)
     {
-        if (item.IsTerminal || (item.IsImage && protocolVersion != ProtocolLimits.ProtocolVersionV2))
+        // Images are downgraded to a local_only marker on v1 sessions and while the local
+        // image_sync gate is off, so the origin cursor still advances without image bodies.
+        if (item.IsTerminal || (item.IsImage && !ImageClipAllowed))
         {
-            var reason = item.IsImage && protocolVersion != ProtocolLimits.ProtocolVersionV2
+            var reason = item.IsImage && !ImageClipAllowed
                 ? ClipUnavailableReasons.LocalOnly
                 : item.TerminalReason;
 
@@ -1279,6 +1297,14 @@ public sealed class SyncSessionEngine : IDisposable
         if (protocolVersion != ProtocolLimits.ProtocolVersionV2)
         {
             await FailAsync(ProtocolErrorCodes.MessageOutOfOrder, "image_on_v1", token).ConfigureAwait(false);
+            return false;
+        }
+
+        if (!options.ImageSyncEnabled())
+        {
+            // Same mid-session gate as the announce path: no image bytes are accepted
+            // (or buffered to disk) once the local image_sync setting turned off.
+            await FailAsync(ProtocolErrorCodes.UnsupportedMedia, "image_sync_disabled", token).ConfigureAwait(false);
             return false;
         }
 

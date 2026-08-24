@@ -63,4 +63,8 @@ public static partial class PeerLog
 
     [LoggerMessage(EventId = 17, Level = LogLevel.Warning, Message = "rejecting connection: rate limited kind={Kind}")]
     public static partial void ConnectionRateLimited(ILogger logger, string kind);
+
+    [LoggerMessage(EventId = 18, Level = LogLevel.Information,
+        Message = "refusing /v2 sync upgrade: image sync is disabled locally")]
+    public static partial void V2RefusedImageSyncDisabled(ILogger logger);
 }

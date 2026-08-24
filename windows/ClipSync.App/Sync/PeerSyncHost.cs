@@ -35,6 +35,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
     private readonly ISystemStateEvents? systemEventsOverride;
     private readonly SyncResilienceOptions? resilienceOptions;
     private readonly Func<bool> outboundAllowed;
+    private readonly Func<bool> imageSyncEnabled;
     private PeerServer? server;
     private UdpDiscoveryBroadcaster? broadcaster;
     private Timer? beaconTimer;
@@ -51,7 +52,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
         PairingService? pairingService = null,
         ISystemStateEvents? systemEvents = null,
         SyncResilienceOptions? resilienceOptions = null,
-        Func<bool>? outboundAllowed = null)
+        Func<bool>? outboundAllowed = null,
+        Func<bool>? imageSyncEnabled = null)
     {
         this.store = store ?? throw new ArgumentNullException(nameof(store));
         this.secretProtector = secretProtector ?? throw new ArgumentNullException(nameof(secretProtector));
@@ -62,6 +64,10 @@ public sealed class PeerSyncHost : IAsyncDisposable
         // Pause/private gate for outbound content in every session; re-read per drain tick
         // and per want_ranges pull so a toggle applies immediately (mirrors Android).
         this.outboundAllowed = outboundAllowed ?? (static () => true);
+        // 图片同步 gate: while off, the listener refuses /v2 upgrades (dialers fall back to
+        // v1) and live sessions accept/serve no image bodies; re-read so the toggle applies
+        // immediately (strict audit §3: the setting must govern inbound, not only capture).
+        this.imageSyncEnabled = imageSyncEnabled ?? (static () => true);
         CertificateFingerprint = PeerCertificate.Fingerprint(certificate);
     }
 
@@ -279,7 +285,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
         {
             ClientVersion = typeof(PeerSyncHost).Assembly.GetName().Version?.ToString(3) ?? "0.2.0",
             Platform = "windows",
-            OutboundAllowed = outboundAllowed
+            OutboundAllowed = outboundAllowed,
+            ImageSyncEnabled = imageSyncEnabled
         };
 
         var candidate = new PeerServer(store, secretProtector, new PeerServerOptions
