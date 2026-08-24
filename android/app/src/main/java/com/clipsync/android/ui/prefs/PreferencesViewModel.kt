@@ -27,6 +27,8 @@ data class PreferencesUiState(
     val bootRestore: Boolean = false,
     /** 图像剪贴板同步（协议 v2）；按章程默认关闭。 */
     val imageSync: Boolean = false,
+    /** 远端图片自动写入剪贴板；独立于文本自动写入（ADR 0004），默认关闭。 */
+    val autoApplyImages: Boolean = false,
     val maxSyncTextBytes: Int = SyncSettingsStore.DEFAULT_MAX_TEXT_BYTES,
     /** Result line of the last 导出历史/导入历史 run; null until either has run. */
     val transferStatus: String? = null,
@@ -63,6 +65,7 @@ class PreferencesViewModel(
             retentionDays = settings.retentionMaxAgeDays,
             bootRestore = settings.bootRestoreEnabled,
             imageSync = settings.imageSyncEnabled,
+            autoApplyImages = settings.autoApplyImages,
             maxSyncTextBytes = settings.effectiveMaxSyncTextBytes,
         ),
     )
@@ -111,6 +114,15 @@ class PreferencesViewModel(
     fun setImageSync(enabled: Boolean) {
         settings.imageSyncEnabled = enabled
         mutableState.update { it.copy(imageSync = enabled) }
+    }
+
+    /**
+     * 自动写入远端图片 (ADR 0004, 默认关): the service re-reads the gate per inbound batch,
+     * so toggling applies to the very next received image without a reconnect.
+     */
+    fun setAutoApplyImages(enabled: Boolean) {
+        settings.autoApplyImages = enabled
+        mutableState.update { it.copy(autoApplyImages = enabled) }
     }
 
     /**

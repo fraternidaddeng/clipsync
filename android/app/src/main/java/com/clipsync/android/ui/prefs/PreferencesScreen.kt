@@ -46,6 +46,7 @@ fun PreferencesScreen(
     onAutoExpireChange: (Boolean) -> Unit,
     onBootRestoreChange: (Boolean) -> Unit = {},
     onImageSyncChange: (Boolean) -> Unit = {},
+    onAutoApplyImagesChange: (Boolean) -> Unit = {},
     /** Display name of the paired Windows peer; null while unpaired. */
     pairedDeviceName: String? = null,
     onOpenConduit: () -> Unit = {},
@@ -100,6 +101,13 @@ fun PreferencesScreen(
                     "需要两端都开启；对新连接生效。",
                 checked = state.imageSync,
                 onCheckedChange = onImageSyncChange,
+            )
+            RowDivider()
+            ToggleRow(
+                title = "自动写入远端图片",
+                description = "对端发来的图片自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。",
+                checked = state.autoApplyImages,
+                onCheckedChange = onAutoApplyImagesChange,
             )
             RowDivider()
             ToggleRow(

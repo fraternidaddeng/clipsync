@@ -590,6 +590,7 @@ private fun ClipSyncApp(
                         onAutoExpireChange = preferencesViewModel::setAutoExpire,
                         onBootRestoreChange = preferencesViewModel::setBootRestore,
                         onImageSyncChange = preferencesViewModel::setImageSync,
+                        onAutoApplyImagesChange = preferencesViewModel::setAutoApplyImages,
                         pairedDeviceName = healthState.pairedPeerName,
                         onOpenConduit = {
                             pairingOpen = false

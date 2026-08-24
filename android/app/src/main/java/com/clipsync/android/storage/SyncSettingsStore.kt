@@ -67,6 +67,16 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         get() = readBoolean(KEY_IMAGE_SYNC, default = false)
         set(value) = write(KEY_IMAGE_SYNC, value.toString())
 
+    /**
+     * Auto-write remote images into the system clipboard. Independent of the text
+     * [autoApplyRemote] gate per ADR 0004 (「`auto_apply_images` 与文本自动应用独立」) and
+     * off by default, matching the Windows `auto_apply_images` setting: received images
+     * always land in history; only the automatic clipboard write is opt-in.
+     */
+    var autoApplyImages: Boolean
+        get() = readBoolean(KEY_AUTO_APPLY_IMAGES, default = false)
+        set(value) = write(KEY_AUTO_APPLY_IMAGES, value.toString())
+
     fun retentionPolicy(): RetentionPolicy = RetentionPolicy(
         maximumEntries = retentionMaxEntries,
         maximumAgeMs = retentionMaxAgeDays * MILLIS_PER_DAY,
@@ -112,5 +122,6 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         private const val KEY_MAX_SYNC_TEXT_BYTES = "sync.max_text_bytes"
         private const val KEY_BOOT_RESTORE = "sync.boot_restore"
         private const val KEY_IMAGE_SYNC = "sync.image_sync"
+        private const val KEY_AUTO_APPLY_IMAGES = "sync.auto_apply_images"
     }
 }

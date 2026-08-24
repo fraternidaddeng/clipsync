@@ -121,8 +121,10 @@ class ClipboardSyncService : Service() {
                     // Preferences are re-read per batch so toggling applies immediately.
                     // Paused sync still receives into the inbox but never auto-applies.
                     // Like Windows, only the newest body of a batch reaches the system
-                    // clipboard; every event still lands in the inbox first.
+                    // clipboard; every event still lands in the inbox first. Images have
+                    // their own opt-in write gate (ADR 0004), independent of the text one.
                     val autoApply = InboxDelivery.autoApplyAllowed(settings)
+                    val autoApplyImage = InboxDelivery.autoApplyImagesAllowed(settings)
                     val newestEventId = committed.lastOrNull()?.eventId
                     committed.forEach { applied ->
                         if (applied.isImage) {
@@ -131,7 +133,7 @@ class ClipboardSyncService : Service() {
                                 applied.eventId,
                                 applied.contentHash,
                                 applied.mimeType,
-                                autoApply = autoApply && applied.eventId == newestEventId,
+                                autoApply = autoApplyImage && applied.eventId == newestEventId,
                             )
                         } else {
                             InboxDelivery.deliver(
