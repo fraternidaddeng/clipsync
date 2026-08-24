@@ -26,6 +26,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,9 +47,13 @@ import com.clipsync.android.pairing.PairingConfirmClient
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.platform.clipboard.AndroidPublicClipboardWriter
+import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
+import com.clipsync.android.storage.ClipDatabase
+import com.clipsync.android.storage.RoomClipSyncRepository
 import com.clipsync.android.ui.HealthScreen
-import com.clipsync.android.ui.HealthScreenState
 import com.clipsync.android.ui.home.HomeScreen
+import com.clipsync.android.ui.home.HomeViewModel
 import com.clipsync.android.ui.pairing.PairingScreen
 import com.clipsync.android.ui.pairing.PairingViewModel
 import com.clipsync.android.ui.prefs.PreferencesScreen
@@ -61,6 +67,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val pairingStore = PairingStore(SharedPrefsKeyValueStore(this), KeystoreSecretProtector())
+        val repository = RoomClipSyncRepository(ClipDatabase.open(applicationContext).clipDao())
+        val writeCoordinator = ClipboardWriteCoordinator(
+            publicWriter = AndroidPublicClipboardWriter(applicationContext),
+        )
         setContent {
             ClipSyncTheme {
                 val pairingViewModel: PairingViewModel = viewModel(
@@ -70,7 +80,10 @@ class MainActivity : ComponentActivity() {
                         localNameFallback = deviceLabel(),
                     ),
                 )
-                ClipSyncApp(pairingViewModel)
+                val homeViewModel: HomeViewModel = viewModel(
+                    factory = HomeViewModel.factory(repository, writeCoordinator, pairingStore),
+                )
+                ClipSyncApp(pairingViewModel, homeViewModel)
             }
         }
     }
@@ -92,11 +105,18 @@ class MainActivity : ComponentActivity() {
  * Pairing hangs under the conduit's network segment rather than owning a tab.
  */
 @Composable
-private fun ClipSyncApp(pairingViewModel: PairingViewModel) {
+private fun ClipSyncApp(
+    pairingViewModel: PairingViewModel,
+    homeViewModel: HomeViewModel,
+) {
     val c = clipSyncColors
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var pairingOpen by rememberSaveable { mutableStateOf(false) }
-    val healthState = HealthScreenState.initial()
+    val healthState by homeViewModel.conduit.collectAsState()
+    val homeState by homeViewModel.state.collectAsState()
+    // Pairing has no reactive store yet; re-read it whenever the user moves
+    // between places (covers returning from a just-completed pairing).
+    LaunchedEffect(tab, pairingOpen) { homeViewModel.refreshConduit() }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -125,7 +145,11 @@ private fun ClipSyncApp(pairingViewModel: PairingViewModel) {
         ) { padding ->
             when (tab) {
                 0 -> HomeScreen(
-                    state = healthState,
+                    conduit = healthState,
+                    home = homeState,
+                    onQueryChange = homeViewModel::setQuery,
+                    onCopy = homeViewModel::copy,
+                    onDelete = homeViewModel::delete,
                     onOpenConduit = { tab = 1 },
                     modifier = Modifier.padding(padding),
                 )
