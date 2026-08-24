@@ -35,6 +35,7 @@
         <Geometry x:Key="IconNetwork">M5,12.5 A7,7 0 0 1 19,12.5 M8.5,16 A3.5,3.5 0 0 1 15.5,16 M13,19.5 A1,1 0 1 0 11,19.5 A1,1 0 1 0 13,19.5</Geometry>
         <Geometry x:Key="IconPair">M4,8 V5.5 A1.5,1.5 0 0 1 5.5,4 H8 M16,4 H18.5 A1.5,1.5 0 0 1 20,5.5 V8 M20,16 V18.5 A1.5,1.5 0 0 1 18.5,20 H16 M8,20 H5.5 A1.5,1.5 0 0 1 4,18.5 V16 M7.5,12 H9.5 L10.5,9.6 L13.5,14.4 L14.5,12 H16.5</Geometry>
         <Geometry x:Key="IconDevices">M3.5,4 H12.5 A1.5,1.5 0 0 1 14,5.5 V11.5 A1.5,1.5 0 0 1 12.5,13 H3.5 A1.5,1.5 0 0 1 2,11.5 V5.5 A1.5,1.5 0 0 1 3.5,4 Z M6,16.5 H10.5 M8.25,13 V16.5 M18,8 H20.5 A2,2 0 0 1 22.5,10 V18 A2,2 0 0 1 20.5,20 H18 A2,2 0 0 1 16,18 V10 A2,2 0 0 1 18,8 Z M18.5,17.2 H20</Geometry>
+        <Geometry x:Key="IconSearch">M10.5,4 A6.5,6.5 0 1 0 10.5,17 A6.5,6.5 0 1 0 10.5,4 M15.4,15.4 L20,20</Geometry>
 
         <!-- ============ 控件样式 ============ -->
         <!-- 左栏导航项：图标 + 文字，选中 = 流动蓝着色盒 -->
@@ -165,13 +166,36 @@
             </Setter>
         </Style>
 
-        <!-- z1 卡片组 -->
-        <Style x:Key="GroupCard" TargetType="Border">
-            <Setter Property="Background" Value="{DynamicResource CsSurfaceBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource CsLineBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="12" />
+        <!-- z1 卡片组：与历史卡/通路段同一套 tokens §8 三层嵌套——
+             最外层 sh-1 阴影（文字在中层渲染，不进 Effect 子树，保住 ClearType）、
+             中层 1px 边框 + sf-grad 受光、最内 2px 顶部高光 -->
+        <Style x:Key="GroupCard" TargetType="ContentControl">
+            <Setter Property="Focusable" Value="False" />
             <Setter Property="Margin" Value="0,0,0,14" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContentControl">
+                        <Grid>
+                            <Border Background="{DynamicResource CsSurfaceBrush}"
+                                    CornerRadius="12"
+                                    Effect="{DynamicResource CsSh1Effect}" />
+                            <Border Background="{DynamicResource CsSurfaceGradBrush}"
+                                    BorderBrush="{DynamicResource CsLineBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="12">
+                                <Grid>
+                                    <Border Height="2"
+                                            Margin="1,1,1,0"
+                                            VerticalAlignment="Top"
+                                            Background="{DynamicResource CsEdgeBrush}"
+                                            CornerRadius="11,11,0,0" />
+                                    <ContentPresenter />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!-- 组头：Mono、全大写语汇、t4 -->
@@ -593,47 +617,166 @@
                         </TextBox>
                     </DockPanel>
 
-                    <ListBox Grid.Row="2"
-                             Background="Transparent"
-                             BorderThickness="0"
-                             ItemContainerStyle="{StaticResource HistoryItemContainer}"
-                             ItemsSource="{Binding History}"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                             SelectedItem="{Binding SelectedItem}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <TextBlock MaxHeight="56"
-                                               FontSize="13"
-                                               Foreground="{DynamicResource CsText2Brush}"
-                                               Text="{Binding Text}"
-                                               TextTrimming="CharacterEllipsis"
-                                               TextWrapping="Wrap" />
-                                    <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
-                                        <!-- 远端来源用该设备的邻近色注记盒（按配对顺位）；本机条目不加盒，保持安静 -->
-                                        <Border Margin="0,0,7,0"
-                                                Padding="7,1"
-                                                VerticalAlignment="Center"
-                                                Background="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Background}"
-                                                BorderBrush="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Line}"
-                                                BorderThickness="1"
-                                                CornerRadius="6"
-                                                Visibility="{Binding IsRemote, Converter={StaticResource BoolToVisibility}}">
-                                            <TextBlock FontSize="9"
-                                                       Foreground="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
-                                                       Text="{Binding OriginLabel}" />
-                                        </Border>
-                                        <TextBlock VerticalAlignment="Center"
-                                                   FontFamily="{StaticResource CsMono}"
-                                                   FontSize="10.5"
-                                                   Foreground="{DynamicResource CsText4Brush}">
-                                            <Run Text="{Binding Source, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding CreatedAt, Mode=OneWay}" />
-                                        </TextBlock>
+                    <Grid Grid.Row="2">
+                        <ListBox Background="Transparent"
+                                 BorderThickness="0"
+                                 ItemContainerStyle="{StaticResource HistoryItemContainer}"
+                                 ItemsSource="{Binding History}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 SelectedItem="{Binding SelectedItem}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock MaxHeight="56"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource CsText2Brush}"
+                                                   Text="{Binding Text}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   TextWrapping="Wrap" />
+                                        <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                                            <!-- 远端来源用该设备的邻近色注记盒（按配对顺位）；本机条目不加盒，保持安静 -->
+                                            <Border Margin="0,0,7,0"
+                                                    Padding="7,1"
+                                                    VerticalAlignment="Center"
+                                                    Background="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Background}"
+                                                    BorderBrush="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Line}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="6"
+                                                    Visibility="{Binding IsRemote, Converter={StaticResource BoolToVisibility}}">
+                                                <TextBlock FontSize="9"
+                                                           Foreground="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
+                                                           Text="{Binding OriginLabel}" />
+                                            </Border>
+                                            <TextBlock VerticalAlignment="Center"
+                                                       FontFamily="{StaticResource CsMono}"
+                                                       FontSize="10.5"
+                                                       Foreground="{DynamicResource CsText4Brush}">
+                                                <Run Text="{Binding Source, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding CreatedAt, Mode=OneWay}" />
+                                            </TextBlock>
+                                        </StackPanel>
                                     </StackPanel>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <!-- 空状态：三处衬线时刻之一（纲领 3.5），与 Android 同一词句。
+                             未配对 = 首启引导：Serif 短句 + 幽灵「去配对」；已配对 = 静候，不催促。 -->
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding History.Count}" Value="0" />
+                                                <Condition Binding="{Binding ActiveQuery}" Value="" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <Viewbox Width="28" Height="28" HorizontalAlignment="Center">
+                                <Canvas Width="24" Height="24">
+                                    <Path Data="{StaticResource IconConduit}"
+                                          Stroke="{DynamicResource CsText4Brush}"
+                                          StrokeThickness="1.7"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round" />
+                                </Canvas>
+                            </Viewbox>
+                            <TextBlock Margin="0,10,0,0"
+                                       HorizontalAlignment="Center"
+                                       FontFamily="{StaticResource CsSerif}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource CsText2Brush}" />
+                                        <Setter Property="Text" Value="先把两端接起来" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasPairedDevices}" Value="True">
+                                                <Setter Property="Text" Value="静候第一条剪贴" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Margin="0,10,0,0"
+                                       HorizontalAlignment="Center"
+                                       FontSize="11"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
+                                        <Setter Property="Text" Value="尚未与手机配对。配对入口在「通路」页的网络段。" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasPairedDevices}" Value="True">
+                                                <Setter Property="Text" Value="在任意一端复制文本，它会出现在这里并流向对面。" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <Button Margin="0,12,0,0"
+                                    HorizontalAlignment="Center"
+                                    Click="OnGoToConduitClicked"
+                                    Content="去配对 ›"
+                                    FontSize="12.5"
+                                    Padding="16,6">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource GhostFlowButton}" TargetType="Button">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasPairedDevices}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- 搜索无匹配：灰色事实一句，不占用衬线时刻 -->
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding History.Count}" Value="0">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                        <!-- 后者胜出：真空列表让位给上面的衬线空状态 -->
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding History.Count}" Value="0" />
+                                                <Condition Binding="{Binding ActiveQuery}" Value="" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <Viewbox Width="22" Height="22" HorizontalAlignment="Center">
+                                <Canvas Width="24" Height="24">
+                                    <Path Data="{StaticResource IconSearch}"
+                                          Stroke="{DynamicResource CsText4Brush}"
+                                          StrokeThickness="1.7"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round" />
+                                </Canvas>
+                            </Viewbox>
+                            <TextBlock Margin="0,8,0,0"
+                                       HorizontalAlignment="Center"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource CsText3Brush}"
+                                       TextAlignment="Center">
+                                <Run Text="没有匹配「" /><Run Text="{Binding ActiveQuery, Mode=OneWay}" /><Run Text="」的记录" />
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
 
                     <StackPanel Grid.Row="3"
                                 Margin="0,12,0,0"
@@ -995,7 +1138,7 @@
                         </Grid>
 
                         <!-- 网络段 · 已配对设备（配对本质是接通网络段，设备清单挂在段下） -->
-                        <Border Style="{StaticResource GroupCard}">
+                        <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
                                 <Grid Margin="16,12,16,10">
                                     <Grid.ColumnDefinitions>
@@ -1173,7 +1316,7 @@
                                                TextWrapping="Wrap" />
                                 </Border>
                             </StackPanel>
-                        </Border>
+                        </ContentControl>
                     </StackPanel>
                 </ScrollViewer>
 
@@ -1186,7 +1329,7 @@
                         <TextBlock Style="{StaticResource PageSub}" Text="改动即生效 · 剪贴板正文永不出现在日志里" />
 
                         <!-- 捕获 -->
-                        <Border Style="{StaticResource GroupCard}">
+                        <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource GroupHeader}" Text="捕 获 · CAPTURE" />
                                 <Grid Margin="16,9,16,12">
@@ -1243,10 +1386,10 @@
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
-                        </Border>
+                        </ContentControl>
 
                         <!-- 同步 -->
-                        <Border Style="{StaticResource GroupCard}">
+                        <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource GroupHeader}" Text="同 步 · SYNC" />
                                 <Grid Margin="16,9,16,12">
@@ -1292,10 +1435,10 @@
                                     </Grid>
                                 </Border>
                             </StackPanel>
-                        </Border>
+                        </ContentControl>
 
                         <!-- 存留 -->
-                        <Border Style="{StaticResource GroupCard}">
+                        <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource GroupHeader}" Text="存 留 · RETENTION" />
                                 <Grid Margin="16,9,16,12">
@@ -1336,7 +1479,7 @@
                                     </Border>
                                 </Grid>
                             </StackPanel>
-                        </Border>
+                        </ContentControl>
 
                         <!-- 数据 -->
                         <Border Style="{StaticResource GroupCard}">
@@ -1398,7 +1541,7 @@
                         </Border>
 
                         <!-- 信任 -->
-                        <Border Style="{StaticResource GroupCard}">
+                        <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource GroupHeader}" Text="信 任 · TRUST" />
                                 <Grid Margin="16,9,16,14">
@@ -1435,7 +1578,7 @@
                                             Style="{StaticResource GhostQuietButton}" />
                                 </Grid>
                             </StackPanel>
-                        </Border>
+                        </ContentControl>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

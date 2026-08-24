@@ -21,6 +21,18 @@ public partial class MainViewModel(
     [ObservableProperty]
     private string searchText = string.Empty;
 
+    /// <summary>
+    /// The query the History collection currently reflects — set when a search
+    /// runs, not per keystroke. Distinguishes the charter empty state (nothing
+    /// recorded yet) from "no clips matched this search".
+    /// </summary>
+    [ObservableProperty]
+    private string activeQuery = string.Empty;
+
+    /// <summary>True while at least one paired device is not revoked; picks the empty-state wording.</summary>
+    [ObservableProperty]
+    private bool hasPairedDevices;
+
     [ObservableProperty]
     private HistoryItemViewModel? selectedItem;
 
@@ -192,6 +204,7 @@ public partial class MainViewModel(
     private async Task RefreshAsync()
     {
         var entries = await store.SearchAsync(new ClipboardHistoryQuery(SearchText));
+        ActiveQuery = SearchText.Trim();
         History.Clear();
         foreach (var entry in entries)
         {
@@ -408,6 +421,7 @@ public partial class MainViewModel(
         }
 
         SelectedDevice = Devices.FirstOrDefault(device => device.DeviceId == selectedId);
+        HasPairedDevices = Devices.Any(device => !device.IsRevoked);
     }
 
     [RelayCommand(CanExecute = nameof(HasDeviceSelection))]

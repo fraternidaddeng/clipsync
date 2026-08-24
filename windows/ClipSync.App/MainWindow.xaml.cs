@@ -20,6 +20,13 @@ public partial class MainWindow : Window
     {
         Loaded -= OnLoaded;
         await viewModel.InitializeAsync();
+
+        // 首启落「通路」页（pc-ui-inventory #14）：还没配对也没有任何历史时，
+        // 网络段的「配对新设备」应当是第一眼；其余情况保持历史页。
+        if (!viewModel.HasPairedDevices && viewModel.History.Count == 0)
+        {
+            NavConduit.IsChecked = true;
+        }
     }
 
     private void OnClosing(object? sender, System.ComponentModel.CancelEventArgs e)
@@ -52,6 +59,11 @@ public partial class MainWindow : Window
 
     private void OnPairNewDeviceClicked(object sender, RoutedEventArgs e) =>
         ((App)Application.Current).ShowPairingWindow(this);
+
+    // 空状态的幽灵「去配对」：与 Android 同一动线——先到通路页的网络段，
+    // 让用户看见配对在整条通路里的位置，而不是直接弹二维码。
+    private void OnGoToConduitClicked(object sender, RoutedEventArgs e) =>
+        NavConduit.IsChecked = true;
 
     // 自绘 chrome 的窗控三钮（WindowChrome 去掉了系统标题栏）。
     private void OnMinimizeClicked(object sender, RoutedEventArgs e) =>
