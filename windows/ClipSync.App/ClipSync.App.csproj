@@ -14,6 +14,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Icons\*.ico" />
+    <!-- Charter voices ship with the package (tokens.md §6): Noto Sans SC (Chinese sans),
+         Plus Jakarta Sans (Latin sans) and JetBrains Mono (machine voice). All OFL-licensed;
+         licence texts live next to the files. -->
+    <Resource Include="Resources\Fonts\*.otf" />
+    <Resource Include="Resources\Fonts\*.ttf" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
