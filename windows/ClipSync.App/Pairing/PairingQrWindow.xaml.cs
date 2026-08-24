@@ -26,8 +26,8 @@ public partial class PairingQrWindow : Window
         this.pairing = pairing;
         this.host = host;
 
-        DeviceNameText.Text = $"Computer name: {Environment.MachineName}";
-        FingerprintText.Text = $"Certificate: {PairingQrRenderer.FormatFingerprint(host.CertificateFingerprint)}";
+        DeviceNameText.Text = Environment.MachineName;
+        FingerprintText.Text = TwoLineFingerprint(host.CertificateFingerprint);
 
         countdown = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         countdown.Tick += OnCountdownTick;
@@ -47,13 +47,13 @@ public partial class PairingQrWindow : Window
             // rather than rendering a code that can only fail.
             pairing.CancelTicket();
             QrImage.Source = null;
-            NoHostsText.Visibility = Visibility.Visible;
+            NoHostsBox.Visibility = Visibility.Visible;
             CountdownText.Text = string.Empty;
             countdown.Stop();
             return;
         }
 
-        NoHostsText.Visibility = Visibility.Collapsed;
+        NoHostsBox.Visibility = Visibility.Collapsed;
         var ticket = pairing.IssueTicket();
         expiresAt = ticket.ExpiresAt;
         var payload = pairing.BuildQrPayload(ticket, hosts, host.Port, host.CertificateFingerprint);
@@ -91,7 +91,14 @@ public partial class PairingQrWindow : Window
             remaining = TimeSpan.Zero;
         }
 
-        CountdownText.Text = $"Code refreshes in {remaining:m\\:ss}";
+        CountdownText.Text = $"{remaining:m\\:ss} 后自动更换";
+    }
+
+    /// <summary>Four-character groups, eight per line: humans compare groups, not character streams.</summary>
+    private static string TwoLineFingerprint(string fingerprint)
+    {
+        var groups = fingerprint.Chunk(4).Select(chunk => new string(chunk));
+        return string.Join('\n', groups.Chunk(8).Select(line => string.Join(' ', line)));
     }
 
     private void OnPairingCompleted(PairedDevice device) =>

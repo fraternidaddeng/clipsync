@@ -144,9 +144,9 @@ public partial class App : Application
 
         var hasUsableDevice = mainViewModel.Devices.Any(device => !device.IsRevoked);
         var attentionReason =
-            peerEndpointUnavailable ? "sync is off this session (endpoint failed to start)"
-            : mainViewModel.CaptureFaulted ? "clipboard capture degraded (last access failed)"
-            : !hasUsableDevice ? "pair a device to start syncing"
+            peerEndpointUnavailable ? "本次会话同步未启动（端点启动失败）"
+            : mainViewModel.CaptureFaulted ? "剪贴板捕获降级（上次访问失败）"
+            : !hasUsableDevice ? "配对一台设备开始同步"
             : null;
         var state = TrayStateMapper.Map(mainViewModel.IsPrivateMode, mainViewModel.IsPaused, attentionReason is not null);
         trayIcon.SetState(state, attentionReason);
@@ -225,8 +225,8 @@ public partial class App : Application
         {
             MessageBox.Show(
                 owner,
-                "The peer endpoint is not running, so pairing is unavailable this session.",
-                "ClipSync",
+                "对端服务未启动，本次会话无法配对。",
+                "剪剪相传",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;

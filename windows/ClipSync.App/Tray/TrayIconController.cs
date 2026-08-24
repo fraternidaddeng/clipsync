@@ -32,18 +32,18 @@ internal sealed class TrayIconController : IDisposable
     public static TrayIconController Create(Window mainWindow, Action exit)
     {
         var menu = new ContextMenu();
-        var openItem = new MenuItem { Header = "Open ClipSync" };
+        var openItem = new MenuItem { Header = "打开剪剪相传" };
         openItem.Click += (_, _) => Show(mainWindow);
         menu.Items.Add(openItem);
         menu.Items.Add(new Separator());
-        var exitItem = new MenuItem { Header = "Exit" };
+        var exitItem = new MenuItem { Header = "退出" };
         exitItem.Click += (_, _) => exit();
         menu.Items.Add(exitItem);
 
         var stateIcons = LoadStateIcons();
         var taskbarIcon = new TaskbarIcon
         {
-            ToolTipText = "ClipSync — listening",
+            ToolTipText = "剪剪相传 · 监听中",
             Icon = stateIcons[TrayState.Flow],
             ContextMenu = menu
         };
@@ -59,10 +59,10 @@ internal sealed class TrayIconController : IDisposable
     {
         var toolTip = state switch
         {
-            TrayState.Attention => $"ClipSync — {attentionDetail ?? "needs your action"}",
-            TrayState.Paused => "ClipSync — capture paused",
-            TrayState.Private => "ClipSync — private mode, nothing is recorded",
-            _ => "ClipSync — listening",
+            TrayState.Attention => $"剪剪相传 · {attentionDetail ?? "需要你操作"}",
+            TrayState.Paused => "剪剪相传 · 捕获已暂停",
+            TrayState.Private => "剪剪相传 · 私密模式，不留痕迹",
+            _ => "剪剪相传 · 监听中",
         };
         if (state == currentState && toolTip == currentToolTip)
         {

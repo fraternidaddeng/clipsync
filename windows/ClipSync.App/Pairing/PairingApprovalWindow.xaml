@@ -1,36 +1,154 @@
 <Window x:Class="ClipSync.App.Pairing.PairingApprovalWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Pairing request"
-        Width="420"
+        Title="配对请求"
+        Icon="/Assets/Icons/app.ico"
+        Width="440"
         SizeToContent="Height"
         ResizeMode="NoResize"
+        Background="{StaticResource CsBgSolidBrush}"
+        FontFamily="Segoe UI, Microsoft YaHei UI, Noto Sans SC"
+        UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen"
         Topmost="True"
         ShowInTaskbar="True">
-    <StackPanel Margin="24" Background="{DynamicResource CsSurfaceBrush}">
-        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Allow this device to pair?" />
-        <TextBlock Margin="0,14,0,0" TextWrapping="Wrap" Foreground="{DynamicResource CsText2Brush}">
-            A device asked to pair using the QR code shown by this computer.
-            Approve only if the name below matches the phone in your hand.
-        </TextBlock>
-        <Border Margin="0,16,0,0" Padding="14" Background="{DynamicResource CsSurfaceInBrush}" BorderBrush="{DynamicResource CsLineBrush}" BorderThickness="1" CornerRadius="6">
-            <StackPanel>
-                <TextBlock x:Name="DeviceNameText" FontSize="16" FontWeight="SemiBold" />
-                <TextBlock x:Name="PlatformText" Margin="0,4,0,0" Foreground="{DynamicResource CsText3Brush}" />
-            </StackPanel>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="42"
+                      CornerRadius="0"
+                      GlassFrameThickness="-1"
+                      ResizeBorderThickness="0"
+                      UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+
+    <DockPanel Background="{StaticResource CsBgBrush}">
+
+        <!-- 标题栏：关闭 = 拒绝（协议第 9 节：未批准即拒绝） -->
+        <Border DockPanel.Dock="Top"
+                Height="42"
+                Padding="16,0,0,0"
+                Background="{StaticResource CsSurface3Brush}"
+                BorderBrush="{StaticResource CsLineBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Viewbox Width="15" Height="15">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="{StaticResource IconConduit}"
+                                  Stroke="{StaticResource CsFlowBrush}"
+                                  StrokeThickness="1.9"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  StrokeLineJoin="Round" />
+                        </Canvas>
+                    </Viewbox>
+                    <TextBlock Margin="9,0,0,0"
+                               VerticalAlignment="Center"
+                               FontFamily="{StaticResource CsSerif}"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource CsText1Brush}"
+                               Text="配对请求" />
+                </StackPanel>
+                <Button Grid.Column="1"
+                        AutomationProperties.Name="关闭并拒绝"
+                        Click="OnRejectClicked"
+                        Style="{StaticResource CsCaptionCloseButton}">
+                    <Path Data="{StaticResource CsGlyphClose}" Style="{StaticResource CsCaptionGlyph}" />
+                </Button>
+            </Grid>
         </Border>
-        <!-- Certificate/secret replacement is a genuine error-class warning: red is allowed here -->
-        <TextBlock x:Name="RepairWarningText"
-                   Margin="0,12,0,0"
-                   Foreground="{DynamicResource CsErrBrush}"
-                   FontWeight="SemiBold"
-                   TextWrapping="Wrap"
-                   Visibility="Collapsed"
-                   Text="This device is already paired. Approving replaces its previous pairing secret and invalidates the old installation." />
-        <StackPanel Margin="0,20,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Width="100" Height="32" Click="OnRejectClicked" Content="Reject" />
-            <Button Width="100" Height="32" Margin="10,0,0,0" Click="OnApproveClicked" Content="Approve" FontWeight="SemiBold" />
+
+        <StackPanel Margin="24,18,24,20">
+            <TextBlock FontFamily="{StaticResource CsSerif}"
+                       FontSize="17"
+                       FontWeight="SemiBold"
+                       Foreground="{StaticResource CsText1Brush}"
+                       Text="允许此设备配对吗？" />
+            <TextBlock Margin="0,8,0,0"
+                       FontSize="11.5"
+                       Foreground="{StaticResource CsText2Brush}"
+                       Text="有设备用本机显示的二维码请求配对。仅当下方名称与你手中的手机一致时批准。"
+                       TextWrapping="Wrap" />
+
+            <!-- 请求方：设备邻近色着色盒（顺位 1 · 青灰），身份用形 -->
+            <Border Margin="0,16,0,0"
+                    Padding="14,12"
+                    Background="{StaticResource CsSurfaceBrush}"
+                    BorderBrush="{StaticResource CsLineBrush}"
+                    BorderThickness="1"
+                    CornerRadius="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Width="36"
+                            Height="36"
+                            VerticalAlignment="Center"
+                            Background="{StaticResource CsDev1BgBrush}"
+                            BorderBrush="{StaticResource CsDev1LineBrush}"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                        <Viewbox Width="17" Height="17">
+                            <Canvas Width="24" Height="24">
+                                <Path Data="{StaticResource IconPhone}"
+                                      Stroke="{StaticResource CsDev1Brush}"
+                                      StrokeThickness="1.8"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round" />
+                            </Canvas>
+                        </Viewbox>
+                    </Border>
+                    <StackPanel Grid.Column="1"
+                                Margin="12,0,0,0"
+                                VerticalAlignment="Center">
+                        <TextBlock x:Name="DeviceNameText"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource CsText1Brush}" />
+                        <TextBlock x:Name="PlatformText"
+                                   Margin="0,2,0,0"
+                                   FontFamily="{StaticResource CsMono}"
+                                   FontSize="10.5"
+                                   Foreground="{StaticResource CsText4Brush}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 重配对 = 替换旧密钥：真正的 error 级警示，红色在此出场 -->
+            <Border x:Name="RepairWarningBox"
+                    Margin="0,12,0,0"
+                    Padding="12,10"
+                    Background="{StaticResource CsErrBgBrush}"
+                    BorderBrush="{StaticResource CsErrLineBrush}"
+                    BorderThickness="1"
+                    CornerRadius="9"
+                    Visibility="Collapsed">
+                <TextBlock FontSize="11"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource CsErrBrush}"
+                           Text="该设备此前已配对。批准会替换它原有的配对密钥，旧的安装立即失效。"
+                           TextWrapping="Wrap" />
+            </Border>
+
+            <StackPanel Margin="0,20,0,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <Button MinWidth="100"
+                        Click="OnRejectClicked"
+                        Content="拒绝"
+                        Style="{StaticResource GhostQuietButton}" />
+                <Button MinWidth="120"
+                        Margin="10,0,0,0"
+                        Click="OnApproveClicked"
+                        Content="批准配对"
+                        Style="{StaticResource PrimaryButton}" />
+            </StackPanel>
         </StackPanel>
-    </StackPanel>
+    </DockPanel>
 </Window>
