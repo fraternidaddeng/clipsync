@@ -1,3 +1,4 @@
+using ClipSync.App.Ui;
 using ClipSync.Core.Storage;
 
 namespace ClipSync.App.ViewModels;
@@ -8,9 +9,15 @@ public sealed record PairedDeviceViewModel(
     string Platform,
     string LastSeenText,
     string StateText,
-    bool IsRevoked)
+    bool IsRevoked,
+    int AccentIndex)
 {
-    public static PairedDeviceViewModel FromDevice(PairedDevice device) => new(
+    /// <summary>
+    /// <paramref name="pairingPosition"/> is the device's zero-based position in the
+    /// created_at-ordered device list; the charter assigns neighbour hues by pairing
+    /// order (first device hue 195, second 215, …), cycling after five.
+    /// </summary>
+    public static PairedDeviceViewModel FromDevice(PairedDevice device, int pairingPosition) => new(
         device.DeviceId,
         device.DisplayName,
         device.Platform switch { "android" => "Android", "windows" => "Windows", _ => device.Platform },
@@ -18,5 +25,6 @@ public sealed record PairedDeviceViewModel(
             ? $"Last seen {seen.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture)}"
             : "Never connected",
         device.IsRevoked ? "Revoked — scan a new QR code to re-pair" : "Paired",
-        device.IsRevoked);
+        device.IsRevoked,
+        DeviceAccent.ForPairingPosition(pairingPosition));
 }

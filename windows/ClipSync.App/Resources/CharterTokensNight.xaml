@@ -11,7 +11,10 @@
       - Ochre (CsAct*) is the only colour allowed to interrupt the user ("needs your action").
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    mc:Ignorable="po">
 
     <!-- ============ Lightness ladder (z-levels), grey-blue hue 245-255 ============ -->
     <Color x:Key="CsBg">#FF0C1116</Color>            <!-- z0  app background -->
@@ -67,6 +70,33 @@
     <!-- ============ Special ============ -->
     <!-- QR quiet zone stays pure white in both themes; grey-blue would hurt scanning -->
     <Color x:Key="CsQrQuiet">#FFFFFFFF</Color>
+
+    <!-- ============ Shadows (tokens §8) ============ -->
+    <!-- Night shadows only separate the card from the background; depth itself comes
+         from the lightened surfaces above (sf-up), never from heavier shadows alone. -->
+    <Color x:Key="CsShadow">#FF000000</Color>
+    <DropShadowEffect x:Key="CsSh1Effect"
+                      po:Freeze="True"
+                      BlurRadius="9"
+                      Direction="270"
+                      Opacity="0.45"
+                      ShadowDepth="2"
+                      Color="{StaticResource CsShadow}" />
+    <DropShadowEffect x:Key="CsSh2Effect"
+                      po:Freeze="True"
+                      BlurRadius="24"
+                      Direction="270"
+                      Opacity="0.55"
+                      ShadowDepth="6"
+                      Color="{StaticResource CsShadow}" />
+    <!-- edge: 2px-high top highlight strip, faint white at night (edge = .07) -->
+    <LinearGradientBrush x:Key="CsEdgeBrush"
+                         po:Freeze="True"
+                         StartPoint="0.5,0"
+                         EndPoint="0.5,1">
+        <GradientStop Offset="0" Color="#12FFFFFF" />
+        <GradientStop Offset="1" Color="#00FFFFFF" />
+    </LinearGradientBrush>
 
     <!-- ============ Brushes: lightness ladder ============ -->
     <!-- bg-grad: 178deg, light above, dark below (approximated vertically per tokens.md) -->

@@ -9,7 +9,10 @@
     swaps whole dictionaries at runtime following the Windows theme (SystemUsesLightTheme).
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    mc:Ignorable="po">
 
     <!-- ============ Lightness ladder (z-levels), grey-blue hue 245-255 ============ -->
     <Color x:Key="CsBg">#FFE2E9F2</Color>            <!-- z0  app background -->
@@ -63,6 +66,34 @@
     <!-- ============ Special ============ -->
     <!-- QR quiet zone stays pure white in both themes; grey-blue would hurt scanning -->
     <Color x:Key="CsQrQuiet">#FFFFFFFF</Color>
+
+    <!-- ============ Shadows (tokens §8), one hue for every tier ============ -->
+    <Color x:Key="CsShadow">#FF233448</Color>
+    <!-- sh-1 / sh-2 collapsed into single DropShadowEffects (WPF has no multi-shadow);
+         per tokens §12.3 the effect hangs on the outermost of three nested layers only,
+         so text never renders inside the effect subtree. -->
+    <DropShadowEffect x:Key="CsSh1Effect"
+                      po:Freeze="True"
+                      BlurRadius="7"
+                      Direction="270"
+                      Opacity="0.13"
+                      ShadowDepth="2"
+                      Color="{StaticResource CsShadow}" />
+    <DropShadowEffect x:Key="CsSh2Effect"
+                      po:Freeze="True"
+                      BlurRadius="18"
+                      Direction="270"
+                      Opacity="0.20"
+                      ShadowDepth="5"
+                      Color="{StaticResource CsShadow}" />
+    <!-- edge: 2px-high top highlight strip laid inside the card's 1px border -->
+    <LinearGradientBrush x:Key="CsEdgeBrush"
+                         po:Freeze="True"
+                         StartPoint="0.5,0"
+                         EndPoint="0.5,1">
+        <GradientStop Offset="0" Color="#E6FFFFFF" />
+        <GradientStop Offset="1" Color="#00FFFFFF" />
+    </LinearGradientBrush>
 
     <!-- ============ Brushes: lightness ladder ============ -->
     <!-- bg-grad: 178deg, light above, dark below (approximated vertically per tokens.md) -->

@@ -1,6 +1,7 @@
 <Window x:Class="ClipSync.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:ClipSync.App.Ui"
         Title="剪剪相传 ClipSync"
         Icon="Assets/Icons/app.ico"
         Width="1020"
@@ -24,6 +25,8 @@
         <!-- 色彩令牌与字体/按钮族来自 App 级 Resources/（CharterTokens / CharterControls）。
              此处仅保留本窗口私有的图标几何与样式。 -->
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <!-- 设备邻近色按配对顺位取 dev-1..dev-5（tokens §4）；顺位 0 = 灰（本机/已不在册的来源） -->
+        <ui:DeviceAccentBrushConverter x:Key="DeviceAccentBrush" />
 
         <!-- ============ 图标几何（docs/design/icons/*.svg 的 Path 转写；IconConduit/IconPhone 已上移 App 级）============ -->
         <Geometry x:Key="IconHistory">M10,3 H19 A2,2 0 0 1 21,5 V18 A2,2 0 0 1 19,20 H10 A2,2 0 0 1 8,18 V5 A2,2 0 0 1 10,3 Z M16,3 V1 H3 V15 H6</Geometry>
@@ -223,30 +226,80 @@
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
 
-        <!-- 历史条目容器：z1 卡片，选中描流动蓝 -->
+        <!-- 历史条目容器：z1 卡片（tokens §8 三层嵌套：外层 sh-1 阴影、中层 1px 边框、
+             内层 2px 顶部高光），悬停抬到 z2（阴影跳 sh-2 + 1px 上移），选中描流动蓝 -->
         <Style x:Key="HistoryItemContainer" TargetType="ListBoxItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
-                        <Border x:Name="Card"
-                                Margin="0,0,0,8"
-                                Padding="14,10"
-                                Background="{DynamicResource CsSurfaceBrush}"
-                                BorderBrush="{DynamicResource CsLineBrush}"
-                                BorderThickness="1"
-                                CornerRadius="10">
-                            <ContentPresenter />
-                        </Border>
+                        <Grid x:Name="Root" Margin="0,0,0,8">
+                            <!-- 最外层：面色 + 阴影（文字在中层渲染，不进 Effect 子树，保住 ClearType） -->
+                            <Border x:Name="Fill"
+                                    Background="{DynamicResource CsSurfaceBrush}"
+                                    CornerRadius="10"
+                                    Effect="{DynamicResource CsSh1Effect}" />
+                            <!-- 中层：1px 边框 + sf-grad 受光；最内：2px 顶部高光条 -->
+                            <Border x:Name="Card"
+                                    Background="{DynamicResource CsSurfaceGradBrush}"
+                                    BorderBrush="{DynamicResource CsLineBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <Border Height="2"
+                                            Margin="1,1,1,0"
+                                            VerticalAlignment="Top"
+                                            Background="{DynamicResource CsEdgeBrush}"
+                                            CornerRadius="9,9,0,0" />
+                                    <ContentPresenter Margin="14,10" />
+                                </Grid>
+                            </Border>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Card" Property="Background" Value="{DynamicResource CsSurfaceUpBrush}" />
+                                <Setter TargetName="Fill" Property="Background" Value="{DynamicResource CsSurfaceUpBrush}" />
+                                <Setter TargetName="Fill" Property="Effect" Value="{DynamicResource CsSh2Effect}" />
+                                <Setter TargetName="Root" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="-1" />
+                                    </Setter.Value>
+                                </Setter>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Card" Property="Background" Value="{DynamicResource CsSurfaceUpBrush}" />
+                                <Setter TargetName="Fill" Property="Background" Value="{DynamicResource CsSurfaceUpBrush}" />
                                 <Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource CsFlowBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 通路段卡片外衣：与历史卡同一套三层嵌套（对齐 pc-settings-preview 的 .hseg：
+             sf 底 + sf-grad 受光 + 1px ln + 圆角 11 + sh-1 + 顶部高光） -->
+        <Style x:Key="SegCard" TargetType="ContentControl">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContentControl">
+                        <Grid>
+                            <Border Background="{DynamicResource CsSurfaceBrush}"
+                                    CornerRadius="11"
+                                    Effect="{DynamicResource CsSh1Effect}" />
+                            <Border Background="{DynamicResource CsSurfaceGradBrush}"
+                                    BorderBrush="{DynamicResource CsLineBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="11">
+                                <Grid>
+                                    <Border Height="2"
+                                            Margin="1,1,1,0"
+                                            VerticalAlignment="Top"
+                                            Background="{DynamicResource CsEdgeBrush}"
+                                            CornerRadius="10,10,0,0" />
+                                    <ContentPresenter Margin="12,11" />
+                                </Grid>
+                            </Border>
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -557,17 +610,17 @@
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="Wrap" />
                                     <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
-                                        <!-- 远端来源用邻家色（水蓝）注记盒；本机条目不加盒，保持安静 -->
+                                        <!-- 远端来源用该设备的邻近色注记盒（按配对顺位）；本机条目不加盒，保持安静 -->
                                         <Border Margin="0,0,7,0"
                                                 Padding="7,1"
                                                 VerticalAlignment="Center"
-                                                Background="{DynamicResource CsDev2BgBrush}"
-                                                BorderBrush="{DynamicResource CsDev2LineBrush}"
+                                                Background="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Background}"
+                                                BorderBrush="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Line}"
                                                 BorderThickness="1"
                                                 CornerRadius="6"
                                                 Visibility="{Binding IsRemote, Converter={StaticResource BoolToVisibility}}">
                                             <TextBlock FontSize="9"
-                                                       Foreground="{DynamicResource CsDev2Brush}"
+                                                       Foreground="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
                                                        Text="{Binding OriginLabel}" />
                                         </Border>
                                         <TextBlock VerticalAlignment="Center"
@@ -618,13 +671,8 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <!-- 段 1 · 本机捕获（随 暂停/私密 变灰） -->
-                            <Border Margin="0,0,10,0"
-                                    Padding="12,11"
-                                    Background="{DynamicResource CsSurfaceBrush}"
-                                    BorderBrush="{DynamicResource CsLineBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="11">
+                            <!-- 段 1 · 本机捕获（随 暂停/私密 变灰；降级 = 赭色「需要你操作」+ 2.6s 脉动） -->
+                            <ContentControl Margin="0,0,10,0" Style="{StaticResource SegCard}">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Viewbox Width="16" Height="16">
@@ -673,35 +721,93 @@
                                                     <DataTrigger Binding="{Binding CaptureFaulted}" Value="True">
                                                         <Setter Property="Text" Value="捕获降级 · 剪贴板访问失败" />
                                                         <Setter Property="Foreground" Value="{DynamicResource CsActBrush}" />
+                                                        <Setter Property="FontWeight" Value="SemiBold" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                    <Border Height="4"
-                                            Margin="0,7,0,0"
-                                            Background="{DynamicResource CsSurfaceInBrush}"
-                                            CornerRadius="2">
-                                        <Border HorizontalAlignment="Stretch" CornerRadius="2">
+                                    <Grid Height="4" Margin="0,7,0,0">
+                                        <!-- 脉动光环：仅「需要你操作」时出现——外扩 5px、渐隐、2.6s 循环（tokens §9 pulse），
+                                             缓动逐位对齐 cubic-bezier(.16,1,.3,1) -->
+                                        <Border CornerRadius="7">
                                             <Border.Style>
                                                 <Style TargetType="Border">
-                                                    <Setter Property="Background" Value="{DynamicResource CsFlowBrush}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource CsActBrush}" />
+                                                    <Setter Property="BorderThickness" Value="1.5" />
+                                                    <Setter Property="Opacity" Value="0" />
+                                                    <Setter Property="Visibility" Value="Collapsed" />
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsPaused}" Value="True">
-                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
-                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding CaptureFaulted}" Value="True">
                                                             <Setter Property="Visibility" Value="Visible" />
-                                                            <Setter Property="Background" Value="{DynamicResource CsActBrush}" />
+                                                            <DataTrigger.EnterActions>
+                                                                <BeginStoryboard x:Name="CapturePulse">
+                                                                    <Storyboard RepeatBehavior="Forever">
+                                                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin">
+                                                                            <DiscreteThicknessKeyFrame KeyTime="0:0:0" Value="0" />
+                                                                            <SplineThicknessKeyFrame KeySpline="0.16,1 0.3,1"
+                                                                                                     KeyTime="0:0:1.3"
+                                                                                                     Value="-5" />
+                                                                            <SplineThicknessKeyFrame KeySpline="0.16,1 0.3,1"
+                                                                                                     KeyTime="0:0:2.6"
+                                                                                                     Value="0" />
+                                                                        </ThicknessAnimationUsingKeyFrames>
+                                                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                                                                            <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.35" />
+                                                                            <SplineDoubleKeyFrame KeySpline="0.16,1 0.3,1"
+                                                                                                  KeyTime="0:0:1.3"
+                                                                                                  Value="0" />
+                                                                            <SplineDoubleKeyFrame KeySpline="0.16,1 0.3,1"
+                                                                                                  KeyTime="0:0:2.6"
+                                                                                                  Value="0.35" />
+                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.EnterActions>
+                                                            <DataTrigger.ExitActions>
+                                                                <StopStoryboard BeginStoryboardName="CapturePulse" />
+                                                            </DataTrigger.ExitActions>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
                                         </Border>
-                                    </Border>
+                                        <!-- 轨道：常态 z−1 凹槽；「需要你操作」= act-bg 底（状态编码 §10） -->
+                                        <Border CornerRadius="2">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{DynamicResource CsSurfaceInBrush}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding CaptureFaulted}" Value="True">
+                                                            <Setter Property="Background" Value="{DynamicResource CsActBgBrush}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <!-- 填充：就绪 = flow 满填充；暂停/私密 = 空；降级 = 空 + 1.5px act 描边 -->
+                                            <Border HorizontalAlignment="Stretch" CornerRadius="2">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="{DynamicResource CsFlowBrush}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding CaptureFaulted}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                <Setter Property="Background" Value="Transparent" />
+                                                                <Setter Property="BorderBrush" Value="{DynamicResource CsActBrush}" />
+                                                                <Setter Property="BorderThickness" Value="1.5" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                            </Border>
+                                        </Border>
+                                    </Grid>
                                     <Border Margin="0,7,0,0"
                                             Padding="0,7,0,0"
                                             BorderBrush="{DynamicResource CsLineBrush}"
@@ -709,16 +815,12 @@
                                         <TextBlock Style="{StaticResource SegDetail}" Text="私密模式与屏蔽进程在这一段拦下内容。" />
                                     </Border>
                                 </StackPanel>
-                            </Border>
+                            </ContentControl>
 
                             <!-- 段 2 · 本机服务（历史条数实时） -->
-                            <Border Grid.Column="1"
-                                    Margin="0,0,10,0"
-                                    Padding="12,11"
-                                    Background="{DynamicResource CsSurfaceBrush}"
-                                    BorderBrush="{DynamicResource CsLineBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="11">
+                            <ContentControl Grid.Column="1"
+                                            Margin="0,0,10,0"
+                                            Style="{StaticResource SegCard}">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Viewbox Width="16" Height="16">
@@ -751,16 +853,12 @@
                                         </TextBlock>
                                     </Border>
                                 </StackPanel>
-                            </Border>
+                            </ContentControl>
 
                             <!-- 段 3 · 网络（对端服务实时状态） -->
-                            <Border Grid.Column="2"
-                                    Margin="0,0,10,0"
-                                    Padding="12,11"
-                                    Background="{DynamicResource CsSurfaceBrush}"
-                                    BorderBrush="{DynamicResource CsLineBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="11">
+                            <ContentControl Grid.Column="2"
+                                            Margin="0,0,10,0"
+                                            Style="{StaticResource SegCard}">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Viewbox Width="16" Height="16">
@@ -817,15 +915,10 @@
                                         <TextBlock Style="{StaticResource SegDetail}" Text="{Binding SyncStatus}" />
                                     </Border>
                                 </StackPanel>
-                            </Border>
+                            </ContentControl>
 
                             <!-- 段 4 · 对端写入（按已配对设备与自动应用推导） -->
-                            <Border Grid.Column="3"
-                                    Padding="12,11"
-                                    Background="{DynamicResource CsSurfaceBrush}"
-                                    BorderBrush="{DynamicResource CsLineBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="11">
+                            <ContentControl Grid.Column="3" Style="{StaticResource SegCard}">
                                 <StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Viewbox Width="16" Height="16">
@@ -898,7 +991,7 @@
                                         </TextBlock>
                                     </Border>
                                 </StackPanel>
-                            </Border>
+                            </ContentControl>
                         </Grid>
 
                         <!-- 网络段 · 已配对设备（配对本质是接通网络段，设备清单挂在段下） -->
@@ -965,10 +1058,11 @@
                                                         VerticalAlignment="Center"
                                                         BorderThickness="1"
                                                         CornerRadius="9">
+                                                    <!-- 邻近色按配对顺位（AccentIndex = dev-1..dev-5 循环）；已撤销退回灰——彩度是活跃度 -->
                                                     <Border.Style>
                                                         <Style TargetType="Border">
-                                                            <Setter Property="Background" Value="{DynamicResource CsDev1BgBrush}" />
-                                                            <Setter Property="BorderBrush" Value="{DynamicResource CsDev1LineBrush}" />
+                                                            <Setter Property="Background" Value="{Binding AccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Background}" />
+                                                            <Setter Property="BorderBrush" Value="{Binding AccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Line}" />
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsRevoked}" Value="True">
                                                                     <Setter Property="Background" Value="{DynamicResource CsSurface3Brush}" />
@@ -986,7 +1080,7 @@
                                                                   StrokeLineJoin="Round">
                                                                 <Path.Style>
                                                                     <Style TargetType="Path">
-                                                                        <Setter Property="Stroke" Value="{DynamicResource CsDev1Brush}" />
+                                                                        <Setter Property="Stroke" Value="{Binding AccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}" />
                                                                         <Style.Triggers>
                                                                             <DataTrigger Binding="{Binding IsRevoked}" Value="True">
                                                                                 <Setter Property="Stroke" Value="{DynamicResource CsText4Brush}" />

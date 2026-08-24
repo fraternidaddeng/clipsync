@@ -20,10 +20,15 @@ public partial class MainViewModel(
     [ObservableProperty]
     private HistoryItemViewModel? selectedItem;
 
+    /// <summary>Most recent clips surfaced in the tray flyout (tokens §12.6).</summary>
+    private const int RecentHistoryLength = 4;
+
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TrayStatusText))]
     private bool isPaused;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TrayStatusText))]
     private bool isPrivateMode;
 
     [ObservableProperty]
@@ -43,6 +48,7 @@ public partial class MainViewModel(
 
     /// <summary>True while the peer endpoint is listening; drives the conduit page's network segment.</summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TrayStatusText))]
     private bool peerOnline;
 
     [ObservableProperty]
@@ -50,6 +56,7 @@ public partial class MainViewModel(
 
     /// <summary>Paired devices with an authenticated session right now (conduit network segment).</summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TrayStatusText))]
     private int connectedDeviceCount;
 
     /// <summary>Outbox rows not yet acked by any peer (conduit local-service segment).</summary>
@@ -62,6 +69,7 @@ public partial class MainViewModel(
 
     /// <summary>True after the clipboard adapter reported a fault; cleared on the next successful capture.</summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TrayStatusText))]
     private bool captureFaulted;
 
     /// <summary>Local certificate fingerprint, pre-formatted in groups of four for human comparison.</summary>
@@ -76,7 +84,23 @@ public partial class MainViewModel(
 
     public ObservableCollection<HistoryItemViewModel> History { get; } = new();
 
+    /// <summary>Newest clips first, capped for the tray flyout; refreshed together with History.</summary>
+    public ObservableCollection<HistoryItemViewModel> RecentHistory { get; } = new();
+
     public ObservableCollection<PairedDeviceViewModel> Devices { get; } = new();
+
+    /// <summary>
+    /// One line for the tray flyout status strip. Priority mirrors the tray icon
+    /// (private &gt; paused &gt; attention &gt; flow); the paused/private wordings match
+    /// the conduit capture segment so the same fact reads the same everywhere.
+    /// </summary>
+    public string TrayStatusText =>
+        IsPrivateMode ? "私密模式 · 不留痕迹"
+        : IsPaused ? "已暂停 · 不再记录"
+        : CaptureFaulted ? "捕获降级 · 剪贴板访问失败"
+        : !PeerOnline ? "监听中 · 同步未启动"
+        : ConnectedDeviceCount > 0 ? $"监听中 · 已连 {ConnectedDeviceCount} 台"
+        : "监听中 · 等待设备连入";
 
     /// <summary>Raised after a device is revoked so the app layer can drop its live sessions.</summary>
     public event Action<string>? DeviceRevoked;
@@ -163,14 +187,24 @@ public partial class MainViewModel(
         History.Clear();
         foreach (var entry in entries)
         {
-            History.Add(HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDeviceName));
+            History.Add(HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDevice));
+        }
+
+        // The flyout always shows the newest clips regardless of the search box.
+        RecentHistory.Clear();
+        var recent = string.IsNullOrEmpty(SearchText)
+            ? entries
+            : await store.SearchAsync(new ClipboardHistoryQuery(string.Empty));
+        foreach (var entry in recent.Take(RecentHistoryLength))
+        {
+            RecentHistory.Add(HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDevice));
         }
 
         await RefreshOutboxAsync();
     }
 
-    private string? LookupDeviceName(string deviceId) =>
-        Devices.FirstOrDefault(device => device.DeviceId == deviceId)?.DisplayName;
+    private PairedDeviceViewModel? LookupDevice(string deviceId) =>
+        Devices.FirstOrDefault(device => device.DeviceId == deviceId);
 
     [RelayCommand]
     private async Task SearchAsync() => await RefreshAsync();
@@ -185,6 +219,19 @@ public partial class MainViewModel(
 
         capturePolicy.SuppressNextWrite(SelectedItem.Text, DateTimeOffset.UtcNow);
         clipboardAdapter.WriteText(SelectedItem.Text);
+    }
+
+    /// <summary>Copies a specific clip (tray flyout cards) without touching the main-window selection.</summary>
+    [RelayCommand]
+    private void CopyItem(HistoryItemViewModel? item)
+    {
+        if (item is null)
+        {
+            return;
+        }
+
+        capturePolicy.SuppressNextWrite(item.Text, DateTimeOffset.UtcNow);
+        clipboardAdapter.WriteText(item.Text);
     }
 
     /// <summary>Copies the raw lowercase-hex fingerprint (machine-comparable form, no grouping spaces).</summary>
@@ -245,11 +292,13 @@ public partial class MainViewModel(
     private async Task RefreshDevicesAsync()
     {
         var selectedId = SelectedDevice?.DeviceId;
+        // ListDevicesAsync orders by created_at: the position IS the pairing order,
+        // which assigns each device its neighbour hue (dev-1..dev-5, cycling).
         var devices = await store.ListDevicesAsync();
         Devices.Clear();
-        foreach (var device in devices)
+        for (var position = 0; position < devices.Count; position++)
         {
-            Devices.Add(PairedDeviceViewModel.FromDevice(device));
+            Devices.Add(PairedDeviceViewModel.FromDevice(devices[position], position));
         }
 
         SelectedDevice = Devices.FirstOrDefault(device => device.DeviceId == selectedId);
