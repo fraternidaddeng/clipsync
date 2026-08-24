@@ -15,6 +15,8 @@ class RoomSyncRepository(
     private val store: ClipSyncRepository,
     /** Peers a newly captured local clip fans out to; re-read per call so re-pairing applies. */
     private val fanOutPeerIds: () -> List<String>,
+    /** User-adjustable per-clip size cap; it may lower the protocol's 1 MiB, never raise it. */
+    private val maxContentUtf8Bytes: () -> Int = { SyncLimits.MAX_CONTENT_UTF8_BYTES },
 ) : SyncRepository {
     override suspend fun knownVector(): Map<String, OriginReceiveState> = store.knownVector()
 
@@ -88,7 +90,8 @@ class RoomSyncRepository(
 
     override suspend fun recordLocalClip(text: String, sourceApp: String?, nowMs: Long): SyncableClipEvent? {
         val utf8Bytes = text.toByteArray(StandardCharsets.UTF_8).size
-        if (utf8Bytes == 0 || utf8Bytes > SyncLimits.MAX_CONTENT_UTF8_BYTES) {
+        val cap = minOf(SyncLimits.MAX_CONTENT_UTF8_BYTES, maxContentUtf8Bytes())
+        if (utf8Bytes == 0 || utf8Bytes > cap) {
             return null
         }
         val contentHash = Sha256ContentHasher.hash(text)

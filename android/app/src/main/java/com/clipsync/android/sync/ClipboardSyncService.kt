@@ -17,6 +17,7 @@ import com.clipsync.android.R
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.platform.notify.SyncNotifications
 import com.clipsync.android.storage.ClipSyncRepository
 import com.clipsync.android.storage.SyncSettingsStore
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -54,7 +56,20 @@ class ClipboardSyncService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startAsForeground(notification(text = getString(R.string.notification_sync_connecting)))
+        // The system can refuse the foreground promotion (e.g. FGS-from-background policy on
+        // some OEM/API combinations). That must degrade to the honest "需要恢复" notification
+        // and a stopped service — never a crash, never a sticky restart loop (plan 5.2).
+        val foregroundOk = runCatching {
+            startAsForeground(notification(text = getString(R.string.notification_sync_connecting)))
+        }.isSuccess
+        if (!foregroundOk) {
+            mutableStartErrorCodes.value = START_ERROR_FGS_DENIED
+            SyncNotifications.notifyRecoveryNeeded(applicationContext)
+            stopSelf(startId)
+            return START_NOT_STICKY
+        }
+        mutableStartErrorCodes.value = null
+        SyncNotifications.cancelRecoveryNeeded(applicationContext)
         if (!started) {
             started = true
             launchSyncStack()
@@ -121,6 +136,18 @@ class ClipboardSyncService : Service() {
             drainShareOutbox(repository) // catch up entries queued while the service was down
             for (nudge in syncNudges) {
                 drainShareOutbox(repository)
+            }
+        }
+        scope.launch {
+            // Retention cleanup on start and periodically after (Windows runs the same policy
+            // on startup and on settings save). The policy is re-read per pass so preference
+            // changes apply without a service restart.
+            val store = SyncStore.repository(appContext)
+            while (true) {
+                runCatching {
+                    store.cleanup(settings.effectiveRetentionPolicy(), System.currentTimeMillis())
+                }
+                delay(RETENTION_CLEANUP_INTERVAL_MS)
             }
         }
     }
@@ -205,14 +232,24 @@ class ClipboardSyncService : Service() {
         private const val CHANNEL_ID = "clipsync.sync"
         private const val NOTIFICATION_ID = 1001
 
+        /** Stable code the conduit shows when the foreground promotion was refused. */
+        const val START_ERROR_FGS_DENIED = "FGS_START_DENIED"
+
+        /** How often the retention policy is enforced while the service is alive. */
+        private const val RETENTION_CLEANUP_INTERVAL_MS = 6L * 60 * 60 * 1_000
+
         private val mutableServiceRunning = MutableStateFlow(false)
         private val mutableConnectionStates = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)
+        private val mutableStartErrorCodes = MutableStateFlow<String?>(null)
 
         /** Whether the foreground service is alive; feeds the conduit's SyncHealthSource. */
         val serviceRunning: StateFlow<Boolean> = mutableServiceRunning.asStateFlow()
 
         /** Live connection state mirror for UI surfaces; never carries clipboard text. */
         val connectionStates: StateFlow<SyncConnectionState> = mutableConnectionStates.asStateFlow()
+
+        /** Last foreground-start failure code, or null; cleared on the next successful start. */
+        val startErrorCodes: StateFlow<String?> = mutableStartErrorCodes.asStateFlow()
 
         @Volatile
         private var sharedRepository: SyncRepository? = null
@@ -227,9 +264,14 @@ class ClipboardSyncService : Service() {
 
         private fun createRoomRepository(appContext: Context): SyncRepository {
             val pairing = PairingStore(SharedPrefsKeyValueStore(appContext), KeystoreSecretProtector())
+            val settings = SyncSettingsStore(
+                SharedPrefsKeyValueStore(appContext, name = SyncSettingsStore.PREFERENCES_NAME),
+            )
             return RoomSyncRepository(
                 store = SyncStore.repository(appContext),
                 fanOutPeerIds = { pairing.peer()?.deviceId?.let(::listOf).orEmpty() },
+                // Re-read per clip so the user cap applies without restarting the service.
+                maxContentUtf8Bytes = { settings.effectiveMaxSyncTextBytes },
             )
         }
 

@@ -3,6 +3,7 @@ package com.clipsync.android.storage
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.clipsync.android.pairing.FakeKeyValueStore
 import com.clipsync.android.platform.clipboard.Sha256ContentHasher
 import com.clipsync.android.sync.SequenceRange
 import kotlinx.coroutines.runBlocking
@@ -230,6 +231,28 @@ class ClipSyncRepositoryTest {
         assertEquals(listOf("recent 3", "recent 2"), repository.searchHistory().map { it.content })
         val expired = repository.getById(old.eventId, includeDeleted = true)!!
         assertTrue(expired.isDeleted)
+    }
+
+    @Test
+    fun cleanupWithAutoExpireOffKeepsOldRowsButStillEnforcesTheEntryCap() = runBlocking {
+        // The settings store derives this shape when 自动过期清理 is off: entry cap only.
+        val settings = SyncSettingsStore(FakeKeyValueStore()).apply {
+            autoExpireEnabled = false
+            retentionMaxEntries = 2
+        }
+
+        val veryOld = repository.storeLocalEvent(draft("ancient", capturedAtMs = 1L), emptyList())
+        repository.storeLocalEvent(draft("newest", capturedAtMs = NOW), emptyList())
+
+        // Two rows under the cap: age alone never expires anything while the toggle is off.
+        assertEquals(0, repository.cleanup(settings.effectiveRetentionPolicy(), NOW))
+        assertNotNull(repository.getById(veryOld.eventId))
+
+        // The entry cap still applies: the oldest row falls once a third one arrives.
+        repository.storeLocalEvent(draft("third", capturedAtMs = NOW + 1), emptyList())
+        assertEquals(1, repository.cleanup(settings.effectiveRetentionPolicy(), NOW))
+        assertNull(repository.getById(veryOld.eventId))
+        assertEquals(listOf("third", "newest"), repository.searchHistory().map { it.content })
     }
 
     // ---- Outbox lifecycle ----

@@ -69,7 +69,8 @@ class KeyValueClipOutbox(
     private val hasher: ContentHasher = Sha256ContentHasher,
     private val nowEpochMillis: () -> Long = System::currentTimeMillis,
     private val newEventId: () -> String = { UUID.randomUUID().toString() },
-    private val maxUtf8Bytes: Int = MAX_UTF8_BYTES,
+    /** Re-read per enqueue so a changed user cap applies immediately; capped at 1 MiB. */
+    private val maxUtf8Bytes: () -> Int = { MAX_UTF8_BYTES },
     private val dedupWindowMillis: Long = DEDUP_WINDOW_MILLIS,
 ) : ClipOutbox {
 
@@ -78,7 +79,7 @@ class KeyValueClipOutbox(
             return EnqueueResult.EmptyText
         }
         val utf8Bytes = text.toByteArray(StandardCharsets.UTF_8).size
-        if (utf8Bytes > maxUtf8Bytes) {
+        if (utf8Bytes > minOf(MAX_UTF8_BYTES, maxUtf8Bytes())) {
             return EnqueueResult.TooLarge
         }
         val contentHash = hasher.hash(text)

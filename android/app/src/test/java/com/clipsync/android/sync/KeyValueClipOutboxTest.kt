@@ -15,7 +15,7 @@ class KeyValueClipOutboxTest {
         store = store,
         nowEpochMillis = { nowMillis },
         newEventId = { "event-${nextId++}" },
-        maxUtf8Bytes = maxUtf8Bytes,
+        maxUtf8Bytes = { maxUtf8Bytes },
     )
 
     @Test
@@ -69,6 +69,29 @@ class KeyValueClipOutboxTest {
         val outbox = outbox(maxUtf8Bytes = 8)
 
         assertTrue(outbox.enqueue("12345678", ClipSource.SHARE_SHEET) is EnqueueResult.Accepted)
+    }
+
+    @Test
+    fun `a changed user cap applies to the next enqueue without a new outbox`() {
+        var cap = 4
+        val outbox = KeyValueClipOutbox(
+            store = store,
+            nowEpochMillis = { nowMillis },
+            newEventId = { "event-${nextId++}" },
+            maxUtf8Bytes = { cap },
+        )
+
+        assertEquals(EnqueueResult.TooLarge, outbox.enqueue("12345", ClipSource.SHARE_SHEET))
+        cap = 8
+        assertTrue(outbox.enqueue("12345", ClipSource.SHARE_SHEET) is EnqueueResult.Accepted)
+    }
+
+    @Test
+    fun `the user cap can never raise the limit past the protocol 1 MiB`() {
+        val outbox = outbox(maxUtf8Bytes = Int.MAX_VALUE)
+        val oversized = "a".repeat(KeyValueClipOutbox.MAX_UTF8_BYTES + 1)
+
+        assertEquals(EnqueueResult.TooLarge, outbox.enqueue(oversized, ClipSource.SHARE_SHEET))
     }
 
     @Test
