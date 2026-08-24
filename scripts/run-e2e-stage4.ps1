@@ -16,9 +16,17 @@ if ($env:DOTNET_ROOT) {
     $env:PATH = $env:DOTNET_ROOT + ';' + $env:PATH
 }
 
-$hostExe = Join-Path $repoRoot 'windows\ClipSync.E2eHost\bin\Debug\net8.0\ClipSync.E2eHost.exe'
-$solution = Join-Path $repoRoot 'windows\ClipSync.sln'
+$isWindowsHost = ($PSVersionTable.PSEdition -eq 'Desktop') -or $IsWindows
+$hostExeName = if ($isWindowsHost) { 'ClipSync.E2eHost.exe' } else { 'ClipSync.E2eHost' }
+$hostExe = [IO.Path]::Combine($repoRoot, 'windows', 'ClipSync.E2eHost', 'bin', 'Debug', 'net8.0', $hostExeName)
+$solution = [IO.Path]::Combine($repoRoot, 'windows', 'ClipSync.sln')
 $androidRoot = Join-Path $repoRoot 'android'
+# Non-Windows hosts compile-check the WPF projects via EnableWindowsTargeting
+# (same convention as scripts/build-windows.ps1); the E2eHost itself is net8.0.
+$buildArgs = @($solution, '-c', 'Debug')
+if (-not $isWindowsHost) {
+    $buildArgs += '-p:EnableWindowsTargeting=true'
+}
 
 $proc = $null
 $resultPrinted = $false
@@ -75,13 +83,13 @@ function Read-HostLine {
 }
 
 try {
-    $buildOutput = & dotnet build $solution -c Debug 2>&1
+    $buildOutput = & dotnet build @buildArgs 2>&1
     $buildExit = $LASTEXITCODE
     if ($buildExit -ne 0) {
         $joined = ($buildOutput | ForEach-Object { $_.ToString() }) -join "`n"
         if (Test-NetworkFlake $joined) {
             Write-Host 'RETRY dotnet-build after network flake'
-            & dotnet build $solution -c Debug
+            & dotnet build @buildArgs
             $buildExit = $LASTEXITCODE
         }
         if ($buildExit -ne 0) {
@@ -155,8 +163,9 @@ try {
         $gradleExit = 1
         $gradleOutput = @()
         $gradleText = ''
+        $gradlew = if ($isWindowsHost) { '.\gradlew.bat' } else { './gradlew' }
         for ($attempt = 1; $attempt -le 3; $attempt++) {
-            $gradleOutput = & .\gradlew.bat @gradleArgs 2>&1 | ForEach-Object { $_.ToString() }
+            $gradleOutput = & $gradlew @gradleArgs 2>&1 | ForEach-Object { $_.ToString() }
             $gradleExit = $LASTEXITCODE
             $gradleText = $gradleOutput -join "`n"
             Write-Host $gradleText
