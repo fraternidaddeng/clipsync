@@ -95,4 +95,36 @@ class PreferencesViewModelTest {
         assertTrue(state.autoApplyRemote)
         assertEquals(SyncSettingsStore.DEFAULT_MAX_AGE_DAYS, state.retentionDays)
     }
+
+    @Test
+    fun `boot restore defaults off, persists, and notifies the host to flip the receiver`() {
+        val receiverStates = mutableListOf<Boolean>()
+        val model = PreferencesViewModel(settings, onBootRestoreChanged = receiverStates::add)
+        assertFalse(model.state.value.bootRestore)
+
+        model.setBootRestore(true)
+
+        // The preference lands first, so the receiver's boot-time re-check agrees with it.
+        assertEquals("true", keyValues.map["sync.boot_restore"])
+        assertTrue(model.state.value.bootRestore)
+        assertEquals(listOf(true), receiverStates)
+
+        model.setBootRestore(false)
+        assertEquals("false", keyValues.map["sync.boot_restore"])
+        assertEquals(listOf(true, false), receiverStates)
+    }
+
+    @Test
+    fun `retention changes trigger one immediate cleanup pass`() {
+        var cleanups = 0
+        val model = PreferencesViewModel(settings, onRetentionChanged = { cleanups++ })
+
+        model.setRetentionDays(7)
+        model.setAutoExpire(false)
+
+        assertEquals(2, cleanups)
+        // Unrelated toggles never trigger cleanup.
+        model.setPauseSync(true)
+        assertEquals(2, cleanups)
+    }
 }

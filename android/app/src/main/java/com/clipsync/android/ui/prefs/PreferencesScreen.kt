@@ -38,6 +38,7 @@ fun PreferencesScreen(
     onPrivateModeChange: (Boolean) -> Unit,
     onAutoApplyRemoteChange: (Boolean) -> Unit,
     onAutoExpireChange: (Boolean) -> Unit,
+    onBootRestoreChange: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
@@ -80,6 +81,13 @@ fun PreferencesScreen(
                 checked = state.autoApplyRemote,
                 onCheckedChange = onAutoApplyRemoteChange,
             )
+            RowDivider()
+            ToggleRow(
+                title = "开机恢复",
+                description = "设备重启后自动恢复同步服务。若系统阻止启动，会以通知提醒你手动恢复。",
+                checked = state.bootRestore,
+                onCheckedChange = onBootRestoreChange,
+            )
         }
 
         Spacer(Modifier.height(20.dp))
@@ -101,7 +109,7 @@ fun PreferencesScreen(
                 value = if (state.autoExpire) "${state.retentionDays} 天" else "永久保留",
             )
             RowDivider()
-            ValueRow(title = "单条上限", value = "1 MiB · 纯文本")
+            ValueRow(title = "单条上限", value = "${formatByteCap(state.maxSyncTextBytes)} · 纯文本")
         }
 
         Spacer(Modifier.height(20.dp))
@@ -125,6 +133,13 @@ fun PreferencesScreen(
                 .padding(bottom = 8.dp),
         )
     }
+}
+
+/** The cap is a power-of-two byte count (1 MiB by default); shown in the nearest whole unit. */
+private fun formatByteCap(bytes: Int): String = when {
+    bytes >= 1 shl 20 -> "${bytes / (1 shl 20)} MiB"
+    bytes >= 1 shl 10 -> "${bytes / (1 shl 10)} KiB"
+    else -> "$bytes B"
 }
 
 @Composable

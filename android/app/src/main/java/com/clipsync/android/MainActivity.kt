@@ -1,9 +1,11 @@
 package com.clipsync.android
 
+import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +13,7 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,10 +49,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.clipsync.android.pairing.PairingConfirmClient
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.pairing.PeerHealthClient
@@ -65,6 +69,7 @@ import com.clipsync.android.platform.clipboard.ForegroundClipboardBackend
 import com.clipsync.android.platform.clipboard.OverlayPollingBackend
 import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
 import com.clipsync.android.storage.SyncSettingsStore
+import com.clipsync.android.sync.BootCompletedReceiver
 import com.clipsync.android.sync.ClipboardSyncService
 import com.clipsync.android.sync.SyncConnectionState
 import com.clipsync.android.sync.SyncStore
@@ -87,7 +92,9 @@ import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.clipSyncColors
 import com.clipsync.android.ui.theme.filmGrain
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import rikka.shizuku.Shizuku
 
 class MainActivity : ComponentActivity() {
@@ -135,10 +142,12 @@ class MainActivity : ComponentActivity() {
                 combine(
                     ClipboardSyncService.serviceRunning,
                     ClipboardSyncService.connectionStates,
-                ) { running, connection ->
+                    ClipboardSyncService.startErrorCodes,
+                ) { running, connection, startError ->
                     SyncHealth(
                         serviceRunning = running,
                         connected = connection is SyncConnectionState.Connected,
+                        serviceErrorCode = startError,
                     )
                 }
             },
@@ -171,34 +180,92 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private val preferencesViewModel: PreferencesViewModel by viewModels {
-        PreferencesViewModel.factory(
-            SyncSettingsStore(
-                SharedPrefsKeyValueStore(this, name = SyncSettingsStore.PREFERENCES_NAME),
-            ),
+    private val syncSettings by lazy {
+        SyncSettingsStore(
+            SharedPrefsKeyValueStore(this, name = SyncSettingsStore.PREFERENCES_NAME),
         )
     }
+
+    private val preferencesViewModel: PreferencesViewModel by viewModels {
+        PreferencesViewModel.factory(
+            syncSettings,
+            onBootRestoreChanged = { enabled ->
+                BootCompletedReceiver.setReceiverEnabled(this, enabled)
+                if (enabled) {
+                    // The recovery path speaks through a notification; ask honestly up front.
+                    requestNotificationsPermissionIfMissing()
+                }
+            },
+            onRetentionChanged = {
+                // Mirror Windows: a changed retention applies now, not at the next service start.
+                lifecycleScope.launch(Dispatchers.IO) {
+                    runCatching {
+                        SyncStore.repository(applicationContext)
+                            .cleanup(syncSettings.effectiveRetentionPolicy(), System.currentTimeMillis())
+                    }
+                }
+            },
+        )
+    }
+
+    /**
+     * Denial is respected as-is: the sync service and inbox keep working, only the
+     * notification surface goes missing, which the notification helpers already report
+     * honestly (areNotificationsEnabled checks before every post).
+     */
+    private val notificationsPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         runCatching { Shizuku.addRequestPermissionResultListener(shizukuPermissionListener) }
         if (pairingStore.peer() != null) {
+            // Already-enabled sync resumes quietly; the permission dialog only appears on the
+            // explicit enable moments (pairing completion, 启动服务, 开机恢复), never per app open.
             ClipboardSyncService.start(this)
         }
         setContent {
             ClipSyncTheme {
-                SyncServiceController(pairingViewModel)
+                SyncServiceController(
+                    pairingViewModel = pairingViewModel,
+                    onStartService = ::startSyncService,
+                    onStopService = { ClipboardSyncService.stop(this) },
+                )
                 ClipSyncApp(
                     pairingViewModel = pairingViewModel,
                     healthViewModel = healthViewModel,
                     homeViewModel = homeViewModel,
                     preferencesViewModel = preferencesViewModel,
                     onRouteAction = ::handleRouteAction,
-                    onServiceStart = { ClipboardSyncService.start(this) },
+                    onServiceStart = ::startSyncService,
                     onServiceStop = { ClipboardSyncService.stop(this) },
                 )
             }
+        }
+    }
+
+    /**
+     * The user just enabled sync (paired, or tapped 启动服务): start the service and, on
+     * Android 13+, ask for POST_NOTIFICATIONS so the status/inbox surfaces can appear. The
+     * service starts either way — the permission is never a precondition (plan 5.2).
+     */
+    private fun startSyncService() {
+        requestNotificationsPermissionIfMissing()
+        ClipboardSyncService.start(this)
+    }
+
+    private fun requestNotificationsPermissionIfMissing() {
+        if (Build.VERSION.SDK_INT < 33) {
+            return
+        }
+        val granted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.POST_NOTIFICATIONS,
+        ) == PackageManager.PERMISSION_GRANTED
+        if (!granted) {
+            // After two denials the system returns immediately; we never nag beyond that.
+            notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
@@ -267,15 +334,18 @@ class MainActivity : ComponentActivity() {
 
 /** Starts the sync foreground service once paired and stops it when the pairing is forgotten. */
 @Composable
-private fun SyncServiceController(pairingViewModel: PairingViewModel) {
-    val context = LocalContext.current
+private fun SyncServiceController(
+    pairingViewModel: PairingViewModel,
+    onStartService: () -> Unit,
+    onStopService: () -> Unit,
+) {
     val pairingState by pairingViewModel.state.collectAsState()
     LaunchedEffect(pairingState) {
         when (val state = pairingState) {
-            is PairingUiState.Paired -> ClipboardSyncService.start(context)
+            is PairingUiState.Paired -> onStartService()
             is PairingUiState.Idle ->
                 if (state.pairedPeer == null) {
-                    ClipboardSyncService.stop(context)
+                    onStopService()
                 }
             else -> Unit
         }
@@ -370,6 +440,7 @@ private fun ClipSyncApp(
                     onPrivateModeChange = preferencesViewModel::setPrivateMode,
                     onAutoApplyRemoteChange = preferencesViewModel::setAutoApplyRemote,
                     onAutoExpireChange = preferencesViewModel::setAutoExpire,
+                    onBootRestoreChange = preferencesViewModel::setBootRestore,
                     modifier = Modifier.padding(padding),
                 )
             }
