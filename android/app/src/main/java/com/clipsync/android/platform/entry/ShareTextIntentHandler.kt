@@ -36,7 +36,7 @@ object ShareTextIntentHandler {
         return Outcome.ShareText(value)
     }
 
-    /** The filter matches text/plain; some apps still send text/* variants with EXTRA_TEXT set. */
+    // The filter matches text/plain; some apps send other "text/…" subtypes with EXTRA_TEXT set.
     private fun isTextMimeType(mimeType: String): Boolean =
         mimeType == "text/plain" || mimeType.startsWith("text/")
 }
