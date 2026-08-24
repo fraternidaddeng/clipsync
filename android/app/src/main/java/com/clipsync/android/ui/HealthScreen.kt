@@ -47,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.clipsync.android.ui.health.buildHealthScreenState
 import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.ClipSyncType
@@ -96,32 +97,6 @@ data class HealthScreenState(
 ) {
     val statuses: List<ConduitStatus>
         get() = listOf(localRead.status, localService.status, network.status, peerWrite.status)
-
-    companion object {
-        fun initial() = HealthScreenState(
-            localRead = ConduitSegmentState(
-                statusLabel = "降级 · 仅前台",
-                detail = "应用在前台时可读取剪贴板；后台读取能力尚未接入。",
-                status = ConduitStatus.DEGRADED,
-            ),
-            localService = ConduitSegmentState(
-                statusLabel = "就绪",
-                detail = "应用运行正常。",
-                status = ConduitStatus.READY,
-            ),
-            network = ConduitSegmentState(
-                statusLabel = "需要你操作",
-                detail = "尚未与 Windows 配对。在电脑上打开「剪剪相传」，选择「配对新设备」。",
-                status = ConduitStatus.NEEDS_ACTION,
-            ),
-            peerWrite = ConduitSegmentState(
-                statusLabel = "未探测",
-                detail = "网络接通后才能探测对端写入能力。缺信息 ≠ 坏消息。",
-                status = ConduitStatus.UNPROBED,
-            ),
-            pairedDeviceCount = 0,
-        )
-    }
 }
 
 @Composable
@@ -511,6 +486,6 @@ private fun FlowLine(modifier: Modifier = Modifier) {
 @Composable
 private fun HealthScreenPreview() {
     ClipSyncTheme {
-        HealthScreen(state = HealthScreenState.initial())
+        HealthScreen(state = buildHealthScreenState(peer = null, clipboard = null, sync = null))
     }
 }

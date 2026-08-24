@@ -15,10 +15,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -31,16 +27,20 @@ import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.clipSyncColors
 
 /**
- * 偏好: placeholder for the key product commitments (product-scope.md) —
- * pause sync, private mode, history expiry. Toggles hold local UI state only
- * until the sync engine lands in a later stage.
+ * 偏好: the key product commitments (product-scope.md) — pause sync, private
+ * mode, auto apply, history expiry. State lives in [PreferencesViewModel] and
+ * every change is persisted immediately; this screen only renders and reports.
  */
 @Composable
-fun PreferencesScreen(modifier: Modifier = Modifier) {
+fun PreferencesScreen(
+    state: PreferencesUiState,
+    onPauseSyncChange: (Boolean) -> Unit,
+    onPrivateModeChange: (Boolean) -> Unit,
+    onAutoApplyRemoteChange: (Boolean) -> Unit,
+    onAutoExpireChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val c = clipSyncColors
-    var pauseSync by rememberSaveable { mutableStateOf(false) }
-    var privateMode by rememberSaveable { mutableStateOf(false) }
-    var autoExpire by rememberSaveable { mutableStateOf(true) }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -63,15 +63,22 @@ fun PreferencesScreen(modifier: Modifier = Modifier) {
             ToggleRow(
                 title = "暂停同步",
                 description = "暂停后两端不再交换内容，已有历史保留。",
-                checked = pauseSync,
-                onCheckedChange = { pauseSync = it },
+                checked = state.pauseSync,
+                onCheckedChange = onPauseSyncChange,
             )
             RowDivider()
             ToggleRow(
                 title = "私密模式",
                 description = "开启时本机复制的内容不离开这台设备。",
-                checked = privateMode,
-                onCheckedChange = { privateMode = it },
+                checked = state.privateMode,
+                onCheckedChange = onPrivateModeChange,
+            )
+            RowDivider()
+            ToggleRow(
+                title = "自动写入剪贴板",
+                description = "收到对端内容时，优先自动写入本机剪贴板。",
+                checked = state.autoApplyRemote,
+                onCheckedChange = onAutoApplyRemoteChange,
             )
         }
 
@@ -85,8 +92,13 @@ fun PreferencesScreen(modifier: Modifier = Modifier) {
             ToggleRow(
                 title = "自动过期清理",
                 description = "到期的历史条目自动删除，删除只作用于本机。",
-                checked = autoExpire,
-                onCheckedChange = { autoExpire = it },
+                checked = state.autoExpire,
+                onCheckedChange = onAutoExpireChange,
+            )
+            RowDivider()
+            ValueRow(
+                title = "保留时长",
+                value = if (state.autoExpire) "${state.retentionDays} 天" else "永久保留",
             )
             RowDivider()
             ValueRow(title = "单条上限", value = "1 MiB · 纯文本")
@@ -193,6 +205,12 @@ private fun ValueRow(title: String, value: String) {
 @Composable
 private fun PreferencesScreenPreview() {
     ClipSyncTheme {
-        PreferencesScreen()
+        PreferencesScreen(
+            state = PreferencesUiState(),
+            onPauseSyncChange = {},
+            onPrivateModeChange = {},
+            onAutoApplyRemoteChange = {},
+            onAutoExpireChange = {},
+        )
     }
 }
