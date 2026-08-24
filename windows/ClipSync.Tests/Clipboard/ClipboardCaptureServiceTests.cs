@@ -42,11 +42,17 @@ public sealed class ClipboardCaptureServiceTests
             calls.Add("store");
             return ValueTask.FromResult(new StoredClipboardEvent(Guid.NewGuid(), 1, content));
         }
+
+        public ValueTask<StoredImageEvent> StoreImageAsync(AcceptedImageContent image, CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
     }
 
     private sealed class ThrowingStore : IClipboardEventStore
     {
         public ValueTask<StoredClipboardEvent> StoreAsync(AcceptedClipboardContent content, CancellationToken cancellationToken = default) =>
+            throw new InvalidOperationException("transaction failed");
+
+        public ValueTask<StoredImageEvent> StoreImageAsync(AcceptedImageContent image, CancellationToken cancellationToken = default) =>
             throw new InvalidOperationException("transaction failed");
     }
 

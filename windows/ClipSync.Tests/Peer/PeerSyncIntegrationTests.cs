@@ -277,6 +277,52 @@ public sealed class PeerSyncIntegrationTests
     }
 
     [Fact]
+    public async Task DeletedAfterAckTravelsAsTombstone()
+    {
+        await using var pair = await PeerPair.CreateAsync();
+        var stored = await PeerPair.CaptureAsync(pair.WindowsStore, "later-deleted");
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("later-deleted"));
+        await session.CloseAsync();
+
+        Assert.True(await pair.WindowsStore.DeleteAsync(stored.EventId, DateTimeOffset.UtcNow));
+
+        session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+            !(await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("later-deleted"));
+        await session.CloseAsync();
+    }
+
+    [Fact]
+    public async Task ImageClipTravelsOverV2WithBytesIntact()
+    {
+        await using var pair = await PeerPair.CreateAsync();
+        var png = ClipSync.Core.Media.ImageCodec.EncodePngBgra(2, 1, [255, 0, 0, 255, 0, 255, 0, 255]);
+        var hash = ClipSync.Core.Media.ImageCodec.HashBytes(png);
+        await PeerPair.CaptureImageAsync(pair.WindowsStore, png, hash, "image/png", width: 2, height: 1);
+
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+        {
+            var items = await pair.AndroidStore.SearchAsync(new ClipboardHistoryQuery(Limit: 50));
+            return items.Any(item => item.IsImage && item.ContentHash == hash);
+        });
+
+        // The chunked v2 transfer reassembled the exact encoded bytes, content-addressed.
+        Assert.True(pair.AndroidStore.Media.Exists(hash));
+        Assert.Equal(png, pair.AndroidStore.Media.ReadAllBytes(hash));
+        var entry = (await pair.AndroidStore.SearchAsync(new ClipboardHistoryQuery(Limit: 50)))
+            .Single(item => item.IsImage);
+        Assert.Equal("image/png", entry.MimeType);
+        Assert.Equal(2, entry.PixelWidth);
+        Assert.Equal(1, entry.PixelHeight);
+        Assert.Equal(png.Length, entry.EncodedBytes);
+
+        await session.CloseAsync();
+    }
+
+    [Fact]
     public async Task BacklogIsServedThroughWantRangesInCappedRounds()
     {
         await using var pair = await PeerPair.CreateAsync();

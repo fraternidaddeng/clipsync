@@ -91,6 +91,14 @@ public sealed class OriginReceiveStateTests
     }
 
     [Fact]
+    public void HighestCoveredSeqUsesIsolatedRangesAboveTheCursor()
+    {
+        Assert.Equal(0, OriginReceiveState.Empty.HighestCoveredSeq());
+        Assert.Equal(10, new OriginReceiveState(10, Array.Empty<SequenceRange>()).HighestCoveredSeq());
+        Assert.Equal(14, new OriginReceiveState(10, new[] { new SequenceRange(13, 14) }).HighestCoveredSeq());
+    }
+
+    [Fact]
     public void CoverageListsContiguousPrefixThenIsolatedRanges()
     {
         var state = new OriginReceiveState(4, new[] { new SequenceRange(7, 8) });

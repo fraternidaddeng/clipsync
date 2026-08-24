@@ -203,6 +203,14 @@ public sealed class ClipboardDataAccessorTests
 
         public bool FormatAvailable { get; init; } = true;
 
+        public HashSet<uint> AvailableFormats { get; } = [ClipboardDataAccessor.UnicodeTextFormat];
+
+        public Dictionary<uint, nint> FormatData { get; } = [];
+
+        public Dictionary<string, uint> RegisteredFormats { get; } = new(StringComparer.Ordinal);
+
+        public uint NextRegisteredFormat { get; set; } = 0xC000;
+
         public string ClipboardText
         {
             get => clipboardText;
@@ -258,6 +266,8 @@ public sealed class ClipboardDataAccessorTests
 
         public uint SetFormat { get; private set; }
 
+        public List<(uint Format, nint Memory)> SetCalls { get; } = [];
+
         public string? SetText { get; private set; }
 
         public bool OpenClipboard(nint ownerWindow)
@@ -279,20 +289,42 @@ public sealed class ClipboardDataAccessorTests
             return true;
         }
 
-        public bool IsClipboardFormatAvailable(uint format) => FormatAvailable;
+        public bool IsClipboardFormatAvailable(uint format) =>
+            FormatAvailable && (AvailableFormats.Count == 0 || AvailableFormats.Contains(format));
 
         public nint GetClipboardData(uint format)
         {
             GetClipboardDataCount++;
-            return clipboardData;
+            return FormatData.TryGetValue(format, out var memory) ? memory : clipboardData;
         }
 
         public nint SetClipboardData(uint format, nint memory)
         {
             SetFormat = format;
-            SetText = Marshal.PtrToStringUni(memory);
+            SetCalls.Add((format, memory));
+            if (format == ClipboardDataAccessor.UnicodeTextFormat)
+            {
+                SetText = Marshal.PtrToStringUni(memory);
+            }
+
             return FailSetClipboardData ? nint.Zero : memory;
         }
+
+        public uint RegisterClipboardFormat(string format)
+        {
+            if (RegisteredFormats.TryGetValue(format, out var existing))
+            {
+                return existing;
+            }
+
+            var id = NextRegisteredFormat++;
+            RegisteredFormats[format] = id;
+            return id;
+        }
+
+        public uint EnumClipboardFormats(uint format) => 0;
+
+        public int CountClipboardFormats() => AvailableFormats.Count;
 
         public nint GetClipboardOwner() => OwnerWindow;
 

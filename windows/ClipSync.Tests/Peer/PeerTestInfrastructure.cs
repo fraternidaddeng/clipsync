@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using ClipSync.Core.Clipboard;
+using ClipSync.Core.Protocol;
 using ClipSync.Core.Security;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Pairing;
@@ -193,7 +194,8 @@ public sealed class PeerPair : IAsyncDisposable
     {
         ClientVersion = "0.2.0",
         OutboxDrainInterval = TimeSpan.FromMilliseconds(100),
-        PingInterval = TimeSpan.FromSeconds(60)
+        PingInterval = TimeSpan.FromSeconds(60),
+        ProtocolVersion = ProtocolLimits.ProtocolVersionV2
     };
 
     public static SyncSessionOptions DialerOptions() => DefaultSessionOptions() with
@@ -205,16 +207,18 @@ public sealed class PeerPair : IAsyncDisposable
     /// <summary>Dials the listener and runs a session until the test closes it.</summary>
     public async Task<DialedSession> DialAsync(SyncSessionOptions? options = null)
     {
+        var sessionOptions = options ?? DialerOptions();
         var transport = await ClipSync.Peer.Client.PeerSyncClient.ConnectAsync(
             "127.0.0.1",
             Server.Port,
             ServerFingerprint,
+            sessionOptions.ProtocolVersion,
             CancellationToken.None);
         var engine = new SyncSessionEngine(
             SyncSessionRole.Dialer,
             AndroidStore,
             Protector,
-            options ?? DialerOptions(),
+            sessionOptions,
             authFailureSink: null,
             Logs.CreateLogger("ClipSync.Peer.DialerSession"));
         var committed = new List<RemoteClipApplied>();
@@ -244,6 +248,24 @@ public sealed class PeerPair : IAsyncDisposable
         var bytes = Encoding.UTF8.GetBytes(text);
         var hash = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
         return await store.StoreAsync(new AcceptedClipboardContent(text, hash, bytes.Length, "test", DateTimeOffset.UtcNow));
+    }
+
+    public static async Task<StoredImageEvent> CaptureImageAsync(
+        SqliteClipboardEventStore store,
+        byte[] encoded,
+        string contentHash,
+        string mimeType = "image/png",
+        int width = 1,
+        int height = 1)
+    {
+        return await store.StoreImageAsync(new AcceptedImageContent(
+            encoded,
+            contentHash,
+            mimeType,
+            width,
+            height,
+            "test",
+            DateTimeOffset.UtcNow));
     }
 
     public async Task WaitUntilAsync(Func<Task<bool>> condition, TimeSpan? timeout = null)

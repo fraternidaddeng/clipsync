@@ -257,6 +257,8 @@ public sealed class Win32ClipboardAdapterTests
 
         public string? LastWrittenText { get; private set; }
 
+        public byte[]? LastWrittenImage { get; private set; }
+
         public ClipboardTextSnapshot? ReadText(nint listenerWindow)
         {
             ReadCount++;
@@ -273,6 +275,16 @@ public sealed class Win32ClipboardAdapterTests
         {
             LastWriteWindow = listenerWindow;
             LastWrittenText = text;
+            if (WriteException is not null)
+            {
+                throw WriteException;
+            }
+        }
+
+        public void WriteImage(nint listenerWindow, byte[] pngBytes)
+        {
+            LastWriteWindow = listenerWindow;
+            LastWrittenImage = pngBytes;
             if (WriteException is not null)
             {
                 throw WriteException;
