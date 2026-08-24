@@ -5,6 +5,8 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>ClipSync.App</RootNamespace>
     <AssemblyName>ClipSync.App</AssemblyName>
+    <!-- Charter polyline tile (scripts/generate-app-icons.py) replaces the default .NET icon. -->
+    <ApplicationIcon>Assets\Icons\app.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClipSync.Core\ClipSync.Core.csproj" />

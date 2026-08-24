@@ -50,6 +50,18 @@
 
 ---
 
+## 二·五、应用图标（启动器 / exe / 窗口）
+
+折线标记放上自带 charter 底色的圆角瓦片——瓦片自供背景，深浅桌面都成立，**不需要日夜两套**：
+
+| 文件 | 内容 | 去处 |
+|---|---|---|
+| `app-icon.svg` | 256 网格：z0 日间渐变瓦片 + 顶部受光 + `ln` 细边 + 流动蓝折线（24 网格几何 ×9.5） | Windows ICO 的 48/64/128/256 帧 |
+| `app-icon-16.svg` | 16 网格重画：平色瓦片 + `ln2` 边 + 16 网格折线内缩 20% | Windows ICO 的 16/20/24/32 帧 |
+
+- Windows：`scripts/generate-app-icons.py` 生成 `windows/ClipSync.App/Assets/Icons/app.ico`（小帧 BMP、大帧 PNG 压缩），csproj `ApplicationIcon` + 各窗口 `Window.Icon` 引用。
+- Android：**不出光栅**。自适应图标三层矢量直接转写（`res/drawable/ic_launcher_background/foreground/monochrome.xml`），minSdk 29 > 26，仅 `mipmap-anydpi-v26` 一套；深色主题人格由 monochrome 层承担。
+
 ## 三、导航 / 区块图标（PC 主窗口左栏 · Android 底栏共用）
 
 三个位置的 IA 两端一致（一屏·历史 / 通路 / 偏好），图标也一致——**骨共享**；渲染尺寸与间距各端自便——**皮各异**。
