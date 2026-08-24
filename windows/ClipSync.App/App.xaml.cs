@@ -3,6 +3,7 @@ using ClipSync.App.Diagnostics;
 using ClipSync.App.Pairing;
 using ClipSync.App.Security;
 using ClipSync.App.Sync;
+using ClipSync.App.Theme;
 using ClipSync.App.Tray;
 using ClipSync.App.ViewModels;
 using ClipSync.Core.Clipboard;
@@ -40,6 +41,9 @@ public partial class App : Application
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // Pick day/night tokens before any window loads, then follow Windows theme changes.
+        CharterThemeManager.Initialize();
 
         var dataDirectory = Environment.GetEnvironmentVariable("CLIPSYNC_DATA_DIR");
         if (string.IsNullOrWhiteSpace(dataDirectory))
@@ -302,6 +306,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        CharterThemeManager.Shutdown();
         if (liveRefreshTimer is not null)
         {
             liveRefreshTimer.Stop();
