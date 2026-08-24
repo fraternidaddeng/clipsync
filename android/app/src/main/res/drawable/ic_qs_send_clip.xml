@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Quick Settings tile: per docs/design/icons.md §6 the QS surface uses the
+     polyline mark itself (brand = status); the system draws the tile chrome. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
@@ -6,6 +8,10 @@
     android:viewportHeight="24"
     android:tint="?android:attr/colorControlNormal">
     <path
-        android:fillColor="@android:color/white"
-        android:pathData="M2.01,21L23,12 2.01,3 2,10l15,2 -15,2z" />
+        android:pathData="M4,12h4l2,-5 4,10 2,-5h4"
+        android:strokeColor="@android:color/white"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
 </vector>

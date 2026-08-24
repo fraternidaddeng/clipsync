@@ -7,6 +7,7 @@ import android.content.Intent
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.clipsync.android.MainActivity
 import com.clipsync.android.R
 
@@ -52,10 +53,16 @@ object SyncNotifications {
         )
         return NotificationCompat.Builder(context, CHANNEL_INBOX)
             .setSmallIcon(R.drawable.ic_notify_clip)
+            // Charter flow blue tints the polyline small icon and the action text
+            // on OEMs that honour it; the title/body stay content-free by design.
+            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
             .setContentTitle(context.getString(R.string.notification_inbox_title))
             .setContentText(context.getString(R.string.notification_inbox_text))
             .setContentIntent(openApp)
             .setAutoCancel(true)
+            // No clipboard text is present, so the lock screen may show it as-is.
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
             .addAction(0, context.getString(R.string.notification_action_copy), copyAction)
             .build()
     }

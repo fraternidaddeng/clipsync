@@ -8,10 +8,18 @@
 
     <!-- 通知：正文永不包含剪贴板内容 -->
     <string name="notification_channel_inbox_name">收到的文本</string>
-    <string name="notification_channel_inbox_description">收到来自已配对电脑的新文本时提醒</string>
+    <string name="notification_channel_inbox_description">收到来自已配对电脑的新文本时提醒。通知从不显示剪贴板内容。</string>
     <string name="notification_inbox_title">来自电脑的新文本</string>
     <string name="notification_inbox_text">点按“复制”即可放入剪贴板</string>
     <string name="notification_action_copy">复制</string>
+
+    <!-- 同步前台服务通知：只描述连接状态 -->
+    <string name="notification_channel_sync_name">同步状态</string>
+    <string name="notification_channel_sync_description">与已配对电脑的连接状态。通知从不显示剪贴板内容。</string>
+    <string name="notification_sync_connected">已连接 · 剪贴同步在线</string>
+    <string name="notification_sync_connecting">正在连接电脑…</string>
+    <string name="notification_sync_reconnecting">连接断开 · 等待重连</string>
+    <string name="notification_sync_not_paired">未配对 · 同步待命</string>
 
     <!-- 发送结果提示 -->
     <string name="toast_share_enqueued">已加入发送队列，联机后同步到电脑</string>

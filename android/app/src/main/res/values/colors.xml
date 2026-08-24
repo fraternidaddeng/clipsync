@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Charter flow blue (tokens.md): the notification accent. System surfaces
+         get the day value; they render on system chrome, not on the app bg. -->
+    <color name="cs_flow">#215F8F</color>
+</resources>

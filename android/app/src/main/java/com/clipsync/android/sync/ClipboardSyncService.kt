@@ -50,7 +50,7 @@ class ClipboardSyncService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startAsForeground(notification(text = STATE_CONNECTING))
+        startAsForeground(notification(text = getString(R.string.notification_sync_connecting)))
         if (!started) {
             started = true
             launchSyncStack()
@@ -139,10 +139,10 @@ class ClipboardSyncService : Service() {
 
     private fun updateNotification(state: SyncConnectionState) {
         val text = when (state) {
-            is SyncConnectionState.Connected -> STATE_CONNECTED
-            is SyncConnectionState.Connecting -> STATE_CONNECTING
-            is SyncConnectionState.WaitingRetry -> STATE_RECONNECTING
-            is SyncConnectionState.NotPaired -> STATE_NOT_PAIRED
+            is SyncConnectionState.Connected -> getString(R.string.notification_sync_connected)
+            is SyncConnectionState.Connecting -> getString(R.string.notification_sync_connecting)
+            is SyncConnectionState.WaitingRetry -> getString(R.string.notification_sync_reconnecting)
+            is SyncConnectionState.NotPaired -> getString(R.string.notification_sync_not_paired)
         }
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         // POST_NOTIFICATIONS may be revoked on API 33+; the service keeps running regardless.
@@ -152,17 +152,28 @@ class ClipboardSyncService : Service() {
     private fun notification(text: String): Notification =
         NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notify_clip)
+            // Flow blue accents the polyline mark where the OEM honours setColor.
+            .setColor(androidx.core.content.ContextCompat.getColor(this, R.color.cs_flow))
             .setContentTitle(text)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .build()
 
     private fun createNotificationChannel() {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.createNotificationChannel(
-            NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW),
-        )
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            getString(R.string.notification_channel_sync_name),
+            NotificationManager.IMPORTANCE_LOW,
+        ).apply {
+            description = getString(R.string.notification_channel_sync_description)
+            // A resident state notification must not add a launcher badge.
+            setShowBadge(false)
+        }
+        manager.createNotificationChannel(channel)
     }
 
     private fun clientVersion(): String =
@@ -171,13 +182,7 @@ class ClipboardSyncService : Service() {
 
     companion object {
         private const val CHANNEL_ID = "clipsync.sync"
-        private const val CHANNEL_NAME = "同步状态"
         private const val NOTIFICATION_ID = 1001
-
-        private const val STATE_CONNECTED = "ClipSync 已连接"
-        private const val STATE_CONNECTING = "ClipSync 正在连接…"
-        private const val STATE_RECONNECTING = "ClipSync 等待重连"
-        private const val STATE_NOT_PAIRED = "ClipSync 未配对"
 
         private val mutableServiceRunning = MutableStateFlow(false)
         private val mutableConnectionStates = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)
