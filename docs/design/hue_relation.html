@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-scheme="ana">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>剪剪相传 · 设备色：邻近 vs 对立</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600&display=swap');
+:root[data-theme="light"]{
+  --t1:#1c2733;--t2:#3d4a59;--t3:#6b7a8b;--t4:#9aa7b6;
+  --bg:#e2e9f2;--bg-grad:linear-gradient(178deg,#e9eff6 0%,#e2e9f2 42%,#dae3ee 100%);
+  --sf:#f6f9fc;--sf-grad:linear-gradient(180deg,rgba(255,255,255,.72) 0%,rgba(255,255,255,0) 62%);
+  --sf-up:#fdfeff;--sf-in:#dde5ef;--sf3:#e7edf5;
+  --ln:#cfd9e6;--ln2:#bcc9d9;
+  --edge:inset 0 1px 0 rgba(255,255,255,.9);
+  --sh-0:inset 0 1px 2.5px rgba(35,52,72,.07);
+  --sh-1:0 1px 1.5px rgba(35,52,72,.05),0 3px 8px -3px rgba(35,52,72,.09);
+  --sh-2:0 1px 2px rgba(35,52,72,.05),0 6px 14px -4px rgba(35,52,72,.10),0 20px 40px -16px rgba(35,52,72,.16);
+  --fl:#215f8f;--fl-bg:rgba(33,95,143,.10);--fl-ln:rgba(33,95,143,.24);
+  --ac:#9b6b24;--ac-bg:rgba(155,107,36,.11);--ac-ln:rgba(155,107,36,.28);
+  --er:#a8342b;
+  --grain:0,0,0;--grain-a:.030;
+}
+:root[data-theme="dark"]{
+  --t1:#e3e9f0;--t2:#c0cad6;--t3:#8b98a8;--t4:#5f6c7c;
+  --bg:#0c1116;--bg-grad:linear-gradient(178deg,#121922 0%,#0e141b 45%,#090d12 100%);
+  --sf:#1b232e;--sf-grad:linear-gradient(180deg,rgba(255,255,255,.055) 0%,rgba(255,255,255,0) 65%);
+  --sf-up:#242e3b;--sf-in:#0f151c;--sf3:#1f2833;
+  --ln:#2c3744;--ln2:#3e4a59;
+  --edge:inset 0 1px 0 rgba(255,255,255,.07);
+  --sh-0:inset 0 1.5px 3px rgba(0,0,0,.5);
+  --sh-1:0 1px 2px rgba(0,0,0,.4),0 4px 10px -3px rgba(0,0,0,.5);
+  --sh-2:0 2px 4px rgba(0,0,0,.45),0 10px 22px -6px rgba(0,0,0,.55),0 28px 52px -18px rgba(0,0,0,.7);
+  --fl:#6fa8d4;--fl-bg:rgba(111,168,212,.13);--fl-ln:rgba(111,168,212,.30);
+  --ac:#d9a15c;--ac-bg:rgba(217,161,92,.12);--ac-ln:rgba(217,161,92,.30);
+  --er:#e0776c;
+  --grain:255,255,255;--grain-a:.042;
+}
+/* ===== 邻近色方案：设备两色都落在蓝族 210–285，彩度 .03 ===== */
+:root[data-scheme="ana"][data-theme="light"]{
+  --d1:#4a7a96;--d1-bg:rgba(74,122,150,.11);--d1-ln:rgba(74,122,150,.24);   /* 215° 偏青蓝 */
+  --d2:#6a6f9e;--d2-bg:rgba(106,111,158,.11);--d2-ln:rgba(106,111,158,.24); /* 275° 偏紫蓝 */
+  --d3:#4f8288;--d3-bg:rgba(79,130,136,.11);--d3-ln:rgba(79,130,136,.24);   /* 195° 第三设备 */
+}
+:root[data-scheme="ana"][data-theme="dark"]{
+  --d1:#8db4cb;--d1-bg:rgba(141,180,203,.13);--d1-ln:rgba(141,180,203,.26);
+  --d2:#a3a6cf;--d2-bg:rgba(163,166,207,.13);--d2-ln:rgba(163,166,207,.26);
+  --d3:#8fb8bd;--d3-bg:rgba(143,184,189,.13);--d3-ln:rgba(143,184,189,.26);
+}
+/* ===== 对立色方案：设备两色相距 180°，必然撞进状态色邻域 ===== */
+:root[data-scheme="comp"][data-theme="light"]{
+  --d1:#2f6b96;--d1-bg:rgba(47,107,150,.12);--d1-ln:rgba(47,107,150,.26);   /* 240° 撞流动蓝 */
+  --d2:#96682f;--d2-bg:rgba(150,104,47,.12);--d2-ln:rgba(150,104,47,.26);   /* 60° 撞召唤赭 */
+  --d3:#7d2f6b;--d3-bg:rgba(125,47,107,.12);--d3-ln:rgba(125,47,107,.26);
+}
+:root[data-scheme="comp"][data-theme="dark"]{
+  --d1:#7db0d8;--d1-bg:rgba(125,176,216,.14);--d1-ln:rgba(125,176,216,.3);
+  --d2:#d8a67d;--d2-bg:rgba(216,166,125,.14);--d2-ln:rgba(216,166,125,.3);
+  --d3:#c47db0;--d3-bg:rgba(196,125,176,.14);--d3-ln:rgba(196,125,176,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+body{font-family:'Noto Sans SC',-apple-system,sans-serif;color:var(--t2);line-height:1.7;
+  padding:40px 22px 100px;background-color:var(--bg);background-image:var(--bg-grad);
+  transition:background-color .45s,color .45s;min-height:100vh}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;background-color:rgba(var(--grain),var(--grain-a));
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+  -webkit-mask-size:256px;mask-size:256px}
+.wrap{max-width:1120px;margin:0 auto;position:relative;z-index:2}
+.hd{text-align:center;margin-bottom:20px}
+.bd{font-family:'Noto Serif SC',serif;font-size:23px;font-weight:600;letter-spacing:.2em;color:var(--t1)}
+.en{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.3em;color:var(--t4);margin-top:8px;text-transform:uppercase}
+.hd p{max-width:650px;margin:14px auto 0;color:var(--t3);font-size:12.5px}
+.ctl{display:flex;justify-content:center;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.cb{background-color:var(--sf);background-image:var(--sf-grad);border:1px solid var(--ln);color:var(--t3);
+  padding:7px 17px;border-radius:100px;font-size:11.5px;font-weight:500;cursor:pointer;font-family:inherit;
+  transition:all .25s;box-shadow:var(--sh-1),var(--edge)}
+.cb.on{background-color:var(--sf-up);color:var(--fl);font-weight:600;border-color:var(--fl-ln)}
+.big{margin-bottom:28px}.big .cb{padding:9px 24px;font-size:13px;font-weight:600}
+sect{display:block;background-color:var(--sf);background-image:var(--sf-grad);border:1px solid var(--ln);
+  border-radius:18px;box-shadow:var(--sh-2),var(--edge);padding:28px 32px;margin-bottom:22px}
+h2{font-family:'Noto Serif SC',serif;font-size:16.5px;font-weight:600;letter-spacing:.09em;color:var(--t1);margin-bottom:5px}
+h2 .ix{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t4);letter-spacing:.1em;margin-right:11px;font-weight:400}
+.sub{font-size:12.5px;color:var(--t3);margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid var(--ln)}
+p{font-size:13px;margin-bottom:9px}
+code{font-family:'JetBrains Mono',monospace;font-size:11px;background-color:var(--sf-in);border:1px solid var(--ln);
+  padding:1.5px 6px;border-radius:5px;color:var(--fl)}
+.law{background-color:var(--sf-in);border-left:2px solid var(--fl);border-radius:0 10px 10px 0;
+  padding:13px 16px;margin:13px 0;font-size:12.5px;box-shadow:var(--sh-0)}
+.law b{color:var(--t1)}
+.warn{border-left-color:var(--ac)}.warn b{color:var(--ac)}
+.bad{border-left-color:var(--er)}.bad b{color:var(--er)}
+
+/* 色环 */
+.wheelbox{display:grid;grid-template-columns:290px 1fr;gap:30px;align-items:center}
+.wheel{position:relative;width:290px;height:290px}
+.wheel svg{width:100%;height:100%}
+.wlegend{display:flex;flex-direction:column;gap:10px}
+.lg{display:flex;align-items:flex-start;gap:10px;font-size:12px}
+.lgd{width:13px;height:13px;border-radius:4px;flex-shrink:0;margin-top:4px;border:1px solid rgba(0,0,0,.12)}
+.lgt b{color:var(--t1);font-size:12px}
+.lgt span{display:block;color:var(--t3);font-size:11px;line-height:1.6}
+.hue{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t4)}
+
+/* 卡片 */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.ph{border:1px solid var(--ln);border-radius:20px;overflow:hidden;background-color:var(--sf-in);
+  box-shadow:var(--sh-2),var(--edge)}
+.pht{padding:12px 16px 10px;display:flex;justify-content:space-between;align-items:center}
+.phn{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;letter-spacing:.14em;color:var(--t1)}
+.band{margin:0 14px 11px;border-radius:11px;padding:9px 12px;display:flex;align-items:center;gap:9px;
+  border:1px solid var(--fl-ln);background:var(--fl-bg);box-shadow:var(--sh-1),var(--edge)}
+.rail{display:flex;gap:3px}
+.rail i{width:12px;height:4px;border-radius:100px;background:var(--fl)}
+.bt{font-size:11px;font-weight:600;color:var(--fl)}
+.ls{padding:0 14px 12px;display:flex;flex-direction:column;gap:7px}
+.cd{background-color:var(--sf);background-image:var(--sf-grad);border:1px solid var(--ln);border-radius:10px;
+  padding:10px 12px;box-shadow:var(--sh-1),var(--edge)}
+.ct{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;min-height:15px}
+.tm{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t4)}
+.bd2{font-size:11.5px;color:var(--t2);line-height:1.5;word-break:break-all}
+.bd2.mn{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--fl)}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:500;
+  padding:2px 7px 2px 6px;border-radius:100px;border:1px solid}
+.tag svg{width:10px;height:10px;fill:none;stroke-width:1.9;stroke:currentColor}
+.t1{color:var(--d1);background:var(--d1-bg);border-color:var(--d1-ln)}
+.t2{color:var(--d2);background:var(--d2-bg);border-color:var(--d2-ln)}
+.t3{color:var(--d3);background:var(--d3-bg);border-color:var(--d3-ln)}
+.btn{margin:0 14px 12px;padding:9px;border-radius:10px;text-align:center;font-size:11.5px;font-weight:600;
+  background:var(--fl);color:var(--sf);border:1px solid var(--fl)}
+.warnbox{margin:0 14px 11px;padding:9px 12px;border-radius:10px;background:var(--ac-bg);border:1px solid var(--ac-ln);
+  font-size:10.5px;color:var(--ac);line-height:1.6}
+.cap{text-align:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;
+  color:var(--t4);margin-top:10px;text-transform:uppercase}
+.verdict{margin-top:11px;padding:11px 13px;border-radius:10px;font-size:11.5px;line-height:1.65}
+.vg{background:var(--fl-bg);border:1px solid var(--fl-ln);color:var(--t2)}
+.vb{background:rgba(168,52,43,.08);border:1px solid rgba(168,52,43,.22);color:var(--t2)}
+.verdict b{color:var(--t1)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;margin-top:6px}
+th{text-align:left;padding:9px 11px;font-size:9.5px;letter-spacing:.12em;color:var(--t4);
+  font-family:'JetBrains Mono',monospace;font-weight:400;border-bottom:1px solid var(--ln);text-transform:uppercase}
+td{padding:10px 11px;border-bottom:1px solid var(--ln);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.ax{font-weight:600;color:var(--t1)}
+.wy{color:var(--t3);font-size:11.5px}
+.ok{color:var(--fl);font-weight:600}.no{color:var(--er);font-weight:600}
+.ftr{text-align:center;font-size:9.5px;color:var(--t4);margin-top:36px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<div class="hd">
+  <div class="bd">邻 近 还 是 对 立</div>
+  <div class="en">Analogous vs Complementary · Device Hues</div>
+  <p>答案是<b>邻近色</b>。但这不是审美偏好——是被你已有的约束逼出来的<b>唯一解</b>。下面是几何证明。</p>
+</div>
+<div class="ctl big">
+  <button class="cb on" onclick="sc('ana')">邻近色（推荐）</button>
+  <button class="cb" onclick="sc('comp')">对立色</button>
+</div>
+<div class="ctl">
+  <button class="cb on" onclick="th('light')">日间</button>
+  <button class="cb" onclick="th('dark')">夜间</button>
+</div>
+
+<sect>
+  <h2><span class="ix">01</span>色环上已经没有两块对立的空地了</h2>
+  <div class="sub">切换上面的方案，看设备色（实心方块）在色环上的落点如何与状态色（描边扇区）的关系变化。</div>
+  <div class="wheelbox">
+    <div class="wheel"><svg viewBox="0 0 200 200">
+      <defs>
+        <linearGradient id="gFl"><stop offset="0" stop-color="#215f8f" stop-opacity=".85"/></linearGradient>
+      </defs>
+      <!-- 色环底 -->
+      <g id="ring"></g>
+      <!-- 禁区遮罩：绿 100-180 -->
+      <path id="banGreen" fill="rgba(120,120,120,.55)"/>
+      <!-- 禁区：红 5-32 -->
+      <path id="banRed" fill="rgba(120,120,120,.55)"/>
+      <!-- 状态色扇区 -->
+      <path id="secFl" fill="none" stroke="#215f8f" stroke-width="3"/>
+      <path id="secAc" fill="none" stroke="#9b6b24" stroke-width="3"/>
+      <!-- 设备色点 -->
+      <circle id="dot1" r="9" stroke="#fff" stroke-width="2"/>
+      <circle id="dot2" r="9" stroke="#fff" stroke-width="2"/>
+      <circle id="dot3" r="7" stroke="#fff" stroke-width="1.6" opacity=".8"/>
+      <circle cx="100" cy="100" r="42" fill="var(--sf)"/>
+      <text x="100" y="96" text-anchor="middle" font-size="11" font-weight="600" fill="var(--t1)"
+        font-family="Noto Sans SC">色环</text>
+      <text x="100" y="110" text-anchor="middle" font-size="8" fill="var(--t4)"
+        font-family="JetBrains Mono">OKLCH HUE</text>
+    </svg></div>
+    <div class="wlegend">
+      <div class="lg"><span class="lgd" style="background:#215f8f"></span>
+        <span class="lgt"><b>状态 · 流动蓝</b><span class="hue">色相 250</span>
+        <span>已占用。就绪 / 流动 / 主操作</span></span></div>
+      <div class="lg"><span class="lgd" style="background:#9b6b24"></span>
+        <span class="lgt"><b>状态 · 召唤赭</b><span class="hue">色相 65</span>
+        <span>已占用。唯一允许打断你的颜色</span></span></div>
+      <div class="lg"><span class="lgd" style="background:#a8342b"></span>
+        <span class="lgt"><b>错误红</b><span class="hue">色相 5–32 禁区</span>
+        <span>保留给 error，设备色不得靠近</span></span></div>
+      <div class="lg"><span class="lgd" style="background:rgba(120,120,120,.6)"></span>
+        <span class="lgt"><b>绿色禁区</b><span class="hue">色相 100–180</span>
+        <span>你已明确排除</span></span></div>
+      <div class="lg"><span class="lgd" style="background:var(--d1)"></span>
+        <span class="lgt"><b>设备 A</b><span class="hue" id="h1">—</span></span></div>
+      <div class="lg"><span class="lgd" style="background:var(--d2)"></span>
+        <span class="lgt"><b>设备 B</b><span class="hue" id="h2">—</span></span></div>
+    </div>
+  </div>
+  <div class="law"><b>几何论证。</b> 流动蓝（250）与召唤赭（65）相距约 <b>185°</b>——<b>状态轴本身就已经是一对补色</b>。<br><br>如果设备轴也用对立关系，它需要色环上<b>两块相距 180° 的自由区</b>。但可用区间已经被切成碎片：绿色 100–180 你排除了，红色 5–32 留给 error，蓝 250 和赭 65 各自占着邻域。<b>剩下的自由区拼不出一对相距 180° 的位置</b>——任选一对，必有一个撞进状态色邻域。切到「对立色」方案看那两个点：一个贴着流动蓝，一个贴着召唤赭。</div>
+</sect>
+
+<sect>
+  <h2><span class="ix">02</span>撞色的实际后果</h2>
+  <div class="sub">同一个屏幕，两种方案。看左边那条状态带、主按钮、警示框，和卡片里的设备标签。</div>
+  <div class="grid2">
+    <div>
+      <div class="ph">
+        <div class="pht"><span class="phn">剪剪相传</span></div>
+        <div class="band"><div class="rail"><i></i><i></i><i></i><i></i></div><span class="bt">通路畅通</span></div>
+        <div class="ls">
+          <div class="cd"><div class="ct"><span class="tag t1">
+            <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>工作站</span>
+            <span class="tm">10:48</span></div><div class="bd2">https://github.com/clipsync/core</div></div>
+          <div class="cd"><div class="ct"><span></span><span class="tm">10:15</span></div>
+            <div class="bd2 mn">pwsh .\scripts\build.ps1</div></div>
+          <div class="cd"><div class="ct"><span class="tag t2">
+            <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 19h2"/></svg>笔记本</span>
+            <span class="tm">09:33</span></div><div class="bd2">会议纪要：本周五完成握手测试</div></div>
+        </div>
+        <div class="btn">扫描二维码</div>
+      </div>
+      <div class="cap">状态色与设备色共存</div>
+    </div>
+    <div>
+      <div class="ph">
+        <div class="pht"><span class="phn">剪剪相传</span></div>
+        <div class="warnbox">写入需要你操作 · 选一条路线打通后台写入</div>
+        <div class="ls">
+          <div class="cd"><div class="ct"><span class="tag t1">
+            <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>工作站</span>
+            <span class="tm">10:48</span></div><div class="bd2">验证码：849201</div></div>
+          <div class="cd"><div class="ct"><span class="tag t2">
+            <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 19h2"/></svg>笔记本</span>
+            <span class="tm">09:33</span></div><div class="bd2">这条来自另一台电脑</div></div>
+          <div class="cd"><div class="ct"><span class="tag t3">
+            <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 19h2"/></svg>平板</span>
+            <span class="tm">昨天</span></div><div class="bd2">第三台设备的内容</div></div>
+        </div>
+      </div>
+      <div class="cap">赭色警示与设备色共存</div>
+    </div>
+  </div>
+  <div id="verdictAna" class="verdict vg"><b>邻近色：设备标签全部落在蓝族，读起来是「同一类东西的不同个体」。</b> 它们与状态色的关系是<b>彩度差</b>（.03 vs .09）而非色相差——所以状态永远赢一档，而设备之间靠色相微差区分。左图的流动蓝和右图的召唤赭都没有被干扰。</div>
+  <div id="verdictComp" class="verdict vb" style="display:none"><b>对立色：左图的「工作站」标签和状态带几乎同色</b>——歧义立刻出现，这个蓝到底是「已连接」还是「来自工作站」？<b>右图的「笔记本」标签又和赭色警示框撞了</b>，警示的独占性被稀释。<b>而且两个设备色互为补色，放在同一列表里会产生振动感</b>，正是你说的 color noise。</div>
+</sect>
+
+<sect>
+  <h2><span class="ix">03</span>邻近色怎么分出足够多的设备</h2>
+  <div class="sub">担心「邻近色不够分」是合理的。实际可用位比想象的多。</div>
+  <table>
+    <tr><th>设备</th><th>色相</th><th>色样</th><th>命名</th><th>与前一个的距离</th></tr>
+    <tr><td class="ax">A</td><td class="wy">195</td><td><span class="tag t3" style="min-width:60px;justify-content:center">示例</span></td><td class="wy">青灰</td><td class="wy">—</td></tr>
+    <tr><td class="ax">B</td><td class="wy">215</td><td><span class="tag t1" style="min-width:60px;justify-content:center">示例</span></td><td class="wy">水蓝</td><td class="wy">20°</td></tr>
+    <tr><td class="ax">C</td><td class="wy">275</td><td><span class="tag t2" style="min-width:60px;justify-content:center">示例</span></td><td class="wy">紫蓝</td><td class="wy">60°</td></tr>
+    <tr><td class="ax">D</td><td class="wy">305</td><td><span class="tag" style="min-width:60px;justify-content:center;color:#8a6194;background:rgba(138,97,148,.11);border-color:rgba(138,97,148,.24)">示例</span></td><td class="wy">藕紫</td><td class="wy">30°</td></tr>
+    <tr><td class="ax">E</td><td class="wy">335</td><td><span class="tag" style="min-width:60px;justify-content:center;color:#93607a;background:rgba(147,96,122,.11);border-color:rgba(147,96,122,.24)">示例</span></td><td class="wy">灰粉</td><td class="wy">30°</td></tr>
+  </table>
+  <div class="law"><b>195° → 335° 是一条 140° 的连续弧</b>，全部避开绿（100–180）和红（5–32），并且绕过了赭 65。在彩度 .03 这一档，<b>相邻 20–30° 的色相差足以分辨</b>——因为它们并置在同一列表里，是<b>比较判断</b>而非绝对识别。<br><br>五台设备是这个产品实际会遇到的上限（手机 + 工作站 + 笔记本 + 平板 + 备用机）。<b>邻近色不但够用，还留了余量。</b></div>
+  <div class="law warn"><b>但要遵守一条：设备色的分配必须稳定且可预测。</b> 不要用「哈希设备 ID 取色」——同一台设备在重装后会换色，用户建立的记忆就废了。<b>按配对顺序分配</b>（第一台 195、第二台 215…），并允许用户手动改。这也是为什么色序要预先定好而不是算出来。</div>
+</sect>
+
+<sect>
+  <h2><span class="ix">04</span>结论</h2>
+  <div class="sub">两句话。</div>
+  <div class="law"><b>邻近色，落在 195–335 这条弧上，彩度统一压在 .03。</b><br><br>理由不是「邻近色更协调」这种泛泛之谈，而是：<b>你的状态轴已经用掉了色环上唯一一对可用的对立位置</b>（蓝 250 / 赭 65，相距 185°）。设备轴若再用对立关系，几何上必然与状态色相撞——而状态的独占性比设备的辨识度重要得多。<br><br>邻近色把设备轴整体挪到<b>彩度的第二档</b>，于是两条轴在不同维度上分开：<b>状态靠彩度取胜，设备靠色相微差区分。</b>互不干扰。</div>
+  <div class="law bad"><b>唯一该用对立色的地方，你已经在用了。</b> 那就是状态轴本身——流动蓝与召唤赭。<b>对立关系是稀缺资源，应该花在最需要被区分的那一对语义上</b>：「一切正常」与「需要你介入」。设备来源远没有那么重要。</div>
+</sect>
+
+<div class="ftr">ANALOGOUS VS COMPLEMENTARY · 概念稿，未接入项目代码</div>
+</div>
+<script>
+const SVGNS='http://www.w3.org/2000/svg';
+// 画色环
+(function(){
+  const g=document.getElementById('ring');
+  for(let h=0;h<360;h+=2){
+    const a0=(h-90)*Math.PI/180,a1=(h+2-90)*Math.PI/180;
+    const R=88,r=58;
+    const p=document.createElementNS(SVGNS,'path');
+    p.setAttribute('d',`M${100+R*Math.cos(a0)},${100+R*Math.sin(a0)}A${R},${R} 0 0 1 ${100+R*Math.cos(a1)},${100+R*Math.sin(a1)}L${100+r*Math.cos(a1)},${100+r*Math.sin(a1)}A${r},${r} 0 0 0 ${100+r*Math.cos(a0)},${100+r*Math.sin(a0)}Z`);
+    p.setAttribute('fill',`oklch(0.62 0.11 ${h})`);
+    g.appendChild(p);
+  }
+})();
+function arc(id,from,to,R){
+  const a0=(from-90)*Math.PI/180,a1=(to-90)*Math.PI/180;
+  const large=(to-from)>180?1:0;
+  document.getElementById(id).setAttribute('d',
+    `M${100+R*Math.cos(a0)},${100+R*Math.sin(a0)}A${R},${R} 0 ${large} 1 ${100+R*Math.cos(a1)},${100+R*Math.sin(a1)}`);
+}
+function wedge(id,from,to){
+  const a0=(from-90)*Math.PI/180,a1=(to-90)*Math.PI/180;
+  const R=88,r=58,large=(to-from)>180?1:0;
+  document.getElementById(id).setAttribute('d',
+    `M${100+R*Math.cos(a0)},${100+R*Math.sin(a0)}A${R},${R} 0 ${large} 1 ${100+R*Math.cos(a1)},${100+R*Math.sin(a1)}L${100+r*Math.cos(a1)},${100+r*Math.sin(a1)}A${r},${r} 0 ${large} 0 ${100+r*Math.cos(a0)},${100+r*Math.sin(a0)}Z`);
+}
+wedge('banGreen',100,180); wedge('banRed',5,32);
+arc('secFl',238,262,95); arc('secAc',53,77,95);
+function dot(id,h,r){
+  const a=(h-90)*Math.PI/180,R=73;
+  const e=document.getElementById(id);
+  e.setAttribute('cx',100+R*Math.cos(a)); e.setAttribute('cy',100+R*Math.sin(a));
+  e.setAttribute('fill',`oklch(0.55 0.09 ${h})`);
+}
+const SCH={ana:[215,275,195],comp:[240,60,310]};
+function sc(m){
+  document.documentElement.setAttribute('data-scheme',m);
+  document.querySelectorAll('.big .cb').forEach((b,i)=>b.classList.toggle('on',(m==='ana')===(i===0)));
+  const[a,b,c]=SCH[m];
+  dot('dot1',a); dot('dot2',b); dot('dot3',c);
+  document.getElementById('h1').textContent='色相 '+a;
+  document.getElementById('h2').textContent='色相 '+b;
+  document.getElementById('verdictAna').style.display=(m==='ana')?'block':'none';
+  document.getElementById('verdictComp').style.display=(m==='comp')?'block':'none';
+}
+function th(m){document.documentElement.setAttribute('data-theme',m);
+  document.querySelectorAll('.ctl:not(.big) .cb').forEach((b,i)=>b.classList.toggle('on',(m==='light')===(i===0)));}
+sc('ana');
+</script>
+</body>
+</html>

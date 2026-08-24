@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>剪剪相传 · A/B 对照 —— 规则套用前后</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600&family=Noto+Sans+SC:wght@300;400;500;600&display=swap');
+:root{
+  --t1:#12253b;--t2:#1e3a59;--t3:#567594;--t4:#8caec7;
+  --warm:#7c4467;--warm-bg:rgba(124,68,103,.08);--warm-line:rgba(124,68,103,.18);
+  --cool:#1c628a;--cool-bg:rgba(28,98,138,.08);--cool-line:rgba(28,98,138,.18);
+  --dot:#2a7c88;--danger:#b91c1c;
+  --glass:rgba(255,255,255,.58);--glass-line:rgba(255,255,255,.95);
+  --ease:cubic-bezier(.16,1,.3,1);
+  --sh:0 25px 60px -12px rgba(45,85,130,.12),0 0 0 1px rgba(255,255,255,.8),inset 0 1.5px 2px rgba(255,255,255,1);
+  --sh1:0 10px 26px -8px rgba(45,85,130,.10),0 0 0 1px rgba(255,255,255,.75),inset 0 1px 1.5px rgba(255,255,255,.95);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+body{font-family:'Plus Jakarta Sans','Noto Sans SC',sans-serif;color:var(--t2);line-height:1.7;
+  background:linear-gradient(135deg in oklab,#b0d8f6 0%,#faeef8 45%,#e8f4fd 100%);
+  min-height:100vh;padding:44px 20px 110px;position:relative}
+.amb{position:fixed;inset:-20%;z-index:0;pointer-events:none;filter:blur(65px);
+  background:radial-gradient(circle at 18% 22%,rgba(165,215,252,.7),transparent 45%),
+             radial-gradient(circle at 82% 18%,rgba(253,235,248,.75),transparent 50%),
+             radial-gradient(circle at 50% 88%,rgba(232,244,253,.8),transparent 55%);
+  animation:drift 22s infinite alternate ease-in-out}
+@keyframes drift{0%{transform:scale(1)}50%{transform:scale(1.04) translate(-1.5%,1.5%)}100%{transform:scale(.98) translate(1.5%,-1.5%)}}
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");background-size:300px}
+.wrap{position:relative;z-index:10;max-width:1140px;margin:0 auto}
+.hero{text-align:center;margin-bottom:32px}
+.brand{font-family:'Noto Serif SC',serif;font-size:27px;font-weight:600;letter-spacing:.18em;color:var(--t1)}
+.hero .en{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.3em;color:var(--t4);margin-top:9px;text-transform:uppercase}
+.hero p{max-width:600px;margin:16px auto 0;color:var(--t3);font-size:13px}
+
+.tabs{display:flex;justify-content:center;gap:4px;margin-bottom:26px}
+.tab{background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.9);color:var(--t3);
+  padding:8px 20px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s var(--ease);
+  font-family:'Plus Jakarta Sans','Noto Sans SC',sans-serif}
+.tab:hover{color:var(--t1)}
+.tab.on{background:#fff;color:var(--cool);font-weight:600;box-shadow:0 4px 14px rgba(25,75,130,.1)}
+.view{display:none}.view.on{display:block}
+
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+.col-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding:0 4px}
+.col-nm{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.old .col-nm{color:var(--t4)} .new .col-nm{color:var(--dot)}
+.col-tag{font-size:10px;padding:2px 10px;border-radius:100px;font-weight:600}
+.old .col-tag{background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.9);color:var(--t3)}
+.new .col-tag{background:rgba(42,124,136,.1);border:1px solid rgba(42,124,136,.25);color:var(--dot)}
+
+/* ============ 共用外壳 ============ */
+.shell{width:100%;border-radius:24px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.shell.o{background:rgba(255,255,255,.58);backdrop-filter:blur(45px) saturate(170%);
+  border:1px solid rgba(255,255,255,.95);box-shadow:var(--sh)}
+.shell.n{background:rgba(255,255,255,.6);backdrop-filter:blur(45px) saturate(170%);
+  border:1px solid rgba(255,255,255,.95);box-shadow:var(--sh)}
+.tbar{display:flex;justify-content:space-between;align-items:center;padding:17px 21px 13px;
+  border-bottom:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.25)}
+.btitle{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:600;letter-spacing:.16em;color:var(--t1)}
+.pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.95);
+  padding:4px 12px;border-radius:100px;font-size:10.5px;font-weight:600;box-shadow:0 2px 6px rgba(25,75,125,.05)}
+.pill.c{color:var(--cool)}.pill.w{color:var(--warm)}
+.dt{width:6px;height:6px;border-radius:50%}
+.dt.c{background:var(--dot)}.dt.w{background:var(--warm)}
+.dt.br{animation:br 4s var(--ease) infinite}
+@keyframes br{0%,100%{opacity:.35;transform:scale(.78)}50%{opacity:1;transform:scale(1)}}
+
+.srch{padding:13px 21px 9px;display:flex;flex-direction:column;gap:9px}
+.sbar{position:relative;display:flex;align-items:center}
+.sbar input{width:100%;background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.9);
+  padding:9px 40px 9px 34px;color:var(--t1);font-size:12.5px;font-weight:500;outline:none;
+  box-shadow:inset 0 1px 2px rgba(20,50,90,.04);font-family:inherit}
+.o .sbar input{border-radius:12px}
+.n .sbar input{border-radius:9px}
+.sbar input::placeholder{color:var(--t4);font-weight:400}
+.sico{position:absolute;left:12px;width:13px;height:13px;color:var(--t3)}
+.skey{position:absolute;right:10px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--t3);
+  background:rgba(255,255,255,.85);padding:2px 6px;border-radius:4px;border:1px solid rgba(255,255,255,.95)}
+.chips{display:flex;gap:6px}
+.chip{padding:3px 11px;border-radius:100px;font-size:10.5px;font-weight:500;background:rgba(255,255,255,.45);
+  border:1px solid rgba(255,255,255,.75);color:var(--t3);cursor:pointer}
+.chip.on{background:#fff;color:var(--cool);font-weight:600;border-color:rgba(255,255,255,.95)}
+
+.list{padding:6px 21px 12px;display:flex;flex-direction:column;gap:8px}
+/* 旧：卡片再套一层玻璃 */
+.card.o{background:rgba(255,255,255,.48);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.8);
+  border-radius:16px;padding:11px 13px;cursor:pointer;transition:all .2s var(--ease)}
+.card.o:hover{background:rgba(255,255,255,.85);border-color:rgba(140,180,225,.45)}
+/* 新：靠不透明度浮起，圆角遵守嵌套定律 */
+.card.n{background:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.72);
+  border-radius:11px;padding:11px 13px;cursor:pointer;transition:all .18s var(--ease)}
+.card.n:hover{background:rgba(255,255,255,.88);border-color:rgba(140,180,225,.4);
+  box-shadow:0 8px 20px -8px rgba(45,85,130,.14),inset 0 1px 1.5px rgba(255,255,255,1)}
+.ctop{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--t4);margin-bottom:6px}
+.ts{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--t4)}
+.tag{font-size:9px;font-family:'JetBrains Mono',monospace;padding:1.5px 7px;border-radius:100px;letter-spacing:.05em;font-weight:500}
+.tag.w{background:var(--warm-bg);color:var(--warm);border:1px solid var(--warm-line)}
+.tag.c{background:var(--cool-bg);color:var(--cool);border:1px solid var(--cool-line)}
+.tag.g{background:rgba(255,255,255,.6);color:var(--t3);border:1px solid rgba(255,255,255,.9)}
+.ctext{font-size:12.5px;color:var(--t2);line-height:1.55;word-break:break-all}
+.ctext.code{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--cool)}
+.cact{display:flex;gap:8px;margin-top:8px}
+.card.n .cact{opacity:0;max-height:0;margin-top:0;overflow:hidden;transition:all .2s var(--ease)}
+.card.n:hover .cact{opacity:1;max-height:30px;margin-top:8px}
+.abtn{font-size:10.5px;font-weight:600;color:var(--cool);cursor:pointer}
+.abtn.del{color:var(--t4)}
+.foot{display:flex;justify-content:space-between;align-items:center;padding:11px 21px;
+  border-top:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.25);font-size:10.5px;color:var(--t3)}
+.tgl{display:flex;align-items:center;gap:8px}
+.trk{width:26px;height:15px;border-radius:100px;background:var(--dot);position:relative}
+.trk::after{content:'';position:absolute;right:2px;top:2px;width:11px;height:11px;border-radius:50%;background:#fff}
+
+/* ============ Android ============ */
+.phone{width:100%;max-width:310px;margin:0 auto;border-radius:26px;overflow:hidden;position:relative;
+  border:1px solid rgba(255,255,255,.95);box-shadow:var(--sh)}
+.ph-amb{position:absolute;inset:0;z-index:0;filter:blur(34px);animation:drift 22s infinite alternate ease-in-out}
+.ph-amb.o{background:radial-gradient(circle at 25% 15%,rgba(165,215,252,.9),transparent 55%),radial-gradient(circle at 80% 85%,rgba(253,235,248,.85),transparent 50%)}
+.ph-amb.n{background:radial-gradient(circle at 78% 14%,rgba(253,235,248,.95),transparent 55%),radial-gradient(circle at 18% 84%,rgba(232,244,253,.9),transparent 52%)}
+.ph-in{position:relative;z-index:2;background:rgba(255,255,255,.42);backdrop-filter:blur(30px) saturate(160%);min-height:456px;display:flex;flex-direction:column}
+.ph-sb{display:flex;justify-content:space-between;padding:9px 16px 4px;font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace}
+.ph-bd{padding:14px 18px 10px}
+.ph-h1{font-family:'Noto Serif SC',serif;font-size:19px;font-weight:600;letter-spacing:.16em;color:var(--t1)}
+.ph-bn{margin:0 16px 12px;padding:11px 13px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.ph-bn.o{background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.9)}
+.ph-bn.n{background:var(--cool-bg);border:1px solid var(--cool-line)}
+.cn-nm{font-size:11.5px;font-weight:600;color:var(--t1)}
+.cn-sb{font-size:9.5px;color:var(--t3);margin-top:2px;display:flex;align-items:center;gap:5px}
+.ph-ls{flex:1;padding:0 16px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.ph-dk{display:flex;border-top:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.35);padding:8px 0 10px}
+.dki{flex:1;text-align:center;font-size:9.5px;color:var(--t4);display:flex;flex-direction:column;align-items:center;gap:3px}
+.dki.on{color:var(--cool);font-weight:600}
+.dki svg{width:16px;height:16px}
+.emj{font-size:15px;line-height:1}
+
+/* 标记 */
+.mk{position:absolute;width:19px;height:19px;border-radius:50%;background:var(--warm);color:#fff;
+  font-family:'JetBrains Mono',monospace;font-size:10px;display:flex;align-items:center;justify-content:center;
+  z-index:60;box-shadow:0 3px 8px rgba(124,68,103,.35);font-weight:600;cursor:default}
+.new .mk{background:var(--dot);box-shadow:0 3px 8px rgba(42,124,136,.35)}
+
+/* 变更表 */
+section{background:var(--glass);backdrop-filter:blur(45px) saturate(170%);border:1px solid var(--glass-line);
+  border-radius:24px;box-shadow:var(--sh);padding:32px 36px;margin-top:34px}
+h2{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;letter-spacing:.1em;color:var(--t1);margin-bottom:5px}
+h2 .idx{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t4);letter-spacing:.1em;margin-right:11px;font-weight:400}
+.sub{font-size:12.5px;color:var(--t3);margin-bottom:22px;padding-bottom:17px;border-bottom:1px solid rgba(255,255,255,.7)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+th{text-align:left;padding:9px 11px;font-size:9.5px;letter-spacing:.12em;color:var(--t4);
+  font-family:'JetBrains Mono',monospace;font-weight:400;border-bottom:1px solid rgba(255,255,255,.8);text-transform:uppercase}
+td{padding:11px;border-bottom:1px solid rgba(255,255,255,.55);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.num{width:26px;font-family:'JetBrains Mono',monospace;color:var(--dot);font-weight:600}
+.ax{font-weight:600;color:var(--t1);width:112px}
+.wy{color:var(--t3);font-size:11.5px}
+.law{background:rgba(255,255,255,.5);border-left:2px solid var(--cool);border-radius:0 12px 12px 0;padding:13px 17px;margin:14px 0;font-size:12.5px}
+.law b{color:var(--t1)}
+.warn{border-left-color:var(--warm)}.warn b{color:var(--warm)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:16px}
+.dcap{text-align:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;color:var(--t4);margin-top:11px;text-transform:uppercase}
+.ftr{text-align:center;font-size:10px;color:var(--t4);margin-top:38px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+</style>
+</head>
+<body>
+<div class="amb"></div><div class="noise"></div>
+<div class="wrap">
+
+<div class="hero">
+  <div class="brand">规则套用前后</div>
+  <div class="en">A / B · Same Layout, Different Rules</div>
+  <p>左边是你 <code style="font-family:'JetBrains Mono',monospace;font-size:11px">clipsync_production_ui.html</code> 的原样复刻，右边只套用规则、<b>不动版面结构</b>。数字标记对应下方变更表。</p>
+</div>
+
+<div class="tabs">
+  <button class="tab on" onclick="sw(0)">Windows 托盘浮窗</button>
+  <button class="tab" onclick="sw(1)">Android 移动端</button>
+  <button class="tab" onclick="sw(2)">对偶检验</button>
+</div>
+
+<!-- ============ WINDOWS ============ -->
+<div class="view on" id="v0">
+<div class="pair">
+  <div class="old">
+    <div class="col-hd"><span class="col-nm">A · 原版</span><span class="col-tag">production_ui</span></div>
+    <div class="shell o" style="position:relative">
+      <div class="tbar"><span class="btitle">剪 剪 相 传</span>
+        <span class="pill c"><span class="dt c"></span>Pixel 8 · 直连中</span></div>
+      <div class="srch">
+        <div class="sbar"><svg class="sico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="在本地 SQLite 中检索记忆..."><span class="skey">Alt+C</span></div>
+        <div class="chips"><span class="mk" style="left:-9px;top:-7px">4</span>
+          <span class="chip on">全部 (18)</span><span class="chip">代码</span><span class="chip">链接</span><span class="chip">敏感锁定</span></div>
+      </div>
+      <div class="list">
+        <div class="card o" style="position:relative"><span class="mk" style="left:-9px;top:-8px">1</span>
+          <div class="ctop"><span class="tag w">Android Inbound</span><span>10:48 刚刚</span></div>
+          <div class="ctext">https://github.com/clipsync/core</div>
+          <div class="cact"><span class="abtn">复制</span><span class="abtn del">删除</span></div></div>
+        <div class="card o" style="position:relative"><span class="mk" style="left:-9px;top:-8px">2</span>
+          <div class="ctop"><span class="tag g">本地复制</span><span>09:20</span></div>
+          <div class="ctext code">git checkout -b feature/high-key-harmony</div>
+          <div class="cact"><span class="abtn">复制</span><span class="abtn del">删除</span></div></div>
+        <div class="card o"><div class="ctop"><span class="tag w">Android Inbound</span><span>昨天</span></div>
+          <div class="ctext">会议纪要：本周五完成 Stage 4 端到端握手测试</div>
+          <div class="cact"><span class="abtn">复制</span><span class="abtn del">删除</span></div></div>
+      </div>
+      <div class="foot"><span class="tgl"><span class="trk"></span>监听剪贴板就绪</span><span>静默清空</span></div>
+    </div>
+  </div>
+
+  <div class="new">
+    <div class="col-hd"><span class="col-nm">B · 套用规则</span><span class="col-tag">daylight duet</span></div>
+    <div class="shell n" style="position:relative">
+      <div class="tbar"><span class="btitle">剪 剪 相 传</span>
+        <span class="pill c"><span class="dt c br"></span>Pixel 8</span><span class="mk" style="right:-8px;top:14px">5</span></div>
+      <div class="srch">
+        <div class="sbar" style="position:relative"><span class="mk" style="right:-9px;top:-8px">6</span>
+          <svg class="sico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="检索本地历史"><span class="skey">Alt+C</span></div>
+      </div>
+      <div class="list">
+        <div class="card n" style="position:relative"><span class="mk" style="left:-9px;top:-8px">1</span>
+          <div class="ctop"><span class="tag w">来自手机</span><span class="ts">10:48</span></div>
+          <div class="ctext">https://github.com/clipsync/core</div>
+          <div class="cact"><span class="abtn">复制</span><span class="abtn del">删除</span></div></div>
+        <div class="card n" style="position:relative"><span class="mk" style="left:-9px;top:-8px">2</span>
+          <div class="ctop"><span></span><span class="ts">09:20</span></div>
+          <div class="ctext code">git checkout -b feature/high-key-harmony</div>
+          <div class="cact"><span class="abtn">复制</span><span class="abtn del">删除</span></div></div>
+        <div class="card n"><div class="ctop"><span class="tag w">来自手机</span><span class="ts">昨天</span></div>
+          <div class="ctext">会议纪要：本周五完成 Stage 4 端到端握手测试</div>
+          <div class="cact"><span class="abtn">复制</span><span class="abtn del">删除</span></div></div>
+      </div>
+      <div class="foot"><span class="tgl"><span class="trk"></span>监听中</span><span>清空</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ ANDROID ============ -->
+<div class="view" id="v1">
+<div class="pair">
+  <div class="old">
+    <div class="col-hd"><span class="col-nm">A · 原版</span><span class="col-tag">production_ui</span></div>
+    <div class="phone"><div class="ph-amb o"></div><div class="ph-in">
+      <div class="ph-sb"><span>10:52</span><span>5G 98%</span></div>
+      <div class="ph-bd"><div class="ph-h1">剪剪相传</div></div>
+      <div class="ph-bn o"><div><div class="cn-nm">PC-STUDIO (Windows 11)</div>
+        <div class="cn-sb">● 局域网 WebSocket 互信连接</div></div>
+        <span style="font-size:10.5px;color:var(--cool);font-weight:600">管理 ›</span></div>
+      <div class="ph-ls">
+        <div class="card o" style="position:relative"><span class="mk" style="left:-9px;top:-8px">3</span>
+          <div class="ctop"><span class="tag w">来自 PC 电脑</span><span>刚刚</span></div>
+          <div class="ctext">https://github.com/clipsync/core</div></div>
+        <div class="card o"><div class="ctop"><span class="tag g">本地复制</span><span>10:15</span></div>
+          <div class="ctext code">pwsh .\scripts\build-windows.ps1</div></div>
+        <div class="card o"><div class="ctop"><span class="tag c">短信提取</span><span>08:40</span></div>
+          <div class="ctext">验证码：849201</div></div>
+      </div>
+      <div class="ph-dk"><span class="mk" style="left:44px;top:-8px">7</span>
+        <div class="dki on"><span class="emj">📋</span><span>历史记录</span></div>
+        <div class="dki"><span class="emj">🔗</span><span>设备配对</span></div>
+        <div class="dki"><span class="emj">⚙️</span><span>设置</span></div></div>
+    </div></div>
+  </div>
+
+  <div class="new">
+    <div class="col-hd"><span class="col-nm">B · 套用规则</span><span class="col-tag">daylight duet</span></div>
+    <div class="phone"><div class="ph-amb n"></div><div class="ph-in">
+      <div class="ph-sb"><span>10:52</span><span>5G 98%</span></div>
+      <div class="ph-bd"><div class="ph-h1">剪剪相传</div></div>
+      <div class="ph-bn n"><div><div class="cn-nm">PC-STUDIO</div>
+        <div class="cn-sb"><span class="dt c br" style="width:5px;height:5px"></span>局域网直连</div></div>
+        <span style="font-size:10.5px;color:var(--cool);font-weight:600">管理 ›</span></div>
+      <div class="ph-ls">
+        <div class="card n" style="position:relative"><span class="mk" style="left:-9px;top:-8px">3</span>
+          <div class="ctop"><span class="tag c">来自电脑</span><span class="ts">刚刚</span></div>
+          <div class="ctext">https://github.com/clipsync/core</div></div>
+        <div class="card n"><div class="ctop"><span></span><span class="ts">10:15</span></div>
+          <div class="ctext code">pwsh .\scripts\build-windows.ps1</div></div>
+        <div class="card n"><div class="ctop"><span></span><span class="ts">08:40</span></div>
+          <div class="ctext">验证码：849201</div></div>
+      </div>
+      <div class="ph-dk"><span class="mk" style="left:44px;top:-8px">7</span>
+        <div class="dki on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="4" width="12" height="16" rx="2"/><path d="M16 4V2H4v14h2"/></svg><span>历史</span></div>
+        <div class="dki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg><span>配对</span></div>
+        <div class="dki"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M4.2 4.2l2.1 2.1m11.4 11.4l2.1 2.1M2 12h3m14 0h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span>设置</span></div></div>
+    </div></div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 对偶检验 ============ -->
+<div class="view" id="v2">
+<div class="law warn" style="margin-bottom:22px"><b>这一页是这次 A/B 最大的收获。</b> 把两端并排放，原版有个矛盾会立刻暴露：<code style="font-family:'JetBrains Mono',monospace;font-size:11px">source-tag-warm</code> 在 Windows 上表示「来自 Android」，在 Android 上表示「来自 PC」——<b>同一个颜色编码了两个对立的概念</b>。它编的其实是「远端」，不是「设备」。所以你看历史时，颜色告诉不了你内容从哪来，只告诉你「不是本机」。</div>
+<div class="duo">
+  <div>
+    <div class="phone" style="max-width:100%"><div class="ph-amb n" style="background:radial-gradient(circle at 22% 18%,rgba(165,215,252,.9),transparent 55%),radial-gradient(circle at 82% 82%,rgba(255,255,255,.9),transparent 50%)"></div><div class="ph-in" style="min-height:auto">
+      <div class="tbar"><span class="btitle" style="font-size:13px">剪 剪 相 传</span><span class="pill c"><span class="dt c br"></span>已连接</span></div>
+      <div class="list" style="padding:12px 16px">
+        <div class="card n"><div class="ctop"><span></span><span class="ts">14:32</span></div><div class="ctext">https://github.com/clipsync/core</div></div>
+        <div class="card n"><div class="ctop"><span class="tag w">来自手机</span><span class="ts">14:28</span></div><div class="ctext">验证码：849201</div></div>
+        <div class="card n"><div class="ctop"><span></span><span class="ts">14:11</span></div><div class="ctext code">pwsh .\scripts\build-windows.ps1</div></div>
+      </div>
+    </div></div>
+    <div class="dcap">Windows · 冷 · 标签只出现在暖色项</div>
+  </div>
+  <div>
+    <div class="phone" style="max-width:100%"><div class="ph-amb n"></div><div class="ph-in" style="min-height:auto">
+      <div class="tbar"><span class="btitle" style="font-size:13px">剪 剪 相 传</span><span class="pill w"><span class="dt w br"></span>已连接</span></div>
+      <div class="list" style="padding:12px 16px">
+        <div class="card n"><div class="ctop"><span></span><span class="ts">14:28</span></div><div class="ctext">验证码：849201</div></div>
+        <div class="card n"><div class="ctop"><span class="tag c">来自电脑</span><span class="ts">14:32</span></div><div class="ctext">https://github.com/clipsync/core</div></div>
+        <div class="card n"><div class="ctop"><span class="tag c">来自电脑</span><span class="ts">14:11</span></div><div class="ctext code">pwsh .\scripts\build-windows.ps1</div></div>
+      </div>
+    </div></div>
+    <div class="dcap">Android · 暖 · 标签只出现在冷色项</div>
+  </div>
+</div>
+<div class="law"><b>修正后的语法是完全镜像的：</b>暖＝手机，冷＝电脑，<b>永远如此，与你正在看哪台设备无关</b>。加上「缺省即本地」，每一端都只给对侧来的项打标签——于是两边的标签颜色天然互补，同一条剪贴项在两台设备上颜色一致。<br><br>顺带的收益：<b>标签数量少了约四成</b>，而信息量反而增加了（现在颜色真的编码了来源）。这就是「不杂乱」最典型的实现方式——<b>删掉的是冗余，不是信息</b>。</div>
+</div>
+
+<!-- ============ 变更表 ============ -->
+<section>
+  <h2><span class="idx">CHANGELOG</span>改了什么，依据是什么</h2>
+  <div class="sub">七处。版面结构、控件位置、信息层级一律未动。</div>
+  <table>
+    <tr><th></th><th>改动</th><th>前 → 后</th><th>依据 / 收益</th></tr>
+    <tr><td class="num">1</td><td class="ax">卡片浮起方式</td><td>嵌套毛玻璃 → 提高不透明度</td>
+      <td class="wy"><b>WPF 渲染不出嵌套 backdrop blur。</b>改用 .42→.88 的不透明度跃迁 + hover 时才出现的阴影。观感几乎无损，且这是<b>唯一能两端一致</b>的做法。顺带省掉一次昂贵的模糊合成。</td></tr>
+    <tr><td class="num">2</td><td class="ax">本地项去标签</td><td>「本地复制」灰标签 → 无标签</td>
+      <td class="wy"><b>缺省即本地。</b>「无标签＝此地」在两端都成立，是完美镜像的语法。删掉近四成标签，静息状态噪音显著下降。</td></tr>
+    <tr><td class="num">3</td><td class="ax">冷暖轴＝设备轴</td><td>Android 端的 PC 来源用<b>暖</b> → 改用<b>冷</b></td>
+      <td class="wy"><b>本次最实质的修正。</b>原版同一个暖色在两端表示相反的意思。修正后暖恒等于手机、冷恒等于电脑，与观察者所在设备无关。见「对偶检验」页。</td></tr>
+    <tr><td class="num">4</td><td class="ax">筛选 chip</td><td>四个常驻 → 移入搜索聚焦态</td>
+      <td class="wy"><b>一屏只有一个主角。</b>四个 chip 与卡片列表争夺同一层视觉权重。它们只在检索意图出现时才有用，藏进聚焦态即可。</td></tr>
+    <tr><td class="num">5</td><td class="ax">状态点改呼吸</td><td>静态圆点 → 4s 呼吸 + 文案收短</td>
+      <td class="wy"><b>状态即背景</b>的最小实现。连接活着＝在呼吸，断开＝凝固。「Pixel 8 · 直连中」缩为「Pixel 8」——呼吸本身已经说了「直连中」。</td></tr>
+    <tr><td class="num">6</td><td class="ax">圆角嵌套定律</td><td>输入框 12px → 9px；卡片 16px → 11px</td>
+      <td class="wy"><code style="font-family:'JetBrains Mono',monospace;font-size:11px">内 = 外 − 内边距</code>。外壳 24px、内边距 21px 时，内层理论值 3px 偏小，取一档折中让两条弧接近同心。半透明会把角落几何关系放大，这一处最容易「说不上来哪里怪」。</td></tr>
+    <tr><td class="num">7</td><td class="ax">Emoji 换线性图标</td><td>📋🔗⚙️ → 单色 1.8px 描边</td>
+      <td class="wy"><b>这条对双端统一是硬伤。</b>Emoji 在 Windows 走 Segoe UI Emoji、Android 走 Noto Color Emoji，<b>造型和配色完全不同</b>，会直接让两端看起来像两个应用。而且彩色 emoji 无法参与你的低彩度体系——它们是画面里彩度最高的东西。</td></tr>
+  </table>
+  <div class="law"><b>没有改的：</b>配色本体、字体搭配、三层阴影配方、环境光场、间距节奏、所有文案位置与信息架构。<b>这是一次调音，不是重新编曲。</b></div>
+  <div class="law warn"><b>本页的渐变用了 CSS <code style="font-family:'JetBrains Mono',monospace;font-size:11px">in oklab</code>，原生端拿不到。</b>移植时必须用技术实验室 §01 生成的预计算色标表替换——WPF 和 Compose 的渐变都只有 sRGB 插值。这是唯一一处「浏览器里好看、原生端要额外干活」的地方。</div>
+</section>
+
+<div class="ftr">A/B COMPARISON · 概念稿，未接入项目代码</div>
+</div>
+<script>
+function sw(i){
+  document.querySelectorAll('.view').forEach((v,k)=>v.classList.toggle('on',k===i));
+  document.querySelectorAll('.tab').forEach((t,k)=>t.classList.toggle('on',k===i));
+}
+// 呼吸相位锁挂钟：两端天然同频
+const p=(Date.now()%4000)/1000;
+document.querySelectorAll('.dt.br').forEach(e=>e.style.animationDelay=`-${p}s`);
+document.querySelectorAll('.ph-amb').forEach(e=>e.style.animationDelay=`-${(Date.now()%22000)/1000}s`);
+</script>
+</body>
+</html>
