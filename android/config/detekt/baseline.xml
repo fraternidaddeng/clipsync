@@ -19,8 +19,8 @@
     <ID>CyclomaticComplexMethod:ImageCodec.kt$ImageCodec$private fun tryReadJpegSize(encoded: ByteArray): Pair&lt;Int, Int&gt;?</ID>
     <ID>CyclomaticComplexMethod:ImageThumbnail.kt$ImageThumbnail$private fun writeThumbnail(blob: File, dest: File): File?</ID>
     <ID>CyclomaticComplexMethod:PairingJson.kt$PairingJson.StrictScanner$private fun scanNumber()</ID>
-    <ID>CyclomaticComplexMethod:ProtocolJson.kt$ProtocolJson$private fun rejectDuplicateKeys(source: String)</ID>
     <ID>CyclomaticComplexMethod:ProtocolJson.kt$ProtocolJson$private fun validateBody(type: String, body: kotlinx.serialization.json.JsonObject, version: Int)</ID>
+    <ID>CyclomaticComplexMethod:ProtocolStrictJson.kt$ProtocolStrictJson.StrictScanner$private fun scanNumber()</ID>
     <ID>CyclomaticComplexMethod:SyncEngine.kt$SyncEngine$private suspend fun dispatch(text: String): Boolean</ID>
     <ID>CyclomaticComplexMethod:SyncEngine.kt$SyncEngine$private suspend fun handleClipAnnounce(announce: ClipAnnounceBody): Boolean</ID>
     <ID>CyclomaticComplexMethod:SyncEngine.kt$SyncEngine$suspend fun run(sessionTransport: SyncTransport): SyncSessionResult</ID>
@@ -249,6 +249,9 @@
     <ID>MagicNumber:ProtocolJson.kt$ProtocolJson$128</ID>
     <ID>MagicNumber:ProtocolJson.kt$ProtocolJson$256</ID>
     <ID>MagicNumber:ProtocolJson.kt$ProtocolJson$32</ID>
+    <ID>MagicNumber:ProtocolStrictJson.kt$ProtocolStrictJson.StrictScanner$0x20</ID>
+    <ID>MagicNumber:ProtocolStrictJson.kt$ProtocolStrictJson.StrictScanner$16</ID>
+    <ID>MagicNumber:ProtocolStrictJson.kt$ProtocolStrictJson.StrictScanner$4</ID>
     <ID>MagicNumber:SyncMessages.kt$SyncLimits$0x80</ID>
     <ID>MagicNumber:SyncMessages.kt$SyncLimits$0x800</ID>
     <ID>MagicNumber:SyncMessages.kt$SyncLimits$3</ID>
@@ -330,15 +333,18 @@
     <ID>MaxLineLength:PairingJson.kt$PairingJson$fun serialize(request: PairingConfirmRequest): String</ID>
     <ID>MaxLineLength:PairingJson.kt$PairingJson$fun serialize(response: PairingConfirmResponse): String</ID>
     <ID>MaxLineLength:PairingJson.kt$PairingJson$requireDocument(decodeBase64Url256(response.pairSecret) != null) { "pair_secret is not 32 bytes of unpadded base64url" }</ID>
+    <ID>MaxLineLength:ProtocolFixtureTest.kt$ProtocolFixtureTest$"""{"version":1,"type":"error","request_id":"9b24fc53-b75f-4bd3-9b24-127025de111a","body":{"code":"RATE_LIMITED","retryable":true,"retry_after_ms":null}}"""</ID>
+    <ID>MaxLineLength:ProtocolFixtureTest.kt$ProtocolFixtureTest$"""{"version":1,"type":"ping","request_id":"9b24fc53-b75f-4bd3-9b24-127025de111a","body":{"sent_at_ms":1,"pad":"$padding"}}"""</ID>
+    <ID>MaxLineLength:ProtocolFixtureTest.kt$ProtocolFixtureTest$"""{"version":1,"type":"ping","request_id":"9b24fc53-b75f-4bd3-9b24-127025de111a","body":{"sent_at_ms":1,"sent_at_ms":2}}"""</ID>
     <ID>MaxLineLength:ProtocolFixtureTest.kt$ProtocolFixtureTest$"""{"version":1,"type":"ping","request_id":"9b24fc53-b75f-4bd3-9b24-127025de111a","body":{},"extra":true}"""</ID>
     <ID>MaxLineLength:ProtocolJson.kt$ProtocolJson$"event_id"</ID>
     <ID>MaxLineLength:ProtocolJson.kt$ProtocolJson$if (isString || content.contains('.') || content.contains('e', ignoreCase = true)) null else content.toLongOrNull()</ID>
+    <ID>MaxLineLength:ProtocolStrictJson.kt$ProtocolStrictJson$/** Must match `SyncLimits.MAX_WEBSOCKET_TEXT_MESSAGE_BYTES` and Windows `ProtocolLimits.MaxWebSocketTextMessageBytes`. */</ID>
     <ID>MaxLineLength:SyncEngine.kt$SyncEngine$RemoteClipApplied(item.eventId, item.originDeviceId, item.originSeq, item.content, item.createdAtMs)</ID>
     <ID>MaxLineLength:SyncSupervisorTest.kt$SyncSupervisorTest$private fun backoffWithoutJitter()</ID>
     <ID>NestedBlockDepth:AdbLogTestSupport.kt$fun assertNoRetainedRawLine(target: Any, rawLine: String)</ID>
     <ID>NestedBlockDepth:HiddenApis.kt$HiddenApis$fun callProvider( provider: Any, authority: String, method: String, extras: Bundle, ): Bundle?</ID>
     <ID>NestedBlockDepth:ImageCodec.kt$ImageCodec$fun tryInspectFile( path: File, expectedHash: String? = null, expectedBytes: Long? = null, ): Pair&lt;ImageCodecError, ValidatedImage?&gt;</ID>
-    <ID>NestedBlockDepth:ProtocolJson.kt$ProtocolJson$private fun rejectDuplicateKeys(source: String)</ID>
     <ID>NestedBlockDepth:SyncEngine.kt$SyncEngine$private suspend fun handleClipAnnounce(announce: ClipAnnounceBody): Boolean</ID>
     <ID>ReturnCount:AdbLogOverlayBackend.kt$AdbLogOverlayBackend$private fun diagnose(granted: Boolean): Pair&lt;CapabilityState, String?&gt;</ID>
     <ID>ReturnCount:AndroidPublicClipboardWriter.kt$AndroidClipboardWriteOs$override fun setPrimaryImage( encoded: ByteArray, mimeType: String, originEventId: String, ): OsWriteStatus</ID>
@@ -478,6 +484,7 @@
     <ID>TooManyFunctions:PairingStore.kt$PairingStore</ID>
     <ID>TooManyFunctions:PrivilegedHostService.kt$PrivilegedHostService : Stub</ID>
     <ID>TooManyFunctions:ProtocolJson.kt$ProtocolJson</ID>
+    <ID>TooManyFunctions:ProtocolStrictJson.kt$ProtocolStrictJson$StrictScanner</ID>
     <ID>TooManyFunctions:RoomSyncRepository.kt$RoomSyncRepository : SyncRepository</ID>
     <ID>TooManyFunctions:ShizukuClipboardBackend.kt$ShizukuClipboardBackend : BackgroundClipboardBackend</ID>
     <ID>TooManyFunctions:ShizukuRuntime.kt$ShizukuRuntime</ID>
