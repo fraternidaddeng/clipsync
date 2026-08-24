@@ -71,9 +71,26 @@ public sealed class PeerServer : IAsyncDisposable
     /// <summary>Raised when any session commits remote clip bodies locally.</summary>
     public event Action<IReadOnlyList<RemoteClipApplied>>? RemoteClipsCommitted;
 
+    /// <summary>
+    /// Raised on a worker thread whenever the set of live sessions changes: a session
+    /// finished its handshake or a session ended. Subscribers read
+    /// <see cref="ConnectedDeviceIds"/> for the current authenticated set.
+    /// </summary>
+    public event Action? SessionsChanged;
+
     public int Port { get; private set; }
 
     public int ActiveSessionCount => sessions.Count;
+
+    /// <summary>Distinct device ids with a session past the handshake right now.</summary>
+    public IReadOnlyList<string> ConnectedDeviceIds => sessions.Values
+        .Where(session => session.Engine.IsReady)
+        .Select(session => session.Engine.PeerDeviceId)
+        .OfType<string>()
+        .Distinct(StringComparer.Ordinal)
+        .ToArray();
+
+    public int ConnectedDeviceCount => ConnectedDeviceIds.Count;
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
@@ -159,6 +176,7 @@ public sealed class PeerServer : IAsyncDisposable
             authThrottle,
             loggerFactory.CreateLogger("ClipSync.Peer.Session"));
         engine.RemoteClipsCommitted += OnRemoteClipsCommitted;
+        engine.SessionReady += OnSessionReady;
 
         var sessionId = Guid.NewGuid();
         var active = new ActiveSession(engine);
@@ -171,9 +189,13 @@ public sealed class PeerServer : IAsyncDisposable
         finally
         {
             engine.RemoteClipsCommitted -= OnRemoteClipsCommitted;
+            engine.SessionReady -= OnSessionReady;
             sessions.TryRemove(sessionId, out _);
+            SessionsChanged?.Invoke();
         }
     }
+
+    private void OnSessionReady(string deviceId) => SessionsChanged?.Invoke();
 
     private async Task HandlePairConfirmAsync(HttpContext context)
     {

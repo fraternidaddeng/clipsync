@@ -48,6 +48,22 @@ public partial class MainViewModel(
     [ObservableProperty]
     private int peerPort;
 
+    /// <summary>Paired devices with an authenticated session right now (conduit network segment).</summary>
+    [ObservableProperty]
+    private int connectedDeviceCount;
+
+    /// <summary>Outbox rows not yet acked by any peer (conduit local-service segment).</summary>
+    [ObservableProperty]
+    private int outboxPendingCount;
+
+    /// <summary>When a peer last confirmed receipt, phrased for the conduit detail row.</summary>
+    [ObservableProperty]
+    private string lastAckText = "尚未收到对端确认";
+
+    /// <summary>True after the clipboard adapter reported a fault; cleared on the next successful capture.</summary>
+    [ObservableProperty]
+    private bool captureFaulted;
+
     /// <summary>Local certificate fingerprint, pre-formatted in groups of four for human comparison.</summary>
     [ObservableProperty]
     private string localFingerprint = string.Empty;
@@ -87,14 +103,58 @@ public partial class MainViewModel(
         await store.CleanupAsync(
             new ClipboardRetentionPolicy(maximumAge: TimeSpan.FromDays(RetentionDays)),
             DateTimeOffset.UtcNow);
-        await RefreshAsync();
+        // Devices first: the history refresh labels remote clips with device display names.
         await RefreshDevicesAsync();
+        await RefreshAsync();
         initialized = true;
     }
 
     public Task RefreshFromCaptureAsync() => RefreshAsync();
 
     public Task SaveSettingsFromUiAsync() => SaveSettingsAsync();
+
+    /// <summary>
+    /// Applies a live peer-endpoint snapshot: online flag, listening port, and how many
+    /// paired devices hold an authenticated session. Recomputes the network segment text.
+    /// </summary>
+    public void UpdatePeerStatus(bool online, int port, int connectedCount)
+    {
+        PeerOnline = online;
+        PeerPort = port;
+        ConnectedDeviceCount = online ? connectedCount : 0;
+        SyncStatus = !online
+            ? "对端服务未能启动，本次会话同步关闭。"
+            : connectedCount > 0
+                ? $"LAN 监听端口 {port} · 已连接 {connectedCount} 台设备，内容实时互通。"
+                : $"LAN 监听端口 {port} · 等待已配对设备连入；事件先落库再入发件队列，断线不丢。";
+    }
+
+    /// <summary>Re-reads the outbox depth and last peer ack for the conduit local-service segment.</summary>
+    public async Task RefreshOutboxAsync()
+    {
+        var status = await store.GetOutboxStatusAsync();
+        OutboxPendingCount = status.PendingCount;
+        LastAckText = status.LastPeerAckAt is { } ackedAt
+            ? $"对端确认至 {ackedAt.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture)}"
+            : "尚未收到对端确认";
+    }
+
+    /// <summary>
+    /// Records remote activity from the given origin devices: bumps their last-seen
+    /// timestamps and refreshes the device list so the UI shows the new times.
+    /// </summary>
+    public async Task NotifyRemoteActivityAsync(IEnumerable<string> originDeviceIds, DateTimeOffset now)
+    {
+        foreach (var deviceId in originDeviceIds.Distinct(StringComparer.Ordinal))
+        {
+            if (!string.Equals(deviceId, store.LocalDeviceId, StringComparison.Ordinal))
+            {
+                await store.UpdateDeviceLastSeenAsync(deviceId, now);
+            }
+        }
+
+        await RefreshDevicesAsync();
+    }
 
     [RelayCommand]
     private async Task RefreshAsync()
@@ -103,9 +163,14 @@ public partial class MainViewModel(
         History.Clear();
         foreach (var entry in entries)
         {
-            History.Add(HistoryItemViewModel.FromEntry(entry));
+            History.Add(HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDeviceName));
         }
+
+        await RefreshOutboxAsync();
     }
+
+    private string? LookupDeviceName(string deviceId) =>
+        Devices.FirstOrDefault(device => device.DeviceId == deviceId)?.DisplayName;
 
     [RelayCommand]
     private async Task SearchAsync() => await RefreshAsync();
