@@ -2,10 +2,13 @@ package com.clipsync.android.ui.health
 
 import com.clipsync.android.pairing.FakeKeyValueStore
 import com.clipsync.android.pairing.FakeSecretProtector
+import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingConfirmResponse
 import com.clipsync.android.pairing.PairingDocumentKinds
 import com.clipsync.android.pairing.PairingQrPayload
 import com.clipsync.android.pairing.PairingStore
+import com.clipsync.android.pairing.PeerHealthApi
+import com.clipsync.android.pairing.PeerHealthOutcome
 import com.clipsync.android.platform.clipboard.BackendHealth
 import com.clipsync.android.platform.clipboard.BackendHealthState
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackend
@@ -26,6 +29,7 @@ import com.clipsync.android.ui.ConduitStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -392,6 +396,63 @@ class HealthViewModelTest {
     @Test
     fun `no notification fact at all without capability wiring`() {
         assertNull(viewModel().state.value.notificationsEnabled)
+    }
+
+    // ---- periodic peer reachability polling (mirrors Windows live refresh) ----------------
+
+    /** Records how many reachability probes ran so the ticker's effect is observable. */
+    private class CountingPeerHealth(
+        private val outcome: PeerHealthOutcome = PeerHealthOutcome.Unreachable,
+    ) : PeerHealthApi {
+        var probeCount = 0
+            private set
+
+        override suspend fun probe(peer: PairedPeer): PeerHealthOutcome {
+            probeCount++
+            return outcome
+        }
+    }
+
+    private fun modelWithReachabilityTicker(
+        peerHealth: PeerHealthApi,
+        ticker: kotlinx.coroutines.flow.Flow<Unit>,
+    ): HealthViewModel {
+        val environment = FakeClipboardEnvironment()
+        return HealthViewModel(
+            pairingStore = store,
+            clipboard = ClipboardAccessCoordinator(listOf(environment.readBackend)),
+            syncHealthSource = null,
+            probeDispatcher = dispatcher,
+            capability = CapabilityWiring(
+                routeProbes = object : RouteProbes {
+                    override fun probe() = RoutePrerequisites()
+                },
+                capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore()),
+                writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
+                foregroundBackend = environment.readBackend,
+                clearClipboard = { environment.text = null },
+                peerHealth = peerHealth,
+                nowMs = { 1_755_000_000_000 },
+            ),
+            reachabilityRefreshTicker = ticker,
+        )
+    }
+
+    @Test
+    fun `reachability ticker re-probes the peer while paired`() {
+        pair()
+        val peerHealth = CountingPeerHealth()
+        modelWithReachabilityTicker(peerHealth, flowOf(Unit))
+        // The init refresh probes once; the single ticker emission probes again.
+        assertEquals(2, peerHealth.probeCount)
+    }
+
+    @Test
+    fun `reachability ticker stays quiet when unpaired`() {
+        val peerHealth = CountingPeerHealth()
+        modelWithReachabilityTicker(peerHealth, flowOf(Unit))
+        // No peer: neither the init refresh nor the tick has anything to probe.
+        assertEquals(0, peerHealth.probeCount)
     }
 
     @Test

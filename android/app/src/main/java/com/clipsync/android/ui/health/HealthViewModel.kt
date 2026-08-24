@@ -25,9 +25,12 @@ import com.clipsync.android.ui.HealthScreenState
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -66,6 +69,13 @@ class HealthViewModel(
     syncHealthSource: SyncHealthSource? = null,
     private val probeDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val capability: CapabilityWiring? = null,
+    /**
+     * Periodic nudge to re-probe peer reachability while a peer is paired, so the conduit's
+     * 对端可达 state does not go stale on a page the user keeps open. Mirrors the Windows app's
+     * 30s live-refresh timer (App.LiveRefreshInterval). Null disables it; the [factory] wires a
+     * real periodic tick, tests inject a finite flow so the behaviour is deterministic.
+     */
+    reachabilityRefreshTicker: Flow<Unit>? = null,
 ) : ViewModel() {
     // Peer presence is known synchronously (same pattern as PairingViewModel);
     // clipboard and sync facts arrive asynchronously via refresh()/snapshots().
@@ -86,6 +96,17 @@ class HealthViewModel(
                 syncHealthSource.snapshots().collect { sync ->
                     lastSyncHealth = sync
                     publish(pairingStore.peer())
+                }
+            }
+        }
+        if (reachabilityRefreshTicker != null) {
+            viewModelScope.launch {
+                reachabilityRefreshTicker.collect {
+                    // Re-probe only when there is something to probe: a paired peer and a
+                    // reachability probe wired. refresh() itself repeats these guards.
+                    if (pairingStore.peer() != null && capability?.peerHealth != null) {
+                        refresh()
+                    }
                 }
             }
         }
@@ -243,11 +264,15 @@ class HealthViewModel(
     companion object {
         const val ERROR_WRITE_UNVERIFIED = "CLIPBOARD_WRITE_UNVERIFIED"
 
+        /** Matches the Windows app's live-refresh cadence so both ends re-check peers on the same beat. */
+        const val REACHABILITY_REFRESH_INTERVAL_MS = 30_000L
+
         fun factory(
             pairingStore: PairingStore,
             clipboard: ClipboardAccessCoordinator,
             syncHealthSource: SyncHealthSource?,
             capability: CapabilityWiring? = null,
+            reachabilityRefreshIntervalMs: Long = REACHABILITY_REFRESH_INTERVAL_MS,
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T =
@@ -256,8 +281,21 @@ class HealthViewModel(
                     clipboard = clipboard,
                     syncHealthSource = syncHealthSource,
                     capability = capability,
+                    reachabilityRefreshTicker = periodicTicker(reachabilityRefreshIntervalMs),
                 ) as T
         }
+
+        private fun periodicTicker(intervalMs: Long): Flow<Unit>? =
+            if (intervalMs <= 0L) {
+                null
+            } else {
+                flow {
+                    while (true) {
+                        delay(intervalMs)
+                        emit(Unit)
+                    }
+                }
+            }
     }
 }
 
