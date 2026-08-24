@@ -1,4 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ClipSync</string>
+
+    <!-- 系统入口 -->
+    <string name="share_target_label">发送到电脑</string>
+    <string name="qs_tile_label">发送剪贴板</string>
+
+    <!-- 通知：正文永不包含剪贴板内容 -->
+    <string name="notification_channel_inbox_name">收到的文本</string>
+    <string name="notification_channel_inbox_description">收到来自已配对电脑的新文本时提醒</string>
+    <string name="notification_inbox_title">来自电脑的新文本</string>
+    <string name="notification_inbox_text">点按“复制”即可放入剪贴板</string>
+    <string name="notification_action_copy">复制</string>
+
+    <!-- 发送结果提示 -->
+    <string name="toast_share_enqueued">已加入发送队列，联机后同步到电脑</string>
+    <string name="toast_share_empty">分享内容为空，未加入队列</string>
+    <string name="toast_share_duplicate">相同内容刚刚已加入队列</string>
+    <string name="toast_share_too_large">文本超过 1 MiB 上限，未加入队列</string>
+    <string name="toast_share_unsupported">仅支持纯文本分享</string>
+    <string name="toast_clipboard_empty">剪贴板没有可发送的文本</string>
+    <string name="toast_clipboard_unavailable">无法读取剪贴板，请重试</string>
+
+    <!-- 复制操作提示 -->
+    <string name="toast_copied">已复制到剪贴板</string>
+    <string name="toast_copy_failed">复制失败，请打开应用后重试</string>
+    <string name="toast_copy_missing">该内容已不在收件箱中</string>
 </resources>
