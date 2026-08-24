@@ -94,7 +94,17 @@ SDKMANAGER="$ANDROID_SDK_DIR/cmdline-tools/latest/bin/sdkmanager"
 if [ ! -d "$ANDROID_SDK_DIR/platforms/android-35" ] \
    || [ ! -d "$ANDROID_SDK_DIR/build-tools/35.0.0" ] \
    || [ ! -d "$ANDROID_SDK_DIR/platform-tools" ]; then
+  # `yes` is killed by SIGPIPE (exit 141) once sdkmanager stops reading; disable
+  # pipefail around this pipe so that harmless SIGPIPE does not abort the script,
+  # while still surfacing a real sdkmanager failure via PIPESTATUS.
+  set +o pipefail
   yes | "$SDKMANAGER" --licenses >/dev/null
+  license_status=${PIPESTATUS[1]}
+  set -o pipefail
+  if [ "$license_status" -ne 0 ]; then
+    echo "sdkmanager --licenses failed (status $license_status)" >&2
+    exit 1
+  fi
   "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 else
   echo "Android SDK packages already present"
