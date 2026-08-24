@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <!-- needs-action: same mark, ochre dot lit on the peak vertex (no badge, no icon swap) -->
+  <!-- dot is the only non-currentColor element; day #9b6b24 / night #d9a15c, #C08A3E = tray compromise -->
+  <path d="M2 8h3l1.5-3.5 3 7 1.5-3.5h3"/>
+  <circle cx="6.5" cy="4.5" r="2.4" fill="#C08A3E" stroke="none"/>
+</svg>

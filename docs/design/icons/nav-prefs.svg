@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <!-- preferences: three slider rails with knobs (no gear - closed regions blur at 16px) -->
+  <path d="M4 6h8.3M17.7 6H20"/><circle cx="15" cy="6" r="2.2"/>
+  <path d="M4 12h2.3M11.7 12H20"/><circle cx="9" cy="12" r="2.2"/>
+  <path d="M4 18h9.3M18.7 18H20"/><circle cx="16" cy="18" r="2.2"/>
+</svg>
