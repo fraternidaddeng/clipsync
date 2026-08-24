@@ -6,15 +6,17 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Three voices (tokens.md §6). Sans and Mono ship with the package (Resources/Fonts/,
+    <!-- Three voices (tokens.md §6), all shipped with the package (Resources/Fonts/,
          resolved relative to this dictionary): Plus Jakarta Sans carries Latin, Noto Sans SC
          carries Chinese, JetBrains Mono is the machine voice (never used for Chinese — CJK
          characters inside mono runs fall through to the bundled Noto Sans SC, then Consolas
          only if the embedded faces fail to load).
-         Serif is the one voice still on system fallback: Noto Serif SC is ~11 MB per weight,
-         too heavy to bundle for its three charter appearances (brand, empty state, pairing). -->
+         Serif ships the single SemiBold weight of Noto Serif SC (~11 MB) for its three charter
+         appearances (brand, empty state, pairing) — the size verdict was already accepted on
+         Android, and SimSun must never carry the brand voice. The GDI-style family name
+         ("Noto Serif SC SemiBold") is listed after the typographic one as a resolver hedge. -->
     <FontFamily x:Key="CsSans">./Fonts/#Plus Jakarta Sans, ./Fonts/#Noto Sans SC, Segoe UI, Microsoft YaHei UI</FontFamily>
-    <FontFamily x:Key="CsSerif">Noto Serif SC, SimSun, Georgia</FontFamily>
+    <FontFamily x:Key="CsSerif">./Fonts/#Noto Serif SC, ./Fonts/#Noto Serif SC SemiBold, Noto Serif SC, SimSun, Georgia</FontFamily>
     <FontFamily x:Key="CsMono">./Fonts/#JetBrains Mono, ./Fonts/#Noto Sans SC, Consolas</FontFamily>
 
     <!-- The polyline mark (24 grid) and the phone glyph, shared across windows -->

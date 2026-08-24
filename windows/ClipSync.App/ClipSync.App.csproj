@@ -15,7 +15,8 @@
   <ItemGroup>
     <Resource Include="Assets\Icons\*.ico" />
     <!-- Charter voices ship with the package (tokens.md §6): Noto Sans SC (Chinese sans),
-         Plus Jakarta Sans (Latin sans) and JetBrains Mono (machine voice). All OFL-licensed;
+         Plus Jakarta Sans (Latin sans), JetBrains Mono (machine voice) and Noto Serif SC
+         SemiBold (the serif voice for its three charter appearances). All OFL-licensed;
          licence texts live next to the files. -->
     <Resource Include="Resources\Fonts\*.otf" />
     <Resource Include="Resources\Fonts\*.ttf" />
