@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clipsync.android.ui.ConduitStatusBand
 import com.clipsync.android.ui.HealthScreenState
+import com.clipsync.android.ui.health.buildHealthScreenState
 import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.ClipSyncType
@@ -376,7 +377,7 @@ private fun NoMatchState(query: String, modifier: Modifier = Modifier) {
 private fun HomeScreenEmptyPreview() {
     ClipSyncTheme {
         HomeScreen(
-            conduit = HealthScreenState.initial(),
+            conduit = buildHealthScreenState(peer = null, clipboard = null, sync = null),
             home = HomeUiState(loaded = true),
             onQueryChange = {},
             onCopy = {},
@@ -391,7 +392,7 @@ private fun HomeScreenEmptyPreview() {
 private fun HomeScreenListPreview() {
     ClipSyncTheme {
         HomeScreen(
-            conduit = HealthScreenState.initial(),
+            conduit = buildHealthScreenState(peer = null, clipboard = null, sync = null),
             home = HomeUiState(
                 loaded = true,
                 items = listOf(

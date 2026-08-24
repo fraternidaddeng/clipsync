@@ -12,7 +12,6 @@ import com.clipsync.android.platform.clipboard.ClipboardWriteResult
 import com.clipsync.android.platform.clipboard.ClipboardWriter
 import com.clipsync.android.storage.ClipEntry
 import com.clipsync.android.storage.ClipSyncRepository
-import com.clipsync.android.ui.ConduitStatus
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlinx.coroutines.Dispatchers
@@ -266,18 +265,18 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `conduit reflects the pairing store after refresh`() = runTest(dispatcher) {
+    fun `refreshPeer relabels remote clips after a new pairing`() = runTest(dispatcher) {
+        repository.clips.value = listOf(
+            clip("e-remote", "hello", origin = WINDOWS_ID, createdAtMs = 1_000),
+        )
         val model = model()
         testScheduler.advanceUntilIdle()
-        assertEquals(ConduitStatus.NEEDS_ACTION, model.conduit.value.network.status)
-        assertEquals(0, model.conduit.value.pairedDeviceCount)
+        assertEquals("远端设备", model.state.value.items.single().remoteSourceLabel)
 
         pairWithWindows()
-        model.refreshConduit()
+        model.refreshPeer()
         testScheduler.advanceUntilIdle()
-        assertEquals(ConduitStatus.UNPROBED, model.conduit.value.network.status)
-        assertEquals(1, model.conduit.value.pairedDeviceCount)
-        assertTrue(model.conduit.value.network.detail.contains("PC-STUDIO"))
+        assertEquals("PC-STUDIO", model.state.value.items.single().remoteSourceLabel)
     }
 
     @Test

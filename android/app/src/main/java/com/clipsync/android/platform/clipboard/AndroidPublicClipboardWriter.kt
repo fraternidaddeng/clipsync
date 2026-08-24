@@ -5,22 +5,23 @@ import android.content.ClipboardManager
 import android.content.Context
 
 /**
- * The public write path (plan.md §2.1): plain `ClipboardManager.setPrimaryClip`
- * with the actual outcome reported — a vendor rejection surfaces as a stable
- * error code instead of a faked success.
+ * Public-API clipboard writer (`ClipboardManager.setPrimaryClip`). AOSP allows writes without
+ * focus, so this is the default write path; OEM rejections surface as stable error codes for
+ * the write coordinator to decide on a privileged fallback (plan 0.1.2 rule 5).
+ * The ClipData label is a constant so no content leaks through it.
  */
 class AndroidPublicClipboardWriter(context: Context) : ClipboardWriter {
     private val appContext = context.applicationContext
 
-    override fun probe(): CapabilityState =
-        if (manager() != null) CapabilityState.READY else CapabilityState.UNAVAILABLE
+    override fun probe(): CapabilityState {
+        return if (clipboardManager() != null) CapabilityState.READY else CapabilityState.UNAVAILABLE
+    }
 
     override fun writeText(text: String, originEventId: String): ClipboardWriteResult {
-        val manager = manager() ?: return ClipboardWriteResult.Failure(ERROR_MANAGER_MISSING)
+        val manager = clipboardManager()
+            ?: return ClipboardWriteResult.Failure(ERROR_SERVICE_MISSING)
         return try {
-            // Generic label: clip labels can surface in system UI and must not
-            // leak content.
-            manager.setPrimaryClip(ClipData.newPlainText("clipsync", text))
+            manager.setPrimaryClip(ClipData.newPlainText(CLIP_LABEL, text))
             ClipboardWriteResult.Success
         } catch (_: SecurityException) {
             ClipboardWriteResult.Failure(ERROR_WRITE_DENIED)
@@ -29,12 +30,13 @@ class AndroidPublicClipboardWriter(context: Context) : ClipboardWriter {
         }
     }
 
-    private fun manager(): ClipboardManager? =
+    private fun clipboardManager(): ClipboardManager? =
         appContext.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
 
     companion object {
-        const val ERROR_MANAGER_MISSING = "public_write_manager_missing"
-        const val ERROR_WRITE_DENIED = "public_write_denied"
-        const val ERROR_WRITE_FAILED = "public_write_failed"
+        const val ERROR_SERVICE_MISSING = "CLIPBOARD_SERVICE_MISSING"
+        const val ERROR_WRITE_DENIED = "CLIPBOARD_WRITE_DENIED"
+        const val ERROR_WRITE_FAILED = "CLIPBOARD_WRITE_FAILED"
+        private const val CLIP_LABEL = "ClipSync"
     }
 }

@@ -30,6 +30,34 @@ class ClipboardAccessCoordinator(
         return selectAndStart(fromMode = state.requestedReadMode)
     }
 
+    /**
+     * Probes every registered backend in fallback order without starting any of
+     * them and returns the most capable report (READY > DEGRADED > UNKNOWN >
+     * UNAVAILABLE), or null when no backends are registered. Health UI uses
+     * this; it never changes which backend is active.
+     */
+    fun probe(): CapabilityReport? {
+        var best: CapabilityReport? = null
+        for (mode in FALLBACK_ORDER) {
+            val backend = backendsByMode[mode] ?: continue
+            val report = backend.probe()
+            if (best == null || readStateRank(report.readState) < readStateRank(best.readState)) {
+                best = report
+            }
+            if (report.readState == CapabilityState.READY) {
+                break
+            }
+        }
+        return best
+    }
+
+    private fun readStateRank(state: CapabilityState): Int = when (state) {
+        CapabilityState.READY -> 0
+        CapabilityState.DEGRADED -> 1
+        CapabilityState.UNKNOWN -> 2
+        CapabilityState.UNAVAILABLE -> 3
+    }
+
     fun requestMode(mode: ClipboardReadMode): ClipboardAccessState {
         state = state.copy(requestedReadMode = mode)
         if (listener == null) {

@@ -9,9 +9,6 @@ import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
 import com.clipsync.android.storage.ClipEntry
 import com.clipsync.android.storage.ClipSyncRepository
-import com.clipsync.android.ui.ConduitSegmentState
-import com.clipsync.android.ui.ConduitStatus
-import com.clipsync.android.ui.HealthScreenState
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -20,14 +17,12 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -77,15 +72,6 @@ class HomeViewModel(
     private val localDeviceId = pairingStore.localDeviceId()
     private var noticeClearJob: Job? = null
 
-    /** Conduit state for the 44dp band and the 通路 page — one source of truth. */
-    val conduit: StateFlow<HealthScreenState> = peerSnapshot
-        .map { conduitStateFor(it) }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            conduitStateFor(peerSnapshot.value),
-        )
-
     init {
         viewModelScope.launch {
             combine(
@@ -114,8 +100,8 @@ class HomeViewModel(
         queryInput.value = query
     }
 
-    /** Re-reads the pairing store; call when returning to the screen or after pairing. */
-    fun refreshConduit() {
+    /** Re-reads the pairing store so remote source tags pick up a new peer name. */
+    fun refreshPeer() {
         peerSnapshot.value = pairingStore.peer()
     }
 
@@ -151,21 +137,6 @@ class HomeViewModel(
             delayMs(noticeClearAfterMs)
             mutableState.update { it.copy(notice = null) }
         }
-    }
-
-    private fun conduitStateFor(peer: PairedPeer?): HealthScreenState {
-        val base = HealthScreenState.initial()
-        if (peer == null) {
-            return base
-        }
-        return base.copy(
-            network = ConduitSegmentState(
-                statusLabel = "已配对 · 未探测",
-                detail = "已与「${peer.displayName}」配对。实时同步连接随同步服务接入后探测。",
-                status = ConduitStatus.UNPROBED,
-            ),
-            pairedDeviceCount = 1,
-        )
     }
 
     companion object {
