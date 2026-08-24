@@ -17,6 +17,8 @@ data class SyncHealth(
     val peerWriteState: CapabilityState? = null,
     /** Stable code of the last foreground-service start failure, if any. */
     val serviceErrorCode: String? = null,
+    /** The peer is rate-limiting this device after repeated failed authentication. */
+    val peerThrottled: Boolean = false,
 )
 
 /**

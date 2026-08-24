@@ -186,11 +186,13 @@ class MainActivity : ComponentActivity() {
                     ClipboardSyncService.serviceRunning,
                     ClipboardSyncService.connectionStates,
                     ClipboardSyncService.startErrorCodes,
-                ) { running, connection, startError ->
+                    ClipboardSyncService.peerThrottled,
+                ) { running, connection, startError, throttled ->
                     SyncHealth(
                         serviceRunning = running,
                         connected = connection is SyncConnectionState.Connected,
                         serviceErrorCode = startError,
+                        peerThrottled = throttled,
                     )
                 }
             },

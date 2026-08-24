@@ -28,6 +28,10 @@
     <string name="notification_recovery_title">需要恢复 · 剪贴同步未运行</string>
     <string name="notification_recovery_text">同步服务未能自动启动。点按打开应用手动恢复。</string>
 
+    <!-- 对端限流：电脑端检测到本机反复认证失败，临时拒绝连接（镜像 Windows 托盘气泡） -->
+    <string name="notification_auth_throttled_title">已被对端临时限流</string>
+    <string name="notification_auth_throttled_text">电脑端检测到本机多次认证失败，已临时限流。约 30 秒后自动重试；若持续出现，请重新配对。</string>
+
     <!-- 发送结果提示 -->
     <string name="toast_share_enqueued">已加入发送队列，联机后同步到电脑</string>
     <string name="toast_share_empty">分享内容为空，未加入队列</string>

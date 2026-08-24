@@ -160,6 +160,22 @@ class HealthViewModelTest {
     }
 
     @Test
+    fun `peer throttling shows on the network segment until a session authenticates`() {
+        pair()
+        val sync = FakeSyncHealthSource(
+            SyncHealth(serviceRunning = true, connected = false, peerThrottled = true),
+        )
+        val model = viewModel(syncHealthSource = sync)
+        val throttled = model.state.value.network
+        assertEquals(ConduitStatus.DEGRADED, throttled.status)
+        assertEquals("已被对端限流", throttled.statusLabel)
+
+        // A session that authenticates again ends the episode on every surface.
+        sync.flow.value = SyncHealth(serviceRunning = true, connected = true, peerThrottled = false)
+        assertEquals(ConduitStatus.READY, model.state.value.network.status)
+    }
+
+    @Test
     fun `stopped sync service degrades the local service segment`() {
         val sync = FakeSyncHealthSource(SyncHealth(serviceRunning = false, connected = false))
         val state = viewModel(syncHealthSource = sync).state.value

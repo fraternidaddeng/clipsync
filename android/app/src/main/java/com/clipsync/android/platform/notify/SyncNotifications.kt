@@ -21,6 +21,7 @@ object SyncNotifications {
     const val CHANNEL_RECOVERY = "clipsync.recovery"
     private const val INBOX_NOTIFICATION_ID_BASE = 41_000
     const val RECOVERY_NOTIFICATION_ID = 42_001
+    const val AUTH_THROTTLE_NOTIFICATION_ID = 42_002
 
     /** Idempotent; called from Application.onCreate so receivers can post right away. */
     fun ensureChannels(context: Context) {
@@ -182,5 +183,49 @@ object SyncNotifications {
 
     fun cancelRecoveryNeeded(context: Context) {
         NotificationManagerCompat.from(context).cancel(RECOVERY_NOTIFICATION_ID)
+    }
+
+    /**
+     * Warns that the paired Windows peer temporarily rate-limited this device after repeated
+     * failed authentication (mirrors the Windows tray bubble for the same event). Fired once
+     * per lockout episode by the sync supervisor; cancelled when a session authenticates.
+     * Contains no clipboard content and no proof material. Returns false when the user has
+     * disabled notifications — the conduit page states the same fact in-app.
+     */
+    fun notifyAuthThrottled(context: Context): Boolean {
+        ensureRecoveryChannel(context)
+        val manager = NotificationManagerCompat.from(context)
+        if (!manager.areNotificationsEnabled()) {
+            return false
+        }
+        val openApp = PendingIntent.getActivity(
+            context,
+            AUTH_THROTTLE_NOTIFICATION_ID,
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+        val notification = NotificationCompat.Builder(context, CHANNEL_RECOVERY)
+            .setSmallIcon(R.drawable.ic_notify_clip)
+            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
+            .setContentTitle(context.getString(R.string.notification_auth_throttled_title))
+            .setContentText(context.getString(R.string.notification_auth_throttled_text))
+            .setContentIntent(openApp)
+            .setAutoCancel(true)
+            // No clipboard text is present, so the lock screen may show it as-is.
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
+            .build()
+        return try {
+            manager.notify(AUTH_THROTTLE_NOTIFICATION_ID, notification)
+            true
+        } catch (_: SecurityException) {
+            // POST_NOTIFICATIONS revoked between the check and the call.
+            false
+        }
+    }
+
+    fun cancelAuthThrottled(context: Context) {
+        NotificationManagerCompat.from(context).cancel(AUTH_THROTTLE_NOTIFICATION_ID)
     }
 }

@@ -65,8 +65,16 @@ class SyncSupervisor(
     private val onRemoteClipsCommitted: (List<RemoteClipApplied>) -> Unit = {},
     /** Pause/private gate for outbound announces; passed through to every session. */
     private val outboundAllowed: () -> Boolean = { true },
+    /**
+     * Fired once per lockout episode when the peer answers with RATE_LIMITED before this
+     * device authenticated — the Windows listener throttles repeated auth failures, and the
+     * user must see that instead of a silent retry loop (mirrors the Windows tray bubble).
+     * Re-armed only after a session authenticates again. Never carries clipboard content.
+     */
+    private val onAuthThrottled: () -> Unit = {},
 ) {
     private val mutableState = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)
+    private var throttleAnnounced = false
 
     // Conflated so a burst of network-available callbacks collapses into one early retry.
     private val reconnectNudges = Channel<Unit>(Channel.CONFLATED)
@@ -130,7 +138,15 @@ class SyncSupervisor(
                 transport.dispose()
             }
 
-            attempt = if (result.authenticated) 0 else attempt
+            if (result.authenticated) {
+                attempt = 0
+                throttleAnnounced = false
+            } else if (result.errorCode == SyncErrorCodes.RATE_LIMITED && !throttleAnnounced) {
+                // Announce the transition into the throttled state once, not on every
+                // backoff retry inside the same 30-second lockout window.
+                throttleAnnounced = true
+                onAuthThrottled()
+            }
             if (!currentCoroutineContext().isActive) {
                 break
             }

@@ -444,6 +444,12 @@ private fun networkSegment(
         detail = "与「${peer.displayName}」保持连接。",
         status = ConduitStatus.READY,
     )
+    sync?.peerThrottled == true -> ConduitSegmentState(
+        statusLabel = "已被对端限流",
+        detail = "「${peer.displayName}」检测到本机多次认证失败，已临时限流。约 30 秒后自动重试。",
+        status = ConduitStatus.DEGRADED,
+        errorDetail = "若持续出现，通常表示配对凭据已失效（例如电脑端撤销或重装后）；重新配对可恢复。",
+    )
     facts?.reachability == PeerReachability.REACHABLE -> ConduitSegmentState(
         statusLabel = "对端可达",
         detail = "与「${peer.displayName}」握手成功（固定证书 TLS）；同步通道尚未接入。",

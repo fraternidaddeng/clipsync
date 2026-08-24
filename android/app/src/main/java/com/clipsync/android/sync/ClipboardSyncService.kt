@@ -88,6 +88,7 @@ class ClipboardSyncService : Service() {
         unregisterNetworkCallback()
         mutableServiceRunning.value = false
         mutableConnectionStates.value = SyncConnectionState.NotPaired
+        mutablePeerThrottled.value = false
         scope.cancel()
         super.onDestroy()
     }
@@ -135,6 +136,12 @@ class ClipboardSyncService : Service() {
             },
             // Pause/private stop outbound announces immediately; re-read every drain tick.
             outboundAllowed = { !settings.syncPaused && !settings.privateMode },
+            // The peer rate-limited this device after repeated failed auth: mirror the
+            // Windows tray bubble with a content-free notification plus a conduit fact.
+            onAuthThrottled = {
+                mutablePeerThrottled.value = true
+                SyncNotifications.notifyAuthThrottled(appContext)
+            },
         )
         this.supervisor = supervisor
         // Network-available events cut the reconnect backoff short (plan: "网络恢复后立即触发
@@ -143,6 +150,11 @@ class ClipboardSyncService : Service() {
         scope.launch { supervisor.run() }
         scope.launch {
             supervisor.state.collect { state ->
+                if (state is SyncConnectionState.Connected && mutablePeerThrottled.value) {
+                    // Authenticated again: the lockout episode is over on both surfaces.
+                    mutablePeerThrottled.value = false
+                    SyncNotifications.cancelAuthThrottled(appContext)
+                }
                 mutableConnectionStates.value = state
                 updateNotification(state)
             }
@@ -283,6 +295,7 @@ class ClipboardSyncService : Service() {
         private val mutableServiceRunning = MutableStateFlow(false)
         private val mutableConnectionStates = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)
         private val mutableStartErrorCodes = MutableStateFlow<String?>(null)
+        private val mutablePeerThrottled = MutableStateFlow(false)
 
         /** Whether the foreground service is alive; feeds the conduit's SyncHealthSource. */
         val serviceRunning: StateFlow<Boolean> = mutableServiceRunning.asStateFlow()
@@ -292,6 +305,12 @@ class ClipboardSyncService : Service() {
 
         /** Last foreground-start failure code, or null; cleared on the next successful start. */
         val startErrorCodes: StateFlow<String?> = mutableStartErrorCodes.asStateFlow()
+
+        /**
+         * True while the paired peer is rate-limiting this device after repeated failed
+         * authentication; cleared when a session authenticates. Feeds the conduit page.
+         */
+        val peerThrottled: StateFlow<Boolean> = mutablePeerThrottled.asStateFlow()
 
         @Volatile
         private var sharedRepository: SyncRepository? = null

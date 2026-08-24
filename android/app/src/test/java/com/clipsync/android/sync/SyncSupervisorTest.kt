@@ -8,6 +8,7 @@ import com.clipsync.android.pairing.PairingQrPayload
 import com.clipsync.android.pairing.PairingStore
 import java.io.IOException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
@@ -254,5 +255,102 @@ class SyncSupervisorTest {
         runCurrent()
         assertEquals(SyncConnectionState.NotPaired, supervisor.state.value)
         assertTrue(connector.calls.isEmpty())
+    }
+
+    /**
+     * Speaks just enough of the listener side to script one outcome per session: either the
+     * Windows AuthThrottle answer (retryable RATE_LIMITED before auth, then close), or a
+     * successful handshake (challenge -> accept any proof -> known_vector, then close).
+     */
+    private class ScriptedListenerTransport(
+        private val throttle: Boolean,
+        private val localDeviceId: String,
+    ) : SyncTransport {
+        private val frames = Channel<TransportFrame>(Channel.UNLIMITED)
+
+        override suspend fun receive(): TransportFrame = frames.receive()
+
+        override suspend fun send(text: String) {
+            when (SyncWire.decode(text).type) {
+                SyncMessageTypes.HELLO ->
+                    if (throttle) {
+                        deliver(
+                            SyncMessageTypes.ERROR,
+                            ErrorBody(code = SyncErrorCodes.RATE_LIMITED, retryable = true, retryAfterMs = 30_000),
+                        )
+                        frames.trySend(TransportFrame.Closed)
+                    } else {
+                        deliver(
+                            SyncMessageTypes.CHALLENGE,
+                            ChallengeBody(
+                                algorithm = HMAC_ALGORITHM,
+                                nonce = Base64Url.encode(ByteArray(32) { (it * 3).toByte() }),
+                                challengerDeviceId = PEER_ID,
+                                responderDeviceId = localDeviceId,
+                                trustEpoch = 1,
+                                expiresAtMs = Long.MAX_VALUE,
+                            ),
+                        )
+                    }
+                SyncMessageTypes.AUTH -> {
+                    // A data message is the dialer's confirmation that auth passed.
+                    deliver(SyncMessageTypes.KNOWN_VECTOR, SyncStateBody(origins = emptyList()))
+                    frames.trySend(TransportFrame.Closed)
+                }
+                else -> {}
+            }
+        }
+
+        private fun deliver(type: String, body: Any) {
+            frames.trySend(TransportFrame.Text(SyncWire.encode(type, SyncWire.newRequestId(), body)))
+        }
+
+        override suspend fun close(code: Int, reason: String) {
+            frames.trySend(TransportFrame.Closed)
+        }
+
+        override fun dispose() {
+            frames.trySend(TransportFrame.Closed)
+        }
+    }
+
+    @Test
+    fun `peer rate limiting is announced once per episode and re-arms after recovery`() = runTest {
+        val pairing = pairedStore()
+        // Session script: throttled, throttled (same episode), authenticated, throttled again.
+        val scripts = ArrayDeque(listOf(true, true, false, true))
+        val connector = ScriptedConnector {
+            ScriptedListenerTransport(scripts.removeFirst(), pairing.localDeviceId())
+        }
+        var announcements = 0
+        val supervisor = SyncSupervisor(
+            pairing = pairing,
+            repository = InMemorySyncRepository(pairing.localDeviceId()),
+            connector = connector,
+            clientVersion = "0.1.0",
+            backoff = backoffWithoutJitter(),
+            onAuthThrottled = { announcements++ },
+        )
+        backgroundScope.launch { supervisor.run() }
+
+        // First throttled session announces the lockout to the user.
+        runCurrent()
+        assertEquals(1, announcements)
+
+        // The backoff retry inside the same lockout window stays silent.
+        advanceTimeBy(1_001)
+        runCurrent()
+        assertEquals(1, announcements)
+
+        // An authenticated session ends the episode...
+        advanceTimeBy(2_001)
+        runCurrent()
+        assertEquals(1, announcements)
+
+        // ...so the next lockout is a fresh episode and announces again.
+        advanceTimeBy(1_001)
+        runCurrent()
+        assertEquals(2, announcements)
+        assertTrue(scripts.isEmpty())
     }
 }
