@@ -1,5 +1,10 @@
 package com.clipsync.android.sync
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
+
 /** A closed, inclusive origin-sequence range as defined by protocol v1 section 6. */
 data class SequenceRange(val startSeq: Long, val endSeq: Long) {
     init {
@@ -12,7 +17,6 @@ data class SequenceRange(val startSeq: Long, val endSeq: Long) {
     fun contains(seq: Long): Boolean = seq in startSeq..endSeq
 }
 
-/** Canonical range-list arithmetic shared with the Windows peer (SequenceRangeMath.cs). */
 object SequenceRangeMath {
     /** Sorts and merges overlapping or adjacent ranges into the canonical protocol form. */
     fun normalize(ranges: Iterable<SequenceRange>): List<SequenceRange> {
@@ -40,8 +44,11 @@ object SequenceRangeMath {
         return true
     }
 
-    /** Sequences covered by [minuend] but not by [subtrahend]. Both inputs must be canonical. */
-    fun subtract(minuend: List<SequenceRange>, subtrahend: List<SequenceRange>): List<SequenceRange> {
+    /** Sequences covered by [minuend] but not by [subtrahend]; both inputs must be canonical. */
+    fun subtract(
+        minuend: List<SequenceRange>,
+        subtrahend: List<SequenceRange>,
+    ): List<SequenceRange> {
         val result = mutableListOf<SequenceRange>()
         var holeIndex = 0
         for (range in minuend) {
@@ -50,14 +57,17 @@ object SequenceRangeMath {
                 while (holeIndex < subtrahend.size && subtrahend[holeIndex].endSeq < cursor) {
                     holeIndex++
                 }
+
                 if (holeIndex >= subtrahend.size || subtrahend[holeIndex].startSeq > range.endSeq) {
                     result.add(SequenceRange(cursor, range.endSeq))
                     break
                 }
+
                 val hole = subtrahend[holeIndex]
                 if (hole.startSeq > cursor) {
                     result.add(SequenceRange(cursor, hole.startSeq - 1))
                 }
+
                 // A hole can span into the next minuend range, so it is not consumed here.
                 cursor = hole.endSeq + 1
             }
@@ -67,7 +77,7 @@ object SequenceRangeMath {
 
     /** Caps a canonical range list to at most [maximumSequences] total sequences. */
     fun take(ranges: List<SequenceRange>, maximumSequences: Long): List<SequenceRange> {
-        require(maximumSequences >= 0)
+        require(maximumSequences >= 0) { "maximumSequences cannot be negative." }
         val result = mutableListOf<SequenceRange>()
         var remaining = maximumSequences
         for (range in ranges) {
@@ -89,69 +99,31 @@ object SequenceRangeMath {
 }
 
 /**
- * Receive progress for one origin device: the greatest fully contiguous sequence plus isolated
- * ranges persisted above a gap. Mirrors the Windows OriginReceiveState so both peers compute
- * identical vectors (protocol v1 sections 4 and 6).
+ * Serializes canonical range lists for Room columns using protocol field names. The persisted
+ * format matches the Windows store byte-for-byte so a schema dump is comparable across peers.
  */
-class OriginReceiveState(
-    val contiguousSeq: Long,
-    val receivedRanges: List<SequenceRange>,
-) {
-    init {
-        require(contiguousSeq >= 0) { "contiguous_seq cannot be negative." }
-        require(SequenceRangeMath.isCanonical(receivedRanges)) {
-            "received_ranges must be sorted, disjoint, and non-adjacent."
-        }
-        require(receivedRanges.isEmpty() || receivedRanges[0].startSeq > contiguousSeq + 1) {
-            "Every received range must start above contiguous_seq + 1."
-        }
-    }
+object SequenceRangeJson {
+    @Serializable
+    private data class RangeDocument(
+        @SerialName("start_seq") val startSeq: Long,
+        @SerialName("end_seq") val endSeq: Long,
+    )
 
-    fun contains(seq: Long): Boolean =
-        seq <= contiguousSeq || receivedRanges.any { it.contains(seq) }
+    private val json = Json
 
-    fun accept(seq: Long): OriginReceiveState {
-        require(seq >= 1)
-        return acceptRange(SequenceRange(seq, seq))
-    }
+    fun serialize(ranges: List<SequenceRange>): String =
+        json.encodeToString(
+            ListSerializer(RangeDocument.serializer()),
+            ranges.map { RangeDocument(it.startSeq, it.endSeq) },
+        )
 
-    /** Marks every sequence in [range] as persisted, advancing the cursor through any ranges it now touches. */
-    fun acceptRange(range: SequenceRange): OriginReceiveState {
-        if (range.endSeq <= contiguousSeq) {
-            return this
+    fun deserialize(value: String): List<SequenceRange> {
+        require(value.isNotBlank()) { "The persisted range list cannot be blank." }
+        return try {
+            json.decodeFromString(ListSerializer(RangeDocument.serializer()), value)
+                .map { SequenceRange(it.startSeq, it.endSeq) }
+        } catch (exception: kotlinx.serialization.SerializationException) {
+            throw IllegalArgumentException("The persisted range list is invalid.", exception)
         }
-        if (range.startSeq > contiguousSeq + 1) {
-            val merged = SequenceRangeMath.normalize(receivedRanges + range)
-            if (merged == receivedRanges) {
-                return this
-            }
-            return OriginReceiveState(contiguousSeq, merged)
-        }
-        var contiguous = maxOf(contiguousSeq, range.endSeq)
-        val remaining = receivedRanges.toMutableList()
-        while (remaining.isNotEmpty() && remaining[0].startSeq <= contiguous + 1) {
-            contiguous = maxOf(contiguous, remaining[0].endSeq)
-            remaining.removeAt(0)
-        }
-        return OriginReceiveState(contiguous, remaining)
-    }
-
-    /** The full persisted coverage: the contiguous prefix followed by isolated ranges. */
-    fun toCoverage(): List<SequenceRange> {
-        if (contiguousSeq == 0L) {
-            return receivedRanges
-        }
-        return buildList(receivedRanges.size + 1) {
-            add(SequenceRange(1, contiguousSeq))
-            addAll(receivedRanges)
-        }
-    }
-
-    /** Sequences the other peer holds that this state does not. */
-    fun missingFrom(theirs: OriginReceiveState): List<SequenceRange> =
-        SequenceRangeMath.subtract(theirs.toCoverage(), toCoverage())
-
-    companion object {
-        val EMPTY = OriginReceiveState(0, emptyList())
     }
 }

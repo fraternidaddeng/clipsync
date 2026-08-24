@@ -50,11 +50,22 @@ public sealed class PeerSyncHost : IAsyncDisposable
     /// <summary>Raised on a worker thread when remote clip bodies commit locally.</summary>
     public event Action<IReadOnlyList<RemoteClipApplied>>? RemoteClipsCommitted;
 
+    /// <summary>
+    /// Raised on a worker thread when a peer session authenticates or ends.
+    /// Read <see cref="ConnectedDeviceCount"/>/<see cref="ConnectedDeviceIds"/> for the new state.
+    /// </summary>
+    public event Action? SessionsChanged;
+
     public string CertificateFingerprint { get; }
 
     public int Port => server?.Port ?? 0;
 
     public bool IsRunning => server is not null;
+
+    /// <summary>Distinct paired devices with an authenticated session right now.</summary>
+    public IReadOnlyList<string> ConnectedDeviceIds => server?.ConnectedDeviceIds ?? [];
+
+    public int ConnectedDeviceCount => server?.ConnectedDeviceCount ?? 0;
 
     public PairingService? Pairing => pairingService;
 
@@ -110,6 +121,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
         }
 
         candidate.RemoteClipsCommitted += OnRemoteClipsCommitted;
+        candidate.SessionsChanged += OnSessionsChanged;
         server = candidate;
 
         broadcaster = new UdpDiscoveryBroadcaster(store.LocalDeviceId, server.Port, CertificateFingerprint);
@@ -124,6 +136,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
 
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch) =>
         RemoteClipsCommitted?.Invoke(batch);
+
+    private void OnSessionsChanged() => SessionsChanged?.Invoke();
 
     private async Task BroadcastQuietlyAsync()
     {
@@ -216,6 +230,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
         if (server is not null)
         {
             server.RemoteClipsCommitted -= OnRemoteClipsCommitted;
+            server.SessionsChanged -= OnSessionsChanged;
             await server.DisposeAsync().ConfigureAwait(false);
             server = null;
         }

@@ -6,6 +6,12 @@ namespace ClipSync.Core.Storage;
 
 public sealed record OriginSequenceRanges(string OriginDeviceId, IReadOnlyList<SequenceRange> Ranges);
 
+/// <summary>
+/// A snapshot of the delivery queue: how many outbox rows still await a peer ack
+/// (pending or announced — acked rows are deleted), and when a peer last acked anything.
+/// </summary>
+public sealed record OutboxStatus(int PendingCount, DateTimeOffset? LastPeerAckAt);
+
 public sealed partial class SqliteClipboardEventStore
 {
     private const string SyncableColumns = """
@@ -613,6 +619,28 @@ public sealed partial class SqliteClipboardEventStore
             await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
             throw;
         }
+    }
+
+    /// <summary>
+    /// Reads the current outbox depth and the newest peer-cursor timestamp. Rows are removed
+    /// from the outbox only when a peer acks them, so the count is "not yet confirmed anywhere".
+    /// </summary>
+    public async ValueTask<OutboxStatus> GetOutboxStatusAsync(CancellationToken cancellationToken = default)
+    {
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT
+                (SELECT COUNT(*) FROM outbox),
+                (SELECT MAX(updated_at) FROM peer_cursors);
+            """;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+        return new OutboxStatus(
+            reader.GetInt32(0),
+            reader.IsDBNull(1) ? null : DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(1)));
     }
 
     public async ValueTask<IReadOnlyDictionary<string, OriginReceiveState>> GetPeerCursorsAsync(
