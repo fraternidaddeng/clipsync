@@ -80,6 +80,10 @@ tasks.withType<Test>().configureEach {
         "protocol.fixtures.dir",
         rootProject.file("../protocol/v1/fixtures").absolutePath,
     )
+    systemProperty(
+        "protocol.v2.fixtures.dir",
+        rootProject.file("../protocol/v2/fixtures").absolutePath,
+    )
 }
 
 dependencies {

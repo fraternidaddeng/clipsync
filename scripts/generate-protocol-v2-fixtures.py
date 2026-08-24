@@ -120,8 +120,15 @@ def main() -> None:
         for x in range(8):
             rgba8 += bytes([0, 255, 0, 128] if (x + y) % 2 == 0 else [0, 0, 255, 255])
     png8 = make_png(8, 8, bytes(rgba8))
+    # 2x2 quadrant (red, green, blue, transparent white): the cross-platform
+    # image round-trip tests inspect/chunk/reassemble this alongside png-8x8.
+    rgba2 = bytes(
+        [255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 0]
+    )
+    png2 = make_png(2, 2, rgba2)
     (MEDIA / "png-1x1-transparent.png").write_bytes(png1)
     (MEDIA / "png-8x8.png").write_bytes(png8)
+    (MEDIA / "png-2x2-quadrant.png").write_bytes(png2)
 
     image = Image.new("RGB", (1, 1), (255, 0, 0))
     buffer = io.BytesIO()
@@ -680,6 +687,8 @@ def main() -> None:
         "png_1x1_bytes": len(png1),
         "png_8x8_sha256": sha(png8),
         "png_8x8_bytes": len(png8),
+        "png_2x2_sha256": sha(png2),
+        "png_2x2_bytes": len(png2),
         "jpeg_1x1_sha256": sha(jpeg),
         "jpeg_1x1_bytes": len(jpeg),
         "png_8x8_chunk0_bytes": mid,
