@@ -24,10 +24,10 @@
 | A3 | `OverlayFocusController` + 悬浮窗读写（路线 2/3 的正文读取） | Stub（仅探针）/ Missing | **High** | `OverlayPollingBackend` 只有授权探针；stage-4 有完整的 `overlay/OverlayFocusController`（焦点 flag 纪律、串行化、生命周期不变量测试）和轮询后端。没有它，ADB 日志模式也无法取得正文。 | 从 stage-4 移植 `platform/clipboard/overlay/**` 及其测试。 |
 | A4 | `LogcatClipboardEventReader` / ADB 日志模式 | Stub（仅探针）/ Missing | **High** | `AdbLogOverlayBackend` 只探 `READ_LOGS`+悬浮窗授权；stage-4 有 logcat 读取器、按 ROM 版本化的 `ClipboardLogParsers`（AOSP/OneUI/MIUI-HyperOS/ColorOS-OriginOS）、匿名化 fixture 和数据最小化不变量测试。 | 在 A3 之后从 stage-4 移植 `adblog/**` + `src/test/resources/adblog/**`。 |
 | A5 | `auto_apply_remote` 入站自动写入 | ~~Stub~~ → **本次已修复** | **Critical** | 修复前：偏好项存在（默认开）且 Windows 侧已实现，但 Android 的 `InboxDelivery` 只落收件箱+发"复制"通知，写协调器从未被入站路径调用。修复后：先落收件箱，再对批次中最新一条走公开写入（与 Windows 行为一致），成功发不含正文的"已自动写入"状态通知，失败回退"复制"通知；`originEventId` 传入写入器供未来回环抑制。特权写回退仍待 A1。 | 采集管线（A2）落地时，把 `InboxDelivery.writerFactory` 换成进程共享的 `ClipboardWriteCoordinator`，使回环抑制覆盖自动写入。 |
-| A6 | 开机恢复（`RECEIVE_BOOT_COMPLETED` + 恢复健康检查） | **Missing** | Medium-High | Manifest 无权限、无 receiver；stage-4 有 `BootCompletedReceiver`、`BootHealthCheck(Worker)`、`BootRecoveryNotifier`（按计划 5.2 由用户显式开启）。当前重启后同步服务死透，直到用户手动打开 App。 | 从 stage-4 移植 `service/Boot*`，配合"开机恢复"偏好开关。 |
+| A6 | 开机恢复（`RECEIVE_BOOT_COMPLETED` + 恢复健康检查） | ~~Missing~~ → **本次已实现** | Medium-High | 新增偏好「开机恢复」（默认关，计划 5.2 显式开启）；开关直接启停 manifest 中默认禁用的 `BootCompletedReceiver` 组件，boot 时再核对偏好+配对。单次启动尝试，失败发不含正文的「需要恢复」通知；`BootHealthCheckWorker`（WorkManager）做有上限（3 次观察）的启动后健康检查，只观察不重启。前台服务自身的 `startForeground` 被拒时同样降级为「需要恢复」+ `START_NOT_STICKY`，错误码上报通路页。 | 实机核验 Android 15 / OEM 的 BOOT FGS 行为（计划 5.2 遗留验证项）。 |
 | A7 | 暂停 / 私密模式执行 | Stub（仅 UI） | **High** | `SyncSettingsStore.syncPaused/privateMode` 只有 PreferencesViewModel 读写；分享/磁贴入队、`drainShareOutbox`、`recordLocalClip`、入站交付都不查它们。用户按下"暂停同步/私密模式"实际什么都不会变。Windows 侧的等价开关（`is_paused`/`is_private_mode`/黑名单）是真实执行的。 | 在 `ClipboardSyncService.drainShareOutbox` 与入口 enqueue 处按计划 3.4 的顺序（暂停/私密 → 大小 → 方向）做闸门，并补 JVM 测试。 |
-| A8 | 内容大小上限 / 保留期清理 | Partial | Medium | 协议硬上限 1 MiB 在 outbox enqueue 和 `recordLocalClip` 都有真实执行（好）；但用户可调的 `maxSyncTextBytes` 无人读取，`RetentionPolicy`/`retentionPolicy()` 从未被执行（无清理任务）。Windows 在启动和保存设置时都跑 `CleanupAsync`。 | 服务启动及每次批量提交后跑保留清理；enqueue 时尊重用户上限（低于协议上限时）。 |
-| A9 | `POST_NOTIFICATIONS` 运行时请求与状态展示 | Missing | Medium | Manifest 已声明；`SyncNotifications` 在通知被禁时静默返回 false。无运行时请求、无"通知被关闭"状态卡（计划 5.2 要求应用内清楚显示）。收件箱事件不丢，但用户可能完全看不到提示。 | 向导里加权限请求步骤；通路页加通知状态行。 |
+| A8 | 内容大小上限 / 保留期清理 | ~~Partial~~ → **本次已接线** | Medium | 保留清理：服务启动即跑一次 `ClipSyncRepository.cleanup`，之后每 6 小时一次，偏好变更（保留期/自动过期）立即再跑一次（对齐 Windows 启动+保存设置的行为）；`effectiveRetentionPolicy()` 在自动过期关闭时仍保留条数上限、只停用按龄过期。用户上限：`effectiveMaxSyncTextBytes`（不越过协议 1 MiB）现于 outbox enqueue 与 `recordLocalClip` 两处按次重读执行。 | 偏好页暂无调整保留条数/单条上限的输入控件（显示为只读行），需要时补 UI。 |
+| A9 | `POST_NOTIFICATIONS` 运行时请求与状态展示 | ~~Missing~~ → **运行时请求已实现** | Medium | Android 13+ 在「启用同步」的时刻请求（配对完成、点「启动服务」、打开「开机恢复」），拒绝不阻塞服务且不再纠缠（系统两次拒绝后自然静默）；已配对的日常打开不弹窗。`SyncNotifications` 的 `areNotificationsEnabled` 前置检查保持诚实降级。 | 通路页的「通知被关闭」状态行仍缺（UI 打磨范畴）。 |
 | A10 | 入站通知策略（`InboundNotifyPolicy` 去重/静音） | Missing | Low | stage-4 有独立 notify 策略与测试；当前按事件 ID 更新式通知（不会无限堆叠），收件箱上限 50 条。可接受。 | 出现通知洪泛问题时再移植。 |
 | A11 | 收件箱 Room 化 | Partial | Low | `KeyValueClipInbox` 是 SharedPreferences JSON 占位（代码注释已声明），事件正文本身在 Room 里不丢。 | 顺手迁移即可，不紧急。 |
 | A12 | 双语资源（values-zh-rCN） | Missing | Low | 当前 base strings 即中文；stage-4 是双语。 | UI 打磨 agent 的领域，不在此处理。 |
@@ -43,10 +43,9 @@
 1. **A2 前台自动捕获接线** — 后端和协调器都是现成的，缺一段生命周期接线；这是阶段 4 验收项，也是当前"手机复制→电脑"唯一断掉的自动路径。
 2. **A7 暂停/私密模式执行** — 用户可见的安全开关目前是假的，属于诚实性问题；改动小（enqueue/drain 处加闸门）。
 3. **A3 OverlayFocusController + 悬浮窗轮询** — 路线 2/3 的正文读取前提，阶段 5 的无电脑兜底；stage-4 有带完整测试的实现可移植。
-4. **A6 开机恢复链** — 无它则重启后同步静默失效，违反计划 5.2"不能静默失效"。
-5. **A4 ADB 日志模式（logcat 读取器 + ROM 解析器 + fixtures）** — 阶段 5 三档能力之二，stage-4 有含数据最小化测试的完整实现。
+4. **A4 ADB 日志模式（logcat 读取器 + ROM 解析器 + fixtures）** — 阶段 5 三档能力之二，stage-4 有含数据最小化测试的完整实现。
 
-（A5 `auto_apply_remote` 原本是第 1 位，本次审计已直接修复。）
+（A5 `auto_apply_remote` 原本是第 1 位，审计当轮已直接修复；A6 开机恢复、A8 保留清理/大小上限、A9 `POST_NOTIFICATIONS` 运行时请求已在后续提交中落地，见状态表。）
 
 ## 本次审计随手修复的内容
 
