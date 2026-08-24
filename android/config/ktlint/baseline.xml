@@ -791,47 +791,47 @@
         <error line="40" column="60" source="standard:function-signature" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/notify/CopyInboxItemReceiver.kt">
-        <error line="18" column="1" source="standard:no-empty-first-line-in-class-body" />
-        <error line="19" column="28" source="standard:function-signature" />
-        <error line="19" column="46" source="standard:function-signature" />
-        <error line="19" column="60" source="standard:function-signature" />
-        <error line="25" column="26" source="standard:multiline-expression-wrapping" />
-        <error line="48" column="20" source="standard:function-signature" />
-        <error line="48" column="38" source="standard:function-signature" />
-        <error line="48" column="53" source="standard:function-signature" />
+        <error line="17" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="18" column="28" source="standard:function-signature" />
+        <error line="18" column="46" source="standard:function-signature" />
+        <error line="18" column="60" source="standard:function-signature" />
+        <error line="24" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="45" column="20" source="standard:function-signature" />
+        <error line="45" column="38" source="standard:function-signature" />
+        <error line="45" column="53" source="standard:function-signature" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/notify/SyncNotifications.kt">
-        <error line="28" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="28" column="48" source="standard:chain-method-continuation" />
-        <error line="32" column="13" source="standard:chain-method-continuation" />
-        <error line="40" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="40" column="48" source="standard:chain-method-continuation" />
-        <error line="44" column="13" source="standard:chain-method-continuation" />
-        <error line="51" column="50" source="standard:function-signature" />
-        <error line="54" column="36" source="standard:function-signature" />
-        <error line="54" column="54" source="standard:function-signature" />
-        <error line="54" column="69" source="standard:function-signature" />
-        <error line="56" column="26" source="standard:multiline-expression-wrapping" />
-        <error line="62" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="69" column="34" source="standard:chain-method-continuation" />
-        <error line="90" column="25" source="standard:function-signature" />
-        <error line="90" column="43" source="standard:function-signature" />
-        <error line="90" column="58" source="standard:function-signature" />
-        <error line="109" column="27" source="standard:function-signature" />
-        <error line="109" column="45" source="standard:function-signature" />
-        <error line="109" column="60" source="standard:function-signature" />
-        <error line="115" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="122" column="28" source="standard:multiline-expression-wrapping" />
-        <error line="122" column="46" source="standard:chain-method-continuation" />
-        <error line="140" column="25" source="standard:function-signature" />
-        <error line="140" column="43" source="standard:function-signature" />
-        <error line="140" column="58" source="standard:function-signature" />
-        <error line="157" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="164" column="28" source="standard:multiline-expression-wrapping" />
-        <error line="164" column="46" source="standard:chain-method-continuation" />
-        <error line="201" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="208" column="28" source="standard:multiline-expression-wrapping" />
-        <error line="208" column="46" source="standard:chain-method-continuation" />
+        <error line="32" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="32" column="48" source="standard:chain-method-continuation" />
+        <error line="36" column="13" source="standard:chain-method-continuation" />
+        <error line="44" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="44" column="48" source="standard:chain-method-continuation" />
+        <error line="48" column="13" source="standard:chain-method-continuation" />
+        <error line="55" column="50" source="standard:function-signature" />
+        <error line="58" column="36" source="standard:function-signature" />
+        <error line="58" column="54" source="standard:function-signature" />
+        <error line="58" column="69" source="standard:function-signature" />
+        <error line="60" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="66" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="73" column="34" source="standard:chain-method-continuation" />
+        <error line="94" column="25" source="standard:function-signature" />
+        <error line="94" column="43" source="standard:function-signature" />
+        <error line="94" column="58" source="standard:function-signature" />
+        <error line="113" column="27" source="standard:function-signature" />
+        <error line="113" column="45" source="standard:function-signature" />
+        <error line="113" column="60" source="standard:function-signature" />
+        <error line="119" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="126" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="126" column="46" source="standard:chain-method-continuation" />
+        <error line="144" column="25" source="standard:function-signature" />
+        <error line="144" column="43" source="standard:function-signature" />
+        <error line="144" column="58" source="standard:function-signature" />
+        <error line="161" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="168" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="168" column="46" source="standard:chain-method-continuation" />
+        <error line="205" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="212" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="212" column="46" source="standard:chain-method-continuation" />
     </file>
     <file name="src/main/java/com/clipsync/android/protocol/ProtocolJson.kt">
         <error line="3" column="1" source="standard:import-ordering" />
