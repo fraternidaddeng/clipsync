@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -26,6 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,37 +43,67 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.clipsync.android.pairing.PairingConfirmClient
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
 import com.clipsync.android.ui.HealthScreen
-import com.clipsync.android.ui.HealthScreenState
+import com.clipsync.android.ui.health.HealthViewModel
 import com.clipsync.android.ui.home.HomeScreen
+import com.clipsync.android.ui.home.HomeViewModel
 import com.clipsync.android.ui.pairing.PairingScreen
 import com.clipsync.android.ui.pairing.PairingViewModel
 import com.clipsync.android.ui.prefs.PreferencesScreen
+import com.clipsync.android.ui.prefs.PreferencesViewModel
 import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.clipSyncColors
 import com.clipsync.android.ui.theme.filmGrain
 
 class MainActivity : ComponentActivity() {
+    private val pairingStore by lazy {
+        PairingStore(SharedPrefsKeyValueStore(this), KeystoreSecretProtector())
+    }
+
+    private val pairingViewModel: PairingViewModel by viewModels {
+        PairingViewModel.factory(
+            pairingStore,
+            PairingConfirmClient(),
+            localNameFallback = deviceLabel(),
+        )
+    }
+
+    private val healthViewModel: HealthViewModel by viewModels {
+        HealthViewModel.factory(
+            pairingStore = pairingStore,
+            // No background read backends ship in this stage; probe() reports that honestly.
+            clipboard = ClipboardAccessCoordinator(backends = emptyList()),
+            // The sync engine lands in a later stage; null keeps the conduit truthful.
+            syncHealthSource = null,
+        )
+    }
+
+    private val homeViewModel: HomeViewModel by viewModels {
+        // Room-backed history lands in a later stage; null renders the honest empty state.
+        HomeViewModel.factory(historySource = null)
+    }
+
+    private val preferencesViewModel: PreferencesViewModel by viewModels {
+        PreferencesViewModel.factory(SharedPrefsKeyValueStore(this, name = "clipsync.settings"))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val pairingStore = PairingStore(SharedPrefsKeyValueStore(this), KeystoreSecretProtector())
         setContent {
             ClipSyncTheme {
-                val pairingViewModel: PairingViewModel = viewModel(
-                    factory = PairingViewModel.factory(
-                        pairingStore,
-                        PairingConfirmClient(),
-                        localNameFallback = deviceLabel(),
-                    ),
+                ClipSyncApp(
+                    pairingViewModel = pairingViewModel,
+                    healthViewModel = healthViewModel,
+                    homeViewModel = homeViewModel,
+                    preferencesViewModel = preferencesViewModel,
                 )
-                ClipSyncApp(pairingViewModel)
             }
         }
     }
@@ -92,11 +125,25 @@ class MainActivity : ComponentActivity() {
  * Pairing hangs under the conduit's network segment rather than owning a tab.
  */
 @Composable
-private fun ClipSyncApp(pairingViewModel: PairingViewModel) {
+private fun ClipSyncApp(
+    pairingViewModel: PairingViewModel,
+    healthViewModel: HealthViewModel,
+    homeViewModel: HomeViewModel,
+    preferencesViewModel: PreferencesViewModel,
+) {
     val c = clipSyncColors
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var pairingOpen by rememberSaveable { mutableStateOf(false) }
-    val healthState = HealthScreenState.initial()
+    val healthState by healthViewModel.state.collectAsState()
+    val homeState by homeViewModel.state.collectAsState()
+    val preferencesState by preferencesViewModel.state.collectAsState()
+    val pairingState by pairingViewModel.state.collectAsState()
+
+    // Pairing completing (or the peer being forgotten) must reflect in the
+    // conduit immediately, not on the next app start.
+    LaunchedEffect(pairingState) {
+        healthViewModel.refresh()
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -126,6 +173,7 @@ private fun ClipSyncApp(pairingViewModel: PairingViewModel) {
             when (tab) {
                 0 -> HomeScreen(
                     state = healthState,
+                    home = homeState,
                     onOpenConduit = { tab = 1 },
                     modifier = Modifier.padding(padding),
                 )
@@ -141,7 +189,14 @@ private fun ClipSyncApp(pairingViewModel: PairingViewModel) {
                         modifier = Modifier.padding(padding),
                     )
                 }
-                else -> PreferencesScreen(modifier = Modifier.padding(padding))
+                else -> PreferencesScreen(
+                    state = preferencesState,
+                    onPauseSyncChange = preferencesViewModel::setPauseSync,
+                    onPrivateModeChange = preferencesViewModel::setPrivateMode,
+                    onAutoApplyRemoteChange = preferencesViewModel::setAutoApplyRemote,
+                    onAutoExpireChange = preferencesViewModel::setAutoExpire,
+                    modifier = Modifier.padding(padding),
+                )
             }
         }
     }
