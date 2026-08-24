@@ -22,6 +22,15 @@
     <string name="notification_sync_reconnecting">连接断开 · 等待重连</string>
     <string name="notification_sync_not_paired">未配对 · 同步待命</string>
 
+    <!-- 前台服务通知操作（plan 5.2）：暂停全部同步 / 仅暂停自动捕获 / 立即同步；点按正文打开通路（故障状态）。均不含剪贴板内容 -->
+    <string name="notification_action_pause_all">暂停同步</string>
+    <string name="notification_action_resume_all">恢复同步</string>
+    <string name="notification_action_pause_capture">暂停捕获</string>
+    <string name="notification_action_resume_capture">恢复捕获</string>
+    <string name="notification_action_sync_now">立即同步</string>
+    <string name="notification_status_sync_paused">同步已暂停 · 收到的内容仅入收件箱</string>
+    <string name="notification_status_capture_paused">自动捕获已暂停 · 手动发送与接收不受影响</string>
+
     <!-- 需要恢复：同步服务未能自动启动（开机恢复失败或系统拒绝前台服务） -->
     <string name="notification_channel_recovery_name">同步恢复提醒</string>
     <string name="notification_channel_recovery_description">同步服务无法自动恢复时提醒你打开应用手动恢复。通知从不显示剪贴板内容。</string>

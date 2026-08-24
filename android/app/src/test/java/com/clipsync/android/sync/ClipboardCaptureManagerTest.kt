@@ -57,6 +57,28 @@ class ClipboardCaptureManagerTest {
     }
 
     @Test
+    fun `capture pause skips auto-capture without touching the outbox`() {
+        settings.autoCapturePaused = true
+
+        assertEquals(CaptureOutcome.SKIPPED_CAPTURE_PAUSED, manager.onClipboardChanged(change("held")))
+        assertTrue(outbox.pending().isEmpty())
+        assertEquals(0, nudges)
+
+        // Toggling it back on (via the notification action) applies to the next change.
+        settings.autoCapturePaused = false
+        assertEquals(CaptureOutcome.CAPTURED, manager.onClipboardChanged(change("held")))
+        assertEquals(1, outbox.pending().size)
+    }
+
+    @Test
+    fun `the global pause wins the outcome when both pauses are set`() {
+        settings.syncPaused = true
+        settings.autoCapturePaused = true
+
+        assertEquals(CaptureOutcome.SKIPPED_SYNC_PAUSED, manager.onClipboardChanged(change("held")))
+    }
+
+    @Test
     fun `toggling pause off applies to the very next change`() {
         settings.syncPaused = true
         assertEquals(CaptureOutcome.SKIPPED_SYNC_PAUSED, manager.onClipboardChanged(change("one")))

@@ -14,7 +14,6 @@ import android.net.NetworkRequest
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.clipsync.android.R
@@ -53,21 +52,48 @@ class ClipboardSyncService : Service() {
     private var started = false
     private var supervisor: SyncSupervisor? = null
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private lateinit var settings: SyncSettingsStore
+
+    // Strong reference: SharedPreferences keeps listeners weakly. Fires when a settings
+    // write actually changed a value — from the notification actions or the preferences
+    // screen — so the pause action labels/status line never go stale.
+    private var settingsListener: android.content.SharedPreferences.OnSharedPreferenceChangeListener? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+        settings = SyncSettingsStore(
+            SharedPrefsKeyValueStore(applicationContext, name = SyncSettingsStore.PREFERENCES_NAME),
+        )
+        val listener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+            if (started) {
+                updateNotification(mutableConnectionStates.value)
+            }
+        }
+        settingsListener = listener
+        applicationContext
+            .getSharedPreferences(SyncSettingsStore.PREFERENCES_NAME, Context.MODE_PRIVATE)
+            .registerOnSharedPreferenceChangeListener(listener)
         mutableServiceRunning.value = true
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Apply a notification action first so the notification promoted below is honest.
+        if (SyncServiceNotification.applyAction(intent?.action, settings)) {
+            requestSyncNow()
+        }
         // The system can refuse the foreground promotion (e.g. FGS-from-background policy on
         // some OEM/API combinations). That must degrade to the honest "需要恢复" notification
         // and a stopped service — never a crash, never a sticky restart loop (plan 5.2).
+        val stateText = if (started) {
+            stateText(mutableConnectionStates.value)
+        } else {
+            getString(R.string.notification_sync_connecting)
+        }
         val foregroundOk = runCatching {
-            startAsForeground(notification(text = getString(R.string.notification_sync_connecting)))
+            startAsForeground(notification(stateText))
         }.isSuccess
         if (!foregroundOk) {
             mutableStartErrorCodes.value = START_ERROR_FGS_DENIED
@@ -85,6 +111,12 @@ class ClipboardSyncService : Service() {
     }
 
     override fun onDestroy() {
+        settingsListener?.let { listener ->
+            applicationContext
+                .getSharedPreferences(SyncSettingsStore.PREFERENCES_NAME, Context.MODE_PRIVATE)
+                .unregisterOnSharedPreferenceChangeListener(listener)
+        }
+        settingsListener = null
         unregisterNetworkCallback()
         mutableServiceRunning.value = false
         mutableConnectionStates.value = SyncConnectionState.NotPaired
@@ -93,13 +125,17 @@ class ClipboardSyncService : Service() {
         super.onDestroy()
     }
 
+    /** 立即同步: drain queued share/tile entries and cut any reconnect backoff short. */
+    private fun requestSyncNow() {
+        syncNudges.trySend(Unit)
+        supervisor?.nudgeReconnect()
+    }
+
     private fun launchSyncStack() {
         val appContext = applicationContext
         val pairing = PairingStore(SharedPrefsKeyValueStore(appContext), KeystoreSecretProtector())
         val repository = repositoryProvider(appContext)
-        val settings = SyncSettingsStore(
-            SharedPrefsKeyValueStore(appContext, name = SyncSettingsStore.PREFERENCES_NAME),
-        )
+        val settings = this.settings
         val mainHandler = Handler(Looper.getMainLooper())
 
         // System entry points (share target, Quick Settings tile) nudge the drain below.
@@ -254,29 +290,30 @@ class ClipboardSyncService : Service() {
     }
 
     private fun updateNotification(state: SyncConnectionState) {
-        val text = when (state) {
-            is SyncConnectionState.Connected -> getString(R.string.notification_sync_connected)
-            is SyncConnectionState.Connecting -> getString(R.string.notification_sync_connecting)
-            is SyncConnectionState.WaitingRetry -> getString(R.string.notification_sync_reconnecting)
-            is SyncConnectionState.NotPaired -> getString(R.string.notification_sync_not_paired)
-        }
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         // POST_NOTIFICATIONS may be revoked on API 33+; the service keeps running regardless.
-        runCatching { manager.notify(NOTIFICATION_ID, notification(text)) }
+        runCatching { manager.notify(NOTIFICATION_ID, notification(stateText(state))) }
     }
 
+    private fun stateText(state: SyncConnectionState): String = when (state) {
+        is SyncConnectionState.Connected -> getString(R.string.notification_sync_connected)
+        is SyncConnectionState.Connecting -> getString(R.string.notification_sync_connecting)
+        is SyncConnectionState.WaitingRetry -> getString(R.string.notification_sync_reconnecting)
+        is SyncConnectionState.NotPaired -> getString(R.string.notification_sync_not_paired)
+    }
+
+    /**
+     * The resident notification: connection state as the title, pause status as the text,
+     * the plan 5.2 actions as buttons, 打开故障状态 (通路) on tap. Never clipboard content.
+     */
     private fun notification(text: String): Notification =
-        NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notify_clip)
-            // Flow blue accents the polyline mark where the OEM honours setColor.
-            .setColor(androidx.core.content.ContextCompat.getColor(this, R.color.cs_flow))
-            .setContentTitle(text)
-            .setOngoing(true)
-            .setOnlyAlertOnce(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-            .build()
+        SyncServiceNotification.build(
+            this,
+            channelId = CHANNEL_ID,
+            stateText = text,
+            syncPaused = settings.syncPaused,
+            autoCapturePaused = settings.autoCapturePaused,
+        )
 
     private fun createNotificationChannel() {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

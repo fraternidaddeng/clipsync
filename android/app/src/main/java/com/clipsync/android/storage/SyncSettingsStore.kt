@@ -21,6 +21,15 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         get() = readBoolean(KEY_PRIVATE_MODE, default = false)
         set(value) = write(KEY_PRIVATE_MODE, value.toString())
 
+    /**
+     * 仅暂停自动捕获 (plan 5.2 notification action): local clipboard changes are no longer
+     * auto-captured, but — unlike [syncPaused] — explicit share/tile sends, outbound sync of
+     * already-recorded clips, and inbound delivery all keep working.
+     */
+    var autoCapturePaused: Boolean
+        get() = readBoolean(KEY_AUTO_CAPTURE_PAUSED, default = false)
+        set(value) = write(KEY_AUTO_CAPTURE_PAUSED, value.toString())
+
     var retentionMaxEntries: Int
         get() = readInt(KEY_RETENTION_MAX_ENTRIES, default = DEFAULT_MAX_ENTRIES)
         set(value) {
@@ -116,6 +125,7 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         private const val KEY_AUTO_APPLY_REMOTE = "sync.auto_apply_remote"
         private const val KEY_SYNC_PAUSED = "sync.paused"
         private const val KEY_PRIVATE_MODE = "sync.private_mode"
+        private const val KEY_AUTO_CAPTURE_PAUSED = "sync.capture_paused"
         private const val KEY_RETENTION_MAX_ENTRIES = "sync.retention.max_entries"
         private const val KEY_RETENTION_MAX_AGE_DAYS = "sync.retention.max_age_days"
         private const val KEY_AUTO_EXPIRE_ENABLED = "sync.retention.auto_expire"

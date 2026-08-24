@@ -15,6 +15,9 @@ enum class CaptureOutcome {
     /** Sync is paused: nothing is auto-captured while the user has sync off. */
     SKIPPED_SYNC_PAUSED,
 
+    /** 仅暂停自动捕获 (plan 5.2): auto-capture is off while sync and inbound keep running. */
+    SKIPPED_CAPTURE_PAUSED,
+
     /** The change is a clip this app just wrote itself (auto-apply, history copy). */
     SKIPPED_OWN_WRITE,
 
@@ -53,6 +56,12 @@ class ClipboardCaptureManager(
         }
         if (settings.syncPaused) {
             return CaptureOutcome.SKIPPED_SYNC_PAUSED
+        }
+        if (settings.autoCapturePaused) {
+            // The narrower gate sits after the global ones: 暂停全部同步 wins the outcome
+            // when both are set, and this one stops only local auto-capture — explicit
+            // share/tile sends and inbound delivery are gated elsewhere and keep working.
+            return CaptureOutcome.SKIPPED_CAPTURE_PAUSED
         }
         if (change.isImage) {
             if (!settings.imageSyncEnabled) {

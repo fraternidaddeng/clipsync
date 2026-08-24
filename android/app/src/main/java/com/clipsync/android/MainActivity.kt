@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -104,6 +105,8 @@ import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.clipSyncColors
 import com.clipsync.android.ui.theme.filmGrain
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
@@ -112,6 +115,8 @@ import kotlinx.coroutines.launch
 import rikka.shizuku.Shizuku
 
 class MainActivity : ComponentActivity() {
+    /** One-shot tab request from a notification tap; cleared once the UI applies it. */
+    private val tabRequests = MutableStateFlow<Int?>(null)
     private val pairingStore by lazy {
         PairingStore(SharedPrefsKeyValueStore(this), KeystoreSecretProtector())
     }
@@ -304,6 +309,8 @@ class MainActivity : ComponentActivity() {
             // explicit enable moments (pairing completion, 启动服务, 开机恢复), never per app open.
             ClipboardSyncService.start(this)
         }
+        // The FGS notification's 打开故障状态 tap lands here with the 通路 tab requested.
+        handleOpenTabIntent(intent)
         // Decided before composition: reading it may mark an already-paired
         // install as seen, which must not happen as a composition side effect.
         val showOnboarding =
@@ -338,8 +345,23 @@ class MainActivity : ComponentActivity() {
                             ImageThumbnail.decodePreview(store, contentHash)
                         }
                     },
+                    tabRequests = tabRequests,
+                    onTabRequestConsumed = { tabRequests.value = null },
                 )
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleOpenTabIntent(intent)
+    }
+
+    private fun handleOpenTabIntent(intent: Intent?) {
+        val requested = intent?.getIntExtra(EXTRA_OPEN_TAB, -1) ?: -1
+        if (requested in TAB_HOME..TAB_PREFS) {
+            tabRequests.value = requested
         }
     }
 
@@ -452,6 +474,27 @@ class MainActivity : ComponentActivity() {
         }
         return label.ifBlank { "Android phone" }
     }
+
+    companion object {
+        /** Int extra selecting the tab to open: 0 一屏(历史) / 1 通路 / 2 偏好. */
+        const val EXTRA_OPEN_TAB = "com.clipsync.android.extra.OPEN_TAB"
+        const val TAB_HOME = 0
+        const val TAB_CONDUIT = 1
+        const val TAB_PREFS = 2
+
+        /**
+         * The FGS notification's 打开故障状态 target: the 通路 (conduit/status) tab.
+         * SINGLE_TOP keeps an existing task alive so the request arrives via onNewIntent.
+         */
+        fun conduitIntent(context: Context): Intent =
+            Intent(context, MainActivity::class.java)
+                .addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK
+                        or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        or Intent.FLAG_ACTIVITY_SINGLE_TOP,
+                )
+                .putExtra(EXTRA_OPEN_TAB, TAB_CONDUIT)
+    }
 }
 
 /** Starts the sync foreground service once paired and stops it when the pairing is forgotten. */
@@ -493,11 +536,22 @@ private fun ClipSyncApp(
     onExportHistory: () -> Unit = {},
     onImportHistory: () -> Unit = {},
     imageThumbnail: suspend (String) -> android.graphics.Bitmap? = { null },
+    tabRequests: StateFlow<Int?> = MutableStateFlow(null),
+    onTabRequestConsumed: () -> Unit = {},
 ) {
     val c = clipSyncColors
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var pairingOpen by rememberSaveable { mutableStateOf(false) }
     var onboardingOpen by rememberSaveable { mutableStateOf(showOnboarding) }
+    // A notification tap (打开故障状态 → 通路) may arrive while the app is already open;
+    // the request is consumed once applied so a later same-tab request fires again.
+    val requestedTab by tabRequests.collectAsState()
+    LaunchedEffect(requestedTab) {
+        val request = requestedTab ?: return@LaunchedEffect
+        tab = request
+        pairingOpen = false
+        onTabRequestConsumed()
+    }
     val healthState by healthViewModel.state.collectAsState()
     val homeState by homeViewModel.state.collectAsState()
     val preferencesState by preferencesViewModel.state.collectAsState()
