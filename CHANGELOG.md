@@ -18,6 +18,7 @@
 - [Windows] 托盘四态图标 + 440px 托盘浮窗（最近剪贴 + 暂停开关）、托盘诊断查看器 + 认证锁定通知。
 - [Windows] 自绘宪章标题栏、配对 QR/确认窗口重皮肤、通路页接真实会话状态（连接数、发件队列、对端确认至）。
 - [双端] 暂停/私密模式在捕获、队列、引擎逐层真实关断，恢复后补投无丢失。
+- [分发] 最小分发链（阶段 7 裁剪版）：`scripts/package-windows.ps1` 产出自包含 win-x64 便携 ZIP（含运行时/许可/安装指南 + SHA-256，Linux CI 经 `EnableWindowsTargeting` 可产包）；`scripts/package-android.ps1` 产出 Release APK（签名只读 `CLIPSYNC_ANDROID_*` 环境变量，密钥库不入库，另有 Debug/未签名校验路径）；`docs/install.md` 一页中文安装/配对/通路/排障指南（并随 Windows ZIP 分发）。
 
 ### 变更
 
@@ -37,5 +38,5 @@
 
 ### 已知欠账（进行中）
 
-- 打包分发（Windows 便携 ZIP / 签名 APK / 安装文档 / 发布产物上传）、历史导出导入——并行任务推进中，见 `docs/competitive-analysis.md` 状态更新。
+- 发布产物上传（GitHub Releases / 发布 CI）、历史导出导入——并行任务推进中，见 `docs/competitive-analysis.md` 状态更新。
 - 实体机验证为零；图片同步（protocol v2）未做。
