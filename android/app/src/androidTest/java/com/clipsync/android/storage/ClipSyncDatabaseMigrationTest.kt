@@ -23,12 +23,13 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class ClipSyncDatabaseMigrationTest {
     @get:Rule
-    val helper = MigrationTestHelper(
-        InstrumentationRegistry.getInstrumentation(),
-        ClipSyncDatabase::class.java,
-        emptyList(),
-        FrameworkSQLiteOpenHelperFactory(),
-    )
+    val helper =
+        MigrationTestHelper(
+            InstrumentationRegistry.getInstrumentation(),
+            ClipSyncDatabase::class.java,
+            emptyList(),
+            FrameworkSQLiteOpenHelperFactory(),
+        )
 
     @After
     fun tearDown() {
@@ -42,19 +43,21 @@ class ClipSyncDatabaseMigrationTest {
         seedVersion1Database(HELPER_DB)
 
         helper.runMigrationsAndValidate(HELPER_DB, 2, true, ClipSyncDatabase.MIGRATION_1_2).use { migrated ->
-            migrated.query(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('media_blobs','clip_media') ORDER BY name",
-            ).use { cursor ->
-                assertTrue(cursor.moveToFirst())
-                assertEquals("clip_media", cursor.getString(0))
-                assertTrue(cursor.moveToNext())
-                assertEquals("media_blobs", cursor.getString(0))
-            }
-            migrated.query(
-                "SELECT name FROM sqlite_master WHERE type='index' AND name='index_clip_media_content_hash'",
-            ).use { cursor ->
-                assertTrue("clip_media hash index missing after migration", cursor.moveToFirst())
-            }
+            migrated
+                .query(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('media_blobs','clip_media') ORDER BY name",
+                ).use { cursor ->
+                    assertTrue(cursor.moveToFirst())
+                    assertEquals("clip_media", cursor.getString(0))
+                    assertTrue(cursor.moveToNext())
+                    assertEquals("media_blobs", cursor.getString(0))
+                }
+            migrated
+                .query(
+                    "SELECT name FROM sqlite_master WHERE type='index' AND name='index_clip_media_content_hash'",
+                ).use { cursor ->
+                    assertTrue("clip_media hash index missing after migration", cursor.moveToFirst())
+                }
 
             // Pre-migration history survives untouched.
             migrated.query("SELECT content, kind FROM clips WHERE event_id='$EVENT_ID'").use { cursor ->

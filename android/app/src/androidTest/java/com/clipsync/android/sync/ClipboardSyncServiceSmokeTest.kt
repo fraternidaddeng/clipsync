@@ -20,7 +20,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class ClipboardSyncServiceSmokeTest {
-
     @Test
     fun startPromotesToForegroundAndStopTearsDown() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -51,13 +50,18 @@ class ClipboardSyncServiceSmokeTest {
     private fun runningServiceInfo(context: Context): ActivityManager.RunningServiceInfo? {
         val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         @Suppress("DEPRECATION")
-        return manager.getRunningServices(Int.MAX_VALUE)
+        return manager
+            .getRunningServices(Int.MAX_VALUE)
             .firstOrNull { it.service.className == ClipboardSyncService::class.java.name }
     }
 
     // Generous ceiling so the test also passes on slow (e.g. software-emulated) devices;
     // on real hardware every wait resolves in well under a second.
-    private fun awaitUntil(what: String, timeoutMs: Long = 60_000, condition: () -> Boolean) {
+    private fun awaitUntil(
+        what: String,
+        timeoutMs: Long = 60_000,
+        condition: () -> Boolean,
+    ) {
         val deadline = System.currentTimeMillis() + timeoutMs
         while (System.currentTimeMillis() < deadline) {
             if (condition()) return
