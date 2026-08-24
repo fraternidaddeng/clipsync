@@ -84,6 +84,8 @@ data class CapabilityFacts(
     val publicWriteState: CapabilityState,
     val publicWriteErrorCode: String? = null,
     val reachability: PeerReachability = PeerReachability.UNKNOWN,
+    /** Null = notification probe not wired; false = the surface is off right now. */
+    val notificationsEnabled: Boolean? = null,
 )
 
 private val BACKGROUND_READ_MODES = listOf(

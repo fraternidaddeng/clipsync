@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.clipsync.android.pairing.PairingConfirmClient
@@ -85,6 +86,8 @@ import com.clipsync.android.ui.health.SyncHealthSource
 import com.clipsync.android.ui.home.ClipSyncHistoryGateway
 import com.clipsync.android.ui.home.HomeScreen
 import com.clipsync.android.ui.home.HomeViewModel
+import com.clipsync.android.ui.onboarding.FirstRunStore
+import com.clipsync.android.ui.onboarding.OnboardingScreen
 import com.clipsync.android.ui.pairing.PairingScreen
 import com.clipsync.android.ui.pairing.PairingUiState
 import com.clipsync.android.ui.pairing.PairingViewModel
@@ -102,6 +105,10 @@ import rikka.shizuku.Shizuku
 class MainActivity : ComponentActivity() {
     private val pairingStore by lazy {
         PairingStore(SharedPrefsKeyValueStore(this), KeystoreSecretProtector())
+    }
+
+    private val firstRunStore by lazy {
+        FirstRunStore(SharedPrefsKeyValueStore(this, name = FirstRunStore.PREFERENCES_NAME))
     }
 
     private val pairingViewModel: PairingViewModel by viewModels {
@@ -192,6 +199,11 @@ class MainActivity : ComponentActivity() {
                 foregroundBackend = foregroundBackend,
                 clearClipboard = foregroundBackend::clear,
                 peerHealth = PeerHealthClient(),
+                // Covers both the API 33+ runtime denial and the surface being
+                // switched off in Settings on any API level.
+                notificationsEnabled = {
+                    NotificationManagerCompat.from(this).areNotificationsEnabled()
+                },
             ),
         )
     }
@@ -255,6 +267,10 @@ class MainActivity : ComponentActivity() {
             // explicit enable moments (pairing completion, 启动服务, 开机恢复), never per app open.
             ClipboardSyncService.start(this)
         }
+        // Decided before composition: reading it may mark an already-paired
+        // install as seen, which must not happen as a composition side effect.
+        val showOnboarding =
+            firstRunStore.shouldShowOnboarding(alreadyPaired = pairingStore.peer() != null)
         setContent {
             ClipSyncTheme {
                 SyncServiceController(
@@ -267,9 +283,12 @@ class MainActivity : ComponentActivity() {
                     healthViewModel = healthViewModel,
                     homeViewModel = homeViewModel,
                     preferencesViewModel = preferencesViewModel,
+                    showOnboarding = showOnboarding,
+                    onOnboardingSeen = firstRunStore::markOnboardingSeen,
                     onRouteAction = ::handleRouteAction,
                     onServiceStart = ::startSyncService,
                     onServiceStop = { ClipboardSyncService.stop(this) },
+                    onOpenNotificationSettings = ::openNotificationSettings,
                 )
             }
         }
@@ -364,6 +383,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /** The 通知已关闭 banner's action; the resume re-probe picks up the outcome. */
+    private fun openNotificationSettings() {
+        startActivitySafely(
+            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                .putExtra(Settings.EXTRA_APP_PACKAGE, packageName),
+        )
+    }
+
     private fun systemVersion(): String = "android-${Build.VERSION.SDK_INT}"
 
     private fun deviceLabel(): String {
@@ -408,13 +435,17 @@ private fun ClipSyncApp(
     healthViewModel: HealthViewModel,
     homeViewModel: HomeViewModel,
     preferencesViewModel: PreferencesViewModel,
+    showOnboarding: Boolean = false,
+    onOnboardingSeen: () -> Unit = {},
     onRouteAction: (ReadRouteUi, RouteActionId) -> Unit = { _, _ -> },
     onServiceStart: () -> Unit = {},
     onServiceStop: () -> Unit = {},
+    onOpenNotificationSettings: (() -> Unit)? = null,
 ) {
     val c = clipSyncColors
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var pairingOpen by rememberSaveable { mutableStateOf(false) }
+    var onboardingOpen by rememberSaveable { mutableStateOf(showOnboarding) }
     val healthState by healthViewModel.state.collectAsState()
     val homeState by homeViewModel.state.collectAsState()
     val preferencesState by preferencesViewModel.state.collectAsState()
@@ -440,6 +471,23 @@ private fun ClipSyncApp(
             // …with film grain on the app background only.
             .filmGrain(),
     ) {
+        if (onboardingOpen) {
+            // First-run introduction: once dismissed, the flag is persisted and
+            // the chosen entrance (通路 for pairing, or 一屏) takes over.
+            OnboardingScreen(
+                onPair = {
+                    onOnboardingSeen()
+                    onboardingOpen = false
+                    tab = 1
+                },
+                onSkip = {
+                    onOnboardingSeen()
+                    onboardingOpen = false
+                    tab = 0
+                },
+            )
+            return@Box
+        }
         Scaffold(
             containerColor = Color.Transparent,
             bottomBar = {
@@ -477,6 +525,7 @@ private fun ClipSyncApp(
                         onServiceStop = onServiceStop,
                         onTestWrite = healthViewModel::runWriteTest,
                         onDismissTestResult = healthViewModel::dismissTestResult,
+                        onOpenNotificationSettings = onOpenNotificationSettings,
                         modifier = Modifier.padding(padding),
                     )
                 }
@@ -487,6 +536,11 @@ private fun ClipSyncApp(
                     onAutoApplyRemoteChange = preferencesViewModel::setAutoApplyRemote,
                     onAutoExpireChange = preferencesViewModel::setAutoExpire,
                     onBootRestoreChange = preferencesViewModel::setBootRestore,
+                    pairedDeviceName = healthState.pairedPeerName,
+                    onOpenConduit = {
+                        pairingOpen = false
+                        tab = 1
+                    },
                     modifier = Modifier.padding(padding),
                 )
             }

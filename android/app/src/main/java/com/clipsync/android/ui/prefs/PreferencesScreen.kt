@@ -1,6 +1,9 @@
 package com.clipsync.android.ui.prefs
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -17,6 +21,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,6 +45,9 @@ fun PreferencesScreen(
     onAutoApplyRemoteChange: (Boolean) -> Unit,
     onAutoExpireChange: (Boolean) -> Unit,
     onBootRestoreChange: (Boolean) -> Unit = {},
+    /** Display name of the paired Windows peer; null while unpaired. */
+    pairedDeviceName: String? = null,
+    onOpenConduit: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
@@ -119,7 +128,13 @@ fun PreferencesScreen(
                 .fillMaxWidth()
                 .charterCard(),
         ) {
-            ValueRow(title = "已配对设备", value = "在「通路 · 网络」管理")
+            if (pairedDeviceName != null) {
+                ValueRow(title = "已配对设备", value = pairedDeviceName)
+                RowDivider()
+                LinkRow(title = "管理配对", value = "通路 · 网络", onClick = onOpenConduit)
+            } else {
+                DeviceEmptyState(onOpenConduit = onOpenConduit)
+            }
         }
 
         Spacer(Modifier.height(28.dp))
@@ -213,6 +228,63 @@ private fun ValueRow(title: String, value: String) {
             modifier = Modifier.weight(1f),
         )
         Text(text = value, style = ClipSyncType.caption, color = c.t3)
+    }
+}
+
+/** A row that navigates elsewhere in the app; the chevron says so honestly. */
+@Composable
+private fun LinkRow(title: String, value: String, onClick: () -> Unit) {
+    val c = clipSyncColors
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = title,
+            fontSize = 14.sp,
+            color = c.t1,
+            modifier = Modifier.weight(1f),
+        )
+        Text(text = value, style = ClipSyncType.caption, color = c.flow)
+        Spacer(Modifier.width(4.dp))
+        Text(text = "›", fontSize = 14.sp, color = c.t4)
+    }
+}
+
+/**
+ * The device section with nothing in it: a stated fact plus the pointer to
+ * the real pairing entrance (charter: pairing hangs under 通路 · 网络).
+ */
+@Composable
+private fun DeviceEmptyState(onOpenConduit: () -> Unit) {
+    val c = clipSyncColors
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 14.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text(text = "尚无已配对设备", fontSize = 14.sp, color = c.t1)
+        Text(
+            text = "配对入口在「通路」页的网络段；配对后这里会显示对端名称。",
+            style = ClipSyncType.caption,
+            color = c.t3,
+        )
+        val shape = RoundedCornerShape(10.dp)
+        Text(
+            text = "去配对 ›",
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = c.flow,
+            modifier = Modifier
+                .clip(shape)
+                .border(1.dp, c.flowLn, shape)
+                .clickable(onClick = onOpenConduit)
+                .padding(horizontal = 14.dp, vertical = 7.dp),
+        )
     }
 }
 

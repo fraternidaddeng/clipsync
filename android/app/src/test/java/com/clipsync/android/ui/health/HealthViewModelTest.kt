@@ -239,6 +239,7 @@ class HealthViewModelTest {
     private fun capabilityHarness(
         prerequisites: RoutePrerequisites = RoutePrerequisites(),
         environment: FakeClipboardEnvironment = FakeClipboardEnvironment(),
+        notificationsEnabled: (() -> Boolean)? = null,
     ): Triple<HealthViewModel, ClipboardCapabilityStore, FakeClipboardEnvironment> {
         val capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore())
         val model = HealthViewModel(
@@ -254,6 +255,7 @@ class HealthViewModelTest {
                 writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
                 foregroundBackend = environment.readBackend,
                 clearClipboard = { environment.text = null },
+                notificationsEnabled = notificationsEnabled,
                 nowMs = { 1_755_000_000_000 },
             ),
         )
@@ -365,6 +367,39 @@ class HealthViewModelTest {
         // Unpaired network still needs action; read is degraded (foreground only).
         assertEquals(ConduitStatus.NEEDS_ACTION, state.network.status)
         assertTrue(state.network.beckoning)
+    }
+
+    // ---- notification surface + peer name -------------------------------------------------
+
+    @Test
+    fun `notifications off is surfaced as an honest fact and re-probed on refresh`() {
+        var enabled = false
+        val (model, _, _) = capabilityHarness(notificationsEnabled = { enabled })
+        assertEquals(false, model.state.value.notificationsEnabled)
+
+        // The user flips it in system settings; the resume re-probe must pick it up.
+        enabled = true
+        model.refresh()
+        assertEquals(true, model.state.value.notificationsEnabled)
+    }
+
+    @Test
+    fun `unwired notification probe stays unknown rather than claiming either way`() {
+        val (model, _, _) = capabilityHarness()
+        assertNull(model.state.value.notificationsEnabled)
+    }
+
+    @Test
+    fun `no notification fact at all without capability wiring`() {
+        assertNull(viewModel().state.value.notificationsEnabled)
+    }
+
+    @Test
+    fun `paired peer name reaches the screen state for the device rows`() {
+        assertNull(viewModel().state.value.pairedPeerName)
+
+        pair()
+        assertEquals("DESKTOP-WIN", viewModel().state.value.pairedPeerName)
     }
 
     @Test

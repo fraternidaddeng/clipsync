@@ -97,7 +97,11 @@ fun HomeScreen(
                 query = home.query,
                 modifier = Modifier.weight(1f),
             )
-            home.items.isEmpty() -> EmptyState(modifier = Modifier.weight(1f))
+            home.items.isEmpty() -> EmptyState(
+                paired = conduit.pairedDeviceCount > 0,
+                onPair = onOpenConduit,
+                modifier = Modifier.weight(1f),
+            )
             else -> LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -319,8 +323,17 @@ private fun SourceTag(label: String, modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * The history empty state — one of the app's serif moments (charter 3.5).
+ * Unpaired, it is also the first-run landing: a serif short line plus the
+ * ghost pairing button the audit calls for; paired, it just waits quietly.
+ */
 @Composable
-private fun EmptyState(modifier: Modifier = Modifier) {
+private fun EmptyState(
+    paired: Boolean,
+    onPair: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val c = clipSyncColors
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Column(
@@ -334,16 +347,34 @@ private fun EmptyState(modifier: Modifier = Modifier) {
                 modifier = Modifier.size(28.dp),
             )
             Text(
-                text = "静候第一条剪贴",
+                text = if (paired) "静候第一条剪贴" else "先把两端接起来",
                 style = ClipSyncType.brand.copy(fontSize = 18.sp),
                 color = c.t2,
             )
             Text(
-                text = "配对完成后，两端复制的内容会在这里汇合。",
+                text = if (paired) {
+                    "在任意一端复制文本，它会出现在这里并流向对面。"
+                } else {
+                    "尚未与电脑配对。配对入口在「通路」页的网络段。"
+                },
                 style = ClipSyncType.caption,
                 color = c.t3,
                 textAlign = TextAlign.Center,
             )
+            if (!paired) {
+                val shape = RoundedCornerShape(10.dp)
+                Text(
+                    text = "去配对 ›",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = c.flow,
+                    modifier = Modifier
+                        .clip(shape)
+                        .border(1.dp, c.flowLn, shape)
+                        .clickable(onClick = onPair)
+                        .padding(horizontal = 14.dp, vertical = 7.dp),
+                )
+            }
         }
     }
 }

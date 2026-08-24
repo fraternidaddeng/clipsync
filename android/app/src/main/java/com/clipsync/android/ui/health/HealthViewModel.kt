@@ -43,6 +43,13 @@ data class CapabilityWiring(
     val foregroundBackend: BackgroundClipboardBackend,
     val clearClipboard: () -> Unit,
     val peerHealth: PeerHealthApi? = null,
+    /**
+     * Whether this app may post notifications right now (POST_NOTIFICATIONS
+     * granted and the channel surface not switched off). Probed on every
+     * refresh — a denial hides the inbox/recovery notifications silently, so
+     * the conduit page must state it. Null = not wired on this build.
+     */
+    val notificationsEnabled: (() -> Boolean)? = null,
     val nowMs: () -> Long = System::currentTimeMillis,
 )
 
@@ -103,6 +110,7 @@ class HealthViewModel(
                         preferredReadMode = w.capabilityStore.preferredReadMode(),
                         publicWriteState = w.capabilityStore.publicWriteState(),
                         publicWriteErrorCode = w.capabilityStore.publicWriteErrorCode(),
+                        notificationsEnabled = w.notificationsEnabled?.invoke(),
                     )
                 }
                 Triple(peer, report, facts)
@@ -271,9 +279,11 @@ internal fun buildHealthScreenState(
         network = network,
         peerWrite = peerWriteSegment(network.status, sync),
         pairedDeviceCount = if (peer != null) 1 else 0,
+        pairedPeerName = peer?.displayName,
         localWrite = facts?.let(::localWriteSegmentFromFacts),
         routes = facts?.let(::buildReadRoutes).orEmpty(),
         serviceRunning = sync?.serviceRunning ?: false,
+        notificationsEnabled = facts?.notificationsEnabled,
     )
     return applySingleBeckon(state)
 }

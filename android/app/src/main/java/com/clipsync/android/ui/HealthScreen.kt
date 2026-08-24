@@ -115,12 +115,16 @@ data class HealthScreenState(
     val network: ConduitSegmentState,
     val peerWrite: ConduitSegmentState,
     val pairedDeviceCount: Int,
+    /** Display name of the paired Windows peer; null while unpaired. */
+    val pairedPeerName: String? = null,
     /** 本机写回 — the inbound write axis; null until the capability stack is wired. */
     val localWrite: ConduitSegmentState? = null,
     /** The wizard's three routes; empty until the capability stack is wired. */
     val routes: List<ReadRouteUi> = emptyList(),
     val serviceRunning: Boolean = false,
     val testResult: ConduitTestResult? = null,
+    /** Null = notification probe not wired; false = the surface is off right now. */
+    val notificationsEnabled: Boolean? = null,
 ) {
     val statuses: List<ConduitStatus>
         get() = listOf(localRead.status, localService.status, network.status, peerWrite.status)
@@ -137,6 +141,7 @@ fun HealthScreen(
     onServiceStop: (() -> Unit)? = null,
     onTestWrite: (() -> Unit)? = null,
     onDismissTestResult: () -> Unit = {},
+    onOpenNotificationSettings: (() -> Unit)? = null,
 ) {
     val c = clipSyncColors
     // The wizard opens itself when the read segment is the one beckoning.
@@ -178,6 +183,12 @@ fun HealthScreen(
             TestResultRow(
                 result = test,
                 onDismiss = onDismissTestResult,
+                modifier = Modifier.padding(bottom = 10.dp),
+            )
+        }
+        if (state.notificationsEnabled == false) {
+            NotificationsOffBanner(
+                onOpenSettings = onOpenNotificationSettings,
                 modifier = Modifier.padding(bottom = 10.dp),
             )
         }
@@ -250,18 +261,109 @@ fun HealthScreen(
             )
         }
         FlowLine(modifier = Modifier.padding(vertical = 12.dp))
+        if (state.pairedDeviceCount == 0) {
+            PairedDevicesEmptyState(
+                onPairRequest = onPairRequest,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
+        } else {
+            Text(
+                text = "已配对设备 · ${state.pairedDeviceCount}",
+                style = ClipSyncType.groupHeader,
+                color = c.t4,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
+/**
+ * Honest fact strip (charter: a user's choice is a fact, not an error). With
+ * notifications off, sync keeps working — but the inbox-copy and boot-recovery
+ * notifications silently never appear, and that consequence must be stated.
+ */
+@Composable
+private fun NotificationsOffBanner(
+    onOpenSettings: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
+    val c = clipSyncColors
+    val shape = RoundedCornerShape(10.dp)
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(c.sf3)
+            .border(1.dp, c.ln, shape)
+            .padding(horizontal = 12.dp, vertical = 9.dp),
+        verticalArrangement = Arrangement.spacedBy(3.dp),
+    ) {
         Text(
-            text = if (state.pairedDeviceCount == 0) {
-                "尚无已配对设备"
-            } else {
-                "已配对设备 · ${state.pairedDeviceCount}"
-            },
+            text = "通知已关闭",
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = c.t2,
+        )
+        Text(
+            text = "同步照常进行，但「收到内容」与「需要恢复」的通知不会出现。",
+            style = ClipSyncType.caption,
+            color = c.t3,
+        )
+        if (onOpenSettings != null) {
+            Text(
+                text = "去系统设置开启 ›",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = c.flow,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .clickable(onClick = onOpenSettings)
+                    .padding(vertical = 2.dp),
+            )
+        }
+    }
+}
+
+/**
+ * The paired-devices area with nothing in it: a stated fact plus a quiet ghost
+ * entrance (the beckoning lives on the network segment, not here).
+ */
+@Composable
+private fun PairedDevicesEmptyState(
+    onPairRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val c = clipSyncColors
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text(
+            text = "尚无已配对设备",
             style = ClipSyncType.groupHeader,
             color = c.t4,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
+        )
+        Text(
+            text = "在电脑上打开「剪剪相传」出示二维码，配对在网络段完成。",
+            style = ClipSyncType.caption,
+            color = c.t3,
             textAlign = TextAlign.Center,
+        )
+        val shape = RoundedCornerShape(10.dp)
+        Text(
+            text = "去配对 ›",
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = c.flow,
+            modifier = Modifier
+                .clip(shape)
+                .border(1.dp, c.flowLn, shape)
+                .clickable(onClick = onPairRequest)
+                .padding(horizontal = 14.dp, vertical = 7.dp),
         )
     }
 }

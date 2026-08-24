@@ -296,8 +296,19 @@ private fun PeerFacts(qr: PairingQrPayload) {
 @Composable
 private fun SubmittingContent(peerName: String) {
     val c = clipSyncColors
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        CircularProgressIndicator(Modifier.padding(end = 16.dp))
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .charterCard()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        CircularProgressIndicator(
+            color = c.flow,
+            trackColor = c.sfIn,
+            strokeWidth = 3.dp,
+            modifier = Modifier.padding(end = 16.dp),
+        )
         Column {
             Text("等待批准…", fontWeight = FontWeight.SemiBold, color = c.t1)
             Text(
@@ -313,10 +324,20 @@ private fun SubmittingContent(peerName: String) {
 private fun PairedContent(peer: PairedPeer, viewModel: PairingViewModel) {
     val c = clipSyncColors
     Text("已配对", style = RitualTitle, color = c.t1)
-    Text(
-        "此手机已与「${peer.displayName}」配对。信任与密钥已安全存储，网络段就此接通。",
-        color = c.t2,
-    )
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .charterCard()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Text(peer.displayName, fontWeight = FontWeight.SemiBold, color = c.t1)
+        Text(
+            "信任与密钥已安全存储，网络段就此接通。",
+            style = MaterialTheme.typography.bodySmall,
+            color = c.t2,
+        )
+    }
     Button(onClick = viewModel::reset, shape = ControlShape, modifier = Modifier.fillMaxWidth()) {
         Text("完成")
     }
@@ -326,22 +347,42 @@ private fun PairedContent(peer: PairedPeer, viewModel: PairingViewModel) {
 private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel) {
     val c = clipSyncColors
     Text("配对失败", style = RitualTitle, color = c.t1)
-    Text(
-        when (reason) {
-            PairingFailure.INVALID_PAYLOAD -> "这不是有效的剪剪相传配对码。"
-            PairingFailure.OWN_DEVICE -> "这个码标识的是本机自己。"
-            PairingFailure.CERTIFICATE_MISMATCH ->
-                "电脑出示的证书与二维码承诺的不一致，配对已被阻止。请检查网络，并在 Windows 上重新打开二维码窗口。"
-            PairingFailure.UNREACHABLE -> "无法连接到电脑。请确认两台设备在同一网络。"
-            PairingFailure.REJECTED -> "请求在电脑上被拒绝。"
-            PairingFailure.TIMEOUT -> "电脑未在限时内批准。请出示新的二维码后重试。"
-            PairingFailure.TOKEN_INVALID -> "这个码已被使用或已取消。请出示新的二维码。"
-            PairingFailure.TOKEN_EXPIRED -> "这个码已过期。出示新的二维码后请尽快扫描。"
-            PairingFailure.PROTOCOL -> "电脑的应答超出配对协议。请将两端更新到匹配的版本。"
-        },
-        // 证书不一致是真正的 error（可能的中间人）：红色唯一出场处。
-        color = if (reason == PairingFailure.CERTIFICATE_MISMATCH) c.err else c.t2,
-    )
+    val message = when (reason) {
+        PairingFailure.INVALID_PAYLOAD -> "这不是有效的剪剪相传配对码。"
+        PairingFailure.OWN_DEVICE -> "这个码标识的是本机自己。"
+        PairingFailure.CERTIFICATE_MISMATCH ->
+            "电脑出示的证书与二维码承诺的不一致，配对已被阻止。请检查网络，并在 Windows 上重新打开二维码窗口。"
+        PairingFailure.UNREACHABLE -> "无法连接到电脑。请确认两台设备在同一网络。"
+        PairingFailure.REJECTED -> "请求在电脑上被拒绝。"
+        PairingFailure.TIMEOUT -> "电脑未在限时内批准。请出示新的二维码后重试。"
+        PairingFailure.TOKEN_INVALID -> "这个码已被使用或已取消。请出示新的二维码。"
+        PairingFailure.TOKEN_EXPIRED -> "这个码已过期。出示新的二维码后请尽快扫描。"
+        PairingFailure.PROTOCOL -> "电脑的应答超出配对协议。请将两端更新到匹配的版本。"
+    }
+    if (reason == PairingFailure.CERTIFICATE_MISMATCH) {
+        // 证书不一致是真正的 error（可能的中间人）：红色着色盒唯一出场处。
+        val shape = RoundedCornerShape(16.dp)
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(c.errBg)
+                .border(1.dp, c.errLn, shape)
+                .padding(16.dp),
+        ) {
+            Text(message, style = MaterialTheme.typography.bodyMedium, color = c.err)
+        }
+    } else {
+        // 其余失败是可陈述的事实：普通卡面，不动用红色。
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .charterCard()
+                .padding(16.dp),
+        ) {
+            Text(message, style = MaterialTheme.typography.bodyMedium, color = c.t2)
+        }
+    }
     Button(onClick = viewModel::reset, shape = ControlShape, modifier = Modifier.fillMaxWidth()) {
         Text("重新开始")
     }
