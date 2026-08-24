@@ -120,7 +120,10 @@ public sealed class PeerServer : IAsyncDisposable
                     listen.UseHttps(https =>
                     {
                         https.ServerCertificate = options.Certificate;
+                        // CA5398 wants SslProtocols.None (OS picks). We pin 1.2+ so TLS 1.0/1.1 cannot come back.
+#pragma warning disable CA5398
                         https.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
+#pragma warning restore CA5398
                     });
                 });
             }

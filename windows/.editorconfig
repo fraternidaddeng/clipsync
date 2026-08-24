@@ -1,0 +1,8 @@
+# Security CA rules stay errors. Style/IDE analyzers are not enforced in-build
+# (EnforceCodeStyleInBuild=false) so TreatWarningsAsErrors does not mass-fail.
+[*.cs]
+dotnet_analyzer_diagnostic.category-Security.severity = error
+dotnet_diagnostic.CA2100.severity = error
+dotnet_diagnostic.CA5350.severity = error
+dotnet_diagnostic.CA5351.severity = error
+dotnet_diagnostic.CA3075.severity = error
