@@ -110,7 +110,8 @@ public static partial class ClipContentClassifier
     {
         if (BareOtpRegex().IsMatch(text))
         {
-            return !(text.Length == 4 && int.Parse(text) is >= YearMin and <= YearMax);
+            return !(text.Length == 4
+                && int.Parse(text, System.Globalization.CultureInfo.InvariantCulture) is >= YearMin and <= YearMax);
         }
 
         // 短信可以多行，所以上下文分支不要求单行，只封顶长度。
