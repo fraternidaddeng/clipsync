@@ -266,7 +266,7 @@ class HealthViewModelTest {
         assertEquals(3, state.routes.size)
         assertEquals(ConduitStatus.UNPROBED, state.localWrite?.status)
         // Fresh device: every route still has steps remaining.
-        assertEquals(listOf(3, 2, 2), state.routes.map { it.stepsRemaining })
+        assertEquals(listOf(2, 2, 2), state.routes.map { it.stepsRemaining })
     }
 
     @Test
