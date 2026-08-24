@@ -55,6 +55,22 @@ class ClipboardWriteCoordinator(
         return matches
     }
 
+    /**
+     * Content-only variant for capture paths that cannot know which of our own writes produced
+     * the change (the platform clip-changed listener carries no origin id). Matches any
+     * unexpired self-write with the same content hash and consumes it, so a clip this app just
+     * wrote (history copy, inbound auto-apply, write test) is not re-captured and echoed back
+     * to the peer.
+     */
+    fun shouldSuppressContent(text: String): Boolean {
+        purgeExpiredSuppressions()
+        val hash = hasher.hash(text)
+        val match = suppressionsByOrigin.entries.firstOrNull { it.value.contentHash == hash }
+            ?: return false
+        suppressionsByOrigin.remove(match.key)
+        return true
+    }
+
     private fun clearSuppression(originEventId: String) {
         suppressionsByOrigin.remove(originEventId)
     }

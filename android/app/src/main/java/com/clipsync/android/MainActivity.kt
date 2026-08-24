@@ -56,15 +56,15 @@ import com.clipsync.android.pairing.PeerHealthClient
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.AdbLogOverlayBackend
-import com.clipsync.android.platform.clipboard.AndroidPublicClipboardWriter
 import com.clipsync.android.platform.clipboard.AndroidRouteProbes
 import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardCapabilityStore
-import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.ForegroundClipboardBackend
 import com.clipsync.android.platform.clipboard.OverlayPollingBackend
+import com.clipsync.android.platform.clipboard.SharedClipboardWrites
 import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
 import com.clipsync.android.storage.SyncSettingsStore
+import com.clipsync.android.sync.ClipboardCaptureManager
 import com.clipsync.android.sync.ClipboardSyncService
 import com.clipsync.android.sync.SyncConnectionState
 import com.clipsync.android.sync.SyncStore
@@ -126,6 +126,19 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    // One process-wide write coordinator: history copy, auto-apply, and the write test all
+    // share the suppression table the capture pipeline consults, so self-writes never echo.
+    private val writeCoordinator by lazy { SharedClipboardWrites.coordinator(applicationContext) }
+
+    private val captureManager by lazy {
+        ClipboardCaptureManager(
+            settings = SyncSettingsStore(
+                SharedPrefsKeyValueStore(this, name = SyncSettingsStore.PREFERENCES_NAME),
+            ),
+            writeCoordinator = writeCoordinator,
+        )
+    }
+
     private val healthViewModel: HealthViewModel by viewModels {
         HealthViewModel.factory(
             pairingStore = pairingStore,
@@ -145,9 +158,7 @@ class MainActivity : ComponentActivity() {
             capability = CapabilityWiring(
                 routeProbes = routeProbes,
                 capabilityStore = capabilityStore,
-                writeCoordinator = ClipboardWriteCoordinator(
-                    publicWriter = AndroidPublicClipboardWriter(this),
-                ),
+                writeCoordinator = writeCoordinator,
                 foregroundBackend = foregroundBackend,
                 clearClipboard = foregroundBackend::clear,
                 peerHealth = PeerHealthClient(),
@@ -164,9 +175,7 @@ class MainActivity : ComponentActivity() {
         // database instance and history observers see the engine's writes.
         HomeViewModel.factory(
             history = ClipSyncHistoryGateway(SyncStore.repository(applicationContext)),
-            writeCoordinator = ClipboardWriteCoordinator(
-                publicWriter = AndroidPublicClipboardWriter(applicationContext),
-            ),
+            writeCoordinator = writeCoordinator,
             pairingStore = pairingStore,
         )
     }
@@ -200,6 +209,21 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Stage-4 acceptance: while the app is visible, the capability ladder captures copies
+        // automatically (today that resolves to the FOREGROUND_ONLY backend; a privileged
+        // backend upgrades this without any change here). The manager gates on pause/private
+        // and on self-writes before enqueueing into the same outbox the share sheet uses.
+        clipboardCoordinator.start { change -> captureManager.onClipboardChanged(change) }
+    }
+
+    override fun onStop() {
+        // Android 10+ denies background reads anyway; stopping keeps the listener honest.
+        clipboardCoordinator.stop()
+        super.onStop()
     }
 
     override fun onResume() {
