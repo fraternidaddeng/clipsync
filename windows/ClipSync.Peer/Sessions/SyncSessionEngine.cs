@@ -72,8 +72,17 @@ public sealed class SyncSessionEngine : IDisposable
     /// <summary>Raised after a batch of remote clip bodies committed locally, in commit order.</summary>
     public event Action<IReadOnlyList<RemoteClipApplied>>? RemoteClipsCommitted;
 
+    /// <summary>
+    /// Raised with the peer device id once the session reaches the ready state (on the
+    /// listener this is right after the proof verified). Raised on a worker thread.
+    /// </summary>
+    public event Action<string>? SessionReady;
+
     /// <summary>The authenticated peer, available once the handshake completed.</summary>
     public string? PeerDeviceId => peerDevice?.DeviceId;
+
+    /// <summary>True once the handshake finished and data messages may flow.</summary>
+    public bool IsReady => state == SessionState.Ready;
 
     /// <summary>
     /// True only when both directions confirmed the handshake: the listener verified the proof,
@@ -483,6 +492,7 @@ public sealed class SyncSessionEngine : IDisposable
         await store.ResetOutboxToPendingAsync(peerDevice!.DeviceId, token).ConfigureAwait(false);
         await SendAsync(ProtocolMessageTypes.KnownVector, await BuildKnownVectorAsync(token).ConfigureAwait(false), token).ConfigureAwait(false);
         PeerLog.SessionReady(logger, role.ToString(), peerDevice.DeviceId);
+        SessionReady?.Invoke(peerDevice.DeviceId);
     }
 
     private async Task<bool> HandleKnownVectorAsync(SyncStateDto vector, CancellationToken token)
