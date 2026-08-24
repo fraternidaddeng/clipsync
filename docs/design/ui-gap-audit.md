@@ -2,7 +2,7 @@
 
 > 从属于《设计纲领》（`DESIGN-CHARTER.md`）与 `tokens.md`。
 > 本文件记录「章程 → 实现」尚未合拢的差距，按影响排序；每完成一轮打磨更新一次。
-> 最后更新：2026-08-24（WPF 夜间主题 / Windows 随包字体 打磨轮之后）
+> 最后更新：2026-08-24（Android 空状态 / 首次运行引导 / 通知关闭状态行 打磨轮之后）
 
 ---
 
@@ -19,6 +19,10 @@
 | 托盘/杂项中文化 | 托盘菜单、气泡提示、「需要你操作」缘由、配对不可用弹窗全部转中文 |
 | WPF 夜间主题 | `CharterTokensNight.xaml` 同键夜间字典（tokens §2 夜值，夜间抬起 = 提亮面色）；`CharterThemeManager` 读 `SystemUsesLightTheme`（与托盘同一取值，缺省视为深色）、监听 `SystemEvents.UserPreferenceChanged` 运行时整体替换字典；三个窗口约 170 处 `StaticResource` 刷成 `DynamicResource`，切主题无需重启 |
 | Windows 随包字体（Sans/Mono） | `Resources/Fonts/` 打包 Noto Sans SC 400/500、Plus Jakarta Sans 400/500/600、JetBrains Mono 400/500（OFL 许可证随文件）；`CsSans`/`CsMono` 改指随包字体，三窗口不再落 `Segoe UI / 微软雅黑`，Mono 链中文回落到随包 Noto Sans SC；`Consolas` 仅作加载失败兜底 |
+| Android 空状态（三处） | 历史空列表：未配对 = Serif 短句「先把两端接起来」+ 幽灵「去配对」按钮（跳通路）；已配对 = 「静候第一条剪贴」。通路「已配对设备」区空态 = 事实陈述 + 幽灵配对入口。偏好「设备」区：未配对空态 + 去配对；已配对显示对端名 + 「管理配对」链接行 |
+| Android 首次运行引导 | `OnboardingScreen`（仅首次、未配对安装展示一次，`FirstRunStore` 落盘）：衬线品牌问候、三个 tab 各一句诚实说明、配对入口明确指向通路网络段、「先说清楚」能力限制卡（后台读取需授权、以实测为准）；实心「去配对」+ 幽灵「先看看」；文案为纯数据 `OnboardingContent`，有测试锁定承诺 |
+| Android 通知关闭状态行 | 通路页「通知已关闭」诚实条（stage-gap A9 收尾）：`areNotificationsEnabled` 每次 refresh/回到前台重探，false 时灰面事实条陈述后果（收到内容/需要恢复通知不会出现）+ 「去系统设置开启」深链；非赭非红——用户的选择是事实不是错误 |
+| Android 配对页次级状态 | 等待批准/已配对/失败三态脱离默认外观：charter 卡面 + 流动蓝进度环；证书不匹配 = 全应用唯一 err 着色盒，其余失败为灰面事实卡 |
 
 ---
 
@@ -29,7 +33,7 @@
 | 差距 | 现状 | 需要做 |
 |---|---|---|
 | **字体随包分发（剩余部分）** | Windows Sans/Mono 已随包（见上）；衬线仍落 `SimSun`（Noto Serif SC 单字重 ~11MB，暂缓）；**Android 三个声音仍全部落系统/OEM 字体** | Android 打包 `NotoSansSC`、`JetBrainsMono`（Compose `FontFamily(Font(...))`）；衬线两端一起裁决：要么接受体积打包 `NotoSerifSC-SemiBold`，要么改章程 |
-| **空状态 / 首次运行** | 历史空列表是空白区域；首次运行没有「去配对」的引导 | 空状态是三处衬线时刻之一（纲领 3.5）：Serif 短句 + 幽灵配对按钮；两端都缺 |
+| **空状态 / 首次运行（Windows 侧）** | Android 空状态与首次运行引导已合拢（见上）；Windows 历史空列表仍是空白区域，首次运行没有「去配对」引导 | 空状态是三处衬线时刻之一（纲领 3.5）：Serif 短句 + 幽灵配对按钮；建议首启直接落「通路」页（`pc-ui-inventory` #14/#15） |
 | **卡片深度不足**（Windows） | 主窗卡片是 1px 边框平面卡，无 `sh-1` 阴影、无 `sf-grad` 受光 | tokens §8：最外层挂一次 `DropShadowEffect`，内层 1px 边框，最内 2px 顶部高光渐变 |
 
 ### P2 · 章程规定但未接线
