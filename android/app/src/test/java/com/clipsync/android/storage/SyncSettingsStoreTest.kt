@@ -94,4 +94,43 @@ class SyncSettingsStoreTest {
         assertEquals(2_000, corrupted.retentionMaxEntries)
         assertTrue(corrupted.autoApplyRemote)
     }
+
+    @Test
+    fun bootRestoreDefaultsOffAndRoundTrips() {
+        // Plan 5.2: 开机恢复 is opt-in; nothing registers at boot until the user says so.
+        assertFalse(store.bootRestoreEnabled)
+
+        store.bootRestoreEnabled = true
+        assertTrue(store.bootRestoreEnabled)
+
+        store.bootRestoreEnabled = false
+        assertFalse(store.bootRestoreEnabled)
+    }
+
+    @Test
+    fun effectiveRetentionPolicyKeepsAgeOnlyWhileAutoExpireIsOn() {
+        store.retentionMaxEntries = 100
+        store.retentionMaxAgeDays = 2
+
+        val withExpiry = store.effectiveRetentionPolicy()
+        assertEquals(100, withExpiry.maximumEntries)
+        assertEquals(2L * 24 * 60 * 60 * 1_000, withExpiry.maximumAgeMs)
+
+        store.autoExpireEnabled = false
+        val withoutExpiry = store.effectiveRetentionPolicy()
+        // The entry cap survives; the age limit becomes unreachably large (matches no row).
+        assertEquals(100, withoutExpiry.maximumEntries)
+        assertTrue(withoutExpiry.maximumAgeMs > System.currentTimeMillis())
+    }
+
+    @Test
+    fun effectiveMaxSyncTextBytesNeverExceedsTheProtocolCap() {
+        assertEquals(1_048_576, store.effectiveMaxSyncTextBytes)
+
+        store.maxSyncTextBytes = 2_048
+        assertEquals(2_048, store.effectiveMaxSyncTextBytes)
+
+        store.maxSyncTextBytes = 8_388_608 // stored, but the wire cap still rules
+        assertEquals(1_048_576, store.effectiveMaxSyncTextBytes)
+    }
 }

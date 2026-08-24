@@ -50,10 +50,31 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
             write(KEY_MAX_SYNC_TEXT_BYTES, value.toString())
         }
 
+    /**
+     * Restart the sync service after a device reboot (plan 5.2). Off by default: the
+     * BOOT_COMPLETED receiver may only be registered after the user explicitly opts in.
+     */
+    var bootRestoreEnabled: Boolean
+        get() = readBoolean(KEY_BOOT_RESTORE, default = false)
+        set(value) = write(KEY_BOOT_RESTORE, value.toString())
+
     fun retentionPolicy(): RetentionPolicy = RetentionPolicy(
         maximumEntries = retentionMaxEntries,
         maximumAgeMs = retentionMaxAgeDays * MILLIS_PER_DAY,
     )
+
+    /**
+     * What cleanup should enforce right now: the entry cap always applies; the age limit only
+     * while [autoExpireEnabled] is on (an effectively-infinite age matches no row otherwise).
+     */
+    fun effectiveRetentionPolicy(): RetentionPolicy = RetentionPolicy(
+        maximumEntries = retentionMaxEntries,
+        maximumAgeMs = if (autoExpireEnabled) retentionMaxAgeDays * MILLIS_PER_DAY else NO_AGE_LIMIT_MS,
+    )
+
+    /** The user cap may lower the per-item size, never raise it past the protocol's 1 MiB. */
+    val effectiveMaxSyncTextBytes: Int
+        get() = minOf(maxSyncTextBytes, DEFAULT_MAX_TEXT_BYTES)
 
     private fun readBoolean(key: String, default: Boolean): Boolean =
         keyValues.read(key)?.toBooleanStrictOrNull() ?: default
@@ -70,6 +91,9 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         const val DEFAULT_MAX_TEXT_BYTES = 1_048_576
         private const val MILLIS_PER_DAY = 24L * 60 * 60 * 1_000
 
+        /** Far above any real clip age; `now - this` stays negative, so no row ever matches. */
+        private const val NO_AGE_LIMIT_MS = Long.MAX_VALUE / 2
+
         private const val KEY_AUTO_APPLY_REMOTE = "sync.auto_apply_remote"
         private const val KEY_SYNC_PAUSED = "sync.paused"
         private const val KEY_PRIVATE_MODE = "sync.private_mode"
@@ -77,5 +101,6 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         private const val KEY_RETENTION_MAX_AGE_DAYS = "sync.retention.max_age_days"
         private const val KEY_AUTO_EXPIRE_ENABLED = "sync.retention.auto_expire"
         private const val KEY_MAX_SYNC_TEXT_BYTES = "sync.max_text_bytes"
+        private const val KEY_BOOT_RESTORE = "sync.boot_restore"
     }
 }
