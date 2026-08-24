@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -31,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.ClipSyncType
@@ -140,7 +140,7 @@ fun OnboardingScreen(
 @Composable
 private fun HonestyNote(modifier: Modifier = Modifier) {
     val c = clipSyncColors
-    val shape = RoundedCornerShape(12.dp)
+    val shape = CharterShapes.control
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -167,7 +167,7 @@ private fun HonestyNote(modifier: Modifier = Modifier) {
 @Composable
 private fun PrimaryAction(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val c = clipSyncColors
-    val shape = RoundedCornerShape(12.dp)
+    val shape = CharterShapes.control
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -190,7 +190,7 @@ private fun PrimaryAction(label: String, onClick: () -> Unit, modifier: Modifier
 @Composable
 private fun GhostAction(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val c = clipSyncColors
-    val shape = RoundedCornerShape(12.dp)
+    val shape = CharterShapes.control
     Box(
         modifier = modifier
             .fillMaxWidth()

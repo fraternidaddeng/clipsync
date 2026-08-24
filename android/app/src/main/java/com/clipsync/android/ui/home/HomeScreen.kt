@@ -397,7 +397,7 @@ private fun EmptyState(
                 textAlign = TextAlign.Center,
             )
             if (!paired) {
-                val shape = RoundedCornerShape(10.dp)
+                val shape = CharterShapes.control
                 Text(
                     text = "去配对 ›",
                     fontSize = 13.sp,

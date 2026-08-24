@@ -306,7 +306,7 @@ private fun NotificationsOffBanner(
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
-    val shape = RoundedCornerShape(10.dp)
+    val shape = CharterShapes.control
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -368,7 +368,7 @@ private fun PairedDevicesEmptyState(
             color = c.t3,
             textAlign = TextAlign.Center,
         )
-        val shape = RoundedCornerShape(10.dp)
+        val shape = CharterShapes.control
         Text(
             text = "去配对 ›",
             fontSize = 13.sp,

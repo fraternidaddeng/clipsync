@@ -360,7 +360,7 @@ private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel) {
     }
     if (reason == PairingFailure.CERTIFICATE_MISMATCH) {
         // 证书不一致是真正的 error（可能的中间人）：红色着色盒唯一出场处。
-        val shape = RoundedCornerShape(16.dp)
+        val shape = CharterShapes.card
         Column(
             Modifier
                 .fillMaxWidth()
