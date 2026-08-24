@@ -70,6 +70,21 @@ class SyncSettingsStoreTest {
     }
 
     @Test
+    fun autoExpireDefaultsOnAndRoundTripsWithoutTouchingTheDuration() {
+        assertTrue(store.autoExpireEnabled)
+
+        store.retentionMaxAgeDays = 14
+        store.autoExpireEnabled = false
+
+        assertFalse(store.autoExpireEnabled)
+        assertEquals(14, store.retentionMaxAgeDays)
+
+        store.autoExpireEnabled = true
+        assertTrue(store.autoExpireEnabled)
+        assertEquals(14, store.retentionMaxAgeDays)
+    }
+
+    @Test
     fun corruptPersistedValuesFallBackToDefaults() {
         val backing = FakeKeyValueStore()
         backing.values["sync.retention.max_entries"] = "not-a-number"

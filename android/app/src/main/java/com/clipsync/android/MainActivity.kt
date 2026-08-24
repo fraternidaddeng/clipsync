@@ -52,6 +52,7 @@ import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.storage.ClipSyncDatabase
 import com.clipsync.android.storage.ClipSyncRepository
+import com.clipsync.android.storage.SyncSettingsStore
 import com.clipsync.android.ui.HealthScreen
 import com.clipsync.android.ui.health.HealthViewModel
 import com.clipsync.android.ui.home.ClipSyncHistoryGateway
@@ -106,7 +107,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private val preferencesViewModel: PreferencesViewModel by viewModels {
-        PreferencesViewModel.factory(SharedPrefsKeyValueStore(this, name = "clipsync.settings"))
+        PreferencesViewModel.factory(
+            SyncSettingsStore(
+                SharedPrefsKeyValueStore(this, name = SyncSettingsStore.PREFERENCES_NAME),
+            ),
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
