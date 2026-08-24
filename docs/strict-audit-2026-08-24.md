@@ -119,7 +119,7 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 | Windows 日志 | `PeerLog` source-generated，模板参数只有 code/type/count/deviceId；集成测试显式断言会话日志不含正文/密钥/proof/nonce ✅；`BoundedDiagnosticsLog` 有界 |
 | logcat 路径 | 只在内存中匹配已知 ROM 标签，parse 后行即弃、不落盘、不上传；fixture 匿名化内联 ✅ |
 | `CapabilityReport` 持久化 | 只有模式/状态/稳定错误码/时间戳，无文本、无目标 App 名、无 Shizuku 输出 ✅ |
-| 导出 | JSONL 明文**有意为之**且两端 UI 明示（「导出内容为明文，请妥善保管」）；不含密钥/证书/配对信息；导入强校验（逐行 schema + hash 重算 + 计数核对）✅。图片 blob 不随导出（见 §6 合并债务 P1，是功能缺口非隐私泄漏） |
+| 导出 | JSONL 明文**有意为之**且两端 UI 明示（「导出内容为明文，请妥善保管」）；不含密钥/证书/配对信息；导入强校验（逐行 schema + hash 重算 + 计数核对）✅。图片随 `format_version: 2` 导出（`docs/export-format-v2.md`：blob 元数据 + 16 MiB 上限内嵌 base64，导入重算 hash + magic/尺寸校验），仍不含任何密钥/设备行 |
 | 密钥卫生 | `SyncEngine` 会话结束 `pairSecret.fill(0)`；Keystore/DPAPI 保管 pair secret；UserService 不接触密钥/网络 ✅ |
 | 剩余风险 | 图片原始字节含 EXIF 已在设置文案里承诺告知（纲领 §5.9 的隐私文案完整保留）✅ |
 
@@ -150,7 +150,7 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 
 | 项 | 优先级 | 状态（2026-08-24 最终集成复核） |
 |---|---|---|
-| 图片感知导出/导入（media blob 随 JSONL） | ~~P1~~ | **已裁决降级为文档化排除**：`48e0a14` 在 `docs/export-format-v1.md` 明文规定导出 v1 整体排除图片行（读写两端都拒绝非 `text` kind），缺失图片区间走正常同步补齐；image-aware `format_version: 2` 留作未来功能项，不再是移植缺口 |
+| 图片感知导出/导入（media blob 随 JSONL） | ~~P1~~ | **已实现**（先经 `48e0a14` 文档化排除，后落地）：`docs/export-format-v2.md` 定义 image-aware `format_version: 2`（图片记录带 blob 元数据 + 16 MiB 上限内嵌 base64、图片墓碑、仅元数据回退），两端 `HistoryExportFormat.cs`/`HistoryTransfer.kt` + 存储层落地；纯文本库仍写 v1 保持旧版可导入 |
 | Windows Modern Standby（`PowerRegisterSuspendResumeNotification` + 睡前会话闸门） | ~~P1~~ | **已修复（`25d2788`）**：`SessionPowerMonitor` + `Win32SuspendResumeNotificationSource`，挂起闸门新会话（503）并断开活跃会话，恢复后解闸；三套测试覆盖 |
 | PeerServer 认证前 per-IP 限流 | ~~P2~~ | **已修复（`25d2788`）**：`SlidingWindowRateLimiter` 接入 sync WebSocket accept + pairing confirm（429） |
 | 跨端 E2E harness（`E2eHost` + 脚本） | ~~P2~~ | **已修复（`f5c1efb`）**，最终集成轮实测 **E2E-PASS**（本 Linux 环境） |
