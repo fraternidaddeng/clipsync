@@ -42,6 +42,12 @@ sealed interface EnqueueResult {
 
     /** Above the 1 MiB UTF-8 limit; never truncated silently (plan 3.3 rule 9). */
     data object TooLarge : EnqueueResult
+
+    /** The user paused sync; nothing new may be queued for upload (plan 3.4 gate order). */
+    data object SyncPaused : EnqueueResult
+
+    /** Private mode is on; local clipboard content must not leave the device (plan 3.4). */
+    data object PrivateMode : EnqueueResult
 }
 
 /**

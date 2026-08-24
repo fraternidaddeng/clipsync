@@ -2,6 +2,7 @@ package com.clipsync.android.sync
 
 import android.content.Context
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.storage.SyncSettingsStore
 
 /** Hook the WebSocket sync engine implements to be nudged after a local enqueue. */
 fun interface SyncRequester {
@@ -37,8 +38,12 @@ object SyncServices {
                 return
             }
             val store = SharedPrefsKeyValueStore(context, name = "clipsync.sync")
+            val settings = SyncSettingsStore(
+                SharedPrefsKeyValueStore(context, name = SyncSettingsStore.PREFERENCES_NAME),
+            )
             services = Services(
-                outbox = KeyValueClipOutbox(store),
+                // Pause/private gates wrap the queue itself so no entry point can bypass them.
+                outbox = SettingsGatedClipOutbox(KeyValueClipOutbox(store), settings),
                 inbox = KeyValueClipInbox(store),
                 // The Stage-4 WebSocket engine registers itself via install(); until then a
                 // queued entry simply waits for the next connection.

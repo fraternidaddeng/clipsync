@@ -33,6 +33,13 @@ data class SyncSessionConfig(
     val nowMs: () -> Long = System::currentTimeMillis,
     /** Re-checked on every data message so a forgotten pairing kills live sessions. */
     val peerStillTrusted: () -> Boolean = { true },
+    /**
+     * Re-checked before every announce so pausing sync (or turning private mode on) stops
+     * outbound content immediately. Inbound stays untouched, and in-flight fetches of clips
+     * announced earlier still complete; pending outbox entries flow on the next drain tick
+     * after the gate reopens.
+     */
+    val outboundAllowed: () -> Boolean = { true },
 )
 
 /** Why the session ended; [errorCode] is a protocol code when one applies. */
@@ -359,6 +366,12 @@ class SyncEngine(
             return true
         }
 
+        if (!config.outboundAllowed()) {
+            // Paused/private: the peer's pull is not served. It re-requests on the next
+            // vector exchange, and the outbox drain announces backlog once the gate reopens.
+            return true
+        }
+
         for (request in wants.requests) {
             var remaining: List<SequenceRange> = request.ranges.map { SequenceRange(it.startSeq, it.endSeq) }
             while (remaining.isNotEmpty()) {
@@ -600,6 +613,11 @@ class SyncEngine(
 
     private suspend fun drainOutbox() {
         while (currentCoroutineContext().isActive) {
+            if (!config.outboundAllowed()) {
+                // Entries stay pending (never marked announced), so nothing is lost: the
+                // next drain tick after unpausing announces them.
+                return
+            }
             val batch = repository.getOutboxBatch(config.peerDeviceId, SyncLimits.MAX_ANNOUNCE_CLIPS)
             if (batch.isEmpty()) {
                 return

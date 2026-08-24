@@ -60,6 +60,8 @@ class SyncSupervisor(
     private val unpairedPollMs: Long = 15_000,
     private val nowMs: () -> Long = System::currentTimeMillis,
     private val onRemoteClipsCommitted: (List<RemoteClipApplied>) -> Unit = {},
+    /** Pause/private gate for outbound announces; passed through to every session. */
+    private val outboundAllowed: () -> Boolean = { true },
 ) {
     private val mutableState = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)
 
@@ -99,6 +101,7 @@ class SyncSupervisor(
                         val current = pairing.peer()
                         current != null && current.deviceId == peer.deviceId && current.trustEpoch == peer.trustEpoch
                     },
+                    outboundAllowed = outboundAllowed,
                 ),
                 pairSecret = secret,
                 onRemoteClipsCommitted = onRemoteClipsCommitted,

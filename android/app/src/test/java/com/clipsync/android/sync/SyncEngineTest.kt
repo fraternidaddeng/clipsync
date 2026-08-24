@@ -420,6 +420,127 @@ class SyncEngineTest {
     }
 
     @Test
+    fun `paused outbound gate holds announces and releases them on resume`() = runTest {
+        var outboundAllowed = false
+        val repository = InMemorySyncRepository(LOCAL_ID)
+        val engine = SyncEngine(repository, config().copy(outboundAllowed = { outboundAllowed }), SECRET)
+        val transport = FakeTransport()
+        val result = CompletableDeferred<SyncSessionResult>()
+        backgroundScope.launchEngine(engine, transport, result)
+
+        transport.awaitSent(SyncMessageTypes.HELLO)
+        transport.deliver(SyncMessageTypes.CHALLENGE, challengeBody())
+        transport.awaitSent(SyncMessageTypes.AUTH)
+        transport.awaitSent(SyncMessageTypes.KNOWN_VECTOR)
+        transport.deliver(SyncMessageTypes.KNOWN_VECTOR, SyncStateBody(emptyList()))
+
+        // A local clip lands in the outbox while the gate is closed.
+        val local = repository.recordLocalClip("held while paused", sourceApp = null, nowMs = 1_776_000_001_000)!!
+
+        // Fence: the next outbound frame is the pong, proving no announce slipped out.
+        transport.deliver(SyncMessageTypes.PING, PingBody(sentAtMs = 1))
+        transport.awaitSent(SyncMessageTypes.PONG)
+
+        // Resuming lets the next drain tick announce the pending entry; nothing was lost.
+        outboundAllowed = true
+        val announce = transport.awaitSent(SyncMessageTypes.CLIP_ANNOUNCE).body as ClipAnnounceBody
+        assertEquals(local.eventId, announce.clips.single().eventId)
+
+        transport.peerCloses()
+        assertTrue(result.await().authenticated)
+    }
+
+    @Test
+    fun `want_ranges are not served while outbound is gated`() = runTest {
+        val repository = InMemorySyncRepository(LOCAL_ID)
+        val engine = SyncEngine(repository, config().copy(outboundAllowed = { false }), SECRET)
+        val transport = FakeTransport()
+        val result = CompletableDeferred<SyncSessionResult>()
+        backgroundScope.launchEngine(engine, transport, result)
+
+        transport.awaitSent(SyncMessageTypes.HELLO)
+        transport.deliver(SyncMessageTypes.CHALLENGE, challengeBody())
+        transport.awaitSent(SyncMessageTypes.AUTH)
+        transport.awaitSent(SyncMessageTypes.KNOWN_VECTOR)
+        repository.recordLocalClip("not served", sourceApp = null, nowMs = 1_776_000_001_000)
+
+        // The peer pulls explicitly; the paused engine must not announce in response.
+        transport.deliver(
+            SyncMessageTypes.WANT_RANGES,
+            WantRangesBody(listOf(OriginRangesDto(LOCAL_ID, listOf(RangeDto(1, 1))))),
+        )
+        transport.deliver(SyncMessageTypes.PING, PingBody(sentAtMs = 1))
+        transport.awaitSent(SyncMessageTypes.PONG)
+
+        transport.peerCloses()
+        assertTrue(result.await().authenticated)
+    }
+
+    @Test
+    fun `inbound clips still commit while outbound is gated`() = runTest {
+        val repository = InMemorySyncRepository(LOCAL_ID)
+        val committed = mutableListOf<RemoteClipApplied>()
+        val engine = SyncEngine(
+            repository,
+            config().copy(outboundAllowed = { false }),
+            SECRET,
+        ) { committed.addAll(it) }
+        val transport = FakeTransport()
+        val result = CompletableDeferred<SyncSessionResult>()
+        backgroundScope.launchEngine(engine, transport, result)
+
+        transport.awaitSent(SyncMessageTypes.HELLO)
+        transport.deliver(SyncMessageTypes.CHALLENGE, challengeBody())
+        transport.awaitSent(SyncMessageTypes.AUTH)
+        transport.awaitSent(SyncMessageTypes.KNOWN_VECTOR)
+
+        // Receiving stays fully functional while paused: announce -> fetch -> payload -> ack.
+        val eventId = "55555555-5555-4555-8555-555555555555"
+        val content = "windows clip during pause"
+        transport.deliver(
+            SyncMessageTypes.CLIP_ANNOUNCE,
+            ClipAnnounceBody(
+                listOf(
+                    ClipHeaderDto(
+                        eventId = eventId,
+                        originDeviceId = PEER_ID,
+                        originSeq = 1,
+                        availability = ClipAvailability.AVAILABLE,
+                        kind = "text",
+                        contentHash = sha256Hex(content),
+                        utf8Bytes = content.toByteArray(StandardCharsets.UTF_8).size.toLong(),
+                        createdAtMs = 1_776_000_000_000,
+                    ),
+                ),
+            ),
+        )
+        transport.awaitSent(SyncMessageTypes.CLIP_FETCH)
+        transport.deliver(
+            SyncMessageTypes.CLIP_PAYLOAD,
+            ClipPayloadBody(
+                listOf(
+                    ClipPayloadItemDto(
+                        eventId = eventId,
+                        originDeviceId = PEER_ID,
+                        originSeq = 1,
+                        kind = "text",
+                        content = content,
+                        contentHash = sha256Hex(content),
+                        utf8Bytes = content.toByteArray(StandardCharsets.UTF_8).size.toLong(),
+                        createdAtMs = 1_776_000_000_000,
+                    ),
+                ),
+            ),
+        )
+        val acks = transport.awaitSent(SyncMessageTypes.ACK_RANGES).body as AckRangesBody
+        assertEquals(listOf(OriginRangesDto(PEER_ID, listOf(RangeDto(1, 1)))), acks.acks)
+        assertEquals(listOf(content), committed.map { it.content })
+
+        transport.peerCloses()
+        assertTrue(result.await().authenticated)
+    }
+
+    @Test
     fun `inbound want_ranges above the cap is rate limited but not fatal`() = runTest {
         val engine = SyncEngine(InMemorySyncRepository(LOCAL_ID), config(), SECRET)
         val transport = FakeTransport()
