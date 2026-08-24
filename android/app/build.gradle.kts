@@ -91,6 +91,16 @@ tasks.withType<Test>().configureEach {
         "protocol.v2.fixtures.dir",
         rootProject.file("../protocol/v2/fixtures").absolutePath,
     )
+    // Forward the cross-client E2E connection parameters (scripts/run-e2e-stage4.ps1)
+    // from the Gradle launcher JVM into the forked test JVM.
+    System
+        .getProperties()
+        .stringPropertyNames()
+        .filter { it.startsWith("clipsync.e2e.") }
+        .forEach { name ->
+            val value = System.getProperty(name) ?: return@forEach
+            systemProperty(name, value)
+        }
 }
 
 dependencies {
