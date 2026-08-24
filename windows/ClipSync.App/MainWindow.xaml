@@ -697,13 +697,18 @@
                     </StackPanel>
 
                     <Grid Grid.Row="3">
+                        <!-- 长列表虚拟化：ListBox 默认已虚拟化（VirtualizingStackPanel），此处显式声明
+                             并开启容器回收（Recycling），滚动时复用条目容器而非反复创建/析构，
+                             上千条历史时显著降低布局与 GC 压力。视觉零变化。 -->
                         <ListBox Background="Transparent"
                                  BorderThickness="0"
                                  ItemContainerStyle="{StaticResource HistoryItemContainer}"
                                  ItemsSource="{Binding History}"
                                  MouseDoubleClick="OnHistoryItemDoubleClick"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                 SelectedItem="{Binding SelectedItem}">
+                                 SelectedItem="{Binding SelectedItem}"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.VirtualizationMode="Recycling">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
