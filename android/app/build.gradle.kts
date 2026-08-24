@@ -4,6 +4,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
+    id("io.gitlab.arturbosch.detekt")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 android {
@@ -118,4 +120,61 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
     testImplementation("org.robolectric:robolectric:4.14.1")
     testImplementation("androidx.test:core:1.6.1")
+}
+
+// Static analysis is opt-in (`detekt`, `ktlintCheck`). Do not fail assemble/test.
+detekt {
+    toolVersion = "1.23.8"
+    buildUponDefaultConfig = true
+    allRules = false
+    parallel = true
+    autoCorrect = false
+    ignoreFailures = false
+    config.setFrom(files("${rootProject.projectDir}/config/detekt/detekt.yml"))
+    baseline = file("${rootProject.projectDir}/config/detekt/baseline.xml")
+    source.setFrom("src/main/java", "src/test/java")
+    basePath = rootProject.projectDir.absolutePath
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    jvmTarget = "17"
+    include("**/*.kt")
+    include("**/*.kts")
+    exclude("**/build/**")
+    exclude("**/generated/**")
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
+    jvmTarget = "17"
+    include("**/*.kt")
+    include("**/*.kts")
+    exclude("**/build/**")
+    exclude("**/generated/**")
+}
+
+ktlint {
+    version.set("1.5.0")
+    android.set(true)
+    ignoreFailures.set(false)
+    enableExperimentalRules.set(false)
+    baseline.set(file("${rootProject.projectDir}/config/ktlint/baseline.xml"))
+    filter {
+        exclude("**/generated/**")
+        exclude("**/build/**")
+    }
+}
+
+// Keep :app:check / assemble / unit tests independent of these opt-in tasks.
+tasks.named("check").configure {
+    setDependsOn(
+        dependsOn.filterNot { dep ->
+            val name =
+                when (dep) {
+                    is TaskProvider<*> -> dep.name
+                    is Task -> dep.name
+                    else -> ""
+                }
+            name.startsWith("detekt") || name.contains("ktlint", ignoreCase = true)
+        },
+    )
 }

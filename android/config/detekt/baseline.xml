@@ -1,0 +1,509 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ComplexCondition:AdbLogMinimizationInvariantTest.kt$AdbLogMinimizationInvariantTest$type == File::class.java || type == FileOutputStream::class.java || type == FileWriter::class.java || type == RandomAccessFile::class.java || type == FileChannel::class.java || type == Path::class.java</ID>
+    <ID>ComplexCondition:HistoryTransfer.kt$HistoryExportFormat$dto.content != null || dto.contentHash != null || dto.sourceApp != null || dto.deletedAtMs == null</ID>
+    <ID>ComplexCondition:ImageCodec.kt$ImageCodec$encoded[12] != 'I'.code.toByte() || encoded[13] != 'H'.code.toByte() || encoded[14] != 'D'.code.toByte() || encoded[15] != 'R'.code.toByte()</ID>
+    <ID>ComplexCondition:ImageCodec.kt$ImageCodec$marker == 0xD8 || marker == 0xD9 || marker in 0xD0..0xD7 || marker == 0x01</ID>
+    <ID>ComplexCondition:SyncEngine.kt$SyncEngine$header == null || header.contentHash != begin.contentHash || header.mimeType != begin.mimeType || header.encodedBytes != begin.encodedBytes</ID>
+    <ID>ComplexCondition:SyncEngine.kt$SyncEngine$item.originDeviceId != header.originDeviceId || item.originSeq != header.originSeq || item.contentHash != header.contentHash || item.utf8Bytes != header.utf8Bytes</ID>
+    <ID>ComplexCondition:SyncEngine.kt$SyncEngine$transfer == null || transfer.transferId != end.transferId || transfer.contentHash != end.contentHash || transfer.nextIndex != transfer.chunkCount</ID>
+    <ID>CyclomaticComplexMethod:AdbLogTestSupport.kt$fun assertNoRetainedRawLine(target: Any, rawLine: String)</ID>
+    <ID>CyclomaticComplexMethod:ClipboardMediaReader.kt$ClipboardMediaReader$fun readFirstImage(context: Context, clip: ClipData): ClipboardChange?</ID>
+    <ID>CyclomaticComplexMethod:HealthScreen.kt$@Composable fun HealthScreen( state: HealthScreenState, modifier: Modifier = Modifier, onPairRequest: () -&gt; Unit = {}, onRefresh: (() -&gt; Unit)? = null, onRouteAction: ((ReadRouteUi, RouteActionId) -&gt; Unit)? = null, onServiceStart: (() -&gt; Unit)? = null, onServiceStop: (() -&gt; Unit)? = null, onTestWrite: (() -&gt; Unit)? = null, onDismissTestResult: () -&gt; Unit = {}, onOpenNotificationSettings: (() -&gt; Unit)? = null, )</ID>
+    <ID>CyclomaticComplexMethod:HealthScreen.kt$@Composable private fun PipelineSegment( title: String, icon: ImageVector, segment: ConduitSegmentState, modifier: Modifier = Modifier, actions: List&lt;SegmentActionUi&gt; = emptyList(), )</ID>
+    <ID>CyclomaticComplexMethod:HistoryTransfer.kt$HistoryExportFormat$fun parseClipLine(line: String, lineNumber: Int): HistoryExportedClip</ID>
+    <ID>CyclomaticComplexMethod:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter.Companion$internal fun matches(method: Method, shape: IClipboardApiShape, kind: MethodKind): Boolean</ID>
+    <ID>CyclomaticComplexMethod:ImageCodec.kt$ImageCodec$fun tryInspectFile( path: File, expectedHash: String? = null, expectedBytes: Long? = null, ): Pair&lt;ImageCodecError, ValidatedImage?&gt;</ID>
+    <ID>CyclomaticComplexMethod:ImageCodec.kt$ImageCodec$private fun tryReadJpegSize(encoded: ByteArray): Pair&lt;Int, Int&gt;?</ID>
+    <ID>CyclomaticComplexMethod:ImageThumbnail.kt$ImageThumbnail$private fun writeThumbnail(blob: File, dest: File): File?</ID>
+    <ID>CyclomaticComplexMethod:PairingJson.kt$PairingJson.StrictScanner$private fun scanNumber()</ID>
+    <ID>CyclomaticComplexMethod:ProtocolJson.kt$ProtocolJson$private fun rejectDuplicateKeys(source: String)</ID>
+    <ID>CyclomaticComplexMethod:ProtocolJson.kt$ProtocolJson$private fun validateBody(type: String, body: kotlinx.serialization.json.JsonObject, version: Int)</ID>
+    <ID>CyclomaticComplexMethod:SyncEngine.kt$SyncEngine$private suspend fun dispatch(text: String): Boolean</ID>
+    <ID>CyclomaticComplexMethod:SyncEngine.kt$SyncEngine$private suspend fun handleClipAnnounce(announce: ClipAnnounceBody): Boolean</ID>
+    <ID>CyclomaticComplexMethod:SyncEngine.kt$SyncEngine$suspend fun run(sessionTransport: SyncTransport): SyncSessionResult</ID>
+    <ID>CyclomaticComplexMethod:SyncMessages.kt$SyncWire$fun encode(type: String, requestId: String, body: Any, version: Int = ProtocolJson.PROTOCOL_V1): String</ID>
+    <ID>CyclomaticComplexMethod:SyncMessages.kt$SyncWire$private fun decodeBody(type: String, body: JsonObject): Any</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:HomeScreen.kt$val (text, fg, bg, ln) = when (notice) { HomeNotice.Copied -&gt; NoticeStyle("已写入系统剪贴板", c.flow, c.flowBg, c.flowLn) is HomeNotice.CopyFailed -&gt; NoticeStyle("复制失败 · ${notice.errorCode}", c.err, c.errBg, c.errLn) HomeNotice.DeletedLocal -&gt; NoticeStyle("已从本机移除 · 不影响其他设备", c.t2, c.sf3, c.ln) }</ID>
+    <ID>FunctionNaming:CapabilityWizard.kt$@Composable fun CapabilityWizard( routes: List&lt;ReadRouteUi&gt;, onRouteAction: (ReadRouteUi, RouteActionId) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:CapabilityWizard.kt$@Composable private fun QualityDots(filled: Int)</ID>
+    <ID>FunctionNaming:CapabilityWizard.kt$@Composable private fun RouteActionButton( label: String, primary: Boolean, onClick: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:CapabilityWizard.kt$@Composable private fun RouteCard( route: ReadRouteUi, onAction: (RouteActionId) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:CapabilityWizard.kt$@Composable private fun StepRow(step: RouteStep)</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable fun ConduitRail( statuses: List&lt;ConduitStatus&gt;, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable fun ConduitStatusBand( state: HealthScreenState, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable fun HealthScreen( state: HealthScreenState, modifier: Modifier = Modifier, onPairRequest: () -&gt; Unit = {}, onRefresh: (() -&gt; Unit)? = null, onRouteAction: ((ReadRouteUi, RouteActionId) -&gt; Unit)? = null, onServiceStart: (() -&gt; Unit)? = null, onServiceStop: (() -&gt; Unit)? = null, onTestWrite: (() -&gt; Unit)? = null, onDismissTestResult: () -&gt; Unit = {}, onOpenNotificationSettings: (() -&gt; Unit)? = null, )</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable private fun DashedBar(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable private fun FillBar( status: ConduitStatus, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable private fun FilledTrack( modifier: Modifier = Modifier, fraction: Float, fill: Color, border: Color? = null, )</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable private fun FlowLine(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable private fun NotificationsOffBanner( onOpenSettings: (() -&gt; Unit)?, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable private fun PairedDevicesEmptyState( onPairRequest: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable private fun PipelineSegment( title: String, icon: ImageVector, segment: ConduitSegmentState, modifier: Modifier = Modifier, actions: List&lt;SegmentActionUi&gt; = emptyList(), )</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable private fun PulsingBar(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable private fun SegmentActionChip(action: SegmentActionUi)</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Composable private fun TestResultRow( result: ConduitTestResult, onDismiss: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HealthScreen.kt$@Preview(showBackground = true) @Composable private fun HealthScreenPreview()</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable fun HomeScreen( conduit: HealthScreenState, home: HomeUiState, onQueryChange: (String) -&gt; Unit, onCopy: (String) -&gt; Unit, onDelete: (String) -&gt; Unit, onOpenConduit: () -&gt; Unit, modifier: Modifier = Modifier, onFormatFilterChange: (ClipContentFormat?) -&gt; Unit = {}, nowMs: () -&gt; Long = System::currentTimeMillis, thumbnail: suspend (contentHash: String) -&gt; Bitmap? = { null }, )</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun ClipCard( item: HomeClipItem, nowMs: () -&gt; Long, thumbnail: suspend (String) -&gt; Bitmap?, onCopy: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun ClipThumbnail( contentHash: String, thumbnail: suspend (String) -&gt; Bitmap?, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun DismissableClipCard( item: HomeClipItem, nowMs: () -&gt; Long, thumbnail: suspend (String) -&gt; Bitmap?, onCopy: () -&gt; Unit, onDelete: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun EmptyState( paired: Boolean, onPair: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun FormatBadge(format: ClipContentFormat, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun FormatFilterRow( selected: ClipContentFormat?, onSelect: (ClipContentFormat?) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun ImageBadge(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun NoMatchState(message: String, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun NoticeStrip(notice: HomeNotice, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun SearchField( query: String, onQueryChange: (String) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun SourceTag(label: String, pairingOrder: Int?, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Preview(showBackground = true) @Composable private fun HomeScreenEmptyPreview()</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Preview(showBackground = true) @Composable private fun HomeScreenListPreview()</ID>
+    <ID>FunctionNaming:MainActivity.kt$@Composable private fun BackRow(label: String, onBack: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:MainActivity.kt$@Composable private fun ClipSyncApp( pairingViewModel: PairingViewModel, healthViewModel: HealthViewModel, homeViewModel: HomeViewModel, preferencesViewModel: PreferencesViewModel, showOnboarding: Boolean = false, onOnboardingSeen: () -&gt; Unit = {}, onRouteAction: (ReadRouteUi, RouteActionId) -&gt; Unit = { _, _ -&gt; }, onServiceStart: () -&gt; Unit = {}, onServiceStop: () -&gt; Unit = {}, onOpenNotificationSettings: (() -&gt; Unit)? = null, onExportHistory: () -&gt; Unit = {}, onImportHistory: () -&gt; Unit = {}, imageThumbnail: suspend (String) -&gt; android.graphics.Bitmap? = { null }, )</ID>
+    <ID>FunctionNaming:MainActivity.kt$@Composable private fun ClipSyncDock(selected: Int, onSelect: (Int) -&gt; Unit)</ID>
+    <ID>FunctionNaming:MainActivity.kt$@Composable private fun DockItem( icon: ImageVector, label: String, active: Boolean, onClick: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:MainActivity.kt$@Composable private fun SyncServiceController( pairingViewModel: PairingViewModel, onStartService: () -&gt; Unit, onStopService: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:OnboardingScreen.kt$@Composable fun OnboardingScreen( onPair: () -&gt; Unit, onSkip: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:OnboardingScreen.kt$@Composable private fun GhostAction(label: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:OnboardingScreen.kt$@Composable private fun HonestyNote(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:OnboardingScreen.kt$@Composable private fun PrimaryAction(label: String, onClick: () -&gt; Unit, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:OnboardingScreen.kt$@Preview(showBackground = true) @Composable private fun OnboardingScreenPreview()</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable fun PairingScreen(viewModel: PairingViewModel, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun GhostButton(text: String, onClick: () -&gt; Unit, enabled: Boolean = true)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun PairedContent(peer: PairedPeer, viewModel: PairingViewModel)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun PeerFacts(qr: PairingQrPayload)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun QrScannerView(onResult: (String) -&gt; Unit, modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewModel)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun ScannerFrame(onResult: (String) -&gt; Unit)</ID>
+    <ID>FunctionNaming:PairingScreen.kt$@Composable private fun SubmittingContent(peerName: String)</ID>
+    <ID>FunctionNaming:PreferencesScreen.kt$@Composable fun PreferencesScreen( state: PreferencesUiState, onPauseSyncChange: (Boolean) -&gt; Unit, onPrivateModeChange: (Boolean) -&gt; Unit, onAutoApplyRemoteChange: (Boolean) -&gt; Unit, onAutoExpireChange: (Boolean) -&gt; Unit, onBootRestoreChange: (Boolean) -&gt; Unit = {}, onImageSyncChange: (Boolean) -&gt; Unit = {}, /** Display name of the paired Windows peer; null while unpaired. */ pairedDeviceName: String? = null, onOpenConduit: () -&gt; Unit = {}, onExportHistory: () -&gt; Unit = {}, onImportHistory: () -&gt; Unit = {}, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:PreferencesScreen.kt$@Composable private fun ActionRow(title: String, description: String, onClick: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:PreferencesScreen.kt$@Composable private fun DeviceEmptyState(onOpenConduit: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:PreferencesScreen.kt$@Composable private fun GroupHeader(text: String)</ID>
+    <ID>FunctionNaming:PreferencesScreen.kt$@Composable private fun LinkRow(title: String, value: String, onClick: () -&gt; Unit)</ID>
+    <ID>FunctionNaming:PreferencesScreen.kt$@Composable private fun RowDivider()</ID>
+    <ID>FunctionNaming:PreferencesScreen.kt$@Composable private fun ToggleRow( title: String, description: String, checked: Boolean, onCheckedChange: (Boolean) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:PreferencesScreen.kt$@Composable private fun ValueRow(title: String, value: String)</ID>
+    <ID>FunctionNaming:PreferencesScreen.kt$@Preview(showBackground = true) @Composable private fun PreferencesScreenPreview()</ID>
+    <ID>FunctionNaming:Theme.kt$@Composable fun ClipSyncTheme( darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -&gt; Unit, )</ID>
+    <ID>InstanceOfCheckForException:SyncTransport.kt$OkHttpSyncConnector$failure is IOException</ID>
+    <ID>LargeClass:SyncEngine.kt$SyncEngine</ID>
+    <ID>LongMethod:CapabilityWizard.kt$@Composable private fun RouteCard( route: ReadRouteUi, onAction: (RouteActionId) -&gt; Unit, )</ID>
+    <ID>LongMethod:ClipboardSyncService.kt$ClipboardSyncService$private fun launchSyncStack()</ID>
+    <ID>LongMethod:HealthScreen.kt$@Composable fun HealthScreen( state: HealthScreenState, modifier: Modifier = Modifier, onPairRequest: () -&gt; Unit = {}, onRefresh: (() -&gt; Unit)? = null, onRouteAction: ((ReadRouteUi, RouteActionId) -&gt; Unit)? = null, onServiceStart: (() -&gt; Unit)? = null, onServiceStop: (() -&gt; Unit)? = null, onTestWrite: (() -&gt; Unit)? = null, onDismissTestResult: () -&gt; Unit = {}, onOpenNotificationSettings: (() -&gt; Unit)? = null, )</ID>
+    <ID>LongMethod:HealthScreen.kt$@Composable private fun PipelineSegment( title: String, icon: ImageVector, segment: ConduitSegmentState, modifier: Modifier = Modifier, actions: List&lt;SegmentActionUi&gt; = emptyList(), )</ID>
+    <ID>LongMethod:HomeScreen.kt$@Composable fun HomeScreen( conduit: HealthScreenState, home: HomeUiState, onQueryChange: (String) -&gt; Unit, onCopy: (String) -&gt; Unit, onDelete: (String) -&gt; Unit, onOpenConduit: () -&gt; Unit, modifier: Modifier = Modifier, onFormatFilterChange: (ClipContentFormat?) -&gt; Unit = {}, nowMs: () -&gt; Long = System::currentTimeMillis, thumbnail: suspend (contentHash: String) -&gt; Bitmap? = { null }, )</ID>
+    <ID>LongMethod:ImageClipRoundTripTest.kt$ImageClipRoundTripTest$@Test fun `every media fixture survives the chunked wire round-trip into the blob store`()</ID>
+    <ID>LongMethod:ImageCodec.kt$ImageCodec$fun tryInspectFile( path: File, expectedHash: String? = null, expectedBytes: Long? = null, ): Pair&lt;ImageCodecError, ValidatedImage?&gt;</ID>
+    <ID>LongMethod:MainActivity.kt$@Composable private fun ClipSyncApp( pairingViewModel: PairingViewModel, healthViewModel: HealthViewModel, homeViewModel: HomeViewModel, preferencesViewModel: PreferencesViewModel, showOnboarding: Boolean = false, onOnboardingSeen: () -&gt; Unit = {}, onRouteAction: (ReadRouteUi, RouteActionId) -&gt; Unit = { _, _ -&gt; }, onServiceStart: () -&gt; Unit = {}, onServiceStop: () -&gt; Unit = {}, onOpenNotificationSettings: (() -&gt; Unit)? = null, onExportHistory: () -&gt; Unit = {}, onImportHistory: () -&gt; Unit = {}, imageThumbnail: suspend (String) -&gt; android.graphics.Bitmap? = { null }, )</ID>
+    <ID>LongMethod:OnboardingScreen.kt$@Composable fun OnboardingScreen( onPair: () -&gt; Unit, onSkip: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:PairingScreen.kt$@Composable private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel)</ID>
+    <ID>LongMethod:PreferencesScreen.kt$@Composable fun PreferencesScreen( state: PreferencesUiState, onPauseSyncChange: (Boolean) -&gt; Unit, onPrivateModeChange: (Boolean) -&gt; Unit, onAutoApplyRemoteChange: (Boolean) -&gt; Unit, onAutoExpireChange: (Boolean) -&gt; Unit, onBootRestoreChange: (Boolean) -&gt; Unit = {}, onImageSyncChange: (Boolean) -&gt; Unit = {}, /** Display name of the paired Windows peer; null while unpaired. */ pairedDeviceName: String? = null, onOpenConduit: () -&gt; Unit = {}, onExportHistory: () -&gt; Unit = {}, onImportHistory: () -&gt; Unit = {}, modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:PrivilegedHostScript.kt$PrivilegedHostScript$fun render( packageName: String = PrivilegedHostConstants.PACKAGE_NAME, mainClass: String = PrivilegedHostConstants.HOST_MAIN_CLASS, processName: String = PrivilegedHostConstants.HOST_PROCESS_NAME, ): String</ID>
+    <ID>LongMethod:ProtocolJson.kt$ProtocolJson$private fun validateBody(type: String, body: kotlinx.serialization.json.JsonObject, version: Int)</ID>
+    <ID>LongMethod:SyncEngine.kt$SyncEngine$private suspend fun handleClipAnnounce(announce: ClipAnnounceBody): Boolean</ID>
+    <ID>LongMethod:SyncEngine.kt$SyncEngine$private suspend fun handleClipPayloadEnd(end: ClipPayloadEndBody): Boolean</ID>
+    <ID>LongMethod:SyncEngine.kt$SyncEngine$suspend fun run(sessionTransport: SyncTransport): SyncSessionResult</ID>
+    <ID>LongMethod:SyncEngineTest.kt$SyncEngineTest$@Test fun `full session - handshake, pull, push, and acks`()</ID>
+    <ID>LongMethod:Theme.kt$private fun m3Scheme(c: ClipSyncColors)</ID>
+    <ID>LongParameterList:AdbLogOverlayBackend.kt$AdbLogOverlayBackend$( private val readOverlayText: () -&gt; ClipboardReadResult, private val readLogsGranted: () -&gt; Boolean, private val reader: LogcatClipboardEventReader, private val hasher: ContentHasher = Sha256ContentHasher, private val nowEpochMillis: () -&gt; Long = System::currentTimeMillis, private val healthySignalTtlMillis: Long = HEALTHY_SIGNAL_TTL_MILLIS, private val systemVersion: String = "unknown", private val releaseOverlay: () -&gt; Unit = {}, )</ID>
+    <ID>LongParameterList:CapabilityRoutes.kt$( id: ReadRouteId, mode: ClipboardReadMode, title: String, quality: Int, cost: String, steps: List&lt;RouteStep&gt;, facts: CapabilityFacts, )</ID>
+    <ID>LongParameterList:HealthScreen.kt$( state: HealthScreenState, modifier: Modifier = Modifier, onPairRequest: () -&gt; Unit = {}, onRefresh: (() -&gt; Unit)? = null, onRouteAction: ((ReadRouteUi, RouteActionId) -&gt; Unit)? = null, onServiceStart: (() -&gt; Unit)? = null, onServiceStop: (() -&gt; Unit)? = null, onTestWrite: (() -&gt; Unit)? = null, onDismissTestResult: () -&gt; Unit = {}, onOpenNotificationSettings: (() -&gt; Unit)? = null, )</ID>
+    <ID>LongParameterList:HomeScreen.kt$( conduit: HealthScreenState, home: HomeUiState, onQueryChange: (String) -&gt; Unit, onCopy: (String) -&gt; Unit, onDelete: (String) -&gt; Unit, onOpenConduit: () -&gt; Unit, modifier: Modifier = Modifier, onFormatFilterChange: (ClipContentFormat?) -&gt; Unit = {}, nowMs: () -&gt; Long = System::currentTimeMillis, thumbnail: suspend (contentHash: String) -&gt; Bitmap? = { null }, )</ID>
+    <ID>LongParameterList:HomeScreen.kt$( item: HomeClipItem, nowMs: () -&gt; Long, thumbnail: suspend (String) -&gt; Bitmap?, onCopy: () -&gt; Unit, onDelete: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
+    <ID>LongParameterList:HomeViewModel.kt$HomeViewModel$( private val history: HistoryGateway, private val writeCoordinator: ClipboardWriteCoordinator, private val pairingStore: PairingStore, private val nowMs: () -&gt; Long = System::currentTimeMillis, private val searchDebounceMs: Long = SEARCH_DEBOUNCE_MS, private val noticeClearAfterMs: Long = NOTICE_CLEAR_MS, private val delayMs: suspend (Long) -&gt; Unit = { delay(it) }, )</ID>
+    <ID>LongParameterList:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$( private val clipboard: Any, private val sdkInt: Int, private val callingPackage: String, private val userId: Int = 0, private val attributionTag: String? = null, private val deviceId: Int = 0, private val clipTextReader: ClipTextReader = ReflectiveClipTextReader, )</ID>
+    <ID>LongParameterList:MainActivity.kt$( pairingViewModel: PairingViewModel, healthViewModel: HealthViewModel, homeViewModel: HomeViewModel, preferencesViewModel: PreferencesViewModel, showOnboarding: Boolean = false, onOnboardingSeen: () -&gt; Unit = {}, onRouteAction: (ReadRouteUi, RouteActionId) -&gt; Unit = { _, _ -&gt; }, onServiceStart: () -&gt; Unit = {}, onServiceStop: () -&gt; Unit = {}, onOpenNotificationSettings: (() -&gt; Unit)? = null, onExportHistory: () -&gt; Unit = {}, onImportHistory: () -&gt; Unit = {}, imageThumbnail: suspend (String) -&gt; android.graphics.Bitmap? = { null }, )</ID>
+    <ID>LongParameterList:OverlayPollingBackendTest.kt$OverlayPollingBackendTest$( platform: FakeOverlayPlatform = FakeOverlayPlatform(), canPollNow: () -&gt; Boolean = { true }, pollIntervalMillis: Long = OverlayPollingBackend.DEFAULT_POLL_INTERVAL_MS, scheduler: OverlayPollScheduler = ManualOverlayPollScheduler(), hasher: ContentHasher = ContentHasher { "hash:$it" }, nowEpochMillis: () -&gt; Long = { 1L }, )</ID>
+    <ID>LongParameterList:PairAuthProof.kt$PairAuthProof$( pairSecret: ByteArray, challengeRequestId: String, nonce: ByteArray, challengerDeviceId: String, responderDeviceId: String, trustEpoch: Long, proof: ByteArray, protocolVersion: Int = 1, )</ID>
+    <ID>LongParameterList:PairAuthProof.kt$PairAuthProof$( pairSecret: ByteArray, challengeRequestId: String, nonce: ByteArray, challengerDeviceId: String, responderDeviceId: String, trustEpoch: Long, protocolVersion: Int = 1, )</ID>
+    <ID>LongParameterList:PreferencesScreen.kt$( state: PreferencesUiState, onPauseSyncChange: (Boolean) -&gt; Unit, onPrivateModeChange: (Boolean) -&gt; Unit, onAutoApplyRemoteChange: (Boolean) -&gt; Unit, onAutoExpireChange: (Boolean) -&gt; Unit, onBootRestoreChange: (Boolean) -&gt; Unit = {}, onImageSyncChange: (Boolean) -&gt; Unit = {}, /** Display name of the paired Windows peer; null while unpaired. */ pairedDeviceName: String? = null, onOpenConduit: () -&gt; Unit = {}, onExportHistory: () -&gt; Unit = {}, onImportHistory: () -&gt; Unit = {}, modifier: Modifier = Modifier, )</ID>
+    <ID>LongParameterList:PrivilegedHostScript.kt$PrivilegedHostScript$( apkPath: String, token: String, packageName: String, className: String, processNameSuffix: String, callingUid: Int, )</ID>
+    <ID>LongParameterList:SyncSupervisor.kt$SyncSupervisor$( private val pairing: PairingStore, private val repository: SyncRepository, private val connector: SyncConnector, private val clientVersion: String, private val backoff: ReconnectBackoff = ReconnectBackoff(), private val unpairedPollMs: Long = 15_000, private val nowMs: () -&gt; Long = System::currentTimeMillis, private val onRemoteClipsCommitted: (List&lt;RemoteClipApplied&gt;) -&gt; Unit = {}, /** Pause/private gate for outbound announces; passed through to every session. */ private val outboundAllowed: () -&gt; Boolean = { true }, /** * When true, each dial attempt tries protocol v2 (`/v2/peer/sync`, image sync) first and * falls back to v1 when the peer's listener refuses the v2 handshake. Re-read per attempt * so flipping the preference applies on the next (re)connect. */ private val imageSyncEnabled: () -&gt; Boolean = { false }, /** * Fired once per lockout episode when the peer answers with RATE_LIMITED before this * device authenticated — the Windows listener throttles repeated auth failures, and the * user must see that instead of a silent retry loop (mirrors the Windows tray bubble). * Re-armed only after a session authenticates again. Never carries clipboard content. */ private val onAuthThrottled: () -&gt; Unit = {}, )</ID>
+    <ID>LoopWithTooManyJumpStatements:AdbLogTestSupport.kt$for</ID>
+    <ID>LoopWithTooManyJumpStatements:AdbLogTestSupport.kt$while</ID>
+    <ID>LoopWithTooManyJumpStatements:ClipSyncRepository.kt$ClipSyncRepository$for</ID>
+    <ID>LoopWithTooManyJumpStatements:ClipSyncRepository.kt$ClipSyncRepository$while</ID>
+    <ID>LoopWithTooManyJumpStatements:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator$for</ID>
+    <ID>LoopWithTooManyJumpStatements:ClipboardMediaReader.kt$ClipboardMediaReader$for</ID>
+    <ID>LoopWithTooManyJumpStatements:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$for</ID>
+    <ID>LoopWithTooManyJumpStatements:SequenceRange.kt$SequenceRangeMath$for</ID>
+    <ID>LoopWithTooManyJumpStatements:SyncEngine.kt$SyncEngine$for</ID>
+    <ID>LoopWithTooManyJumpStatements:SyncEngine.kt$SyncEngine$while</ID>
+    <ID>LoopWithTooManyJumpStatements:SyncSupervisor.kt$SyncSupervisor$while</ID>
+    <ID>MagicNumber:CapabilityWizard.kt$3</ID>
+    <ID>MagicNumber:ClipContentFormat.kt$0x21</ID>
+    <ID>MagicNumber:ClipContentFormat.kt$0x7E</ID>
+    <ID>MagicNumber:ClipContentFormat.kt$3</ID>
+    <ID>MagicNumber:ClipContentFormat.kt$4</ID>
+    <ID>MagicNumber:ClipSyncIcons.kt$ClipSyncIcons$1.7f</ID>
+    <ID>MagicNumber:ClipSyncIcons.kt$ClipSyncIcons$1.8f</ID>
+    <ID>MagicNumber:ClipSyncIcons.kt$ClipSyncIcons$1.9f</ID>
+    <ID>MagicNumber:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator$3</ID>
+    <ID>MagicNumber:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator$4</ID>
+    <ID>MagicNumber:Grain.kt$0x00FFFFFF</ID>
+    <ID>MagicNumber:Grain.kt$0x5EED</ID>
+    <ID>MagicNumber:Grain.kt$24</ID>
+    <ID>MagicNumber:Grain.kt$256</ID>
+    <ID>MagicNumber:HealthScreen.kt$0.4f</ID>
+    <ID>MagicNumber:HealthScreen.kt$0.52f</ID>
+    <ID>MagicNumber:HealthScreen.kt$0.6f</ID>
+    <ID>MagicNumber:HealthScreen.kt$3</ID>
+    <ID>MagicNumber:HealthScreen.kt$3f</ID>
+    <ID>MagicNumber:HealthViewModel.kt$HealthViewModel$8</ID>
+    <ID>MagicNumber:HiddenApis.kt$HiddenApis$3</ID>
+    <ID>MagicNumber:HiddenApis.kt$HiddenApis$31</ID>
+    <ID>MagicNumber:HiddenApis.kt$HiddenApis$4</ID>
+    <ID>MagicNumber:HiddenApis.kt$HiddenApis$5</ID>
+    <ID>MagicNumber:HiddenApis.kt$HiddenApis$6</ID>
+    <ID>MagicNumber:HistoryTransfer.kt$HistoryExportFormat$128</ID>
+    <ID>MagicNumber:HomeScreen.kt$3</ID>
+    <ID>MagicNumber:HomeScreen.kt$4</ID>
+    <ID>MagicNumber:IClipboardReflectionAdapter.kt$IClipboardApiShape$3</ID>
+    <ID>MagicNumber:IClipboardReflectionAdapter.kt$IClipboardApiShape$4</ID>
+    <ID>MagicNumber:IClipboardReflectionAdapter.kt$IClipboardApiShape.Companion$30</ID>
+    <ID>MagicNumber:IClipboardReflectionAdapter.kt$IClipboardApiShape.Companion$34</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0x0A</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0x1A</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0x47</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0x4E</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0x50</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xC0</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xC1</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xC2</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xC3</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xC5</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xC6</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xC7</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xC9</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xCA</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xCB</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xCD</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xCE</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xCF</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xD0</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xD7</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xD8</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xD9</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$0xFF</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$1024</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$1024L</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$12</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$13</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$14</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$15</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$16</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$20</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$24</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$3</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$5</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$64</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$64L</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$7</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$8</ID>
+    <ID>MagicNumber:ImageCodec.kt$ImageCodec$9</ID>
+    <ID>MagicNumber:ImageThumbnail.kt$ImageThumbnail$100</ID>
+    <ID>MagicNumber:KeystoreSecretProtector.kt$KeystoreSecretProtector$256</ID>
+    <ID>MagicNumber:LogcatClipboardEventReader.kt$LogcatClipboardEventReader$5L</ID>
+    <ID>MagicNumber:MainActivity.kt$0.42f</ID>
+    <ID>MagicNumber:MainActivity.kt$MainActivity$33</ID>
+    <ID>MagicNumber:MediaBlobStore.kt$MediaBlobStore$1000L</ID>
+    <ID>MagicNumber:MediaBlobStore.kt$MediaBlobStore$60L</ID>
+    <ID>MagicNumber:MediaBlobStore.kt$MediaBlobStore$64</ID>
+    <ID>MagicNumber:MediaBlobStore.kt$MediaBlobStore.Companion$64</ID>
+    <ID>MagicNumber:PairAuthProof.kt$PairAuthProof$16</ID>
+    <ID>MagicNumber:PairAuthProof.kt$PairAuthProof$8</ID>
+    <ID>MagicNumber:PairingConfirmClient.kt$PairingConfirmClient$200</ID>
+    <ID>MagicNumber:PairingConfirmClient.kt$PairingConfirmClient$400</ID>
+    <ID>MagicNumber:PairingConfirmClient.kt$PairingConfirmClient$403</ID>
+    <ID>MagicNumber:PairingConfirmClient.kt$PairingConfirmClient$410</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson$253</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson$32</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson$64</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson$65535</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson$8</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson.StrictScanner$0x20</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson.StrictScanner$16</ID>
+    <ID>MagicNumber:PairingJson.kt$PairingJson.StrictScanner$4</ID>
+    <ID>MagicNumber:PairingScreen.kt$19</ID>
+    <ID>MagicNumber:PairingScreen.kt$4</ID>
+    <ID>MagicNumber:PairingScreen.kt$8</ID>
+    <ID>MagicNumber:PairingStore.kt$PairingStore$32</ID>
+    <ID>MagicNumber:PairingStore.kt$PairingStore$64</ID>
+    <ID>MagicNumber:PreferencesScreen.kt$10</ID>
+    <ID>MagicNumber:PreferencesScreen.kt$20</ID>
+    <ID>MagicNumber:PrivilegedHostService.kt$PrivilegedHostService$14</ID>
+    <ID>MagicNumber:PrivilegedHostService.kt$PrivilegedHostService$3</ID>
+    <ID>MagicNumber:PrivilegedHostService.kt$PrivilegedHostService$30_000L</ID>
+    <ID>MagicNumber:PrivilegedHostService.kt$PrivilegedHostService.Companion$2000</ID>
+    <ID>MagicNumber:PrivilegedHostStarter.kt$PrivilegedHostStarter$24</ID>
+    <ID>MagicNumber:PrivilegedUserServiceStarter.kt$PrivilegedUserServiceStarter.Companion$10</ID>
+    <ID>MagicNumber:PrivilegedUserServiceStarter.kt$PrivilegedUserServiceStarter.Companion$100_000</ID>
+    <ID>MagicNumber:PrivilegedUserServiceStarter.kt$PrivilegedUserServiceStarter.Companion$13</ID>
+    <ID>MagicNumber:PrivilegedUserServiceStarter.kt$PrivilegedUserServiceStarter.Companion$6</ID>
+    <ID>MagicNumber:PrivilegedUserServiceStarter.kt$PrivilegedUserServiceStarter.Companion$8</ID>
+    <ID>MagicNumber:ProtocolJson.kt$ProtocolJson$128</ID>
+    <ID>MagicNumber:ProtocolJson.kt$ProtocolJson$256</ID>
+    <ID>MagicNumber:ProtocolJson.kt$ProtocolJson$32</ID>
+    <ID>MagicNumber:SyncMessages.kt$SyncLimits$0x80</ID>
+    <ID>MagicNumber:SyncMessages.kt$SyncLimits$0x800</ID>
+    <ID>MagicNumber:SyncMessages.kt$SyncLimits$3</ID>
+    <ID>MagicNumber:SyncMessages.kt$SyncLimits$4</ID>
+    <ID>MagicNumber:SyncNotifications.kt$SyncNotifications$0x7FFF</ID>
+    <ID>MagicNumber:SyncTransport.kt$OkHttpSyncTransport$120</ID>
+    <ID>MagicNumber:Theme.kt$0.62f</ID>
+    <ID>MagicNumber:Theme.kt$0x0EFFFFFF</ID>
+    <ID>MagicNumber:Theme.kt$0x17A8342B</ID>
+    <ID>MagicNumber:Theme.kt$0x1A215F8F</ID>
+    <ID>MagicNumber:Theme.kt$0x1C9B6B24</ID>
+    <ID>MagicNumber:Theme.kt$0x1FD9A15C</ID>
+    <ID>MagicNumber:Theme.kt$0x1FE0776C</ID>
+    <ID>MagicNumber:Theme.kt$0x216FA8D4</ID>
+    <ID>MagicNumber:Theme.kt$0x3D215F8F</ID>
+    <ID>MagicNumber:Theme.kt$0x3DA8342B</ID>
+    <ID>MagicNumber:Theme.kt$0x479B6B24</ID>
+    <ID>MagicNumber:Theme.kt$0x47E0776C</ID>
+    <ID>MagicNumber:Theme.kt$0x4D6FA8D4</ID>
+    <ID>MagicNumber:Theme.kt$0x4DD9A15C</ID>
+    <ID>MagicNumber:Theme.kt$0x66233448</ID>
+    <ID>MagicNumber:Theme.kt$0xB3000000</ID>
+    <ID>MagicNumber:Theme.kt$0xB8FFFFFF</ID>
+    <ID>MagicNumber:Theme.kt$0xFF000000</ID>
+    <ID>MagicNumber:Theme.kt$0xFF090D12</ID>
+    <ID>MagicNumber:Theme.kt$0xFF0C1116</ID>
+    <ID>MagicNumber:Theme.kt$0xFF0E141B</ID>
+    <ID>MagicNumber:Theme.kt$0xFF0F151C</ID>
+    <ID>MagicNumber:Theme.kt$0xFF121922</ID>
+    <ID>MagicNumber:Theme.kt$0xFF1B232E</ID>
+    <ID>MagicNumber:Theme.kt$0xFF1C2733</ID>
+    <ID>MagicNumber:Theme.kt$0xFF1F2833</ID>
+    <ID>MagicNumber:Theme.kt$0xFF215F8F</ID>
+    <ID>MagicNumber:Theme.kt$0xFF233448</ID>
+    <ID>MagicNumber:Theme.kt$0xFF242E3B</ID>
+    <ID>MagicNumber:Theme.kt$0xFF2C3744</ID>
+    <ID>MagicNumber:Theme.kt$0xFF3D4A59</ID>
+    <ID>MagicNumber:Theme.kt$0xFF3E4A59</ID>
+    <ID>MagicNumber:Theme.kt$0xFF4A7A96</ID>
+    <ID>MagicNumber:Theme.kt$0xFF4F8288</ID>
+    <ID>MagicNumber:Theme.kt$0xFF5F6C7C</ID>
+    <ID>MagicNumber:Theme.kt$0xFF6A6F9E</ID>
+    <ID>MagicNumber:Theme.kt$0xFF6B7A8B</ID>
+    <ID>MagicNumber:Theme.kt$0xFF6FA8D4</ID>
+    <ID>MagicNumber:Theme.kt$0xFF81B2D0</ID>
+    <ID>MagicNumber:Theme.kt$0xFF81B5BC</ID>
+    <ID>MagicNumber:Theme.kt$0xFF8A6194</ID>
+    <ID>MagicNumber:Theme.kt$0xFF8B98A8</ID>
+    <ID>MagicNumber:Theme.kt$0xFF93607A</ID>
+    <ID>MagicNumber:Theme.kt$0xFF9AA7B6</ID>
+    <ID>MagicNumber:Theme.kt$0xFF9B6B24</ID>
+    <ID>MagicNumber:Theme.kt$0xFFA0A7D9</ID>
+    <ID>MagicNumber:Theme.kt$0xFFA8342B</ID>
+    <ID>MagicNumber:Theme.kt$0xFFBCC9D9</ID>
+    <ID>MagicNumber:Theme.kt$0xFFC0CAD6</ID>
+    <ID>MagicNumber:Theme.kt$0xFFC499CF</ID>
+    <ID>MagicNumber:Theme.kt$0xFFCF98B3</ID>
+    <ID>MagicNumber:Theme.kt$0xFFCFD9E6</ID>
+    <ID>MagicNumber:Theme.kt$0xFFD9A15C</ID>
+    <ID>MagicNumber:Theme.kt$0xFFDAE3EE</ID>
+    <ID>MagicNumber:Theme.kt$0xFFDDE5EF</ID>
+    <ID>MagicNumber:Theme.kt$0xFFE0776C</ID>
+    <ID>MagicNumber:Theme.kt$0xFFE2E9F2</ID>
+    <ID>MagicNumber:Theme.kt$0xFFE3E9F0</ID>
+    <ID>MagicNumber:Theme.kt$0xFFE7EDF5</ID>
+    <ID>MagicNumber:Theme.kt$0xFFE9EFF6</ID>
+    <ID>MagicNumber:Theme.kt$0xFFF6F9FC</ID>
+    <ID>MagicNumber:Theme.kt$0xFFFDFEFF</ID>
+    <ID>MagicNumber:Theme.kt$CharterMotion$0.16f</ID>
+    <ID>MagicNumber:Theme.kt$CharterMotion$0.3f</ID>
+    <ID>MaxLineLength:ClipSyncRepository.kt$ClipSyncRepository$when</ID>
+    <ID>MaxLineLength:ClipboardLogFixtures.kt$ClipboardLogFixtures$"E ClipboardService: Denying clipboard access to pkg.app, application is not in focus nor is it a system service for user 0"</ID>
+    <ID>MaxLineLength:ClipboardLogFixtures.kt$ClipboardLogFixtures$fixture(ClipboardLogRomFamily.COLOROS_ORIGINOS, "coloros-originos-v1", "I ClipboardServiceExtImpl: setPrimaryClip")</ID>
+    <ID>MaxLineLength:ClipboardLogFixtures.kt$ClipboardLogFixtures$fixture(ClipboardLogRomFamily.COLOROS_ORIGINOS, "coloros-originos-v1", "I ColorClipboardService: notifyPrimaryClipChanged")</ID>
+    <ID>MaxLineLength:ClipboardLogFixtures.kt$ClipboardLogFixtures$fixture(ClipboardLogRomFamily.COLOROS_ORIGINOS, "coloros-originos-v1", "I OplusClipboardService: onPrimaryClipChanged")</ID>
+    <ID>MaxLineLength:ClipboardLogParsersTest.kt$ClipboardLogParsersTest$"E ClipboardService: Denying clipboard access to pkg.app, application is not in focus nor is it a system service for user 0"</ID>
+    <ID>MaxLineLength:HistoryTransferTest.kt$HistoryTransferTest$""""content":"hello","content_hash":"2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824","""</ID>
+    <ID>MaxLineLength:HistoryTransferTest.kt$HistoryTransferTest$""""exporting_device_id":"11111111-1111-4111-8111-111111111111","platform":"windows","event_count":1}"""</ID>
+    <ID>MaxLineLength:PairingJson.kt$PairingJson$fun serialize(request: PairingConfirmRequest): String</ID>
+    <ID>MaxLineLength:PairingJson.kt$PairingJson$fun serialize(response: PairingConfirmResponse): String</ID>
+    <ID>MaxLineLength:PairingJson.kt$PairingJson$requireDocument(decodeBase64Url256(response.pairSecret) != null) { "pair_secret is not 32 bytes of unpadded base64url" }</ID>
+    <ID>MaxLineLength:ProtocolFixtureTest.kt$ProtocolFixtureTest$"""{"version":1,"type":"ping","request_id":"9b24fc53-b75f-4bd3-9b24-127025de111a","body":{},"extra":true}"""</ID>
+    <ID>MaxLineLength:ProtocolJson.kt$ProtocolJson$"event_id"</ID>
+    <ID>MaxLineLength:ProtocolJson.kt$ProtocolJson$if (isString || content.contains('.') || content.contains('e', ignoreCase = true)) null else content.toLongOrNull()</ID>
+    <ID>MaxLineLength:SyncEngine.kt$SyncEngine$RemoteClipApplied(item.eventId, item.originDeviceId, item.originSeq, item.content, item.createdAtMs)</ID>
+    <ID>MaxLineLength:SyncSupervisorTest.kt$SyncSupervisorTest$private fun backoffWithoutJitter()</ID>
+    <ID>NestedBlockDepth:AdbLogTestSupport.kt$fun assertNoRetainedRawLine(target: Any, rawLine: String)</ID>
+    <ID>NestedBlockDepth:HiddenApis.kt$HiddenApis$fun callProvider( provider: Any, authority: String, method: String, extras: Bundle, ): Bundle?</ID>
+    <ID>NestedBlockDepth:ImageCodec.kt$ImageCodec$fun tryInspectFile( path: File, expectedHash: String? = null, expectedBytes: Long? = null, ): Pair&lt;ImageCodecError, ValidatedImage?&gt;</ID>
+    <ID>NestedBlockDepth:ProtocolJson.kt$ProtocolJson$private fun rejectDuplicateKeys(source: String)</ID>
+    <ID>NestedBlockDepth:SyncEngine.kt$SyncEngine$private suspend fun handleClipAnnounce(announce: ClipAnnounceBody): Boolean</ID>
+    <ID>ReturnCount:AdbLogOverlayBackend.kt$AdbLogOverlayBackend$private fun diagnose(granted: Boolean): Pair&lt;CapabilityState, String?&gt;</ID>
+    <ID>ReturnCount:AndroidPublicClipboardWriter.kt$AndroidClipboardWriteOs$override fun setPrimaryImage( encoded: ByteArray, mimeType: String, originEventId: String, ): OsWriteStatus</ID>
+    <ID>ReturnCount:AndroidPublicClipboardWriter.kt$AndroidClipboardWriteOs$private fun primaryTextMatches(expected: String): Boolean</ID>
+    <ID>ReturnCount:AndroidShizukuRuntime.kt$AndroidShizukuRuntime$override fun bindUserService(): BindResult</ID>
+    <ID>ReturnCount:AndroidShizukuRuntime.kt$AndroidShizukuRuntime$override fun requestAuthorization(onResult: (granted: Boolean) -&gt; Unit)</ID>
+    <ID>ReturnCount:AndroidShizukuRuntime.kt$AndroidShizukuRuntime$private fun linkShizukuDeath()</ID>
+    <ID>ReturnCount:AndroidShizukuRuntime.kt$AndroidShizukuRuntime.&lt;no name provided&gt;$override fun run()</ID>
+    <ID>ReturnCount:ClipContentFormat.kt$fun classifyClipContent(content: String): ClipContentFormat</ID>
+    <ID>ReturnCount:ClipContentFormat.kt$private fun isCredentialLike(text: String): Boolean</ID>
+    <ID>ReturnCount:ClipContentFormat.kt$private fun isOtp(text: String): Boolean</ID>
+    <ID>ReturnCount:ClipOutbox.kt$KeyValueClipOutbox$override fun enqueue(text: String, source: ClipSource): EnqueueResult</ID>
+    <ID>ReturnCount:ClipSyncRepository.kt$ClipSyncRepository$private suspend fun checkRemoteIdentity( eventId: String, originDeviceId: String, originSeq: Long, expectedContentHash: String?, ): RemoteStoreResult?</ID>
+    <ID>ReturnCount:ClipSyncShizukuProvider.kt$ClipSyncShizukuProvider$override fun call(method: String, arg: String?, extras: Bundle?): Bundle?</ID>
+    <ID>ReturnCount:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator$fun checkHealth(): ClipboardAccessState</ID>
+    <ID>ReturnCount:ClipboardCaptureManager.kt$ClipboardCaptureManager$fun onClipboardChanged(change: ClipboardChange): CaptureOutcome</ID>
+    <ID>ReturnCount:ClipboardLogParsers.kt$LogcatLineShape$fun parse(line: String): LogcatTagMessage?</ID>
+    <ID>ReturnCount:ClipboardLogParsers.kt$VersionedTagParser$override fun match(line: String): ClipboardLogMatch?</ID>
+    <ID>ReturnCount:ClipboardMediaReader.kt$ClipboardMediaReader$fun descriptionLooksLikeImage(description: ClipDescription?): Boolean</ID>
+    <ID>ReturnCount:ClipboardMediaReader.kt$ClipboardMediaReader$fun readFirstImage(context: Context, clip: ClipData): ClipboardChange?</ID>
+    <ID>ReturnCount:ClipboardMediaReader.kt$ClipboardMediaReader$fun readPreferred(context: Context, clip: ClipData): ClipboardChange?</ID>
+    <ID>ReturnCount:ClipboardMediaReader.kt$ClipboardMediaReader$fun readPreferred(context: Context, clipboard: ClipboardManager): ClipboardChange?</ID>
+    <ID>ReturnCount:ClipboardSelfTest.kt$ClipboardSelfTest$fun runReadTest(): SelfTestResult</ID>
+    <ID>ReturnCount:ClipboardUserService.kt$ClipboardUserService$override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean</ID>
+    <ID>ReturnCount:ClipboardUserService.kt$ClipboardUserService$private fun ensureAdapter(): IClipboardReflectionAdapter?</ID>
+    <ID>ReturnCount:ClipboardUserService.kt$ClipboardUserService$private fun registerSystemListener(): Boolean</ID>
+    <ID>ReturnCount:ClipboardUserService.kt$ClipboardUserService.&lt;no name provided&gt;$override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean</ID>
+    <ID>ReturnCount:ClipboardWriteCoordinator.kt$ClipboardWriteCoordinator$fun shouldSuppress(originEventId: String?, text: String): Boolean</ID>
+    <ID>ReturnCount:ClipboardWriteCoordinator.kt$ClipboardWriteCoordinator$fun writeText(text: String, originEventId: String): ClipboardWriteOutcome</ID>
+    <ID>ReturnCount:FakeShizukuRuntime.kt$FakeShizukuRuntime$override fun bindUserService(): BindResult</ID>
+    <ID>ReturnCount:FirstRunStore.kt$FirstRunStore$fun shouldShowOnboarding(alreadyPaired: Boolean): Boolean</ID>
+    <ID>ReturnCount:ForegroundClipboardBackend.kt$ForegroundClipboardBackend$private fun readImageChange(): ClipboardChange?</ID>
+    <ID>ReturnCount:HiddenApis.kt$HiddenApis$fun addPowerSaveTempWhitelist(packageName: String, durationMs: Long, userId: Int)</ID>
+    <ID>ReturnCount:HiddenApis.kt$HiddenApis$fun callProvider( provider: Any, authority: String, method: String, extras: Bundle, ): Bundle?</ID>
+    <ID>ReturnCount:HiddenApis.kt$HiddenApis$fun getContentProviderExternal( name: String, userId: Int, token: IBinder?, tag: String, ): Any?</ID>
+    <ID>ReturnCount:HistoryGateway.kt$ClipSyncHistoryGateway$override suspend fun imagePayload(eventId: String): HistoryImagePayload?</ID>
+    <ID>ReturnCount:HostBinderReplacePolicy.kt$HostBinderReplacePolicy$fun shouldTearDownForIncoming( incomingAlive: Boolean, currentAlive: Boolean, incomingIsCurrent: Boolean, granted: Boolean, forceReattach: Boolean = false, ): Boolean</ID>
+    <ID>ReturnCount:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$private fun resolve(name: String, kind: MethodKind): ResolvedMethod?</ID>
+    <ID>ReturnCount:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter.Companion$internal fun matches(method: Method, shape: IClipboardApiShape, kind: MethodKind): Boolean</ID>
+    <ID>ReturnCount:IClipboardReflectionAdapter.kt$ReflectiveClipTextReader$override fun readItemText(clip: Any?): String?</ID>
+    <ID>ReturnCount:ImageChunks.kt$ImageChunks$fun tryDecodeChunk(data: String, expectedBytes: Int): ByteArray?</ID>
+    <ID>ReturnCount:ImageClipSink.kt$ImageClipSink$fun submit(context: Context, encoded: ByteArray, sourceApp: String?): Outcome</ID>
+    <ID>ReturnCount:ImageCodec.kt$ImageCodec$fun tryInspect( encoded: ByteArray, expectedHash: String? = null, ): Pair&lt;ImageCodecError, ValidatedImage?&gt;</ID>
+    <ID>ReturnCount:ImageCodec.kt$ImageCodec$fun tryInspectFile( path: File, expectedHash: String? = null, expectedBytes: Long? = null, ): Pair&lt;ImageCodecError, ValidatedImage?&gt;</ID>
+    <ID>ReturnCount:ImageCodec.kt$ImageCodec$fun tryReadDimensions(encoded: ByteArray): ImageDimensions?</ID>
+    <ID>ReturnCount:ImageCodec.kt$ImageCodec$private fun ByteArray.startsWith(prefix: ByteArray): Boolean</ID>
+    <ID>ReturnCount:ImageCodec.kt$ImageCodec$private fun tryReadJpegSize(encoded: ByteArray): Pair&lt;Int, Int&gt;?</ID>
+    <ID>ReturnCount:ImageCodec.kt$ImageCodec$private fun tryReadPngSize(encoded: ByteArray): Pair&lt;Int, Int&gt;?</ID>
+    <ID>ReturnCount:ImageThumbnail.kt$ImageThumbnail$fun ensure(store: MediaBlobStore, contentHash: String): File?</ID>
+    <ID>ReturnCount:ImageThumbnail.kt$ImageThumbnail$private fun writeThumbnail(blob: File, dest: File): File?</ID>
+    <ID>ReturnCount:InMemorySyncRepository.kt$InMemorySyncRepository$private fun storeLocked(event: SyncableClipEvent): RemoteStoreResult</ID>
+    <ID>ReturnCount:InboxDelivery.kt$InboxDelivery$fun deliverImage( context: Context, eventId: String, contentHash: String?, mimeType: String?, autoApply: Boolean = false, ): Boolean</ID>
+    <ID>ReturnCount:LogcatClipboardEventReader.kt$LogcatClipboardEventReader$private fun runFlights()</ID>
+    <ID>ReturnCount:MediaBlobStore.kt$MediaBlobStore$fun deleteUnreferenced( liveHashes: Collection&lt;String&gt;, maximumDeletes: Int = 256, gracePeriodMs: Long = 0L, ): Int</ID>
+    <ID>ReturnCount:MediaBlobStore.kt$MediaBlobStore$fun recoverTemps(nowMs: Long, maximumDeletes: Int = 256): Int</ID>
+    <ID>ReturnCount:OriginReceiveState.kt$OriginReceiveState$fun acceptRange(range: SequenceRange): OriginReceiveState</ID>
+    <ID>ReturnCount:OverlayFocusController.kt$AndroidOverlayPlatform$override fun currentWindow(): OverlayWindowSpec?</ID>
+    <ID>ReturnCount:OverlayFocusController.kt$AndroidOverlayPlatform$override fun readPrimaryText(): OverlayClipRead</ID>
+    <ID>ReturnCount:OverlayFocusController.kt$OverlayFocusController$private fun doReadText(): ClipboardReadResult</ID>
+    <ID>ReturnCount:OverlayPollingBackend.kt$OverlayPollingBackend$override fun health(): BackendHealth</ID>
+    <ID>ReturnCount:OverlayPollingBackend.kt$OverlayPollingBackend$private fun onTick()</ID>
+    <ID>ReturnCount:PairingConfirmClient.kt$PairingConfirmClient$private fun readBounded(response: okhttp3.Response): String?</ID>
+    <ID>ReturnCount:PairingJson.kt$PairingJson$fun decodeBase64Url256(value: String): ByteArray?</ID>
+    <ID>ReturnCount:PairingStore.kt$PairingStore$fun peer(): PairedPeer?</ID>
+    <ID>ReturnCount:PairingViewModel.kt$PairingViewModel$fun onPayload(text: String)</ID>
+    <ID>ReturnCount:PairingViewModel.kt$PairingViewModel$private fun saveApproved(qr: PairingQrPayload, outcome: PairingConfirmOutcome.Approved): PairingUiState</ID>
+    <ID>ReturnCount:PrivilegedHostAccess.kt$PrivilegedHostAccess$private fun uidAllowed( callingUid: Int, hostUid: Int, packagesForUid: Set&lt;String&gt;, clipSyncUid: Int?, requiredPackage: String, ): Boolean</ID>
+    <ID>ReturnCount:PrivilegedHostService.kt$PrivilegedHostService$override fun addUserService(conn: IShizukuServiceConnection?, args: Bundle?): Int</ID>
+    <ID>ReturnCount:PrivilegedHostService.kt$PrivilegedHostService$override fun removeUserService(conn: IShizukuServiceConnection?, args: Bundle?): Int</ID>
+    <ID>ReturnCount:PrivilegedHostService.kt$PrivilegedHostService$private fun hostApkPath(): String?</ID>
+    <ID>ReturnCount:PrivilegedHostStarter.kt$PrivilegedHostStarter$fun writeScript(context: Context): File?</ID>
+    <ID>ReturnCount:PrivilegedUserServiceStarter.kt$PrivilegedUserServiceStarter.Companion$private fun sendBinder(binder: IBinder, token: String): Boolean</ID>
+    <ID>ReturnCount:SendClipboardActivity.kt$SendClipboardActivity$private fun sendCurrentClipboard(): Int</ID>
+    <ID>ReturnCount:SettingsGatedClipOutbox.kt$SettingsGatedClipOutbox$override fun enqueue(text: String, source: ClipSource): EnqueueResult</ID>
+    <ID>ReturnCount:ShareReceiverActivity.kt$internal fun Intent.sharedStream(): Uri?</ID>
+    <ID>ReturnCount:ShareTextIntentHandler.kt$ShareTextIntentHandler$fun classify(action: String?, mimeType: String?, text: CharSequence?): Outcome</ID>
+    <ID>ReturnCount:ShizukuClipboardBackend.kt$ShizukuClipboardBackend$override fun health(): BackendHealth</ID>
+    <ID>ReturnCount:ShizukuClipboardBackend.kt$ShizukuClipboardBackend$override fun probe(): CapabilityReport</ID>
+    <ID>ReturnCount:ShizukuClipboardBackend.kt$ShizukuClipboardBackend$override fun readText(): ClipboardReadResult</ID>
+    <ID>ReturnCount:ShizukuClipboardBinder.kt$ChangeCallbackBinder$override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean</ID>
+    <ID>ReturnCount:ShizukuClipboardBinder.kt$ShizukuClipboardSessionProxy$override fun pingHealth(): String?</ID>
+    <ID>ReturnCount:ShizukuClipboardWriter.kt$ShizukuClipboardWriter$override fun writeText(text: String, originEventId: String): ClipboardWriteResult</ID>
+    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private fun buildHeader(item: SyncableClipEvent): ClipHeaderDto</ID>
+    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun dispatch(text: String): Boolean</ID>
+    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun drainOutbox()</ID>
+    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun handleChallenge(body: ChallengeBody, requestId: String): Boolean</ID>
+    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun handleClipAnnounce(announce: ClipAnnounceBody): Boolean</ID>
+    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun handleClipPayload(payload: ClipPayloadBody): Boolean</ID>
+    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun handleClipPayloadBegin(begin: ClipPayloadBeginBody): Boolean</ID>
+    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun handleClipPayloadChunk(chunk: ClipPayloadChunkBody): Boolean</ID>
+    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun handleClipPayloadEnd(end: ClipPayloadEndBody): Boolean</ID>
+    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun handleWantRanges(wants: WantRangesBody): Boolean</ID>
+    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun sendImagePayload(item: SyncableClipEvent): Boolean</ID>
+    <ID>ReturnCount:SyncMessages.kt$SyncLimits$fun utf8BytesExceed(text: String, maxBytes: Int): Boolean</ID>
+    <ID>ReturnCount:SyncSupervisor.kt$SyncSupervisor$private suspend fun connectAnyHost(peer: com.clipsync.android.pairing.PairedPeer): ConnectedTransport?</ID>
+    <ID>ReturnCount:SyncTransport.kt$InboundFrameGate$fun onText(text: String): Verdict</ID>
+    <ID>SpreadOperator:ClipSyncDatabase.kt$ClipSyncDatabase.Companion$(*MIGRATIONS)</ID>
+    <ID>SpreadOperator:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$(clipboard, *argsForGet(resolved.shape))</ID>
+    <ID>SpreadOperator:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$(clipboard, *argsForListener(resolved.shape, listener))</ID>
+    <ID>SpreadOperator:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$(clipboard, *argsForRemove(resolved, listener))</ID>
+    <ID>SpreadOperator:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$(clipboard, *argsForSet(resolved.shape, clip))</ID>
+    <ID>ThrowsCount:HistoryTransfer.kt$HistoryExportFormat$fun parseClipLine(line: String, lineNumber: Int): HistoryExportedClip</ID>
+    <ID>ThrowsCount:HistoryTransfer.kt$HistoryExportFormat$fun parseHeaderLine(line: String): HistoryExportHeader</ID>
+    <ID>ThrowsCount:MediaBlobStore.kt$MediaBlobStore$fun commit( pending: PendingMediaWrite, expectedHash: String? = null, expectedMime: String? = null, ): ValidatedImage</ID>
+    <ID>ThrowsCount:ProtocolJson.kt$ProtocolJson$fun parseEnvelope(source: String, version: Int = PROTOCOL_V1): ProtocolEnvelope</ID>
+    <ID>TooGenericExceptionCaught:AndroidShizukuRuntime.kt$AndroidShizukuRuntime$error: Exception</ID>
+    <ID>TooGenericExceptionCaught:ClipboardUserService.kt$ClipboardUserService$error: Exception</ID>
+    <ID>TooGenericExceptionCaught:ClipboardUserService.kt$ClipboardUserService$error: Throwable</ID>
+    <ID>TooGenericExceptionCaught:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$error: Throwable</ID>
+    <ID>TooGenericExceptionCaught:MediaBlobStore.kt$MediaBlobStore$error: Throwable</ID>
+    <ID>TooGenericExceptionCaught:OverlayFocusController.kt$OverlayFocusController$error: RuntimeException</ID>
+    <ID>TooGenericExceptionCaught:PrivilegedHostService.kt$PrivilegedHostService$error: Exception</ID>
+    <ID>TooGenericExceptionCaught:PrivilegedUserServiceStarter.kt$PrivilegedUserServiceStarter.Companion$error: Exception</ID>
+    <ID>TooGenericExceptionCaught:SyncTransport.kt$OkHttpSyncConnector$failure: Throwable</ID>
+    <ID>TooGenericExceptionThrown:FakeOverlayPlatform.kt$FakeOverlayPlatform$throw RuntimeException("overlay-attach-boom")</ID>
+    <ID>TooGenericExceptionThrown:FakeOverlayPlatform.kt$FakeOverlayPlatform$throw RuntimeException("overlay-read-boom")</ID>
+    <ID>TooGenericExceptionThrown:OverlayFocusController.kt$OverlayFocusController$throw RuntimeException("overlay window hop timed out")</ID>
+    <ID>TooManyFunctions:AndroidShizukuRuntime.kt$AndroidShizukuRuntime : ShizukuRuntime</ID>
+    <ID>TooManyFunctions:ClipSyncDaos.kt$ClipEventDao</ID>
+    <ID>TooManyFunctions:ClipSyncRepository.kt$ClipSyncRepository</ID>
+    <ID>TooManyFunctions:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator</ID>
+    <ID>TooManyFunctions:ClipboardCapabilityStore.kt$ClipboardCapabilityStore</ID>
+    <ID>TooManyFunctions:ClipboardSyncService.kt$ClipboardSyncService : Service</ID>
+    <ID>TooManyFunctions:ClipboardUserService.kt$ClipboardUserService : BinderDeathRecipient</ID>
+    <ID>TooManyFunctions:HealthScreen.kt$com.clipsync.android.ui.HealthScreen.kt</ID>
+    <ID>TooManyFunctions:HomeScreen.kt$com.clipsync.android.ui.home.HomeScreen.kt</ID>
+    <ID>TooManyFunctions:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter</ID>
+    <ID>TooManyFunctions:ImageCodec.kt$ImageCodec</ID>
+    <ID>TooManyFunctions:InMemorySyncRepository.kt$InMemorySyncRepository : SyncRepository</ID>
+    <ID>TooManyFunctions:LogcatClipboardEventReader.kt$LogcatClipboardEventReader</ID>
+    <ID>TooManyFunctions:MainActivity.kt$MainActivity : ComponentActivity</ID>
+    <ID>TooManyFunctions:MediaBlobStore.kt$MediaBlobStore</ID>
+    <ID>TooManyFunctions:OverlayFocusController.kt$OverlayFocusController</ID>
+    <ID>TooManyFunctions:PairingJson.kt$PairingJson</ID>
+    <ID>TooManyFunctions:PairingJson.kt$PairingJson$StrictScanner</ID>
+    <ID>TooManyFunctions:PairingScreen.kt$com.clipsync.android.ui.pairing.PairingScreen.kt</ID>
+    <ID>TooManyFunctions:PairingStore.kt$PairingStore</ID>
+    <ID>TooManyFunctions:PrivilegedHostService.kt$PrivilegedHostService : Stub</ID>
+    <ID>TooManyFunctions:ProtocolJson.kt$ProtocolJson</ID>
+    <ID>TooManyFunctions:RoomSyncRepository.kt$RoomSyncRepository : SyncRepository</ID>
+    <ID>TooManyFunctions:ShizukuClipboardBackend.kt$ShizukuClipboardBackend : BackgroundClipboardBackend</ID>
+    <ID>TooManyFunctions:ShizukuRuntime.kt$ShizukuRuntime</ID>
+    <ID>TooManyFunctions:SyncEngine.kt$SyncEngine</ID>
+    <ID>TooManyFunctions:SyncNotifications.kt$SyncNotifications</ID>
+    <ID>TooManyFunctions:SyncRepository.kt$SyncRepository</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClip$index: Int</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardApi34$attributionTag: String?</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardApi34$callingPackage: String</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardApi34$deviceId: Int</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardApi34$userId: Int</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardBooleanListener$callingPackage: String</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardBooleanListener$listener: Any</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardBooleanListener$userId: Int</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardPkgAttributionUserId$pkg: String</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardPkgAttributionUserId$userId: Int</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardPkgUserId$callingPackage: String</ID>
+    <ID>UnusedParameter:IClipboardReflectionAdapterTest.kt$IClipboardReflectionAdapterTest.FakeClipboardPkgUserId$userId: Int</ID>
+    <ID>UnusedPrivateMember:HealthScreen.kt$@Preview(showBackground = true) @Composable private fun HealthScreenPreview()</ID>
+    <ID>UnusedPrivateMember:HomeScreen.kt$@Preview(showBackground = true) @Composable private fun HomeScreenEmptyPreview()</ID>
+    <ID>UnusedPrivateMember:HomeScreen.kt$@Preview(showBackground = true) @Composable private fun HomeScreenListPreview()</ID>
+    <ID>UnusedPrivateMember:OnboardingScreen.kt$@Preview(showBackground = true) @Composable private fun OnboardingScreenPreview()</ID>
+    <ID>UnusedPrivateMember:PreferencesScreen.kt$@Preview(showBackground = true) @Composable private fun PreferencesScreenPreview()</ID>
+    <ID>UnusedPrivateProperty:ClipboardSyncService.kt$ClipboardSyncService$nudge</ID>
+    <ID>UnusedPrivateProperty:SyncSupervisor.kt$ReconnectBackoff$step</ID>
+    <ID>UseRequire:PrivilegedHostService.kt$PrivilegedHostService$throw IllegalArgumentException("unable to find token")</ID>
+    <ID>UtilityClassWithPublicConstructor:PrivilegedUserServiceStarter.kt$PrivilegedUserServiceStarter</ID>
+  </CurrentIssues>
+</SmellBaseline>
