@@ -8,6 +8,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
@@ -72,6 +74,7 @@ fun HomeScreen(
     onDelete: (String) -> Unit,
     onOpenConduit: () -> Unit,
     modifier: Modifier = Modifier,
+    onFormatFilterChange: (ClipContentFormat?) -> Unit = {},
     nowMs: () -> Long = System::currentTimeMillis,
 ) {
     val c = clipSyncColors
@@ -96,6 +99,8 @@ fun HomeScreen(
         ConduitStatusBand(state = conduit, onClick = onOpenConduit)
         Spacer(Modifier.height(12.dp))
         SearchField(query = home.query, onQueryChange = onQueryChange)
+        Spacer(Modifier.height(8.dp))
+        FormatFilterRow(selected = home.formatFilter, onSelect = onFormatFilterChange)
         // The strip slides in and out on the charter curve; the last notice is
         // kept so the exit animation has content to fade.
         var lastNotice by remember { mutableStateOf(home.notice) }
@@ -120,7 +125,11 @@ fun HomeScreen(
         when {
             !home.loaded -> Box(Modifier.weight(1f))
             home.items.isEmpty() && home.searchActive -> NoMatchState(
-                query = home.query,
+                message = "没有匹配「${home.query.trim()}」的记录",
+                modifier = Modifier.weight(1f),
+            )
+            home.items.isEmpty() && home.formatFilter != null -> NoMatchState(
+                message = "没有「${formatLabel(home.formatFilter)}」类的记录",
                 modifier = Modifier.weight(1f),
             )
             home.items.isEmpty() -> EmptyState(
@@ -193,6 +202,75 @@ private fun SearchField(
                 fontSize = 15.sp,
                 color = c.t3,
                 modifier = Modifier.clickable { onQueryChange("") },
+            )
+        }
+    }
+}
+
+/** Chip label for a format (ADR 0003 词汇); PLAIN reads 文本 on the chip row. */
+internal fun formatLabel(format: ClipContentFormat?): String = when (format) {
+    null -> "全部"
+    ClipContentFormat.LINK -> "链接"
+    ClipContentFormat.OTP -> "验证码"
+    ClipContentFormat.EMAIL -> "账号"
+    ClipContentFormat.CREDENTIAL -> "密码"
+    ClipContentFormat.PLAIN -> "文本"
+}
+
+/**
+ * Fixed neighbour-hue slot per format (ADR 0003): the badge borrows the
+ * annotation chroma tier (tokens.md §4), never the state colours — a
+ * credential is a fact to find again, not an alarm, so no red anywhere.
+ * PLAIN carries no badge (缺省即普通文本).
+ */
+internal fun formatAccentSlot(format: ClipContentFormat): Int? = when (format) {
+    ClipContentFormat.EMAIL -> 1 // 青灰
+    ClipContentFormat.LINK -> 2 // 水蓝
+    ClipContentFormat.OTP -> 3 // 蓝紫
+    ClipContentFormat.CREDENTIAL -> 4 // 藕紫
+    ClipContentFormat.PLAIN -> null
+}
+
+/**
+ * The format chips: 全部 plus the five formats, single-select, scrollable.
+ * Selected = flow-blue tinted box (same vocabulary as nav selection);
+ * unselected chips stay in the quiet grey family.
+ */
+@Composable
+private fun FormatFilterRow(
+    selected: ClipContentFormat?,
+    onSelect: (ClipContentFormat?) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val c = clipSyncColors
+    val options = listOf(
+        null,
+        ClipContentFormat.LINK,
+        ClipContentFormat.OTP,
+        ClipContentFormat.EMAIL,
+        ClipContentFormat.CREDENTIAL,
+        ClipContentFormat.PLAIN,
+    )
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        options.forEach { option ->
+            val active = option == selected
+            val shape = CharterShapes.control
+            Text(
+                text = formatLabel(option),
+                fontSize = 12.sp,
+                fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
+                color = if (active) c.flow else c.t3,
+                modifier = Modifier
+                    .clip(shape)
+                    .background(if (active) c.flowBg else c.sf3)
+                    .border(1.dp, if (active) c.flowLn else c.ln, shape)
+                    .clickable { onSelect(option) }
+                    .padding(horizontal = 11.dp, vertical = 5.dp),
             )
         }
     }
@@ -296,11 +374,13 @@ private fun ClipCard(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             val source = item.remoteSourceLabel
             if (source != null) {
                 SourceTag(label = source, pairingOrder = item.sourcePairingOrder)
             }
+            FormatBadge(format = item.format)
             Spacer(Modifier.weight(1f))
             Text(
                 text = remember(item.createdAtMs) { clipTimeLabel(item.createdAtMs, nowMs()) },
@@ -356,6 +436,29 @@ private fun SourceTag(label: String, pairingOrder: Int?, modifier: Modifier = Mo
             color = tone,
         )
     }
+}
+
+/**
+ * Format tag (ADR 0003): the same low-chroma annotation box as the source
+ * tag, but on a fixed neighbour-hue slot per format. Plain text renders
+ * nothing — a quiet card is the default, tags mark the exceptions.
+ */
+@Composable
+private fun FormatBadge(format: ClipContentFormat, modifier: Modifier = Modifier) {
+    val slot = formatAccentSlot(format) ?: return
+    val c = clipSyncColors
+    val shape = RoundedCornerShape(6.dp)
+    Text(
+        text = formatLabel(format),
+        fontSize = 10.sp,
+        fontWeight = FontWeight.Medium,
+        color = c.device(slot),
+        modifier = modifier
+            .clip(shape)
+            .background(c.deviceBg(slot))
+            .border(1.dp, c.deviceLn(slot), shape)
+            .padding(horizontal = 7.dp, vertical = 2.dp),
+    )
 }
 
 /**
@@ -415,7 +518,7 @@ private fun EmptyState(
 }
 
 @Composable
-private fun NoMatchState(query: String, modifier: Modifier = Modifier) {
+private fun NoMatchState(message: String, modifier: Modifier = Modifier) {
     val c = clipSyncColors
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Column(
@@ -429,7 +532,7 @@ private fun NoMatchState(query: String, modifier: Modifier = Modifier) {
                 modifier = Modifier.size(22.dp),
             )
             Text(
-                text = "没有匹配「${query.trim()}」的记录",
+                text = message,
                 style = ClipSyncType.caption,
                 color = c.t3,
                 textAlign = TextAlign.Center,
@@ -468,6 +571,7 @@ private fun HomeScreenListPreview() {
                         createdAtMs = System.currentTimeMillis() - 240_000,
                         remoteSourceLabel = "PC-STUDIO",
                         sourcePairingOrder = 1,
+                        format = ClipContentFormat.LINK,
                     ),
                     HomeClipItem(
                         eventId = "e2",
@@ -477,6 +581,13 @@ private fun HomeScreenListPreview() {
                     ),
                     HomeClipItem(
                         eventId = "e3",
+                        preview = "【剪剪相传】验证码 843921，五分钟内有效。",
+                        createdAtMs = System.currentTimeMillis() - 3_000_000,
+                        remoteSourceLabel = null,
+                        format = ClipContentFormat.OTP,
+                    ),
+                    HomeClipItem(
+                        eventId = "e4",
                         preview = "会议纪要：本周五完成 Stage 4 端到端握手测试",
                         createdAtMs = System.currentTimeMillis() - 90_000_000,
                         remoteSourceLabel = "PC-STUDIO",

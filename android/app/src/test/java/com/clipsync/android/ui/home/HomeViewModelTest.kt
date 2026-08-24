@@ -288,6 +288,37 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `format chips filter render-time without touching the repository query`() = runTest(dispatcher) {
+        repository.clips.value = listOf(
+            clip("e-link", "https://github.com/clipsync", origin = "x", createdAtMs = 3_000),
+            clip("e-otp", "843921", origin = "x", createdAtMs = 2_000),
+            clip("e-plain", "meeting notes", origin = "x", createdAtMs = 1_000),
+        )
+        val model = model()
+        testScheduler.advanceUntilIdle()
+        assertEquals(
+            listOf(ClipContentFormat.LINK, ClipContentFormat.OTP, ClipContentFormat.PLAIN),
+            model.state.value.items.map { it.format },
+        )
+
+        model.setFormatFilter(ClipContentFormat.LINK)
+        testScheduler.advanceUntilIdle()
+        assertEquals(listOf("e-link"), model.state.value.items.map { it.eventId })
+        assertEquals(ClipContentFormat.LINK, model.state.value.formatFilter)
+        // The repository only ever saw the blank search — the format never
+        // reaches the DB (ADR 0003: render-time only, no persisted tag).
+        assertEquals(listOf(""), repository.observedQueries)
+
+        model.setFormatFilter(null)
+        testScheduler.advanceUntilIdle()
+        assertEquals(
+            listOf("e-link", "e-otp", "e-plain"),
+            model.state.value.items.map { it.eventId },
+        )
+        assertNull(model.state.value.formatFilter)
+    }
+
+    @Test
     fun `preview text collapses whitespace and caps length`() {
         assertEquals("a b c", previewText(" a\n b\t\tc "))
         val long = "x".repeat(500)

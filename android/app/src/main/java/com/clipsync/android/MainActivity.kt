@@ -514,6 +514,7 @@ private fun ClipSyncApp(
                         conduit = healthState,
                         home = homeState,
                         onQueryChange = homeViewModel::setQuery,
+                        onFormatFilterChange = homeViewModel::setFormatFilter,
                         onCopy = homeViewModel::copy,
                         onDelete = homeViewModel::delete,
                         onOpenConduit = { tab = 1 },

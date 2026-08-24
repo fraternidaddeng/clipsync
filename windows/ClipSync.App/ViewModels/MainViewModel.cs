@@ -36,6 +36,16 @@ public partial class MainViewModel(
     [ObservableProperty]
     private HistoryItemViewModel? selectedItem;
 
+    /// <summary>
+    /// Format chip in effect on the history page (null = 全部). Filters render-time
+    /// on the classified rows (ADR 0003) — the store query stays untouched.
+    /// </summary>
+    public ClipContentFormat? FormatFilter { get; private set; }
+
+    /// <summary>True while a non-全部 format chip is on; picks the empty-state wording.</summary>
+    [ObservableProperty]
+    private bool isFormatFilterActive;
+
     /// <summary>Most recent clips surfaced in the tray flyout (tokens §12.6).</summary>
     private const int RecentHistoryLength = 4;
 
@@ -200,6 +210,23 @@ public partial class MainViewModel(
         await RefreshDevicesAsync();
     }
 
+    /// <summary>Applies a format chip by key ("all", "link", "otp", "email", "credential", "plain").</summary>
+    [RelayCommand]
+    private async Task SetFormatFilterAsync(string? key)
+    {
+        FormatFilter = key switch
+        {
+            "link" => ClipContentFormat.Link,
+            "otp" => ClipContentFormat.Otp,
+            "email" => ClipContentFormat.Email,
+            "credential" => ClipContentFormat.Credential,
+            "plain" => ClipContentFormat.Plain,
+            _ => null,
+        };
+        IsFormatFilterActive = FormatFilter is not null;
+        await RefreshAsync();
+    }
+
     [RelayCommand]
     private async Task RefreshAsync()
     {
@@ -208,7 +235,13 @@ public partial class MainViewModel(
         History.Clear();
         foreach (var entry in entries)
         {
-            History.Add(HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDevice));
+            var item = HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDevice);
+            if (FormatFilter is { } filter && item.Format != filter)
+            {
+                continue;
+            }
+
+            History.Add(item);
         }
 
         // The flyout always shows the newest clips regardless of the search box.

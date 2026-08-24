@@ -111,6 +111,45 @@
             </Setter>
         </Style>
 
+        <!-- 形态筛选 chip（ADR 0003）：选中 = 流动蓝着色盒（与导航同一词汇），
+             未选中留在安静的灰族 -->
+        <Style x:Key="FilterChip" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bd"
+                                Padding="10,4"
+                                Background="{DynamicResource CsSurface3Brush}"
+                                BorderBrush="{DynamicResource CsLineBrush}"
+                                BorderThickness="1"
+                                CornerRadius="9">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsFlowBgBrush}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CsFlowLineBrush}" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsChecked" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Foreground" Value="{DynamicResource CsText2Brush}" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsSurfaceBrush}" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- 步进器 −/＋ 钮 -->
         <Style x:Key="StepButton" TargetType="Button">
             <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
@@ -593,6 +632,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -602,7 +642,7 @@
                         <TextBlock Style="{StaticResource PageSub}" Text="本机与已配对设备的剪贴记录 · 清理只发生在本机" />
                     </StackPanel>
 
-                    <DockPanel Grid.Row="1" Margin="0,0,0,12">
+                    <DockPanel Grid.Row="1" Margin="0,0,0,10">
                         <Button DockPanel.Dock="Right"
                                 Margin="8,0,0,0"
                                 Command="{Binding SearchCommand}"
@@ -617,7 +657,44 @@
                         </TextBox>
                     </DockPanel>
 
-                    <Grid Grid.Row="2">
+                    <!-- 形态筛选（ADR 0003）：渲染时按分类过滤，检索辅助，不写库 -->
+                    <StackPanel Grid.Row="2"
+                                Margin="0,0,0,12"
+                                Orientation="Horizontal">
+                        <RadioButton Command="{Binding SetFormatFilterCommand}"
+                                     CommandParameter="all"
+                                     Content="全部"
+                                     GroupName="HistoryFormatFilter"
+                                     IsChecked="True"
+                                     Style="{StaticResource FilterChip}" />
+                        <RadioButton Command="{Binding SetFormatFilterCommand}"
+                                     CommandParameter="link"
+                                     Content="链接"
+                                     GroupName="HistoryFormatFilter"
+                                     Style="{StaticResource FilterChip}" />
+                        <RadioButton Command="{Binding SetFormatFilterCommand}"
+                                     CommandParameter="otp"
+                                     Content="验证码"
+                                     GroupName="HistoryFormatFilter"
+                                     Style="{StaticResource FilterChip}" />
+                        <RadioButton Command="{Binding SetFormatFilterCommand}"
+                                     CommandParameter="email"
+                                     Content="账号"
+                                     GroupName="HistoryFormatFilter"
+                                     Style="{StaticResource FilterChip}" />
+                        <RadioButton Command="{Binding SetFormatFilterCommand}"
+                                     CommandParameter="credential"
+                                     Content="密码"
+                                     GroupName="HistoryFormatFilter"
+                                     Style="{StaticResource FilterChip}" />
+                        <RadioButton Command="{Binding SetFormatFilterCommand}"
+                                     CommandParameter="plain"
+                                     Content="文本"
+                                     GroupName="HistoryFormatFilter"
+                                     Style="{StaticResource FilterChip}" />
+                    </StackPanel>
+
+                    <Grid Grid.Row="3">
                         <ListBox Background="Transparent"
                                  BorderThickness="0"
                                  ItemContainerStyle="{StaticResource HistoryItemContainer}"
@@ -647,6 +724,20 @@
                                                            Foreground="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
                                                            Text="{Binding OriginLabel}" />
                                             </Border>
+                                            <!-- 形态注记盒（ADR 0003）：固定邻近色槽位，密码用藕紫不是红——
+                                                 它是待找回的事实，不是警报；普通文本不加盒 -->
+                                            <Border Margin="0,0,7,0"
+                                                    Padding="7,1"
+                                                    VerticalAlignment="Center"
+                                                    Background="{Binding FormatAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Background}"
+                                                    BorderBrush="{Binding FormatAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Line}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="6"
+                                                    Visibility="{Binding HasFormatBadge, Converter={StaticResource BoolToVisibility}}">
+                                                <TextBlock FontSize="9"
+                                                           Foreground="{Binding FormatAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
+                                                           Text="{Binding FormatLabel}" />
+                                            </Border>
                                             <TextBlock VerticalAlignment="Center"
                                                        FontFamily="{StaticResource CsMono}"
                                                        FontSize="10.5"
@@ -670,6 +761,7 @@
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding History.Count}" Value="0" />
                                                 <Condition Binding="{Binding ActiveQuery}" Value="" />
+                                                <Condition Binding="{Binding IsFormatFilterActive}" Value="False" />
                                             </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Visible" />
                                         </MultiDataTrigger>
@@ -776,9 +868,33 @@
                                 <Run Text="没有匹配「" /><Run Text="{Binding ActiveQuery, Mode=OneWay}" /><Run Text="」的记录" />
                             </TextBlock>
                         </StackPanel>
+
+                        <!-- 形态筛选无匹配（ADR 0003）：同样是灰色事实，不是衬线时刻 -->
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding History.Count}" Value="0" />
+                                                <Condition Binding="{Binding ActiveQuery}" Value="" />
+                                                <Condition Binding="{Binding IsFormatFilterActive}" Value="True" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <TextBlock HorizontalAlignment="Center"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource CsText3Brush}"
+                                       Text="该形态下暂无记录 · 换个筛选试试"
+                                       TextAlignment="Center" />
+                        </StackPanel>
                     </Grid>
 
-                    <StackPanel Grid.Row="3"
+                    <StackPanel Grid.Row="4"
                                 Margin="0,12,0,0"
                                 Orientation="Horizontal">
                         <Button Command="{Binding CopySelectedCommand}" Content="复制所选" Style="{StaticResource GhostFlowButton}" />

@@ -38,6 +38,8 @@ data class HomeClipItem(
      * that hold no pairing slot.
      */
     val sourcePairingOrder: Int? = null,
+    /** Render-time format tag (ADR 0003) — classified from content, never persisted. */
+    val format: ClipContentFormat = ClipContentFormat.PLAIN,
 )
 
 /** Transient, honest feedback for the last item action. */
@@ -56,6 +58,8 @@ data class HomeUiState(
     val loaded: Boolean = false,
     /** True when [items] reflect a non-blank search query. */
     val searchActive: Boolean = false,
+    /** Format chip in effect (null = 全部). Filters render-time, never the DB. */
+    val formatFilter: ClipContentFormat? = null,
     val notice: HomeNotice? = null,
 )
 
@@ -73,6 +77,7 @@ class HomeViewModel(
     val state: StateFlow<HomeUiState> = mutableState.asStateFlow()
 
     private val queryInput = MutableStateFlow("")
+    private val formatFilterInput = MutableStateFlow<ClipContentFormat?>(null)
     private val peersSnapshot = MutableStateFlow(pairingStore.pairedPeers())
     private val localDeviceId = pairingStore.localDeviceId()
     private var noticeClearJob: Job? = null
@@ -86,14 +91,23 @@ class HomeViewModel(
                         history.observeSearch(query).map { entries -> query to entries }
                     },
                 peersSnapshot,
-            ) { (query, entries), peers ->
-                Triple(query, entries, peers)
-            }.collect { (query, entries, peers) ->
+                formatFilterInput,
+            ) { (query, entries), peers, filter ->
+                // Format filtering happens here, render-time, on the classified
+                // rows (ADR 0003) — the repository query stays untouched.
+                val rows = entries.map { it.toHomeItem(localDeviceId, peers) }
+                Triple(
+                    query,
+                    if (filter == null) rows else rows.filter { it.format == filter },
+                    filter,
+                )
+            }.collect { (query, rows, filter) ->
                 mutableState.update { previous ->
                     previous.copy(
-                        items = entries.map { it.toHomeItem(localDeviceId, peers) },
+                        items = rows,
                         loaded = true,
                         searchActive = query.isNotBlank(),
+                        formatFilter = filter,
                     )
                 }
             }
@@ -103,6 +117,12 @@ class HomeViewModel(
     fun setQuery(query: String) {
         mutableState.update { it.copy(query = query) }
         queryInput.value = query
+    }
+
+    /** Applies a format chip (null = 全部); takes effect immediately, no debounce. */
+    fun setFormatFilter(format: ClipContentFormat?) {
+        mutableState.update { it.copy(formatFilter = format) }
+        formatFilterInput.value = format
     }
 
     /** Re-reads the pairing store so remote source tags pick up a new peer name. */
@@ -178,6 +198,8 @@ internal fun ClipHistoryEntry.toHomeItem(localDeviceId: String, peers: List<Pair
         createdAtMs = createdAtMs,
         remoteSourceLabel = label,
         sourcePairingOrder = if (remote) slot else null,
+        // Classified from the full content (the preview may be truncated).
+        format = classifyClipContent(content),
     )
 }
 
