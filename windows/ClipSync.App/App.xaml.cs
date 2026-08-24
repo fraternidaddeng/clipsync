@@ -179,6 +179,7 @@ public partial class App : Application
             syncHost.RemoteClipsCommitted += OnRemoteClipsCommitted;
             syncHost.SessionsChanged += OnPeerSessionsChanged;
             syncHost.DeviceLockedOut += OnDeviceLockedOut;
+            syncHost.PeerStatusChanged += OnPeerStatusChanged;
             await syncHost.StartAsync(viewModel.ExtraBindAddresses);
             viewModel.LocalFingerprint = FormatFingerprint(syncHost.CertificateFingerprint);
             viewModel.UpdatePeerStatus(true, syncHost.Port, syncHost.ConnectedDeviceCount);
@@ -206,6 +207,24 @@ public partial class App : Application
 
             mainViewModel.UpdatePeerStatus(true, host.Port, host.ConnectedDeviceCount);
             await mainViewModel.RefreshDevicesCommand.ExecuteAsync(null);
+        });
+    }
+
+    /// <summary>
+    /// A resume/network recovery pass changed the endpoint's state (worker thread): push the
+    /// fresh online flag, port, and connected count into the conduit page and tray flyout.
+    /// A failed rebind reads as offline here until a later recovery pass brings it back.
+    /// </summary>
+    private void OnPeerStatusChanged()
+    {
+        _ = Dispatcher.InvokeAsync(() =>
+        {
+            if (mainViewModel is null || syncHost is null)
+            {
+                return;
+            }
+
+            mainViewModel.UpdatePeerStatus(syncHost.IsRunning, syncHost.Port, syncHost.ConnectedDeviceCount);
         });
     }
 
@@ -342,6 +361,7 @@ public partial class App : Application
             syncHost.RemoteClipsCommitted -= OnRemoteClipsCommitted;
             syncHost.SessionsChanged -= OnPeerSessionsChanged;
             syncHost.DeviceLockedOut -= OnDeviceLockedOut;
+            syncHost.PeerStatusChanged -= OnPeerStatusChanged;
             syncHost.DisposeAsync().AsTask().GetAwaiter().GetResult();
         }
         if (clipboardAdapter is not null)
