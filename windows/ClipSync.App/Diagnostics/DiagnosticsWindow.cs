@@ -96,7 +96,9 @@ internal sealed class DiagnosticsWindow : Window
         var builder = new StringBuilder();
         foreach (var entry in snapshot)
         {
-            builder.Append(entry.TimestampUtc.ToLocalTime().ToString("MM-dd HH:mm:ss"));
+            builder.Append(entry.TimestampUtc.ToLocalTime().ToString(
+                "MM-dd HH:mm:ss",
+                System.Globalization.CultureInfo.CurrentCulture));
             builder.Append("  ");
             builder.AppendLine(entry.Code);
         }
@@ -108,7 +110,8 @@ internal sealed class DiagnosticsWindow : Window
     {
         try
         {
-            Clipboard.SetText(logView.Text);
+            // Fully qualified: the sibling ClipSync.App.Clipboard namespace shadows the type.
+            System.Windows.Clipboard.SetText(logView.Text);
         }
         catch (System.Runtime.InteropServices.ExternalException)
         {
@@ -116,7 +119,7 @@ internal sealed class DiagnosticsWindow : Window
         }
     }
 
-    private static Brush Frozen(Color color)
+    private static SolidColorBrush Frozen(Color color)
     {
         var brush = new SolidColorBrush(color);
         brush.Freeze();
