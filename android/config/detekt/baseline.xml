@@ -92,14 +92,18 @@
     <ID>FunctionNaming:Theme.kt$@Composable fun ClipSyncTheme( darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -&gt; Unit, )</ID>
     <ID>InstanceOfCheckForException:SyncTransport.kt$OkHttpSyncConnector$failure is IOException</ID>
     <ID>LargeClass:SyncEngine.kt$SyncEngine</ID>
+    <ID>LongMethod:AckIdempotencyTest.kt$AckIdempotencyTest$@Test fun `applying the same ack ranges twice is a no-op for outbox and peer cursors`()</ID>
     <ID>LongMethod:CapabilityWizard.kt$@Composable private fun RouteCard( route: ReadRouteUi, onAction: (RouteActionId) -&gt; Unit, )</ID>
     <ID>LongMethod:ClipboardSyncService.kt$ClipboardSyncService$private fun launchSyncStack()</ID>
+    <ID>LongMethod:CrossClientSyncE2eTest.kt$CrossClientSyncE2eTest$@Test fun windowsListenerAndAndroidDialerConvergeBothWays()</ID>
     <ID>LongMethod:HealthScreen.kt$@Composable fun HealthScreen( state: HealthScreenState, modifier: Modifier = Modifier, onPairRequest: () -&gt; Unit = {}, onRefresh: (() -&gt; Unit)? = null, onRouteAction: ((ReadRouteUi, RouteActionId) -&gt; Unit)? = null, onServiceStart: (() -&gt; Unit)? = null, onServiceStop: (() -&gt; Unit)? = null, onTestWrite: (() -&gt; Unit)? = null, onDismissTestResult: () -&gt; Unit = {}, onOpenNotificationSettings: (() -&gt; Unit)? = null, )</ID>
     <ID>LongMethod:HealthScreen.kt$@Composable private fun PipelineSegment( title: String, icon: ImageVector, segment: ConduitSegmentState, modifier: Modifier = Modifier, actions: List&lt;SegmentActionUi&gt; = emptyList(), )</ID>
     <ID>LongMethod:HomeScreen.kt$@Composable fun HomeScreen( conduit: HealthScreenState, home: HomeUiState, onQueryChange: (String) -&gt; Unit, onCopy: (String) -&gt; Unit, onDelete: (String) -&gt; Unit, onOpenConduit: () -&gt; Unit, modifier: Modifier = Modifier, onFormatFilterChange: (ClipContentFormat?) -&gt; Unit = {}, nowMs: () -&gt; Long = System::currentTimeMillis, thumbnail: suspend (contentHash: String) -&gt; Bitmap? = { null }, )</ID>
     <ID>LongMethod:ImageClipRoundTripTest.kt$ImageClipRoundTripTest$@Test fun `every media fixture survives the chunked wire round-trip into the blob store`()</ID>
     <ID>LongMethod:ImageCodec.kt$ImageCodec$fun tryInspectFile( path: File, expectedHash: String? = null, expectedBytes: Long? = null, ): Pair&lt;ImageCodecError, ValidatedImage?&gt;</ID>
+    <ID>LongMethod:LoopSuppressionStressTest.kt$LoopSuppressionStressTest$@Test fun `one thousand capture sync writeback cycles keep sequences contiguous and swallow each echo once`()</ID>
     <ID>LongMethod:MainActivity.kt$@Composable private fun ClipSyncApp( pairingViewModel: PairingViewModel, healthViewModel: HealthViewModel, homeViewModel: HomeViewModel, preferencesViewModel: PreferencesViewModel, showOnboarding: Boolean = false, onOnboardingSeen: () -&gt; Unit = {}, onRouteAction: (ReadRouteUi, RouteActionId) -&gt; Unit = { _, _ -&gt; }, onServiceStart: () -&gt; Unit = {}, onServiceStop: () -&gt; Unit = {}, onOpenNotificationSettings: (() -&gt; Unit)? = null, onExportHistory: () -&gt; Unit = {}, onImportHistory: () -&gt; Unit = {}, imageThumbnail: suspend (String) -&gt; android.graphics.Bitmap? = { null }, )</ID>
+    <ID>LongMethod:ModeSwitchIdempotencyTest.kt$ModeSwitchIdempotencyTest$@Test fun `one hundred mode switches suppress unchanged text and count only real emits`()</ID>
     <ID>LongMethod:OnboardingScreen.kt$@Composable fun OnboardingScreen( onPair: () -&gt; Unit, onSkip: () -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>LongMethod:PairingScreen.kt$@Composable private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel)</ID>
     <ID>LongMethod:PreferencesScreen.kt$@Composable fun PreferencesScreen( state: PreferencesUiState, onPauseSyncChange: (Boolean) -&gt; Unit, onPrivateModeChange: (Boolean) -&gt; Unit, onAutoApplyRemoteChange: (Boolean) -&gt; Unit, onAutoExpireChange: (Boolean) -&gt; Unit, onBootRestoreChange: (Boolean) -&gt; Unit = {}, onImageSyncChange: (Boolean) -&gt; Unit = {}, onAutoApplyImagesChange: (Boolean) -&gt; Unit = {}, /** Display name of the paired Windows peer; null while unpaired. */ pairedDeviceName: String? = null, onOpenConduit: () -&gt; Unit = {}, onExportHistory: () -&gt; Unit = {}, onImportHistory: () -&gt; Unit = {}, modifier: Modifier = Modifier, )</ID>
@@ -143,8 +147,6 @@
     <ID>MagicNumber:ClipSyncIcons.kt$ClipSyncIcons$1.7f</ID>
     <ID>MagicNumber:ClipSyncIcons.kt$ClipSyncIcons$1.8f</ID>
     <ID>MagicNumber:ClipSyncIcons.kt$ClipSyncIcons$1.9f</ID>
-    <ID>MagicNumber:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator$3</ID>
-    <ID>MagicNumber:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator$4</ID>
     <ID>MagicNumber:Grain.kt$0x00FFFFFF</ID>
     <ID>MagicNumber:Grain.kt$0x5EED</ID>
     <ID>MagicNumber:Grain.kt$24</ID>
