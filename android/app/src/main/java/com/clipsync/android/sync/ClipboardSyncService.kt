@@ -7,7 +7,9 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
@@ -16,6 +18,7 @@ import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.storage.ClipSyncRepository
+import com.clipsync.android.storage.SyncSettingsStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,8 +36,9 @@ import kotlinx.coroutines.launch
  *
  * Wiring: the [SyncSupervisor] dials and reconnects, the [SyncEngine] speaks protocol v1, the
  * Room-backed [ClipSyncRepository] persists everything, share-sheet/tile entries land through
- * [SyncServices] and are drained into the store here, and committed remote clips flow out to
- * the inbox notification via [InboxDelivery].
+ * [SyncServices] and are drained into the store here, and committed remote clips flow out
+ * through [InboxDelivery]: inbox first, then auto-apply to the system clipboard when the
+ * auto_apply_remote preference is on.
  */
 class ClipboardSyncService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -69,6 +73,10 @@ class ClipboardSyncService : Service() {
         val appContext = applicationContext
         val pairing = PairingStore(SharedPrefsKeyValueStore(appContext), KeystoreSecretProtector())
         val repository = repositoryProvider(appContext)
+        val settings = SyncSettingsStore(
+            SharedPrefsKeyValueStore(appContext, name = SyncSettingsStore.PREFERENCES_NAME),
+        )
+        val mainHandler = Handler(Looper.getMainLooper())
 
         // System entry points (share target, Quick Settings tile) nudge the drain below.
         SyncServices.initialize(appContext)
@@ -84,8 +92,21 @@ class ClipboardSyncService : Service() {
             connector = OkHttpSyncConnector(),
             clientVersion = clientVersion(),
             onRemoteClipsCommitted = { committed ->
-                committed.forEach { applied ->
-                    InboxDelivery.deliver(appContext, applied.eventId, applied.content)
+                // Clipboard writes run on the main thread (mirrors the Windows dispatcher hop).
+                mainHandler.post {
+                    // auto_apply_remote is re-read per batch so toggling it applies immediately.
+                    // Like Windows, only the newest body of a batch reaches the system
+                    // clipboard; every event still lands in the inbox first.
+                    val autoApply = settings.autoApplyRemote
+                    val newestEventId = committed.lastOrNull()?.eventId
+                    committed.forEach { applied ->
+                        InboxDelivery.deliver(
+                            appContext,
+                            applied.eventId,
+                            applied.content,
+                            autoApply = autoApply && applied.eventId == newestEventId,
+                        )
+                    }
                 }
             },
         )

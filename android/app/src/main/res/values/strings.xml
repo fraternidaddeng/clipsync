@@ -12,6 +12,7 @@
     <string name="notification_inbox_title">来自电脑的新文本</string>
     <string name="notification_inbox_text">点按“复制”即可放入剪贴板</string>
     <string name="notification_action_copy">复制</string>
+    <string name="notification_applied_text">已自动写入剪贴板</string>
 
     <!-- 同步前台服务通知：只描述连接状态 -->
     <string name="notification_channel_sync_name">同步状态</string>

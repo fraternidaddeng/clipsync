@@ -86,6 +86,39 @@ object SyncNotifications {
         }
     }
 
+    /**
+     * Posts the content-free status notification for a remote clip that was auto-applied to
+     * the system clipboard (plan 阶段 4: 成功后再发不含正文的状态通知). It shares the event's
+     * notification id, so it replaces any earlier copy-action notification for the same event.
+     */
+    fun notifyAutoApplied(context: Context, eventId: String): Boolean {
+        val manager = NotificationManagerCompat.from(context)
+        if (!manager.areNotificationsEnabled()) {
+            return false
+        }
+        val requestCode = notificationIdFor(eventId)
+        val openApp = PendingIntent.getActivity(
+            context,
+            requestCode,
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+        val notification = NotificationCompat.Builder(context, CHANNEL_INBOX)
+            .setSmallIcon(R.drawable.ic_notify_clip)
+            .setContentTitle(context.getString(R.string.notification_inbox_title))
+            .setContentText(context.getString(R.string.notification_applied_text))
+            .setContentIntent(openApp)
+            .setAutoCancel(true)
+            .build()
+        return try {
+            manager.notify(requestCode, notification)
+            true
+        } catch (_: SecurityException) {
+            false
+        }
+    }
+
     fun cancelInboxItem(context: Context, eventId: String) {
         NotificationManagerCompat.from(context).cancel(notificationIdFor(eventId))
     }
