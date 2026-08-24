@@ -98,7 +98,7 @@
 ### B. 还没做（计划内欠账）
 
 3. **打包分发（阶段 7）——最小分发链已解决（commit `eedf009`）。** `scripts/package-windows.ps1` 产出自包含 win-x64 便携 ZIP（内含运行时、许可与安装指南，附 SHA-256），`scripts/package-android.ps1` 产出环境变量签名的 Release APK（附 SHA-256，密钥库与密码不入库），`docs/install.md` 提供一页中文安装/配对/授权/排障文档；两个脚本已在 Linux 上实跑验证（Windows 端经 `EnableWindowsTargeting`，Android 端签名/Debug/未签名三路径 + apksigner 验签）。**仍未做**：GitHub Releases 产物上传与发布 CI、商店/F-Droid 上架。
-4. **图片同步没有。** 协议 v1 只有纯文本（预留了 MIME 字段，`ImageCodec` 雏形未接线）。ClipShare、ClipCascade、Deskdrop 都支持图片；「截图过去」是剪贴板同步的高频场景，这是对比表上最扎眼的功能差距。
+4. **图片同步没有。** 协议 v1 只有纯文本（`kind` 固定为 `const: "text"`，未预留 MIME 字段；`ImageCodec` 雏形随后端移植带入但未接线）。ClipShare、ClipCascade、Deskdrop 都支持图片；「截图过去」是剪贴板同步的高频场景，这是对比表上最扎眼的功能差距。
 5. **阶段 6 硬化残项**：Windows 睡眠/唤醒会话快速恢复（现在靠超时 + 退避，恢复慢）、WebSocket 帧级限流、历史导出/导入。*（进行中：历史导出/导入由并行任务自 `feature/stage-4` 移植，截至 2026-08-24 未合入。）*
 6. **小项**：收件箱仍是 SharedPreferences 占位（正文在 Room 不丢）、入站通知洪泛策略、Windows 衬线字体/空状态等 UI 残项（见 `ui-gap-audit.md` P1–P3）。
 
@@ -144,7 +144,7 @@
 4. Windows 睡眠/唤醒会话快速恢复（`SessionPowerCoordinator`，stage-4 分支有可移植实现）。
 5. 真实弱网/Wi-Fi 切换重连时延测量与调参（退避逻辑已有测试，真实时延未知）。
 6. 历史导出/导入（换机、备份场景；stage-4 分支有雏形）。*（进行中：并行任务移植，未合入。）*
-7. **图片同步（protocol v2）立项裁决**：这是对照表上最大的功能差距，协议已预留字段、`ImageCodec` 有雏形；建议先做「Windows→Android 单向 PNG ≤ N MB」最小版本。若裁决不做，应在 product-scope 里写明理由（如「截图走 LocalSend」）。
+7. **图片同步（protocol v2）立项裁决**：这是对照表上最大的功能差距。协议 v1 未预留图片字段（`kind` 冻结为 `text`，需另起版本）；`feature/stage-4` 分支已有完整的 protocol v2 图片实现（commit `28e354a`：v2 schema/fixtures、双端媒体栈与同步引擎、ADR 0003），本分支只带入了未接线的 `ImageCodec`/`MediaLimits`/`ClipboardMediaReader` 雏形。建议优先评估从 stage-4 移植，而非从零做「Windows→Android 单向 PNG ≤ N MB」最小版本。若裁决不做，应在 product-scope 里写明理由（如「截图走 LocalSend」）。
 
 ### P2 —— 硬化与打磨
 
