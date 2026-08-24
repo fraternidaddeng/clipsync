@@ -2,7 +2,7 @@
 
 > 从属于《设计纲领》（`DESIGN-CHARTER.md`）与 `tokens.md`。
 > 本文件记录「章程 → 实现」尚未合拢的差距，按影响排序；每完成一轮打磨更新一次。
-> 最后更新：2026-08-24（Android 空状态 / 首次运行引导 / 通知关闭状态行 打磨轮之后）
+> 最后更新：2026-08-24（Android 字体随包 / 卡片深度 / 动效令牌 / 超椭圆 / 设备邻近色 打磨轮之后）
 
 ---
 
@@ -10,6 +10,11 @@
 
 | 项 | 落地 |
 |---|---|
+| Android 三个声音随包分发 | `res/font` 打包 `NotoSerifSC-SemiBold`、`NotoSansSC-Regular/Medium`、`JetBrainsMono-Regular/Medium` 五枚；`ClipSyncFonts` 三族接入 `ClipSyncType` 全字阶与 M3 Typography（Material 组件不再漏系统字体）；Sans 600 按打包清单落 Medium 文件而非合成粗体；配对页指纹/地址改用随包 Mono |
+| Android 卡片深度 | 历史卡从平面 1px 边框卡换 `charterCard`（sh-1 阴影 + `sf` 面 + `sf-grad` 顶部受光 + 1px 发丝线）；通路「需要你操作」段改为 z1 深度上叠赭色着色（不再是无影平条） |
+| Android 动效令牌 | `CharterMotion`：`cubic-bezier(.16,1,.3,1)` + 260/300/320ms 档；接入 tab 切换 Crossfade、向导开合、管道段展开、通知条进出、历史列表 item 位移；2.6s 赭色描边脉动核验存在并改引令牌 |
+| Android 超椭圆 | `SuperellipseShape`（n≈4.4，采样路径）+ `CharterShapes.card/control`；卡 16dp / 控件 12dp 统一（通知条 8→12、段操作 chip 10→12、测试结果条 10→12、历史卡 12→16） |
+| Android 设备邻近色 | 来源盒不再硬编码 `dev1`：`ClipSyncColors.device/deviceBg/deviceLn(pairingOrder)` 按配对顺位取色（着色底 11%/12%、描边 24%，过五循环）；`PairingStore.pairedPeers()` 定义顺位契约，未配对来源退灰色事实盒 |
 | 应用图标 | 折线标记应用图标（`docs/design/icons/app-icon.svg` + 16 网格小帧变体）。Windows `app.ico`（16–256 八档，`scripts/generate-app-icons.py` 生成）接入 exe（`ApplicationIcon`）与全部窗口（`Window.Icon`）；Android 自适应图标（前景/背景/monochrome 三层矢量，minSdk 29 无需光栅 mipmap），默认机器人不再出现 |
 | Windows 标题栏 | 三个窗口全部 `WindowChrome` 自绘：灰蓝 `sf3` 顶栏、品牌折线 + 衬线名、窗控三钮（关闭钮悬停用 err 着色盒）。主窗标题栏承载 暂停/私密 开关与四段 mini rail（纲领 3.7：rail 在标题栏复用） |
 | 配对二维码窗口 | 纯白静区保留，外加流动蓝四角取景框；倒计时转 Mono「机器的声音」；无可达地址 = 赭色着色盒（需要你操作，不是错误）；指纹四位一组、八组一行、两行、t1 最高对比；文案全中文 |
@@ -32,7 +37,7 @@
 
 | 差距 | 现状 | 需要做 |
 |---|---|---|
-| **字体随包分发（剩余部分）** | Windows Sans/Mono 已随包（见上）；衬线仍落 `SimSun`（Noto Serif SC 单字重 ~11MB，暂缓）；**Android 三个声音仍全部落系统/OEM 字体** | Android 打包 `NotoSansSC`、`JetBrainsMono`（Compose `FontFamily(Font(...))`）；衬线两端一起裁决：要么接受体积打包 `NotoSerifSC-SemiBold`，要么改章程 |
+| **字体随包分发（剩余部分）** | Windows Sans/Mono 已随包（见上）；Android 三个声音已随包（本轮，含衬线 `NotoSerifSC-SemiBold` ~11MB）；仅剩 Windows 衬线仍落 `SimSun` | Windows 打包同款 `NotoSerifSC-SemiBold`（体积裁决已在 Android 侧接受），`Fonts/#Noto Serif SC` 引用 |
 | **空状态 / 首次运行（Windows 侧）** | Android 空状态与首次运行引导已合拢（见上）；Windows 历史空列表仍是空白区域，首次运行没有「去配对」引导 | 空状态是三处衬线时刻之一（纲领 3.5）：Serif 短句 + 幽灵配对按钮；建议首启直接落「通路」页（`pc-ui-inventory` #14/#15） |
 | **卡片深度不足**（Windows） | 主窗卡片是 1px 边框平面卡，无 `sh-1` 阴影、无 `sf-grad` 受光 | tokens §8：最外层挂一次 `DropShadowEffect`，内层 1px 边框，最内 2px 顶部高光渐变 |
 
@@ -40,9 +45,9 @@
 
 | 差距 | 现状 | 需要做 |
 |---|---|---|
-| 设备邻近色按配对顺序分配 | Windows 历史来源盒硬编码 `dev2`、设备行硬编码 `dev1`；Android 对端色未用 | 按配对顺位 1..5 取 `dev-N`，存储在设备记录上、允许手动改 |
-| 动效令牌 | 两端均无统一的 `cubic-bezier(.16,1,.3,1)` + 时长档；「需要你操作」的 2.6s 描边脉动未做；配对成功的一次性镜面流光未做 | WPF `Storyboard` / Compose `CubicBezierEasing(0.16f,1f,0.3f,1f)` 接入交互过渡 |
-| 超椭圆 | 两端全部是普通圆角矩形（n=2） | n≈4–5 超椭圆：WPF 自绘 `Geometry`、Compose 自定义 `Shape`；两端共享 n |
+| 设备邻近色按配对顺序分配（Windows 侧） | Android 已按顺位取色（本轮）；Windows 历史来源盒仍硬编码 `dev2`、设备行硬编码 `dev1` | Windows 按配对顺位 1..5 取 `dev-N`，存储在设备记录上、允许手动改 |
+| 动效令牌（Windows 侧） | Android 已接令牌（本轮）；Windows 仍无统一缓动/时长档；配对成功的一次性镜面流光两端均未做 | WPF `Storyboard` 接 `cubic-bezier(.16,1,.3,1)` + 180–220ms 档 |
+| 超椭圆（Windows 侧） | Android 已用 n≈4.4 超椭圆（本轮）；Windows 仍是普通圆角矩形 | WPF 自绘 `Geometry`，与 Android 共享指数 n |
 | Windows 托盘浮窗 | tokens §12.6 规格已定（440px、3 秒、无颗粒无时间性动效、标题栏右侧 rail），未实现 | 独立 `Popup`/无边框窗 + 最近条目 + rail |
 | QS 磁贴状态 | 磁贴常为可用态，未随服务/暂停状态切 active/inactive | `TileService.qsTile.state` 接 `ClipboardSyncService.connectionStates` |
 | 托盘主题只采样一次 | 深浅任务栏切换后托盘图标不换套（启动时读一次注册表） | 监听 `SystemEvents.UserPreferenceChanged` 重载图标 |
