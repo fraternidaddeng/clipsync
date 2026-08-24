@@ -18,10 +18,11 @@ public sealed partial class SqliteClipboardEventStore
         await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
 
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        // Export format v1 carries text bodies only; image clips (schema 3) stay local.
         var eventCount = checked((int)await ReadScalarInt64Async(
             connection,
             null,
-            "SELECT COUNT(*) FROM clips;",
+            "SELECT COUNT(*) FROM clips WHERE kind = 'text';",
             cancellationToken).ConfigureAwait(false));
 
         await WriteLineAsync(
@@ -38,6 +39,7 @@ public sealed partial class SqliteClipboardEventStore
             SELECT event_id, origin_device_id, origin_seq, content, content_hash,
                    source_app, created_at, expires_at, deleted_at, terminal_reason
             FROM clips
+            WHERE kind = 'text'
             ORDER BY origin_device_id, origin_seq;
             """;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);

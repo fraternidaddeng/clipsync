@@ -19,6 +19,7 @@ public static class PairingErrorCodes
     public const string TokenExpired = "PAIRING_TOKEN_EXPIRED";
     public const string Rejected = "PAIRING_REJECTED";
     public const string Timeout = "PAIRING_TIMEOUT";
+    public const string RateLimited = "PAIRING_RATE_LIMITED";
 }
 
 /// <summary>The JSON object rendered inside the pairing QR code. Never contains the pair secret.</summary>

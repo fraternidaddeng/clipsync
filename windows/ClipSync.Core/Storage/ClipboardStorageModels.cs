@@ -14,9 +14,16 @@ public sealed record ClipboardHistoryEntry(
     string? SourceProcess,
     DateTimeOffset CreatedAt,
     DateTimeOffset? ExpiresAt,
-    DateTimeOffset? DeletedAt)
+    DateTimeOffset? DeletedAt,
+    string Kind = "text",
+    string? MimeType = null,
+    int? EncodedBytes = null,
+    int? PixelWidth = null,
+    int? PixelHeight = null)
 {
     public bool IsDeleted => DeletedAt is not null;
+
+    public bool IsImage => string.Equals(Kind, "image", StringComparison.Ordinal);
 }
 
 public sealed class ClipboardRetentionPolicy

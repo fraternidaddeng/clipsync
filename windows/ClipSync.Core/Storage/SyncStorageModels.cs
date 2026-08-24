@@ -28,11 +28,19 @@ public sealed record RemoteClipEvent(
     Guid EventId,
     string OriginDeviceId,
     long OriginSeq,
-    string Content,
+    string? Content,
     string ContentHash,
     string? SourceApp,
     DateTimeOffset CreatedAt,
-    DateTimeOffset? ExpiresAt);
+    DateTimeOffset? ExpiresAt,
+    string Kind = "text",
+    string? MimeType = null,
+    int? EncodedBytes = null,
+    int? PixelWidth = null,
+    int? PixelHeight = null)
+{
+    public bool IsImage => string.Equals(Kind, "image", StringComparison.Ordinal);
+}
 
 /// <summary>An origin-authoritative unavailable marker; advances cursors without content.</summary>
 public sealed record RemoteTerminalMarker(
@@ -82,7 +90,14 @@ public sealed record SyncableClipEvent(
     string? SourceApp,
     DateTimeOffset CreatedAt,
     DateTimeOffset? ExpiresAt,
-    string? TerminalReason)
+    string? TerminalReason,
+    string Kind = "text",
+    string? MimeType = null,
+    int? EncodedBytes = null,
+    int? PixelWidth = null,
+    int? PixelHeight = null)
 {
     public bool IsTerminal => TerminalReason is not null;
+
+    public bool IsImage => string.Equals(Kind, "image", StringComparison.Ordinal);
 }

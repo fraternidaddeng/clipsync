@@ -1,36 +1,14 @@
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace ClipSync.Core.Protocol;
 
-public abstract record ProtocolParseOutcome
-{
-    private ProtocolParseOutcome()
-    {
-    }
-
-    public sealed record Success(int Version, string Type, Guid RequestId, object Body) : ProtocolParseOutcome;
-
-    /// <summary>Rejection with a stable protocol error code; <see cref="Reason"/> is diagnostic only and never contains message content.</summary>
-    public sealed record Failure(string ErrorCode, string Reason) : ProtocolParseOutcome;
-}
-
 /// <summary>
-/// Strict protocol v1 frame reader: token-level duplicate-property, depth, and null checks,
-/// exact envelope shape, per-type body deserialization, and the mandatory semantic rules.
+/// Strict protocol v2 frame reader. v1 <see cref="ProtocolReader"/> stays frozen
+/// and continues to reject version 2 and image payload types.
 /// </summary>
-public static class ProtocolReader
+public static class ProtocolReaderV2
 {
-    internal static readonly JsonSerializerOptions BodyOptions = new()
-    {
-        PropertyNameCaseInsensitive = false,
-        UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
-        NumberHandling = JsonNumberHandling.Strict,
-        MaxDepth = ProtocolLimits.MaxJsonDepth,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-    };
-
     private static readonly Dictionary<string, Type> BodyTypes = new(StringComparer.Ordinal)
     {
         [ProtocolMessageTypes.Hello] = typeof(HelloBody),
@@ -41,6 +19,9 @@ public static class ProtocolReader
         [ProtocolMessageTypes.ClipAnnounce] = typeof(ClipAnnounceBody),
         [ProtocolMessageTypes.ClipFetch] = typeof(ClipFetchBody),
         [ProtocolMessageTypes.ClipPayload] = typeof(ClipPayloadBody),
+        [ProtocolMessageTypes.ClipPayloadBegin] = typeof(ClipPayloadBeginBody),
+        [ProtocolMessageTypes.ClipPayloadChunk] = typeof(ClipPayloadChunkBody),
+        [ProtocolMessageTypes.ClipPayloadEnd] = typeof(ClipPayloadEndBody),
         [ProtocolMessageTypes.AckRanges] = typeof(AckRangesBody),
         [ProtocolMessageTypes.Error] = typeof(ErrorBody),
         [ProtocolMessageTypes.Ping] = typeof(PingBody),
@@ -55,10 +36,14 @@ public static class ProtocolReader
 
     public static ProtocolParseOutcome Parse(ReadOnlySpan<byte> utf8)
     {
-        var scanFailure = ScanTokens(utf8);
+        var scanFailure = ProtocolReader.ScanStrictJson(utf8);
         if (scanFailure is not null)
         {
-            return scanFailure;
+            var code = scanFailure.Contains("malformed", StringComparison.OrdinalIgnoreCase)
+                || scanFailure.Contains("duplicate", StringComparison.OrdinalIgnoreCase)
+                ? ProtocolErrorCodes.MalformedJson
+                : ProtocolErrorCodes.SchemaViolation;
+            return new ProtocolParseOutcome.Failure(code, scanFailure);
         }
 
         JsonDocument document;
@@ -120,14 +105,13 @@ public static class ProtocolReader
             return new ProtocolParseOutcome.Failure(ProtocolErrorCodes.SchemaViolation, "envelope version must be an integer");
         }
 
-        if (version != ProtocolLimits.ProtocolVersion)
+        if (version != ProtocolLimits.ProtocolVersionV2)
         {
             return new ProtocolParseOutcome.Failure(ProtocolErrorCodes.UnsupportedVersion, "protocol version is unsupported");
         }
 
         if (typeElement.Value.ValueKind != JsonValueKind.String
             || typeElement.Value.GetString() is not { } type
-            || !ProtocolMessageTypes.V1.Contains(type)
             || !BodyTypes.TryGetValue(type, out var bodyType))
         {
             return new ProtocolParseOutcome.Failure(ProtocolErrorCodes.SchemaViolation, "message type is unknown");
@@ -150,7 +134,7 @@ public static class ProtocolReader
         object? body;
         try
         {
-            body = bodyElement.Value.Deserialize(bodyType, BodyOptions);
+            body = bodyElement.Value.Deserialize(bodyType, ProtocolReader.BodyOptions);
         }
         catch (JsonException)
         {
@@ -166,106 +150,12 @@ public static class ProtocolReader
             return new ProtocolParseOutcome.Failure(ProtocolErrorCodes.SchemaViolation, "body cannot be null");
         }
 
-        var semanticError = ProtocolValidation.Validate(type, body);
+        var semanticError = ProtocolValidation.ValidateV2(type, body);
         if (semanticError is not null)
         {
             return new ProtocolParseOutcome.Failure(ProtocolErrorCodes.SchemaViolation, semanticError);
         }
 
         return new ProtocolParseOutcome.Success((int)version, type, requestId, body);
-    }
-
-    /// <summary>
-    /// Runs only the token-level strictness pass (malformed JSON, depth, duplicate properties,
-    /// null values) for non-envelope documents such as pairing bodies. Null means clean.
-    /// </summary>
-    public static string? ScanStrictJson(ReadOnlySpan<byte> utf8) => ScanTokens(utf8)?.Reason;
-
-    /// <summary>Token-level pass rejecting malformed JSON, nesting above 16, duplicate properties, and null values.</summary>
-    private static ProtocolParseOutcome.Failure? ScanTokens(ReadOnlySpan<byte> utf8)
-    {
-        var reader = new Utf8JsonReader(
-            utf8,
-            new JsonReaderOptions
-            {
-                AllowTrailingCommas = false,
-                CommentHandling = JsonCommentHandling.Disallow,
-                MaxDepth = ProtocolLimits.MaxJsonDepth
-            });
-
-        var propertyNamesByDepth = new Stack<HashSet<string>>();
-        try
-        {
-            while (reader.Read())
-            {
-                switch (reader.TokenType)
-                {
-                    case JsonTokenType.StartObject:
-                        propertyNamesByDepth.Push(new HashSet<string>(StringComparer.Ordinal));
-                        break;
-                    case JsonTokenType.EndObject:
-                        propertyNamesByDepth.Pop();
-                        break;
-                    case JsonTokenType.PropertyName:
-                        if (!propertyNamesByDepth.Peek().Add(reader.GetString()!))
-                        {
-                            return new ProtocolParseOutcome.Failure(
-                                ProtocolErrorCodes.MalformedJson,
-                                "duplicate object property");
-                        }
-
-                        break;
-                    case JsonTokenType.Null:
-                        return new ProtocolParseOutcome.Failure(
-                            ProtocolErrorCodes.SchemaViolation,
-                            "null values are not allowed in protocol v1");
-                }
-            }
-        }
-        catch (JsonException)
-        {
-            return new ProtocolParseOutcome.Failure(ProtocolErrorCodes.MalformedJson, "malformed JSON frame");
-        }
-
-        return null;
-    }
-}
-
-public static class ProtocolWriter
-{
-    public static string Serialize(string type, Guid requestId, object body)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(type);
-        ArgumentNullException.ThrowIfNull(body);
-        if (requestId == Guid.Empty)
-        {
-            throw new ArgumentException("A sender generates a fresh non-nil request ID.", nameof(requestId));
-        }
-
-        return Serialize(ProtocolLimits.ProtocolVersion, type, requestId, body);
-    }
-
-    public static string Serialize(int version, string type, Guid requestId, object body)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(type);
-        ArgumentNullException.ThrowIfNull(body);
-        if (requestId == Guid.Empty)
-        {
-            throw new ArgumentException("A sender generates a fresh non-nil request ID.", nameof(requestId));
-        }
-
-        using var stream = new MemoryStream();
-        using (var writer = new Utf8JsonWriter(stream))
-        {
-            writer.WriteStartObject();
-            writer.WriteNumber("version", version);
-            writer.WriteString("type", type);
-            writer.WriteString("request_id", requestId.ToString("D"));
-            writer.WritePropertyName("body");
-            JsonSerializer.Serialize(writer, body, body.GetType(), ProtocolReader.BodyOptions);
-            writer.WriteEndObject();
-        }
-
-        return Encoding.UTF8.GetString(stream.ToArray());
     }
 }

@@ -37,15 +37,59 @@ public static partial class ProtocolValidation
             return false;
         }
 
-        var padded = value.Replace('-', '+').Replace('_', '/') + "=";
-        Span<byte> decoded = stackalloc byte[33];
-        if (!Convert.TryFromBase64String(padded, decoded, out var written) || written != 32)
+        if (!TryDecodeBase64Url(value, out var decoded) || decoded.Length != 32)
         {
             return false;
         }
 
-        bytes = decoded[..32].ToArray();
+        bytes = decoded;
         return string.Equals(EncodeBase64Url(bytes), value, StringComparison.Ordinal);
+    }
+
+    /// <summary>Decodes unpadded base64url. Rejects padding characters and non-canonical encodings.</summary>
+    public static bool TryDecodeBase64Url(string? value, out byte[] bytes)
+    {
+        bytes = Array.Empty<byte>();
+        if (string.IsNullOrEmpty(value) || value.IndexOfAny(['+', '/', '=']) >= 0)
+        {
+            return false;
+        }
+
+        foreach (var character in value)
+        {
+            if (character is not ((>= 'A' and <= 'Z') or (>= 'a' and <= 'z') or (>= '0' and <= '9') or '-' or '_'))
+            {
+                return false;
+            }
+        }
+
+        var padded = value.Replace('-', '+').Replace('_', '/');
+        var remainder = padded.Length % 4;
+        if (remainder == 1)
+        {
+            return false;
+        }
+
+        if (remainder > 0)
+        {
+            padded += remainder == 2 ? "==" : "=";
+        }
+
+        try
+        {
+            var decoded = Convert.FromBase64String(padded);
+            if (!string.Equals(EncodeBase64Url(decoded), value, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            bytes = decoded;
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
     }
 
     public static string EncodeBase64Url(ReadOnlySpan<byte> bytes) =>
@@ -72,6 +116,22 @@ public static partial class ProtocolValidation
     };
 
     private static string? ValidateHello(HelloBody hello)
+    {
+        var identityError = ValidateHelloIdentity(hello);
+        if (identityError is not null)
+        {
+            return identityError;
+        }
+
+        if (hello.Capabilities is not null)
+        {
+            return "v1 hello cannot carry capabilities";
+        }
+
+        return null;
+    }
+
+    private static string? ValidateHelloIdentity(HelloBody hello)
     {
         if (!IsCanonicalUuid(hello.DeviceId))
         {
@@ -294,6 +354,12 @@ public static partial class ProtocolValidation
                         return "available header created_at_ms is invalid";
                     }
 
+                    if (clip.MimeType is not null || clip.EncodedBytes is not null
+                        || clip.PixelWidth is not null || clip.PixelHeight is not null)
+                    {
+                        return "v1 available header cannot carry image fields";
+                    }
+
                     var metadataError = ValidateOptionalClipMetadata(clip.SourceApp, clip.CreatedAtMs, clip.ExpiresAtMs);
                     if (metadataError is not null)
                     {
@@ -309,7 +375,9 @@ public static partial class ProtocolValidation
                     }
 
                     if (clip.Kind is not null || clip.ContentHash is not null || clip.Utf8Bytes is not null
-                        || clip.SourceApp is not null || clip.CreatedAtMs is not null || clip.ExpiresAtMs is not null)
+                        || clip.SourceApp is not null || clip.CreatedAtMs is not null || clip.ExpiresAtMs is not null
+                        || clip.MimeType is not null || clip.EncodedBytes is not null
+                        || clip.PixelWidth is not null || clip.PixelHeight is not null)
                     {
                         return "unavailable header cannot carry content metadata";
                     }
@@ -521,4 +589,285 @@ public static partial class ProtocolValidation
 
     public static IReadOnlyList<RangeDto> ToRangeDtos(IReadOnlyList<SequenceRange> ranges) =>
         ranges.Select(range => new RangeDto { StartSeq = range.StartSeq, EndSeq = range.EndSeq }).ToArray();
+
+    public static string? ValidateV2(string messageType, object body) => body switch
+    {
+        HelloBody hello => ValidateHelloV2(hello),
+        ChallengeBody challenge => ValidateChallenge(challenge),
+        AuthBody auth => ValidateAuth(auth),
+        SyncStateDto vector => ValidateSyncState(vector),
+        WantRangesBody want => ValidateOriginRangesList(want.Requests),
+        ClipAnnounceBody announce => ValidateAnnounceV2(announce),
+        ClipFetchBody fetch => ValidateFetch(fetch),
+        ClipPayloadBody payload => ValidatePayload(payload),
+        ClipPayloadBeginBody begin => ValidatePayloadBegin(begin),
+        ClipPayloadChunkBody chunk => ValidatePayloadChunk(chunk),
+        ClipPayloadEndBody end => ValidatePayloadEnd(end),
+        AckRangesBody acks => ValidateOriginRangesList(acks.Acks),
+        ErrorBody error => ValidateErrorV2(error),
+        PingBody ping => ValidateTimestamp(ping.SentAtMs),
+        PongBody pong => ValidateTimestamp(pong.PingSentAtMs) ?? ValidateTimestamp(pong.SentAtMs),
+        _ => $"unsupported message type {messageType}"
+    };
+
+    private static string? ValidateHelloV2(HelloBody hello)
+    {
+        var identityError = ValidateHelloIdentity(hello);
+        if (identityError is not null)
+        {
+            return identityError;
+        }
+
+        return ValidateCapabilities(hello.Capabilities);
+    }
+
+    public static string? ValidateCapabilities(IReadOnlyList<string>? capabilities)
+    {
+        if (capabilities is null || capabilities.Count is < 1 or > ProtocolLimits.MaxCapabilities)
+        {
+            return "hello.capabilities is required and must have 1..16 unique tokens";
+        }
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var token in capabilities)
+        {
+            if (!string.Equals(token, ProtocolLimits.CapabilityImageClipV2, StringComparison.Ordinal))
+            {
+                return "hello.capabilities contains an unknown token";
+            }
+
+            if (!seen.Add(token))
+            {
+                return "hello.capabilities contains a duplicate token";
+            }
+        }
+
+        return null;
+    }
+
+    private static string? ValidateAnnounceV2(ClipAnnounceBody announce)
+    {
+        if (announce.Clips.Count is < 1 or > ProtocolLimits.MaxAnnounceClips)
+        {
+            return "clip_announce size is out of bounds";
+        }
+
+        var seenEventIds = new HashSet<string>(StringComparer.Ordinal);
+        var seenSequences = new HashSet<(string Origin, long Seq)>();
+        foreach (var clip in announce.Clips)
+        {
+            var identityError = ValidateClipIdentity(clip.EventId, clip.OriginDeviceId, clip.OriginSeq, seenEventIds, seenSequences);
+            if (identityError is not null)
+            {
+                return identityError;
+            }
+
+            switch (clip.Availability)
+            {
+                case ClipAvailability.Available:
+                    if (clip.Reason is not null)
+                    {
+                        return "available header cannot carry a reason";
+                    }
+
+                    if (string.Equals(clip.Kind, TextKind, StringComparison.Ordinal))
+                    {
+                        if (clip.MimeType is not null || clip.EncodedBytes is not null
+                            || clip.PixelWidth is not null || clip.PixelHeight is not null)
+                        {
+                            return "text header cannot carry image fields";
+                        }
+
+                        if (clip.ContentHash is null || !IsLowercaseSha256(clip.ContentHash))
+                        {
+                            return "available header content_hash is invalid";
+                        }
+
+                        if (clip.Utf8Bytes is null or < 1 or > ProtocolLimits.MaxContentUtf8Bytes)
+                        {
+                            return "available header utf8_bytes is out of bounds";
+                        }
+
+                        if (clip.CreatedAtMs is null || ValidateTimestamp(clip.CreatedAtMs.Value) is not null)
+                        {
+                            return "available header created_at_ms is invalid";
+                        }
+
+                        var textMeta = ValidateOptionalClipMetadata(clip.SourceApp, clip.CreatedAtMs, clip.ExpiresAtMs);
+                        if (textMeta is not null)
+                        {
+                            return textMeta;
+                        }
+
+                        break;
+                    }
+
+                    if (!string.Equals(clip.Kind, "image", StringComparison.Ordinal))
+                    {
+                        return "available header kind must be text or image";
+                    }
+
+                    if (clip.Utf8Bytes is not null)
+                    {
+                        return "image header cannot carry utf8_bytes";
+                    }
+
+                    if (clip.MimeType is not ("image/png" or "image/jpeg"))
+                    {
+                        return "image header mime_type is unsupported";
+                    }
+
+                    if (clip.ContentHash is null || !IsLowercaseSha256(clip.ContentHash))
+                    {
+                        return "image header content_hash is invalid";
+                    }
+
+                    if (clip.EncodedBytes is null or < 1 or > ProtocolLimits.MaxEncodedImageBytes)
+                    {
+                        return "image header encoded_bytes is out of bounds";
+                    }
+
+                    if (clip.PixelWidth is null or < 1 or > ProtocolLimits.MaxImageSide
+                        || clip.PixelHeight is null or < 1 or > ProtocolLimits.MaxImageSide)
+                    {
+                        return "image header dimensions are out of bounds";
+                    }
+
+                    if (clip.PixelWidth.Value * clip.PixelHeight.Value > ProtocolLimits.MaxImagePixels)
+                    {
+                        return "image header exceeds 32 MP";
+                    }
+
+                    if (clip.CreatedAtMs is null || ValidateTimestamp(clip.CreatedAtMs.Value) is not null)
+                    {
+                        return "available header created_at_ms is invalid";
+                    }
+
+                    var imageMeta = ValidateOptionalClipMetadata(clip.SourceApp, clip.CreatedAtMs, clip.ExpiresAtMs);
+                    if (imageMeta is not null)
+                    {
+                        return imageMeta;
+                    }
+
+                    break;
+
+                case ClipAvailability.Unavailable:
+                    if (clip.Reason is null || !ClipUnavailableReasons.V2.Contains(clip.Reason))
+                    {
+                        return "unavailable header reason is invalid";
+                    }
+
+                    if (clip.Kind is not null || clip.ContentHash is not null || clip.Utf8Bytes is not null
+                        || clip.SourceApp is not null || clip.CreatedAtMs is not null || clip.ExpiresAtMs is not null
+                        || clip.MimeType is not null || clip.EncodedBytes is not null
+                        || clip.PixelWidth is not null || clip.PixelHeight is not null)
+                    {
+                        return "unavailable header cannot carry content metadata";
+                    }
+
+                    break;
+
+                default:
+                    return "availability is unknown";
+            }
+        }
+
+        return null;
+    }
+
+    private static string? ValidatePayloadBegin(ClipPayloadBeginBody begin)
+    {
+        if (!IsCanonicalUuid(begin.TransferId) || !IsCanonicalUuid(begin.EventId))
+        {
+            return "clip_payload_begin ids are not canonical UUIDs";
+        }
+
+        if (begin.ChunkCount is < 1 or > ProtocolLimits.MaxChunkCount)
+        {
+            return "clip_payload_begin chunk_count is out of bounds";
+        }
+
+        if (begin.EncodedBytes is < 1 or > ProtocolLimits.MaxEncodedImageBytes)
+        {
+            return "clip_payload_begin encoded_bytes is out of bounds";
+        }
+
+        if (!IsLowercaseSha256(begin.ContentHash))
+        {
+            return "clip_payload_begin content_hash is invalid";
+        }
+
+        if (begin.MimeType is not ("image/png" or "image/jpeg"))
+        {
+            return "clip_payload_begin mime_type is unsupported";
+        }
+
+        var minChunks = (begin.EncodedBytes + ProtocolLimits.MaxChunkBytes - 1) / ProtocolLimits.MaxChunkBytes;
+        if (begin.ChunkCount < minChunks)
+        {
+            return "clip_payload_begin chunk_count is too small for encoded_bytes";
+        }
+
+        return null;
+    }
+
+    private static string? ValidatePayloadChunk(ClipPayloadChunkBody chunk)
+    {
+        if (!IsCanonicalUuid(chunk.TransferId) || !IsCanonicalUuid(chunk.EventId))
+        {
+            return "clip_payload_chunk ids are not canonical UUIDs";
+        }
+
+        if (chunk.ChunkCount is < 1 or > ProtocolLimits.MaxChunkCount)
+        {
+            return "clip_payload_chunk chunk_count is out of bounds";
+        }
+
+        if (chunk.ChunkIndex < 0 || chunk.ChunkIndex >= chunk.ChunkCount)
+        {
+            return "clip_payload_chunk chunk_index is out of bounds";
+        }
+
+        if (chunk.ChunkBytes is < 1 or > ProtocolLimits.MaxChunkBytes)
+        {
+            return "clip_payload_chunk chunk_bytes is out of bounds";
+        }
+
+        if (!TryDecodeBase64Url(chunk.Data, out var decoded) || decoded.Length != chunk.ChunkBytes)
+        {
+            return "clip_payload_chunk data is not unpadded base64url of chunk_bytes";
+        }
+
+        return null;
+    }
+
+    private static string? ValidatePayloadEnd(ClipPayloadEndBody end)
+    {
+        if (!IsCanonicalUuid(end.TransferId) || !IsCanonicalUuid(end.EventId))
+        {
+            return "clip_payload_end ids are not canonical UUIDs";
+        }
+
+        return IsLowercaseSha256(end.ContentHash) ? null : "clip_payload_end content_hash is invalid";
+    }
+
+    private static string? ValidateErrorV2(ErrorBody error)
+    {
+        if (!ProtocolErrorCodes.V2.Contains(error.Code))
+        {
+            return "error.code is unknown";
+        }
+
+        if (error.FailedType is not null && !ProtocolMessageTypes.All.Contains(error.FailedType))
+        {
+            return "error.failed_type is unknown";
+        }
+
+        if (error.RetryAfterMs is not null && error.RetryAfterMs.Value is < 1 or > ProtocolLimits.MaxRetryAfterMs)
+        {
+            return "error.retry_after_ms is out of bounds";
+        }
+
+        return null;
+    }
 }
