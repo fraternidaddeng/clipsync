@@ -31,7 +31,12 @@ internal sealed class TrayIconController : IDisposable
         currentToolTip = taskbarIcon.ToolTipText;
     }
 
-    public static TrayIconController Create(Window mainWindow, Action exit)
+    /// <summary>
+    /// Charter surface map (pc-settings-preview §00): single left click opens the quick
+    /// flyout, double click / menu opens the main window. Without a flyout callback the
+    /// single click falls back to opening the main window.
+    /// </summary>
+    public static TrayIconController Create(Window mainWindow, Action exit, Action? showFlyout = null)
     {
         var menu = new ContextMenu();
         var openItem = new MenuItem { Header = "打开剪剪相传" };
@@ -51,7 +56,16 @@ internal sealed class TrayIconController : IDisposable
             Icon = stateIcons[TrayState.Flow],
             ContextMenu = menu
         };
-        taskbarIcon.TrayLeftMouseDown += (_, _) => Show(mainWindow);
+        if (showFlyout is null)
+        {
+            taskbarIcon.TrayLeftMouseDown += (_, _) => Show(mainWindow);
+        }
+        else
+        {
+            taskbarIcon.TrayLeftMouseUp += (_, _) => showFlyout();
+            taskbarIcon.TrayMouseDoubleClick += (_, _) => Show(mainWindow);
+        }
+
         var controller = new TrayIconController(taskbarIcon, stateIcons);
         diagnosticsItem.Click += (_, _) => controller.ShowDiagnostics();
         return controller;

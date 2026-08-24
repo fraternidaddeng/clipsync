@@ -30,6 +30,7 @@ public partial class App : Application
 
     private ServiceProvider? services;
     private TrayIconController? trayIcon;
+    private TrayFlyoutWindow? trayFlyout;
     private MainViewModel? mainViewModel;
     private Win32ClipboardAdapter? clipboardAdapter;
     private PeerSyncHost? syncHost;
@@ -74,7 +75,8 @@ public partial class App : Application
         await viewModel.InitializeAsync();
         var mainWindow = services.GetRequiredService<MainWindow>();
         MainWindow = mainWindow;
-        trayIcon = TrayIconController.Create(mainWindow, Shutdown);
+        trayFlyout = new TrayFlyoutWindow(viewModel);
+        trayIcon = TrayIconController.Create(mainWindow, Shutdown, () => trayFlyout?.ShowFlyout());
         mainViewModel = viewModel;
         viewModel.PropertyChanged += OnViewModelPropertyChanged;
         viewModel.Devices.CollectionChanged += OnDevicesChanged;
@@ -353,6 +355,7 @@ public partial class App : Application
             mainViewModel.PropertyChanged -= OnViewModelPropertyChanged;
             mainViewModel.Devices.CollectionChanged -= OnDevicesChanged;
         }
+        trayFlyout?.Close();
         trayIcon?.Dispose();
         services?.DisposeAsync().AsTask().GetAwaiter().GetResult();
         base.OnExit(e);

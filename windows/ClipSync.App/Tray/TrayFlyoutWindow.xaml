@@ -1,0 +1,301 @@
+<Window x:Class="ClipSync.App.Tray.TrayFlyoutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:ClipSync.App.Ui"
+        Title="剪剪相传 · 最近剪贴"
+        Width="464"
+        AllowsTransparency="True"
+        Background="Transparent"
+        FontFamily="Segoe UI, Microsoft YaHei UI, Noto Sans SC"
+        Icon="/Assets/Icons/app.ico"
+        ResizeMode="NoResize"
+        ShowActivated="True"
+        ShowInTaskbar="False"
+        SizeToContent="Height"
+        Topmost="True"
+        UseLayoutRounding="True"
+        WindowStartupLocation="Manual"
+        WindowStyle="None">
+    <!-- 托盘浮窗（tokens §12.6）：440px 卡片、约 3 秒后自行退场；
+         不铺颗粒、无时间性动效——只有最近条目、rail 与暂停开关。 -->
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <ui:DeviceAccentBrushConverter x:Key="DeviceAccentBrush" />
+
+        <!-- 最近剪贴卡：z2 面浮在 z1 浮窗里（charter-preview .cd），点击即复制 -->
+        <Style x:Key="ClipCard" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="Root" Margin="0,0,0,7">
+                            <Border x:Name="Fill"
+                                    Background="{StaticResource CsSurfaceUpBrush}"
+                                    CornerRadius="10"
+                                    Effect="{StaticResource CsSh1Effect}" />
+                            <Border x:Name="Card"
+                                    Background="{StaticResource CsSurfaceUpGradBrush}"
+                                    BorderBrush="{StaticResource CsLineBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <Border Height="2"
+                                            Margin="1,1,1,0"
+                                            VerticalAlignment="Top"
+                                            Background="{StaticResource CsEdgeBrush}"
+                                            CornerRadius="9,9,0,0" />
+                                    <ContentPresenter Margin="12,10" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Fill" Property="Effect" Value="{StaticResource CsSh2Effect}" />
+                                <Setter TargetName="Root" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="-1" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Card" Property="BorderBrush" Value="{StaticResource CsFlowLineBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 页脚暂停钮：使用频率最高的开关提级到浮窗页脚（charter-preview §03） -->
+        <Style x:Key="PausePill" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontSize" Value="10.5" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource CsFlowBrush}" />
+            <Setter Property="Content" Value="暂停同步" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Padding="13,4"
+                                Background="{StaticResource CsFlowBgBrush}"
+                                BorderBrush="{StaticResource CsFlowLineBrush}"
+                                BorderThickness="1"
+                                CornerRadius="100">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource CsFlowBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource CsOnFlowBrush}" />
+                            </Trigger>
+                            <!-- 已暂停 = 陈述事实的灰，不是错误的红 -->
+                            <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                <Setter Property="Content" Value="恢复同步" />
+                                <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource CsSurfaceInBrush}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource CsLine2Brush}" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- 外留 12px 给 sh-2 阴影；卡片本体 440px -->
+    <Grid Margin="12">
+        <Border Background="{StaticResource CsSurfaceBrush}"
+                CornerRadius="14"
+                Effect="{StaticResource CsSh2Effect}" />
+        <Border Background="{StaticResource CsSurfaceGradBrush}"
+                BorderBrush="{StaticResource CsLineBrush}"
+                BorderThickness="1"
+                CornerRadius="14">
+            <StackPanel>
+                <!-- 头部：品牌 + 四段 mini rail（与标题栏、通路页同一语汇） -->
+                <Border Padding="16,12"
+                        BorderBrush="{StaticResource CsLineBrush}"
+                        BorderThickness="0,0,0,1">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Viewbox Width="15" Height="15">
+                                <Canvas Width="24" Height="24">
+                                    <Path Data="{StaticResource IconConduit}"
+                                          Stroke="{StaticResource CsFlowBrush}"
+                                          StrokeThickness="1.9"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round" />
+                                </Canvas>
+                            </Viewbox>
+                            <TextBlock Margin="9,0,0,0"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource CsSerif}"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource CsText1Brush}"
+                                       Text="剪 剪 相 传" />
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Right"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center">
+                            <Rectangle Width="14" Height="4" RadiusX="2" RadiusY="2">
+                                <Rectangle.Style>
+                                    <Style TargetType="Rectangle">
+                                        <Setter Property="Fill" Value="{StaticResource CsFlowBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource CsLine2Brush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource CsLine2Brush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Rectangle.Style>
+                            </Rectangle>
+                            <Rectangle Width="14"
+                                       Height="4"
+                                       Margin="3,0,0,0"
+                                       Fill="{StaticResource CsFlowBrush}"
+                                       RadiusX="2"
+                                       RadiusY="2" />
+                            <Rectangle Width="14" Height="4" Margin="3,0,0,0" RadiusX="2" RadiusY="2">
+                                <Rectangle.Style>
+                                    <Style TargetType="Rectangle">
+                                        <Setter Property="Fill" Value="{StaticResource CsLine2Brush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding PeerOnline}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource CsFlowBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Rectangle.Style>
+                            </Rectangle>
+                            <Rectangle Width="14" Height="4" Margin="3,0,0,0" RadiusX="2" RadiusY="2">
+                                <Rectangle.Style>
+                                    <Style TargetType="Rectangle">
+                                        <Setter Property="Fill" Value="{StaticResource CsFlowBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Devices.Count}" Value="0">
+                                                <Setter Property="Fill" Value="{StaticResource CsLine2Brush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Rectangle.Style>
+                            </Rectangle>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 最近条目：点击即复制到剪贴板 -->
+                <ItemsControl Margin="16,10,16,12"
+                              Focusable="False"
+                              ItemsSource="{Binding RecentHistory}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button AutomationProperties.Name="{Binding OriginLabel, StringFormat=复制来自 {0} 的剪贴}"
+                                    Click="OnClipCardClicked"
+                                    Style="{StaticResource ClipCard}">
+                                <StackPanel>
+                                    <Grid MinHeight="15" Margin="0,0,0,5">
+                                        <!-- 来源盒沿用邻近色；本机条目不打标签，缺省即本地 -->
+                                        <Border Padding="7,1"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Background="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Background}"
+                                                BorderBrush="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Line}"
+                                                BorderThickness="1"
+                                                CornerRadius="6"
+                                                Visibility="{Binding IsRemote, Converter={StaticResource BoolToVisibility}}">
+                                            <TextBlock FontSize="9"
+                                                       Foreground="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
+                                                       Text="{Binding OriginLabel}" />
+                                        </Border>
+                                        <TextBlock HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource CsMono}"
+                                                   FontSize="9"
+                                                   Foreground="{StaticResource CsText4Brush}"
+                                                   Text="{Binding CreatedAt}" />
+                                    </Grid>
+                                    <TextBlock MaxHeight="36"
+                                               FontSize="12"
+                                               Foreground="{StaticResource CsText2Brush}"
+                                               Text="{Binding Text}"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- 空状态：安静陈述，不指责 -->
+                <TextBlock Margin="16,2,16,16"
+                           HorizontalAlignment="Center"
+                           FontSize="11"
+                           Foreground="{StaticResource CsText4Brush}"
+                           Text="还没有剪贴记录 · 复制一段文字试试">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RecentHistory.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <!-- 页脚状态条：一句话 + 暂停开关 -->
+                <Border Padding="16,9"
+                        Background="{StaticResource CsSurface3Brush}"
+                        BorderBrush="{StaticResource CsLineBrush}"
+                        BorderThickness="0,1,0,0"
+                        CornerRadius="0,0,13,13">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Viewbox Width="12" Height="12">
+                                <Canvas Width="24" Height="24">
+                                    <Path Data="M5,13 L9,17 L19,7"
+                                          StrokeThickness="2"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round">
+                                        <Path.Style>
+                                            <Style TargetType="Path">
+                                                <Setter Property="Stroke" Value="{StaticResource CsFlowBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                                        <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
+                                                        <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Path.Style>
+                                    </Path>
+                                </Canvas>
+                            </Viewbox>
+                            <TextBlock Margin="7,0,0,0"
+                                       VerticalAlignment="Center"
+                                       FontSize="10.5"
+                                       Foreground="{StaticResource CsText3Brush}"
+                                       Text="{Binding TrayStatusText}" />
+                        </StackPanel>
+                        <Button HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                AutomationProperties.Name="暂停或恢复同步"
+                                Click="OnPauseClicked"
+                                Style="{StaticResource PausePill}" />
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
