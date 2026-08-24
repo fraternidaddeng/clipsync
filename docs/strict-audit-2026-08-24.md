@@ -130,10 +130,10 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 1. **（伴随 P0）后台读取链路无任何运行时验证**——功能未接线，自然没有「服务在、App 退后台、复制到达 Windows」的自动化或器械测试。接线后必须补 FGS 生命周期 + 协调器交接测试。
 2. **Overlay 器械测试缺失（plan 5.7 明文要求）**——`androidTest` 只有 Room 迁移 2 + DAO 3 + FGS 冒烟 1；窗口创建/释放、永不可触摸、焦点恢复、熄屏不残留等不变量只有 JVM 假件版（`OverlayLifecycleInvariantTest`），未在真 WindowManager 上验证。
 3. **可跳过的 Shizuku 设备测试缺失（plan 5.7）**——授权后读取/事件/写入/Binder 重启恢复没有 on-device 套件（现只有 JVM 反射适配器与状态机测试）。
-4. **器械测试从未真机执行**——6 个用例仅 `assembleDebugAndroidTest` 编译验证；CI 嵌套 KVM 失败记录在 `android-instrumentation-test-report.md`，需实机/可用模拟器跑一轮。
+4. ~~器械测试从未真机执行~~ **已在模拟器执行，真机仍待**——6/6 用例在 API 35 模拟器（QEMU TCG 软件模拟）上全部通过（`android-instrumentation-test-report.md`）；进程/FGS 存活另在 API 29/33/35 三级实测（`emulator-survival-report.md`）。嵌套 KVM 宿主内核缺陷已留证。真机（OEM ROM）执行仍待办。
 5. **Android 会话级图片集成测试缺失**——`SyncEngine` 的 chunk 状态机靠 wire 层往返 + Windows 集成测试间接覆盖（`verification-without-device.md` 已自认）。
-6. **压力/幂等套件缺失**——1,000 次回环抑制压力、模式切换幂等、ack 幂等（stage-4 分支有，本分支未移植；属阶段 6 但 P95/回环验收依赖它）。
-7. **跨端 E2E harness 缺失**——无 `ClipSync.E2eHost` 等无头对端，图片/断线补投的跨端验证只能靠 JVM 脚本化传输层。
+6. ~~压力/幂等套件缺失~~ **已修复（`f5c1efb`）**——`LoopSuppressionStressTest`（1000 次混合方向零回声）、`ModeSwitchIdempotencyTest`、`AckIdempotencyTest` 均按本分支架构重写落地，随 `testDebugUnitTest` 常跑。
+7. ~~跨端 E2E harness 缺失~~ **已修复（`f5c1efb`）并实测通过**——`windows/ClipSync.E2eHost` + `scripts/run-e2e-stage4.ps1` 落地；最终集成轮在本 Linux 环境实际执行，输出 **E2E-PASS**（真实 `SyncEngine` + pinned TLS WebSocket 对真实 Kestrel 宿主，双向各收敛恰好一次）。
 8. **WPF 应用层测试只能在 Windows CI 执行**——本环境仅编译级检查（通过，0 警告）；59 个测试方法未在本轮执行。
 9. **四 ROM 实机矩阵全空**——`device-validation-matrix.md` 全部待办；藕紫/灰粉夜值、MIUI 通知改写、Win10 chrome 等 P3 核验同样悬置。
 
@@ -148,15 +148,15 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 
 ### 6.2 stage-4 尚未移植项（沿用 `stage-4-merge-gap-audit.md` 编号，均复核仍开放）
 
-| 项 | 优先级 |
-|---|---|
-| 图片感知导出/导入（media blob 随 JSONL）——§1 落地后唯一剩余 §2 项 | **P1** |
-| Windows Modern Standby（`PowerRegisterSuspendResumeNotification` + 睡前会话闸门）——现 SystemEvents 覆盖不到多数笔记本 | **P1** |
-| PeerServer 认证前 per-IP 限流 | P2 |
-| 跨端 E2E harness（`E2eHost` + 脚本） | P2 |
-| 压力/幂等 JVM 套件 | P2 |
-| 审计/安全文档（`AUDIT-FINDINGS`、stage-6 security audit 等） | P3 |
-| 发布打包 checksum + 回滚保留 | P3 |
+| 项 | 优先级 | 状态（2026-08-24 最终集成复核） |
+|---|---|---|
+| 图片感知导出/导入（media blob 随 JSONL） | ~~P1~~ | **已裁决降级为文档化排除**：`48e0a14` 在 `docs/export-format-v1.md` 明文规定导出 v1 整体排除图片行（读写两端都拒绝非 `text` kind），缺失图片区间走正常同步补齐；image-aware `format_version: 2` 留作未来功能项，不再是移植缺口 |
+| Windows Modern Standby（`PowerRegisterSuspendResumeNotification` + 睡前会话闸门） | ~~P1~~ | **已修复（`25d2788`）**：`SessionPowerMonitor` + `Win32SuspendResumeNotificationSource`，挂起闸门新会话（503）并断开活跃会话，恢复后解闸；三套测试覆盖 |
+| PeerServer 认证前 per-IP 限流 | ~~P2~~ | **已修复（`25d2788`）**：`SlidingWindowRateLimiter` 接入 sync WebSocket accept + pairing confirm（429） |
+| 跨端 E2E harness（`E2eHost` + 脚本） | ~~P2~~ | **已修复（`f5c1efb`）**，最终集成轮实测 **E2E-PASS**（本 Linux 环境） |
+| 压力/幂等 JVM 套件 | ~~P2~~ | **已修复（`f5c1efb`）**：回环压力 / 模式切换幂等 / ack 幂等三套件随单元测试常跑 |
+| 审计/安全文档（`AUDIT-FINDINGS`、stage-6 security audit 等） | P3 | **关闭（被取代）**：stage 4–9 变更日志已归档 `docs/stage-4-lineage/`；本分支自有审计集（本文、`review-checklist-results.md`、`performance-audit.md` 等）更新更准；stage-4 原文保留在 `feature/stage-4` 历史 |
+| 发布打包 checksum + 回滚保留 | P3 | 保持开放：属真实发布时的 release-engineering 跟进项，非移植缺口（`stage-4-merge-gap-audit.md` 已同步裁决） |
 
 ### 6.3 文档漂移（审计文档自身欠账）
 
@@ -184,3 +184,17 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 | Windows 应用层（WPF，仅 Windows 可执行） | ✅ `dotnet build -p:EnableWindowsTargeting=true` 0 警告 0 错误（TreatWarningsAsErrors 生效）；59 个测试方法待 Windows CI 执行 |
 | Android JVM（`./gradlew testDebugUnitTest`，Robolectric） | ✅ **500/500 通过**（0 失败 0 跳过；含 §7 两处修复后的复跑） |
 | Android 器械测试 | ⏸ 需设备/KVM，本环境不可执行（既有报告见 `android-instrumentation-test-report.md`） |
+
+### 8.1 最终集成复跑（2026-08-24，Linux，JDK 21，.NET 8.0.419，Android SDK 35）
+
+E2E 压力套件与图片/性能提交全部落分支后的整轮复跑，全绿：
+
+| 套件 | 结果 |
+|---|---|
+| `scripts/validate-protocol.ps1` | ✅ v1 12+37、v2 15+15、配对 5+7 全通过 |
+| `scripts/build-windows.ps1`（restore + build + test；本轮起脚本在非 Windows 主机自动加 `EnableWindowsTargeting` 并只执行跨平台套件） | ✅ 解决方案 0 警告 0 错误；`ClipSync.Tests` **402/402 通过** |
+| `./gradlew testDebugUnitTest`（Robolectric） | ✅ **507 用例 0 失败 0 错误**（1 跳过 = `CrossClientSyncE2eTest` 的 `clipsync.e2e.enabled` 闸门，见下一行的实际执行） |
+| `scripts/run-e2e-stage4.ps1`（跨端 E2E：真实 `SyncEngine` + pinned TLS 对真实 `ClipSync.E2eHost`） | ✅ **E2E-PASS**（双向各收敛恰好一次，Windows 侧 list 确认 Android 上行恰好一条） |
+| `./gradlew assembleDebug` | ✅ `app-debug.apk` 产出 |
+| `./gradlew detekt ktlintCheck` | ✅ 通过（基线无新增违规） |
+| Android 器械测试 | ✅ 6/6 已在 API 35 模拟器（TCG）通过，进程/FGS 存活在 API 29/33/35 实测（`android-instrumentation-test-report.md`、`emulator-survival-report.md`）；真机（OEM ROM）执行仍待办 |

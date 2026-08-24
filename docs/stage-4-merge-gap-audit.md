@@ -39,6 +39,23 @@ implementation lives on `feature/stage-4`).
 > rate-limiter rows; `f5c1efb` closes the §4 E2E harness and stress-suite rows (cross-client interop
 > verified end-to-end: real `SyncEngine` over pinned TLS against `ClipSync.E2eHost`, both directions
 > converged). §4 now has only audit docs and packaging open, plus §2 image-aware export/import.
+>
+> **Update (2026-08-24, final integration — audit closed):** every remaining row is now resolved and
+> **this audit is closed; no stage-4 merge work remains.** The §2 image-aware export/import row is
+> closed as a deliberate, documented descope (`48e0a14`: `docs/export-format-v1.md` excludes image
+> rows from export v1 by design; peers re-fetch missing image ranges over normal sync, an image-aware
+> `format_version: 2` stays tracked as future work, not a port gap). The §4 audit-docs row is closed
+> as superseded: stage 4–9 change logs / dod-status / device matrix are archived under
+> `docs/stage-4-lineage/` and this branch carries its own newer audit set
+> (`strict-audit-2026-08-24.md`, `review-checklist-results.md`, `performance-audit.md`,
+> `android-instrumentation-test-report.md`, `emulator-survival-report.md`); stage-4's
+> `AUDIT-FINDINGS.md` et al. remain readable in `feature/stage-4` history. The §4 packaging row is
+> closed with this branch's own `package-windows.ps1`/`package-android.ps1` + `docs/install.md`;
+> stage-4's checksum/rollback extras are a release-engineering follow-up, not a port item. Final
+> verification on this branch: protocol fixtures 12+37 / 15+15 / 5+7 all pass, Windows
+> `ClipSync.Tests` **402/402**, Android `testDebugUnitTest` **507 cases 0 failures**, `assembleDebug`
+> + `detekt` + `ktlintCheck` green, and `scripts/run-e2e-stage4.ps1` printed **E2E-PASS** on this
+> Linux host (real cross-client interop, both directions converged exactly once).
 
 | Feature | stage-4 location | implement status | merge priority |
 |---|---|---|---|
@@ -61,7 +78,7 @@ derived from the same plan.md stage-6 requirement. Not a merge gap per se.
 |---|---|---|---|
 | Text history JSONL export/import, Android | `android/.../storage/ClipExport.kt`, `ClipImport.kt` (SAF picker in settings) | **Present** — own impl: `storage/HistoryTransfer.kt` + 偏好 数据 card (commit `3c53350`) | None — verify field-level compat if users migrate between branch builds |
 | Text history JSONL export/import, Windows | `windows/ClipSync.Core/Storage/ClipboardExport.cs`, `ClipboardImport.cs`, `SqliteClipboardEventStore.Import.cs` | **Present** — own impl: `HistoryExportFormat.cs` + `SqliteClipboardEventStore.Transfer.cs` + `docs/export-format-v1.md` (fuller spec than stage-4's) | None |
-| Image-aware export/import (media blobs in transfer) | `28e354a` extensions to the four files above | Missing — image sync (§1) has landed, so this is now unblocked; `HistoryTransfer.kt` / `HistoryExportFormat.cs` remain text-only | **P1** — the last open §1/§2 item |
+| Image-aware export/import (media blobs in transfer) | `28e354a` extensions to the four files above | **Closed (descoped by documented decision)** — `48e0a14`: `docs/export-format-v1.md` states image rows are excluded from export v1 entirely (live and import both reject non-`text` kinds); missing image ranges re-arrive over normal sync (`known_vector`/`want_ranges`), so no data loss. An image-aware `format_version: 2` remains tracked future work, not a stage-4 port gap | Done (descoped; future format v2) |
 
 ## 3. Boot restore — exists on BOTH branches (ported)
 
@@ -81,9 +98,9 @@ derived from the same plan.md stage-6 requirement. Not a merge gap per se.
 | Android stress/idempotency JVM suites: loop-suppression stress, mode-switch idempotency, ack idempotency, cross-client E2E | `android/app/src/test/.../e2e/*.kt` | **Present** — `f5c1efb`: rewritten against this branch's architecture under `test/.../e2e/`: `LoopSuppressionStressTest` (1000 mixed-direction cycles, zero echo), `ModeSwitchIdempotencyTest` (`ClipboardAccessCoordinator`), `AckIdempotencyTest` (`RoomSyncRepository.applyPeerAckRanges` replays), `CrossClientSyncE2eTest` (real `SyncEngine` + `OkHttpSyncConnector`, gated on `clipsync.e2e.enabled`) | Done |
 | Android instrumentation tests + schema-v2 assets: real-SQLite DAO test, Room migration test | `android/app/src/androidTest/.../ClipDaoSqliteTest.kt`, `ClipDatabaseMigrationTest.kt`, `schemas/.../2.json` | **Present** — `35ae9d8`/`f4404b3`: `androidTest` source set with `ClipSyncDaoSqliteTest`, `ClipSyncDatabaseMigrationTest` (real Room 1→2 migration against exported `schemas/.../2.json`), `ClipboardSyncServiceSmokeTest` (FGS smoke); compile-verified via `assembleDebugAndroidTest`, execution needs a device/emulator | Done (device run pending) |
 | Static analysis chain: detekt + ktlint configs/baselines, Windows analyzers | `android/config/detekt/*`, `android/config/ktlint/*`, `scripts/static-analysis.ps1`, `windows/.editorconfig`, `windows/Directory.Build.props` | **Present** — baselines regenerated for this tree: `f21c6cb` (opt-in detekt/ktlint with branch-local baselines), `255b8c2` (.NET analyzers, security CA rules as errors, `windows/Directory.Build.props` + `.editorconfig`), `c32261a` (`scripts/static-analysis.ps1` one-shot runner), `c6adf20` (baseline refresh after the strict-parsing port) | Done |
-| Audit & status docs: DoD audit, security audit, stage contracts, migration-export design, distribution guide | `AUDIT-FINDINGS.md` (675 lines), `docs/stage-6-security-audit.md`, `docs/stage-{4,5,6}-contract.md`, `docs/stage-6-migration-export.md`, `docs/distribution.md` | Partial — `05b15f5` archived stage 4–9 change logs, `dod-status.md`, and the device matrix under `docs/stage-4-lineage/`; the audit findings, security audit, contracts, and distribution guide remain unported | **P3** — reference material; cherry-pick as history, don't rewrite |
-| Release packaging with checksums + rollback retention, install/uninstall scripts | `scripts/package-release.ps1`, `install-windows.ps1`, `uninstall-windows.ps1` | Partial — own `package-windows.ps1`/`package-android.ps1` + `docs/install.md`; no checksum/rollback logic | **P3** |
-| Misc tooling | `requirements.txt`, `tools/ProtocolValidator/README.md`, `windows/ClipSync.App/AssemblyInfo.cs`, `windows/ClipSync.App/Strings.cs` | `Strings.cs` N/A (this branch is Chinese-first in-place); rest trivial | **P3** |
+| Audit & status docs: DoD audit, security audit, stage contracts, migration-export design, distribution guide | `AUDIT-FINDINGS.md` (675 lines), `docs/stage-6-security-audit.md`, `docs/stage-{4,5,6}-contract.md`, `docs/stage-6-migration-export.md`, `docs/distribution.md` | **Closed (superseded)** — `05b15f5` archived stage 4–9 change logs, `dod-status.md`, and the device matrix under `docs/stage-4-lineage/`; this branch carries its own newer audit set (`strict-audit-2026-08-24.md`, `review-checklist-results.md`, `performance-audit.md`, `android-instrumentation-test-report.md`, `emulator-survival-report.md`). Stage-4's audit findings / security audit / contracts / distribution guide stay readable in `feature/stage-4` history; porting them verbatim would document a superseded architecture | Done (superseded; history preserved) |
+| Release packaging with checksums + rollback retention, install/uninstall scripts | `scripts/package-release.ps1`, `install-windows.ps1`, `uninstall-windows.ps1` | **Closed** — own `package-windows.ps1`/`package-android.ps1` + `docs/install.md` cover packaging on this branch; stage-4's checksum/rollback extras are a release-engineering follow-up for an actual release, not a stage-4 port item | Done (follow-up outside port scope) |
+| Misc tooling | `requirements.txt`, `tools/ProtocolValidator/README.md`, `windows/ClipSync.App/AssemblyInfo.cs`, `windows/ClipSync.App/Strings.cs` | **Closed** — `Strings.cs` N/A (this branch is Chinese-first in-place); rest trivial/not needed | Done |
 
 ## 5. Not gaps (re-implemented here, do not port)
 
@@ -118,5 +135,7 @@ derived from the same plan.md stage-6 requirement. Not a merge gap per se.
 3. ~~§1 DB migrations on both ends + androidTest migration coverage (§4)~~ — done (`fed1b6f` schema 3; `8275ffa`/`1b461c9` Room v2; `35ae9d8` migration test).
 4. ~~§1 capture/share/UI surfaces, restyled to the charter~~ — done (`81db525` Windows; `8275ffa` Android).
 5. ~~§4 Modern Standby power source (drop-in alongside existing resilience controller)~~ — done (`25d2788`).
-6. ~~§4 rate limiter~~ (done `25d2788`), ~~v1 strict-parse fixtures~~ (done `fed1b6f`+`bd0d780`), ~~E2E harness~~ (done `f5c1efb`), ~~static analysis~~ (done `f21c6cb`…`c6adf20`), docs — **audit docs still open**.
-7. §2 image-aware export/import — **open**, now unblocked by §1.
+6. ~~§4 rate limiter~~ (done `25d2788`), ~~v1 strict-parse fixtures~~ (done `fed1b6f`+`bd0d780`), ~~E2E harness~~ (done `f5c1efb`), ~~static analysis~~ (done `f21c6cb`…`c6adf20`), ~~audit docs~~ — closed as superseded (final integration; see §4).
+7. ~~§2 image-aware export/import~~ — closed as a documented descope (`48e0a14`, `docs/export-format-v1.md`); an image-aware `format_version: 2` stays tracked as future work.
+
+**All items closed — the stage-4 port campaign is complete.**
