@@ -13,6 +13,6 @@ public class TrayStateMapperTests
     [InlineData(true, false, true, TrayState.Private)]
     [InlineData(true, true, false, TrayState.Private)]
     [InlineData(true, true, true, TrayState.Private)]
-    public void Map_AppliesCharterPriority(bool isPrivateMode, bool isPaused, bool needsAttention, TrayState expected) =>
+    public void MapAppliesCharterPriority(bool isPrivateMode, bool isPaused, bool needsAttention, TrayState expected) =>
         Assert.Equal(expected, TrayStateMapper.Map(isPrivateMode, isPaused, needsAttention));
 }

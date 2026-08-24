@@ -4,7 +4,7 @@ namespace ClipSync.App.Tray;
 /// The four charter tray states. All four render the same polyline mark; only the
 /// stroke treatment changes (fill/dash/dot), never the shape (charter rule 12.7).
 /// </summary>
-internal enum TrayState
+public enum TrayState
 {
     /// <summary>Normal operation: the solid polyline — content is flowing.</summary>
     Flow,
