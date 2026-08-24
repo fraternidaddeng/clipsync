@@ -53,7 +53,7 @@
 | Windows 捕获/历史/策略/写回 | 实现 + 测试；真实剪贴板生态（RDP/Office/密码管理器共存）未实测 |
 | Android 手动/前台链路 | 实现 + JVM 测试；真机触达率未实测 |
 | Android 三档后台读取 | **代码实现 + 纯逻辑测试；0 台实体机验证（矩阵全 `NOT_TESTED`）** |
-| 图片/文件同步 | 未做（协议 v1 只有 text；`ImageCodec` 雏形未接线） |
+| 图片/文件同步 | **Windows 端图片同步已落地**（protocol v2：CF_DIB 捕获 → PNG 编码 → 分块传输 → 缩略图历史/详情，默认关闭）；Android 端 v2 图片链路未接线；文件同步未做 |
 | 打包分发（阶段 7） | **最小分发链已落地（commit `eedf009`）**：便携 ZIP + 签名 APK 打包脚本 + SHA-256 + 一页安装文档；Releases 上传/商店上架未做 |
 | 睡眠/唤醒快速恢复、帧级限流（阶段 6 硬化） | 未做（靠超时 + 退避重连，功能可用恢复慢） |
 
@@ -98,7 +98,7 @@
 ### B. 还没做（计划内欠账）
 
 3. **打包分发（阶段 7）——最小分发链已解决（commit `eedf009`）。** `scripts/package-windows.ps1` 产出自包含 win-x64 便携 ZIP（内含运行时、许可与安装指南，附 SHA-256），`scripts/package-android.ps1` 产出环境变量签名的 Release APK（附 SHA-256，密钥库与密码不入库），`docs/install.md` 提供一页中文安装/配对/授权/排障文档；两个脚本已在 Linux 上实跑验证（Windows 端经 `EnableWindowsTargeting`，Android 端签名/Debug/未签名三路径 + apksigner 验签）。**仍未做**：GitHub Releases 产物上传与发布 CI、商店/F-Droid 上架。
-4. **图片同步没有。** 协议 v1 只有纯文本（`kind` 固定为 `const: "text"`，未预留 MIME 字段；`ImageCodec` 雏形随后端移植带入但未接线）。ClipShare、ClipCascade、Deskdrop 都支持图片；「截图过去」是剪贴板同步的高频场景，这是对比表上最扎眼的功能差距。
+4. **图片同步（Windows 端已落地，Android 端未接线）。** 协议 v1 只有纯文本（`kind` 固定为 `const: "text"`，未预留 MIME 字段）；protocol v2（含 image_clip_v2 能力、分块传输、v2 fixtures）与 Windows 端完整链路（CF_DIB 捕获 → SQLite schema 3 媒体存储 → 会话引擎 v2 传输 → 历史/详情缩略图 → 图片同步开关，默认关）已自 `feature/stage-4` 移植合入本分支。Android 端 v2 图片收发仍未接线，跨端「截图过去」场景要等 Android 侧补齐。
 5. **阶段 6 硬化残项**：Windows 睡眠/唤醒会话快速恢复（现在靠超时 + 退避，恢复慢）、WebSocket 帧级限流、历史导出/导入。*（进行中：历史导出/导入由并行任务自 `feature/stage-4` 移植，截至 2026-08-24 未合入。）*
 6. **小项**：收件箱仍是 SharedPreferences 占位（正文在 Room 不丢）、入站通知洪泛策略、Windows 衬线字体/空状态等 UI 残项（见 `ui-gap-audit.md` P1–P3）。
 
@@ -121,7 +121,7 @@
 | 剪贴板历史 + 搜索 | ✅ 双端 | ❌（靠桌面 Klipper） | ✅ 强（标签/统计/导出） | ✅ | ⚠️ 基础 | ✅ 加密历史 |
 | 策略引擎（暂停/私密/黑名单/大小/方向） | ✅ 逐层真实执行 | ❌ 开关级 | ⚠️ 部分 | ⚠️ 部分 | ⚠️ 部分 | ⚠️ 部分 |
 | 传输安全 | TLS1.3+证书 pin+每对 secret | TLS+配对 | ⚠️ 可配密钥 | 依服务器 HTTPS | E2EE AES-256-GCM（手工对 salt） | E2EE |
-| 图片同步 | ❌（v2 预留） | ❌ 明确不支持 | ✅ | ✅ | ✅ | ✅ |
+| 图片同步 | ⚠️（Windows 端 v2 已实现，默认关；Android 未接线） | ❌ 明确不支持 | ✅ | ✅ | ✅ | ✅ |
 | 文件传输 | ➖ 用 LocalSend | ✅ | ✅ | ✅ | ✅ | ⚠️ |
 | iOS / macOS / Linux | ➖ | ✅（深浅不一） | ✅（iOS 未充分测试） | ✅ 桌面 | ✅ | ✅ |
 | 跨公网（NAT 穿透/中转） | ➖ 需 VPN/端口转发 | ❌ LAN | ✅ 中转可选 | ✅ 服务器天然跨网 | ✅ | ✅ 卖点 |
@@ -144,7 +144,7 @@
 4. Windows 睡眠/唤醒会话快速恢复（`SessionPowerCoordinator`，stage-4 分支有可移植实现）。
 5. 真实弱网/Wi-Fi 切换重连时延测量与调参（退避逻辑已有测试，真实时延未知）。
 6. 历史导出/导入（换机、备份场景；stage-4 分支有雏形）。*（进行中：并行任务移植，未合入。）*
-7. **图片同步（protocol v2）立项裁决**：这是对照表上最大的功能差距。协议 v1 未预留图片字段（`kind` 冻结为 `text`，需另起版本）；`feature/stage-4` 分支已有完整的 protocol v2 图片实现（commit `28e354a`：双端媒体栈与同步引擎）。本分支已从 stage-4 移植 protocol v2 线上契约（`protocol/v2/` schema 与 fixtures、`docs/protocol-v2.md`、ADR 0004，验证脚本已覆盖 v2），双端实现仍待移植：目前只有未接线的 `ImageCodec`/`MediaLimits`/`ClipboardMediaReader` 雏形。建议优先评估从 stage-4 移植实现，而非从零做「Windows→Android 单向 PNG ≤ N MB」最小版本。若裁决不做，应在 product-scope 里写明理由（如「截图走 LocalSend」）。
+7. **图片同步（protocol v2）——契约与 Windows 端实现均已自 stage-4 移植合入**：线上契约（`protocol/v2/` schema 与 fixtures、`docs/protocol-v2.md`、ADR 0004，验证脚本已覆盖 v2）与 Windows 端完整实现（媒体栈 `DibCodec`/`ImageCodec`/`ImageChunks`/`MediaBlobStore`、SQLite schema 3 媒体存储、会话引擎 v2 分块图片传输、CF_DIB 捕获、历史/详情缩略图、图片同步开关默认关）均已在本分支落地并有测试覆盖。**剩余欠账是 Android 端 v2 图片收发接线**（stage-4 commit `28e354a` 有双端参考实现）；补齐前图片只进 Windows 本机历史（回环集成测试已证明 v2 传输链路），跨端「截图过去」尚不可用。若裁决不做 Android 侧，应在 product-scope 里写明理由（如「截图走 LocalSend」）。
 
 ### P2 —— 硬化与打磨
 
