@@ -24,7 +24,7 @@ public sealed class SqliteSyncStoreTests
         await store.InitializeAsync();
 
         var state = await store.ReadDatabaseStateAsync();
-        Assert.Equal(3, state.SchemaVersion);
+        Assert.Equal(SqliteClipboardEventStore.SchemaVersion, state.SchemaVersion);
 
         var history = await store.SearchAsync(new ClipboardHistoryQuery());
         Assert.Single(history);

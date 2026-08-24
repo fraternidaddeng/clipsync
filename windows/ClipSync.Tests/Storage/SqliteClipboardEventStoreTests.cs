@@ -25,7 +25,29 @@ public sealed class SqliteClipboardEventStoreTests
         Assert.Equal("wal", state.JournalMode, ignoreCase: true);
         Assert.True(state.ForeignKeysEnabled);
         Assert.Equal(SqliteClipboardEventStore.SchemaVersion, state.SchemaVersion);
-        Assert.Equal(3, SqliteClipboardEventStore.SchemaVersion);
+        Assert.Equal(4, SqliteClipboardEventStore.SchemaVersion);
+    }
+
+    [Fact]
+    public async Task InitializeCreatesTheHistoryAndContentHashIndexes()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.InitializeAsync();
+
+        await using var connection = new SqliteConnection($"Data Source={database.Path}");
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'clips';";
+        var indexes = new List<string>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            indexes.Add(reader.GetString(0));
+        }
+
+        Assert.Contains("clips_visible_history_idx", indexes);
+        Assert.Contains("clips_content_hash_idx", indexes);
     }
 
     [Fact]

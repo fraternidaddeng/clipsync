@@ -8,7 +8,7 @@ namespace ClipSync.Core.Storage;
 
 public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IAsyncDisposable
 {
-    public const int SchemaVersion = 3;
+    public const int SchemaVersion = 4;
     private const int MaximumQueryLimit = 2_000;
     private const int BusyTimeoutMilliseconds = 30_000;
     private const string TextKind = "text";
@@ -668,6 +668,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         new(1, CreateBaselineSchemaAsync),
         new(2, ApplySyncSchemaAsync),
         new(3, ApplyImageSchemaAsync),
+        new(4, ApplyContentHashIndexAsync),
     ];
 
     private readonly record struct SchemaMigrationStep(
@@ -839,6 +840,23 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             );
 
             CREATE INDEX clip_media_hash_idx ON clip_media(content_hash);
+            """;
+        await ExecuteNonQueryAsync(connection, transaction, sql, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Adjacent v3→v4 step. Purely additive: an index on clips(content_hash) so the
+    /// announce-time materialization lookup (<see cref="FindLiveContentByHashAsync"/>,
+    /// run by the session engine for every announced text clip) stops scanning the
+    /// whole table. The Android Room schema has carried this index since v1.
+    /// </summary>
+    private static async ValueTask ApplyContentHashIndexAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        const string sql = """
+            CREATE INDEX IF NOT EXISTS clips_content_hash_idx ON clips(content_hash);
             """;
         await ExecuteNonQueryAsync(connection, transaction, sql, cancellationToken).ConfigureAwait(false);
     }
