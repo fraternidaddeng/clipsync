@@ -20,6 +20,22 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Release signing comes exclusively from environment variables so the
+    // keystore and its passwords never enter the repository. Without the
+    // variables, assembleRelease produces an unsigned APK; the packaging
+    // entry point is scripts/package-android.ps1 (documented in docs/install.md).
+    val releaseKeystorePath: String? = System.getenv("CLIPSYNC_ANDROID_KEYSTORE")
+    signingConfigs {
+        if (!releaseKeystorePath.isNullOrBlank()) {
+            create("release") {
+                storeFile = rootProject.file(releaseKeystorePath)
+                storePassword = System.getenv("CLIPSYNC_ANDROID_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("CLIPSYNC_ANDROID_KEY_ALIAS")
+                keyPassword = System.getenv("CLIPSYNC_ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -27,6 +43,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.findByName("release")
         }
     }
 
