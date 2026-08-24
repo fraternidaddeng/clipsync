@@ -27,6 +27,8 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <!-- 设备邻近色按配对顺位取 dev-1..dev-5（tokens §4）；顺位 0 = 灰（本机/已不在册的来源） -->
         <ui:DeviceAccentBrushConverter x:Key="DeviceAccentBrush" />
+        <!-- 图片条目缩略图：经 BitmapFile 解码，绝不绑定文件 URI（避免消息泵重入剪贴板捕获） -->
+        <ui:FilePathToImageConverter x:Key="FilePathToImage" />
 
         <!-- ============ 图标几何（docs/design/icons/*.svg 的 Path 转写；IconConduit/IconPhone 已上移 App 级）============ -->
         <Geometry x:Key="IconHistory">M10,3 H19 A2,2 0 0 1 21,5 V18 A2,2 0 0 1 19,20 H10 A2,2 0 0 1 8,18 V5 A2,2 0 0 1 10,3 Z M16,3 V1 H3 V15 H6</Geometry>
@@ -699,15 +701,35 @@
                                  BorderThickness="0"
                                  ItemContainerStyle="{StaticResource HistoryItemContainer}"
                                  ItemsSource="{Binding History}"
+                                 MouseDoubleClick="OnHistoryItemDoubleClick"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                  SelectedItem="{Binding SelectedItem}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <!-- 图片条目：56px 缩略图靠左，安静圆角盒；文本条目不占位 -->
+                                        <Border Width="56"
+                                                Height="56"
+                                                Margin="0,0,12,0"
+                                                VerticalAlignment="Top"
+                                                Background="{DynamicResource CsSurfaceInBrush}"
+                                                BorderBrush="{DynamicResource CsLineBrush}"
+                                                BorderThickness="1"
+                                                ClipToBounds="True"
+                                                CornerRadius="8"
+                                                Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}">
+                                            <Image Source="{Binding ThumbnailPath, Converter={StaticResource FilePathToImage}}"
+                                                   Stretch="UniformToFill" />
+                                        </Border>
+                                        <StackPanel Grid.Column="1">
                                         <TextBlock MaxHeight="56"
                                                    FontSize="13"
                                                    Foreground="{DynamicResource CsText2Brush}"
-                                                   Text="{Binding Text}"
+                                                   Text="{Binding Preview, Mode=OneWay}"
                                                    TextTrimming="CharacterEllipsis"
                                                    TextWrapping="Wrap" />
                                         <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
@@ -745,7 +767,8 @@
                                                 <Run Text="{Binding Source, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding CreatedAt, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>
-                                    </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
@@ -898,6 +921,10 @@
                                 Margin="0,12,0,0"
                                 Orientation="Horizontal">
                         <Button Command="{Binding CopySelectedCommand}" Content="复制所选" Style="{StaticResource GhostFlowButton}" />
+                        <Button Margin="8,0,0,0"
+                                Command="{Binding ViewSelectedCommand}"
+                                Content="查看详情"
+                                Style="{StaticResource GhostQuietButton}" />
                         <Button Margin="8,0,0,0"
                                 Command="{Binding DeleteSelectedCommand}"
                                 Content="删除所选"
@@ -1523,6 +1550,44 @@
                                                   IsChecked="{Binding AutoApplyRemote}"
                                                   Style="{StaticResource CharterToggle}" />
                                 </Grid>
+                                <Border Padding="16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowName}" Text="同步剪贴板图片" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="默认关闭。仅 PNG/JPEG；原始字节可能含 EXIF 等元数据，双端需为 v2 会话。" />
+                                        </StackPanel>
+                                        <ToggleButton Grid.Column="1"
+                                                      VerticalAlignment="Top"
+                                                      Click="OnSettingToggled"
+                                                      IsChecked="{Binding ImageSyncEnabled}"
+                                                      Style="{StaticResource CharterToggle}" />
+                                    </Grid>
+                                </Border>
+                                <Border Padding="16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowName}" Text="自动应用远端图片" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="手机发来的图片自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。" />
+                                        </StackPanel>
+                                        <ToggleButton Grid.Column="1"
+                                                      VerticalAlignment="Top"
+                                                      Click="OnSettingToggled"
+                                                      IsChecked="{Binding AutoApplyImages}"
+                                                      Style="{StaticResource CharterToggle}" />
+                                    </Grid>
+                                </Border>
                                 <Border Padding="16,12"
                                         BorderBrush="{DynamicResource CsLineBrush}"
                                         BorderThickness="0,1,0,0">

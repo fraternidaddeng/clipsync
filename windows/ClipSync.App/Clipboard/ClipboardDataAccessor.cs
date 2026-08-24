@@ -3,16 +3,27 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using ClipSync.Core.Media;
 
 namespace ClipSync.App.Clipboard;
 
-internal sealed record ClipboardTextSnapshot(string Text, string? SourceProcess, uint SequenceNumber = 0);
+internal sealed record ClipboardTextSnapshot(
+    string Text,
+    string? SourceProcess,
+    uint SequenceNumber = 0,
+    byte[]? ImageBytes = null,
+    string? ImageMimeType = null,
+    string? PixelDigest = null);
 
 internal interface IClipboardDataAccess
 {
     ClipboardTextSnapshot? ReadText(nint listenerWindow);
 
     void WriteText(nint listenerWindow, string text);
+
+    void WriteImage(nint listenerWindow, byte[] pngBytes);
 }
 
 internal interface IClipboardRetryDelay
@@ -39,6 +50,12 @@ internal interface IClipboardNativeApi
 
     nint SetClipboardData(uint format, nint memory);
 
+    uint RegisterClipboardFormat(string format);
+
+    uint EnumClipboardFormats(uint format);
+
+    int CountClipboardFormats();
+
     nint GetClipboardOwner();
 
     uint GetClipboardSequenceNumber();
@@ -61,9 +78,12 @@ internal interface IClipboardNativeApi
 internal sealed class ClipboardDataAccessor : IClipboardDataAccess
 {
     internal const uint UnicodeTextFormat = 13;
+    internal const uint DibFormat = 8;
+    internal const uint DibV5Format = 17;
     // The Core policy enforces the 1 MiB UTF-8 limit. This native guard prevents
     // an untrusted HGLOBAL from forcing a multi-gigabyte managed allocation first.
     internal const nuint MaximumUnicodeTextBytes = (2u * 1024u * 1024u) + sizeof(char);
+    internal const nuint MaximumImageBytes = 32u * 1024u * 1024u;
     private const uint MoveableZeroInitializedMemory = 0x0002 | 0x0040;
     private const int DefaultOpenAttempts = 5;
     private static readonly TimeSpan DefaultRetryDelay = TimeSpan.FromMilliseconds(20);
@@ -109,49 +129,18 @@ internal sealed class ClipboardDataAccessor : IClipboardDataAccess
     public ClipboardTextSnapshot? ReadText(nint listenerWindow)
     {
         string? text = null;
+        byte[]? imageBytes = null;
+        string? imageMime = null;
+        string? pixelDigest = null;
         var ownerProcessId = ResolveClipboardOwnerProcessId();
         uint sequenceNumber = 0;
         OpenClipboardWithRetry(listenerWindow);
         try
         {
-            if (!nativeApi.IsClipboardFormatAvailable(UnicodeTextFormat))
+            TryReadImage(out imageBytes, out imageMime, out pixelDigest);
+            if (nativeApi.IsClipboardFormatAvailable(UnicodeTextFormat))
             {
-                return null;
-            }
-
-            var memory = nativeApi.GetClipboardData(UnicodeTextFormat);
-            if (memory == nint.Zero)
-            {
-                throw NativeFailure("read clipboard data");
-            }
-
-            var byteCount = nativeApi.GlobalSize(memory);
-            if (byteCount < sizeof(char) || byteCount % sizeof(char) != 0 || byteCount > MaximumUnicodeTextBytes)
-            {
-                throw new InvalidDataException("The clipboard text allocation has an invalid size.");
-            }
-
-            var pointer = nativeApi.GlobalLock(memory);
-            if (pointer == nint.Zero)
-            {
-                throw NativeFailure("lock clipboard data");
-            }
-
-            try
-            {
-                var characterCount = checked((int)(byteCount / sizeof(char)));
-                text = Marshal.PtrToStringUni(pointer, characterCount) ?? string.Empty;
-                var terminator = text.IndexOf('\0', StringComparison.Ordinal);
-                if (terminator < 0)
-                {
-                    throw new InvalidDataException("The clipboard text is not NUL terminated.");
-                }
-
-                text = text[..terminator];
-            }
-            finally
-            {
-                _ = nativeApi.GlobalUnlock(memory);
+                text = ReadUnicodeTextLocked();
             }
 
             sequenceNumber = nativeApi.GetClipboardSequenceNumber();
@@ -161,10 +150,131 @@ internal sealed class ClipboardDataAccessor : IClipboardDataAccess
             _ = nativeApi.CloseClipboard();
         }
 
+        if (text is null && imageBytes is null)
+        {
+            return null;
+        }
+
         return new ClipboardTextSnapshot(
-            text,
+            text ?? string.Empty,
             ownerResolver.ResolveProcess(ownerProcessId),
-            sequenceNumber);
+            sequenceNumber,
+            imageBytes,
+            imageMime,
+            pixelDigest);
+    }
+
+    private string ReadUnicodeTextLocked()
+    {
+        var memory = nativeApi.GetClipboardData(UnicodeTextFormat);
+        if (memory == nint.Zero)
+        {
+            throw NativeFailure("read clipboard data");
+        }
+
+        var byteCount = nativeApi.GlobalSize(memory);
+        if (byteCount < sizeof(char) || byteCount % sizeof(char) != 0 || byteCount > MaximumUnicodeTextBytes)
+        {
+            throw new InvalidDataException("The clipboard text allocation has an invalid size.");
+        }
+
+        var pointer = nativeApi.GlobalLock(memory);
+        if (pointer == nint.Zero)
+        {
+            throw NativeFailure("lock clipboard data");
+        }
+
+        try
+        {
+            var characterCount = checked((int)(byteCount / sizeof(char)));
+            var text = Marshal.PtrToStringUni(pointer, characterCount) ?? string.Empty;
+            var terminator = text.IndexOf('\0', StringComparison.Ordinal);
+            if (terminator < 0)
+            {
+                throw new InvalidDataException("The clipboard text is not NUL terminated.");
+            }
+
+            return text[..terminator];
+        }
+        finally
+        {
+            _ = nativeApi.GlobalUnlock(memory);
+        }
+    }
+
+    private void TryReadImage(out byte[]? imageBytes, out string? imageMime, out string? pixelDigest)
+    {
+        imageBytes = null;
+        imageMime = null;
+        pixelDigest = null;
+        var pngFormat = nativeApi.RegisterClipboardFormat("PNG");
+        if (pngFormat != 0 && nativeApi.IsClipboardFormatAvailable(pngFormat))
+        {
+            var png = CopyGlobalBytes(pngFormat);
+            if (png is not null
+                && ImageCodec.TryInspect(png, out var validated) == ImageCodecError.Ok
+                && validated is not null)
+            {
+                imageBytes = png;
+                imageMime = validated.MimeType;
+                pixelDigest = TryPixelDigest(png);
+                return;
+            }
+        }
+
+        foreach (var format in new[] { DibV5Format, DibFormat })
+        {
+            if (!nativeApi.IsClipboardFormatAvailable(format))
+            {
+                continue;
+            }
+
+            var dib = CopyGlobalBytes(format);
+            if (dib is null)
+            {
+                continue;
+            }
+
+            var decoded = DibCodec.TryDecodeToPng(dib, out var png, out pixelDigest);
+            if (decoded == ImageCodecError.Ok)
+            {
+                imageBytes = png;
+                imageMime = MediaLimits.MimePng;
+                return;
+            }
+        }
+    }
+
+    private byte[]? CopyGlobalBytes(uint format)
+    {
+        var memory = nativeApi.GetClipboardData(format);
+        if (memory == nint.Zero)
+        {
+            return null;
+        }
+
+        var byteCount = nativeApi.GlobalSize(memory);
+        if (byteCount is < 24 or > MaximumImageBytes)
+        {
+            return null;
+        }
+
+        var pointer = nativeApi.GlobalLock(memory);
+        if (pointer == nint.Zero)
+        {
+            throw NativeFailure("lock clipboard data");
+        }
+
+        try
+        {
+            var copy = new byte[checked((int)byteCount)];
+            Marshal.Copy(pointer, copy, 0, copy.Length);
+            return copy;
+        }
+        finally
+        {
+            _ = nativeApi.GlobalUnlock(memory);
+        }
     }
 
     private uint ResolveClipboardOwnerProcessId()
@@ -239,6 +349,155 @@ internal sealed class ClipboardDataAccessor : IClipboardDataAccess
                 _ = nativeApi.CloseClipboard();
             }
         }
+    }
+
+    public void WriteImage(nint listenerWindow, byte[] encodedBytes)
+    {
+        ArgumentNullException.ThrowIfNull(encodedBytes);
+        if (ImageCodec.TryInspect(encodedBytes, out var validated) != ImageCodecError.Ok || validated is null)
+        {
+            throw new InvalidDataException("Clipboard image is not a supported PNG or JPEG.");
+        }
+
+        var dib = EncodeDib(encodedBytes);
+        nint pngMemory = nint.Zero;
+        nint dibMemory = nint.Zero;
+        var clipboardOpened = false;
+        var pngTransferred = false;
+        var dibTransferred = false;
+        try
+        {
+            pngMemory = AllocCopy(encodedBytes);
+            dibMemory = AllocCopy(dib);
+            OpenClipboardWithRetry(listenerWindow);
+            clipboardOpened = true;
+            if (!nativeApi.EmptyClipboard())
+            {
+                throw NativeFailure("empty the clipboard");
+            }
+
+            var pngFormat = nativeApi.RegisterClipboardFormat("PNG");
+            if (pngFormat == 0)
+            {
+                throw NativeFailure("register PNG clipboard format");
+            }
+
+            if (string.Equals(validated.MimeType, MediaLimits.MimePng, StringComparison.Ordinal))
+            {
+                if (nativeApi.SetClipboardData(pngFormat, pngMemory) == nint.Zero)
+                {
+                    throw NativeFailure("write clipboard PNG");
+                }
+
+                pngTransferred = true;
+            }
+
+            if (nativeApi.SetClipboardData(DibFormat, dibMemory) == nint.Zero)
+            {
+                throw NativeFailure("write clipboard DIB");
+            }
+
+            dibTransferred = true;
+
+            if (!pngTransferred && string.Equals(validated.MimeType, MediaLimits.MimeJpeg, StringComparison.Ordinal))
+            {
+                var jpegFormat = nativeApi.RegisterClipboardFormat("JFIF");
+                if (jpegFormat != 0 && nativeApi.SetClipboardData(jpegFormat, pngMemory) != nint.Zero)
+                {
+                    pngTransferred = true;
+                }
+            }
+        }
+        finally
+        {
+            if (pngMemory != nint.Zero && !pngTransferred)
+            {
+                _ = nativeApi.GlobalFree(pngMemory);
+            }
+
+            if (dibMemory != nint.Zero && !dibTransferred)
+            {
+                _ = nativeApi.GlobalFree(dibMemory);
+            }
+
+            if (clipboardOpened)
+            {
+                _ = nativeApi.CloseClipboard();
+            }
+        }
+    }
+
+    private nint AllocCopy(byte[] bytes)
+    {
+        var memory = nativeApi.GlobalAlloc(MoveableZeroInitializedMemory, checked((nuint)bytes.Length));
+        if (memory == nint.Zero)
+        {
+            throw NativeFailure("allocate clipboard data");
+        }
+
+        var pointer = nativeApi.GlobalLock(memory);
+        if (pointer == nint.Zero)
+        {
+            _ = nativeApi.GlobalFree(memory);
+            throw NativeFailure("lock clipboard data");
+        }
+
+        try
+        {
+            Marshal.Copy(bytes, 0, pointer, bytes.Length);
+        }
+        finally
+        {
+            _ = nativeApi.GlobalUnlock(memory);
+        }
+
+        return memory;
+    }
+
+    internal static string? TryPixelDigest(byte[] encoded)
+    {
+        try
+        {
+            return ImageCodec.HashBytes(DecodeBgra(encoded).Pixels);
+        }
+        catch (Exception exception) when (exception is InvalidDataException or NotSupportedException or ArgumentException)
+        {
+            return null;
+        }
+    }
+
+    internal static byte[] EncodeDib(byte[] encoded)
+    {
+        var decoded = DecodeBgra(encoded);
+        return DibCodec.EncodeDibBgra(decoded.Width, decoded.Height, decoded.Pixels);
+    }
+
+    internal static (int Width, int Height, byte[] Pixels) DecodeBgra(byte[] encoded)
+    {
+        using var stream = new MemoryStream(encoded, writable: false);
+        var decoder = BitmapDecoder.Create(
+            stream,
+            BitmapCreateOptions.IgnoreColorProfile | BitmapCreateOptions.PreservePixelFormat,
+            BitmapCacheOption.OnLoad);
+        if (decoder.Frames.Count == 0)
+        {
+            throw new InvalidDataException("Image has no frames.");
+        }
+
+        var frame = decoder.Frames[0];
+        var width = frame.PixelWidth;
+        var height = frame.PixelHeight;
+        if (!MediaLimits.FitsPixelBudget(width, height))
+        {
+            throw new InvalidDataException("Clipboard image exceeded the pixel budget.");
+        }
+
+        var converted = new FormatConvertedBitmap(frame, PixelFormats.Bgra32, null, 0);
+        converted.Freeze();
+        var stride = checked(width * 4);
+        var pixels = new byte[checked(stride * height)];
+        converted.CopyPixels(pixels, stride, 0);
+        return (width, height, pixels);
     }
 
     private void OpenClipboardWithRetry(nint listenerWindow)
@@ -321,6 +580,12 @@ internal sealed class Win32ClipboardNativeApi : IClipboardNativeApi
 
     public nint SetClipboardData(uint format, nint memory) => NativeMethods.SetClipboardData(format, memory);
 
+    public uint RegisterClipboardFormat(string format) => NativeMethods.RegisterClipboardFormat(format);
+
+    public uint EnumClipboardFormats(uint format) => NativeMethods.EnumClipboardFormats(format);
+
+    public int CountClipboardFormats() => NativeMethods.CountClipboardFormats();
+
     public nint GetClipboardOwner() => NativeMethods.GetClipboardOwner();
 
     public uint GetClipboardSequenceNumber() => NativeMethods.GetClipboardSequenceNumber();
@@ -363,6 +628,15 @@ internal sealed class Win32ClipboardNativeApi : IClipboardNativeApi
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern nint SetClipboardData(uint format, nint memory);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        internal static extern uint RegisterClipboardFormat(string format);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern uint EnumClipboardFormats(uint format);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern int CountClipboardFormats();
 
         [DllImport("user32.dll")]
         internal static extern nint GetClipboardOwner();

@@ -9,6 +9,23 @@ using System.Windows;
 
 namespace ClipSync.App.ViewModels;
 
+/// <summary>
+/// Full clip body plus metadata for the detail window. The history list only
+/// shows a trimmed preview; this shape is also the unit-test seam so payload
+/// mapping can be checked without opening WPF UI.
+/// </summary>
+public sealed record ClipDetailPayload(
+    string Text,
+    string Source,
+    string CreatedAt,
+    bool IsImage = false,
+    string? MimeType = null,
+    int? PixelWidth = null,
+    int? PixelHeight = null,
+    int? EncodedBytes = null,
+    string? ContentHash = null,
+    string? ThumbnailPath = null);
+
 public partial class MainViewModel(
     SqliteClipboardEventStore store,
     ClipboardCapturePolicy capturePolicy,
@@ -65,6 +82,14 @@ public partial class MainViewModel(
 
     [ObservableProperty]
     private bool autoApplyRemote = true;
+
+    /// <summary>Opt-in (default off): capture and sync clipboard images (PNG/JPEG, protocol v2).</summary>
+    [ObservableProperty]
+    private bool imageSyncEnabled;
+
+    /// <summary>Opt-in (default off): write remote images straight into the local clipboard.</summary>
+    [ObservableProperty]
+    private bool autoApplyImages;
 
     [ObservableProperty]
     private string extraBindAddresses = string.Empty;
@@ -135,6 +160,9 @@ public partial class MainViewModel(
     /// <summary>Raised after a device is revoked so the app layer can drop its live sessions.</summary>
     public event Action<string>? DeviceRevoked;
 
+    /// <summary>Raised when the user asks to see the full body of the selected clip.</summary>
+    public event Action? DetailRequested;
+
     public async Task InitializeAsync()
     {
         if (initialized)
@@ -152,6 +180,8 @@ public partial class MainViewModel(
 
         BlockedProcesses = await store.GetSettingAsync("blocked_processes") ?? BlockedProcesses;
         AutoApplyRemote = !bool.TryParse(await store.GetSettingAsync("auto_apply_remote"), out var autoApply) || autoApply;
+        ImageSyncEnabled = bool.TryParse(await store.GetSettingAsync("image_sync"), out var imageSync) && imageSync;
+        AutoApplyImages = bool.TryParse(await store.GetSettingAsync("auto_apply_images"), out var autoApplyImage) && autoApplyImage;
         ExtraBindAddresses = await store.GetSettingAsync("extra_bind_addresses") ?? string.Empty;
         ApplySettings();
         await store.CleanupAsync(
@@ -235,8 +265,9 @@ public partial class MainViewModel(
         History.Clear();
         foreach (var entry in entries)
         {
-            var item = HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDevice);
-            if (FormatFilter is { } filter && item.Format != filter)
+            var item = HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDevice, store.Media);
+            // Format chips are text-shape filters (ADR 0003): images only show under 全部.
+            if (FormatFilter is { } filter && (item.IsImage || item.Format != filter))
             {
                 continue;
             }
@@ -251,7 +282,7 @@ public partial class MainViewModel(
             : await store.SearchAsync(new ClipboardHistoryQuery(string.Empty));
         foreach (var entry in recent.Take(RecentHistoryLength))
         {
-            RecentHistory.Add(HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDevice));
+            RecentHistory.Add(HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDevice, store.Media));
         }
 
         await RefreshOutboxAsync();
@@ -263,6 +294,26 @@ public partial class MainViewModel(
     [RelayCommand]
     private async Task SearchAsync() => await RefreshAsync();
 
+    /// <summary>
+    /// Copies through the same suppression + adapter path as the history Copy
+    /// button so the capture loop does not treat the write as a new clip.
+    /// </summary>
+    public void CopyText(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        capturePolicy.SuppressNextWrite(text, DateTimeOffset.UtcNow);
+        clipboardAdapter.WriteText(text);
+    }
+
+    /// <summary>Writes a stored image back to the clipboard as CF_DIB, suppressing re-capture.</summary>
+    public void CopyImage(string contentHash)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(contentHash);
+        var bytes = store.Media.ReadAllBytes(contentHash);
+        capturePolicy.SuppressNextImage(contentHash, DateTimeOffset.UtcNow);
+        clipboardAdapter.WriteImage(bytes);
+    }
+
     [RelayCommand(CanExecute = nameof(HasSelection))]
     private void CopySelected()
     {
@@ -271,8 +322,7 @@ public partial class MainViewModel(
             return;
         }
 
-        capturePolicy.SuppressNextWrite(SelectedItem.Text, DateTimeOffset.UtcNow);
-        clipboardAdapter.WriteText(SelectedItem.Text);
+        CopyItem(SelectedItem);
     }
 
     /// <summary>Copies a specific clip (tray flyout cards) without touching the main-window selection.</summary>
@@ -284,9 +334,43 @@ public partial class MainViewModel(
             return;
         }
 
-        capturePolicy.SuppressNextWrite(item.Text, DateTimeOffset.UtcNow);
-        clipboardAdapter.WriteText(item.Text);
+        if (item.IsImage)
+        {
+            if (item.ContentHash is not null)
+            {
+                CopyImage(item.ContentHash);
+            }
+
+            return;
+        }
+
+        CopyText(item.Text);
     }
+
+    /// <summary>
+    /// Maps the current selection to the detail payload. Returns null when
+    /// nothing is selected so the window layer can no-op without extra state.
+    /// </summary>
+    public ClipDetailPayload? GetSelectedDetail()
+    {
+        var item = SelectedItem;
+        return item is null
+            ? null
+            : new ClipDetailPayload(
+                item.Text,
+                item.Source,
+                item.CreatedAt,
+                item.IsImage,
+                item.MimeType,
+                item.PixelWidth,
+                item.PixelHeight,
+                item.EncodedBytes,
+                item.ContentHash,
+                item.ThumbnailPath);
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSelection))]
+    private void ViewSelected() => DetailRequested?.Invoke();
 
     /// <summary>Copies the raw lowercase-hex fingerprint (machine-comparable form, no grouping spaces).</summary>
     [RelayCommand(CanExecute = nameof(HasFingerprint))]
@@ -432,6 +516,8 @@ public partial class MainViewModel(
         await store.SetSettingAsync("retention_days", RetentionDays.ToString(System.Globalization.CultureInfo.InvariantCulture));
         await store.SetSettingAsync("blocked_processes", BlockedProcesses);
         await store.SetSettingAsync("auto_apply_remote", AutoApplyRemote.ToString());
+        await store.SetSettingAsync("image_sync", ImageSyncEnabled.ToString());
+        await store.SetSettingAsync("auto_apply_images", AutoApplyImages.ToString());
         await store.SetSettingAsync("extra_bind_addresses", ExtraBindAddresses);
         ApplySettings();
         await store.CleanupAsync(
@@ -506,6 +592,7 @@ public partial class MainViewModel(
     {
         CopySelectedCommand.NotifyCanExecuteChanged();
         DeleteSelectedCommand.NotifyCanExecuteChanged();
+        ViewSelectedCommand.NotifyCanExecuteChanged();
     }
 
     private bool HasSelection() => SelectedItem is not null;
@@ -518,6 +605,7 @@ public partial class MainViewModel(
             IsPaused,
             IsPrivateMode,
             blocked,
-            TimeSpan.FromDays(RetentionDays)));
+            TimeSpan.FromDays(RetentionDays),
+            ImageSyncEnabled));
     }
 }

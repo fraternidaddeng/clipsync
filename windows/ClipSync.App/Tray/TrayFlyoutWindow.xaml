@@ -224,7 +224,7 @@
                                     <TextBlock MaxHeight="36"
                                                FontSize="12"
                                                Foreground="{StaticResource CsText2Brush}"
-                                               Text="{Binding Text}"
+                                               Text="{Binding Preview, Mode=OneWay}"
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="Wrap" />
                                 </StackPanel>

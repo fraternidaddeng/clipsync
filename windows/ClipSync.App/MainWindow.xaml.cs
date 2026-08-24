@@ -14,6 +14,7 @@ public partial class MainWindow : Window
         DataContext = viewModel;
         Loaded += OnLoaded;
         Closing += OnClosing;
+        viewModel.DetailRequested += OpenSelectedDetail;
     }
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -59,6 +60,41 @@ public partial class MainWindow : Window
 
     private void OnPairNewDeviceClicked(object sender, RoutedEventArgs e) =>
         ((App)Application.Current).ShowPairingWindow(this);
+
+    private void OnHistoryItemDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) =>
+        OpenSelectedDetail();
+
+    /// <summary>
+    /// Opens the read-only detail window for the selected clip. Copy inside the
+    /// detail view routes through the same suppression path as the list buttons.
+    /// </summary>
+    private void OpenSelectedDetail()
+    {
+        var detail = viewModel.GetSelectedDetail();
+        if (detail is null)
+        {
+            return;
+        }
+
+        var window = new DetailWindow(detail, () =>
+        {
+            if (detail.IsImage)
+            {
+                if (detail.ContentHash is not null)
+                {
+                    viewModel.CopyImage(detail.ContentHash);
+                }
+            }
+            else
+            {
+                viewModel.CopyText(detail.Text);
+            }
+        })
+        {
+            Owner = this
+        };
+        window.ShowDialog();
+    }
 
     // 空状态的幽灵「去配对」：与 Android 同一动线——先到通路页的网络段，
     // 让用户看见配对在整条通路里的位置，而不是直接弹二维码。

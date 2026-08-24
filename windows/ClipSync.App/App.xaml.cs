@@ -319,15 +319,32 @@ public partial class App : Application
                 var viewModel = services.GetRequiredService<MainViewModel>();
                 // Paused sync still receives into history but never auto-applies, matching
                 // the Android InboxDelivery.autoApplyAllowed gate.
-                if (viewModel.AutoApplyRemote && !viewModel.IsPaused)
+                if (!viewModel.IsPaused)
                 {
                     // Only the newest body of the batch reaches the system clipboard; the
                     // suppression window keeps our own listener from re-capturing it.
                     var latest = batch[^1];
-                    services.GetRequiredService<ClipboardCapturePolicy>()
-                        .SuppressNextWrite(latest.Content, DateTimeOffset.UtcNow);
-                    services.GetRequiredService<Win32ClipboardAdapter>().WriteText(latest.Content);
-                    LocalDiagnostics.Write("remote_applied");
+                    var policy = services.GetRequiredService<ClipboardCapturePolicy>();
+                    var adapter = services.GetRequiredService<Win32ClipboardAdapter>();
+                    if (latest.IsImage)
+                    {
+                        // Images have their own opt-in gate; text's AutoApplyRemote never
+                        // writes pixel bytes to the clipboard on its own.
+                        if (viewModel.AutoApplyImages && latest.ContentHash is not null)
+                        {
+                            var store = services.GetRequiredService<SqliteClipboardEventStore>();
+                            var bytes = store.Media.ReadAllBytes(latest.ContentHash);
+                            policy.SuppressNextImage(latest.ContentHash, DateTimeOffset.UtcNow);
+                            adapter.WriteImage(bytes);
+                            LocalDiagnostics.Write("remote_image_applied");
+                        }
+                    }
+                    else if (viewModel.AutoApplyRemote)
+                    {
+                        policy.SuppressNextWrite(latest.Content, DateTimeOffset.UtcNow);
+                        adapter.WriteText(latest.Content);
+                        LocalDiagnostics.Write("remote_applied");
+                    }
                 }
 
                 // Remote activity proves those devices are alive right now; the device rows
@@ -408,10 +425,17 @@ public partial class App : Application
             }
 
             var captureService = services.GetRequiredService<ClipboardCaptureService>();
-            var result = await captureService.CaptureAsync(new ClipboardCandidate(e.Text, e.SourceProcess, e.CapturedAt));
-            if (result is CaptureResult.Stored && MainWindow?.DataContext is MainViewModel viewModel)
+            var result = await captureService.CaptureAsync(new ClipboardCandidate(
+                e.Text,
+                e.SourceProcess,
+                e.CapturedAt,
+                e.ImageBytes,
+                e.ImageMimeType,
+                e.PixelDigest));
+            if (result is CaptureResult.Stored or CaptureResult.StoredImage
+                && MainWindow?.DataContext is MainViewModel viewModel)
             {
-                LocalDiagnostics.Write("capture_stored");
+                LocalDiagnostics.Write(result is CaptureResult.StoredImage ? "capture_image_stored" : "capture_stored");
                 await viewModel.RefreshFromCaptureAsync();
             }
             else if (result is CaptureResult.Rejected rejected)

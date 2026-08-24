@@ -178,6 +178,44 @@ public sealed class Win32ClipboardAdapter : IDisposable
         }
     }
 
+    public void WriteImage(byte[] encodedBytes)
+    {
+        ArgumentNullException.ThrowIfNull(encodedBytes);
+
+        lock (stateLock)
+        {
+            ObjectDisposedException.ThrowIf(isDisposed, this);
+            if (!isRunning)
+            {
+                throw new InvalidOperationException("The clipboard adapter must be started before writing.");
+            }
+        }
+
+        var writing = false;
+        try
+        {
+            lock (lifecycleGate)
+            {
+                lock (stateLock)
+                {
+                    ObjectDisposedException.ThrowIf(isDisposed, this);
+                    if (!isRunning)
+                    {
+                        throw new InvalidOperationException("The clipboard adapter must be started before writing.");
+                    }
+                }
+
+                writing = true;
+                dataAccess.WriteImage(messageWindow.Handle, encodedBytes);
+            }
+        }
+        catch (Exception exception) when (writing)
+        {
+            RaiseFault(ClipboardAdapterOperation.Write, exception);
+            throw;
+        }
+    }
+
     public void Dispose()
     {
         lock (stateLock)
@@ -259,7 +297,13 @@ public sealed class Win32ClipboardAdapter : IDisposable
             }
         }
 
-        var arguments = new ClipboardTextChangedEventArgs(snapshot.Text, snapshot.SourceProcess, capturedAt);
+        var arguments = new ClipboardTextChangedEventArgs(
+            snapshot.Text,
+            snapshot.SourceProcess,
+            capturedAt,
+            snapshot.ImageBytes,
+            snapshot.ImageMimeType,
+            snapshot.PixelDigest);
         var handlers = TextChanged;
         if (handlers is null)
         {
