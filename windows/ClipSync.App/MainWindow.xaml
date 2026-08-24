@@ -7,8 +7,8 @@
         Height="680"
         MinWidth="860"
         MinHeight="560"
-        Background="{StaticResource CsBgSolidBrush}"
-        FontFamily="Segoe UI, Microsoft YaHei UI, Noto Sans SC"
+        Background="{DynamicResource CsBgSolidBrush}"
+        FontFamily="{StaticResource CsSans}"
         UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen">
     <!-- Native frame removed: the charter grey-blue chrome extends into the
@@ -36,7 +36,7 @@
         <!-- ============ 控件样式 ============ -->
         <!-- 左栏导航项：图标 + 文字，选中 = 流动蓝着色盒 -->
         <Style x:Key="NavItem" TargetType="RadioButton">
-            <Setter Property="Foreground" Value="{StaticResource CsText4Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText4Brush}" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Margin" Value="0,0,0,4" />
             <Setter Property="Template">
@@ -52,17 +52,17 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Foreground" Value="{StaticResource CsFlowBrush}" />
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource CsFlowBgBrush}" />
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource CsFlowLineBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsFlowBgBrush}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CsFlowLineBrush}" />
                             </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
                                     <Condition Property="IsMouseOver" Value="True" />
                                     <Condition Property="IsChecked" Value="False" />
                                 </MultiTrigger.Conditions>
-                                <Setter Property="Foreground" Value="{StaticResource CsText2Brush}" />
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource CsSurfaceBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource CsText2Brush}" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsSurfaceBrush}" />
                             </MultiTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -79,8 +79,8 @@
                         <Border x:Name="Track"
                                 Width="40"
                                 Height="22"
-                                Background="{StaticResource CsSurfaceInBrush}"
-                                BorderBrush="{StaticResource CsLine2Brush}"
+                                Background="{DynamicResource CsSurfaceInBrush}"
+                                BorderBrush="{DynamicResource CsLine2Brush}"
                                 BorderThickness="1"
                                 CornerRadius="11">
                             <Border x:Name="Knob"
@@ -89,15 +89,15 @@
                                     Margin="2,0,0,0"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Background="{StaticResource CsSurfaceUpBrush}"
-                                    BorderBrush="{StaticResource CsLineBrush}"
+                                    Background="{DynamicResource CsSurfaceUpBrush}"
+                                    BorderBrush="{DynamicResource CsLineBrush}"
                                     BorderThickness="1"
                                     CornerRadius="8" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Track" Property="Background" Value="{StaticResource CsFlowBrush}" />
-                                <Setter TargetName="Track" Property="BorderBrush" Value="{StaticResource CsFlowBrush}" />
+                                <Setter TargetName="Track" Property="Background" Value="{DynamicResource CsFlowBrush}" />
+                                <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource CsFlowBrush}" />
                                 <Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right" />
                                 <Setter TargetName="Knob" Property="Margin" Value="0,0,2,0" />
                             </Trigger>
@@ -109,7 +109,7 @@
 
         <!-- 步进器 −/＋ 钮 -->
         <Style x:Key="StepButton" TargetType="Button">
-            <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Width" Value="26" />
             <Setter Property="Height" Value="26" />
@@ -122,8 +122,8 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource CsSurface3Brush}" />
-                                <Setter Property="Foreground" Value="{StaticResource CsText1Brush}" />
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsSurface3Brush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -133,10 +133,10 @@
 
         <!-- 凹陷输入框（z−1：比底更暗） -->
         <Style x:Key="InsetTextBox" TargetType="TextBox">
-            <Setter Property="Background" Value="{StaticResource CsSurfaceInBrush}" />
-            <Setter Property="BorderBrush" Value="{StaticResource CsLineBrush}" />
-            <Setter Property="Foreground" Value="{StaticResource CsText1Brush}" />
-            <Setter Property="CaretBrush" Value="{StaticResource CsText1Brush}" />
+            <Setter Property="Background" Value="{DynamicResource CsSurfaceInBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CsLineBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
+            <Setter Property="CaretBrush" Value="{DynamicResource CsText1Brush}" />
             <Setter Property="FontSize" Value="12.5" />
             <Setter Property="Padding" Value="10,6" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -154,7 +154,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource CsFlowLineBrush}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CsFlowLineBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -164,8 +164,8 @@
 
         <!-- z1 卡片组 -->
         <Style x:Key="GroupCard" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource CsSurfaceBrush}" />
-            <Setter Property="BorderBrush" Value="{StaticResource CsLineBrush}" />
+            <Setter Property="Background" Value="{DynamicResource CsSurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CsLineBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="12" />
             <Setter Property="Margin" Value="0,0,0,14" />
@@ -175,7 +175,7 @@
         <Style x:Key="GroupHeader" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="{StaticResource CsMono}" />
             <Setter Property="FontSize" Value="10" />
-            <Setter Property="Foreground" Value="{StaticResource CsText4Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText4Brush}" />
             <Setter Property="Margin" Value="16,11,16,0" />
         </Style>
 
@@ -184,11 +184,11 @@
             <Setter Property="FontFamily" Value="{StaticResource CsSerif}" />
             <Setter Property="FontSize" Value="17" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource CsText1Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
         </Style>
         <Style x:Key="PageSub" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11" />
-            <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
             <Setter Property="Margin" Value="0,2,0,16" />
         </Style>
 
@@ -196,11 +196,11 @@
         <Style x:Key="RowName" TargetType="TextBlock">
             <Setter Property="FontSize" Value="13" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource CsText1Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
         </Style>
         <Style x:Key="RowDesc" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11" />
-            <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Margin" Value="0,2,0,0" />
         </Style>
@@ -209,7 +209,7 @@
         <Style x:Key="SegName" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11.5" />
             <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Foreground" Value="{StaticResource CsText1Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style x:Key="SegStatus" TargetType="TextBlock">
@@ -219,7 +219,7 @@
         </Style>
         <Style x:Key="SegDetail" TargetType="TextBlock">
             <Setter Property="FontSize" Value="10" />
-            <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
 
@@ -232,19 +232,19 @@
                         <Border x:Name="Card"
                                 Margin="0,0,0,8"
                                 Padding="14,10"
-                                Background="{StaticResource CsSurfaceBrush}"
-                                BorderBrush="{StaticResource CsLineBrush}"
+                                Background="{DynamicResource CsSurfaceBrush}"
+                                BorderBrush="{DynamicResource CsLineBrush}"
                                 BorderThickness="1"
                                 CornerRadius="10">
                             <ContentPresenter />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Card" Property="Background" Value="{StaticResource CsSurfaceUpBrush}" />
+                                <Setter TargetName="Card" Property="Background" Value="{DynamicResource CsSurfaceUpBrush}" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Card" Property="Background" Value="{StaticResource CsSurfaceUpBrush}" />
-                                <Setter TargetName="Card" Property="BorderBrush" Value="{StaticResource CsFlowBrush}" />
+                                <Setter TargetName="Card" Property="Background" Value="{DynamicResource CsSurfaceUpBrush}" />
+                                <Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource CsFlowBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -261,16 +261,16 @@
                         <Border x:Name="Row"
                                 Padding="16,10"
                                 Background="Transparent"
-                                BorderBrush="{StaticResource CsLineBrush}"
+                                BorderBrush="{DynamicResource CsLineBrush}"
                                 BorderThickness="0,1,0,0">
                             <ContentPresenter />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Row" Property="Background" Value="{StaticResource CsSurface3Brush}" />
+                                <Setter TargetName="Row" Property="Background" Value="{DynamicResource CsSurface3Brush}" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Row" Property="Background" Value="{StaticResource CsFlowBgBrush}" />
+                                <Setter TargetName="Row" Property="Background" Value="{DynamicResource CsFlowBgBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -291,14 +291,14 @@
                 </Style.Triggers>
             </Style>
         </Border.Style>
-    <DockPanel Background="{StaticResource CsBgBrush}">
+    <DockPanel Background="{DynamicResource CsBgBrush}">
 
         <!-- ============ 标题栏（自绘 chrome）：折线标记 + 品牌名 + 暂停/私密开关 + 四段 mini rail + 窗控 ============ -->
         <Border DockPanel.Dock="Top"
                 Height="45"
                 Padding="16,0,0,0"
-                Background="{StaticResource CsSurface3Brush}"
-                BorderBrush="{StaticResource CsLineBrush}"
+                Background="{DynamicResource CsSurface3Brush}"
+                BorderBrush="{DynamicResource CsLineBrush}"
                 BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -312,7 +312,7 @@
                     <Viewbox Width="16" Height="16">
                         <Canvas Width="24" Height="24">
                             <Path Data="{StaticResource IconConduit}"
-                                  Stroke="{StaticResource CsFlowBrush}"
+                                  Stroke="{DynamicResource CsFlowBrush}"
                                   StrokeThickness="1.9"
                                   StrokeStartLineCap="Round"
                                   StrokeEndLineCap="Round"
@@ -324,7 +324,7 @@
                                FontFamily="{StaticResource CsSerif}"
                                FontSize="13"
                                FontWeight="SemiBold"
-                               Foreground="{StaticResource CsText1Brush}"
+                               Foreground="{DynamicResource CsText1Brush}"
                                Text="剪 剪 相 传" />
                 </StackPanel>
 
@@ -335,7 +335,7 @@
                     <TextBlock Margin="0,0,8,0"
                                VerticalAlignment="Center"
                                FontSize="11"
-                               Foreground="{StaticResource CsText3Brush}"
+                               Foreground="{DynamicResource CsText3Brush}"
                                Text="暂停捕获" />
                     <ToggleButton Click="OnSettingToggled"
                                   IsChecked="{Binding IsPaused}"
@@ -343,7 +343,7 @@
                     <TextBlock Margin="20,0,8,0"
                                VerticalAlignment="Center"
                                FontSize="11"
-                               Foreground="{StaticResource CsText3Brush}"
+                               Foreground="{DynamicResource CsText3Brush}"
                                Text="私密模式" />
                     <ToggleButton Click="OnSettingToggled"
                                   IsChecked="{Binding IsPrivateMode}"
@@ -358,13 +358,13 @@
                     <Rectangle Width="14" Height="4" RadiusX="2" RadiusY="2">
                         <Rectangle.Style>
                             <Style TargetType="Rectangle">
-                                <Setter Property="Fill" Value="{StaticResource CsFlowBrush}" />
+                                <Setter Property="Fill" Value="{DynamicResource CsFlowBrush}" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsPaused}" Value="True">
-                                        <Setter Property="Fill" Value="{StaticResource CsLine2Brush}" />
+                                        <Setter Property="Fill" Value="{DynamicResource CsLine2Brush}" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
-                                        <Setter Property="Fill" Value="{StaticResource CsLine2Brush}" />
+                                        <Setter Property="Fill" Value="{DynamicResource CsLine2Brush}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -373,16 +373,16 @@
                     <Rectangle Width="14"
                                Height="4"
                                Margin="3,0,0,0"
-                               Fill="{StaticResource CsFlowBrush}"
+                               Fill="{DynamicResource CsFlowBrush}"
                                RadiusX="2"
                                RadiusY="2" />
                     <Rectangle Width="14" Height="4" Margin="3,0,0,0" RadiusX="2" RadiusY="2">
                         <Rectangle.Style>
                             <Style TargetType="Rectangle">
-                                <Setter Property="Fill" Value="{StaticResource CsLine2Brush}" />
+                                <Setter Property="Fill" Value="{DynamicResource CsLine2Brush}" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding PeerOnline}" Value="True">
-                                        <Setter Property="Fill" Value="{StaticResource CsFlowBrush}" />
+                                        <Setter Property="Fill" Value="{DynamicResource CsFlowBrush}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -391,10 +391,10 @@
                     <Rectangle Width="14" Height="4" Margin="3,0,0,0" RadiusX="2" RadiusY="2">
                         <Rectangle.Style>
                             <Style TargetType="Rectangle">
-                                <Setter Property="Fill" Value="{StaticResource CsFlowBrush}" />
+                                <Setter Property="Fill" Value="{DynamicResource CsFlowBrush}" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Devices.Count}" Value="0">
-                                        <Setter Property="Fill" Value="{StaticResource CsLine2Brush}" />
+                                        <Setter Property="Fill" Value="{DynamicResource CsLine2Brush}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -444,8 +444,8 @@
 
             <!-- ============ 左栏导航：与 Android 底栏三页镜像 ============ -->
             <Border Padding="8,14"
-                    Background="{StaticResource CsSurface3Brush}"
-                    BorderBrush="{StaticResource CsLineBrush}"
+                    Background="{DynamicResource CsSurface3Brush}"
+                    BorderBrush="{DynamicResource CsLineBrush}"
                     BorderThickness="0,0,1,0">
                 <StackPanel>
                     <RadioButton x:Name="NavHistory"
@@ -552,7 +552,7 @@
                                 <StackPanel>
                                     <TextBlock MaxHeight="56"
                                                FontSize="13"
-                                               Foreground="{StaticResource CsText2Brush}"
+                                               Foreground="{DynamicResource CsText2Brush}"
                                                Text="{Binding Text}"
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="Wrap" />
@@ -561,19 +561,19 @@
                                         <Border Margin="0,0,7,0"
                                                 Padding="7,1"
                                                 VerticalAlignment="Center"
-                                                Background="{StaticResource CsDev2BgBrush}"
-                                                BorderBrush="{StaticResource CsDev2LineBrush}"
+                                                Background="{DynamicResource CsDev2BgBrush}"
+                                                BorderBrush="{DynamicResource CsDev2LineBrush}"
                                                 BorderThickness="1"
                                                 CornerRadius="6"
                                                 Visibility="{Binding IsRemote, Converter={StaticResource BoolToVisibility}}">
                                             <TextBlock FontSize="9"
-                                                       Foreground="{StaticResource CsDev2Brush}"
+                                                       Foreground="{DynamicResource CsDev2Brush}"
                                                        Text="{Binding OriginLabel}" />
                                         </Border>
                                         <TextBlock VerticalAlignment="Center"
                                                    FontFamily="{StaticResource CsMono}"
                                                    FontSize="10.5"
-                                                   Foreground="{StaticResource CsText4Brush}">
+                                                   Foreground="{DynamicResource CsText4Brush}">
                                             <Run Text="{Binding Source, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding CreatedAt, Mode=OneWay}" />
                                         </TextBlock>
                                     </StackPanel>
@@ -621,8 +621,8 @@
                             <!-- 段 1 · 本机捕获（随 暂停/私密 变灰） -->
                             <Border Margin="0,0,10,0"
                                     Padding="12,11"
-                                    Background="{StaticResource CsSurfaceBrush}"
-                                    BorderBrush="{StaticResource CsLineBrush}"
+                                    Background="{DynamicResource CsSurfaceBrush}"
+                                    BorderBrush="{DynamicResource CsLineBrush}"
                                     BorderThickness="1"
                                     CornerRadius="11">
                                 <StackPanel>
@@ -636,17 +636,17 @@
                                                       StrokeLineJoin="Round">
                                                     <Path.Style>
                                                         <Style TargetType="Path">
-                                                            <Setter Property="Stroke" Value="{StaticResource CsFlowBrush}" />
+                                                            <Setter Property="Stroke" Value="{DynamicResource CsFlowBrush}" />
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsPaused}" Value="True">
-                                                                    <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
+                                                                    <Setter Property="Stroke" Value="{DynamicResource CsText4Brush}" />
                                                                 </DataTrigger>
                                                                 <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
-                                                                    <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
+                                                                    <Setter Property="Stroke" Value="{DynamicResource CsText4Brush}" />
                                                                 </DataTrigger>
                                                                 <!-- 降级排最后：故障比暂停/私密更需要被看见（赭色 = 需要行动，非错误红） -->
                                                                 <DataTrigger Binding="{Binding CaptureFaulted}" Value="True">
-                                                                    <Setter Property="Stroke" Value="{StaticResource CsActBrush}" />
+                                                                    <Setter Property="Stroke" Value="{DynamicResource CsActBrush}" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -660,19 +660,19 @@
                                         <TextBlock.Style>
                                             <Style BasedOn="{StaticResource SegStatus}" TargetType="TextBlock">
                                                 <Setter Property="Text" Value="就绪 · 监听 Ctrl+C" />
-                                                <Setter Property="Foreground" Value="{StaticResource CsFlowBrush}" />
+                                                <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsPaused}" Value="True">
                                                         <Setter Property="Text" Value="已暂停 · 不再记录" />
-                                                        <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
                                                         <Setter Property="Text" Value="私密模式 · 不留痕迹" />
-                                                        <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding CaptureFaulted}" Value="True">
                                                         <Setter Property="Text" Value="捕获降级 · 剪贴板访问失败" />
-                                                        <Setter Property="Foreground" Value="{StaticResource CsActBrush}" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource CsActBrush}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -680,12 +680,12 @@
                                     </TextBlock>
                                     <Border Height="4"
                                             Margin="0,7,0,0"
-                                            Background="{StaticResource CsSurfaceInBrush}"
+                                            Background="{DynamicResource CsSurfaceInBrush}"
                                             CornerRadius="2">
                                         <Border HorizontalAlignment="Stretch" CornerRadius="2">
                                             <Border.Style>
                                                 <Style TargetType="Border">
-                                                    <Setter Property="Background" Value="{StaticResource CsFlowBrush}" />
+                                                    <Setter Property="Background" Value="{DynamicResource CsFlowBrush}" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsPaused}" Value="True">
                                                             <Setter Property="Visibility" Value="Collapsed" />
@@ -695,7 +695,7 @@
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding CaptureFaulted}" Value="True">
                                                             <Setter Property="Visibility" Value="Visible" />
-                                                            <Setter Property="Background" Value="{StaticResource CsActBrush}" />
+                                                            <Setter Property="Background" Value="{DynamicResource CsActBrush}" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -704,7 +704,7 @@
                                     </Border>
                                     <Border Margin="0,7,0,0"
                                             Padding="0,7,0,0"
-                                            BorderBrush="{StaticResource CsLineBrush}"
+                                            BorderBrush="{DynamicResource CsLineBrush}"
                                             BorderThickness="0,1,0,0">
                                         <TextBlock Style="{StaticResource SegDetail}" Text="私密模式与屏蔽进程在这一段拦下内容。" />
                                     </Border>
@@ -715,8 +715,8 @@
                             <Border Grid.Column="1"
                                     Margin="0,0,10,0"
                                     Padding="12,11"
-                                    Background="{StaticResource CsSurfaceBrush}"
-                                    BorderBrush="{StaticResource CsLineBrush}"
+                                    Background="{DynamicResource CsSurfaceBrush}"
+                                    BorderBrush="{DynamicResource CsLineBrush}"
                                     BorderThickness="1"
                                     CornerRadius="11">
                                 <StackPanel>
@@ -724,7 +724,7 @@
                                         <Viewbox Width="16" Height="16">
                                             <Canvas Width="24" Height="24">
                                                 <Path Data="{StaticResource IconService}"
-                                                      Stroke="{StaticResource CsFlowBrush}"
+                                                      Stroke="{DynamicResource CsFlowBrush}"
                                                       StrokeThickness="1.7"
                                                       StrokeStartLineCap="Round"
                                                       StrokeEndLineCap="Round"
@@ -733,18 +733,18 @@
                                         </Viewbox>
                                         <TextBlock Margin="7,0,0,0" Style="{StaticResource SegName}" Text="本机服务" />
                                     </StackPanel>
-                                    <TextBlock Foreground="{StaticResource CsFlowBrush}" Style="{StaticResource SegStatus}">
+                                    <TextBlock Foreground="{DynamicResource CsFlowBrush}" Style="{StaticResource SegStatus}">
                                         <Run Text="就绪 · 历史 " /><Run Text="{Binding History.Count, Mode=OneWay}" /><Run Text=" 条 · 待发 " /><Run Text="{Binding OutboxPendingCount, Mode=OneWay}" />
                                     </TextBlock>
                                     <Border Height="4"
                                             Margin="0,7,0,0"
-                                            Background="{StaticResource CsSurfaceInBrush}"
+                                            Background="{DynamicResource CsSurfaceInBrush}"
                                             CornerRadius="2">
-                                        <Border Background="{StaticResource CsFlowBrush}" CornerRadius="2" />
+                                        <Border Background="{DynamicResource CsFlowBrush}" CornerRadius="2" />
                                     </Border>
                                     <Border Margin="0,7,0,0"
                                             Padding="0,7,0,0"
-                                            BorderBrush="{StaticResource CsLineBrush}"
+                                            BorderBrush="{DynamicResource CsLineBrush}"
                                             BorderThickness="0,1,0,0">
                                         <TextBlock Style="{StaticResource SegDetail}">
                                             <Run Text="事件先落库再入发件队列 · " /><Run Text="{Binding LastAckText, Mode=OneWay}" />
@@ -757,8 +757,8 @@
                             <Border Grid.Column="2"
                                     Margin="0,0,10,0"
                                     Padding="12,11"
-                                    Background="{StaticResource CsSurfaceBrush}"
-                                    BorderBrush="{StaticResource CsLineBrush}"
+                                    Background="{DynamicResource CsSurfaceBrush}"
+                                    BorderBrush="{DynamicResource CsLineBrush}"
                                     BorderThickness="1"
                                     CornerRadius="11">
                                 <StackPanel>
@@ -772,10 +772,10 @@
                                                       StrokeLineJoin="Round">
                                                     <Path.Style>
                                                         <Style TargetType="Path">
-                                                            <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
+                                                            <Setter Property="Stroke" Value="{DynamicResource CsText4Brush}" />
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding PeerOnline}" Value="True">
-                                                                    <Setter Property="Stroke" Value="{StaticResource CsFlowBrush}" />
+                                                                    <Setter Property="Stroke" Value="{DynamicResource CsFlowBrush}" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -785,7 +785,7 @@
                                         </Viewbox>
                                         <TextBlock Margin="7,0,0,0" Style="{StaticResource SegName}" Text="网络" />
                                     </StackPanel>
-                                    <TextBlock Foreground="{StaticResource CsFlowBrush}" Visibility="{Binding PeerOnline, Converter={StaticResource BoolToVisibility}}">
+                                    <TextBlock Foreground="{DynamicResource CsFlowBrush}" Visibility="{Binding PeerOnline, Converter={StaticResource BoolToVisibility}}">
                                         <TextBlock.Style>
                                             <Style BasedOn="{StaticResource SegStatus}" TargetType="TextBlock" />
                                         </TextBlock.Style>
@@ -794,7 +794,7 @@
                                     <TextBlock Text="未启动 · 同步关闭">
                                         <TextBlock.Style>
                                             <Style BasedOn="{StaticResource SegStatus}" TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
+                                                <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding PeerOnline}" Value="False">
@@ -806,13 +806,13 @@
                                     </TextBlock>
                                     <Border Height="4"
                                             Margin="0,7,0,0"
-                                            Background="{StaticResource CsSurfaceInBrush}"
+                                            Background="{DynamicResource CsSurfaceInBrush}"
                                             CornerRadius="2">
-                                        <Border CornerRadius="2" Visibility="{Binding PeerOnline, Converter={StaticResource BoolToVisibility}}" Background="{StaticResource CsFlowBrush}" />
+                                        <Border CornerRadius="2" Visibility="{Binding PeerOnline, Converter={StaticResource BoolToVisibility}}" Background="{DynamicResource CsFlowBrush}" />
                                     </Border>
                                     <Border Margin="0,7,0,0"
                                             Padding="0,7,0,0"
-                                            BorderBrush="{StaticResource CsLineBrush}"
+                                            BorderBrush="{DynamicResource CsLineBrush}"
                                             BorderThickness="0,1,0,0">
                                         <TextBlock Style="{StaticResource SegDetail}" Text="{Binding SyncStatus}" />
                                     </Border>
@@ -822,8 +822,8 @@
                             <!-- 段 4 · 对端写入（按已配对设备与自动应用推导） -->
                             <Border Grid.Column="3"
                                     Padding="12,11"
-                                    Background="{StaticResource CsSurfaceBrush}"
-                                    BorderBrush="{StaticResource CsLineBrush}"
+                                    Background="{DynamicResource CsSurfaceBrush}"
+                                    BorderBrush="{DynamicResource CsLineBrush}"
                                     BorderThickness="1"
                                     CornerRadius="11">
                                 <StackPanel>
@@ -837,10 +837,10 @@
                                                       StrokeLineJoin="Round">
                                                     <Path.Style>
                                                         <Style TargetType="Path">
-                                                            <Setter Property="Stroke" Value="{StaticResource CsFlowBrush}" />
+                                                            <Setter Property="Stroke" Value="{DynamicResource CsFlowBrush}" />
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding Devices.Count}" Value="0">
-                                                                    <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
+                                                                    <Setter Property="Stroke" Value="{DynamicResource CsText4Brush}" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -853,10 +853,10 @@
                                     <TextBlock>
                                         <TextBlock.Style>
                                             <Style BasedOn="{StaticResource SegStatus}" TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="{StaticResource CsFlowBrush}" />
+                                                <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding Devices.Count}" Value="0">
-                                                        <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -865,12 +865,12 @@
                                     </TextBlock>
                                     <Border Height="4"
                                             Margin="0,7,0,0"
-                                            Background="{StaticResource CsSurfaceInBrush}"
+                                            Background="{DynamicResource CsSurfaceInBrush}"
                                             CornerRadius="2">
                                         <Border CornerRadius="2">
                                             <Border.Style>
                                                 <Style TargetType="Border">
-                                                    <Setter Property="Background" Value="{StaticResource CsFlowBrush}" />
+                                                    <Setter Property="Background" Value="{DynamicResource CsFlowBrush}" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding Devices.Count}" Value="0">
                                                             <Setter Property="Visibility" Value="Collapsed" />
@@ -882,7 +882,7 @@
                                     </Border>
                                     <Border Margin="0,7,0,0"
                                             Padding="0,7,0,0"
-                                            BorderBrush="{StaticResource CsLineBrush}"
+                                            BorderBrush="{DynamicResource CsLineBrush}"
                                             BorderThickness="0,1,0,0">
                                         <TextBlock>
                                             <TextBlock.Style>
@@ -913,7 +913,7 @@
                                         <Viewbox Width="17" Height="17">
                                             <Canvas Width="24" Height="24">
                                                 <Path Data="{StaticResource IconDevices}"
-                                                      Stroke="{StaticResource CsText3Brush}"
+                                                      Stroke="{DynamicResource CsText3Brush}"
                                                       StrokeThickness="1.7"
                                                       StrokeStartLineCap="Round"
                                                       StrokeEndLineCap="Round"
@@ -924,7 +924,7 @@
                                                    VerticalAlignment="Center"
                                                    FontSize="13"
                                                    FontWeight="SemiBold"
-                                                   Foreground="{StaticResource CsText1Brush}"
+                                                   Foreground="{DynamicResource CsText1Brush}"
                                                    Text="网络段 · 已配对设备" />
                                     </StackPanel>
                                     <Button Grid.Column="1"
@@ -934,7 +934,7 @@
                                             <Viewbox Width="13" Height="13" Margin="0,0,7,0">
                                                 <Canvas Width="24" Height="24">
                                                     <Path Data="{StaticResource IconPair}"
-                                                          Stroke="{StaticResource CsOnFlowBrush}"
+                                                          Stroke="{DynamicResource CsOnFlowBrush}"
                                                           StrokeThickness="1.9"
                                                           StrokeStartLineCap="Round"
                                                           StrokeEndLineCap="Round"
@@ -967,12 +967,12 @@
                                                         CornerRadius="9">
                                                     <Border.Style>
                                                         <Style TargetType="Border">
-                                                            <Setter Property="Background" Value="{StaticResource CsDev1BgBrush}" />
-                                                            <Setter Property="BorderBrush" Value="{StaticResource CsDev1LineBrush}" />
+                                                            <Setter Property="Background" Value="{DynamicResource CsDev1BgBrush}" />
+                                                            <Setter Property="BorderBrush" Value="{DynamicResource CsDev1LineBrush}" />
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsRevoked}" Value="True">
-                                                                    <Setter Property="Background" Value="{StaticResource CsSurface3Brush}" />
-                                                                    <Setter Property="BorderBrush" Value="{StaticResource CsLine2Brush}" />
+                                                                    <Setter Property="Background" Value="{DynamicResource CsSurface3Brush}" />
+                                                                    <Setter Property="BorderBrush" Value="{DynamicResource CsLine2Brush}" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -986,10 +986,10 @@
                                                                   StrokeLineJoin="Round">
                                                                 <Path.Style>
                                                                     <Style TargetType="Path">
-                                                                        <Setter Property="Stroke" Value="{StaticResource CsDev1Brush}" />
+                                                                        <Setter Property="Stroke" Value="{DynamicResource CsDev1Brush}" />
                                                                         <Style.Triggers>
                                                                             <DataTrigger Binding="{Binding IsRevoked}" Value="True">
-                                                                                <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
+                                                                                <Setter Property="Stroke" Value="{DynamicResource CsText4Brush}" />
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
                                                                     </Style>
@@ -1006,11 +1006,11 @@
                                                             <TextBlock.Style>
                                                                 <Style TargetType="TextBlock">
                                                                     <Setter Property="FontWeight" Value="SemiBold" />
-                                                                    <Setter Property="Foreground" Value="{StaticResource CsText1Brush}" />
+                                                                    <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding IsRevoked}" Value="True">
                                                                             <Setter Property="FontWeight" Value="Normal" />
-                                                                            <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
+                                                                            <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
@@ -1021,18 +1021,18 @@
                                                         <Border Margin="7,0,0,0"
                                                                 Padding="7,1"
                                                                 VerticalAlignment="Center"
-                                                                Background="{StaticResource CsSurface3Brush}"
-                                                                BorderBrush="{StaticResource CsLine2Brush}"
+                                                                Background="{DynamicResource CsSurface3Brush}"
+                                                                BorderBrush="{DynamicResource CsLine2Brush}"
                                                                 BorderThickness="1"
                                                                 CornerRadius="6"
                                                                 Visibility="{Binding IsRevoked, Converter={StaticResource BoolToVisibility}}">
-                                                            <TextBlock FontSize="9" Foreground="{StaticResource CsText3Brush}" Text="已撤销" />
+                                                            <TextBlock FontSize="9" Foreground="{DynamicResource CsText3Brush}" Text="已撤销" />
                                                         </Border>
                                                     </StackPanel>
                                                     <TextBlock Margin="0,1,0,0"
                                                                FontFamily="{StaticResource CsMono}"
                                                                FontSize="10"
-                                                               Foreground="{StaticResource CsText4Brush}">
+                                                               Foreground="{DynamicResource CsText4Brush}">
                                                         <Run Text="{Binding Platform, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding LastSeenText, Mode=OneWay}" />
                                                     </TextBlock>
                                                 </StackPanel>
@@ -1043,7 +1043,7 @@
 
                                 <!-- 选中设备的动作：重命名 / 撤销 -->
                                 <Border Padding="16,10"
-                                        BorderBrush="{StaticResource CsLineBrush}"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
                                         BorderThickness="0,1,0,0">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -1069,12 +1069,12 @@
                                 </Border>
 
                                 <Border Padding="16,10,16,12"
-                                        Background="{StaticResource CsSurface3Brush}"
-                                        BorderBrush="{StaticResource CsLineBrush}"
+                                        Background="{DynamicResource CsSurface3Brush}"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
                                         BorderThickness="0,1,0,0"
                                         CornerRadius="0,0,11,11">
                                     <TextBlock FontSize="10.5"
-                                               Foreground="{StaticResource CsText4Brush}"
+                                               Foreground="{DynamicResource CsText4Brush}"
                                                Text="撤销立即断开该设备并作废其配对密钥；对方已收到的内容不会被远程删除。撤销后重新配对视为新设备。"
                                                TextWrapping="Wrap" />
                                 </Border>
@@ -1111,7 +1111,7 @@
                                                   Style="{StaticResource CharterToggle}" />
                                 </Grid>
                                 <Border Padding="16,12"
-                                        BorderBrush="{StaticResource CsLineBrush}"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
                                         BorderThickness="0,1,0,0">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -1130,7 +1130,7 @@
                                     </Grid>
                                 </Border>
                                 <Border Padding="16,12"
-                                        BorderBrush="{StaticResource CsLineBrush}"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
                                         BorderThickness="0,1,0,0">
                                     <StackPanel>
                                         <TextBlock Style="{StaticResource RowName}" Text="屏蔽进程" />
@@ -1171,7 +1171,7 @@
                                                   Style="{StaticResource CharterToggle}" />
                                 </Grid>
                                 <Border Padding="16,12"
-                                        BorderBrush="{StaticResource CsLineBrush}"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
                                         BorderThickness="0,1,0,0">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -1182,8 +1182,8 @@
                                             <TextBlock Style="{StaticResource RowName}" Text="额外监听地址" />
                                             <TextBlock Style="{StaticResource RowDesc}" Text="用于 Tailscale / WireGuard 等虚拟网卡地址。不提供公网中转。" />
                                             <!-- 「重启后生效」用赭色说明，不用弹窗 -->
-                                            <TextBlock Margin="0,5,0,0" FontSize="10.5" Foreground="{StaticResource CsText4Brush}">
-                                                <Run FontWeight="SemiBold" Foreground="{StaticResource CsActBrush}" Text="重启后生效" /><Run Text=" · 逗号分隔多个地址" />
+                                            <TextBlock Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource CsText4Brush}">
+                                                <Run FontWeight="SemiBold" Foreground="{DynamicResource CsActBrush}" Text="重启后生效" /><Run Text=" · 逗号分隔多个地址" />
                                             </TextBlock>
                                         </StackPanel>
                                         <TextBox Grid.Column="1"
@@ -1215,20 +1215,20 @@
                                     </StackPanel>
                                     <Border Grid.Column="1"
                                             VerticalAlignment="Top"
-                                            Background="{StaticResource CsSurfaceInBrush}"
-                                            BorderBrush="{StaticResource CsLineBrush}"
+                                            Background="{DynamicResource CsSurfaceInBrush}"
+                                            BorderBrush="{DynamicResource CsLineBrush}"
                                             BorderThickness="1"
                                             CornerRadius="8">
                                         <StackPanel Orientation="Horizontal">
                                             <Button Click="OnRetentionMinusClicked" Content="−" Style="{StaticResource StepButton}" />
-                                            <Border Background="{StaticResource CsSurfaceBrush}"
-                                                    BorderBrush="{StaticResource CsLineBrush}"
+                                            <Border Background="{DynamicResource CsSurfaceBrush}"
+                                                    BorderBrush="{DynamicResource CsLineBrush}"
                                                     BorderThickness="1,0">
                                                 <TextBlock MinWidth="42"
                                                            VerticalAlignment="Center"
                                                            FontFamily="{StaticResource CsMono}"
                                                            FontSize="12"
-                                                           Foreground="{StaticResource CsText1Brush}"
+                                                           Foreground="{DynamicResource CsText1Brush}"
                                                            Text="{Binding RetentionDays}"
                                                            TextAlignment="Center" />
                                             </Border>
@@ -1236,7 +1236,7 @@
                                             <TextBlock Margin="7,0,9,0"
                                                        VerticalAlignment="Center"
                                                        FontSize="10.5"
-                                                       Foreground="{StaticResource CsText4Brush}"
+                                                       Foreground="{DynamicResource CsText4Brush}"
                                                        Text="天" />
                                         </StackPanel>
                                     </Border>
@@ -1263,11 +1263,11 @@
                                                    TextWrapping="Wrap">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
-                                                    <Setter Property="Foreground" Value="{StaticResource CsText1Brush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
                                                     <Setter Property="Text" Value="{Binding LocalFingerprint}" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding LocalFingerprint}" Value="">
-                                                            <Setter Property="Foreground" Value="{StaticResource CsText4Brush}" />
+                                                            <Setter Property="Foreground" Value="{DynamicResource CsText4Brush}" />
                                                             <Setter Property="Text" Value="对端服务未启动，本次会话无指纹可示。" />
                                                         </DataTrigger>
                                                     </Style.Triggers>

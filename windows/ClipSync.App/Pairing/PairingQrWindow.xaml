@@ -6,8 +6,8 @@
         Width="460"
         SizeToContent="Height"
         ResizeMode="NoResize"
-        Background="{StaticResource CsBgSolidBrush}"
-        FontFamily="Segoe UI, Microsoft YaHei UI, Noto Sans SC"
+        Background="{DynamicResource CsBgSolidBrush}"
+        FontFamily="{StaticResource CsSans}"
         UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen">
     <!-- 与主窗一致的自绘 chrome：配对是仪式，不该顶着一条系统白条出场 -->
@@ -19,14 +19,14 @@
                       UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
 
-    <DockPanel Background="{StaticResource CsBgBrush}">
+    <DockPanel Background="{DynamicResource CsBgBrush}">
 
         <!-- 标题栏：折线标记 + 窗名（Serif，配对仪式是全应用三处衬线之一） -->
         <Border DockPanel.Dock="Top"
                 Height="42"
                 Padding="16,0,0,0"
-                Background="{StaticResource CsSurface3Brush}"
-                BorderBrush="{StaticResource CsLineBrush}"
+                Background="{DynamicResource CsSurface3Brush}"
+                BorderBrush="{DynamicResource CsLineBrush}"
                 BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -37,7 +37,7 @@
                     <Viewbox Width="15" Height="15">
                         <Canvas Width="24" Height="24">
                             <Path Data="{StaticResource IconConduit}"
-                                  Stroke="{StaticResource CsFlowBrush}"
+                                  Stroke="{DynamicResource CsFlowBrush}"
                                   StrokeThickness="1.9"
                                   StrokeStartLineCap="Round"
                                   StrokeEndLineCap="Round"
@@ -49,7 +49,7 @@
                                FontFamily="{StaticResource CsSerif}"
                                FontSize="13"
                                FontWeight="SemiBold"
-                               Foreground="{StaticResource CsText1Brush}"
+                               Foreground="{DynamicResource CsText1Brush}"
                                Text="配对新设备" />
                 </StackPanel>
                 <Button Grid.Column="1"
@@ -63,7 +63,7 @@
 
         <StackPanel Margin="24,18,24,20">
             <TextBlock FontSize="11.5"
-                       Foreground="{StaticResource CsText3Brush}"
+                       Foreground="{DynamicResource CsText3Brush}"
                        Text="用手机上的「剪剪相传」扫描此码。二维码包含本机地址、证书指纹与一次性令牌，绝不包含配对密钥。"
                        TextWrapping="Wrap" />
 
@@ -71,8 +71,8 @@
             <Grid Margin="0,16,0,0" HorizontalAlignment="Center">
                 <Border Margin="7"
                         Padding="12"
-                        Background="{StaticResource CsQrQuietBrush}"
-                        BorderBrush="{StaticResource CsLineBrush}"
+                        Background="{DynamicResource CsQrQuietBrush}"
+                        BorderBrush="{DynamicResource CsLineBrush}"
                         BorderThickness="1"
                         CornerRadius="6">
                     <Image x:Name="QrImage"
@@ -82,16 +82,16 @@
                 </Border>
                 <Path HorizontalAlignment="Left" VerticalAlignment="Top"
                       Data="M0,22 V6 A6,6 0 0 1 6,0 H22"
-                      Stroke="{StaticResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                      Stroke="{DynamicResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                 <Path HorizontalAlignment="Right" VerticalAlignment="Top"
                       Data="M0,0 H16 A6,6 0 0 1 22,6 V22"
-                      Stroke="{StaticResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                      Stroke="{DynamicResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                 <Path HorizontalAlignment="Right" VerticalAlignment="Bottom"
                       Data="M22,0 V16 A6,6 0 0 1 16,22 H0"
-                      Stroke="{StaticResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                      Stroke="{DynamicResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                 <Path HorizontalAlignment="Left" VerticalAlignment="Bottom"
                       Data="M22,22 H6 A6,6 0 0 1 0,16 V0"
-                      Stroke="{StaticResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                      Stroke="{DynamicResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
             </Grid>
 
             <!-- 倒计时是机器的声音：Mono -->
@@ -100,19 +100,19 @@
                        HorizontalAlignment="Center"
                        FontFamily="{StaticResource CsMono}"
                        FontSize="11"
-                       Foreground="{StaticResource CsText4Brush}" />
+                       Foreground="{DynamicResource CsText4Brush}" />
 
             <!-- 无可达地址 = 需要你操作（赭色着色盒），不是错误 -->
             <Border x:Name="NoHostsBox"
                     Margin="0,12,0,0"
                     Padding="12,10"
-                    Background="{StaticResource CsActBgBrush}"
-                    BorderBrush="{StaticResource CsActLineBrush}"
+                    Background="{DynamicResource CsActBgBrush}"
+                    BorderBrush="{DynamicResource CsActLineBrush}"
                     BorderThickness="1"
                     CornerRadius="9"
                     Visibility="Collapsed">
                 <TextBlock FontSize="11"
-                           Foreground="{StaticResource CsActBrush}"
+                           Foreground="{DynamicResource CsActBrush}"
                            Text="未检测到局域网地址。请把本机和手机接入同一网络（或在偏好里添加 Tailscale 地址），再重新打开此窗口。"
                            TextWrapping="Wrap" />
             </Border>
@@ -120,34 +120,34 @@
             <!-- 核对卡：指纹是全应用风险最高的比对，四位一组、等宽、t1 最高对比 -->
             <Border Margin="0,16,0,0"
                     Padding="14,11"
-                    Background="{StaticResource CsSurfaceBrush}"
-                    BorderBrush="{StaticResource CsLineBrush}"
+                    Background="{DynamicResource CsSurfaceBrush}"
+                    BorderBrush="{DynamicResource CsLineBrush}"
                     BorderThickness="1"
                     CornerRadius="10">
                 <StackPanel>
                     <TextBlock FontFamily="{StaticResource CsMono}"
                                FontSize="10"
-                               Foreground="{StaticResource CsText4Brush}"
+                               Foreground="{DynamicResource CsText4Brush}"
                                Text="确 认 前 请 在 手 机 上 核 对" />
                     <TextBlock Margin="0,8,0,0"
                                FontSize="11"
-                               Foreground="{StaticResource CsText3Brush}"
+                               Foreground="{DynamicResource CsText3Brush}"
                                Text="电脑名称" />
                     <TextBlock x:Name="DeviceNameText"
                                Margin="0,1,0,0"
                                FontSize="13"
                                FontWeight="SemiBold"
-                               Foreground="{StaticResource CsText1Brush}" />
+                               Foreground="{DynamicResource CsText1Brush}" />
                     <TextBlock Margin="0,8,0,0"
                                FontSize="11"
-                               Foreground="{StaticResource CsText3Brush}"
+                               Foreground="{DynamicResource CsText3Brush}"
                                Text="证书指纹" />
                     <TextBlock x:Name="FingerprintText"
                                Margin="0,2,0,0"
                                FontFamily="{StaticResource CsMono}"
                                FontSize="13"
                                LineHeight="22"
-                               Foreground="{StaticResource CsText1Brush}"
+                               Foreground="{DynamicResource CsText1Brush}"
                                TextWrapping="Wrap" />
                 </StackPanel>
             </Border>

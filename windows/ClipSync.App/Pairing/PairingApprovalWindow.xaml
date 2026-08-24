@@ -6,8 +6,8 @@
         Width="440"
         SizeToContent="Height"
         ResizeMode="NoResize"
-        Background="{StaticResource CsBgSolidBrush}"
-        FontFamily="Segoe UI, Microsoft YaHei UI, Noto Sans SC"
+        Background="{DynamicResource CsBgSolidBrush}"
+        FontFamily="{StaticResource CsSans}"
         UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen"
         Topmost="True"
@@ -20,14 +20,14 @@
                       UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
 
-    <DockPanel Background="{StaticResource CsBgBrush}">
+    <DockPanel Background="{DynamicResource CsBgBrush}">
 
         <!-- 标题栏：关闭 = 拒绝（协议第 9 节：未批准即拒绝） -->
         <Border DockPanel.Dock="Top"
                 Height="42"
                 Padding="16,0,0,0"
-                Background="{StaticResource CsSurface3Brush}"
-                BorderBrush="{StaticResource CsLineBrush}"
+                Background="{DynamicResource CsSurface3Brush}"
+                BorderBrush="{DynamicResource CsLineBrush}"
                 BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -38,7 +38,7 @@
                     <Viewbox Width="15" Height="15">
                         <Canvas Width="24" Height="24">
                             <Path Data="{StaticResource IconConduit}"
-                                  Stroke="{StaticResource CsFlowBrush}"
+                                  Stroke="{DynamicResource CsFlowBrush}"
                                   StrokeThickness="1.9"
                                   StrokeStartLineCap="Round"
                                   StrokeEndLineCap="Round"
@@ -50,7 +50,7 @@
                                FontFamily="{StaticResource CsSerif}"
                                FontSize="13"
                                FontWeight="SemiBold"
-                               Foreground="{StaticResource CsText1Brush}"
+                               Foreground="{DynamicResource CsText1Brush}"
                                Text="配对请求" />
                 </StackPanel>
                 <Button Grid.Column="1"
@@ -66,19 +66,19 @@
             <TextBlock FontFamily="{StaticResource CsSerif}"
                        FontSize="17"
                        FontWeight="SemiBold"
-                       Foreground="{StaticResource CsText1Brush}"
+                       Foreground="{DynamicResource CsText1Brush}"
                        Text="允许此设备配对吗？" />
             <TextBlock Margin="0,8,0,0"
                        FontSize="11.5"
-                       Foreground="{StaticResource CsText2Brush}"
+                       Foreground="{DynamicResource CsText2Brush}"
                        Text="有设备用本机显示的二维码请求配对。仅当下方名称与你手中的手机一致时批准。"
                        TextWrapping="Wrap" />
 
             <!-- 请求方：设备邻近色着色盒（顺位 1 · 青灰），身份用形 -->
             <Border Margin="0,16,0,0"
                     Padding="14,12"
-                    Background="{StaticResource CsSurfaceBrush}"
-                    BorderBrush="{StaticResource CsLineBrush}"
+                    Background="{DynamicResource CsSurfaceBrush}"
+                    BorderBrush="{DynamicResource CsLineBrush}"
                     BorderThickness="1"
                     CornerRadius="10">
                 <Grid>
@@ -89,14 +89,14 @@
                     <Border Width="36"
                             Height="36"
                             VerticalAlignment="Center"
-                            Background="{StaticResource CsDev1BgBrush}"
-                            BorderBrush="{StaticResource CsDev1LineBrush}"
+                            Background="{DynamicResource CsDev1BgBrush}"
+                            BorderBrush="{DynamicResource CsDev1LineBrush}"
                             BorderThickness="1"
                             CornerRadius="10">
                         <Viewbox Width="17" Height="17">
                             <Canvas Width="24" Height="24">
                                 <Path Data="{StaticResource IconPhone}"
-                                      Stroke="{StaticResource CsDev1Brush}"
+                                      Stroke="{DynamicResource CsDev1Brush}"
                                       StrokeThickness="1.8"
                                       StrokeStartLineCap="Round"
                                       StrokeEndLineCap="Round"
@@ -110,12 +110,12 @@
                         <TextBlock x:Name="DeviceNameText"
                                    FontSize="14"
                                    FontWeight="SemiBold"
-                                   Foreground="{StaticResource CsText1Brush}" />
+                                   Foreground="{DynamicResource CsText1Brush}" />
                         <TextBlock x:Name="PlatformText"
                                    Margin="0,2,0,0"
                                    FontFamily="{StaticResource CsMono}"
                                    FontSize="10.5"
-                                   Foreground="{StaticResource CsText4Brush}" />
+                                   Foreground="{DynamicResource CsText4Brush}" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -124,14 +124,14 @@
             <Border x:Name="RepairWarningBox"
                     Margin="0,12,0,0"
                     Padding="12,10"
-                    Background="{StaticResource CsErrBgBrush}"
-                    BorderBrush="{StaticResource CsErrLineBrush}"
+                    Background="{DynamicResource CsErrBgBrush}"
+                    BorderBrush="{DynamicResource CsErrLineBrush}"
                     BorderThickness="1"
                     CornerRadius="9"
                     Visibility="Collapsed">
                 <TextBlock FontSize="11"
                            FontWeight="SemiBold"
-                           Foreground="{StaticResource CsErrBrush}"
+                           Foreground="{DynamicResource CsErrBrush}"
                            Text="该设备此前已配对。批准会替换它原有的配对密钥，旧的安装立即失效。"
                            TextWrapping="Wrap" />
             </Border>
