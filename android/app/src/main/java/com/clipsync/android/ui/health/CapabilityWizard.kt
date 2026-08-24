@@ -138,6 +138,13 @@ private fun RouteCard(
                 onClick = { onAction(action) },
             )
         }
+        route.readTestAction?.let { action ->
+            RouteActionButton(
+                label = routeActionLabel(action),
+                primary = true,
+                onClick = { onAction(action) },
+            )
+        }
     }
 }
 

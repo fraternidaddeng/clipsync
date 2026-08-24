@@ -63,8 +63,10 @@ import com.clipsync.android.platform.clipboard.AdbLogOverlayBackend
 import com.clipsync.android.platform.clipboard.AndroidRouteProbes
 import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardCapabilityStore
+import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.clipboard.ForegroundClipboardBackend
 import com.clipsync.android.platform.clipboard.OverlayPollingBackend
+import com.clipsync.android.platform.clipboard.RealBackgroundReaders
 import com.clipsync.android.platform.clipboard.SharedClipboardWrites
 import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
 import com.clipsync.android.storage.SyncSettingsStore
@@ -120,12 +122,31 @@ class MainActivity : ComponentActivity() {
         ForegroundClipboardBackend(this, systemVersion = systemVersion())
     }
 
+    // The real device read backends (privileged Shizuku channel, logcat+overlay, overlay polling).
+    // The flat capability-ladder adapters below wrap these and gate them on the honest probe.
+    private val realReaders by lazy { RealBackgroundReaders.build(applicationContext) }
+
     private val clipboardCoordinator by lazy {
         ClipboardAccessCoordinator(
             backends = listOf(
-                ShizukuClipboardBackend(routeProbes, systemVersion()),
-                AdbLogOverlayBackend(routeProbes, systemVersion()),
-                OverlayPollingBackend(routeProbes, systemVersion()),
+                ShizukuClipboardBackend(
+                    probes = routeProbes,
+                    systemVersion = systemVersion(),
+                    delegate = realReaders.shizuku,
+                    readVerified = { capabilityStore.isReadVerified(ClipboardReadMode.SHIZUKU_EVENT) },
+                ),
+                AdbLogOverlayBackend(
+                    probes = routeProbes,
+                    systemVersion = systemVersion(),
+                    delegate = realReaders.adbLog,
+                    readVerified = { capabilityStore.isReadVerified(ClipboardReadMode.ADB_LOG_OVERLAY) },
+                ),
+                OverlayPollingBackend(
+                    probes = routeProbes,
+                    systemVersion = systemVersion(),
+                    delegate = realReaders.overlayPolling,
+                    readVerified = { capabilityStore.isReadVerified(ClipboardReadMode.OVERLAY_POLLING) },
+                ),
                 foregroundBackend,
             ),
             requestedReadMode = capabilityStore.preferredReadMode(),
@@ -326,6 +347,7 @@ class MainActivity : ComponentActivity() {
                 ),
             )
             RouteActionId.SET_PREFERRED -> healthViewModel.setPreferredReadMode(route.mode)
+            RouteActionId.RUN_READ_TEST -> healthViewModel.runReadTest(route.mode)
         }
     }
 

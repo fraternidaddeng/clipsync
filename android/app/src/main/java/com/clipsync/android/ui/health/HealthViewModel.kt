@@ -14,6 +14,7 @@ import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardCapabilityStore
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.clipboard.ClipboardReadResult
+import com.clipsync.android.platform.clipboard.ClipboardSelfTest
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
 import com.clipsync.android.platform.clipboard.RouteProbes
@@ -166,6 +167,45 @@ class HealthViewModel(
                 ConduitTestResult("写入测试失败：$errorCode", success = false)
             }
             publish(pairingStore.peer())
+        }
+    }
+
+    /**
+     * Device-verified background read test for [mode] (plan §8.3): seed an app-generated token
+     * through the write coordinator, read it back through the route's real backend, clear it,
+     * and persist the outcome. A pass records READY so the backend's probe stops reporting
+     * "授权但待实测" and the route finally claims READY. The user's own clipboard content is
+     * never read, stored or uploaded — only the random token round-trips.
+     */
+    fun runReadTest(mode: ClipboardReadMode) {
+        val wiring = capability ?: return
+        viewModelScope.launch {
+            val backend = clipboard.backend(mode)
+            val selfTest = ClipboardSelfTest(
+                writeCoordinator = wiring.writeCoordinator,
+                readBackend = { backend },
+                clearClipboard = {
+                    wiring.clearClipboard()
+                    true
+                },
+            )
+            val result = withContext(probeDispatcher) { selfTest.runReadTest() }
+            val verified = result.passed
+            withContext(probeDispatcher) {
+                wiring.capabilityStore.recordReadTest(
+                    mode = mode,
+                    state = if (verified) CapabilityState.READY else CapabilityState.UNAVAILABLE,
+                    errorCode = result.errorCode,
+                    atMs = wiring.nowMs(),
+                )
+            }
+            testResult = if (verified) {
+                ConduitTestResult("后台读取测试通过（测试文本已清除）", success = true)
+            } else {
+                ConduitTestResult("后台读取测试失败：${result.errorCode ?: "未知原因"}", success = false)
+            }
+            // Re-probe so the just-verified route surfaces as READY (or the failure code shows).
+            refresh()
         }
     }
 

@@ -59,6 +59,13 @@ class ClipboardAccessCoordinator(
     fun probeAll(): List<CapabilityReport> =
         FALLBACK_ORDER.mapNotNull { mode -> backendsByMode[mode]?.probe() }
 
+    /**
+     * The registered backend for [mode], or null when this build has none. Used by the
+     * capability wizard's device-verified read test to exercise a specific route's real
+     * read path without starting or switching the active backend.
+     */
+    fun backend(mode: ClipboardReadMode): BackgroundClipboardBackend? = backendsByMode[mode]
+
     private fun readStateRank(state: CapabilityState): Int = when (state) {
         CapabilityState.READY -> 0
         CapabilityState.DEGRADED -> 1

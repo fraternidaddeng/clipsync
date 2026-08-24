@@ -47,11 +47,50 @@ class ClipboardCapabilityStore(private val keyValues: KeyValueStore) {
         )
     }
 
+    /**
+     * The per-route background-read capability as last verified by a real device read
+     * (plan §8.3: a granted prerequisite is never enough — a mode only claims READY after a
+     * verified test read). UNKNOWN until the user runs the read test for that mode.
+     */
+    fun readVerifiedState(mode: ClipboardReadMode): CapabilityState =
+        keyValues.read(readStateKey(mode))
+            ?.let { stored -> CapabilityState.entries.firstOrNull { it.name == stored } }
+            ?: CapabilityState.UNKNOWN
+
+    /** Convenience gate for the backends' probe: has this mode passed a device-verified read? */
+    fun isReadVerified(mode: ClipboardReadMode): Boolean =
+        readVerifiedState(mode) == CapabilityState.READY
+
+    fun readVerifiedErrorCode(mode: ClipboardReadMode): String? =
+        keyValues.read(readErrorKey(mode))
+
+    fun lastReadTestAtMs(mode: ClipboardReadMode): Long? =
+        keyValues.read(readTestAtKey(mode))?.toLongOrNull()
+
+    fun recordReadTest(mode: ClipboardReadMode, state: CapabilityState, errorCode: String?, atMs: Long) {
+        keyValues.write(
+            mapOf(
+                readStateKey(mode) to state.name,
+                readErrorKey(mode) to errorCode,
+                readTestAtKey(mode) to atMs.toString(),
+            ),
+        )
+    }
+
+    private fun readStateKey(mode: ClipboardReadMode): String = "$KEY_READ_VERIFIED_PREFIX.${mode.name}"
+
+    private fun readErrorKey(mode: ClipboardReadMode): String = "$KEY_READ_ERROR_PREFIX.${mode.name}"
+
+    private fun readTestAtKey(mode: ClipboardReadMode): String = "$KEY_LAST_READ_TEST_AT_PREFIX.${mode.name}"
+
     private companion object {
         const val KEY_PREFERRED_READ_MODE = "capability.preferred_read_mode"
         const val KEY_AUTO_FALLBACK = "capability.auto_fallback"
         const val KEY_PUBLIC_WRITE_STATE = "capability.public_write_state"
         const val KEY_PUBLIC_WRITE_ERROR = "capability.public_write_error"
         const val KEY_LAST_WRITE_TEST_AT = "capability.last_write_test_at_ms"
+        const val KEY_READ_VERIFIED_PREFIX = "capability.read_verified_state"
+        const val KEY_READ_ERROR_PREFIX = "capability.read_verified_error"
+        const val KEY_LAST_READ_TEST_AT_PREFIX = "capability.last_read_test_at_ms"
     }
 }

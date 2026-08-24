@@ -35,6 +35,14 @@ enum class RouteActionId {
     OPEN_OVERLAY_SETTINGS,
     OPEN_BATTERY_SETTINGS,
     SET_PREFERRED,
+
+    /**
+     * Run a device-verified background read for this route: seed an app-generated token,
+     * read it back through the route's real backend, clear it, and only then may the route
+     * claim READY (plan §8.3). Offered once the prerequisites are met but the route is still
+     * DEGRADED (授权但待实测).
+     */
+    RUN_READ_TEST,
 }
 
 data class ReadRouteUi(
@@ -49,6 +57,11 @@ data class ReadRouteUi(
     val readState: CapabilityState,
     val errorCode: String?,
     val nextAction: RouteActionId?,
+    /**
+     * Secondary action offered independently of [nextAction]: the device-verified read test,
+     * shown when the prerequisites are met but the route is still awaiting实测验证 (DEGRADED).
+     */
+    val readTestAction: RouteActionId? = null,
     val preferred: Boolean,
 )
 
@@ -239,6 +252,11 @@ private fun readRoute(
     } else {
         RouteActionId.SET_PREFERRED.takeUnless { preferred }
     }
+    // Prerequisites are met but the read path has not yet been device-verified: offer the
+    // one-tap read test that promotes DEGRADED -> READY (plan §8.3). Kept separate from
+    // nextAction so choosing the preferred route and verifying it stay independent.
+    val readTestAction = RouteActionId.RUN_READ_TEST
+        .takeIf { remaining == 0 && report?.readState == CapabilityState.DEGRADED }
     return ReadRouteUi(
         id = id,
         mode = mode,
@@ -250,6 +268,7 @@ private fun readRoute(
         readState = report?.readState ?: CapabilityState.UNKNOWN,
         errorCode = report?.errorCode,
         nextAction = nextAction,
+        readTestAction = readTestAction,
         preferred = preferred,
     )
 }
@@ -276,6 +295,7 @@ fun routeActionLabel(action: RouteActionId): String = when (action) {
     RouteActionId.OPEN_OVERLAY_SETTINGS -> "去设置悬浮窗"
     RouteActionId.OPEN_BATTERY_SETTINGS -> "去设置电池"
     RouteActionId.SET_PREFERRED -> "设为首选路线"
+    RouteActionId.RUN_READ_TEST -> "测试后台读取"
 }
 
 private fun readStateWord(report: CapabilityReport?): String = when (report?.readState) {
