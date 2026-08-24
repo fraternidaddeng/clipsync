@@ -7,6 +7,12 @@ namespace ClipSync.Peer.Resilience;
 /// </summary>
 public interface ISystemStateEvents
 {
+    /// <summary>
+    /// The machine is entering suspend (classic S3 or Modern Standby S0). Handlers must be
+    /// fast and synchronous: tear down sessions and gate new accepts before sleep lands.
+    /// </summary>
+    event Action? SuspendingToSleep;
+
     /// <summary>The machine woke from suspend/hibernate; sockets and timers may be stale.</summary>
     event Action? ResumedFromSuspend;
 

@@ -142,9 +142,28 @@ public sealed class PeerSyncHost : IAsyncDisposable
             systemEvents,
             onResume: token => RecoverAsync(afterResume: true, token),
             onNetworkChanged: token => RecoverAsync(afterResume: false, token),
-            resilienceOptions);
+            resilienceOptions,
+            onSuspend: EnterSuspend);
         started = true;
         LocalDiagnostics.Write($"peer_server_started_port_{server.Port}");
+    }
+
+    /// <summary>
+    /// Suspend path, synchronous inside the OS pre-sleep window: refuse new sessions first
+    /// so a fast peer redial cannot open a half-alive connection right before sleep, then
+    /// close the live ones. The resume recovery pass reopens the gate.
+    /// </summary>
+    internal void EnterSuspend()
+    {
+        var current = server;
+        if (current is null)
+        {
+            return;
+        }
+
+        current.SetRefuseNewSessions(true);
+        current.DisconnectAllSessions();
+        LocalDiagnostics.Write("peer_suspend_sessions_gated");
     }
 
     public void DisconnectDevice(string deviceId) => server?.DisconnectDevice(deviceId);
@@ -160,6 +179,13 @@ public sealed class PeerSyncHost : IAsyncDisposable
         if (!started)
         {
             return;
+        }
+
+        if (afterResume)
+        {
+            // Reopen the suspend gate before anything else; even when the rebind below
+            // fails, peers must be able to redial the surviving listener.
+            server?.SetRefuseNewSessions(false);
         }
 
         var resolved = ResolveBindAddresses(extraBindAddressSetting);

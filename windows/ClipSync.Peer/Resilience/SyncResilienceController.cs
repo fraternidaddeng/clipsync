@@ -20,13 +20,16 @@ public sealed record SyncResilienceOptions
 /// Turns raw system signals (resume from suspend, network address churn) into serialized,
 /// coalesced recovery calls. Guarantees: recovery callbacks never overlap, signal bursts
 /// collapse into one call per window, callback failures never propagate (the next signal
-/// retries), and dispose waits for any in-flight recovery to finish.
+/// retries), and dispose waits for any in-flight recovery to finish. The suspend signal is
+/// the one exception to coalescing: it runs <c>onSuspend</c> synchronously on the event
+/// thread, because the machine is about to sleep and a delayed teardown would never run.
 /// </summary>
 public sealed class SyncResilienceController : IAsyncDisposable
 {
     private readonly ISystemStateEvents source;
     private readonly Func<CancellationToken, Task> onResume;
     private readonly Func<CancellationToken, Task> onNetworkChanged;
+    private readonly Action? onSuspend;
     private readonly SyncResilienceOptions options;
     private readonly CancellationTokenSource disposal = new();
     private readonly CancellationToken disposalToken;
@@ -37,21 +40,25 @@ public sealed class SyncResilienceController : IAsyncDisposable
     private int networkPending;
     private long resumeRecoveries;
     private long networkRecoveries;
+    private long suspendSignals;
     private volatile bool disposed;
 
     public SyncResilienceController(
         ISystemStateEvents source,
         Func<CancellationToken, Task> onResume,
         Func<CancellationToken, Task> onNetworkChanged,
-        SyncResilienceOptions? options = null)
+        SyncResilienceOptions? options = null,
+        Action? onSuspend = null)
     {
         this.source = source ?? throw new ArgumentNullException(nameof(source));
         this.onResume = onResume ?? throw new ArgumentNullException(nameof(onResume));
         this.onNetworkChanged = onNetworkChanged ?? throw new ArgumentNullException(nameof(onNetworkChanged));
+        this.onSuspend = onSuspend;
         this.options = options ?? new SyncResilienceOptions();
         disposalToken = disposal.Token;
         resumeTimer = new Timer(_ => _ = RunRecoveryAsync(resume: true), null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
         networkTimer = new Timer(_ => _ = RunRecoveryAsync(resume: false), null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+        source.SuspendingToSleep += OnSuspendingToSleep;
         source.ResumedFromSuspend += OnResumedFromSuspend;
         source.NetworkAddressChanged += OnNetworkAddressChanged;
     }
@@ -61,6 +68,32 @@ public sealed class SyncResilienceController : IAsyncDisposable
 
     /// <summary>Completed network-change recoveries (callback ran without throwing).</summary>
     public long NetworkRecoveryCount => Interlocked.Read(ref networkRecoveries);
+
+    /// <summary>Suspend signals whose synchronous callback ran without throwing.</summary>
+    public long SuspendSignalCount => Interlocked.Read(ref suspendSignals);
+
+    /// <summary>
+    /// Runs inline (no settle delay, no coalescing timer): the OS grants only a short window
+    /// before sleep, so the teardown must happen on this callback. Failures are swallowed —
+    /// a failed pre-sleep teardown just means dead sockets, which the resume pass replaces.
+    /// </summary>
+    private void OnSuspendingToSleep()
+    {
+        if (disposed || onSuspend is null)
+        {
+            return;
+        }
+
+        try
+        {
+            onSuspend();
+            Interlocked.Increment(ref suspendSignals);
+        }
+        catch
+        {
+            // Never propagate into the OS power callback.
+        }
+    }
 
     private void OnResumedFromSuspend() =>
         Schedule(ref resumePending, resumeTimer, options.ResumeSettleDelay);
@@ -138,6 +171,7 @@ public sealed class SyncResilienceController : IAsyncDisposable
         }
 
         disposed = true;
+        source.SuspendingToSleep -= OnSuspendingToSleep;
         source.ResumedFromSuspend -= OnResumedFromSuspend;
         source.NetworkAddressChanged -= OnNetworkAddressChanged;
         await disposal.CancelAsync().ConfigureAwait(false);

@@ -60,4 +60,7 @@ public static partial class PeerLog
     [LoggerMessage(EventId = 16, Level = LogLevel.Warning,
         Message = "auth rate limit engaged for device={DeviceId}")]
     public static partial void AuthRateLimited(ILogger logger, string deviceId);
+
+    [LoggerMessage(EventId = 17, Level = LogLevel.Warning, Message = "rejecting connection: rate limited kind={Kind}")]
+    public static partial void ConnectionRateLimited(ILogger logger, string kind);
 }

@@ -12,9 +12,13 @@ public sealed class SyncResilienceControllerTests
 
     private sealed class FakeSystemStateEvents : ISystemStateEvents
     {
+        public event Action? SuspendingToSleep;
+
         public event Action? ResumedFromSuspend;
 
         public event Action? NetworkAddressChanged;
+
+        public void RaiseSuspend() => SuspendingToSleep?.Invoke();
 
         public void RaiseResume() => ResumedFromSuspend?.Invoke();
 
@@ -165,6 +169,64 @@ public sealed class SyncResilienceControllerTests
         events.RaiseNetworkChanged();
         await WaitUntilAsync(() => controller.NetworkRecoveryCount == 1);
         Assert.Equal(2, Volatile.Read(ref attempts));
+    }
+
+    [Fact]
+    public async Task SuspendRunsSynchronouslyWithoutSettleDelay()
+    {
+        var events = new FakeSystemStateEvents();
+        var suspends = 0;
+        await using var controller = new SyncResilienceController(
+            events,
+            onResume: _ => Task.CompletedTask,
+            onNetworkChanged: _ => Task.CompletedTask,
+            FastOptions,
+            onSuspend: () => Interlocked.Increment(ref suspends));
+
+        events.RaiseSuspend();
+
+        // No timer, no coalescing window: the callback already ran on this thread.
+        Assert.Equal(1, Volatile.Read(ref suspends));
+        Assert.Equal(1, controller.SuspendSignalCount);
+    }
+
+    [Fact]
+    public async Task SuspendCallbackFailureIsSwallowedAndResumeStillRecovers()
+    {
+        var events = new FakeSystemStateEvents();
+        var resumes = 0;
+        await using var controller = new SyncResilienceController(
+            events,
+            onResume: _ =>
+            {
+                Interlocked.Increment(ref resumes);
+                return Task.CompletedTask;
+            },
+            onNetworkChanged: _ => Task.CompletedTask,
+            FastOptions,
+            onSuspend: () => throw new InvalidOperationException("teardown failed"));
+
+        events.RaiseSuspend();
+        Assert.Equal(0, controller.SuspendSignalCount);
+
+        events.RaiseResume();
+        await WaitUntilAsync(() => controller.ResumeRecoveryCount == 1);
+        Assert.Equal(1, Volatile.Read(ref resumes));
+    }
+
+    [Fact]
+    public async Task SuspendWithoutCallbackIsANoOp()
+    {
+        var events = new FakeSystemStateEvents();
+        await using var controller = new SyncResilienceController(
+            events,
+            onResume: _ => Task.CompletedTask,
+            onNetworkChanged: _ => Task.CompletedTask,
+            FastOptions);
+
+        events.RaiseSuspend();
+
+        Assert.Equal(0, controller.SuspendSignalCount);
     }
 
     [Fact]

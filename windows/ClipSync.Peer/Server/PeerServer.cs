@@ -33,6 +33,18 @@ public sealed record PeerServerOptions
     public int Port { get; init; }
 
     public int MaxConcurrentSessions { get; init; } = 8;
+
+    public const int DefaultPairingConfirmsPerWindow = 10;
+
+    public const int DefaultSyncAcceptsPerWindow = 30;
+
+    /// <summary>Pairing confirm attempts admitted per remote address per <see cref="ConnectionRateLimitWindow"/>.</summary>
+    public int MaxPairingConfirmsPerWindow { get; init; } = DefaultPairingConfirmsPerWindow;
+
+    /// <summary>WebSocket accepts admitted per remote address per <see cref="ConnectionRateLimitWindow"/>.</summary>
+    public int MaxSyncAcceptsPerWindow { get; init; } = DefaultSyncAcceptsPerWindow;
+
+    public TimeSpan ConnectionRateLimitWindow { get; init; } = TimeSpan.FromMinutes(1);
 }
 
 /// <summary>
@@ -47,9 +59,12 @@ public sealed class PeerServer : IAsyncDisposable
     private readonly ILoggerFactory loggerFactory;
     private readonly ILogger logger;
     private readonly AuthThrottle authThrottle;
+    private readonly SlidingWindowRateLimiter pairingConfirmLimiter;
+    private readonly SlidingWindowRateLimiter syncAcceptLimiter;
     private readonly PairingService? pairing;
     private readonly ConcurrentDictionary<Guid, ActiveSession> sessions = new();
     private WebApplication? app;
+    private bool refusingNewSessions;
 
     public PeerServer(
         SqliteClipboardEventStore store,
@@ -63,8 +78,17 @@ public sealed class PeerServer : IAsyncDisposable
         this.options = options ?? throw new ArgumentNullException(nameof(options));
         this.loggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
         logger = this.loggerFactory.CreateLogger("ClipSync.Peer.Server");
-        authThrottle = new AuthThrottle(options.SessionOptions.TimeProvider);
+        var clock = options.SessionOptions.TimeProvider;
+        authThrottle = new AuthThrottle(clock);
         authThrottle.DeviceLockedOut += OnDeviceLockedOut;
+        pairingConfirmLimiter = new SlidingWindowRateLimiter(
+            clock,
+            options.MaxPairingConfirmsPerWindow,
+            options.ConnectionRateLimitWindow);
+        syncAcceptLimiter = new SlidingWindowRateLimiter(
+            clock,
+            options.MaxSyncAcceptsPerWindow,
+            options.ConnectionRateLimitWindow);
         pairing = pairingService;
     }
 
@@ -185,6 +209,26 @@ public sealed class PeerServer : IAsyncDisposable
             return;
         }
 
+        // Pre-auth, per-remote-address admission: a flood from one address exhausts its own
+        // budget before it can occupy handshake slots. Checked before the socket upgrade so
+        // refused dials cost one HTTP response, not a WebSocket accept.
+        if (!syncAcceptLimiter.TryAdmit(RemoteKey(context)))
+        {
+            PeerLog.ConnectionRateLimited(logger, "sync_accept");
+            context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+            await context.Response.WriteAsJsonAsync(new { error = ProtocolErrorCodes.RateLimited });
+            return;
+        }
+
+        if (Volatile.Read(ref refusingNewSessions))
+        {
+            // Suspending: the machine is about to sleep. Refusing here keeps a
+            // fast Android redial from opening a session that would die half-open
+            // moments later; the resume recovery pass invites peers back.
+            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+            return;
+        }
+
         if (sessions.Count >= options.MaxConcurrentSessions)
         {
             PeerLog.SessionLimitReached(logger, options.MaxConcurrentSessions);
@@ -233,6 +277,14 @@ public sealed class PeerServer : IAsyncDisposable
 
     private async Task HandlePairConfirmAsync(HttpContext context)
     {
+        if (!pairingConfirmLimiter.TryAdmit(RemoteKey(context)))
+        {
+            PeerLog.ConnectionRateLimited(logger, "pairing_confirm");
+            await WritePairingErrorAsync(context, StatusCodes.Status429TooManyRequests, PairingErrorCodes.RateLimited)
+                .ConfigureAwait(false);
+            return;
+        }
+
         // The version middleware already enforced X-Protocol-Version. Read at most the
         // document limit plus one byte; anything longer is rejected without buffering it.
         var buffer = new byte[PairingJson.MaxDocumentBytes + 1];
@@ -289,6 +341,9 @@ public sealed class PeerServer : IAsyncDisposable
         await context.Response.WriteAsync(PairingJson.Serialize(body), context.RequestAborted).ConfigureAwait(false);
     }
 
+    private static string RemoteKey(HttpContext context) =>
+        context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch) =>
         RemoteClipsCommitted?.Invoke(batch);
 
@@ -303,6 +358,21 @@ public sealed class PeerServer : IAsyncDisposable
             }
         }
     }
+
+    /// <summary>Cancels every live session without stopping the listener (e.g. before sleep).</summary>
+    public void DisconnectAllSessions()
+    {
+        foreach (var session in sessions.Values)
+        {
+            session.Engine.RequestClose();
+        }
+    }
+
+    /// <summary>
+    /// Gate for the suspend window: while true, new sync sessions are refused
+    /// with 503 so peers cannot open half-alive connections right before sleep.
+    /// </summary>
+    public void SetRefuseNewSessions(bool refuse) => Volatile.Write(ref refusingNewSessions, refuse);
 
     private static int ResolveBoundPort(WebApplication host)
     {

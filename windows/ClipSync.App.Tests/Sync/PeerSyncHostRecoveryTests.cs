@@ -37,9 +37,13 @@ public sealed class PeerSyncHostRecoveryTests : IAsyncDisposable
 
     private sealed class FakeSystemStateEvents : ISystemStateEvents
     {
+        public event Action? SuspendingToSleep;
+
         public event Action? ResumedFromSuspend;
 
         public event Action? NetworkAddressChanged;
+
+        public void RaiseSuspend() => SuspendingToSleep?.Invoke();
 
         public void RaiseResume() => ResumedFromSuspend?.Invoke();
 
@@ -97,6 +101,62 @@ public sealed class PeerSyncHostRecoveryTests : IAsyncDisposable
         Assert.True(host.IsRunning);
         Assert.Equal(portBefore, host.Port);
         Assert.Equal(0, Volatile.Read(ref statusChanges));
+    }
+
+    [Fact]
+    public async Task SuspendSignalGatesNewSessionsUntilResumeRecovery()
+    {
+        await store.InitializeAsync();
+        var events = new FakeSystemStateEvents();
+        await using var host = new PeerSyncHost(
+            store,
+            new DpapiSecretProtector(),
+            certificate,
+            systemEvents: events,
+            resilienceOptions: FastOptions);
+        await host.StartAsync(extraBindAddresses: null);
+        var statusChanges = 0;
+        host.PeerStatusChanged += () => Interlocked.Increment(ref statusChanges);
+
+        // Suspend runs synchronously; the sync endpoint must refuse right away.
+        events.RaiseSuspend();
+        Assert.Equal(System.Net.HttpStatusCode.ServiceUnavailable, await TryDialSyncAsync(host));
+
+        // The resume recovery pass reopens the gate on the surviving listener.
+        events.RaiseResume();
+        await WaitUntilAsync(() => Volatile.Read(ref statusChanges) >= 1);
+        Assert.True(host.IsRunning);
+        Assert.Null(await TryDialSyncAsync(host));
+    }
+
+    /// <summary>Dials the host's sync endpoint; null means the upgrade was accepted.</summary>
+    private static async Task<System.Net.HttpStatusCode?> TryDialSyncAsync(PeerSyncHost host)
+    {
+        using var socket = new System.Net.WebSockets.ClientWebSocket();
+        socket.Options.CollectHttpResponseDetails = true;
+        socket.Options.SetRequestHeader("X-Protocol-Version", "1");
+        socket.Options.RemoteCertificateValidationCallback = (_, presented, _, _) =>
+            presented is not null
+            && string.Equals(
+                Convert.ToHexString(
+                    System.Security.Cryptography.SHA256.HashData(presented.GetRawCertData())).ToLowerInvariant(),
+                host.CertificateFingerprint,
+                StringComparison.Ordinal);
+        try
+        {
+            await socket.ConnectAsync(
+                new Uri($"wss://127.0.0.1:{host.Port}/v1/peer/sync"),
+                CancellationToken.None);
+            await socket.CloseAsync(
+                System.Net.WebSockets.WebSocketCloseStatus.NormalClosure,
+                null,
+                CancellationToken.None);
+            return null;
+        }
+        catch (System.Net.WebSockets.WebSocketException)
+        {
+            return socket.HttpStatusCode;
+        }
     }
 
     [Fact]
