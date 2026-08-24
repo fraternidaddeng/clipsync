@@ -10,13 +10,13 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     </Window.Resources>
-    <Grid Background="#F7F8FA">
+    <Grid Background="{DynamicResource CsBgBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Border Padding="24,18" Background="White" BorderBrush="#DDE1E7" BorderThickness="0,0,0,1">
+        <Border Padding="24,18" Background="{DynamicResource CsSurfaceBrush}" BorderBrush="{DynamicResource CsLineBrush}" BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -24,7 +24,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <TextBlock FontSize="24" FontWeight="SemiBold" Text="ClipSync" />
-                    <TextBlock Margin="0,4,0,0" Foreground="#5E6672" Text="Local clipboard history" />
+                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource CsText3Brush}" Text="Local clipboard history" />
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <CheckBox Margin="0,0,20,0" Click="OnCaptureSettingToggled" Content="Pause capture" IsChecked="{Binding IsPaused}" />
@@ -55,7 +55,7 @@
                 <ListBox Grid.Row="2"
                          ItemsSource="{Binding History}"
                          SelectedItem="{Binding SelectedItem}"
-                         BorderBrush="#CBD1D9"
+                         BorderBrush="{DynamicResource CsLineBrush}"
                          BorderThickness="1"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
@@ -66,7 +66,7 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBlock MaxHeight="56" Text="{Binding Text}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
-                                <TextBlock Grid.Row="1" Margin="0,6,0,0" Foreground="#6D7580" FontSize="12">
+                                <TextBlock Grid.Row="1" Margin="0,6,0,0" Foreground="{DynamicResource CsText4Brush}" FontSize="12">
                                     <Run Text="{Binding Source}" /><Run Text="  " /><Run Text="{Binding CreatedAt}" />
                                 </TextBlock>
                             </Grid>
@@ -81,7 +81,7 @@
                 </StackPanel>
             </Grid>
 
-            <Border Grid.Column="2" Padding="18" Background="White" BorderBrush="#CBD1D9" BorderThickness="1" CornerRadius="6">
+            <Border Grid.Column="2" Padding="18" Background="{DynamicResource CsSurfaceBrush}" BorderBrush="{DynamicResource CsLineBrush}" BorderThickness="1" CornerRadius="6">
                 <ScrollViewer Margin="-6,0" Padding="6,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <TextBlock FontSize="17" FontWeight="SemiBold" Text="Capture settings" />
@@ -103,7 +103,7 @@
                     <TextBox Padding="8,5" Text="{Binding ExtraBindAddresses}" />
                     <TextBlock Margin="0,6,0,0"
                                FontSize="11"
-                               Foreground="#6D7580"
+                               Foreground="{DynamicResource CsText3Brush}"
                                Text="Address changes take effect after restart."
                                TextWrapping="Wrap" />
                     <Button Height="34" Margin="0,18,0,0" Command="{Binding SaveSettingsCommand}" Content="Save settings" />
@@ -112,7 +112,7 @@
                     <Button Height="32" Margin="0,12,0,0" Click="OnPairNewDeviceClicked" Content="Pair new device…" />
                     <ListBox MaxHeight="180"
                              Margin="0,12,0,0"
-                             BorderBrush="#CBD1D9"
+                             BorderBrush="{DynamicResource CsLineBrush}"
                              BorderThickness="1"
                              ItemsSource="{Binding Devices}"
                              SelectedItem="{Binding SelectedDevice}"
@@ -121,10 +121,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="4">
                                     <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" />
-                                    <TextBlock FontSize="11" Foreground="#6D7580">
+                                    <TextBlock FontSize="11" Foreground="{DynamicResource CsText3Brush}">
                                         <Run Text="{Binding Platform, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding LastSeenText, Mode=OneWay}" />
                                     </TextBlock>
-                                    <TextBlock FontSize="11" Foreground="#A4262C" Text="{Binding StateText}" Visibility="{Binding IsRevoked, Converter={StaticResource BoolToVisibility}}" />
+                                    <!-- Revoked is a stated fact, not an error: grey (t3), never red -->
+                                    <TextBlock FontSize="11" Foreground="{DynamicResource CsText3Brush}" Text="{Binding StateText}" Visibility="{Binding IsRevoked, Converter={StaticResource BoolToVisibility}}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -134,24 +135,26 @@
                         <Button DockPanel.Dock="Right" Width="70" Margin="8,0,0,0" Command="{Binding RenameDeviceCommand}" Content="Rename" />
                         <TextBox Padding="6,4" Text="{Binding RenameText, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
+                    <!-- Destructive action is guarded by confirmation, not scare-red -->
                     <Button Height="30"
                             Margin="0,10,0,0"
                             Command="{Binding RevokeDeviceCommand}"
                             Content="Revoke selected device"
-                            Foreground="#A4262C" />
+                            Foreground="{DynamicResource CsText2Brush}" />
                     <TextBlock Margin="0,6,0,0"
                                FontSize="11"
-                               Foreground="#6D7580"
+                               Foreground="{DynamicResource CsText3Brush}"
                                Text="Revoking disconnects the device immediately and invalidates its pairing secret."
                                TextWrapping="Wrap" />
                     <Separator Margin="0,22,0,18" />
                     <StackPanel Orientation="Horizontal">
-                        <Ellipse Width="9" Height="9" Margin="0,0,9,0" Fill="#27844F" />
+                        <!-- Ready = flow blue, full fill (green status lights are banned) -->
+                        <Ellipse Width="9" Height="9" Margin="0,0,9,0" Fill="{DynamicResource CsFlowBrush}" />
                         <TextBlock VerticalAlignment="Center" Text="Local capture service running" />
                     </StackPanel>
                     <TextBlock Margin="0,10,0,0"
                                FontSize="12"
-                               Foreground="#6D7580"
+                               Foreground="{DynamicResource CsText3Brush}"
                                Text="{Binding SyncStatus}"
                                TextWrapping="Wrap" />
                 </StackPanel>

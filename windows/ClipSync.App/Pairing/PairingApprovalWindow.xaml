@@ -8,21 +8,22 @@
         WindowStartupLocation="CenterScreen"
         Topmost="True"
         ShowInTaskbar="True">
-    <StackPanel Margin="24" Background="White">
+    <StackPanel Margin="24" Background="{DynamicResource CsSurfaceBrush}">
         <TextBlock FontSize="18" FontWeight="SemiBold" Text="Allow this device to pair?" />
-        <TextBlock Margin="0,14,0,0" TextWrapping="Wrap" Foreground="#3B424C">
+        <TextBlock Margin="0,14,0,0" TextWrapping="Wrap" Foreground="{DynamicResource CsText2Brush}">
             A device asked to pair using the QR code shown by this computer.
             Approve only if the name below matches the phone in your hand.
         </TextBlock>
-        <Border Margin="0,16,0,0" Padding="14" Background="#F7F8FA" BorderBrush="#DDE1E7" BorderThickness="1" CornerRadius="6">
+        <Border Margin="0,16,0,0" Padding="14" Background="{DynamicResource CsSurfaceInBrush}" BorderBrush="{DynamicResource CsLineBrush}" BorderThickness="1" CornerRadius="6">
             <StackPanel>
                 <TextBlock x:Name="DeviceNameText" FontSize="16" FontWeight="SemiBold" />
-                <TextBlock x:Name="PlatformText" Margin="0,4,0,0" Foreground="#5E6672" />
+                <TextBlock x:Name="PlatformText" Margin="0,4,0,0" Foreground="{DynamicResource CsText3Brush}" />
             </StackPanel>
         </Border>
+        <!-- Certificate/secret replacement is a genuine error-class warning: red is allowed here -->
         <TextBlock x:Name="RepairWarningText"
                    Margin="0,12,0,0"
-                   Foreground="#A4262C"
+                   Foreground="{DynamicResource CsErrBrush}"
                    FontWeight="SemiBold"
                    TextWrapping="Wrap"
                    Visibility="Collapsed"
