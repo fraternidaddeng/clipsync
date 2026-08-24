@@ -21,6 +21,7 @@ import com.clipsync.android.platform.clipboard.ClipboardWriter
 import com.clipsync.android.platform.clipboard.FakeBackgroundClipboardBackend
 import com.clipsync.android.platform.clipboard.RoutePrerequisites
 import com.clipsync.android.platform.clipboard.RouteProbes
+import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
 import com.clipsync.android.ui.ConduitStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -302,6 +303,56 @@ class HealthViewModelTest {
         assertEquals("CLIPBOARD_WRITE_DENIED", capabilityStore.publicWriteErrorCode())
         assertEquals(ConduitStatus.UNAVAILABLE, model.state.value.localWrite?.status)
         assertEquals(false, model.state.value.testResult?.success)
+    }
+
+    @Test
+    fun `authorization grant then refresh moves the privileged route from denied to awaiting verification`() {
+        // The real backend + probes pair from production, with only the Shizuku
+        // API answers faked: channel up, authorization initially denied.
+        var prerequisites = RoutePrerequisites(shizukuInstalled = true, shizukuRunning = true)
+        val probes = object : RouteProbes {
+            override fun probe() = prerequisites
+        }
+        val environment = FakeClipboardEnvironment()
+        val model = HealthViewModel(
+            pairingStore = store,
+            clipboard = ClipboardAccessCoordinator(
+                listOf(
+                    ShizukuClipboardBackend(probes, systemVersion = "test"),
+                    environment.readBackend,
+                ),
+            ),
+            syncHealthSource = null,
+            probeDispatcher = dispatcher,
+            capability = CapabilityWiring(
+                routeProbes = probes,
+                capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore()),
+                writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
+                foregroundBackend = environment.readBackend,
+                clearClipboard = { environment.text = null },
+                nowMs = { 1_755_000_000_000 },
+            ),
+        )
+
+        // Channel up but unauthorized: the card offers exactly one in-app action.
+        val before = model.state.value.routes.first { it.id == ReadRouteId.PRIVILEGED }
+        assertEquals(RouteActionId.REQUEST_PRIVILEGED_PERMISSION, before.nextAction)
+        assertEquals(1, before.stepsRemaining)
+        assertEquals(CapabilityState.UNAVAILABLE, before.readState)
+        assertEquals(ShizukuClipboardBackend.ERROR_PERMISSION_DENIED, before.errorCode)
+
+        // The grant happens in the privileged host's own dialog; the app reacts
+        // through its permission-result listener, which only calls refresh().
+        prerequisites = prerequisites.copy(shizukuAuthorized = true)
+        model.refresh()
+
+        val after = model.state.value.routes.first { it.id == ReadRouteId.PRIVILEGED }
+        assertEquals(0, after.stepsRemaining)
+        assertNull(after.nextAction) // preferred by default; nothing left to tap
+        assertEquals(CapabilityState.DEGRADED, after.readState)
+        assertEquals(ShizukuClipboardBackend.ERROR_READ_UNVERIFIED, after.errorCode)
+        // Honest ceiling: authorized is never READY before device-verified reads.
+        assertEquals("已授权 · 待实测", model.state.value.localRead.statusLabel)
     }
 
     @Test

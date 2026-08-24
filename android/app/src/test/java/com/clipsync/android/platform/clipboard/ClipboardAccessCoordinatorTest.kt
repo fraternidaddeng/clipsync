@@ -51,6 +51,69 @@ class ClipboardAccessCoordinatorTest {
     }
 
     @Test
+    fun `privileged backend that reports ready becomes active and its reads flow through`() {
+        val calls = mutableListOf<String>()
+        // Simulates the stage-5.3 privileged backend after device verification:
+        // probe READY, a baseline clip present, change events via the callback.
+        val shizuku = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            readResult = ClipboardReadResult.Success("baseline"),
+            callLog = calls,
+        )
+        val foreground = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.FOREGROUND_ONLY,
+            callLog = calls,
+        )
+        val emitted = mutableListOf<String>()
+        val state = ClipboardAccessCoordinator(
+            backends = listOf(shizuku, foreground),
+            hasher = ContentHasher { "hash:$it" },
+        ).start { emitted += it.text }
+
+        assertEquals(ClipboardReadMode.SHIZUKU_EVENT, state.activeReadMode)
+        assertNull(state.lastErrorCode)
+        // Selection stops at the first READY backend; nothing downstream is touched.
+        assertEquals(
+            listOf("SHIZUKU_EVENT.probe", "SHIZUKU_EVENT.read", "SHIZUKU_EVENT.start"),
+            calls,
+        )
+
+        // The clip present at start is a baseline, not a new change; later copies flow.
+        shizuku.emit("baseline", "hash:baseline")
+        shizuku.emit("copied later", "hash:copied later")
+        assertEquals(listOf("copied later"), emitted)
+    }
+
+    @Test
+    fun `privileged mode activates on request once its backend turns ready`() {
+        val shizuku = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            report = FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.UNAVAILABLE,
+                errorCode = "PRIVILEGED_PERMISSION_DENIED",
+            ),
+        )
+        val foreground = FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)
+        val coordinator = ClipboardAccessCoordinator(listOf(shizuku, foreground))
+        coordinator.start { }
+        // Denied privileged backend is skipped; the fallback selection succeeds,
+        // so no error code survives (codes only persist when nothing starts).
+        assertEquals(ClipboardReadMode.FOREGROUND_ONLY, coordinator.state.activeReadMode)
+        assertNull(coordinator.state.lastErrorCode)
+
+        // Authorization granted and reads verified: the next probe reports READY.
+        shizuku.report = FakeBackgroundClipboardBackend.capabilityReport(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            state = CapabilityState.READY,
+        )
+        val state = coordinator.requestMode(ClipboardReadMode.SHIZUKU_EVENT)
+
+        assertEquals(ClipboardReadMode.SHIZUKU_EVENT, state.activeReadMode)
+        assertNull(state.lastErrorCode)
+    }
+
+    @Test
     fun `switch stops old backend then refreshes hash before starting new listener`() {
         val calls = mutableListOf<String>()
         val shizuku = FakeBackgroundClipboardBackend(
