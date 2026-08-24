@@ -42,7 +42,7 @@
 | 5.1 模式切换事务（epoch/回滚） | 部分 | `switchTo`：停旧 → 刷基线哈希 → 启新 ✓；无 mode epoch，失败时沿 fallback 阶梯下落而非显式回滚到已知可用模式 |
 | 5.1 四项状态分开显示 | ✅ | 通路四段互不合并；「最多一段伸手」（single-beckon）有测试 |
 | 5.2 FGS `connectedDevice` | ✅ | `ServiceCompat.startForeground(..., CONNECTED_DEVICE)`；FGS 拒绝 → 诚实「需要恢复」+ `START_NOT_STICKY`，错误码上通路页 |
-| 5.2 **通知操作**（暂停全部/仅停捕获/立即同步/打开故障状态） | ❌ **缺失** | 常驻通知只有状态文案，无任何 action，也无 contentIntent。计划明文要求四个操作 |
+| 5.2 **通知操作**（暂停全部/仅停捕获/立即同步/打开故障状态） | ✅（审计后补齐） | 常驻通知三个按钮（暂停/恢复同步、暂停/恢复捕获、立即同步）+ 点按正文打开通路（故障状态）页；`SyncServiceNotification.applyAction` 纯函数 + Robolectric 通知内容测试；仍不含任何剪贴板正文。新增 `autoCapturePaused` 仅辖自动捕获（分享/磁贴/入站不受影响） |
 | 5.2 服务持有 backend 协调器 | ❌ **见 P0** | 见下 |
 | 5.2 POST_NOTIFICATIONS 与电池分开引导；权限非 FGS 前提 | ✅ | 启用时机才请求；拒绝后服务照跑、应用内诚实显示「通知已关闭」条 |
 | 5.2 BOOT_COMPLETED 仅 opt-in + WorkManager 有界健康检查 | ✅ | `BootCompletedReceiver`（manifest 默认禁用）+ `BootHealthCheckWorker`（3 次观察不重启）+「需要恢复」通知；`BootRestoreTest` 覆盖 |
@@ -106,7 +106,7 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 | 认证绑定版本 | `PairAuthProof.compute(..., protocolVersion)` 把版本写进 transcript——v2 会话不可能用 v1 proof 重放 ✅ |
 | 图片过 v1 会话 | 发送侧把图片事件降为 `local_only` terminal 标记（游标照常推进，不断链）；接收侧 v1 收到图片头直接 `UNSUPPORTED_MEDIA` 断会话（belt-and-braces）✅ |
 | 分块传输 | begin/chunk/end 状态机双端镜像：乱序/越界/超限/hash 不符各有稳定错误码；半途会话中断丢弃临时件、下次重新 announce ✅ |
-| **P1：Windows 侧 image_sync 开关不辖入站** | 协议 v2 §3 规定「Image bodies may be sent only when **both peers** listed `image_clip_v2`」，但 Windows 监听端只要会话在 `/v2` 路由上就无条件在 hello 里广告 `image_clip_v2`（`SyncSessionEngine` L223–225），自己的 `image_sync` 设置只闸**捕获**。后果：Windows 关着图片同步，Android 开着 → 图片照样进 Windows 历史并显示缩略图。设置文案「双端需为 v2 会话」暗示双向 opt-in，与实现不符。建议：把 `ImageSyncEnabled` 传进 `SyncSessionOptions`，关闭时不广告能力（Android 会自动回落 v1） |
+| ~~**P1：Windows 侧 image_sync 开关不辖入站**~~（审计后已修复） | 原发现：协议 v2 §3 规定「Image bodies may be sent only when **both peers** listed `image_clip_v2`」，但 Windows 监听端只要会话在 `/v2` 路由上就无条件参与 image_clip_v2，自己的 `image_sync` 设置只闸**捕获**。修复：`ImageSyncEnabled`（live `Func<bool>`）进 `SyncSessionOptions`；关闭时 `/v2/peer/sync` 升级前即被 403 拒绝（等效不广告能力，Android 自动回落 v1）；已开会话中途关闭时，入站图片 announce/payload_begin 以 `UNSUPPORTED_MEDIA` 拒收、出站图片降级 local_only 标记（游标照常推进）。三条路径均有 Kestrel 集成测试（`ImageSyncGateTests`） |
 
 ---
 
@@ -171,7 +171,7 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 1. **通知 ID 撞车**（`SyncNotifications`）：收件箱通知 id 区间为 `41_000 + (hash and 0x7FFF)` = `[41000, 73767]`，固定 id `RECOVERY=42_001`、`AUTH_THROTTLE=42_002` 落在区间**内**——事件 id 哈希撞上时会顶掉/误取消「需要恢复」或「节流」通知。已把两枚固定 id 迁至 `74_001/74_002`（区间外）并注释区间数学。
 2. **通知「复制」动作绕过回环抑制**（`CopyInboxItemReceiver`）：原实现直接 new `AndroidPublicClipboardWriter` 写剪贴板，不经过程共享 `ClipboardWriteCoordinator` 的抑制表——App 在前台时点通知复制，前台捕获会把这条**远端**剪贴重新捕获并回传 Windows（正是抑制表要防的回环）。已改走 `SharedClipboardWrites.coordinator(...)`（顺带获得特权写回退，与 5.6 一致）。
 
-§1.3 的 P0（服务不持有读取协调器）与 §3 的 P1（Windows 入站图片不辖于开关）**均非 trivial**，本轮只记录不实现。
+§1.3 的 P0（服务不持有读取协调器）与 §3 的 P1（Windows 入站图片不辖于开关）**均非 trivial**，本轮只记录不实现。（后记：§3 的 P1 与 §1.2 的「5.2 通知操作」已在审计后的专项提交中修复，见对应表格行。）
 
 ---
 
