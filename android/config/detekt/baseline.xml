@@ -3,17 +3,21 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexCondition:AdbLogMinimizationInvariantTest.kt$AdbLogMinimizationInvariantTest$type == File::class.java || type == FileOutputStream::class.java || type == FileWriter::class.java || type == RandomAccessFile::class.java || type == FileChannel::class.java || type == Path::class.java</ID>
-    <ID>ComplexCondition:HistoryTransfer.kt$HistoryExportFormat$dto.content != null || dto.contentHash != null || dto.sourceApp != null || dto.deletedAtMs == null</ID>
+    <ID>ComplexCondition:HistoryTransfer.kt$HistoryExportFormat$dto.content != null || dto.contentHash != null || dto.sourceApp != null || dto.deletedAtMs == null || dto.media != null</ID>
+    <ID>ComplexCondition:HistoryTransfer.kt$HistoryExportFormat$dto.content == null || dto.contentHash == null || dto.deletedAtMs != null || dto.media != null</ID>
+    <ID>ComplexCondition:HistoryTransfer.kt$HistoryExportFormat$error != ImageCodecError.OK || image == null || image.mimeType != declared.mimeType || image.pixelWidth != declared.pixelWidth || image.pixelHeight != declared.pixelHeight</ID>
     <ID>ComplexCondition:ImageCodec.kt$ImageCodec$encoded[12] != 'I'.code.toByte() || encoded[13] != 'H'.code.toByte() || encoded[14] != 'D'.code.toByte() || encoded[15] != 'R'.code.toByte()</ID>
     <ID>ComplexCondition:ImageCodec.kt$ImageCodec$marker == 0xD8 || marker == 0xD9 || marker in 0xD0..0xD7 || marker == 0x01</ID>
     <ID>ComplexCondition:SyncEngine.kt$SyncEngine$header == null || header.contentHash != begin.contentHash || header.mimeType != begin.mimeType || header.encodedBytes != begin.encodedBytes</ID>
     <ID>ComplexCondition:SyncEngine.kt$SyncEngine$item.originDeviceId != header.originDeviceId || item.originSeq != header.originSeq || item.contentHash != header.contentHash || item.utf8Bytes != header.utf8Bytes</ID>
     <ID>ComplexCondition:SyncEngine.kt$SyncEngine$transfer == null || transfer.transferId != end.transferId || transfer.contentHash != end.contentHash || transfer.nextIndex != transfer.chunkCount</ID>
     <ID>CyclomaticComplexMethod:AdbLogTestSupport.kt$fun assertNoRetainedRawLine(target: Any, rawLine: String)</ID>
+    <ID>CyclomaticComplexMethod:ClipSyncRepository.kt$ClipSyncRepository$suspend fun importParsedHistory(records: List&lt;HistoryExportedClip&gt;): HistoryImportResult</ID>
     <ID>CyclomaticComplexMethod:ClipboardMediaReader.kt$ClipboardMediaReader$fun readFirstImage(context: Context, clip: ClipData): ClipboardChange?</ID>
     <ID>CyclomaticComplexMethod:HealthScreen.kt$@Composable fun HealthScreen( state: HealthScreenState, modifier: Modifier = Modifier, onPairRequest: () -&gt; Unit = {}, onRefresh: (() -&gt; Unit)? = null, onRouteAction: ((ReadRouteUi, RouteActionId) -&gt; Unit)? = null, onServiceStart: (() -&gt; Unit)? = null, onServiceStop: (() -&gt; Unit)? = null, onTestWrite: (() -&gt; Unit)? = null, onDismissTestResult: () -&gt; Unit = {}, onOpenNotificationSettings: (() -&gt; Unit)? = null, )</ID>
     <ID>CyclomaticComplexMethod:HealthScreen.kt$@Composable private fun PipelineSegment( title: String, icon: ImageVector, segment: ConduitSegmentState, modifier: Modifier = Modifier, actions: List&lt;SegmentActionUi&gt; = emptyList(), )</ID>
-    <ID>CyclomaticComplexMethod:HistoryTransfer.kt$HistoryExportFormat$fun parseClipLine(line: String, lineNumber: Int): HistoryExportedClip</ID>
+    <ID>CyclomaticComplexMethod:HistoryTransfer.kt$HistoryExportFormat$fun parseClipLine( line: String, lineNumber: Int, formatVersion: Int = TEXT_ONLY_FORMAT_VERSION, ): HistoryExportedClip</ID>
+    <ID>CyclomaticComplexMethod:HistoryTransfer.kt$HistoryExportFormat$private fun validateLiveImage(dto: ClipDto, lineNumber: Int): HistoryExportedMedia</ID>
     <ID>CyclomaticComplexMethod:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter.Companion$internal fun matches(method: Method, shape: IClipboardApiShape, kind: MethodKind): Boolean</ID>
     <ID>CyclomaticComplexMethod:ImageCodec.kt$ImageCodec$fun tryInspectFile( path: File, expectedHash: String? = null, expectedBytes: Long? = null, ): Pair&lt;ImageCodecError, ValidatedImage?&gt;</ID>
     <ID>CyclomaticComplexMethod:ImageCodec.kt$ImageCodec$private fun tryReadJpegSize(encoded: ByteArray): Pair&lt;Int, Int&gt;?</ID>
@@ -359,6 +363,7 @@
     <ID>ReturnCount:ClipContentFormat.kt$private fun isCredentialLike(text: String): Boolean</ID>
     <ID>ReturnCount:ClipContentFormat.kt$private fun isOtp(text: String): Boolean</ID>
     <ID>ReturnCount:ClipOutbox.kt$KeyValueClipOutbox$override fun enqueue(text: String, source: ClipSource): EnqueueResult</ID>
+    <ID>ReturnCount:ClipSyncRepository.kt$ClipSyncRepository$private fun readBlobForEmbedding(contentHash: String): ByteArray?</ID>
     <ID>ReturnCount:ClipSyncRepository.kt$ClipSyncRepository$private suspend fun checkRemoteIdentity( eventId: String, originDeviceId: String, originSeq: Long, expectedContentHash: String?, ): RemoteStoreResult?</ID>
     <ID>ReturnCount:ClipSyncShizukuProvider.kt$ClipSyncShizukuProvider$override fun call(method: String, arg: String?, extras: Bundle?): Bundle?</ID>
     <ID>ReturnCount:ClipboardAccessCoordinator.kt$ClipboardAccessCoordinator$fun checkHealth(): ClipboardAccessState</ID>
@@ -448,8 +453,10 @@
     <ID>SpreadOperator:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$(clipboard, *argsForListener(resolved.shape, listener))</ID>
     <ID>SpreadOperator:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$(clipboard, *argsForRemove(resolved, listener))</ID>
     <ID>SpreadOperator:IClipboardReflectionAdapter.kt$IClipboardReflectionAdapter$(clipboard, *argsForSet(resolved.shape, clip))</ID>
-    <ID>ThrowsCount:HistoryTransfer.kt$HistoryExportFormat$fun parseClipLine(line: String, lineNumber: Int): HistoryExportedClip</ID>
+    <ID>ThrowsCount:HistoryTransfer.kt$HistoryExportFormat$fun parseClipLine( line: String, lineNumber: Int, formatVersion: Int = TEXT_ONLY_FORMAT_VERSION, ): HistoryExportedClip</ID>
     <ID>ThrowsCount:HistoryTransfer.kt$HistoryExportFormat$fun parseHeaderLine(line: String): HistoryExportHeader</ID>
+    <ID>ThrowsCount:HistoryTransfer.kt$HistoryExportFormat$private fun validateLiveImage(dto: ClipDto, lineNumber: Int): HistoryExportedMedia</ID>
+    <ID>ThrowsCount:HistoryTransfer.kt$HistoryExportFormat$private fun validateLiveText(dto: ClipDto, lineNumber: Int)</ID>
     <ID>ThrowsCount:MediaBlobStore.kt$MediaBlobStore$fun commit( pending: PendingMediaWrite, expectedHash: String? = null, expectedMime: String? = null, ): ValidatedImage</ID>
     <ID>ThrowsCount:ProtocolJson.kt$ProtocolJson$fun parseEnvelope(source: String, version: Int = PROTOCOL_V1): ProtocolEnvelope</ID>
     <ID>TooGenericExceptionCaught:AndroidShizukuRuntime.kt$AndroidShizukuRuntime$error: Exception</ID>

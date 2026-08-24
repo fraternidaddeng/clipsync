@@ -210,7 +210,11 @@ object HistoryExportFormat {
         )
     }
 
-    fun parseClipLine(line: String, lineNumber: Int, formatVersion: Int = TEXT_ONLY_FORMAT_VERSION): HistoryExportedClip {
+    fun parseClipLine(
+        line: String,
+        lineNumber: Int,
+        formatVersion: Int = TEXT_ONLY_FORMAT_VERSION,
+    ): HistoryExportedClip {
         if (formatVersion != TEXT_ONLY_FORMAT_VERSION && formatVersion != FORMAT_VERSION) {
             throw HistoryTransferException(
                 HistoryTransferErrorCodes.UNSUPPORTED_VERSION,
