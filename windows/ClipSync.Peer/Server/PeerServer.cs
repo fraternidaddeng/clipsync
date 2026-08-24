@@ -65,11 +65,18 @@ public sealed class PeerServer : IAsyncDisposable
         this.loggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
         logger = this.loggerFactory.CreateLogger("ClipSync.Peer.Server");
         authThrottle = new AuthThrottle(options.SessionOptions.TimeProvider);
+        authThrottle.DeviceLockedOut += OnDeviceLockedOut;
         pairing = pairingService;
     }
 
     /// <summary>Raised when any session commits remote clip bodies locally.</summary>
     public event Action<IReadOnlyList<RemoteClipApplied>>? RemoteClipsCommitted;
+
+    /// <summary>
+    /// Raised on a worker thread when a device first crosses the failed-auth rate limit. The App
+    /// layer surfaces this (diagnostics entry, tray notice); the payload is the claimed device id.
+    /// </summary>
+    public event Action<string>? DeviceLockedOut;
 
     /// <summary>
     /// Raised on a worker thread whenever the set of live sessions changes: a session
@@ -91,6 +98,9 @@ public sealed class PeerServer : IAsyncDisposable
         .ToArray();
 
     public int ConnectedDeviceCount => ConnectedDeviceIds.Count;
+
+    /// <summary>Claimed device ids that are rate-limited right now; empty when none.</summary>
+    public IReadOnlyList<string> ThrottledDeviceIds => authThrottle.ThrottledDevices();
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
@@ -197,6 +207,12 @@ public sealed class PeerServer : IAsyncDisposable
 
     private void OnSessionReady(string deviceId) => SessionsChanged?.Invoke();
 
+    private void OnDeviceLockedOut(string deviceId)
+    {
+        PeerLog.AuthRateLimited(logger, deviceId);
+        DeviceLockedOut?.Invoke(deviceId);
+    }
+
     private async Task HandlePairConfirmAsync(HttpContext context)
     {
         // The version middleware already enforced X-Protocol-Version. Read at most the
@@ -279,6 +295,7 @@ public sealed class PeerServer : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        authThrottle.DeviceLockedOut -= OnDeviceLockedOut;
         foreach (var session in sessions.Values)
         {
             session.Engine.RequestClose();

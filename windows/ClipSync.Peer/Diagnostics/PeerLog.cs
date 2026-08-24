@@ -56,4 +56,8 @@ public static partial class PeerLog
     [LoggerMessage(EventId = 15, Level = LogLevel.Information,
         Message = "pairing confirmed device={DeviceId} repair={IsRepair} trustEpoch={TrustEpoch}")]
     public static partial void PairingConfirmed(ILogger logger, string deviceId, bool isRepair, long trustEpoch);
+
+    [LoggerMessage(EventId = 16, Level = LogLevel.Warning,
+        Message = "auth rate limit engaged for device={DeviceId}")]
+    public static partial void AuthRateLimited(ILogger logger, string deviceId);
 }
