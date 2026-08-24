@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using System.Windows.Threading;
 using ClipSync.App.Clipboard;
 
 namespace ClipSync.App.Tests.Clipboard;

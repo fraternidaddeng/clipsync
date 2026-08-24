@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Net.WebSockets;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using ClipSync.Peer.Transport;
 
 namespace ClipSync.Peer.Client;

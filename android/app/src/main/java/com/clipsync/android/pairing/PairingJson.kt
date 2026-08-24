@@ -1,7 +1,6 @@
 package com.clipsync.android.pairing
 
 import java.util.Base64
-import java.util.UUID
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject

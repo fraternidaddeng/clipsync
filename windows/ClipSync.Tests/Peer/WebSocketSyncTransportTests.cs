@@ -1,6 +1,5 @@
 using System.Net.WebSockets;
 using System.Text;
-using ClipSync.Core.Protocol;
 using ClipSync.Peer.Transport;
 
 namespace ClipSync.Tests.Peer;

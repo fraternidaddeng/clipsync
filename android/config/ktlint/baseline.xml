@@ -161,30 +161,29 @@
     </file>
     <file name="src/main/java/com/clipsync/android/pairing/PairingJson.kt">
         <error line="3" column="1" source="standard:import-ordering" />
-        <error line="4" column="1" source="standard:no-unused-imports" />
-        <error line="21" column="24" source="standard:multiline-expression-wrapping" />
-        <error line="77" column="43" source="standard:multiline-expression-wrapping" />
-        <error line="77" column="43" source="standard:function-signature" />
-        <error line="78" column="13" source="standard:chain-method-continuation" />
-        <error line="78" column="38" source="standard:chain-method-continuation" />
-        <error line="78" column="57" source="standard:chain-method-continuation" />
-        <error line="78" column="72" source="standard:chain-method-continuation" />
-        <error line="78" column="96" source="standard:chain-method-continuation" />
-        <error line="103" column="52" source="standard:function-signature" />
-        <error line="108" column="62" source="standard:multiline-expression-wrapping" />
-        <error line="108" column="62" source="standard:function-signature" />
-        <error line="116" column="32" source="standard:function-signature" />
-        <error line="116" column="46" source="standard:function-signature" />
-        <error line="116" column="64" source="standard:function-signature" />
-        <error line="116" column="83" source="standard:function-signature" />
-        <error line="122" column="40" source="standard:function-signature" />
-        <error line="122" column="60" source="standard:function-signature" />
-        <error line="122" column="80" source="standard:function-signature" />
-        <error line="140" column="33" source="standard:class-signature" />
-        <error line="140" column="59" source="standard:class-signature" />
-        <error line="329" column="36" source="standard:function-signature" />
-        <error line="329" column="56" source="standard:function-signature" />
-        <error line="329" column="76" source="standard:function-signature" />
+        <error line="20" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="76" column="43" source="standard:multiline-expression-wrapping" />
+        <error line="76" column="43" source="standard:function-signature" />
+        <error line="77" column="13" source="standard:chain-method-continuation" />
+        <error line="77" column="38" source="standard:chain-method-continuation" />
+        <error line="77" column="57" source="standard:chain-method-continuation" />
+        <error line="77" column="72" source="standard:chain-method-continuation" />
+        <error line="77" column="96" source="standard:chain-method-continuation" />
+        <error line="102" column="52" source="standard:function-signature" />
+        <error line="107" column="62" source="standard:multiline-expression-wrapping" />
+        <error line="107" column="62" source="standard:function-signature" />
+        <error line="115" column="32" source="standard:function-signature" />
+        <error line="115" column="46" source="standard:function-signature" />
+        <error line="115" column="64" source="standard:function-signature" />
+        <error line="115" column="83" source="standard:function-signature" />
+        <error line="121" column="40" source="standard:function-signature" />
+        <error line="121" column="60" source="standard:function-signature" />
+        <error line="121" column="80" source="standard:function-signature" />
+        <error line="139" column="33" source="standard:class-signature" />
+        <error line="139" column="59" source="standard:class-signature" />
+        <error line="328" column="36" source="standard:function-signature" />
+        <error line="328" column="56" source="standard:function-signature" />
+        <error line="328" column="76" source="standard:function-signature" />
     </file>
     <file name="src/main/java/com/clipsync/android/pairing/PairingStore.kt">
         <error line="147" column="57" source="standard:function-signature" />
@@ -439,17 +438,16 @@
         <error line="315" column="31" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/overlay/OverlayPollingBackend.kt">
-        <error line="5" column="1" source="standard:no-unused-imports" />
-        <error line="66" column="29" source="standard:multiline-expression-wrapping" />
-        <error line="78" column="44" source="standard:multiline-expression-wrapping" />
-        <error line="128" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="215" column="15" source="standard:function-signature" />
-        <error line="215" column="37" source="standard:function-signature" />
-        <error line="215" column="55" source="standard:function-signature" />
-        <error line="225" column="24" source="standard:function-signature" />
-        <error line="225" column="46" source="standard:function-signature" />
-        <error line="225" column="64" source="standard:function-signature" />
-        <error line="232" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="65" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="77" column="44" source="standard:multiline-expression-wrapping" />
+        <error line="127" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="214" column="15" source="standard:function-signature" />
+        <error line="214" column="37" source="standard:function-signature" />
+        <error line="214" column="55" source="standard:function-signature" />
+        <error line="224" column="24" source="standard:function-signature" />
+        <error line="224" column="46" source="standard:function-signature" />
+        <error line="224" column="64" source="standard:function-signature" />
+        <error line="231" column="20" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/shizuku/AndroidShizukuRuntime.kt">
         <error line="21" column="74" source="standard:chain-method-continuation" />
@@ -1756,64 +1754,63 @@
         <error line="213" column="13" source="standard:function-naming" />
     </file>
     <file name="src/main/java/com/clipsync/android/ui/pairing/PairingScreen.kt">
-        <error line="46" column="1" source="standard:no-unused-imports" />
-        <error line="78" column="5" source="standard:function-naming" />
-        <error line="78" column="19" source="standard:function-signature" />
-        <error line="78" column="48" source="standard:function-signature" />
-        <error line="78" column="77" source="standard:function-signature" />
-        <error line="81" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="98" column="13" source="standard:function-naming" />
-        <error line="98" column="25" source="standard:function-signature" />
-        <error line="98" column="44" source="standard:function-signature" />
-        <error line="98" column="71" source="standard:function-signature" />
-        <error line="104" column="30" source="standard:multiline-expression-wrapping" />
-        <error line="162" column="31" source="standard:multiline-expression-wrapping" />
-        <error line="192" column="18" source="standard:multiline-expression-wrapping" />
-        <error line="212" column="13" source="standard:function-naming" />
-        <error line="212" column="27" source="standard:function-signature" />
-        <error line="212" column="58" source="standard:function-signature" />
-        <error line="212" column="85" source="standard:function-signature" />
-        <error line="250" column="18" source="standard:multiline-expression-wrapping" />
-        <error line="263" column="13" source="standard:function-naming" />
-        <error line="296" column="13" source="standard:function-naming" />
-        <error line="299" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="323" column="13" source="standard:function-naming" />
-        <error line="323" column="27" source="standard:function-signature" />
-        <error line="323" column="45" source="standard:function-signature" />
-        <error line="323" column="72" source="standard:function-signature" />
-        <error line="346" column="13" source="standard:function-naming" />
-        <error line="346" column="27" source="standard:function-signature" />
-        <error line="346" column="51" source="standard:function-signature" />
-        <error line="346" column="78" source="standard:function-signature" />
-        <error line="349" column="19" source="standard:multiline-expression-wrapping" />
-        <error line="392" column="13" source="standard:function-naming" />
-        <error line="392" column="25" source="standard:function-signature" />
-        <error line="392" column="39" source="standard:function-signature" />
-        <error line="392" column="60" source="standard:function-signature" />
-        <error line="392" column="83" source="standard:function-signature" />
-        <error line="411" column="13" source="standard:function-naming" />
-        <error line="429" column="13" source="standard:blank-line-before-declaration" />
-        <error line="429" column="24" source="standard:function-signature" />
-        <error line="429" column="35" source="standard:function-signature" />
-        <error line="429" column="46" source="standard:function-signature" />
-        <error line="429" column="57" source="standard:function-signature" />
-        <error line="429" column="66" source="standard:function-signature" />
-        <error line="431" column="28" source="standard:multiline-expression-wrapping" />
-        <error line="448" column="13" source="standard:function-naming" />
-        <error line="448" column="27" source="standard:function-signature" />
-        <error line="448" column="55" source="standard:function-signature" />
-        <error line="448" column="84" source="standard:function-signature" />
-        <error line="457" column="31" source="standard:multiline-expression-wrapping" />
-        <error line="460" column="32" source="standard:multiline-expression-wrapping" />
-        <error line="460" column="45" source="standard:chain-method-continuation" />
-        <error line="483" column="26" source="standard:class-signature" />
-        <error line="483" column="64" source="standard:class-signature" />
-        <error line="484" column="27" source="standard:multiline-expression-wrapping" />
-        <error line="497" column="16" source="standard:chain-method-continuation" />
-        <error line="504" column="13" source="standard:chain-method-continuation" />
-        <error line="508" column="60" source="standard:function-signature" />
-        <error line="513" column="16" source="standard:chain-method-continuation" />
-        <error line="513" column="27" source="standard:chain-method-continuation" />
+        <error line="77" column="5" source="standard:function-naming" />
+        <error line="77" column="19" source="standard:function-signature" />
+        <error line="77" column="48" source="standard:function-signature" />
+        <error line="77" column="77" source="standard:function-signature" />
+        <error line="80" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="97" column="13" source="standard:function-naming" />
+        <error line="97" column="25" source="standard:function-signature" />
+        <error line="97" column="44" source="standard:function-signature" />
+        <error line="97" column="71" source="standard:function-signature" />
+        <error line="103" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="161" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="191" column="18" source="standard:multiline-expression-wrapping" />
+        <error line="211" column="13" source="standard:function-naming" />
+        <error line="211" column="27" source="standard:function-signature" />
+        <error line="211" column="58" source="standard:function-signature" />
+        <error line="211" column="85" source="standard:function-signature" />
+        <error line="249" column="18" source="standard:multiline-expression-wrapping" />
+        <error line="262" column="13" source="standard:function-naming" />
+        <error line="295" column="13" source="standard:function-naming" />
+        <error line="298" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="322" column="13" source="standard:function-naming" />
+        <error line="322" column="27" source="standard:function-signature" />
+        <error line="322" column="45" source="standard:function-signature" />
+        <error line="322" column="72" source="standard:function-signature" />
+        <error line="345" column="13" source="standard:function-naming" />
+        <error line="345" column="27" source="standard:function-signature" />
+        <error line="345" column="51" source="standard:function-signature" />
+        <error line="345" column="78" source="standard:function-signature" />
+        <error line="348" column="19" source="standard:multiline-expression-wrapping" />
+        <error line="391" column="13" source="standard:function-naming" />
+        <error line="391" column="25" source="standard:function-signature" />
+        <error line="391" column="39" source="standard:function-signature" />
+        <error line="391" column="60" source="standard:function-signature" />
+        <error line="391" column="83" source="standard:function-signature" />
+        <error line="410" column="13" source="standard:function-naming" />
+        <error line="428" column="13" source="standard:blank-line-before-declaration" />
+        <error line="428" column="24" source="standard:function-signature" />
+        <error line="428" column="35" source="standard:function-signature" />
+        <error line="428" column="46" source="standard:function-signature" />
+        <error line="428" column="57" source="standard:function-signature" />
+        <error line="428" column="66" source="standard:function-signature" />
+        <error line="430" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="447" column="13" source="standard:function-naming" />
+        <error line="447" column="27" source="standard:function-signature" />
+        <error line="447" column="55" source="standard:function-signature" />
+        <error line="447" column="84" source="standard:function-signature" />
+        <error line="456" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="459" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="459" column="45" source="standard:chain-method-continuation" />
+        <error line="482" column="26" source="standard:class-signature" />
+        <error line="482" column="64" source="standard:class-signature" />
+        <error line="483" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="496" column="16" source="standard:chain-method-continuation" />
+        <error line="503" column="13" source="standard:chain-method-continuation" />
+        <error line="507" column="60" source="standard:function-signature" />
+        <error line="512" column="16" source="standard:chain-method-continuation" />
+        <error line="512" column="27" source="standard:chain-method-continuation" />
     </file>
     <file name="src/main/java/com/clipsync/android/ui/pairing/PairingViewModel.kt">
         <error line="36" column="21" source="standard:class-signature" />

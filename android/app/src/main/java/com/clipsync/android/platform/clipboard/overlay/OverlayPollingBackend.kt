@@ -2,7 +2,6 @@ package com.clipsync.android.platform.clipboard.overlay
 
 import android.os.Handler
 import android.os.HandlerThread
-import android.os.Looper
 import com.clipsync.android.platform.clipboard.BackendHealth
 import com.clipsync.android.platform.clipboard.BackendHealthState
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackend

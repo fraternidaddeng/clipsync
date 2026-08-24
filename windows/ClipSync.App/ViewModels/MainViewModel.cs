@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
-using System.Windows;
 
 namespace ClipSync.App.ViewModels;
 

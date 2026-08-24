@@ -93,10 +93,18 @@ derived from the same plan.md stage-6 requirement. Not a merge gap per se.
 
 ## 6. Cleanup debt noted in passing (this branch, not stage-4)
 
-Duplicate legacy stubs coexist with the ported real implementations and should be deleted when convenient:
-`platform/clipboard/AdbLogOverlayBackend.kt` vs `platform/clipboard/adblog/AdbLogOverlayBackend.kt`,
-`platform/clipboard/OverlayPollingBackend.kt` vs `platform/clipboard/overlay/OverlayPollingBackend.kt`,
-`platform/clipboard/ShizukuClipboardBackend.kt` vs `platform/clipboard/shizuku/ShizukuClipboardBackend.kt`.
+> **Resolved (2026-08-24, strict re-review):** the three same-named pairs are **not** deletable
+> duplicates. Commit `9b361c8` rewired the flat `platform/clipboard/{Shizuku,AdbLogOverlay,OverlayPolling}Backend.kt`
+> files as thin delegating adapters: they keep the honest `RouteProbes` probe with user-facing error
+> codes and the DEGRADED-until-device-verified-read gate (plan §8.3), and forward start/read/health to
+> the real backends in `shizuku/`, `adblog/`, `overlay/` that `RealBackgroundReaders.build()` supplies
+> as delegates. `MainActivity` wires all three pairs in production and `PrivilegedReadWiringTest`
+> covers the delegation, so both layers stay. Likewise `sync/KeyValueClipOutbox` stays: the share
+> sheet / Quick Settings tile entry points enqueue into it from processes where Room may not be up,
+> and `ClipboardSyncService.drainShareOutbox` moves entries into the Room store afterwards — Room
+> consumes the queue, it does not replace it. The only dead weight found was three unused imports
+> (`PairingJson.kt`, `overlay/OverlayPollingBackend.kt`, `ui/pairing/PairingScreen.kt`), now removed
+> with the ktlint baseline regenerated.
 
 ## Suggested merge order
 
