@@ -11,6 +11,8 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,10 +22,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -43,16 +44,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingQrPayload
+import com.clipsync.android.ui.theme.ClipSyncType
+import com.clipsync.android.ui.theme.charterCard
+import com.clipsync.android.ui.theme.clipSyncColors
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.atomic.AtomicBoolean
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+/** Controls carry a 12dp radius (tokens.md §7). */
+private val ControlShape = RoundedCornerShape(12.dp)
+
+/** The pairing ritual is one of the app's few serif moments. */
+private val RitualTitle = ClipSyncType.pageTitle.copy(fontSize = 20.sp)
 
 @Composable
 fun PairingScreen(viewModel: PairingViewModel, modifier: Modifier = Modifier) {
@@ -87,27 +99,34 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
         scanning = granted
     }
 
-    Text("Pair with Windows", style = MaterialTheme.typography.headlineSmall)
+    Text("Pair with Windows", style = RitualTitle, color = clipSyncColors.t1)
 
     if (peer != null) {
-        Card(colors = CardDefaults.cardColors()) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(peer.displayName, fontWeight = FontWeight.SemiBold)
-                Text(
-                    "Certificate ${groupFingerprint(peer.certSha256).take(19)}…",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontFamily = FontFamily.Monospace,
-                )
-                Text(
-                    "Trust epoch ${peer.trustEpoch}",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-                TextButton(onClick = viewModel::forgetPeer) { Text("Forget this pairing") }
-            }
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .charterCard()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(peer.displayName, fontWeight = FontWeight.SemiBold, color = clipSyncColors.t1)
+            Text(
+                "Certificate ${groupFingerprint(peer.certSha256).take(19)}…",
+                style = MaterialTheme.typography.bodySmall,
+                fontFamily = FontFamily.Monospace,
+                color = clipSyncColors.t2,
+            )
+            Text(
+                "Trust epoch ${peer.trustEpoch}",
+                style = MaterialTheme.typography.bodySmall,
+                color = clipSyncColors.t3,
+            )
+            TextButton(onClick = viewModel::forgetPeer) { Text("Forget this pairing") }
         }
         Text(
             "Scanning a new code replaces the current pairing after your confirmation.",
             style = MaterialTheme.typography.bodySmall,
+            color = clipSyncColors.t3,
         )
     } else {
         Text(
@@ -126,7 +145,11 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
                 .fillMaxWidth()
                 .height(320.dp),
         )
-        OutlinedButton(onClick = { scanning = false }, modifier = Modifier.fillMaxWidth()) {
+        OutlinedButton(
+            onClick = { scanning = false },
+            shape = ControlShape,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
             Text("Stop scanning")
         }
     } else {
@@ -140,6 +163,7 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
                     permissionLauncher.launch(Manifest.permission.CAMERA)
                 }
             },
+            shape = ControlShape,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text("Scan QR code")
@@ -158,6 +182,7 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
         onValueChange = { manualPayload = it },
         modifier = Modifier.fillMaxWidth(),
         label = { Text("Or paste the pairing payload") },
+        shape = ControlShape,
         minLines = 2,
     )
     OutlinedButton(
@@ -166,6 +191,7 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
             manualPayload = ""
         },
         enabled = manualPayload.isNotBlank(),
+        shape = ControlShape,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text("Use pasted payload")
@@ -174,64 +200,88 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
 
 @Composable
 private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewModel) {
-    Text("Confirm this computer", style = MaterialTheme.typography.headlineSmall)
+    val c = clipSyncColors
+    Text("Confirm this computer", style = RitualTitle, color = c.t1)
     Text(
         "Only continue if the name and certificate fingerprint below match what the Windows app shows.",
         style = MaterialTheme.typography.bodyMedium,
+        color = c.t2,
     )
     PeerFacts(review.qr)
     if (review.certificateChanged) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+        // Certificate change is a genuine error — the one place red is allowed.
+        val shape = RoundedCornerShape(16.dp)
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(c.errBg)
+                .border(1.dp, c.errLn, shape),
         ) {
             Text(
                 "Warning: this computer's certificate CHANGED since the last pairing. " +
                     "If you did not reinstall ClipSync on Windows, stop and check the computer.",
                 modifier = Modifier.padding(16.dp),
-                color = MaterialTheme.colorScheme.onErrorContainer,
+                color = c.err,
                 fontWeight = FontWeight.SemiBold,
             )
         }
     }
-    Button(onClick = viewModel::confirm, modifier = Modifier.fillMaxWidth()) {
+    Button(onClick = viewModel::confirm, shape = ControlShape, modifier = Modifier.fillMaxWidth()) {
         Text(if (review.certificateChanged) "I verified it — replace pairing" else "Fingerprint matches — pair")
     }
-    OutlinedButton(onClick = viewModel::cancelReview, modifier = Modifier.fillMaxWidth()) {
+    OutlinedButton(onClick = viewModel::cancelReview, shape = ControlShape, modifier = Modifier.fillMaxWidth()) {
         Text("Cancel")
     }
 }
 
 @Composable
 private fun PeerFacts(qr: PairingQrPayload) {
-    Card {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(qr.displayName, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.titleMedium)
-            Text(
-                "Certificate fingerprint",
-                style = MaterialTheme.typography.labelMedium,
-            )
-            Text(
-                groupFingerprint(qr.certSha256),
-                fontFamily = FontFamily.Monospace,
-                style = MaterialTheme.typography.bodySmall,
-            )
-            Text(
-                "Address ${qr.hosts.joinToString()} : ${qr.port}",
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
+    val c = clipSyncColors
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .charterCard()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text(
+            qr.displayName,
+            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleMedium,
+            color = c.t1,
+        )
+        Text(
+            "Certificate fingerprint",
+            style = MaterialTheme.typography.labelMedium,
+            color = c.t3,
+        )
+        // The fingerprint is the app's highest-risk comparison: t1 + mono.
+        Text(
+            groupFingerprint(qr.certSha256),
+            fontFamily = FontFamily.Monospace,
+            style = ClipSyncType.fingerprint,
+            color = c.t1,
+        )
+        Text(
+            "Address ${qr.hosts.joinToString()} : ${qr.port}",
+            style = MaterialTheme.typography.bodySmall,
+            color = c.t3,
+        )
     }
 }
 
 @Composable
 private fun SubmittingContent(peerName: String) {
+    val c = clipSyncColors
     Row(verticalAlignment = Alignment.CenterVertically) {
         CircularProgressIndicator(Modifier.padding(end = 16.dp))
         Column {
-            Text("Waiting for approval…", fontWeight = FontWeight.SemiBold)
+            Text("Waiting for approval…", fontWeight = FontWeight.SemiBold, color = c.t1)
             Text(
                 "Approve this phone in the ClipSync window on \"$peerName\".",
                 style = MaterialTheme.typography.bodyMedium,
+                color = c.t2,
             )
         }
     }
@@ -239,14 +289,17 @@ private fun SubmittingContent(peerName: String) {
 
 @Composable
 private fun PairedContent(peer: PairedPeer, viewModel: PairingViewModel) {
-    Text("Paired", style = MaterialTheme.typography.headlineSmall)
-    Text("This phone is now paired with \"${peer.displayName}\". Clipboard sync starts in a later stage; the trust and secret are stored securely now.")
-    Button(onClick = viewModel::reset, modifier = Modifier.fillMaxWidth()) { Text("Done") }
+    Text("Paired", style = RitualTitle, color = clipSyncColors.t1)
+    Text(
+        "This phone is now paired with \"${peer.displayName}\". Clipboard sync starts in a later stage; the trust and secret are stored securely now.",
+        color = clipSyncColors.t2,
+    )
+    Button(onClick = viewModel::reset, shape = ControlShape, modifier = Modifier.fillMaxWidth()) { Text("Done") }
 }
 
 @Composable
 private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel) {
-    Text("Pairing failed", style = MaterialTheme.typography.headlineSmall)
+    Text("Pairing failed", style = RitualTitle, color = clipSyncColors.t1)
     Text(
         when (reason) {
             PairingFailure.INVALID_PAYLOAD -> "That is not a valid ClipSync pairing code."
@@ -268,7 +321,7 @@ private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel) {
             MaterialTheme.colorScheme.onSurface
         },
     )
-    Button(onClick = viewModel::reset, modifier = Modifier.fillMaxWidth()) { Text("Start over") }
+    Button(onClick = viewModel::reset, shape = ControlShape, modifier = Modifier.fillMaxWidth()) { Text("Start over") }
 }
 
 @Composable
