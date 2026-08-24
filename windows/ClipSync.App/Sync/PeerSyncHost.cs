@@ -56,6 +56,12 @@ public sealed class PeerSyncHost : IAsyncDisposable
     /// </summary>
     public event Action? SessionsChanged;
 
+    /// <summary>
+    /// Raised on a worker thread when a device first trips the failed-auth rate limit. The App
+    /// surfaces it (diagnostics entry + tray notice); the payload is the claimed device id.
+    /// </summary>
+    public event Action<string>? DeviceLockedOut;
+
     public string CertificateFingerprint { get; }
 
     public int Port => server?.Port ?? 0;
@@ -66,6 +72,9 @@ public sealed class PeerSyncHost : IAsyncDisposable
     public IReadOnlyList<string> ConnectedDeviceIds => server?.ConnectedDeviceIds ?? [];
 
     public int ConnectedDeviceCount => server?.ConnectedDeviceCount ?? 0;
+
+    /// <summary>Claimed device ids rate-limited right now; empty when none.</summary>
+    public IReadOnlyList<string> ThrottledDeviceIds => server?.ThrottledDeviceIds ?? [];
 
     public PairingService? Pairing => pairingService;
 
@@ -122,6 +131,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
 
         candidate.RemoteClipsCommitted += OnRemoteClipsCommitted;
         candidate.SessionsChanged += OnSessionsChanged;
+        candidate.DeviceLockedOut += OnDeviceLockedOut;
         server = candidate;
 
         broadcaster = new UdpDiscoveryBroadcaster(store.LocalDeviceId, server.Port, CertificateFingerprint);
@@ -138,6 +148,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
         RemoteClipsCommitted?.Invoke(batch);
 
     private void OnSessionsChanged() => SessionsChanged?.Invoke();
+
+    private void OnDeviceLockedOut(string deviceId) => DeviceLockedOut?.Invoke(deviceId);
 
     private async Task BroadcastQuietlyAsync()
     {
@@ -231,6 +243,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
         {
             server.RemoteClipsCommitted -= OnRemoteClipsCommitted;
             server.SessionsChanged -= OnSessionsChanged;
+            server.DeviceLockedOut -= OnDeviceLockedOut;
             await server.DisposeAsync().ConfigureAwait(false);
             server = null;
         }

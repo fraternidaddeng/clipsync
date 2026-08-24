@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using ClipSync.App.Diagnostics;
 
 namespace ClipSync.App.Tray;
 
@@ -21,6 +22,7 @@ internal sealed class TrayIconController : IDisposable
     private readonly Dictionary<TrayState, Icon> stateIcons;
     private TrayState currentState = TrayState.Flow;
     private string currentToolTip;
+    private DiagnosticsWindow? diagnosticsWindow;
 
     private TrayIconController(TaskbarIcon taskbarIcon, Dictionary<TrayState, Icon> stateIcons)
     {
@@ -35,6 +37,8 @@ internal sealed class TrayIconController : IDisposable
         var openItem = new MenuItem { Header = "打开剪剪相传" };
         openItem.Click += (_, _) => Show(mainWindow);
         menu.Items.Add(openItem);
+        var diagnosticsItem = new MenuItem { Header = "诊断日志" };
+        menu.Items.Add(diagnosticsItem);
         menu.Items.Add(new Separator());
         var exitItem = new MenuItem { Header = "退出" };
         exitItem.Click += (_, _) => exit();
@@ -48,7 +52,9 @@ internal sealed class TrayIconController : IDisposable
             ContextMenu = menu
         };
         taskbarIcon.TrayLeftMouseDown += (_, _) => Show(mainWindow);
-        return new TrayIconController(taskbarIcon, stateIcons);
+        var controller = new TrayIconController(taskbarIcon, stateIcons);
+        diagnosticsItem.Click += (_, _) => controller.ShowDiagnostics();
+        return controller;
     }
 
     /// <summary>
@@ -87,8 +93,36 @@ internal sealed class TrayIconController : IDisposable
         taskbarIcon.ShowBalloonTip("剪剪相传", message, BalloonIcon.Info);
     }
 
+    /// <summary>
+    /// Warns that a device tripped the failed-auth rate limit. Names the device only — no proof
+    /// material — and mirrors the persistent diagnostics entry the viewer shows.
+    /// </summary>
+    public void ShowAuthThrottleNotice(string deviceLabel)
+    {
+        taskbarIcon.ShowBalloonTip(
+            "剪剪相传",
+            $"检测到「{deviceLabel}」反复认证失败，已临时限流该设备。",
+            BalloonIcon.Warning);
+    }
+
+    /// <summary>Opens (or re-focuses) the read-only diagnostics viewer.</summary>
+    public void ShowDiagnostics()
+    {
+        if (diagnosticsWindow is not null)
+        {
+            diagnosticsWindow.Activate();
+            return;
+        }
+
+        diagnosticsWindow = new DiagnosticsWindow();
+        diagnosticsWindow.Closed += (_, _) => diagnosticsWindow = null;
+        diagnosticsWindow.Show();
+    }
+
     public void Dispose()
     {
+        diagnosticsWindow?.Close();
+        diagnosticsWindow = null;
         taskbarIcon.Dispose();
         foreach (var icon in stateIcons.Values)
         {

@@ -176,6 +176,7 @@ public partial class App : Application
             syncHost = new PeerSyncHost(store, protector, certificate, pairingService);
             syncHost.RemoteClipsCommitted += OnRemoteClipsCommitted;
             syncHost.SessionsChanged += OnPeerSessionsChanged;
+            syncHost.DeviceLockedOut += OnDeviceLockedOut;
             await syncHost.StartAsync(viewModel.ExtraBindAddresses);
             viewModel.LocalFingerprint = FormatFingerprint(syncHost.CertificateFingerprint);
             viewModel.UpdatePeerStatus(true, syncHost.Port, syncHost.ConnectedDeviceCount);
@@ -260,6 +261,22 @@ public partial class App : Application
 
     private void OnDeviceRevoked(string deviceId) => syncHost?.DisconnectDevice(deviceId);
 
+    /// <summary>
+    /// A device just tripped the failed-auth rate limit (worker thread). Record it for the
+    /// diagnostics viewer and warn the user; the balloon names the device only, never proof
+    /// material or clipboard content.
+    /// </summary>
+    private void OnDeviceLockedOut(string deviceId)
+    {
+        LocalDiagnostics.Write("auth_locked_out");
+        _ = Dispatcher.InvokeAsync(() =>
+        {
+            var label = mainViewModel?.Devices
+                .FirstOrDefault(device => device.DeviceId == deviceId)?.DisplayName ?? "未知设备";
+            trayIcon?.ShowAuthThrottleNotice(label);
+        });
+    }
+
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch)
     {
         _ = Dispatcher.InvokeAsync(async () =>
@@ -322,6 +339,7 @@ public partial class App : Application
         {
             syncHost.RemoteClipsCommitted -= OnRemoteClipsCommitted;
             syncHost.SessionsChanged -= OnPeerSessionsChanged;
+            syncHost.DeviceLockedOut -= OnDeviceLockedOut;
             syncHost.DisposeAsync().AsTask().GetAwaiter().GetResult();
         }
         if (clipboardAdapter is not null)
