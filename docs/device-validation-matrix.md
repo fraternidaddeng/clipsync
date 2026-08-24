@@ -2,6 +2,8 @@
 
 状态：设备盘点模板 + 脚本化检查清单（2026-08-24 扩充）。**尚未提供或连接任何实体设备，以下结果全部为 `NOT_TESTED`，不得视为兼容性声明。** 本页新增的检查步骤与 READY 判据只是把「人到场之后要做什么、做到什么程度算过」预先写死，防止临场即兴降低标准。
 
+参考：`feature/stage-4` 谱系在 Redmi Note 11T Pro / MIUI 14 上的实测结果已存档在 [`stage-4-lineage/device-validation-matrix.md`](stage-4-lineage/device-validation-matrix.md)（含 MIUI 后台剪贴板拒绝、Shizuku 版本可用性、P95 延迟等 ROM 行为数据）。那些结论属于另一条代码谱系，**不填入本表**，但排期实机验证时应先读它避开已知坑。
+
 ## 状态定义
 
 - `NOT_TESTED`：没有在符合描述的实体设备上执行。
