@@ -1,5 +1,7 @@
 # ClipSync
 
+[![CI](https://github.com/fraternidaddeng/clipsync/actions/workflows/ci.yml/badge.svg)](https://github.com/fraternidaddeng/clipsync/actions/workflows/ci.yml)
+
 ClipSync is a private, direct peer-to-peer clipboard synchronization project for Windows and Android. The repository has completed **Stage 1**: the Stage 0 protocol and client foundations plus a background Windows clipboard listener, transactional local history, privacy controls, and a tray-based WPF UI.
 
 No account service, cloud database, public relay, file transfer, telemetry, or clipboard-content logging is included.
