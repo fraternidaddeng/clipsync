@@ -35,6 +35,14 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
             write(KEY_RETENTION_MAX_AGE_DAYS, value.toString())
         }
 
+    /**
+     * Whether age-based expiry runs at all; the stored [retentionMaxAgeDays] keeps its value
+     * (and its positive invariant) while the toggle is off, so re-enabling restores it.
+     */
+    var autoExpireEnabled: Boolean
+        get() = readBoolean(KEY_AUTO_EXPIRE_ENABLED, default = true)
+        set(value) = write(KEY_AUTO_EXPIRE_ENABLED, value.toString())
+
     var maxSyncTextBytes: Int
         get() = readInt(KEY_MAX_SYNC_TEXT_BYTES, default = DEFAULT_MAX_TEXT_BYTES)
         set(value) {
@@ -67,6 +75,7 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         private const val KEY_PRIVATE_MODE = "sync.private_mode"
         private const val KEY_RETENTION_MAX_ENTRIES = "sync.retention.max_entries"
         private const val KEY_RETENTION_MAX_AGE_DAYS = "sync.retention.max_age_days"
+        private const val KEY_AUTO_EXPIRE_ENABLED = "sync.retention.auto_expire"
         private const val KEY_MAX_SYNC_TEXT_BYTES = "sync.max_text_bytes"
     }
 }

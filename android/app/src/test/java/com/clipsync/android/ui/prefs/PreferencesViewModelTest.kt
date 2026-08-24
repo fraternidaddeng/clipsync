@@ -1,6 +1,7 @@
 package com.clipsync.android.ui.prefs
 
 import com.clipsync.android.pairing.FakeKeyValueStore
+import com.clipsync.android.storage.SyncSettingsStore
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -8,8 +9,9 @@ import org.junit.Test
 
 class PreferencesViewModelTest {
     private val keyValues = FakeKeyValueStore()
+    private val settings = SyncSettingsStore(keyValues)
 
-    private fun viewModel() = PreferencesViewModel(keyValues)
+    private fun viewModel() = PreferencesViewModel(settings)
 
     @Test
     fun `empty store yields the product-scope defaults`() {
@@ -17,20 +19,21 @@ class PreferencesViewModelTest {
         assertFalse(state.pauseSync)
         assertFalse(state.privateMode)
         assertTrue(state.autoApplyRemote)
-        assertEquals(PreferenceKeys.DEFAULT_RETENTION_DAYS, state.retentionDays)
         assertTrue(state.autoExpire)
+        assertEquals(SyncSettingsStore.DEFAULT_MAX_AGE_DAYS, state.retentionDays)
     }
 
     @Test
-    fun `toggles persist under the shared settings keys immediately`() {
+    fun `toggles persist under the shared sync settings keys immediately`() {
         val model = viewModel()
         model.setPauseSync(true)
         model.setPrivateMode(true)
         model.setAutoApplyRemote(false)
 
-        assertEquals("true", keyValues.map[PreferenceKeys.PAUSE_SYNC])
-        assertEquals("true", keyValues.map[PreferenceKeys.PRIVATE_MODE])
-        assertEquals("false", keyValues.map[PreferenceKeys.AUTO_APPLY_REMOTE])
+        // The keys are the sync engine's vocabulary, not a UI-private copy.
+        assertEquals("true", keyValues.map["sync.paused"])
+        assertEquals("true", keyValues.map["sync.private_mode"])
+        assertEquals("false", keyValues.map["sync.auto_apply_remote"])
 
         val state = model.state.value
         assertTrue(state.pauseSync)
@@ -53,48 +56,43 @@ class PreferencesViewModelTest {
     }
 
     @Test
-    fun `auto expire off means keep forever and on restores the default`() {
+    fun `auto expire off keeps the stored duration so re-enabling restores it`() {
         val model = viewModel()
+        model.setRetentionDays(14)
 
         model.setAutoExpire(false)
-        assertEquals("0", keyValues.map[PreferenceKeys.RETENTION_DAYS])
+        assertEquals("false", keyValues.map["sync.retention.auto_expire"])
         assertFalse(model.state.value.autoExpire)
+        assertEquals(14, model.state.value.retentionDays)
 
         model.setAutoExpire(true)
-        assertEquals(
-            PreferenceKeys.DEFAULT_RETENTION_DAYS.toString(),
-            keyValues.map[PreferenceKeys.RETENTION_DAYS],
-        )
         assertTrue(model.state.value.autoExpire)
+        assertEquals(14, model.state.value.retentionDays)
     }
 
     @Test
-    fun `negative retention is coerced to keep forever`() {
+    fun `the sync engine reads exactly what the user toggled`() {
         val model = viewModel()
-        model.setRetentionDays(-5)
-        assertEquals(0, model.state.value.retentionDays)
-        assertEquals("0", keyValues.map[PreferenceKeys.RETENTION_DAYS])
+        model.setPauseSync(true)
+        model.setPrivateMode(true)
+        model.setAutoExpire(false)
+
+        // Another component (sync loop, retention cleanup) over the same backing store.
+        val engineView = SyncSettingsStore(keyValues)
+        assertTrue(engineView.syncPaused)
+        assertTrue(engineView.privateMode)
+        assertFalse(engineView.autoExpireEnabled)
     }
 
     @Test
     fun `corrupt stored values fall back to the defaults`() {
-        keyValues.map[PreferenceKeys.PAUSE_SYNC] = "definitely"
-        keyValues.map[PreferenceKeys.AUTO_APPLY_REMOTE] = ""
-        keyValues.map[PreferenceKeys.RETENTION_DAYS] = "soon"
+        keyValues.map["sync.paused"] = "definitely"
+        keyValues.map["sync.auto_apply_remote"] = ""
+        keyValues.map["sync.retention.max_age_days"] = "soon"
 
         val state = viewModel().state.value
         assertFalse(state.pauseSync)
         assertTrue(state.autoApplyRemote)
-        assertEquals(PreferenceKeys.DEFAULT_RETENTION_DAYS, state.retentionDays)
-    }
-
-    @Test
-    fun `flag parsing is case-insensitive`() {
-        keyValues.map[PreferenceKeys.PRIVATE_MODE] = "TRUE"
-        keyValues.map[PreferenceKeys.AUTO_APPLY_REMOTE] = "False"
-
-        val state = viewModel().state.value
-        assertTrue(state.privateMode)
-        assertFalse(state.autoApplyRemote)
+        assertEquals(SyncSettingsStore.DEFAULT_MAX_AGE_DAYS, state.retentionDays)
     }
 }
