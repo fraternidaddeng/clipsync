@@ -31,15 +31,17 @@ object ProtocolJson {
     fun parseEnvelope(source: String, version: Int = PROTOCOL_V1): ProtocolEnvelope {
         require(version == PROTOCOL_V1 || version == PROTOCOL_V2) { "Unknown protocol version: $version" }
         require(source.isNotBlank()) { "Protocol envelope must not be blank." }
-        // kotlinx silently keeps the last duplicate key, so the raw text must be
-        // screened first — a repeated property is a schema violation on the wire.
-        rejectDuplicateKeys(source)
+        // Token-level screen before kotlinx sees the text: duplicate properties, explicit
+        // nulls, nesting depth, and oversized documents are wire violations kotlinx masks.
+        ProtocolStrictJson.scan(source)
         val element = json.parseToJsonElement(source)
-        rejectExcessiveDepth(element.toString())
         val envelope = json.decodeFromJsonElement<ProtocolEnvelope>(element)
 
         if (envelope.version != version) {
-            throw SerializationException("Unsupported protocol version: ${envelope.version}")
+            throw ProtocolParseException(
+                ProtocolErrorCodes.UNSUPPORTED_VERSION,
+                "Unsupported protocol version: ${envelope.version}",
+            )
         }
         val types = if (version == PROTOCOL_V2) MESSAGE_TYPES_V2 else MESSAGE_TYPES
         if (envelope.type !in types) {
@@ -401,92 +403,10 @@ object ProtocolJson {
         .digest(bytes)
         .joinToString(separator = "") { byte -> "%02x".format(byte) }
 
-    /**
-     * Rejects a repeated property anywhere in the document. kotlinx keeps the last
-     * duplicate silently, so this walks the raw text: a stack of per-object key sets,
-     * where a string is a key exactly when the object expects one (after `{` or `,`).
-     */
-    private fun rejectDuplicateKeys(source: String) {
-        val objectKeys = ArrayDeque<MutableSet<String>?>()
-        var expectingKey = false
-        var index = 0
-        while (index < source.length) {
-            when (source[index]) {
-                '"' -> {
-                    val key = StringBuilder()
-                    index += 1
-                    var escaped = false
-                    while (index < source.length) {
-                        val character = source[index]
-                        when {
-                            escaped -> {
-                                key.append(character)
-                                escaped = false
-                            }
-                            character == '\\' -> escaped = true
-                            character == '"' -> break
-                            else -> key.append(character)
-                        }
-                        index += 1
-                    }
-                    if (expectingKey) {
-                        val keys = objectKeys.lastOrNull()
-                        if (keys != null && !keys.add(key.toString())) {
-                            throw SerializationException("Duplicate JSON property: $key")
-                        }
-                        expectingKey = false
-                    }
-                }
-                '{' -> {
-                    objectKeys.addLast(mutableSetOf())
-                    expectingKey = true
-                }
-                '[' -> {
-                    objectKeys.addLast(null)
-                    expectingKey = false
-                }
-                '}', ']' -> {
-                    objectKeys.removeLastOrNull()
-                    expectingKey = false
-                }
-                ',' -> expectingKey = objectKeys.lastOrNull() != null
-                ':' -> expectingKey = false
-            }
-            index += 1
-        }
-    }
-
-    private fun rejectExcessiveDepth(source: String) {
-        var depth = 0
-        var inString = false
-        var escaped = false
-        for (character in source) {
-            if (inString) {
-                when {
-                    escaped -> escaped = false
-                    character == '\\' -> escaped = true
-                    character == '"' -> inString = false
-                }
-                continue
-            }
-            when (character) {
-                '"' -> inString = true
-                '{', '[' -> {
-                    depth += 1
-                    if (depth > MAX_DEPTH) {
-                        throw SerializationException("Protocol envelope exceeds maximum depth.")
-                    }
-                }
-                '}', ']' -> depth -= 1
-            }
-        }
-    }
-
     const val PROTOCOL_V1 = 1
     const val PROTOCOL_V2 = 2
     const val CAPABILITY_IMAGE_CLIP_V2 = "image_clip_v2"
 
-    private const val MAX_DEPTH = 16
     private const val MAX_PAYLOAD_BYTES = 1_048_576
     private const val MAX_IMAGE_BYTES = 16_777_216L
     private const val MAX_PIXEL_SIDE = 8_192L

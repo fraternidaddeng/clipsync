@@ -1,7 +1,13 @@
 package com.clipsync.android.sync
 
+import com.clipsync.android.protocol.ProtocolErrorCodes
 import com.clipsync.android.protocol.ProtocolJson
+import com.clipsync.android.protocol.ProtocolParseException
 import java.io.File
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -50,13 +56,31 @@ class SyncWireV2FixtureTest {
     }
 
     @Test
-    fun `every invalid v2 fixture is rejected by the strict validator`() {
+    fun `every invalid v2 fixture is rejected with the expected error code`() {
         val files = File(fixturesRoot, "invalid").listFiles { file -> file.extension == "json" }.orEmpty()
         assertTrue("Invalid v2 fixture set must not be empty.", files.isNotEmpty())
 
+        val expected = loadExpectedErrors()
         files.forEach { file ->
-            val outcome = runCatching { ProtocolJson.parseEnvelope(file.readText(), ProtocolJson.PROTOCOL_V2) }
-            assertTrue("Invalid fixture must be rejected: ${file.name}", outcome.isFailure)
+            val error = runCatching {
+                ProtocolJson.parseEnvelope(file.readText(), ProtocolJson.PROTOCOL_V2)
+            }.exceptionOrNull()
+            assertTrue("Invalid fixture must be rejected: ${file.name}", error != null)
+            val code = when (error) {
+                is ProtocolParseException -> error.errorCode
+                is SerializationException -> ProtocolErrorCodes.SCHEMA_VIOLATION
+                else -> error("unexpected ${error!!::class.java.name} for ${file.name}")
+            }
+            val wanted = expected[file.name]
+            assertTrue("Missing expected_error for ${file.name}", wanted != null)
+            assertEquals("Wrong error for ${file.name}", wanted, code)
         }
+    }
+
+    private fun loadExpectedErrors(): Map<String, String> {
+        val file = File(fixturesRoot, "expected_errors.json")
+        assertTrue("expected_errors.json is missing: $file", file.isFile)
+        val obj = Json.parseToJsonElement(file.readText()).jsonObject
+        return obj.mapValues { it.value.jsonPrimitive.content }
     }
 }
