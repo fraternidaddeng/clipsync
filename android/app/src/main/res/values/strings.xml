@@ -22,11 +22,17 @@
     <string name="notification_sync_reconnecting">连接断开 · 等待重连</string>
     <string name="notification_sync_not_paired">未配对 · 同步待命</string>
 
+    <!-- 需要恢复：同步服务未能自动启动（开机恢复失败或系统拒绝前台服务） -->
+    <string name="notification_channel_recovery_name">同步恢复提醒</string>
+    <string name="notification_channel_recovery_description">同步服务无法自动恢复时提醒你打开应用手动恢复。通知从不显示剪贴板内容。</string>
+    <string name="notification_recovery_title">需要恢复 · 剪贴同步未运行</string>
+    <string name="notification_recovery_text">同步服务未能自动启动。点按打开应用手动恢复。</string>
+
     <!-- 发送结果提示 -->
     <string name="toast_share_enqueued">已加入发送队列，联机后同步到电脑</string>
     <string name="toast_share_empty">分享内容为空，未加入队列</string>
     <string name="toast_share_duplicate">相同内容刚刚已加入队列</string>
-    <string name="toast_share_too_large">文本超过 1 MiB 上限，未加入队列</string>
+    <string name="toast_share_too_large">文本超过单条大小上限，未加入队列</string>
     <string name="toast_share_unsupported">仅支持纯文本分享</string>
     <string name="toast_clipboard_empty">剪贴板没有可发送的文本</string>
     <string name="toast_clipboard_unavailable">无法读取剪贴板，请重试</string>

@@ -18,7 +18,9 @@ import com.clipsync.android.R
  */
 object SyncNotifications {
     const val CHANNEL_INBOX = "clipsync.inbox"
+    const val CHANNEL_RECOVERY = "clipsync.recovery"
     private const val INBOX_NOTIFICATION_ID_BASE = 41_000
+    const val RECOVERY_NOTIFICATION_ID = 42_001
 
     /** Idempotent; called from Application.onCreate so receivers can post right away. */
     fun ensureChannels(context: Context) {
@@ -28,6 +30,18 @@ object SyncNotifications {
         )
             .setName(context.getString(R.string.notification_channel_inbox_name))
             .setDescription(context.getString(R.string.notification_channel_inbox_description))
+            .build()
+        NotificationManagerCompat.from(context).createNotificationChannel(channel)
+        ensureRecoveryChannel(context)
+    }
+
+    private fun ensureRecoveryChannel(context: Context) {
+        val channel = NotificationChannelCompat.Builder(
+            CHANNEL_RECOVERY,
+            NotificationManagerCompat.IMPORTANCE_DEFAULT,
+        )
+            .setName(context.getString(R.string.notification_channel_recovery_name))
+            .setDescription(context.getString(R.string.notification_channel_recovery_description))
             .build()
         NotificationManagerCompat.from(context).createNotificationChannel(channel)
     }
@@ -124,5 +138,49 @@ object SyncNotifications {
 
     fun cancelInboxItem(context: Context, eventId: String) {
         NotificationManagerCompat.from(context).cancel(notificationIdFor(eventId))
+    }
+
+    /**
+     * Posts the honest "需要恢复" notification: the sync service could not be (re)started
+     * automatically — after boot, or when the system refused the foreground start — and the
+     * user must open the app to restore it. Never restarts anything itself (plan 5.2: no
+     * crash loop, no fake "online"). Returns false when notifications are disabled; the
+     * conduit page still shows the same fact in-app.
+     */
+    fun notifyRecoveryNeeded(context: Context): Boolean {
+        ensureRecoveryChannel(context)
+        val manager = NotificationManagerCompat.from(context)
+        if (!manager.areNotificationsEnabled()) {
+            return false
+        }
+        val openApp = PendingIntent.getActivity(
+            context,
+            RECOVERY_NOTIFICATION_ID,
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+        val notification = NotificationCompat.Builder(context, CHANNEL_RECOVERY)
+            .setSmallIcon(R.drawable.ic_notify_clip)
+            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
+            .setContentTitle(context.getString(R.string.notification_recovery_title))
+            .setContentText(context.getString(R.string.notification_recovery_text))
+            .setContentIntent(openApp)
+            .setAutoCancel(true)
+            // No clipboard text is present, so the lock screen may show it as-is.
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
+            .build()
+        return try {
+            manager.notify(RECOVERY_NOTIFICATION_ID, notification)
+            true
+        } catch (_: SecurityException) {
+            // POST_NOTIFICATIONS revoked between the check and the call.
+            false
+        }
+    }
+
+    fun cancelRecoveryNeeded(context: Context) {
+        NotificationManagerCompat.from(context).cancel(RECOVERY_NOTIFICATION_ID)
     }
 }
