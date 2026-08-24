@@ -1482,7 +1482,7 @@
                         </ContentControl>
 
                         <!-- 数据 -->
-                        <Border Style="{StaticResource GroupCard}">
+                        <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource GroupHeader}" Text="数 据 · DATA" />
                                 <Grid Margin="16,9,16,12">
@@ -1538,7 +1538,7 @@
                                     </Border.Style>
                                 </Border>
                             </StackPanel>
-                        </Border>
+                        </ContentControl>
 
                         <!-- 信任 -->
                         <ContentControl Style="{StaticResource GroupCard}">
