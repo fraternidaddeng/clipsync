@@ -134,15 +134,27 @@ public partial class App : Application
             syncHost = new PeerSyncHost(store, protector, certificate, pairingService);
             syncHost.RemoteClipsCommitted += OnRemoteClipsCommitted;
             await syncHost.StartAsync(viewModel.ExtraBindAddresses);
-            viewModel.SyncStatus =
-                $"Peer endpoint on port {syncHost.Port}\nDevice {deviceId}\nCert {syncHost.CertificateFingerprint[..16]}…";
+            viewModel.PeerOnline = true;
+            viewModel.PeerPort = syncHost.Port;
+            viewModel.LocalFingerprint = FormatFingerprint(syncHost.CertificateFingerprint);
+            viewModel.SyncStatus = $"LAN 监听端口 {syncHost.Port} · 事件先落库再入发件队列，断线不丢。";
         }
         catch (Exception exception)
         {
             LocalDiagnostics.Write($"peer_start_failed_{exception.GetType().Name}");
-            viewModel.SyncStatus = "Peer endpoint failed to start; sync is off this session.";
+            viewModel.PeerOnline = false;
+            viewModel.SyncStatus = "对端服务未能启动，本次会话同步关闭。";
             peerEndpointUnavailable = true;
         }
+    }
+
+    /// <summary>Groups the hex fingerprint by four, eight groups per line — humans compare groups, not character streams.</summary>
+    private static string FormatFingerprint(string hex)
+    {
+        var upper = hex.ToUpperInvariant();
+        var groups = Enumerable.Range(0, upper.Length / 4)
+            .Select(i => upper.Substring(i * 4, 4));
+        return string.Join('\n', groups.Chunk(8).Select(line => string.Join(' ', line)));
     }
 
     /// <summary>PairingJson caps display names at 64 characters; machine names fit far below that.</summary>

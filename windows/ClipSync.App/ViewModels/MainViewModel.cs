@@ -39,7 +39,18 @@ public partial class MainViewModel(
     private string extraBindAddresses = string.Empty;
 
     [ObservableProperty]
-    private string syncStatus = "Peer endpoint not running";
+    private string syncStatus = "对端服务尚未启动";
+
+    /// <summary>True while the peer endpoint is listening; drives the conduit page's network segment.</summary>
+    [ObservableProperty]
+    private bool peerOnline;
+
+    [ObservableProperty]
+    private int peerPort;
+
+    /// <summary>Local certificate fingerprint, pre-formatted in groups of four for human comparison.</summary>
+    [ObservableProperty]
+    private string localFingerprint = string.Empty;
 
     [ObservableProperty]
     private PairedDeviceViewModel? selectedDevice;
@@ -110,6 +121,24 @@ public partial class MainViewModel(
         capturePolicy.SuppressNextWrite(SelectedItem.Text, DateTimeOffset.UtcNow);
         clipboardAdapter.WriteText(SelectedItem.Text);
     }
+
+    /// <summary>Copies the raw lowercase-hex fingerprint (machine-comparable form, no grouping spaces).</summary>
+    [RelayCommand(CanExecute = nameof(HasFingerprint))]
+    private void CopyFingerprint()
+    {
+        var raw = string.Concat(LocalFingerprint.Where(Uri.IsHexDigit)).ToLowerInvariant();
+        if (raw.Length == 0)
+        {
+            return;
+        }
+
+        capturePolicy.SuppressNextWrite(raw, DateTimeOffset.UtcNow);
+        clipboardAdapter.WriteText(raw);
+    }
+
+    private bool HasFingerprint() => LocalFingerprint.Length > 0;
+
+    partial void OnLocalFingerprintChanged(string value) => CopyFingerprintCommand.NotifyCanExecuteChanged();
 
     [RelayCommand(CanExecute = nameof(HasSelection))]
     private async Task DeleteSelectedAsync()
