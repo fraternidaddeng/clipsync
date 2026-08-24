@@ -624,12 +624,27 @@
                                                Text="{Binding Text}"
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="Wrap" />
-                                    <TextBlock Margin="0,6,0,0"
-                                               FontFamily="{StaticResource CsMono}"
-                                               FontSize="10.5"
-                                               Foreground="{StaticResource CsText4Brush}">
-                                        <Run Text="{Binding Source, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding CreatedAt, Mode=OneWay}" />
-                                    </TextBlock>
+                                    <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                                        <!-- 远端来源用邻家色（水蓝）注记盒；本机条目不加盒，保持安静 -->
+                                        <Border Margin="0,0,7,0"
+                                                Padding="7,1"
+                                                VerticalAlignment="Center"
+                                                Background="{StaticResource CsDev2BgBrush}"
+                                                BorderBrush="{StaticResource CsDev2LineBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="6"
+                                                Visibility="{Binding IsRemote, Converter={StaticResource BoolToVisibility}}">
+                                            <TextBlock FontSize="9"
+                                                       Foreground="{StaticResource CsDev2Brush}"
+                                                       Text="{Binding OriginLabel}" />
+                                        </Border>
+                                        <TextBlock VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource CsMono}"
+                                                   FontSize="10.5"
+                                                   Foreground="{StaticResource CsText4Brush}">
+                                            <Run Text="{Binding Source, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding CreatedAt, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -697,6 +712,10 @@
                                                                 <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
                                                                     <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
                                                                 </DataTrigger>
+                                                                <!-- 降级排最后：故障比暂停/私密更需要被看见（赭色 = 需要行动，非错误红） -->
+                                                                <DataTrigger Binding="{Binding CaptureFaulted}" Value="True">
+                                                                    <Setter Property="Stroke" Value="{StaticResource CsActBrush}" />
+                                                                </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
                                                     </Path.Style>
@@ -719,6 +738,10 @@
                                                         <Setter Property="Text" Value="私密模式 · 不留痕迹" />
                                                         <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
                                                     </DataTrigger>
+                                                    <DataTrigger Binding="{Binding CaptureFaulted}" Value="True">
+                                                        <Setter Property="Text" Value="捕获降级 · 剪贴板访问失败" />
+                                                        <Setter Property="Foreground" Value="{StaticResource CsActBrush}" />
+                                                    </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -737,6 +760,10 @@
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
                                                             <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding CaptureFaulted}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                            <Setter Property="Background" Value="{StaticResource CsActBrush}" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -775,7 +802,7 @@
                                         <TextBlock Margin="7,0,0,0" Style="{StaticResource SegName}" Text="本机服务" />
                                     </StackPanel>
                                     <TextBlock Foreground="{StaticResource CsFlowBrush}" Style="{StaticResource SegStatus}">
-                                        <Run Text="就绪 · 历史 " /><Run Text="{Binding History.Count, Mode=OneWay}" /><Run Text=" 条" />
+                                        <Run Text="就绪 · 历史 " /><Run Text="{Binding History.Count, Mode=OneWay}" /><Run Text=" 条 · 待发 " /><Run Text="{Binding OutboxPendingCount, Mode=OneWay}" />
                                     </TextBlock>
                                     <Border Height="4"
                                             Margin="0,7,0,0"
@@ -787,7 +814,9 @@
                                             Padding="0,7,0,0"
                                             BorderBrush="{StaticResource CsLineBrush}"
                                             BorderThickness="0,1,0,0">
-                                        <TextBlock Style="{StaticResource SegDetail}" Text="事件先落库，再入发件队列；断线不丢。" />
+                                        <TextBlock Style="{StaticResource SegDetail}">
+                                            <Run Text="事件先落库再入发件队列 · " /><Run Text="{Binding LastAckText, Mode=OneWay}" />
+                                        </TextBlock>
                                     </Border>
                                 </StackPanel>
                             </Border>
@@ -828,7 +857,7 @@
                                         <TextBlock.Style>
                                             <Style BasedOn="{StaticResource SegStatus}" TargetType="TextBlock" />
                                         </TextBlock.Style>
-                                        <Run Text="就绪 · 监听 :" /><Run Text="{Binding PeerPort, Mode=OneWay}" />
+                                        <Run Text="就绪 · 监听 :" /><Run Text="{Binding PeerPort, Mode=OneWay}" /><Run Text=" · 已连 " /><Run Text="{Binding ConnectedDeviceCount, Mode=OneWay}" /><Run Text=" 台" />
                                     </TextBlock>
                                     <TextBlock Text="未启动 · 同步关闭">
                                         <TextBlock.Style>

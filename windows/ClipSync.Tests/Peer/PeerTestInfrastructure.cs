@@ -225,8 +225,16 @@ public sealed class PeerPair : IAsyncDisposable
                 committed.AddRange(batch);
             }
         };
+        var readyPeers = new List<string>();
+        engine.SessionReady += peerId =>
+        {
+            lock (readyPeers)
+            {
+                readyPeers.Add(peerId);
+            }
+        };
         var run = engine.RunAsync(transport, CancellationToken.None);
-        var session = new DialedSession(engine, run, committed);
+        var session = new DialedSession(engine, run, committed, readyPeers);
         sessions.Add(session);
         return session;
     }
@@ -279,7 +287,8 @@ public sealed class PeerPair : IAsyncDisposable
 public sealed record DialedSession(
     SyncSessionEngine Engine,
     Task<SyncSessionResult> Run,
-    List<RemoteClipApplied> Committed)
+    List<RemoteClipApplied> Committed,
+    List<string> ReadyPeers)
 {
     public async Task<SyncSessionResult> CloseAsync()
     {

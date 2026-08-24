@@ -284,6 +284,41 @@ public sealed class SqliteSyncStoreTests
     }
 
     [Fact]
+    public async Task OutboxStatusTracksQueueDepthAndLastAck()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+
+        var empty = await store.GetOutboxStatusAsync();
+        Assert.Equal(0, empty.PendingCount);
+        Assert.Null(empty.LastPeerAckAt);
+
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+        await store.StoreAsync(Content("one", BaseTime));
+        await store.StoreAsync(Content("two", BaseTime.AddSeconds(1)));
+
+        var queued = await store.GetOutboxStatusAsync();
+        Assert.Equal(2, queued.PendingCount);
+        Assert.Null(queued.LastPeerAckAt);
+
+        // Announced-but-unacked rows still count: no peer has confirmed them yet.
+        var batch = await store.GetOutboxBatchAsync(PhoneDeviceId, 10);
+        await store.MarkOutboxAnnouncedAsync(new[] { batch[0].Entry.Id });
+        Assert.Equal(2, (await store.GetOutboxStatusAsync()).PendingCount);
+
+        var ackTime = BaseTime.AddSeconds(5);
+        await store.ApplyPeerAckRangesAsync(
+            PhoneDeviceId,
+            new[] { new OriginSequenceRanges(LocalDeviceId, new[] { new SequenceRange(1, 1) }) },
+            ackTime);
+
+        var acked = await store.GetOutboxStatusAsync();
+        Assert.Equal(1, acked.PendingCount);
+        Assert.NotNull(acked.LastPeerAckAt);
+        Assert.Equal(ackTime.ToUnixTimeMilliseconds(), acked.LastPeerAckAt.Value.ToUnixTimeMilliseconds());
+    }
+
+    [Fact]
     public async Task RenameDeviceChangesOnlyTheDisplayName()
     {
         await using var database = new TemporaryDatabase();
