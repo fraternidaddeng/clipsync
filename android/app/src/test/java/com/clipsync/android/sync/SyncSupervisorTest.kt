@@ -27,9 +27,16 @@ class SyncSupervisorTest {
         var behavior: (String) -> SyncTransport,
     ) : SyncConnector {
         val calls = mutableListOf<String>()
+        val versions = mutableListOf<Int>()
 
-        override suspend fun connect(host: String, port: Int, certSha256: String): SyncTransport {
+        override suspend fun connect(
+            host: String,
+            port: Int,
+            certSha256: String,
+            protocolVersion: Int,
+        ): SyncTransport {
             calls.add(host)
+            versions.add(protocolVersion)
             return behavior(host)
         }
     }
