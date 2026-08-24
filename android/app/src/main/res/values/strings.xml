@@ -12,6 +12,7 @@
     <string name="notification_inbox_title">来自电脑的新文本</string>
     <string name="notification_inbox_text">点按“复制”即可放入剪贴板</string>
     <string name="notification_action_copy">复制</string>
+    <string name="notification_applied_text">已自动写入剪贴板</string>
 
     <!-- 发送结果提示 -->
     <string name="toast_share_enqueued">已加入发送队列，联机后同步到电脑</string>
