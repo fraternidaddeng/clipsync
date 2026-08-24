@@ -7,6 +7,7 @@ import com.clipsync.android.pairing.PairingDocumentKinds
 import com.clipsync.android.pairing.PairingQrPayload
 import com.clipsync.android.pairing.PairingStore
 import java.io.IOException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
@@ -19,6 +20,7 @@ private const val PEER_ID = "11111111-1111-4111-8111-111111111111"
 private const val HOST_A = "192.168.1.23"
 private const val HOST_B = "10.0.11.7"
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SyncSupervisorTest {
     private class ScriptedConnector(
         var behavior: (String) -> SyncTransport,

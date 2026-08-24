@@ -146,7 +146,8 @@ class ClipboardSyncService : Service() {
             is SyncConnectionState.NotPaired -> STATE_NOT_PAIRED
         }
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(NOTIFICATION_ID, notification(text))
+        // POST_NOTIFICATIONS may be revoked on API 33+; the service keeps running regardless.
+        runCatching { manager.notify(NOTIFICATION_ID, notification(text)) }
     }
 
     private fun notification(text: String): Notification =

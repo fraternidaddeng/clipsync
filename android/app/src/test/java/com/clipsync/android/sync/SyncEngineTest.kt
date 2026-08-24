@@ -3,7 +3,9 @@ package com.clipsync.android.sync
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -442,10 +444,10 @@ class SyncEngineTest {
     }
 }
 
-private fun kotlinx.coroutines.CoroutineScope.launchEngine(
+private fun CoroutineScope.launchEngine(
     engine: SyncEngine,
     transport: SyncTransport,
     result: CompletableDeferred<SyncSessionResult>,
-) = kotlinx.coroutines.launch {
+) = launch {
     result.complete(engine.run(transport))
 }
