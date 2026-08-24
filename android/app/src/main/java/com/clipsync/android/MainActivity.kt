@@ -26,6 +26,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,10 +48,12 @@ import com.clipsync.android.pairing.PairingConfirmClient
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.sync.ClipboardSyncService
 import com.clipsync.android.ui.HealthScreen
 import com.clipsync.android.ui.HealthScreenState
 import com.clipsync.android.ui.home.HomeScreen
 import com.clipsync.android.ui.pairing.PairingScreen
+import com.clipsync.android.ui.pairing.PairingUiState
 import com.clipsync.android.ui.pairing.PairingViewModel
 import com.clipsync.android.ui.prefs.PreferencesScreen
 import com.clipsync.android.ui.theme.ClipSyncIcons
@@ -61,6 +66,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val pairingStore = PairingStore(SharedPrefsKeyValueStore(this), KeystoreSecretProtector())
+        if (pairingStore.peer() != null) {
+            ClipboardSyncService.start(this)
+        }
         setContent {
             ClipSyncTheme {
                 val pairingViewModel: PairingViewModel = viewModel(
@@ -70,6 +78,7 @@ class MainActivity : ComponentActivity() {
                         localNameFallback = deviceLabel(),
                     ),
                 )
+                SyncServiceController(pairingViewModel)
                 ClipSyncApp(pairingViewModel)
             }
         }
@@ -84,6 +93,23 @@ class MainActivity : ComponentActivity() {
             "$manufacturer $model".trim()
         }
         return label.ifBlank { "Android phone" }
+    }
+}
+
+/** Starts the sync foreground service once paired and stops it when the pairing is forgotten. */
+@Composable
+private fun SyncServiceController(pairingViewModel: PairingViewModel) {
+    val context = LocalContext.current
+    val pairingState by pairingViewModel.state.collectAsState()
+    LaunchedEffect(pairingState) {
+        when (val state = pairingState) {
+            is PairingUiState.Paired -> ClipboardSyncService.start(context)
+            is PairingUiState.Idle ->
+                if (state.pairedPeer == null) {
+                    ClipboardSyncService.stop(context)
+                }
+            else -> Unit
+        }
     }
 }
 

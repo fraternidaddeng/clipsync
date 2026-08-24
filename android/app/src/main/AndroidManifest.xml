@@ -5,6 +5,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- QR scanning only; pairing also works by pasting the payload without camera access. -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- The sync session to the paired Windows peer runs as a connectedDevice foreground service. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <!-- API 34+ prerequisite for the connectedDevice type on LAN (Wi-Fi) peers. -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <!-- The persistent "ClipSync 已连接" status notification on API 33+. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -24,6 +31,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".sync.ClipboardSyncService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
     </application>
 
 </manifest>
