@@ -7,6 +7,10 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -40,12 +44,15 @@ import kotlinx.coroutines.launch
  * Room-backed [ClipSyncRepository] persists everything, share-sheet/tile entries land through
  * [SyncServices] and are drained into the store here, and committed remote clips flow out
  * through [InboxDelivery]: inbox first, then auto-apply to the system clipboard when the
- * auto_apply_remote preference is on.
+ * auto_apply_remote preference is on. A [ConnectivityManager] network callback nudges the
+ * supervisor when a network comes up so reconnects do not wait out the full backoff.
  */
 class ClipboardSyncService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val syncNudges = Channel<Unit>(Channel.CONFLATED)
     private var started = false
+    private var supervisor: SyncSupervisor? = null
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -78,6 +85,7 @@ class ClipboardSyncService : Service() {
     }
 
     override fun onDestroy() {
+        unregisterNetworkCallback()
         mutableServiceRunning.value = false
         mutableConnectionStates.value = SyncConnectionState.NotPaired
         scope.cancel()
@@ -128,6 +136,10 @@ class ClipboardSyncService : Service() {
             // Pause/private stop outbound announces immediately; re-read every drain tick.
             outboundAllowed = { !settings.syncPaused && !settings.privateMode },
         )
+        this.supervisor = supervisor
+        // Network-available events cut the reconnect backoff short (plan: "网络恢复后立即触发
+        // 一次重连") instead of letting a fresh link sit out a wait that can reach 60 s.
+        registerNetworkCallback()
         scope.launch { supervisor.run() }
         scope.launch {
             supervisor.state.collect { state ->
@@ -170,6 +182,33 @@ class ClipboardSyncService : Service() {
             // forever, matching the enqueue-side rules that should have rejected them already.
             SyncServices.outbox.remove(entry.eventId)
         }
+    }
+
+    /**
+     * Watches for any network that offers internet and nudges the supervisor when one appears,
+     * so reconnects happen at network-recovery time rather than after the remaining backoff.
+     * Registration failures (e.g. an OEM's callback quota) are tolerated: the supervisor's
+     * normal backoff still reconnects on its own, just without the early trigger.
+     */
+    private fun registerNetworkCallback() {
+        val manager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val request = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                supervisor?.nudgeReconnect()
+            }
+        }
+        runCatching { manager.registerNetworkCallback(request, callback) }
+            .onSuccess { networkCallback = callback }
+    }
+
+    private fun unregisterNetworkCallback() {
+        val callback = networkCallback ?: return
+        networkCallback = null
+        val manager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        runCatching { manager.unregisterNetworkCallback(callback) }
     }
 
     private fun sourceLabel(source: ClipSource): String = when (source) {

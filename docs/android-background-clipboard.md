@@ -56,6 +56,14 @@ Android 10 起，后台应用通常不能读取剪贴板；当前有焦点的应
 - 安装、升级、重启、权限撤销和 ROM 策略变化后重新 probe。
 - 网络状态、进程/服务状态、后台读取状态和后台写回状态必须分别展示。
 
+## 进程死亡与恢复
+
+同步前台服务对进程死亡的恢复契约（plan 5.2）：
+
+- **`START_STICKY` 仅作为补充**：`ClipboardSyncService.onStartCommand` 只在前台提升成功后返回 `START_STICKY`，让系统在内存回收杀进程后择机重建服务。前台提升被系统拒绝（如 OEM 的 FGS-from-background 策略）时返回 `START_NOT_STICKY`、停止服务并发出“需要恢复”通知——不崩溃、不进入粘性重启循环、不伪造在线状态。
+- **可靠状态只在 Room**：来源序号、outbox、ack cursor 全部落库，服务不依赖任何内存队列。粘性重启后 `launchSyncStack` 从零重建整个栈（`SyncSupervisor`、网络回调、retention 清理循环），启动时的 outbox drain 追平服务不在期间排队的分享/磁贴条目；网络恢复触发的立即重连回调也随之重新注册。
+- **单一数据库句柄**：进程内唯一的 Room 句柄由 `SyncStore` 单例持有并懒加载。服务侧 `ClipboardSyncService.repositoryProvider` 构建的 `RoomSyncRepository` 包装 `SyncStore.repository()`，UI 侧（`MainActivity` 的历史 gateway 与 retention 清理）同样只经 `SyncStore.repository()` 取句柄；进程重建后由第一个调用方重新创建，之后全进程共享。Room 的 invalidation tracker 只通知注册在同一实例上的观察者，第二个句柄会让历史界面看不到引擎的写入——因此生产代码禁止直接调用 `ClipSyncDatabase.build`（仅 `SyncStore` 内部与测试可用）。已审计：当前生产代码中 `ClipSyncDatabase.build` / `Room.databaseBuilder` 均只有 `SyncStore`（经 `ClipSyncDatabase`）这一条路径，无重复句柄。
+
 ## 已知 ROM 差异（待验证）
 
 以下均为待测假设，而不是兼容声明：

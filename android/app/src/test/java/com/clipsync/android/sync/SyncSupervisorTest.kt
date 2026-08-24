@@ -33,6 +33,20 @@ class SyncSupervisorTest {
         }
     }
 
+    /**
+     * A socket that connects and is gone before the handshake: the engine sees an immediate
+     * Closed frame and the session ends unauthenticated — the weak-network flap shape.
+     */
+    private class InstantDropTransport : SyncTransport {
+        override suspend fun receive(): TransportFrame = TransportFrame.Closed
+
+        override suspend fun send(text: String) = Unit
+
+        override suspend fun close(code: Int, reason: String) = Unit
+
+        override fun dispose() = Unit
+    }
+
     private fun pairedStore(): PairingStore {
         val store = PairingStore(FakeKeyValueStore(), FakeSecretProtector())
         store.savePeer(
@@ -124,5 +138,121 @@ class SyncSupervisorTest {
         runCurrent()
         assertEquals(listOf(HOST_A), connector.calls)
         assertTrue(supervisor.state.value is SyncConnectionState.WaitingRetry)
+    }
+
+    @Test
+    fun `rapid connect then disconnect cycles keep growing the backoff`() = runTest {
+        // Weak-network flap: the dial succeeds, then the socket dies before authentication.
+        // The unauthenticated session must not reset the schedule, or a flapping link would
+        // turn the reconnect loop into a tight dial loop.
+        val pairing = pairedStore()
+        val connector = ScriptedConnector { InstantDropTransport() }
+        val supervisor = SyncSupervisor(
+            pairing = pairing,
+            repository = InMemorySyncRepository(pairing.localDeviceId()),
+            connector = connector,
+            clientVersion = "0.1.0",
+            backoff = backoffWithoutJitter(),
+        )
+        backgroundScope.launch { supervisor.run() }
+
+        runCurrent()
+        assertEquals(listOf(HOST_A), connector.calls)
+        assertEquals(SyncConnectionState.WaitingRetry(0, 1_000), supervisor.state.value)
+
+        advanceTimeBy(1_001)
+        runCurrent()
+        assertEquals(listOf(HOST_A, HOST_A), connector.calls)
+        assertEquals(SyncConnectionState.WaitingRetry(1, 2_000), supervisor.state.value)
+
+        advanceTimeBy(2_001)
+        runCurrent()
+        assertEquals(listOf(HOST_A, HOST_A, HOST_A), connector.calls)
+        assertEquals(SyncConnectionState.WaitingRetry(2, 4_000), supervisor.state.value)
+    }
+
+    @Test
+    fun `a network nudge dials immediately without resetting the schedule`() = runTest {
+        val pairing = pairedStore()
+        val connector = ScriptedConnector { throw IOException("refused") }
+        val supervisor = SyncSupervisor(
+            pairing = pairing,
+            repository = InMemorySyncRepository(pairing.localDeviceId()),
+            connector = connector,
+            clientVersion = "0.1.0",
+            backoff = backoffWithoutJitter(),
+        )
+        backgroundScope.launch { supervisor.run() }
+
+        runCurrent()
+        assertEquals(listOf(HOST_A, HOST_B), connector.calls)
+        assertEquals(SyncConnectionState.WaitingRetry(0, 1_000), supervisor.state.value)
+
+        // Network came back: the wait is cut short with no virtual time passing at all...
+        supervisor.nudgeReconnect()
+        runCurrent()
+        assertEquals(listOf(HOST_A, HOST_B, HOST_A, HOST_B), connector.calls)
+        // ...but the failed dial still advanced the schedule instead of restarting it.
+        assertEquals(SyncConnectionState.WaitingRetry(1, 2_000), supervisor.state.value)
+
+        supervisor.nudgeReconnect()
+        runCurrent()
+        assertEquals(6, connector.calls.size)
+        assertEquals(SyncConnectionState.WaitingRetry(2, 4_000), supervisor.state.value)
+
+        // The plain timer path still works after nudges.
+        advanceTimeBy(4_001)
+        runCurrent()
+        assertEquals(8, connector.calls.size)
+        assertEquals(SyncConnectionState.WaitingRetry(3, 8_000), supervisor.state.value)
+    }
+
+    @Test
+    fun `a nudge from before the wait began is drained rather than banked`() = runTest {
+        val pairing = pairedStore()
+        val connector = ScriptedConnector { throw IOException("refused") }
+        val supervisor = SyncSupervisor(
+            pairing = pairing,
+            repository = InMemorySyncRepository(pairing.localDeviceId()),
+            connector = connector,
+            clientVersion = "0.1.0",
+            backoff = backoffWithoutJitter(),
+        )
+        backgroundScope.launch { supervisor.run() }
+        // The network event fires before the loop reaches its first wait: the dial that is
+        // about to fail already sees that network, so the stale nudge must not skip the wait.
+        supervisor.nudgeReconnect()
+
+        runCurrent()
+        assertEquals(listOf(HOST_A, HOST_B), connector.calls)
+        assertEquals(SyncConnectionState.WaitingRetry(0, 1_000), supervisor.state.value)
+
+        advanceTimeBy(999)
+        runCurrent()
+        assertEquals(listOf(HOST_A, HOST_B), connector.calls)
+
+        advanceTimeBy(2)
+        runCurrent()
+        assertEquals(listOf(HOST_A, HOST_B, HOST_A, HOST_B), connector.calls)
+    }
+
+    @Test
+    fun `a nudge while unpaired never dials`() = runTest {
+        val connector = ScriptedConnector { throw IOException("unused") }
+        val supervisor = SyncSupervisor(
+            pairing = PairingStore(FakeKeyValueStore(), FakeSecretProtector()),
+            repository = InMemorySyncRepository("22222222-2222-4222-8222-222222222222"),
+            connector = connector,
+            clientVersion = "0.1.0",
+            backoff = backoffWithoutJitter(),
+        )
+        backgroundScope.launch { supervisor.run() }
+
+        runCurrent()
+        supervisor.nudgeReconnect()
+        advanceTimeBy(60_000)
+        runCurrent()
+        assertEquals(SyncConnectionState.NotPaired, supervisor.state.value)
+        assertTrue(connector.calls.isEmpty())
     }
 }

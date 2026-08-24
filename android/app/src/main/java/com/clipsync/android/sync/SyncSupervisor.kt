@@ -4,12 +4,14 @@ import com.clipsync.android.pairing.PairingStore
 import java.io.IOException
 import kotlin.math.min
 import kotlin.random.Random
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withTimeoutOrNull
 
 /** Deterministically testable exponential backoff with bounded jitter. */
 class ReconnectBackoff(
@@ -49,7 +51,8 @@ sealed interface SyncConnectionState {
  * Owns the reconnect loop: reads the paired peer, dials each pairing host in preference order,
  * runs one [SyncEngine] session, and retries with exponential backoff. A session that reached
  * mutual authentication resets the backoff; a certificate pin mismatch never fails over to the
- * next host because a changed certificate must block, not be retried around.
+ * next host because a changed certificate must block, not be retried around. A network-available
+ * signal ([nudgeReconnect]) cuts the current wait short without resetting the schedule.
  */
 class SyncSupervisor(
     private val pairing: PairingStore,
@@ -65,7 +68,21 @@ class SyncSupervisor(
 ) {
     private val mutableState = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)
 
+    // Conflated so a burst of network-available callbacks collapses into one early retry.
+    private val reconnectNudges = Channel<Unit>(Channel.CONFLATED)
+
     val state: StateFlow<SyncConnectionState> = mutableState.asStateFlow()
+
+    /**
+     * Asks the loop to skip the remainder of the current backoff wait and dial now. Called when
+     * the platform reports a network became available, so a link that just came up is tried
+     * immediately instead of sitting out the rest of a wait that can reach 60 s. The attempt
+     * counter is deliberately not reset: a flapping network still faces growing delays between
+     * failed dials, and only a session that reached mutual authentication restarts the schedule.
+     */
+    fun nudgeReconnect() {
+        reconnectNudges.trySend(Unit)
+    }
 
     /** Runs until the calling coroutine is cancelled (the foreground service scope). */
     suspend fun run() {
@@ -138,9 +155,12 @@ class SyncSupervisor(
     }
 
     private suspend fun waitBeforeRetry(attempt: Int): Int {
+        // A nudge that arrived while connecting/connected reported a network the attempt that
+        // just failed already saw; drain it so only events during this wait cut it short.
+        reconnectNudges.tryReceive()
         val delayMs = backoff.nextDelayMs(attempt)
         mutableState.value = SyncConnectionState.WaitingRetry(attempt, delayMs)
-        delay(delayMs)
+        withTimeoutOrNull(delayMs) { reconnectNudges.receive() }
         return attempt + 1
     }
 }
