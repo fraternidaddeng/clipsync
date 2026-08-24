@@ -9,6 +9,7 @@
 | 套件 | 命令 | 运行环境 | 当前规模 |
 |---|---|---|---|
 | Android JVM 单元/集成测试 | `cd android && ./gradlew testDebugUnitTest` | 任意装有 JDK 17+ 与 Android SDK 的机器（无需模拟器/设备；Robolectric 提供 Android 框架） | 496 个用例 |
+| Android 仪器化测试（androidTest） | `cd android && ./gradlew connectedDebugAndroidTest` | 已连接的 Android 设备或模拟器（API 29+；CI 上需要可用的 KVM）。Room 1→2 迁移、DAO 真 SQLite、前台服务启停冒烟；执行记录与嵌套 KVM 失败的绕行见 `docs/android-instrumentation-test-report.md` | 6 个用例（迁移 2 + DAO 3 + FGS 1） |
 | Windows 核心/对端测试 | `cd windows && dotnet test ClipSync.Tests/ClipSync.Tests.csproj` | 任意 .NET 8 平台（Linux/macOS/Windows；真实 Kestrel + TLS + WebSocket 回环） | 378 个用例 |
 | Windows 应用层测试 | `cd windows && dotnet test ClipSync.App.Tests/ClipSync.App.Tests.csproj` | 仅 Windows（WPF/DPAPI/Win32 剪贴板；CI 的 `windows-latest` 作业执行） | 59 个测试方法 |
 | 协议 fixture 校验 | `python3 scripts/validate-protocol.py` 或 `scripts/validate-protocol.ps1` | 任意平台 | v1：12 valid + 37 invalid；v2：15 valid + 15 invalid；配对：5 valid + 7 invalid |
