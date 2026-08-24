@@ -106,10 +106,13 @@ object SyncNotifications {
         )
         val notification = NotificationCompat.Builder(context, CHANNEL_INBOX)
             .setSmallIcon(R.drawable.ic_notify_clip)
+            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
             .setContentTitle(context.getString(R.string.notification_inbox_title))
             .setContentText(context.getString(R.string.notification_applied_text))
             .setContentIntent(openApp)
             .setAutoCancel(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
             .build()
         return try {
             manager.notify(requestCode, notification)

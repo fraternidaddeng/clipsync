@@ -46,7 +46,7 @@
 
 | 差距 | 现状 | 需要做 |
 |---|---|---|
-| Win10 下自绘 chrome 表现 | `GlassFrameThickness=-1` 在 Win11 有圆角+投影；Win10 直角待实机核验 | 实机核验；必要时按系统版本回退 |
+| Win10 下自绘 chrome 表现 | `GlassFrameThickness=-1` 在 Win11 有圆角+投影；Win10 直角待实机核验；配对两窗 `SizeToContent=Height` 与 WindowChrome 组合的首次布局也需实机确认无底部空隙 | 实机核验；必要时按系统版本回退 |
 | MIUI 通知表现 | `setColor`/折线小图标在 MIUI 会被二次改写（纲领 5.8 预期内） | 实机核验 Redmi；不达标则接受系统绘制 |
 | 夜间设备色 | 藕紫 305 / 灰粉 335 的夜值仍未实机核验（纲领 §六 遗留） | 实机比对后修 `tokens.md` |
 | 高 DPI 的 QR 整数缩放 | `pixelsPerModule=8` 固定；150% 缩放下模块非整像素 | 按 DPI 取整 `pixelsPerModule` |

@@ -391,7 +391,7 @@ private fun ScannerFrame(onResult: (String) -> Unit) {
                 val path = Path().apply {
                     moveTo(ox, oy + sy * leg)
                     lineTo(ox, oy + sy * radius)
-                    quadraticBezierTo(ox, oy, ox + sx * radius, oy)
+                    quadraticTo(ox, oy, ox + sx * radius, oy)
                     lineTo(ox + sx * leg, oy)
                 }
                 drawPath(path, color = c.flow, style = stroke)
