@@ -67,6 +67,48 @@ public sealed class PeerSyncIntegrationTests
     }
 
     [Fact]
+    public async Task ServerTracksConnectedDevicesAndRaisesSessionsChanged()
+    {
+        await using var pair = await PeerPair.CreateAsync();
+        var changes = 0;
+        pair.Server.SessionsChanged += () => Interlocked.Increment(ref changes);
+
+        Assert.Equal(0, pair.Server.ConnectedDeviceCount);
+        Assert.Empty(pair.Server.ConnectedDeviceIds);
+
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ConnectedDeviceCount == 1));
+        Assert.Equal([PeerPair.AndroidDeviceId], pair.Server.ConnectedDeviceIds);
+        Assert.True(Volatile.Read(ref changes) >= 1);
+
+        await session.CloseAsync();
+        await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ConnectedDeviceCount == 0));
+        Assert.True(Volatile.Read(ref changes) >= 2);
+    }
+
+    [Fact]
+    public async Task DialerRaisesSessionReadyWithThePeerDeviceId()
+    {
+        await using var pair = await PeerPair.CreateAsync();
+
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(() =>
+        {
+            lock (session.ReadyPeers)
+            {
+                return Task.FromResult(session.ReadyPeers.Count > 0);
+            }
+        });
+        lock (session.ReadyPeers)
+        {
+            Assert.Equal([PeerPair.WindowsDeviceId], session.ReadyPeers);
+        }
+
+        Assert.True(session.Engine.IsReady);
+        await session.CloseAsync();
+    }
+
+    [Fact]
     public async Task WrongSecretFailsAuthAndRepeatsGetThrottled()
     {
         await using var pair = await PeerPair.CreateAsync(useDifferentAndroidSecret: true);

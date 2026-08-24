@@ -88,7 +88,7 @@ class ClipboardAccessCoordinatorTest {
     }
 
     @Test
-    fun `probe reports every backend in ladder order without starting anything`() {
+    fun `probeAll reports every backend in ladder order without starting anything`() {
         val calls = mutableListOf<String>()
         val shizuku = FakeBackgroundClipboardBackend(
             mode = ClipboardReadMode.SHIZUKU_EVENT,
@@ -109,7 +109,7 @@ class ClipboardAccessCoordinatorTest {
         )
         val coordinator = ClipboardAccessCoordinator(listOf(foreground, shizuku, overlay))
 
-        val reports = coordinator.probe()
+        val reports = coordinator.probeAll()
 
         assertEquals(
             listOf(
@@ -169,5 +169,87 @@ class ClipboardAccessCoordinatorTest {
         assertEquals(ClipboardReadMode.SHIZUKU_EVENT, state.activeReadMode)
         assertEquals("SHIZUKU_DISCONNECTED", state.lastErrorCode)
         assertEquals(50L, state.lastHealthAtEpochMillis)
+    }
+
+    @Test
+    fun `probe returns null when no backends are registered`() {
+        assertNull(ClipboardAccessCoordinator(emptyList()).probe())
+    }
+
+    @Test
+    fun `probe returns the most capable report without starting anything`() {
+        val calls = mutableListOf<String>()
+        val shizuku = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            report = FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.UNAVAILABLE,
+                errorCode = "SHIZUKU_NOT_RUNNING",
+            ),
+            callLog = calls,
+        )
+        val overlay = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.OVERLAY_POLLING,
+            report = FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.OVERLAY_POLLING,
+                state = CapabilityState.DEGRADED,
+            ),
+            callLog = calls,
+        )
+        val foreground = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.FOREGROUND_ONLY,
+            callLog = calls,
+        )
+
+        val report = ClipboardAccessCoordinator(listOf(shizuku, overlay, foreground)).probe()
+
+        // READY beats the earlier DEGRADED and UNAVAILABLE reports.
+        assertEquals(ClipboardReadMode.FOREGROUND_ONLY, report?.readMode)
+        assertEquals(CapabilityState.READY, report?.readState)
+        assertEquals(
+            listOf("SHIZUKU_EVENT.probe", "OVERLAY_POLLING.probe", "FOREGROUND_ONLY.probe"),
+            calls,
+        )
+    }
+
+    @Test
+    fun `probe stops at the first ready backend in fallback order`() {
+        val calls = mutableListOf<String>()
+        val shizuku = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            callLog = calls,
+        )
+        val foreground = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.FOREGROUND_ONLY,
+            callLog = calls,
+        )
+
+        val report = ClipboardAccessCoordinator(listOf(shizuku, foreground)).probe()
+
+        assertEquals(ClipboardReadMode.SHIZUKU_EVENT, report?.readMode)
+        assertEquals(listOf("SHIZUKU_EVENT.probe"), calls)
+    }
+
+    @Test
+    fun `probe prefers degraded over unavailable when nothing is ready`() {
+        val shizuku = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            report = FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.DEGRADED,
+            ),
+        )
+        val foreground = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.FOREGROUND_ONLY,
+            report = FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.FOREGROUND_ONLY,
+                state = CapabilityState.UNAVAILABLE,
+            ),
+        )
+
+        val report = ClipboardAccessCoordinator(listOf(shizuku, foreground)).probe()
+
+        assertEquals(CapabilityState.DEGRADED, report?.readState)
+        assertEquals(ClipboardReadMode.SHIZUKU_EVENT, report?.readMode)
     }
 }

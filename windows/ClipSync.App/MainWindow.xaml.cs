@@ -31,8 +31,24 @@ public partial class MainWindow : Window
         }
     }
 
-    private async void OnCaptureSettingToggled(object sender, RoutedEventArgs e) =>
+    // 改动即生效：开关在点击时保存，文本框在失焦时保存（没有「保存设置」按钮）。
+    private async void OnSettingToggled(object sender, RoutedEventArgs e) =>
         await viewModel.SaveSettingsFromUiAsync();
+
+    private async void OnSettingLostFocus(object sender, RoutedEventArgs e) =>
+        await viewModel.SaveSettingsFromUiAsync();
+
+    private async void OnRetentionMinusClicked(object sender, RoutedEventArgs e)
+    {
+        viewModel.RetentionDays = System.Math.Max(1, viewModel.RetentionDays - 1);
+        await viewModel.SaveSettingsFromUiAsync();
+    }
+
+    private async void OnRetentionPlusClicked(object sender, RoutedEventArgs e)
+    {
+        viewModel.RetentionDays = System.Math.Min(3650, viewModel.RetentionDays + 1);
+        await viewModel.SaveSettingsFromUiAsync();
+    }
 
     private void OnPairNewDeviceClicked(object sender, RoutedEventArgs e) =>
         ((App)Application.Current).ShowPairingWindow(this);

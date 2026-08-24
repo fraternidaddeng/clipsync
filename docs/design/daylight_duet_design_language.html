@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>剪剪相传 · 设计语言规范 v1 「晨曦对偶 / Daylight Duet」</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+:root{
+  --sky-base:#bce0f8; --sky-warm:#fcf4fa; --sky-mist:#eaf4fd;
+  --glass:rgba(255,255,255,.58); --glass-line:rgba(255,255,255,.95);
+  --card:rgba(255,255,255,.48); --card-hi:rgba(255,255,255,.85);
+  --t1:#12253b; --t2:#1e3a59; --t3:#567594; --t4:#8caec7;
+  --warm:#7c4467; --warm-bg:rgba(124,68,103,.08); --warm-line:rgba(124,68,103,.18);
+  --cool:#1c628a; --cool-bg:rgba(28,98,138,.08); --cool-line:rgba(28,98,138,.18);
+  --dot:#2a7c88; --danger:#b91c1c;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --shadow:0 25px 60px -12px rgba(45,85,130,.12),0 0 0 1px rgba(255,255,255,.8),inset 0 1.5px 2px rgba(255,255,255,1);
+  --shadow-1:0 8px 20px -6px rgba(45,85,130,.10),0 0 0 1px rgba(255,255,255,.7),inset 0 1px 1.5px rgba(255,255,255,.95);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+body{
+  font-family:'Plus Jakarta Sans','Noto Sans SC',sans-serif;
+  color:var(--t2);background:linear-gradient(135deg,#b0d8f6 0%,#faeef8 45%,#e8f4fd 100%);
+  min-height:100vh;padding:56px 24px 120px;position:relative;line-height:1.7;
+}
+.ambient{position:fixed;inset:-20%;z-index:0;pointer-events:none;filter:blur(65px);
+  background:
+    radial-gradient(circle at 18% 22%,rgba(165,215,252,.75) 0%,transparent 45%),
+    radial-gradient(circle at 82% 18%,rgba(253,235,248,.8) 0%,transparent 50%),
+    radial-gradient(circle at 50% 85%,rgba(232,244,253,.8) 0%,transparent 55%),
+    radial-gradient(circle at 85% 85%,rgba(255,255,255,.9) 0%,transparent 40%);
+  animation:drift 22s infinite alternate ease-in-out}
+@keyframes drift{0%{transform:scale(1) translate(0,0)}50%{transform:scale(1.04) translate(-1.5%,1.5%)}100%{transform:scale(.98) translate(1.5%,-1.5%)}}
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E")}
+.wrap{position:relative;z-index:10;max-width:1080px;margin:0 auto}
+
+.hero{text-align:center;margin-bottom:64px}
+.brand{font-family:'Noto Serif SC',serif;font-size:32px;font-weight:600;letter-spacing:.18em;color:var(--t1)}
+.hero .en{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;color:var(--t4);margin-top:10px;text-transform:uppercase}
+.hero p{max-width:600px;margin:20px auto 0;color:var(--t3);font-size:14px}
+
+section{background:var(--glass);backdrop-filter:blur(45px) saturate(170%);-webkit-backdrop-filter:blur(45px) saturate(170%);
+  border:1px solid var(--glass-line);border-radius:24px;box-shadow:var(--shadow);padding:36px 40px;margin-bottom:28px}
+h2{font-family:'Noto Serif SC',serif;font-size:19px;font-weight:600;letter-spacing:.1em;color:var(--t1);margin-bottom:6px}
+h2 .idx{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t4);letter-spacing:.1em;margin-right:12px;font-weight:400}
+.sub{font-size:13px;color:var(--t3);margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.7)}
+h3{font-size:13px;font-weight:600;color:var(--t1);margin:26px 0 12px;letter-spacing:.03em}
+p{font-size:13.5px;color:var(--t2);margin-bottom:10px}
+code{font-family:'JetBrains Mono',monospace;font-size:11.5px;background:rgba(255,255,255,.75);
+  border:1px solid rgba(255,255,255,.9);padding:1.5px 6px;border-radius:5px;color:var(--cool)}
+.law{background:rgba(255,255,255,.5);border-left:2px solid var(--cool);border-radius:0 12px 12px 0;
+  padding:14px 18px;margin:16px 0;font-size:13px}
+.law b{color:var(--t1)}
+.warn{border-left-color:var(--warm)}
+.warn b{color:var(--warm)}
+
+/* ---- 分层爆炸图 ---- */
+.stack{display:flex;flex-direction:column;gap:0;align-items:center;padding:30px 0;perspective:1400px}
+.plate{width:340px;height:56px;border-radius:14px;display:flex;align-items:center;padding:0 18px;gap:12px;
+  transform:rotateX(58deg) rotateZ(-42deg);transform-style:preserve-3d;margin:-14px 0;
+  transition:transform .5s var(--ease),margin .5s var(--ease);font-size:11px;font-weight:600;letter-spacing:.05em}
+.stack:hover .plate{margin:-4px 0}
+.plate .z{font-family:'JetBrains Mono',monospace;font-size:10px;opacity:.55;font-weight:400}
+.p0{background:linear-gradient(135deg,#b0d8f6,#faeef8);border:1px solid rgba(255,255,255,.6);color:var(--t2)}
+.p1{background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.7);color:var(--t2)}
+.p2{background:var(--glass);border:1px solid var(--glass-line);box-shadow:var(--shadow-1);color:var(--t1)}
+.p3{background:var(--card-hi);border:1px solid rgba(140,180,225,.45);box-shadow:0 12px 28px -10px rgba(45,85,130,.18);color:var(--t1)}
+.stack-note{text-align:center;font-size:12px;color:var(--t3);margin-top:18px}
+
+/* ---- 色 ---- */
+.ramp{display:flex;gap:0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.8);margin-bottom:8px}
+.swatch{flex:1;padding:18px 12px 14px;font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.5;cursor:default}
+.swatch .hex{font-weight:500;letter-spacing:.02em}
+.swatch .ok{opacity:.72;font-size:9px;margin-top:3px}
+.duet{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+.duet-card{border-radius:16px;padding:20px;border:1px solid}
+.duet-card .lab{font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:.14em;opacity:.7;margin-bottom:8px}
+.duet-card .nm{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:600;letter-spacing:.08em;margin-bottom:6px}
+.duet-card .ds{font-size:12px;opacity:.85}
+.dw{background:var(--warm-bg);border-color:var(--warm-line);color:var(--warm)}
+.dc{background:var(--cool-bg);border-color:var(--cool-line);color:var(--cool)}
+.chroma-bars{margin-top:16px}
+.cbar{display:flex;align-items:center;gap:14px;margin-bottom:7px;font-size:11.5px}
+.cbar .nm{width:120px;color:var(--t3);flex-shrink:0}
+.cbar .track{flex:1;height:7px;background:rgba(255,255,255,.6);border-radius:4px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.9)}
+.cbar .fill{height:100%;border-radius:4px}
+.cbar .val{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t4);width:42px;text-align:right}
+
+/* ---- 字 ---- */
+.voice{display:grid;grid-template-columns:88px 1fr;gap:20px;align-items:baseline;padding:16px 0;
+  border-bottom:1px solid rgba(255,255,255,.6)}
+.voice:last-child{border-bottom:none}
+.voice .who{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--t4);text-transform:uppercase}
+.voice .spec{font-size:11px;color:var(--t3);margin-top:6px;font-family:'JetBrains Mono',monospace}
+.s-serif{font-family:'Noto Serif SC',serif;font-size:21px;font-weight:600;letter-spacing:.14em;color:var(--t1)}
+.s-sans{font-family:'Plus Jakarta Sans','Noto Sans SC',sans-serif;font-size:15px;font-weight:400;color:var(--t2)}
+.s-mono{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--t3)}
+
+/* ---- 圆角嵌套 ---- */
+.radius-lab{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+.rbox{background:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.85);padding:16px;border-radius:20px}
+.rbox .inner{background:var(--cool-bg);border:1px solid var(--cool-line);height:74px;
+  display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--cool);transition:border-radius .35s var(--ease)}
+.rbox .cap{font-size:11px;margin-top:12px;text-align:center;font-weight:600}
+.ok-cap{color:var(--dot)} .bad-cap{color:var(--warm)}
+.slider-row{display:flex;align-items:center;gap:14px;margin-top:20px;font-size:12px;color:var(--t3)}
+input[type=range]{flex:1;accent-color:var(--cool);height:3px}
+
+/* ---- 双端对偶表 ---- */
+.duo{width:100%;border-collapse:separate;border-spacing:0;margin-top:8px;font-size:12.5px}
+.duo th{text-align:left;padding:11px 14px;font-size:10px;letter-spacing:.14em;color:var(--t4);
+  font-family:'JetBrains Mono',monospace;font-weight:400;text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,.8)}
+.duo td{padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.55);vertical-align:top}
+.duo tr:last-child td{border-bottom:none}
+.duo .axis{font-weight:600;color:var(--t1);width:120px}
+.duo .pc{color:var(--cool)} .duo .ph{color:var(--warm)}
+.duo .why{color:var(--t3);font-size:11.5px}
+
+/* ---- 双端并置 ---- */
+.side{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:20px;align-items:start}
+.dev{border-radius:20px;overflow:hidden;border:1px solid var(--glass-line);box-shadow:var(--shadow-1);
+  background:var(--glass);position:relative}
+.dev-amb{position:absolute;inset:0;z-index:0;filter:blur(30px);opacity:.85;animation:drift 22s infinite alternate ease-in-out}
+.amb-pc{background:radial-gradient(circle at 25% 20%,rgba(165,215,252,.9),transparent 55%),radial-gradient(circle at 80% 80%,rgba(255,255,255,.9),transparent 50%)}
+.amb-ph{background:radial-gradient(circle at 75% 18%,rgba(253,235,248,.95),transparent 55%),radial-gradient(circle at 20% 82%,rgba(232,244,253,.9),transparent 50%)}
+.dev-in{position:relative;z-index:2}
+.dev-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;
+  border-bottom:1px solid rgba(255,255,255,.7);background:rgba(255,255,255,.28)}
+.dev-nm{font-family:'Noto Serif SC',serif;font-size:13px;font-weight:600;letter-spacing:.14em;color:var(--t1)}
+.pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.8);
+  border:1px solid rgba(255,255,255,.95);padding:3px 10px;border-radius:100px;font-size:10px;font-weight:600}
+.pill.c{color:var(--cool)} .pill.w{color:var(--warm)}
+.bdot{width:5px;height:5px;border-radius:50%;animation:breathe 4s var(--ease) infinite}
+.bdot.c{background:var(--cool)} .bdot.w{background:var(--warm)}
+@keyframes breathe{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+.clip{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.45);font-size:12px;color:var(--t2);
+  transition:background .2s var(--ease)}
+.clip:hover{background:var(--card-hi)}
+.clip .meta{display:flex;align-items:center;gap:7px;margin-top:6px}
+.tag{font-size:9px;font-family:'JetBrains Mono',monospace;padding:1.5px 7px;border-radius:100px;letter-spacing:.06em}
+.tag.w{background:var(--warm-bg);color:var(--warm);border:1px solid var(--warm-line)}
+.tag.c{background:var(--cool-bg);color:var(--cool);border:1px solid var(--cool-line)}
+.ts{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--t4)}
+.dev-cap{text-align:center;font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:.16em;
+  color:var(--t4);margin-top:12px;text-transform:uppercase}
+
+/* ---- 能力矩阵 ---- */
+.mtx{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;margin-top:8px}
+.mtx th{text-align:left;padding:10px 12px;font-size:10px;letter-spacing:.12em;color:var(--t4);
+  font-family:'JetBrains Mono',monospace;font-weight:400;border-bottom:1px solid rgba(255,255,255,.8)}
+.mtx td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.55)}
+.mtx tr:last-child td{border-bottom:none}
+.yes{color:var(--dot);font-weight:600} .no{color:var(--warm);font-weight:600} .part{color:var(--t3);font-weight:600}
+.foot{text-align:center;font-size:11px;color:var(--t4);margin-top:44px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+</style>
+</head>
+<body>
+<div class="ambient"></div><div class="noise"></div>
+<div class="wrap">
+
+<div class="hero">
+  <div class="brand">晨曦对偶</div>
+  <div class="en">Daylight Duet · Design Language v1</div>
+  <p>沿着你从「沉溪」到「晨曦花瓣」的那条路继续走。深色被否掉是对的——<b>通透</b>的前提是光要能穿过去，而不是被吸收。这份规范只做一件事：把你已经调出来的直觉，固化成两端都能落地的规则。</p>
+</div>
+
+<section>
+  <h2><span class="idx">00</span>三条铁律</h2>
+  <div class="sub">如果只记住三句话，记这三句。剩下的都是它们的推论。</div>
+  <div class="law"><b>一 · 层次靠光，不靠框。</b> 深度由「明度差 + 模糊 + 高光边」制造，不由分割线和描边制造。你现有的三层阴影（外扩柔影 / 1px 白环 / 内顶高光）就是一片半透薄瓷在接光的物理模型——它应该是<b>唯一</b>的高度语汇，只允许三档强度。每加一条分割线，就少一分通透。</div>
+  <div class="law"><b>二 · 一屏之内，只有一个主角。</b> 一个实心主按钮、一处最高彩度、一个 z2 层。其余全部退成幽灵态。「杂乱」几乎从不来自元素太多，而来自<b>同级元素太多</b>。</div>
+  <div class="law"><b>三 · 双端共享的是骨，不是皮。</b> 骨＝色相关系、明度节奏、缓动曲线、圆角性格、留白比例。皮＝模糊半径、控件形状、密度。骨必须逐位相同，皮必须各自舒服。<span style="color:var(--warm)">强行让 WPF 长得像 Compose，只会两边都别扭。</span></div>
+</section>
+
+<section>
+  <h2><span class="idx">01</span>背景层次 · 四层，不多不少</h2>
+  <div class="sub">悬停展开。你现在是五层（底色渐变 / 环境光斑 / 噪点 / 壳玻璃 / 卡片玻璃）——建议压到四层。</div>
+  <div class="stack">
+    <div class="plate p3"><span class="z">z2</span>焦点卡片 · 仅悬停或展开时存在</div>
+    <div class="plate p2"><span class="z">z1</span>主容器薄瓷 · 一屏一个</div>
+    <div class="plate p1"><span class="z">z0+</span>胶片噪点 opacity .02 · 全局一张</div>
+    <div class="plate p0"><span class="z">z0</span>环境光场 · 渐变 + 光斑，永不可交互</div>
+  </div>
+  <div class="stack-note">底色渐变与环境光斑合并为一层「环境光场」——它们在视觉上本来就不可分辨，拆成两层只增加渲染成本。</div>
+  <div class="law"><b>为什么是四层：</b>人眼在单一场景里能稳定分辨的<b>半透明</b>深度层级约为 3–4 层。超过之后，每一层的 alpha 都必须调低才不至于糊成一片，结果是所有层都变弱，整体反而失去层次。这就是「层次感」和「层数」的悖论：<b>层数越多，层次越弱。</b></div>
+  <div class="law warn"><b>卡片不要再套玻璃。</b> z2 用<b>提高不透明度</b>（.48 → .85）而不是再加一次模糊来浮起。原因有二：一是视觉上「模糊套模糊」会丢掉背景纹理，通透感反而下降；二是 WPF 根本渲染不出嵌套 backdrop blur（见 §06）——这条规则让两端天然一致。</div>
+</section>
+
+<section>
+  <h2><span class="idx">02</span>色 · 一族四阶 + 一对二色</h2>
+  <div class="sub">下面的 OKLCH 值由页面实时换算，不是我手填的。</div>
+
+  <h3>文字阶梯 —— 同色相族，靠明度拉开</h3>
+  <div class="ramp" id="ramp-text"></div>
+
+  <h3>点缀二色 —— 冷暖对偶，也是设备对偶</h3>
+  <div class="duet">
+    <div class="duet-card dc"><div class="lab">COOL · WINDOWS</div><div class="nm">雾霭水青</div><div class="ds">静止的、工位的、俯视的。桌面端本体色。</div></div>
+    <div class="duet-card dw"><div class="lab">WARM · ANDROID</div><div class="nm">花蕊粉黛</div><div class="ds">贴身的、掌心的、体温的。移动端本体色。</div></div>
+  </div>
+  <div class="law"><b>这对色的关系值得说明。</b> 两者色相相距约 110°——不是 180° 的正补色。正补色是最粗暴的对比，会互相「打架」产生振动感；而 110° 左右的<b>分裂补色</b>既有足够辨识度，又保留了共同的灰度基底，这正是它读起来「高级」而非「艳丽」的原因。而且二者明度（L≈.43 / .47）和彩度（C≈.09 / .10）几乎相等——<b>等重</b>，所以谁也不压过谁。这就是「对偶」而非「主次」。</div>
+
+  <h3>彩度天花板 —— 「不杂乱」的量化定义</h3>
+  <div class="chroma-bars" id="chroma"></div>
+  <div class="law"><b>规则：背景的彩度永远不能超过压在它上面的文字。</b> 一旦背景比前景更「有色」，视线就会被背景抢走，这就是「花」「乱」的生理成因。落成数字：环境层 C ≤ .04，文字 C ≈ .05–.06，点缀 C ≈ .09–.11，且点缀<b>只允许出现在总面积 5% 以内</b>。你现在的 <code>--accent-warm-bg</code> 用 8% alpha 正是这个道理的体现——把高彩度的色相稀释成低彩度的底，色相还在，彩度降下来了。</div>
+  <div class="law warn"><b>关于红绿指示灯。</b> 你提的「PC 红 / 手机绿」这个直觉——对称的部分是对的，选色我建议换掉。三个理由：<b>一</b>，红色在状态灯语境里被「错误」占死了，拿它表示「这是电脑」会和真正的报错语义打架，而你确实有 <code>--danger:#b91c1c</code> 要用；<b>二</b>，红与绿明度接近，转成灰度几乎无差，这是最弱的一对辨识轴（也正好是最常见的色觉障碍轴）；<b>三</b>，饱和红绿会直接摧毁你花力气建立的低彩度体系——那就是你自己说的 "color noise"。<b>而你其实已经解决了这个问题</b>：production 稿里给 Android 来的剪贴项打的是 <code>source-tag-warm</code>。冷暖轴就是设备轴，它比红绿更安静、更耐看，还把红色留给了真正的错误。</div>
+</section>
+
+<section>
+  <h2><span class="idx">03</span>字 · 三个声音</h2>
+  <div class="sub">不是「三种字体」，是「三个说话的人」。这样才不会滥用。</div>
+  <div class="voice"><div><div class="who">Serif</div><div class="spec">Noto Serif SC<br>600 / +.14em</div></div>
+    <div><div class="s-serif">剪剪相传</div><p style="margin-top:8px">应用<b>自己</b>的声音。只用于品牌名、空状态的一句话、配对仪式。全应用出现不超过三处——它的力量来自稀有。</p></div></div>
+  <div class="voice"><div><div class="who">Sans</div><div class="spec">Plus Jakarta Sans<br>+ Noto Sans SC</div></div>
+    <div><div class="s-sans">用户的剪贴板内容，与一切界面文本 Interface text</div><p style="margin-top:8px"><b>内容</b>的声音。承担 95% 的文字。</p></div></div>
+  <div class="voice"><div><div class="who">Mono</div><div class="spec">JetBrains Mono<br>400 / 500</div></div>
+    <div><div class="s-mono">14:32:07 · Ctrl+Shift+V · 2.4 KB</div><p style="margin-top:8px"><b>机器</b>的声音。时间戳、快捷键、哈希、字节数、设备 ID。<span style="color:var(--warm)">绝不用于中文</span>——JetBrains Mono 无中文字形，混排会掉字回退，等宽也就失去意义。</p></div></div>
+
+  <div class="law warn"><b>这是你当前方案里最大的一个隐患，而且它是隐形的。</b> Plus Jakarta Sans <b>没有任何中文字形</b>。你的应用是中英双语（<code>values/</code> + <code>values-zh-rCN/</code>），所以界面上绝大多数中文走的是<b>系统兜底字体</b>——Windows 落到微软雅黑，Android 落到 Noto Sans CJK 或 OEM 魔改字体。结果是：拉丁文字是你精心挑的，中文是系统随便给的，<b>而且两端给的还不是同一个</b>。<br><br>你想要的「双端统一」，恰恰在占比最高的那部分文字上是断的。<b>必须显式指定并随包分发一款中文无衬线</b>。与 Jakarta 的几何人文主义气质最搭的三个候选：<b>Noto Sans SC</b>（与你已用的 Noto Serif SC 同源，字重与字面率最协调，稳）、<b>HarmonyOS Sans SC</b>（更现代、更「仪器感」，与你的高调冷调很配）、<b>思源黑体</b>（最经典，略传统）。<br><br>算总账：<b>3 个声音 × 2 套字形 = 需要显式打包 5–6 个字体文件。</b> 别指望 fallback。</div>
+</section>
+
+<section>
+  <h2><span class="idx">04</span>形 · 圆角嵌套定律</h2>
+  <div class="sub">这条最容易被忽略，也最容易造成「说不上来哪里怪」。拖动滑块看差别。</div>
+  <div class="radius-lab">
+    <div><div class="rbox" id="box-ok" style="border-radius:20px"><div class="inner" id="in-ok">内 = 外 − 内边距</div></div><div class="cap ok-cap">同心 · 两条弧线平行</div></div>
+    <div><div class="rbox" id="box-bad" style="border-radius:20px"><div class="inner" id="in-bad" style="border-radius:20px">内 = 外（错）</div></div><div class="cap bad-cap">不同心 · 角落被挤压</div></div>
+  </div>
+  <div class="slider-row"><span>外圆角</span><input type="range" id="rr" min="8" max="34" value="20"><span id="rv" style="font-family:'JetBrains Mono',monospace;color:var(--cool);width:80px">20 / 12 → 8</span></div>
+  <div class="law"><b>公式：<code>内圆角 = 外圆角 − 内边距</code>。</b> 两条弧才会同心，角落的留白才恒定。相等时内角显得过圆、被外角「挤」住；差太多时内角显得死板。这是玻璃质感 UI 里最高频的失误来源——因为半透明会把角落的几何关系放大得很明显。</div>
+  <div class="law"><b>超椭圆而非圆角。</b> 两端都用 squircle（超椭圆，指数 n≈4–5），而不是标准圆角矩形。曲率连续变化，没有圆弧接直线那个二阶不连续点，视觉上更「流体」——这正好接上你 <code>fluid_*</code> 那几稿想要的感觉。<b>双端共享指数 n，各自选半径</b>：Windows 收紧（8–14px），Android 放开（16–28px）。同一种角的「性格」，不同的尺度。iOS 用的就是这个；Compose 有 <code>RoundedPolygon</code>，WPF 需要自绘 Geometry。</div>
+  <div class="law"><b>间距只用一组数：4 / 8 / 12 / 16 / 24 / 32 / 48。</b> 不出现 10、14、18、20。约束的是「可选项数量」，不是「精度」——选项越少越难出错，节奏感自然出现。</div>
+</section>
+
+<section>
+  <h2><span class="idx">05</span>双端对偶 · 你问的「还能设计什么」</h2>
+  <div class="sub">对称的价值不在装饰，在于它把「两台设备是一个整体」这件事变成可感知的。以下按我推荐的优先级排。</div>
+  <table class="duo">
+    <tr><th>轴</th><th>Windows</th><th>Android</th><th>为什么这样分</th></tr>
+    <tr><td class="axis">① 色温</td><td class="pc">雾霭水青</td><td class="ph">花蕊粉黛</td>
+      <td class="why">已在你稿中成立。桌面＝静止/工位/冷；手机＝贴身/掌心/暖。<b>每条剪贴项带着它出生地的体温</b>——扫一眼历史就知道这段来自哪一侧，不需要读标签。</td></tr>
+    <tr><td class="axis">② 呼吸同频</td><td class="pc" colspan="2" style="text-align:center">同一条 22s 曲线，相位锁在<b>挂钟时间</b></td>
+      <td class="why">相位 = <code>(unixMillis % 22000) / 22000</code>。不需要任何网络同步，两台设备的背景光场天然同频。<b>手机放在键盘旁边时，两块屏在一起呼吸。</b>零成本，且只有你会发现——最适合私人项目的那种细节。</td></tr>
+    <tr><td class="axis">③ 状态即背景</td><td class="pc" colspan="2" style="text-align:center">连接＝光场漂移；断开＝<b>凝固并降彩度</b></td>
+      <td class="why">用整个环境层当状态指示，而不是加一个小圆点。既<b>删掉一个控件</b>（轻量化），又让状态在余光里就能感知。断线时画面「静止」的那一瞬是极强的信号，但完全不吵。</td></tr>
+    <tr><td class="axis">④ 重力方向</td><td class="pc">托盘浮窗自右下升起<br>同步出去的项<b>向下</b>淡出</td><td class="ph">列表贴底、拇指可及<br>同步出去的项<b>向上</b>淡出</td>
+      <td class="why">两端的「出口」朝向彼此。久而久之会形成一条心理管道：内容从这台沉下去，从那台浮上来。</td></tr>
+    <tr><td class="axis">⑤ 节奏</td><td class="pc">180–220ms</td><td class="ph">260–320ms</td>
+      <td class="why"><b>缓动曲线逐位相同</b>（<code>cubic-bezier(.16,1,.3,1)</code>），只有时长不同。鼠标要求精准即时，手指需要动画跟手。同一个演奏者，不同的速度。</td></tr>
+    <tr><td class="axis">⑥ 确认通道</td><td class="pc">一次视觉脉冲</td><td class="ph">一次触觉轻击</td>
+      <td class="why">两端都<b>绝不发声</b>。各自用最贴合自己身体的通道回执：桌面是眼睛，手机是手指。意图对称，媒介不同。</td></tr>
+    <tr><td class="axis">⑦ 缺省即本地</td><td class="pc" colspan="2" style="text-align:center">只给<b>对侧来的</b>剪贴项打标签，本地项不打</td>
+      <td class="why">「无标签＝此地」在两端都成立，是完美镜像的语法。同时砍掉近半数标签，直接服务于「不杂乱」。</td></tr>
+    <tr><td class="axis">⑧ 配对仪式</td><td class="pc">二维码静区带<b>冷→暖</b>渐变</td><td class="ph">扫描框带<b>暖→冷</b>渐变</td>
+      <td class="why">手机「吞下」二维码的瞬间，两个渐变正好补成完整的一环。一生只发生一两次，正因如此值得做——这是产品唯一的仪式时刻。</td></tr>
+  </table>
+  <div class="law warn"><b>不建议做的对偶：明暗分置</b>（PC 亮 / 手机暗）。理由：它会直接摧毁「同一个产品」的整体感，而这是你的首要目标。<b>替代方案</b>：两端同一套高调日光底，但手机的环境光场<b>略微压低明度、略微提高暖度</b>——同一个房间，上午十点与下午四点。是同一处光，不是两处。</div>
+</section>
+
+<section>
+  <h2><span class="idx">06</span>并置检验</h2>
+  <div class="sub">冷暖对偶 + 呼吸同频 + 缺省即本地，三条规则同时生效的样子。两个小圆点是相位锁定的。</div>
+  <div class="side">
+    <div><div class="dev"><div class="dev-amb amb-pc"></div><div class="dev-in">
+      <div class="dev-bar"><span class="dev-nm">剪剪相传</span><span class="pill c"><span class="bdot c"></span>已连接</span></div>
+      <div class="clip">https://github.com/clipsync/core<div class="meta"><span class="ts">14:32:07</span></div></div>
+      <div class="clip">验证码：849201<div class="meta"><span class="tag w">来自手机</span><span class="ts">14:28:51</span></div></div>
+      <div class="clip">pwsh .\scripts\build-windows.ps1<div class="meta"><span class="ts">14:11:03</span></div></div>
+    </div></div><div class="dev-cap">Windows · Cool</div></div>
+    <div><div class="dev"><div class="dev-amb amb-ph"></div><div class="dev-in">
+      <div class="dev-bar"><span class="dev-nm">剪剪相传</span><span class="pill w"><span class="bdot w"></span>已连接</span></div>
+      <div class="clip">验证码：849201<div class="meta"><span class="ts">14:28:51</span></div></div>
+      <div class="clip">https://github.com/clipsync/core<div class="meta"><span class="tag c">来自电脑</span><span class="ts">14:32:07</span></div></div>
+      <div class="clip">粉粉的背景，中间有细碎的绿蓝红<div class="meta"><span class="ts">13:55:20</span></div></div>
+    </div></div><div class="dev-cap">Android · Warm</div></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="idx">07</span>平台能力矩阵 · 哪些能共享，哪些必须降级</h2>
+  <div class="sub">这一节决定了上面所有想法哪些真能落地。<span style="color:var(--warm)">以下为我的既有知识，未经联网核实（搜索限流），落地前建议实机验证标注 ⚠ 的项。</span></div>
+  <table class="mtx">
+    <tr><th>能力</th><th>WPF / Windows</th><th>Compose / Android</th><th>结论</th></tr>
+    <tr><td>渐变光场</td><td class="yes">完全支持</td><td class="yes">完全支持</td><td class="yes">✅ 承重墙</td></tr>
+    <tr><td>噪点纹理</td><td class="yes">图片平铺</td><td class="yes">图片 / AGSL 着色器</td><td class="yes">✅ 承重墙</td></tr>
+    <tr><td>多层阴影 + 高光边</td><td class="yes">可叠 Border</td><td class="yes">可叠 Modifier</td><td class="yes">✅ 承重墙</td></tr>
+    <tr><td>缓动曲线</td><td class="yes">KeySpline</td><td class="yes">CubicBezierEasing</td><td class="yes">✅ 逐位一致</td></tr>
+    <tr><td>超椭圆圆角</td><td class="part">需自绘 Geometry</td><td class="yes">RoundedPolygon</td><td class="part">⚠ Win 侧要写代码</td></tr>
+    <tr><td>窗口背板模糊</td><td class="part">Mica / Acrylic（DWM）</td><td class="part">setBackgroundBlurRadius</td><td class="no">⚠ 两端都不可靠</td></tr>
+    <tr><td><b>元素级 backdrop blur</b></td><td class="no">不支持</td><td class="part">Modifier.blur，API 31+</td><td class="no">❌ 禁止依赖</td></tr>
+    <tr><td>字体随包分发</td><td class="yes">Resource</td><td class="yes">res/font</td><td class="yes">✅ 必须做</td></tr>
+  </table>
+  <div class="law warn"><b>最关键的一条。</b> WPF <b>没有</b>元素级 backdrop blur——Mica/Acrylic 由 DWM 作用于<b>窗口自身背板</b>，你无法让一张卡片模糊它下面的兄弟元素。所以 <code>clipsync_production_ui.html</code> 里「壳玻璃 + 卡片玻璃」的<b>嵌套玻璃在 WPF 里根本不可能实现</b>。<br><br>Android 侧看似能做（<code>Modifier.blur</code>，API 31+），但 <code>Window.setBackgroundBlurRadius</code> 会被系统「模糊开关」、省电模式和 OEM 策略直接关掉——<b>而你的目标机是 MIUI，恰好是最激进的那一类</b>。<br><br>所以 §01 那条「卡片不要再套玻璃，用不透明度浮起」不只是审美选择，它是<b>唯一能让两端长得一样的选择</b>。把模糊限定在<b>每端唯一的最外层窗口背板</b>上，作为渐进增强：有就更透，没有就退成不透明度更高的纯色，<b>版面一格不动</b>。这也顺带回答了「轻量化」——模糊是两个渲染管线里最贵的一项。</div>
+</section>
+
+<div class="foot">DAYLIGHT DUET · v1 · 概念稿，未接入项目代码</div>
+</div>
+
+<script>
+// sRGB → OKLCH（Björn Ottosson）
+function hex2rgb(h){h=h.replace('#','');return[0,2,4].map(i=>parseInt(h.substr(i,2),16)/255)}
+function lin(c){return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)}
+function oklch(hex){
+  let[r,g,b]=hex2rgb(hex).map(lin);
+  let l=Math.cbrt(.4122214708*r+.5363325363*g+.0514459929*b),
+      m=Math.cbrt(.2119034982*r+.6806995451*g+.1073969566*b),
+      s=Math.cbrt(.0883024619*r+.2817188376*g+.6299787005*b);
+  let L=.2104542553*l+.7936177850*m-.0040720468*s,
+      A=1.9779984951*l-2.4285922050*m+.4505937099*s,
+      B=.0259040371*l+.7827717662*m-.8086757660*s;
+  let C=Math.hypot(A,B),H=(Math.atan2(B,A)*180/Math.PI+360)%360;
+  return{L,C,H};
+}
+const fmt=o=>`L ${o.L.toFixed(2)} · C ${o.C.toFixed(3)} · H ${Math.round(o.H)}°`;
+
+// 文字阶梯
+const textRamp=[['#12253b','标题 t1'],['#1e3a59','正文 t2'],['#567594','次级 t3'],['#8caec7','极弱 t4']];
+document.getElementById('ramp-text').innerHTML=textRamp.map(([hex,nm],i)=>{
+  const o=oklch(hex);
+  return `<div class="swatch" style="background:${hex};color:${i<2?'#eaf4fd':'#12253b'}">
+    <div class="hex">${hex}</div><div class="ok">${fmt(o)}</div>
+    <div class="ok" style="margin-top:5px;opacity:.9">${nm}</div></div>`;
+}).join('');
+
+// 彩度条
+const chromaSet=[['环境光场 #bce0f8','#bce0f8'],['薄瓷容器 ~白','#f4fafe'],['正文 #1e3a59','#1e3a59'],
+                 ['冷点缀 #1c628a','#1c628a'],['暖点缀 #7c4467','#7c4467']];
+document.getElementById('chroma').innerHTML=chromaSet.map(([nm,hex])=>{
+  const o=oklch(hex),pct=Math.min(o.C/.13*100,100);
+  return `<div class="cbar"><span class="nm">${nm}</span>
+    <span class="track"><span class="fill" style="width:${pct}%;background:${hex}"></span></span>
+    <span class="val">${o.C.toFixed(3)}</span></div>`;
+}).join('');
+
+// 圆角嵌套
+const rr=document.getElementById('rr'),rv=document.getElementById('rv');
+function upd(){
+  const R=+rr.value,P=Math.round(R*.6),I=Math.max(R-P,0);
+  ['box-ok','box-bad'].forEach(id=>{const e=document.getElementById(id);e.style.borderRadius=R+'px';e.style.padding=P+'px'});
+  document.getElementById('in-ok').style.borderRadius=I+'px';
+  document.getElementById('in-bad').style.borderRadius=R+'px';
+  rv.textContent=`${R} / ${P} → ${I}`;
+}
+rr.addEventListener('input',upd);upd();
+
+// 呼吸相位锁挂钟 —— 两端天然同频的演示
+function phase(){
+  const t=(Date.now()%22000)/22000;
+  document.querySelectorAll('.dev-amb').forEach(e=>e.style.animationDelay=`-${t*22}s`);
+  document.querySelectorAll('.bdot').forEach(e=>e.style.animationDelay=`-${(Date.now()%4000)/1000}s`);
+}
+phase();
+</script>
+</body>
+</html>

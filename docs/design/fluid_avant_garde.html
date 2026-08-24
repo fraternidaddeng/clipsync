@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avant-Garde Fluid Prism · 剪剪相传</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+SC:wght@200;300;400&family=Space+Grotesk:wght@300;400;600&display=swap');
+
+        :root {
+            --bg: #05080f;
+            --prism-1: rgba(120, 220, 255, 0.7);
+            --prism-2: rgba(220, 140, 255, 0.6);
+            --prism-3: rgba(100, 255, 200, 0.5);
+            --text-pure: #ffffff;
+            --text-muted: rgba(220, 235, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Space Grotesk', 'Noto Serif SC', sans-serif;
+            color: var(--text-pure);
+            perspective: 1200px;
+        }
+
+        /* 1. 全局流体粒子与焦散引力场 Canvas */
+        #prism-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            filter: contrast(120%) brightness(110%);
+        }
+
+        /* 2. 突破常规的大胆构架：空间悬浮水银晶岛 (Liquid Crystal Island) */
+        .stage-viewport {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            transform-style: preserve-3d;
+            transition: transform 0.2s cubic-bezier(0.1, 0.8, 0.2, 1);
+        }
+
+        /* 顶端悬浮流动状态岛 (Fluid Capsule Island) */
+        .island-capsule {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.6),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4),
+                0 0 20px rgba(120, 220, 255, 0.2);
+            animation: floatIsland 6s infinite ease-in-out alternate;
+        }
+
+        .brand-text {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 14px;
+            letter-spacing: 0.35em;
+            color: #fff;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+        }
+
+        .fluid-core-orb {
+            position: relative;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fff, #6de5ff, #834dff);
+            box-shadow: 0 0 14px #6de5ff, 0 0 28px #834dff;
+            animation: coreRotate 4s linear infinite;
+        }
+
+        @keyframes coreRotate {
+            0% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
+            50% { transform: rotate(180deg) scale(1.15); filter: hue-rotate(90deg); }
+            100% { transform: rotate(360deg) scale(1); filter: hue-rotate(180deg); }
+        }
+
+        /* 3. 先锋流体棱镜主面板 (Prism Morphing Glass) */
+        .prism-board {
+            width: 480px;
+            background: linear-gradient(140deg, rgba(255, 255, 255, 0.08) 0%, rgba(200, 230, 255, 0.02) 50%, rgba(220, 160, 255, 0.04) 100%);
+            backdrop-filter: blur(50px) saturate(180%);
+            -webkit-backdrop-filter: blur(50px) saturate(180%);
+            border-radius: 40px;
+            padding: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            /* 关键：棱镜色散物理高光 (Chromatic Dispersion Rim) */
+            box-shadow: 
+                0 40px 100px rgba(0, 5, 16, 0.7),
+                inset 0 2px 2px rgba(255, 255, 255, 0.5),
+                inset 0 -2px 4px rgba(120, 200, 255, 0.2),
+                0 0 30px rgba(100, 200, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 内部流体折射彩虹折光带 (Iridescent Shimmer Band) */
+        .prism-board::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 180deg at 50% 50%, transparent 0deg, rgba(100, 220, 255, 0.06) 60deg, rgba(240, 140, 255, 0.06) 120deg, transparent 180deg);
+            animation: slowRotate 24s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes slowRotate {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 4. 先锋杂志式非对称排版 (Editorial Spatial Header) */
+        .editorial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-title-group h2 {
+            font-size: 26px;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            background: linear-gradient(120deg, #ffffff 30%, #a2dcff 70%, #dfb6ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title-group p {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.3em;
+            margin-top: 4px;
+        }
+
+        .sync-tag {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            color: #8ce6ff;
+            background: rgba(140, 230, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(140, 230, 255, 0.3);
+        }
+
+        /* 5. 突破常规的“流体有机卡片” (Viscous Morphing Cards) */
+        .cards-stream {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .organic-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 24px;
+            padding: 20px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            overflow: hidden;
+            /* 空间悬浮与水银张力形变 */
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .organic-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(180, 230, 255, 0.4);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 
+                0 15px 35px rgba(0, 15, 35, 0.5),
+                inset 0 0 20px rgba(140, 220, 255, 0.15);
+            border-radius: 28px 18px 28px 18px; /* 大胆的有机非对称形态形变 */
+        }
+
+        .card-num-watermark {
+            position: absolute;
+            right: 18px;
+            bottom: 6px;
+            font-family: 'Cinzel', serif;
+            font-size: 38px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.03);
+            pointer-events: none;
+            transition: color 0.4s ease, transform 0.4s ease;
+        }
+
+        .organic-card:hover .card-num-watermark {
+            color: rgba(140, 220, 255, 0.12);
+            transform: translateY(-4px) scale(1.08);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-source {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: #79d6ff;
+            text-transform: uppercase;
+        }
+
+        .card-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'Space Grotesk', monospace;
+        }
+
+        .card-body {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ffffff;
+            font-weight: 300;
+        }
+
+        .card-body code {
+            font-family: 'Space Grotesk', monospace;
+            background: rgba(0, 15, 30, 0.4);
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(140, 220, 255, 0.2);
+            color: #bbf0ff;
+            font-size: 13px;
+        }
+
+        /* 6. 底部艺术化数据沉淀统计 */
+        .prism-footer {
+            margin-top: 26px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-metric {
+            display: flex;
+            gap: 20px;
+        }
+
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-val {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .metric-lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .flush-action {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 18px;
+            border-radius: 100px;
+            color: #ffffff;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .flush-action:hover {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* 3D 浮动动画 */
+        @keyframes floatIsland {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-8px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 交互式棱镜折射与流体引力波 Canvas -->
+    <canvas id="prism-canvas"></canvas>
+
+    <div class="stage-viewport" id="viewport">
+
+        <!-- 悬浮微光流体状态胶囊 -->
+        <div class="island-capsule">
+            <div class="fluid-core-orb"></div>
+            <span class="brand-text">剪 剪 相 传</span>
+            <span class="sync-tag">P2P DIRECT · 0.4ms</span>
+        </div>
+
+        <!-- 先锋流体棱镜面板 -->
+        <div class="prism-board" id="board">
+            <div class="editorial-header">
+                <div class="header-title-group">
+                    <h2>Stream Memory</h2>
+                    <p>万物流转 · 静穆沉淀</p>
+                </div>
+                <div class="sync-tag">NODE: ACTIVE</div>
+            </div>
+
+            <div class="cards-stream">
+                <div class="organic-card" onclick="spawnBurst(event)">
+                    <div class="card-num-watermark">01</div>
+                    <div class="card-top">
+                        <span class="card-source">Android Inbound</span>
+                        <span class="card-time">10:52:14</span>
+                    </div>
+                    <div class="card-body">
+                        https://hyperfluid.design/spec/prismatic-glass
+                    </div>
+                </div>
+
+                <div class="organic-card" onclick="spawnBurst(event)">
+                    <div class="card-num-watermark">02</div>
+                    <div class="card-top">
+                        <span class="card-source">Snippet · Shell</span>
+                        <span class="card-time">09:14:02</span>
+                    </div>
+                    <div class="card-body">
+                        <code>cargo run --release --features=liquid-mesh</code>
+                    </div>
+                </div>
+
+                <div class="organic-card" onclick="spawnBurst(event)">
+                    <div class="card-num-watermark">03</div>
+                    <div class="card-top">
+                        <span class="card-source">Local Core</span>
+                        <span class="card-time">Yesterday</span>
+                    </div>
+                    <div class="card-body">
+                        打破常规的棱镜色散、流体引力与有机晶体拓扑
+                    </div>
+                </div>
+            </div>
+
+            <div class="prism-footer">
+                <div class="footer-metric">
+                    <div class="metric-item">
+                        <span class="metric-val">3 Items</span>
+                        <span class="metric-lbl">Buffered</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-val">100%</span>
+                        <span class="metric-lbl">Private</span>
+                    </div>
+                </div>
+                <button class="flush-action" onclick="clearStream(event)">PURGE STREAM</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 1. 流体棱镜与粒子引力场引擎 (Prismatic Fluid Gravity Field)
+        const canvas = document.getElementById('prism-canvas');
+        const ctx = canvas.getContext('2d');
+        let w, h;
+        let particles = [];
+        let bursts = [];
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let mouse = { x: w / 2, y: h / 2, vx: 0, vy: 0 };
+        let prevMouse = { x: w / 2, y: h / 2 };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.vx = e.clientX - prevMouse.x;
+            mouse.vy = e.clientY - prevMouse.y;
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            prevMouse.x = e.clientX;
+            prevMouse.y = e.clientY;
+
+            // 3D 视角跟随鼠标发生物理倾斜
+            const cx = (e.clientX - w / 2) / (w / 2);
+            const cy = (e.clientY - h / 2) / (h / 2);
+            const board = document.getElementById('board');
+            board.style.transform = `rotateY(${cx * 8}deg) rotateX(${-cy * 8}deg)`;
+        });
+
+        // 浮动光子粒子
+        class FluidPhoton {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * w;
+                this.y = Math.random() * h;
+                this.size = Math.random() * 2 + 1;
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = (Math.random() - 0.5) * 0.8;
+                this.hue = Math.random() > 0.5 ? 190 + Math.random() * 30 : 270 + Math.random() * 40;
+                this.alpha = Math.random() * 0.6 + 0.2;
+            }
+
+            update() {
+                // 受鼠标引力流体影响
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 200) {
+                    const force = (1 - dist / 200) * 0.6;
+                    this.vx += (dx / dist) * force + mouse.vx * 0.05;
+                    this.vy += (dy / dist) * force + mouse.vy * 0.05;
+                }
+
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vx *= 0.96;
+                this.vy *= 0.96;
+
+                if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 90%, 75%, ${this.alpha})`;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = `hsla(${this.hue}, 100%, 70%, 0.8)`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 70; i++) {
+            particles.push(new FluidPhoton());
+        }
+
+        // 点击产生的棱镜冲击波 (Prism Burst)
+        class PrismBurst {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.r = 0;
+                this.maxR = 260;
+                this.alpha = 0.8;
+            }
+
+            update() {
+                this.r += 4.5;
+                this.alpha = (1 - this.r / this.maxR) * 0.8;
+            }
+
+            draw() {
+                if (this.alpha <= 0) return;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(140, 230, 255, ${this.alpha})`;
+                ctx.lineWidth = 2;
+                ctx.shadowBlur = 25;
+                ctx.shadowColor = 'rgba(210, 150, 255, 0.9)';
+                ctx.stroke();
+
+                // 伴随色散外环
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r * 1.05, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(230, 140, 255, ${this.alpha * 0.5})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        function spawnBurst(e) {
+            bursts.push(new PrismBurst(e.clientX, e.clientY));
+        }
+
+        function clearStream(e) {
+            e.stopPropagation();
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    bursts.push(new PrismBurst(e.clientX, e.clientY));
+                }, i * 150);
+            }
+        }
+
+        window.addEventListener('click', (e) => {
+            bursts.push(new PrismBurst(e.clientX, e.clientY));
+        });
+
+        // 渲染主循环
+        function loop() {
+            ctx.clearRect(0, 0, w, h);
+
+            // 绘制粒子连线（微流体晶格网络）
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(140, 210, 255, ${(1 - dist / 100) * 0.15})`;
+                        ctx.lineWidth = 0.6;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // 绘制冲击波
+            for (let i = bursts.length - 1; i >= 0; i--) {
+                bursts[i].update();
+                bursts[i].draw();
+                if (bursts[i].r >= bursts[i].maxR) {
+                    bursts.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(loop);
+        }
+        loop();
+    </script>
+</body>
+</html>

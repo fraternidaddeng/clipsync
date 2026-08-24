@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-depth="rich">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>剪剪相传 · 层次修复（可切换对照）</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600&display=swap');
+
+/* ============ 日间 ============ */
+:root[data-theme="light"]{
+  --t1:#1c2733;--t2:#3d4a59;--t3:#6b7a8b;--t4:#9aa7b6;
+  --fl:#215f8f;--fl-bg:rgba(33,95,143,.10);--fl-ln:rgba(33,95,143,.24);
+  --ac:#9b6b24;--ac-bg:rgba(155,107,36,.11);--ac-ln:rgba(155,107,36,.28);
+  --grain:0,0,0;--grain-a:.030;
+}
+/* 扁平版：明度几乎不分层，全靠框 */
+:root[data-theme="light"][data-depth="flat"]{
+  --bg:#eef2f7;--bg-grad:none;
+  --sf:#fbfcfe;--sf-grad:none;
+  --sf-up:#fbfcfe;--sf-up-grad:none;
+  --sf-in:#f4f7fa;--sf3:#eaeff5;
+  --ln:#dbe2ec;--ln2:#c8d3e0;
+  --edge:none;--edge-up:none;
+  --sh-0:none;
+  --sh-1:none;
+  --sh-2:0 1px 2px rgba(28,39,51,.04),0 8px 24px -12px rgba(28,39,51,.10);
+}
+/* 富层次版：拉开明度阶差 + 三层阴影 + 面内受光渐变 */
+:root[data-theme="light"][data-depth="rich"]{
+  --bg:#e2e9f2;
+  --bg-grad:linear-gradient(178deg,#e9eff6 0%,#e2e9f2 42%,#dae3ee 100%);
+  --sf:#f6f9fc;
+  --sf-grad:linear-gradient(180deg,rgba(255,255,255,.72) 0%,rgba(255,255,255,0) 62%);
+  --sf-up:#fdfeff;
+  --sf-up-grad:linear-gradient(180deg,rgba(255,255,255,.95) 0%,rgba(255,255,255,.2) 70%);
+  --sf-in:#dde5ef;--sf3:#e7edf5;
+  --ln:#cfd9e6;--ln2:#bcc9d9;
+  --edge:inset 0 1px 0 rgba(255,255,255,.9);
+  --edge-up:inset 0 1.5px 0 rgba(255,255,255,1);
+  --sh-0:inset 0 1px 2.5px rgba(35,52,72,.07);
+  --sh-1:0 1px 1.5px rgba(35,52,72,.05),0 3px 8px -3px rgba(35,52,72,.09);
+  --sh-2:0 1px 2px rgba(35,52,72,.05),0 6px 14px -4px rgba(35,52,72,.10),0 20px 40px -16px rgba(35,52,72,.16);
+}
+/* ============ 夜间 ============ */
+:root[data-theme="dark"]{
+  --t1:#e3e9f0;--t2:#c0cad6;--t3:#8b98a8;--t4:#5f6c7c;
+  --fl:#6fa8d4;--fl-bg:rgba(111,168,212,.13);--fl-ln:rgba(111,168,212,.30);
+  --ac:#d9a15c;--ac-bg:rgba(217,161,92,.12);--ac-ln:rgba(217,161,92,.30);
+  --grain:255,255,255;--grain-a:.042;
+}
+:root[data-theme="dark"][data-depth="flat"]{
+  --bg:#11161d;--bg-grad:none;
+  --sf:#1a212b;--sf-grad:none;
+  --sf-up:#1a212b;--sf-up-grad:none;
+  --sf-in:#161d26;--sf3:#212a35;
+  --ln:#2a333f;--ln2:#3a4552;
+  --edge:none;--edge-up:none;
+  --sh-0:none;--sh-1:none;
+  --sh-2:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
+}
+:root[data-theme="dark"][data-depth="rich"]{
+  --bg:#0c1116;
+  --bg-grad:linear-gradient(178deg,#121922 0%,#0e141b 45%,#090d12 100%);
+  --sf:#1b232e;
+  --sf-grad:linear-gradient(180deg,rgba(255,255,255,.055) 0%,rgba(255,255,255,0) 65%);
+  --sf-up:#242e3b;
+  --sf-up-grad:linear-gradient(180deg,rgba(255,255,255,.085) 0%,rgba(255,255,255,.01) 72%);
+  --sf-in:#0f151c;--sf3:#1f2833;
+  --ln:#2c3744;--ln2:#3e4a59;
+  --edge:inset 0 1px 0 rgba(255,255,255,.07);
+  --edge-up:inset 0 1.5px 0 rgba(255,255,255,.11);
+  --sh-0:inset 0 1.5px 3px rgba(0,0,0,.5);
+  --sh-1:0 1px 2px rgba(0,0,0,.4),0 4px 10px -3px rgba(0,0,0,.5);
+  --sh-2:0 2px 4px rgba(0,0,0,.45),0 10px 22px -6px rgba(0,0,0,.55),0 28px 52px -18px rgba(0,0,0,.7);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+body{font-family:'Noto Sans SC',-apple-system,sans-serif;color:var(--t2);line-height:1.7;
+  padding:40px 22px 100px;background-color:var(--bg);background-image:var(--bg-grad);
+  transition:background-color .45s,color .45s;min-height:100vh}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;background-color:rgba(var(--grain),var(--grain-a));
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+  -webkit-mask-size:256px;mask-size:256px;transition:background-color .45s}
+.wrap{max-width:1080px;margin:0 auto;position:relative;z-index:2}
+.hd{text-align:center;margin-bottom:20px}
+.bd{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:600;letter-spacing:.2em;color:var(--t1)}
+.en{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.3em;color:var(--t4);margin-top:8px;text-transform:uppercase}
+.hd p{max-width:620px;margin:14px auto 0;color:var(--t3);font-size:12.5px}
+.ctl{display:flex;justify-content:center;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.cb{background-color:var(--sf);background-image:var(--sf-grad);border:1px solid var(--ln);color:var(--t3);
+  padding:7px 17px;border-radius:100px;font-size:11.5px;font-weight:500;cursor:pointer;font-family:inherit;
+  transition:all .25s;box-shadow:var(--sh-1),var(--edge)}
+.cb.on{background-color:var(--sf-up);color:var(--fl);font-weight:600;border-color:var(--fl-ln);box-shadow:var(--sh-1),var(--edge-up)}
+.big{margin-bottom:30px}
+.big .cb{padding:9px 26px;font-size:13px;font-weight:600}
+
+sect{display:block;background-color:var(--sf);background-image:var(--sf-grad);border:1px solid var(--ln);
+  border-radius:18px;box-shadow:var(--sh-2),var(--edge);padding:28px 32px;margin-bottom:22px;transition:all .45s}
+h2{font-family:'Noto Serif SC',serif;font-size:16.5px;font-weight:600;letter-spacing:.09em;color:var(--t1);margin-bottom:5px}
+h2 .ix{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t4);letter-spacing:.1em;margin-right:11px;font-weight:400}
+.sub{font-size:12.5px;color:var(--t3);margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid var(--ln)}
+p{font-size:13px;margin-bottom:9px}
+code{font-family:'JetBrains Mono',monospace;font-size:11px;background-color:var(--sf-in);border:1px solid var(--ln);
+  padding:1.5px 6px;border-radius:5px;color:var(--fl);box-shadow:var(--sh-0)}
+.law{background-color:var(--sf-in);border-left:2px solid var(--fl);border-radius:0 10px 10px 0;
+  padding:13px 16px;margin:13px 0;font-size:12.5px;box-shadow:var(--sh-0)}
+.law b{color:var(--t1)}
+.warn{border-left-color:var(--ac)}.warn b{color:var(--ac)}
+
+/* 明度阶梯演示 */
+.ramp{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:6px}
+.rc{border-radius:12px;padding:16px 12px 13px;text-align:center;border:1px solid var(--ln);transition:all .45s}
+.r0{background-color:var(--bg);background-image:var(--bg-grad);box-shadow:var(--sh-0)}
+.r1{background-color:var(--sf-in);box-shadow:var(--sh-0)}
+.r2{background-color:var(--sf);background-image:var(--sf-grad);box-shadow:var(--sh-1),var(--edge)}
+.r3{background-color:var(--sf-up);background-image:var(--sf-up-grad);box-shadow:var(--sh-2),var(--edge-up)}
+.r4{background-color:var(--fl);border-color:var(--fl);box-shadow:var(--sh-2)}
+.rn{font-size:11px;font-weight:600;color:var(--t1)}
+.r4 .rn{color:var(--sf)}
+.rd{font-size:9.5px;color:var(--t3);margin-top:4px;font-family:'JetBrains Mono',monospace}
+.r4 .rd{color:rgba(255,255,255,.75)}
+
+/* 手机 */
+.stage{display:flex;gap:28px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+.ph{width:340px;border:1px solid var(--ln);border-radius:24px;overflow:hidden;flex-shrink:0;
+  background-color:var(--sf-in);box-shadow:var(--sh-2),var(--edge);transition:all .45s}
+.sb{display:flex;justify-content:space-between;padding:10px 16px 5px;font-size:9.5px;color:var(--t4);font-family:'JetBrains Mono',monospace}
+.ah{padding:12px 18px 11px;display:flex;justify-content:space-between;align-items:baseline}
+.at{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;letter-spacing:.15em;color:var(--t1)}
+.asr{width:15px;height:15px;stroke:var(--t3);fill:none;stroke-width:1.8}
+.band{margin:0 16px 13px;border-radius:12px;padding:10px 13px;display:flex;align-items:center;
+  justify-content:space-between;border:1px solid var(--fl-ln);background:var(--fl-bg);
+  box-shadow:var(--sh-1),var(--edge);transition:all .45s}
+.bl{display:flex;align-items:center;gap:10px}
+.rail{display:flex;gap:3px}
+.rail i{width:13px;height:4px;border-radius:100px;background:var(--ln2);box-shadow:var(--sh-0)}
+.rail i.f{background:var(--fl);box-shadow:none}
+.bt{font-size:11.5px;font-weight:600;color:var(--fl)}
+.bs{font-size:10px;color:var(--t3);margin-top:1px}
+.chev{font-size:14px;color:var(--t4);line-height:1}
+.ls{padding:0 16px 13px;display:flex;flex-direction:column;gap:8px}
+.cd{background-color:var(--sf);background-image:var(--sf-grad);border:1px solid var(--ln);border-radius:11px;
+  padding:11px 13px;transition:all .22s cubic-bezier(.16,1,.3,1);box-shadow:var(--sh-1),var(--edge)}
+.cd:hover{background-color:var(--sf-up);background-image:var(--sf-up-grad);
+  box-shadow:var(--sh-2),var(--edge-up);transform:translateY(-1px)}
+.ct{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;min-height:13px}
+.sc{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--t3)}
+.sc svg{width:11px;height:11px;stroke:var(--t3);fill:none;stroke-width:1.8}
+.tm{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t4)}
+.cb2{font-size:12px;color:var(--t2);line-height:1.5;word-break:break-all}
+.cb2.mn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fl)}
+.thumb{height:74px;border-radius:8px;background:linear-gradient(150deg,var(--sf3),var(--sf-in));
+  display:flex;align-items:center;justify-content:center;font-size:9.5px;color:var(--t4);
+  font-family:'JetBrains Mono',monospace;margin-top:3px;box-shadow:var(--sh-0)}
+.srch{margin:0 16px 12px;position:relative;display:flex;align-items:center}
+.srch input{width:100%;background-color:var(--sf-in);border:1px solid var(--ln);border-radius:9px;
+  padding:9px 12px 9px 32px;color:var(--t1);font-size:12px;outline:none;font-family:inherit;
+  box-shadow:var(--sh-0);transition:all .2s}
+.srch input::placeholder{color:var(--t4)}
+.srch input:focus{border-color:var(--fl-ln);box-shadow:var(--sh-0),0 0 0 3px var(--fl-bg)}
+.sri{position:absolute;left:11px;width:13px;height:13px;stroke:var(--t3);fill:none;stroke-width:1.9}
+.dk{display:flex;border-top:1px solid var(--ln);padding:9px 0 11px;
+  background-color:var(--sf);background-image:var(--sf-grad);box-shadow:var(--edge)}
+.di{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9.5px;color:var(--t4)}
+.di.on{color:var(--fl);font-weight:600}
+.di svg{width:17px;height:17px;stroke-width:1.7;fill:none}
+.cap{text-align:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;
+  color:var(--t4);margin-top:11px;text-transform:uppercase}
+.nts{width:330px;display:flex;flex-direction:column;gap:13px;flex-shrink:0}
+.nn{border-left:2px solid var(--ln2);padding-left:13px}
+.nn b{font-size:11.5px;color:var(--t1);display:block;margin-bottom:3px}
+.nn span{font-size:11px;color:var(--t3);line-height:1.7}
+.nn.k{border-left-color:var(--fl)}
+.nn.w{border-left-color:var(--ac)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;margin-top:6px}
+th{text-align:left;padding:9px 11px;font-size:9.5px;letter-spacing:.12em;color:var(--t4);
+  font-family:'JetBrains Mono',monospace;font-weight:400;border-bottom:1px solid var(--ln);text-transform:uppercase}
+td{padding:10px 11px;border-bottom:1px solid var(--ln);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.ax{font-weight:600;color:var(--t1)}
+.wy{color:var(--t3);font-size:11.5px}
+.yes{color:var(--fl);font-weight:600}
+.ftr{text-align:center;font-size:9.5px;color:var(--t4);margin-top:36px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<div class="hd">
+  <div class="bd">层 次 修 复</div>
+  <div class="en">Depth Restored · Toggle to Compare</div>
+  <p>你说得对，我过校正了。上一版<b>只剩框，没有光</b>——这违反了我自己写的第一条铁律。下面两个按钮切换，直接感受差别。</p>
+</div>
+<div class="ctl big">
+  <button class="cb" onclick="dp('flat')">扁平（上一版）</button>
+  <button class="cb on" onclick="dp('rich')">富层次（修复后）</button>
+</div>
+<div class="ctl">
+  <button class="cb on" onclick="th('light')">日间</button>
+  <button class="cb" onclick="th('dark')">夜间</button>
+</div>
+
+<sect>
+  <h2><span class="ix">01</span>问题在哪</h2>
+  <div class="sub">三条同时出错，而且都是我砍掉的东西。</div>
+  <table>
+    <tr><th>要素</th><th>上一版</th><th>修复后</th><th>能否移植</th></tr>
+    <tr><td class="ax">底与面的明度差</td><td class="wy">3.6%（几乎看不出）</td><td class="wy">日间 9.5% · 夜间 11%</td><td class="yes">纯色值</td></tr>
+    <tr><td class="ax">底色自身渐变</td><td class="wy">无（纯平色）</td><td class="wy">178° 三段，上亮下暗</td><td class="yes">线性渐变刷</td></tr>
+    <tr><td class="ax">面内受光渐变</td><td class="wy">无</td><td class="wy">顶部白 72% → 62% 处透明</td><td class="yes">线性渐变刷</td></tr>
+    <tr><td class="ax">边缘高光</td><td class="wy">无</td><td class="wy"><code>inset 0 1px 0</code> 白</td><td class="yes">1px Border</td></tr>
+    <tr><td class="ax">阴影层级</td><td class="wy">只有 1 档，且极弱</td><td class="wy">4 档：凹陷 / 抬 1 / 抬 2 / 无</td><td class="yes">见 §04</td></tr>
+    <tr><td class="ax">凹陷面</td><td class="wy">无（输入框与卡片同色）</td><td class="wy">内阴影，明度低于底</td><td class="yes">内阴影</td></tr>
+  </table>
+  <div class="law"><b>关键区分。</b> 上一轮该砍的是<b>时间性的装饰</b>——22 秒呼吸、流光、迁移不了的模糊。它们在 3 秒浮窗和高密度状态页上确实是纯成本。<br><br>但我把<b>空间性的层次</b>一起砍了——明度阶差、阴影、受光渐变、边缘高光。这些恰恰是「富有层次」的全部来源，<b>而且两端都能一比一移植</b>（见右列）。</div>
+</sect>
+
+<sect>
+  <h2><span class="ix">02</span>五级明度阶梯</h2>
+  <div class="sub">切到扁平版看这一排会塌成两块。灰蓝比高调浅色更难分层——明度区间被压缩了，所以阶差必须刻意拉开。</div>
+  <div class="ramp">
+    <div class="rc r0"><div class="rn">底</div><div class="rd">z0 · 环境</div></div>
+    <div class="rc r1"><div class="rn">凹陷</div><div class="rd">z−1 · 输入</div></div>
+    <div class="rc r2"><div class="rn">面</div><div class="rd">z1 · 卡片</div></div>
+    <div class="rc r3"><div class="rn">抬起</div><div class="rd">z2 · 悬停</div></div>
+    <div class="rc r4"><div class="rn">强调</div><div class="rd">主操作</div></div>
+  </div>
+  <div class="law"><b>五级不是四级。</b> 我上一版只有「底 / 面」两级，凹陷面和抬起面都缺席。<b>「凹陷」这一级尤其重要</b>——输入框、代码块、内嵌说明框都该比底色更暗，它给出"能装东西"的暗示。只靠边框的输入框看起来像贴上去的贴纸，不像一个凹槽。</div>
+  <div class="law"><b>为什么灰蓝更难分层。</b> 你原来那套高调浅色（`#bce0f8`→白）明度区间宽，随便取几个值就分得开。灰蓝为了保持中性，明度集中在 88–99% 之间——<b>可用区间只有 11 个百分点，要塞 5 级</b>。所以每一级的差值必须精确，不能随手取。这也是为什么必须同时用渐变和阴影来补——<b>光比色值更能造深度。</b></div>
+</sect>
+
+<sect>
+  <h2><span class="ix">03</span>落到界面上</h2>
+  <div class="sub">同一个屏幕。切换上面的按钮，注意搜索框、卡片、底部 dock 的变化。</div>
+  <div class="stage">
+    <div><div class="ph">
+      <div class="sb"><span>10:52</span><span>5G 98%</span></div>
+      <div class="ah"><span class="at">剪剪相传</span>
+        <svg class="asr" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg></div>
+      <div class="band"><div class="bl"><div class="rail"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div>
+        <div><div class="bt">通路畅通</div><div class="bs">PC-STUDIO · 局域网直连</div></div></div><span class="chev">›</span></div>
+      <div class="srch"><svg class="sri" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
+        <input placeholder="搜索"></div>
+      <div class="ls">
+        <div class="cd"><div class="ct"><span class="sc">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">10:48</span></div><div class="cb2">https://github.com/clipsync/core</div></div>
+        <div class="cd"><div class="ct"><span class="sc"></span><span class="tm">10:15</span></div>
+          <div class="cb2 mn">pwsh .\scripts\build-windows.ps1</div></div>
+        <div class="cd"><div class="ct"><span class="sc">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">09:33</span></div><div class="thumb">PNG · 1.2 MB · 1920×1080</div></div>
+        <div class="cd"><div class="ct"><span class="sc"></span><span class="tm">昨天</span></div>
+          <div class="cb2">会议纪要：本周五完成 Stage 4 端到端握手测试</div></div>
+      </div>
+      <div class="dk">
+        <div class="di on"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg><span>历史</span></div>
+        <div class="di"><svg viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg><span>通路</span></div>
+        <div class="di"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>偏好</span></div>
+      </div>
+    </div><div class="cap">悬停卡片看 z2 抬起</div></div>
+    <div class="nts">
+      <div class="nn k"><b>手机外壳现在是凹陷面</b><span>壳用 <code>--sf-in</code>（比底色暗），卡片用 <code>--sf</code>（比底色亮）。<b>于是卡片是"浮在托盘里"，不是"贴在纸上"</b>。这一个改动就把整屏的层次撑起来了。</span></div>
+      <div class="nn k"><b>搜索框反向</b><span>它比外壳更暗 + 内阴影，读起来是个凹槽。上一版它和卡片同色，看起来像贴纸。<b>可输入 = 凹陷</b>，这是最省力的直觉暗示。</span></div>
+      <div class="nn"><b>卡片顶部有受光渐变</b><span>白色 72% 到 62% 处透明。它模拟半透材质上表面的反射——<b>让面"接光"而不是"填色"</b>。这是你原来那套薄瓷感的核心，我上一版整条丢了。</span></div>
+      <div class="nn"><b>dock 抬起，不是压下</b><span>dock 用面色 + 顶部边缘高光，所以它是浮在内容之上的一条。上一版用 <code>--sf3</code> 反而比卡片暗，视觉上沉到内容下面去了，这是错的。</span></div>
+      <div class="nn w"><b>悬停位移只有 1px</b><span>加上阴影从 z1 跳到 z2。<b>位移必须极小</b>——大了就成了网页按钮，与"安静"相斥。层次靠阴影变化传达，不靠位移幅度。</span></div>
+      <div class="nn"><b>缩略图也是凹陷的</b><span>150° 斜向渐变 + 内阴影，像嵌在卡片里的一块。图片内容天然抢眼，给它一个凹槽能压住它。</span></div>
+    </div>
+  </div>
+</sect>
+
+<sect>
+  <h2><span class="ix">04</span>四档阴影怎么两端移植</h2>
+  <div class="sub">这是上一轮我说"WPF 只能挂一个 DropShadowEffect"的正确解法。</div>
+  <table>
+    <tr><th>档</th><th>用途</th><th>构成</th><th>Compose</th><th>WPF</th></tr>
+    <tr><td class="ax">z−1 凹陷</td><td class="wy">输入框、代码块、缩略图</td><td class="wy">仅内阴影</td>
+      <td class="wy">自绘 <code>drawIntoCanvas</code> 或渐变叠层</td><td class="wy">内层 Border + 上→下渐变 Background</td></tr>
+    <tr><td class="ax">z1 面</td><td class="wy">卡片、常驻容器</td><td class="wy">弱外阴影 + 顶部 1px 高光</td>
+      <td class="wy"><code>Modifier.shadow(3.dp)</code> + <code>border</code></td><td class="wy">外 Border 挂 DropShadow，内 Border 画高光</td></tr>
+    <tr><td class="ax">z2 抬起</td><td class="wy">悬停、展开、浮窗</td><td class="wy">三段外阴影 + 更强高光</td>
+      <td class="wy"><code>Modifier.shadow(12.dp)</code></td><td class="wy">同上，DropShadow 参数加大</td></tr>
+    <tr><td class="ax">强调</td><td class="wy">主按钮</td><td class="wy">无阴影，靠色</td><td class="wy">—</td><td class="wy">—</td></tr>
+  </table>
+  <div class="law"><b>关键：不要试图在一个元素上叠三个阴影。</b> Web 的 <code>box-shadow</code> 能逗号叠加，两个原生端都不能。正确做法是<b>把三层拆到三个嵌套容器上</b>：最外层负责外扩柔影，中间层负责 1px 边框，最内层用一条 2px 高的渐变负责顶部高光。<br><br>这样每个容器只承担一件事，两端结构完全对应。<b>而且它比 Web 版更省</b>——WPF 的 DropShadowEffect 只在最外层出现一次，不会重复光栅化。</div>
+  <div class="law warn"><b>夜间的阴影逻辑是反的。</b> 暗色下抬起意味着<b>变亮</b>，不是投下更深的影。所以夜间版 <code>--sf-up</code>（<code>#242e3b</code>）明显亮于 <code>--sf</code>（<code>#1b232e</code>），而阴影只用来把卡片和背景隔开。<b>如果夜间只加深阴影不提亮面色，层次会完全消失</b>——这是暗色主题最常见的失败。切到夜间对比两版能直接看出来。</div>
+</sect>
+
+<sect>
+  <h2><span class="ix">05</span>这次没有加回来的</h2>
+  <div class="sub">区分「空间层次」和「时间装饰」——前者补回，后者仍然不要。</div>
+  <table>
+    <tr><th>项</th><th>状态</th><th>理由</th></tr>
+    <tr><td class="ax">明度阶梯 5 级</td><td class="yes">已补回</td><td class="wy">层次的主要来源，纯色值，零成本</td></tr>
+    <tr><td class="ax">面内受光渐变</td><td class="yes">已补回</td><td class="wy">薄瓷感的核心，一条线性渐变刷</td></tr>
+    <tr><td class="ax">边缘高光</td><td class="yes">已补回</td><td class="wy">给出厚度，1px Border 即可</td></tr>
+    <tr><td class="ax">四档阴影</td><td class="yes">已补回</td><td class="wy">深度的语法，拆成嵌套容器可移植</td></tr>
+    <tr><td class="ax">凹陷面</td><td class="yes">已补回</td><td class="wy">"能装东西"的直觉暗示</td></tr>
+    <tr><td class="ax">背景大渐变</td><td class="yes">已补回</td><td class="wy">给出光的方向；配合颗粒防色带</td></tr>
+    <tr><td class="ax">22s 环境漂移</td><td class="wy">仍不加</td><td class="wy">3 秒浮窗跑不完一个周期</td></tr>
+    <tr><td class="ax">镜面流光</td><td class="wy">仍不加</td><td class="wy">与"安静"相斥；仅配对成功可考虑一次</td></tr>
+    <tr><td class="ax">嵌套毛玻璃</td><td class="wy">仍不加</td><td class="wy">WPF 渲染不出，两端必然不一致</td></tr>
+    <tr><td class="ax">渐进式模糊</td><td class="wy">仍不加</td><td class="wy">同上；明度渐隐已能替代</td></tr>
+  </table>
+  <div class="law"><b>六项补回，四项仍拒。</b> 补回的全部是<b>静态的、空间的、两端可一比一移植的</b>；仍拒的全部是<b>时间性的或平台独有的</b>。<br><br>这条界线比我上一轮画的那条准确得多：上一轮我用"这个界面存在多久"来判断，结果把静态层次也一起否了。<b>正确的判据是"它是空间的还是时间的"</b>——空间层次在 0.1 秒的界面上也成立，时间装饰在 3 秒的界面上才有意义。</div>
+</sect>
+
+<div class="ftr">DEPTH RESTORED · 概念稿，未接入项目代码</div>
+</div>
+<script>
+function th(m){document.documentElement.setAttribute('data-theme',m);
+  document.querySelectorAll('.ctl:not(.big) .cb').forEach((b,i)=>b.classList.toggle('on',(m==='light')===(i===0)));}
+function dp(m){document.documentElement.setAttribute('data-depth',m);
+  document.querySelectorAll('.big .cb').forEach((b,i)=>b.classList.toggle('on',(m==='flat')===(i===0)));}
+</script>
+</body>
+</html>

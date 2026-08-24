@@ -12,7 +12,8 @@
     <!-- The user-started sync service; it keeps the connection, never clipboard privilege. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
-    <!-- Not a precondition for the service; declining only hides the ongoing notification. -->
+    <!-- Inbox notifications (API 33+ runtime permission). Denial never blocks sync itself;
+         the item stays in the inbox and the in-app status must explain the missing surface. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Wizard routes 2 and 3: the transient read-focus overlay, granted in Settings. -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -32,6 +33,7 @@
         android:required="false" />
 
     <application
+        android:name=".ClipSyncApplication"
         android:allowBackup="false"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -59,6 +61,46 @@
             android:exported="true"
             android:multiprocess="false"
             android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+        <!-- 系统分享面板目标：纯文本写入本地 outbox，无界面。 -->
+        <activity
+            android:name=".platform.entry.ShareReceiverActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:label="@string/share_target_label"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <!-- 快捷磁贴的透明宿主：取得焦点读取一次剪贴板后立即结束。 -->
+        <activity
+            android:name=".platform.entry.SendClipboardActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.ClipSync.Transparent" />
+
+        <!-- 通知“复制”操作：仅携带事件 ID，正文在本地按 ID 查找。 -->
+        <receiver
+            android:name=".platform.notify.CopyInboxItemReceiver"
+            android:exported="false" />
+
+        <!-- Quick Settings 磁贴：发送当前剪贴板。 -->
+        <service
+            android:name=".platform.entry.SendClipboardTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_qs_send_clip"
+            android:label="@string/qs_tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

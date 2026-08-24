@@ -3,7 +3,16 @@
     <style name="Theme.ClipSync" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">#F7F8FA</item>
-        <item name="android:statusBarColor">#F7F8FA</item>
+        <item name="android:navigationBarColor">#E2E9F2</item>
+        <item name="android:statusBarColor">#E2E9F2</item>
+    </style>
+
+    <!-- Invisible host for the Quick Settings tile's one-shot clipboard read. -->
+    <style name="Theme.ClipSync.Transparent">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 </resources>
