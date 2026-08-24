@@ -88,6 +88,46 @@ class ClipboardAccessCoordinatorTest {
     }
 
     @Test
+    fun `probe reports every backend in ladder order without starting anything`() {
+        val calls = mutableListOf<String>()
+        val shizuku = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            report = FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.UNAVAILABLE,
+                errorCode = "SHIZUKU_NOT_INSTALLED",
+            ),
+            callLog = calls,
+        )
+        val overlay = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.OVERLAY_POLLING,
+            callLog = calls,
+        )
+        val foreground = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.FOREGROUND_ONLY,
+            callLog = calls,
+        )
+        val coordinator = ClipboardAccessCoordinator(listOf(foreground, shizuku, overlay))
+
+        val reports = coordinator.probe()
+
+        assertEquals(
+            listOf(
+                ClipboardReadMode.SHIZUKU_EVENT,
+                ClipboardReadMode.OVERLAY_POLLING,
+                ClipboardReadMode.FOREGROUND_ONLY,
+            ),
+            reports.map { it.readMode },
+        )
+        assertEquals("SHIZUKU_NOT_INSTALLED", reports.first().errorCode)
+        assertEquals(
+            listOf("SHIZUKU_EVENT.probe", "OVERLAY_POLLING.probe", "FOREGROUND_ONLY.probe"),
+            calls,
+        )
+        assertNull(coordinator.state.activeReadMode)
+    }
+
+    @Test
     fun `failed active backend falls back when allowed`() {
         val shizuku = FakeBackgroundClipboardBackend(
             mode = ClipboardReadMode.SHIZUKU_EVENT,

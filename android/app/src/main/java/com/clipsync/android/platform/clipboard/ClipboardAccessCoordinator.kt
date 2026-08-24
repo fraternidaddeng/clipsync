@@ -30,6 +30,14 @@ class ClipboardAccessCoordinator(
         return selectAndStart(fromMode = state.requestedReadMode)
     }
 
+    /**
+     * Probes every registered backend in capability-ladder order without starting, stopping or
+     * switching anything. Drives the conduit page and the wizard; safe to call repeatedly (on
+     * resume and on user refresh).
+     */
+    fun probe(): List<CapabilityReport> =
+        FALLBACK_ORDER.mapNotNull { mode -> backendsByMode[mode]?.probe() }
+
     fun requestMode(mode: ClipboardReadMode): ClipboardAccessState {
         state = state.copy(requestedReadMode = mode)
         if (listener == null) {

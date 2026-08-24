@@ -18,10 +18,20 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.clipsync.android.pairing.PairingConfirmClient
 import com.clipsync.android.pairing.PairingStore
+import com.clipsync.android.pairing.PeerHealthClient
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
-import com.clipsync.android.ui.HealthScreen
-import com.clipsync.android.ui.HealthScreenState
+import com.clipsync.android.platform.clipboard.AdbLogOverlayBackend
+import com.clipsync.android.platform.clipboard.AndroidPublicClipboardWriter
+import com.clipsync.android.platform.clipboard.AndroidRouteProbes
+import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
+import com.clipsync.android.platform.clipboard.ClipboardCapabilityStore
+import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
+import com.clipsync.android.platform.clipboard.ForegroundClipboardBackend
+import com.clipsync.android.platform.clipboard.OverlayPollingBackend
+import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
+import com.clipsync.android.ui.conduit.ConduitScreen
+import com.clipsync.android.ui.conduit.ConduitViewModel
 import com.clipsync.android.ui.pairing.PairingScreen
 import com.clipsync.android.ui.pairing.PairingViewModel
 import com.clipsync.android.ui.theme.ClipSyncTheme
@@ -31,6 +41,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val pairingStore = PairingStore(SharedPrefsKeyValueStore(this), KeystoreSecretProtector())
+        val capabilityStore = ClipboardCapabilityStore(
+            SharedPrefsKeyValueStore(this, name = "clipsync.capability"),
+        )
+        val routeProbes = AndroidRouteProbes(this)
+        val systemVersion = "android-${Build.VERSION.SDK_INT}"
+        val foregroundBackend = ForegroundClipboardBackend(this, systemVersion = systemVersion)
+        val coordinator = ClipboardAccessCoordinator(
+            backends = listOf(
+                ShizukuClipboardBackend(routeProbes, systemVersion),
+                AdbLogOverlayBackend(routeProbes, systemVersion),
+                OverlayPollingBackend(routeProbes, systemVersion),
+                foregroundBackend,
+            ),
+            requestedReadMode = capabilityStore.preferredReadMode(),
+            autoFallbackAllowed = capabilityStore.autoFallbackAllowed(),
+        )
+        val writeCoordinator = ClipboardWriteCoordinator(
+            publicWriter = AndroidPublicClipboardWriter(this, capabilityStore),
+        )
         setContent {
             ClipSyncTheme {
                 var tab by rememberSaveable { mutableIntStateOf(0) }
@@ -41,6 +70,18 @@ class MainActivity : ComponentActivity() {
                         localNameFallback = deviceLabel(),
                     ),
                 )
+                val conduitViewModel: ConduitViewModel = viewModel(
+                    factory = ConduitViewModel.factory(
+                        coordinator = coordinator,
+                        routeProbes = routeProbes,
+                        capabilityStore = capabilityStore,
+                        pairingStore = pairingStore,
+                        peerHealth = PeerHealthClient(),
+                        writeCoordinator = writeCoordinator,
+                        foregroundBackend = foregroundBackend,
+                        clearClipboard = foregroundBackend::clear,
+                    ),
+                )
                 Scaffold(
                     bottomBar = {
                         NavigationBar {
@@ -48,20 +89,21 @@ class MainActivity : ComponentActivity() {
                                 selected = tab == 0,
                                 onClick = { tab = 0 },
                                 icon = {},
-                                label = { Text("Status") },
+                                label = { Text("通路") },
                             )
                             NavigationBarItem(
                                 selected = tab == 1,
                                 onClick = { tab = 1 },
                                 icon = {},
-                                label = { Text("Pairing") },
+                                label = { Text("配对") },
                             )
                         }
                     },
                 ) { padding ->
                     when (tab) {
-                        0 -> HealthScreen(
-                            state = HealthScreenState.initial(),
+                        0 -> ConduitScreen(
+                            viewModel = conduitViewModel,
+                            onNavigateToPairing = { tab = 1 },
                             modifier = Modifier.padding(padding),
                         )
                         else -> PairingScreen(
@@ -85,4 +127,3 @@ class MainActivity : ComponentActivity() {
         return label.ifBlank { "Android phone" }
     }
 }
-

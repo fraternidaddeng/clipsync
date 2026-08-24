@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Pairing calls the Windows peer's /v1/pair/confirm endpoint over pinned TLS. -->
+    <!-- Pairing and the peer health probe call the Windows peer over pinned TLS. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Satisfies one network prerequisite of the connectedDevice foreground service type. -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <!-- QR scanning only; pairing also works by pasting the payload without camera access. -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- The user-started sync service; it keeps the connection, never clipboard privilege. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <!-- Not a precondition for the service; declining only hides the ongoing notification. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Wizard routes 2 and 3: the transient read-focus overlay, granted in Settings. -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- Wizard route 3: polling needs the app exempted from battery optimization. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!--
+        Wizard route 2. READ_LOGS cannot be granted by any runtime dialog; the user grants it
+        explicitly from a computer (`adb shell pm grant ... READ_LOGS`) and the app re-probes
+        the real state on every resume — a past grant is never assumed permanent.
+    -->
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
+        tools:ignore="ProtectedPermissions" />
 
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -24,6 +45,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".service.ClipboardSyncService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
+        <!-- Lets Shizuku hand this app its binder when the Shizuku service (re)starts. -->
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:enabled="true"
+            android:exported="true"
+            android:multiprocess="false"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
     </application>
 
 </manifest>
