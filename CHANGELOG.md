@@ -31,10 +31,11 @@
 
 ### 文档 / 测试
 
+- CI 工作流重构为三作业：协议 schema/fixture 校验、Windows 构建 + 全部测试、Android 单元测试 + debug APK 组装；在 `cursor/**` / `feature/**` 分支与 PR 上运行。
 - 测试规模：444 Android JVM + 185 跨平台对端 + 39 Windows 应用层用例；新增 Windows↔Android 全链路脚本化集成测试与真实会话事件驱动的通路页验证。
 - 新增 `docs/verification-without-device.md`（绿测 ≠ 兼容的边界）、`docs/stage-gap-audit.md`、`docs/competitive-analysis.md`、`docs/design/ui-gap-audit.md`、`docs/manual-qa-checklist.md`、`docs/release-notes-template.md`；扩充 `docs/device-validation-matrix.md` 为脚本化检查清单。
 
 ### 已知欠账（进行中）
 
-- 打包分发（Windows 便携 ZIP / 签名 APK / 安装文档）、发布 CI、历史导出导入——并行任务推进中，见 `docs/competitive-analysis.md` 状态更新。
+- 打包分发（Windows 便携 ZIP / 签名 APK / 安装文档 / 发布产物上传）、历史导出导入——并行任务推进中，见 `docs/competitive-analysis.md` 状态更新。
 - 实体机验证为零；图片同步（protocol v2）未做。

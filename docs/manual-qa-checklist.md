@@ -9,7 +9,7 @@
 ## 0. 环境与构建准备
 
 - [ ] Windows 侧构建自 `scripts/build-windows.ps1`，Android APK 构建自 `scripts/build-android.ps1`，两端 commit 一致并记录。
-- [ ] CI 三个作业（windows / android / protocol）在该 commit 上全绿。
+- [ ] CI 三个作业（validate-protocol / build-windows / build-android）在该 commit 上全绿。
 - [ ] 测试网络：两台设备同一 Wi-Fi，无 AP 隔离；另准备一个次要 Wi-Fi 或热点用于切网测试。
 - [ ] Windows 防火墙对 47654 端口的放行提示已按预期出现并允许。
 

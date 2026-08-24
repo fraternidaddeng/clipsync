@@ -5,7 +5,12 @@
 - 依据：`docs/product-scope.md`、`plan.md`、`docs/stage-gap-audit.md`、`docs/verification-without-device.md`、`docs/design/ui-gap-audit.md`、分支源码实读，以及对 KDE Connect、ClipShare、SyncClipboard、ClipCascade、UniClipboard、LocalSend、Syncthing、CopyQ、Espanso 等项目的公开资料核对（2024–2026 年状态）。
 - 读法提醒：本文遵守仓库一贯的诚实纪律——「代码在」「JVM 测试绿」「实体机验证过」是三件事，下文严格区分。
 
-> **状态更新（2026-08-24）**：本文指出的三项执行欠账——**打包分发（阶段 7 裁剪版）**、**发布 CI（产物构建与上传；测试 CI `.github/workflows/ci.yml` 早已存在）**、**历史导出/导入**——已由并行任务在本分支上推进中，截至本次更新**尚未合入**。落地合入后，请把本节与下文各处「进行中」标记改为「已解决（commit `<sha>`）」；在此之前，第五、六、七节的相关结论维持原判。
+> **状态更新（2026-08-24）**：本文指出的执行欠账由并行任务在本分支上推进，当前状态——
+> - **CI：已解决（commit `c456080`）**。工作流重构为三作业（协议 schema/fixture 校验、Windows 构建 + 全部测试、Android 单元测试 + debug APK 组装），在 `cursor/**` / `feature/**` 分支和 PR 上运行。
+> - **打包分发（阶段 7 裁剪版：便携 ZIP、签名 APK、安装文档、发布产物上传）：进行中，未合入**。CI 产出的 debug APK 是测试副产物，不是可分发产物。
+> - **历史导出/导入：进行中，未合入**（自 `feature/stage-4` 移植）。
+>
+> 后两项落地后，请把本节与下文各处「进行中」标记改为「已解决（commit `<sha>`）」；在此之前，第五、六、七节的相关结论维持原判。
 
 ---
 
