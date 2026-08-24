@@ -48,14 +48,18 @@ import com.clipsync.android.pairing.PairingConfirmClient
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.platform.clipboard.AndroidPublicClipboardWriter
 import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
+import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.storage.SyncSettingsStore
 import com.clipsync.android.sync.ClipboardSyncService
 import com.clipsync.android.sync.SyncConnectionState
+import com.clipsync.android.sync.SyncStore
 import com.clipsync.android.ui.HealthScreen
 import com.clipsync.android.ui.health.HealthViewModel
 import com.clipsync.android.ui.health.SyncHealth
 import com.clipsync.android.ui.health.SyncHealthSource
+import com.clipsync.android.ui.home.ClipSyncHistoryGateway
 import com.clipsync.android.ui.home.HomeScreen
 import com.clipsync.android.ui.home.HomeViewModel
 import com.clipsync.android.ui.pairing.PairingScreen
@@ -103,8 +107,15 @@ class MainActivity : ComponentActivity() {
     }
 
     private val homeViewModel: HomeViewModel by viewModels {
-        // Room-backed history lands in a later stage; null renders the honest empty state.
-        HomeViewModel.factory(historySource = null)
+        // SyncStore is the process-wide handle, so service and UI share one
+        // database instance and history observers see the engine's writes.
+        HomeViewModel.factory(
+            history = ClipSyncHistoryGateway(SyncStore.repository(applicationContext)),
+            writeCoordinator = ClipboardWriteCoordinator(
+                publicWriter = AndroidPublicClipboardWriter(applicationContext),
+            ),
+            pairingStore = pairingStore,
+        )
     }
 
     private val preferencesViewModel: PreferencesViewModel by viewModels {
@@ -183,9 +194,10 @@ private fun ClipSyncApp(
     val pairingState by pairingViewModel.state.collectAsState()
 
     // Pairing completing (or the peer being forgotten) must reflect in the
-    // conduit immediately, not on the next app start.
+    // conduit and in the history source tags immediately, not on next start.
     LaunchedEffect(pairingState) {
         healthViewModel.refresh()
+        homeViewModel.refreshPeer()
     }
     Box(
         modifier = Modifier
@@ -215,8 +227,11 @@ private fun ClipSyncApp(
         ) { padding ->
             when (tab) {
                 0 -> HomeScreen(
-                    state = healthState,
+                    conduit = healthState,
                     home = homeState,
+                    onQueryChange = homeViewModel::setQuery,
+                    onCopy = homeViewModel::copy,
+                    onDelete = homeViewModel::delete,
                     onOpenConduit = { tab = 1 },
                     modifier = Modifier.padding(padding),
                 )

@@ -15,7 +15,6 @@ import com.clipsync.android.R
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
-import com.clipsync.android.storage.ClipSyncDatabase
 import com.clipsync.android.storage.ClipSyncRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -203,7 +202,7 @@ class ClipboardSyncService : Service() {
         private fun createRoomRepository(appContext: Context): SyncRepository {
             val pairing = PairingStore(SharedPrefsKeyValueStore(appContext), KeystoreSecretProtector())
             return RoomSyncRepository(
-                store = ClipSyncRepository(ClipSyncDatabase.build(appContext), pairing.localDeviceId()),
+                store = SyncStore.repository(appContext),
                 fanOutPeerIds = { pairing.peer()?.deviceId?.let(::listOf).orEmpty() },
             )
         }

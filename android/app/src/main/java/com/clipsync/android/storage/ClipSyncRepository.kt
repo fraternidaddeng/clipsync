@@ -5,6 +5,8 @@ import com.clipsync.android.sync.OriginReceiveState
 import com.clipsync.android.sync.SequenceRange
 import com.clipsync.android.sync.SequenceRangeJson
 import java.util.UUID
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * The single storage entry point for the sync engine and UI. Mirrors the Windows
@@ -158,11 +160,13 @@ class ClipSyncRepository(
     // ---- History ----
 
     suspend fun searchHistory(query: HistoryQuery = HistoryQuery()): List<ClipHistoryEntry> {
-        val pattern = query.searchText
-            ?.takeIf { it.isNotEmpty() }
-            ?.let { "%${escapeLikePattern(it)}%" }
-        return clips.search(pattern, query.limit, query.offset).map { it.toHistoryEntry() }
+        return clips.search(likePattern(query), query.limit, query.offset).map { it.toHistoryEntry() }
     }
+
+    /** [searchHistory] as a Room-invalidation-driven stream; [HistoryQuery.offset] is ignored. */
+    fun observeHistory(query: HistoryQuery = HistoryQuery()): Flow<List<ClipHistoryEntry>> =
+        clips.observeSearch(likePattern(query), query.limit)
+            .map { entities -> entities.map { it.toHistoryEntry() } }
 
     suspend fun getById(eventId: String, includeDeleted: Boolean = false): ClipHistoryEntry? =
         clips.getByEventId(eventId, includeDeleted)?.toHistoryEntry()
@@ -366,6 +370,10 @@ class ClipSyncRepository(
         OriginReceiveState(contiguousSeq, SequenceRangeJson.deserialize(receivedRangesJson))
 
     private companion object {
+        fun likePattern(query: HistoryQuery): String? = query.searchText
+            ?.takeIf { it.isNotEmpty() }
+            ?.let { "%${escapeLikePattern(it)}%" }
+
         fun escapeLikePattern(value: String): String = value
             .replace("\\", "\\\\")
             .replace("%", "\\%")
