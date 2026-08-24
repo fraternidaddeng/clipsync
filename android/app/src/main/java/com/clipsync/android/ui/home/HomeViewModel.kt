@@ -32,6 +32,12 @@ data class HomeClipItem(
     val createdAtMs: Long,
     /** Null for clips this phone produced (缺省即本地 — locals carry no tag). */
     val remoteSourceLabel: String?,
+    /**
+     * 1-based pairing slot of the origin device (charter §3.4: neighbour hues
+     * follow pairing order, never a hash). Null for locals and for remotes
+     * that hold no pairing slot.
+     */
+    val sourcePairingOrder: Int? = null,
 )
 
 /** Transient, honest feedback for the last item action. */
@@ -67,7 +73,7 @@ class HomeViewModel(
     val state: StateFlow<HomeUiState> = mutableState.asStateFlow()
 
     private val queryInput = MutableStateFlow("")
-    private val peerSnapshot = MutableStateFlow(pairingStore.peer())
+    private val peersSnapshot = MutableStateFlow(pairingStore.pairedPeers())
     private val localDeviceId = pairingStore.localDeviceId()
     private var noticeClearJob: Job? = null
 
@@ -79,13 +85,13 @@ class HomeViewModel(
                     .flatMapLatest { query ->
                         history.observeSearch(query).map { entries -> query to entries }
                     },
-                peerSnapshot,
-            ) { (query, entries), peer ->
-                Triple(query, entries, peer)
-            }.collect { (query, entries, peer) ->
+                peersSnapshot,
+            ) { (query, entries), peers ->
+                Triple(query, entries, peers)
+            }.collect { (query, entries, peers) ->
                 mutableState.update { previous ->
                     previous.copy(
-                        items = entries.map { it.toHomeItem(localDeviceId, peer) },
+                        items = entries.map { it.toHomeItem(localDeviceId, peers) },
                         loaded = true,
                         searchActive = query.isNotBlank(),
                     )
@@ -101,7 +107,7 @@ class HomeViewModel(
 
     /** Re-reads the pairing store so remote source tags pick up a new peer name. */
     fun refreshPeer() {
-        peerSnapshot.value = pairingStore.peer()
+        peersSnapshot.value = pairingStore.pairedPeers()
     }
 
     /**
@@ -156,11 +162,14 @@ class HomeViewModel(
     }
 }
 
-internal fun ClipHistoryEntry.toHomeItem(localDeviceId: String, peer: PairedPeer?): HomeClipItem {
+internal fun ClipHistoryEntry.toHomeItem(localDeviceId: String, peers: List<PairedPeer>): HomeClipItem {
     val remote = originDeviceId != localDeviceId
+    // The device's 1-based pairing slot picks its neighbour hue (charter §3.4:
+    // by pairing order, never a hash); an unslotted remote stays unhued.
+    val slot = peers.indexOfFirst { it.deviceId == originDeviceId }.takeIf { it >= 0 }?.plus(1)
     val label = when {
         !remote -> null
-        peer != null && peer.deviceId == originDeviceId -> peer.displayName
+        slot != null -> peers[slot - 1].displayName
         else -> "远端设备"
     }
     return HomeClipItem(
@@ -168,6 +177,7 @@ internal fun ClipHistoryEntry.toHomeItem(localDeviceId: String, peer: PairedPeer
         preview = previewText(content),
         createdAtMs = createdAtMs,
         remoteSourceLabel = label,
+        sourcePairingOrder = if (remote) slot else null,
     )
 }
 

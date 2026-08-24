@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -51,7 +50,6 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,6 +57,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingQrPayload
+import com.clipsync.android.ui.theme.CharterShapes
+import com.clipsync.android.ui.theme.ClipSyncFonts
 import com.clipsync.android.ui.theme.ClipSyncType
 import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.clipSyncColors
@@ -68,8 +68,8 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.atomic.AtomicBoolean
 
-/** Controls carry a 12dp radius (tokens.md §7). */
-private val ControlShape = RoundedCornerShape(12.dp)
+/** Controls carry the 12dp superellipse (tokens.md §7). */
+private val ControlShape = CharterShapes.control
 
 /** The pairing ritual is one of the app's few serif moments. */
 private val RitualTitle = ClipSyncType.pageTitle.copy(fontSize = 20.sp)
@@ -122,7 +122,7 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
             Text(
                 "证书 ${groupFingerprint(peer.certSha256).take(19)}…",
                 style = MaterialTheme.typography.bodySmall,
-                fontFamily = FontFamily.Monospace,
+                fontFamily = ClipSyncFonts.mono,
                 color = c.t2,
             )
             Text(
@@ -220,7 +220,7 @@ private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewM
     PeerFacts(review.qr)
     if (review.certificateChanged) {
         // 全应用最高风险的决策点：唯一允许赭黄整块背景的地方（ui_preview 注记）。
-        val shape = RoundedCornerShape(16.dp)
+        val shape = CharterShapes.card
         Column(
             Modifier
                 .fillMaxWidth()
@@ -279,14 +279,13 @@ private fun PeerFacts(qr: PairingQrPayload) {
         // 指纹是全应用风险最高的比对：等宽、四位一组、两行、t1 最高对比。
         Text(
             twoLineFingerprint(qr.certSha256),
-            fontFamily = FontFamily.Monospace,
             style = ClipSyncType.fingerprint.copy(lineHeight = 22.sp),
             color = c.t1,
         )
         Text("地址", style = ClipSyncType.groupHeader, color = c.t4)
         Text(
             "${qr.hosts.joinToString()} : ${qr.port}",
-            fontFamily = FontFamily.Monospace,
+            fontFamily = ClipSyncFonts.mono,
             style = MaterialTheme.typography.bodySmall,
             color = c.t2,
         )
@@ -411,7 +410,7 @@ private fun GhostButton(text: String, onClick: () -> Unit, enabled: Boolean = tr
 @Composable
 private fun ScannerFrame(onResult: (String) -> Unit) {
     val c = clipSyncColors
-    val shape = RoundedCornerShape(16.dp)
+    val shape = CharterShapes.card
     Box(
         Modifier
             .fillMaxWidth()

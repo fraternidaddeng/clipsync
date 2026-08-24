@@ -60,6 +60,14 @@ class PairingStore(
         }
     }
 
+    /**
+     * Every trusted peer in pairing order — the order that assigns each device
+     * its neighbour hue (charter §3.4: slot N takes dev-N, never a hash).
+     * Stage 4 pairs a single Windows peer, so the list holds at most one; the
+     * ordering contract is what multi-device stages must preserve.
+     */
+    fun pairedPeers(): List<PairedPeer> = listOfNotNull(peer())
+
     fun peer(): PairedPeer? {
         val deviceId = keyValues.read(KEY_PEER_DEVICE_ID) ?: return null
         val hosts = keyValues.read(KEY_PEER_HOSTS)?.split('\n')?.filter { it.isNotEmpty() } ?: return null

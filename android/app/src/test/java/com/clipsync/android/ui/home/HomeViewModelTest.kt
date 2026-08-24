@@ -161,6 +161,11 @@ class HomeViewModelTest {
         assertEquals("PC-STUDIO", items[0].remoteSourceLabel)
         assertNull(items[1].remoteSourceLabel)
         assertEquals("远端设备", items[2].remoteSourceLabel)
+        // Neighbour hues follow pairing order (charter §3.4): the paired PC
+        // holds slot 1; locals and unslotted remotes carry no hue.
+        assertEquals(1, items[0].sourcePairingOrder)
+        assertNull(items[1].sourcePairingOrder)
+        assertNull(items[2].sourcePairingOrder)
         assertTrue(model.state.value.loaded)
         assertFalse(model.state.value.searchActive)
     }
@@ -273,11 +278,13 @@ class HomeViewModelTest {
         val model = model()
         testScheduler.advanceUntilIdle()
         assertEquals("远端设备", model.state.value.items.single().remoteSourceLabel)
+        assertNull(model.state.value.items.single().sourcePairingOrder)
 
         pairWithWindows()
         model.refreshPeer()
         testScheduler.advanceUntilIdle()
         assertEquals("PC-STUDIO", model.state.value.items.single().remoteSourceLabel)
+        assertEquals(1, model.state.value.items.single().sourcePairingOrder)
     }
 
     @Test

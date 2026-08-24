@@ -1,12 +1,17 @@
 package com.clipsync.android.ui
 
-import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -54,14 +60,13 @@ import com.clipsync.android.ui.health.CapabilityWizard
 import com.clipsync.android.ui.health.ReadRouteUi
 import com.clipsync.android.ui.health.RouteActionId
 import com.clipsync.android.ui.health.buildHealthScreenState
+import com.clipsync.android.ui.theme.CharterMotion
+import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.ClipSyncType
 import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.clipSyncColors
-
-/** Interaction easing shared by all charter motion (tokens.md §9). */
-val CharterEase = CubicBezierEasing(0.16f, 1f, 0.3f, 1f)
 
 /**
  * Five-fill status encoding (tokens.md §10): one shape, five fill degrees,
@@ -173,7 +178,7 @@ fun HealthScreen(
                     fontWeight = FontWeight.SemiBold,
                     color = c.flow,
                     modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(CharterShapes.control)
                         .clickable(onClick = onRefresh)
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                 )
@@ -208,12 +213,22 @@ fun HealthScreen(
                 }
             },
         )
-        if (wizardOpen && state.routes.isNotEmpty() && onRouteAction != null) {
-            Spacer(Modifier.height(8.dp))
-            CapabilityWizard(
-                routes = state.routes,
-                onRouteAction = onRouteAction,
-            )
+        if (state.routes.isNotEmpty() && onRouteAction != null) {
+            AnimatedVisibility(
+                visible = wizardOpen,
+                enter = fadeIn(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                    expandVertically(CharterMotion.spec(CharterMotion.DUR_EMPHASIS_MS)),
+                exit = fadeOut(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                    shrinkVertically(CharterMotion.spec(CharterMotion.DUR_EMPHASIS_MS)),
+            ) {
+                Column {
+                    Spacer(Modifier.height(8.dp))
+                    CapabilityWizard(
+                        routes = state.routes,
+                        onRouteAction = onRouteAction,
+                    )
+                }
+            }
         }
         Spacer(Modifier.height(8.dp))
         PipelineSegment(
@@ -377,7 +392,7 @@ private fun TestResultRow(
 ) {
     val c = clipSyncColors
     val tint = if (result.success) c.flow else c.err
-    val shape = RoundedCornerShape(10.dp)
+    val shape = CharterShapes.control
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -412,9 +427,23 @@ fun ConduitStatusBand(
     val c = clipSyncColors
     val needsAction = state.statuses.any { it == ConduitStatus.NEEDS_ACTION }
     val allReady = state.statuses.all { it == ConduitStatus.READY }
-    val tint = if (needsAction) c.act else c.flow
-    val bandBg = if (needsAction) c.actBg else c.flowBg
-    val bandLn = if (needsAction) c.actLn else c.flowLn
+    // The band shifts between the flow and beckon vocabularies as segments
+    // change; the crossing runs on the charter curve, never a hard cut.
+    val tint by animateColorAsState(
+        targetValue = if (needsAction) c.act else c.flow,
+        animationSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
+        label = "bandTint",
+    )
+    val bandBg by animateColorAsState(
+        targetValue = if (needsAction) c.actBg else c.flowBg,
+        animationSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
+        label = "bandBg",
+    )
+    val bandLn by animateColorAsState(
+        targetValue = if (needsAction) c.actLn else c.flowLn,
+        animationSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
+        label = "bandLn",
+    )
     val title = when {
         needsAction -> "通路未接通"
         allReady -> "通路畅通"
@@ -425,7 +454,7 @@ fun ConduitStatusBand(
         allReady -> "内容正在两端流动"
         else -> "有环节降级或未探测"
     }
-    val shape = RoundedCornerShape(12.dp)
+    val shape = CharterShapes.control
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -506,7 +535,7 @@ private fun PipelineSegment(
     val beckons = segment.beckoning
     val expandable = segment.detailLines.isNotEmpty() || segment.errorDetail != null
     var expanded by rememberSaveable(title) { mutableStateOf(false) }
-    val shape = RoundedCornerShape(16.dp)
+    val shape = CharterShapes.card
     val tint = when {
         segment.status == ConduitStatus.NEEDS_ACTION -> c.act
         segment.status == ConduitStatus.READY -> c.flow
@@ -514,8 +543,12 @@ private fun PipelineSegment(
         else -> c.t4
     }
     val surface = if (beckons) {
+        // The beckoning card keeps the same z1 depth (sh-1 + face) with the
+        // ochre wash composited on top — a tinted card, not a flat strip.
         Modifier
+            .shadow(elevation = 3.dp, shape = shape, ambientColor = c.shadow, spotColor = c.shadow)
             .clip(shape)
+            .background(c.sf)
             .background(c.actBg)
             .border(1.dp, c.actLn, shape)
     } else {
@@ -576,22 +609,30 @@ private fun PipelineSegment(
             style = ClipSyncType.caption,
             color = c.t3,
         )
-        if (expanded) {
-            segment.detailLines.forEach { line ->
-                Spacer(Modifier.height(5.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        Modifier
-                            .size(4.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(c.ln2),
-                    )
-                    Spacer(Modifier.width(7.dp))
-                    Text(
-                        text = line,
-                        style = ClipSyncType.caption,
-                        color = c.t3,
-                    )
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                expandVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
+            exit = fadeOut(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                shrinkVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
+        ) {
+            Column {
+                segment.detailLines.forEach { line ->
+                    Spacer(Modifier.height(5.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            Modifier
+                                .size(4.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(c.ln2),
+                        )
+                        Spacer(Modifier.width(7.dp))
+                        Text(
+                            text = line,
+                            style = ClipSyncType.caption,
+                            color = c.t3,
+                        )
+                    }
                 }
             }
         }
@@ -627,7 +668,7 @@ private fun SegmentActionChip(action: SegmentActionUi) {
     val tint = if (action.emphasized) c.act else c.flow
     val bg = if (action.emphasized) c.actBg else c.flowBg
     val line = if (action.emphasized) c.actLn else c.flowLn
-    val shape = RoundedCornerShape(10.dp)
+    val shape = CharterShapes.control
     Text(
         text = "${action.label} ›",
         fontSize = 13.sp,
@@ -685,7 +726,7 @@ private fun FilledTrack(
     }
 }
 
-/** Empty capsule + ochre outline + 2.6s pulse — the reaching hand. */
+/** Empty capsule + ochre outline + 2.6s pulse — the reaching hand (tokens.md §9). */
 @Composable
 private fun PulsingBar(modifier: Modifier = Modifier) {
     val c = clipSyncColors
@@ -694,7 +735,7 @@ private fun PulsingBar(modifier: Modifier = Modifier) {
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2600, easing = CharterEase),
+            animation = tween(durationMillis = CharterMotion.PULSE_MS, easing = CharterMotion.Ease),
             repeatMode = RepeatMode.Restart,
         ),
         label = "pulse",

@@ -15,6 +15,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -93,6 +94,7 @@ import com.clipsync.android.ui.pairing.PairingUiState
 import com.clipsync.android.ui.pairing.PairingViewModel
 import com.clipsync.android.ui.prefs.PreferencesScreen
 import com.clipsync.android.ui.prefs.PreferencesViewModel
+import com.clipsync.android.ui.theme.CharterMotion
 import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.clipSyncColors
@@ -500,23 +502,28 @@ private fun ClipSyncApp(
                 )
             },
         ) { padding ->
-            when (tab) {
-                0 -> HomeScreen(
-                    conduit = healthState,
-                    home = homeState,
-                    onQueryChange = homeViewModel::setQuery,
-                    onCopy = homeViewModel::copy,
-                    onDelete = homeViewModel::delete,
-                    onOpenConduit = { tab = 1 },
-                    modifier = Modifier.padding(padding),
-                )
-                1 -> if (pairingOpen) {
-                    Column(Modifier.padding(padding)) {
+            // Switching place crossfades on the charter curve (tokens.md §9:
+            // 260–320ms, cubic-bezier(.16,1,.3,1)) instead of a hard cut.
+            Crossfade(
+                targetState = tab to pairingOpen,
+                animationSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
+                label = "place",
+            ) { (place, pairing) ->
+                when {
+                    place == 0 -> HomeScreen(
+                        conduit = healthState,
+                        home = homeState,
+                        onQueryChange = homeViewModel::setQuery,
+                        onCopy = homeViewModel::copy,
+                        onDelete = homeViewModel::delete,
+                        onOpenConduit = { tab = 1 },
+                        modifier = Modifier.padding(padding),
+                    )
+                    place == 1 && pairing -> Column(Modifier.padding(padding)) {
                         BackRow(label = "通路", onBack = { pairingOpen = false })
                         PairingScreen(viewModel = pairingViewModel)
                     }
-                } else {
-                    HealthScreen(
+                    place == 1 -> HealthScreen(
                         state = healthState,
                         onPairRequest = { pairingOpen = true },
                         onRefresh = healthViewModel::refresh,
@@ -528,21 +535,21 @@ private fun ClipSyncApp(
                         onOpenNotificationSettings = onOpenNotificationSettings,
                         modifier = Modifier.padding(padding),
                     )
+                    else -> PreferencesScreen(
+                        state = preferencesState,
+                        onPauseSyncChange = preferencesViewModel::setPauseSync,
+                        onPrivateModeChange = preferencesViewModel::setPrivateMode,
+                        onAutoApplyRemoteChange = preferencesViewModel::setAutoApplyRemote,
+                        onAutoExpireChange = preferencesViewModel::setAutoExpire,
+                        onBootRestoreChange = preferencesViewModel::setBootRestore,
+                        pairedDeviceName = healthState.pairedPeerName,
+                        onOpenConduit = {
+                            pairingOpen = false
+                            tab = 1
+                        },
+                        modifier = Modifier.padding(padding),
+                    )
                 }
-                else -> PreferencesScreen(
-                    state = preferencesState,
-                    onPauseSyncChange = preferencesViewModel::setPauseSync,
-                    onPrivateModeChange = preferencesViewModel::setPrivateMode,
-                    onAutoApplyRemoteChange = preferencesViewModel::setAutoApplyRemote,
-                    onAutoExpireChange = preferencesViewModel::setAutoExpire,
-                    onBootRestoreChange = preferencesViewModel::setBootRestore,
-                    pairedDeviceName = healthState.pairedPeerName,
-                    onOpenConduit = {
-                        pairingOpen = false
-                        tab = 1
-                    },
-                    modifier = Modifier.padding(padding),
-                )
             }
         }
     }

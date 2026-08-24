@@ -1,11 +1,16 @@
 package com.clipsync.android.ui.theme
 
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -17,15 +22,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.clipsync.android.R
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
 
 /**
  * Charter tokens beyond what Material3 roles can carry (tokens.md §11.2):
@@ -79,7 +97,26 @@ data class ClipSyncColors(
     // film grain: tint colour + strength
     val grainTint: Color,
     val grainAlpha: Float,
-)
+) {
+    /**
+     * The neighbour-hue ladder in pairing order (charter §3.4): assignment
+     * follows the order devices were paired, never a hash, wrapping past five.
+     */
+    val deviceLadder: List<Color>
+        get() = listOf(dev1, dev2, dev3, dev4, dev5)
+
+    /** Device colour for a 1-based pairing slot. */
+    fun device(pairingOrder: Int): Color =
+        deviceLadder[(pairingOrder - 1).mod(deviceLadder.size)]
+
+    /** 着色底 for the low-chroma source box (tokens.md §4: 11% day / 12% night). */
+    fun deviceBg(pairingOrder: Int): Color =
+        device(pairingOrder).copy(alpha = if (isDark) 0.12f else 0.11f)
+
+    /** 描边 for the source box (tokens.md §4: 24%). */
+    fun deviceLn(pairingOrder: Int): Color =
+        device(pairingOrder).copy(alpha = 0.24f)
+}
 
 val ClipSyncDayColors = ClipSyncColors(
     isDark = false,
@@ -229,7 +266,81 @@ private fun m3Scheme(c: ClipSyncColors) = if (c.isDark) {
     )
 }
 
-/** Corner radii per tokens.md §7: controls 12dp, cards 16dp, screen container 28dp. */
+// ---------------------------------------------------------------------------
+// Geometry (tokens.md §7)
+// ---------------------------------------------------------------------------
+
+private const val SUPERELLIPSE_EXPONENT = 4.4
+private const val CORNER_STEPS = 12
+
+/**
+ * Unit quadrant of |x|ⁿ + |y|ⁿ = 1, sampled once and mirrored to all four
+ * corners: index 0 lies on the edge (1, 0), the last index on (0, 1).
+ */
+internal val superellipseCornerUnit: FloatArray by lazy {
+    val points = FloatArray((CORNER_STEPS + 1) * 2)
+    val power = 2.0 / SUPERELLIPSE_EXPONENT
+    for (i in 0..CORNER_STEPS) {
+        val t = i * (PI / 2.0) / CORNER_STEPS
+        points[i * 2] = cos(t).pow(power).toFloat()
+        points[i * 2 + 1] = sin(t).pow(power).toFloat()
+    }
+    points
+}
+
+/**
+ * Rounded rectangle whose corners follow a superellipse (n ≈ 4–5) instead of
+ * circular arcs. The exponent is shared bone across both ends (charter §3.6);
+ * each end picks its own radii (skin).
+ */
+class SuperellipseShape(private val radius: Dp) : Shape {
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
+        val r = with(density) { radius.toPx() }
+            .coerceAtMost(minOf(size.width, size.height) / 2f)
+        if (r < 1f) return Outline.Rectangle(size.toRect())
+        return Outline.Generic(superellipsePath(size, r))
+    }
+}
+
+private fun superellipsePath(size: Size, r: Float): Path {
+    val w = size.width
+    val h = size.height
+
+    fun Path.corner(cx: Float, cy: Float, sx: Float, sy: Float, reverse: Boolean) {
+        val indices = if (reverse) CORNER_STEPS downTo 0 else 0..CORNER_STEPS
+        for (i in indices) {
+            lineTo(
+                cx + sx * superellipseCornerUnit[i * 2] * r,
+                cy + sy * superellipseCornerUnit[i * 2 + 1] * r,
+            )
+        }
+    }
+
+    return Path().apply {
+        moveTo(r, 0f)
+        lineTo(w - r, 0f)
+        corner(cx = w - r, cy = r, sx = 1f, sy = -1f, reverse = true)
+        lineTo(w, h - r)
+        corner(cx = w - r, cy = h - r, sx = 1f, sy = 1f, reverse = false)
+        lineTo(r, h)
+        corner(cx = r, cy = h - r, sx = -1f, sy = 1f, reverse = true)
+        lineTo(0f, r)
+        corner(cx = r, cy = r, sx = -1f, sy = -1f, reverse = false)
+        close()
+    }
+}
+
+/** Charter surfaces share two superellipse radii: card 16dp, control 12dp. */
+object CharterShapes {
+    val card: Shape = SuperellipseShape(16.dp)
+    val control: Shape = SuperellipseShape(12.dp)
+}
+
+/**
+ * Corner radii per tokens.md §7 for Material components (M3 `Shapes` only
+ * accepts corner-based shapes, so these stay circular; charter surfaces use
+ * [CharterShapes] / [SuperellipseShape] for the shared superellipse bone).
+ */
 private val ClipSyncShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
     small = RoundedCornerShape(12.dp),
@@ -238,58 +349,137 @@ private val ClipSyncShapes = Shapes(
     extraLarge = RoundedCornerShape(28.dp),
 )
 
+// ---------------------------------------------------------------------------
+// Motion (tokens.md §9)
+// ---------------------------------------------------------------------------
+
+/** Motion tokens: one easing curve (bone), Android durations 260–320ms (skin). */
+object CharterMotion {
+    /** cubic-bezier(.16, 1, .3, 1) — bit-identical on both ends. */
+    val Ease: Easing = CubicBezierEasing(0.16f, 1f, 0.3f, 1f)
+
+    /** Android interaction transitions run 260–320ms (Windows runs 180–220ms). */
+    const val DUR_QUICK_MS = 260
+    const val DUR_STANDARD_MS = 300
+    const val DUR_EMPHASIS_MS = 320
+
+    /** The needs-action outline pulse period: 2.6s infinite loop. */
+    const val PULSE_MS = 2600
+
+    /** A charter-eased tween for interaction transitions. */
+    fun <T> spec(durationMillis: Int = DUR_STANDARD_MS): FiniteAnimationSpec<T> =
+        tween(durationMillis = durationMillis, easing = Ease)
+}
+
+// ---------------------------------------------------------------------------
+// Type — the three voices (tokens.md §6), bundled in res/font
+// ---------------------------------------------------------------------------
+
 /**
- * Three voices (tokens.md §6), approximated with system font families until the
- * charter typefaces (Noto Serif SC / Plus Jakarta Sans / JetBrains Mono) ship
- * with the APK. Serif is the app's own voice — at most three places per app.
+ * The three voices ship with the APK so both ends render the same glyphs —
+ * relying on the system would land on OEM-patched fonts (tokens.md §6 hard
+ * requirement). Serif speaks for the app, Sans for content, Mono for machines.
  */
+object ClipSyncFonts {
+    /** Noto Serif SC 600 — brand, empty states, the pairing ritual. At most three places. */
+    val serif: FontFamily = FontFamily(
+        Font(R.font.noto_serif_sc_semibold, FontWeight.SemiBold),
+    )
+
+    /**
+     * Noto Sans SC — 95% of the text. The charter packs Regular + Medium only,
+     * so SemiBold resolves to the Medium file rather than a synthetic bold.
+     */
+    val sans: FontFamily = FontFamily(
+        Font(R.font.noto_sans_sc_regular, FontWeight.Normal),
+        Font(R.font.noto_sans_sc_medium, FontWeight.Medium),
+        Font(R.font.noto_sans_sc_medium, FontWeight.SemiBold),
+    )
+
+    /** JetBrains Mono — timestamps, shortcuts, hashes, byte counts. Never for Chinese. */
+    val mono: FontFamily = FontFamily(
+        Font(R.font.jetbrains_mono_regular, FontWeight.Normal),
+        Font(R.font.jetbrains_mono_medium, FontWeight.Medium),
+    )
+}
+
+/** The type scale of tokens.md §6, voiced by the bundled families. */
 object ClipSyncType {
     val brand = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = ClipSyncFonts.serif,
         fontWeight = FontWeight.SemiBold,
         fontSize = 22.sp,
         letterSpacing = 0.14.em,
     )
     val pageTitle = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = ClipSyncFonts.serif,
         fontWeight = FontWeight.SemiBold,
         fontSize = 17.sp,
         letterSpacing = 0.09.em,
     )
     val sectionTitle = TextStyle(
+        fontFamily = ClipSyncFonts.sans,
         fontWeight = FontWeight.SemiBold,
         fontSize = 15.sp,
     )
     val body = TextStyle(
+        fontFamily = ClipSyncFonts.sans,
         fontSize = 14.sp,
         lineHeight = 21.sp,
     )
     val caption = TextStyle(
+        fontFamily = ClipSyncFonts.sans,
         fontSize = 12.sp,
         lineHeight = 18.sp,
     )
     val groupHeader = TextStyle(
-        fontFamily = FontFamily.Monospace,
+        fontFamily = ClipSyncFonts.mono,
         fontSize = 10.sp,
         letterSpacing = 0.14.em,
     )
     val meta = TextStyle(
-        fontFamily = FontFamily.Monospace,
+        fontFamily = ClipSyncFonts.mono,
         fontSize = 11.sp,
     )
     val fingerprint = TextStyle(
-        fontFamily = FontFamily.Monospace,
+        fontFamily = ClipSyncFonts.mono,
         fontSize = 13.sp,
     )
 }
 
+/** Every Material role speaks the content voice, so no system font leaks in. */
+private val ClipSyncTypography = Typography().let { base ->
+    val sans = ClipSyncFonts.sans
+    base.copy(
+        displayLarge = base.displayLarge.copy(fontFamily = sans),
+        displayMedium = base.displayMedium.copy(fontFamily = sans),
+        displaySmall = base.displaySmall.copy(fontFamily = sans),
+        headlineLarge = base.headlineLarge.copy(fontFamily = sans),
+        headlineMedium = base.headlineMedium.copy(fontFamily = sans),
+        headlineSmall = base.headlineSmall.copy(fontFamily = sans),
+        titleLarge = base.titleLarge.copy(fontFamily = sans),
+        titleMedium = base.titleMedium.copy(fontFamily = sans),
+        titleSmall = base.titleSmall.copy(fontFamily = sans),
+        bodyLarge = base.bodyLarge.copy(fontFamily = sans),
+        bodyMedium = base.bodyMedium.copy(fontFamily = sans),
+        bodySmall = base.bodySmall.copy(fontFamily = sans),
+        labelLarge = base.labelLarge.copy(fontFamily = sans),
+        labelMedium = base.labelMedium.copy(fontFamily = sans),
+        labelSmall = base.labelSmall.copy(fontFamily = sans),
+    )
+}
+
+// ---------------------------------------------------------------------------
+// Charter surfaces (tokens.md §8)
+// ---------------------------------------------------------------------------
+
 /**
- * z1 card face: shadow + clip + face colour + top light + 1px hairline
+ * z1 card face: sh-1 shadow + clip + face colour + top light + 1px hairline
  * (tokens.md §8 — three nested layers collapsed into one modifier).
  */
 fun Modifier.charterCard(corner: Dp = 16.dp): Modifier = composed {
     val c = LocalClipSyncColors.current
-    val shape = RoundedCornerShape(corner)
+    val shape = if (corner == 16.dp) CharterShapes.card else SuperellipseShape(corner)
     this
         .shadow(elevation = 3.dp, shape = shape, ambientColor = c.shadow, spotColor = c.shadow)
         .clip(shape)
@@ -301,7 +491,7 @@ fun Modifier.charterCard(corner: Dp = 16.dp): Modifier = composed {
 /** z−1 sunken face for inputs and slots. */
 fun Modifier.charterSunken(corner: Dp = 12.dp): Modifier = composed {
     val c = LocalClipSyncColors.current
-    val shape = RoundedCornerShape(corner)
+    val shape = if (corner == 12.dp) CharterShapes.control else SuperellipseShape(corner)
     this
         .clip(shape)
         .background(c.sfIn)
@@ -321,6 +511,7 @@ fun ClipSyncTheme(
         MaterialTheme(
             colorScheme = m3Scheme(colors),
             shapes = ClipSyncShapes,
+            typography = ClipSyncTypography,
             content = content,
         )
     }

@@ -1,5 +1,10 @@
 package com.clipsync.android.ui.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,11 +29,13 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
@@ -41,9 +48,12 @@ import androidx.compose.ui.unit.sp
 import com.clipsync.android.ui.ConduitStatusBand
 import com.clipsync.android.ui.HealthScreenState
 import com.clipsync.android.ui.health.buildHealthScreenState
+import com.clipsync.android.ui.theme.CharterMotion
+import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.ClipSyncType
+import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.charterSunken
 import com.clipsync.android.ui.theme.clipSyncColors
 
@@ -86,9 +96,25 @@ fun HomeScreen(
         ConduitStatusBand(state = conduit, onClick = onOpenConduit)
         Spacer(Modifier.height(12.dp))
         SearchField(query = home.query, onQueryChange = onQueryChange)
-        home.notice?.let { notice ->
-            Spacer(Modifier.height(8.dp))
-            NoticeStrip(notice)
+        // The strip slides in and out on the charter curve; the last notice is
+        // kept so the exit animation has content to fade.
+        var lastNotice by remember { mutableStateOf(home.notice) }
+        if (home.notice != null) {
+            lastNotice = home.notice
+        }
+        AnimatedVisibility(
+            visible = home.notice != null,
+            enter = fadeIn(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                expandVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
+            exit = fadeOut(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                shrinkVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
+        ) {
+            lastNotice?.let { notice ->
+                Column {
+                    Spacer(Modifier.height(8.dp))
+                    NoticeStrip(notice)
+                }
+            }
         }
         Spacer(Modifier.height(12.dp))
         when {
@@ -112,6 +138,11 @@ fun HomeScreen(
                         nowMs = nowMs,
                         onCopy = { onCopy(item.eventId) },
                         onDelete = { onDelete(item.eventId) },
+                        modifier = Modifier.animateItem(
+                            fadeInSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
+                            placementSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
+                            fadeOutSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+                        ),
                     )
                 }
                 item { Spacer(Modifier.height(4.dp)) }
@@ -179,7 +210,7 @@ private fun NoticeStrip(notice: HomeNotice, modifier: Modifier = Modifier) {
         HomeNotice.DeletedLocal ->
             NoticeStyle("已从本机移除 · 不影响其他设备", c.t2, c.sf3, c.ln)
     }
-    val shape = RoundedCornerShape(8.dp)
+    val shape = CharterShapes.control
     Text(
         text = text,
         fontSize = 12.sp,
@@ -225,7 +256,7 @@ private fun DismissableClipCard(
         modifier = modifier,
         backgroundContent = {
             // Removal is a stated fact, not an error: grey face, honest copy.
-            val shape = RoundedCornerShape(12.dp)
+            val shape = CharterShapes.card
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -243,7 +274,10 @@ private fun DismissableClipCard(
     }
 }
 
-/** One history card: header row (source tag / time), then the preview body. */
+/**
+ * One history card: header row (source tag / time), then the preview body.
+ * z1 charter face — sh-1 shadow, top light, hairline (tokens.md §8).
+ */
 @Composable
 private fun ClipCard(
     item: HomeClipItem,
@@ -252,14 +286,10 @@ private fun ClipCard(
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
-    val shape = RoundedCornerShape(12.dp)
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(shape)
-            .background(c.sfUp)
-            .background(Brush.verticalGradient(0f to c.sfGradTop, 0.62f to Color.Transparent))
-            .border(1.dp, c.ln, shape)
+            .charterCard()
             .clickable(onClick = onCopy)
             .padding(horizontal = 13.dp, vertical = 10.dp),
     ) {
@@ -269,7 +299,7 @@ private fun ClipCard(
         ) {
             val source = item.remoteSourceLabel
             if (source != null) {
-                SourceTag(label = source)
+                SourceTag(label = source, pairingOrder = item.sourcePairingOrder)
             }
             Spacer(Modifier.weight(1f))
             Text(
@@ -293,17 +323,22 @@ private fun ClipCard(
 
 /**
  * Neighbour-hue source box (charter: 来源标记 = 低彩度着色盒). Only remote
- * clips get one — the single paired PC takes pairing slot 1 (dev1, 青灰 195).
+ * clips get one. The hue follows the device's pairing order through the
+ * charter ladder (tokens.md §4: slot 1 青灰 … slot 5 灰粉, never a hash);
+ * a remote without a pairing slot states the fact in grey instead.
  */
 @Composable
-private fun SourceTag(label: String, modifier: Modifier = Modifier) {
+private fun SourceTag(label: String, pairingOrder: Int?, modifier: Modifier = Modifier) {
     val c = clipSyncColors
+    val tone = pairingOrder?.let { c.device(it) } ?: c.t3
+    val boxBg = pairingOrder?.let { c.deviceBg(it) } ?: c.sf3
+    val boxLn = pairingOrder?.let { c.deviceLn(it) } ?: c.ln2
     val shape = RoundedCornerShape(6.dp)
     Row(
         modifier = modifier
             .clip(shape)
-            .background(c.dev1.copy(alpha = 0.10f))
-            .border(1.dp, c.dev1.copy(alpha = 0.28f), shape)
+            .background(boxBg)
+            .border(1.dp, boxLn, shape)
             .padding(horizontal = 7.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -311,14 +346,14 @@ private fun SourceTag(label: String, modifier: Modifier = Modifier) {
         Icon(
             imageVector = ClipSyncIcons.Monitor,
             contentDescription = "来自",
-            tint = c.dev1,
+            tint = tone,
             modifier = Modifier.size(10.dp),
         )
         Text(
             text = label,
             fontSize = 10.sp,
             fontWeight = FontWeight.Medium,
-            color = c.dev1,
+            color = tone,
         )
     }
 }
@@ -432,6 +467,7 @@ private fun HomeScreenListPreview() {
                         preview = "https://github.com/clipsync/core",
                         createdAtMs = System.currentTimeMillis() - 240_000,
                         remoteSourceLabel = "PC-STUDIO",
+                        sourcePairingOrder = 1,
                     ),
                     HomeClipItem(
                         eventId = "e2",
@@ -444,6 +480,7 @@ private fun HomeScreenListPreview() {
                         preview = "会议纪要：本周五完成 Stage 4 端到端握手测试",
                         createdAtMs = System.currentTimeMillis() - 90_000_000,
                         remoteSourceLabel = "PC-STUDIO",
+                        sourcePairingOrder = 1,
                     ),
                 ),
             ),

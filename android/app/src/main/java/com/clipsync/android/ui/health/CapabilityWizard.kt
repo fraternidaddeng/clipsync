@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clipsync.android.platform.clipboard.CapabilityState
+import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncType
 import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.clipSyncColors
@@ -65,11 +65,10 @@ private fun RouteCard(
     onAction: (RouteActionId) -> Unit,
 ) {
     val c = clipSyncColors
-    val shape = RoundedCornerShape(16.dp)
     val surface = if (route.preferred) {
         Modifier
             .charterCard(corner = 16.dp)
-            .border(1.5.dp, c.flowLn, shape)
+            .border(1.5.dp, c.flowLn, CharterShapes.card)
     } else {
         Modifier.charterCard(corner = 16.dp)
     }
@@ -155,7 +154,7 @@ private fun RouteActionButton(
     onClick: () -> Unit,
 ) {
     val c = clipSyncColors
-    val shape = RoundedCornerShape(12.dp)
+    val shape = CharterShapes.control
     val surface = if (primary) {
         Modifier
             .background(c.flow)
