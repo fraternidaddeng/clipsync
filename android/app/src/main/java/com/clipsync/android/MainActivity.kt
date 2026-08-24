@@ -249,7 +249,26 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             },
+            historyRepository = { SyncStore.repository(applicationContext) },
         )
+    }
+
+    // 导出历史/导入历史 write and read only where the user explicitly points (SAF);
+    // the streams are opened lazily on the ViewModel's IO dispatcher.
+    private val exportHistoryLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument("application/octet-stream"),
+    ) { uri ->
+        if (uri != null) {
+            preferencesViewModel.exportHistory { contentResolver.openOutputStream(uri) }
+        }
+    }
+
+    private val importHistoryLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        if (uri != null) {
+            preferencesViewModel.importHistory { contentResolver.openInputStream(uri) }
+        }
     }
 
     /**
@@ -291,6 +310,13 @@ class MainActivity : ComponentActivity() {
                     onServiceStart = ::startSyncService,
                     onServiceStop = { ClipboardSyncService.stop(this) },
                     onOpenNotificationSettings = ::openNotificationSettings,
+                    onExportHistory = {
+                        val stamp = java.time.format.DateTimeFormatter
+                            .ofPattern("yyyyMMdd-HHmmss")
+                            .format(java.time.LocalDateTime.now())
+                        exportHistoryLauncher.launch("clipsync-history-$stamp.jsonl")
+                    },
+                    onImportHistory = { importHistoryLauncher.launch(arrayOf("*/*")) },
                 )
             }
         }
@@ -443,6 +469,8 @@ private fun ClipSyncApp(
     onServiceStart: () -> Unit = {},
     onServiceStop: () -> Unit = {},
     onOpenNotificationSettings: (() -> Unit)? = null,
+    onExportHistory: () -> Unit = {},
+    onImportHistory: () -> Unit = {},
 ) {
     val c = clipSyncColors
     var tab by rememberSaveable { mutableIntStateOf(0) }
@@ -548,6 +576,8 @@ private fun ClipSyncApp(
                             pairingOpen = false
                             tab = 1
                         },
+                        onExportHistory = onExportHistory,
+                        onImportHistory = onImportHistory,
                         modifier = Modifier.padding(padding),
                     )
                 }

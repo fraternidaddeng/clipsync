@@ -288,6 +288,126 @@ class ClipSyncRepository(
     suspend fun peerCursors(peerId: String): Map<String, OriginReceiveState> =
         cursors.listForPeer(peerId).associate { it.originDeviceId to it.toState() }
 
+    // ---- History export/import (docs/export-format-v1.md) ----
+
+    /**
+     * Streams the whole clips table — live rows and terminal tombstones — as an
+     * export-format-v1 JSON Lines document. Read-only; returns the exported event count.
+     * The stream is flushed but not closed (the caller owns it).
+     */
+    suspend fun exportHistory(output: java.io.OutputStream, exportedAtMs: Long): Int {
+        val rows = clips.exportAll()
+        val writer = output.bufferedWriter(Charsets.UTF_8)
+        writer.write(
+            HistoryExportFormat.writeHeaderLine(
+                HistoryExportHeader(exportedAtMs, localDeviceId, "android", rows.size),
+            ),
+        )
+        writer.write("\n")
+        for (row in rows) {
+            writer.write(HistoryExportFormat.writeClipLine(row.toExportedClip()))
+            writer.write("\n")
+        }
+        writer.flush()
+        return rows.size
+    }
+
+    /**
+     * Merge-imports an export-format-v1 document. The whole file is parsed and validated
+     * first, then applied in one transaction: idempotent on (origin_device_id, origin_seq),
+     * no outbox fan-out, receive vector advanced, and the local sequence allocator bumped
+     * past any restored own-origin events. A validation failure changes nothing.
+     */
+    suspend fun importHistory(input: java.io.InputStream): HistoryImportResult {
+        val reader = input.bufferedReader(Charsets.UTF_8)
+        var headerLine: String?
+        do {
+            headerLine = reader.readLine()
+                ?: throw HistoryTransferException(HistoryTransferErrorCodes.BAD_HEADER, "The file is empty.")
+        } while (headerLine.isBlank())
+
+        val header = HistoryExportFormat.parseHeaderLine(headerLine)
+        val records = mutableListOf<HistoryExportedClip>()
+        var lineNumber = 1
+        while (true) {
+            val line = reader.readLine() ?: break
+            lineNumber++
+            if (line.isBlank()) {
+                continue
+            }
+            records.add(HistoryExportFormat.parseClipLine(line, lineNumber))
+        }
+        if (records.size != header.eventCount) {
+            throw HistoryTransferException(
+                HistoryTransferErrorCodes.COUNT_MISMATCH,
+                "The header announces ${header.eventCount} events but the file carries ${records.size}.",
+            )
+        }
+        return importParsedHistory(records)
+    }
+
+    /** The transactional half of [importHistory]; also the unit-test entry point. */
+    suspend fun importParsedHistory(records: List<HistoryExportedClip>): HistoryImportResult =
+        database.withTransaction {
+            var imported = 0
+            var skipped = 0
+            var conflicts = 0
+            var maxOwnOriginSeq = 0L
+            for (record in records) {
+                when (checkRemoteIdentity(record.eventId, record.originDeviceId, record.originSeq, record.contentHash)) {
+                    is RemoteStoreResult.AlreadyPersisted -> {
+                        skipped++
+                        continue
+                    }
+                    is RemoteStoreResult.IdentityConflict -> {
+                        conflicts++
+                        continue
+                    }
+                    else -> Unit
+                }
+                clips.insert(
+                    ClipEventEntity(
+                        eventId = record.eventId,
+                        originDeviceId = record.originDeviceId,
+                        originSeq = record.originSeq,
+                        content = record.content ?: "",
+                        contentHash = record.contentHash ?: "",
+                        sourceApp = record.sourceApp,
+                        createdAtMs = record.createdAtMs,
+                        expiresAtMs = record.expiresAtMs,
+                        deletedAtMs = record.deletedAtMs,
+                        terminalReason = record.terminalReason,
+                        appliedAtMs = null,
+                    ),
+                )
+                advanceReceiveState(record.originDeviceId, record.originSeq)
+                if (record.originDeviceId == localDeviceId) {
+                    maxOwnOriginSeq = maxOf(maxOwnOriginSeq, record.originSeq)
+                }
+                imported++
+            }
+            // Never lower the allocator: restored own-origin events must not collide with
+            // future captures.
+            if (maxOwnOriginSeq > 0) {
+                val next = sequences.nextSeq(localDeviceId) ?: 1L
+                sequences.upsert(LocalSequenceEntity(localDeviceId, maxOf(next, maxOwnOriginSeq + 1)))
+            }
+            HistoryImportResult(imported, skipped, conflicts)
+        }
+
+    private fun ClipEventEntity.toExportedClip(): HistoryExportedClip = HistoryExportedClip(
+        eventId = eventId,
+        originDeviceId = originDeviceId,
+        originSeq = originSeq,
+        content = if (terminalReason == null) content else null,
+        contentHash = if (terminalReason == null) contentHash else null,
+        sourceApp = if (terminalReason == null) sourceApp else null,
+        createdAtMs = createdAtMs,
+        expiresAtMs = expiresAtMs,
+        deletedAtMs = deletedAtMs,
+        terminalReason = terminalReason,
+    )
+
     /** Drops all queue and cursor state for a revoked/unpaired peer; history is untouched. */
     suspend fun forgetPeer(peerId: String) = database.withTransaction {
         outbox.deleteForPeer(peerId)

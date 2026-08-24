@@ -48,6 +48,8 @@ fun PreferencesScreen(
     /** Display name of the paired Windows peer; null while unpaired. */
     pairedDeviceName: String? = null,
     onOpenConduit: () -> Unit = {},
+    onExportHistory: () -> Unit = {},
+    onImportHistory: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
@@ -119,6 +121,39 @@ fun PreferencesScreen(
             )
             RowDivider()
             ValueRow(title = "单条上限", value = "${formatByteCap(state.maxSyncTextBytes)} · 纯文本")
+        }
+
+        Spacer(Modifier.height(20.dp))
+        GroupHeader("数据")
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .charterCard(),
+        ) {
+            ActionRow(
+                title = "导出历史",
+                description = "把全部历史（含删除标记）写成 JSON Lines 备份文件；" +
+                    "不含密钥与配对信息。导出内容为明文，请妥善保管。",
+                onClick = onExportHistory,
+            )
+            RowDivider()
+            ActionRow(
+                title = "导入历史",
+                description = "从备份文件合并历史：按「来源设备 + 序号」幂等去重，" +
+                    "重复导入不产生重复条目。校验失败时不做任何改动。",
+                onClick = onImportHistory,
+            )
+            if (state.transferStatus != null) {
+                RowDivider()
+                Text(
+                    text = state.transferStatus,
+                    style = ClipSyncType.caption,
+                    color = c.t3,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                )
+            }
         }
 
         Spacer(Modifier.height(20.dp))
@@ -228,6 +263,30 @@ private fun ValueRow(title: String, value: String) {
             modifier = Modifier.weight(1f),
         )
         Text(text = value, style = ClipSyncType.caption, color = c.t3)
+    }
+}
+
+/**
+ * A row that runs an action here (file pickers for 导出历史/导入历史): title and
+ * honest description on the left, a flow-coloured chevron marking the tap target.
+ */
+@Composable
+private fun ActionRow(title: String, description: String, onClick: () -> Unit) {
+    val c = clipSyncColors
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(text = title, fontSize = 14.sp, color = c.t1)
+            Spacer(Modifier.height(2.dp))
+            Text(text = description, style = ClipSyncType.caption, color = c.t3)
+        }
+        Spacer(Modifier.width(12.dp))
+        Text(text = "›", fontSize = 16.sp, color = c.flow)
     }
 }
 

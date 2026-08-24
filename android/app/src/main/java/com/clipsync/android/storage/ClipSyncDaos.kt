@@ -127,6 +127,10 @@ interface ClipEventDao {
 
     @Query("SELECT COUNT(*) FROM clips WHERE deleted_at IS NULL")
     suspend fun countVisible(): Int
+
+    /** Every row — live and terminal — in deterministic order for the history export. */
+    @Query("SELECT * FROM clips ORDER BY origin_device_id, origin_seq")
+    suspend fun exportAll(): List<ClipEventEntity>
 }
 
 /** A pending outbox row joined with the clip it must announce; a terminal clip announces `unavailable`. */
