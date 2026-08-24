@@ -1338,6 +1338,65 @@
                             </StackPanel>
                         </Border>
 
+                        <!-- 数据 -->
+                        <Border Style="{StaticResource GroupCard}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource GroupHeader}" Text="数 据 · DATA" />
+                                <Grid Margin="16,9,16,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,16,0">
+                                        <TextBlock Style="{StaticResource RowName}" Text="导出历史" />
+                                        <TextBlock Style="{StaticResource RowDesc}" Text="把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥、证书与配对信息。导出内容为明文，请妥善保管。" />
+                                    </StackPanel>
+                                    <Button Grid.Column="1"
+                                            VerticalAlignment="Top"
+                                            Command="{Binding ExportHistoryCommand}"
+                                            Content="导出历史"
+                                            Style="{StaticResource GhostQuietButton}" />
+                                </Grid>
+                                <Border Padding="16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowName}" Text="导入历史" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="从备份文件合并历史：按「来源设备 + 序号」幂等去重，重复导入不产生重复条目，也不会覆盖本机已删除的记录。校验失败时不做任何改动。" />
+                                        </StackPanel>
+                                        <Button Grid.Column="1"
+                                                VerticalAlignment="Top"
+                                                Command="{Binding ImportHistoryCommand}"
+                                                Content="导入历史"
+                                                Style="{StaticResource GhostQuietButton}" />
+                                    </Grid>
+                                </Border>
+                                <Border Padding="16,10"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <TextBlock FontFamily="{StaticResource CsMono}"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource CsText3Brush}"
+                                               Text="{Binding HistoryTransferStatus}"
+                                               TextWrapping="Wrap" />
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HistoryTransferStatus}" Value="">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
                         <!-- 信任 -->
                         <Border Style="{StaticResource GroupCard}">
                             <StackPanel>

@@ -3,6 +3,8 @@ using ClipSync.Core.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Text;
 using System.Windows;
 
 namespace ClipSync.App.ViewModels;
@@ -10,7 +12,9 @@ namespace ClipSync.App.ViewModels;
 public partial class MainViewModel(
     SqliteClipboardEventStore store,
     ClipboardCapturePolicy capturePolicy,
-    ClipSync.App.Clipboard.Win32ClipboardAdapter clipboardAdapter) : ObservableObject
+    ClipSync.App.Clipboard.Win32ClipboardAdapter clipboardAdapter,
+    Func<string?>? exportPathPicker = null,
+    Func<string?>? importPathPicker = null) : ObservableObject
 {
     private bool initialized;
 
@@ -81,6 +85,10 @@ public partial class MainViewModel(
 
     [ObservableProperty]
     private string renameText = string.Empty;
+
+    /// <summary>Result line of the last 导出历史/导入历史 run; empty until either has run.</summary>
+    [ObservableProperty]
+    private string historyTransferStatus = string.Empty;
 
     public ObservableCollection<HistoryItemViewModel> History { get; } = new();
 
@@ -269,6 +277,104 @@ public partial class MainViewModel(
     {
         await store.ClearAsync(DateTimeOffset.UtcNow);
         await RefreshAsync();
+    }
+
+    /// <summary>
+    /// 导出历史: writes the whole clips table (live rows and deletion markers) as an
+    /// export-format-v1 JSON Lines file. Events only — never pair secrets, certificates,
+    /// or device rows. The status line states the plaintext nature honestly.
+    /// </summary>
+    [RelayCommand]
+    private async Task ExportHistoryAsync()
+    {
+        var path = (exportPathPicker ?? PickExportPath)();
+        if (path is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await using (var writer = new StreamWriter(path, append: false, new UTF8Encoding(false)))
+            {
+                var count = await store.ExportHistoryAsync(writer, DateTimeOffset.UtcNow);
+                HistoryTransferStatus = $"已导出 {count} 条记录（明文）→ {path}";
+            }
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            HistoryTransferStatus = "导出失败：无法写入所选文件。";
+        }
+    }
+
+    /// <summary>
+    /// 导入历史: merges an export file. Idempotent on (origin_device_id, origin_seq) —
+    /// importing the same file twice, or on a device that already synced part of the
+    /// history, never duplicates events. Validation failures change nothing.
+    /// </summary>
+    [RelayCommand]
+    private async Task ImportHistoryAsync()
+    {
+        var path = (importPathPicker ?? PickImportPath)();
+        if (path is null)
+        {
+            return;
+        }
+
+        try
+        {
+            HistoryImportResult result;
+            using (var reader = new StreamReader(path, Encoding.UTF8))
+            {
+                result = await store.ImportHistoryAsync(reader);
+            }
+
+            HistoryTransferStatus =
+                $"导入完成：新增 {result.Imported} · 已存在 {result.Skipped} · 冲突 {result.Conflicts}";
+            await RefreshAsync();
+        }
+        catch (HistoryTransferException exception)
+        {
+            HistoryTransferStatus = $"导入失败：{DescribeTransferError(exception.ErrorCode)}。未做任何改动。";
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            HistoryTransferStatus = "导入失败：无法读取所选文件。";
+        }
+    }
+
+    private static string DescribeTransferError(string errorCode) => errorCode switch
+    {
+        HistoryTransferErrorCodes.BadHeader => "这不是 ClipSync 历史导出文件",
+        HistoryTransferErrorCodes.UnsupportedVersion => "文件版本高于本应用支持的版本",
+        HistoryTransferErrorCodes.MalformedRecord => "文件内容损坏（记录格式错误）",
+        HistoryTransferErrorCodes.HashMismatch => "文件内容损坏（哈希校验失败）",
+        HistoryTransferErrorCodes.CountMismatch => "文件不完整（条数与头部不符）",
+        HistoryTransferErrorCodes.ContentTooLarge => "文件包含超过 1 MiB 的条目",
+        _ => "未知错误"
+    };
+
+    private static string? PickExportPath()
+    {
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = "导出历史",
+            FileName = $"clipsync-history-{DateTime.Now:yyyyMMdd-HHmmss}.jsonl",
+            DefaultExt = HistoryExportFormat.SuggestedExtension,
+            Filter = "ClipSync 历史导出 (*.jsonl)|*.jsonl|所有文件 (*.*)|*.*"
+        };
+        return dialog.ShowDialog() == true ? dialog.FileName : null;
+    }
+
+    private static string? PickImportPath()
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Title = "导入历史",
+            DefaultExt = HistoryExportFormat.SuggestedExtension,
+            Filter = "ClipSync 历史导出 (*.jsonl)|*.jsonl|所有文件 (*.*)|*.*"
+        };
+        return dialog.ShowDialog() == true ? dialog.FileName : null;
     }
 
     [RelayCommand]
