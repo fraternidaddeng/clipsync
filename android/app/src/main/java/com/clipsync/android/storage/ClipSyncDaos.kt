@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ClipEventDao {
@@ -34,6 +35,18 @@ interface ClipEventDao {
         """,
     )
     suspend fun search(pattern: String?, limit: Int, offset: Int): List<ClipEventEntity>
+
+    /** Reactive [search] without paging, for the history screen. */
+    @Query(
+        """
+        SELECT * FROM clips
+        WHERE deleted_at IS NULL
+          AND (:pattern IS NULL OR content LIKE :pattern ESCAPE '\')
+        ORDER BY created_at DESC, origin_seq DESC, origin_device_id ASC, event_id ASC
+        LIMIT :limit
+        """,
+    )
+    fun observeSearch(pattern: String?, limit: Int): Flow<List<ClipEventEntity>>
 
     @Query(
         """

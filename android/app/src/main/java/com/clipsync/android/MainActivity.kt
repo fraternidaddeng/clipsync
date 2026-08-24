@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,8 +64,10 @@ import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.ForegroundClipboardBackend
 import com.clipsync.android.platform.clipboard.OverlayPollingBackend
 import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
-import com.clipsync.android.service.ClipboardSyncService
 import com.clipsync.android.storage.SyncSettingsStore
+import com.clipsync.android.sync.ClipboardSyncService
+import com.clipsync.android.sync.SyncConnectionState
+import com.clipsync.android.sync.SyncStore
 import com.clipsync.android.ui.HealthScreen
 import com.clipsync.android.ui.health.CapabilityWiring
 import com.clipsync.android.ui.health.HealthViewModel
@@ -72,9 +75,11 @@ import com.clipsync.android.ui.health.ReadRouteUi
 import com.clipsync.android.ui.health.RouteActionId
 import com.clipsync.android.ui.health.SyncHealth
 import com.clipsync.android.ui.health.SyncHealthSource
+import com.clipsync.android.ui.home.ClipSyncHistoryGateway
 import com.clipsync.android.ui.home.HomeScreen
 import com.clipsync.android.ui.home.HomeViewModel
 import com.clipsync.android.ui.pairing.PairingScreen
+import com.clipsync.android.ui.pairing.PairingUiState
 import com.clipsync.android.ui.pairing.PairingViewModel
 import com.clipsync.android.ui.prefs.PreferencesScreen
 import com.clipsync.android.ui.prefs.PreferencesViewModel
@@ -125,17 +130,15 @@ class MainActivity : ComponentActivity() {
         HealthViewModel.factory(
             pairingStore = pairingStore,
             clipboard = clipboardCoordinator,
-            // The sync engine lands later; until then the service skeleton is the
-            // only honest fact the service segment can report.
+            // Live facts from the sync foreground service: alive + authenticated session.
             syncHealthSource = SyncHealthSource {
                 combine(
-                    ClipboardSyncService.running,
-                    ClipboardSyncService.lastErrorCode,
-                ) { running, errorCode ->
+                    ClipboardSyncService.serviceRunning,
+                    ClipboardSyncService.connectionStates,
+                ) { running, connection ->
                     SyncHealth(
                         serviceRunning = running,
-                        connected = false,
-                        serviceErrorCode = errorCode,
+                        connected = connection is SyncConnectionState.Connected,
                     )
                 }
             },
@@ -157,8 +160,15 @@ class MainActivity : ComponentActivity() {
         Shizuku.OnRequestPermissionResultListener { _, _ -> healthViewModel.refresh() }
 
     private val homeViewModel: HomeViewModel by viewModels {
-        // Room-backed history lands in a later stage; null renders the honest empty state.
-        HomeViewModel.factory(historySource = null)
+        // SyncStore is the process-wide handle, so service and UI share one
+        // database instance and history observers see the engine's writes.
+        HomeViewModel.factory(
+            history = ClipSyncHistoryGateway(SyncStore.repository(applicationContext)),
+            writeCoordinator = ClipboardWriteCoordinator(
+                publicWriter = AndroidPublicClipboardWriter(applicationContext),
+            ),
+            pairingStore = pairingStore,
+        )
     }
 
     private val preferencesViewModel: PreferencesViewModel by viewModels {
@@ -173,8 +183,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         runCatching { Shizuku.addRequestPermissionResultListener(shizukuPermissionListener) }
+        if (pairingStore.peer() != null) {
+            ClipboardSyncService.start(this)
+        }
         setContent {
             ClipSyncTheme {
+                SyncServiceController(pairingViewModel)
                 ClipSyncApp(
                     pairingViewModel = pairingViewModel,
                     healthViewModel = healthViewModel,
@@ -264,6 +278,23 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/** Starts the sync foreground service once paired and stops it when the pairing is forgotten. */
+@Composable
+private fun SyncServiceController(pairingViewModel: PairingViewModel) {
+    val context = LocalContext.current
+    val pairingState by pairingViewModel.state.collectAsState()
+    LaunchedEffect(pairingState) {
+        when (val state = pairingState) {
+            is PairingUiState.Paired -> ClipboardSyncService.start(context)
+            is PairingUiState.Idle ->
+                if (state.pairedPeer == null) {
+                    ClipboardSyncService.stop(context)
+                }
+            else -> Unit
+        }
+    }
+}
+
 /**
  * Three positions (charter: the old five screens fold into 一屏 / 通路 / 偏好).
  * Pairing hangs under the conduit's network segment rather than owning a tab.
@@ -287,9 +318,10 @@ private fun ClipSyncApp(
     val pairingState by pairingViewModel.state.collectAsState()
 
     // Pairing completing (or the peer being forgotten) must reflect in the
-    // conduit immediately, not on the next app start.
+    // conduit and in the history source tags immediately, not on next start.
     LaunchedEffect(pairingState) {
         healthViewModel.refresh()
+        homeViewModel.refreshPeer()
     }
     Box(
         modifier = Modifier
@@ -319,8 +351,11 @@ private fun ClipSyncApp(
         ) { padding ->
             when (tab) {
                 0 -> HomeScreen(
-                    state = healthState,
+                    conduit = healthState,
                     home = homeState,
+                    onQueryChange = homeViewModel::setQuery,
+                    onCopy = homeViewModel::copy,
+                    onDelete = homeViewModel::delete,
                     onOpenConduit = { tab = 1 },
                     modifier = Modifier.padding(padding),
                 )

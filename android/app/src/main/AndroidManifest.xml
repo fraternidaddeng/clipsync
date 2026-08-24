@@ -9,11 +9,13 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <!-- QR scanning only; pairing also works by pasting the payload without camera access. -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <!-- The user-started sync service; it keeps the connection, never clipboard privilege. -->
+    <!-- The sync session to the paired Windows peer runs as a connectedDevice foreground service. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
-    <!-- Inbox notifications (API 33+ runtime permission). Denial never blocks sync itself;
-         the item stays in the inbox and the in-app status must explain the missing surface. -->
+    <!-- API 34+ prerequisite for the connectedDevice type on LAN (Wi-Fi) peers. -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <!-- Status + inbox notifications (API 33+ runtime permission). Denial never blocks sync
+         itself; items stay in the inbox and the in-app status must explain the missing surface. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Wizard routes 2 and 3: the transient read-focus overlay, granted in Settings. -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -47,11 +49,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".service.ClipboardSyncService"
-            android:exported="false"
-            android:foregroundServiceType="connectedDevice" />
 
         <!-- Lets Shizuku hand this app its binder when the Shizuku service (re)starts. -->
         <provider
@@ -101,6 +98,12 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
+
+        <!-- 与已配对 Windows 端保持同步会话的前台服务；通知只描述连接状态。 -->
+        <service
+            android:name=".sync.ClipboardSyncService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
     </application>
 
 </manifest>
