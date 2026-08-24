@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>剪剪相传 · 来源标记 · 六个变体</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600&display=swap');
+:root[data-theme="light"]{
+  --t1:#1c2733;--t2:#3d4a59;--t3:#6b7a8b;--t4:#9aa7b6;
+  --bg:#e2e9f2;--bg-grad:linear-gradient(178deg,#e9eff6 0%,#e2e9f2 42%,#dae3ee 100%);
+  --sf:#f6f9fc;--sf-grad:linear-gradient(180deg,rgba(255,255,255,.72) 0%,rgba(255,255,255,0) 62%);
+  --sf-up:#fdfeff;--sf-in:#dde5ef;--sf3:#e7edf5;
+  --ln:#cfd9e6;--ln2:#bcc9d9;
+  --edge:inset 0 1px 0 rgba(255,255,255,.9);
+  --sh-0:inset 0 1px 2.5px rgba(35,52,72,.07);
+  --sh-1:0 1px 1.5px rgba(35,52,72,.05),0 3px 8px -3px rgba(35,52,72,.09);
+  --sh-2:0 1px 2px rgba(35,52,72,.05),0 6px 14px -4px rgba(35,52,72,.10),0 20px 40px -16px rgba(35,52,72,.16);
+  --fl:#215f8f;--fl-bg:rgba(33,95,143,.10);--fl-ln:rgba(33,95,143,.24);
+  --ac:#9b6b24;--ac-bg:rgba(155,107,36,.11);--ac-ln:rgba(155,107,36,.28);
+  /* 低彩度设备色：同色相族，彩度只有状态色的 1/3 */
+  --dev-cool:#547891;--dev-cool-bg:rgba(84,120,145,.10);--dev-cool-ln:rgba(84,120,145,.22);
+  --dev-warm:#8d7a63;--dev-warm-bg:rgba(141,122,99,.11);--dev-warm-ln:rgba(141,122,99,.24);
+  /* 高彩度设备色（原 production 风格） */
+  --sat-cool:#1c628a;--sat-cool-bg:rgba(28,98,138,.10);--sat-cool-ln:rgba(28,98,138,.26);
+  --sat-warm:#7c4467;--sat-warm-bg:rgba(124,68,103,.10);--sat-warm-ln:rgba(124,68,103,.26);
+  --grain:0,0,0;--grain-a:.030;
+}
+:root[data-theme="dark"]{
+  --t1:#e3e9f0;--t2:#c0cad6;--t3:#8b98a8;--t4:#5f6c7c;
+  --bg:#0c1116;--bg-grad:linear-gradient(178deg,#121922 0%,#0e141b 45%,#090d12 100%);
+  --sf:#1b232e;--sf-grad:linear-gradient(180deg,rgba(255,255,255,.055) 0%,rgba(255,255,255,0) 65%);
+  --sf-up:#242e3b;--sf-in:#0f151c;--sf3:#1f2833;
+  --ln:#2c3744;--ln2:#3e4a59;
+  --edge:inset 0 1px 0 rgba(255,255,255,.07);
+  --sh-0:inset 0 1.5px 3px rgba(0,0,0,.5);
+  --sh-1:0 1px 2px rgba(0,0,0,.4),0 4px 10px -3px rgba(0,0,0,.5);
+  --sh-2:0 2px 4px rgba(0,0,0,.45),0 10px 22px -6px rgba(0,0,0,.55),0 28px 52px -18px rgba(0,0,0,.7);
+  --fl:#6fa8d4;--fl-bg:rgba(111,168,212,.13);--fl-ln:rgba(111,168,212,.30);
+  --ac:#d9a15c;--ac-bg:rgba(217,161,92,.12);--ac-ln:rgba(217,161,92,.30);
+  --dev-cool:#8fa8bd;--dev-cool-bg:rgba(143,168,189,.12);--dev-cool-ln:rgba(143,168,189,.24);
+  --dev-warm:#b8a690;--dev-warm-bg:rgba(184,166,144,.12);--dev-warm-ln:rgba(184,166,144,.26);
+  --sat-cool:#6fa8d4;--sat-cool-bg:rgba(111,168,212,.13);--sat-cool-ln:rgba(111,168,212,.3);
+  --sat-warm:#c2879f;--sat-warm-bg:rgba(194,135,159,.13);--sat-warm-ln:rgba(194,135,159,.3);
+  --grain:255,255,255;--grain-a:.042;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+body{font-family:'Noto Sans SC',-apple-system,sans-serif;color:var(--t2);line-height:1.7;
+  padding:40px 22px 100px;background-color:var(--bg);background-image:var(--bg-grad);
+  transition:background-color .45s,color .45s;min-height:100vh}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;background-color:rgba(var(--grain),var(--grain-a));
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+  -webkit-mask-size:256px;mask-size:256px}
+.wrap{max-width:1140px;margin:0 auto;position:relative;z-index:2}
+.hd{text-align:center;margin-bottom:20px}
+.bd{font-family:'Noto Serif SC',serif;font-size:23px;font-weight:600;letter-spacing:.2em;color:var(--t1)}
+.en{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.3em;color:var(--t4);margin-top:8px;text-transform:uppercase}
+.hd p{max-width:640px;margin:14px auto 0;color:var(--t3);font-size:12.5px}
+.ctl{display:flex;justify-content:center;gap:5px;margin-bottom:26px;flex-wrap:wrap}
+.cb{background-color:var(--sf);background-image:var(--sf-grad);border:1px solid var(--ln);color:var(--t3);
+  padding:7px 17px;border-radius:100px;font-size:11.5px;font-weight:500;cursor:pointer;font-family:inherit;
+  transition:all .25s;box-shadow:var(--sh-1),var(--edge)}
+.cb.on{background-color:var(--sf-up);color:var(--fl);font-weight:600;border-color:var(--fl-ln)}
+sect{display:block;background-color:var(--sf);background-image:var(--sf-grad);border:1px solid var(--ln);
+  border-radius:18px;box-shadow:var(--sh-2),var(--edge);padding:28px 32px;margin-bottom:22px}
+h2{font-family:'Noto Serif SC',serif;font-size:16.5px;font-weight:600;letter-spacing:.09em;color:var(--t1);margin-bottom:5px}
+h2 .ix{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t4);letter-spacing:.1em;margin-right:11px;font-weight:400}
+.sub{font-size:12.5px;color:var(--t3);margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid var(--ln)}
+p{font-size:13px;margin-bottom:9px}
+code{font-family:'JetBrains Mono',monospace;font-size:11px;background-color:var(--sf-in);border:1px solid var(--ln);
+  padding:1.5px 6px;border-radius:5px;color:var(--fl)}
+.law{background-color:var(--sf-in);border-left:2px solid var(--fl);border-radius:0 10px 10px 0;
+  padding:13px 16px;margin:13px 0;font-size:12.5px;box-shadow:var(--sh-0)}
+.law b{color:var(--t1)}
+.warn{border-left-color:var(--ac)}.warn b{color:var(--ac)}
+
+/* 变体网格 */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.vc{background-color:var(--sf-in);border:1px solid var(--ln);border-radius:14px;padding:16px;box-shadow:var(--sh-0)}
+.vh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.vn{font-size:12.5px;font-weight:600;color:var(--t1)}
+.vi{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t4);letter-spacing:.1em}
+.stack{display:flex;flex-direction:column;gap:7px}
+.cd{background-color:var(--sf);background-image:var(--sf-grad);border:1px solid var(--ln);border-radius:10px;
+  padding:10px 12px;box-shadow:var(--sh-1),var(--edge);transition:all .2s cubic-bezier(.16,1,.3,1)}
+.ct{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;min-height:15px}
+.tm{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t4)}
+.bd2{font-size:11.5px;color:var(--t2);line-height:1.5;word-break:break-all}
+.bd2.mn{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--fl)}
+.vd{font-size:10.5px;color:var(--t3);margin-top:12px;padding-top:11px;border-top:1px solid var(--ln);line-height:1.65}
+.vd b{color:var(--t1)}
+.pro{color:var(--fl);font-weight:600}
+.con{color:var(--ac);font-weight:600}
+
+/* ===== 变体 A：裸图标（现状） ===== */
+.mA{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--t3)}
+.mA svg{width:11px;height:11px;stroke:var(--t3);fill:none;stroke-width:1.8}
+/* ===== 变体 B：中性盒子 ===== */
+.mB{display:inline-flex;align-items:center;gap:4px;font-size:9px;color:var(--t3);
+  background:var(--sf-in);border:1px solid var(--ln);padding:2px 7px 2px 6px;border-radius:100px;box-shadow:var(--sh-0)}
+.mB svg{width:10px;height:10px;stroke:var(--t3);fill:none;stroke-width:1.9}
+/* ===== 变体 C：低彩度着色盒 ===== */
+.mC{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:500;
+  padding:2px 7px 2px 6px;border-radius:100px;border:1px solid}
+.mC.w{color:var(--dev-cool);background:var(--dev-cool-bg);border-color:var(--dev-cool-ln)}
+.mC.p{color:var(--dev-warm);background:var(--dev-warm-bg);border-color:var(--dev-warm-ln)}
+.mC svg{width:10px;height:10px;fill:none;stroke-width:1.9;stroke:currentColor}
+/* ===== 变体 D：高彩度着色盒（原 production 风格） ===== */
+.mD{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:600;
+  padding:2px 7px 2px 6px;border-radius:100px;border:1px solid}
+.mD.w{color:var(--sat-cool);background:var(--sat-cool-bg);border-color:var(--sat-cool-ln)}
+.mD.p{color:var(--sat-warm);background:var(--sat-warm-bg);border-color:var(--sat-warm-ln)}
+.mD svg{width:10px;height:10px;fill:none;stroke-width:1.9;stroke:currentColor}
+/* ===== 变体 E：卡片左脊 ===== */
+.cd.spine{position:relative;padding-left:15px;overflow:hidden}
+.cd.spine::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--dev-cool)}
+.cd.spine.loc::before{background:transparent}
+/* ===== 变体 F：仅图标着色，无盒 ===== */
+.mF{display:flex;align-items:center;gap:4px;font-size:9.5px;font-weight:500}
+.mF.w{color:var(--dev-cool)}
+.mF svg{width:11px;height:11px;fill:none;stroke-width:1.9;stroke:currentColor}
+
+/* 彩度对比条 */
+.cbars{margin-top:8px}
+.cbar{display:flex;align-items:center;gap:13px;margin-bottom:7px;font-size:11.5px}
+.cbar .n{width:150px;color:var(--t3);flex-shrink:0}
+.cbar .tr{flex:1;height:7px;background:var(--sf-in);border-radius:4px;overflow:hidden;border:1px solid var(--ln);box-shadow:var(--sh-0)}
+.cbar .fi{height:100%;border-radius:4px}
+.cbar .v{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t4);width:44px;text-align:right}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;margin-top:6px}
+th{text-align:left;padding:9px 11px;font-size:9.5px;letter-spacing:.12em;color:var(--t4);
+  font-family:'JetBrains Mono',monospace;font-weight:400;border-bottom:1px solid var(--ln);text-transform:uppercase}
+td{padding:10px 11px;border-bottom:1px solid var(--ln);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.ax{font-weight:600;color:var(--t1)}
+.wy{color:var(--t3);font-size:11.5px}
+.ftr{text-align:center;font-size:9.5px;color:var(--t4);margin-top:36px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+.rec{background:var(--fl-bg);border:1px solid var(--fl-ln)}
+.rec .vn{color:var(--fl)}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<div class="hd">
+  <div class="bd">来 源 标 记</div>
+  <div class="en">Source Marker · Six Variants</div>
+  <p>每个变体都放在 4 条卡片的真实节奏里——<b>单看一个标签都好看，放进列表才知道会不会变噪音</b>。</p>
+</div>
+<div class="ctl">
+  <button class="cb on" onclick="th('light')">日间</button>
+  <button class="cb" onclick="th('dark')">夜间</button>
+</div>
+
+<sect>
+  <h2><span class="ix">00</span>先厘清一件事</h2>
+  <div class="sub">这决定了颜色到底该不该加。</div>
+  <div class="law warn"><b>在单台设备的列表里，标签颜色不携带信息。</b> 按「缺省即本地」规则：手机上只会出现「来自 Windows」一种标签，Windows 上只会出现「来自手机」一种。<b>有没有标签已经说完了全部</b>——颜色是纯冗余。<br><br>所以颜色买到的只有两样：① 跨端的「异乡感」一致（手机上外来的永远偏冷）② <b>为多设备预留</b>——项目的 <code>health_peer_count</code> 是复数，协议也允许转发第三方 origin。真到三台设备时，颜色才开始承载信息。</div>
+  <div class="law"><b>但「盒子」买到的是真东西。</b> 现状是裸图标 + 灰字，它在卡片顶行没有<b>视觉锚点</b>——和右侧时间戳同为灰色小字，视线分不清主次。加个盒子（哪怕是中性色）就把它从「一段小字」变成「一个物件」，扫视时立刻有落点。<br><br><b>所以我的判断是：盒子该加，颜色可选。</b>下面按这个顺序看。</div>
+</sect>
+
+<sect>
+  <h2><span class="ix">01</span>六个变体</h2>
+  <div class="sub">注意每组第 2、4 条是本机项（无标记）——这是「缺省即本地」的节奏。</div>
+  <div class="grid">
+
+    <!-- A -->
+    <div class="vc"><div class="vh"><span class="vn">A · 裸图标</span><span class="vi">现状</span></div>
+      <div class="stack">
+        <div class="cd"><div class="ct"><span class="mA">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">10:48</span></div><div class="bd2">https://github.com/clipsync/core</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">10:15</span></div>
+          <div class="bd2 mn">pwsh .\scripts\build.ps1</div></div>
+        <div class="cd"><div class="ct"><span class="mA">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">09:33</span></div><div class="bd2">会议纪要：本周五完成握手测试</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">昨天</span></div>
+          <div class="bd2">验证码：849201</div></div>
+      </div>
+      <div class="vd"><b>问题</b>：与时间戳同为灰色小字，<span class="con">没有视觉锚点</span>。扫视时两者混在一起。</div></div>
+
+    <!-- B -->
+    <div class="vc"><div class="vh"><span class="vn">B · 中性盒</span><span class="vi">加结构，不花色</span></div>
+      <div class="stack">
+        <div class="cd"><div class="ct"><span class="mB">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">10:48</span></div><div class="bd2">https://github.com/clipsync/core</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">10:15</span></div>
+          <div class="bd2 mn">pwsh .\scripts\build.ps1</div></div>
+        <div class="cd"><div class="ct"><span class="mB">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">09:33</span></div><div class="bd2">会议纪要：本周五完成握手测试</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">昨天</span></div>
+          <div class="bd2">验证码：849201</div></div>
+      </div>
+      <div class="vd"><span class="pro">有锚点</span>，且<b>零色彩预算</b>。凹陷盒（内阴影）读起来像嵌在卡片里的一块铭牌。缺点：稍显工业。</div></div>
+
+    <!-- C 推荐 -->
+    <div class="vc rec"><div class="vh"><span class="vn">C · 低彩度着色盒</span><span class="vi">推荐</span></div>
+      <div class="stack">
+        <div class="cd"><div class="ct"><span class="mC w">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">10:48</span></div><div class="bd2">https://github.com/clipsync/core</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">10:15</span></div>
+          <div class="bd2 mn">pwsh .\scripts\build.ps1</div></div>
+        <div class="cd"><div class="ct"><span class="mC w">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">09:33</span></div><div class="bd2">会议纪要：本周五完成握手测试</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">昨天</span></div>
+          <div class="bd2">验证码：849201</div></div>
+      </div>
+      <div class="vd">彩度只有状态色的 <b>1/3</b>（C≈.03 vs .09）。<span class="pro">有色但不争</span>——状态色永远赢它一档，语义不会打架。</div></div>
+
+    <!-- D -->
+    <div class="vc"><div class="vh"><span class="vn">D · 高彩度着色盒</span><span class="vi">原 production 风格</span></div>
+      <div class="stack">
+        <div class="cd"><div class="ct"><span class="mD w">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">10:48</span></div><div class="bd2">https://github.com/clipsync/core</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">10:15</span></div>
+          <div class="bd2 mn">pwsh .\scripts\build.ps1</div></div>
+        <div class="cd"><div class="ct"><span class="mD w">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">09:33</span></div><div class="bd2">会议纪要：本周五完成握手测试</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">昨天</span></div>
+          <div class="bd2">验证码：849201</div></div>
+      </div>
+      <div class="vd">最醒目，但<span class="con">与状态蓝同彩度</span>。列表里最抢眼的东西变成了「这条从哪来」——而它其实不重要。</div></div>
+
+    <!-- E -->
+    <div class="vc"><div class="vh"><span class="vn">E · 卡片左脊</span><span class="vi">标记移到卡片边缘</span></div>
+      <div class="stack">
+        <div class="cd spine"><div class="ct"><span class="mA">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">10:48</span></div><div class="bd2">https://github.com/clipsync/core</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">10:15</span></div>
+          <div class="bd2 mn">pwsh .\scripts\build.ps1</div></div>
+        <div class="cd spine"><div class="ct"><span class="mA">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">09:33</span></div><div class="bd2">会议纪要：本周五完成握手测试</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">昨天</span></div>
+          <div class="bd2">验证码：849201</div></div>
+      </div>
+      <div class="vd"><span class="pro">纵向扫视最快</span>——一列脊线立刻分出两组。但左边缘对齐被打断，且脊线与「选中态」的常见语汇冲突。</div></div>
+
+    <!-- F -->
+    <div class="vc"><div class="vh"><span class="vn">F · 仅着色，无盒</span><span class="vi">最轻</span></div>
+      <div class="stack">
+        <div class="cd"><div class="ct"><span class="mF w">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">10:48</span></div><div class="bd2">https://github.com/clipsync/core</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">10:15</span></div>
+          <div class="bd2 mn">pwsh .\scripts\build.ps1</div></div>
+        <div class="cd"><div class="ct"><span class="mF w">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+          <span class="tm">09:33</span></div><div class="bd2">会议纪要：本周五完成握手测试</div></div>
+        <div class="cd"><div class="ct"><span></span><span class="tm">昨天</span></div>
+          <div class="bd2">验证码：849201</div></div>
+      </div>
+      <div class="vd">比 A 强、比 C 弱。<b>仍然没有边界</b>，所以在长 URL 旁边还是容易被吞掉。适合极简取向。</div></div>
+
+  </div>
+</sect>
+
+<sect>
+  <h2><span class="ix">02</span>彩度分层：为什么 C 不会和状态打架</h2>
+  <div class="sub">同一个色相族，靠彩度分出「主」和「次」。</div>
+  <div class="cbars">
+    <div class="cbar"><span class="n">底色 灰蓝</span><span class="tr"><span class="fi" style="width:12%;background:#e2e9f2"></span></span><span class="v">.015</span></div>
+    <div class="cbar"><span class="n">设备色 低彩度冷</span><span class="tr"><span class="fi" style="width:26%;background:var(--dev-cool)"></span></span><span class="v">.030</span></div>
+    <div class="cbar"><span class="n">设备色 低彩度暖</span><span class="tr"><span class="fi" style="width:28%;background:var(--dev-warm)"></span></span><span class="v">.032</span></div>
+    <div class="cbar"><span class="n">状态 流动蓝</span><span class="tr"><span class="fi" style="width:78%;background:var(--fl)"></span></span><span class="v">.090</span></div>
+    <div class="cbar"><span class="n">状态 召唤赭</span><span class="tr"><span class="fi" style="width:88%;background:var(--ac)"></span></span><span class="v">.101</span></div>
+  </div>
+  <div class="law"><b>三档彩度，三个语义层。</b> 底色 .015 是环境，设备色 .03 是<b>标注</b>，状态色 .09+ 是<b>信号</b>。眼睛天然把彩度读作重要性，所以状态永远赢——<b>不需要额外规则去保证优先级，物理上就成立</b>。<br><br>这和我们给流动色定的原则是同一条：<b>不引入新色相，只在彩度轴上分层</b>。全应用仍然只有两个色相族（蓝 250 / 赭 65），设备色是它们的「低语版」。</div>
+  <div class="law warn"><b>如果选 D（高彩度），必须换掉状态色的一个。</b> 因为 D 的冷色 <code>#1c628a</code> 和状态蓝 <code>#215f8f</code> 几乎同一个色——列表里会出现「这个蓝是设备还是状态」的歧义。<b>D 不是不能用，但它要占掉一个色相配额。</b></div>
+</sect>
+
+<sect>
+  <h2><span class="ix">03</span>取舍表</h2>
+  <div class="sub">按你的四个关键词打分。</div>
+  <table>
+    <tr><th>变体</th><th>有锚点</th><th>不杂乱</th><th>色彩成本</th><th>多设备可扩展</th><th>建议</th></tr>
+    <tr><td class="ax">A 裸图标</td><td class="wy">✗</td><td class="wy">最好</td><td class="wy">0</td><td class="wy">✗</td><td class="wy">现状，偏弱</td></tr>
+    <tr><td class="ax">B 中性盒</td><td class="wy">✓</td><td class="wy">很好</td><td class="wy">0</td><td class="wy">✗</td><td class="wy">最保守的安全解</td></tr>
+    <tr style="background:var(--fl-bg)"><td class="ax" style="color:var(--fl)">C 低彩度盒</td><td class="wy">✓</td><td class="wy">好</td><td class="wy">低（.03）</td><td class="wy">✓</td><td class="wy" style="color:var(--fl);font-weight:600">推荐</td></tr>
+    <tr><td class="ax">D 高彩度盒</td><td class="wy">✓✓</td><td class="wy">一般</td><td class="wy">高，占色相配额</td><td class="wy">✓</td><td class="wy">要牺牲一个状态色</td></tr>
+    <tr><td class="ax">E 卡片左脊</td><td class="wy">✓✓</td><td class="wy">好</td><td class="wy">低</td><td class="wy">✓</td><td class="wy">与选中态语汇冲突</td></tr>
+    <tr><td class="ax">F 仅着色</td><td class="wy">半</td><td class="wy">很好</td><td class="wy">低</td><td class="wy">✓</td><td class="wy">极简取向可选</td></tr>
+  </table>
+  <div class="law"><b>我选 C，理由是它同时解决了你问的和你没问的。</b> 你问的是「加个不同颜色的框会不会更好」——C 给了框也给了色。而它额外解决的是：<b>把「设备」这条轴放进彩度的第二档，为多设备留了扩展位，同时物理上保证它永远不会盖过状态色。</b><br><br>如果你更偏极简，B 也完全站得住——<b>它的锚点效果和 C 一样好</b>，只是少了那点异乡感。真正不推荐的只有 A（太弱）和 D（占配额）。</div>
+</sect>
+
+<div class="ftr">SOURCE MARKER · 概念稿，未接入项目代码</div>
+</div>
+<script>
+function th(m){document.documentElement.setAttribute('data-theme',m);
+  document.querySelectorAll('.cb').forEach((b,i)=>b.classList.toggle('on',(m==='light')===(i===0)));}
+</script>
+</body>
+</html>

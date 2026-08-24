@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>疏离 · 幽深</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
+
+        :root {
+            /* 幽深的冷色调基础 */
+            --bg-color: #0b1110;
+            --glass-bg: rgba(14, 22, 20, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.04);
+            --text-primary: rgba(210, 225, 220, 0.85);
+            --text-secondary: rgba(170, 190, 180, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            background-color: var(--bg-color);
+            overflow: hidden; /* 隐藏滚动条，保持沉浸感 */
+            font-family: 'Noto Serif SC', serif; /* 使用宋体带来骨感和淡雅 */
+        }
+
+        /* 1. 背景层：幽深的环境 */
+        .background {
+            position: absolute;
+            top: -5%; left: -5%; right: -5%; bottom: -5%;
+            /* 尝试加载用户原图，如果跨域或路径失效则使用纯色+渐变回退 */
+            background-image: 
+                linear-gradient(to bottom, rgba(11, 17, 16, 0.2), rgba(11, 17, 16, 0.8)),
+                url('user_uploaded/media_1787206634820.jpg');
+            background-size: cover;
+            background-position: center;
+            /* 缓慢的呼吸感缩放动画 */
+            animation: breathe 30s infinite alternate ease-in-out;
+            z-index: 0;
+        }
+
+        /* 2. 噪点层：胶片感与时间痕迹（数字侘寂） */
+        .noise-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+            /* SVG噪点，带来粗糙的质感 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+        }
+
+        /* 3. 核心容器：极简与留白 */
+        .container {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        /* 4. 毛玻璃面板：物理隔绝感与疏离 */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            padding: 5rem 6rem;
+            text-align: center;
+            /* 极简的阴影，不喧宾夺主 */
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 2.5s ease-out 0.5s forwards;
+        }
+
+        /* 5. 排版细节：克制、距离感 */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 200;
+            color: var(--text-primary);
+            letter-spacing: 0.4em; /* 极大的字间距产生空旷感 */
+            margin-bottom: 2rem;
+            margin-right: -0.4em; /* 修正字间距导致的居中偏移 */
+        }
+
+        p {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            letter-spacing: 0.15em;
+            line-height: 2;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .en-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 0.8rem;
+            margin-top: 3rem;
+            letter-spacing: 0.2em;
+            color: rgba(170, 190, 180, 0.3);
+        }
+
+        /* 缓慢的进入动画 */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes breathe {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="noise-overlay"></div>
+    
+    <div class="container">
+        <div class="glass-panel">
+            <h1>观 寂</h1>
+            <p>万物皆有裂痕<br>那是光照进来的地方</p>
+            <div class="en-subtitle">Embrace the Solitude</div>
+        </div>
+    </div>
+</body>
+</html>
