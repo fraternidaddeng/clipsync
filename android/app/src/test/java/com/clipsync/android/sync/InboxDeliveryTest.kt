@@ -3,10 +3,11 @@ package com.clipsync.android.sync
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import com.clipsync.android.platform.clipboard.AndroidPublicClipboardWriter
 import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
 import com.clipsync.android.platform.clipboard.ClipboardWriter
+import com.clipsync.android.platform.clipboard.SharedClipboardWrites
+import com.clipsync.android.storage.SyncSettingsStore
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -25,6 +26,9 @@ class InboxDeliveryTest {
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
+        // Robolectric recreates the application per test; the shared write coordinator must
+        // not keep a writer bound to the previous test's clipboard.
+        SharedClipboardWrites.reset()
         val store = com.clipsync.android.platform.SharedPrefsKeyValueStore(context, name = "inbox-delivery-test")
         inbox = KeyValueClipInbox(store)
         SyncServices.install(
@@ -36,7 +40,7 @@ class InboxDeliveryTest {
 
     @After
     fun tearDown() {
-        InboxDelivery.writerFactory = ::AndroidPublicClipboardWriter
+        InboxDelivery.writerFactory = InboxDelivery.defaultWriterFactory
     }
 
     @Test
@@ -75,6 +79,30 @@ class InboxDeliveryTest {
         InboxDelivery.deliver(context, "e4", "suppress me", 123L, autoApply = true)
 
         assertEquals("e4", writer.lastOriginEventId)
+    }
+
+    @Test
+    fun autoApplyGateHonoursThePauseSwitch() {
+        val settings = SyncSettingsStore(
+            com.clipsync.android.platform.SharedPrefsKeyValueStore(context, name = "inbox-delivery-settings"),
+        )
+        assertTrue(InboxDelivery.autoApplyAllowed(settings))
+
+        settings.syncPaused = true
+        assertFalse(InboxDelivery.autoApplyAllowed(settings))
+
+        settings.syncPaused = false
+        settings.autoApplyRemote = false
+        assertFalse(InboxDelivery.autoApplyAllowed(settings))
+    }
+
+    @Test
+    fun defaultWriterRegistersCaptureLoopSuppression() {
+        InboxDelivery.deliver(context, "e5", "auto applied body", 123L, autoApply = true)
+
+        // The capture pipeline consults the same shared coordinator: the clip this app just
+        // wrote must be recognized as a self-write and not echoed back to the peer.
+        assertTrue(SharedClipboardWrites.coordinator(context).shouldSuppressContent("auto applied body"))
     }
 
     private fun clipboardText(): String? {

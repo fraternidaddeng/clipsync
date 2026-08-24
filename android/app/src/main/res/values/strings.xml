@@ -33,6 +33,8 @@
     <string name="toast_share_empty">分享内容为空，未加入队列</string>
     <string name="toast_share_duplicate">相同内容刚刚已加入队列</string>
     <string name="toast_share_too_large">文本超过单条大小上限，未加入队列</string>
+    <string name="toast_share_paused">同步已暂停，未加入队列</string>
+    <string name="toast_share_private_mode">私密模式已开启，未加入队列</string>
     <string name="toast_share_unsupported">仅支持纯文本分享</string>
     <string name="toast_clipboard_empty">剪贴板没有可发送的文本</string>
     <string name="toast_clipboard_unavailable">无法读取剪贴板，请重试</string>

@@ -69,6 +69,8 @@ class SendClipboardActivity : Activity() {
             EnqueueResult.DuplicateRecent -> R.string.toast_share_duplicate
             EnqueueResult.TooLarge -> R.string.toast_share_too_large
             EnqueueResult.EmptyText -> R.string.toast_clipboard_empty
+            EnqueueResult.SyncPaused -> R.string.toast_share_paused
+            EnqueueResult.PrivateMode -> R.string.toast_share_private_mode
         }
     }
 

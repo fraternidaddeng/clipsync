@@ -42,10 +42,14 @@ object SyncServices {
                 SharedPrefsKeyValueStore(context, name = SyncSettingsStore.PREFERENCES_NAME),
             )
             services = Services(
-                outbox = KeyValueClipOutbox(
-                    store,
-                    // The user cap gates entry points too, not just the sync engine's store.
-                    maxUtf8Bytes = { settings.effectiveMaxSyncTextBytes },
+                // Pause/private gates wrap the queue itself so no entry point can bypass
+                // them; inside the gate, the user size cap applies before the 1 MiB rule.
+                outbox = SettingsGatedClipOutbox(
+                    KeyValueClipOutbox(
+                        store,
+                        maxUtf8Bytes = { settings.effectiveMaxSyncTextBytes },
+                    ),
+                    settings,
                 ),
                 inbox = KeyValueClipInbox(store),
                 // The Stage-4 WebSocket engine registers itself via install(); until then a

@@ -1,10 +1,12 @@
 package com.clipsync.android.sync
 
 import android.content.Context
-import com.clipsync.android.platform.clipboard.AndroidPublicClipboardWriter
+import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
 import com.clipsync.android.platform.clipboard.ClipboardWriter
+import com.clipsync.android.platform.clipboard.SharedClipboardWrites
 import com.clipsync.android.platform.notify.SyncNotifications
+import com.clipsync.android.storage.SyncSettingsStore
 
 /**
  * Single entry point the sync engine calls when a remote clip event has been persisted.
@@ -16,12 +18,29 @@ import com.clipsync.android.platform.notify.SyncNotifications
  */
 object InboxDelivery {
     /**
-     * Replaceable seam: production uses the public-API writer (plan 0.1.2 rule 5 — public
-     * write first). When a privileged write fallback or an active capture pipeline lands,
-     * this should route through the process-shared ClipboardWriteCoordinator instead so
-     * loop suppression covers auto-applied clips.
+     * Production writes go through the process-shared [ClipboardWriteCoordinator]
+     * [com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator] so the foreground
+     * capture pipeline suppresses auto-applied clips instead of echoing them back to the peer.
      */
-    var writerFactory: (Context) -> ClipboardWriter = ::AndroidPublicClipboardWriter
+    val defaultWriterFactory: (Context) -> ClipboardWriter = { context ->
+        val coordinator = SharedClipboardWrites.coordinator(context)
+        object : ClipboardWriter {
+            override fun probe(): CapabilityState = coordinator.publicWriteState
+
+            override fun writeText(text: String, originEventId: String): ClipboardWriteResult =
+                coordinator.writeText(text, originEventId).result
+        }
+    }
+
+    /** Replaceable seam for tests; production keeps [defaultWriterFactory]. */
+    var writerFactory: (Context) -> ClipboardWriter = defaultWriterFactory
+
+    /**
+     * Plan 3.4 gate: inbound auto-apply obeys both the auto_apply_remote preference and the
+     * pause switch. Receiving into the inbox is never gated — only the automatic write is.
+     */
+    fun autoApplyAllowed(settings: SyncSettingsStore): Boolean =
+        settings.autoApplyRemote && !settings.syncPaused
 
     /** Returns true when the clip reached the system clipboard automatically. */
     fun deliver(

@@ -77,4 +77,47 @@ class ClipboardWriteCoordinatorTest {
 
         assertFalse(coordinator.shouldSuppress("event-5", "remote text"))
     }
+
+    @Test
+    fun `content suppression matches a recent self write without knowing the origin id`() {
+        val coordinator = ClipboardWriteCoordinator(
+            publicWriter = FakeClipboardWriter(),
+            hasher = ContentHasher { "hash:$it" },
+        )
+        coordinator.writeText("auto applied", "event-6")
+
+        assertFalse(coordinator.shouldSuppressContent("something else"))
+        assertTrue(coordinator.shouldSuppressContent("auto applied"))
+        // The marker is consumed: a genuine later copy of the same text is not hidden.
+        assertFalse(coordinator.shouldSuppressContent("auto applied"))
+    }
+
+    @Test
+    fun `content suppression expires with the window`() {
+        var now = 1_000L
+        val coordinator = ClipboardWriteCoordinator(
+            publicWriter = FakeClipboardWriter(),
+            hasher = ContentHasher { "hash:$it" },
+            nowEpochMillis = { now },
+            suppressionWindowMillis = 500L,
+        )
+        coordinator.writeText("short lived", "event-7")
+        now = 1_500L
+
+        assertFalse(coordinator.shouldSuppressContent("short lived"))
+    }
+
+    @Test
+    fun `failed write leaves no content suppression`() {
+        val publicWriter = FakeClipboardWriter().apply {
+            enqueue(ClipboardWriteResult.Failure("PUBLIC_WRITE_REJECTED"))
+        }
+        val coordinator = ClipboardWriteCoordinator(
+            publicWriter = publicWriter,
+            hasher = ContentHasher { "hash:$it" },
+        )
+        coordinator.writeText("never landed", "event-8")
+
+        assertFalse(coordinator.shouldSuppressContent("never landed"))
+    }
 }
