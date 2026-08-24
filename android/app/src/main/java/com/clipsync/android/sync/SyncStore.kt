@@ -1,6 +1,7 @@
 package com.clipsync.android.sync
 
 import android.content.Context
+import com.clipsync.android.media.MediaBlobStore
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
@@ -23,6 +24,9 @@ object SyncStore {
 
     private fun create(appContext: Context): ClipSyncRepository {
         val pairing = PairingStore(SharedPrefsKeyValueStore(appContext), KeystoreSecretProtector())
-        return ClipSyncRepository(ClipSyncDatabase.build(appContext), pairing.localDeviceId())
+        val media = MediaBlobStore(
+            MediaBlobStore.defaultRootForDatabase(appContext.getDatabasePath(ClipSyncDatabase.DEFAULT_NAME)),
+        )
+        return ClipSyncRepository(ClipSyncDatabase.build(appContext), pairing.localDeviceId(), media)
     }
 }

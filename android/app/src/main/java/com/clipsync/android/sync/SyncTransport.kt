@@ -45,8 +45,11 @@ interface SyncTransport {
 
 /** Dials one WebSocket to a candidate host; implementations pin the peer certificate. */
 fun interface SyncConnector {
-    /** Connects or throws [IOException]; [PinMismatchException] means a wrong certificate. */
-    suspend fun connect(host: String, port: Int, certSha256: String): SyncTransport
+    /**
+     * Connects with the given wire version (1 -> `/v1/peer/sync`, 2 -> `/v2/peer/sync`) or
+     * throws [IOException]; [PinMismatchException] means a wrong certificate.
+     */
+    suspend fun connect(host: String, port: Int, certSha256: String, protocolVersion: Int): SyncTransport
 }
 
 /** The presented TLS certificate did not match the pinned pairing fingerprint. */
@@ -54,14 +57,15 @@ class PinMismatchException(host: String) : IOException("certificate pin mismatch
 
 /**
  * OkHttp WebSocket dial side of the peer connection, mirroring the Windows PeerSyncClient:
- * connects to wss://host:port/v1/peer/sync with the protocol version header over TLS that
- * trusts exactly one certificate fingerprint. Chain and hostname are ignored by design; the
- * pin from pairing is the whole trust decision.
+ * connects to wss://host:port/v{n}/peer/sync with the matching protocol version header over
+ * TLS that trusts exactly one certificate fingerprint. Chain and hostname are ignored by
+ * design; the pin from pairing is the whole trust decision.
  */
 class OkHttpSyncConnector(
     private val connectTimeoutMs: Long = 6_000,
 ) : SyncConnector {
-    override suspend fun connect(host: String, port: Int, certSha256: String): SyncTransport {
+    override suspend fun connect(host: String, port: Int, certSha256: String, protocolVersion: Int): SyncTransport {
+        require(protocolVersion == 1 || protocolVersion == 2) { "Unknown protocol version." }
         val trustManager = PinnedTrustManager(certSha256)
         val sslContext = SSLContext.getInstance("TLS")
         sslContext.init(null, arrayOf(trustManager), SecureRandom())
@@ -76,8 +80,8 @@ class OkHttpSyncConnector(
             .retryOnConnectionFailure(false)
             .build()
         val request = Request.Builder()
-            .url("https://$host:$port/v1/peer/sync")
-            .header("X-Protocol-Version", "1")
+            .url("https://$host:$port/v$protocolVersion/peer/sync")
+            .header("X-Protocol-Version", protocolVersion.toString())
             .build()
 
         val transport = OkHttpSyncTransport(client)

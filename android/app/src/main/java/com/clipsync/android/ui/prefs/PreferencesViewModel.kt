@@ -25,6 +25,8 @@ data class PreferencesUiState(
     val autoExpire: Boolean = true,
     val retentionDays: Int = SyncSettingsStore.DEFAULT_MAX_AGE_DAYS,
     val bootRestore: Boolean = false,
+    /** 图像剪贴板同步（协议 v2）；按章程默认关闭。 */
+    val imageSync: Boolean = false,
     val maxSyncTextBytes: Int = SyncSettingsStore.DEFAULT_MAX_TEXT_BYTES,
     /** Result line of the last 导出历史/导入历史 run; null until either has run. */
     val transferStatus: String? = null,
@@ -60,6 +62,7 @@ class PreferencesViewModel(
             autoExpire = settings.autoExpireEnabled,
             retentionDays = settings.retentionMaxAgeDays,
             bootRestore = settings.bootRestoreEnabled,
+            imageSync = settings.imageSyncEnabled,
             maxSyncTextBytes = settings.effectiveMaxSyncTextBytes,
         ),
     )
@@ -99,6 +102,15 @@ class PreferencesViewModel(
         settings.bootRestoreEnabled = enabled
         mutableState.update { it.copy(bootRestore = enabled) }
         onBootRestoreChanged(enabled)
+    }
+
+    /**
+     * 图像同步 (protocol v2, 默认关): applies to the next (re)connection — the supervisor
+     * re-reads the preference per dial attempt, and capture/serve paths re-read it per event.
+     */
+    fun setImageSync(enabled: Boolean) {
+        settings.imageSyncEnabled = enabled
+        mutableState.update { it.copy(imageSync = enabled) }
     }
 
     /**

@@ -122,8 +122,22 @@ interface ClipEventDao {
     )
     suspend fun syncableByIds(eventIds: List<String>): List<ClipEventEntity>
 
-    @Query("SELECT content FROM clips WHERE content_hash = :contentHash AND deleted_at IS NULL LIMIT 1")
+    @Query(
+        """
+        SELECT content FROM clips
+        WHERE content_hash = :contentHash AND deleted_at IS NULL AND kind = 'text'
+        LIMIT 1
+        """,
+    )
     suspend fun findLiveContentByHash(contentHash: String): String?
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM clips
+        WHERE content_hash = :contentHash AND deleted_at IS NULL AND kind = 'image'
+        """,
+    )
+    suspend fun countLiveImagesByHash(contentHash: String): Int
 
     @Query("SELECT COUNT(*) FROM clips WHERE deleted_at IS NULL")
     suspend fun countVisible(): Int
@@ -218,4 +232,44 @@ interface LocalSequenceDao {
 
     @Upsert
     suspend fun upsert(sequence: LocalSequenceEntity)
+}
+
+@Dao
+interface MediaBlobDao {
+    @Upsert
+    suspend fun upsert(blob: MediaBlobEntity)
+
+    @Query("SELECT * FROM media_blobs WHERE content_hash = :contentHash LIMIT 1")
+    suspend fun find(contentHash: String): MediaBlobEntity?
+
+    @Query("SELECT content_hash FROM media_blobs")
+    suspend fun allHashes(): List<String>
+
+    @Query("DELETE FROM media_blobs WHERE content_hash NOT IN (SELECT content_hash FROM clip_media)")
+    suspend fun deleteUnreferenced(): Int
+}
+
+@Dao
+interface ClipMediaDao {
+    @Upsert
+    suspend fun upsert(link: ClipMediaEntity)
+
+    @Query("SELECT * FROM clip_media WHERE event_id = :eventId LIMIT 1")
+    suspend fun find(eventId: String): ClipMediaEntity?
+
+    @Query("SELECT DISTINCT content_hash FROM clip_media")
+    suspend fun referencedHashes(): List<String>
+
+    @Query("DELETE FROM clip_media WHERE event_id = :eventId")
+    suspend fun deleteByEventId(eventId: String)
+
+    /** Drops links whose clip row is gone or terminal, so blob GC can reclaim the bytes. */
+    @Query(
+        """
+        DELETE FROM clip_media
+        WHERE event_id NOT IN (SELECT event_id FROM clips)
+           OR event_id IN (SELECT event_id FROM clips WHERE deleted_at IS NOT NULL)
+        """,
+    )
+    suspend fun deleteOrphaned(): Int
 }

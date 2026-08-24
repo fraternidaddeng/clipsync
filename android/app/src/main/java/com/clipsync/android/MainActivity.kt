@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.clipsync.android.media.ImageThumbnail
 import com.clipsync.android.pairing.PairingConfirmClient
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.pairing.PeerHealthClient
@@ -75,6 +76,7 @@ import com.clipsync.android.storage.SyncSettingsStore
 import com.clipsync.android.sync.BootCompletedReceiver
 import com.clipsync.android.sync.ClipboardCaptureManager
 import com.clipsync.android.sync.ClipboardSyncService
+import com.clipsync.android.sync.ImageClipSink
 import com.clipsync.android.sync.SyncConnectionState
 import com.clipsync.android.sync.SyncStore
 import com.clipsync.android.ui.HealthScreen
@@ -128,7 +130,12 @@ class MainActivity : ComponentActivity() {
     private val routeProbes by lazy { AndroidRouteProbes(this) }
 
     private val foregroundBackend by lazy {
-        ForegroundClipboardBackend(this, systemVersion = systemVersion())
+        ForegroundClipboardBackend(
+            this,
+            systemVersion = systemVersion(),
+            // Re-read per clipboard change so the preference toggle applies immediately.
+            imageCaptureEnabled = { syncSettings.imageSyncEnabled },
+        )
     }
 
     // The real device read backends (privileged Shizuku channel, logcat+overlay, overlay polling).
@@ -169,10 +176,12 @@ class MainActivity : ComponentActivity() {
 
     private val captureManager by lazy {
         ClipboardCaptureManager(
-            settings = SyncSettingsStore(
-                SharedPrefsKeyValueStore(this, name = SyncSettingsStore.PREFERENCES_NAME),
-            ),
+            settings = syncSettings,
             writeCoordinator = writeCoordinator,
+            imageSink = { bytes ->
+                ImageClipSink.submit(applicationContext, bytes, "android.app") is
+                    ImageClipSink.Outcome.Accepted
+            },
         )
     }
 
@@ -319,6 +328,11 @@ class MainActivity : ComponentActivity() {
                         exportHistoryLauncher.launch("clipsync-history-$stamp.jsonl")
                     },
                     onImportHistory = { importHistoryLauncher.launch(arrayOf("*/*")) },
+                    imageThumbnail = { contentHash ->
+                        SyncStore.repository(applicationContext).media?.let { store ->
+                            ImageThumbnail.decodePreview(store, contentHash)
+                        }
+                    },
                 )
             }
         }
@@ -473,6 +487,7 @@ private fun ClipSyncApp(
     onOpenNotificationSettings: (() -> Unit)? = null,
     onExportHistory: () -> Unit = {},
     onImportHistory: () -> Unit = {},
+    imageThumbnail: suspend (String) -> android.graphics.Bitmap? = { null },
 ) {
     val c = clipSyncColors
     var tab by rememberSaveable { mutableIntStateOf(0) }
@@ -549,6 +564,7 @@ private fun ClipSyncApp(
                         onDelete = homeViewModel::delete,
                         onOpenConduit = { tab = 1 },
                         modifier = Modifier.padding(padding),
+                        thumbnail = imageThumbnail,
                     )
                     place == 1 && pairing -> Column(Modifier.padding(padding)) {
                         BackRow(label = "通路", onBack = { pairingOpen = false })
@@ -573,6 +589,7 @@ private fun ClipSyncApp(
                         onAutoApplyRemoteChange = preferencesViewModel::setAutoApplyRemote,
                         onAutoExpireChange = preferencesViewModel::setAutoExpire,
                         onBootRestoreChange = preferencesViewModel::setBootRestore,
+                        onImageSyncChange = preferencesViewModel::setImageSync,
                         pairedDeviceName = healthState.pairedPeerName,
                         onOpenConduit = {
                             pairingOpen = false

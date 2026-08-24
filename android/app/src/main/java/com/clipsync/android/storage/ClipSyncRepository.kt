@@ -1,6 +1,8 @@
 package com.clipsync.android.storage
 
 import androidx.room.withTransaction
+import com.clipsync.android.media.MediaBlobStore
+import com.clipsync.android.media.MediaLimits
 import com.clipsync.android.sync.OriginReceiveState
 import com.clipsync.android.sync.SequenceRange
 import com.clipsync.android.sync.SequenceRangeJson
@@ -14,10 +16,15 @@ import kotlinx.coroutines.flow.map
  * receive-vector advance, and outbox fan-out) in one transaction before any network send;
  * remote stores are idempotent on `(origin_device_id, origin_seq)`; deletes are local soft
  * deletes that keep terminal markers so peers' sequence gaps still close.
+ *
+ * Image clips (protocol v2 / ADR 0004) keep their encoded bytes in [media]; the clips row
+ * carries `kind = image`, an empty body, and the blob hash, with `media_blobs`/`clip_media`
+ * rows joining event to blob. [media] is optional so text-only tests need no filesystem.
  */
 class ClipSyncRepository(
     private val database: ClipSyncDatabase,
     val localDeviceId: String,
+    val media: MediaBlobStore? = null,
 ) {
     init {
         require(localDeviceId.isNotBlank()) { "localDeviceId cannot be blank" }
@@ -28,6 +35,8 @@ class ClipSyncRepository(
     private val cursors get() = database.peerCursors()
     private val receiveState get() = database.originReceiveState()
     private val sequences get() = database.localSequences()
+    private val mediaBlobs get() = database.mediaBlobs()
+    private val clipMedia get() = database.clipMedia()
 
     // ---- Local capture ----
 
@@ -62,6 +71,50 @@ class ClipSyncRepository(
         StoredClipEvent(eventId, localDeviceId, originSeq)
     }
 
+    /**
+     * Commits a locally captured image clip. The caller has already validated the bytes and
+     * committed the blob into [media]; this transaction writes the clips row (`kind = image`,
+     * empty body, blob hash), the blob metadata, the event-to-blob link, the receive-vector
+     * advance, and the outbox fan-out together.
+     */
+    suspend fun storeLocalImageEvent(
+        draft: LocalImageDraft,
+        fanOutPeerIds: List<String>,
+    ): StoredClipEvent = database.withTransaction {
+        val originSeq = allocateSequence()
+        val eventId = UUID.randomUUID().toString()
+        clips.insert(
+            ClipEventEntity(
+                eventId = eventId,
+                originDeviceId = localDeviceId,
+                originSeq = originSeq,
+                kind = ClipKinds.IMAGE,
+                content = "",
+                contentHash = draft.contentHash,
+                sourceApp = draft.sourceApp,
+                createdAtMs = draft.capturedAtMs,
+                expiresAtMs = draft.expiresAtMs,
+                deletedAtMs = null,
+                terminalReason = null,
+                appliedAtMs = null,
+            ),
+        )
+        writeMediaRows(
+            eventId,
+            ClipMediaRef(
+                contentHash = draft.contentHash,
+                mimeType = draft.mimeType,
+                encodedBytes = draft.encodedBytes,
+                pixelWidth = draft.pixelWidth,
+                pixelHeight = draft.pixelHeight,
+            ),
+            draft.capturedAtMs,
+        )
+        advanceReceiveState(localDeviceId, originSeq)
+        enqueueOutbox(eventId, localDeviceId, originSeq, fanOutPeerIds, excludedPeerId = null)
+        StoredClipEvent(eventId, localDeviceId, originSeq)
+    }
+
     // ---- Remote inbox ----
 
     /**
@@ -77,6 +130,9 @@ class ClipSyncRepository(
         require(remoteEvent.originDeviceId != localDeviceId) {
             "Remote events cannot claim this device as origin."
         }
+        require(remoteEvent.kind != ClipKinds.IMAGE || remoteEvent.media != null) {
+            "Remote image events must carry blob metadata."
+        }
         return database.withTransaction {
             checkRemoteIdentity(
                 remoteEvent.eventId,
@@ -90,6 +146,7 @@ class ClipSyncRepository(
                     eventId = remoteEvent.eventId,
                     originDeviceId = remoteEvent.originDeviceId,
                     originSeq = remoteEvent.originSeq,
+                    kind = remoteEvent.kind,
                     content = remoteEvent.content,
                     contentHash = remoteEvent.contentHash,
                     sourceApp = remoteEvent.sourceApp,
@@ -100,6 +157,7 @@ class ClipSyncRepository(
                     appliedAtMs = null,
                 ),
             )
+            remoteEvent.media?.let { writeMediaRows(remoteEvent.eventId, it, remoteEvent.createdAtMs) }
             val state = advanceReceiveState(remoteEvent.originDeviceId, remoteEvent.originSeq)
             enqueueOutbox(
                 remoteEvent.eventId,
@@ -187,8 +245,32 @@ class ClipSyncRepository(
     suspend fun clearHistory(deletedAtMs: Long): Int = clips.softDeleteAll(deletedAtMs)
 
     /** Expires rows older than the policy age or beyond the entry cap; returns rows affected. */
-    suspend fun cleanup(policy: RetentionPolicy, nowMs: Long): Int = database.withTransaction {
-        clips.cleanup(nowMs - policy.maximumAgeMs, policy.maximumEntries, nowMs)
+    suspend fun cleanup(policy: RetentionPolicy, nowMs: Long): Int {
+        val expired = database.withTransaction {
+            clips.cleanup(nowMs - policy.maximumAgeMs, policy.maximumEntries, nowMs)
+        }
+        collectMediaGarbage(nowMs)
+        return expired
+    }
+
+    /**
+     * Media housekeeping: drops event-to-blob links whose clip row was deleted or expired,
+     * removes now-unreferenced blob metadata, then deletes the on-disk bytes that no metadata
+     * row references anymore (with the protocol grace period so in-flight sends finish).
+     */
+    suspend fun collectMediaGarbage(nowMs: Long) {
+        val store = media ?: return
+        database.withTransaction {
+            clipMedia.deleteOrphaned()
+            mediaBlobs.deleteUnreferenced()
+        }
+        runCatching {
+            store.recoverTemps(nowMs)
+            store.deleteUnreferenced(
+                liveHashes = mediaBlobs.allHashes(),
+                gracePeriodMs = MediaLimits.BLOB_GC_GRACE_MS,
+            )
+        }
     }
 
     // ---- Sync projection ----
@@ -210,17 +292,35 @@ class ClipSyncRepository(
                 break
             }
             clips.syncableInRange(originDeviceId, range.startSeq, range.endSeq, maximumEvents - events.size)
-                .mapTo(events) { it.toSyncable() }
+                .mapTo(events) { it.toSyncableWithMedia() }
         }
         return events
     }
 
     suspend fun getSyncableEventsByIds(eventIds: List<String>): List<SyncableClipEvent> =
-        if (eventIds.isEmpty()) emptyList() else clips.syncableByIds(eventIds).map { it.toSyncable() }
+        if (eventIds.isEmpty()) {
+            emptyList()
+        } else {
+            clips.syncableByIds(eventIds).map { it.toSyncableWithMedia() }
+        }
 
     /** Finds live content with the given hash so an announced event can be materialized without a fetch. */
     suspend fun findLiveContentByHash(contentHash: String): String? =
         clips.findLiveContentByHash(contentHash)
+
+    /** True when a live image row with this blob hash exists and its bytes are still on disk. */
+    suspend fun findLiveImageByHash(contentHash: String): Boolean {
+        if (clips.countLiveImagesByHash(contentHash) == 0) {
+            return false
+        }
+        return media?.exists(contentHash) == true
+    }
+
+    /** Blob metadata for one image clip; null for text rows or when the metadata is gone. */
+    suspend fun mediaRefFor(eventId: String): ClipMediaRef? {
+        val link = clipMedia.find(eventId) ?: return null
+        return mediaBlobs.find(link.contentHash)?.toRef()
+    }
 
     // ---- Outbox ----
 
@@ -232,7 +332,7 @@ class ClipSyncRepository(
                 peerId = row.peerId,
                 state = row.state,
                 attempts = row.attempts,
-                event = row.clip.toSyncable(),
+                event = row.clip.toSyncableWithMedia(),
             )
         }
     }
@@ -296,7 +396,9 @@ class ClipSyncRepository(
      * The stream is flushed but not closed (the caller owns it).
      */
     suspend fun exportHistory(output: java.io.OutputStream, exportedAtMs: Long): Int {
-        val rows = clips.exportAll()
+        // export-format-v1 is text-only: image rows are skipped rather than written as a
+        // lossy shape a re-import would misread. Their blobs stay local by design.
+        val rows = clips.exportAll().filter { it.kind != ClipKinds.IMAGE }
         val writer = output.bufferedWriter(Charsets.UTF_8)
         writer.write(
             HistoryExportFormat.writeHeaderLine(
@@ -482,6 +584,40 @@ class ClipSyncRepository(
             RemoteStoreResult.IdentityConflict("event id maps to a different origin sequence")
         }
     }
+
+    /** Writes/refreshes the blob-metadata row and the event-to-blob link for one image event. */
+    private suspend fun writeMediaRows(eventId: String, ref: ClipMediaRef, createdAtMs: Long) {
+        mediaBlobs.upsert(
+            MediaBlobEntity(
+                contentHash = ref.contentHash,
+                mimeType = ref.mimeType,
+                encodedBytes = ref.encodedBytes,
+                pixelWidth = ref.pixelWidth,
+                pixelHeight = ref.pixelHeight,
+                state = MediaLimits.BLOB_STATE_READY,
+                createdAtMs = createdAtMs,
+            ),
+        )
+        clipMedia.upsert(
+            ClipMediaEntity(
+                eventId = eventId,
+                contentHash = ref.contentHash,
+                state = MediaLimits.CLIP_MEDIA_READY,
+            ),
+        )
+    }
+
+    private suspend fun ClipEventEntity.toSyncableWithMedia(): SyncableClipEvent = toSyncable(
+        media = if (kind == ClipKinds.IMAGE && terminalReason == null) mediaRefFor(eventId) else null,
+    )
+
+    private fun MediaBlobEntity.toRef(): ClipMediaRef = ClipMediaRef(
+        contentHash = contentHash,
+        mimeType = mimeType,
+        encodedBytes = encodedBytes,
+        pixelWidth = pixelWidth,
+        pixelHeight = pixelHeight,
+    )
 
     private fun PeerCursorEntity.toState(): OriginReceiveState =
         OriginReceiveState(contiguousSeq, SequenceRangeJson.deserialize(receivedRangesJson))

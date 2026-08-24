@@ -1,8 +1,13 @@
 package com.clipsync.android.sync
 
+import com.clipsync.android.media.MediaBlobStore
+import com.clipsync.android.media.MediaLimits
+import com.clipsync.android.media.ValidatedImage
 import com.clipsync.android.platform.clipboard.Sha256ContentHasher
+import com.clipsync.android.storage.ClipMediaRef
 import com.clipsync.android.storage.ClipSyncRepository
 import com.clipsync.android.storage.LocalClipDraft
+import com.clipsync.android.storage.LocalImageDraft
 import com.clipsync.android.storage.OriginAckRanges
 import java.nio.charset.StandardCharsets
 
@@ -18,10 +23,15 @@ class RoomSyncRepository(
     /** User-adjustable per-clip size cap; it may lower the protocol's 1 MiB, never raise it. */
     private val maxContentUtf8Bytes: () -> Int = { SyncLimits.MAX_CONTENT_UTF8_BYTES },
 ) : SyncRepository {
+    override val media: MediaBlobStore? get() = store.media
+
     override suspend fun knownVector(): Map<String, OriginReceiveState> = store.knownVector()
 
     override suspend fun findLiveContentByHash(contentHash: String): String? =
         store.findLiveContentByHash(contentHash)
+
+    override suspend fun findLiveImageByHash(contentHash: String): Boolean =
+        store.findLiveImageByHash(contentHash)
 
     override suspend fun storeRemoteEvent(event: RemoteClipEvent, viaDeviceId: String): RemoteStoreResult =
         store.storeRemoteEvent(
@@ -34,6 +44,18 @@ class RoomSyncRepository(
                 sourceApp = event.sourceApp,
                 createdAtMs = event.createdAtMs,
                 expiresAtMs = event.expiresAtMs,
+                kind = event.kind,
+                media = if (event.kind == MediaLimits.KIND_IMAGE) {
+                    ClipMediaRef(
+                        contentHash = event.contentHash,
+                        mimeType = event.mimeType ?: MediaLimits.MIME_PNG,
+                        encodedBytes = event.encodedBytes ?: 0,
+                        pixelWidth = event.pixelWidth ?: 0,
+                        pixelHeight = event.pixelHeight ?: 0,
+                    )
+                } else {
+                    null
+                },
             ),
             sourcePeerId = viaDeviceId,
         ).toEngineResult()
@@ -116,6 +138,43 @@ class RoomSyncRepository(
         )
     }
 
+    override suspend fun recordLocalImageClip(
+        image: ValidatedImage,
+        sourceApp: String?,
+        nowMs: Long,
+    ): SyncableClipEvent? {
+        if (store.media?.exists(image.contentHash) != true) {
+            return null
+        }
+        val stored = store.storeLocalImageEvent(
+            LocalImageDraft(
+                contentHash = image.contentHash,
+                mimeType = image.mimeType,
+                encodedBytes = image.encodedBytes,
+                pixelWidth = image.pixelWidth,
+                pixelHeight = image.pixelHeight,
+                sourceApp = sourceApp,
+                capturedAtMs = nowMs,
+            ),
+            fanOutPeerIds = fanOutPeerIds(),
+        )
+        return SyncableClipEvent(
+            eventId = stored.eventId,
+            originDeviceId = stored.originDeviceId,
+            originSeq = stored.originSeq,
+            isTerminal = false,
+            content = "",
+            contentHash = image.contentHash,
+            sourceApp = sourceApp,
+            createdAtMs = nowMs,
+            kind = MediaLimits.KIND_IMAGE,
+            mimeType = image.mimeType,
+            encodedBytes = image.encodedBytes,
+            pixelWidth = image.pixelWidth,
+            pixelHeight = image.pixelHeight,
+        )
+    }
+
     private fun com.clipsync.android.storage.RemoteStoreResult.toEngineResult(): RemoteStoreResult =
         when (this) {
             is com.clipsync.android.storage.RemoteStoreResult.Stored -> RemoteStoreResult.Stored
@@ -136,5 +195,10 @@ class RoomSyncRepository(
             sourceApp = sourceApp,
             createdAtMs = createdAtMs,
             expiresAtMs = expiresAtMs,
+            kind = kind,
+            mimeType = media?.mimeType,
+            encodedBytes = media?.encodedBytes,
+            pixelWidth = media?.pixelWidth,
+            pixelHeight = media?.pixelHeight,
         )
 }

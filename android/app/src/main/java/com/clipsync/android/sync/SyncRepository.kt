@@ -1,6 +1,14 @@
 package com.clipsync.android.sync
 
-/** A remote clip body being committed locally (from clip_payload or a hash replay). */
+import com.clipsync.android.media.MediaBlobStore
+import com.clipsync.android.media.MediaLimits
+import com.clipsync.android.media.ValidatedImage
+
+/**
+ * A remote clip body being committed locally (from clip_payload, an image chunk transfer, or a
+ * hash replay). Image events carry an empty [content] and the blob metadata; the encoded bytes
+ * are already committed in the media store before this is persisted.
+ */
 data class RemoteClipEvent(
     val eventId: String,
     val originDeviceId: String,
@@ -10,6 +18,11 @@ data class RemoteClipEvent(
     val sourceApp: String?,
     val createdAtMs: Long,
     val expiresAtMs: Long?,
+    val kind: String = MediaLimits.KIND_TEXT,
+    val mimeType: String? = null,
+    val encodedBytes: Int? = null,
+    val pixelWidth: Int? = null,
+    val pixelHeight: Int? = null,
 )
 
 /** An origin-authoritative unavailable marker: advances sync without carrying content. */
@@ -32,7 +45,7 @@ sealed interface RemoteStoreResult {
     data class IdentityConflict(val detail: String) : RemoteStoreResult
 }
 
-/** One event this device can serve to the peer: a live text body or a terminal marker. */
+/** One event this device can serve to the peer: a live text/image body or a terminal marker. */
 data class SyncableClipEvent(
     val eventId: String,
     val originDeviceId: String,
@@ -44,7 +57,15 @@ data class SyncableClipEvent(
     val sourceApp: String? = null,
     val createdAtMs: Long = 0,
     val expiresAtMs: Long? = null,
-)
+    val kind: String = MediaLimits.KIND_TEXT,
+    // Image blob metadata (protocol v2); null on text rows and terminal markers.
+    val mimeType: String? = null,
+    val encodedBytes: Int? = null,
+    val pixelWidth: Int? = null,
+    val pixelHeight: Int? = null,
+) {
+    val isImage: Boolean get() = kind == MediaLimits.KIND_IMAGE
+}
 
 /** One pending outbox row: a local event queued for announcement to the paired peer. */
 data class OutboxRow(val entryId: Long, val event: SyncableClipEvent)
@@ -57,9 +78,15 @@ data class RemoteClipApplied(
     val eventId: String,
     val originDeviceId: String,
     val originSeq: Long,
+    /** Empty for image clips; the bytes live in the media store under [contentHash]. */
     val content: String,
     val createdAtMs: Long,
-)
+    val kind: String = MediaLimits.KIND_TEXT,
+    val contentHash: String? = null,
+    val mimeType: String? = null,
+) {
+    val isImage: Boolean get() = kind == MediaLimits.KIND_IMAGE
+}
 
 /**
  * Storage contract between [SyncEngine] and the clipboard event store.
@@ -105,4 +132,23 @@ interface SyncRepository {
      * Returns null when the text is empty or exceeds the 1 MiB protocol limit.
      */
     suspend fun recordLocalClip(text: String, sourceApp: String?, nowMs: Long): SyncableClipEvent?
+
+    // ---- Protocol v2 image support (optional; text-only repositories keep the defaults) ----
+
+    /** Media blob store for protocol v2 image bodies; null when images are unsupported. */
+    val media: MediaBlobStore? get() = null
+
+    /** True when a live image row with this blob hash exists and its bytes are on disk. */
+    suspend fun findLiveImageByHash(contentHash: String): Boolean = false
+
+    /**
+     * Captures one local clipboard image as a new origin event and queues it for the peer.
+     * The encoded bytes were already validated and committed into [media]; this only writes
+     * the event and metadata rows. Returns null when images are unsupported.
+     */
+    suspend fun recordLocalImageClip(
+        image: ValidatedImage,
+        sourceApp: String?,
+        nowMs: Long,
+    ): SyncableClipEvent? = null
 }

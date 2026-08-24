@@ -124,3 +124,48 @@ data class LocalSequenceEntity(
     @ColumnInfo(name = "next_seq", defaultValue = "1")
     val nextSeq: Long,
 )
+
+/**
+ * Metadata of one content-addressed image blob (protocol v2 / ADR 0004). The encoded bytes
+ * live on disk in the [com.clipsync.android.media.MediaBlobStore]; this row is the queryable
+ * index (MIME, size, dimensions) and the GC root set together with [ClipMediaEntity].
+ */
+@Entity(tableName = "media_blobs")
+data class MediaBlobEntity(
+    @PrimaryKey
+    @ColumnInfo(name = "content_hash")
+    val contentHash: String,
+    @ColumnInfo(name = "mime_type")
+    val mimeType: String,
+    @ColumnInfo(name = "encoded_bytes")
+    val encodedBytes: Int,
+    @ColumnInfo(name = "pixel_width")
+    val pixelWidth: Int,
+    @ColumnInfo(name = "pixel_height")
+    val pixelHeight: Int,
+    @ColumnInfo(name = "state")
+    val state: String,
+    @ColumnInfo(name = "created_at")
+    val createdAtMs: Long,
+)
+
+/** Joins one image clip event to its blob; several events may share one blob by hash. */
+@Entity(
+    tableName = "clip_media",
+    indices = [Index(value = ["content_hash"])],
+)
+data class ClipMediaEntity(
+    @PrimaryKey
+    @ColumnInfo(name = "event_id")
+    val eventId: String,
+    @ColumnInfo(name = "content_hash")
+    val contentHash: String,
+    @ColumnInfo(name = "state")
+    val state: String,
+)
+
+/** Values of the `kind` column; must match protocol v2 clip header kinds. */
+object ClipKinds {
+    const val TEXT = "text"
+    const val IMAGE = "image"
+}

@@ -58,6 +58,15 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         get() = readBoolean(KEY_BOOT_RESTORE, default = false)
         set(value) = write(KEY_BOOT_RESTORE, value.toString())
 
+    /**
+     * Image clipboard sync (protocol v2 / ADR 0004). Off by default per the charter: when off,
+     * the device dials protocol v1, captures no images, and answers image announces with
+     * `unsupported_media`. Turning it on advertises the `image_clip_v2` capability.
+     */
+    var imageSyncEnabled: Boolean
+        get() = readBoolean(KEY_IMAGE_SYNC, default = false)
+        set(value) = write(KEY_IMAGE_SYNC, value.toString())
+
     fun retentionPolicy(): RetentionPolicy = RetentionPolicy(
         maximumEntries = retentionMaxEntries,
         maximumAgeMs = retentionMaxAgeDays * MILLIS_PER_DAY,
@@ -102,5 +111,6 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         private const val KEY_AUTO_EXPIRE_ENABLED = "sync.retention.auto_expire"
         private const val KEY_MAX_SYNC_TEXT_BYTES = "sync.max_text_bytes"
         private const val KEY_BOOT_RESTORE = "sync.boot_restore"
+        private const val KEY_IMAGE_SYNC = "sync.image_sync"
     }
 }

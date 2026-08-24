@@ -45,6 +45,7 @@ fun PreferencesScreen(
     onAutoApplyRemoteChange: (Boolean) -> Unit,
     onAutoExpireChange: (Boolean) -> Unit,
     onBootRestoreChange: (Boolean) -> Unit = {},
+    onImageSyncChange: (Boolean) -> Unit = {},
     /** Display name of the paired Windows peer; null while unpaired. */
     pairedDeviceName: String? = null,
     onOpenConduit: () -> Unit = {},
@@ -91,6 +92,14 @@ fun PreferencesScreen(
                 description = "收到对端内容时，优先自动写入本机剪贴板。",
                 checked = state.autoApplyRemote,
                 onCheckedChange = onAutoApplyRemoteChange,
+            )
+            RowDivider()
+            ToggleRow(
+                title = "图片同步",
+                description = "同步复制或分享的 PNG/JPEG 图片（单张最大 16 MiB）。" +
+                    "需要两端都开启；对新连接生效。",
+                checked = state.imageSync,
+                onCheckedChange = onImageSyncChange,
             )
             RowDivider()
             ToggleRow(

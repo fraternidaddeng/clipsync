@@ -125,17 +125,29 @@ class ClipboardSyncService : Service() {
                     val autoApply = InboxDelivery.autoApplyAllowed(settings)
                     val newestEventId = committed.lastOrNull()?.eventId
                     committed.forEach { applied ->
-                        InboxDelivery.deliver(
-                            appContext,
-                            applied.eventId,
-                            applied.content,
-                            autoApply = autoApply && applied.eventId == newestEventId,
-                        )
+                        if (applied.isImage) {
+                            InboxDelivery.deliverImage(
+                                appContext,
+                                applied.eventId,
+                                applied.contentHash,
+                                applied.mimeType,
+                                autoApply = autoApply && applied.eventId == newestEventId,
+                            )
+                        } else {
+                            InboxDelivery.deliver(
+                                appContext,
+                                applied.eventId,
+                                applied.content,
+                                autoApply = autoApply && applied.eventId == newestEventId,
+                            )
+                        }
                     }
                 }
             },
             // Pause/private stop outbound announces immediately; re-read every drain tick.
             outboundAllowed = { !settings.syncPaused && !settings.privateMode },
+            // With the preference on, dial protocol v2 first and fall back to v1 listeners.
+            imageSyncEnabled = { settings.imageSyncEnabled },
             // The peer rate-limited this device after repeated failed auth: mirror the
             // Windows tray bubble with a content-free notification plus a conduit fact.
             onAuthThrottled = {

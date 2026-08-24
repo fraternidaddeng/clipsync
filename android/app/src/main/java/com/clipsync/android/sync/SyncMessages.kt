@@ -10,7 +10,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
 
-/** Message type constants for protocol v1; must match ProtocolMessageTypes on Windows. */
+/** Message type constants for protocol v1/v2; must match ProtocolMessageTypes on Windows. */
 object SyncMessageTypes {
     const val HELLO = "hello"
     const val CHALLENGE = "challenge"
@@ -24,6 +24,11 @@ object SyncMessageTypes {
     const val ERROR = "error"
     const val PING = "ping"
     const val PONG = "pong"
+
+    // Protocol v2 image body transfer (docs/protocol-v2.md section 5).
+    const val CLIP_PAYLOAD_BEGIN = "clip_payload_begin"
+    const val CLIP_PAYLOAD_CHUNK = "clip_payload_chunk"
+    const val CLIP_PAYLOAD_END = "clip_payload_end"
 }
 
 /** Stable protocol error codes; must match ProtocolErrorCodes on Windows. */
@@ -42,6 +47,14 @@ object SyncErrorCodes {
     const val PAYLOAD_TOO_LARGE = "PAYLOAD_TOO_LARGE"
     const val RATE_LIMITED = "RATE_LIMITED"
     const val INTERNAL_ERROR = "INTERNAL_ERROR"
+
+    // Protocol v2 media errors (docs/protocol-v2.md section 6).
+    const val UNSUPPORTED_MEDIA = "UNSUPPORTED_MEDIA"
+    const val MEDIA_TOO_LARGE = "MEDIA_TOO_LARGE"
+    const val MEDIA_DECODE_FAILED = "MEDIA_DECODE_FAILED"
+    const val MEDIA_HASH_MISMATCH = "MEDIA_HASH_MISMATCH"
+    const val MEDIA_OUT_OF_ORDER = "MEDIA_OUT_OF_ORDER"
+    const val MEDIA_STORAGE_FAILED = "MEDIA_STORAGE_FAILED"
 }
 
 /** Wire limits from protocol v1 section 7. */
@@ -114,6 +127,8 @@ data class HelloBody(
     @SerialName("platform") val platform: String,
     @SerialName("client_version") val clientVersion: String,
     @SerialName("trust_epoch") val trustEpoch: Long,
+    /** Required on v2 (known tokens only, no duplicates, at most 16); omitted on v1. */
+    @SerialName("capabilities") val capabilities: List<String>? = null,
     @SerialName("known_vector") val knownVector: SyncStateBody,
 )
 
@@ -165,6 +180,11 @@ data class ClipHeaderDto(
     @SerialName("created_at_ms") val createdAtMs: Long? = null,
     @SerialName("expires_at_ms") val expiresAtMs: Long? = null,
     @SerialName("reason") val reason: String? = null,
+    // Protocol v2 image headers only; never present on text or unavailable headers.
+    @SerialName("mime_type") val mimeType: String? = null,
+    @SerialName("encoded_bytes") val encodedBytes: Long? = null,
+    @SerialName("pixel_width") val pixelWidth: Long? = null,
+    @SerialName("pixel_height") val pixelHeight: Long? = null,
 )
 
 @Serializable
@@ -194,6 +214,34 @@ data class ClipPayloadItemDto(
 @Serializable
 data class ClipPayloadBody(
     @SerialName("clips") val clips: List<ClipPayloadItemDto>,
+)
+
+@Serializable
+data class ClipPayloadBeginBody(
+    @SerialName("transfer_id") val transferId: String,
+    @SerialName("event_id") val eventId: String,
+    @SerialName("chunk_count") val chunkCount: Int,
+    @SerialName("encoded_bytes") val encodedBytes: Long,
+    @SerialName("content_hash") val contentHash: String,
+    @SerialName("mime_type") val mimeType: String,
+)
+
+@Serializable
+data class ClipPayloadChunkBody(
+    @SerialName("transfer_id") val transferId: String,
+    @SerialName("event_id") val eventId: String,
+    @SerialName("chunk_index") val chunkIndex: Int,
+    @SerialName("chunk_count") val chunkCount: Int,
+    @SerialName("chunk_bytes") val chunkBytes: Int,
+    /** Unpadded base64url of the raw chunk bytes. */
+    @SerialName("data") val data: String,
+)
+
+@Serializable
+data class ClipPayloadEndBody(
+    @SerialName("transfer_id") val transferId: String,
+    @SerialName("event_id") val eventId: String,
+    @SerialName("content_hash") val contentHash: String,
 )
 
 @Serializable
@@ -237,7 +285,7 @@ object SyncWire {
 
     fun newRequestId(): String = UUID.randomUUID().toString()
 
-    fun encode(type: String, requestId: String, body: Any): String {
+    fun encode(type: String, requestId: String, body: Any, version: Int = ProtocolJson.PROTOCOL_V1): String {
         val bodyObject = when (body) {
             is HelloBody -> json.encodeToJsonElement(body)
             is ChallengeBody -> json.encodeToJsonElement(body)
@@ -247,6 +295,9 @@ object SyncWire {
             is ClipAnnounceBody -> json.encodeToJsonElement(body)
             is ClipFetchBody -> json.encodeToJsonElement(body)
             is ClipPayloadBody -> json.encodeToJsonElement(body)
+            is ClipPayloadBeginBody -> json.encodeToJsonElement(body)
+            is ClipPayloadChunkBody -> json.encodeToJsonElement(body)
+            is ClipPayloadEndBody -> json.encodeToJsonElement(body)
             is AckRangesBody -> json.encodeToJsonElement(body)
             is ErrorBody -> json.encodeToJsonElement(body)
             is PingBody -> json.encodeToJsonElement(body)
@@ -255,7 +306,7 @@ object SyncWire {
         }.jsonObject
         return json.encodeToString(
             ProtocolEnvelope.serializer(),
-            ProtocolEnvelope(version = 1, type = type, requestId = requestId, body = bodyObject),
+            ProtocolEnvelope(version = version, type = type, requestId = requestId, body = bodyObject),
         )
     }
 
@@ -263,8 +314,8 @@ object SyncWire {
      * Parses one inbound frame through the strict shared validator, then decodes the typed body.
      * Throws SerializationException or IllegalArgumentException for anything off-contract.
      */
-    fun decode(frame: String): SyncMessage {
-        val envelope = ProtocolJson.parseEnvelope(frame)
+    fun decode(frame: String, version: Int = ProtocolJson.PROTOCOL_V1): SyncMessage {
+        val envelope = ProtocolJson.parseEnvelope(frame, version)
         return SyncMessage(envelope.type, envelope.requestId, decodeBody(envelope.type, envelope.body))
     }
 
@@ -277,6 +328,9 @@ object SyncWire {
         SyncMessageTypes.CLIP_ANNOUNCE -> json.decodeFromJsonElement(ClipAnnounceBody.serializer(), body)
         SyncMessageTypes.CLIP_FETCH -> json.decodeFromJsonElement(ClipFetchBody.serializer(), body)
         SyncMessageTypes.CLIP_PAYLOAD -> json.decodeFromJsonElement(ClipPayloadBody.serializer(), body)
+        SyncMessageTypes.CLIP_PAYLOAD_BEGIN -> json.decodeFromJsonElement(ClipPayloadBeginBody.serializer(), body)
+        SyncMessageTypes.CLIP_PAYLOAD_CHUNK -> json.decodeFromJsonElement(ClipPayloadChunkBody.serializer(), body)
+        SyncMessageTypes.CLIP_PAYLOAD_END -> json.decodeFromJsonElement(ClipPayloadEndBody.serializer(), body)
         SyncMessageTypes.ACK_RANGES -> json.decodeFromJsonElement(AckRangesBody.serializer(), body)
         SyncMessageTypes.ERROR -> json.decodeFromJsonElement(ErrorBody.serializer(), body)
         SyncMessageTypes.PING -> json.decodeFromJsonElement(PingBody.serializer(), body)

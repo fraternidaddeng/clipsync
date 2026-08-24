@@ -1,10 +1,12 @@
 package com.clipsync.android.ui.home
 
+import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,13 +36,17 @@ import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,6 +65,8 @@ import com.clipsync.android.ui.theme.ClipSyncType
 import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.charterSunken
 import com.clipsync.android.ui.theme.clipSyncColors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * 一屏: clipboard history behind the 44dp conduit band. Tap copies (honestly —
@@ -76,6 +85,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onFormatFilterChange: (ClipContentFormat?) -> Unit = {},
     nowMs: () -> Long = System::currentTimeMillis,
+    thumbnail: suspend (contentHash: String) -> Bitmap? = { null },
 ) {
     val c = clipSyncColors
     Column(
@@ -145,6 +155,7 @@ fun HomeScreen(
                     DismissableClipCard(
                         item = item,
                         nowMs = nowMs,
+                        thumbnail = thumbnail,
                         onCopy = { onCopy(item.eventId) },
                         onDelete = { onDelete(item.eventId) },
                         modifier = Modifier.animateItem(
@@ -313,6 +324,7 @@ private data class NoticeStyle(
 private fun DismissableClipCard(
     item: HomeClipItem,
     nowMs: () -> Long,
+    thumbnail: suspend (String) -> Bitmap?,
     onCopy: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -348,18 +360,20 @@ private fun DismissableClipCard(
             }
         },
     ) {
-        ClipCard(item = item, nowMs = nowMs, onCopy = onCopy)
+        ClipCard(item = item, nowMs = nowMs, thumbnail = thumbnail, onCopy = onCopy)
     }
 }
 
 /**
- * One history card: header row (source tag / time), then the preview body.
+ * One history card: header row (source tag / time), then the preview body —
+ * text clips show the collapsed preview, image clips a bounded thumbnail.
  * z1 charter face — sh-1 shadow, top light, hairline (tokens.md §8).
  */
 @Composable
 private fun ClipCard(
     item: HomeClipItem,
     nowMs: () -> Long,
+    thumbnail: suspend (String) -> Bitmap?,
     onCopy: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -380,7 +394,11 @@ private fun ClipCard(
             if (source != null) {
                 SourceTag(label = source, pairingOrder = item.sourcePairingOrder)
             }
-            FormatBadge(format = item.format)
+            if (item.isImage) {
+                ImageBadge()
+            } else {
+                FormatBadge(format = item.format)
+            }
             Spacer(Modifier.weight(1f))
             Text(
                 text = remember(item.createdAtMs) { clipTimeLabel(item.createdAtMs, nowMs()) },
@@ -390,14 +408,62 @@ private fun ClipCard(
             )
         }
         Spacer(Modifier.height(5.dp))
-        Text(
-            text = item.preview,
-            fontSize = 13.sp,
-            lineHeight = 19.sp,
-            color = c.t2,
-            maxLines = 4,
-            overflow = TextOverflow.Ellipsis,
+        if (item.isImage) {
+            ClipThumbnail(contentHash = item.contentHash, thumbnail = thumbnail)
+        } else {
+            Text(
+                text = item.preview,
+                fontSize = 13.sp,
+                lineHeight = 19.sp,
+                color = c.t2,
+                maxLines = 4,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+/**
+ * Bounded history thumbnail (512px cap upstream, ≤120dp here). Loads off the
+ * main thread keyed by blob hash; while absent, a quiet grey stand-in states
+ * the fact instead of flashing an error.
+ */
+@Composable
+private fun ClipThumbnail(
+    contentHash: String,
+    thumbnail: suspend (String) -> Bitmap?,
+    modifier: Modifier = Modifier,
+) {
+    val c = clipSyncColors
+    val bitmap by produceState<ImageBitmap?>(initialValue = null, contentHash) {
+        value = withContext(Dispatchers.IO) {
+            if (contentHash.isEmpty()) null else thumbnail(contentHash)?.asImageBitmap()
+        }
+    }
+    val shape = RoundedCornerShape(8.dp)
+    val preview = bitmap
+    if (preview != null) {
+        Image(
+            bitmap = preview,
+            contentDescription = "图片剪贴",
+            modifier = modifier
+                .heightIn(max = 120.dp)
+                .clip(shape)
+                .border(1.dp, c.ln2, shape),
+            contentScale = ContentScale.Fit,
         )
+    } else {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(72.dp)
+                .clip(shape)
+                .background(c.sf3)
+                .border(1.dp, c.ln2, shape),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(text = "图片", fontSize = 11.sp, color = c.t4)
+        }
     }
 }
 
@@ -460,6 +526,30 @@ private fun FormatBadge(format: ClipContentFormat, modifier: Modifier = Modifier
             .padding(horizontal = 7.dp, vertical = 2.dp),
     )
 }
+
+/**
+ * Image clip tag: the same low-chroma annotation box on the last neighbour-hue
+ * slot (灰粉) — image is a content kind, not a text format, so it sits outside
+ * the ADR 0003 ladder.
+ */
+@Composable
+private fun ImageBadge(modifier: Modifier = Modifier) {
+    val c = clipSyncColors
+    val shape = RoundedCornerShape(6.dp)
+    Text(
+        text = "图片",
+        fontSize = 10.sp,
+        fontWeight = FontWeight.Medium,
+        color = c.device(IMAGE_BADGE_SLOT),
+        modifier = modifier
+            .clip(shape)
+            .background(c.deviceBg(IMAGE_BADGE_SLOT))
+            .border(1.dp, c.deviceLn(IMAGE_BADGE_SLOT), shape)
+            .padding(horizontal = 7.dp, vertical = 2.dp),
+    )
+}
+
+private const val IMAGE_BADGE_SLOT = 5
 
 /**
  * The history empty state — one of the app's serif moments (charter 3.5).

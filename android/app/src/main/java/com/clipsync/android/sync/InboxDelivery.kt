@@ -29,6 +29,13 @@ object InboxDelivery {
 
             override fun writeText(text: String, originEventId: String): ClipboardWriteResult =
                 coordinator.writeText(text, originEventId).result
+
+            override fun writeImage(
+                encoded: ByteArray,
+                mimeType: String,
+                originEventId: String,
+            ): ClipboardWriteResult =
+                coordinator.writeImage(encoded, mimeType, originEventId).result
         }
     }
 
@@ -56,6 +63,31 @@ object InboxDelivery {
             return true
         }
         SyncNotifications.notifyInboxItem(context, eventId)
+        return false
+    }
+
+    /**
+     * Image counterpart of [deliver]. Images never enter the text inbox (its records and the
+     * notification copy action are text-only); the event is already in Room history with its
+     * thumbnail, so a skipped or failed auto-apply simply leaves it there for manual use.
+     * Returns true when the image reached the system clipboard automatically.
+     */
+    fun deliverImage(
+        context: Context,
+        eventId: String,
+        contentHash: String?,
+        mimeType: String?,
+        autoApply: Boolean = false,
+    ): Boolean {
+        if (!autoApply || contentHash == null || mimeType == null) {
+            return false
+        }
+        val media = SyncStore.repository(context).media ?: return false
+        val bytes = runCatching { media.readAllBytes(contentHash) }.getOrNull() ?: return false
+        if (writerFactory(context).writeImage(bytes, mimeType, eventId) is ClipboardWriteResult.Success) {
+            SyncNotifications.notifyAutoApplied(context, eventId)
+            return true
+        }
         return false
     }
 }

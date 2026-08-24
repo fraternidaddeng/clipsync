@@ -63,7 +63,7 @@
             android:multiprocess="false"
             android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
 
-        <!-- 系统分享面板目标：纯文本写入本地 outbox，无界面。 -->
+        <!-- 系统分享面板目标：纯文本写入本地 outbox；PNG/JPEG 图片直接落库并入队（图库分享）。 -->
         <activity
             android:name=".platform.entry.ShareReceiverActivity"
             android:exported="true"
@@ -75,7 +75,25 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/png" />
+                <data android:mimeType="image/jpeg" />
+                <data android:mimeType="image/jpg" />
+            </intent-filter>
         </activity>
+
+        <!-- 图像自动应用：把接收到的图片以 content:// URI 写入系统剪贴板。 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.clipboard"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <!-- 快捷磁贴的透明宿主：取得焦点读取一次剪贴板后立即结束。 -->
         <activity

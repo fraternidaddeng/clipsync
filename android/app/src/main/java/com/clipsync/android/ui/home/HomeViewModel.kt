@@ -7,6 +7,7 @@ import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
+import com.clipsync.android.platform.clipboard.ClipboardWriter
 import com.clipsync.android.storage.ClipHistoryEntry
 import java.time.Instant
 import java.time.ZoneId
@@ -40,6 +41,10 @@ data class HomeClipItem(
     val sourcePairingOrder: Int? = null,
     /** Render-time format tag (ADR 0003) — classified from content, never persisted. */
     val format: ClipContentFormat = ClipContentFormat.PLAIN,
+    /** True for image clips (kind = image); the card renders a thumbnail instead of text. */
+    val isImage: Boolean = false,
+    /** Blob hash for image clips — keys the thumbnail lookup. Empty for text. */
+    val contentHash: String = "",
 )
 
 /** Transient, honest feedback for the last item action. */
@@ -95,10 +100,11 @@ class HomeViewModel(
             ) { (query, entries), peers, filter ->
                 // Format filtering happens here, render-time, on the classified
                 // rows (ADR 0003) — the repository query stays untouched.
+                // Format chips are text vocabulary, so images only show under 全部.
                 val rows = entries.map { it.toHomeItem(localDeviceId, peers) }
                 Triple(
                     query,
-                    if (filter == null) rows else rows.filter { it.format == filter },
+                    if (filter == null) rows else rows.filter { it.format == filter && !it.isImage },
                     filter,
                 )
             }.collect { (query, rows, filter) ->
@@ -137,9 +143,20 @@ class HomeViewModel(
     fun copy(eventId: String) {
         viewModelScope.launch {
             val entry = history.findVisible(eventId) ?: return@launch
-            val outcome = writeCoordinator.writeText(entry.content, entry.eventId)
+            val result = if (entry.isImage) {
+                // The blob lives on disk, not in the row; a missing blob is an
+                // honest failure, never a silent empty-text write.
+                val payload = history.imagePayload(entry.eventId)
+                if (payload == null) {
+                    ClipboardWriteResult.Failure(ClipboardWriter.IMAGE_WRITE_UNAVAILABLE)
+                } else {
+                    writeCoordinator.writeImage(payload.bytes, payload.mimeType, entry.eventId).result
+                }
+            } else {
+                writeCoordinator.writeText(entry.content, entry.eventId).result
+            }
             showNotice(
-                when (val result = outcome.result) {
+                when (result) {
                     is ClipboardWriteResult.Success -> HomeNotice.Copied
                     is ClipboardWriteResult.Failure -> HomeNotice.CopyFailed(result.errorCode)
                 },
@@ -194,12 +211,15 @@ internal fun ClipHistoryEntry.toHomeItem(localDeviceId: String, peers: List<Pair
     }
     return HomeClipItem(
         eventId = eventId,
-        preview = previewText(content),
+        preview = if (isImage) "图片" else previewText(content),
         createdAtMs = createdAtMs,
         remoteSourceLabel = label,
         sourcePairingOrder = if (remote) slot else null,
         // Classified from the full content (the preview may be truncated).
-        format = classifyClipContent(content),
+        // Image rows carry no text to classify — they get the 图片 tag instead.
+        format = if (isImage) ClipContentFormat.PLAIN else classifyClipContent(content),
+        isImage = isImage,
+        contentHash = if (isImage) contentHash else "",
     )
 }
 

@@ -18,6 +18,9 @@ enum class CaptureOutcome {
     /** The change is a clip this app just wrote itself (auto-apply, history copy). */
     SKIPPED_OWN_WRITE,
 
+    /** The change is an image but the image-sync preference (default off) is not enabled. */
+    SKIPPED_IMAGE_SYNC_OFF,
+
     /** The outbox rejected the text (empty, oversized, or a recent duplicate). */
     REJECTED_BY_OUTBOX,
 }
@@ -38,6 +41,11 @@ class ClipboardCaptureManager(
     /** Resolved lazily so [SyncServices.install] swaps stay visible to a live manager. */
     private val outbox: () -> ClipOutbox = { SyncServices.outbox },
     private val syncRequester: () -> SyncRequester = { SyncServices.syncRequester },
+    /**
+     * Where captured image bytes go (validation + blob commit + Room event). Injectable so
+     * unit tests need no Room database; production passes [ImageClipSink.submit].
+     */
+    private val imageSink: (ByteArray) -> Boolean = { false },
 ) {
     fun onClipboardChanged(change: ClipboardChange): CaptureOutcome {
         if (settings.privateMode) {
@@ -45,6 +53,20 @@ class ClipboardCaptureManager(
         }
         if (settings.syncPaused) {
             return CaptureOutcome.SKIPPED_SYNC_PAUSED
+        }
+        if (change.isImage) {
+            if (!settings.imageSyncEnabled) {
+                return CaptureOutcome.SKIPPED_IMAGE_SYNC_OFF
+            }
+            // Suppression is hash-keyed: an image this app just auto-applied must not echo.
+            if (writeCoordinator.shouldSuppressContentHash(change.contentHash)) {
+                return CaptureOutcome.SKIPPED_OWN_WRITE
+            }
+            return if (imageSink(change.imageBytes!!)) {
+                CaptureOutcome.CAPTURED
+            } else {
+                CaptureOutcome.REJECTED_BY_OUTBOX
+            }
         }
         if (writeCoordinator.shouldSuppressContent(change.text)) {
             return CaptureOutcome.SKIPPED_OWN_WRITE

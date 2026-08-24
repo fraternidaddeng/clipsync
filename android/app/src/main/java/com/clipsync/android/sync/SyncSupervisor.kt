@@ -66,6 +66,12 @@ class SyncSupervisor(
     /** Pause/private gate for outbound announces; passed through to every session. */
     private val outboundAllowed: () -> Boolean = { true },
     /**
+     * When true, each dial attempt tries protocol v2 (`/v2/peer/sync`, image sync) first and
+     * falls back to v1 when the peer's listener refuses the v2 handshake. Re-read per attempt
+     * so flipping the preference applies on the next (re)connect.
+     */
+    private val imageSyncEnabled: () -> Boolean = { false },
+    /**
      * Fired once per lockout episode when the peer answers with RATE_LIMITED before this
      * device authenticated — the Windows listener throttles repeated auth failures, and the
      * user must see that instead of a silent retry loop (mirrors the Windows tray bubble).
@@ -106,8 +112,8 @@ class SyncSupervisor(
             }
 
             mutableState.value = SyncConnectionState.Connecting
-            val transport = connectAnyHost(peer)
-            if (transport == null) {
+            val connected = connectAnyHost(peer)
+            if (connected == null) {
                 secret.fill(0)
                 attempt = waitBeforeRetry(attempt)
                 continue
@@ -121,6 +127,7 @@ class SyncSupervisor(
                     peerDeviceId = peer.deviceId,
                     trustEpoch = peer.trustEpoch,
                     clientVersion = clientVersion,
+                    protocolVersion = connected.protocolVersion,
                     nowMs = nowMs,
                     peerStillTrusted = {
                         val current = pairing.peer()
@@ -133,9 +140,9 @@ class SyncSupervisor(
             )
             secret.fill(0)
             val result = try {
-                engine.run(transport)
+                engine.run(connected.transport)
             } finally {
-                transport.dispose()
+                connected.transport.dispose()
             }
 
             if (result.authenticated) {
@@ -154,17 +161,31 @@ class SyncSupervisor(
         }
     }
 
-    /** Tries every pairing host in preference order; null when none accepted a connection. */
-    private suspend fun connectAnyHost(peer: com.clipsync.android.pairing.PairedPeer): SyncTransport? {
+    /** A dialed socket together with the wire version it was accepted on. */
+    private class ConnectedTransport(val transport: SyncTransport, val protocolVersion: Int)
+
+    /**
+     * Tries every pairing host in preference order; null when none accepted a connection.
+     * With image sync on, each host is dialed on v2 first and once more on v1 when the v2
+     * handshake is refused (a v1-only listener rejects `/v2/peer/sync` before upgrade); a
+     * certificate pin mismatch stops everything because trust, not connectivity, failed.
+     */
+    private suspend fun connectAnyHost(peer: com.clipsync.android.pairing.PairedPeer): ConnectedTransport? {
+        val versions = if (imageSyncEnabled()) listOf(2, 1) else listOf(1)
         for (host in peer.hosts) {
-            try {
-                return connector.connect(host, peer.port, peer.certSha256)
-            } catch (_: PinMismatchException) {
-                // Wrong certificate is a trust decision, not a connectivity problem: stop the
-                // whole attempt so the user re-pairs instead of silently probing other hosts.
-                return null
-            } catch (_: IOException) {
-                continue
+            for (version in versions) {
+                try {
+                    return ConnectedTransport(
+                        connector.connect(host, peer.port, peer.certSha256, version),
+                        version,
+                    )
+                } catch (_: PinMismatchException) {
+                    // Wrong certificate is a trust decision, not a connectivity problem: stop
+                    // the whole attempt so the user re-pairs instead of silently probing on.
+                    return null
+                } catch (_: IOException) {
+                    continue
+                }
             }
         }
         return null

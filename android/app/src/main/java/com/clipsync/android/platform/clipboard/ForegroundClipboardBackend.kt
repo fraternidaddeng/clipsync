@@ -13,9 +13,16 @@ class ForegroundClipboardBackend(
     private val systemVersion: String,
     private val hasher: ContentHasher = Sha256ContentHasher,
     private val nowEpochMillis: () -> Long = System::currentTimeMillis,
+    /**
+     * Gate for materializing PNG/JPEG clipboard items into bytes. Re-read per change so the
+     * image-sync preference applies immediately; off by default per the charter, in which
+     * case image clips are ignored exactly as before.
+     */
+    private val imageCaptureEnabled: () -> Boolean = { false },
 ) : BackgroundClipboardBackend {
+    private val appContext = context.applicationContext
     private val clipboard =
-        context.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        appContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     private var listener: ClipboardManager.OnPrimaryClipChangedListener? = null
 
     override val mode: ClipboardReadMode = ClipboardReadMode.FOREGROUND_ONLY
@@ -30,12 +37,35 @@ class ForegroundClipboardBackend(
     override fun start(onChanged: (ClipboardChange) -> Unit) {
         stop()
         val registered = ClipboardManager.OnPrimaryClipChangedListener {
+            val image = readImageChange()
+            if (image != null) {
+                onChanged(image)
+                return@OnPrimaryClipChangedListener
+            }
             val text = (readText() as? ClipboardReadResult.Success)?.text
                 ?: return@OnPrimaryClipChangedListener
             onChanged(ClipboardChange(text, hasher.hash(text), nowEpochMillis()))
         }
         clipboard.addPrimaryClipChangedListener(registered)
         listener = registered
+    }
+
+    /** A PNG/JPEG primary clip as bytes, or null when disabled, absent, or unreadable. */
+    private fun readImageChange(): ClipboardChange? {
+        if (!imageCaptureEnabled()) {
+            return null
+        }
+        val clip = try {
+            clipboard.primaryClip
+        } catch (_: SecurityException) {
+            null
+        } catch (_: RuntimeException) {
+            null
+        } ?: return null
+        if (!ClipboardMediaReader.descriptionLooksLikeImage(clip.description)) {
+            return null
+        }
+        return ClipboardMediaReader.readFirstImage(appContext, clip)
     }
 
     override fun stop() {
