@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "type": "error",
+  "request_id": "15151515-1515-4151-8151-151515151515",
+  "body": {
+    "code": "MEDIA_TOO_LARGE",
+    "retryable": false,
+    "failed_type": "clip_payload_begin"
+  }
+}

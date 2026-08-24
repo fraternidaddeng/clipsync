@@ -1,0 +1,547 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clipsync.local/protocol/v2/messages.schema.json",
+  "title": "ClipSync protocol v2 message bodies",
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "deviceId": { "$ref": "#/$defs/uuid" },
+    "eventId": { "$ref": "#/$defs/uuid" },
+    "transferId": { "$ref": "#/$defs/uuid" },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9223372036854775807
+    },
+    "contiguousSequence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9223372036854775807
+    },
+    "unixTimeMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9223372036854775807
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "base64Url256": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{43}$"
+    },
+    "base64UrlUnpadded": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "minLength": 2,
+      "maxLength": 349528
+    },
+    "capability": {
+      "type": "string",
+      "enum": ["image_clip_v2"]
+    },
+    "imageMime": {
+      "type": "string",
+      "enum": ["image/png", "image/jpeg"]
+    },
+    "closedRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_seq", "end_seq"],
+      "properties": {
+        "start_seq": { "$ref": "#/$defs/sequence" },
+        "end_seq": { "$ref": "#/$defs/sequence" }
+      }
+    },
+    "rangeSet": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": { "$ref": "#/$defs/closedRange" }
+    },
+    "originState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin_device_id", "contiguous_seq"],
+      "properties": {
+        "origin_device_id": { "$ref": "#/$defs/deviceId" },
+        "contiguous_seq": { "$ref": "#/$defs/contiguousSequence" },
+        "received_ranges": { "$ref": "#/$defs/rangeSet" }
+      }
+    },
+    "syncState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origins"],
+      "properties": {
+        "origins": {
+          "type": "array",
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/originState" }
+        }
+      }
+    },
+    "helloBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "device_id",
+        "platform",
+        "client_version",
+        "trust_epoch",
+        "known_vector",
+        "capabilities"
+      ],
+      "properties": {
+        "device_id": { "$ref": "#/$defs/deviceId" },
+        "platform": { "enum": ["windows", "android"] },
+        "client_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z._+-]{0,63}$"
+        },
+        "trust_epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854775807
+        },
+        "known_vector": { "$ref": "#/$defs/syncState" },
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/capability" }
+        }
+      }
+    },
+    "challengeBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "nonce",
+        "challenger_device_id",
+        "responder_device_id",
+        "trust_epoch",
+        "expires_at_ms"
+      ],
+      "properties": {
+        "algorithm": { "const": "hmac-sha256" },
+        "nonce": { "$ref": "#/$defs/base64Url256" },
+        "challenger_device_id": { "$ref": "#/$defs/deviceId" },
+        "responder_device_id": { "$ref": "#/$defs/deviceId" },
+        "trust_epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854775807
+        },
+        "expires_at_ms": { "$ref": "#/$defs/unixTimeMs" }
+      }
+    },
+    "authBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "challenge_request_id",
+        "responder_device_id",
+        "trust_epoch",
+        "proof"
+      ],
+      "properties": {
+        "algorithm": { "const": "hmac-sha256" },
+        "challenge_request_id": { "$ref": "#/$defs/uuid" },
+        "responder_device_id": { "$ref": "#/$defs/deviceId" },
+        "trust_epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854775807
+        },
+        "proof": { "$ref": "#/$defs/base64Url256" }
+      }
+    },
+    "knownVectorBody": { "$ref": "#/$defs/syncState" },
+    "originRanges": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin_device_id", "ranges"],
+      "properties": {
+        "origin_device_id": { "$ref": "#/$defs/deviceId" },
+        "ranges": { "$ref": "#/$defs/rangeSet" }
+      }
+    },
+    "wantRangesBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requests"],
+      "properties": {
+        "requests": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/originRanges" }
+        }
+      }
+    },
+    "availableTextClipHeader": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "origin_device_id",
+        "origin_seq",
+        "availability",
+        "kind",
+        "content_hash",
+        "utf8_bytes",
+        "created_at_ms"
+      ],
+      "properties": {
+        "event_id": { "$ref": "#/$defs/eventId" },
+        "origin_device_id": { "$ref": "#/$defs/deviceId" },
+        "origin_seq": { "$ref": "#/$defs/sequence" },
+        "availability": { "const": "available" },
+        "kind": { "const": "text" },
+        "content_hash": { "$ref": "#/$defs/sha256" },
+        "utf8_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "source_app": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "created_at_ms": { "$ref": "#/$defs/unixTimeMs" },
+        "expires_at_ms": { "$ref": "#/$defs/unixTimeMs" }
+      }
+    },
+    "availableImageClipHeader": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "origin_device_id",
+        "origin_seq",
+        "availability",
+        "kind",
+        "mime_type",
+        "content_hash",
+        "encoded_bytes",
+        "pixel_width",
+        "pixel_height",
+        "created_at_ms"
+      ],
+      "properties": {
+        "event_id": { "$ref": "#/$defs/eventId" },
+        "origin_device_id": { "$ref": "#/$defs/deviceId" },
+        "origin_seq": { "$ref": "#/$defs/sequence" },
+        "availability": { "const": "available" },
+        "kind": { "const": "image" },
+        "mime_type": { "$ref": "#/$defs/imageMime" },
+        "content_hash": { "$ref": "#/$defs/sha256" },
+        "encoded_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16777216
+        },
+        "pixel_width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "pixel_height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "source_app": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "created_at_ms": { "$ref": "#/$defs/unixTimeMs" },
+        "expires_at_ms": { "$ref": "#/$defs/unixTimeMs" }
+      }
+    },
+    "unavailableClipHeader": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "origin_device_id",
+        "origin_seq",
+        "availability",
+        "reason"
+      ],
+      "properties": {
+        "event_id": { "$ref": "#/$defs/eventId" },
+        "origin_device_id": { "$ref": "#/$defs/deviceId" },
+        "origin_seq": { "$ref": "#/$defs/sequence" },
+        "availability": { "const": "unavailable" },
+        "reason": {
+          "enum": [
+            "local_only",
+            "deleted",
+            "expired",
+            "policy_filtered",
+            "not_found",
+            "unsupported_media"
+          ]
+        }
+      }
+    },
+    "clipHeader": {
+      "oneOf": [
+        { "$ref": "#/$defs/availableTextClipHeader" },
+        { "$ref": "#/$defs/availableImageClipHeader" },
+        { "$ref": "#/$defs/unavailableClipHeader" }
+      ]
+    },
+    "clipAnnounceBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clips"],
+      "properties": {
+        "clips": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 256,
+          "items": { "$ref": "#/$defs/clipHeader" }
+        }
+      }
+    },
+    "clipFetchBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_ids"],
+      "properties": {
+        "event_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/eventId" }
+        }
+      }
+    },
+    "clipPayloadItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "origin_device_id",
+        "origin_seq",
+        "kind",
+        "content",
+        "content_hash",
+        "utf8_bytes",
+        "created_at_ms"
+      ],
+      "properties": {
+        "event_id": { "$ref": "#/$defs/eventId" },
+        "origin_device_id": { "$ref": "#/$defs/deviceId" },
+        "origin_seq": { "$ref": "#/$defs/sequence" },
+        "kind": { "const": "text" },
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1048576
+        },
+        "content_hash": { "$ref": "#/$defs/sha256" },
+        "utf8_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "source_app": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "created_at_ms": { "$ref": "#/$defs/unixTimeMs" },
+        "expires_at_ms": { "$ref": "#/$defs/unixTimeMs" }
+      }
+    },
+    "clipPayloadBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clips"],
+      "properties": {
+        "clips": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": { "$ref": "#/$defs/clipPayloadItem" }
+        }
+      }
+    },
+    "clipPayloadBeginBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transfer_id",
+        "event_id",
+        "chunk_count",
+        "encoded_bytes",
+        "content_hash",
+        "mime_type"
+      ],
+      "properties": {
+        "transfer_id": { "$ref": "#/$defs/transferId" },
+        "event_id": { "$ref": "#/$defs/eventId" },
+        "chunk_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "encoded_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16777216
+        },
+        "content_hash": { "$ref": "#/$defs/sha256" },
+        "mime_type": { "$ref": "#/$defs/imageMime" }
+      }
+    },
+    "clipPayloadChunkBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transfer_id",
+        "event_id",
+        "chunk_index",
+        "chunk_count",
+        "chunk_bytes",
+        "data"
+      ],
+      "properties": {
+        "transfer_id": { "$ref": "#/$defs/transferId" },
+        "event_id": { "$ref": "#/$defs/eventId" },
+        "chunk_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63
+        },
+        "chunk_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "chunk_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 262144
+        },
+        "data": { "$ref": "#/$defs/base64UrlUnpadded" }
+      }
+    },
+    "clipPayloadEndBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transfer_id", "event_id", "content_hash"],
+      "properties": {
+        "transfer_id": { "$ref": "#/$defs/transferId" },
+        "event_id": { "$ref": "#/$defs/eventId" },
+        "content_hash": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "ackRangesBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["acks"],
+      "properties": {
+        "acks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/originRanges" }
+        }
+      }
+    },
+    "errorCode": {
+      "enum": [
+        "MALFORMED_JSON",
+        "SCHEMA_VIOLATION",
+        "UNSUPPORTED_VERSION",
+        "AUTH_REQUIRED",
+        "AUTH_FAILED",
+        "CHALLENGE_EXPIRED",
+        "REPLAY_DETECTED",
+        "DEVICE_REVOKED",
+        "TRUST_EPOCH_MISMATCH",
+        "MESSAGE_OUT_OF_ORDER",
+        "INVALID_RANGE",
+        "EVENT_CONFLICT",
+        "PAYLOAD_NOT_FOUND",
+        "HASH_MISMATCH",
+        "PAYLOAD_TOO_LARGE",
+        "RATE_LIMITED",
+        "INTERNAL_ERROR",
+        "UNSUPPORTED_MEDIA",
+        "MEDIA_TOO_LARGE",
+        "MEDIA_DECODE_FAILED",
+        "MEDIA_HASH_MISMATCH",
+        "MEDIA_OUT_OF_ORDER",
+        "MEDIA_STORAGE_FAILED"
+      ]
+    },
+    "messageType": {
+      "enum": [
+        "hello",
+        "challenge",
+        "auth",
+        "known_vector",
+        "want_ranges",
+        "clip_announce",
+        "clip_fetch",
+        "clip_payload",
+        "clip_payload_begin",
+        "clip_payload_chunk",
+        "clip_payload_end",
+        "ack_ranges",
+        "error",
+        "ping",
+        "pong"
+      ]
+    },
+    "errorBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "retryable"],
+      "properties": {
+        "code": { "$ref": "#/$defs/errorCode" },
+        "retryable": { "type": "boolean" },
+        "failed_type": { "$ref": "#/$defs/messageType" },
+        "retry_after_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300000
+        }
+      }
+    },
+    "pingBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sent_at_ms"],
+      "properties": {
+        "sent_at_ms": { "$ref": "#/$defs/unixTimeMs" }
+      }
+    },
+    "pongBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ping_sent_at_ms", "sent_at_ms"],
+      "properties": {
+        "ping_sent_at_ms": { "$ref": "#/$defs/unixTimeMs" },
+        "sent_at_ms": { "$ref": "#/$defs/unixTimeMs" }
+      }
+    }
+  }
+}

@@ -144,7 +144,7 @@
 4. Windows 睡眠/唤醒会话快速恢复（`SessionPowerCoordinator`，stage-4 分支有可移植实现）。
 5. 真实弱网/Wi-Fi 切换重连时延测量与调参（退避逻辑已有测试，真实时延未知）。
 6. 历史导出/导入（换机、备份场景；stage-4 分支有雏形）。*（进行中：并行任务移植，未合入。）*
-7. **图片同步（protocol v2）立项裁决**：这是对照表上最大的功能差距。协议 v1 未预留图片字段（`kind` 冻结为 `text`，需另起版本）；`feature/stage-4` 分支已有完整的 protocol v2 图片实现（commit `28e354a`：v2 schema/fixtures、双端媒体栈与同步引擎、ADR 0003），本分支只带入了未接线的 `ImageCodec`/`MediaLimits`/`ClipboardMediaReader` 雏形。建议优先评估从 stage-4 移植，而非从零做「Windows→Android 单向 PNG ≤ N MB」最小版本。若裁决不做，应在 product-scope 里写明理由（如「截图走 LocalSend」）。
+7. **图片同步（protocol v2）立项裁决**：这是对照表上最大的功能差距。协议 v1 未预留图片字段（`kind` 冻结为 `text`，需另起版本）；`feature/stage-4` 分支已有完整的 protocol v2 图片实现（commit `28e354a`：双端媒体栈与同步引擎）。本分支已从 stage-4 移植 protocol v2 线上契约（`protocol/v2/` schema 与 fixtures、`docs/protocol-v2.md`、ADR 0004，验证脚本已覆盖 v2），双端实现仍待移植：目前只有未接线的 `ImageCodec`/`MediaLimits`/`ClipboardMediaReader` 雏形。建议优先评估从 stage-4 移植实现，而非从零做「Windows→Android 单向 PNG ≤ N MB」最小版本。若裁决不做，应在 product-scope 里写明理由（如「截图走 LocalSend」）。
 
 ### P2 —— 硬化与打磨
 

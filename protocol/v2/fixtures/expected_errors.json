@@ -1,0 +1,17 @@
+{
+  "malformed.json": "MALFORMED_JSON",
+  "unsupported_version.json": "UNSUPPORTED_VERSION",
+  "unknown_envelope_field.json": "SCHEMA_VIOLATION",
+  "duplicate_event_id.json": "SCHEMA_VIOLATION",
+  "unknown_capability.json": "SCHEMA_VIOLATION",
+  "unknown_unavailable_reason.json": "SCHEMA_VIOLATION",
+  "hello_missing_capabilities.json": "SCHEMA_VIOLATION",
+  "gif_mime.json": "SCHEMA_VIOLATION",
+  "image_header_with_utf8_bytes.json": "SCHEMA_VIOLATION",
+  "pixel_bomb.json": "SCHEMA_VIOLATION",
+  "pixel_side_too_large.json": "SCHEMA_VIOLATION",
+  "encoded_bytes_too_large.json": "SCHEMA_VIOLATION",
+  "chunk_too_large.json": "SCHEMA_VIOLATION",
+  "chunk_bytes_mismatch.json": "SCHEMA_VIOLATION",
+  "chunk_padded_base64.json": "SCHEMA_VIOLATION"
+}
