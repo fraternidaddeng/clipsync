@@ -43,7 +43,7 @@
 | 5.1 四项状态分开显示 | ✅ | 通路四段互不合并；「最多一段伸手」（single-beckon）有测试 |
 | 5.2 FGS `connectedDevice` | ✅ | `ServiceCompat.startForeground(..., CONNECTED_DEVICE)`；FGS 拒绝 → 诚实「需要恢复」+ `START_NOT_STICKY`，错误码上通路页 |
 | 5.2 **通知操作**（暂停全部/仅停捕获/立即同步/打开故障状态） | ✅（审计后补齐） | 常驻通知三个按钮（暂停/恢复同步、暂停/恢复捕获、立即同步）+ 点按正文打开通路（故障状态）页；`SyncServiceNotification.applyAction` 纯函数 + Robolectric 通知内容测试；仍不含任何剪贴板正文。新增 `autoCapturePaused` 仅辖自动捕获（分享/磁贴/入站不受影响） |
-| 5.2 服务持有 backend 协调器 | ❌ **见 P0** | 见下 |
+| 5.2 服务持有 backend 协调器 | ✅（审计后修复） | `36fc47e`：见 §1.3 的修复记录 |
 | 5.2 POST_NOTIFICATIONS 与电池分开引导；权限非 FGS 前提 | ✅ | 启用时机才请求；拒绝后服务照跑、应用内诚实显示「通知已关闭」条 |
 | 5.2 BOOT_COMPLETED 仅 opt-in + WorkManager 有界健康检查 | ✅ | `BootCompletedReceiver`（manifest 默认禁用）+ `BootHealthCheckWorker`（3 次观察不重启）+「需要恢复」通知；`BootRestoreTest` 覆盖 |
 | 5.3 Shizuku 七类错误码 | ✅ | `ShizukuErrorCodes` 七枚齐全（NOT_INSTALLED/NOT_RUNNING/NOT_AUTHORIZED/BINDER_DEAD/USERSERVICE_DEAD/CLIPBOARD_BINDER_DEAD/API_MISMATCH） |
@@ -66,6 +66,8 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 - 「悬浮窗轮询已启用」常驻通知项也因此无处安放。
 
 `MainActivity.onStop` 的注释（「Android 10+ denies background reads anyway」）只对 FOREGROUND_ONLY 后端成立，对特权后端是错误依据。**修复不是 trivial**（需要：服务持有协调器 + 依据 preferredReadMode/verified 状态决定是否后台启动 + 前后台切换的所有权交接 + 熄屏策略 + 测试），本轮只记录不动刀。这是本分支相对 plan 阶段 5 的唯一 P0 级功能缺口。
+
+> **已修复（审计后，`36fc47e`）**：进程级 `SharedClipboardCapture` 现在只建一套捕获栈（阶梯后端 + `ClipboardAccessCoordinator` + 策略引擎），新的 `ClipboardCaptureSession` 做所有权仲裁——前台服务在提升期间持有协调器（并驱动 30s 周期健康检查触发阶梯回落），Activity 可见性只在无服务时起作用，双向交接不重启健康后端；暂停/私密/暂停捕获除逐事件闸门外还在后端层面直接停读（私密模式下特权后端不得后台轮询剪贴板），偏好开关与通知动作翻转即时生效（服务监听 SharedPreferences 变更重估闸门）。测试：`ClipboardCaptureSessionTest`（8 例：交接/闸门/健康回落）+ `ClipboardSyncServiceCaptureOwnershipTest`（5 例：Robolectric 真服务生命周期，含通知动作停读/恢复）。仍待器械/实机验证「服务在、App 退后台、复制到达 Windows」的 P95 验收（§5 第 1 条的设备部分）。
 
 ---
 
@@ -127,7 +129,7 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 
 ## 5. 测试缺口（按风险排序）
 
-1. **（伴随 P0）后台读取链路无任何运行时验证**——功能未接线，自然没有「服务在、App 退后台、复制到达 Windows」的自动化或器械测试。接线后必须补 FGS 生命周期 + 协调器交接测试。
+1. **（伴随 P0）后台读取链路无任何运行时验证**——功能未接线，自然没有「服务在、App 退后台、复制到达 Windows」的自动化或器械测试。接线后必须补 FGS 生命周期 + 协调器交接测试。*更新（`36fc47e`）：接线已完成，FGS 生命周期 + 交接的 JVM/Robolectric 测试已补；仍缺实机端到端（P95 验收）。*
 2. **Overlay 器械测试缺失（plan 5.7 明文要求）**——`androidTest` 只有 Room 迁移 2 + DAO 3 + FGS 冒烟 1；窗口创建/释放、永不可触摸、焦点恢复、熄屏不残留等不变量只有 JVM 假件版（`OverlayLifecycleInvariantTest`），未在真 WindowManager 上验证。
 3. **可跳过的 Shizuku 设备测试缺失（plan 5.7）**——授权后读取/事件/写入/Binder 重启恢复没有 on-device 套件（现只有 JVM 反射适配器与状态机测试）。
 4. ~~器械测试从未真机执行~~ **已在模拟器执行，真机仍待**——6/6 用例在 API 35 模拟器（QEMU TCG 软件模拟）上全部通过（`android-instrumentation-test-report.md`）；进程/FGS 存活另在 API 29/33/35 三级实测（`emulator-survival-report.md`）。嵌套 KVM 宿主内核缺陷已留证。真机（OEM ROM）执行仍待办。
