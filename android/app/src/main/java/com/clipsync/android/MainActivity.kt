@@ -45,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -57,6 +58,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.clipsync.android.media.ImageThumbnail
+import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingConfirmClient
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.pairing.PeerHealthClient
@@ -103,6 +105,9 @@ import com.clipsync.android.ui.theme.clipSyncColors
 import com.clipsync.android.ui.theme.filmGrain
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import rikka.shizuku.Shizuku
 
@@ -500,9 +505,25 @@ private fun ClipSyncApp(
 
     // Pairing completing (or the peer being forgotten) must reflect in the
     // conduit and in the history source tags immediately, not on next start.
-    LaunchedEffect(pairingState) {
-        healthViewModel.refresh()
-        homeViewModel.refreshPeer()
+    // Keyed to the persisted peer, not the whole pairing state: the in-flight
+    // steps (review, submitting, a failed attempt) never change the saved peer,
+    // so they must not each trigger a full conduit probe pass. The initial
+    // emission is dropped too — init{} and onResume already probe on entry.
+    LaunchedEffect(pairingViewModel, healthViewModel, homeViewModel) {
+        snapshotFlow { pairingState }
+            .mapNotNull { state ->
+                when (state) {
+                    is PairingUiState.Idle -> PersistedPeerKey(state.pairedPeer)
+                    is PairingUiState.Paired -> PersistedPeerKey(state.peer)
+                    else -> null
+                }
+            }
+            .distinctUntilChanged()
+            .drop(1)
+            .collect {
+                healthViewModel.refresh()
+                homeViewModel.refreshPeer()
+            }
     }
     Box(
         modifier = Modifier
@@ -605,6 +626,13 @@ private fun ClipSyncApp(
         }
     }
 }
+
+/**
+ * The saved peer as reflected by the pairing states that can change it. A value
+ * class over the full [PairedPeer] (not just the id) so re-pairing the same
+ * device — new certificate or trust epoch — still counts as a change.
+ */
+private data class PersistedPeerKey(val peer: PairedPeer?)
 
 @Composable
 private fun BackRow(label: String, onBack: () -> Unit) {

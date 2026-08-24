@@ -12,6 +12,7 @@ import com.clipsync.android.pairing.PeerHealthOutcome
 import com.clipsync.android.platform.clipboard.BackendHealth
 import com.clipsync.android.platform.clipboard.BackendHealthState
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackend
+import com.clipsync.android.platform.clipboard.CapabilityReport
 import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardCapabilityStore
@@ -26,6 +27,7 @@ import com.clipsync.android.platform.clipboard.RoutePrerequisites
 import com.clipsync.android.platform.clipboard.RouteProbes
 import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
 import com.clipsync.android.ui.ConduitStatus
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -387,6 +389,104 @@ class HealthViewModelTest {
         // Unpaired network still needs action; read is degraded (foreground only).
         assertEquals(ConduitStatus.NEEDS_ACTION, state.network.status)
         assertTrue(state.network.beckoning)
+    }
+
+    // ---- refresh probe economy -------------------------------------------------------------
+
+    /** Foreground-only backend that counts probes so double probing per pass is observable. */
+    private class CountingBackend : BackgroundClipboardBackend {
+        var probeCount = 0
+            private set
+
+        override val mode = ClipboardReadMode.FOREGROUND_ONLY
+
+        override fun probe(): CapabilityReport {
+            probeCount++
+            return FakeBackgroundClipboardBackend.capabilityReport(mode, CapabilityState.READY)
+        }
+
+        override fun start(onChanged: (ClipboardChange) -> Unit) = Unit
+
+        override fun stop() = Unit
+
+        override fun readText(): ClipboardReadResult = ClipboardReadResult.Empty
+
+        override fun health() = BackendHealth(BackendHealthState.HEALTHY, 1L)
+    }
+
+    private fun modelWithCapability(
+        backend: BackgroundClipboardBackend,
+        routeProbes: RouteProbes,
+        peerHealth: PeerHealthApi? = null,
+    ): HealthViewModel {
+        val environment = FakeClipboardEnvironment()
+        return HealthViewModel(
+            pairingStore = store,
+            clipboard = ClipboardAccessCoordinator(listOf(backend)),
+            syncHealthSource = null,
+            probeDispatcher = dispatcher,
+            capability = CapabilityWiring(
+                routeProbes = routeProbes,
+                capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore()),
+                writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
+                foregroundBackend = environment.readBackend,
+                clearClipboard = { environment.text = null },
+                peerHealth = peerHealth,
+                nowMs = { 1_755_000_000_000 },
+            ),
+        )
+    }
+
+    @Test
+    fun `refresh with capability wiring probes each backend exactly once per pass`() {
+        val backend = CountingBackend()
+        val model = modelWithCapability(
+            backend,
+            routeProbes = object : RouteProbes {
+                override fun probe() = RoutePrerequisites()
+            },
+        )
+        // The init pass runs one ladder probe, not a headline probe plus a ladder probe.
+        assertEquals(1, backend.probeCount)
+
+        model.refresh()
+        assertEquals(2, backend.probeCount)
+    }
+
+    @Test
+    fun `a burst of refresh calls during a pass coalesces into one trailing pass`() {
+        // Hold the init pass open inside the reachability probe so the burst
+        // demonstrably lands while a pass is in flight — the way resume, a pairing
+        // change and the permission listeners can all fire on the same beat.
+        pair()
+        val gate = CompletableDeferred<Unit>()
+        var reachabilityProbes = 0
+        val peerHealth = object : PeerHealthApi {
+            override suspend fun probe(peer: PairedPeer): PeerHealthOutcome {
+                reachabilityProbes++
+                if (reachabilityProbes == 1) {
+                    gate.await()
+                }
+                return PeerHealthOutcome.Unreachable
+            }
+        }
+        val model = modelWithCapability(
+            CountingBackend(),
+            routeProbes = object : RouteProbes {
+                override fun probe() = RoutePrerequisites()
+            },
+            peerHealth = peerHealth,
+        )
+        // The init pass is suspended inside the first reachability probe.
+        assertEquals(1, reachabilityProbes)
+
+        model.refresh()
+        model.refresh()
+        model.refresh()
+        gate.complete(Unit)
+
+        // The whole burst collapses into exactly one trailing pass.
+        assertEquals(2, reachabilityProbes)
     }
 
     // ---- notification surface + peer name -------------------------------------------------

@@ -66,14 +66,6 @@ class ClipboardAccessCoordinator(
      */
     fun backend(mode: ClipboardReadMode): BackgroundClipboardBackend? = backendsByMode[mode]
 
-    private fun readStateRank(state: CapabilityState): Int = when (state) {
-        CapabilityState.READY -> 0
-        CapabilityState.DEGRADED -> 1
-        CapabilityState.NEEDS_USER_ACTION -> 2
-        CapabilityState.UNKNOWN -> 3
-        CapabilityState.UNAVAILABLE -> 4
-    }
-
     fun requestMode(mode: ClipboardReadMode): ClipboardAccessState {
         state = state.copy(requestedReadMode = mode)
         if (listener == null) {
@@ -171,12 +163,32 @@ class ClipboardAccessCoordinator(
     private fun ClipboardReadResult.successTextOrNull(): String? =
         (this as? ClipboardReadResult.Success)?.text
 
-    private companion object {
-        val FALLBACK_ORDER = listOf(
+    companion object {
+        private val FALLBACK_ORDER = listOf(
             ClipboardReadMode.SHIZUKU_EVENT,
             ClipboardReadMode.ADB_LOG_OVERLAY,
             ClipboardReadMode.OVERLAY_POLLING,
             ClipboardReadMode.FOREGROUND_ONLY,
         )
+
+        /** Most capable first; the tail states all mean "nothing usable observed yet". */
+        private val READ_STATE_ORDER = listOf(
+            CapabilityState.READY,
+            CapabilityState.DEGRADED,
+            CapabilityState.NEEDS_USER_ACTION,
+            CapabilityState.UNKNOWN,
+            CapabilityState.UNAVAILABLE,
+        )
+
+        /**
+         * The most capable of [reports] under the same ordering [probe] uses (READY >
+         * DEGRADED > NEEDS_USER_ACTION > UNKNOWN > UNAVAILABLE); ties keep the earlier
+         * entry, i.e. the higher ladder rung. Lets a caller that already holds a full
+         * [probeAll] pass derive the headline report without probing every backend again.
+         */
+        fun mostCapable(reports: List<CapabilityReport>): CapabilityReport? =
+            reports.minByOrNull { readStateRank(it.readState) }
+
+        private fun readStateRank(state: CapabilityState): Int = READ_STATE_ORDER.indexOf(state)
     }
 }

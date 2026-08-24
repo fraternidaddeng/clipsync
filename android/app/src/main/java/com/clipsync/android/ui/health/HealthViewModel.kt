@@ -25,6 +25,7 @@ import com.clipsync.android.ui.HealthScreenState
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -89,6 +90,8 @@ class HealthViewModel(
     private var lastSyncHealth: SyncHealth? = null
     private var lastFacts: CapabilityFacts? = null
     private var testResult: ConduitTestResult? = null
+    private var refreshJob: Job? = null
+    private var refreshQueued = false
 
     init {
         if (syncHealthSource != null) {
@@ -117,35 +120,56 @@ class HealthViewModel(
      * Full re-probe: pairing store, capability ladder, route prerequisites and
      * (when wired) peer reachability. Called from init, on every resume and on
      * the user's 重新探测 — a grant observed once is never assumed permanent.
+     *
+     * Triggers arrive in bursts (a resume, a pairing change and a permission listener can
+     * all land on the same beat), so concurrent calls coalesce: while a pass is in flight,
+     * further calls mark exactly one trailing pass instead of stacking probe passes. The
+     * trailing pass starts after the running one, so the freshest state always gets probed.
      */
     fun refresh() {
-        viewModelScope.launch {
-            val wiring = capability
-            val pass = withContext(probeDispatcher) {
-                val peer = pairingStore.peer()
-                val report = clipboard.probe()
-                val facts = wiring?.let { w ->
-                    CapabilityFacts(
-                        reports = clipboard.probeAll().associateBy { it.readMode },
-                        prerequisites = w.routeProbes.probe(),
-                        preferredReadMode = w.capabilityStore.preferredReadMode(),
-                        publicWriteState = w.capabilityStore.publicWriteState(),
-                        publicWriteErrorCode = w.capabilityStore.publicWriteErrorCode(),
-                        notificationsEnabled = w.notificationsEnabled?.invoke(),
-                    )
-                }
-                Triple(peer, report, facts)
-            }
-            val (peer, report, probedFacts) = pass
-            val facts = if (probedFacts != null && peer != null && wiring?.peerHealth != null) {
-                probedFacts.copy(reachability = probeReachability(wiring.peerHealth, peer))
-            } else {
-                probedFacts
-            }
-            lastClipboardReport = report
-            lastFacts = facts
-            publish(peer)
+        if (refreshJob?.isActive == true) {
+            refreshQueued = true
+            return
         }
+        refreshJob = viewModelScope.launch {
+            do {
+                refreshQueued = false
+                refreshOnce()
+            } while (refreshQueued)
+        }
+    }
+
+    private suspend fun refreshOnce() {
+        val wiring = capability
+        val pass = withContext(probeDispatcher) {
+            val peer = pairingStore.peer()
+            if (wiring == null) {
+                Triple(peer, clipboard.probe(), null)
+            } else {
+                // One ladder pass feeds both the per-route facts and the headline
+                // report; probing twice (probe() then probeAll()) would run every
+                // backend's prerequisite checks twice per refresh.
+                val reports = clipboard.probeAll()
+                val facts = CapabilityFacts(
+                    reports = reports.associateBy { it.readMode },
+                    prerequisites = wiring.routeProbes.probe(),
+                    preferredReadMode = wiring.capabilityStore.preferredReadMode(),
+                    publicWriteState = wiring.capabilityStore.publicWriteState(),
+                    publicWriteErrorCode = wiring.capabilityStore.publicWriteErrorCode(),
+                    notificationsEnabled = wiring.notificationsEnabled?.invoke(),
+                )
+                Triple(peer, ClipboardAccessCoordinator.mostCapable(reports), facts)
+            }
+        }
+        val (peer, report, probedFacts) = pass
+        val facts = if (probedFacts != null && peer != null && wiring?.peerHealth != null) {
+            probedFacts.copy(reachability = probeReachability(wiring.peerHealth, peer))
+        } else {
+            probedFacts
+        }
+        lastClipboardReport = report
+        lastFacts = facts
+        publish(peer)
     }
 
     /** Persists the wizard's route choice (SharedPrefs) and re-derives the page. */
