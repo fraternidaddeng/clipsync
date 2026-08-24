@@ -9,15 +9,14 @@ import com.clipsync.android.ui.ConduitStatus
 
 /** The three background-read routes of the capability wizard (charter §4.1). */
 enum class ReadRouteId {
-    SHIZUKU,
+    PRIVILEGED,
     LOG_OVERLAY,
     OVERLAY_POLLING,
 }
 
 enum class RouteStepId {
-    SHIZUKU_INSTALLED,
-    SHIZUKU_RUNNING,
-    SHIZUKU_AUTHORIZED,
+    PRIVILEGED_CHANNEL_READY,
+    PRIVILEGED_AUTHORIZED,
     READ_LOGS_GRANTED,
     OVERLAY_GRANTED,
     BATTERY_UNRESTRICTED,
@@ -31,9 +30,7 @@ data class RouteStep(
 
 /** What tapping the route's main button should do next; resolved to intents by the activity. */
 enum class RouteActionId {
-    INSTALL_SHIZUKU,
-    LAUNCH_SHIZUKU,
-    REQUEST_SHIZUKU_PERMISSION,
+    REQUEST_PRIVILEGED_PERMISSION,
     COPY_ADB_READ_LOGS_COMMAND,
     OPEN_OVERLAY_SETTINGS,
     OPEN_BATTERY_SETTINGS,
@@ -180,15 +177,18 @@ internal fun buildReadRoutes(facts: CapabilityFacts): List<ReadRouteUi> {
     val p = facts.prerequisites
     return listOf(
         readRoute(
-            id = ReadRouteId.SHIZUKU,
+            id = ReadRouteId.PRIVILEGED,
             mode = ClipboardReadMode.SHIZUKU_EVENT,
-            title = "特权直读 · Shizuku",
+            title = "特权直读",
             quality = 3,
-            cost = "安装 Shizuku 并授权一次；无 Root 可用无线调试启动，重启后可能需恢复",
+            cost = "授权一次即可；设备重启后特权通道可能需要重新就绪",
             steps = listOf(
-                RouteStep(RouteStepId.SHIZUKU_INSTALLED, "已安装 Shizuku", p.shizukuInstalled),
-                RouteStep(RouteStepId.SHIZUKU_RUNNING, "Shizuku 服务运行中", p.shizukuRunning),
-                RouteStep(RouteStepId.SHIZUKU_AUTHORIZED, "已授权本应用", p.shizukuAuthorized),
+                RouteStep(
+                    RouteStepId.PRIVILEGED_CHANNEL_READY,
+                    "特权通道可用",
+                    p.shizukuInstalled && p.shizukuRunning,
+                ),
+                RouteStep(RouteStepId.PRIVILEGED_AUTHORIZED, "已授权本应用", p.shizukuAuthorized),
             ),
             facts = facts,
         ),
@@ -231,8 +231,14 @@ private fun readRoute(
     val report = facts.reports[mode]
     val remaining = steps.count { !it.satisfied }
     val preferred = facts.preferredReadMode == mode
-    val nextAction = steps.firstOrNull { !it.satisfied }?.let { stepAction(it.id) }
-        ?: RouteActionId.SET_PREFERRED.takeUnless { preferred }
+    // A step without an in-app action (e.g. privileged channel not available)
+    // shows probe status only; it never falls through to "set preferred".
+    val firstUnsatisfied = steps.firstOrNull { !it.satisfied }
+    val nextAction = if (firstUnsatisfied != null) {
+        stepAction(firstUnsatisfied.id)
+    } else {
+        RouteActionId.SET_PREFERRED.takeUnless { preferred }
+    }
     return ReadRouteUi(
         id = id,
         mode = mode,
@@ -248,26 +254,24 @@ private fun readRoute(
     )
 }
 
-private fun stepAction(step: RouteStepId): RouteActionId = when (step) {
-    RouteStepId.SHIZUKU_INSTALLED -> RouteActionId.INSTALL_SHIZUKU
-    RouteStepId.SHIZUKU_RUNNING -> RouteActionId.LAUNCH_SHIZUKU
-    RouteStepId.SHIZUKU_AUTHORIZED -> RouteActionId.REQUEST_SHIZUKU_PERMISSION
+/** Channel availability is a probed fact, not a chore — no in-app action can satisfy it. */
+private fun stepAction(step: RouteStepId): RouteActionId? = when (step) {
+    RouteStepId.PRIVILEGED_CHANNEL_READY -> null
+    RouteStepId.PRIVILEGED_AUTHORIZED -> RouteActionId.REQUEST_PRIVILEGED_PERMISSION
     RouteStepId.READ_LOGS_GRANTED -> RouteActionId.COPY_ADB_READ_LOGS_COMMAND
     RouteStepId.OVERLAY_GRANTED -> RouteActionId.OPEN_OVERLAY_SETTINGS
     RouteStepId.BATTERY_UNRESTRICTED -> RouteActionId.OPEN_BATTERY_SETTINGS
 }
 
 fun readModeTitle(mode: ClipboardReadMode): String = when (mode) {
-    ClipboardReadMode.SHIZUKU_EVENT -> "特权直读 · Shizuku"
+    ClipboardReadMode.SHIZUKU_EVENT -> "特权直读"
     ClipboardReadMode.ADB_LOG_OVERLAY -> "日志感知 + 悬浮窗"
     ClipboardReadMode.OVERLAY_POLLING -> "悬浮窗轮询"
     ClipboardReadMode.FOREGROUND_ONLY -> "前台/手动"
 }
 
 fun routeActionLabel(action: RouteActionId): String = when (action) {
-    RouteActionId.INSTALL_SHIZUKU -> "获取 Shizuku"
-    RouteActionId.LAUNCH_SHIZUKU -> "打开 Shizuku"
-    RouteActionId.REQUEST_SHIZUKU_PERMISSION -> "请求 Shizuku 授权"
+    RouteActionId.REQUEST_PRIVILEGED_PERMISSION -> "授权特权直读"
     RouteActionId.COPY_ADB_READ_LOGS_COMMAND -> "复制 adb 命令"
     RouteActionId.OPEN_OVERLAY_SETTINGS -> "去设置悬浮窗"
     RouteActionId.OPEN_BATTERY_SETTINGS -> "去设置电池"

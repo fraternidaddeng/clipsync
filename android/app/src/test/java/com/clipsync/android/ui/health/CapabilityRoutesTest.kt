@@ -169,12 +169,13 @@ class CapabilityRoutesTest {
     // ---- wizard routes ---------------------------------------------------------------------
 
     @Test
-    fun `fresh device shows full remaining steps and install action first`() {
+    fun `fresh device shows remaining steps without any install action`() {
         val routes = buildReadRoutes(baseFacts())
-        val shizuku = routes.first { it.id == ReadRouteId.SHIZUKU }
-        assertEquals(3, shizuku.stepsRemaining)
-        assertEquals(RouteActionId.INSTALL_SHIZUKU, shizuku.nextAction)
-        assertEquals(3, shizuku.quality)
+        val privileged = routes.first { it.id == ReadRouteId.PRIVILEGED }
+        assertEquals(2, privileged.stepsRemaining)
+        // Channel availability is a probed fact, never a "go install an app" chore.
+        assertNull(privileged.nextAction)
+        assertEquals(3, privileged.quality)
 
         val logOverlay = routes.first { it.id == ReadRouteId.LOG_OVERLAY }
         assertEquals(2, logOverlay.stepsRemaining)
@@ -187,21 +188,32 @@ class CapabilityRoutesTest {
     }
 
     @Test
-    fun `shizuku route walks install launch authorize in order`() {
-        val installed = baseFacts().copy(
+    fun `privileged route only offers authorization once its channel is available`() {
+        // Installed but not running: the channel step is unsatisfied and has no
+        // in-app action — the card states probe facts instead of redirecting.
+        val channelDown = baseFacts().copy(
             prerequisites = RoutePrerequisites(shizukuInstalled = true),
         )
-        assertEquals(
-            RouteActionId.LAUNCH_SHIZUKU,
-            buildReadRoutes(installed).first { it.id == ReadRouteId.SHIZUKU }.nextAction,
-        )
+        assertNull(buildReadRoutes(channelDown).first { it.id == ReadRouteId.PRIVILEGED }.nextAction)
 
-        val running = baseFacts().copy(
+        val channelUp = baseFacts().copy(
             prerequisites = RoutePrerequisites(shizukuInstalled = true, shizukuRunning = true),
         )
-        val route = buildReadRoutes(running).first { it.id == ReadRouteId.SHIZUKU }
-        assertEquals(RouteActionId.REQUEST_SHIZUKU_PERMISSION, route.nextAction)
+        val route = buildReadRoutes(channelUp).first { it.id == ReadRouteId.PRIVILEGED }
+        assertEquals(RouteActionId.REQUEST_PRIVILEGED_PERMISSION, route.nextAction)
         assertEquals(1, route.stepsRemaining)
+    }
+
+    @Test
+    fun `no user-facing wizard string mentions the backing implementation brand`() {
+        val routes = buildReadRoutes(baseFacts())
+        val visible = routes.flatMap { route ->
+            listOf(route.title, route.cost) + route.steps.map { it.label }
+        } + RouteActionId.entries.map(::routeActionLabel) +
+            ClipboardReadMode.entries.map(::readModeTitle)
+        visible.forEach { text ->
+            assertFalse("\"$text\" leaks the brand name", text.contains("shizuku", ignoreCase = true))
+        }
     }
 
     @Test
@@ -217,11 +229,11 @@ class CapabilityRoutesTest {
         )
         assertEquals(
             RouteActionId.SET_PREFERRED,
-            buildReadRoutes(notPreferred).first { it.id == ReadRouteId.SHIZUKU }.nextAction,
+            buildReadRoutes(notPreferred).first { it.id == ReadRouteId.PRIVILEGED }.nextAction,
         )
 
         val preferred = baseFacts().copy(prerequisites = complete)
-        val route = buildReadRoutes(preferred).first { it.id == ReadRouteId.SHIZUKU }
+        val route = buildReadRoutes(preferred).first { it.id == ReadRouteId.PRIVILEGED }
         assertNull(route.nextAction)
         assertTrue(route.preferred)
         assertEquals(0, route.stepsRemaining)
@@ -234,13 +246,13 @@ class CapabilityRoutesTest {
                 ClipboardReadMode.SHIZUKU_EVENT to report(
                     ClipboardReadMode.SHIZUKU_EVENT,
                     CapabilityState.UNAVAILABLE,
-                    errorCode = "SHIZUKU_NOT_RUNNING",
+                    errorCode = "PRIVILEGED_CHANNEL_OFFLINE",
                 ),
             ),
         )
-        val route = buildReadRoutes(facts).first { it.id == ReadRouteId.SHIZUKU }
+        val route = buildReadRoutes(facts).first { it.id == ReadRouteId.PRIVILEGED }
         assertEquals(CapabilityState.UNAVAILABLE, route.readState)
-        assertEquals("SHIZUKU_NOT_RUNNING", route.errorCode)
+        assertEquals("PRIVILEGED_CHANNEL_OFFLINE", route.errorCode)
     }
 
     @Test

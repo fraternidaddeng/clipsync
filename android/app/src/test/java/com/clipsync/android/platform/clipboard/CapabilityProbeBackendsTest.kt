@@ -25,11 +25,11 @@ class CapabilityProbeBackendsTest {
     fun `shizuku reports each missing prerequisite with its own code`() {
         val notInstalled = shizuku(RoutePrerequisites())
         assertEquals(CapabilityState.UNAVAILABLE, notInstalled.readState)
-        assertEquals(ShizukuClipboardBackend.ERROR_NOT_INSTALLED, notInstalled.errorCode)
+        assertEquals(ShizukuClipboardBackend.ERROR_CHANNEL_MISSING, notInstalled.errorCode)
 
         val notRunning = shizuku(RoutePrerequisites(shizukuInstalled = true))
         assertEquals(CapabilityState.UNAVAILABLE, notRunning.readState)
-        assertEquals(ShizukuClipboardBackend.ERROR_NOT_RUNNING, notRunning.errorCode)
+        assertEquals(ShizukuClipboardBackend.ERROR_CHANNEL_OFFLINE, notRunning.errorCode)
 
         val denied = shizuku(RoutePrerequisites(shizukuInstalled = true, shizukuRunning = true))
         assertEquals(CapabilityState.UNAVAILABLE, denied.readState)

@@ -17,8 +17,8 @@ class ShizukuClipboardBackend(
     override fun probe(): CapabilityReport {
         val p = probes.probe()
         val (state, errorCode) = when {
-            !p.shizukuInstalled -> CapabilityState.UNAVAILABLE to ERROR_NOT_INSTALLED
-            !p.shizukuRunning -> CapabilityState.UNAVAILABLE to ERROR_NOT_RUNNING
+            !p.shizukuInstalled -> CapabilityState.UNAVAILABLE to ERROR_CHANNEL_MISSING
+            !p.shizukuRunning -> CapabilityState.UNAVAILABLE to ERROR_CHANNEL_OFFLINE
             !p.shizukuAuthorized -> CapabilityState.UNAVAILABLE to ERROR_PERMISSION_DENIED
             else -> CapabilityState.DEGRADED to ERROR_READ_UNVERIFIED
         }
@@ -48,10 +48,12 @@ class ShizukuClipboardBackend(
         errorCode = probe().errorCode,
     )
 
+    // Error codes surface in the conduit UI, so they carry the user-facing route
+    // name (特权直读 / privileged) rather than the implementation's brand name.
     companion object {
-        const val ERROR_NOT_INSTALLED = "SHIZUKU_NOT_INSTALLED"
-        const val ERROR_NOT_RUNNING = "SHIZUKU_NOT_RUNNING"
-        const val ERROR_PERMISSION_DENIED = "SHIZUKU_PERMISSION_DENIED"
-        const val ERROR_READ_UNVERIFIED = "SHIZUKU_READ_UNVERIFIED"
+        const val ERROR_CHANNEL_MISSING = "PRIVILEGED_CHANNEL_MISSING"
+        const val ERROR_CHANNEL_OFFLINE = "PRIVILEGED_CHANNEL_OFFLINE"
+        const val ERROR_PERMISSION_DENIED = "PRIVILEGED_PERMISSION_DENIED"
+        const val ERROR_READ_UNVERIFIED = "PRIVILEGED_READ_UNVERIFIED"
     }
 }

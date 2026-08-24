@@ -216,20 +216,8 @@ class MainActivity : ComponentActivity() {
     /** Resolves a wizard route action to the system surface that can satisfy it. */
     private fun handleRouteAction(route: ReadRouteUi, action: RouteActionId) {
         when (action) {
-            RouteActionId.INSTALL_SHIZUKU -> startActivitySafely(
-                Intent(Intent.ACTION_VIEW, Uri.parse(SHIZUKU_DOWNLOAD_URL)),
-            )
-            RouteActionId.LAUNCH_SHIZUKU -> {
-                val launch = packageManager
-                    .getLaunchIntentForPackage(AndroidRouteProbes.SHIZUKU_PACKAGE)
-                if (launch != null) {
-                    startActivitySafely(launch)
-                } else {
-                    startActivitySafely(Intent(Intent.ACTION_VIEW, Uri.parse(SHIZUKU_DOWNLOAD_URL)))
-                }
-            }
-            RouteActionId.REQUEST_SHIZUKU_PERMISSION ->
-                runCatching { Shizuku.requestPermission(REQUEST_CODE_SHIZUKU) }
+            RouteActionId.REQUEST_PRIVILEGED_PERMISSION ->
+                runCatching { Shizuku.requestPermission(REQUEST_CODE_PRIVILEGED_READ) }
             RouteActionId.COPY_ADB_READ_LOGS_COMMAND -> {
                 val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 manager.setPrimaryClip(
@@ -273,8 +261,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private companion object {
-        const val REQUEST_CODE_SHIZUKU = 4310
-        const val SHIZUKU_DOWNLOAD_URL = "https://shizuku.rikka.app/zh-hans/download/"
+        const val REQUEST_CODE_PRIVILEGED_READ = 4310
     }
 }
 

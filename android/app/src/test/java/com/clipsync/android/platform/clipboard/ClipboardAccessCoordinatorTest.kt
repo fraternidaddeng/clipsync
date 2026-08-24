@@ -13,7 +13,7 @@ class ClipboardAccessCoordinatorTest {
             report = FakeBackgroundClipboardBackend.capabilityReport(
                 mode = ClipboardReadMode.SHIZUKU_EVENT,
                 state = CapabilityState.UNAVAILABLE,
-                errorCode = "SHIZUKU_NOT_RUNNING",
+                errorCode = "PRIVILEGED_CHANNEL_OFFLINE",
             ),
             callLog = calls,
         )
@@ -95,7 +95,7 @@ class ClipboardAccessCoordinatorTest {
             report = FakeBackgroundClipboardBackend.capabilityReport(
                 mode = ClipboardReadMode.SHIZUKU_EVENT,
                 state = CapabilityState.UNAVAILABLE,
-                errorCode = "SHIZUKU_NOT_INSTALLED",
+                errorCode = "PRIVILEGED_CHANNEL_MISSING",
             ),
             callLog = calls,
         )
@@ -119,7 +119,7 @@ class ClipboardAccessCoordinatorTest {
             ),
             reports.map { it.readMode },
         )
-        assertEquals("SHIZUKU_NOT_INSTALLED", reports.first().errorCode)
+        assertEquals("PRIVILEGED_CHANNEL_MISSING", reports.first().errorCode)
         assertEquals(
             listOf("SHIZUKU_EVENT.probe", "OVERLAY_POLLING.probe", "FOREGROUND_ONLY.probe"),
             calls,
@@ -184,7 +184,7 @@ class ClipboardAccessCoordinatorTest {
             report = FakeBackgroundClipboardBackend.capabilityReport(
                 mode = ClipboardReadMode.SHIZUKU_EVENT,
                 state = CapabilityState.UNAVAILABLE,
-                errorCode = "SHIZUKU_NOT_RUNNING",
+                errorCode = "PRIVILEGED_CHANNEL_OFFLINE",
             ),
             callLog = calls,
         )
