@@ -6,26 +6,29 @@
         SizeToContent="Height"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
-    <StackPanel Margin="24" Background="White">
+    <StackPanel Margin="24" Background="{DynamicResource CsSurfaceBrush}">
         <TextBlock FontSize="18" FontWeight="SemiBold" Text="Scan with the ClipSync Android app" />
-        <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Foreground="#5E6672"
+        <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Foreground="{DynamicResource CsText3Brush}"
                    Text="The code contains this computer's address, certificate fingerprint and a one-time token. It never contains the pairing secret." />
+        <!-- QR quiet zone must stay pure white in every theme for reliable scanning -->
         <Border Margin="0,16,0,0" Padding="12" HorizontalAlignment="Center"
-                Background="White" BorderBrush="#DDE1E7" BorderThickness="1" CornerRadius="6">
+                Background="{DynamicResource CsQrQuietBrush}" BorderBrush="{DynamicResource CsLineBrush}" BorderThickness="1" CornerRadius="6">
             <Image x:Name="QrImage" Width="300" Height="300" SnapsToDevicePixels="True" />
         </Border>
-        <TextBlock x:Name="CountdownText" Margin="0,12,0,0" HorizontalAlignment="Center" Foreground="#5E6672" />
+        <TextBlock x:Name="CountdownText" Margin="0,12,0,0" HorizontalAlignment="Center" Foreground="{DynamicResource CsText3Brush}" />
+        <!-- No network = "needs your action" (act ochre), not an error -->
         <TextBlock x:Name="NoHostsText"
                    Margin="0,12,0,0"
-                   Foreground="#A4262C"
+                   Foreground="{DynamicResource CsActBrush}"
                    TextWrapping="Wrap"
                    Visibility="Collapsed"
                    Text="No LAN address was detected. Connect this computer to the same network as your phone (or add a Tailscale address in settings), then reopen this window." />
         <Separator Margin="0,16,0,12" />
         <TextBlock FontWeight="SemiBold" Text="Verify on the phone before confirming:" />
-        <TextBlock x:Name="DeviceNameText" Margin="0,8,0,0" Foreground="#3B424C" />
+        <TextBlock x:Name="DeviceNameText" Margin="0,8,0,0" Foreground="{DynamicResource CsText2Brush}" />
+        <!-- Fingerprint is the highest-risk comparison in the app: maximum contrast (t1) -->
         <TextBlock x:Name="FingerprintText" Margin="0,4,0,0" FontFamily="Consolas" FontSize="12"
-                   Foreground="#3B424C" TextWrapping="Wrap" />
+                   Foreground="{DynamicResource CsText1Brush}" TextWrapping="Wrap" />
         <StackPanel Margin="0,18,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Width="120" Height="32" Click="OnRegenerateClicked" Content="New code" />
             <Button Width="120" Height="32" Margin="10,0,0,0" Click="OnCloseClicked" Content="Close" />
