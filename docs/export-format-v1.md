@@ -78,8 +78,15 @@ export mirrors that.
 
 ## 3. Export semantics
 
-- Export writes **all** rows of the `clips` table — live and terminal — ordered by
+- Export writes **all text** rows of the `clips` table — live and terminal — ordered by
   `origin_device_id, origin_seq` so the output is deterministic for a given database state.
+- Image clip rows (`kind = image`, protocol v2 / ADR 0004) are **excluded entirely**, live and
+  terminal alike, and `event_count` counts only the exported text rows. v1 cannot represent an
+  image record (readers reject any `kind` other than `text`), and writing image events as a lossy
+  text shape would corrupt a re-import. Image events and their blobs stay local until an
+  image-aware `format_version: 2` exists (tracked as the open P1 item in
+  `stage-4-merge-gap-audit.md` §2). After an import on a fresh device, peers still recover the
+  missing image sequence ranges through the normal `known_vector` / `want_ranges` exchange.
 - Export is read-only; it never mutates the database.
 - The 1 MiB per-event content cap already holds for every stored row; the exporter asserts rather than
   truncates (truncation would silently change content identity).
