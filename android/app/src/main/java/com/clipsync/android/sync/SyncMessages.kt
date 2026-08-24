@@ -52,6 +52,40 @@ object SyncLimits {
     const val MAX_CONTENT_UTF8_BYTES = 1_048_576
     const val MAX_PAYLOAD_BATCH_CONTENT_BYTES = 1_048_576L
     const val MAX_WEBSOCKET_TEXT_MESSAGE_BYTES = 7 * 1_048_576
+
+    /**
+     * True when [text]'s UTF-8 encoding is longer than [maxBytes], counted without
+     * materializing the encoding (a `toByteArray` of a frame-limit-sized message would
+     * allocate megabytes just to be measured). Matches `String.toByteArray(UTF_8)` sizing,
+     * including the 1-byte replacement character for unpaired surrogates, and exits as soon
+     * as the running total passes the limit.
+     */
+    fun utf8BytesExceed(text: String, maxBytes: Int): Boolean {
+        // Every UTF-16 unit encodes to at least one byte, so this fast path is exact.
+        if (text.length > maxBytes) {
+            return true
+        }
+        var bytes = 0L
+        var index = 0
+        while (index < text.length) {
+            val character = text[index]
+            bytes += when {
+                character.code < 0x80 -> 1
+                character.code < 0x800 -> 2
+                character.isHighSurrogate() && index + 1 < text.length && text[index + 1].isLowSurrogate() -> {
+                    index++
+                    4
+                }
+                character.isSurrogate() -> 1 // unpaired: the encoder writes '?'
+                else -> 3
+            }
+            if (bytes > maxBytes) {
+                return true
+            }
+            index++
+        }
+        return false
+    }
 }
 
 const val HMAC_ALGORITHM = "hmac-sha256"

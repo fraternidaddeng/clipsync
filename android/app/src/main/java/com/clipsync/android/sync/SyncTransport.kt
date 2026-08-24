@@ -1,7 +1,6 @@
 package com.clipsync.android.sync
 
 import java.io.IOException
-import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.security.cert.CertificateException
@@ -122,12 +121,61 @@ class OkHttpSyncConnector(
 }
 
 /**
- * Bridges OkHttp's callback WebSocket into the suspend [SyncTransport] shape: frames land in
- * an unbounded channel (the engine consumes promptly and message sizes are protocol-capped).
+ * Frame-size and buffering discipline for the inbound direction of one socket, extracted so
+ * the rules are unit-testable without OkHttp:
+ *
+ * - a text message whose UTF-8 form exceeds the protocol frame limit maps to
+ *   [TransportFrame.TooLarge] (measured without allocating the encoding);
+ * - accepted-but-not-yet-consumed text is accounted in UTF-16 units, and once the backlog
+ *   passes [maxBufferedChars] the verdict is [Verdict.OVERFLOW]: the caller must kill the
+ *   socket, because a peer outrunning the engine that far is misbehaving and the buffer
+ *   must stay bounded.
+ *
+ * OkHttp assembles each WebSocket message fully before `onMessage` fires, so a single frame
+ * cannot be rejected mid-read here; that exposure is bounded to one message and only the
+ * pin-verified paired peer can speak on the socket at all (TLS pin fails anyone else during
+ * the handshake, before WebSocket data flows).
+ */
+internal class InboundFrameGate(
+    private val maxMessageBytes: Int = SyncLimits.MAX_WEBSOCKET_TEXT_MESSAGE_BYTES,
+    private val maxBufferedChars: Long = MAX_BUFFERED_INBOUND_CHARS,
+) {
+    enum class Verdict { ACCEPT, TOO_LARGE, OVERFLOW }
+
+    private val bufferedChars = java.util.concurrent.atomic.AtomicLong(0)
+
+    fun onText(text: String): Verdict {
+        if (SyncLimits.utf8BytesExceed(text, maxMessageBytes)) {
+            return Verdict.TOO_LARGE
+        }
+        if (bufferedChars.addAndGet(text.length.toLong()) > maxBufferedChars) {
+            // The rejected frame is never queued, so its cost is rolled back.
+            bufferedChars.addAndGet(-text.length.toLong())
+            return Verdict.OVERFLOW
+        }
+        return Verdict.ACCEPT
+    }
+
+    /** Call when a previously accepted text frame leaves the buffer. */
+    fun onConsumed(text: String) {
+        bufferedChars.addAndGet(-text.length.toLong())
+    }
+
+    companion object {
+        /** A few frame-limits' worth of backlog; far more than a healthy engine ever queues. */
+        const val MAX_BUFFERED_INBOUND_CHARS = 4L * SyncLimits.MAX_WEBSOCKET_TEXT_MESSAGE_BYTES
+    }
+}
+
+/**
+ * Bridges OkHttp's callback WebSocket into the suspend [SyncTransport] shape. Frames land in
+ * a channel whose queued text is byte-bounded by [InboundFrameGate]; a peer that overruns the
+ * bound is disconnected instead of growing the queue.
  */
 internal class OkHttpSyncTransport(private val client: OkHttpClient) : SyncTransport {
     private val frames = Channel<TransportFrame>(Channel.UNLIMITED)
     private val opened = CompletableDeferred<Unit>()
+    private val inboundGate = InboundFrameGate()
 
     @Volatile
     private var socket: WebSocket? = null
@@ -138,9 +186,16 @@ internal class OkHttpSyncTransport(private val client: OkHttpClient) : SyncTrans
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
-            val oversized = text.length > SyncLimits.MAX_WEBSOCKET_TEXT_MESSAGE_BYTES ||
-                text.toByteArray(StandardCharsets.UTF_8).size > SyncLimits.MAX_WEBSOCKET_TEXT_MESSAGE_BYTES
-            frames.trySend(if (oversized) TransportFrame.TooLarge else TransportFrame.Text(text))
+            when (inboundGate.onText(text)) {
+                InboundFrameGate.Verdict.ACCEPT -> frames.trySend(TransportFrame.Text(text))
+                InboundFrameGate.Verdict.TOO_LARGE -> frames.trySend(TransportFrame.TooLarge)
+                InboundFrameGate.Verdict.OVERFLOW -> {
+                    // The engine sees TooLarge and reports PAYLOAD_TOO_LARGE; the socket is
+                    // cancelled right away so the flood stops at the TCP layer.
+                    frames.trySend(TransportFrame.TooLarge)
+                    webSocket.cancel()
+                }
+            }
         }
 
         override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
@@ -168,7 +223,13 @@ internal class OkHttpSyncTransport(private val client: OkHttpClient) : SyncTrans
         opened.await()
     }
 
-    override suspend fun receive(): TransportFrame = frames.receive()
+    override suspend fun receive(): TransportFrame {
+        val frame = frames.receive()
+        if (frame is TransportFrame.Text) {
+            inboundGate.onConsumed(frame.payload)
+        }
+        return frame
+    }
 
     override suspend fun send(text: String) {
         val accepted = socket?.send(text) ?: false
