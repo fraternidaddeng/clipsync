@@ -12,6 +12,9 @@ enum class CapabilityState {
     READY,
     DEGRADED,
     UNAVAILABLE,
+
+    /** Blocked until the user grants or restores something (Shizuku, overlay, READ_LOGS). */
+    NEEDS_USER_ACTION,
 }
 
 data class ClipboardAuthorization(
@@ -55,7 +58,11 @@ data class ClipboardChange(
     val text: String,
     val contentHash: String,
     val observedAtEpochMillis: Long,
-)
+    val imageBytes: ByteArray? = null,
+    val imageMimeType: String? = null,
+) {
+    val isImage: Boolean get() = imageBytes != null
+}
 
 sealed interface ClipboardWriteResult {
     data object Success : ClipboardWriteResult

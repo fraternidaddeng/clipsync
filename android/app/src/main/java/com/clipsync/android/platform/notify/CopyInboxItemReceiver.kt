@@ -1,6 +1,7 @@
 package com.clipsync.android.platform.notify
 
 import android.content.BroadcastReceiver
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
@@ -24,7 +25,12 @@ class CopyInboxItemReceiver : BroadcastReceiver() {
         val messageRes = if (text == null) {
             R.string.toast_copy_missing
         } else {
-            when (AndroidPublicClipboardWriter(context).writeText(text, eventId)) {
+            when (
+                AndroidPublicClipboardWriter(
+                    clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager,
+                    context = context.applicationContext,
+                ).writeText(text, eventId)
+            ) {
                 is ClipboardWriteResult.Success -> {
                     SyncNotifications.cancelInboxItem(context, eventId)
                     R.string.toast_copied

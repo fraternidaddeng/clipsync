@@ -3,40 +3,183 @@ package com.clipsync.android.platform.clipboard
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.net.Uri
+import androidx.core.content.FileProvider
+import com.clipsync.android.media.MediaLimits
+import java.io.File
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicReference
 
 /**
- * Public-API clipboard writer (`ClipboardManager.setPrimaryClip`). AOSP allows writes without
- * focus, so this is the default write path; OEM rejections surface as stable error codes for
- * the write coordinator to decide on a privileged fallback (plan 0.1.2 rule 5).
- * The ClipData label is a constant so no content leaks through it.
+ * Public [ClipboardManager.setPrimaryClip] writer. Results are success, system
+ * rejected, timeout, or unavailable. Clip text is never logged.
  */
-class AndroidPublicClipboardWriter(context: Context) : ClipboardWriter {
-    private val appContext = context.applicationContext
+class AndroidPublicClipboardWriter internal constructor(
+    private val os: ClipboardWriteOs,
+) : ClipboardWriter {
+    constructor(
+        clipboardManager: ClipboardManager,
+        timeoutMillis: Long = DEFAULT_TIMEOUT_MILLIS,
+        context: Context? = null,
+    ) : this(AndroidClipboardWriteOs(clipboardManager, timeoutMillis, context))
 
-    override fun probe(): CapabilityState {
-        return if (clipboardManager() != null) CapabilityState.READY else CapabilityState.UNAVAILABLE
-    }
+    override fun probe(): CapabilityState =
+        if (os.isUsable) CapabilityState.READY else CapabilityState.UNAVAILABLE
 
     override fun writeText(text: String, originEventId: String): ClipboardWriteResult {
-        val manager = clipboardManager()
-            ?: return ClipboardWriteResult.Failure(ERROR_SERVICE_MISSING)
+        if (!os.isUsable) {
+            return ClipboardWriteResult.Failure(ERROR_UNAVAILABLE)
+        }
         return try {
-            manager.setPrimaryClip(ClipData.newPlainText(CLIP_LABEL, text))
-            ClipboardWriteResult.Success
-        } catch (_: SecurityException) {
-            ClipboardWriteResult.Failure(ERROR_WRITE_DENIED)
+            when (os.setPrimaryClip(text)) {
+                OsWriteStatus.SUCCESS -> ClipboardWriteResult.Success
+                OsWriteStatus.REJECTED -> ClipboardWriteResult.Failure(ERROR_REJECTED)
+                OsWriteStatus.TIMEOUT -> ClipboardWriteResult.Failure(ERROR_TIMEOUT)
+            }
         } catch (_: RuntimeException) {
-            ClipboardWriteResult.Failure(ERROR_WRITE_FAILED)
+            ClipboardWriteResult.Failure(ERROR_REJECTED)
         }
     }
 
-    private fun clipboardManager(): ClipboardManager? =
-        appContext.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+    override fun writeImage(
+        encoded: ByteArray,
+        mimeType: String,
+        originEventId: String,
+    ): ClipboardWriteResult {
+        if (!os.isUsable) {
+            return ClipboardWriteResult.Failure(ERROR_UNAVAILABLE)
+        }
+        return try {
+            when (os.setPrimaryImage(encoded, mimeType, originEventId)) {
+                OsWriteStatus.SUCCESS -> ClipboardWriteResult.Success
+                OsWriteStatus.REJECTED -> ClipboardWriteResult.Failure(ERROR_REJECTED)
+                OsWriteStatus.TIMEOUT -> ClipboardWriteResult.Failure(ERROR_TIMEOUT)
+            }
+        } catch (_: RuntimeException) {
+            ClipboardWriteResult.Failure(ERROR_REJECTED)
+        }
+    }
 
     companion object {
-        const val ERROR_SERVICE_MISSING = "CLIPBOARD_SERVICE_MISSING"
-        const val ERROR_WRITE_DENIED = "CLIPBOARD_WRITE_DENIED"
-        const val ERROR_WRITE_FAILED = "CLIPBOARD_WRITE_FAILED"
-        private const val CLIP_LABEL = "ClipSync"
+        const val ERROR_REJECTED = "PUBLIC_WRITE_REJECTED"
+        const val ERROR_TIMEOUT = "PUBLIC_WRITE_TIMEOUT"
+        const val ERROR_UNAVAILABLE = "PUBLIC_WRITE_UNAVAILABLE"
+        val ERROR_CODES = setOf(ERROR_REJECTED, ERROR_TIMEOUT, ERROR_UNAVAILABLE)
+        const val DEFAULT_TIMEOUT_MILLIS = 2_000L
+        internal const val CLIP_LABEL = "ClipSync"
+    }
+}
+
+internal interface ClipboardWriteOs {
+    val isUsable: Boolean
+
+    fun setPrimaryClip(text: String): OsWriteStatus
+
+    fun setPrimaryImage(encoded: ByteArray, mimeType: String, originEventId: String): OsWriteStatus =
+        OsWriteStatus.REJECTED
+}
+
+internal enum class OsWriteStatus {
+    SUCCESS,
+    REJECTED,
+    TIMEOUT,
+}
+
+internal class AndroidClipboardWriteOs(
+    private val clipboardManager: ClipboardManager,
+    private val timeoutMillis: Long = AndroidPublicClipboardWriter.DEFAULT_TIMEOUT_MILLIS,
+    private val context: Context? = null,
+) : ClipboardWriteOs {
+    override val isUsable: Boolean
+        get() = try {
+            clipboardManager.hasPrimaryClip()
+            true
+        } catch (_: RuntimeException) {
+            false
+        }
+
+    override fun setPrimaryClip(text: String): OsWriteStatus {
+        val status = runOsWrite("clipsync-public-write") {
+            clipboardManager.setPrimaryClip(
+                ClipData.newPlainText(AndroidPublicClipboardWriter.CLIP_LABEL, text),
+            )
+        }
+        if (status != OsWriteStatus.SUCCESS) {
+            return status
+        }
+        return if (primaryTextMatches(text)) OsWriteStatus.SUCCESS else OsWriteStatus.REJECTED
+    }
+
+    override fun setPrimaryImage(
+        encoded: ByteArray,
+        mimeType: String,
+        originEventId: String,
+    ): OsWriteStatus {
+        val app = context?.applicationContext ?: return OsWriteStatus.REJECTED
+        if (!MediaLimits.isSupportedMime(mimeType) || encoded.isEmpty()) {
+            return OsWriteStatus.REJECTED
+        }
+        return runOsWrite("clipsync-public-write-image") {
+            val shareDir = File(app.filesDir, "clipboard-share")
+            shareDir.mkdirs()
+            val extension = if (mimeType == MediaLimits.MIME_JPEG) "jpg" else "png"
+            val file = File(shareDir, "$originEventId.$extension")
+            file.writeBytes(encoded)
+            val uri: Uri = FileProvider.getUriForFile(
+                app,
+                "${app.packageName}.clipboard",
+                file,
+            )
+            val clip = ClipData.newUri(
+                app.contentResolver,
+                AndroidPublicClipboardWriter.CLIP_LABEL,
+                uri,
+            )
+            clipboardManager.setPrimaryClip(clip)
+        }
+    }
+
+    /**
+     * Runs [block] off this thread. On the 2s latch timeout we still join the
+     * worker so a late setPrimaryClip cannot land after the caller has already
+     * dropped the loop-suppression marker.
+     */
+    private fun runOsWrite(threadName: String, block: () -> Unit): OsWriteStatus {
+        val result = AtomicReference(OsWriteStatus.TIMEOUT)
+        val done = CountDownLatch(1)
+        val worker = Thread(
+            {
+                try {
+                    block()
+                    result.set(OsWriteStatus.SUCCESS)
+                } catch (_: SecurityException) {
+                    result.set(OsWriteStatus.REJECTED)
+                } catch (_: RuntimeException) {
+                    result.set(OsWriteStatus.REJECTED)
+                } finally {
+                    done.countDown()
+                }
+            },
+            threadName,
+        )
+        worker.start()
+        if (!done.await(timeoutMillis, TimeUnit.MILLISECONDS)) {
+            worker.join(timeoutMillis)
+        }
+        return result.get()
+    }
+
+    private fun primaryTextMatches(expected: String): Boolean {
+        return try {
+            val clip = clipboardManager.primaryClip ?: return true
+            if (clip.itemCount < 1) {
+                return true
+            }
+            val actual = clip.getItemAt(0).text?.toString() ?: return true
+            actual == expected
+        } catch (_: RuntimeException) {
+            true
+        }
     }
 }

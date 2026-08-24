@@ -23,9 +23,7 @@ object ShizukuErrorCodes {
     )
 
     fun probeReadState(errorCode: String): CapabilityState = when (errorCode) {
-        // Charter UI keeps a 4-state model (no NEEDS_USER_ACTION): a missing
-        // prerequisite is reported as UNAVAILABLE with its own stable code.
-        NOT_INSTALLED, NOT_RUNNING, NOT_AUTHORIZED -> CapabilityState.UNAVAILABLE
+        NOT_INSTALLED, NOT_RUNNING, NOT_AUTHORIZED -> CapabilityState.NEEDS_USER_ACTION
         USERSERVICE_DEAD, CLIPBOARD_BINDER_DEAD -> CapabilityState.UNAVAILABLE
         BINDER_DEAD, API_MISMATCH -> CapabilityState.UNAVAILABLE
         else -> CapabilityState.UNAVAILABLE

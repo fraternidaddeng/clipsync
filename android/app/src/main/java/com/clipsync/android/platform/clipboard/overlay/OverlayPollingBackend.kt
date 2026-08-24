@@ -64,7 +64,7 @@ class OverlayPollingBackend internal constructor(
             }
         }
         val (state, code) = when {
-            !permission -> CapabilityState.UNAVAILABLE to ERROR_PERMISSION_MISSING
+            !permission -> CapabilityState.NEEDS_USER_ACTION to ERROR_PERMISSION_MISSING
             touchableRequired -> CapabilityState.UNAVAILABLE to ERROR_TOUCHABLE_REQUIRED
             !interactive -> CapabilityState.DEGRADED to ERROR_SCREEN_NOT_INTERACTIVE
             else -> CapabilityState.READY to null

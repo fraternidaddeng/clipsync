@@ -8,8 +8,10 @@ fun interface ContentHasher {
 }
 
 object Sha256ContentHasher : ContentHasher {
-    override fun hash(text: String): String = MessageDigest
+    override fun hash(text: String): String = hashBytes(text.toByteArray(StandardCharsets.UTF_8))
+
+    fun hashBytes(bytes: ByteArray): String = MessageDigest
         .getInstance("SHA-256")
-        .digest(text.toByteArray(StandardCharsets.UTF_8))
+        .digest(bytes)
         .joinToString(separator = "") { byte -> "%02x".format(byte) }
 }

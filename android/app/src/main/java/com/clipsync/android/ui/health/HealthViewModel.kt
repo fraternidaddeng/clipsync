@@ -342,6 +342,11 @@ private fun localReadSegment(report: CapabilityReport?): ConduitSegmentState {
             detail = "读取能力尚未探测。缺信息 ≠ 坏消息。",
             status = ConduitStatus.UNPROBED,
         )
+        CapabilityState.NEEDS_USER_ACTION -> ConduitSegmentState(
+            statusLabel = "待授权",
+            detail = "读取能力需要先完成授权或设置（$mode）。",
+            status = ConduitStatus.DEGRADED,
+        )
     }
 }
 
@@ -452,6 +457,11 @@ private fun peerWriteSegment(networkStatus: ConduitStatus, sync: SyncHealth?): C
             statusLabel = "未探测",
             detail = "等待对端上报写入能力。",
             status = ConduitStatus.UNPROBED,
+        )
+        CapabilityState.NEEDS_USER_ACTION -> ConduitSegmentState(
+            statusLabel = "待授权",
+            detail = "对端写入能力需要先完成授权或设置。",
+            status = ConduitStatus.DEGRADED,
         )
     }
 }

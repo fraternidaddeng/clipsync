@@ -69,8 +69,9 @@ class ClipboardAccessCoordinator(
     private fun readStateRank(state: CapabilityState): Int = when (state) {
         CapabilityState.READY -> 0
         CapabilityState.DEGRADED -> 1
-        CapabilityState.UNKNOWN -> 2
-        CapabilityState.UNAVAILABLE -> 3
+        CapabilityState.NEEDS_USER_ACTION -> 2
+        CapabilityState.UNKNOWN -> 3
+        CapabilityState.UNAVAILABLE -> 4
     }
 
     fun requestMode(mode: ClipboardReadMode): ClipboardAccessState {

@@ -1,5 +1,6 @@
 package com.clipsync.android.platform.clipboard
 
+import android.content.ClipboardManager
 import android.content.Context
 
 /**
@@ -15,7 +16,12 @@ object SharedClipboardWrites {
     fun coordinator(context: Context): ClipboardWriteCoordinator =
         instance ?: synchronized(this) {
             instance ?: ClipboardWriteCoordinator(
-                publicWriter = AndroidPublicClipboardWriter(context.applicationContext),
+                publicWriter = AndroidPublicClipboardWriter(
+                    clipboardManager = context.applicationContext.getSystemService(
+                        Context.CLIPBOARD_SERVICE,
+                    ) as ClipboardManager,
+                    context = context.applicationContext,
+                ),
             ).also { instance = it }
         }
 

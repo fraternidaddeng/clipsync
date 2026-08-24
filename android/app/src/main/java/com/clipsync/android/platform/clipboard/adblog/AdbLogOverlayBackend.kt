@@ -117,6 +117,7 @@ class AdbLogOverlayBackend(
         val healthState = when (state) {
             CapabilityState.READY -> BackendHealthState.HEALTHY
             CapabilityState.DEGRADED -> BackendHealthState.DEGRADED
+            CapabilityState.NEEDS_USER_ACTION -> BackendHealthState.DEGRADED
             CapabilityState.UNAVAILABLE -> BackendHealthState.FAILED
             CapabilityState.UNKNOWN -> BackendHealthState.DEGRADED
         }
@@ -153,7 +154,7 @@ class AdbLogOverlayBackend(
     private fun diagnose(granted: Boolean): Pair<CapabilityState, String?> {
         if (!granted) {
             val code = if (sawGrant) ERROR_READ_LOGS_REVOKED else ERROR_READ_LOGS_NOT_GRANTED
-            val state = if (sawGrant) CapabilityState.DEGRADED else CapabilityState.UNAVAILABLE
+            val state = if (sawGrant) CapabilityState.DEGRADED else CapabilityState.NEEDS_USER_ACTION
             return state to code
         }
         if (!started) {

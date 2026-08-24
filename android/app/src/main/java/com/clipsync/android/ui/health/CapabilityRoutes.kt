@@ -178,6 +178,12 @@ internal fun localWriteSegmentFromFacts(facts: CapabilityFacts): ConduitSegmentS
             status = ConduitStatus.UNPROBED,
             detailLines = detailLines,
         )
+        CapabilityState.NEEDS_USER_ACTION -> ConduitSegmentState(
+            statusLabel = "待授权",
+            detail = "写入能力需要先完成授权或设置。",
+            status = ConduitStatus.DEGRADED,
+            detailLines = detailLines,
+        )
     }
 }
 
@@ -304,6 +310,7 @@ private fun readStateWord(report: CapabilityReport?): String = when (report?.rea
     CapabilityState.DEGRADED -> "待实测（${report.errorCode ?: "未验证"}）"
     CapabilityState.UNAVAILABLE -> "未打通（${report.errorCode ?: "原因未知"}）"
     CapabilityState.UNKNOWN -> "未探测"
+    CapabilityState.NEEDS_USER_ACTION -> "待授权（${report.errorCode ?: "需用户操作"}）"
 }
 
 private fun capabilityWord(state: CapabilityState): String = when (state) {
@@ -311,4 +318,5 @@ private fun capabilityWord(state: CapabilityState): String = when (state) {
     CapabilityState.DEGRADED -> "受限"
     CapabilityState.UNAVAILABLE -> "不可用"
     CapabilityState.UNKNOWN -> "未测试"
+    CapabilityState.NEEDS_USER_ACTION -> "待授权"
 }
