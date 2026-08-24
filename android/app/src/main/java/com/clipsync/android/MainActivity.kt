@@ -50,10 +50,11 @@ import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.AndroidPublicClipboardWriter
 import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
-import com.clipsync.android.storage.ClipDatabase
-import com.clipsync.android.storage.RoomClipSyncRepository
+import com.clipsync.android.storage.ClipSyncDatabase
+import com.clipsync.android.storage.ClipSyncRepository
 import com.clipsync.android.ui.HealthScreen
 import com.clipsync.android.ui.health.HealthViewModel
+import com.clipsync.android.ui.home.ClipSyncHistoryGateway
 import com.clipsync.android.ui.home.HomeScreen
 import com.clipsync.android.ui.home.HomeViewModel
 import com.clipsync.android.ui.pairing.PairingScreen
@@ -89,8 +90,14 @@ class MainActivity : ComponentActivity() {
     }
 
     private val homeViewModel: HomeViewModel by viewModels {
+        // The sync engine stage will move this to process-wide wiring
+        // (SyncServices.install) so service and UI share one database handle.
+        val repository = ClipSyncRepository(
+            database = ClipSyncDatabase.build(applicationContext),
+            localDeviceId = pairingStore.localDeviceId(),
+        )
         HomeViewModel.factory(
-            repository = RoomClipSyncRepository(ClipDatabase.open(applicationContext).clipDao()),
+            history = ClipSyncHistoryGateway(repository),
             writeCoordinator = ClipboardWriteCoordinator(
                 publicWriter = AndroidPublicClipboardWriter(applicationContext),
             ),

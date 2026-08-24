@@ -7,8 +7,7 @@ import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
-import com.clipsync.android.storage.ClipEntry
-import com.clipsync.android.storage.ClipSyncRepository
+import com.clipsync.android.storage.ClipHistoryEntry
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -56,7 +55,7 @@ data class HomeUiState(
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class HomeViewModel(
-    private val repository: ClipSyncRepository,
+    private val history: HistoryGateway,
     private val writeCoordinator: ClipboardWriteCoordinator,
     private val pairingStore: PairingStore,
     private val nowMs: () -> Long = System::currentTimeMillis,
@@ -78,7 +77,7 @@ class HomeViewModel(
                 queryInput
                     .debounce { query -> if (query.isBlank()) 0L else searchDebounceMs }
                     .flatMapLatest { query ->
-                        repository.observeSearch(query).map { entries -> query to entries }
+                        history.observeSearch(query).map { entries -> query to entries }
                     },
                 peerSnapshot,
             ) { (query, entries), peer ->
@@ -111,7 +110,7 @@ class HomeViewModel(
      */
     fun copy(eventId: String) {
         viewModelScope.launch {
-            val entry = repository.findVisible(eventId) ?: return@launch
+            val entry = history.findVisible(eventId) ?: return@launch
             val outcome = writeCoordinator.writeText(entry.content, entry.eventId)
             showNotice(
                 when (val result = outcome.result) {
@@ -125,7 +124,7 @@ class HomeViewModel(
     /** Local delete only; other devices keep their copies (plan.md §3.3 rule 6). */
     fun delete(eventId: String) {
         viewModelScope.launch {
-            repository.delete(eventId, nowMs())
+            history.delete(eventId, nowMs())
             showNotice(HomeNotice.DeletedLocal)
         }
     }
@@ -145,19 +144,19 @@ class HomeViewModel(
         const val PREVIEW_LIMIT = 160
 
         fun factory(
-            repository: ClipSyncRepository,
+            history: HistoryGateway,
             writeCoordinator: ClipboardWriteCoordinator,
             pairingStore: PairingStore,
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                    HomeViewModel(repository, writeCoordinator, pairingStore) as T
+                    HomeViewModel(history, writeCoordinator, pairingStore) as T
             }
     }
 }
 
-internal fun ClipEntry.toHomeItem(localDeviceId: String, peer: PairedPeer?): HomeClipItem {
+internal fun ClipHistoryEntry.toHomeItem(localDeviceId: String, peer: PairedPeer?): HomeClipItem {
     val remote = originDeviceId != localDeviceId
     val label = when {
         !remote -> null

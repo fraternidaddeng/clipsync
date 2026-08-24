@@ -75,6 +75,18 @@ internal sealed class TrayIconController : IDisposable
         taskbarIcon.ToolTipText = toolTip;
     }
 
+    /// <summary>
+    /// Announces newly arrived remote clips. The balloon names the device and the count
+    /// only — clipboard content never appears in notifications.
+    /// </summary>
+    public void ShowRemoteClipNotice(string deviceLabel, int count)
+    {
+        var message = count == 1
+            ? $"收到 {deviceLabel} 的 1 条新剪贴"
+            : $"收到 {deviceLabel} 的 {count} 条新剪贴";
+        taskbarIcon.ShowBalloonTip("剪剪相传", message, BalloonIcon.Info);
+    }
+
     public void Dispose()
     {
         taskbarIcon.Dispose();

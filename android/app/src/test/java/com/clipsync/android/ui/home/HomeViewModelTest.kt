@@ -10,8 +10,7 @@ import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
 import com.clipsync.android.platform.clipboard.ClipboardWriter
-import com.clipsync.android.storage.ClipEntry
-import com.clipsync.android.storage.ClipSyncRepository
+import com.clipsync.android.storage.ClipHistoryEntry
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlinx.coroutines.Dispatchers
@@ -32,13 +31,13 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-/** In-memory repository: contains-filtering like the DAO, newest first. */
-private class FakeClipSyncRepository : ClipSyncRepository {
-    val clips = MutableStateFlow<List<ClipEntry>>(emptyList())
+/** In-memory history: contains-filtering like the DAO, newest first. */
+private class FakeHistoryGateway : HistoryGateway {
+    val clips = MutableStateFlow<List<ClipHistoryEntry>>(emptyList())
     val observedQueries = mutableListOf<String>()
     val deletes = mutableListOf<Pair<String, Long>>()
 
-    override fun observeSearch(query: String): Flow<List<ClipEntry>> {
+    override fun observeSearch(query: String): Flow<List<ClipHistoryEntry>> {
         observedQueries += query
         val needle = query.trim()
         return clips.map { list ->
@@ -48,7 +47,7 @@ private class FakeClipSyncRepository : ClipSyncRepository {
         }
     }
 
-    override suspend fun findVisible(eventId: String): ClipEntry? =
+    override suspend fun findVisible(eventId: String): ClipHistoryEntry? =
         clips.value.find { it.eventId == eventId }
 
     override suspend fun delete(eventId: String, nowMs: Long) {
@@ -76,7 +75,7 @@ private const val CERT = "AAAABBBBCCCCDDDDEEEEFFFF000011112222333344445555666677
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
     private val dispatcher = StandardTestDispatcher()
-    private val repository = FakeClipSyncRepository()
+    private val repository = FakeHistoryGateway()
     private val writer = FakeClipboardWriter()
     private val keyValues = FakeKeyValueStore()
     private val pairingStore = PairingStore(keyValues, FakeSecretProtector())
@@ -92,7 +91,7 @@ class HomeViewModelTest {
     }
 
     private fun model(nowMs: () -> Long = { 1_755_100_000_000 }) = HomeViewModel(
-        repository = repository,
+        history = repository,
         writeCoordinator = ClipboardWriteCoordinator(publicWriter = writer),
         pairingStore = pairingStore,
         nowMs = nowMs,
@@ -105,7 +104,7 @@ class HomeViewModelTest {
         content: String,
         origin: String,
         createdAtMs: Long,
-    ) = ClipEntry(
+    ) = ClipHistoryEntry(
         eventId = eventId,
         originDeviceId = origin,
         originSeq = createdAtMs,
@@ -114,6 +113,8 @@ class HomeViewModelTest {
         sourceApp = null,
         createdAtMs = createdAtMs,
         expiresAtMs = null,
+        deletedAtMs = null,
+        appliedAtMs = null,
     )
 
     private fun pairWithWindows() {
