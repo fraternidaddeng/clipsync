@@ -30,6 +30,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +50,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.clipsync.android.ui.health.CapabilityWizard
+import com.clipsync.android.ui.health.ReadRouteUi
+import com.clipsync.android.ui.health.RouteActionId
 import com.clipsync.android.ui.health.buildHealthScreenState
 import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
@@ -82,6 +88,21 @@ data class ConduitSegmentState(
     val statusLabel: String,
     val detail: String,
     val status: ConduitStatus,
+    /** Extra fact lines shown when the segment card is expanded. */
+    val detailLines: List<String> = emptyList(),
+    /** Rendered in error red; reserved for true errors such as a certificate change. */
+    val errorDetail: String? = null,
+    /**
+     * Single-beckon rule (charter §5.6): at most one segment pulses ochre. The
+     * builder demotes downstream NEEDS_ACTION segments to a quiet rendering.
+     */
+    val beckoning: Boolean = status == ConduitStatus.NEEDS_ACTION,
+)
+
+/** Transient outcome line of a 测试 button; never contains clipboard content. */
+data class ConduitTestResult(
+    val label: String,
+    val success: Boolean,
 )
 
 /**
@@ -94,6 +115,12 @@ data class HealthScreenState(
     val network: ConduitSegmentState,
     val peerWrite: ConduitSegmentState,
     val pairedDeviceCount: Int,
+    /** 本机写回 — the inbound write axis; null until the capability stack is wired. */
+    val localWrite: ConduitSegmentState? = null,
+    /** The wizard's three routes; empty until the capability stack is wired. */
+    val routes: List<ReadRouteUi> = emptyList(),
+    val serviceRunning: Boolean = false,
+    val testResult: ConduitTestResult? = null,
 ) {
     val statuses: List<ConduitStatus>
         get() = listOf(localRead.status, localService.status, network.status, peerWrite.status)
@@ -104,38 +131,104 @@ fun HealthScreen(
     state: HealthScreenState,
     modifier: Modifier = Modifier,
     onPairRequest: () -> Unit = {},
+    onRefresh: (() -> Unit)? = null,
+    onRouteAction: ((ReadRouteUi, RouteActionId) -> Unit)? = null,
+    onServiceStart: (() -> Unit)? = null,
+    onServiceStop: (() -> Unit)? = null,
+    onTestWrite: (() -> Unit)? = null,
+    onDismissTestResult: () -> Unit = {},
 ) {
     val c = clipSyncColors
+    // The wizard opens itself when the read segment is the one beckoning.
+    var wizardOpen by rememberSaveable(state.localRead.beckoning) {
+        mutableStateOf(state.localRead.beckoning)
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
-        Text(
-            text = "通路",
-            style = ClipSyncType.pageTitle,
-            color = c.t1,
-            modifier = Modifier.padding(start = 2.dp, bottom = 14.dp),
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 2.dp, bottom = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "通路",
+                style = ClipSyncType.pageTitle,
+                color = c.t1,
+                modifier = Modifier.weight(1f),
+            )
+            if (onRefresh != null) {
+                Text(
+                    text = "重新探测",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = c.flow,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable(onClick = onRefresh)
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                )
+            }
+        }
+        state.testResult?.let { test ->
+            TestResultRow(
+                result = test,
+                onDismiss = onDismissTestResult,
+                modifier = Modifier.padding(bottom = 10.dp),
+            )
+        }
         PipelineSegment(
             title = "本机读取",
             icon = ClipSyncIcons.History,
             segment = state.localRead,
+            actions = buildList {
+                if (state.routes.isNotEmpty()) {
+                    add(
+                        SegmentActionUi(
+                            label = if (wizardOpen) "收起引导" else "打开引导",
+                            emphasized = !wizardOpen && state.localRead.beckoning,
+                            onClick = { wizardOpen = !wizardOpen },
+                        ),
+                    )
+                }
+            },
         )
+        if (wizardOpen && state.routes.isNotEmpty() && onRouteAction != null) {
+            Spacer(Modifier.height(8.dp))
+            CapabilityWizard(
+                routes = state.routes,
+                onRouteAction = onRouteAction,
+            )
+        }
         Spacer(Modifier.height(8.dp))
         PipelineSegment(
             title = "本机服务",
             icon = ClipSyncIcons.Service,
             segment = state.localService,
+            actions = buildList {
+                if (state.serviceRunning && onServiceStop != null) {
+                    add(SegmentActionUi(label = "停止服务", onClick = onServiceStop))
+                } else if (!state.serviceRunning && state.pairedDeviceCount > 0 && onServiceStart != null) {
+                    add(SegmentActionUi(label = "启动服务", emphasized = true, onClick = onServiceStart))
+                }
+            },
         )
         Spacer(Modifier.height(8.dp))
         PipelineSegment(
             title = "网络",
             icon = ClipSyncIcons.Network,
             segment = state.network,
-            onAction = if (state.network.status == ConduitStatus.NEEDS_ACTION) onPairRequest else null,
-            actionLabel = "去配对",
+            actions = listOf(
+                SegmentActionUi(
+                    label = if (state.pairedDeviceCount > 0) "管理配对" else "去配对",
+                    emphasized = state.network.beckoning,
+                    onClick = onPairRequest,
+                ),
+            ),
         )
         Spacer(Modifier.height(8.dp))
         PipelineSegment(
@@ -143,6 +236,19 @@ fun HealthScreen(
             icon = ClipSyncIcons.Monitor,
             segment = state.peerWrite,
         )
+        state.localWrite?.let { localWrite ->
+            Spacer(Modifier.height(8.dp))
+            PipelineSegment(
+                title = "本机写回",
+                icon = ClipSyncIcons.Conduit,
+                segment = localWrite,
+                actions = buildList {
+                    if (onTestWrite != null) {
+                        add(SegmentActionUi(label = "测试写入", onClick = onTestWrite))
+                    }
+                },
+            )
+        }
         FlowLine(modifier = Modifier.padding(vertical = 12.dp))
         Text(
             text = if (state.pairedDeviceCount == 0) {
@@ -157,6 +263,36 @@ fun HealthScreen(
                 .padding(bottom = 8.dp),
             textAlign = TextAlign.Center,
         )
+    }
+}
+
+/** One quiet line: test outcome without content, dismissable with a tap. */
+@Composable
+private fun TestResultRow(
+    result: ConduitTestResult,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val c = clipSyncColors
+    val tint = if (result.success) c.flow else c.err
+    val shape = RoundedCornerShape(10.dp)
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(if (result.success) c.flowBg else c.errBg)
+            .border(1.dp, if (result.success) c.flowLn else c.errLn, shape)
+            .clickable(onClick = onDismiss)
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = result.label,
+            style = ClipSyncType.caption,
+            color = tint,
+            modifier = Modifier.weight(1f),
+        )
+        Text(text = "×", fontSize = 14.sp, color = c.t4)
     }
 }
 
@@ -249,25 +385,33 @@ fun ConduitRail(
     }
 }
 
+/** One tappable segment action; emphasized actions render in beckon ochre. */
+data class SegmentActionUi(
+    val label: String,
+    val emphasized: Boolean = false,
+    val onClick: () -> Unit,
+)
+
 @Composable
 private fun PipelineSegment(
     title: String,
     icon: ImageVector,
     segment: ConduitSegmentState,
     modifier: Modifier = Modifier,
-    onAction: (() -> Unit)? = null,
-    actionLabel: String? = null,
+    actions: List<SegmentActionUi> = emptyList(),
 ) {
     val c = clipSyncColors
-    val needsAction = segment.status == ConduitStatus.NEEDS_ACTION
+    val beckons = segment.beckoning
+    val expandable = segment.detailLines.isNotEmpty() || segment.errorDetail != null
+    var expanded by rememberSaveable(title) { mutableStateOf(false) }
     val shape = RoundedCornerShape(16.dp)
-    val tint = when (segment.status) {
-        ConduitStatus.READY -> c.flow
-        ConduitStatus.DEGRADED -> c.flow.copy(alpha = 0.8f)
-        ConduitStatus.NEEDS_ACTION -> c.act
-        ConduitStatus.UNAVAILABLE, ConduitStatus.UNPROBED -> c.t4
+    val tint = when {
+        segment.status == ConduitStatus.NEEDS_ACTION -> c.act
+        segment.status == ConduitStatus.READY -> c.flow
+        segment.status == ConduitStatus.DEGRADED -> c.flow.copy(alpha = 0.8f)
+        else -> c.t4
     }
-    val surface = if (needsAction) {
+    val surface = if (beckons) {
         Modifier
             .clip(shape)
             .background(c.actBg)
@@ -279,7 +423,9 @@ private fun PipelineSegment(
         modifier = modifier
             .fillMaxWidth()
             .then(surface)
-            .then(if (onAction != null) Modifier.clickable(onClick = onAction) else Modifier)
+            .then(
+                if (expandable) Modifier.clickable { expanded = !expanded } else Modifier,
+            )
             .padding(horizontal = 14.dp, vertical = 12.dp),
     ) {
         Row(
@@ -296,24 +442,31 @@ private fun PipelineSegment(
                 text = title,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = if (needsAction) c.act else c.t1,
+                color = if (beckons) c.act else c.t1,
                 modifier = Modifier.weight(1f),
             )
             Text(
                 text = segment.statusLabel,
                 style = ClipSyncType.meta,
-                fontWeight = if (needsAction) FontWeight.SemiBold else FontWeight.Normal,
+                fontWeight = if (beckons) FontWeight.SemiBold else FontWeight.Normal,
                 color = tint,
             )
+            if (expandable) {
+                Text(
+                    text = if (expanded) "⌃" else "⌄",
+                    fontSize = 12.sp,
+                    color = c.t4,
+                )
+            }
         }
         Spacer(Modifier.height(10.dp))
-        FillBar(status = segment.status)
+        FillBar(status = if (beckons) segment.status else segment.status.quietened())
         Spacer(Modifier.height(10.dp))
         Box(
             Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(if (needsAction) c.actLn else c.ln),
+                .background(if (beckons) c.actLn else c.ln),
         )
         Spacer(Modifier.height(8.dp))
         Text(
@@ -321,16 +474,70 @@ private fun PipelineSegment(
             style = ClipSyncType.caption,
             color = c.t3,
         )
-        if (onAction != null && actionLabel != null) {
+        if (expanded) {
+            segment.detailLines.forEach { line ->
+                Spacer(Modifier.height(5.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        Modifier
+                            .size(4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(c.ln2),
+                    )
+                    Spacer(Modifier.width(7.dp))
+                    Text(
+                        text = line,
+                        style = ClipSyncType.caption,
+                        color = c.t3,
+                    )
+                }
+            }
+        }
+        segment.errorDetail?.let { error ->
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "$actionLabel ›",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = c.act,
+                text = error,
+                style = ClipSyncType.caption,
+                color = c.err,
             )
         }
+        if (actions.isNotEmpty()) {
+            Spacer(Modifier.height(10.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                actions.forEach { action ->
+                    SegmentActionChip(action)
+                }
+            }
+        }
     }
+}
+
+/**
+ * A demoted NEEDS_ACTION (single-beckon rule) still states its status but must
+ * not pulse; render it with the unprobed dashed bar instead.
+ */
+private fun ConduitStatus.quietened(): ConduitStatus =
+    if (this == ConduitStatus.NEEDS_ACTION) ConduitStatus.UNPROBED else this
+
+@Composable
+private fun SegmentActionChip(action: SegmentActionUi) {
+    val c = clipSyncColors
+    val tint = if (action.emphasized) c.act else c.flow
+    val bg = if (action.emphasized) c.actBg else c.flowBg
+    val line = if (action.emphasized) c.actLn else c.flowLn
+    val shape = RoundedCornerShape(10.dp)
+    Text(
+        text = "${action.label} ›",
+        fontSize = 13.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = tint,
+        modifier = Modifier
+            .clip(shape)
+            .background(bg)
+            .border(1.dp, line, shape)
+            .clickable(onClick = action.onClick)
+            .padding(horizontal = 12.dp, vertical = 7.dp),
+    )
 }
 
 /** One shape, five fills: the capsule bar carrying the status encoding. */

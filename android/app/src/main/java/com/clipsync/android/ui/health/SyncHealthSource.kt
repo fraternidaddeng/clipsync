@@ -15,6 +15,8 @@ data class SyncHealth(
     val connected: Boolean,
     /** Peer-reported write capability; null until the peer has been probed. */
     val peerWriteState: CapabilityState? = null,
+    /** Stable code of the last foreground-service start failure, if any. */
+    val serviceErrorCode: String? = null,
 )
 
 /**

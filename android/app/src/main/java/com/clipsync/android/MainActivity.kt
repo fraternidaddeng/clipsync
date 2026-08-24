@@ -1,7 +1,13 @@
 package com.clipsync.android
 
+import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -45,12 +51,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clipsync.android.pairing.PairingConfirmClient
 import com.clipsync.android.pairing.PairingStore
+import com.clipsync.android.pairing.PeerHealthClient
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.platform.clipboard.AdbLogOverlayBackend
+import com.clipsync.android.platform.clipboard.AndroidPublicClipboardWriter
+import com.clipsync.android.platform.clipboard.AndroidRouteProbes
 import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
+import com.clipsync.android.platform.clipboard.ClipboardCapabilityStore
+import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
+import com.clipsync.android.platform.clipboard.ForegroundClipboardBackend
+import com.clipsync.android.platform.clipboard.OverlayPollingBackend
+import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
+import com.clipsync.android.service.ClipboardSyncService
 import com.clipsync.android.storage.SyncSettingsStore
 import com.clipsync.android.ui.HealthScreen
+import com.clipsync.android.ui.health.CapabilityWiring
 import com.clipsync.android.ui.health.HealthViewModel
+import com.clipsync.android.ui.health.ReadRouteUi
+import com.clipsync.android.ui.health.RouteActionId
+import com.clipsync.android.ui.health.SyncHealth
+import com.clipsync.android.ui.health.SyncHealthSource
 import com.clipsync.android.ui.home.HomeScreen
 import com.clipsync.android.ui.home.HomeViewModel
 import com.clipsync.android.ui.pairing.PairingScreen
@@ -61,6 +82,8 @@ import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.clipSyncColors
 import com.clipsync.android.ui.theme.filmGrain
+import kotlinx.coroutines.flow.combine
+import rikka.shizuku.Shizuku
 
 class MainActivity : ComponentActivity() {
     private val pairingStore by lazy {
@@ -75,15 +98,63 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    private val capabilityStore by lazy {
+        ClipboardCapabilityStore(SharedPrefsKeyValueStore(this, name = "clipsync.capability"))
+    }
+
+    private val routeProbes by lazy { AndroidRouteProbes(this) }
+
+    private val foregroundBackend by lazy {
+        ForegroundClipboardBackend(this, systemVersion = systemVersion())
+    }
+
+    private val clipboardCoordinator by lazy {
+        ClipboardAccessCoordinator(
+            backends = listOf(
+                ShizukuClipboardBackend(routeProbes, systemVersion()),
+                AdbLogOverlayBackend(routeProbes, systemVersion()),
+                OverlayPollingBackend(routeProbes, systemVersion()),
+                foregroundBackend,
+            ),
+            requestedReadMode = capabilityStore.preferredReadMode(),
+            autoFallbackAllowed = capabilityStore.autoFallbackAllowed(),
+        )
+    }
+
     private val healthViewModel: HealthViewModel by viewModels {
         HealthViewModel.factory(
             pairingStore = pairingStore,
-            // No background read backends ship in this stage; probe() reports that honestly.
-            clipboard = ClipboardAccessCoordinator(backends = emptyList()),
-            // The sync engine lands in a later stage; null keeps the conduit truthful.
-            syncHealthSource = null,
+            clipboard = clipboardCoordinator,
+            // The sync engine lands later; until then the service skeleton is the
+            // only honest fact the service segment can report.
+            syncHealthSource = SyncHealthSource {
+                combine(
+                    ClipboardSyncService.running,
+                    ClipboardSyncService.lastErrorCode,
+                ) { running, errorCode ->
+                    SyncHealth(
+                        serviceRunning = running,
+                        connected = false,
+                        serviceErrorCode = errorCode,
+                    )
+                }
+            },
+            capability = CapabilityWiring(
+                routeProbes = routeProbes,
+                capabilityStore = capabilityStore,
+                writeCoordinator = ClipboardWriteCoordinator(
+                    publicWriter = AndroidPublicClipboardWriter(this),
+                ),
+                foregroundBackend = foregroundBackend,
+                clearClipboard = foregroundBackend::clear,
+                peerHealth = PeerHealthClient(),
+            ),
         )
     }
+
+    // Shizuku authorization completes outside the app; re-probe when it answers.
+    private val shizukuPermissionListener =
+        Shizuku.OnRequestPermissionResultListener { _, _ -> healthViewModel.refresh() }
 
     private val homeViewModel: HomeViewModel by viewModels {
         // Room-backed history lands in a later stage; null renders the honest empty state.
@@ -101,6 +172,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        runCatching { Shizuku.addRequestPermissionResultListener(shizukuPermissionListener) }
         setContent {
             ClipSyncTheme {
                 ClipSyncApp(
@@ -108,10 +180,72 @@ class MainActivity : ComponentActivity() {
                     healthViewModel = healthViewModel,
                     homeViewModel = homeViewModel,
                     preferencesViewModel = preferencesViewModel,
+                    onRouteAction = ::handleRouteAction,
+                    onServiceStart = { ClipboardSyncService.start(this) },
+                    onServiceStop = { ClipboardSyncService.stop(this) },
                 )
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        // Grants change outside the app (Settings, adb, Shizuku); re-probe every return.
+        healthViewModel.refresh()
+    }
+
+    override fun onDestroy() {
+        runCatching { Shizuku.removeRequestPermissionResultListener(shizukuPermissionListener) }
+        super.onDestroy()
+    }
+
+    /** Resolves a wizard route action to the system surface that can satisfy it. */
+    private fun handleRouteAction(route: ReadRouteUi, action: RouteActionId) {
+        when (action) {
+            RouteActionId.INSTALL_SHIZUKU -> startActivitySafely(
+                Intent(Intent.ACTION_VIEW, Uri.parse(SHIZUKU_DOWNLOAD_URL)),
+            )
+            RouteActionId.LAUNCH_SHIZUKU -> {
+                val launch = packageManager
+                    .getLaunchIntentForPackage(AndroidRouteProbes.SHIZUKU_PACKAGE)
+                if (launch != null) {
+                    startActivitySafely(launch)
+                } else {
+                    startActivitySafely(Intent(Intent.ACTION_VIEW, Uri.parse(SHIZUKU_DOWNLOAD_URL)))
+                }
+            }
+            RouteActionId.REQUEST_SHIZUKU_PERMISSION ->
+                runCatching { Shizuku.requestPermission(REQUEST_CODE_SHIZUKU) }
+            RouteActionId.COPY_ADB_READ_LOGS_COMMAND -> {
+                val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                manager.setPrimaryClip(
+                    ClipData.newPlainText("adb", "adb shell pm grant $packageName android.permission.READ_LOGS"),
+                )
+                healthViewModel.noteAdbCommandCopied()
+            }
+            RouteActionId.OPEN_OVERLAY_SETTINGS -> startActivitySafely(
+                Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")),
+            )
+            RouteActionId.OPEN_BATTERY_SETTINGS -> startActivitySafely(
+                Intent(
+                    Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                    Uri.parse("package:$packageName"),
+                ),
+            )
+            RouteActionId.SET_PREFERRED -> healthViewModel.setPreferredReadMode(route.mode)
+        }
+    }
+
+    private fun startActivitySafely(intent: Intent) {
+        try {
+            startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+            // Some OEM builds hide standard Settings screens; the conduit's
+            // re-probe on resume keeps the shown state truthful either way.
+        }
+    }
+
+    private fun systemVersion(): String = "android-${Build.VERSION.SDK_INT}"
 
     private fun deviceLabel(): String {
         val manufacturer = Build.MANUFACTURER.trim()
@@ -122,6 +256,11 @@ class MainActivity : ComponentActivity() {
             "$manufacturer $model".trim()
         }
         return label.ifBlank { "Android phone" }
+    }
+
+    private companion object {
+        const val REQUEST_CODE_SHIZUKU = 4310
+        const val SHIZUKU_DOWNLOAD_URL = "https://shizuku.rikka.app/zh-hans/download/"
     }
 }
 
@@ -135,6 +274,9 @@ private fun ClipSyncApp(
     healthViewModel: HealthViewModel,
     homeViewModel: HomeViewModel,
     preferencesViewModel: PreferencesViewModel,
+    onRouteAction: (ReadRouteUi, RouteActionId) -> Unit = { _, _ -> },
+    onServiceStart: () -> Unit = {},
+    onServiceStop: () -> Unit = {},
 ) {
     val c = clipSyncColors
     var tab by rememberSaveable { mutableIntStateOf(0) }
@@ -191,6 +333,12 @@ private fun ClipSyncApp(
                     HealthScreen(
                         state = healthState,
                         onPairRequest = { pairingOpen = true },
+                        onRefresh = healthViewModel::refresh,
+                        onRouteAction = onRouteAction,
+                        onServiceStart = onServiceStart,
+                        onServiceStop = onServiceStop,
+                        onTestWrite = healthViewModel::runWriteTest,
+                        onDismissTestResult = healthViewModel::dismissTestResult,
                         modifier = Modifier.padding(padding),
                     )
                 }

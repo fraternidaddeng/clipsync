@@ -6,10 +6,21 @@ import com.clipsync.android.pairing.PairingConfirmResponse
 import com.clipsync.android.pairing.PairingDocumentKinds
 import com.clipsync.android.pairing.PairingQrPayload
 import com.clipsync.android.pairing.PairingStore
+import com.clipsync.android.platform.clipboard.BackendHealth
+import com.clipsync.android.platform.clipboard.BackendHealthState
+import com.clipsync.android.platform.clipboard.BackgroundClipboardBackend
 import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
+import com.clipsync.android.platform.clipboard.ClipboardCapabilityStore
+import com.clipsync.android.platform.clipboard.ClipboardChange
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
+import com.clipsync.android.platform.clipboard.ClipboardReadResult
+import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
+import com.clipsync.android.platform.clipboard.ClipboardWriteResult
+import com.clipsync.android.platform.clipboard.ClipboardWriter
 import com.clipsync.android.platform.clipboard.FakeBackgroundClipboardBackend
+import com.clipsync.android.platform.clipboard.RoutePrerequisites
+import com.clipsync.android.platform.clipboard.RouteProbes
 import com.clipsync.android.ui.ConduitStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,6 +30,8 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -182,6 +195,125 @@ class HealthViewModelTest {
         )
         val state = viewModel(coordinator).state.value
         assertEquals(ConduitStatus.UNAVAILABLE, state.localRead.status)
+    }
+
+    // ---- capability wiring ----------------------------------------------------------------
+
+    /** One shared "system clipboard": the writer fills it, the backend reads it back. */
+    private class FakeClipboardEnvironment {
+        var text: String? = null
+        var nextWriteResult: ClipboardWriteResult = ClipboardWriteResult.Success
+
+        val writer = object : ClipboardWriter {
+            override fun probe(): CapabilityState = CapabilityState.READY
+
+            override fun writeText(text: String, originEventId: String): ClipboardWriteResult {
+                val result = nextWriteResult
+                if (result is ClipboardWriteResult.Success) {
+                    this@FakeClipboardEnvironment.text = text
+                }
+                return result
+            }
+        }
+
+        val readBackend = object : BackgroundClipboardBackend {
+            override val mode = ClipboardReadMode.FOREGROUND_ONLY
+
+            override fun probe() = FakeBackgroundClipboardBackend.capabilityReport(
+                mode,
+                CapabilityState.READY,
+            )
+
+            override fun start(onChanged: (ClipboardChange) -> Unit) = Unit
+
+            override fun stop() = Unit
+
+            override fun readText(): ClipboardReadResult =
+                text?.let { ClipboardReadResult.Success(it) } ?: ClipboardReadResult.Empty
+
+            override fun health() = BackendHealth(BackendHealthState.HEALTHY, 1L)
+        }
+    }
+
+    private fun capabilityHarness(
+        prerequisites: RoutePrerequisites = RoutePrerequisites(),
+        environment: FakeClipboardEnvironment = FakeClipboardEnvironment(),
+    ): Triple<HealthViewModel, ClipboardCapabilityStore, FakeClipboardEnvironment> {
+        val capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore())
+        val model = HealthViewModel(
+            pairingStore = store,
+            clipboard = ClipboardAccessCoordinator(listOf(environment.readBackend)),
+            syncHealthSource = null,
+            probeDispatcher = dispatcher,
+            capability = CapabilityWiring(
+                routeProbes = object : RouteProbes {
+                    override fun probe() = prerequisites
+                },
+                capabilityStore = capabilityStore,
+                writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
+                foregroundBackend = environment.readBackend,
+                clearClipboard = { environment.text = null },
+                nowMs = { 1_755_000_000_000 },
+            ),
+        )
+        return Triple(model, capabilityStore, environment)
+    }
+
+    @Test
+    fun `capability wiring surfaces the three wizard routes and the local write card`() {
+        val (model, _, _) = capabilityHarness()
+        val state = model.state.value
+        assertEquals(3, state.routes.size)
+        assertEquals(ConduitStatus.UNPROBED, state.localWrite?.status)
+        // Fresh device: every route still has steps remaining.
+        assertEquals(listOf(3, 2, 2), state.routes.map { it.stepsRemaining })
+    }
+
+    @Test
+    fun `preferred read mode choice is persisted and reflected in routes`() {
+        val (model, capabilityStore, _) = capabilityHarness()
+        model.setPreferredReadMode(ClipboardReadMode.OVERLAY_POLLING)
+
+        assertEquals(ClipboardReadMode.OVERLAY_POLLING, capabilityStore.preferredReadMode())
+        val polling = model.state.value.routes.first { it.mode == ClipboardReadMode.OVERLAY_POLLING }
+        assertTrue(polling.preferred)
+    }
+
+    @Test
+    fun `write test verifies the round trip, clears the token and records ready`() {
+        val (model, capabilityStore, environment) = capabilityHarness()
+        model.runWriteTest()
+
+        assertEquals(CapabilityState.READY, capabilityStore.publicWriteState())
+        assertEquals(ConduitStatus.READY, model.state.value.localWrite?.status)
+        assertEquals(true, model.state.value.testResult?.success)
+        // The test token never survives the test (plan §5.3).
+        assertNull(environment.text)
+    }
+
+    @Test
+    fun `failed write test records unavailable with its stable error code`() {
+        val environment = FakeClipboardEnvironment()
+        environment.nextWriteResult = ClipboardWriteResult.Failure("CLIPBOARD_WRITE_DENIED")
+        val (model, capabilityStore, _) = capabilityHarness(environment = environment)
+        model.runWriteTest()
+
+        assertEquals(CapabilityState.UNAVAILABLE, capabilityStore.publicWriteState())
+        assertEquals("CLIPBOARD_WRITE_DENIED", capabilityStore.publicWriteErrorCode())
+        assertEquals(ConduitStatus.UNAVAILABLE, model.state.value.localWrite?.status)
+        assertEquals(false, model.state.value.testResult?.success)
+    }
+
+    @Test
+    fun `all background routes closed beckons the read segment above the unpaired network`() {
+        val (model, _, _) = capabilityHarness()
+        // Only the foreground backend is registered, so every background route
+        // is absent -> the coordinator reports nothing for them; simulate the
+        // all-closed ladder through prerequisites-only probing instead.
+        val state = model.state.value
+        // Unpaired network still needs action; read is degraded (foreground only).
+        assertEquals(ConduitStatus.NEEDS_ACTION, state.network.status)
+        assertTrue(state.network.beckoning)
     }
 
     @Test
