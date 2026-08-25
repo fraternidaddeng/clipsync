@@ -150,6 +150,11 @@ fun HealthScreen(
     onTestWrite: (() -> Unit)? = null,
     onDismissTestResult: () -> Unit = {},
     onOpenNotificationSettings: (() -> Unit)? = null,
+    /**
+     * 收到内容通知 (settings-roadmap P1-8): the in-app switch state; null = not wired.
+     * Off is the user's choice — the conduit states the consequence in grey, never red.
+     */
+    inboxNotifyEnabled: Boolean? = null,
     // 蓝牙备援住在网络段下（settings-roadmap IA 迁移）；null 表示未接线，卡片不出现。
     bluetoothFallback: BluetoothFallbackUi? = null,
     onBluetoothFallbackChange: (Boolean) -> Unit = {},
@@ -207,6 +212,10 @@ fun HealthScreen(
                 onOpenSettings = onOpenNotificationSettings,
                 modifier = Modifier.padding(bottom = 10.dp),
             )
+        } else if (inboxNotifyEnabled == false) {
+            // The system surface is fine but the in-app switch is off; one banner at a
+            // time — the system-level fact already covers this consequence when shown.
+            InboxNotifyOffBanner(modifier = Modifier.padding(bottom = 10.dp))
         }
         PipelineSegment(
             title = "本机读取",
@@ -361,6 +370,38 @@ private fun NotificationsOffBanner(
                     .padding(vertical = 2.dp),
             )
         }
+    }
+}
+
+/**
+ * 收到内容通知 turned off in 偏好·运行 (settings-roadmap P1-8). Same honest-fact
+ * strip as the system-level banner: the choice is stated, the consequence named,
+ * and where to change it — sync and history are explicitly unaffected.
+ */
+@Composable
+private fun InboxNotifyOffBanner(modifier: Modifier = Modifier) {
+    val c = clipSyncColors
+    val shape = CharterShapes.control
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(c.sf3)
+            .border(1.dp, c.ln, shape)
+            .padding(horizontal = 12.dp, vertical = 9.dp),
+        verticalArrangement = Arrangement.spacedBy(3.dp),
+    ) {
+        Text(
+            text = "收到内容通知已关闭",
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = c.t2,
+        )
+        Text(
+            text = "同步与历史照常，但收到对端内容时不再提醒。可在「偏好 · 运行」重新开启。",
+            style = ClipSyncType.caption,
+            color = c.t3,
+        )
     }
 }
 

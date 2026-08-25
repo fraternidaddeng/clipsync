@@ -288,20 +288,17 @@ fun interface ClipSensitivityReader {
 object ReflectiveClipSensitivityReader : ClipSensitivityReader {
     private const val EXTRA_IS_SENSITIVE = "android.content.extra.IS_SENSITIVE"
 
-    override fun readIsSensitive(clip: Any?): Boolean {
-        if (clip == null) {
-            return false
-        }
-        return try {
-            val description = clip.javaClass.getMethod("getDescription").invoke(clip) ?: return false
-            val extras = description.javaClass.getMethod("getExtras").invoke(description) ?: return false
-            extras.javaClass
-                .getMethod("getBoolean", String::class.java, Boolean::class.javaPrimitiveType)
-                .invoke(extras, EXTRA_IS_SENSITIVE, false) as? Boolean ?: false
+    override fun readIsSensitive(clip: Any?): Boolean =
+        try {
+            val description = clip?.javaClass?.getMethod("getDescription")?.invoke(clip)
+            val extras = description?.javaClass?.getMethod("getExtras")?.invoke(description)
+            extras
+                ?.javaClass
+                ?.getMethod("getBoolean", String::class.java, Boolean::class.javaPrimitiveType)
+                ?.invoke(extras, EXTRA_IS_SENSITIVE, false) as? Boolean ?: false
         } catch (_: Throwable) {
             false
         }
-    }
 }
 
 private data class ResolvedMethod(

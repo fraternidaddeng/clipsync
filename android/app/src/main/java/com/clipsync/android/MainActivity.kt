@@ -700,6 +700,8 @@ private fun ClipSyncApp(
                             onTestWrite = healthViewModel::runWriteTest,
                             onDismissTestResult = healthViewModel::dismissTestResult,
                             onOpenNotificationSettings = onOpenNotificationSettings,
+                            // 收到内容通知的应用内开关（P1#8）；关闭时通路以灰面事实条陈述后果。
+                            inboxNotifyEnabled = preferencesState.inboxNotify,
                             // 蓝牙备援挂在网络段下（IA 迁移）；状态仍由 PreferencesViewModel 持有。
                             bluetoothFallback =
                                 BluetoothFallbackUi(

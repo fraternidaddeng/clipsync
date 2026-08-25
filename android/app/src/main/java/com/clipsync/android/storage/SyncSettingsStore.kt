@@ -203,7 +203,8 @@ class SyncSettingsStore(
         const val HISTORY_FONT_SCALE_SMALL = 0.9f
         const val HISTORY_FONT_SCALE_STANDARD = 1.0f
         const val HISTORY_FONT_SCALE_LARGE = 1.15f
-        val HISTORY_FONT_SCALES = listOf(HISTORY_FONT_SCALE_SMALL, HISTORY_FONT_SCALE_STANDARD, HISTORY_FONT_SCALE_LARGE)
+        val HISTORY_FONT_SCALES =
+            listOf(HISTORY_FONT_SCALE_SMALL, HISTORY_FONT_SCALE_STANDARD, HISTORY_FONT_SCALE_LARGE)
 
         /** 预览行数 choices (settings-roadmap P1-7). */
         val PREVIEW_LINE_CHOICES = listOf(2, 4, 6)
