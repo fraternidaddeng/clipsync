@@ -47,12 +47,6 @@ fun PreferencesScreen(
     onBootRestoreChange: (Boolean) -> Unit = {},
     onImageSyncChange: (Boolean) -> Unit = {},
     onAutoApplyImagesChange: (Boolean) -> Unit = {},
-    onBluetoothFallbackChange: (Boolean) -> Unit = {},
-    /** Bonded devices to choose from; null keeps the inline chooser collapsed. */
-    bluetoothDevices: List<BondedBluetoothDevice>? = null,
-    onRequestBluetoothDevices: () -> Unit = {},
-    onBluetoothDeviceChosen: (BondedBluetoothDevice) -> Unit = {},
-    onDismissBluetoothDevices: () -> Unit = {},
     /** Display name of the paired Windows peer; null while unpaired. */
     pairedDeviceName: String? = null,
     onOpenConduit: () -> Unit = {},
@@ -127,38 +121,15 @@ fun PreferencesScreen(
         }
 
         Spacer(Modifier.height(20.dp))
+        // IA 迁移过渡（settings-roadmap §4.2）：蓝牙备援已迁往通路网络段，
+        // 此链接行保留一个发布版本后删除。
         GroupHeader("蓝牙备援")
         Column(
             Modifier
                 .fillMaxWidth()
                 .charterCard(),
         ) {
-            ToggleRow(
-                title = "蓝牙备援",
-                description =
-                    "IP 路径全部不可达时（例如代理/VPN 全局接管），通过系统已配对的蓝牙设备" +
-                        "继续同步文本。仅文本、速度较慢；IP 恢复后自动切回。",
-                checked = state.bluetoothFallback,
-                onCheckedChange = onBluetoothFallbackChange,
-            )
-            if (state.bluetoothFallback) {
-                RowDivider()
-                ActionRow(
-                    title = "蓝牙目标设备",
-                    description =
-                        state.bluetoothDeviceName
-                            ?.let { "当前：$it" }
-                            ?: "未选择 · 需先在系统设置里与电脑完成蓝牙配对",
-                    onClick = onRequestBluetoothDevices,
-                )
-                if (bluetoothDevices != null) {
-                    BondedDeviceChooser(
-                        devices = bluetoothDevices,
-                        onChosen = onBluetoothDeviceChosen,
-                        onDismiss = onDismissBluetoothDevices,
-                    )
-                }
-            }
+            LinkRow(title = "蓝牙备援", value = "已移至通路 · 网络", onClick = onOpenConduit)
         }
 
         Spacer(Modifier.height(20.dp))
@@ -364,65 +335,6 @@ private fun ActionRow(
         Spacer(Modifier.width(12.dp))
         Text(text = "›", fontSize = 16.sp, color = c.flow)
     }
-}
-
-/**
- * Inline chooser for the fallback's dial target, rendered as plain rows inside the same
- * charter card (no dialogs in this app). An empty list states the honest reasons instead
- * of pretending the feature is broken.
- */
-@Composable
-private fun BondedDeviceChooser(
-    devices: List<BondedBluetoothDevice>,
-    onChosen: (BondedBluetoothDevice) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val c = clipSyncColors
-    if (devices.isEmpty()) {
-        RowDivider()
-        Text(
-            text =
-                "没有可选的已配对设备。请确认系统蓝牙已开启、连接权限已授予，" +
-                    "并先在系统设置里与电脑完成蓝牙配对。",
-            style = ClipSyncType.caption,
-            color = c.t3,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
-        )
-    } else {
-        devices.forEach { device ->
-            RowDivider()
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = { onChosen(device) })
-                        .padding(horizontal = 14.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = device.name,
-                    fontSize = 14.sp,
-                    color = c.t1,
-                    modifier = Modifier.weight(1f),
-                )
-                Text(text = device.address, style = ClipSyncType.caption, color = c.t4)
-            }
-        }
-    }
-    RowDivider()
-    Text(
-        text = "收起",
-        fontSize = 13.sp,
-        fontWeight = FontWeight.SemiBold,
-        color = c.flow,
-        modifier =
-            Modifier
-                .clickable(onClick = onDismiss)
-                .padding(horizontal = 14.dp, vertical = 10.dp),
-    )
 }
 
 /** A row that navigates elsewhere in the app; the chevron says so honestly. */

@@ -47,7 +47,11 @@ data class BackendHealth(
 )
 
 sealed interface ClipboardReadResult {
-    data class Success(val text: String) : ClipboardReadResult
+    data class Success(
+        val text: String,
+        /** The source app marked this clip sensitive (ClipDescription extra); see [ClipboardChange.isSensitive]. */
+        val isSensitive: Boolean = false,
+    ) : ClipboardReadResult
 
     data object Empty : ClipboardReadResult
 
@@ -60,6 +64,12 @@ data class ClipboardChange(
     val observedAtEpochMillis: Long,
     val imageBytes: ByteArray? = null,
     val imageMimeType: String? = null,
+    /**
+     * The source app flagged this clip as sensitive on its ClipDescription (password
+     * managers do). Carried so the capture policy can honour 跳过敏感内容; honest limit:
+     * the flag only exists when the source app sets it.
+     */
+    val isSensitive: Boolean = false,
 ) {
     val isImage: Boolean get() = imageBytes != null
 }

@@ -166,6 +166,7 @@ class OverlayPollingBackend internal constructor(
                             text = result.text,
                             contentHash = hash,
                             observedAtEpochMillis = lastReadSuccessAtEpochMillis ?: nowEpochMillis(),
+                            isSensitive = result.isSensitive,
                         ),
                     )
                 }

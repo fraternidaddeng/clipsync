@@ -26,6 +26,7 @@ class IClipboardReflectionAdapter(
     private val attributionTag: String? = null,
     private val deviceId: Int = 0,
     private val clipTextReader: ClipTextReader = ReflectiveClipTextReader,
+    private val clipSensitivityReader: ClipSensitivityReader = ReflectiveClipSensitivityReader,
 ) {
     val selectedShape: IClipboardApiShape = IClipboardApiShape.forSdk(sdkInt)
 
@@ -37,7 +38,7 @@ class IClipboardReflectionAdapter(
             when {
                 text == null -> ClipboardAdapterResult.Empty
                 text.isEmpty() -> ClipboardAdapterResult.Empty
-                else -> ClipboardAdapterResult.Text(text)
+                else -> ClipboardAdapterResult.Text(text, clipSensitivityReader.readIsSensitive(raw))
             }
         } catch (error: Throwable) {
             ClipboardAdapterResult.Failed(mapInvokeError(error))
@@ -239,7 +240,11 @@ enum class MethodKind {
 }
 
 sealed interface ClipboardAdapterResult {
-    data class Text(val value: String) : ClipboardAdapterResult
+    data class Text(
+        val value: String,
+        /** The source app marked the clip sensitive on its ClipDescription. */
+        val isSensitive: Boolean = false,
+    ) : ClipboardAdapterResult
 
     data object Empty : ClipboardAdapterResult
 
@@ -266,6 +271,35 @@ object ReflectiveClipTextReader : ClipTextReader {
             item.javaClass.getMethod("getText").invoke(item)?.toString()
         } catch (_: Throwable) {
             null
+        }
+    }
+}
+
+fun interface ClipSensitivityReader {
+    fun readIsSensitive(clip: Any?): Boolean
+}
+
+/**
+ * Reads the ClipDescription sensitive extra ("android.content.extra.IS_SENSITIVE",
+ * inlined because the SDK constant is API 33+) reflectively — the raw ClipData is a
+ * real object in the UserService process, but fakes back the JVM tests. Any failure
+ * honestly means "not marked": the flag exists only when the source app set it.
+ */
+object ReflectiveClipSensitivityReader : ClipSensitivityReader {
+    private const val EXTRA_IS_SENSITIVE = "android.content.extra.IS_SENSITIVE"
+
+    override fun readIsSensitive(clip: Any?): Boolean {
+        if (clip == null) {
+            return false
+        }
+        return try {
+            val description = clip.javaClass.getMethod("getDescription").invoke(clip) ?: return false
+            val extras = description.javaClass.getMethod("getExtras").invoke(description) ?: return false
+            extras.javaClass
+                .getMethod("getBoolean", String::class.java, Boolean::class.javaPrimitiveType)
+                .invoke(extras, EXTRA_IS_SENSITIVE, false) as? Boolean ?: false
+        } catch (_: Throwable) {
+            false
         }
     }
 }

@@ -56,10 +56,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.clipsync.android.ui.health.BluetoothFallbackCard
+import com.clipsync.android.ui.health.BluetoothFallbackUi
 import com.clipsync.android.ui.health.CapabilityWizard
 import com.clipsync.android.ui.health.ReadRouteUi
 import com.clipsync.android.ui.health.RouteActionId
 import com.clipsync.android.ui.health.buildHealthScreenState
+import com.clipsync.android.ui.prefs.BondedBluetoothDevice
 import com.clipsync.android.ui.theme.CharterMotion
 import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncIcons
@@ -147,6 +150,14 @@ fun HealthScreen(
     onTestWrite: (() -> Unit)? = null,
     onDismissTestResult: () -> Unit = {},
     onOpenNotificationSettings: (() -> Unit)? = null,
+    // 蓝牙备援住在网络段下（settings-roadmap IA 迁移）；null 表示未接线，卡片不出现。
+    bluetoothFallback: BluetoothFallbackUi? = null,
+    onBluetoothFallbackChange: (Boolean) -> Unit = {},
+    /** Bonded devices to choose from; null keeps the inline chooser collapsed. */
+    bluetoothDevices: List<BondedBluetoothDevice>? = null,
+    onRequestBluetoothDevices: () -> Unit = {},
+    onBluetoothDeviceChosen: (BondedBluetoothDevice) -> Unit = {},
+    onDismissBluetoothDevices: () -> Unit = {},
 ) {
     val c = clipSyncColors
     // The wizard opens itself when the read segment is the one beckoning.
@@ -256,6 +267,17 @@ fun HealthScreen(
                 ),
             ),
         )
+        bluetoothFallback?.let { fallback ->
+            Spacer(Modifier.height(8.dp))
+            BluetoothFallbackCard(
+                state = fallback,
+                onEnabledChange = onBluetoothFallbackChange,
+                devices = bluetoothDevices,
+                onRequestDevices = onRequestBluetoothDevices,
+                onDeviceChosen = onBluetoothDeviceChosen,
+                onDismissDevices = onDismissBluetoothDevices,
+            )
+        }
         Spacer(Modifier.height(8.dp))
         PipelineSegment(
             title = "对端写入",

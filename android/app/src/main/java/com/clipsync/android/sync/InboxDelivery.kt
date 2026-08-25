@@ -57,6 +57,12 @@ object InboxDelivery {
     fun autoApplyImagesAllowed(settings: SyncSettingsStore): Boolean =
         settings.autoApplyImages && !settings.syncPaused
 
+    /**
+     * 收到内容通知 (settings-roadmap P1-8): the in-app switch for the inbox notification
+     * surface. Recording and auto-apply are never gated by it — only the notification.
+     */
+    fun inboxNotificationsAllowed(settings: SyncSettingsStore): Boolean = settings.inboxNotifyEnabled
+
     /** Returns true when the clip reached the system clipboard automatically. */
     fun deliver(
         context: Context,
@@ -64,13 +70,18 @@ object InboxDelivery {
         text: String,
         receivedAtEpochMillis: Long = System.currentTimeMillis(),
         autoApply: Boolean = false,
+        notify: Boolean = true,
     ): Boolean {
         SyncServices.inbox.record(eventId, text, receivedAtEpochMillis)
         if (autoApply && writerFactory(context).writeText(text, eventId) is ClipboardWriteResult.Success) {
-            SyncNotifications.notifyAutoApplied(context, eventId)
+            if (notify) {
+                SyncNotifications.notifyAutoApplied(context, eventId)
+            }
             return true
         }
-        SyncNotifications.notifyInboxItem(context, eventId)
+        if (notify) {
+            SyncNotifications.notifyInboxItem(context, eventId)
+        }
         return false
     }
 
@@ -86,6 +97,7 @@ object InboxDelivery {
         contentHash: String?,
         mimeType: String?,
         autoApply: Boolean = false,
+        notify: Boolean = true,
     ): Boolean {
         if (!autoApply || contentHash == null || mimeType == null) {
             return false
@@ -93,7 +105,9 @@ object InboxDelivery {
         val media = SyncStore.repository(context).media ?: return false
         val bytes = runCatching { media.readAllBytes(contentHash) }.getOrNull() ?: return false
         if (writerFactory(context).writeImage(bytes, mimeType, eventId) is ClipboardWriteResult.Success) {
-            SyncNotifications.notifyAutoApplied(context, eventId)
+            if (notify) {
+                SyncNotifications.notifyAutoApplied(context, eventId)
+            }
             return true
         }
         return false

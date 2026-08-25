@@ -42,9 +42,16 @@ class ForegroundClipboardBackend(
                 onChanged(image)
                 return@OnPrimaryClipChangedListener
             }
-            val text = (readText() as? ClipboardReadResult.Success)?.text
+            val read = readText() as? ClipboardReadResult.Success
                 ?: return@OnPrimaryClipChangedListener
-            onChanged(ClipboardChange(text, hasher.hash(text), nowEpochMillis()))
+            onChanged(
+                ClipboardChange(
+                    read.text,
+                    hasher.hash(read.text),
+                    nowEpochMillis(),
+                    isSensitive = read.isSensitive,
+                ),
+            )
         }
         clipboard.addPrimaryClipChangedListener(registered)
         listener = registered
@@ -65,7 +72,9 @@ class ForegroundClipboardBackend(
         if (!ClipboardMediaReader.descriptionLooksLikeImage(clip.description)) {
             return null
         }
-        return ClipboardMediaReader.readFirstImage(appContext, clip)
+        return ClipboardMediaReader
+            .readFirstImage(appContext, clip)
+            ?.copy(isSensitive = ClipSensitivity.isMarkedSensitive(clip.description))
     }
 
     override fun stop() {
@@ -74,9 +83,13 @@ class ForegroundClipboardBackend(
     }
 
     override fun readText(): ClipboardReadResult = try {
-        val item = clipboard.primaryClip?.takeIf { it.itemCount > 0 }?.getItemAt(0)
-        val text = item?.text?.toString()
-        if (text.isNullOrEmpty()) ClipboardReadResult.Empty else ClipboardReadResult.Success(text)
+        val clip = clipboard.primaryClip?.takeIf { it.itemCount > 0 }
+        val text = clip?.getItemAt(0)?.text?.toString()
+        if (text.isNullOrEmpty()) {
+            ClipboardReadResult.Empty
+        } else {
+            ClipboardReadResult.Success(text, ClipSensitivity.isMarkedSensitive(clip.description))
+        }
     } catch (_: SecurityException) {
         ClipboardReadResult.Failure(ERROR_ACCESS_DENIED)
     }

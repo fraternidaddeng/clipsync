@@ -1535,6 +1535,117 @@
                                 </Border>
                             </StackPanel>
                         </ContentControl>
+
+                        <!-- 网络段 · 连接（IA 迁移，settings-roadmap §四）：蓝牙备援、额外监听地址与
+                             本机证书指纹改变「内容能不能到达对端」，按判据属通路，与配对同住网络段。 -->
+                        <ContentControl Style="{StaticResource GroupCard}">
+                            <StackPanel>
+                                <Grid Margin="16,12,16,10">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Viewbox Width="17" Height="17">
+                                            <Canvas Width="24" Height="24">
+                                                <Path Data="{StaticResource IconNetwork}"
+                                                      Stroke="{DynamicResource CsText3Brush}"
+                                                      StrokeThickness="1.7"
+                                                      StrokeStartLineCap="Round"
+                                                      StrokeEndLineCap="Round"
+                                                      StrokeLineJoin="Round" />
+                                            </Canvas>
+                                        </Viewbox>
+                                        <TextBlock Margin="8,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource CsText1Brush}"
+                                                   Text="网络段 · 连接" />
+                                    </StackPanel>
+                                </Grid>
+                                <Border Padding="16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowName}" Text="蓝牙备援" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="默认关闭。LAN 被 VPN 或防火墙阻断时，已在系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。" />
+                                        </StackPanel>
+                                        <ToggleButton Grid.Column="1"
+                                                      VerticalAlignment="Top"
+                                                      Click="OnSettingToggled"
+                                                      IsChecked="{Binding BluetoothFallbackEnabled}"
+                                                      Style="{StaticResource CharterToggle}" />
+                                    </Grid>
+                                </Border>
+                                <Border Padding="16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowName}" Text="额外监听地址" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="用于 Tailscale / WireGuard 等虚拟网卡地址。不提供公网中转。" />
+                                            <!-- 「重启后生效」用赭色说明，不用弹窗 -->
+                                            <TextBlock Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource CsText4Brush}">
+                                                <Run FontWeight="SemiBold" Foreground="{DynamicResource CsActBrush}" Text="重启后生效" /><Run Text=" · 逗号分隔多个地址" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <TextBox Grid.Column="1"
+                                                 Width="220"
+                                                 Height="30"
+                                                 VerticalAlignment="Top"
+                                                 FontFamily="{StaticResource CsMono}"
+                                                 FontSize="11.5"
+                                                 LostFocus="OnSettingLostFocus"
+                                                 Style="{StaticResource InsetTextBox}"
+                                                 Text="{Binding ExtraBindAddresses, UpdateSourceTrigger=PropertyChanged}" />
+                                    </Grid>
+                                </Border>
+                                <!-- 指纹只在配对仪式中被核对，住在配对所在的网络段旁 -->
+                                <Border Padding="16,12,16,14"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowName}" Text="本机证书指纹" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="配对时请与手机上显示的指纹逐组核对。指纹变更会使所有已配对设备提示重新确认。" />
+                                            <TextBlock Margin="0,6,0,0"
+                                                       FontFamily="{StaticResource CsMono}"
+                                                       FontSize="13"
+                                                       LineHeight="24"
+                                                       TextWrapping="Wrap">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
+                                                        <Setter Property="Text" Value="{Binding LocalFingerprint}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding LocalFingerprint}" Value="">
+                                                                <Setter Property="Foreground" Value="{DynamicResource CsText4Brush}" />
+                                                                <Setter Property="Text" Value="对端服务未启动，本次会话无指纹可示。" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <Button Grid.Column="1"
+                                                VerticalAlignment="Top"
+                                                Command="{Binding CopyFingerprintCommand}"
+                                                Content="复制"
+                                                Style="{StaticResource GhostQuietButton}" />
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </ContentControl>
                     </StackPanel>
                 </ScrollViewer>
 
@@ -1663,6 +1774,8 @@
                                                       Style="{StaticResource CharterToggle}" />
                                     </Grid>
                                 </Border>
+                                <!-- IA 迁移过渡（settings-roadmap §4.2）：连通性配置已迁往通路网络段，
+                                     此链接行保留一个发布版本后删除。 -->
                                 <Border Padding="16,12"
                                         BorderBrush="{DynamicResource CsLineBrush}"
                                         BorderThickness="0,1,0,0">
@@ -1672,41 +1785,14 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="蓝牙备援" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="默认关闭。LAN 被 VPN 或防火墙阻断时，已在系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="蓝牙备援 · 额外监听地址 · 本机证书指纹" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="已移至「通路 · 网络段」——它们决定内容能否到达对端，与配对、设备管理同住。" />
                                         </StackPanel>
-                                        <ToggleButton Grid.Column="1"
-                                                      VerticalAlignment="Top"
-                                                      Click="OnSettingToggled"
-                                                      IsChecked="{Binding BluetoothFallbackEnabled}"
-                                                      Style="{StaticResource CharterToggle}" />
-                                    </Grid>
-                                </Border>
-                                <Border Padding="16,12"
-                                        BorderBrush="{DynamicResource CsLineBrush}"
-                                        BorderThickness="0,1,0,0">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="额外监听地址" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="用于 Tailscale / WireGuard 等虚拟网卡地址。不提供公网中转。" />
-                                            <!-- 「重启后生效」用赭色说明，不用弹窗 -->
-                                            <TextBlock Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource CsText4Brush}">
-                                                <Run FontWeight="SemiBold" Foreground="{DynamicResource CsActBrush}" Text="重启后生效" /><Run Text=" · 逗号分隔多个地址" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                        <TextBox Grid.Column="1"
-                                                 Width="220"
-                                                 Height="30"
-                                                 VerticalAlignment="Top"
-                                                 FontFamily="{StaticResource CsMono}"
-                                                 FontSize="11.5"
-                                                 LostFocus="OnSettingLostFocus"
-                                                 Style="{StaticResource InsetTextBox}"
-                                                 Text="{Binding ExtraBindAddresses, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Grid.Column="1"
+                                                VerticalAlignment="Top"
+                                                Click="OnGoToConduitClicked"
+                                                Content="前往通路"
+                                                Style="{StaticResource GhostQuietButton}" />
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -1815,45 +1901,6 @@
                             </StackPanel>
                         </ContentControl>
 
-                        <!-- 信任 -->
-                        <ContentControl Style="{StaticResource GroupCard}">
-                            <StackPanel>
-                                <TextBlock Style="{StaticResource GroupHeader}" Text="信 任 · TRUST" />
-                                <Grid Margin="16,9,16,14">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Margin="0,0,16,0">
-                                        <TextBlock Style="{StaticResource RowName}" Text="本机证书指纹" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="配对时请与手机上显示的指纹逐组核对。指纹变更会使所有已配对设备提示重新确认。" />
-                                        <TextBlock Margin="0,6,0,0"
-                                                   FontFamily="{StaticResource CsMono}"
-                                                   FontSize="13"
-                                                   LineHeight="24"
-                                                   TextWrapping="Wrap">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
-                                                    <Setter Property="Text" Value="{Binding LocalFingerprint}" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding LocalFingerprint}" Value="">
-                                                            <Setter Property="Foreground" Value="{DynamicResource CsText4Brush}" />
-                                                            <Setter Property="Text" Value="对端服务未启动，本次会话无指纹可示。" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </StackPanel>
-                                    <Button Grid.Column="1"
-                                            VerticalAlignment="Top"
-                                            Command="{Binding CopyFingerprintCommand}"
-                                            Content="复制"
-                                            Style="{StaticResource GhostQuietButton}" />
-                                </Grid>
-                            </StackPanel>
-                        </ContentControl>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

@@ -76,6 +76,7 @@ import com.clipsync.android.sync.SyncConnectionState
 import com.clipsync.android.sync.SyncStore
 import com.clipsync.android.sync.SyncTransportKind
 import com.clipsync.android.ui.HealthScreen
+import com.clipsync.android.ui.health.BluetoothFallbackUi
 import com.clipsync.android.ui.health.CapabilityWiring
 import com.clipsync.android.ui.health.HealthViewModel
 import com.clipsync.android.ui.health.ReadRouteUi
@@ -697,6 +698,17 @@ private fun ClipSyncApp(
                             onTestWrite = healthViewModel::runWriteTest,
                             onDismissTestResult = healthViewModel::dismissTestResult,
                             onOpenNotificationSettings = onOpenNotificationSettings,
+                            // 蓝牙备援挂在网络段下（IA 迁移）；状态仍由 PreferencesViewModel 持有。
+                            bluetoothFallback =
+                                BluetoothFallbackUi(
+                                    enabled = preferencesState.bluetoothFallback,
+                                    deviceName = preferencesState.bluetoothDeviceName,
+                                ),
+                            onBluetoothFallbackChange = preferencesViewModel::setBluetoothFallback,
+                            bluetoothDevices = bluetoothDeviceChoices,
+                            onRequestBluetoothDevices = onRequestBluetoothDevices,
+                            onBluetoothDeviceChosen = onBluetoothDeviceChosen,
+                            onDismissBluetoothDevices = onDismissBluetoothDevices,
                             modifier = Modifier.padding(padding),
                         )
                     else ->
@@ -709,11 +721,6 @@ private fun ClipSyncApp(
                             onBootRestoreChange = preferencesViewModel::setBootRestore,
                             onImageSyncChange = preferencesViewModel::setImageSync,
                             onAutoApplyImagesChange = preferencesViewModel::setAutoApplyImages,
-                            onBluetoothFallbackChange = preferencesViewModel::setBluetoothFallback,
-                            bluetoothDevices = bluetoothDeviceChoices,
-                            onRequestBluetoothDevices = onRequestBluetoothDevices,
-                            onBluetoothDeviceChosen = onBluetoothDeviceChosen,
-                            onDismissBluetoothDevices = onDismissBluetoothDevices,
                             pairedDeviceName = healthState.pairedPeerName,
                             onOpenConduit = {
                                 pairingOpen = false

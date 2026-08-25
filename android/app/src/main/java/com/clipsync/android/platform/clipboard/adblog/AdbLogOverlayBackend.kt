@@ -141,6 +141,7 @@ class AdbLogOverlayBackend(
                         text = result.text,
                         contentHash = hasher.hash(result.text),
                         observedAtEpochMillis = observedAt,
+                        isSensitive = result.isSensitive,
                     ),
                 )
             }

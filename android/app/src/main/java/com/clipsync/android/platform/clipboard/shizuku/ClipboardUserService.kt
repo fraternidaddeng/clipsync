@@ -199,6 +199,9 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
                 reply.writeNoException()
                 reply.writeInt(ShizukuClipboardBinderContract.READ_TEXT)
                 reply.writeString(result.value)
+                // Trailing sensitive flag; an older proxy simply never reads it, and an
+                // older service leaves the parcel short — readInt past the end yields 0.
+                reply.writeInt(if (result.isSensitive) 1 else 0)
             }
             ClipboardAdapterResult.Empty -> {
                 reply.writeNoException()

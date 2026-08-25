@@ -64,7 +64,11 @@ interface ShizukuClipboardSession {
 }
 
 sealed interface SessionRead {
-    data class Text(val value: String) : SessionRead
+    data class Text(
+        val value: String,
+        /** The source app marked the clip sensitive; carried across the UserService binder. */
+        val isSensitive: Boolean = false,
+    ) : SessionRead
 
     data object Empty : SessionRead
 
