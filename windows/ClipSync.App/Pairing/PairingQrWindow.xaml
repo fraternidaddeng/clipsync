@@ -76,9 +76,12 @@
                         BorderBrush="{DynamicResource CsLineBrush}"
                         BorderThickness="1"
                         CornerRadius="6">
+                    <!-- 初始 280dip 占位；代码按 DPI 取整模块后精确覆盖尺寸（模块=整物理像素）。
+                         NearestNeighbor 兜底：万一残余亚像素缩放，模块边缘保持硬切不糊 -->
                     <Image x:Name="QrImage"
                            Width="280"
                            Height="280"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
                            SnapsToDevicePixels="True" />
                 </Border>
                 <Path HorizontalAlignment="Left" VerticalAlignment="Top"

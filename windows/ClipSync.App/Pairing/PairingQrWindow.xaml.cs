@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using ClipSync.App.Localization;
@@ -16,10 +17,14 @@ namespace ClipSync.App.Pairing;
 /// </summary>
 public partial class PairingQrWindow : Window
 {
+    /// <summary>The QR's intended edge in device-independent units (matches the XAML frame).</summary>
+    private const double QrEdgeDips = 280;
+
     private readonly PairingService pairing;
     private readonly PeerSyncHost host;
     private readonly DispatcherTimer countdown;
     private DateTimeOffset expiresAt;
+    private string? currentPayloadJson;
 
     public PairingQrWindow(PairingService pairing, PeerSyncHost host)
     {
@@ -49,6 +54,7 @@ public partial class PairingQrWindow : Window
             // Without a reachable address a phone cannot connect; keep the token cancelled
             // rather than rendering a code that can only fail.
             pairing.CancelTicket();
+            currentPayloadJson = null;
             QrImage.Source = null;
             NoHostsBox.Visibility = Visibility.Visible;
             CountdownText.Text = string.Empty;
@@ -60,18 +66,44 @@ public partial class PairingQrWindow : Window
         var ticket = pairing.IssueTicket();
         expiresAt = ticket.ExpiresAt;
         var payload = pairing.BuildQrPayload(ticket, hosts, host.Port, host.CertificateFingerprint);
-        var png = PairingQrRenderer.RenderPng(PairingJson.Serialize(payload));
+        currentPayloadJson = PairingJson.Serialize(payload);
+        RenderQr();
+
+        UpdateCountdownText();
+        countdown.Start();
+    }
+
+    /// <summary>
+    /// Rasters the current payload with whole physical pixels per module and lays the image
+    /// out at the bitmap's exact physical size, so no DPI scale resamples the modules
+    /// (ui-gap-audit P3: the fixed 8px module blurred at 125%/150%).
+    /// </summary>
+    private void RenderQr()
+    {
+        if (currentPayloadJson is null)
+        {
+            return;
+        }
+
+        var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+        var rendered = PairingQrRenderer.RenderPngForDpi(currentPayloadJson, pixelsPerDip, QrEdgeDips);
 
         var image = new BitmapImage();
         image.BeginInit();
         image.CacheOption = BitmapCacheOption.OnLoad;
-        image.StreamSource = new MemoryStream(png);
+        image.StreamSource = new MemoryStream(rendered.Png);
         image.EndInit();
         image.Freeze();
         QrImage.Source = image;
+        QrImage.Width = rendered.PixelEdge / pixelsPerDip;
+        QrImage.Height = rendered.PixelEdge / pixelsPerDip;
+    }
 
-        UpdateCountdownText();
-        countdown.Start();
+    /// <summary>Moving to a monitor with another scale re-rasters the same ticket — never a new one.</summary>
+    protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+    {
+        base.OnDpiChanged(oldDpi, newDpi);
+        RenderQr();
     }
 
     private void OnCountdownTick(object? sender, EventArgs e)

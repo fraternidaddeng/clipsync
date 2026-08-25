@@ -61,9 +61,9 @@
 | Win10 下自绘 chrome 表现 | `GlassFrameThickness=-1` 在 Win11 有圆角+投影；Win10 直角待实机核验；配对两窗 `SizeToContent=Height` 与 WindowChrome 组合的首次布局也需实机确认无底部空隙 | 实机核验；必要时按系统版本回退 |
 | MIUI 通知表现 | `setColor`/折线小图标在 MIUI 会被二次改写（纲领 5.8 预期内） | 实机核验 Redmi；不达标则接受系统绘制 |
 | 夜间设备色 | 藕紫 305 / 灰粉 335 的夜值仍未实机核验（纲领 §六 遗留） | 实机比对后修 `tokens.md` |
-| 高 DPI 的 QR 整数缩放 | `pixelsPerModule=8` 固定；150% 缩放下模块非整像素 | 按 DPI 取整 `pixelsPerModule` |
+| ~~高 DPI 的 QR 整数缩放~~ **已解决（2026-08-25）** | `RenderPngForDpi` 按 `VisualTreeHelper.GetDpi` 取整每模块物理像素（就近 280dip 目标边、最小 1），`Image` 按位图物理尺寸精确布局杜绝重采样；跨屏 DPI 变化重栅格同一票据（不重发）；NearestNeighbor 兜底；纯计算 `PixelsPerModule` 有参数化测试 | — |
 | 可访问性 | 窗控钮有 `AutomationProperties`，但开关/来源盒的读屏文案不全；`t4` 压 `sf3` 的对比度边缘案例 | 系统性过一遍 AutomationProperties / contentDescription |
-| Android 状态栏色硬编码 | `values/styles.xml` 直写 `#E2E9F2` / `#0C1116`，与 tokens 重复 | 收进 `colors.xml` 引用（与 `cs_flow` 同处） |
+| ~~Android 状态栏色硬编码~~ **已解决（2026-08-25）** | `cs_bg`（tokens §2 z0 底）入 `values/colors.xml` + `values-night/colors.xml`，两套 `styles.xml` 的状态栏/导航栏改引 `@color/cs_bg`；夜值随 AppCompat 夜间模式（含外观手动覆盖）解析 | — |
 | 历史图片项 | 74dp 缩略条（纲领 §六 待裁决）完全未做——当前阶段仅文本同步 | 随图片同步阶段一起做 |
 
 ---

@@ -34,6 +34,30 @@ public sealed class PairingAppWiringTests
         Assert.Equal("aabb ccdd eeff 0011", formatted);
     }
 
+    [Theory]
+    [InlineData(1.0, 45, 280, 6)] // 100%: round(280 / 45)
+    [InlineData(1.25, 45, 280, 8)] // 125%: round(350 / 45)
+    [InlineData(1.5, 45, 280, 9)] // 150%: round(420 / 45)
+    [InlineData(2.0, 45, 280, 12)] // 200%: round(560 / 45)
+    [InlineData(1.0, 1000, 280, 1)] // never below one whole pixel per module
+    public void PixelsPerModuleIsWholePhysicalPixelsNearestTheTargetEdge(
+        double pixelsPerDip, int moduleCount, double targetEdgeDips, int expected)
+    {
+        Assert.Equal(expected, PairingQrRenderer.PixelsPerModule(pixelsPerDip, moduleCount, targetEdgeDips));
+    }
+
+    [Fact]
+    public void DpiAwareRenderReportsTheExactPngPixelEdge()
+    {
+        var rendered = PairingQrRenderer.RenderPngForDpi("{\"kind\":\"pairing_qr\"}", pixelsPerDip: 1.5, targetEdgeDips: 280);
+
+        // IHDR width/height are big-endian at offsets 16 and 20 of a PNG stream.
+        var width = (rendered.Png[16] << 24) | (rendered.Png[17] << 16) | (rendered.Png[18] << 8) | rendered.Png[19];
+        var height = (rendered.Png[20] << 24) | (rendered.Png[21] << 16) | (rendered.Png[22] << 8) | rendered.Png[23];
+        Assert.Equal(rendered.PixelEdge, width);
+        Assert.Equal(rendered.PixelEdge, height);
+    }
+
     [Fact]
     public async Task HostServesPairConfirmEndToEnd()
     {
