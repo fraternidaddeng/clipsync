@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">Báo khi có văn bản mới đến từ PC đã ghép nối. Thông báo không bao giờ hiển thị nội dung bảng nhớ tạm.</string>
     <string name="notification_inbox_title">Văn bản mới từ PC của bạn</string>
     <string name="notification_inbox_text">Nhấn “Sao chép” để đưa vào bảng nhớ tạm</string>
+    <string name="notification_inbox_image_title">Hình ảnh mới từ PC của bạn</string>
+    <string name="notification_inbox_image_text">Đã lưu vào lịch sử — mở ứng dụng để xem hoặc sao chép</string>
     <string name="notification_action_copy">Sao chép</string>
     <string name="notification_applied_text">Đã tự động ghi vào bảng nhớ tạm</string>
     <string name="notification_inbox_flood_title">Đã nhận nhiều mục</string>

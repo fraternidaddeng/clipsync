@@ -80,6 +80,24 @@ class SyncNotificationsTest {
     }
 
     @Test
+    fun `image arrival card keeps the accents and offers no copy action`() {
+        val notification = SyncNotifications.buildInboxImageNotification(context, "evt-img-1")
+
+        assertCharterAccents(notification)
+        assertEquals(NotificationCompat.CATEGORY_STATUS, notification.category)
+        assertEquals(
+            context.getString(R.string.notification_inbox_image_title),
+            notification.extras.getCharSequence(Notification.EXTRA_TITLE)?.toString(),
+        )
+        assertEquals(
+            context.getString(R.string.notification_inbox_image_text),
+            notification.extras.getCharSequence(Notification.EXTRA_TEXT)?.toString(),
+        )
+        // The text inbox cannot resolve an image, so the card must not promise a 复制 action.
+        assertTrue(notification.actions.isNullOrEmpty())
+    }
+
+    @Test
     fun `auto-applied status keeps the accents and stays content-free`() {
         assertTrue(SyncNotifications.notifyAutoApplied(context, "evt-7"))
 

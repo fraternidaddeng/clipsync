@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">แจ้งเมื่อมีข้อความใหม่มาจากพีซีที่จับคู่ไว้ การแจ้งเตือนจะไม่แสดงเนื้อหาคลิปบอร์ดเด็ดขาด</string>
     <string name="notification_inbox_title">ข้อความใหม่จากพีซีของคุณ</string>
     <string name="notification_inbox_text">แตะ “คัดลอก” เพื่อนำไปไว้ในคลิปบอร์ด</string>
+    <string name="notification_inbox_image_title">รูปภาพใหม่จากพีซีของคุณ</string>
+    <string name="notification_inbox_image_text">บันทึกลงประวัติแล้ว — เปิดแอปเพื่อดูหรือคัดลอก</string>
     <string name="notification_action_copy">คัดลอก</string>
     <string name="notification_applied_text">เขียนลงคลิปบอร์ดโดยอัตโนมัติแล้ว</string>
     <string name="notification_inbox_flood_title">ได้รับหลายรายการ</string>

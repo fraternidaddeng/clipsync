@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">ペアリング済みの PC から新しいテキストが届いたときに通知します。通知にクリップボードの内容が表示されることはありません。</string>
     <string name="notification_inbox_title">PC から新しいテキスト</string>
     <string name="notification_inbox_text">「コピー」をタップするとクリップボードに入ります</string>
+    <string name="notification_inbox_image_title">PC から新しい画像</string>
+    <string name="notification_inbox_image_text">履歴に保存済み。アプリを開くと表示・コピーできます</string>
     <string name="notification_action_copy">コピー</string>
     <string name="notification_applied_text">クリップボードに自動で書き込みました</string>
     <string name="notification_inbox_flood_title">複数のアイテムを受信しました</string>

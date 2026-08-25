@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">ينبّهك عند وصول نص جديد من حاسوب مقترن. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>
     <string name="notification_inbox_title">نص جديد من حاسوبك</string>
     <string name="notification_inbox_text">انقر على «نسخ» لوضعه في الحافظة</string>
+    <string name="notification_inbox_image_title">صورة جديدة من حاسوبك</string>
+    <string name="notification_inbox_image_text">حُفظت في السجل — افتح التطبيق لعرضها أو نسخها</string>
     <string name="notification_action_copy">نسخ</string>
     <string name="notification_applied_text">كُتب في الحافظة تلقائيًا</string>
     <string name="notification_inbox_flood_title">تم استلام عدة عناصر</string>

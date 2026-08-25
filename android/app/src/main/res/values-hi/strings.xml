@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">जोड़े गए PC से नया टेक्स्ट आने पर सूचित करता है। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>
     <string name="notification_inbox_title">आपके PC से नया टेक्स्ट</string>
     <string name="notification_inbox_text">क्लिपबोर्ड में डालने के लिए “कॉपी करें” पर टैप करें</string>
+    <string name="notification_inbox_image_title">आपके PC से नई छवि</string>
+    <string name="notification_inbox_image_text">इतिहास में सहेजी गई — देखने या कॉपी करने के लिए ऐप खोलें</string>
     <string name="notification_action_copy">कॉपी करें</string>
     <string name="notification_applied_text">क्लिपबोर्ड में अपने आप लिख दिया गया</string>
     <string name="notification_inbox_flood_title">कई आइटम मिले</string>

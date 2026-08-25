@@ -105,9 +105,11 @@ object InboxDelivery {
 
     /**
      * Image counterpart of [deliver]. Images never enter the text inbox (its records and the
-     * notification copy action are text-only); the event is already in Room history with its
-     * thumbnail, so a skipped or failed auto-apply simply leaves it there for manual use.
-     * Returns true when the image reached the system clipboard automatically.
+     * notification copy action are text-only) — the event is already in Room history with its
+     * thumbnail. But an arrival never lands silently (plan 5.6): a skipped or failed
+     * auto-apply posts the content-free 收到图片 card (no copy action, opens the app), while
+     * a successful write posts the same "applied" status card as text. Returns true when the
+     * image reached the system clipboard automatically.
      */
     fun deliverImage(
         context: Context,
@@ -117,17 +119,34 @@ object InboxDelivery {
         autoApply: Boolean = false,
         notify: Boolean = true,
     ): Boolean {
-        if (!autoApply || contentHash == null || mimeType == null) {
+        val applied = autoApply && applyImage(context, eventId, contentHash, mimeType)
+        if (notify) {
+            notifyGated(context) {
+                if (applied) {
+                    SyncNotifications.notifyAutoApplied(context, eventId)
+                } else {
+                    SyncNotifications.notifyInboxImage(context, eventId)
+                }
+            }
+        }
+        return applied
+    }
+
+    /** Loads the blob and writes it to the system clipboard; false on any missing piece. */
+    private fun applyImage(
+        context: Context,
+        eventId: String,
+        contentHash: String?,
+        mimeType: String?,
+    ): Boolean {
+        if (contentHash == null || mimeType == null) {
             return false
         }
-        val media = SyncStore.repository(context).media ?: return false
-        val bytes = runCatching { media.readAllBytes(contentHash) }.getOrNull() ?: return false
-        if (writerFactory(context).writeImage(bytes, mimeType, eventId) is ClipboardWriteResult.Success) {
-            if (notify) {
-                notifyGated(context) { SyncNotifications.notifyAutoApplied(context, eventId) }
+        val bytes =
+            SyncStore.repository(context).media?.let { media ->
+                runCatching { media.readAllBytes(contentHash) }.getOrNull()
             }
-            return true
-        }
-        return false
+        return bytes != null &&
+            writerFactory(context).writeImage(bytes, mimeType, eventId) is ClipboardWriteResult.Success
     }
 }

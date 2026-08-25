@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">페어링된 PC에서 새 텍스트가 도착하면 알립니다. 알림에 클립보드 내용이 표시되지 않습니다.</string>
     <string name="notification_inbox_title">PC에서 새 텍스트 도착</string>
     <string name="notification_inbox_text">‘복사’를 누르면 클립보드에 들어갑니다</string>
+    <string name="notification_inbox_image_title">PC에서 새 이미지 도착</string>
+    <string name="notification_inbox_image_text">기록에 저장됨 — 앱을 열어 보거나 복사할 수 있습니다</string>
     <string name="notification_action_copy">복사</string>
     <string name="notification_applied_text">클립보드에 자동으로 기록했습니다</string>
     <string name="notification_inbox_flood_title">여러 항목을 수신했습니다</string>

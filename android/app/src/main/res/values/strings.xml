@@ -21,6 +21,8 @@
     <string name="notification_channel_inbox_description">收到来自已配对电脑的新文本时提醒。通知从不显示剪贴板内容。</string>
     <string name="notification_inbox_title">来自电脑的新文本</string>
     <string name="notification_inbox_text">点按“复制”即可放入剪贴板</string>
+    <string name="notification_inbox_image_title">来自电脑的新图片</string>
+    <string name="notification_inbox_image_text">已存入历史，打开应用即可查看或复制</string>
     <string name="notification_action_copy">复制</string>
     <string name="notification_applied_text">已自动写入剪贴板</string>
     <string name="notification_inbox_flood_title">收到多条内容</string>

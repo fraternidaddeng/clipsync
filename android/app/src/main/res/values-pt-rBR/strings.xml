@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">Avisa quando um novo texto chega de um PC pareado. As notificações nunca mostram o conteúdo da área de transferência.</string>
     <string name="notification_inbox_title">Novo texto do seu PC</string>
     <string name="notification_inbox_text">Toque em “Copiar” para colocá-lo na área de transferência</string>
+    <string name="notification_inbox_image_title">Nova imagem do seu PC</string>
+    <string name="notification_inbox_image_text">Salva no histórico — abra o app para vê-la ou copiá-la</string>
     <string name="notification_action_copy">Copiar</string>
     <string name="notification_applied_text">Gravado na área de transferência automaticamente</string>
     <string name="notification_inbox_flood_title">Vários itens recebidos</string>

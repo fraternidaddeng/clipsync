@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">Meldet, wenn neuer Text von einem gekoppelten PC eintrifft. Benachrichtigungen zeigen niemals den Inhalt der Zwischenablage.</string>
     <string name="notification_inbox_title">Neuer Text von Ihrem PC</string>
     <string name="notification_inbox_text">Tippen Sie auf „Kopieren“, um ihn in die Zwischenablage zu legen</string>
+    <string name="notification_inbox_image_title">Neues Bild von Ihrem PC</string>
+    <string name="notification_inbox_image_text">Im Verlauf gespeichert – öffnen Sie die App, um es anzusehen oder zu kopieren</string>
     <string name="notification_action_copy">Kopieren</string>
     <string name="notification_applied_text">Automatisch in die Zwischenablage geschrieben</string>
     <string name="notification_inbox_flood_title">Mehrere Einträge empfangen</string>

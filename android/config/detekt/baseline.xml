@@ -432,7 +432,6 @@
     <ID>ReturnCount:ImageThumbnail.kt$ImageThumbnail$fun ensure(store: MediaBlobStore, contentHash: String): File?</ID>
     <ID>ReturnCount:ImageThumbnail.kt$ImageThumbnail$private fun writeThumbnail(blob: File, dest: File): File?</ID>
     <ID>ReturnCount:InMemorySyncRepository.kt$InMemorySyncRepository$private fun storeLocked(event: SyncableClipEvent): RemoteStoreResult</ID>
-    <ID>ReturnCount:InboxDelivery.kt$InboxDelivery$fun deliverImage( context: Context, eventId: String, contentHash: String?, mimeType: String?, autoApply: Boolean = false, notify: Boolean = true, ): Boolean</ID>
     <ID>ReturnCount:LogcatClipboardEventReader.kt$LogcatClipboardEventReader$private fun runFlights()</ID>
     <ID>ReturnCount:MediaBlobStore.kt$MediaBlobStore$fun deleteUnreferenced( liveHashes: Collection&lt;String&gt;, maximumDeletes: Int = 256, gracePeriodMs: Long = 0L, ): Int</ID>
     <ID>ReturnCount:MediaBlobStore.kt$MediaBlobStore$fun recoverTemps(nowMs: Long, maximumDeletes: Int = 256): Int</ID>

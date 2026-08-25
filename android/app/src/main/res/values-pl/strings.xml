@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">Powiadamia, gdy nowy tekst nadejdzie ze sparowanego PC. Powiadomienia nigdy nie pokazują zawartości schowka.</string>
     <string name="notification_inbox_title">Nowy tekst z Twojego PC</string>
     <string name="notification_inbox_text">Dotknij „Kopiuj”, aby umieścić go w schowku</string>
+    <string name="notification_inbox_image_title">Nowy obraz z Twojego PC</string>
+    <string name="notification_inbox_image_text">Zapisano w historii — otwórz aplikację, aby go zobaczyć lub skopiować</string>
     <string name="notification_action_copy">Kopiuj</string>
     <string name="notification_applied_text">Automatycznie zapisano w schowku</string>
     <string name="notification_inbox_flood_title">Otrzymano wiele elementów</string>

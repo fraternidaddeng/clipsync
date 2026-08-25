@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">Сообщает, когда с сопряжённого ПК приходит новый текст. Уведомления никогда не показывают содержимое буфера обмена.</string>
     <string name="notification_inbox_title">Новый текст с вашего ПК</string>
     <string name="notification_inbox_text">Нажмите «Копировать», чтобы поместить его в буфер обмена</string>
+    <string name="notification_inbox_image_title">Новое изображение с вашего ПК</string>
+    <string name="notification_inbox_image_text">Сохранено в истории — откройте приложение, чтобы посмотреть или скопировать</string>
     <string name="notification_action_copy">Копировать</string>
     <string name="notification_applied_text">Автоматически записано в буфер обмена</string>
     <string name="notification_inbox_flood_title">Получено несколько элементов</string>

@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">Vous avertit quand un nouveau texte arrive d’un PC appairé. Les notifications n’affichent jamais le contenu du presse-papiers.</string>
     <string name="notification_inbox_title">Nouveau texte depuis votre PC</string>
     <string name="notification_inbox_text">Touchez « Copier » pour le placer dans le presse-papiers</string>
+    <string name="notification_inbox_image_title">Nouvelle image depuis votre PC</string>
+    <string name="notification_inbox_image_text">Enregistrée dans l’historique — ouvrez l’application pour la voir ou la copier</string>
     <string name="notification_action_copy">Copier</string>
     <string name="notification_applied_text">Écrit automatiquement dans le presse-papiers</string>
     <string name="notification_inbox_flood_title">Plusieurs éléments reçus</string>

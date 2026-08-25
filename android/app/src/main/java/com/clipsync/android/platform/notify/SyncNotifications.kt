@@ -160,6 +160,57 @@ object SyncNotifications {
     }
 
     /**
+     * Content-free arrival card for a remote image that stayed in history (auto-apply off,
+     * skipped, or failed): plan 5.6 honesty — received content never lands silently. No
+     * pixels, no hash, and no 复制 action (the text inbox cannot resolve an image); the card
+     * only states the arrival and opens the app, where history holds the thumbnail.
+     */
+    fun buildInboxImageNotification(
+        context: Context,
+        eventId: String,
+    ): Notification {
+        val requestCode = notificationIdFor(eventId)
+        val openApp =
+            PendingIntent.getActivity(
+                context,
+                requestCode,
+                Intent(context, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+        return NotificationCompat
+            .Builder(context, CHANNEL_INBOX)
+            .setSmallIcon(R.drawable.ic_notify_clip)
+            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
+            .setContentTitle(context.getString(R.string.notification_inbox_image_title))
+            .setContentText(context.getString(R.string.notification_inbox_image_text))
+            .setContentIntent(openApp)
+            .setAutoCancel(true)
+            // No clipboard content is present, so the lock screen may show it as-is.
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
+            .build()
+    }
+
+    /** Image counterpart of [notifyInboxItem]; same honest degradation contract. */
+    fun notifyInboxImage(
+        context: Context,
+        eventId: String,
+    ): Boolean {
+        val manager = NotificationManagerCompat.from(context)
+        if (!manager.areNotificationsEnabled()) {
+            return false
+        }
+        return try {
+            manager.notify(notificationIdFor(eventId), buildInboxImageNotification(context, eventId))
+            true
+        } catch (_: SecurityException) {
+            // POST_NOTIFICATIONS revoked between the check and the call.
+            false
+        }
+    }
+
+    /**
      * Posts the content-free status notification for a remote clip that was auto-applied to
      * the system clipboard (plan 阶段 4: 成功后再发不含正文的状态通知). It shares the event's
      * notification id, so it replaces any earlier copy-action notification for the same event.

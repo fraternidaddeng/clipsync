@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">Eşleştirilmiş PC’den yeni metin geldiğinde bildirir. Bildirimler pano içeriğini asla göstermez.</string>
     <string name="notification_inbox_title">PC’nizden yeni metin</string>
     <string name="notification_inbox_text">Panoya koymak için “Kopyala”ya dokunun</string>
+    <string name="notification_inbox_image_title">PC’nizden yeni görsel</string>
+    <string name="notification_inbox_image_text">Geçmişe kaydedildi — görmek veya kopyalamak için uygulamayı açın</string>
     <string name="notification_action_copy">Kopyala</string>
     <string name="notification_applied_text">Panoya otomatik yazıldı</string>
     <string name="notification_inbox_flood_title">Birden çok öğe alındı</string>

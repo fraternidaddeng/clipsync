@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">Avvisa quando arriva nuovo testo da un PC associato. Le notifiche non mostrano mai il contenuto degli appunti.</string>
     <string name="notification_inbox_title">Nuovo testo dal tuo PC</string>
     <string name="notification_inbox_text">Tocca «Copia» per metterlo negli appunti</string>
+    <string name="notification_inbox_image_title">Nuova immagine dal tuo PC</string>
+    <string name="notification_inbox_image_text">Salvata nella cronologia: apri l’app per vederla o copiarla</string>
     <string name="notification_action_copy">Copia</string>
     <string name="notification_applied_text">Scritto automaticamente negli appunti</string>
     <string name="notification_inbox_flood_title">Ricevuti più elementi</string>

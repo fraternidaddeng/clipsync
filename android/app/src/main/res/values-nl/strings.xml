@@ -15,6 +15,8 @@
     <string name="notification_channel_inbox_description">Waarschuwt wanneer nieuwe tekst van een gekoppelde pc binnenkomt. Meldingen tonen nooit klembordinhoud.</string>
     <string name="notification_inbox_title">Nieuwe tekst van je pc</string>
     <string name="notification_inbox_text">Tik op “Kopiëren” om het op het klembord te zetten</string>
+    <string name="notification_inbox_image_title">Nieuwe afbeelding van je pc</string>
+    <string name="notification_inbox_image_text">Opgeslagen in de geschiedenis — open de app om die te bekijken of te kopiëren</string>
     <string name="notification_action_copy">Kopiëren</string>
     <string name="notification_applied_text">Automatisch naar het klembord geschreven</string>
     <string name="notification_inbox_flood_title">Meerdere items ontvangen</string>

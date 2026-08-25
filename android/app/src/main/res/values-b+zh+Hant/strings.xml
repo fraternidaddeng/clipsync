@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">收到來自已配對電腦的新文字時提醒。通知絕不顯示剪貼簿內容。</string>
     <string name="notification_inbox_title">來自電腦的新文字</string>
     <string name="notification_inbox_text">點按「複製」即可放入剪貼簿</string>
+    <string name="notification_inbox_image_title">來自電腦的新圖片</string>
+    <string name="notification_inbox_image_text">已存入歷史，開啟應用程式即可檢視或複製</string>
     <string name="notification_action_copy">複製</string>
     <string name="notification_applied_text">已自動寫入剪貼簿</string>
     <string name="notification_inbox_flood_title">收到多則內容</string>

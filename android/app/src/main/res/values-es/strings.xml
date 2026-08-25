@@ -14,6 +14,8 @@
     <string name="notification_channel_inbox_description">Avisa cuando llega texto nuevo desde un PC emparejado. Las notificaciones nunca muestran el contenido del portapapeles.</string>
     <string name="notification_inbox_title">Texto nuevo desde tu PC</string>
     <string name="notification_inbox_text">Toca «Copiar» para ponerlo en el portapapeles</string>
+    <string name="notification_inbox_image_title">Imagen nueva desde tu PC</string>
+    <string name="notification_inbox_image_text">Guardada en el historial: abre la aplicación para verla o copiarla</string>
     <string name="notification_action_copy">Copiar</string>
     <string name="notification_applied_text">Escrito en el portapapeles automáticamente</string>
     <string name="notification_inbox_flood_title">Varios elementos recibidos</string>

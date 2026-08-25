@@ -187,6 +187,72 @@ class InboxDeliveryTest {
     }
 
     @Test
+    fun imageWithoutAutoApplyPostsTheContentFreeArrivalCard() {
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+
+        val applied =
+            InboxDelivery.deliverImage(context, "img-1", contentHash = null, mimeType = null, autoApply = false)
+
+        // Plan 5.6 honesty: the arrival never lands silently even though the write is off.
+        assertFalse(applied)
+        val shadow = org.robolectric.Shadows.shadowOf(manager)
+        val card =
+            shadow.getNotification(
+                com.clipsync.android.platform.notify.SyncNotifications
+                    .notificationIdFor("img-1"),
+            )
+        assertEquals(
+            context.getString(com.clipsync.android.R.string.notification_inbox_image_title),
+            card.extras.getCharSequence(android.app.Notification.EXTRA_TITLE)?.toString(),
+        )
+        // No 复制 action: the text inbox cannot resolve an image; history holds the thumbnail.
+        assertTrue(card.actions.isNullOrEmpty())
+        // Nothing reached the clipboard.
+        assertNull(clipboardText())
+    }
+
+    @Test
+    fun notifyOffSilencesTheImageArrivalCardToo() {
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+
+        val applied =
+            InboxDelivery.deliverImage(
+                context,
+                "img-2",
+                contentHash = null,
+                mimeType = null,
+                autoApply = false,
+                notify = false,
+            )
+
+        assertFalse(applied)
+        assertEquals(
+            0,
+            org.robolectric.Shadows
+                .shadowOf(manager)
+                .allNotifications.size,
+        )
+    }
+
+    @Test
+    fun imageArrivalCardsShareTheTextFloodGate() {
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        InboxDelivery.notificationGate = InboxNotificationGate(maxPerWindow = 1, windowMillis = 60_000L)
+
+        InboxDelivery.deliver(context, "mix-text", "text body", 123L)
+        InboxDelivery.deliverImage(context, "mix-img", contentHash = null, mimeType = null)
+
+        // One surface, one budget: the image card coalesces into the same counting card.
+        val shadow = org.robolectric.Shadows.shadowOf(manager)
+        assertEquals(2, shadow.allNotifications.size)
+        val summary =
+            shadow.getNotification(
+                com.clipsync.android.platform.notify.SyncNotifications.INBOX_FLOOD_NOTIFICATION_ID,
+            )
+        assertEquals(1, summary.number)
+    }
+
+    @Test
     fun notificationFloodCoalescesIntoOneCountingCard() {
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
         InboxDelivery.notificationGate = InboxNotificationGate(maxPerWindow = 2, windowMillis = 60_000L)
