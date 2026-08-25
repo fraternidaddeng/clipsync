@@ -1,5 +1,7 @@
 package com.clipsync.android.ui.health
 
+import com.clipsync.android.R
+import com.clipsync.android.i18n.UiText
 import com.clipsync.android.pairing.PeerClipboardApply
 import com.clipsync.android.platform.clipboard.CapabilityReport
 import com.clipsync.android.platform.clipboard.CapabilityState
@@ -25,7 +27,7 @@ enum class RouteStepId {
 
 data class RouteStep(
     val id: RouteStepId,
-    val label: String,
+    val label: UiText,
     val satisfied: Boolean,
 )
 
@@ -49,10 +51,10 @@ enum class RouteActionId {
 data class ReadRouteUi(
     val id: ReadRouteId,
     val mode: ClipboardReadMode,
-    val title: String,
+    val title: UiText,
     /** Filled dots out of 3 — the charter's quality column. */
     val quality: Int,
-    val cost: String,
+    val cost: UiText,
     val steps: List<RouteStep>,
     val stepsRemaining: Int,
     val readState: CapabilityState,
@@ -109,42 +111,42 @@ internal fun localReadSegmentFromFacts(facts: CapabilityFacts): ConduitSegmentSt
     val background = BACKGROUND_READ_MODES.mapNotNull { facts.reports[it] }
     val detailLines = buildList {
         BACKGROUND_READ_MODES.forEach { mode ->
-            add("${readModeTitle(mode)}：${readStateWord(facts.reports[mode])}")
+            add(UiText.Res(R.string.read_fact_route_state, readModeTitle(mode), readStateWord(facts.reports[mode])))
         }
         if (facts.reports[ClipboardReadMode.FOREGROUND_ONLY]?.readState == CapabilityState.READY) {
-            add("前台读取：应用可见时始终可用（手动兜底）")
+            add(UiText.Res(R.string.read_fact_foreground))
         }
-        add("首选路线：${readModeTitle(facts.preferredReadMode)}")
+        add(UiText.Res(R.string.read_fact_preferred, readModeTitle(facts.preferredReadMode)))
     }
     val ready = background.firstOrNull { it.readState == CapabilityState.READY }
     return when {
         background.isEmpty() -> ConduitSegmentState(
-            statusLabel = "降级 · 仅前台",
-            detail = "应用在前台时可读取剪贴板；后台读取能力尚未接入。",
+            statusLabel = UiText.Res(R.string.status_degraded_foreground),
+            detail = UiText.Res(R.string.read_none_detail),
             status = ConduitStatus.DEGRADED,
             detailLines = detailLines,
         )
         ready != null -> ConduitSegmentState(
-            statusLabel = "就绪",
-            detail = "后台读取可用（${readModeTitle(ready.readMode)}）。",
+            statusLabel = UiText.Res(R.string.status_ready),
+            detail = UiText.Res(R.string.read_ready_detail, readModeTitle(ready.readMode)),
             status = ConduitStatus.READY,
             detailLines = detailLines,
         )
         background.any { it.readState == CapabilityState.DEGRADED } -> ConduitSegmentState(
-            statusLabel = "已授权 · 待实测",
-            detail = "前提已就绪，读取通道等待实测验证；期间前台读取仍可用。",
+            statusLabel = UiText.Res(R.string.status_authorized_pending_test),
+            detail = UiText.Res(R.string.localread_degraded_pending_detail),
             status = ConduitStatus.DEGRADED,
             detailLines = detailLines,
         )
         background.all { it.readState == CapabilityState.UNAVAILABLE } -> ConduitSegmentState(
-            statusLabel = "需要你操作",
-            detail = "后台读取尚未打通。三条路线任选一条完成即可；前台复制不受影响。",
+            statusLabel = UiText.Res(R.string.status_needs_action),
+            detail = UiText.Res(R.string.localread_needs_action_detail),
             status = ConduitStatus.NEEDS_ACTION,
             detailLines = detailLines,
         )
         else -> ConduitSegmentState(
-            statusLabel = "未探测",
-            detail = "读取能力尚未探测。缺信息 ≠ 坏消息。",
+            statusLabel = UiText.Res(R.string.status_unprobed),
+            detail = UiText.Res(R.string.read_unknown_detail),
             status = ConduitStatus.UNPROBED,
             detailLines = detailLines,
         )
@@ -157,38 +159,38 @@ internal fun localReadSegmentFromFacts(facts: CapabilityFacts): ConduitSegmentSt
  */
 internal fun localWriteSegmentFromFacts(facts: CapabilityFacts): ConduitSegmentState {
     val detailLines = buildList {
-        add("公开写入（setPrimaryClip）：${capabilityWord(facts.publicWriteState)}")
-        facts.publicWriteErrorCode?.let { add("最近错误码：$it") }
-        add("测试只写入应用生成的随机文本，校验后立即清除。")
+        add(UiText.Res(R.string.write_fact_public, capabilityWord(facts.publicWriteState)))
+        facts.publicWriteErrorCode?.let { add(UiText.Res(R.string.write_fact_last_error, it)) }
+        add(UiText.Res(R.string.write_fact_test_hygiene))
     }
     return when (facts.publicWriteState) {
         CapabilityState.READY -> ConduitSegmentState(
-            statusLabel = "已验证",
-            detail = "公开写入已实测可用；对端内容可自动进入本机剪贴板。",
+            statusLabel = UiText.Res(R.string.status_verified),
+            detail = UiText.Res(R.string.write_ready_detail),
             status = ConduitStatus.READY,
             detailLines = detailLines,
         )
         CapabilityState.DEGRADED -> ConduitSegmentState(
-            statusLabel = "受限",
-            detail = "写入能力受限，部分内容可能需要从通知手动复制。",
+            statusLabel = UiText.Res(R.string.status_limited),
+            detail = UiText.Res(R.string.write_degraded_detail),
             status = ConduitStatus.DEGRADED,
             detailLines = detailLines,
         )
         CapabilityState.UNAVAILABLE -> ConduitSegmentState(
-            statusLabel = "不可用",
-            detail = "自动写入暂不可用；内容仍会保存到历史，可从通知手动复制。",
+            statusLabel = UiText.Res(R.string.status_unavailable),
+            detail = UiText.Res(R.string.write_unavailable_detail),
             status = ConduitStatus.UNAVAILABLE,
             detailLines = detailLines,
         )
         CapabilityState.UNKNOWN -> ConduitSegmentState(
-            statusLabel = "未测试",
-            detail = "写入能力以实测为准；点「测试写入」验证一次。",
+            statusLabel = UiText.Res(R.string.status_untested),
+            detail = UiText.Res(R.string.write_untested_detail),
             status = ConduitStatus.UNPROBED,
             detailLines = detailLines,
         )
         CapabilityState.NEEDS_USER_ACTION -> ConduitSegmentState(
-            statusLabel = "待授权",
-            detail = "写入能力需要先完成授权或设置。",
+            statusLabel = UiText.Res(R.string.status_needs_auth),
+            detail = UiText.Res(R.string.write_needs_auth_detail),
             status = ConduitStatus.DEGRADED,
             detailLines = detailLines,
         )
@@ -206,40 +208,44 @@ internal fun buildReadRoutes(facts: CapabilityFacts): List<ReadRouteUi> {
         readRoute(
             id = ReadRouteId.PRIVILEGED,
             mode = ClipboardReadMode.SHIZUKU_EVENT,
-            title = "特权直读",
+            title = UiText.Res(R.string.route_privileged),
             quality = 3,
-            cost = "授权一次即可；设备重启后特权通道可能需要重新就绪",
+            cost = UiText.Res(R.string.route_privileged_cost),
             steps = listOf(
                 RouteStep(
                     RouteStepId.PRIVILEGED_CHANNEL_READY,
-                    "特权通道可用",
+                    UiText.Res(R.string.step_privileged_channel),
                     p.shizukuInstalled && p.shizukuRunning,
                 ),
-                RouteStep(RouteStepId.PRIVILEGED_AUTHORIZED, "已授权本应用", p.shizukuAuthorized),
+                RouteStep(
+                    RouteStepId.PRIVILEGED_AUTHORIZED,
+                    UiText.Res(R.string.step_privileged_authorized),
+                    p.shizukuAuthorized,
+                ),
             ),
             facts = facts,
         ),
         readRoute(
             id = ReadRouteId.LOG_OVERLAY,
             mode = ClipboardReadMode.ADB_LOG_OVERLAY,
-            title = "日志感知 + 悬浮窗",
+            title = UiText.Res(R.string.route_log_overlay),
             quality = 2,
-            cost = "需在电脑上用 adb 授予 READ_LOGS，并开启悬浮窗权限",
+            cost = UiText.Res(R.string.route_log_overlay_cost),
             steps = listOf(
-                RouteStep(RouteStepId.READ_LOGS_GRANTED, "READ_LOGS 已授予（需电脑 adb）", p.readLogsGranted),
-                RouteStep(RouteStepId.OVERLAY_GRANTED, "悬浮窗权限已开启", p.overlayGranted),
+                RouteStep(RouteStepId.READ_LOGS_GRANTED, UiText.Res(R.string.step_read_logs), p.readLogsGranted),
+                RouteStep(RouteStepId.OVERLAY_GRANTED, UiText.Res(R.string.step_overlay), p.overlayGranted),
             ),
             facts = facts,
         ),
         readRoute(
             id = ReadRouteId.OVERLAY_POLLING,
             mode = ClipboardReadMode.OVERLAY_POLLING,
-            title = "悬浮窗轮询",
+            title = UiText.Res(R.string.route_overlay_polling),
             quality = 1,
-            cost = "仅需悬浮窗权限；不需要电脑，代价是耗电和轮询延迟",
+            cost = UiText.Res(R.string.route_overlay_polling_cost),
             steps = listOf(
-                RouteStep(RouteStepId.OVERLAY_GRANTED, "悬浮窗权限已开启", p.overlayGranted),
-                RouteStep(RouteStepId.BATTERY_UNRESTRICTED, "电池优化已放行", p.batteryUnrestricted),
+                RouteStep(RouteStepId.OVERLAY_GRANTED, UiText.Res(R.string.step_overlay), p.overlayGranted),
+                RouteStep(RouteStepId.BATTERY_UNRESTRICTED, UiText.Res(R.string.step_battery), p.batteryUnrestricted),
             ),
             facts = facts,
         ),
@@ -249,9 +255,9 @@ internal fun buildReadRoutes(facts: CapabilityFacts): List<ReadRouteUi> {
 private fun readRoute(
     id: ReadRouteId,
     mode: ClipboardReadMode,
-    title: String,
+    title: UiText,
     quality: Int,
-    cost: String,
+    cost: UiText,
     steps: List<RouteStep>,
     facts: CapabilityFacts,
 ): ReadRouteUi {
@@ -296,35 +302,47 @@ private fun stepAction(step: RouteStepId): RouteActionId? = when (step) {
     RouteStepId.BATTERY_UNRESTRICTED -> RouteActionId.OPEN_BATTERY_SETTINGS
 }
 
-fun readModeTitle(mode: ClipboardReadMode): String = when (mode) {
-    ClipboardReadMode.SHIZUKU_EVENT -> "特权直读"
-    ClipboardReadMode.ADB_LOG_OVERLAY -> "日志感知 + 悬浮窗"
-    ClipboardReadMode.OVERLAY_POLLING -> "悬浮窗轮询"
-    ClipboardReadMode.FOREGROUND_ONLY -> "前台/手动"
+fun readModeTitle(mode: ClipboardReadMode): UiText = when (mode) {
+    ClipboardReadMode.SHIZUKU_EVENT -> UiText.Res(R.string.route_privileged)
+    ClipboardReadMode.ADB_LOG_OVERLAY -> UiText.Res(R.string.route_log_overlay)
+    ClipboardReadMode.OVERLAY_POLLING -> UiText.Res(R.string.route_overlay_polling)
+    ClipboardReadMode.FOREGROUND_ONLY -> UiText.Res(R.string.route_foreground)
 }
 
-fun routeActionLabel(action: RouteActionId): String = when (action) {
-    RouteActionId.REQUEST_PRIVILEGED_PERMISSION -> "授权特权直读"
-    RouteActionId.COPY_ADB_READ_LOGS_COMMAND -> "复制 adb 命令"
-    RouteActionId.OPEN_OVERLAY_SETTINGS -> "去设置悬浮窗"
-    RouteActionId.OPEN_BATTERY_SETTINGS -> "去设置电池"
-    RouteActionId.SET_PREFERRED -> "设为首选路线"
-    RouteActionId.RUN_READ_TEST -> "测试后台读取"
+fun routeActionLabel(action: RouteActionId): UiText = when (action) {
+    RouteActionId.REQUEST_PRIVILEGED_PERMISSION -> UiText.Res(R.string.route_action_authorize)
+    RouteActionId.COPY_ADB_READ_LOGS_COMMAND -> UiText.Res(R.string.route_action_copy_adb)
+    RouteActionId.OPEN_OVERLAY_SETTINGS -> UiText.Res(R.string.route_action_overlay_settings)
+    RouteActionId.OPEN_BATTERY_SETTINGS -> UiText.Res(R.string.route_action_battery_settings)
+    RouteActionId.SET_PREFERRED -> UiText.Res(R.string.route_action_set_preferred)
+    RouteActionId.RUN_READ_TEST -> UiText.Res(R.string.route_action_read_test)
 }
 
-private fun readStateWord(report: CapabilityReport?): String = when (report?.readState) {
-    null -> "未探测"
-    CapabilityState.READY -> "就绪"
-    CapabilityState.DEGRADED -> "待实测（${report.errorCode ?: "未验证"}）"
-    CapabilityState.UNAVAILABLE -> "未打通（${report.errorCode ?: "原因未知"}）"
-    CapabilityState.UNKNOWN -> "未探测"
-    CapabilityState.NEEDS_USER_ACTION -> "待授权（${report.errorCode ?: "需用户操作"}）"
+private fun readStateWord(report: CapabilityReport?): UiText = when (report?.readState) {
+    null -> UiText.Res(R.string.read_state_unprobed)
+    CapabilityState.READY -> UiText.Res(R.string.read_state_ready)
+    CapabilityState.DEGRADED ->
+        UiText.Res(
+            R.string.read_state_pending_test,
+            report.errorCode ?: UiText.Res(R.string.read_state_unverified),
+        )
+    CapabilityState.UNAVAILABLE ->
+        UiText.Res(
+            R.string.read_state_blocked,
+            report.errorCode ?: UiText.Res(R.string.read_state_reason_unknown),
+        )
+    CapabilityState.UNKNOWN -> UiText.Res(R.string.read_state_unprobed)
+    CapabilityState.NEEDS_USER_ACTION ->
+        UiText.Res(
+            R.string.read_state_needs_auth,
+            report.errorCode ?: UiText.Res(R.string.read_state_needs_user),
+        )
 }
 
-private fun capabilityWord(state: CapabilityState): String = when (state) {
-    CapabilityState.READY -> "已验证可用"
-    CapabilityState.DEGRADED -> "受限"
-    CapabilityState.UNAVAILABLE -> "不可用"
-    CapabilityState.UNKNOWN -> "未测试"
-    CapabilityState.NEEDS_USER_ACTION -> "待授权"
+private fun capabilityWord(state: CapabilityState): UiText = when (state) {
+    CapabilityState.READY -> UiText.Res(R.string.capability_verified)
+    CapabilityState.DEGRADED -> UiText.Res(R.string.capability_limited)
+    CapabilityState.UNAVAILABLE -> UiText.Res(R.string.capability_unavailable)
+    CapabilityState.UNKNOWN -> UiText.Res(R.string.capability_untested)
+    CapabilityState.NEEDS_USER_ACTION -> UiText.Res(R.string.capability_needs_auth)
 }

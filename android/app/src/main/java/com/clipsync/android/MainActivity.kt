@@ -11,12 +11,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.snap
 import androidx.compose.foundation.background
@@ -56,6 +56,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -114,7 +115,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import rikka.shizuku.Shizuku
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     /** One-shot tab request from a notification tap; cleared once the UI applies it. */
     private val tabRequests = MutableStateFlow<Int?>(null)
     private val pairingStore by lazy {
@@ -738,7 +739,10 @@ private fun ClipSyncApp(
                         )
                     place == 1 && pairing ->
                         Column(Modifier.padding(padding)) {
-                            BackRow(label = "通路", onBack = { pairingOpen = false })
+                            BackRow(
+                                label = stringResource(R.string.tab_conduit),
+                                onBack = { pairingOpen = false },
+                            )
                             PairingScreen(viewModel = pairingViewModel)
                         }
                     place == 1 ->
@@ -797,6 +801,7 @@ private fun ClipSyncApp(
                             onRetentionDaysChange = preferencesViewModel::setRetentionDays,
                             onMaxEntriesChange = preferencesViewModel::setMaxEntries,
                             onClearHistory = preferencesViewModel::clearHistory,
+                            onLanguageChange = preferencesViewModel::setLanguage,
                             modifier = Modifier.padding(padding),
                         )
                 }
@@ -868,21 +873,21 @@ private fun ClipSyncDock(
         ) {
             DockItem(
                 icon = ClipSyncIcons.History,
-                label = "历史",
+                label = stringResource(R.string.tab_history),
                 active = selected == 0,
                 onClick = { onSelect(0) },
                 modifier = Modifier.weight(1f),
             )
             DockItem(
                 icon = ClipSyncIcons.Conduit,
-                label = "通路",
+                label = stringResource(R.string.tab_conduit),
                 active = selected == 1,
                 onClick = { onSelect(1) },
                 modifier = Modifier.weight(1f),
             )
             DockItem(
                 icon = ClipSyncIcons.Prefs,
-                label = "偏好",
+                label = stringResource(R.string.tab_prefs),
                 active = selected == 2,
                 onClick = { onSelect(2) },
                 modifier = Modifier.weight(1f),

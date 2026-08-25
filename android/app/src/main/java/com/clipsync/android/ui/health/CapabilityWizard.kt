@@ -19,9 +19,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.clipsync.android.R
+import com.clipsync.android.i18n.string
 import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncType
@@ -42,13 +45,13 @@ fun CapabilityWizard(
     val c = clipSyncColors
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = "打通后台读取的三条路线",
+            text = stringResource(R.string.wizard_title),
             style = ClipSyncType.sectionTitle,
             color = c.t1,
             modifier = Modifier.padding(start = 2.dp, top = 4.dp),
         )
         Text(
-            text = "任选一条完成即可；质量越高，复制到同步的延迟越小。授权状态每次回到本页都会重新探测。",
+            text = stringResource(R.string.wizard_subtitle),
             style = ClipSyncType.caption,
             color = c.t3,
             modifier = Modifier.padding(start = 2.dp, bottom = 2.dp),
@@ -85,7 +88,7 @@ private fun RouteCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = route.title,
+                text = route.title.string(),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = c.t1,
@@ -93,7 +96,7 @@ private fun RouteCard(
             QualityDots(filled = route.quality)
         }
         Text(
-            text = "代价：${route.cost}",
+            text = stringResource(R.string.wizard_cost, route.cost.string()),
             style = ClipSyncType.caption,
             color = c.t3,
         )
@@ -116,7 +119,7 @@ private fun RouteCard(
             )
             if (route.preferred) {
                 Text(
-                    text = "当前首选",
+                    text = stringResource(R.string.wizard_preferred),
                     style = ClipSyncType.meta,
                     fontWeight = FontWeight.SemiBold,
                     color = c.flow,
@@ -132,14 +135,14 @@ private fun RouteCard(
         }
         route.nextAction?.let { action ->
             RouteActionButton(
-                label = routeActionLabel(action),
+                label = routeActionLabel(action).string(),
                 primary = action != RouteActionId.SET_PREFERRED,
                 onClick = { onAction(action) },
             )
         }
         route.readTestAction?.let { action ->
             RouteActionButton(
-                label = routeActionLabel(action),
+                label = routeActionLabel(action).string(),
                 primary = true,
                 onClick = { onAction(action) },
             )
@@ -197,7 +200,7 @@ private fun StepRow(step: RouteStep) {
         )
         Spacer(Modifier.width(8.dp))
         Text(
-            text = step.label,
+            text = step.label.string(),
             style = ClipSyncType.caption,
             color = if (step.satisfied) c.t2 else c.t3,
         )
@@ -221,8 +224,9 @@ private fun QualityDots(filled: Int) {
     }
 }
 
+@Composable
 private fun routeProgressLabel(route: ReadRouteUi): String = when {
-    route.stepsRemaining > 0 -> "还差 ${route.stepsRemaining} 步"
-    route.readState == CapabilityState.DEGRADED -> "前提已就绪，等待实测验证"
-    else -> "前提已就绪"
+    route.stepsRemaining > 0 -> stringResource(R.string.wizard_steps_remaining, route.stepsRemaining)
+    route.readState == CapabilityState.DEGRADED -> stringResource(R.string.wizard_ready_pending_test)
+    else -> stringResource(R.string.wizard_ready)
 }

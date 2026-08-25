@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,11 +27,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.clipsync.android.R
+import com.clipsync.android.i18n.LanguageCatalog
+import com.clipsync.android.i18n.string
 import com.clipsync.android.storage.SyncSettingsStore
 import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncTheme
@@ -66,6 +72,8 @@ fun PreferencesScreen(
     onRetentionDaysChange: (Int) -> Unit = {},
     onMaxEntriesChange: (Int) -> Unit = {},
     onClearHistory: () -> Unit = {},
+    /** 语言 (P1#16): receives a catalog tag or [LanguageCatalog.FOLLOW_SYSTEM]. */
+    onLanguageChange: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
@@ -77,94 +85,96 @@ fun PreferencesScreen(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Text(
-            text = "偏好",
+            text = stringResource(R.string.prefs_title),
             style = ClipSyncType.pageTitle,
             color = c.t1,
             modifier = Modifier.padding(start = 2.dp, bottom = 14.dp),
         )
 
-        GroupHeader("显示")
+        GroupHeader(stringResource(R.string.prefs_group_display))
         Column(
             Modifier
                 .fillMaxWidth()
                 .charterCard(),
         ) {
             ChoiceRow(
-                title = "历史字号",
-                description = "只缩放历史里的内容文字，界面其余部分不变；与系统字体大小叠加。",
+                title = stringResource(R.string.prefs_history_font_size),
+                description = stringResource(R.string.prefs_history_font_size_desc),
                 options =
                     listOf(
-                        "小" to SyncSettingsStore.HISTORY_FONT_SCALE_SMALL,
-                        "标准" to SyncSettingsStore.HISTORY_FONT_SCALE_STANDARD,
-                        "大" to SyncSettingsStore.HISTORY_FONT_SCALE_LARGE,
+                        stringResource(R.string.font_small) to SyncSettingsStore.HISTORY_FONT_SCALE_SMALL,
+                        stringResource(R.string.font_standard) to SyncSettingsStore.HISTORY_FONT_SCALE_STANDARD,
+                        stringResource(R.string.font_large) to SyncSettingsStore.HISTORY_FONT_SCALE_LARGE,
                     ),
                 selected = state.historyFontScale,
                 onSelect = onHistoryFontScaleChange,
             )
             RowDivider()
             ChoiceRow(
-                title = "预览行数",
-                description = "历史列表每条内容最多显示的预览行数。",
-                options = SyncSettingsStore.PREVIEW_LINE_CHOICES.map { "$it 行" to it },
+                title = stringResource(R.string.prefs_preview_lines),
+                description = stringResource(R.string.prefs_preview_lines_desc),
+                options = SyncSettingsStore.PREVIEW_LINE_CHOICES.map {
+                    stringResource(R.string.prefs_preview_lines_option, it) to it
+                },
                 selected = state.previewLines,
                 onSelect = onPreviewLinesChange,
             )
             RowDivider()
             // 外观（settings-roadmap P1-6）：只在两套既有配色之间选择，绝无取色器。
             ChoiceRow(
-                title = "外观",
-                description = "跟随系统或手动固定日间/夜间；配色始终是既有的两套，不可自定义。",
+                title = stringResource(R.string.prefs_theme),
+                description = stringResource(R.string.prefs_theme_desc),
                 options =
                     listOf(
-                        "跟随系统" to SyncSettingsStore.THEME_SYSTEM,
-                        "日间" to SyncSettingsStore.THEME_DAY,
-                        "夜间" to SyncSettingsStore.THEME_NIGHT,
+                        stringResource(R.string.theme_system) to SyncSettingsStore.THEME_SYSTEM,
+                        stringResource(R.string.theme_day) to SyncSettingsStore.THEME_DAY,
+                        stringResource(R.string.theme_night) to SyncSettingsStore.THEME_NIGHT,
                     ),
                 selected = state.themeOverride,
                 onSelect = onThemeOverrideChange,
             )
+            RowDivider()
+            LanguageRow(selectedTag = state.languageTag, onSelect = onLanguageChange)
         }
 
         Spacer(Modifier.height(20.dp))
-        GroupHeader("同步")
+        GroupHeader(stringResource(R.string.prefs_group_sync))
         Column(
             Modifier
                 .fillMaxWidth()
                 .charterCard(),
         ) {
             ToggleRow(
-                title = "暂停同步",
-                description = "暂停后两端不再交换内容，已有历史保留。",
+                title = stringResource(R.string.prefs_pause_sync),
+                description = stringResource(R.string.prefs_pause_sync_desc),
                 checked = state.pauseSync,
                 onCheckedChange = onPauseSyncChange,
             )
             RowDivider()
             ToggleRow(
-                title = "私密模式",
-                description = "开启时本机复制的内容不离开这台设备。",
+                title = stringResource(R.string.prefs_private_mode),
+                description = stringResource(R.string.prefs_private_mode_desc),
                 checked = state.privateMode,
                 onCheckedChange = onPrivateModeChange,
             )
             RowDivider()
             ToggleRow(
-                title = "自动写入剪贴板",
-                description = "收到对端内容时，优先自动写入本机剪贴板。",
+                title = stringResource(R.string.prefs_auto_apply),
+                description = stringResource(R.string.prefs_auto_apply_desc),
                 checked = state.autoApplyRemote,
                 onCheckedChange = onAutoApplyRemoteChange,
             )
             RowDivider()
             ToggleRow(
-                title = "图片同步",
-                description =
-                    "同步复制或分享的 PNG/JPEG 图片（单张最大 16 MiB）。" +
-                        "需要两端都开启；对新连接生效。",
+                title = stringResource(R.string.prefs_image_sync),
+                description = stringResource(R.string.prefs_image_sync_desc),
                 checked = state.imageSync,
                 onCheckedChange = onImageSyncChange,
             )
             RowDivider()
             ToggleRow(
-                title = "自动写入远端图片",
-                description = "对端发来的图片自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。",
+                title = stringResource(R.string.prefs_auto_apply_images),
+                description = stringResource(R.string.prefs_auto_apply_images_desc),
                 checked = state.autoApplyImages,
                 onCheckedChange = onAutoApplyImagesChange,
             )
@@ -173,49 +183,55 @@ fun PreferencesScreen(
         Spacer(Modifier.height(20.dp))
         // IA 迁移过渡（settings-roadmap §4.2）：蓝牙备援已迁往通路网络段，
         // 此链接行保留一个发布版本后删除。
-        GroupHeader("蓝牙备援")
+        GroupHeader(stringResource(R.string.prefs_group_bt))
         Column(
             Modifier
                 .fillMaxWidth()
                 .charterCard(),
         ) {
-            LinkRow(title = "蓝牙备援", value = "已移至通路 · 网络", onClick = onOpenConduit)
+            LinkRow(
+                title = stringResource(R.string.bt_fallback_title),
+                value = stringResource(R.string.prefs_bt_moved),
+                onClick = onOpenConduit,
+            )
         }
 
         Spacer(Modifier.height(20.dp))
-        GroupHeader("捕获")
+        GroupHeader(stringResource(R.string.prefs_group_capture))
         Column(
             Modifier
                 .fillMaxWidth()
                 .charterCard(),
         ) {
             ToggleRow(
-                title = "跳过敏感内容",
-                description =
-                    "来源应用标记为敏感的复制（密码管理器等）不进历史、不同步。" +
-                        "依赖来源应用打标记；通过分享面板主动发送不受此限制。",
+                title = stringResource(R.string.prefs_skip_sensitive),
+                description = stringResource(R.string.prefs_skip_sensitive_desc),
                 checked = state.skipSensitive,
                 onCheckedChange = onSkipSensitiveChange,
             )
         }
 
         Spacer(Modifier.height(20.dp))
-        GroupHeader("历史")
+        GroupHeader(stringResource(R.string.prefs_group_history))
         Column(
             Modifier
                 .fillMaxWidth()
                 .charterCard(),
         ) {
             ToggleRow(
-                title = "自动过期清理",
-                description = "到期的历史条目自动删除，删除只作用于本机。",
+                title = stringResource(R.string.prefs_auto_expire),
+                description = stringResource(R.string.prefs_auto_expire_desc),
                 checked = state.autoExpire,
                 onCheckedChange = onAutoExpireChange,
             )
             RowDivider()
             StepperRow(
-                title = "保留时长",
-                value = if (state.autoExpire) "${state.retentionDays} 天" else "永久保留",
+                title = stringResource(R.string.prefs_retention_days),
+                value = if (state.autoExpire) {
+                    stringResource(R.string.prefs_retention_days_value, state.retentionDays)
+                } else {
+                    stringResource(R.string.prefs_retention_forever)
+                },
                 enabled = state.autoExpire,
                 canDecrement = state.retentionDays > SyncSettingsStore.MIN_RETENTION_DAYS,
                 canIncrement = state.retentionDays < SyncSettingsStore.MAX_RETENTION_DAYS,
@@ -224,8 +240,8 @@ fun PreferencesScreen(
             )
             RowDivider()
             StepperRow(
-                title = "保留条数",
-                value = "${state.maxEntries} 条",
+                title = stringResource(R.string.prefs_max_entries),
+                value = stringResource(R.string.prefs_max_entries_value, state.maxEntries),
                 enabled = true,
                 canDecrement = state.maxEntries > SyncSettingsStore.MIN_MAX_ENTRIES,
                 canIncrement = state.maxEntries < SyncSettingsStore.MAX_MAX_ENTRIES,
@@ -233,51 +249,50 @@ fun PreferencesScreen(
                 onIncrement = { onMaxEntriesChange(state.maxEntries + MAX_ENTRIES_STEP) },
             )
             RowDivider()
-            ValueRow(title = "单条上限", value = "${formatByteCap(state.maxSyncTextBytes)} · 纯文本")
+            ValueRow(
+                title = stringResource(R.string.prefs_item_cap),
+                value = stringResource(R.string.prefs_item_cap_value, formatByteCap(state.maxSyncTextBytes)),
+            )
         }
 
         Spacer(Modifier.height(20.dp))
-        GroupHeader("运行")
+        GroupHeader(stringResource(R.string.prefs_group_run))
         Column(
             Modifier
                 .fillMaxWidth()
                 .charterCard(),
         ) {
             ToggleRow(
-                title = "开机恢复",
-                description = "设备重启后自动恢复同步服务。若系统阻止启动，会以通知提醒你手动恢复。",
+                title = stringResource(R.string.prefs_boot_restore),
+                description = stringResource(R.string.prefs_boot_restore_desc),
                 checked = state.bootRestore,
                 onCheckedChange = onBootRestoreChange,
             )
             RowDivider()
             ToggleRow(
-                title = "收到内容通知",
-                description = "收到对端内容时发出通知（永不含内容正文）。关闭后同步与历史照常，仅不再提醒。",
+                title = stringResource(R.string.prefs_inbox_notify),
+                description = stringResource(R.string.prefs_inbox_notify_desc),
                 checked = state.inboxNotify,
                 onCheckedChange = onInboxNotifyChange,
             )
         }
 
         Spacer(Modifier.height(20.dp))
-        GroupHeader("数据")
+        GroupHeader(stringResource(R.string.prefs_group_data))
         Column(
             Modifier
                 .fillMaxWidth()
                 .charterCard(),
         ) {
             ActionRow(
-                title = "导出历史",
-                description =
-                    "把全部历史（含删除标记）写成 JSON Lines 备份文件；" +
-                        "不含密钥与配对信息。导出内容为明文，请妥善保管。",
+                title = stringResource(R.string.prefs_export),
+                description = stringResource(R.string.prefs_export_desc),
                 onClick = onExportHistory,
             )
             RowDivider()
             ActionRow(
-                title = "导入历史",
-                description =
-                    "从备份文件合并历史：按「来源设备 + 序号」幂等去重，" +
-                        "重复导入不产生重复条目。校验失败时不做任何改动。",
+                title = stringResource(R.string.prefs_import),
+                description = stringResource(R.string.prefs_import_desc),
                 onClick = onImportHistory,
             )
             RowDivider()
@@ -285,7 +300,7 @@ fun PreferencesScreen(
             if (state.transferStatus != null) {
                 RowDivider()
                 Text(
-                    text = state.transferStatus,
+                    text = state.transferStatus.string(),
                     style = ClipSyncType.caption,
                     color = c.t3,
                     modifier =
@@ -297,16 +312,20 @@ fun PreferencesScreen(
         }
 
         Spacer(Modifier.height(20.dp))
-        GroupHeader("设备")
+        GroupHeader(stringResource(R.string.prefs_group_device))
         Column(
             Modifier
                 .fillMaxWidth()
                 .charterCard(),
         ) {
             if (pairedDeviceName != null) {
-                ValueRow(title = "已配对设备", value = pairedDeviceName)
+                ValueRow(title = stringResource(R.string.prefs_paired_device), value = pairedDeviceName)
                 RowDivider()
-                LinkRow(title = "管理配对", value = "通路 · 网络", onClick = onOpenConduit)
+                LinkRow(
+                    title = stringResource(R.string.prefs_manage_pairing),
+                    value = stringResource(R.string.prefs_conduit_network),
+                    onClick = onOpenConduit,
+                )
             } else {
                 DeviceEmptyState(onOpenConduit = onOpenConduit)
             }
@@ -391,6 +410,57 @@ private fun ToggleRow(
                     uncheckedBorderColor = c.ln2,
                 ),
         )
+    }
+}
+
+/**
+ * 语言 (settings-roadmap P1#16): 跟随系统 plus the 19 catalog languages as a
+ * wrapping chip field. Every language shows its own endonym — never translated
+ * (charter: a person hunting for their language must be able to recognise it).
+ * The catalog is the single cross-platform authority; no list is invented here.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun LanguageRow(
+    selectedTag: String,
+    onSelect: (String) -> Unit,
+) {
+    val c = clipSyncColors
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+    ) {
+        Text(text = stringResource(R.string.prefs_language), fontSize = 14.sp, color = c.t1)
+        Spacer(Modifier.height(2.dp))
+        Text(text = stringResource(R.string.prefs_language_desc), style = ClipSyncType.caption, color = c.t3)
+        Spacer(Modifier.height(8.dp))
+        val options =
+            listOf(LanguageCatalog.FOLLOW_SYSTEM to stringResource(R.string.prefs_language_follow_system)) +
+                LanguageCatalog.LANGUAGES.map { it.tag to it.nativeName }
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            val shape = CharterShapes.control
+            options.forEach { (tag, label) ->
+                val isSelected = tag == selectedTag
+                Text(
+                    text = label,
+                    fontSize = 13.sp,
+                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                    color = if (isSelected) c.flow else c.t3,
+                    modifier =
+                        Modifier
+                            .clip(shape)
+                            .background(if (isSelected) c.flowBg else c.sf3)
+                            .border(1.dp, if (isSelected) c.flowLn else c.ln2, shape)
+                            .clickable { onSelect(tag) }
+                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                )
+            }
+        }
     }
 }
 
@@ -515,8 +585,8 @@ private fun ClearHistoryRow(onClearHistory: () -> Unit) {
     var confirming by remember { mutableStateOf(false) }
     if (!confirming) {
         ActionRow(
-            title = "清空历史",
-            description = "一次删除本机全部历史（含图片），不影响对端。建议先导出历史。",
+            title = stringResource(R.string.prefs_clear_history),
+            description = stringResource(R.string.prefs_clear_history_desc),
             onClick = { confirming = true },
         )
     } else {
@@ -526,10 +596,10 @@ private fun ClearHistoryRow(onClearHistory: () -> Unit) {
                     .fillMaxWidth()
                     .padding(horizontal = 14.dp, vertical = 12.dp),
         ) {
-            Text(text = "确定清空全部历史？", fontSize = 14.sp, color = c.t1)
+            Text(text = stringResource(R.string.prefs_clear_confirm_title), fontSize = 14.sp, color = c.t1)
             Spacer(Modifier.height(2.dp))
             Text(
-                text = "删除仅作用于本机、无法撤销；对端的历史不受影响。建议先导出历史。",
+                text = stringResource(R.string.prefs_clear_confirm_body),
                 style = ClipSyncType.caption,
                 color = c.t3,
             )
@@ -537,7 +607,7 @@ private fun ClearHistoryRow(onClearHistory: () -> Unit) {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 val shape = CharterShapes.control
                 Text(
-                    text = "确认清空",
+                    text = stringResource(R.string.prefs_clear_confirm_action),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = c.t1,
@@ -553,7 +623,7 @@ private fun ClearHistoryRow(onClearHistory: () -> Unit) {
                             .padding(horizontal = 14.dp, vertical = 7.dp),
                 )
                 Text(
-                    text = "取消",
+                    text = stringResource(R.string.common_cancel),
                     fontSize = 13.sp,
                     color = c.flow,
                     modifier =
@@ -662,15 +732,15 @@ private fun DeviceEmptyState(onOpenConduit: () -> Unit) {
                 .padding(horizontal = 14.dp, vertical = 14.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Text(text = "尚无已配对设备", fontSize = 14.sp, color = c.t1)
+        Text(text = stringResource(R.string.prefs_no_device), fontSize = 14.sp, color = c.t1)
         Text(
-            text = "配对入口在「通路」页的网络段；配对后这里会显示对端名称。",
+            text = stringResource(R.string.prefs_no_device_hint),
             style = ClipSyncType.caption,
             color = c.t3,
         )
         val shape = CharterShapes.control
         Text(
-            text = "去配对 ›",
+            text = stringResource(R.string.action_go_pair) + " ›",
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
             color = c.flow,

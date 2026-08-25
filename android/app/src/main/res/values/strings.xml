@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    P1#16 多语言：本文件（默认资源）即简体中文（zh-Hans）文案，也是文档化的兜底语言 —
+    任何语言缺失的键一律回落到这里。其余 18 种语言在 values-b+…/strings.xml。
+    键一经发布只增不改（与协议字段同规）。
+-->
 <resources>
     <string name="app_name">ClipSync</string>
+
+    <!-- 品牌名：中文语言里是「剪剪相传」，其余语言用拉丁品牌 ClipSync（品牌不翻译，不新造）。 -->
+    <string name="brand_name">剪剪相传</string>
 
     <!-- 系统入口 -->
     <string name="share_target_label">发送到电脑</string>
@@ -63,4 +71,351 @@
     <string name="toast_copied">已复制到剪贴板</string>
     <string name="toast_copy_failed">复制失败，请打开应用后重试</string>
     <string name="toast_copy_missing">该内容已不在收件箱中</string>
+
+    <!-- 导航（dock 三席） -->
+    <string name="tab_history">历史</string>
+    <string name="tab_conduit">通路</string>
+    <string name="tab_prefs">偏好</string>
+
+    <!-- 通用 -->
+    <string name="common_cancel">取消</string>
+    <string name="common_done">完成</string>
+    <string name="common_collapse">收起</string>
+    <string name="action_go_pair">去配对</string>
+
+    <!-- 一屏（历史） -->
+    <string name="home_search_hint">搜索</string>
+    <string name="home_notice_copied">已写入系统剪贴板</string>
+    <string name="home_notice_copy_failed">复制失败 · %1$s</string>
+    <string name="home_notice_deleted">已从本机移除 · 不影响其他设备</string>
+    <string name="home_no_match_query">没有匹配「%1$s」的记录</string>
+    <string name="home_no_match_format">没有「%1$s」类的记录</string>
+    <string name="home_empty_paired_title">静候第一条剪贴</string>
+    <string name="home_empty_unpaired_title">先把两端接起来</string>
+    <string name="home_empty_paired_body">在任意一端复制文本，它会出现在这里并流向对面。</string>
+    <string name="home_empty_unpaired_body">尚未与电脑配对。配对入口在「通路」页的网络段。</string>
+    <string name="home_remove_local">移除 · 仅本机</string>
+    <string name="format_all">全部</string>
+    <string name="format_link">链接</string>
+    <string name="format_otp">验证码</string>
+    <string name="format_email">账号</string>
+    <string name="format_credential">密码</string>
+    <string name="format_plain">文本</string>
+    <string name="badge_image">图片</string>
+    <string name="badge_local_only">仅本机保留</string>
+    <string name="image_clip_description">图片剪贴</string>
+    <string name="source_from_description">来自</string>
+    <string name="remote_device_fallback">远端设备</string>
+    <string name="time_yesterday">昨天</string>
+    <!-- java.time 日期格式模板（不是给人读的文案）：同年 / 跨年 -->
+    <string name="time_pattern_same_year">M月d日</string>
+    <string name="time_pattern_other_year">yyyy年M月d日</string>
+
+    <!-- 通路（页面 chrome） -->
+    <string name="conduit_reprobe">重新探测</string>
+    <string name="conduit_segment_local_read">本机读取</string>
+    <string name="conduit_segment_local_service">本机服务</string>
+    <string name="conduit_segment_network">网络</string>
+    <string name="conduit_segment_peer_write">对端写入</string>
+    <string name="conduit_segment_local_write">本机写回</string>
+    <string name="conduit_wizard_open">打开引导</string>
+    <string name="conduit_wizard_close">收起引导</string>
+    <string name="conduit_service_start">启动服务</string>
+    <string name="conduit_service_stop">停止服务</string>
+    <string name="conduit_manage_pairing">管理配对</string>
+    <string name="conduit_test_write">测试写入</string>
+    <string name="conduit_paired_devices_count">已配对设备 · %1$d</string>
+    <string name="conduit_no_paired_devices">尚无已配对设备</string>
+    <string name="conduit_pair_hint">在电脑上打开「剪剪相传」出示二维码，配对在网络段完成。</string>
+    <string name="conduit_flow_line">内容将从这里流过</string>
+    <string name="conduit_notifications_off_title">通知已关闭</string>
+    <string name="conduit_notifications_off_body">同步照常进行，但「收到内容」与「需要恢复」的通知不会出现。</string>
+    <string name="conduit_notifications_off_action">去系统设置开启</string>
+    <string name="conduit_inbox_notify_off_title">收到内容通知已关闭</string>
+    <string name="conduit_inbox_notify_off_body">同步与历史照常，但收到对端内容时不再提醒。可在「偏好 · 运行」重新开启。</string>
+    <string name="conduit_band_blocked">通路未接通</string>
+    <string name="conduit_band_ready">通路畅通</string>
+    <string name="conduit_band_partial">通路部分接通</string>
+    <string name="conduit_band_blocked_sub">尚未与电脑配对 · 轻触处理</string>
+    <string name="conduit_band_ready_sub">内容正在两端流动</string>
+    <string name="conduit_band_partial_sub">有环节降级或未探测</string>
+    <string name="device_accent_label">设备色</string>
+    <string name="device_accent_default">跟随配对顺位</string>
+    <string name="device_accent_manual">手动指定</string>
+
+    <!-- 通路：状态词（statusLabel） -->
+    <string name="status_ready">就绪</string>
+    <string name="status_degraded">降级</string>
+    <string name="status_degraded_foreground">降级 · 仅前台</string>
+    <string name="status_unavailable">不可用</string>
+    <string name="status_unprobed">未探测</string>
+    <string name="status_needs_action">需要你操作</string>
+    <string name="status_needs_auth">待授权</string>
+    <string name="status_start_failed">启动失败</string>
+    <string name="status_not_running">未运行</string>
+    <string name="status_connected">已连接</string>
+    <string name="status_connected_bt">已连接 · 蓝牙备援</string>
+    <string name="status_throttled">已被对端限流</string>
+    <string name="status_peer_reachable">对端可达</string>
+    <string name="status_cert_mismatch">证书不匹配</string>
+    <string name="status_paired_unreachable">已配对 · 不可达</string>
+    <string name="status_paired_not_connected">已配对 · 未连接</string>
+    <string name="status_verified">已验证</string>
+    <string name="status_enabled">已开启</string>
+    <string name="status_peer_apply_off">对端关闭自动写入</string>
+    <string name="status_peer_paused">对端已暂停</string>
+    <string name="status_write_failed">写入失败</string>
+    <string name="status_untested">未测试</string>
+    <string name="status_limited">受限</string>
+    <string name="status_authorized_pending_test">已授权 · 待实测</string>
+
+    <!-- 通路：本机读取 -->
+    <string name="read_none_detail">应用在前台时可读取剪贴板；后台读取能力尚未接入。</string>
+    <string name="read_foreground_detail">前台读取可用；后台读取需要额外授权。</string>
+    <string name="read_ready_detail">后台读取可用（%1$s）。</string>
+    <string name="read_degraded_detail">读取能力降级（%1$s）；部分内容可能需要手动发送。</string>
+    <string name="read_unavailable_detail">后台读取暂不可用；前台复制与分享面板仍然可用。</string>
+    <string name="read_unknown_detail">读取能力尚未探测。缺信息 ≠ 坏消息。</string>
+    <string name="read_needs_auth_detail">读取能力需要先完成授权或设置（%1$s）。</string>
+    <string name="read_fact_route_state">%1$s：%2$s</string>
+    <string name="read_fact_foreground">前台读取：应用可见时始终可用（手动兜底）</string>
+    <string name="read_fact_preferred">首选路线：%1$s</string>
+    <string name="localread_degraded_pending_detail">前提已就绪，读取通道等待实测验证；期间前台读取仍可用。</string>
+    <string name="localread_needs_action_detail">后台读取尚未打通。三条路线任选一条完成即可；前台复制不受影响。</string>
+
+    <!-- 通路：本机服务 -->
+    <string name="service_ready_no_sync_detail">应用运行正常；后台同步服务将在后续阶段接入。</string>
+    <string name="service_running_detail">同步服务运行中。</string>
+    <string name="service_fact_fgs">前台服务只负责保持连接与调度，不等于获得剪贴板权限。</string>
+    <string name="service_fact_notification">通知栏会显示常驻通知；停止服务即移除。</string>
+    <string name="service_start_failed_detail">同步服务启动失败（%1$s）；应用在前台时仍可同步。</string>
+    <string name="service_not_running_detail">同步服务未运行；应用在前台时仍可同步。</string>
+    <string name="service_fact_start_notification">启动后会显示一条常驻通知。</string>
+
+    <!-- 通路：网络 -->
+    <string name="network_unpaired_detail">尚未与 Windows 配对。在电脑上打开「剪剪相传」，选择「配对新设备」。</string>
+    <string name="network_bt_detail">IP 路径不可达，正在通过蓝牙与「%1$s」同步（仅文本，速度较慢）。</string>
+    <string name="network_bt_fact_switchback">IP 恢复后自动切回，无需操作。</string>
+    <string name="network_bt_fact_images">蓝牙期间复制的图片不会同步，且事后不补传。</string>
+    <string name="network_connected_detail">与「%1$s」保持连接。</string>
+    <string name="network_throttled_detail">「%1$s」检测到本机多次认证失败，已临时限流。约 30 秒后自动重试。</string>
+    <string name="network_throttled_error">若持续出现，通常表示配对凭据已失效（例如电脑端撤销或重装后）；重新配对可恢复。</string>
+    <string name="network_reachable_detail">与「%1$s」握手成功（固定证书 TLS）；同步通道尚未接入。</string>
+    <string name="network_probe_fact">探测方式：固定证书 TLS 请求 /v1/peer/health。</string>
+    <string name="network_cert_mismatch_detail">已与「%1$s」配对，但对端出示了不同的证书。</string>
+    <string name="network_cert_mismatch_error">对端证书与固定指纹不符，连接已被阻止。若非你重装了 Windows 端，请检查网络环境；重新配对可更新指纹。</string>
+    <string name="network_unreachable_detail">已与「%1$s」配对，当前探测不可达。</string>
+    <string name="network_unreachable_fact">确认两台设备在同一局域网 / VPN，且 Windows 端正在运行。</string>
+    <string name="network_not_connected_detail">已与「%1$s」配对；同步通道尚未接入。</string>
+    <string name="network_waiting_detail">已与「%1$s」配对，正在等待连接。</string>
+
+    <!-- 通路：对端写入 -->
+    <string name="peer_write_unprobed_detail">网络接通后才能探测对端写入能力。缺信息 ≠ 坏消息。</string>
+    <string name="peer_write_ready_detail">对端可以自动写入剪贴板。</string>
+    <string name="peer_write_degraded_detail">对端写入能力降级，部分内容可能需要手动粘贴。</string>
+    <string name="peer_write_unavailable_detail">对端暂时无法写入剪贴板；内容仍会保存到历史。</string>
+    <string name="peer_write_needs_auth_detail">对端写入能力需要先完成授权或设置。</string>
+    <string name="peer_write_attribution">依据：对端在 /v1/peer/health 的自报，随通路探测刷新。</string>
+    <string name="peer_write_applied_detail">对端已开启自动写入，最近一次内容已实际写入其剪贴板。</string>
+    <string name="peer_write_unverified_detail">对端已开启自动写入；等待第一条内容实际写入后即为已验证。</string>
+    <string name="peer_write_off_detail">内容会进入对端历史，需在对端手动复制。这是对端的设置，不是故障。</string>
+    <string name="peer_write_paused_detail">对端暂停了同步：内容仍会进入其历史，但不写入其剪贴板。</string>
+    <string name="peer_write_failed_detail">对端已开启自动写入，内容也会进入其历史。</string>
+    <string name="peer_write_failed_error">对端报告最近一次剪贴板写入失败；内容可在对端历史手动复制。</string>
+    <string name="peer_write_unreported_detail">对端未上报写入能力（对端版本较旧，或本轮探测尚未返回）。缺信息 ≠ 坏消息。</string>
+    <string name="peer_write_unreported_fact">对端写入状态来自 /v1/peer/health 的自报字段 clipboard_apply_text。</string>
+
+    <!-- 通路：本机写回 -->
+    <string name="write_fact_public">公开写入（setPrimaryClip）：%1$s</string>
+    <string name="write_fact_last_error">最近错误码：%1$s</string>
+    <string name="write_fact_test_hygiene">测试只写入应用生成的随机文本，校验后立即清除。</string>
+    <string name="write_ready_detail">公开写入已实测可用；对端内容可自动进入本机剪贴板。</string>
+    <string name="write_degraded_detail">写入能力受限，部分内容可能需要从通知手动复制。</string>
+    <string name="write_unavailable_detail">自动写入暂不可用；内容仍会保存到历史，可从通知手动复制。</string>
+    <string name="write_untested_detail">写入能力以实测为准；点「测试写入」验证一次。</string>
+    <string name="write_needs_auth_detail">写入能力需要先完成授权或设置。</string>
+
+    <!-- 通路：测试结果条 -->
+    <string name="test_write_passed">写入测试通过（测试文本已清除）</string>
+    <string name="test_write_failed">写入测试失败：%1$s</string>
+    <string name="test_read_passed">后台读取测试通过（测试文本已清除）</string>
+    <string name="test_read_failed">后台读取测试失败：%1$s</string>
+    <string name="test_reason_unknown">未知原因</string>
+    <string name="adb_command_copied">已复制 adb 命令；在电脑上执行后回来点「重新探测」</string>
+
+    <!-- 能力路线（读取方式与向导） -->
+    <string name="route_privileged">特权直读</string>
+    <string name="route_log_overlay">日志感知 + 悬浮窗</string>
+    <string name="route_overlay_polling">悬浮窗轮询</string>
+    <string name="route_foreground">前台/手动</string>
+    <string name="route_privileged_cost">授权一次即可；设备重启后特权通道可能需要重新就绪</string>
+    <string name="route_log_overlay_cost">需在电脑上用 adb 授予 READ_LOGS，并开启悬浮窗权限</string>
+    <string name="route_overlay_polling_cost">仅需悬浮窗权限；不需要电脑，代价是耗电和轮询延迟</string>
+    <string name="step_privileged_channel">特权通道可用</string>
+    <string name="step_privileged_authorized">已授权本应用</string>
+    <string name="step_read_logs">READ_LOGS 已授予（需电脑 adb）</string>
+    <string name="step_overlay">悬浮窗权限已开启</string>
+    <string name="step_battery">电池优化已放行</string>
+    <string name="route_action_authorize">授权特权直读</string>
+    <string name="route_action_copy_adb">复制 adb 命令</string>
+    <string name="route_action_overlay_settings">去设置悬浮窗</string>
+    <string name="route_action_battery_settings">去设置电池</string>
+    <string name="route_action_set_preferred">设为首选路线</string>
+    <string name="route_action_read_test">测试后台读取</string>
+    <string name="read_state_unprobed">未探测</string>
+    <string name="read_state_ready">就绪</string>
+    <string name="read_state_pending_test">待实测（%1$s）</string>
+    <string name="read_state_unverified">未验证</string>
+    <string name="read_state_blocked">未打通（%1$s）</string>
+    <string name="read_state_reason_unknown">原因未知</string>
+    <string name="read_state_needs_auth">待授权（%1$s）</string>
+    <string name="read_state_needs_user">需用户操作</string>
+    <string name="capability_verified">已验证可用</string>
+    <string name="capability_limited">受限</string>
+    <string name="capability_unavailable">不可用</string>
+    <string name="capability_untested">未测试</string>
+    <string name="capability_needs_auth">待授权</string>
+    <string name="wizard_title">打通后台读取的三条路线</string>
+    <string name="wizard_subtitle">任选一条完成即可；质量越高，复制到同步的延迟越小。授权状态每次回到本页都会重新探测。</string>
+    <string name="wizard_cost">代价：%1$s</string>
+    <string name="wizard_preferred">当前首选</string>
+    <string name="wizard_steps_remaining">还差 %1$d 步</string>
+    <string name="wizard_ready_pending_test">前提已就绪，等待实测验证</string>
+    <string name="wizard_ready">前提已就绪</string>
+
+    <!-- 蓝牙备援卡（通路 · 网络段） -->
+    <string name="bt_fallback_title">蓝牙备援</string>
+    <string name="bt_fallback_desc">IP 路径全部不可达时（例如代理/VPN 全局接管），通过系统已配对的蓝牙设备继续同步文本。仅文本、速度较慢；IP 恢复后自动切回。</string>
+    <string name="bt_target_device">蓝牙目标设备</string>
+    <string name="bt_target_current">当前：%1$s</string>
+    <string name="bt_target_none">未选择 · 需先在系统设置里与电脑完成蓝牙配对</string>
+    <string name="bt_no_devices">没有可选的已配对设备。请确认系统蓝牙已开启、连接权限已授予，并先在系统设置里与电脑完成蓝牙配对。</string>
+
+    <!-- 配对仪式 -->
+    <string name="pairing_title">与 Windows 配对</string>
+    <string name="pairing_cert_prefix">证书 %1$s…</string>
+    <string name="pairing_trust_epoch">信任纪元 %1$d</string>
+    <string name="pairing_forget">忘记此配对</string>
+    <string name="pairing_rescan_hint">扫描新码会在你确认后替换当前配对。</string>
+    <string name="pairing_intro">在电脑上打开「剪剪相传」，选择「配对新设备」，然后扫描它显示的二维码。</string>
+    <string name="pairing_stop_scan">停止扫描</string>
+    <string name="pairing_scan_qr">扫描二维码</string>
+    <string name="pairing_camera_denied">相机权限被拒绝。仍可在下方粘贴配对内容完成配对。</string>
+    <string name="pairing_paste_label">或粘贴配对内容</string>
+    <string name="pairing_use_pasted">使用粘贴的内容</string>
+    <string name="pairing_confirm_title">确认此电脑</string>
+    <string name="pairing_confirm_hint">仅当下方名称和证书指纹与 Windows 应用显示的一致时再继续。</string>
+    <string name="pairing_cert_changed_title">警告：证书已变更</string>
+    <string name="pairing_cert_changed_body">此电脑的证书自上次配对后已变更。若你没有在 Windows 上重装「剪剪相传」，请停止并检查该电脑。</string>
+    <string name="pairing_confirm_replace">我已核实 — 替换配对</string>
+    <string name="pairing_confirm_match">指纹一致 — 配对</string>
+    <string name="pairing_fingerprint_header">证书指纹</string>
+    <string name="pairing_address_header">地址</string>
+    <string name="pairing_waiting_title">等待批准…</string>
+    <string name="pairing_waiting_body">请在「%1$s」的剪剪相传窗口中批准此手机。</string>
+    <string name="pairing_done_title">已配对</string>
+    <string name="pairing_done_body">信任与密钥已安全存储，网络段就此接通。</string>
+    <string name="pairing_failed_title">配对失败</string>
+    <string name="pairing_fail_invalid">这不是有效的剪剪相传配对码。</string>
+    <string name="pairing_fail_own_device">这个码标识的是本机自己。</string>
+    <string name="pairing_fail_cert_mismatch">电脑出示的证书与二维码承诺的不一致，配对已被阻止。请检查网络，并在 Windows 上重新打开二维码窗口。</string>
+    <string name="pairing_fail_unreachable">无法连接到电脑。请确认两台设备在同一网络。</string>
+    <string name="pairing_fail_rejected">请求在电脑上被拒绝。</string>
+    <string name="pairing_fail_timeout">电脑未在限时内批准。请出示新的二维码后重试。</string>
+    <string name="pairing_fail_token_invalid">这个码已被使用或已取消。请出示新的二维码。</string>
+    <string name="pairing_fail_token_expired">这个码已过期。出示新的二维码后请尽快扫描。</string>
+    <string name="pairing_fail_protocol">电脑的应答超出配对协议。请将两端更新到匹配的版本。</string>
+    <string name="pairing_restart">重新开始</string>
+
+    <!-- 偏好 -->
+    <string name="prefs_title">偏好</string>
+    <string name="prefs_group_display">显示</string>
+    <string name="prefs_history_font_size">历史字号</string>
+    <string name="prefs_history_font_size_desc">只缩放历史里的内容文字，界面其余部分不变；与系统字体大小叠加。</string>
+    <string name="font_small">小</string>
+    <string name="font_standard">标准</string>
+    <string name="font_large">大</string>
+    <string name="prefs_preview_lines">预览行数</string>
+    <string name="prefs_preview_lines_desc">历史列表每条内容最多显示的预览行数。</string>
+    <string name="prefs_preview_lines_option">%1$d 行</string>
+    <!-- 外观（P1#6）：只在两套既有配色之间选择 -->
+    <string name="prefs_theme">外观</string>
+    <string name="prefs_theme_desc">跟随系统或手动固定日间/夜间；配色始终是既有的两套，不可自定义。</string>
+    <string name="theme_system">跟随系统</string>
+    <string name="theme_day">日间</string>
+    <string name="theme_night">夜间</string>
+    <string name="prefs_language">语言</string>
+    <string name="prefs_language_desc">界面语言即时生效；每种语言以其母语名显示，不随界面语言翻译。</string>
+    <string name="prefs_language_follow_system">跟随系统</string>
+    <string name="prefs_group_sync">同步</string>
+    <string name="prefs_pause_sync">暂停同步</string>
+    <string name="prefs_pause_sync_desc">暂停后两端不再交换内容，已有历史保留。</string>
+    <string name="prefs_private_mode">私密模式</string>
+    <string name="prefs_private_mode_desc">开启时本机复制的内容不离开这台设备。</string>
+    <string name="prefs_auto_apply">自动写入剪贴板</string>
+    <string name="prefs_auto_apply_desc">收到对端内容时，优先自动写入本机剪贴板。</string>
+    <string name="prefs_image_sync">图片同步</string>
+    <string name="prefs_image_sync_desc">同步复制或分享的 PNG/JPEG 图片（单张最大 16 MiB）。需要两端都开启；对新连接生效。</string>
+    <string name="prefs_auto_apply_images">自动写入远端图片</string>
+    <string name="prefs_auto_apply_images_desc">对端发来的图片自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。</string>
+    <string name="prefs_group_bt">蓝牙备援</string>
+    <string name="prefs_bt_moved">已移至通路 · 网络</string>
+    <string name="prefs_group_capture">捕获</string>
+    <string name="prefs_skip_sensitive">跳过敏感内容</string>
+    <string name="prefs_skip_sensitive_desc">来源应用标记为敏感的复制（密码管理器等）不进历史、不同步。依赖来源应用打标记；通过分享面板主动发送不受此限制。</string>
+    <string name="prefs_group_history">历史</string>
+    <string name="prefs_auto_expire">自动过期清理</string>
+    <string name="prefs_auto_expire_desc">到期的历史条目自动删除，删除只作用于本机。</string>
+    <string name="prefs_retention_days">保留时长</string>
+    <string name="prefs_retention_days_value">%1$d 天</string>
+    <string name="prefs_retention_forever">永久保留</string>
+    <string name="prefs_max_entries">保留条数</string>
+    <string name="prefs_max_entries_value">%1$d 条</string>
+    <string name="prefs_item_cap">单条上限</string>
+    <string name="prefs_item_cap_value">%1$s · 纯文本</string>
+    <string name="prefs_group_run">运行</string>
+    <string name="prefs_boot_restore">开机恢复</string>
+    <string name="prefs_boot_restore_desc">设备重启后自动恢复同步服务。若系统阻止启动，会以通知提醒你手动恢复。</string>
+    <string name="prefs_inbox_notify">收到内容通知</string>
+    <string name="prefs_inbox_notify_desc">收到对端内容时发出通知（永不含内容正文）。关闭后同步与历史照常，仅不再提醒。</string>
+    <string name="prefs_group_data">数据</string>
+    <string name="prefs_export">导出历史</string>
+    <string name="prefs_export_desc">把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥与配对信息。导出内容为明文，请妥善保管。</string>
+    <string name="prefs_import">导入历史</string>
+    <string name="prefs_import_desc">从备份文件合并历史：按「来源设备 + 序号」幂等去重，重复导入不产生重复条目。校验失败时不做任何改动。</string>
+    <string name="prefs_clear_history">清空历史</string>
+    <string name="prefs_clear_history_desc">一次删除本机全部历史（含图片），不影响对端。建议先导出历史。</string>
+    <string name="prefs_clear_confirm_title">确定清空全部历史？</string>
+    <string name="prefs_clear_confirm_body">删除仅作用于本机、无法撤销；对端的历史不受影响。建议先导出历史。</string>
+    <string name="prefs_clear_confirm_action">确认清空</string>
+    <string name="prefs_group_device">设备</string>
+    <string name="prefs_paired_device">已配对设备</string>
+    <string name="prefs_manage_pairing">管理配对</string>
+    <string name="prefs_conduit_network">通路 · 网络</string>
+    <string name="prefs_no_device">尚无已配对设备</string>
+    <string name="prefs_no_device_hint">配对入口在「通路」页的网络段；配对后这里会显示对端名称。</string>
+
+    <!-- 数据组操作结果（导出/导入/清空） -->
+    <string name="transfer_export_done">已导出 %1$d 条记录（明文），请妥善保管备份文件。</string>
+    <string name="transfer_export_failed">导出失败：无法写入所选文件。</string>
+    <string name="transfer_import_done">导入完成：新增 %1$d · 已存在 %2$d · 冲突 %3$d</string>
+    <string name="transfer_import_failed">导入失败：%1$s。未做任何改动。</string>
+    <string name="transfer_import_read_failed">导入失败：无法读取所选文件。</string>
+    <string name="transfer_cleared">已清空 %1$d 条历史（仅本机，不影响对端）。</string>
+    <string name="transfer_err_bad_header">这不是 ClipSync 历史导出文件</string>
+    <string name="transfer_err_version">文件版本高于本应用支持的版本</string>
+    <string name="transfer_err_malformed">文件内容损坏（记录格式错误）</string>
+    <string name="transfer_err_hash">文件内容损坏（哈希校验失败）</string>
+    <string name="transfer_err_count">文件不完整（条数与头部不符）</string>
+    <string name="transfer_err_too_large">文件包含超过 1 MiB 的条目</string>
+    <string name="transfer_err_unknown">未知错误</string>
+
+    <!-- 首次运行 -->
+    <string name="onboarding_subtitle">剪贴板在手机与电脑之间安静地流动。</string>
+    <string name="onboarding_tab_history_desc">两端复制过的内容都汇在这里，轻触任意一条即可再次复制到本机。</string>
+    <string name="onboarding_tab_conduit_desc">内容流动的每一段都如实显示。与电脑配对的入口就在这里——网络段的「去配对」。</string>
+    <string name="onboarding_tab_prefs_desc">暂停同步、私密模式、保留期——每个开关都真实生效，改动立即落盘。</string>
+    <string name="onboarding_honesty_header">先说清楚</string>
+    <string name="onboarding_honesty_body">Android 限制应用在后台读取剪贴板，剪剪相传不会假装做到：应用在前台时可自动上行；后台读取需要在「通路」页任选一条路线完成授权，每一段能力都以实测为准，做不到就直说。</string>
+    <string name="onboarding_skip">先看看，稍后配对</string>
 </resources>

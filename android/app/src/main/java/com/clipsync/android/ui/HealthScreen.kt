@@ -52,11 +52,15 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.clipsync.android.R
+import com.clipsync.android.i18n.UiText
+import com.clipsync.android.i18n.string
 import com.clipsync.android.ui.health.BluetoothFallbackCard
 import com.clipsync.android.ui.health.BluetoothFallbackUi
 import com.clipsync.android.ui.health.CapabilityWizard
@@ -95,13 +99,13 @@ enum class ConduitStatus {
 }
 
 data class ConduitSegmentState(
-    val statusLabel: String,
-    val detail: String,
+    val statusLabel: UiText,
+    val detail: UiText,
     val status: ConduitStatus,
     /** Extra fact lines shown when the segment card is expanded. */
-    val detailLines: List<String> = emptyList(),
+    val detailLines: List<UiText> = emptyList(),
     /** Rendered in error red; reserved for true errors such as a certificate change. */
-    val errorDetail: String? = null,
+    val errorDetail: UiText? = null,
     /**
      * Single-beckon rule (charter §5.6): at most one segment pulses ochre. The
      * builder demotes downstream NEEDS_ACTION segments to a quiet rendering.
@@ -111,7 +115,7 @@ data class ConduitSegmentState(
 
 /** Transient outcome line of a 测试 button; never contains clipboard content. */
 data class ConduitTestResult(
-    val label: String,
+    val label: UiText,
     val success: Boolean,
 )
 
@@ -204,14 +208,14 @@ fun HealthScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "通路",
+                text = stringResource(R.string.tab_conduit),
                 style = ClipSyncType.pageTitle,
                 color = c.t1,
                 modifier = Modifier.weight(1f),
             )
             if (onRefresh != null) {
                 Text(
-                    text = "重新探测",
+                    text = stringResource(R.string.conduit_reprobe),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = c.flow,
@@ -240,14 +244,17 @@ fun HealthScreen(
             InboxNotifyOffBanner(modifier = Modifier.padding(bottom = 10.dp))
         }
         PipelineSegment(
-            title = "本机读取",
+            title = stringResource(R.string.conduit_segment_local_read),
             icon = ClipSyncIcons.History,
             segment = state.localRead,
             actions = buildList {
                 if (state.routes.isNotEmpty()) {
                     add(
                         SegmentActionUi(
-                            label = if (wizardOpen) "收起引导" else "打开引导",
+                            label =
+                                stringResource(
+                                    if (wizardOpen) R.string.conduit_wizard_close else R.string.conduit_wizard_open,
+                                ),
                             emphasized = !wizardOpen && state.localRead.beckoning,
                             onClick = { wizardOpen = !wizardOpen },
                         ),
@@ -274,25 +281,38 @@ fun HealthScreen(
         }
         Spacer(Modifier.height(8.dp))
         PipelineSegment(
-            title = "本机服务",
+            title = stringResource(R.string.conduit_segment_local_service),
             icon = ClipSyncIcons.Service,
             segment = state.localService,
             actions = buildList {
                 if (state.serviceRunning && onServiceStop != null) {
-                    add(SegmentActionUi(label = "停止服务", onClick = onServiceStop))
+                    add(SegmentActionUi(label = stringResource(R.string.conduit_service_stop), onClick = onServiceStop))
                 } else if (!state.serviceRunning && state.pairedDeviceCount > 0 && onServiceStart != null) {
-                    add(SegmentActionUi(label = "启动服务", emphasized = true, onClick = onServiceStart))
+                    add(
+                        SegmentActionUi(
+                            label = stringResource(R.string.conduit_service_start),
+                            emphasized = true,
+                            onClick = onServiceStart,
+                        ),
+                    )
                 }
             },
         )
         Spacer(Modifier.height(8.dp))
         PipelineSegment(
-            title = "网络",
+            title = stringResource(R.string.conduit_segment_network),
             icon = ClipSyncIcons.Network,
             segment = state.network,
             actions = listOf(
                 SegmentActionUi(
-                    label = if (state.pairedDeviceCount > 0) "管理配对" else "去配对",
+                    label =
+                        stringResource(
+                            if (state.pairedDeviceCount > 0) {
+                                R.string.conduit_manage_pairing
+                            } else {
+                                R.string.action_go_pair
+                            },
+                        ),
                     emphasized = state.network.beckoning,
                     onClick = onPairRequest,
                 ),
@@ -311,19 +331,19 @@ fun HealthScreen(
         }
         Spacer(Modifier.height(8.dp))
         PipelineSegment(
-            title = "对端写入",
+            title = stringResource(R.string.conduit_segment_peer_write),
             icon = ClipSyncIcons.Monitor,
             segment = state.peerWrite,
         )
         state.localWrite?.let { localWrite ->
             Spacer(Modifier.height(8.dp))
             PipelineSegment(
-                title = "本机写回",
+                title = stringResource(R.string.conduit_segment_local_write),
                 icon = ClipSyncIcons.Conduit,
                 segment = localWrite,
                 actions = buildList {
                     if (onTestWrite != null) {
-                        add(SegmentActionUi(label = "测试写入", onClick = onTestWrite))
+                        add(SegmentActionUi(label = stringResource(R.string.conduit_test_write), onClick = onTestWrite))
                     }
                 },
             )
@@ -336,7 +356,7 @@ fun HealthScreen(
             )
         } else {
             Text(
-                text = "已配对设备 · ${state.pairedDeviceCount}",
+                text = stringResource(R.string.conduit_paired_devices_count, state.pairedDeviceCount),
                 style = ClipSyncType.groupHeader,
                 color = c.t4,
                 modifier = Modifier
@@ -413,7 +433,7 @@ private fun ConduitDeviceRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    text = "设备色",
+                    text = stringResource(R.string.device_accent_label),
                     style = ClipSyncType.caption,
                     color = c.t3,
                 )
@@ -439,7 +459,14 @@ private fun ConduitDeviceRow(
                 }
                 Spacer(Modifier.weight(1f))
                 Text(
-                    text = if (device.accentSlot == device.defaultSlot) "跟随配对顺位" else "手动指定",
+                    text =
+                        stringResource(
+                            if (device.accentSlot == device.defaultSlot) {
+                                R.string.device_accent_default
+                            } else {
+                                R.string.device_accent_manual
+                            },
+                        ),
                     style = ClipSyncType.meta,
                     fontSize = 10.sp,
                     color = c.t4,
@@ -473,19 +500,19 @@ private fun NotificationsOffBanner(
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         Text(
-            text = "通知已关闭",
+            text = stringResource(R.string.conduit_notifications_off_title),
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
             color = c.t2,
         )
         Text(
-            text = "同步照常进行，但「收到内容」与「需要恢复」的通知不会出现。",
+            text = stringResource(R.string.conduit_notifications_off_body),
             style = ClipSyncType.caption,
             color = c.t3,
         )
         if (onOpenSettings != null) {
             Text(
-                text = "去系统设置开启 ›",
+                text = stringResource(R.string.conduit_notifications_off_action) + " ›",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = c.flow,
@@ -517,13 +544,13 @@ private fun InboxNotifyOffBanner(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         Text(
-            text = "收到内容通知已关闭",
+            text = stringResource(R.string.conduit_inbox_notify_off_title),
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
             color = c.t2,
         )
         Text(
-            text = "同步与历史照常，但收到对端内容时不再提醒。可在「偏好 · 运行」重新开启。",
+            text = stringResource(R.string.conduit_inbox_notify_off_body),
             style = ClipSyncType.caption,
             color = c.t3,
         )
@@ -546,19 +573,19 @@ private fun PairedDevicesEmptyState(
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Text(
-            text = "尚无已配对设备",
+            text = stringResource(R.string.conduit_no_paired_devices),
             style = ClipSyncType.groupHeader,
             color = c.t4,
         )
         Text(
-            text = "在电脑上打开「剪剪相传」出示二维码，配对在网络段完成。",
+            text = stringResource(R.string.conduit_pair_hint),
             style = ClipSyncType.caption,
             color = c.t3,
             textAlign = TextAlign.Center,
         )
         val shape = CharterShapes.control
         Text(
-            text = "去配对 ›",
+            text = stringResource(R.string.action_go_pair) + " ›",
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
             color = c.flow,
@@ -592,7 +619,7 @@ private fun TestResultRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = result.label,
+            text = result.label.string(),
             style = ClipSyncType.caption,
             color = tint,
             modifier = Modifier.weight(1f),
@@ -632,16 +659,20 @@ fun ConduitStatusBand(
         animationSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
         label = "bandLn",
     )
-    val title = when {
-        needsAction -> "通路未接通"
-        allReady -> "通路畅通"
-        else -> "通路部分接通"
-    }
-    val subtitle = when {
-        needsAction -> "尚未与电脑配对 · 轻触处理"
-        allReady -> "内容正在两端流动"
-        else -> "有环节降级或未探测"
-    }
+    val title = stringResource(
+        when {
+            needsAction -> R.string.conduit_band_blocked
+            allReady -> R.string.conduit_band_ready
+            else -> R.string.conduit_band_partial
+        },
+    )
+    val subtitle = stringResource(
+        when {
+            needsAction -> R.string.conduit_band_blocked_sub
+            allReady -> R.string.conduit_band_ready_sub
+            else -> R.string.conduit_band_partial_sub
+        },
+    )
     val shape = CharterShapes.control
     Row(
         modifier = modifier
@@ -769,7 +800,7 @@ private fun PipelineSegment(
                 modifier = Modifier.weight(1f),
             )
             Text(
-                text = segment.statusLabel,
+                text = segment.statusLabel.string(),
                 style = ClipSyncType.meta,
                 fontWeight = if (beckons) FontWeight.SemiBold else FontWeight.Normal,
                 color = tint,
@@ -793,7 +824,7 @@ private fun PipelineSegment(
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = segment.detail,
+            text = segment.detail.string(),
             style = ClipSyncType.caption,
             color = c.t3,
         )
@@ -816,7 +847,7 @@ private fun PipelineSegment(
                         )
                         Spacer(Modifier.width(7.dp))
                         Text(
-                            text = line,
+                            text = line.string(),
                             style = ClipSyncType.caption,
                             color = c.t3,
                         )
@@ -827,7 +858,7 @@ private fun PipelineSegment(
         segment.errorDetail?.let { error ->
             Spacer(Modifier.height(8.dp))
             Text(
-                text = error,
+                text = error.string(),
                 style = ClipSyncType.caption,
                 color = c.err,
             )
@@ -1053,7 +1084,7 @@ private fun FlowLine(modifier: Modifier = Modifier) {
         }
         Spacer(Modifier.width(6.dp))
         Text(
-            text = "内容将从这里流过",
+            text = stringResource(R.string.conduit_flow_line),
             fontSize = 11.sp,
             color = c.t3,
         )

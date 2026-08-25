@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +55,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.annotation.StringRes
+import com.clipsync.android.R
+import com.clipsync.android.i18n.UiText
+import com.clipsync.android.i18n.string
 import com.clipsync.android.ui.ConduitStatusBand
 import com.clipsync.android.ui.HealthScreenState
 import com.clipsync.android.ui.health.buildHealthScreenState
@@ -108,7 +113,7 @@ fun HomeScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "剪剪相传",
+                text = stringResource(R.string.brand_name),
                 style = ClipSyncType.pageTitle,
                 color = c.t1,
                 modifier = Modifier.weight(1f),
@@ -143,11 +148,14 @@ fun HomeScreen(
         when {
             !home.loaded -> Box(Modifier.weight(1f))
             home.items.isEmpty() && home.searchActive -> NoMatchState(
-                message = "没有匹配「${home.query.trim()}」的记录",
+                message = stringResource(R.string.home_no_match_query, home.query.trim()),
                 modifier = Modifier.weight(1f),
             )
             home.items.isEmpty() && home.formatFilter != null -> NoMatchState(
-                message = "没有「${formatLabel(home.formatFilter)}」类的记录",
+                message = stringResource(
+                    R.string.home_no_match_format,
+                    stringResource(formatLabelRes(home.formatFilter)),
+                ),
                 modifier = Modifier.weight(1f),
             )
             home.items.isEmpty() -> EmptyState(
@@ -205,7 +213,7 @@ private fun SearchField(
         Spacer(Modifier.width(8.dp))
         Box(Modifier.weight(1f)) {
             if (query.isEmpty()) {
-                Text(text = "搜索", fontSize = 13.sp, color = c.t4)
+                Text(text = stringResource(R.string.home_search_hint), fontSize = 13.sp, color = c.t4)
             }
             BasicTextField(
                 value = query,
@@ -229,13 +237,14 @@ private fun SearchField(
 }
 
 /** Chip label for a format (ADR 0003 词汇); PLAIN reads 文本 on the chip row. */
-internal fun formatLabel(format: ClipContentFormat?): String = when (format) {
-    null -> "全部"
-    ClipContentFormat.LINK -> "链接"
-    ClipContentFormat.OTP -> "验证码"
-    ClipContentFormat.EMAIL -> "账号"
-    ClipContentFormat.CREDENTIAL -> "密码"
-    ClipContentFormat.PLAIN -> "文本"
+@StringRes
+internal fun formatLabelRes(format: ClipContentFormat?): Int = when (format) {
+    null -> R.string.format_all
+    ClipContentFormat.LINK -> R.string.format_link
+    ClipContentFormat.OTP -> R.string.format_otp
+    ClipContentFormat.EMAIL -> R.string.format_email
+    ClipContentFormat.CREDENTIAL -> R.string.format_credential
+    ClipContentFormat.PLAIN -> R.string.format_plain
 }
 
 /**
@@ -282,7 +291,7 @@ private fun FormatFilterRow(
             val active = option == selected
             val shape = CharterShapes.control
             Text(
-                text = formatLabel(option),
+                text = stringResource(formatLabelRes(option)),
                 fontSize = 12.sp,
                 fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
                 color = if (active) c.flow else c.t3,
@@ -303,11 +312,16 @@ private fun NoticeStrip(notice: HomeNotice, modifier: Modifier = Modifier) {
     val c = clipSyncColors
     val (text, fg, bg, ln) = when (notice) {
         HomeNotice.Copied ->
-            NoticeStyle("已写入系统剪贴板", c.flow, c.flowBg, c.flowLn)
+            NoticeStyle(stringResource(R.string.home_notice_copied), c.flow, c.flowBg, c.flowLn)
         is HomeNotice.CopyFailed ->
-            NoticeStyle("复制失败 · ${notice.errorCode}", c.err, c.errBg, c.errLn)
+            NoticeStyle(
+                stringResource(R.string.home_notice_copy_failed, notice.errorCode),
+                c.err,
+                c.errBg,
+                c.errLn,
+            )
         HomeNotice.DeletedLocal ->
-            NoticeStyle("已从本机移除 · 不影响其他设备", c.t2, c.sf3, c.ln)
+            NoticeStyle(stringResource(R.string.home_notice_deleted), c.t2, c.sf3, c.ln)
     }
     val shape = CharterShapes.control
     Text(
@@ -368,7 +382,7 @@ private fun DismissableClipCard(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(text = "移除 · 仅本机", fontSize = 12.sp, color = c.t3)
+                Text(text = stringResource(R.string.home_remove_local), fontSize = 12.sp, color = c.t3)
             }
         },
     ) {
@@ -413,7 +427,7 @@ private fun ClipCard(
         ) {
             val source = item.remoteSourceLabel
             if (source != null) {
-                SourceTag(label = source, accentSlot = item.sourceAccentSlot)
+                SourceTag(label = source.string(), accentSlot = item.sourceAccentSlot)
             }
             if (item.isImage) {
                 ImageBadge()
@@ -424,8 +438,19 @@ private fun ClipCard(
                 FormatBadge(format = item.format)
             }
             Spacer(Modifier.weight(1f))
+            val yesterday = stringResource(R.string.time_yesterday)
+            val sameYearPattern = stringResource(R.string.time_pattern_same_year)
+            val otherYearPattern = stringResource(R.string.time_pattern_other_year)
             Text(
-                text = remember(item.createdAtMs) { clipTimeLabel(item.createdAtMs, nowMs()) },
+                text = remember(item.createdAtMs, yesterday, sameYearPattern, otherYearPattern) {
+                    clipTimeLabel(
+                        item.createdAtMs,
+                        nowMs(),
+                        yesterdayLabel = yesterday,
+                        sameYearPattern = sameYearPattern,
+                        otherYearPattern = otherYearPattern,
+                    )
+                },
                 style = ClipSyncType.meta,
                 fontSize = 10.sp,
                 color = c.t4,
@@ -471,7 +496,7 @@ private fun ClipThumbnail(
     if (preview != null) {
         Image(
             bitmap = preview,
-            contentDescription = "图片剪贴",
+            contentDescription = stringResource(R.string.image_clip_description),
             modifier = modifier
                 .heightIn(max = 120.dp)
                 .clip(shape)
@@ -488,7 +513,7 @@ private fun ClipThumbnail(
                 .border(1.dp, c.ln2, shape),
             contentAlignment = Alignment.Center,
         ) {
-            Text(text = "图片", fontSize = 11.sp, color = c.t4)
+            Text(text = stringResource(R.string.badge_image), fontSize = 11.sp, color = c.t4)
         }
     }
 }
@@ -518,7 +543,7 @@ private fun SourceTag(label: String, accentSlot: Int?, modifier: Modifier = Modi
     ) {
         Icon(
             imageVector = ClipSyncIcons.Monitor,
-            contentDescription = "来自",
+            contentDescription = stringResource(R.string.source_from_description),
             tint = tone,
             modifier = Modifier.size(10.dp),
         )
@@ -542,7 +567,7 @@ private fun FormatBadge(format: ClipContentFormat, modifier: Modifier = Modifier
     val c = clipSyncColors
     val shape = RoundedCornerShape(6.dp)
     Text(
-        text = formatLabel(format),
+        text = stringResource(formatLabelRes(format)),
         fontSize = 10.sp,
         fontWeight = FontWeight.Medium,
         color = c.device(slot),
@@ -564,7 +589,7 @@ private fun ImageBadge(modifier: Modifier = Modifier) {
     val c = clipSyncColors
     val shape = RoundedCornerShape(6.dp)
     Text(
-        text = "图片",
+        text = stringResource(R.string.badge_image),
         fontSize = 10.sp,
         fontWeight = FontWeight.Medium,
         color = c.device(IMAGE_BADGE_SLOT),
@@ -588,7 +613,7 @@ private fun LocalOnlyBadge(modifier: Modifier = Modifier) {
     val c = clipSyncColors
     val shape = RoundedCornerShape(6.dp)
     Text(
-        text = "仅本机保留",
+        text = stringResource(R.string.badge_local_only),
         fontSize = 10.sp,
         fontWeight = FontWeight.Medium,
         color = c.t3,
@@ -624,15 +649,19 @@ private fun EmptyState(
                 modifier = Modifier.size(28.dp),
             )
             Text(
-                text = if (paired) "静候第一条剪贴" else "先把两端接起来",
+                text = if (paired) {
+                    stringResource(R.string.home_empty_paired_title)
+                } else {
+                    stringResource(R.string.home_empty_unpaired_title)
+                },
                 style = ClipSyncType.brand.copy(fontSize = 18.sp),
                 color = c.t2,
             )
             Text(
                 text = if (paired) {
-                    "在任意一端复制文本，它会出现在这里并流向对面。"
+                    stringResource(R.string.home_empty_paired_body)
                 } else {
-                    "尚未与电脑配对。配对入口在「通路」页的网络段。"
+                    stringResource(R.string.home_empty_unpaired_body)
                 },
                 style = ClipSyncType.caption,
                 color = c.t3,
@@ -641,7 +670,7 @@ private fun EmptyState(
             if (!paired) {
                 val shape = CharterShapes.control
                 Text(
-                    text = "去配对 ›",
+                    text = stringResource(R.string.action_go_pair) + " ›",
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = c.flow,
@@ -708,7 +737,7 @@ private fun HomeScreenListPreview() {
                         eventId = "e1",
                         preview = "https://github.com/clipsync/core",
                         createdAtMs = System.currentTimeMillis() - 240_000,
-                        remoteSourceLabel = "PC-STUDIO",
+                        remoteSourceLabel = UiText.Raw("PC-STUDIO"),
                         sourceAccentSlot = 1,
                         format = ClipContentFormat.LINK,
                     ),
@@ -729,7 +758,7 @@ private fun HomeScreenListPreview() {
                         eventId = "e4",
                         preview = "会议纪要：本周五完成 Stage 4 端到端握手测试",
                         createdAtMs = System.currentTimeMillis() - 90_000_000,
-                        remoteSourceLabel = "PC-STUDIO",
+                        remoteSourceLabel = UiText.Raw("PC-STUDIO"),
                         sourceAccentSlot = 1,
                     ),
                 ),

@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -69,13 +70,13 @@ fun OnboardingScreen(
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            text = OnboardingContent.TITLE,
+            text = stringResource(OnboardingContent.TITLE),
             style = ClipSyncType.brand,
             color = c.t1,
         )
         Spacer(Modifier.height(6.dp))
         Text(
-            text = OnboardingContent.SUBTITLE,
+            text = stringResource(OnboardingContent.SUBTITLE),
             style = ClipSyncType.caption,
             color = c.t3,
             textAlign = TextAlign.Center,
@@ -111,14 +112,14 @@ fun OnboardingScreen(
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
                         Text(
-                            text = entry.title,
+                            text = stringResource(entry.title),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = c.t1,
                         )
                         Spacer(Modifier.height(2.dp))
                         Text(
-                            text = entry.description,
+                            text = stringResource(entry.description),
                             style = ClipSyncType.caption,
                             color = c.t3,
                         )
@@ -129,9 +130,9 @@ fun OnboardingScreen(
         Spacer(Modifier.height(14.dp))
         HonestyNote()
         Spacer(Modifier.height(24.dp))
-        PrimaryAction(label = OnboardingContent.ACTION_PAIR, onClick = onPair)
+        PrimaryAction(label = stringResource(OnboardingContent.ACTION_PAIR), onClick = onPair)
         Spacer(Modifier.height(10.dp))
-        GhostAction(label = OnboardingContent.ACTION_SKIP, onClick = onSkip)
+        GhostAction(label = stringResource(OnboardingContent.ACTION_SKIP), onClick = onSkip)
         Spacer(Modifier.height(12.dp))
     }
 }
@@ -151,12 +152,12 @@ private fun HonestyNote(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
-            text = OnboardingContent.HONESTY_HEADER,
+            text = stringResource(OnboardingContent.HONESTY_HEADER),
             style = ClipSyncType.groupHeader,
             color = c.t4,
         )
         Text(
-            text = OnboardingContent.HONESTY_BODY,
+            text = stringResource(OnboardingContent.HONESTY_BODY),
             style = ClipSyncType.caption,
             color = c.t3,
         )

@@ -49,11 +49,13 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.clipsync.android.R
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingQrPayload
 import com.clipsync.android.ui.theme.CharterShapes
@@ -107,7 +109,7 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
         scanning = granted
     }
 
-    Text("与 Windows 配对", style = RitualTitle, color = c.t1)
+    Text(stringResource(R.string.pairing_title), style = RitualTitle, color = c.t1)
 
     if (peer != null) {
         Column(
@@ -119,29 +121,29 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
         ) {
             Text(peer.displayName, fontWeight = FontWeight.SemiBold, color = c.t1)
             Text(
-                "证书 ${groupFingerprint(peer.certSha256).take(19)}…",
+                stringResource(R.string.pairing_cert_prefix, groupFingerprint(peer.certSha256).take(19)),
                 style = MaterialTheme.typography.bodySmall,
                 fontFamily = ClipSyncFonts.mono,
                 color = c.t2,
             )
             Text(
-                "信任纪元 ${peer.trustEpoch}",
+                stringResource(R.string.pairing_trust_epoch, peer.trustEpoch),
                 style = MaterialTheme.typography.bodySmall,
                 color = c.t3,
             )
             // 解除配对是灰的事实级操作；红色留给真正的 error。
             TextButton(onClick = viewModel::forgetPeer) {
-                Text("忘记此配对", color = c.t3)
+                Text(stringResource(R.string.pairing_forget), color = c.t3)
             }
         }
         Text(
-            "扫描新码会在你确认后替换当前配对。",
+            stringResource(R.string.pairing_rescan_hint),
             style = MaterialTheme.typography.bodySmall,
             color = c.t3,
         )
     } else {
         Text(
-            "在电脑上打开「剪剪相传」，选择「配对新设备」，然后扫描它显示的二维码。",
+            stringResource(R.string.pairing_intro),
             style = MaterialTheme.typography.bodyMedium,
             color = c.t2,
         )
@@ -154,7 +156,7 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
                 viewModel.onPayload(raw)
             },
         )
-        GhostButton(text = "停止扫描", onClick = { scanning = false })
+        GhostButton(text = stringResource(R.string.pairing_stop_scan), onClick = { scanning = false })
     } else {
         Button(
             onClick = {
@@ -169,12 +171,12 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
             shape = ControlShape,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("扫描二维码")
+            Text(stringResource(R.string.pairing_scan_qr))
         }
         if (cameraDenied) {
             // 缺相机权限不是错误：粘贴通路仍然可用，赭色提示需要你选择。
             Text(
-                "相机权限被拒绝。仍可在下方粘贴配对内容完成配对。",
+                stringResource(R.string.pairing_camera_denied),
                 color = c.act,
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -185,7 +187,7 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
         value = manualPayload,
         onValueChange = { manualPayload = it },
         modifier = Modifier.fillMaxWidth(),
-        label = { Text("或粘贴配对内容") },
+        label = { Text(stringResource(R.string.pairing_paste_label)) },
         shape = ControlShape,
         minLines = 2,
         colors = OutlinedTextFieldDefaults.colors(
@@ -198,7 +200,7 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
         ),
     )
     GhostButton(
-        text = "使用粘贴的内容",
+        text = stringResource(R.string.pairing_use_pasted),
         enabled = manualPayload.isNotBlank(),
         onClick = {
             viewModel.onPayload(manualPayload)
@@ -210,9 +212,9 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
 @Composable
 private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewModel) {
     val c = clipSyncColors
-    Text("确认此电脑", style = RitualTitle, color = c.t1)
+    Text(stringResource(R.string.pairing_confirm_title), style = RitualTitle, color = c.t1)
     Text(
-        "仅当下方名称和证书指纹与 Windows 应用显示的一致时再继续。",
+        stringResource(R.string.pairing_confirm_hint),
         style = MaterialTheme.typography.bodyMedium,
         color = c.t2,
     )
@@ -230,13 +232,13 @@ private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewM
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
-                "警告：证书已变更",
+                stringResource(R.string.pairing_cert_changed_title),
                 color = c.act,
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                "此电脑的证书自上次配对后已变更。若你没有在 Windows 上重装「剪剪相传」，请停止并检查该电脑。",
+                stringResource(R.string.pairing_cert_changed_body),
                 color = c.act,
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -253,9 +255,15 @@ private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewM
             ButtonDefaults.buttonColors()
         },
     ) {
-        Text(if (review.certificateChanged) "我已核实 — 替换配对" else "指纹一致 — 配对")
+        Text(
+            if (review.certificateChanged) {
+                stringResource(R.string.pairing_confirm_replace)
+            } else {
+                stringResource(R.string.pairing_confirm_match)
+            },
+        )
     }
-    GhostButton(text = "取消", onClick = viewModel::cancelReview)
+    GhostButton(text = stringResource(R.string.common_cancel), onClick = viewModel::cancelReview)
 }
 
 @Composable
@@ -274,14 +282,14 @@ private fun PeerFacts(qr: PairingQrPayload) {
             style = MaterialTheme.typography.titleMedium,
             color = c.t1,
         )
-        Text("证书指纹", style = ClipSyncType.groupHeader, color = c.t4)
+        Text(stringResource(R.string.pairing_fingerprint_header), style = ClipSyncType.groupHeader, color = c.t4)
         // 指纹是全应用风险最高的比对：等宽、四位一组、两行、t1 最高对比。
         Text(
             twoLineFingerprint(qr.certSha256),
             style = ClipSyncType.fingerprint.copy(lineHeight = 22.sp),
             color = c.t1,
         )
-        Text("地址", style = ClipSyncType.groupHeader, color = c.t4)
+        Text(stringResource(R.string.pairing_address_header), style = ClipSyncType.groupHeader, color = c.t4)
         Text(
             "${qr.hosts.joinToString()} : ${qr.port}",
             fontFamily = ClipSyncFonts.mono,
@@ -308,9 +316,9 @@ private fun SubmittingContent(peerName: String) {
             modifier = Modifier.padding(end = 16.dp),
         )
         Column {
-            Text("等待批准…", fontWeight = FontWeight.SemiBold, color = c.t1)
+            Text(stringResource(R.string.pairing_waiting_title), fontWeight = FontWeight.SemiBold, color = c.t1)
             Text(
-                "请在「$peerName」的剪剪相传窗口中批准此手机。",
+                stringResource(R.string.pairing_waiting_body, peerName),
                 style = MaterialTheme.typography.bodyMedium,
                 color = c.t2,
             )
@@ -321,7 +329,7 @@ private fun SubmittingContent(peerName: String) {
 @Composable
 private fun PairedContent(peer: PairedPeer, viewModel: PairingViewModel) {
     val c = clipSyncColors
-    Text("已配对", style = RitualTitle, color = c.t1)
+    Text(stringResource(R.string.pairing_done_title), style = RitualTitle, color = c.t1)
     Column(
         Modifier
             .fillMaxWidth()
@@ -331,32 +339,33 @@ private fun PairedContent(peer: PairedPeer, viewModel: PairingViewModel) {
     ) {
         Text(peer.displayName, fontWeight = FontWeight.SemiBold, color = c.t1)
         Text(
-            "信任与密钥已安全存储，网络段就此接通。",
+            stringResource(R.string.pairing_done_body),
             style = MaterialTheme.typography.bodySmall,
             color = c.t2,
         )
     }
     Button(onClick = viewModel::reset, shape = ControlShape, modifier = Modifier.fillMaxWidth()) {
-        Text("完成")
+        Text(stringResource(R.string.common_done))
     }
 }
 
 @Composable
 private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel) {
     val c = clipSyncColors
-    Text("配对失败", style = RitualTitle, color = c.t1)
-    val message = when (reason) {
-        PairingFailure.INVALID_PAYLOAD -> "这不是有效的剪剪相传配对码。"
-        PairingFailure.OWN_DEVICE -> "这个码标识的是本机自己。"
-        PairingFailure.CERTIFICATE_MISMATCH ->
-            "电脑出示的证书与二维码承诺的不一致，配对已被阻止。请检查网络，并在 Windows 上重新打开二维码窗口。"
-        PairingFailure.UNREACHABLE -> "无法连接到电脑。请确认两台设备在同一网络。"
-        PairingFailure.REJECTED -> "请求在电脑上被拒绝。"
-        PairingFailure.TIMEOUT -> "电脑未在限时内批准。请出示新的二维码后重试。"
-        PairingFailure.TOKEN_INVALID -> "这个码已被使用或已取消。请出示新的二维码。"
-        PairingFailure.TOKEN_EXPIRED -> "这个码已过期。出示新的二维码后请尽快扫描。"
-        PairingFailure.PROTOCOL -> "电脑的应答超出配对协议。请将两端更新到匹配的版本。"
-    }
+    Text(stringResource(R.string.pairing_failed_title), style = RitualTitle, color = c.t1)
+    val message = stringResource(
+        when (reason) {
+            PairingFailure.INVALID_PAYLOAD -> R.string.pairing_fail_invalid
+            PairingFailure.OWN_DEVICE -> R.string.pairing_fail_own_device
+            PairingFailure.CERTIFICATE_MISMATCH -> R.string.pairing_fail_cert_mismatch
+            PairingFailure.UNREACHABLE -> R.string.pairing_fail_unreachable
+            PairingFailure.REJECTED -> R.string.pairing_fail_rejected
+            PairingFailure.TIMEOUT -> R.string.pairing_fail_timeout
+            PairingFailure.TOKEN_INVALID -> R.string.pairing_fail_token_invalid
+            PairingFailure.TOKEN_EXPIRED -> R.string.pairing_fail_token_expired
+            PairingFailure.PROTOCOL -> R.string.pairing_fail_protocol
+        },
+    )
     if (reason == PairingFailure.CERTIFICATE_MISMATCH) {
         // 证书不一致是真正的 error（可能的中间人）：红色着色盒唯一出场处。
         val shape = CharterShapes.card
@@ -382,7 +391,7 @@ private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel) {
         }
     }
     Button(onClick = viewModel::reset, shape = ControlShape, modifier = Modifier.fillMaxWidth()) {
-        Text("重新开始")
+        Text(stringResource(R.string.pairing_restart))
     }
 }
 

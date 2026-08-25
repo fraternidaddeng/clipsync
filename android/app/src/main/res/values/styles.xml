@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.ClipSync" parent="android:style/Theme.Material.Light.NoActionBar">
+    <!-- AppCompat parent: required by AppCompatActivity, which applies the per-app
+         locale (偏好·显示·语言, P1#16) to every activity context. Visuals are unchanged —
+         the UI is fully Compose-drawn; this theme only sets window chrome. -->
+    <style name="Theme.ClipSync" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor">#E2E9F2</item>

@@ -3,6 +3,8 @@ package com.clipsync.android.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.clipsync.android.R
+import com.clipsync.android.i18n.UiText
 import com.clipsync.android.pairing.DeviceAccents
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingStore
@@ -26,6 +28,7 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /** One row of the 一屏 history list. */
 data class HomeClipItem(
@@ -33,7 +36,7 @@ data class HomeClipItem(
     val preview: String,
     val createdAtMs: Long,
     /** Null for clips this phone produced (缺省即本地 — locals carry no tag). */
-    val remoteSourceLabel: String?,
+    val remoteSourceLabel: UiText?,
     /**
      * Effective neighbour-hue slot (1..5) of the origin device: the manual
      * per-device override when one is set (P1#14), else the pairing-order
@@ -248,8 +251,8 @@ internal fun ClipHistoryEntry.toHomeItem(
     val label =
         when {
             !remote -> null
-            peerIndex != null -> peers[peerIndex].displayName
-            else -> "远端设备"
+            peerIndex != null -> UiText.Raw(peers[peerIndex].displayName)
+            else -> UiText.Res(R.string.remote_device_fallback)
         }
     return HomeClipItem(
         eventId = eventId,
@@ -276,22 +279,29 @@ internal fun previewText(
 }
 
 private val timeOfDay = DateTimeFormatter.ofPattern("HH:mm")
-private val sameYear = DateTimeFormatter.ofPattern("M月d日")
-private val otherYear = DateTimeFormatter.ofPattern("yyyy年M月d日")
 
-/** Monospace meta timestamp: today by clock, yesterday by name, older by date. */
+/**
+ * Monospace meta timestamp: today by clock, yesterday by name, older by date.
+ * The word and date patterns are injectable so the UI layer can pass the
+ * localized resources (P1#16); the defaults keep the zh-Hans fallback.
+ */
 internal fun clipTimeLabel(
     createdAtMs: Long,
     nowMs: Long,
     zone: ZoneId = ZoneId.systemDefault(),
+    yesterdayLabel: String = "昨天",
+    sameYearPattern: String = "M月d日",
+    otherYearPattern: String = "yyyy年M月d日",
+    locale: Locale = Locale.getDefault(),
 ): String {
     val created = Instant.ofEpochMilli(createdAtMs).atZone(zone)
     val today = Instant.ofEpochMilli(nowMs).atZone(zone).toLocalDate()
     val createdDate = created.toLocalDate()
     return when {
         createdDate == today -> created.format(timeOfDay)
-        createdDate == today.minusDays(1) -> "昨天"
-        createdDate.year == today.year -> created.format(sameYear)
-        else -> created.format(otherYear)
+        createdDate == today.minusDays(1) -> yesterdayLabel
+        createdDate.year == today.year ->
+            created.format(DateTimeFormatter.ofPattern(sameYearPattern, locale))
+        else -> created.format(DateTimeFormatter.ofPattern(otherYearPattern, locale))
     }
 }

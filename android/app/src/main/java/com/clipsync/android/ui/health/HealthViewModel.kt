@@ -3,6 +3,8 @@ package com.clipsync.android.ui.health
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.clipsync.android.R
+import com.clipsync.android.i18n.UiText
 import com.clipsync.android.pairing.DeviceAccents
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingStore
@@ -238,9 +240,12 @@ class HealthViewModel(
                 )
             testResult =
                 if (verified) {
-                    ConduitTestResult("写入测试通过（测试文本已清除）", success = true)
+                    ConduitTestResult(UiText.Res(R.string.test_write_passed), success = true)
                 } else {
-                    ConduitTestResult("写入测试失败：$errorCode", success = false)
+                    ConduitTestResult(
+                        UiText.Res(R.string.test_write_failed, errorCode.orEmpty()),
+                        success = false,
+                    )
                 }
             publish(pairingStore.peer())
         }
@@ -278,9 +283,15 @@ class HealthViewModel(
             }
             testResult =
                 if (verified) {
-                    ConduitTestResult("后台读取测试通过（测试文本已清除）", success = true)
+                    ConduitTestResult(UiText.Res(R.string.test_read_passed), success = true)
                 } else {
-                    ConduitTestResult("后台读取测试失败：${result.errorCode ?: "未知原因"}", success = false)
+                    ConduitTestResult(
+                        UiText.Res(
+                            R.string.test_read_failed,
+                            result.errorCode ?: UiText.Res(R.string.test_reason_unknown),
+                        ),
+                        success = false,
+                    )
                 }
             // Re-probe so the just-verified route surfaces as READY (or the failure code shows).
             refresh()
@@ -288,7 +299,7 @@ class HealthViewModel(
     }
 
     fun noteAdbCommandCopied() {
-        testResult = ConduitTestResult("已复制 adb 命令；在电脑上执行后回来点「重新探测」", success = true)
+        testResult = ConduitTestResult(UiText.Res(R.string.adb_command_copied), success = true)
         publish(pairingStore.peer())
     }
 
@@ -457,8 +468,8 @@ private fun localReadSegment(report: CapabilityReport?): ConduitSegmentState {
     if (report == null) {
         // No background backends are registered on this build yet.
         return ConduitSegmentState(
-            statusLabel = "降级 · 仅前台",
-            detail = "应用在前台时可读取剪贴板；后台读取能力尚未接入。",
+            statusLabel = UiText.Res(R.string.status_degraded_foreground),
+            detail = UiText.Res(R.string.read_none_detail),
             status = ConduitStatus.DEGRADED,
         )
     }
@@ -467,39 +478,39 @@ private fun localReadSegment(report: CapabilityReport?): ConduitSegmentState {
         CapabilityState.READY ->
             if (report.readMode == ClipboardReadMode.FOREGROUND_ONLY) {
                 ConduitSegmentState(
-                    statusLabel = "降级 · 仅前台",
-                    detail = "前台读取可用；后台读取需要额外授权。",
+                    statusLabel = UiText.Res(R.string.status_degraded_foreground),
+                    detail = UiText.Res(R.string.read_foreground_detail),
                     status = ConduitStatus.DEGRADED,
                 )
             } else {
                 ConduitSegmentState(
-                    statusLabel = "就绪",
-                    detail = "后台读取可用（$mode）。",
+                    statusLabel = UiText.Res(R.string.status_ready),
+                    detail = UiText.Res(R.string.read_ready_detail, mode),
                     status = ConduitStatus.READY,
                 )
             }
         CapabilityState.DEGRADED ->
             ConduitSegmentState(
-                statusLabel = "降级",
-                detail = "读取能力降级（$mode）；部分内容可能需要手动发送。",
+                statusLabel = UiText.Res(R.string.status_degraded),
+                detail = UiText.Res(R.string.read_degraded_detail, mode),
                 status = ConduitStatus.DEGRADED,
             )
         CapabilityState.UNAVAILABLE ->
             ConduitSegmentState(
-                statusLabel = "不可用",
-                detail = "后台读取暂不可用；前台复制与分享面板仍然可用。",
+                statusLabel = UiText.Res(R.string.status_unavailable),
+                detail = UiText.Res(R.string.read_unavailable_detail),
                 status = ConduitStatus.UNAVAILABLE,
             )
         CapabilityState.UNKNOWN ->
             ConduitSegmentState(
-                statusLabel = "未探测",
-                detail = "读取能力尚未探测。缺信息 ≠ 坏消息。",
+                statusLabel = UiText.Res(R.string.status_unprobed),
+                detail = UiText.Res(R.string.read_unknown_detail),
                 status = ConduitStatus.UNPROBED,
             )
         CapabilityState.NEEDS_USER_ACTION ->
             ConduitSegmentState(
-                statusLabel = "待授权",
-                detail = "读取能力需要先完成授权或设置（$mode）。",
+                statusLabel = UiText.Res(R.string.status_needs_auth),
+                detail = UiText.Res(R.string.read_needs_auth_detail, mode),
                 status = ConduitStatus.DEGRADED,
             )
     }
@@ -509,36 +520,36 @@ private fun localServiceSegment(sync: SyncHealth?): ConduitSegmentState =
     when {
         sync == null ->
             ConduitSegmentState(
-                statusLabel = "就绪",
-                detail = "应用运行正常；后台同步服务将在后续阶段接入。",
+                statusLabel = UiText.Res(R.string.status_ready),
+                detail = UiText.Res(R.string.service_ready_no_sync_detail),
                 status = ConduitStatus.READY,
             )
         sync.serviceRunning ->
             ConduitSegmentState(
-                statusLabel = "就绪",
-                detail = "同步服务运行中。",
+                statusLabel = UiText.Res(R.string.status_ready),
+                detail = UiText.Res(R.string.service_running_detail),
                 status = ConduitStatus.READY,
                 detailLines =
                     listOf(
-                        "前台服务只负责保持连接与调度，不等于获得剪贴板权限。",
-                        "通知栏会显示常驻通知；停止服务即移除。",
+                        UiText.Res(R.string.service_fact_fgs),
+                        UiText.Res(R.string.service_fact_notification),
                     ),
             )
         sync.serviceErrorCode != null ->
             ConduitSegmentState(
-                statusLabel = "启动失败",
-                detail = "同步服务启动失败（${sync.serviceErrorCode}）；应用在前台时仍可同步。",
+                statusLabel = UiText.Res(R.string.status_start_failed),
+                detail = UiText.Res(R.string.service_start_failed_detail, sync.serviceErrorCode),
                 status = ConduitStatus.DEGRADED,
             )
         else ->
             ConduitSegmentState(
-                statusLabel = "未运行",
-                detail = "同步服务未运行；应用在前台时仍可同步。",
+                statusLabel = UiText.Res(R.string.status_not_running),
+                detail = UiText.Res(R.string.service_not_running_detail),
                 status = ConduitStatus.DEGRADED,
                 detailLines =
                     listOf(
-                        "前台服务只负责保持连接与调度，不等于获得剪贴板权限。",
-                        "启动后会显示一条常驻通知。",
+                        UiText.Res(R.string.service_fact_fgs),
+                        UiText.Res(R.string.service_fact_start_notification),
                     ),
             )
     }
@@ -551,69 +562,69 @@ private fun networkSegment(
     when {
         peer == null ->
             ConduitSegmentState(
-                statusLabel = "需要你操作",
-                detail = "尚未与 Windows 配对。在电脑上打开「剪剪相传」，选择「配对新设备」。",
+                statusLabel = UiText.Res(R.string.status_needs_action),
+                detail = UiText.Res(R.string.network_unpaired_detail),
                 status = ConduitStatus.NEEDS_ACTION,
             )
         sync?.connected == true && sync.bluetoothFallback ->
             ConduitSegmentState(
-                statusLabel = "已连接 · 蓝牙备援",
-                detail = "IP 路径不可达，正在通过蓝牙与「${peer.displayName}」同步（仅文本，速度较慢）。",
+                statusLabel = UiText.Res(R.string.status_connected_bt),
+                detail = UiText.Res(R.string.network_bt_detail, peer.displayName),
                 status = ConduitStatus.READY,
                 detailLines =
                     listOf(
-                        "IP 恢复后自动切回，无需操作。",
-                        "蓝牙期间复制的图片不会同步，且事后不补传。",
+                        UiText.Res(R.string.network_bt_fact_switchback),
+                        UiText.Res(R.string.network_bt_fact_images),
                     ),
             )
         sync?.connected == true ->
             ConduitSegmentState(
-                statusLabel = "已连接",
-                detail = "与「${peer.displayName}」保持连接。",
+                statusLabel = UiText.Res(R.string.status_connected),
+                detail = UiText.Res(R.string.network_connected_detail, peer.displayName),
                 status = ConduitStatus.READY,
             )
         sync?.peerThrottled == true ->
             ConduitSegmentState(
-                statusLabel = "已被对端限流",
-                detail = "「${peer.displayName}」检测到本机多次认证失败，已临时限流。约 30 秒后自动重试。",
+                statusLabel = UiText.Res(R.string.status_throttled),
+                detail = UiText.Res(R.string.network_throttled_detail, peer.displayName),
                 status = ConduitStatus.DEGRADED,
-                errorDetail = "若持续出现，通常表示配对凭据已失效（例如电脑端撤销或重装后）；重新配对可恢复。",
+                errorDetail = UiText.Res(R.string.network_throttled_error),
             )
         facts?.reachability == PeerReachability.REACHABLE ->
             ConduitSegmentState(
-                statusLabel = "对端可达",
-                detail = "与「${peer.displayName}」握手成功（固定证书 TLS）；同步通道尚未接入。",
+                statusLabel = UiText.Res(R.string.status_peer_reachable),
+                detail = UiText.Res(R.string.network_reachable_detail, peer.displayName),
                 status = ConduitStatus.READY,
-                detailLines = listOf("探测方式：固定证书 TLS 请求 /v1/peer/health。"),
+                detailLines = listOf(UiText.Res(R.string.network_probe_fact)),
             )
         facts?.reachability == PeerReachability.CERTIFICATE_MISMATCH ->
             ConduitSegmentState(
-                statusLabel = "证书不匹配",
-                detail = "已与「${peer.displayName}」配对，但对端出示了不同的证书。",
+                statusLabel = UiText.Res(R.string.status_cert_mismatch),
+                detail = UiText.Res(R.string.network_cert_mismatch_detail, peer.displayName),
                 status = ConduitStatus.DEGRADED,
-                errorDetail = "对端证书与固定指纹不符，连接已被阻止。若非你重装了 Windows 端，请检查网络环境；重新配对可更新指纹。",
+                errorDetail = UiText.Res(R.string.network_cert_mismatch_error),
             )
         facts?.reachability == PeerReachability.UNREACHABLE ->
             ConduitSegmentState(
-                statusLabel = "已配对 · 不可达",
-                detail = "已与「${peer.displayName}」配对，当前探测不可达。",
+                statusLabel = UiText.Res(R.string.status_paired_unreachable),
+                detail = UiText.Res(R.string.network_unreachable_detail, peer.displayName),
                 status = ConduitStatus.DEGRADED,
                 detailLines =
                     listOf(
-                        "确认两台设备在同一局域网 / VPN，且 Windows 端正在运行。",
-                        "探测方式：固定证书 TLS 请求 /v1/peer/health。",
+                        UiText.Res(R.string.network_unreachable_fact),
+                        UiText.Res(R.string.network_probe_fact),
                     ),
             )
         sync == null ->
             ConduitSegmentState(
-                statusLabel = "已配对 · 未连接",
-                detail = "已与「${peer.displayName}」配对；同步通道尚未接入。",
+                statusLabel = UiText.Res(R.string.status_paired_not_connected),
+                detail = UiText.Res(R.string.network_not_connected_detail, peer.displayName),
                 status = ConduitStatus.DEGRADED,
             )
         else ->
             ConduitSegmentState(
-                statusLabel = "已配对 · 未连接",
-                detail = "已与「${peer.displayName}」配对，正在等待连接。",
+                statusLabel = UiText.Res(R.string.status_paired_not_connected),
+                detail = UiText.Res(R.string.network_waiting_detail, peer.displayName),
                 status = ConduitStatus.DEGRADED,
             )
     }
@@ -625,36 +636,36 @@ private fun peerWriteSegment(
 ): ConduitSegmentState {
     if (networkStatus != ConduitStatus.READY) {
         return ConduitSegmentState(
-            statusLabel = "未探测",
-            detail = "网络接通后才能探测对端写入能力。缺信息 ≠ 坏消息。",
+            statusLabel = UiText.Res(R.string.status_unprobed),
+            detail = UiText.Res(R.string.peer_write_unprobed_detail),
             status = ConduitStatus.UNPROBED,
         )
     }
     return when (sync?.peerWriteState) {
         CapabilityState.READY ->
             ConduitSegmentState(
-                statusLabel = "就绪",
-                detail = "对端可以自动写入剪贴板。",
+                statusLabel = UiText.Res(R.string.status_ready),
+                detail = UiText.Res(R.string.peer_write_ready_detail),
                 status = ConduitStatus.READY,
             )
         CapabilityState.DEGRADED ->
             ConduitSegmentState(
-                statusLabel = "降级",
-                detail = "对端写入能力降级，部分内容可能需要手动粘贴。",
+                statusLabel = UiText.Res(R.string.status_degraded),
+                detail = UiText.Res(R.string.peer_write_degraded_detail),
                 status = ConduitStatus.DEGRADED,
             )
         CapabilityState.UNAVAILABLE ->
             ConduitSegmentState(
-                statusLabel = "不可用",
-                detail = "对端暂时无法写入剪贴板；内容仍会保存到历史。",
+                statusLabel = UiText.Res(R.string.status_unavailable),
+                detail = UiText.Res(R.string.peer_write_unavailable_detail),
                 status = ConduitStatus.UNAVAILABLE,
             )
         // No engine-level report: the peer's health self-report is the live source today.
         CapabilityState.UNKNOWN, null -> peerWriteFromHealthReport(facts?.peerClipboardApply)
         CapabilityState.NEEDS_USER_ACTION ->
             ConduitSegmentState(
-                statusLabel = "待授权",
-                detail = "对端写入能力需要先完成授权或设置。",
+                statusLabel = UiText.Res(R.string.status_needs_auth),
+                detail = UiText.Res(R.string.peer_write_needs_auth_detail),
                 status = ConduitStatus.DEGRADED,
             )
     }
@@ -667,50 +678,50 @@ private fun peerWriteSegment(
  * eternal 未探测 (manual QA 2026-08-25 defect #3).
  */
 private fun peerWriteFromHealthReport(apply: PeerClipboardApply?): ConduitSegmentState {
-    val attribution = "依据：对端在 /v1/peer/health 的自报，随通路探测刷新。"
+    val attribution = UiText.Res(R.string.peer_write_attribution)
     return when (apply) {
         PeerClipboardApply.APPLIED ->
             ConduitSegmentState(
-                statusLabel = "已验证",
-                detail = "对端已开启自动写入，最近一次内容已实际写入其剪贴板。",
+                statusLabel = UiText.Res(R.string.status_verified),
+                detail = UiText.Res(R.string.peer_write_applied_detail),
                 status = ConduitStatus.READY,
                 detailLines = listOf(attribution),
             )
         PeerClipboardApply.UNVERIFIED ->
             ConduitSegmentState(
-                statusLabel = "已开启",
-                detail = "对端已开启自动写入；等待第一条内容实际写入后即为已验证。",
+                statusLabel = UiText.Res(R.string.status_enabled),
+                detail = UiText.Res(R.string.peer_write_unverified_detail),
                 status = ConduitStatus.READY,
                 detailLines = listOf(attribution),
             )
         PeerClipboardApply.OFF ->
             ConduitSegmentState(
-                statusLabel = "对端关闭自动写入",
-                detail = "内容会进入对端历史，需在对端手动复制。这是对端的设置，不是故障。",
+                statusLabel = UiText.Res(R.string.status_peer_apply_off),
+                detail = UiText.Res(R.string.peer_write_off_detail),
                 status = ConduitStatus.DEGRADED,
                 detailLines = listOf(attribution),
             )
         PeerClipboardApply.PAUSED ->
             ConduitSegmentState(
-                statusLabel = "对端已暂停",
-                detail = "对端暂停了同步：内容仍会进入其历史，但不写入其剪贴板。",
+                statusLabel = UiText.Res(R.string.status_peer_paused),
+                detail = UiText.Res(R.string.peer_write_paused_detail),
                 status = ConduitStatus.DEGRADED,
                 detailLines = listOf(attribution),
             )
         PeerClipboardApply.FAILED ->
             ConduitSegmentState(
-                statusLabel = "写入失败",
-                detail = "对端已开启自动写入，内容也会进入其历史。",
+                statusLabel = UiText.Res(R.string.status_write_failed),
+                detail = UiText.Res(R.string.peer_write_failed_detail),
                 status = ConduitStatus.DEGRADED,
-                errorDetail = "对端报告最近一次剪贴板写入失败；内容可在对端历史手动复制。",
+                errorDetail = UiText.Res(R.string.peer_write_failed_error),
                 detailLines = listOf(attribution),
             )
         null ->
             ConduitSegmentState(
-                statusLabel = "未探测",
-                detail = "对端未上报写入能力（对端版本较旧，或本轮探测尚未返回）。缺信息 ≠ 坏消息。",
+                statusLabel = UiText.Res(R.string.status_unprobed),
+                detail = UiText.Res(R.string.peer_write_unreported_detail),
                 status = ConduitStatus.UNPROBED,
-                detailLines = listOf("对端写入状态来自 /v1/peer/health 的自报字段 clipboard_apply_text。"),
+                detailLines = listOf(UiText.Res(R.string.peer_write_unreported_fact)),
             )
     }
 }

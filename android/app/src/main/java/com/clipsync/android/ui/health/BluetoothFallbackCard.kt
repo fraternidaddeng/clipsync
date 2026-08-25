@@ -15,9 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.clipsync.android.R
 import com.clipsync.android.ui.prefs.BondedBluetoothDevice
 import com.clipsync.android.ui.theme.ClipSyncType
 import com.clipsync.android.ui.theme.charterCard
@@ -59,12 +61,10 @@ fun BluetoothFallbackCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
-                Text(text = "蓝牙备援", fontSize = 14.sp, color = c.t1)
+                Text(text = stringResource(R.string.bt_fallback_title), fontSize = 14.sp, color = c.t1)
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    text =
-                        "IP 路径全部不可达时（例如代理/VPN 全局接管），通过系统已配对的蓝牙设备" +
-                            "继续同步文本。仅文本、速度较慢；IP 恢复后自动切回。",
+                    text = stringResource(R.string.bt_fallback_desc),
                     style = ClipSyncType.caption,
                     color = c.t3,
                 )
@@ -92,12 +92,12 @@ fun BluetoothFallbackCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(Modifier.weight(1f)) {
-                    Text(text = "蓝牙目标设备", fontSize = 14.sp, color = c.t1)
+                    Text(text = stringResource(R.string.bt_target_device), fontSize = 14.sp, color = c.t1)
                     Spacer(Modifier.height(2.dp))
                     Text(
                         text = state.deviceName
-                            ?.let { "当前：$it" }
-                            ?: "未选择 · 需先在系统设置里与电脑完成蓝牙配对",
+                            ?.let { stringResource(R.string.bt_target_current, it) }
+                            ?: stringResource(R.string.bt_target_none),
                         style = ClipSyncType.caption,
                         color = c.t3,
                     )
@@ -131,9 +131,7 @@ private fun BondedDeviceChooser(
     if (devices.isEmpty()) {
         CardDivider()
         Text(
-            text =
-                "没有可选的已配对设备。请确认系统蓝牙已开启、连接权限已授予，" +
-                    "并先在系统设置里与电脑完成蓝牙配对。",
+            text = stringResource(R.string.bt_no_devices),
             style = ClipSyncType.caption,
             color = c.t3,
             modifier = Modifier
@@ -162,7 +160,7 @@ private fun BondedDeviceChooser(
     }
     CardDivider()
     Text(
-        text = "收起",
+        text = stringResource(R.string.common_collapse),
         fontSize = 13.sp,
         fontWeight = FontWeight.SemiBold,
         color = c.flow,

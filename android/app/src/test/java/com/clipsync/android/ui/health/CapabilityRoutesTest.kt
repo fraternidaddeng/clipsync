@@ -1,5 +1,6 @@
 package com.clipsync.android.ui.health
 
+import com.clipsync.android.i18n.testString
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.platform.clipboard.CapabilityReport
 import com.clipsync.android.platform.clipboard.CapabilityState
@@ -57,7 +58,7 @@ class CapabilityRoutesTest {
             reports = reports(ClipboardReadMode.FOREGROUND_ONLY to CapabilityState.READY),
         )
         assertEquals(ConduitStatus.DEGRADED, localReadSegmentFromFacts(facts).status)
-        assertEquals("降级 · 仅前台", localReadSegmentFromFacts(facts).statusLabel)
+        assertEquals("降级 · 仅前台", localReadSegmentFromFacts(facts).statusLabel.testString())
     }
 
     // ---- write segment (本机写回) ----------------------------------------------------------
@@ -66,7 +67,7 @@ class CapabilityRoutesTest {
     fun `untested public write is unprobed not broken`() {
         val segment = localWriteSegmentFromFacts(baseFacts())
         assertEquals(ConduitStatus.UNPROBED, segment.status)
-        assertEquals("未测试", segment.statusLabel)
+        assertEquals("未测试", segment.statusLabel.testString())
     }
 
     @Test
@@ -87,7 +88,7 @@ class CapabilityRoutesTest {
         )
         assertEquals(ConduitStatus.UNAVAILABLE, segment.status)
         assertNull(segment.errorDetail)
-        assertTrue(segment.detailLines.any { it.contains("CLIPBOARD_WRITE_DENIED") })
+        assertTrue(segment.detailLines.any { it.testString().contains("CLIPBOARD_WRITE_DENIED") })
     }
 
     @Test
@@ -212,7 +213,8 @@ class CapabilityRoutesTest {
         } + RouteActionId.entries.map(::routeActionLabel) +
             ClipboardReadMode.entries.map(::readModeTitle)
         visible.forEach { text ->
-            assertFalse("\"$text\" leaks the brand name", text.contains("shizuku", ignoreCase = true))
+            val rendered = text.testString()
+            assertFalse("\"$rendered\" leaks the brand name", rendered.contains("shizuku", ignoreCase = true))
         }
     }
 
@@ -281,7 +283,7 @@ class CapabilityRoutesTest {
             ),
         )
         assertEquals(ConduitStatus.DEGRADED, state.localService.status)
-        assertTrue(state.localService.detail.contains("FGS_START_REJECTED"))
+        assertTrue(state.localService.detail.testString().contains("FGS_START_REJECTED"))
     }
 
     // ---- helpers ------------------------------------------------------------------------

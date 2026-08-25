@@ -3,6 +3,7 @@ package com.clipsync.android.ui.prefs
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.clipsync.android.i18n.resolve
 import com.clipsync.android.pairing.FakeKeyValueStore
 import com.clipsync.android.platform.clipboard.Sha256ContentHasher
 import com.clipsync.android.storage.ClipSyncDatabase
@@ -87,15 +88,19 @@ class PreferencesHistoryTransferTest {
             )
 
             model.importHistory { ByteArrayInputStream(document) }
-            val firstStatus = awaitTransferStatus(model)
+            val first = withTimeout(5_000) {
+                model.state.first { it.transferStatus != null }
+            }.transferStatus!!
+            val firstStatus = first.resolve(context)
             assertTrue("actual status: $firstStatus", firstStatus.contains("新增 1"))
 
             model.importHistory { ByteArrayInputStream(document) }
             val second = withTimeout(5_000) {
-                model.state.first { it.transferStatus != null && it.transferStatus != firstStatus }
+                model.state.first { it.transferStatus != null && it.transferStatus != first }
             }
-            assertTrue(second.transferStatus!!.contains("新增 0"))
-            assertTrue(second.transferStatus!!.contains("已存在 1"))
+            val secondStatus = second.transferStatus!!.resolve(context)
+            assertTrue(secondStatus.contains("新增 0"))
+            assertTrue(secondStatus.contains("已存在 1"))
             assertEquals(1, fresh.searchHistory().size)
         } finally {
             freshDb.close()
@@ -128,7 +133,9 @@ class PreferencesHistoryTransferTest {
     }
 
     private suspend fun awaitTransferStatus(model: PreferencesViewModel = viewModel): String =
-        withTimeout(5_000) { model.state.first { it.transferStatus != null } }.transferStatus!!
+        withTimeout(5_000) { model.state.first { it.transferStatus != null } }
+            .transferStatus!!
+            .resolve(ApplicationProvider.getApplicationContext<Context>())
 
     private fun draft(text: String) = LocalClipDraft(
         content = text,

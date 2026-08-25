@@ -1,43 +1,47 @@
 package com.clipsync.android.ui.onboarding
 
+import androidx.annotation.StringRes
+import com.clipsync.android.R
+
 /** One of the three places explained on the first-run screen. */
 data class OnboardingTabEntry(
-    val title: String,
-    val description: String,
+    @StringRes val title: Int,
+    @StringRes val description: Int,
 )
 
 /**
  * The first-run copy as pure data, separate from the composable: what the app
  * promises here is a commitment (honesty about capabilities, pairing lives
- * under 通路), so tests can hold the words to it.
+ * under 通路), so tests can hold the structure to it. The words themselves
+ * live in strings.xml (P1#16 — the default resources are the zh-Hans copy).
  */
 object OnboardingContent {
     /** Serif greeting — the app's own voice, reusing the brand moment. */
-    const val TITLE = "剪剪相传"
-    const val SUBTITLE = "剪贴板在手机与电脑之间安静地流动。"
+    @StringRes val TITLE = R.string.brand_name
+
+    @StringRes val SUBTITLE = R.string.onboarding_subtitle
 
     /** In dock order; the icons are matched positionally by the composable. */
     val tabs = listOf(
         OnboardingTabEntry(
-            title = "历史",
-            description = "两端复制过的内容都汇在这里，轻触任意一条即可再次复制到本机。",
+            title = R.string.tab_history,
+            description = R.string.onboarding_tab_history_desc,
         ),
         OnboardingTabEntry(
-            title = "通路",
-            description = "内容流动的每一段都如实显示。与电脑配对的入口就在这里——网络段的「去配对」。",
+            title = R.string.tab_conduit,
+            description = R.string.onboarding_tab_conduit_desc,
         ),
         OnboardingTabEntry(
-            title = "偏好",
-            description = "暂停同步、私密模式、保留期——每个开关都真实生效，改动立即落盘。",
+            title = R.string.tab_prefs,
+            description = R.string.onboarding_tab_prefs_desc,
         ),
     )
 
-    const val HONESTY_HEADER = "先说清楚"
-    const val HONESTY_BODY =
-        "Android 限制应用在后台读取剪贴板，剪剪相传不会假装做到：" +
-            "应用在前台时可自动上行；后台读取需要在「通路」页任选一条路线完成授权，" +
-            "每一段能力都以实测为准，做不到就直说。"
+    @StringRes val HONESTY_HEADER = R.string.onboarding_honesty_header
 
-    const val ACTION_PAIR = "去配对"
-    const val ACTION_SKIP = "先看看，稍后配对"
+    @StringRes val HONESTY_BODY = R.string.onboarding_honesty_body
+
+    @StringRes val ACTION_PAIR = R.string.action_go_pair
+
+    @StringRes val ACTION_SKIP = R.string.onboarding_skip
 }

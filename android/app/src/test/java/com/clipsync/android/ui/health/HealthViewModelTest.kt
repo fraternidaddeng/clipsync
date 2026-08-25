@@ -1,5 +1,6 @@
 package com.clipsync.android.ui.health
 
+import com.clipsync.android.i18n.testString
 import com.clipsync.android.pairing.FakeKeyValueStore
 import com.clipsync.android.pairing.FakeSecretProtector
 import com.clipsync.android.pairing.PairedPeer
@@ -126,7 +127,7 @@ class HealthViewModelTest {
         pair()
         val state = viewModel().state.value
         assertEquals(ConduitStatus.DEGRADED, state.network.status)
-        assertEquals("已配对 · 未连接", state.network.statusLabel)
+        assertEquals("已配对 · 未连接", state.network.statusLabel.testString())
         assertEquals(ConduitStatus.UNPROBED, state.peerWrite.status)
         assertEquals(1, state.pairedDeviceCount)
     }
@@ -230,7 +231,7 @@ class HealthViewModelTest {
         val model = viewModel(syncHealthSource = sync)
         val throttled = model.state.value.network
         assertEquals(ConduitStatus.DEGRADED, throttled.status)
-        assertEquals("已被对端限流", throttled.statusLabel)
+        assertEquals("已被对端限流", throttled.statusLabel.testString())
 
         // A session that authenticates again ends the episode on every surface.
         sync.flow.value = SyncHealth(serviceRunning = true, connected = true, peerThrottled = false)
@@ -270,7 +271,7 @@ class HealthViewModelTest {
             )
         val state = viewModel(coordinator).state.value
         assertEquals(ConduitStatus.DEGRADED, state.localRead.status)
-        assertEquals("降级 · 仅前台", state.localRead.statusLabel)
+        assertEquals("降级 · 仅前台", state.localRead.statusLabel.testString())
     }
 
     @Test
@@ -474,7 +475,7 @@ class HealthViewModelTest {
         assertEquals(CapabilityState.DEGRADED, after.readState)
         assertEquals(ShizukuClipboardBackend.ERROR_READ_UNVERIFIED, after.errorCode)
         // Honest ceiling: authorized is never READY before device-verified reads.
-        assertEquals("已授权 · 待实测", model.state.value.localRead.statusLabel)
+        assertEquals("已授权 · 待实测", model.state.value.localRead.statusLabel.testString())
     }
 
     @Test
@@ -707,23 +708,23 @@ class HealthViewModelTest {
         )
         assertEquals(ConduitStatus.READY, state.network.status)
         assertEquals(ConduitStatus.READY, state.peerWrite.status)
-        assertEquals("已验证", state.peerWrite.statusLabel)
+        assertEquals("已验证", state.peerWrite.statusLabel.testString())
         // The claim carries its attribution so the user can see where the fact comes from.
-        assertTrue(state.peerWrite.detailLines.any { it.contains("/v1/peer/health") })
+        assertTrue(state.peerWrite.detailLines.any { it.testString().contains("/v1/peer/health") })
     }
 
     @Test
     fun `peer auto-apply on but nothing applied yet reads ready awaiting evidence`() {
         val segment = peerWriteWith(reachable(PeerClipboardApply.UNVERIFIED)).peerWrite
         assertEquals(ConduitStatus.READY, segment.status)
-        assertEquals("已开启", segment.statusLabel)
+        assertEquals("已开启", segment.statusLabel.testString())
     }
 
     @Test
     fun `peer turned auto-apply off - a setting stated as a fact, not a failure`() {
         val segment = peerWriteWith(reachable(PeerClipboardApply.OFF)).peerWrite
         assertEquals(ConduitStatus.DEGRADED, segment.status)
-        assertEquals("对端关闭自动写入", segment.statusLabel)
+        assertEquals("对端关闭自动写入", segment.statusLabel.testString())
         assertNull(segment.errorDetail)
     }
 
@@ -731,23 +732,23 @@ class HealthViewModelTest {
     fun `paused peer degrades the segment while naming the pause`() {
         val segment = peerWriteWith(reachable(PeerClipboardApply.PAUSED)).peerWrite
         assertEquals(ConduitStatus.DEGRADED, segment.status)
-        assertEquals("对端已暂停", segment.statusLabel)
+        assertEquals("对端已暂停", segment.statusLabel.testString())
     }
 
     @Test
     fun `failed apply on the peer degrades with the failure spelled out`() {
         val segment = peerWriteWith(reachable(PeerClipboardApply.FAILED)).peerWrite
         assertEquals(ConduitStatus.DEGRADED, segment.status)
-        assertEquals("写入失败", segment.statusLabel)
-        assertTrue(segment.errorDetail!!.contains("写入失败"))
+        assertEquals("写入失败", segment.statusLabel.testString())
+        assertTrue(segment.errorDetail!!.testString().contains("写入失败"))
     }
 
     @Test
     fun `older peer without the report field stays unprobed and says why`() {
         val segment = peerWriteWith(reachable(apply = null)).peerWrite
         assertEquals(ConduitStatus.UNPROBED, segment.status)
-        assertEquals("未探测", segment.statusLabel)
-        assertTrue(segment.detail.contains("对端未上报"))
+        assertEquals("未探测", segment.statusLabel.testString())
+        assertTrue(segment.detail.testString().contains("对端未上报"))
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.clipsync.android.ui.home
 
+import com.clipsync.android.R
+import com.clipsync.android.i18n.UiText
 import com.clipsync.android.pairing.FakeKeyValueStore
 import com.clipsync.android.pairing.FakeSecretProtector
 import com.clipsync.android.pairing.PairingConfirmResponse
@@ -168,9 +170,9 @@ class HomeViewModelTest {
 
             val items = model.state.value.items
             assertEquals(listOf("e-remote", "e-local", "e-unknown"), items.map { it.eventId })
-            assertEquals("PC-STUDIO", items[0].remoteSourceLabel)
+            assertEquals(UiText.Raw("PC-STUDIO"), items[0].remoteSourceLabel)
             assertNull(items[1].remoteSourceLabel)
-            assertEquals("远端设备", items[2].remoteSourceLabel)
+            assertEquals(UiText.Res(R.string.remote_device_fallback), items[2].remoteSourceLabel)
             // Neighbour hues follow pairing order (charter §3.4): the paired PC
             // holds slot 1; locals and unslotted remotes carry no hue.
             assertEquals(1, items[0].sourceAccentSlot)
@@ -313,7 +315,7 @@ class HomeViewModelTest {
             val model = model()
             testScheduler.advanceUntilIdle()
             assertEquals(
-                "远端设备",
+                UiText.Res(R.string.remote_device_fallback),
                 model.state.value.items
                     .single()
                     .remoteSourceLabel,
@@ -328,7 +330,7 @@ class HomeViewModelTest {
             model.refreshPeer()
             testScheduler.advanceUntilIdle()
             assertEquals(
-                "PC-STUDIO",
+                UiText.Raw("PC-STUDIO"),
                 model.state.value.items
                     .single()
                     .remoteSourceLabel,

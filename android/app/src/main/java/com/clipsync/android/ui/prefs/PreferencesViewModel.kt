@@ -3,6 +3,10 @@ package com.clipsync.android.ui.prefs
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.clipsync.android.R
+import com.clipsync.android.i18n.AppLanguages
+import com.clipsync.android.i18n.LanguageCatalog
+import com.clipsync.android.i18n.UiText
 import com.clipsync.android.storage.ClipSyncRepository
 import com.clipsync.android.storage.HistoryTransferErrorCodes
 import com.clipsync.android.storage.HistoryTransferException
@@ -46,8 +50,10 @@ data class PreferencesUiState(
     val skipSensitive: Boolean = true,
     /** 收到内容通知（settings-roadmap P1-8）：应用内总开关，默认开。 */
     val inboxNotify: Boolean = true,
+    /** 界面语言（settings-roadmap P1#16）：目录 tag 或 [LanguageCatalog.FOLLOW_SYSTEM]。 */
+    val languageTag: String = LanguageCatalog.FOLLOW_SYSTEM,
     /** Result line of the last 导出历史/导入历史/清空历史 run; null until one has run. */
-    val transferStatus: String? = null,
+    val transferStatus: UiText? = null,
 )
 
 /** One system-bonded Bluetooth device the fallback may dial; display data only. */
@@ -110,6 +116,7 @@ class PreferencesViewModel(
                 themeOverride = settings.themeOverride,
                 skipSensitive = settings.skipSensitiveEnabled,
                 inboxNotify = settings.inboxNotifyEnabled,
+                languageTag = settings.languageTag,
             ),
         )
 
@@ -204,6 +211,16 @@ class PreferencesViewModel(
         mutableState.update { it.copy(inboxNotify = enabled) }
     }
 
+    /**
+     * 语言 (settings-roadmap P1#16): persists `ui.language` and applies it through
+     * AppCompat per-app locales — started activities recreate, so the switch is
+     * immediate. Must run on the main thread (AppCompat requirement).
+     */
+    fun setLanguage(tag: String) {
+        AppLanguages.select(tag, settings)
+        mutableState.update { it.copy(languageTag = settings.languageTag) }
+    }
+
     /** The preference is written first so the receiver's boot-time re-check agrees. */
     fun setBootRestore(enabled: Boolean) {
         settings.bootRestoreEnabled = enabled
@@ -261,10 +278,10 @@ class PreferencesViewModel(
                     val output = openOutput() ?: return@launch
                     output.use { stream ->
                         val count = repository.exportHistory(stream, nowMs())
-                        "已导出 $count 条记录（明文），请妥善保管备份文件。"
+                        UiText.Res(R.string.transfer_export_done, count)
                     }
                 } catch (_: IOException) {
-                    "导出失败：无法写入所选文件。"
+                    UiText.Res(R.string.transfer_export_failed)
                 }
             mutableState.update { it.copy(transferStatus = status) }
         }
@@ -283,12 +300,20 @@ class PreferencesViewModel(
                     val input = openInput() ?: return@launch
                     input.use { stream ->
                         val result = repository.importHistory(stream)
-                        "导入完成：新增 ${result.imported} · 已存在 ${result.skipped} · 冲突 ${result.conflicts}"
+                        UiText.Res(
+                            R.string.transfer_import_done,
+                            result.imported,
+                            result.skipped,
+                            result.conflicts,
+                        )
                     }
                 } catch (exception: HistoryTransferException) {
-                    "导入失败：${describeTransferError(exception.errorCode)}。未做任何改动。"
+                    UiText.Res(
+                        R.string.transfer_import_failed,
+                        describeTransferError(exception.errorCode),
+                    )
                 } catch (_: IOException) {
-                    "导入失败：无法读取所选文件。"
+                    UiText.Res(R.string.transfer_import_read_failed)
                 }
             mutableState.update { it.copy(transferStatus = status) }
         }
@@ -307,22 +332,24 @@ class PreferencesViewModel(
             val cleared = repository.clearHistory(now)
             repository.collectMediaGarbage(now)
             mutableState.update {
-                it.copy(transferStatus = "已清空 $cleared 条历史（仅本机，不影响对端）。")
+                it.copy(transferStatus = UiText.Res(R.string.transfer_cleared, cleared))
             }
         }
     }
 
     companion object {
-        fun describeTransferError(errorCode: String): String =
-            when (errorCode) {
-                HistoryTransferErrorCodes.BAD_HEADER -> "这不是 ClipSync 历史导出文件"
-                HistoryTransferErrorCodes.UNSUPPORTED_VERSION -> "文件版本高于本应用支持的版本"
-                HistoryTransferErrorCodes.MALFORMED_RECORD -> "文件内容损坏（记录格式错误）"
-                HistoryTransferErrorCodes.HASH_MISMATCH -> "文件内容损坏（哈希校验失败）"
-                HistoryTransferErrorCodes.COUNT_MISMATCH -> "文件不完整（条数与头部不符）"
-                HistoryTransferErrorCodes.CONTENT_TOO_LARGE -> "文件包含超过 1 MiB 的条目"
-                else -> "未知错误"
-            }
+        fun describeTransferError(errorCode: String): UiText =
+            UiText.Res(
+                when (errorCode) {
+                    HistoryTransferErrorCodes.BAD_HEADER -> R.string.transfer_err_bad_header
+                    HistoryTransferErrorCodes.UNSUPPORTED_VERSION -> R.string.transfer_err_version
+                    HistoryTransferErrorCodes.MALFORMED_RECORD -> R.string.transfer_err_malformed
+                    HistoryTransferErrorCodes.HASH_MISMATCH -> R.string.transfer_err_hash
+                    HistoryTransferErrorCodes.COUNT_MISMATCH -> R.string.transfer_err_count
+                    HistoryTransferErrorCodes.CONTENT_TOO_LARGE -> R.string.transfer_err_too_large
+                    else -> R.string.transfer_err_unknown
+                },
+            )
 
         fun factory(
             settings: SyncSettingsStore,
