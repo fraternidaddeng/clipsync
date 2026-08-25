@@ -1,4 +1,6 @@
 using System.Data;
+using ClipSync.Core.Media;
+using ClipSync.Core.Protocol;
 using ClipSync.Core.Sync;
 using Microsoft.Data.Sqlite;
 
@@ -6,18 +8,29 @@ namespace ClipSync.Core.Storage;
 
 public sealed record OriginSequenceRanges(string OriginDeviceId, IReadOnlyList<SequenceRange> Ranges);
 
+/// <summary>
+/// A snapshot of the delivery queue: how many outbox rows still await a peer ack
+/// (pending or announced — acked rows are deleted), and when a peer last acked anything.
+/// </summary>
+public sealed record OutboxStatus(int PendingCount, DateTimeOffset? LastPeerAckAt);
+
 public sealed partial class SqliteClipboardEventStore
 {
     private const string SyncableColumns = """
-        event_id,
-        origin_device_id,
-        origin_seq,
-        content,
-        content_hash,
-        source_app,
-        created_at,
-        expires_at,
-        terminal_reason
+        c.event_id,
+        c.origin_device_id,
+        c.origin_seq,
+        c.content,
+        c.content_hash,
+        c.source_app,
+        c.created_at,
+        c.expires_at,
+        c.terminal_reason,
+        c.kind,
+        b.mime_type,
+        b.encoded_bytes,
+        b.pixel_width,
+        b.pixel_height
         """;
 
     public string LocalDeviceId => localDeviceId;
@@ -218,6 +231,34 @@ public sealed partial class SqliteClipboardEventStore
         return vector;
     }
 
+    /// <summary>
+    /// Raises the local allocator so the next capture is above <paramref name="highestSeq"/>.
+    /// Used when a peer's known_vector shows it already holds this origin further than
+    /// the local database (same device id after a local reset).
+    /// </summary>
+    public async ValueTask AdoptPeerCoverageOfLocalOriginAsync(
+        long highestSeq,
+        CancellationToken cancellationToken = default)
+    {
+        if (highestSeq < 1)
+        {
+            return;
+        }
+
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            INSERT INTO local_sequences (device_id, next_seq)
+            VALUES ($device_id, $next)
+            ON CONFLICT(device_id) DO UPDATE SET
+                next_seq = MAX(local_sequences.next_seq, excluded.next_seq);
+            """;
+        command.Parameters.AddWithValue("$device_id", localDeviceId);
+        command.Parameters.AddWithValue("$next", highestSeq + 1);
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     public async ValueTask<RemoteStoreResult> StoreRemoteEventAsync(
         RemoteClipEvent remoteEvent,
         string? sourcePeerId,
@@ -230,7 +271,13 @@ public sealed partial class SqliteClipboardEventStore
         }
 
         await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        if (remoteEvent.IsImage)
+        {
+            await mediaLifecycle.WaitAsync(cancellationToken).ConfigureAwait(false);
+        }
 
+        try
+        {
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
             IsolationLevel.Serializable,
@@ -247,12 +294,53 @@ public sealed partial class SqliteClipboardEventStore
                 cancellationToken).ConfigureAwait(false);
             if (conflict is not null)
             {
+                if (conflict is RemoteStoreResult.AlreadyPersisted)
+                {
+                    await AdvanceRemoteReceiveStateAsync(
+                        connection,
+                        transaction,
+                        remoteEvent.OriginDeviceId,
+                        remoteEvent.OriginSeq,
+                        cancellationToken).ConfigureAwait(false);
+                    await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                    return conflict;
+                }
+
                 await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
                 return conflict;
             }
 
-            await using (var insert = connection.CreateCommand())
+            if (remoteEvent.IsImage)
             {
+                if (!media.Exists(remoteEvent.ContentHash))
+                {
+                    throw new InvalidOperationException("MEDIA_STORAGE_FAILED");
+                }
+
+                var inspect = ImageCodec.TryInspectFile(
+                    media.RequirePath(remoteEvent.ContentHash),
+                    out var validated,
+                    remoteEvent.ContentHash);
+                if (inspect != ImageCodecError.Ok || validated is null)
+                {
+                    throw new InvalidOperationException("MEDIA_DECODE_FAILED");
+                }
+
+                await InsertImageClipAsync(
+                    connection,
+                    transaction,
+                    remoteEvent.EventId,
+                    remoteEvent.OriginDeviceId,
+                    remoteEvent.OriginSeq,
+                    validated,
+                    remoteEvent.SourceApp,
+                    remoteEvent.CreatedAt,
+                    remoteEvent.ExpiresAt,
+                    cancellationToken).ConfigureAwait(false);
+            }
+            else
+            {
+                await using var insert = connection.CreateCommand();
                 insert.Transaction = transaction;
                 insert.CommandText = """
                     INSERT INTO clips (
@@ -263,7 +351,7 @@ public sealed partial class SqliteClipboardEventStore
                 insert.Parameters.AddWithValue("$event_id", remoteEvent.EventId.ToString("D"));
                 insert.Parameters.AddWithValue("$origin", remoteEvent.OriginDeviceId);
                 insert.Parameters.AddWithValue("$seq", remoteEvent.OriginSeq);
-                insert.Parameters.AddWithValue("$content", remoteEvent.Content);
+                insert.Parameters.AddWithValue("$content", remoteEvent.Content ?? string.Empty);
                 insert.Parameters.AddWithValue("$hash", remoteEvent.ContentHash);
                 insert.Parameters.AddWithValue("$source_app", (object?)remoteEvent.SourceApp ?? DBNull.Value);
                 insert.Parameters.AddWithValue("$created_at", remoteEvent.CreatedAt.ToUnixTimeMilliseconds());
@@ -298,6 +386,14 @@ public sealed partial class SqliteClipboardEventStore
             await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
             throw;
         }
+        }
+        finally
+        {
+            if (remoteEvent.IsImage)
+            {
+                mediaLifecycle.Release();
+            }
+        }
     }
 
     public async ValueTask<RemoteStoreResult> StoreRemoteTerminalAsync(
@@ -330,6 +426,51 @@ public sealed partial class SqliteClipboardEventStore
                 cancellationToken).ConfigureAwait(false);
             if (conflict is not null)
             {
+                if (conflict is RemoteStoreResult.AlreadyPersisted)
+                {
+                    var upgraded = false;
+                    if (string.Equals(marker.Reason, ClipUnavailableReasons.Deleted, StringComparison.Ordinal))
+                    {
+                        await using var tombstone = CreateSoftDeleteCommand(connection, transaction, receivedAt);
+                        tombstone.CommandText += " AND event_id = $event_id;";
+                        tombstone.Parameters.AddWithValue("$event_id", marker.EventId.ToString("D"));
+                        upgraded = await tombstone.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) == 1;
+                        if (upgraded)
+                        {
+                            await DetachClipMediaAsync(
+                                    connection,
+                                    transaction,
+                                    marker.EventId.ToString("D"),
+                                    cancellationToken)
+                                .ConfigureAwait(false);
+                            await EnqueueOutboxFanOutAsync(
+                                    connection,
+                                    transaction,
+                                    marker.EventId,
+                                    marker.OriginDeviceId,
+                                    marker.OriginSeq,
+                                    sourcePeerId,
+                                    cancellationToken)
+                                .ConfigureAwait(false);
+                        }
+                    }
+
+                    var existingState = await AdvanceRemoteReceiveStateAsync(
+                        connection,
+                        transaction,
+                        marker.OriginDeviceId,
+                        marker.OriginSeq,
+                        cancellationToken).ConfigureAwait(false);
+                    await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                    if (upgraded)
+                    {
+                        await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
+                        return new RemoteStoreResult.Stored(existingState);
+                    }
+
+                    return conflict;
+                }
+
                 await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
                 return conflict;
             }
@@ -402,9 +543,11 @@ public sealed partial class SqliteClipboardEventStore
             await using var command = connection.CreateCommand();
             command.CommandText = $"""
                 SELECT {SyncableColumns}
-                FROM clips
-                WHERE origin_device_id = $origin AND origin_seq >= $start AND origin_seq <= $end
-                ORDER BY origin_seq
+                FROM clips c
+                LEFT JOIN clip_media m ON m.event_id = c.event_id
+                LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
+                WHERE c.origin_device_id = $origin AND c.origin_seq >= $start AND c.origin_seq <= $end
+                ORDER BY c.origin_seq
                 LIMIT $limit;
                 """;
             command.Parameters.AddWithValue("$origin", originDeviceId);
@@ -417,6 +560,10 @@ public sealed partial class SqliteClipboardEventStore
         return events;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Security",
+        "CA2100:Review SQL queries for security vulnerabilities",
+        Justification = "IN-list tokens are generated $id{n} names only; event id values are bound with Parameters.AddWithValue. Column list is a const.")]
     public async ValueTask<IReadOnlyList<SyncableClipEvent>> GetSyncableEventsByIdsAsync(
         IReadOnlyList<Guid> eventIds,
         CancellationToken cancellationToken = default)
@@ -439,9 +586,11 @@ public sealed partial class SqliteClipboardEventStore
 
         command.CommandText = $"""
             SELECT {SyncableColumns}
-            FROM clips
-            WHERE event_id IN ({string.Join(", ", parameterNames)})
-            ORDER BY origin_device_id, origin_seq;
+            FROM clips c
+            LEFT JOIN clip_media m ON m.event_id = c.event_id
+            LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
+            WHERE c.event_id IN ({string.Join(", ", parameterNames)})
+            ORDER BY c.origin_device_id, c.origin_seq;
             """;
 
         var events = new List<SyncableClipEvent>();
@@ -461,7 +610,7 @@ public sealed partial class SqliteClipboardEventStore
         await using var command = connection.CreateCommand();
         command.CommandText = """
             SELECT content FROM clips
-            WHERE content_hash = $hash AND deleted_at IS NULL
+            WHERE content_hash = $hash AND deleted_at IS NULL AND kind = 'text'
             LIMIT 1;
             """;
         command.Parameters.AddWithValue("$hash", contentHash);
@@ -479,15 +628,21 @@ public sealed partial class SqliteClipboardEventStore
 
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var command = connection.CreateCommand();
-        command.CommandText = $"""
-            SELECT o.id, o.peer_id, o.state, o.attempts, {string.Join(", ", SyncableColumns.Split(',').Select(column => "c." + column.Trim()))}
+        command.CommandText = """
+            SELECT o.id, o.peer_id, o.state, o.attempts,
+                c.event_id, c.origin_device_id, c.origin_seq, c.content, c.content_hash,
+                c.source_app, c.created_at, c.expires_at, c.terminal_reason,
+                c.kind, b.mime_type, b.encoded_bytes, b.pixel_width, b.pixel_height
             FROM outbox o
             JOIN clips c ON c.event_id = o.event_id
-            WHERE o.peer_id = $peer_id AND o.state = '{OutboxEntryStates.Pending}'
+            LEFT JOIN clip_media m ON m.event_id = c.event_id
+            LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
+            WHERE o.peer_id = $peer_id AND o.state = $state
             ORDER BY o.id
             LIMIT $limit;
             """;
         command.Parameters.AddWithValue("$peer_id", peerId);
+        command.Parameters.AddWithValue("$state", OutboxEntryStates.Pending);
         command.Parameters.AddWithValue("$limit", limit);
 
         var batch = new List<(OutboxEntry, SyncableClipEvent)>();
@@ -510,6 +665,10 @@ public sealed partial class SqliteClipboardEventStore
         return batch;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Security",
+        "CA2100:Review SQL queries for security vulnerabilities",
+        Justification = "IN-list tokens are generated $id{n} names only; outbox id values are bound with Parameters.AddWithValue. State is a const bound as $state.")]
     public async ValueTask MarkOutboxAnnouncedAsync(
         IReadOnlyList<long> outboxIds,
         CancellationToken cancellationToken = default)
@@ -532,7 +691,39 @@ public sealed partial class SqliteClipboardEventStore
 
         command.CommandText = $"""
             UPDATE outbox
-            SET state = '{OutboxEntryStates.Announced}', attempts = attempts + 1
+            SET state = $state, attempts = attempts + 1
+            WHERE id IN ({string.Join(", ", parameterNames)});
+            """;
+        command.Parameters.AddWithValue("$state", OutboxEntryStates.Announced);
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Security",
+        "CA2100:Review SQL queries for security vulnerabilities",
+        Justification = "IN-list tokens are generated $id{n} names only; outbox id values are bound with Parameters.AddWithValue.")]
+    public async ValueTask DeleteOutboxIdsAsync(
+        IReadOnlyList<long> outboxIds,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(outboxIds);
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        if (outboxIds.Count == 0)
+        {
+            return;
+        }
+
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        var parameterNames = new string[outboxIds.Count];
+        for (var index = 0; index < outboxIds.Count; index++)
+        {
+            parameterNames[index] = $"$id{index}";
+            command.Parameters.AddWithValue(parameterNames[index], outboxIds[index]);
+        }
+
+        command.CommandText = $"""
+            DELETE FROM outbox
             WHERE id IN ({string.Join(", ", parameterNames)});
             """;
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
@@ -561,7 +752,29 @@ public sealed partial class SqliteClipboardEventStore
         string peerId,
         IReadOnlyList<OriginSequenceRanges> acks,
         DateTimeOffset now,
+        bool dropTerminalOutbox,
         CancellationToken cancellationToken = default)
+    {
+        await ApplyPeerAckRangesCoreAsync(peerId, acks, now, dropTerminalOutbox, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    public async ValueTask ApplyPeerAckRangesAsync(
+        string peerId,
+        IReadOnlyList<OriginSequenceRanges> acks,
+        DateTimeOffset now,
+        CancellationToken cancellationToken = default)
+    {
+        await ApplyPeerAckRangesCoreAsync(peerId, acks, now, dropTerminalOutbox: true, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async ValueTask ApplyPeerAckRangesCoreAsync(
+        string peerId,
+        IReadOnlyList<OriginSequenceRanges> acks,
+        DateTimeOffset now,
+        bool dropTerminalOutbox,
+        CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(peerId);
         ArgumentNullException.ThrowIfNull(acks);
@@ -593,11 +806,26 @@ public sealed partial class SqliteClipboardEventStore
                 {
                     await using var remove = connection.CreateCommand();
                     remove.Transaction = transaction;
-                    remove.CommandText = """
-                        DELETE FROM outbox
-                        WHERE peer_id = $peer_id AND origin_device_id = $origin
-                          AND origin_seq >= $start AND origin_seq <= $end;
-                        """;
+                    if (dropTerminalOutbox)
+                    {
+                        remove.CommandText = """
+                            DELETE FROM outbox
+                            WHERE peer_id = $peer_id AND origin_device_id = $origin
+                              AND origin_seq >= $start AND origin_seq <= $end;
+                            """;
+                    }
+                    else
+                    {
+                        remove.CommandText = """
+                            DELETE FROM outbox
+                            WHERE peer_id = $peer_id AND origin_device_id = $origin
+                              AND origin_seq >= $start AND origin_seq <= $end
+                              AND event_id IN (
+                                SELECT event_id FROM clips
+                                WHERE deleted_at IS NULL AND terminal_reason IS NULL
+                              );
+                            """;
+                    }
                     remove.Parameters.AddWithValue("$peer_id", peerId);
                     remove.Parameters.AddWithValue("$origin", ack.OriginDeviceId);
                     remove.Parameters.AddWithValue("$start", range.StartSeq);
@@ -613,6 +841,28 @@ public sealed partial class SqliteClipboardEventStore
             await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
             throw;
         }
+    }
+
+    /// <summary>
+    /// Reads the current outbox depth and the newest peer-cursor timestamp. Rows are removed
+    /// from the outbox only when a peer acks them, so the count is "not yet confirmed anywhere".
+    /// </summary>
+    public async ValueTask<OutboxStatus> GetOutboxStatusAsync(CancellationToken cancellationToken = default)
+    {
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT
+                (SELECT COUNT(*) FROM outbox),
+                (SELECT MAX(updated_at) FROM peer_cursors);
+            """;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+        return new OutboxStatus(
+            reader.GetInt32(0),
+            reader.IsDBNull(1) ? null : DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(1)));
     }
 
     public async ValueTask<IReadOnlyDictionary<string, OriginReceiveState>> GetPeerCursorsAsync(
@@ -753,7 +1003,12 @@ public sealed partial class SqliteClipboardEventStore
             WHERE revoked_at IS NULL
               AND device_id <> $origin
               AND ($excluded_peer IS NULL OR device_id <> $excluded_peer)
-            ON CONFLICT(peer_id, origin_device_id, origin_seq) DO NOTHING;
+            ON CONFLICT(peer_id, origin_device_id, origin_seq) DO UPDATE SET
+                event_id = excluded.event_id,
+                state = 'pending',
+                attempts = 0,
+                next_attempt_at = 0,
+                last_error_code = NULL;
             """;
         command.Parameters.AddWithValue("$event_id", eventId.ToString("D"));
         command.Parameters.AddWithValue("$origin", originDeviceId);
@@ -859,15 +1114,79 @@ public sealed partial class SqliteClipboardEventStore
     private static SyncableClipEvent ReadSyncableEvent(SqliteDataReader reader, int columnOffset)
     {
         var terminalReason = reader.IsDBNull(columnOffset + 8) ? null : reader.GetString(columnOffset + 8);
+        var kind = reader.FieldCount > columnOffset + 9 && !reader.IsDBNull(columnOffset + 9)
+            ? reader.GetString(columnOffset + 9)
+            : "text";
+        var content = terminalReason is null && !reader.IsDBNull(columnOffset + 3)
+            ? reader.GetString(columnOffset + 3)
+            : null;
         return new SyncableClipEvent(
             Guid.Parse(reader.GetString(columnOffset)),
             reader.GetString(columnOffset + 1),
             reader.GetInt64(columnOffset + 2),
-            terminalReason is null ? reader.GetString(columnOffset + 3) : null,
+            content,
             terminalReason is null ? reader.GetString(columnOffset + 4) : null,
             reader.IsDBNull(columnOffset + 5) ? null : reader.GetString(columnOffset + 5),
             DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(columnOffset + 6)),
             reader.IsDBNull(columnOffset + 7) ? null : DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(columnOffset + 7)),
-            terminalReason);
+            terminalReason,
+            kind,
+            reader.FieldCount > columnOffset + 10 && !reader.IsDBNull(columnOffset + 10)
+                ? reader.GetString(columnOffset + 10)
+                : null,
+            reader.FieldCount > columnOffset + 11 && !reader.IsDBNull(columnOffset + 11)
+                ? reader.GetInt32(columnOffset + 11)
+                : null,
+            reader.FieldCount > columnOffset + 12 && !reader.IsDBNull(columnOffset + 12)
+                ? reader.GetInt32(columnOffset + 12)
+                : null,
+            reader.FieldCount > columnOffset + 13 && !reader.IsDBNull(columnOffset + 13)
+                ? reader.GetInt32(columnOffset + 13)
+                : null);
+    }
+
+    public async ValueTask<bool> FindLiveBlobByHashAsync(
+        string contentHash,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(contentHash);
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        if (!media.Exists(contentHash))
+        {
+            return false;
+        }
+
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT 1 FROM clip_media m
+            JOIN clips c ON c.event_id = m.event_id
+            WHERE m.content_hash = $hash AND c.deleted_at IS NULL AND m.state = 'ready'
+            LIMIT 1;
+            """;
+        command.Parameters.AddWithValue("$hash", contentHash);
+        return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is not null;
+    }
+
+    public async ValueTask StoreLocalUnsupportedMediaAsync(
+        Guid eventId,
+        string originDeviceId,
+        long originSeq,
+        DateTimeOffset at,
+        CancellationToken cancellationToken = default)
+    {
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            UPDATE clips
+            SET terminal_reason = 'unsupported_media'
+            WHERE event_id = $event_id AND origin_device_id = $origin AND origin_seq = $seq;
+            """;
+        command.Parameters.AddWithValue("$event_id", eventId.ToString("D"));
+        command.Parameters.AddWithValue("$origin", originDeviceId);
+        command.Parameters.AddWithValue("$seq", originSeq);
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        _ = at;
     }
 }

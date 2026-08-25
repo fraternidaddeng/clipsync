@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using ClipSync.Core.Protocol;
 using ClipSync.Core.Storage;
@@ -158,6 +157,38 @@ public sealed class PairingHttpTests
             JsonBody(ConfirmRequestJson(ProtocolValidation.EncodeBase64Url(new byte[32]))));
         Assert.Equal(HttpStatusCode.BadRequest, unversioned.StatusCode);
         Assert.Contains("UNSUPPORTED_VERSION", await unversioned.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
+    public async Task PairingConfirmIsRateLimitedPerRemoteAddress()
+    {
+        await using var pair = await PeerPair.CreateAsync(
+            pairAndroidSide: false,
+            pairWindowsSide: false,
+            pairingApprover: new DelegateApprover((_, _) => Task.FromResult(true)),
+            maxPairingConfirmsPerWindow: 2);
+        using var client = pair.CreatePinnedHttpClient();
+        var unknownToken = ProtocolValidation.EncodeBase64Url(new byte[32]);
+
+        using var first = await client.PostAsync(
+            new Uri("/v1/pair/confirm", UriKind.Relative),
+            JsonBody(ConfirmRequestJson(unknownToken)));
+        Assert.Equal(HttpStatusCode.Forbidden, first.StatusCode);
+
+        using var second = await client.PostAsync(
+            new Uri("/v1/pair/confirm", UriKind.Relative),
+            JsonBody(ConfirmRequestJson(unknownToken)));
+        Assert.Equal(HttpStatusCode.Forbidden, second.StatusCode);
+
+        using var limited = await client.PostAsync(
+            new Uri("/v1/pair/confirm", UriKind.Relative),
+            JsonBody(ConfirmRequestJson(unknownToken)));
+        Assert.Equal(HttpStatusCode.TooManyRequests, limited.StatusCode);
+        var limitedText = await limited.Content.ReadAsStringAsync();
+        var body = PairingJson.ParseError(limitedText, out var parseError);
+        Assert.Null(parseError);
+        Assert.Equal(PairingErrorCodes.RateLimited, body!.Error);
+        Assert.DoesNotContain(unknownToken, limitedText, StringComparison.Ordinal);
     }
 
     [Fact]

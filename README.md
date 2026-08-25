@@ -1,5 +1,7 @@
 # ClipSync
 
+[![CI](https://github.com/fraternidaddeng/clipsync/actions/workflows/ci.yml/badge.svg)](https://github.com/fraternidaddeng/clipsync/actions/workflows/ci.yml)
+
 ClipSync is a private, direct peer-to-peer clipboard synchronization project for Windows and Android. The repository has completed **Stage 1**: the Stage 0 protocol and client foundations plus a background Windows clipboard listener, transactional local history, privacy controls, and a tray-based WPF UI.
 
 No account service, cloud database, public relay, file transfer, telemetry, or clipboard-content logging is included.
@@ -43,6 +45,19 @@ Windows Stage 1 acceptance checks:
 pwsh .\scripts\run-windows-stage1-smoke.ps1
 pwsh .\scripts\run-windows-stage1-stress.ps1 -Count 100
 ```
+
+## Release packaging and install
+
+The minimal distribution chain (stage 7, trimmed) packages both ends into `dist/` (gitignored; publish the files as release artifacts):
+
+```powershell
+pwsh .\scripts\package-windows.ps1   # dist\ClipSync-windows-x64.zip  (+ .sha256)
+pwsh .\scripts\package-android.ps1   # dist\ClipSync-android.apk      (+ .sha256)
+```
+
+- The Windows package is a self-contained portable ZIP (app, dependencies, and the .NET runtime; no installer, no registry writes). On Linux/CI hosts the script adds `-p:EnableWindowsTargeting=true` automatically so the win-x64 payload can be produced and verified there.
+- The Android package is a release APK signed exclusively from the `CLIPSYNC_ANDROID_KEYSTORE`, `CLIPSYNC_ANDROID_KEYSTORE_PASSWORD`, `CLIPSYNC_ANDROID_KEY_ALIAS`, and `CLIPSYNC_ANDROID_KEY_PASSWORD` environment variables. The keystore and its passwords never enter the repository. `-Variant Debug` builds a debug-signed test APK instead.
+- End users start at the Chinese one-page guide: [docs/install.md](docs/install.md) — prerequisites, LAN/Tailscale setup, QR pairing, Android capability routes, and troubleshooting. A copy ships inside the Windows ZIP.
 
 ## Android device inspection
 

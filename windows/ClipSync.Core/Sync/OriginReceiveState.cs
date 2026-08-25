@@ -36,6 +36,10 @@ public sealed class OriginReceiveState
     public bool Contains(long seq) =>
         seq <= ContiguousSeq || ReceivedRanges.Any(range => range.Contains(seq));
 
+    /// <summary>Highest sequence this state claims, including isolated ranges above a gap.</summary>
+    public long HighestCoveredSeq() =>
+        Math.Max(ContiguousSeq, ReceivedRanges.Count == 0 ? 0 : ReceivedRanges.Max(range => range.EndSeq));
+
     public OriginReceiveState Accept(long seq)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(seq, 1);

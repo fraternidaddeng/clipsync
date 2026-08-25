@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher mark: the 24-grid polyline (M4 12h4l2-5 4 10 2-5h4) scaled x2.6
+     into the 66dp adaptive-icon safe zone, flow blue, round caps. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M33.2,54 L43.6,54 L48.8,41 L59.2,67 L64.4,54 L74.8,54"
+        android:strokeColor="#215F8F"
+        android:strokeWidth="5.7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+</vector>

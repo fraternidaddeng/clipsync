@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abstract Fluid UI · 剪剪相传</title>
+    <style>
+        :root {
+            --bg-dark: #070c14;
+            --card-bg: rgba(14, 25, 42, 0.45);
+            --text-primary: #e3effa;
+            --text-secondary: #7e9bb8;
+            --accent-blue: #70b4f8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 1. 抽象流体背景：无声流淌的暗色色浆 (Liquid Mesh Gradient) */
+        .fluid-mesh-bg {
+            position: absolute;
+            top: -20%; left: -20%; width: 140%; height: 140%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(20, 55, 95, 0.45) 0%, transparent 60%),
+                radial-gradient(circle at 70% 60%, rgba(15, 35, 65, 0.5) 0%, transparent 55%),
+                radial-gradient(circle at 50% 80%, rgba(28, 75, 120, 0.3) 0%, transparent 50%);
+            filter: blur(60px);
+            animation: fluidMotion 18s infinite alternate ease-in-out;
+            z-index: 0;
+        }
+
+        @keyframes fluidMotion {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-3%, 2%) scale(1.05); }
+            100% { transform: translate(3%, -2%) scale(0.98); }
+        }
+
+        /* 2. 剪贴板浮窗容器 */
+        .window-panel {
+            position: relative;
+            z-index: 10;
+            width: 380px;
+            background: var(--card-bg);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-radius: 24px; /* 极润的连续曲率圆角 */
+            padding: 24px;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.6),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15); /* 顶部微弱物理高光 */
+            border: 1px solid rgba(112, 180, 248, 0.12);
+        }
+
+        /* 3. 顶部设备状态：流体呼吸微光 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: var(--text-primary);
+        }
+
+        .device-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 100px;
+            background: rgba(112, 180, 248, 0.08);
+            border: 1px solid rgba(112, 180, 248, 0.2);
+            font-size: 12px;
+            color: var(--accent-blue);
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            box-shadow: 0 0 8px var(--accent-blue);
+            animation: pulse 2.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.15); }
+        }
+
+        /* 4. 列表容器与流体卡片 */
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .clip-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.025);
+            border-radius: 16px;
+            padding: 14px 16px;
+            cursor: pointer;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            /* 关键：流体黏滞动效曲线 (Fluid Viscous Easing) */
+            transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* 流体悬浮动效：微拉伸与微光 */
+        .clip-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px) scale(1.01);
+            border-color: rgba(112, 180, 248, 0.3);
+        }
+
+        /* 5. 抽象流光扫掠 (Flowing Light Sheen) */
+        .clip-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 60%; height: 100%;
+            background: linear-gradient(
+                90deg, 
+                transparent, 
+                rgba(112, 180, 248, 0.12), 
+                transparent
+            );
+            transform: skewX(-20deg);
+            transition: none;
+        }
+
+        .clip-card:hover::after {
+            left: 140%;
+            transition: left 0.75s ease-in-out;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            letter-spacing: 0.04em;
+        }
+
+        .card-content {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .tag {
+            color: var(--accent-blue);
+            background: rgba(112, 180, 248, 0.1);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+
+        /* 底部操作 */
+        .footer {
+            margin-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .action-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .action-btn:hover {
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 抽象流体背景 -->
+    <div class="fluid-mesh-bg"></div>
+
+    <!-- 剪贴板窗口 -->
+    <div class="window-panel">
+        <div class="header">
+            <div class="title">CLIPSYNC · 剪剪相传</div>
+            <div class="device-pill">
+                <div class="pulse-dot"></div>
+                <span>Pixel 8 · 直连</span>
+            </div>
+        </div>
+
+        <div class="list-container">
+            <div class="clip-card">
+                <div class="card-meta">
+                    <span class="tag">来自 Android</span>
+                    <span>10:42 刚刚</span>
+                </div>
+                <div class="card-content">https://github.com/clipsync/core</div>
+            </div>
+
+            <div class="clip-card">
+                <div class="card-meta">
+                    <span class="tag">代码片段</span>
+                    <span>09:15</span>
+                </div>
+                <div class="card-content">git commit -m "style: abstract fluid design"</div>
+            </div>
+
+            <div class="clip-card">
+                <div class="card-meta">
+                    <span>本地复制</span>
+                    <span>昨天</span>
+                </div>
+                <div class="card-content">极简、克制、疏离、现代流体美学</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>3 条记忆已沉淀</span>
+            <button class="action-btn">静默清空</button>
+        </div>
+    </div>
+
+</body>
+</html>

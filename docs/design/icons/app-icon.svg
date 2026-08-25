@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!--
+    ClipSync application icon (launcher / exe / window).
+    The tile carries its own charter chrome (grey-blue day gradient), so one
+    asset works on both light and dark desktops - no day/night split needed.
+    Mark: the 24-grid polyline M4 12h4l2-5 4 10 2-5h4, scaled x9.5, flow blue.
+  -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e9eff6"/>
+      <stop offset="0.45" stop-color="#e2e9f2"/>
+      <stop offset="1" stop-color="#d6e0ec"/>
+    </linearGradient>
+    <linearGradient id="toplight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="54" fill="url(#tile)"/>
+  <rect x="8" y="8" width="240" height="120" rx="54" fill="url(#toplight)"/>
+  <rect x="9.5" y="9.5" width="237" height="237" rx="52.5" fill="none" stroke="#cfd9e6" stroke-width="3"/>
+  <path d="M52 128h38l19-47.5 38 95 19-47.5h38"
+        fill="none" stroke="#215f8f" stroke-width="16"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

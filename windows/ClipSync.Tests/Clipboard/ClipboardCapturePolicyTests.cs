@@ -105,6 +105,23 @@ public sealed class ClipboardCapturePolicyTests
     }
 
     [Fact]
+    public void ImageCandidateIsRejectedWhenImageSyncIsOff()
+    {
+        var policy = new ClipboardCapturePolicy();
+        var png = Convert.FromHexString("89504E470D0A1A0A0000000D49484452000000010000000108060000001F15C4890000000A49444154789C63000100000500010D0A2DB40000000049454E44AE426082");
+
+        var imageOnly = policy.Evaluate(new ClipboardCandidate(null, null, BaseTime, png, "image/png"));
+        Assert.Equal(CaptureRejectionReason.UnsupportedMedia, Assert.IsType<CaptureDecision.Reject>(imageOnly).Reason);
+
+        var mixed = policy.Evaluate(new ClipboardCandidate("fallback text", null, BaseTime, png, "image/png"));
+        var accepted = Assert.IsType<CaptureDecision.Accept>(mixed);
+        Assert.Equal("fallback text", accepted.Content.Text);
+
+        var enabled = new ClipboardCapturePolicy(new CaptureSettings(ImageSyncEnabled: true));
+        Assert.IsType<CaptureDecision.AcceptImage>(enabled.Evaluate(new ClipboardCandidate(null, null, BaseTime, png, "image/png")));
+    }
+
+    [Fact]
     public void OneHundredRemoteWritesDoNotLoopBack()
     {
         var policy = new ClipboardCapturePolicy();

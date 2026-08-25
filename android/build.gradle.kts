@@ -3,4 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android") version "2.0.21" apply false
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.21" apply false
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.21" apply false
+    id("com.google.devtools.ksp") version "2.0.21-1.0.28" apply false
+    id("io.gitlab.arturbosch.detekt") version "1.23.8" apply false
+    id("org.jlleitschuh.gradle.ktlint") version "14.2.0" apply false
 }

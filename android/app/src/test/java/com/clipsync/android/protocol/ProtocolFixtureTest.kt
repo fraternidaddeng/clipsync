@@ -2,6 +2,8 @@ package com.clipsync.android.protocol
 
 import java.io.File
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -25,7 +27,7 @@ class ProtocolFixtureTest {
     }
 
     @Test
-    fun `all shared invalid envelope fixtures are rejected`() {
+    fun `all shared invalid envelope fixtures are rejected with the expected error code`() {
         val fixtureRoot = File(requireNotNull(System.getProperty("protocol.fixtures.dir")))
         val fixtureFiles = fixtureRoot.resolve("invalid")
             .walkTopDown()
@@ -33,10 +35,67 @@ class ProtocolFixtureTest {
             .toList()
 
         assertTrue("Invalid protocol fixture set must not be empty.", fixtureFiles.isNotEmpty())
+        val expected = loadExpectedErrors(fixtureRoot)
         fixtureFiles.forEach { fixture ->
-            val rejected = runCatching { ProtocolJson.parseEnvelope(fixture.readText()) }.isFailure
-            assertTrue("Invalid fixture was accepted: ${fixture.name}", rejected)
+            val error = runCatching { ProtocolJson.parseEnvelope(fixture.readText()) }.exceptionOrNull()
+            assertTrue("Invalid fixture was accepted: ${fixture.name}", error != null)
+            val code = when (error) {
+                is ProtocolParseException -> error.errorCode
+                is SerializationException -> ProtocolErrorCodes.SCHEMA_VIOLATION
+                else -> error("unexpected ${error!!::class.java.name} for ${fixture.name}")
+            }
+            val wanted = expected[fixture.name]
+            assertTrue("Missing expected_error for ${fixture.name}", wanted != null)
+            assertEquals("Wrong error for ${fixture.name}", wanted, code)
         }
+    }
+
+    @Test
+    fun `duplicate property nested inside the body is malformed`() {
+        val error = runCatching {
+            ProtocolJson.parseEnvelope(
+                """{"version":1,"type":"ping","request_id":"9b24fc53-b75f-4bd3-9b24-127025de111a","body":{"sent_at_ms":1,"sent_at_ms":2}}""",
+            )
+        }.exceptionOrNull()
+        assertEquals(
+            ProtocolErrorCodes.MALFORMED_JSON,
+            (error as ProtocolParseException).errorCode,
+        )
+    }
+
+    @Test
+    fun `null value anywhere is a schema violation`() {
+        val error = runCatching {
+            ProtocolJson.parseEnvelope(
+                """{"version":1,"type":"error","request_id":"9b24fc53-b75f-4bd3-9b24-127025de111a","body":{"code":"RATE_LIMITED","retryable":true,"retry_after_ms":null}}""",
+            )
+        }.exceptionOrNull()
+        assertEquals(
+            ProtocolErrorCodes.SCHEMA_VIOLATION,
+            (error as ProtocolParseException).errorCode,
+        )
+    }
+
+    @Test
+    fun `nesting deeper than sixteen levels is malformed`() {
+        val document = "{\"a\":".repeat(17) + "1" + "}".repeat(17)
+        val error = runCatching { ProtocolJson.parseEnvelope(document) }.exceptionOrNull()
+        assertEquals(
+            ProtocolErrorCodes.MALFORMED_JSON,
+            (error as ProtocolParseException).errorCode,
+        )
+    }
+
+    @Test
+    fun `document larger than the frame limit is malformed`() {
+        val padding = "x".repeat(ProtocolStrictJson.MAX_TEXT_MESSAGE_BYTES)
+        val document =
+            """{"version":1,"type":"ping","request_id":"9b24fc53-b75f-4bd3-9b24-127025de111a","body":{"sent_at_ms":1,"pad":"$padding"}}"""
+        val error = runCatching { ProtocolJson.parseEnvelope(document) }.exceptionOrNull()
+        assertEquals(
+            ProtocolErrorCodes.MALFORMED_JSON,
+            (error as ProtocolParseException).errorCode,
+        )
     }
 
     @Test(expected = SerializationException::class)
@@ -65,5 +124,12 @@ class ProtocolFixtureTest {
         ProtocolJson.parseEnvelope(
             """{"version":1,"type":"ping","request_id":"9b24fc53-b75f-4bd3-9b24-127025de111a","body":[]}""",
         )
+    }
+
+    private fun loadExpectedErrors(fixtureRoot: File): Map<String, String> {
+        val file = fixtureRoot.resolve("expected_errors.json")
+        assertTrue("expected_errors.json is missing: $file", file.isFile)
+        val obj = kotlinx.serialization.json.Json.parseToJsonElement(file.readText()).jsonObject
+        return obj.mapValues { it.value.jsonPrimitive.content }
     }
 }

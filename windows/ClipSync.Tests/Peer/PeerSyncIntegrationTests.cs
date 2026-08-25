@@ -1,8 +1,8 @@
 using System.Net.WebSockets;
-using System.Text;
 using ClipSync.Core.Protocol;
 using ClipSync.Core.Storage;
 using ClipSync.Core.Sync;
+using ClipSync.Peer.Sessions;
 
 namespace ClipSync.Tests.Peer;
 
@@ -64,6 +64,142 @@ public sealed class PeerSyncIntegrationTests
         var texts = await PeerPair.VisibleTextsAsync(pair.AndroidStore);
         Assert.Equal(3, texts.Count);
         await second.CloseAsync();
+    }
+
+    [Fact]
+    public async Task ServerTracksConnectedDevicesAndRaisesSessionsChanged()
+    {
+        await using var pair = await PeerPair.CreateAsync();
+        var changes = 0;
+        pair.Server.SessionsChanged += () => Interlocked.Increment(ref changes);
+
+        Assert.Equal(0, pair.Server.ConnectedDeviceCount);
+        Assert.Empty(pair.Server.ConnectedDeviceIds);
+
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ConnectedDeviceCount == 1));
+        Assert.Equal([PeerPair.AndroidDeviceId], pair.Server.ConnectedDeviceIds);
+        Assert.True(Volatile.Read(ref changes) >= 1);
+
+        await session.CloseAsync();
+        await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ConnectedDeviceCount == 0));
+        Assert.True(Volatile.Read(ref changes) >= 2);
+    }
+
+    [Fact]
+    public async Task OutboxStatusDrainsToZeroWithAnAckTimestampAfterALiveSession()
+    {
+        // The conduit's local-service segment reads exactly this snapshot via
+        // MainViewModel.RefreshOutboxAsync: queue depth and the last peer-ack time.
+        await using var pair = await PeerPair.CreateAsync();
+        await PeerPair.CaptureAsync(pair.WindowsStore, "conduit-queued-1");
+        await PeerPair.CaptureAsync(pair.WindowsStore, "conduit-queued-2");
+
+        var queued = await pair.WindowsStore.GetOutboxStatusAsync();
+        Assert.Equal(2, queued.PendingCount);
+        Assert.Null(queued.LastPeerAckAt);
+
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+            (await pair.WindowsStore.GetOutboxStatusAsync()).PendingCount == 0);
+
+        // Both rows were confirmed by the phone, and the confirmation time is recorded.
+        var drained = await pair.WindowsStore.GetOutboxStatusAsync();
+        Assert.Equal(0, drained.PendingCount);
+        Assert.NotNull(drained.LastPeerAckAt);
+        Assert.InRange(
+            drained.LastPeerAckAt!.Value,
+            DateTimeOffset.UtcNow.AddMinutes(-5),
+            DateTimeOffset.UtcNow.AddMinutes(1));
+
+        await session.CloseAsync();
+    }
+
+    [Fact]
+    public async Task ListenerRaisesRemoteClipsCommittedAndBumpsLastSeenForPhonePushes()
+    {
+        // The app layer feeds MainViewModel.NotifyRemoteActivityAsync (device rows, history
+        // origin badges) and the auto-apply path from this server event, so it must fire
+        // with the pushed content and the true origin device.
+        await using var pair = await PeerPair.CreateAsync();
+        var committed = new List<RemoteClipApplied>();
+        pair.Server.RemoteClipsCommitted += batch =>
+        {
+            lock (committed)
+            {
+                committed.AddRange(batch);
+            }
+        };
+
+        Assert.Null((await pair.WindowsStore.GetDeviceAsync(PeerPair.AndroidDeviceId))!.LastSeenAt);
+
+        await PeerPair.CaptureAsync(pair.AndroidStore, "phone-push");
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.WindowsStore)).Contains("phone-push"));
+
+        lock (committed)
+        {
+            var applied = Assert.Single(committed);
+            Assert.Equal("phone-push", applied.Content);
+            Assert.Equal(PeerPair.AndroidDeviceId, applied.OriginDeviceId);
+        }
+
+        // The listener stamped last-seen during the handshake: the conduit device row can
+        // leave "Never connected" without waiting for content to flow.
+        var device = await pair.WindowsStore.GetDeviceAsync(PeerPair.AndroidDeviceId);
+        Assert.NotNull(device!.LastSeenAt);
+
+        await session.CloseAsync();
+    }
+
+    [Fact]
+    public async Task ConnectedDeviceSnapshotFollowsTheFullSessionLifecycle()
+    {
+        // The conduit network segment renders UpdatePeerStatus(online, port, connectedCount);
+        // this drives the same snapshot through connect, converge, and disconnect.
+        await using var pair = await PeerPair.CreateAsync();
+        var changes = 0;
+        pair.Server.SessionsChanged += () => Interlocked.Increment(ref changes);
+
+        Assert.True(pair.Server.Port > 0);
+        Assert.Equal(0, pair.Server.ConnectedDeviceCount);
+
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ConnectedDeviceCount == 1));
+        Assert.Equal([PeerPair.AndroidDeviceId], pair.Server.ConnectedDeviceIds);
+
+        // A second dial from the same device must not double-count the conduit's device tally.
+        var second = await pair.DialAsync();
+        await pair.WaitUntilAsync(() => Task.FromResult(second.Engine.IsReady));
+        Assert.Equal(1, pair.Server.ConnectedDeviceCount);
+
+        await second.CloseAsync();
+        await session.CloseAsync();
+        await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ConnectedDeviceCount == 0));
+        Assert.True(Volatile.Read(ref changes) >= 2);
+    }
+
+    [Fact]
+    public async Task DialerRaisesSessionReadyWithThePeerDeviceId()
+    {
+        await using var pair = await PeerPair.CreateAsync();
+
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(() =>
+        {
+            lock (session.ReadyPeers)
+            {
+                return Task.FromResult(session.ReadyPeers.Count > 0);
+            }
+        });
+        lock (session.ReadyPeers)
+        {
+            Assert.Equal([PeerPair.WindowsDeviceId], session.ReadyPeers);
+        }
+
+        Assert.True(session.Engine.IsReady);
+        await session.CloseAsync();
     }
 
     [Fact]
@@ -136,6 +272,52 @@ public sealed class PeerSyncIntegrationTests
         });
 
         Assert.DoesNotContain("vanishing-secret", await PeerPair.VisibleTextsAsync(pair.AndroidStore));
+        await session.CloseAsync();
+    }
+
+    [Fact]
+    public async Task DeletedAfterAckTravelsAsTombstone()
+    {
+        await using var pair = await PeerPair.CreateAsync();
+        var stored = await PeerPair.CaptureAsync(pair.WindowsStore, "later-deleted");
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("later-deleted"));
+        await session.CloseAsync();
+
+        Assert.True(await pair.WindowsStore.DeleteAsync(stored.EventId, DateTimeOffset.UtcNow));
+
+        session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+            !(await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("later-deleted"));
+        await session.CloseAsync();
+    }
+
+    [Fact]
+    public async Task ImageClipTravelsOverV2WithBytesIntact()
+    {
+        await using var pair = await PeerPair.CreateAsync();
+        var png = ClipSync.Core.Media.ImageCodec.EncodePngBgra(2, 1, [255, 0, 0, 255, 0, 255, 0, 255]);
+        var hash = ClipSync.Core.Media.ImageCodec.HashBytes(png);
+        await PeerPair.CaptureImageAsync(pair.WindowsStore, png, hash, "image/png", width: 2, height: 1);
+
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+        {
+            var items = await pair.AndroidStore.SearchAsync(new ClipboardHistoryQuery(Limit: 50));
+            return items.Any(item => item.IsImage && item.ContentHash == hash);
+        });
+
+        // The chunked v2 transfer reassembled the exact encoded bytes, content-addressed.
+        Assert.True(pair.AndroidStore.Media.Exists(hash));
+        Assert.Equal(png, pair.AndroidStore.Media.ReadAllBytes(hash));
+        var entry = (await pair.AndroidStore.SearchAsync(new ClipboardHistoryQuery(Limit: 50)))
+            .Single(item => item.IsImage);
+        Assert.Equal("image/png", entry.MimeType);
+        Assert.Equal(2, entry.PixelWidth);
+        Assert.Equal(1, entry.PixelHeight);
+        Assert.Equal(png.Length, entry.EncodedBytes);
+
         await session.CloseAsync();
     }
 
@@ -258,6 +440,48 @@ public sealed class PeerSyncIntegrationTests
                 StringComparison.Ordinal);
         await Assert.ThrowsAnyAsync<WebSocketException>(() =>
             socket.ConnectAsync(new Uri($"wss://127.0.0.1:{pair.Server.Port}/v1/peer/sync"), CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task PausedListenerHoldsOutboundContentAndReleasesItOnResume()
+    {
+        // Mirrors the Android engine's outboundAllowed gate test: 一键暂停 must stop
+        // outbound content immediately at every serving path, while inbound and the
+        // already-persisted queue stay intact.
+        var outboundAllowed = true;
+        await using var pair = await PeerPair.CreateAsync(
+            serverSessionOptions: PeerPair.DefaultSessionOptions() with
+            {
+                OutboundAllowed = () => Volatile.Read(ref outboundAllowed)
+            });
+
+        await PeerPair.CaptureAsync(pair.WindowsStore, "before-pause");
+        var session = await pair.DialAsync();
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("before-pause"));
+
+        // Pause on the Windows side: the new capture is neither announced by the outbox
+        // drain nor served through want_ranges while the gate is closed.
+        Volatile.Write(ref outboundAllowed, false);
+        await PeerPair.CaptureAsync(pair.WindowsStore, "while-paused");
+        await Task.Delay(500); // several 100 ms drain ticks
+        Assert.DoesNotContain("while-paused", await PeerPair.VisibleTextsAsync(pair.AndroidStore));
+
+        // The entry stayed pending instead of being announced into the void.
+        Assert.True((await pair.WindowsStore.GetOutboxStatusAsync()).PendingCount >= 1);
+
+        // Inbound is untouched by the pause: the phone's clip still reaches Windows history.
+        await PeerPair.CaptureAsync(pair.AndroidStore, "phone-clip");
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.WindowsStore)).Contains("phone-clip"));
+        Assert.DoesNotContain("while-paused", await PeerPair.VisibleTextsAsync(pair.AndroidStore));
+
+        // Resume: the pending entry flows on the next drain tick; nothing was lost.
+        Volatile.Write(ref outboundAllowed, true);
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("while-paused"));
+
+        await session.CloseAsync();
     }
 
     [Fact]

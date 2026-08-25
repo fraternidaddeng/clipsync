@@ -1,0 +1,161 @@
+<!--
+    ClipSync charter design tokens - day theme.
+    Source of truth: docs/design/tokens.md (values) and docs/design/DESIGN-CHARTER.md (rules).
+    Hard rules encoded here:
+      - Hue 100-180 (green) is forbidden; no token may fall in that range.
+      - Red (CsErr*) is reserved for true errors (write failure, certificate change) only.
+      - Ochre (CsAct*) is the only colour allowed to interrupt the user ("needs your action").
+    CharterTokensNight.xaml carries the same keys with night values; CharterThemeManager
+    swaps whole dictionaries at runtime following the Windows theme (SystemUsesLightTheme).
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    mc:Ignorable="po">
+
+    <!-- ============ Lightness ladder (z-levels), grey-blue hue 245-255 ============ -->
+    <Color x:Key="CsBg">#FFE2E9F2</Color>            <!-- z0  app background -->
+    <Color x:Key="CsSurfaceIn">#FFDDE5EF</Color>     <!-- z-1 sunken: inputs, code, thumbnail slots -->
+    <Color x:Key="CsSurface3">#FFE7EDF5</Color>      <!-- z-1 secondary sunken: chips, group headers -->
+    <Color x:Key="CsSurface">#FFF6F9FC</Color>       <!-- z1  cards and resident containers -->
+    <Color x:Key="CsSurfaceUp">#FFFDFEFF</Color>     <!-- z2  hover, expanded, popover -->
+
+    <!-- ============ Lines (avoid when lightness difference suffices) ============ -->
+    <Color x:Key="CsLine">#FFCFD9E6</Color>          <!-- 1px container stroke, separators -->
+    <Color x:Key="CsLine2">#FFBCC9D9</Color>         <!-- stronger: empty slots, dashed outlines -->
+
+    <!-- ============ Text, four steps (same hue family) ============ -->
+    <Color x:Key="CsText1">#FF1C2733</Color>         <!-- titles, primary content -->
+    <Color x:Key="CsText2">#FF3D4A59</Color>         <!-- body -->
+    <Color x:Key="CsText3">#FF6B7A8B</Color>         <!-- captions, subtitles -->
+    <Color x:Key="CsText4">#FF9AA7B6</Color>         <!-- timestamps, group headers, placeholders -->
+
+    <!-- ============ State colours (chroma tier .09 = signal) ============ -->
+    <!-- Flow blue: ready / flowing / primary action -->
+    <Color x:Key="CsFlow">#FF215F8F</Color>
+    <Color x:Key="CsFlowBg">#1A215F8F</Color>        <!-- rgba(33,95,143,.10) -->
+    <Color x:Key="CsFlowLine">#3D215F8F</Color>      <!-- rgba(33,95,143,.24) -->
+    <Color x:Key="CsOnFlow">#FFF6F9FC</Color>        <!-- text on flow fill -->
+    <!-- Act ochre: the only colour allowed to interrupt -->
+    <Color x:Key="CsAct">#FF9B6B24</Color>
+    <Color x:Key="CsActBg">#1C9B6B24</Color>         <!-- rgba(155,107,36,.11) -->
+    <Color x:Key="CsActLine">#479B6B24</Color>       <!-- rgba(155,107,36,.28) -->
+    <!-- Err red: true errors ONLY, never "unavailable" -->
+    <Color x:Key="CsErr">#FFA8342B</Color>
+    <Color x:Key="CsErrBg">#17A8342B</Color>         <!-- rgba(168,52,43,.09) -->
+    <Color x:Key="CsErrLine">#3DA8342B</Color>       <!-- rgba(168,52,43,.24) -->
+
+    <!-- ============ Device neighbour colours (chroma tier .03 = annotation) ============ -->
+    <Color x:Key="CsDev1">#FF4F8288</Color>          <!-- hue 195 teal-grey -->
+    <Color x:Key="CsDev1Bg">#1C4F8288</Color>
+    <Color x:Key="CsDev1Line">#3D4F8288</Color>
+    <Color x:Key="CsDev2">#FF4A7A96</Color>          <!-- hue 215 water-blue -->
+    <Color x:Key="CsDev2Bg">#1C4A7A96</Color>
+    <Color x:Key="CsDev2Line">#3D4A7A96</Color>
+    <Color x:Key="CsDev3">#FF6A6F9E</Color>          <!-- hue 275 violet-blue -->
+    <Color x:Key="CsDev3Bg">#1C6A6F9E</Color>
+    <Color x:Key="CsDev3Line">#3D6A6F9E</Color>
+    <Color x:Key="CsDev4">#FF8A6194</Color>          <!-- hue 305 lotus-purple -->
+    <Color x:Key="CsDev4Bg">#1C8A6194</Color>
+    <Color x:Key="CsDev4Line">#3D8A6194</Color>
+    <Color x:Key="CsDev5">#FF93607A</Color>          <!-- hue 335 grey-pink -->
+    <Color x:Key="CsDev5Bg">#1C93607A</Color>
+    <Color x:Key="CsDev5Line">#3D93607A</Color>
+
+    <!-- ============ Special ============ -->
+    <!-- QR quiet zone stays pure white in both themes; grey-blue would hurt scanning -->
+    <Color x:Key="CsQrQuiet">#FFFFFFFF</Color>
+
+    <!-- ============ Shadows (tokens §8), one hue for every tier ============ -->
+    <Color x:Key="CsShadow">#FF233448</Color>
+    <!-- sh-1 / sh-2 collapsed into single DropShadowEffects (WPF has no multi-shadow);
+         per tokens §12.3 the effect hangs on the outermost of three nested layers only,
+         so text never renders inside the effect subtree. -->
+    <DropShadowEffect x:Key="CsSh1Effect"
+                      po:Freeze="True"
+                      BlurRadius="7"
+                      Direction="270"
+                      Opacity="0.13"
+                      ShadowDepth="2"
+                      Color="{StaticResource CsShadow}" />
+    <DropShadowEffect x:Key="CsSh2Effect"
+                      po:Freeze="True"
+                      BlurRadius="18"
+                      Direction="270"
+                      Opacity="0.20"
+                      ShadowDepth="5"
+                      Color="{StaticResource CsShadow}" />
+    <!-- edge: 2px-high top highlight strip laid inside the card's 1px border -->
+    <LinearGradientBrush x:Key="CsEdgeBrush"
+                         po:Freeze="True"
+                         StartPoint="0.5,0"
+                         EndPoint="0.5,1">
+        <GradientStop Offset="0" Color="#E6FFFFFF" />
+        <GradientStop Offset="1" Color="#00FFFFFF" />
+    </LinearGradientBrush>
+
+    <!-- ============ Brushes: lightness ladder ============ -->
+    <!-- bg-grad: 178deg, light above, dark below (approximated vertically per tokens.md) -->
+    <LinearGradientBrush x:Key="CsBgBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+        <GradientStop Offset="0" Color="#FFE9EFF6" />
+        <GradientStop Offset="0.42" Color="#FFE2E9F2" />
+        <GradientStop Offset="1" Color="#FFDAE3EE" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="CsBgSolidBrush" Color="{StaticResource CsBg}" />
+    <SolidColorBrush x:Key="CsSurfaceInBrush" Color="{StaticResource CsSurfaceIn}" />
+    <SolidColorBrush x:Key="CsSurface3Brush" Color="{StaticResource CsSurface3}" />
+    <SolidColorBrush x:Key="CsSurfaceBrush" Color="{StaticResource CsSurface}" />
+    <SolidColorBrush x:Key="CsSurfaceUpBrush" Color="{StaticResource CsSurfaceUp}" />
+    <!-- sf-grad: top-lit overlay, layered on CsSurfaceBrush -->
+    <LinearGradientBrush x:Key="CsSurfaceGradBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+        <GradientStop Offset="0" Color="#B8FFFFFF" />
+        <GradientStop Offset="0.62" Color="#00FFFFFF" />
+    </LinearGradientBrush>
+    <!-- sf-up-grad: top-lit overlay, layered on CsSurfaceUpBrush -->
+    <LinearGradientBrush x:Key="CsSurfaceUpGradBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+        <GradientStop Offset="0" Color="#F2FFFFFF" />
+        <GradientStop Offset="0.70" Color="#33FFFFFF" />
+    </LinearGradientBrush>
+
+    <!-- ============ Brushes: lines and text ============ -->
+    <SolidColorBrush x:Key="CsLineBrush" Color="{StaticResource CsLine}" />
+    <SolidColorBrush x:Key="CsLine2Brush" Color="{StaticResource CsLine2}" />
+    <SolidColorBrush x:Key="CsText1Brush" Color="{StaticResource CsText1}" />
+    <SolidColorBrush x:Key="CsText2Brush" Color="{StaticResource CsText2}" />
+    <SolidColorBrush x:Key="CsText3Brush" Color="{StaticResource CsText3}" />
+    <SolidColorBrush x:Key="CsText4Brush" Color="{StaticResource CsText4}" />
+
+    <!-- ============ Brushes: states ============ -->
+    <SolidColorBrush x:Key="CsFlowBrush" Color="{StaticResource CsFlow}" />
+    <SolidColorBrush x:Key="CsFlowBgBrush" Color="{StaticResource CsFlowBg}" />
+    <SolidColorBrush x:Key="CsFlowLineBrush" Color="{StaticResource CsFlowLine}" />
+    <SolidColorBrush x:Key="CsOnFlowBrush" Color="{StaticResource CsOnFlow}" />
+    <SolidColorBrush x:Key="CsActBrush" Color="{StaticResource CsAct}" />
+    <SolidColorBrush x:Key="CsActBgBrush" Color="{StaticResource CsActBg}" />
+    <SolidColorBrush x:Key="CsActLineBrush" Color="{StaticResource CsActLine}" />
+    <SolidColorBrush x:Key="CsErrBrush" Color="{StaticResource CsErr}" />
+    <SolidColorBrush x:Key="CsErrBgBrush" Color="{StaticResource CsErrBg}" />
+    <SolidColorBrush x:Key="CsErrLineBrush" Color="{StaticResource CsErrLine}" />
+
+    <!-- ============ Brushes: device colours ============ -->
+    <SolidColorBrush x:Key="CsDev1Brush" Color="{StaticResource CsDev1}" />
+    <SolidColorBrush x:Key="CsDev1BgBrush" Color="{StaticResource CsDev1Bg}" />
+    <SolidColorBrush x:Key="CsDev1LineBrush" Color="{StaticResource CsDev1Line}" />
+    <SolidColorBrush x:Key="CsDev2Brush" Color="{StaticResource CsDev2}" />
+    <SolidColorBrush x:Key="CsDev2BgBrush" Color="{StaticResource CsDev2Bg}" />
+    <SolidColorBrush x:Key="CsDev2LineBrush" Color="{StaticResource CsDev2Line}" />
+    <SolidColorBrush x:Key="CsDev3Brush" Color="{StaticResource CsDev3}" />
+    <SolidColorBrush x:Key="CsDev3BgBrush" Color="{StaticResource CsDev3Bg}" />
+    <SolidColorBrush x:Key="CsDev3LineBrush" Color="{StaticResource CsDev3Line}" />
+    <SolidColorBrush x:Key="CsDev4Brush" Color="{StaticResource CsDev4}" />
+    <SolidColorBrush x:Key="CsDev4BgBrush" Color="{StaticResource CsDev4Bg}" />
+    <SolidColorBrush x:Key="CsDev4LineBrush" Color="{StaticResource CsDev4Line}" />
+    <SolidColorBrush x:Key="CsDev5Brush" Color="{StaticResource CsDev5}" />
+    <SolidColorBrush x:Key="CsDev5BgBrush" Color="{StaticResource CsDev5Bg}" />
+    <SolidColorBrush x:Key="CsDev5LineBrush" Color="{StaticResource CsDev5Line}" />
+
+    <!-- ============ Brushes: special ============ -->
+    <SolidColorBrush x:Key="CsQrQuietBrush" Color="{StaticResource CsQrQuiet}" />
+
+</ResourceDictionary>

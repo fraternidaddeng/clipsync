@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "type": "clip_fetch",
+  "request_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  "body": {
+    "event_ids": [null]
+  }
+}

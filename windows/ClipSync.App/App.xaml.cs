@@ -3,6 +3,7 @@ using ClipSync.App.Diagnostics;
 using ClipSync.App.Pairing;
 using ClipSync.App.Security;
 using ClipSync.App.Sync;
+using ClipSync.App.Theme;
 using ClipSync.App.Tray;
 using ClipSync.App.ViewModels;
 using ClipSync.Core.Clipboard;
@@ -10,8 +11,9 @@ using ClipSync.Core.Security;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Pairing;
 using ClipSync.Peer.Sessions;
-using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 
@@ -23,16 +25,26 @@ namespace ClipSync.App;
     Justification = "WPF Application lifetime: every owned resource is disposed in OnExit.")]
 public partial class App : Application
 {
+    /// <summary>Covers slow-moving state without events: peer acks, device last-seen, missed session changes.</summary>
+    private static readonly TimeSpan LiveRefreshInterval = TimeSpan.FromSeconds(30);
+
     private ServiceProvider? services;
-    private TaskbarIcon? trayIcon;
+    private TrayIconController? trayIcon;
+    private TrayFlyoutWindow? trayFlyout;
+    private MainViewModel? mainViewModel;
     private Win32ClipboardAdapter? clipboardAdapter;
     private PeerSyncHost? syncHost;
     private PairingService? pairingService;
     private PairingQrWindow? pairingWindow;
+    private System.Windows.Threading.DispatcherTimer? liveRefreshTimer;
+    private bool peerEndpointUnavailable;
 
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // Pick day/night tokens before any window loads, then follow Windows theme changes.
+        CharterThemeManager.Initialize();
 
         var dataDirectory = Environment.GetEnvironmentVariable("CLIPSYNC_DATA_DIR");
         if (string.IsNullOrWhiteSpace(dataDirectory))
@@ -63,7 +75,12 @@ public partial class App : Application
         await viewModel.InitializeAsync();
         var mainWindow = services.GetRequiredService<MainWindow>();
         MainWindow = mainWindow;
-        trayIcon = TrayIconFactory.Create(mainWindow, Shutdown);
+        trayFlyout = new TrayFlyoutWindow(viewModel);
+        trayIcon = TrayIconController.Create(mainWindow, Shutdown, () => trayFlyout?.ShowFlyout());
+        mainViewModel = viewModel;
+        viewModel.PropertyChanged += OnViewModelPropertyChanged;
+        viewModel.Devices.CollectionChanged += OnDevicesChanged;
+        UpdateTrayState();
 
         clipboardAdapter = services.GetRequiredService<Win32ClipboardAdapter>();
         clipboardAdapter.TextChanged += OnClipboardTextChanged;
@@ -72,6 +89,73 @@ public partial class App : Application
         LocalDiagnostics.Write("listener_started");
 
         await StartPeerEndpointAsync(dataDirectory, deviceId, store, viewModel);
+        UpdateTrayState();
+
+        liveRefreshTimer = new System.Windows.Threading.DispatcherTimer { Interval = LiveRefreshInterval };
+        liveRefreshTimer.Tick += OnLiveRefreshTick;
+        liveRefreshTimer.Start();
+    }
+
+    /// <summary>
+    /// Periodic fallback for state that has no push event: outbox acks drain, device
+    /// last-seen times move, and the connected-session count is re-polled defensively.
+    /// </summary>
+    private async void OnLiveRefreshTick(object? sender, EventArgs e)
+    {
+        if (mainViewModel is null)
+        {
+            return;
+        }
+
+        try
+        {
+            if (syncHost is { IsRunning: true })
+            {
+                mainViewModel.UpdatePeerStatus(true, syncHost.Port, syncHost.ConnectedDeviceCount);
+            }
+
+            await mainViewModel.RefreshOutboxAsync();
+            await mainViewModel.RefreshDevicesCommand.ExecuteAsync(null);
+        }
+        catch (Exception exception)
+        {
+            LocalDiagnostics.Write($"live_refresh_failed_{exception.GetType().Name}");
+        }
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(MainViewModel.IsPaused)
+            or nameof(MainViewModel.IsPrivateMode)
+            or nameof(MainViewModel.CaptureFaulted))
+        {
+            UpdateTrayState();
+        }
+    }
+
+    private void OnDevicesChanged(object? sender, NotifyCollectionChangedEventArgs e) => UpdateTrayState();
+
+    /// <summary>
+    /// Recomputes the tray state from the current app state. Priority (see
+    /// <see cref="TrayStateMapper"/>): private &gt; paused &gt; attention &gt; flow.
+    /// Attention covers the "needs your action" cases detectable on the PC side:
+    /// the peer endpoint failed to start, or no usable device is paired yet.
+    /// </summary>
+    private void UpdateTrayState()
+    {
+        if (trayIcon is null || mainViewModel is null)
+        {
+            return;
+        }
+
+        var hasUsableDevice = mainViewModel.Devices.Any(device => !device.IsRevoked);
+        var attentionReason =
+            peerEndpointUnavailable ? "本次会话同步未启动（端点启动失败）"
+            : mainViewModel.CaptureFaulted ? "剪贴板捕获降级（上次访问失败）"
+            : !hasUsableDevice ? "配对一台设备开始同步"
+            : null;
+        var state = TrayStateMapper.Map(mainViewModel.IsPrivateMode, mainViewModel.IsPaused, attentionReason is not null);
+        trayIcon.SetState(state, attentionReason);
     }
 
     private async Task StartPeerEndpointAsync(
@@ -91,17 +175,76 @@ public partial class App : Application
                 new PairingServiceOptions { LocalDisplayName = LocalDisplayName() });
             pairingService.PairingCompleted += OnPairingCompleted;
             viewModel.DeviceRevoked += OnDeviceRevoked;
-            syncHost = new PeerSyncHost(store, protector, certificate, pairingService);
+            // 一键暂停/私密模式 must stop outbound content immediately, not only capture:
+            // the gate is re-read inside every session, so the tray toggle applies live.
+            syncHost = new PeerSyncHost(
+                store,
+                protector,
+                certificate,
+                pairingService,
+                outboundAllowed: () => !viewModel.IsPaused && !viewModel.IsPrivateMode,
+                // 图片同步 governs inbound acceptance too, not only capture: while off, the
+                // /v2 route is refused and live sessions take no image bodies (audit §3 P1).
+                imageSyncEnabled: () => viewModel.ImageSyncEnabled);
             syncHost.RemoteClipsCommitted += OnRemoteClipsCommitted;
+            syncHost.SessionsChanged += OnPeerSessionsChanged;
+            syncHost.DeviceLockedOut += OnDeviceLockedOut;
+            syncHost.PeerStatusChanged += OnPeerStatusChanged;
             await syncHost.StartAsync(viewModel.ExtraBindAddresses);
-            viewModel.SyncStatus =
-                $"Peer endpoint on port {syncHost.Port}\nDevice {deviceId}\nCert {syncHost.CertificateFingerprint[..16]}…";
+            viewModel.LocalFingerprint = FormatFingerprint(syncHost.CertificateFingerprint);
+            viewModel.UpdatePeerStatus(true, syncHost.Port, syncHost.ConnectedDeviceCount);
         }
         catch (Exception exception)
         {
             LocalDiagnostics.Write($"peer_start_failed_{exception.GetType().Name}");
-            viewModel.SyncStatus = "Peer endpoint failed to start; sync is off this session.";
+            viewModel.UpdatePeerStatus(false, 0, 0);
+            peerEndpointUnavailable = true;
         }
+    }
+
+    /// <summary>
+    /// A session authenticated or ended (worker thread). Push the new connected count into
+    /// the conduit page and refresh the device list: authentication just bumped last-seen.
+    /// </summary>
+    private void OnPeerSessionsChanged()
+    {
+        _ = Dispatcher.InvokeAsync(async () =>
+        {
+            if (mainViewModel is null || syncHost is not { IsRunning: true } host)
+            {
+                return;
+            }
+
+            mainViewModel.UpdatePeerStatus(true, host.Port, host.ConnectedDeviceCount);
+            await mainViewModel.RefreshDevicesCommand.ExecuteAsync(null);
+        });
+    }
+
+    /// <summary>
+    /// A resume/network recovery pass changed the endpoint's state (worker thread): push the
+    /// fresh online flag, port, and connected count into the conduit page and tray flyout.
+    /// A failed rebind reads as offline here until a later recovery pass brings it back.
+    /// </summary>
+    private void OnPeerStatusChanged()
+    {
+        _ = Dispatcher.InvokeAsync(() =>
+        {
+            if (mainViewModel is null || syncHost is null)
+            {
+                return;
+            }
+
+            mainViewModel.UpdatePeerStatus(syncHost.IsRunning, syncHost.Port, syncHost.ConnectedDeviceCount);
+        });
+    }
+
+    /// <summary>Groups the hex fingerprint by four, eight groups per line — humans compare groups, not character streams.</summary>
+    private static string FormatFingerprint(string hex)
+    {
+        var upper = hex.ToUpperInvariant();
+        var groups = Enumerable.Range(0, upper.Length / 4)
+            .Select(i => upper.Substring(i * 4, 4));
+        return string.Join('\n', groups.Chunk(8).Select(line => string.Join(' ', line)));
     }
 
     /// <summary>PairingJson caps display names at 64 characters; machine names fit far below that.</summary>
@@ -118,8 +261,8 @@ public partial class App : Application
         {
             MessageBox.Show(
                 owner,
-                "The peer endpoint is not running, so pairing is unavailable this session.",
-                "ClipSync",
+                "对端服务未启动，本次会话无法配对。",
+                "剪剪相传",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;
@@ -149,6 +292,22 @@ public partial class App : Application
 
     private void OnDeviceRevoked(string deviceId) => syncHost?.DisconnectDevice(deviceId);
 
+    /// <summary>
+    /// A device just tripped the failed-auth rate limit (worker thread). Record it for the
+    /// diagnostics viewer and warn the user; the balloon names the device only, never proof
+    /// material or clipboard content.
+    /// </summary>
+    private void OnDeviceLockedOut(string deviceId)
+    {
+        LocalDiagnostics.Write("auth_locked_out");
+        _ = Dispatcher.InvokeAsync(() =>
+        {
+            var label = mainViewModel?.Devices
+                .FirstOrDefault(device => device.DeviceId == deviceId)?.DisplayName ?? "未知设备";
+            trayIcon?.ShowAuthThrottleNotice(label);
+        });
+    }
+
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch)
     {
         _ = Dispatcher.InvokeAsync(async () =>
@@ -161,18 +320,49 @@ public partial class App : Application
             try
             {
                 var viewModel = services.GetRequiredService<MainViewModel>();
-                if (viewModel.AutoApplyRemote)
+                // Paused sync still receives into history but never auto-applies, matching
+                // the Android InboxDelivery.autoApplyAllowed gate.
+                if (!viewModel.IsPaused)
                 {
                     // Only the newest body of the batch reaches the system clipboard; the
                     // suppression window keeps our own listener from re-capturing it.
                     var latest = batch[^1];
-                    services.GetRequiredService<ClipboardCapturePolicy>()
-                        .SuppressNextWrite(latest.Content, DateTimeOffset.UtcNow);
-                    services.GetRequiredService<Win32ClipboardAdapter>().WriteText(latest.Content);
-                    LocalDiagnostics.Write("remote_applied");
+                    var policy = services.GetRequiredService<ClipboardCapturePolicy>();
+                    var adapter = services.GetRequiredService<Win32ClipboardAdapter>();
+                    if (latest.IsImage)
+                    {
+                        // Images have their own opt-in gate; text's AutoApplyRemote never
+                        // writes pixel bytes to the clipboard on its own.
+                        if (viewModel.AutoApplyImages && latest.ContentHash is not null)
+                        {
+                            var store = services.GetRequiredService<SqliteClipboardEventStore>();
+                            var bytes = store.Media.ReadAllBytes(latest.ContentHash);
+                            policy.SuppressNextImage(latest.ContentHash, DateTimeOffset.UtcNow);
+                            adapter.WriteImage(bytes);
+                            LocalDiagnostics.Write("remote_image_applied");
+                        }
+                    }
+                    else if (viewModel.AutoApplyRemote)
+                    {
+                        policy.SuppressNextWrite(latest.Content, DateTimeOffset.UtcNow);
+                        adapter.WriteText(latest.Content);
+                        LocalDiagnostics.Write("remote_applied");
+                    }
                 }
 
+                // Remote activity proves those devices are alive right now; the device rows
+                // and the history list (with origin badges) both need the fresh state.
+                await viewModel.NotifyRemoteActivityAsync(
+                    batch.Select(applied => applied.OriginDeviceId),
+                    DateTimeOffset.UtcNow);
                 await viewModel.RefreshFromCaptureAsync();
+
+                // The balloon names the device and count only — clipboard text never
+                // appears in notifications (or logs).
+                var originId = batch[^1].OriginDeviceId;
+                var deviceLabel = viewModel.Devices
+                    .FirstOrDefault(device => device.DeviceId == originId)?.DisplayName ?? "远端设备";
+                trayIcon?.ShowRemoteClipNotice(deviceLabel, batch.Count);
             }
             catch (Exception exception)
             {
@@ -183,6 +373,13 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        CharterThemeManager.Shutdown();
+        if (liveRefreshTimer is not null)
+        {
+            liveRefreshTimer.Stop();
+            liveRefreshTimer.Tick -= OnLiveRefreshTick;
+            liveRefreshTimer = null;
+        }
         if (pairingService is not null)
         {
             pairingService.PairingCompleted -= OnPairingCompleted;
@@ -191,6 +388,9 @@ public partial class App : Application
         if (syncHost is not null)
         {
             syncHost.RemoteClipsCommitted -= OnRemoteClipsCommitted;
+            syncHost.SessionsChanged -= OnPeerSessionsChanged;
+            syncHost.DeviceLockedOut -= OnDeviceLockedOut;
+            syncHost.PeerStatusChanged -= OnPeerStatusChanged;
             syncHost.DisposeAsync().AsTask().GetAwaiter().GetResult();
         }
         if (clipboardAdapter is not null)
@@ -199,6 +399,12 @@ public partial class App : Application
             clipboardAdapter.Faulted -= OnClipboardFaulted;
             clipboardAdapter.Dispose();
         }
+        if (mainViewModel is not null)
+        {
+            mainViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+            mainViewModel.Devices.CollectionChanged -= OnDevicesChanged;
+        }
+        trayFlyout?.Close();
         trayIcon?.Dispose();
         services?.DisposeAsync().AsTask().GetAwaiter().GetResult();
         base.OnExit(e);
@@ -214,11 +420,25 @@ public partial class App : Application
         try
         {
             LocalDiagnostics.Write("text_changed");
-            var captureService = services.GetRequiredService<ClipboardCaptureService>();
-            var result = await captureService.CaptureAsync(new ClipboardCandidate(e.Text, e.SourceProcess, e.CapturedAt));
-            if (result is CaptureResult.Stored && MainWindow?.DataContext is MainViewModel viewModel)
+            // Reaching this handler means the adapter read the clipboard fine, so any
+            // earlier fault is over; the conduit capture segment returns to normal.
+            if (mainViewModel is { CaptureFaulted: true })
             {
-                LocalDiagnostics.Write("capture_stored");
+                mainViewModel.CaptureFaulted = false;
+            }
+
+            var captureService = services.GetRequiredService<ClipboardCaptureService>();
+            var result = await captureService.CaptureAsync(new ClipboardCandidate(
+                e.Text,
+                e.SourceProcess,
+                e.CapturedAt,
+                e.ImageBytes,
+                e.ImageMimeType,
+                e.PixelDigest));
+            if (result is CaptureResult.Stored or CaptureResult.StoredImage
+                && MainWindow?.DataContext is MainViewModel viewModel)
+            {
+                LocalDiagnostics.Write(result is CaptureResult.StoredImage ? "capture_image_stored" : "capture_stored");
                 await viewModel.RefreshFromCaptureAsync();
             }
             else if (result is CaptureResult.Rejected rejected)
@@ -233,6 +453,15 @@ public partial class App : Application
         }
     }
 
-    private static void OnClipboardFaulted(object? sender, ClipboardAdapterFaultEventArgs e) =>
+    private void OnClipboardFaulted(object? sender, ClipboardAdapterFaultEventArgs e)
+    {
         LocalDiagnostics.Write($"adapter_fault_{e.Operation}_{e.Exception.GetType().Name}");
+        _ = Dispatcher.InvokeAsync(() =>
+        {
+            if (mainViewModel is not null)
+            {
+                mainViewModel.CaptureFaulted = true;
+            }
+        });
+    }
 }

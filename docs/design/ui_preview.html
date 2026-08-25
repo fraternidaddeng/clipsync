@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>剪剪相传 · 界面预览（真实文案）</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600&display=swap');
+:root[data-theme="light"]{
+  --bg:#eef2f7;--sf:#fbfcfe;--sf2:#f4f7fa;--sf3:#eaeff5;
+  --ln:#dbe2ec;--ln2:#c8d3e0;
+  --t1:#1c2733;--t2:#3d4a59;--t3:#6b7a8b;--t4:#9aa7b6;
+  --fl:#215f8f;--fl-bg:rgba(33,95,143,.10);--fl-ln:rgba(33,95,143,.24);
+  --ac:#9b6b24;--ac-bg:rgba(155,107,36,.11);--ac-ln:rgba(155,107,36,.28);
+  --er:#a8342b;--er-bg:rgba(168,52,43,.09);--er-ln:rgba(168,52,43,.24);
+  --grain:0,0,0;--grain-a:.030;
+  --sh:0 1px 2px rgba(28,39,51,.04),0 8px 24px -12px rgba(28,39,51,.10);
+  --sh2:0 2px 5px rgba(28,39,51,.06),0 18px 40px -14px rgba(28,39,51,.16);
+}
+:root[data-theme="dark"]{
+  --bg:#11161d;--sf:#1a212b;--sf2:#161d26;--sf3:#212a35;
+  --ln:#2a333f;--ln2:#3a4552;
+  --t1:#e3e9f0;--t2:#c0cad6;--t3:#8b98a8;--t4:#5f6c7c;
+  --fl:#6fa8d4;--fl-bg:rgba(111,168,212,.13);--fl-ln:rgba(111,168,212,.30);
+  --ac:#d9a15c;--ac-bg:rgba(217,161,92,.12);--ac-ln:rgba(217,161,92,.30);
+  --er:#e0776c;--er-bg:rgba(224,119,108,.12);--er-ln:rgba(224,119,108,.28);
+  --grain:255,255,255;--grain-a:.042;
+  --sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
+  --sh2:0 2px 5px rgba(0,0,0,.36),0 18px 40px -14px rgba(0,0,0,.62);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+body{font-family:'Noto Sans SC',-apple-system,sans-serif;background:var(--bg);color:var(--t2);
+  line-height:1.7;padding:40px 22px 100px;transition:background .4s,color .4s}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;background-color:rgba(var(--grain),var(--grain-a));
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+  -webkit-mask-size:256px;mask-size:256px;transition:background-color .4s}
+.wrap{max-width:1120px;margin:0 auto;position:relative;z-index:2}
+.hd{text-align:center;margin-bottom:22px}
+.bd{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:600;letter-spacing:.2em;color:var(--t1)}
+.en{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.3em;color:var(--t4);margin-top:8px;text-transform:uppercase}
+.hd p{max-width:600px;margin:14px auto 0;color:var(--t3);font-size:12.5px}
+.ctl{display:flex;justify-content:center;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.cb{background:var(--sf2);border:1px solid var(--ln);color:var(--t3);padding:6px 16px;border-radius:100px;
+  font-size:11.5px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s}
+.cb.on{background:var(--sf);color:var(--fl);font-weight:600;border-color:var(--fl-ln)}
+.ctl.tabs{margin-bottom:28px}
+.view{display:none}.view.on{display:block}
+.stage{display:flex;gap:30px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+.cap{text-align:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;
+  color:var(--t4);margin-top:11px;text-transform:uppercase}
+
+/* 手机 */
+.ph{width:340px;border:1px solid var(--ln);border-radius:24px;overflow:hidden;background:var(--sf2);box-shadow:var(--sh2);flex-shrink:0}
+.sb{display:flex;justify-content:space-between;padding:10px 16px 5px;font-size:9.5px;color:var(--t4);font-family:'JetBrains Mono',monospace}
+.ah{padding:12px 18px 10px;display:flex;justify-content:space-between;align-items:baseline}
+.at{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600;letter-spacing:.15em;color:var(--t1)}
+.asr{width:15px;height:15px;stroke:var(--t3);fill:none;stroke-width:1.8}
+/* 状态带 */
+.band{margin:0 16px 12px;border-radius:12px;padding:10px 13px;display:flex;align-items:center;
+  justify-content:space-between;cursor:pointer;border:1px solid}
+.band.ok{background:var(--fl-bg);border-color:var(--fl-ln)}
+.band.at{background:var(--ac-bg);border-color:var(--ac-ln)}
+.band.of{background:var(--sf3);border-color:var(--ln)}
+.bl{display:flex;align-items:center;gap:10px}
+.rail{display:flex;gap:3px}
+.rail i{width:13px;height:4px;border-radius:100px;background:var(--ln2)}
+.rail i.f{background:var(--fl)}
+.rail i.h{background:linear-gradient(90deg,var(--fl) 52%,var(--ln2) 52%)}
+.rail i.a{background:var(--ac)}
+.bt{font-size:11.5px;font-weight:600}
+.band.ok .bt{color:var(--fl)}.band.at .bt{color:var(--ac)}.band.of .bt{color:var(--t3)}
+.bs{font-size:10px;color:var(--t3);margin-top:1px}
+.chev{font-size:14px;color:var(--t4);line-height:1}
+/* 列表 */
+.ls{padding:0 16px 12px;display:flex;flex-direction:column;gap:7px}
+.cd{background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:10px 12px;transition:all .18s cubic-bezier(.16,1,.3,1)}
+.cd:hover{border-color:var(--fl-ln);box-shadow:var(--sh)}
+.ct{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;min-height:13px}
+.sc{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--t3)}
+.sc svg{width:11px;height:11px;stroke:var(--t3);fill:none;stroke-width:1.8}
+.tm{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t4)}
+.cb2{font-size:12px;color:var(--t2);line-height:1.5;word-break:break-all}
+.cb2.mn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fl)}
+.thumb{height:74px;border-radius:7px;background:linear-gradient(135deg,var(--sf3),var(--ln));
+  display:flex;align-items:center;justify-content:center;font-size:9.5px;color:var(--t4);
+  font-family:'JetBrains Mono',monospace;margin-top:2px}
+/* dock */
+.dk{display:flex;border-top:1px solid var(--ln);background:var(--sf3);padding:8px 0 10px}
+.di{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9.5px;color:var(--t4)}
+.di.on{color:var(--fl);font-weight:600}
+.di svg{width:17px;height:17px;stroke-width:1.7;fill:none}
+/* 空态 */
+.emp{padding:44px 26px;text-align:center}
+.emp svg{width:36px;height:36px;stroke:var(--ln2);fill:none;stroke-width:1.3;margin-bottom:14px}
+.emp .m{font-size:12px;color:var(--t3);line-height:1.75}
+/* 通路 */
+.seg{margin:0 16px 8px;background:var(--sf);border:1px solid var(--ln);border-radius:11px;padding:12px 13px}
+.seg.hi{border-color:var(--ac-ln);background:var(--ac-bg)}
+.sg1{display:flex;align-items:center;gap:10px}
+.sgi{width:19px;height:19px;stroke-width:1.7;fill:none;flex-shrink:0}
+.sgn{font-size:12px;font-weight:600;color:var(--t1);flex:1}
+.sgs{font-size:10px;font-family:'JetBrains Mono',monospace}
+.fill{height:4px;border-radius:100px;background:var(--sf3);margin-top:9px;overflow:hidden;position:relative}
+.fill i{position:absolute;inset:0 auto 0 0;border-radius:100px}
+.st-ok .sgs{color:var(--fl)}.st-ok .sgi{stroke:var(--fl)}.st-ok .fill i{width:100%;background:var(--fl)}
+.st-dg .sgs{color:var(--fl);opacity:.8}.st-dg .sgi{stroke:var(--fl);opacity:.8}.st-dg .fill i{width:52%;background:var(--fl)}
+.st-ac .sgs{color:var(--ac);font-weight:600}.st-ac .sgi{stroke:var(--ac)}.st-ac .sgn{color:var(--ac)}
+.st-ac .fill{background:var(--ac-bg)}.st-ac .fill i{inset:0;border:1.5px solid var(--ac);border-radius:100px}
+.st-na .sgs{color:var(--t4)}.st-na .sgi{stroke:var(--t4)}.st-na .fill i{width:0}
+.sgd{font-size:10.5px;color:var(--t3);margin-top:8px;padding-top:8px;border-top:1px solid var(--ln);line-height:1.65}
+/* 路线 */
+.rt{border:1px solid var(--ln);border-radius:10px;padding:11px 12px;background:var(--sf2);display:flex;
+  align-items:center;gap:12px;margin-top:7px}
+.rt.b{border-color:var(--fl-ln);background:var(--fl-bg)}
+.rt.a{border-color:var(--ac-ln);background:var(--ac-bg)}
+.q{display:flex;flex-direction:column;gap:3px;width:26px;flex-shrink:0}
+.q i{height:3.5px;border-radius:100px;background:var(--ln2)}
+.rt.b .q i:nth-child(-n+3){background:var(--fl)}
+.rt.a .q i:nth-child(-n+2){background:var(--ac)}
+.rt.l .q i:nth-child(-n+1){background:var(--t4)}
+.rn{font-size:11.5px;font-weight:600;color:var(--t1)}
+.rd{font-size:10px;color:var(--t3);margin-top:2px;line-height:1.55}
+.rs{font-size:9.5px;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.rt.b .rs{color:var(--fl)}.rt.a .rs{color:var(--ac)}.rt.l .rs{color:var(--t4)}
+/* 设置 */
+.gh{font-size:9.5px;font-family:'JetBrains Mono',monospace;letter-spacing:.14em;color:var(--t4);
+  text-transform:uppercase;padding:16px 18px 7px}
+.sr{padding:11px 18px;display:flex;gap:13px;align-items:flex-start;border-top:1px solid var(--ln);background:var(--sf)}
+.sr:first-of-type{border-top:none}
+.si{flex:1}
+.sn{font-size:12.5px;font-weight:500;color:var(--t1)}
+.sh2{font-size:10.5px;color:var(--t3);margin-top:3px;line-height:1.6}
+.sw{width:38px;height:22px;border-radius:100px;background:var(--ln2);position:relative;flex-shrink:0;margin-top:2px;transition:background .2s}
+.sw::after{content:'';position:absolute;top:2.5px;left:2.5px;width:17px;height:17px;border-radius:50%;
+  background:var(--sf);transition:transform .22s cubic-bezier(.16,1,.3,1);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.sw.on{background:var(--fl)}.sw.on::after{transform:translateX(16px)}
+.sv{font-size:11px;color:var(--fl);font-weight:600;flex-shrink:0;margin-top:3px}
+/* 配对 */
+.qr{margin:14px 16px;aspect-ratio:1;border-radius:14px;border:1px solid var(--ln);background:var(--sf);
+  display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.qrg{width:62%;height:62%;opacity:.9}
+.corner{position:absolute;width:26px;height:26px;border:2px solid var(--fl)}
+.c1{top:16px;left:16px;border-right:none;border-bottom:none;border-radius:6px 0 0 0}
+.c2{top:16px;right:16px;border-left:none;border-bottom:none;border-radius:0 6px 0 0}
+.c3{bottom:16px;left:16px;border-right:none;border-top:none;border-radius:0 0 0 6px}
+.c4{bottom:16px;right:16px;border-left:none;border-top:none;border-radius:0 0 6px 0}
+.fp{margin:0 16px 10px;padding:11px 13px;border-radius:10px;background:var(--sf3);border:1px solid var(--ln)}
+.fpl{font-size:9.5px;color:var(--t4);font-family:'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase}
+.fpv{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--t1);margin-top:5px;letter-spacing:.06em;line-height:1.6}
+.alert{margin:0 16px 10px;padding:11px 13px;border-radius:10px;background:var(--ac-bg);border:1px solid var(--ac-ln);
+  font-size:10.5px;color:var(--ac);line-height:1.65}
+.alert b{display:block;font-size:11.5px;margin-bottom:3px}
+.btns{padding:0 16px 14px;display:flex;flex-direction:column;gap:7px}
+.bn{padding:11px;border-radius:10px;text-align:center;font-size:12px;font-weight:600;cursor:pointer;border:1px solid}
+.bn.pri{background:var(--fl);color:var(--sf);border-color:var(--fl)}
+.bn.war{background:var(--ac);color:var(--sf);border-color:var(--ac)}
+.bn.gho{background:transparent;color:var(--t3);border-color:var(--ln2)}
+.hint{padding:0 18px 12px;font-size:10.5px;color:var(--t3);line-height:1.65}
+/* Windows */
+.win{width:440px;border:1px solid var(--ln);border-radius:14px;overflow:hidden;background:var(--sf2);box-shadow:var(--sh2);flex-shrink:0}
+.wt{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--ln);background:var(--sf3)}
+.wtl{display:flex;align-items:center;gap:9px}
+.wtn{font-family:'Noto Serif SC',serif;font-size:13px;font-weight:600;letter-spacing:.14em;color:var(--t1)}
+.wsr{padding:11px 16px 8px}
+.wsb{position:relative;display:flex;align-items:center}
+.wsb input{width:100%;background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:8px 36px 8px 32px;
+  color:var(--t1);font-size:12px;outline:none;font-family:inherit}
+.wsb input::placeholder{color:var(--t4)}
+.wsi{position:absolute;left:11px;width:13px;height:13px;stroke:var(--t3);fill:none;stroke-width:1.9}
+.wsk{position:absolute;right:9px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t4);
+  background:var(--sf3);padding:2px 5px;border-radius:4px;border:1px solid var(--ln)}
+.wl{padding:4px 16px 10px;display:flex;flex-direction:column;gap:6px;max-height:260px;overflow:hidden}
+.wf{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;border-top:1px solid var(--ln);
+  background:var(--sf3);font-size:10.5px;color:var(--t3)}
+.wfl{display:flex;align-items:center;gap:7px}
+/* 系统表面 */
+.sys{width:360px;flex-shrink:0}
+.nt{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:13px 15px;box-shadow:var(--sh);margin-bottom:14px}
+.nth{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.nti{width:15px;height:15px;stroke:var(--t3);fill:none;stroke-width:1.8}
+.nta{font-size:9.5px;color:var(--t4)}
+.ntt{font-size:12.5px;font-weight:600;color:var(--t1)}
+.ntb{font-size:11.5px;color:var(--t3);margin-top:2px;line-height:1.6}
+.nta2{display:flex;gap:18px;margin-top:11px;padding-top:10px;border-top:1px solid var(--ln)}
+.nta2 span{font-size:11.5px;font-weight:600;color:var(--fl);text-transform:uppercase;letter-spacing:.04em}
+.tile{width:150px;height:78px;border-radius:14px;background:var(--fl);padding:12px;display:flex;
+  flex-direction:column;justify-content:space-between}
+.tile svg{width:20px;height:20px;stroke:var(--sf);fill:none;stroke-width:1.8}
+.tile span{font-size:11.5px;color:var(--sf);font-weight:600}
+.tile.off{background:var(--sf3);border:1px solid var(--ln)}
+.tile.off svg{stroke:var(--t3)}.tile.off span{color:var(--t3)}
+/* 注释 */
+.nts{width:320px;display:flex;flex-direction:column;gap:13px;flex-shrink:0}
+.nn{border-left:2px solid var(--ln2);padding-left:13px}
+.nn b{font-size:11.5px;color:var(--t1);display:block;margin-bottom:3px}
+.nn span{font-size:11px;color:var(--t3);line-height:1.7}
+.nn.k{border-left-color:var(--fl)}
+.nn.w{border-left-color:var(--ac)}
+.ftr{text-align:center;font-size:9.5px;color:var(--t4);margin-top:38px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<div class="hd">
+  <div class="bd">界面预览</div>
+  <div class="en">UI Preview · Real Strings from values-zh-rCN</div>
+  <p>全部文案取自项目 <code style="font-family:'JetBrains Mono',monospace;font-size:11px">strings.xml</code>，未改写。<b>长说明文字是这个应用的真实形态</b>，也是排版的真正难点。</p>
+</div>
+<div class="ctl">
+  <button class="cb on" onclick="th('light')">日间</button>
+  <button class="cb" onclick="th('dark')">夜间</button>
+</div>
+<div class="ctl tabs">
+  <button class="cb on" onclick="sw(0)">历史 · 日常态</button>
+  <button class="cb" onclick="sw(1)">历史 · 边缘态</button>
+  <button class="cb" onclick="sw(2)">通路</button>
+  <button class="cb" onclick="sw(3)">偏好</button>
+  <button class="cb" onclick="sw(4)">配对</button>
+  <button class="cb" onclick="sw(5)">Windows</button>
+  <button class="cb" onclick="sw(6)">系统表面</button>
+</div>
+
+<!-- ============ 0 历史日常 ============ -->
+<div class="view on" id="v0"><div class="stage">
+<div><div class="ph">
+  <div class="sb"><span>10:52</span><span>5G 98%</span></div>
+  <div class="ah"><span class="at">剪剪相传</span>
+    <svg class="asr" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg></div>
+  <div class="band ok"><div class="bl"><div class="rail"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div>
+    <div><div class="bt">通路畅通</div><div class="bs">PC-STUDIO · 局域网直连</div></div></div><span class="chev">›</span></div>
+  <div class="ls">
+    <div class="cd"><div class="ct"><span class="sc">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+      <span class="tm">10:48</span></div><div class="cb2">https://github.com/clipsync/core</div></div>
+    <div class="cd"><div class="ct"><span class="sc"></span><span class="tm">10:15</span></div>
+      <div class="cb2 mn">pwsh .\scripts\build-windows.ps1</div></div>
+    <div class="cd"><div class="ct"><span class="sc">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+      <span class="tm">09:33</span></div>
+      <div class="thumb">PNG · 1.2 MB · 1920×1080</div></div>
+    <div class="cd"><div class="ct"><span class="sc"></span><span class="tm">昨天</span></div>
+      <div class="cb2">会议纪要：本周五完成 Stage 4 端到端握手测试</div></div>
+  </div>
+  <div class="dk">
+    <div class="di on"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg><span>历史</span></div>
+    <div class="di"><svg viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg><span>通路</span></div>
+    <div class="di"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>偏好</span></div>
+  </div>
+</div><div class="cap">日常态 · 应用应该几乎消失</div></div>
+<div class="nts">
+  <div class="nn k"><b>状态带是唯一常驻的非内容元素</b><span>四段全满＝通路畅通。它是「通路」页那条管道的折叠版——同一视觉语汇在两个尺度复用，学一次处处认得。</span></div>
+  <div class="nn"><b>设备身份用形，不用色</b><span>显示器字形＝来自 Windows，无字形＝本机。<b>缺省即本地</b>，砍掉近半标签。而且通知和磁贴上你没有颜色控制权，字形是唯一能跨三个表面统一的编码。</span></div>
+  <div class="nn"><b>时间戳用等宽</b><span>右对齐时数字宽度一致，纵向扫视成列。这是 mono 唯一合理的用途之一。</span></div>
+  <div class="nn"><b>图片项不撑满</b><span>74dp 高的缩略条 + 等宽元数据。<b>不做大图预览</b>——历史是索引，不是相册。灰蓝底框住任意截图是隐形的，这就是低彩度的实际收益。</span></div>
+  <div class="nn"><b>操作按钮不常驻</b><span>复制/删除只在长按或悬停出现。静息状态下每张卡片只有内容和两个元数据。</span></div>
+</div>
+</div></div>
+
+<!-- ============ 1 历史边缘态 ============ -->
+<div class="view" id="v1"><div class="stage">
+<div><div class="ph">
+  <div class="sb"><span>10:52</span><span>5G 98%</span></div>
+  <div class="ah"><span class="at">剪剪相传</span></div>
+  <div class="band at"><div class="bl"><div class="rail"><i class="f"></i><i class="f"></i><i class="a"></i><i></i></div>
+    <div><div class="bt">尚未与 Windows 配对</div><div class="bs">必须先配对才能同步</div></div></div><span class="chev">›</span></div>
+  <div class="emp">
+    <svg viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg>
+    <div class="m">暂无记录。可分享文本或 PNG/JPEG、使用快捷设置磁贴，或与 Windows 配对。</div>
+  </div>
+  <div class="dk">
+    <div class="di on"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg><span>历史</span></div>
+    <div class="di"><svg viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg><span>通路</span></div>
+    <div class="di"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>偏好</span></div>
+  </div>
+</div><div class="cap">首次启动 · 未配对</div></div>
+<div><div class="ph">
+  <div class="sb"><span>10:52</span><span>5G 98%</span></div>
+  <div class="ah"><span class="at">剪剪相传</span></div>
+  <div class="band of"><div class="bl"><div class="rail"><i class="f"></i><i class="f"></i><i></i><i></i></div>
+    <div><div class="bt">无法连接 Windows</div><div class="bs">片段会留在本机，直到对端上线</div></div></div><span class="chev">›</span></div>
+  <div class="ls">
+    <div class="cd"><div class="ct"><span class="sc"></span><span class="tm">10:50</span></div>
+      <div class="cb2">这条会在对端上线后补传</div></div>
+    <div class="cd" style="opacity:.62"><div class="ct"><span class="sc"></span><span class="tm">10:44</span></div>
+      <div class="cb2">文本超过 1 MiB，未存储。</div></div>
+    <div class="cd"><div class="ct"><span class="sc">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>Windows</span>
+      <span class="tm">昨天</span></div><div class="cb2">上次连接时收到的内容</div></div>
+  </div>
+  <div class="dk">
+    <div class="di on"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg><span>历史</span></div>
+    <div class="di"><svg viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg><span>通路</span></div>
+    <div class="di"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>偏好</span></div>
+  </div>
+</div><div class="cap">对端离线 · 内容仍在本机累积</div></div>
+<div class="nts">
+  <div class="nn w"><b>「无法连接」用灰，不用红</b><span>对端关机是常态，不是故障。用灰＝陈述事实。红色全应用只留给真正的 error（写入失败、证书变更）。<b>若把常态画成告警，用户会失去对所有告警的信任。</b></span></div>
+  <div class="nn k"><b>未配对时状态带是唯一的赭黄</b><span>首次启动时全屏只有它在「伸手」。用户不需要读任何说明就知道该点哪。</span></div>
+  <div class="nn"><b>空态直接用真实文案</b><span>那句 27 字的说明恰好列了三条可行动作。<b>不需要插画</b>——它已经把该说的说完了，加图只是稀释它。</span></div>
+  <div class="nn"><b>超限项降不透明度，不消失</b><span>「超过 1 MiB 未存储」需要被看见（否则用户以为丢了），但不该占满注意力。62% 不透明度＝在场但不喊。</span></div>
+</div>
+</div></div>
+
+<!-- ============ 2 通路 ============ -->
+<div class="view" id="v2"><div class="stage">
+<div><div class="ph">
+  <div class="sb"><span>10:52</span><span>5G 98%</span></div>
+  <div class="ah"><span class="at">通路</span></div>
+  <div class="seg st-ok"><div class="sg1">
+    <svg class="sgi" viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg>
+    <span class="sgn">本机读取</span><span class="sgs">就绪</span></div>
+    <div class="fill"><i></i></div>
+    <div class="sgd">特权直读 · Shizuku。息屏也能读。</div></div>
+  <div class="seg st-ok"><div class="sg1">
+    <svg class="sgi" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M4.2 4.2l2.1 2.1m11.4 11.4l2.1 2.1M2 12h3m14 0h3"/></svg>
+    <span class="sgn">本机服务</span><span class="sgs">就绪</span></div>
+    <div class="fill"><i></i></div>
+    <div class="sgd">正在保持与 Windows 的连接。这不代表剪贴板权限。</div></div>
+  <div class="seg st-dg"><div class="sg1">
+    <svg class="sgi" viewBox="0 0 24 24"><path d="M5 12.5a7 7 0 0114 0"/><path d="M8.5 16a3.5 3.5 0 017 0"/><circle cx="12" cy="19.5" r="1"/></svg>
+    <span class="sgn">网络</span><span class="sgs">降级 · 重连中</span></div>
+    <div class="fill"><i></i></div>
+    <div class="sgd">PC-STUDIO · 证书 4f2a… · 信任纪元 3</div></div>
+  <div class="seg st-ac hi"><div class="sg1">
+    <svg class="sgi" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+    <span class="sgn">对端写入</span><span class="sgs">需要你操作</span></div>
+    <div class="fill"><i></i></div>
+    <div class="sgd">公开写入不可用。选一条路线打通后台写入：</div>
+    <div class="rt b"><div class="q"><i></i><i></i><i></i></div>
+      <div style="flex:1"><div class="rn">特权直读 · Shizuku</div>
+        <div class="rd">最省电、最可靠。需一次 adb 启动授权</div></div><span class="rs">使用中</span></div>
+    <div class="rt a"><div class="q"><i></i><i></i><i></i></div>
+      <div style="flex:1"><div class="rn">日志感知 + 悬浮窗</div>
+        <div class="rd">中等可靠。需 adb 授予 READ_LOGS 与悬浮窗权限</div></div><span class="rs">差 1 项</span></div>
+    <div class="rt l"><div class="q"><i></i><i></i><i></i></div>
+      <div style="flex:1"><div class="rn">悬浮窗轮询</div>
+        <div class="rd">耗电、有延迟。仅需悬浮窗权限，无需 adb</div></div><span class="rs">可用</span></div>
+  </div>
+  <div class="dk">
+    <div class="di"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg><span>历史</span></div>
+    <div class="di on"><svg viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg><span>通路</span></div>
+    <div class="di"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>偏好</span></div>
+  </div>
+</div><div class="cap">四段管道 · 第四段展开为路线选择</div></div>
+<div class="nts">
+  <div class="nn k"><b>七步向导变成三条路线</b><span>用户关心的从来不是 <code style="font-family:'JetBrains Mono',monospace;font-size:10px">READ_LOGS</code> 或 binder，而是「能不能用、代价是什么」。三条路线各标质量（左侧三档）、代价、还差几项——差的那几项点进去才展开具体授权步骤。</span></div>
+  <div class="nn k"><b>顺序即排障顺序</b><span>读取→服务→网络→写入，是剪贴内容的实际旅程。用户只需看出<b>管子在第几段变细</b>，不需要理解每段的实现。</span></div>
+  <div class="nn w"><b>降级的半填充必须一眼可辨</b><span>审计里那个 Shizuku 卡死 bug 正是永久停在降级态。若 UI 把降级画得和就绪差不多，这类故障会静默几个月。<b>52% 与 100% 的差异要在余光里成立。</b></span></div>
+  <div class="nn"><b>健康屏的 23 种状况被吸收了</b><span>每一种都挂在某一段下面（如「证书 4f2a… 信任纪元 3」挂在网络段），不再是平铺的诊断列表。诊断不该是独立页面。</span></div>
+  <div class="nn"><b>只有一段是赭黄</b><span>四段里最多一段能「伸手」。如果两段同时需要操作，按管道顺序只点亮上游那一段——先通读取，再谈写入。</span></div>
+</div>
+</div></div>
+
+<!-- ============ 3 偏好 ============ -->
+<div class="view" id="v3"><div class="stage">
+<div><div class="ph">
+  <div class="sb"><span>10:52</span><span>5G 98%</span></div>
+  <div class="ah"><span class="at">偏好</span></div>
+  <div class="gh">采集时机</div>
+  <div class="sr"><div class="si"><div class="sn">暂停同步</div>
+    <div class="sh2">停止捕获和发送。已有历史会保留。</div></div><div class="sw"></div></div>
+  <div class="sr"><div class="si"><div class="sn">隐私模式</div>
+    <div class="sh2">新片段既不存储也不发送。之后也不会补传过去的记录。</div></div><div class="sw"></div></div>
+  <div class="gh">采集内容</div>
+  <div class="sr"><div class="si"><div class="sn">同步剪贴板图片</div>
+    <div class="sh2">默认关闭。仅 PNG/JPEG。原始字节含 EXIF。没有设备实测的图片后端不会标为可用。</div></div><div class="sw"></div></div>
+  <div class="sr"><div class="si"><div class="sn">屏蔽已知密码类应用</div>
+    <div class="sh2">跳过知名密码管理器和验证器应用的捕获。不影响从 Windows 收到的片段。</div></div><div class="sw on"></div></div>
+  <div class="sr"><div class="si"><div class="sn">额外屏蔽的包名</div>
+    <div class="sh2">逗号分隔的 Android 包名。含空格的条目会被忽略。</div></div><span class="sv">2 项 ›</span></div>
+  <div class="gh">收到之后</div>
+  <div class="sr"><div class="si"><div class="sn">自动应用远端片段</div>
+    <div class="sh2">公开写入可用时，将 Windows 发来的文本写入系统剪贴板。</div></div><div class="sw on"></div></div>
+  <div class="sr"><div class="si"><div class="sn">自动应用远端图片</div>
+    <div class="sh2">与文本自动应用独立。将入站 PNG/JPEG 写入系统剪贴板。</div></div><div class="sw"></div></div>
+  <div class="gh">后台行为</div>
+  <div class="sr"><div class="si"><div class="sn">后台同步</div>
+    <div class="sh2">保持「已连接设备」前台服务，以维持与 Windows 的连接。这不代表剪贴板权限。</div></div><div class="sw on"></div></div>
+  <div class="sr"><div class="si"><div class="sn">重启后恢复</div>
+    <div class="sh2">手机重启后尝试恢复同步服务。默认关闭。</div></div><div class="sw"></div></div>
+  <div class="gh">数据</div>
+  <div class="sr"><div class="si"><div class="sn">历史保留</div>
+    <div class="sh2">仅删除本机较旧的片段。Windows 有独立的保留设置。</div></div><span class="sv">30 天 ›</span></div>
+  <div class="sr"><div class="si"><div class="sn">清除本机历史</div>
+    <div class="sh2">仅清除本机历史，不会远程删除 Windows 端历史。</div></div></div>
+  <div class="dk">
+    <div class="di"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg><span>历史</span></div>
+    <div class="di"><svg viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg><span>通路</span></div>
+    <div class="di on"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>偏好</span></div>
+  </div>
+</div><div class="cap">10 个开关 · 按语义分 5 组</div></div>
+<div class="nts">
+  <div class="nn k"><b>这一页是真正的排版考题</b><span>10 个开关、每个挂 1–3 行说明，总共约 400 字。<b>任何装饰在这里都是负担</b>——通透只能靠分组、行距和字号层级实现。这就是为什么颗粒不铺卡片内部。</span></div>
+  <div class="nn k"><b>五组标题用等宽小字</b><span>9.5px、字距 .14em、大写、灰四级。它们要能被跳过——扫视时视线应该直接落在开关名上，组标题只在需要定位时才被读到。</span></div>
+  <div class="nn"><b>说明文字不能省</b><span>「原始字节含 EXIF」「这不代表剪贴板权限」——这些是隐私承诺，删掉就是欺骗。<b>设计要适应诚实的文案，不是反过来。</b></span></div>
+  <div class="nn w"><b>「暂停同步」建议提级</b><span>它是使用频率最高的开关，而且通知栏和 QS 磁贴上都需要它。留在这里是妥协——更好的位置是状态带上一个可点的暂停态。</span></div>
+  <div class="nn"><b>非开关项用「值 ›」</b><span>保留天数、额外包名数，右侧显示当前值而不是开关。<b>一眼能读到当前配置</b>，不用点进去确认。</span></div>
+  <div class="nn"><b>清除历史不给红色</b><span>它是常规操作且有二次确认。红色留给真正的 error。破坏性操作靠确认对话框防护，不靠颜色恐吓。</span></div>
+</div>
+</div></div>
+
+<!-- ============ 4 配对 ============ -->
+<div class="view" id="v4"><div class="stage">
+<div><div class="ph">
+  <div class="sb"><span>10:52</span><span>5G 98%</span></div>
+  <div class="ah"><span class="at">与 Windows 配对</span></div>
+  <div class="hint">在电脑上打开「剪剪相传」，选择「配对新设备」，然后扫描它显示的二维码。</div>
+  <div class="qr">
+    <div class="corner c1"></div><div class="corner c2"></div><div class="corner c3"></div><div class="corner c4"></div>
+    <svg class="qrg" viewBox="0 0 21 21" shape-rendering="crispEdges">
+      <rect width="21" height="21" fill="transparent"/>
+      <g fill="currentColor" style="color:var(--t2)">
+        <path d="M0 0h7v7H0zm1 1v5h5V1zm1 1h3v3H2z"/>
+        <path d="M14 0h7v7h-7zm1 1v5h5V1zm1 1h3v3h-3z"/>
+        <path d="M0 14h7v7H0zm1 1v5h5v-5zm1 1h3v3H2z"/>
+        <path d="M9 0h1v1H9zm2 0h1v2h-1zM9 2h2v1H9zm3 1h1v1h-1zM9 4h1v1H9zm2 1h1v1h-1zM8 6h2v1H8zm4 0h1v1h-1z"/>
+        <path d="M0 9h1v1H0zm2 0h2v1H2zm3 0h1v1H5zm2 0h1v1H7zm2 0h1v1H9zm2 0h1v1h-1zm2 0h1v1h-1zm2 0h1v1h-1zm3 0h1v1h-1zM1 11h1v1H1zm3 0h1v1H4zm2 0h2v1H6zm3 0h1v1H9zm3 0h1v1h-1zm2 0h2v1h-2zm4 0h1v1h-1z"/>
+        <path d="M9 13h1v1H9zm2 1h1v1h-1zm-2 1h2v1H9zm3 1h1v1h-1zm-3 1h1v1H9zm2 1h1v1h-1zm-2 1h2v1H9z"/>
+        <path d="M14 13h1v1h-1zm2 0h1v1h-1zm2 0h2v1h-2zm-4 2h2v1h-2zm3 0h1v1h-1zm2 0h1v1h-1zm-6 2h1v1h-1zm2 0h2v1h-2zm3 0h1v1h-1zm-5 2h1v1h-1zm2 0h1v1h-1zm2 0h2v1h-2z"/>
+      </g></svg>
+  </div>
+  <div class="btns"><div class="bn pri">扫描二维码</div><div class="bn gho">或粘贴配对内容</div></div>
+  <div class="dk">
+    <div class="di"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg><span>历史</span></div>
+    <div class="di on"><svg viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg><span>通路</span></div>
+    <div class="di"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>偏好</span></div>
+  </div>
+</div><div class="cap">扫码 · 位于「网络」段之下</div></div>
+<div><div class="ph">
+  <div class="sb"><span>10:52</span><span>5G 98%</span></div>
+  <div class="ah"><span class="at">确认此电脑</span></div>
+  <div class="alert"><b>警告：证书已变更</b>此电脑的证书自上次配对后已变更。若你没有在 Windows 上重装「剪剪相传」，请停止并检查该电脑。</div>
+  <div class="hint">仅当下方名称和证书指纹与 Windows 应用显示的一致时再继续。</div>
+  <div class="fp"><div class="fpl">证书指纹</div>
+    <div class="fpv">4F2A 8C31 9E07 B5D2<br>6A14 F893 2C7E 0B5A</div></div>
+  <div class="fp"><div class="fpl">地址</div><div class="fpv" style="font-size:11.5px">192.168.1.42 : 47820</div></div>
+  <div class="btns"><div class="bn war">我已核实 — 替换配对</div><div class="bn gho">取消</div></div>
+  <div class="dk">
+    <div class="di"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg><span>历史</span></div>
+    <div class="di on"><svg viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg><span>通路</span></div>
+    <div class="di"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>偏好</span></div>
+  </div>
+</div><div class="cap">证书变更 · 全应用最高风险时刻</div></div>
+<div class="nts">
+  <div class="nn w"><b>证书变更是唯一该用赭黄整块背景的地方</b><span>这是全应用最高风险的决策点——误确认等于接受一个可能的中间人。所以这里破例：整块底色 + 实心警示按钮。<b>其余任何地方都不该这么响。</b></span></div>
+  <div class="nn k"><b>指纹用等宽 + 四位分组 + 两行</b><span>64 个十六进制字符要和 Windows 屏幕上的逐字比对。等宽保证字符宽度一致，四位一组便于用手指跟读，两行避免横向扫视丢位。<b>这是 mono 最正当的用途。</b></span></div>
+  <div class="nn"><b>主按钮文案保留「我已核实」</b><span>不是「确认」。按钮文案本身就是一次责任确认——用户点下去时读到的是自己做过的动作。</span></div>
+  <div class="nn"><b>配对不是独立页面</b><span>它挂在「通路」的网络段下——配对的本质就是接通网络段。dock 上高亮的是「通路」，不是第四个 tab。</span></div>
+  <div class="nn"><b>二维码静区留足</b><span>四角定位框用流动蓝，暗示「这里是入口」。静区（白边）必须足够，否则灰蓝底会干扰识别。</span></div>
+</div>
+</div></div>
+
+<!-- ============ 5 Windows ============ -->
+<div class="view" id="v5"><div class="stage">
+<div><div class="win">
+  <div class="wt"><div class="wtl">
+    <svg viewBox="0 0 24 24" width="15" height="15" style="stroke:var(--fl);fill:none;stroke-width:1.9"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg>
+    <span class="wtn">剪 剪 相 传</span></div>
+    <div class="rail"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div></div>
+  <div class="wsr"><div class="wsb">
+    <svg class="wsi" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
+    <input placeholder="搜索"><span class="wsk">Alt+C</span></div></div>
+  <div class="wl">
+    <div class="cd"><div class="ct"><span class="sc">
+      <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 19h2"/></svg>手机</span>
+      <span class="tm">10:48</span></div><div class="cb2">https://github.com/clipsync/core</div></div>
+    <div class="cd"><div class="ct"><span class="sc"></span><span class="tm">10:15</span></div>
+      <div class="cb2 mn">git checkout -b feature/stage-4</div></div>
+    <div class="cd"><div class="ct"><span class="sc">
+      <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 19h2"/></svg>手机</span>
+      <span class="tm">昨天</span></div><div class="cb2">会议纪要：本周五完成 Stage 4 端到端握手测试</div></div>
+  </div>
+  <div class="wf"><span class="wfl">
+    <svg viewBox="0 0 24 24" width="12" height="12" style="stroke:var(--fl);fill:none;stroke-width:2"><path d="M5 13l4 4L19 7"/></svg>
+    监听中 · Pixel 8</span><span>清空</span></div>
+</div><div class="cap">托盘浮窗 440px · 可见约 3 秒</div></div>
+<div class="nts">
+  <div class="nn k"><b>不铺颗粒、无环境漂移、无流光</b><span>440px、开 3 秒。那些效果在这里一样都看不见，纯属渲染成本。<b>之前我给这个窗口设计 22 秒呼吸周期是错的——一个周期都走不完。</b></span></div>
+  <div class="nn k"><b>标题栏右侧就是那条 rail</b><span>四段状态在手机状态带、Windows 标题栏、通路页三处用同一个语汇。<b>跨端统一靠的是这个，不是毛玻璃。</b></span></div>
+  <div class="nn"><b>设备字形在此反转</b><span>Windows 上「手机」用手机字形，本机项无字形。规则不变：<b>缺省即本地</b>。同一条剪贴项在两端都能看出它从哪来。</span></div>
+  <div class="nn"><b>没有筛选 chip</b><span>3 秒窗口里没人会用筛选。搜索框 + Alt+C 足够，chip 移到搜索聚焦后出现。</span></div>
+  <div class="nn w"><b>卡片不套毛玻璃</b><span>WPF 渲染不出元素级 backdrop blur。这里用的是明度差 + 1px 边框，与 Compose 侧完全一致——<b>这是唯一能两端长得一样的做法。</b></span></div>
+  <div class="nn"><b>圆角比手机小一档</b><span>窗口 14px / 卡片 10px，手机是 24px / 10px。超椭圆指数 n 相同，半径各自收放：<b>同一种角的性格，不同的尺度。</b></span></div>
+</div>
+</div></div>
+
+<!-- ============ 6 系统表面 ============ -->
+<div class="view" id="v6"><div class="stage">
+<div class="sys">
+  <div class="nt">
+    <div class="nth"><svg class="nti" viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg>
+      <span class="nta">剪剪相传 · 现在</span></div>
+    <div class="ntt">来自 Windows 的新片段</div>
+    <div class="ntb">点按「复制」写入本机剪贴板。</div>
+    <div class="nta2"><span>复制到剪贴板</span></div>
+  </div>
+  <div class="nt">
+    <div class="nth"><svg class="nti" viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg>
+      <span class="nta">剪剪相传 · 后台同步</span></div>
+    <div class="ntt">剪剪相传后台同步</div>
+    <div class="ntb">正在保持与 Windows 的连接。这不代表剪贴板权限。</div>
+    <div class="nta2"><span>全部暂停</span><span>立即同步</span><span>打开状态</span></div>
+  </div>
+  <div style="display:flex;gap:14px;align-items:flex-start">
+    <div><div class="tile">
+      <svg viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg><span>发送剪贴板</span></div>
+      <div class="cap" style="margin-top:8px">磁贴 · 就绪</div></div>
+    <div><div class="tile off">
+      <svg viewBox="0 0 24 24"><path d="M4 12h4l2-5 4 10 2-5h4"/></svg><span>发送剪贴板</span></div>
+      <div class="cap" style="margin-top:8px">磁贴 · 已暂停</div></div>
+  </div>
+</div>
+<div class="nts">
+  <div class="nn w"><b>这三个表面你几乎没有设计权</b><span>通知与磁贴由系统绘制：字体、圆角、背景、强调色全部来自系统主题，MIUI 还会二次改写。<b>你能控制的只有：单色图标的形状、文案、以及动作按钮的数量与顺序。</b></span></div>
+  <div class="nn k"><b>所以折线标记必须在 24dp 单色下成立</b><span>它同时是应用图标、通知图标、磁贴图标、托盘图标和「通路」页的 dock 图标。选它的理由：6 个顶点、无闭合区域、单笔画——<b>缩到 16px 仍可辨，且深浅任务栏都成立。</b></span></div>
+  <div class="nn k"><b>动作按钮的顺序是设计</b><span>后台通知给了三个：全部暂停 / 立即同步 / 打开状态。<b>「全部暂停」放第一位</b>——它是最高频且最需要即时可达的操作，用户掏出通知栏多半是为了它。</span></div>
+  <div class="nn"><b>文案里的隐私承诺不能删</b><span>「从不包含剪贴板文本」「这不代表剪贴板权限」——常驻通知是用户唯一能持续看到的地方，这两句在这里的价值高于任何视觉设计。</span></div>
+  <div class="nn"><b>入站通知只有一个动作</b><span>「复制到剪贴板」。不加「忽略」——划掉就是忽略，系统已经提供了这个手势。<b>多一个按钮就是多一次决策。</b></span></div>
+</div>
+</div></div>
+
+<div class="ftr">UI PREVIEW · 概念稿，未接入项目代码</div>
+</div>
+<script>
+function th(m){document.documentElement.setAttribute('data-theme',m);
+  document.querySelectorAll('.ctl:not(.tabs) .cb').forEach((b,i)=>b.classList.toggle('on',(m==='light')===(i===0)));}
+function sw(i){document.querySelectorAll('.view').forEach((v,k)=>v.classList.toggle('on',k===i));
+  document.querySelectorAll('.tabs .cb').forEach((b,k)=>b.classList.toggle('on',k===i));}
+</script>
+</body>
+</html>

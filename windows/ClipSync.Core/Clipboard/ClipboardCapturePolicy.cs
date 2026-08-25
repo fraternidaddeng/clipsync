@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using ClipSync.Core.Media;
 
 namespace ClipSync.Core.Clipboard;
 
@@ -31,6 +32,13 @@ public sealed class ClipboardCapturePolicy
         suppressions.Add(new Suppression(Hash(text), at + SuppressionWindow));
     }
 
+    public void SuppressNextImage(string contentHash, DateTimeOffset at, string? pixelDigest = null)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(contentHash);
+        PurgeSuppressions(at);
+        suppressions.Add(new Suppression(contentHash, at + SuppressionWindow, pixelDigest));
+    }
+
     public CaptureDecision Evaluate(ClipboardCandidate candidate)
     {
         if (settings.IsPaused)
@@ -48,6 +56,38 @@ public sealed class ClipboardCapturePolicy
             return new CaptureDecision.Reject(CaptureRejectionReason.SourceBlocked);
         }
 
+        PurgeSuppressions(candidate.CapturedAt);
+
+        if (candidate.ImageBytes is { Length: > 0 })
+        {
+            if (!settings.ImageSyncEnabled)
+            {
+                if (string.IsNullOrEmpty(candidate.Text))
+                {
+                    return new CaptureDecision.Reject(CaptureRejectionReason.UnsupportedMedia);
+                }
+            }
+            else
+            {
+                var imageDecision = EvaluateImage(candidate);
+                if (imageDecision is CaptureDecision.AcceptImage or CaptureDecision.Reject
+                    {
+                        Reason: CaptureRejectionReason.Duplicate
+                        or CaptureRejectionReason.SuppressedWrite
+                        or CaptureRejectionReason.TooLarge
+                    })
+                {
+                    return imageDecision;
+                }
+
+                if (imageDecision is CaptureDecision.Reject
+                    && string.IsNullOrEmpty(candidate.Text))
+                {
+                    return imageDecision;
+                }
+            }
+        }
+
         if (string.IsNullOrEmpty(candidate.Text))
         {
             return new CaptureDecision.Reject(CaptureRejectionReason.EmptyText);
@@ -60,7 +100,6 @@ public sealed class ClipboardCapturePolicy
         }
 
         var hash = Hash(candidate.Text);
-        PurgeSuppressions(candidate.CapturedAt);
         var suppressionIndex = suppressions.FindIndex(item => item.Hash == hash);
         if (suppressionIndex >= 0)
         {
@@ -81,6 +120,57 @@ public sealed class ClipboardCapturePolicy
             bytes,
             NormalizeSource(candidate.SourceProcess),
             candidate.CapturedAt));
+    }
+
+    private CaptureDecision EvaluateImage(ClipboardCandidate candidate)
+    {
+        var inspect = ImageCodec.TryInspect(candidate.ImageBytes.AsSpan(), out var image);
+        if (inspect == ImageCodecError.TooLarge)
+        {
+            return new CaptureDecision.Reject(CaptureRejectionReason.TooLarge);
+        }
+
+        if (inspect != ImageCodecError.Ok || image is null)
+        {
+            return new CaptureDecision.Reject(
+                inspect == ImageCodecError.UnsupportedMedia
+                    ? CaptureRejectionReason.UnsupportedMedia
+                    : CaptureRejectionReason.DecodeFailed);
+        }
+
+        if (!string.IsNullOrEmpty(candidate.ImageMimeType)
+            && !string.Equals(candidate.ImageMimeType, image.MimeType, StringComparison.Ordinal))
+        {
+            return new CaptureDecision.Reject(CaptureRejectionReason.UnsupportedMedia);
+        }
+
+        var suppressionIndex = suppressions.FindIndex(item =>
+            item.Hash == image.ContentHash
+            || (candidate.PixelDigest is not null && item.PixelDigest == candidate.PixelDigest));
+        if (suppressionIndex >= 0)
+        {
+            suppressions.RemoveAt(suppressionIndex);
+            return new CaptureDecision.Reject(CaptureRejectionReason.SuppressedWrite);
+        }
+
+        if ((image.ContentHash == lastAcceptedHash
+                || (candidate.PixelDigest is not null && candidate.PixelDigest == lastAcceptedHash))
+            && candidate.CapturedAt - lastAcceptedAt < DuplicateWindow)
+        {
+            return new CaptureDecision.Reject(CaptureRejectionReason.Duplicate);
+        }
+
+        lastAcceptedHash = candidate.PixelDigest ?? image.ContentHash;
+        lastAcceptedAt = candidate.CapturedAt;
+        return new CaptureDecision.AcceptImage(new AcceptedImageContent(
+            candidate.ImageBytes!,
+            image.ContentHash,
+            image.MimeType,
+            image.PixelWidth,
+            image.PixelHeight,
+            NormalizeSource(candidate.SourceProcess),
+            candidate.CapturedAt,
+            candidate.PixelDigest));
     }
 
     private bool IsSourceBlocked(string? sourceProcess)
@@ -115,5 +205,5 @@ public sealed class ClipboardCapturePolicy
 
     private static string Hash(string text) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(text))).ToLowerInvariant();
 
-    private sealed record Suppression(string Hash, DateTimeOffset ExpiresAt);
+    private sealed record Suppression(string Hash, DateTimeOffset ExpiresAt, string? PixelDigest = null);
 }

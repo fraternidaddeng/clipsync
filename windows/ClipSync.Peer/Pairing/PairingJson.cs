@@ -191,6 +191,7 @@ public static class PairingJson
             or PairingErrorCodes.TokenExpired
             or PairingErrorCodes.Rejected
             or PairingErrorCodes.Timeout
+            or PairingErrorCodes.RateLimited
             ? null
             : "error code is unknown";
     }

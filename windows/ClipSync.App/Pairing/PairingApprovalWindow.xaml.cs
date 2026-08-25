@@ -15,11 +15,11 @@ public partial class PairingApprovalWindow : Window
         DeviceNameText.Text = candidate.DisplayName;
         PlatformText.Text = candidate.Platform switch
         {
-            "android" => "Android device",
-            "windows" => "Windows device",
+            "android" => "Android 设备",
+            "windows" => "Windows 设备",
             _ => candidate.Platform
         };
-        RepairWarningText.Visibility = candidate.IsRepair ? Visibility.Visible : Visibility.Collapsed;
+        RepairWarningBox.Visibility = candidate.IsRepair ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public bool Approved { get; private set; }

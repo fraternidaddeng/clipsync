@@ -1,26 +1,12 @@
 package com.clipsync.android.pairing
 
 import java.io.IOException
-import java.net.ConnectException
-import java.net.NoRouteToHostException
-import java.net.SocketException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import java.nio.charset.CodingErrorAction
-import java.security.MessageDigest
-import java.security.SecureRandom
-import java.security.cert.CertificateException
-import java.security.cert.X509Certificate
-import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLException
-import javax.net.ssl.X509TrustManager
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
@@ -84,7 +70,7 @@ class PairingConfirmClient(
     }
 
     private fun confirmViaHost(host: String, port: Int, pin: String, body: String): HostOutcome {
-        val client = pinnedClient(pin)
+        val client = PinnedTls.client(pin, connectTimeoutMs, readTimeoutMs)
         val request = Request.Builder()
             .url("https://$host:$port/v1/pair/confirm")
             .header("X-Protocol-Version", "1")
@@ -96,15 +82,14 @@ class PairingConfirmClient(
             }
         } catch (exception: IOException) {
             when {
-                isPinRejection(exception) -> HostOutcome.PinRejected
-                isConnectivityFailure(exception) -> HostOutcome.NotReachable
+                PinnedTls.isPinRejection(exception) -> HostOutcome.PinRejected
+                PinnedTls.isConnectivityFailure(exception) -> HostOutcome.NotReachable
                 else -> HostOutcome.Answered(
                     PairingConfirmOutcome.ProtocolViolation("transport failed: ${exception.javaClass.simpleName}"),
                 )
             }
         } finally {
-            client.dispatcher.executorService.shutdown()
-            client.connectionPool.evictAll()
+            PinnedTls.shutdown(client)
         }
     }
 
@@ -149,63 +134,4 @@ class PairingConfirmClient(
         return runCatching { decoder.decode(java.nio.ByteBuffer.wrap(buffer, 0, total)).toString() }.getOrNull()
     }
 
-    private fun pinnedClient(pin: String): OkHttpClient {
-        val trustManager = PinnedTrustManager(pin)
-        val sslContext = SSLContext.getInstance("TLS")
-        sslContext.init(null, arrayOf(trustManager), SecureRandom())
-        return OkHttpClient.Builder()
-            .sslSocketFactory(sslContext.socketFactory, trustManager)
-            // The pin is the whole identity; hostnames are meaningless for LAN IPs.
-            .hostnameVerifier { _, _ -> true }
-            .connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
-            .readTimeout(readTimeoutMs, TimeUnit.MILLISECONDS)
-            .writeTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
-            .retryOnConnectionFailure(false)
-            .followRedirects(false)
-            .followSslRedirects(false)
-            .build()
-    }
-
-    private fun isPinRejection(exception: Throwable): Boolean {
-        var current: Throwable? = exception
-        while (current != null) {
-            if (current is CertificateException && current.message == PIN_MISMATCH_MARKER) {
-                return true
-            }
-            current = current.cause
-        }
-        return false
-    }
-
-    private fun isConnectivityFailure(exception: IOException): Boolean = when (exception) {
-        is ConnectException, is UnknownHostException, is NoRouteToHostException -> true
-        // A timeout while WAITING for the approval decision must not roll over to the next
-        // host: the token was already consumed. Only the connect phase may fail over.
-        is SocketTimeoutException -> exception.message?.contains("connect", ignoreCase = true) == true
-        is SSLException -> false
-        is SocketException -> true
-        else -> false
-    }
-
-    private class PinnedTrustManager(pin: String) : X509TrustManager {
-        private val expected = pin.lowercase()
-
-        override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) =
-            throw CertificateException("client certificates are not used")
-
-        override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-            val leaf = chain.firstOrNull() ?: throw CertificateException(PIN_MISMATCH_MARKER)
-            val digest = MessageDigest.getInstance("SHA-256").digest(leaf.encoded)
-            val fingerprint = digest.joinToString(separator = "") { byte -> "%02x".format(byte) }
-            if (fingerprint != expected) {
-                throw CertificateException(PIN_MISMATCH_MARKER)
-            }
-        }
-
-        override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
-    }
-
-    private companion object {
-        const val PIN_MISMATCH_MARKER = "clipsync.pin.mismatch"
-    }
 }

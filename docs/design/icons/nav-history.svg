@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <!-- history: two overlapping sheets -->
+  <rect x="8" y="3" width="13" height="17" rx="2"/>
+  <path d="M16 3V1H3v14h3"/>
+</svg>

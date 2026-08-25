@@ -1,17 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Pairing calls the Windows peer's /v1/pair/confirm endpoint over pinned TLS. -->
+    <!-- Pairing and the peer health probe call the Windows peer over pinned TLS. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Satisfies one network prerequisite of the connectedDevice foreground service type. -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <!-- QR scanning only; pairing also works by pasting the payload without camera access. -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- The sync session to the paired Windows peer runs as a connectedDevice foreground service. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <!-- API 34+ prerequisite for the connectedDevice type on LAN (Wi-Fi) peers. -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <!-- Status + inbox notifications (API 33+ runtime permission). Denial never blocks sync
+         itself; items stay in the inbox and the in-app status must explain the missing surface. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- 开机恢复 (plan 5.2): the receiver stays component-disabled until the user opts in. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Wizard routes 2 and 3: the transient read-focus overlay, granted in Settings. -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- Wizard route 3: polling needs the app exempted from battery optimization. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!--
+        Wizard route 2. READ_LOGS cannot be granted by any runtime dialog; the user grants it
+        explicitly from a computer (`adb shell pm grant ... READ_LOGS`) and the app re-probes
+        the real state on every resume — a past grant is never assumed permanent.
+    -->
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
+        tools:ignore="ProtectedPermissions" />
 
     <uses-feature
         android:name="android.hardware.camera.any"
         android:required="false" />
 
     <application
+        android:name=".ClipSyncApplication"
         android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.ClipSync">
@@ -24,6 +53,90 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Lets Shizuku hand this app its binder when the Shizuku service (re)starts. -->
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:enabled="true"
+            android:exported="true"
+            android:multiprocess="false"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+        <!-- 系统分享面板目标：纯文本写入本地 outbox；PNG/JPEG 图片直接落库并入队（图库分享）。 -->
+        <activity
+            android:name=".platform.entry.ShareReceiverActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:label="@string/share_target_label"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/png" />
+                <data android:mimeType="image/jpeg" />
+                <data android:mimeType="image/jpg" />
+            </intent-filter>
+        </activity>
+
+        <!-- 图像自动应用：把接收到的图片以 content:// URI 写入系统剪贴板。 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.clipboard"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- 快捷磁贴的透明宿主：取得焦点读取一次剪贴板后立即结束。 -->
+        <activity
+            android:name=".platform.entry.SendClipboardActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.ClipSync.Transparent" />
+
+        <!-- 通知“复制”操作：仅携带事件 ID，正文在本地按 ID 查找。 -->
+        <receiver
+            android:name=".platform.notify.CopyInboxItemReceiver"
+            android:exported="false" />
+
+        <!-- Quick Settings 磁贴：发送当前剪贴板。 -->
+        <service
+            android:name=".platform.entry.SendClipboardTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_qs_send_clip"
+            android:label="@string/qs_tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- 与已配对 Windows 端保持同步会话的前台服务；通知只描述连接状态。 -->
+        <service
+            android:name=".sync.ClipboardSyncService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
+        <!-- 开机恢复：默认禁用，仅当用户在偏好里打开「开机恢复」时才启用该组件；
+             启动失败只发一条「需要恢复」通知，绝不重试循环（计划 5.2）。 -->
+        <receiver
+            android:name=".sync.BootCompletedReceiver"
+            android:enabled="false"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

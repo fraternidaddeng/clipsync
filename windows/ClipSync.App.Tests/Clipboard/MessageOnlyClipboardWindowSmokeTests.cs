@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using System.Windows.Threading;
 using ClipSync.App.Clipboard;
 
 namespace ClipSync.App.Tests.Clipboard;
@@ -46,9 +45,11 @@ public sealed class MessageOnlyClipboardWindowSmokeTests
         Assert.Null(failure);
     }
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")]
     private static extern nint SendMessage(nint window, int message, nint wordParameter, nint longParameter);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]
     private static extern nint GetWindowLongPtr(nint window, int index);
 }

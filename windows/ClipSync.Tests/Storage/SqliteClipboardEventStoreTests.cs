@@ -24,7 +24,55 @@ public sealed class SqliteClipboardEventStoreTests
         var state = await store.ReadDatabaseStateAsync();
         Assert.Equal("wal", state.JournalMode, ignoreCase: true);
         Assert.True(state.ForeignKeysEnabled);
-        Assert.Equal(2, state.SchemaVersion);
+        Assert.Equal(SqliteClipboardEventStore.SchemaVersion, state.SchemaVersion);
+        Assert.Equal(4, SqliteClipboardEventStore.SchemaVersion);
+    }
+
+    [Fact]
+    public async Task InitializeCreatesTheHistoryAndContentHashIndexes()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.InitializeAsync();
+
+        await using var connection = new SqliteConnection($"Data Source={database.Path}");
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'clips';";
+        var indexes = new List<string>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            indexes.Add(reader.GetString(0));
+        }
+
+        Assert.Contains("clips_visible_history_idx", indexes);
+        Assert.Contains("clips_content_hash_idx", indexes);
+    }
+
+    [Fact]
+    public async Task ReinitializeOnExistingFileIsIdempotentAndKeepsRows()
+    {
+        await using var database = new TemporaryDatabase();
+        Guid eventId;
+        await using (var first = database.CreateStore())
+        {
+            await first.InitializeAsync();
+            eventId = (await first.StoreAsync(Content("keep-across-reinit", BaseTime))).EventId;
+            Assert.Equal(SqliteClipboardEventStore.SchemaVersion, (await first.ReadDatabaseStateAsync()).SchemaVersion);
+        }
+
+        await using var reopened = database.CreateStore();
+        await reopened.InitializeAsync();
+        await reopened.InitializeAsync();
+
+        var state = await reopened.ReadDatabaseStateAsync();
+        Assert.Equal(SqliteClipboardEventStore.SchemaVersion, state.SchemaVersion);
+        var history = await reopened.SearchAsync(new ClipboardHistoryQuery());
+        Assert.Single(history);
+        Assert.Equal(eventId, history[0].EventId);
+        Assert.Equal("keep-across-reinit", history[0].Text);
+        Assert.Equal(1, history[0].OriginSequence);
     }
 
     [Fact]
@@ -179,6 +227,54 @@ public sealed class SqliteClipboardEventStoreTests
 
         await using var reopened = database.CreateStore();
         Assert.Equal("line 1\nline 2", await reopened.GetSettingAsync(hostileKey));
+    }
+
+    [Fact]
+    public async Task StoreImagePersistsBlobAndHistoryWithoutTextBody()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        var png = ClipSync.Core.Media.ImageCodec.EncodePngBgra(1, 1, [0, 0, 0, 0]);
+        var hash = ClipSync.Core.Media.ImageCodec.HashBytes(png);
+
+        var stored = await store.StoreImageAsync(new AcceptedImageContent(
+            png,
+            hash,
+            ClipSync.Core.Media.MediaLimits.MimePng,
+            1,
+            1,
+            "paint",
+            BaseTime));
+
+        Assert.Equal(1, stored.OriginSequence);
+        Assert.True(store.Media.Exists(hash));
+        var history = await store.SearchAsync(new ClipboardHistoryQuery());
+        Assert.Single(history);
+        Assert.Equal("image", history[0].Kind);
+        Assert.Equal(string.Empty, history[0].Text);
+        Assert.Equal(hash, history[0].ContentHash);
+        Assert.Equal("image/png", history[0].MimeType);
+        Assert.Equal(1, history[0].PixelWidth);
+        Assert.Equal(png.Length, history[0].EncodedBytes);
+    }
+
+    [Fact]
+    public async Task SoftDeleteDetachesImageMediaAndKeepsTombstone()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        var png = ClipSync.Core.Media.ImageCodec.EncodePngBgra(1, 1, [255, 0, 0, 255]);
+        var hash = ClipSync.Core.Media.ImageCodec.HashBytes(png);
+        var stored = await store.StoreImageAsync(new AcceptedImageContent(
+            png, hash, ClipSync.Core.Media.MediaLimits.MimePng, 1, 1, null, BaseTime));
+
+        Assert.True(await store.DeleteAsync(stored.EventId, BaseTime.AddSeconds(1)));
+        Assert.Empty(await store.SearchAsync(new ClipboardHistoryQuery()));
+        var deleted = await store.GetByIdAsync(stored.EventId, includeDeleted: true);
+        Assert.NotNull(deleted);
+        Assert.True(deleted.IsDeleted);
+        Assert.Equal("image", deleted.Kind);
+        Assert.False(store.Media.Exists(hash));
     }
 
     private static AcceptedClipboardContent Content(string text, DateTimeOffset capturedAt)

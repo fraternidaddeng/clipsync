@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "type": "want_ranges",
+  "request_id": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+  "body": {
+    "requests": [
+      {
+        "origin_device_id": "11111111-1111-4111-8111-111111111111",
+        "ranges": [
+          {
+            "start_seq": 4,
+            "end_seq": 4
+          },
+          {
+            "start_seq": 7,
+            "end_seq": 9
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,235 @@
+package com.clipsync.android.platform.notify
+
+import android.app.Notification
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import androidx.core.app.NotificationChannelCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import com.clipsync.android.MainActivity
+import com.clipsync.android.R
+
+/**
+ * Channel and builder helpers for sync notifications. Per the plan, no notification ever
+ * contains clipboard text: the inbox notification shows only the fixed title
+ * "来自电脑的新文本" plus a 复制 action that resolves the content by event id inside the app.
+ */
+object SyncNotifications {
+    const val CHANNEL_INBOX = "clipsync.inbox"
+    const val CHANNEL_RECOVERY = "clipsync.recovery"
+    private const val INBOX_NOTIFICATION_ID_BASE = 41_000
+
+    // The per-event inbox ids span [41_000, 41_000 + 0x7FFF] = [41_000, 73_767]; the fixed
+    // ids below must stay outside that range or an unlucky event-id hash replaces (and
+    // cancelInboxItem cancels) the recovery / auth-throttle notification.
+    const val RECOVERY_NOTIFICATION_ID = 74_001
+    const val AUTH_THROTTLE_NOTIFICATION_ID = 74_002
+
+    /** Idempotent; called from Application.onCreate so receivers can post right away. */
+    fun ensureChannels(context: Context) {
+        val channel = NotificationChannelCompat.Builder(
+            CHANNEL_INBOX,
+            NotificationManagerCompat.IMPORTANCE_DEFAULT,
+        )
+            .setName(context.getString(R.string.notification_channel_inbox_name))
+            .setDescription(context.getString(R.string.notification_channel_inbox_description))
+            .build()
+        NotificationManagerCompat.from(context).createNotificationChannel(channel)
+        ensureRecoveryChannel(context)
+    }
+
+    private fun ensureRecoveryChannel(context: Context) {
+        val channel = NotificationChannelCompat.Builder(
+            CHANNEL_RECOVERY,
+            NotificationManagerCompat.IMPORTANCE_DEFAULT,
+        )
+            .setName(context.getString(R.string.notification_channel_recovery_name))
+            .setDescription(context.getString(R.string.notification_channel_recovery_description))
+            .build()
+        NotificationManagerCompat.from(context).createNotificationChannel(channel)
+    }
+
+    /** Stable per-event id so re-delivery updates instead of stacking. */
+    fun notificationIdFor(eventId: String): Int =
+        INBOX_NOTIFICATION_ID_BASE + (eventId.hashCode() and 0x7FFF)
+
+    fun buildInboxItemNotification(context: Context, eventId: String): Notification {
+        val requestCode = notificationIdFor(eventId)
+        val copyAction = PendingIntent.getBroadcast(
+            context,
+            requestCode,
+            CopyInboxItemReceiver.intent(context, eventId),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+        val openApp = PendingIntent.getActivity(
+            context,
+            requestCode,
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+        return NotificationCompat.Builder(context, CHANNEL_INBOX)
+            .setSmallIcon(R.drawable.ic_notify_clip)
+            // Charter flow blue tints the polyline small icon and the action text
+            // on OEMs that honour it; the title/body stay content-free by design.
+            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
+            .setContentTitle(context.getString(R.string.notification_inbox_title))
+            .setContentText(context.getString(R.string.notification_inbox_text))
+            .setContentIntent(openApp)
+            .setAutoCancel(true)
+            // No clipboard text is present, so the lock screen may show it as-is.
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
+            .addAction(0, context.getString(R.string.notification_action_copy), copyAction)
+            .build()
+    }
+
+    /**
+     * Posts (or refreshes) the notification for one inbox item. Returns false when the user has
+     * disabled notifications; the item still sits in the inbox, only this surface is missing,
+     * which the in-app status card must show separately.
+     */
+    fun notifyInboxItem(context: Context, eventId: String): Boolean {
+        val manager = NotificationManagerCompat.from(context)
+        if (!manager.areNotificationsEnabled()) {
+            return false
+        }
+        return try {
+            manager.notify(notificationIdFor(eventId), buildInboxItemNotification(context, eventId))
+            true
+        } catch (_: SecurityException) {
+            // POST_NOTIFICATIONS revoked between the check and the call.
+            false
+        }
+    }
+
+    /**
+     * Posts the content-free status notification for a remote clip that was auto-applied to
+     * the system clipboard (plan 阶段 4: 成功后再发不含正文的状态通知). It shares the event's
+     * notification id, so it replaces any earlier copy-action notification for the same event.
+     */
+    fun notifyAutoApplied(context: Context, eventId: String): Boolean {
+        val manager = NotificationManagerCompat.from(context)
+        if (!manager.areNotificationsEnabled()) {
+            return false
+        }
+        val requestCode = notificationIdFor(eventId)
+        val openApp = PendingIntent.getActivity(
+            context,
+            requestCode,
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+        val notification = NotificationCompat.Builder(context, CHANNEL_INBOX)
+            .setSmallIcon(R.drawable.ic_notify_clip)
+            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
+            .setContentTitle(context.getString(R.string.notification_inbox_title))
+            .setContentText(context.getString(R.string.notification_applied_text))
+            .setContentIntent(openApp)
+            .setAutoCancel(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
+            .build()
+        return try {
+            manager.notify(requestCode, notification)
+            true
+        } catch (_: SecurityException) {
+            false
+        }
+    }
+
+    fun cancelInboxItem(context: Context, eventId: String) {
+        NotificationManagerCompat.from(context).cancel(notificationIdFor(eventId))
+    }
+
+    /**
+     * Posts the honest "需要恢复" notification: the sync service could not be (re)started
+     * automatically — after boot, or when the system refused the foreground start — and the
+     * user must open the app to restore it. Never restarts anything itself (plan 5.2: no
+     * crash loop, no fake "online"). Returns false when notifications are disabled; the
+     * conduit page still shows the same fact in-app.
+     */
+    fun notifyRecoveryNeeded(context: Context): Boolean {
+        ensureRecoveryChannel(context)
+        val manager = NotificationManagerCompat.from(context)
+        if (!manager.areNotificationsEnabled()) {
+            return false
+        }
+        val openApp = PendingIntent.getActivity(
+            context,
+            RECOVERY_NOTIFICATION_ID,
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+        val notification = NotificationCompat.Builder(context, CHANNEL_RECOVERY)
+            .setSmallIcon(R.drawable.ic_notify_clip)
+            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
+            .setContentTitle(context.getString(R.string.notification_recovery_title))
+            .setContentText(context.getString(R.string.notification_recovery_text))
+            .setContentIntent(openApp)
+            .setAutoCancel(true)
+            // No clipboard text is present, so the lock screen may show it as-is.
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
+            .build()
+        return try {
+            manager.notify(RECOVERY_NOTIFICATION_ID, notification)
+            true
+        } catch (_: SecurityException) {
+            // POST_NOTIFICATIONS revoked between the check and the call.
+            false
+        }
+    }
+
+    fun cancelRecoveryNeeded(context: Context) {
+        NotificationManagerCompat.from(context).cancel(RECOVERY_NOTIFICATION_ID)
+    }
+
+    /**
+     * Warns that the paired Windows peer temporarily rate-limited this device after repeated
+     * failed authentication (mirrors the Windows tray bubble for the same event). Fired once
+     * per lockout episode by the sync supervisor; cancelled when a session authenticates.
+     * Contains no clipboard content and no proof material. Returns false when the user has
+     * disabled notifications — the conduit page states the same fact in-app.
+     */
+    fun notifyAuthThrottled(context: Context): Boolean {
+        ensureRecoveryChannel(context)
+        val manager = NotificationManagerCompat.from(context)
+        if (!manager.areNotificationsEnabled()) {
+            return false
+        }
+        val openApp = PendingIntent.getActivity(
+            context,
+            AUTH_THROTTLE_NOTIFICATION_ID,
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+        val notification = NotificationCompat.Builder(context, CHANNEL_RECOVERY)
+            .setSmallIcon(R.drawable.ic_notify_clip)
+            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
+            .setContentTitle(context.getString(R.string.notification_auth_throttled_title))
+            .setContentText(context.getString(R.string.notification_auth_throttled_text))
+            .setContentIntent(openApp)
+            .setAutoCancel(true)
+            // No clipboard text is present, so the lock screen may show it as-is.
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
+            .build()
+        return try {
+            manager.notify(AUTH_THROTTLE_NOTIFICATION_ID, notification)
+            true
+        } catch (_: SecurityException) {
+            // POST_NOTIFICATIONS revoked between the check and the call.
+            false
+        }
+    }
+
+    fun cancelAuthThrottled(context: Context) {
+        NotificationManagerCompat.from(context).cancel(AUTH_THROTTLE_NOTIFICATION_ID)
+    }
+}

@@ -5,10 +5,21 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>ClipSync.App</RootNamespace>
     <AssemblyName>ClipSync.App</AssemblyName>
+    <!-- Charter polyline tile (scripts/generate-app-icons.py) replaces the default .NET icon. -->
+    <ApplicationIcon>Assets\Icons\app.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClipSync.Core\ClipSync.Core.csproj" />
     <ProjectReference Include="..\ClipSync.Peer\ClipSync.Peer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\*.ico" />
+    <!-- Charter voices ship with the package (tokens.md §6): Noto Sans SC (Chinese sans),
+         Plus Jakarta Sans (Latin sans), JetBrains Mono (machine voice) and Noto Serif SC
+         SemiBold (the serif voice for its three charter appearances). All OFL-licensed;
+         licence texts live next to the files. -->
+    <Resource Include="Resources\Fonts\*.otf" />
+    <Resource Include="Resources\Fonts\*.ttf" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />

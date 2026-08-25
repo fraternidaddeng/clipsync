@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <!-- devices: monitor + phone side by side (identity by shape) -->
+  <rect x="2" y="4" width="12" height="9" rx="1.5"/>
+  <path d="M6 16.5h4.5M8.25 13v3.5"/>
+  <rect x="16" y="8" width="6.5" height="12" rx="2"/>
+  <path d="M18.5 17.2h1.5"/>
+</svg>

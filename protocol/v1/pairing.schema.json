@@ -185,7 +185,8 @@
             "PAIRING_TOKEN_INVALID",
             "PAIRING_TOKEN_EXPIRED",
             "PAIRING_REJECTED",
-            "PAIRING_TIMEOUT"
+            "PAIRING_TIMEOUT",
+            "PAIRING_RATE_LIMITED"
           ]
         }
       }

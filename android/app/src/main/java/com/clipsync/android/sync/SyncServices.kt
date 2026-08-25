@@ -1,0 +1,76 @@
+package com.clipsync.android.sync
+
+import android.content.Context
+import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.storage.SyncSettingsStore
+
+/** Hook the WebSocket sync engine implements to be nudged after a local enqueue. */
+fun interface SyncRequester {
+    fun requestSyncNow()
+}
+
+/**
+ * Process-wide wiring for the system entry points (share target, Quick Settings tile,
+ * notification copy action). Those components can run in a fresh process with no Activity, so
+ * they resolve their dependencies here after [ClipSyncApplication][com.clipsync.android.ClipSyncApplication]
+ * has initialized the store. When the Room storage and the sync engine land, [install] swaps in
+ * the real implementations without touching any entry point.
+ */
+object SyncServices {
+    @Volatile
+    private var services: Services? = null
+
+    val outbox: ClipOutbox
+        get() = require().outbox
+
+    val inbox: ClipInbox
+        get() = require().inbox
+
+    val syncRequester: SyncRequester
+        get() = require().syncRequester
+
+    fun initialize(context: Context) {
+        if (services != null) {
+            return
+        }
+        synchronized(this) {
+            if (services != null) {
+                return
+            }
+            val store = SharedPrefsKeyValueStore(context, name = "clipsync.sync")
+            val settings = SyncSettingsStore(
+                SharedPrefsKeyValueStore(context, name = SyncSettingsStore.PREFERENCES_NAME),
+            )
+            services = Services(
+                // Pause/private gates wrap the queue itself so no entry point can bypass
+                // them; inside the gate, the user size cap applies before the 1 MiB rule.
+                outbox = SettingsGatedClipOutbox(
+                    KeyValueClipOutbox(
+                        store,
+                        maxUtf8Bytes = { settings.effectiveMaxSyncTextBytes },
+                    ),
+                    settings,
+                ),
+                inbox = KeyValueClipInbox(store),
+                // The Stage-4 WebSocket engine registers itself via install(); until then a
+                // queued entry simply waits for the next connection.
+                syncRequester = SyncRequester { },
+            )
+        }
+    }
+
+    fun install(outbox: ClipOutbox, inbox: ClipInbox, syncRequester: SyncRequester) {
+        synchronized(this) {
+            services = Services(outbox, inbox, syncRequester)
+        }
+    }
+
+    private fun require(): Services =
+        checkNotNull(services) { "SyncServices.initialize must run in Application.onCreate before use." }
+
+    private data class Services(
+        val outbox: ClipOutbox,
+        val inbox: ClipInbox,
+        val syncRequester: SyncRequester,
+    )
+}

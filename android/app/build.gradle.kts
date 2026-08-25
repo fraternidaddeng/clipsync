@@ -3,6 +3,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.google.devtools.ksp")
+    id("io.gitlab.arturbosch.detekt")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 android {
@@ -19,6 +22,22 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Release signing comes exclusively from environment variables so the
+    // keystore and its passwords never enter the repository. Without the
+    // variables, assembleRelease produces an unsigned APK; the packaging
+    // entry point is scripts/package-android.ps1 (documented in docs/install.md).
+    val releaseKeystorePath: String? = System.getenv("CLIPSYNC_ANDROID_KEYSTORE")
+    signingConfigs {
+        if (!releaseKeystorePath.isNullOrBlank()) {
+            create("release") {
+                storeFile = rootProject.file(releaseKeystorePath)
+                storePassword = System.getenv("CLIPSYNC_ANDROID_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("CLIPSYNC_ANDROID_KEY_ALIAS")
+                keyPassword = System.getenv("CLIPSYNC_ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -26,6 +45,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.findByName("release")
         }
     }
 
@@ -46,6 +66,20 @@ android {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
+    sourceSets {
+        // MigrationTestHelper reads the exported Room schemas as instrumentation assets.
+        getByName("androidTest").assets.srcDir("$projectDir/schemas")
+    }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 tasks.withType<Test>().configureEach {
@@ -53,6 +87,20 @@ tasks.withType<Test>().configureEach {
         "protocol.fixtures.dir",
         rootProject.file("../protocol/v1/fixtures").absolutePath,
     )
+    systemProperty(
+        "protocol.v2.fixtures.dir",
+        rootProject.file("../protocol/v2/fixtures").absolutePath,
+    )
+    // Forward the cross-client E2E connection parameters (scripts/run-e2e-stage4.ps1)
+    // from the Gradle launcher JVM into the forked test JVM.
+    System
+        .getProperties()
+        .stringPropertyNames()
+        .filter { it.startsWith("clipsync.e2e.") }
+        .forEach { name ->
+            val value = System.getProperty(name) ?: return@forEach
+            systemProperty(name, value)
+        }
 }
 
 dependencies {
@@ -63,10 +111,18 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+    // Bounded post-boot health check only (plan 5.2); sync reliability still lives in Room.
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation("dev.rikka.shizuku:api:13.1.5")
+    implementation("dev.rikka.shizuku:provider:13.1.5")
     implementation("androidx.camera:camera-camera2:1.4.1")
     implementation("androidx.camera:camera-lifecycle:1.4.1")
     implementation("androidx.camera:camera-view:1.4.1")
@@ -77,4 +133,69 @@ dependencies {
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     testImplementation("com.squareup.okhttp3:okhttp-tls:4.12.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("org.robolectric:robolectric:4.14.1")
+    testImplementation("androidx.test:core:1.6.1")
+
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test:rules:1.6.1")
+    androidTestImplementation("androidx.test:core-ktx:1.6.1")
+    androidTestImplementation("androidx.room:room-testing:2.6.1")
+}
+
+// Static analysis is opt-in (`detekt`, `ktlintCheck`). Do not fail assemble/test.
+detekt {
+    toolVersion = "1.23.8"
+    buildUponDefaultConfig = true
+    allRules = false
+    parallel = true
+    autoCorrect = false
+    ignoreFailures = false
+    config.setFrom(files("${rootProject.projectDir}/config/detekt/detekt.yml"))
+    baseline = file("${rootProject.projectDir}/config/detekt/baseline.xml")
+    source.setFrom("src/main/java", "src/test/java")
+    basePath = rootProject.projectDir.absolutePath
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    jvmTarget = "17"
+    include("**/*.kt")
+    include("**/*.kts")
+    exclude("**/build/**")
+    exclude("**/generated/**")
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
+    jvmTarget = "17"
+    include("**/*.kt")
+    include("**/*.kts")
+    exclude("**/build/**")
+    exclude("**/generated/**")
+}
+
+ktlint {
+    version.set("1.5.0")
+    android.set(true)
+    ignoreFailures.set(false)
+    enableExperimentalRules.set(false)
+    baseline.set(file("${rootProject.projectDir}/config/ktlint/baseline.xml"))
+    filter {
+        exclude("**/generated/**")
+        exclude("**/build/**")
+    }
+}
+
+// Keep :app:check / assemble / unit tests independent of these opt-in tasks.
+tasks.named("check").configure {
+    setDependsOn(
+        dependsOn.filterNot { dep ->
+            val name =
+                when (dep) {
+                    is TaskProvider<*> -> dep.name
+                    is Task -> dep.name
+                    else -> ""
+                }
+            name.startsWith("detekt") || name.contains("ktlint", ignoreCase = true)
+        },
+    )
 }

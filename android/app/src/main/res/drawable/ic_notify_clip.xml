@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notification small icon: the polyline mark (docs/design/icons/nav-conduit.svg).
+     System surfaces only honour the alpha shape, so the stroke is heavier (2.4)
+     than the 24-grid nav weight - matching the 16-grid tray ratio - to survive
+     the status-bar size. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?android:attr/colorControlNormal">
+    <path
+        android:pathData="M4,12h4l2,-5 4,10 2,-5h4"
+        android:strokeColor="@android:color/white"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+</vector>

@@ -56,4 +56,15 @@ public static partial class PeerLog
     [LoggerMessage(EventId = 15, Level = LogLevel.Information,
         Message = "pairing confirmed device={DeviceId} repair={IsRepair} trustEpoch={TrustEpoch}")]
     public static partial void PairingConfirmed(ILogger logger, string deviceId, bool isRepair, long trustEpoch);
+
+    [LoggerMessage(EventId = 16, Level = LogLevel.Warning,
+        Message = "auth rate limit engaged for device={DeviceId}")]
+    public static partial void AuthRateLimited(ILogger logger, string deviceId);
+
+    [LoggerMessage(EventId = 17, Level = LogLevel.Warning, Message = "rejecting connection: rate limited kind={Kind}")]
+    public static partial void ConnectionRateLimited(ILogger logger, string kind);
+
+    [LoggerMessage(EventId = 18, Level = LogLevel.Information,
+        Message = "refusing /v2 sync upgrade: image sync is disabled locally")]
+    public static partial void V2RefusedImageSyncDisabled(ILogger logger);
 }

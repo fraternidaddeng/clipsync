@@ -1,34 +1,170 @@
 <Window x:Class="ClipSync.App.Pairing.PairingQrWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Pair a new device"
-        Width="440"
+        Title="配对新设备"
+        Icon="/Assets/Icons/app.ico"
+        Width="460"
         SizeToContent="Height"
         ResizeMode="NoResize"
+        Background="{DynamicResource CsBgSolidBrush}"
+        FontFamily="{StaticResource CsSans}"
+        UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen">
-    <StackPanel Margin="24" Background="White">
-        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Scan with the ClipSync Android app" />
-        <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Foreground="#5E6672"
-                   Text="The code contains this computer's address, certificate fingerprint and a one-time token. It never contains the pairing secret." />
-        <Border Margin="0,16,0,0" Padding="12" HorizontalAlignment="Center"
-                Background="White" BorderBrush="#DDE1E7" BorderThickness="1" CornerRadius="6">
-            <Image x:Name="QrImage" Width="300" Height="300" SnapsToDevicePixels="True" />
+    <!-- 与主窗一致的自绘 chrome：配对是仪式，不该顶着一条系统白条出场 -->
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="42"
+                      CornerRadius="0"
+                      GlassFrameThickness="-1"
+                      ResizeBorderThickness="0"
+                      UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+
+    <DockPanel Background="{DynamicResource CsBgBrush}">
+
+        <!-- 标题栏：折线标记 + 窗名（Serif，配对仪式是全应用三处衬线之一） -->
+        <Border DockPanel.Dock="Top"
+                Height="42"
+                Padding="16,0,0,0"
+                Background="{DynamicResource CsSurface3Brush}"
+                BorderBrush="{DynamicResource CsLineBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Viewbox Width="15" Height="15">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="{StaticResource IconConduit}"
+                                  Stroke="{DynamicResource CsFlowBrush}"
+                                  StrokeThickness="1.9"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  StrokeLineJoin="Round" />
+                        </Canvas>
+                    </Viewbox>
+                    <TextBlock Margin="9,0,0,0"
+                               VerticalAlignment="Center"
+                               FontFamily="{StaticResource CsSerif}"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource CsText1Brush}"
+                               Text="配对新设备" />
+                </StackPanel>
+                <Button Grid.Column="1"
+                        AutomationProperties.Name="关闭"
+                        Click="OnCloseClicked"
+                        Style="{StaticResource CsCaptionCloseButton}">
+                    <Path Data="{StaticResource CsGlyphClose}" Style="{StaticResource CsCaptionGlyph}" />
+                </Button>
+            </Grid>
         </Border>
-        <TextBlock x:Name="CountdownText" Margin="0,12,0,0" HorizontalAlignment="Center" Foreground="#5E6672" />
-        <TextBlock x:Name="NoHostsText"
-                   Margin="0,12,0,0"
-                   Foreground="#A4262C"
-                   TextWrapping="Wrap"
-                   Visibility="Collapsed"
-                   Text="No LAN address was detected. Connect this computer to the same network as your phone (or add a Tailscale address in settings), then reopen this window." />
-        <Separator Margin="0,16,0,12" />
-        <TextBlock FontWeight="SemiBold" Text="Verify on the phone before confirming:" />
-        <TextBlock x:Name="DeviceNameText" Margin="0,8,0,0" Foreground="#3B424C" />
-        <TextBlock x:Name="FingerprintText" Margin="0,4,0,0" FontFamily="Consolas" FontSize="12"
-                   Foreground="#3B424C" TextWrapping="Wrap" />
-        <StackPanel Margin="0,18,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Width="120" Height="32" Click="OnRegenerateClicked" Content="New code" />
-            <Button Width="120" Height="32" Margin="10,0,0,0" Click="OnCloseClicked" Content="Close" />
+
+        <StackPanel Margin="24,18,24,20">
+            <TextBlock FontSize="11.5"
+                       Foreground="{DynamicResource CsText3Brush}"
+                       Text="用手机上的「剪剪相传」扫描此码。二维码包含本机地址、证书指纹与一次性令牌，绝不包含配对密钥。"
+                       TextWrapping="Wrap" />
+
+            <!-- 二维码：静区必须纯白（灰蓝底会干扰识别）；四角定位框用流动蓝提示「入口」 -->
+            <Grid Margin="0,16,0,0" HorizontalAlignment="Center">
+                <Border Margin="7"
+                        Padding="12"
+                        Background="{DynamicResource CsQrQuietBrush}"
+                        BorderBrush="{DynamicResource CsLineBrush}"
+                        BorderThickness="1"
+                        CornerRadius="6">
+                    <Image x:Name="QrImage"
+                           Width="280"
+                           Height="280"
+                           SnapsToDevicePixels="True" />
+                </Border>
+                <Path HorizontalAlignment="Left" VerticalAlignment="Top"
+                      Data="M0,22 V6 A6,6 0 0 1 6,0 H22"
+                      Stroke="{DynamicResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                <Path HorizontalAlignment="Right" VerticalAlignment="Top"
+                      Data="M0,0 H16 A6,6 0 0 1 22,6 V22"
+                      Stroke="{DynamicResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                <Path HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                      Data="M22,0 V16 A6,6 0 0 1 16,22 H0"
+                      Stroke="{DynamicResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                <Path HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                      Data="M22,22 H6 A6,6 0 0 1 0,16 V0"
+                      Stroke="{DynamicResource CsFlowBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+            </Grid>
+
+            <!-- 倒计时是机器的声音：Mono -->
+            <TextBlock x:Name="CountdownText"
+                       Margin="0,10,0,0"
+                       HorizontalAlignment="Center"
+                       FontFamily="{StaticResource CsMono}"
+                       FontSize="11"
+                       Foreground="{DynamicResource CsText4Brush}" />
+
+            <!-- 无可达地址 = 需要你操作（赭色着色盒），不是错误 -->
+            <Border x:Name="NoHostsBox"
+                    Margin="0,12,0,0"
+                    Padding="12,10"
+                    Background="{DynamicResource CsActBgBrush}"
+                    BorderBrush="{DynamicResource CsActLineBrush}"
+                    BorderThickness="1"
+                    CornerRadius="9"
+                    Visibility="Collapsed">
+                <TextBlock FontSize="11"
+                           Foreground="{DynamicResource CsActBrush}"
+                           Text="未检测到局域网地址。请把本机和手机接入同一网络（或在偏好里添加 Tailscale 地址），再重新打开此窗口。"
+                           TextWrapping="Wrap" />
+            </Border>
+
+            <!-- 核对卡：指纹是全应用风险最高的比对，四位一组、等宽、t1 最高对比 -->
+            <Border Margin="0,16,0,0"
+                    Padding="14,11"
+                    Background="{DynamicResource CsSurfaceBrush}"
+                    BorderBrush="{DynamicResource CsLineBrush}"
+                    BorderThickness="1"
+                    CornerRadius="10">
+                <StackPanel>
+                    <TextBlock FontFamily="{StaticResource CsMono}"
+                               FontSize="10"
+                               Foreground="{DynamicResource CsText4Brush}"
+                               Text="确 认 前 请 在 手 机 上 核 对" />
+                    <TextBlock Margin="0,8,0,0"
+                               FontSize="11"
+                               Foreground="{DynamicResource CsText3Brush}"
+                               Text="电脑名称" />
+                    <TextBlock x:Name="DeviceNameText"
+                               Margin="0,1,0,0"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource CsText1Brush}" />
+                    <TextBlock Margin="0,8,0,0"
+                               FontSize="11"
+                               Foreground="{DynamicResource CsText3Brush}"
+                               Text="证书指纹" />
+                    <TextBlock x:Name="FingerprintText"
+                               Margin="0,2,0,0"
+                               FontFamily="{StaticResource CsMono}"
+                               FontSize="13"
+                               LineHeight="22"
+                               Foreground="{DynamicResource CsText1Brush}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <StackPanel Margin="0,18,0,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <Button MinWidth="110"
+                        Click="OnRegenerateClicked"
+                        Content="换一个码"
+                        Style="{StaticResource GhostFlowButton}" />
+                <Button MinWidth="110"
+                        Margin="10,0,0,0"
+                        Click="OnCloseClicked"
+                        Content="关闭"
+                        Style="{StaticResource GhostQuietButton}" />
+            </StackPanel>
         </StackPanel>
-    </StackPanel>
+    </DockPanel>
 </Window>

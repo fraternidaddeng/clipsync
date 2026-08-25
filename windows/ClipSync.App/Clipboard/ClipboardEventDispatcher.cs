@@ -19,7 +19,9 @@ internal sealed class WpfClipboardEventDispatcher(Dispatcher dispatcher) : IClip
 
         try
         {
-            _ = dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+            // Normal, not Send: Send can nest inside BitmapImage/ListBox layout
+            // and re-enter clipboard capture until the stack overflows (c00000fd).
+            _ = dispatcher.BeginInvoke(DispatcherPriority.Normal, action);
             return true;
         }
         catch (InvalidOperationException)

@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClipSync 剪剪相传 · 晨曦花瓣高调微调和版 (High-Key Harmonized)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@300;400;600&display=swap');
+
+        :root {
+            /* 1. 环境光：清澈天青 + 花瓣透光暖白 (严格控制色相过渡) */
+            --sky-air-base: #bce0f8;
+            --sky-air-warm: #fcf4fa;
+            --sky-air-mist: #eaf4fd;
+
+            /* 2. 容器：透光薄瓷毛玻璃 (纯白透光，中和冷暖) */
+            --glass-shell-bg: rgba(255, 255, 255, 0.58);
+            --glass-shell-border: rgba(255, 255, 255, 0.95);
+            --glass-shell-shadow: 
+                0 25px 60px -12px rgba(45, 85, 130, 0.12),
+                0 0 0 1px rgba(255, 255, 255, 0.8),
+                inset 0 1.5px 2px rgba(255, 255, 255, 1);
+
+            /* 3. 卡片结构：微透白玉 */
+            --card-glass-bg: rgba(255, 255, 255, 0.48);
+            --card-glass-hover: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.8);
+            --card-border-hover: rgba(140, 180, 225, 0.45);
+
+            /* 4. 严格收敛的文字体系 (深海曜石蓝，纯净不杂) */
+            --text-heading: #12253b;
+            --text-body: #1e3a59;
+            --text-muted: #567594;
+            --text-faint: #8caec7;
+
+            /* 5. 严格收敛的点缀色相 (花蕊灰粉黛 + 雾霭水青，拒绝杂乱) */
+            --accent-warm-tag: #7c4467;
+            --accent-warm-bg: rgba(124, 68, 103, 0.08);
+            --accent-warm-border: rgba(124, 68, 103, 0.18);
+
+            --accent-cool-tag: #1c628a;
+            --accent-cool-bg: rgba(28, 98, 138, 0.08);
+            --accent-cool-border: rgba(28, 98, 138, 0.18);
+
+            --accent-dot: #2a7c88;
+            --danger-muted: #b91c1c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            color: var(--text-body);
+            overflow-x: hidden;
+            padding: 40px 20px;
+            position: relative;
+            background: linear-gradient(135deg, #b0d8f6 0%, #faeef8 45%, #e8f4fd 100%);
+        }
+
+        /* 1. 动态低饱和高明度冷暖漫射背景 (高阶空气场) */
+        .ambient-mesh-stage {
+            position: fixed;
+            top: -20%; left: -20%; width: 140%; height: 140%;
+            background: 
+                radial-gradient(circle at 18% 22%, rgba(165, 215, 252, 0.75) 0%, transparent 45%),
+                radial-gradient(circle at 82% 18%, rgba(253, 235, 248, 0.8) 0%, transparent 50%),
+                radial-gradient(circle at 50% 85%, rgba(232, 244, 253, 0.8) 0%, transparent 55%),
+                radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.9) 0%, transparent 40%);
+            filter: blur(65px);
+            animation: ambientDrift 22s infinite alternate ease-in-out;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes ambientDrift {
+            0% { transform: scale(1) translate(0, 0); }
+            50% { transform: scale(1.04) translate(-1.5%, 1.5%); }
+            100% { transform: scale(0.98) translate(1.5%, -1.5%); }
+        }
+
+        /* 极细微透光胶片噪点 */
+        .film-noise {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 顶部导航切换器（透光白瓷胶囊） */
+        .nav-capsule {
+            position: relative;
+            z-index: 100;
+            display: flex;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            padding: 4px;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            margin-bottom: 28px;
+            box-shadow: 0 10px 25px rgba(35, 75, 120, 0.06), inset 0 1px 1px #fff;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 22px;
+            border-radius: 100px;
+            font-size: 12.5px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .nav-btn:hover {
+            color: var(--text-heading);
+        }
+
+        .nav-btn.active {
+            background: #ffffff;
+            color: var(--accent-cool-tag);
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 14px rgba(25, 75, 130, 0.1);
+        }
+
+        /* 视口舞台 */
+        .viewport-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 560px;
+        }
+
+        .view-panel {
+            display: none;
+            animation: viewIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .view-panel.active {
+            display: block;
+        }
+
+        @keyframes viewIn {
+            from { opacity: 0; transform: translateY(8px) scale(0.99); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ======================================================= */
+        /* 1. WINDOWS 托盘浮窗 (WPF Shell) - 晨曦花瓣高调调和版   */
+        /* ======================================================= */
+        .harmonized-windows-shell {
+            width: 440px;
+            background: var(--glass-shell-bg);
+            backdrop-filter: blur(45px) saturate(170%);
+            -webkit-backdrop-filter: blur(45px) saturate(170%);
+            border-radius: 24px;
+            box-shadow: var(--glass-shell-shadow);
+            border: 1px solid var(--glass-shell-border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .shell-titlebar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 22px 14px 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .brand-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            color: var(--text-heading);
+        }
+
+        .p2p-status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-cool-tag);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(25, 75, 125, 0.05);
+            transition: all 0.2s;
+        }
+
+        .p2p-status-pill:hover {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(25, 75, 125, 0.12);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-dot);
+            border-radius: 50%;
+        }
+
+        /* 搜索区域 */
+        .search-container {
+            padding: 14px 22px 10px 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 10px 40px 10px 36px;
+            color: var(--text-heading);
+            font-size: 13px;
+            font-weight: 500;
+            outline: none;
+            box-shadow: inset 0 1px 2px rgba(20, 50, 90, 0.04);
+            transition: all 0.2s;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-faint);
+            font-weight: 400;
+        }
+
+        .search-bar input:focus {
+            background: #ffffff;
+            border-color: rgba(28, 98, 138, 0.4);
+            box-shadow: 0 0 0 3px rgba(28, 98, 138, 0.12);
+        }
+
+        .search-svg {
+            position: absolute;
+            left: 12px;
+            width: 14px;
+            height: 14px;
+            color: var(--text-muted);
+        }
+
+        .search-key {
+            position: absolute;
+            right: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.85);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.95);
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 6px;
+        }
+
+        .filter-chip {
+            padding: 3px 11px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .filter-chip:hover {
+            background: rgba(255, 255, 255, 0.85);
+            color: var(--text-heading);
+        }
+
+        .filter-chip.active {
+            background: #ffffff;
+            color: var(--accent-cool-tag);
+            border-color: rgba(28, 98, 138, 0.25);
+            box-shadow: 0 2px 6px rgba(20, 60, 110, 0.06);
+        }
+
+        /* 剪贴板卡片流 */
+        .clip-list {
+            padding: 4px 22px 16px 22px;
+            max-height: 320px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .clip-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .clip-list::-webkit-scrollbar-thumb {
+            background: rgba(20, 50, 90, 0.12);
+            border-radius: 10px;
+        }
+
+        .harmonized-card {
+            background: var(--card-glass-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 12px 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(35, 75, 120, 0.03), inset 0 1px 1px #ffffff;
+            transition: 
+                transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                border-radius 0.3s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .harmonized-card:hover {
+            background: var(--card-glass-hover);
+            border-color: var(--card-border-hover);
+            transform: translateY(-2px) scale(1.01);
+            border-radius: 16px 12px 16px 12px;
+            box-shadow: 0 8px 22px rgba(35, 75, 120, 0.08), inset 0 1px 1px #ffffff;
+        }
+
+        .harmonized-card:active {
+            transform: scale(0.985);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-faint);
+        }
+
+        /* 统一收敛的调和标签 */
+        .source-tag-warm {
+            font-size: 10.5px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 5px;
+            background: var(--accent-warm-bg);
+            color: var(--accent-warm-tag);
+            border: 1px solid var(--accent-warm-border);
+        }
+
+        .source-tag-cool {
+            font-size: 10.5px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 5px;
+            background: var(--accent-cool-bg);
+            color: var(--accent-cool-tag);
+            border: 1px solid var(--accent-cool-border);
+        }
+
+        .source-tag-local {
+            font-size: 10.5px;
+            font-weight: 500;
+            padding: 2px 7px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            color: var(--text-muted);
+        }
+
+        .card-body-text {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-heading);
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .card-body-text.code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background: rgba(240, 246, 253, 0.9);
+            padding: 6px 10px;
+            border-radius: 8px;
+            color: var(--accent-cool-tag);
+            border: 1px solid rgba(200, 225, 248, 0.85);
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            font-size: 11px;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .harmonized-card:hover .card-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            color: var(--accent-cool-tag);
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .action-btn.delete {
+            color: var(--danger-muted);
+        }
+
+        .shell-footer {
+            padding: 12px 22px;
+            background: rgba(255, 255, 255, 0.35);
+            border-top: 1px solid rgba(255, 255, 255, 0.75);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+            color: var(--text-muted);
+        }
+
+        .toggle-cluster {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+        }
+
+        .switch-track {
+            width: 28px;
+            height: 16px;
+            background: var(--accent-cool-tag);
+            border-radius: 100px;
+            position: relative;
+            box-shadow: 0 1px 4px rgba(28, 98, 138, 0.25);
+        }
+        .switch-track::after {
+            content: '';
+            position: absolute;
+            top: 2px; right: 2px;
+            width: 12px; height: 12px;
+            background: #ffffff;
+            border-radius: 50%;
+        }
+
+        /* ======================================================= */
+        /* 2. ANDROID 移动端 (Harmonized Mobile Shell)            */
+        /* ======================================================= */
+        .harmonized-android-shell {
+            width: 360px;
+            height: 640px;
+            background: var(--glass-shell-bg);
+            backdrop-filter: blur(45px) saturate(170%);
+            -webkit-backdrop-filter: blur(45px) saturate(170%);
+            border-radius: 36px;
+            box-shadow: var(--glass-shell-shadow);
+            border: 1px solid var(--glass-shell-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .android-top-bar {
+            padding: 14px 22px 6px 22px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .android-brand-box {
+            padding: 10px 22px 14px 22px;
+        }
+
+        .android-h1 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            color: var(--text-heading);
+        }
+
+        .android-conn-banner {
+            margin: 0 22px 14px 22px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(25, 75, 120, 0.05);
+        }
+
+        .conn-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        .conn-sub {
+            font-size: 11px;
+            color: var(--accent-cool-tag);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .android-scroll-list {
+            flex: 1;
+            padding: 0 22px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .android-card-item {
+            background: var(--card-glass-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 12px 15px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(35, 75, 120, 0.03), inset 0 1px 1px #ffffff;
+            transition: transform 0.15s ease;
+        }
+
+        .android-card-item:active {
+            transform: scale(0.985);
+            background: #ffffff;
+        }
+
+        .android-dock {
+            padding: 12px 22px 18px 22px;
+            background: rgba(255, 255, 255, 0.45);
+            border-top: 1px solid rgba(255, 255, 255, 0.85);
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .dock-item {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .dock-item.active {
+            color: var(--accent-cool-tag);
+            font-weight: 600;
+        }
+
+        /* ======================================================= */
+        /* 3. P2P 配对视图 (Harmonized Pairing Shell)             */
+        /* ======================================================= */
+        .harmonized-pairing-shell {
+            width: 390px;
+            background: var(--glass-shell-bg);
+            backdrop-filter: blur(45px) saturate(170%);
+            -webkit-backdrop-filter: blur(45px) saturate(170%);
+            border-radius: 30px;
+            box-shadow: var(--glass-shell-shadow);
+            border: 1px solid var(--glass-shell-border);
+            padding: 34px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .pair-h1 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 19px;
+            font-weight: 600;
+            color: var(--text-heading);
+            letter-spacing: 0.15em;
+            margin-bottom: 6px;
+        }
+
+        .pair-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        .qr-card-box {
+            padding: 16px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(35, 75, 120, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.95);
+            margin-bottom: 20px;
+        }
+
+        .qr-frame {
+            width: 160px;
+            height: 160px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-pattern {
+            width: 90%;
+            height: 90%;
+            background-image: 
+                linear-gradient(45deg, #12253b 25%, transparent 25%), 
+                linear-gradient(-45deg, #12253b 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #12253b 75%), 
+                linear-gradient(-45deg, transparent 75%, #12253b 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+        }
+
+        .crypto-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--accent-cool-tag);
+            background: rgba(255, 255, 255, 0.8);
+            padding: 7px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .btn-dismiss {
+            background: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            color: var(--text-heading);
+            padding: 9px 26px;
+            border-radius: 100px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(35, 75, 120, 0.08);
+        }
+
+        .btn-dismiss:hover {
+            background: var(--text-heading);
+            color: #ffffff;
+        }
+
+        /* 顶部 Toast 提示 */
+        .harmonized-toast {
+            position: fixed;
+            top: 24px;
+            background: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 30px rgba(35, 75, 120, 0.12);
+            color: var(--text-heading);
+            padding: 9px 24px;
+            border-radius: 100px;
+            font-size: 12.5px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .harmonized-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 动态低饱和高明度冷暖漫射背景 -->
+    <div class="ambient-mesh-stage"></div>
+    <div class="film-noise"></div>
+
+    <div id="toast" class="harmonized-toast">✦ 纯文本已复制 · 双端流转中 ✦</div>
+
+    <!-- 顶部导航 -->
+    <div class="nav-capsule">
+        <button class="nav-btn active" onclick="switchTab('windows')">
+            <span>🪟</span>
+            <span>Windows 托盘浮窗 (WPF)</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('android')">
+            <span>📱</span>
+            <span>Android 移动端 (Compose)</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('pairing')">
+            <span>🔗</span>
+            <span>P2P 扫码配对</span>
+        </button>
+    </div>
+
+    <div class="viewport-wrapper">
+
+        <!-- 1. WINDOWS 托盘浮窗 (晨曦花瓣高调调和版) -->
+        <div id="view-windows" class="view-panel active">
+            <div class="harmonized-windows-shell">
+                <div class="shell-titlebar">
+                    <span class="brand-title">剪 剪 相 传</span>
+                    <div class="p2p-status-pill" onclick="switchTab('pairing')">
+                        <div class="status-dot"></div>
+                        <span>Pixel 8 · 直连中</span>
+                    </div>
+                </div>
+
+                <div class="search-container">
+                    <div class="search-bar">
+                        <svg class="search-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" placeholder="在本地 SQLite 中检索记忆..." id="winSearch" oninput="filterItems(this.value)">
+                        <span class="search-key">Alt+C</span>
+                    </div>
+                    <div class="filter-tags">
+                        <span class="filter-chip active">全部 (18)</span>
+                        <span class="filter-chip">代码</span>
+                        <span class="filter-chip">链接</span>
+                        <span class="filter-chip">敏感锁定</span>
+                    </div>
+                </div>
+
+                <div class="clip-list" id="clipList">
+                    <div class="harmonized-card" onclick="handleCopy('https://github.com/clipsync/core')">
+                        <div class="card-top">
+                            <span class="source-tag-warm">Android Inbound</span>
+                            <span>10:48 刚刚</span>
+                        </div>
+                        <div class="card-body-text">https://github.com/clipsync/core</div>
+                        <div class="card-actions">
+                            <span class="action-btn">复制</span>
+                            <span class="action-btn delete" onclick="deleteItem(event, this)">删除</span>
+                        </div>
+                    </div>
+
+                    <div class="harmonized-card" onclick="handleCopy('git checkout -b feature/high-key-harmony')">
+                        <div class="card-top">
+                            <span class="source-tag-local">本地复制</span>
+                            <span>09:20</span>
+                        </div>
+                        <div class="card-body-text code">git checkout -b feature/high-key-harmony</div>
+                        <div class="card-actions">
+                            <span class="action-btn">复制</span>
+                            <span class="action-btn delete" onclick="deleteItem(event, this)">删除</span>
+                        </div>
+                    </div>
+
+                    <div class="harmonized-card" onclick="handleCopy('会议纪要：本周五完成 Stage 4 端到端握手测试')">
+                        <div class="card-top">
+                            <span class="source-tag-warm">Android Inbound</span>
+                            <span>昨天</span>
+                        </div>
+                        <div class="card-body-text">会议纪要：本周五完成 Stage 4 端到端握手测试</div>
+                        <div class="card-actions">
+                            <span class="action-btn">复制</span>
+                            <span class="action-btn delete" onclick="deleteItem(event, this)">删除</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shell-footer">
+                    <div class="toggle-cluster">
+                        <div class="switch-track"></div>
+                        <span style="font-weight: 500;">监听剪贴板就绪</span>
+                    </div>
+                    <span style="cursor: pointer; font-weight: 500;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration=''" onclick="clearAll()">静默清空</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. ANDROID 移动端 (晨曦花瓣高调调和版) -->
+        <div id="view-android" class="view-panel">
+            <div class="harmonized-android-shell">
+                <div class="android-top-bar">
+                    <span>10:52</span>
+                    <span>5G 📶 98% 🔋</span>
+                </div>
+
+                <div class="android-brand-box">
+                    <div class="android-h1">剪剪相传</div>
+                </div>
+
+                <div class="android-conn-banner" onclick="switchTab('pairing')">
+                    <div>
+                        <div class="conn-name">PC-STUDIO (Windows 11)</div>
+                        <div class="conn-sub">● 局域网 WebSocket 互信连接</div>
+                    </div>
+                    <span style="font-size: 11px; color: var(--accent-cool-tag); font-weight: 600;">管理 ›</span>
+                </div>
+
+                <div class="android-scroll-list">
+                    <div class="android-card-item" onclick="handleCopy('https://github.com/clipsync/core')">
+                        <div class="card-top" style="margin-bottom: 4px;">
+                            <span class="source-tag-warm">来自 PC 电脑</span>
+                            <span>刚刚</span>
+                        </div>
+                        <div class="card-body-text">https://github.com/clipsync/core</div>
+                    </div>
+
+                    <div class="android-card-item" onclick="handleCopy('pwsh .\\scripts\\build-windows.ps1')">
+                        <div class="card-top" style="margin-bottom: 4px;">
+                            <span class="source-tag-local">本地复制</span>
+                            <span>10:15</span>
+                        </div>
+                        <div class="card-body-text code">pwsh .\scripts\build-windows.ps1</div>
+                    </div>
+
+                    <div class="android-card-item" onclick="handleCopy('验证码：849201')">
+                        <div class="card-top" style="margin-bottom: 4px;">
+                            <span class="source-tag-cool">短信提取</span>
+                            <span>08:40</span>
+                        </div>
+                        <div class="card-body-text">验证码：849201</div>
+                    </div>
+                </div>
+
+                <div class="android-dock">
+                    <div class="dock-item active">
+                        <span>📋</span>
+                        <span>历史记录</span>
+                    </div>
+                    <div class="dock-item" onclick="switchTab('pairing')">
+                        <span>🔗</span>
+                        <span>设备配对</span>
+                    </div>
+                    <div class="dock-item">
+                        <span>⚙️</span>
+                        <span>安全设置</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. P2P 配对视图 (晨曦花瓣高调调和版) -->
+        <div id="view-pairing" class="view-panel">
+            <div class="harmonized-pairing-shell">
+                <div class="pair-h1">建立设备互信</div>
+                <div class="pair-sub">在 Android 手机上打开「剪剪相传」扫码<br>建立端到端加密通道与本地信任关系</div>
+
+                <div class="qr-card-box">
+                    <div class="qr-frame">
+                        <div class="qr-pattern"></div>
+                    </div>
+                </div>
+
+                <div class="crypto-pill">
+                    SHA256: 8F:4A:2C:19:D8:E2:B0:11
+                </div>
+
+                <button class="btn-dismiss" onclick="switchTab('windows')">完成并返回</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
+
+            if (tabId === 'windows') {
+                document.querySelectorAll('.nav-btn')[0].classList.add('active');
+                document.getElementById('view-windows').classList.add('active');
+            } else if (tabId === 'android') {
+                document.querySelectorAll('.nav-btn')[1].classList.add('active');
+                document.getElementById('view-android').classList.add('active');
+            } else if (tabId === 'pairing') {
+                document.querySelectorAll('.nav-btn')[2].classList.add('active');
+                document.getElementById('view-pairing').classList.add('active');
+            }
+        }
+
+        function handleCopy(text) {
+            navigator.clipboard.writeText(text).catch(() => {});
+            const toast = document.getElementById('toast');
+            toast.innerText = `✦ 已复制: "${text.substring(0, 22)}..." ✦`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 1800);
+        }
+
+        function deleteItem(e, el) {
+            e.stopPropagation();
+            const item = el.closest('.harmonized-card');
+            item.style.transform = 'scale(0.95)';
+            item.style.opacity = '0';
+            setTimeout(() => item.remove(), 150);
+        }
+
+        function clearAll() {
+            document.getElementById('clipList').innerHTML = '<div style="text-align: center; color: var(--text-faint); padding: 40px 0; font-size: 12px; font-weight: 500;">✦ 暂无历史沉淀 ✦</div>';
+        }
+
+        function filterItems(query) {
+            const items = document.querySelectorAll('#clipList .harmonized-card');
+            items.forEach(item => {
+                const text = item.querySelector('.card-body-text').innerText.toLowerCase();
+                if (text.includes(query.toLowerCase())) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

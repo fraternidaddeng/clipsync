@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal Fluid Glass · 剪剪相传</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap');
+
+        :root {
+            /* 告别单调深蓝：采用多层次空灵冷色阶（冰川蓝、银雾、淡水青与晨曦微紫） */
+            --bg-deep: #080e14;
+            --glass-card: rgba(255, 255, 255, 0.04);
+            --glass-card-hover: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-border-highlight: rgba(180, 220, 255, 0.4);
+            --text-pure: #f5f9fc;
+            --text-mist: rgba(210, 230, 245, 0.7);
+            --text-subtle: rgba(160, 190, 215, 0.45);
+            --accent-cyan: #7ce7e6;
+            --accent-ice: #a8d5ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', 'Noto Serif SC', -apple-system, sans-serif;
+            color: var(--text-pure);
+        }
+
+        /* 1. 交互式流体画布（背景实时水波微澜） */
+        #fluid-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: all;
+        }
+
+        /* 2. 空灵多色相漫射光源（消除沉闷单调感） */
+        .ambient-aurora {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatMorph 20s infinite alternate ease-in-out;
+        }
+
+        .aurora-1 {
+            top: 10%;
+            left: 20%;
+            background: radial-gradient(circle, #5b92e5 0%, #30c5d2 50%, transparent 70%);
+        }
+
+        .aurora-2 {
+            bottom: 10%;
+            right: 20%;
+            background: radial-gradient(circle, #8367e0 0%, #4facfe 50%, transparent 70%);
+            animation-duration: 25s;
+            animation-delay: -7s;
+        }
+
+        @keyframes floatMorph {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { transform: translate(60px, 40px) scale(1.15) rotate(90deg); border-radius: 40% 60% 70% 30% / 40% 40% 60% 60%; }
+            100% { transform: translate(-40px, 80px) scale(0.9) rotate(180deg); border-radius: 70% 30% 50% 50% / 30% 60% 40% 70%; }
+        }
+
+        /* 3. 极高通透度的水感玻璃主容器 */
+        .glass-shell {
+            position: relative;
+            z-index: 10;
+            width: 440px;
+            /* 超通透双层折射质感 */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.015) 100%);
+            backdrop-filter: blur(40px) saturate(160%);
+            -webkit-backdrop-filter: blur(40px) saturate(160%);
+            border-radius: 32px;
+            padding: 32px;
+            /* 锐利晶莹的玻璃物理反光 */
+            border: 1px solid var(--glass-border);
+            box-shadow: 
+                0 30px 70px rgba(0, 8, 20, 0.5),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3),
+                inset 0 -1px 2px rgba(255, 255, 255, 0.05);
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        /* 4. 顶部标题与流体互联指示器 */
+        .shell-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-title {
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 300;
+            font-size: 17px;
+            letter-spacing: 0.25em;
+            color: var(--text-pure);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        /* 真正的流体有机互联形态（像有生命的水滴液面） */
+        .fluid-status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(124, 231, 230, 0.06);
+            border: 1px solid rgba(124, 231, 230, 0.25);
+            font-size: 12px;
+            color: var(--accent-cyan);
+            letter-spacing: 0.05em;
+        }
+
+        .fluid-drop-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-cyan);
+            animation: dropletBreathe 3s infinite ease-in-out;
+        }
+
+        @keyframes dropletBreathe {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+
+        /* 5. 流体剪贴板列表 */
+        .card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* 真正带有“液体张力”与“通透折射”的卡片 */
+        .fluid-card {
+            position: relative;
+            background: var(--glass-card);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 16px 20px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            /* 液体黏滞回弹阻尼曲线 */
+            transition: 
+                transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                background 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+        }
+
+        .fluid-card:hover {
+            background: var(--glass-card-hover);
+            transform: translateY(-3px) scale(1.015);
+            border-color: var(--glass-border-highlight);
+            box-shadow: 
+                0 12px 30px rgba(0, 20, 50, 0.3),
+                inset 0 0 15px rgba(255, 255, 255, 0.08);
+        }
+
+        /* 点击时的水感下沉与波纹扩散 */
+        .fluid-card:active {
+            transform: scale(0.985);
+            transition-duration: 0.1s;
+        }
+
+        .card-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-subtle);
+            margin-bottom: 8px;
+            letter-spacing: 0.06em;
+        }
+
+        .source-pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: rgba(168, 213, 255, 0.1);
+            color: var(--accent-ice);
+            font-size: 10px;
+        }
+
+        .card-main-text {
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: var(--text-pure);
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+
+        .card-main-text code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 12px;
+            color: #d1ecff;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        /* 6. 底部留白与空灵诗意 */
+        .shell-footer {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+            color: var(--text-subtle);
+            letter-spacing: 0.05em;
+        }
+
+        .hint-text {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hint-text::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--text-subtle);
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: var(--text-mist);
+            font-size: 11.5px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .clear-btn:hover {
+            color: var(--text-pure);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* 提示用户交互的浮动引导 */
+        .interactive-tip {
+            position: absolute;
+            bottom: 30px;
+            font-size: 12px;
+            letter-spacing: 0.15em;
+            color: var(--text-subtle);
+            z-index: 10;
+            pointer-events: none;
+            font-weight: 200;
+            animation: fadeInOut 4s infinite alternate;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0.3; transform: translateY(0); }
+            100% { opacity: 0.8; transform: translateY(-4px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 交互式流体物理引擎 Canvas -->
+    <canvas id="fluid-canvas"></canvas>
+
+    <!-- 2. 多彩空灵微光体（消除单调深蓝） -->
+    <div class="ambient-aurora aurora-1"></div>
+    <div class="ambient-aurora aurora-2"></div>
+
+    <!-- 3. 超通透水感玻璃悬浮窗 -->
+    <div class="glass-shell">
+        <div class="shell-header">
+            <div class="brand-title">剪 剪 相 传</div>
+            <div class="fluid-status-badge">
+                <div class="fluid-drop-dot"></div>
+                <span>Android · 实时流转</span>
+            </div>
+        </div>
+
+        <div class="card-list">
+            <div class="fluid-card" onclick="triggerRipple(event)">
+                <div class="card-meta-row">
+                    <span class="source-pill">来自 手机</span>
+                    <span>10:48 刚刚</span>
+                </div>
+                <div class="card-main-text">
+                    https://github.com/clipsync/core/releases/v1.2
+                </div>
+            </div>
+
+            <div class="fluid-card" onclick="triggerRipple(event)">
+                <div class="card-meta-row">
+                    <span class="source-pill">代码片段</span>
+                    <span>09:30</span>
+                </div>
+                <div class="card-main-text">
+                    <code>git checkout -b feature/fluid-glass-ui</code>
+                </div>
+            </div>
+
+            <div class="fluid-card" onclick="triggerRipple(event)">
+                <div class="card-meta-row">
+                    <span class="source-pill">本地复制</span>
+                    <span>昨天</span>
+                </div>
+                <div class="card-main-text">
+                    通透晶莹 · 晨曦微澜 · 纯粹克制
+                </div>
+            </div>
+        </div>
+
+        <div class="shell-footer">
+            <div class="hint-text">局域网点对点互联就绪</div>
+            <button class="clear-btn">静默清空</button>
+        </div>
+    </div>
+
+    <div class="interactive-tip">✦ 晃动或点击鼠标，感受背景水波微澜与通透折射 ✦</div>
+
+    <script>
+        // 交互式水波流体物理引擎（2D Fluid Wave Simulation）
+        const canvas = document.getElementById('fluid-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let ripples = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Ripple {
+            constructor(x, y, maxRadius = 180, color = 'rgba(140, 210, 255, ') {
+                this.x = x;
+                this.y = y;
+                this.radius = 0;
+                this.maxRadius = maxRadius;
+                this.speed = 2.4;
+                this.opacity = 0.45;
+                this.color = color;
+            }
+
+            update() {
+                this.radius += this.speed;
+                this.opacity = (1 - (this.radius / this.maxRadius)) * 0.45;
+            }
+
+            draw(ctx) {
+                if (this.opacity <= 0) return;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `${this.color}${this.opacity})`;
+                ctx.lineWidth = 1.5;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = `${this.color}${this.opacity * 0.8})`;
+                ctx.stroke();
+
+                // 内层二次折射环
+                if (this.radius > 20) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius * 0.7, 0, Math.PI * 2);
+                    ctx.strokeStyle = `${this.color}${this.opacity * 0.35})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+        }
+
+        // 鼠标移动产生连续的水感微澜
+        let lastMove = 0;
+        window.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastMove > 60) {
+                ripples.push(new Ripple(e.clientX, e.clientY, 140, 'rgba(124, 231, 230, '));
+                lastMove = now;
+            }
+        });
+
+        // 鼠标点击产生深层水波
+        window.addEventListener('click', (e) => {
+            ripples.push(new Ripple(e.clientX, e.clientY, 260, 'rgba(168, 213, 255, '));
+            ripples.push(new Ripple(e.clientX, e.clientY, 180, 'rgba(210, 180, 255, '));
+        });
+
+        function triggerRipple(e) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+            ripples.push(new Ripple(x, y, 220, 'rgba(255, 255, 255, '));
+        }
+
+        // 自动环境水波（让页面永远有呼吸感）
+        setInterval(() => {
+            const rx = width * (0.2 + Math.random() * 0.6);
+            const ry = height * (0.2 + Math.random() * 0.6);
+            ripples.push(new Ripple(rx, ry, 200, 'rgba(120, 180, 240, '));
+        }, 2200);
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                ripples[i].update();
+                ripples[i].draw(ctx);
+                if (ripples[i].radius >= ripples[i].maxRadius) {
+                    ripples.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>

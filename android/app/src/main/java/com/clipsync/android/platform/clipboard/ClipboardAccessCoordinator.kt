@@ -30,6 +30,42 @@ class ClipboardAccessCoordinator(
         return selectAndStart(fromMode = state.requestedReadMode)
     }
 
+    /**
+     * Probes every registered backend in fallback order without starting any of
+     * them and returns the most capable report (READY > DEGRADED > UNKNOWN >
+     * UNAVAILABLE), or null when no backends are registered. Health UI uses
+     * this; it never changes which backend is active.
+     */
+    fun probe(): CapabilityReport? {
+        var best: CapabilityReport? = null
+        for (mode in FALLBACK_ORDER) {
+            val backend = backendsByMode[mode] ?: continue
+            val report = backend.probe()
+            if (best == null || readStateRank(report.readState) < readStateRank(best.readState)) {
+                best = report
+            }
+            if (report.readState == CapabilityState.READY) {
+                break
+            }
+        }
+        return best
+    }
+
+    /**
+     * Probes every registered backend in capability-ladder order without starting, stopping or
+     * switching anything. Drives the conduit page and the capability wizard; safe to call
+     * repeatedly (on resume and on user refresh).
+     */
+    fun probeAll(): List<CapabilityReport> =
+        FALLBACK_ORDER.mapNotNull { mode -> backendsByMode[mode]?.probe() }
+
+    /**
+     * The registered backend for [mode], or null when this build has none. Used by the
+     * capability wizard's device-verified read test to exercise a specific route's real
+     * read path without starting or switching the active backend.
+     */
+    fun backend(mode: ClipboardReadMode): BackgroundClipboardBackend? = backendsByMode[mode]
+
     fun requestMode(mode: ClipboardReadMode): ClipboardAccessState {
         state = state.copy(requestedReadMode = mode)
         if (listener == null) {
@@ -127,12 +163,32 @@ class ClipboardAccessCoordinator(
     private fun ClipboardReadResult.successTextOrNull(): String? =
         (this as? ClipboardReadResult.Success)?.text
 
-    private companion object {
-        val FALLBACK_ORDER = listOf(
+    companion object {
+        private val FALLBACK_ORDER = listOf(
             ClipboardReadMode.SHIZUKU_EVENT,
             ClipboardReadMode.ADB_LOG_OVERLAY,
             ClipboardReadMode.OVERLAY_POLLING,
             ClipboardReadMode.FOREGROUND_ONLY,
         )
+
+        /** Most capable first; the tail states all mean "nothing usable observed yet". */
+        private val READ_STATE_ORDER = listOf(
+            CapabilityState.READY,
+            CapabilityState.DEGRADED,
+            CapabilityState.NEEDS_USER_ACTION,
+            CapabilityState.UNKNOWN,
+            CapabilityState.UNAVAILABLE,
+        )
+
+        /**
+         * The most capable of [reports] under the same ordering [probe] uses (READY >
+         * DEGRADED > NEEDS_USER_ACTION > UNKNOWN > UNAVAILABLE); ties keep the earlier
+         * entry, i.e. the higher ladder rung. Lets a caller that already holds a full
+         * [probeAll] pass derive the headline report without probing every backend again.
+         */
+        fun mostCapable(reports: List<CapabilityReport>): CapabilityReport? =
+            reports.minByOrNull { readStateRank(it.readState) }
+
+        private fun readStateRank(state: CapabilityState): Int = READ_STATE_ORDER.indexOf(state)
     }
 }

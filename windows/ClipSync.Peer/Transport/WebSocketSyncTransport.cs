@@ -8,7 +8,9 @@ namespace ClipSync.Peer.Transport;
 /// Wraps a connected WebSocket: assembles fragmented text messages up to the protocol
 /// frame limit, rejects binary frames, and normalizes close/abort into frames.
 /// </summary>
-public sealed class WebSocketSyncTransport(WebSocket socket) : ISyncTransport
+public sealed class WebSocketSyncTransport(
+    WebSocket socket,
+    int maxTextMessageBytes = ProtocolLimits.MaxWebSocketTextMessageBytes) : ISyncTransport
 {
     private readonly byte[] receiveBuffer = new byte[64 * 1024];
 
@@ -30,11 +32,12 @@ public sealed class WebSocketSyncTransport(WebSocket socket) : ISyncTransport
                     return new TransportFrame.Binary();
                 }
 
-                message.Write(receiveBuffer, 0, result.Count);
-                if (message.Length > ProtocolLimits.MaxWebSocketTextMessageBytes)
+                if (message.Length + result.Count > maxTextMessageBytes)
                 {
                     return new TransportFrame.TooLarge();
                 }
+
+                message.Write(receiveBuffer, 0, result.Count);
 
                 if (result.EndOfMessage)
                 {

@@ -1,3 +1,5 @@
+using ClipSync.Core.Protocol;
+
 namespace ClipSync.Peer.Sessions;
 
 public enum SyncSessionRole
@@ -36,7 +38,31 @@ public sealed record SyncSessionOptions
     /// <summary>Aggregate requested sequences we accept in one incoming want_ranges before RATE_LIMITED.</summary>
     public long MaxRequestedSequencesPerMessage { get; init; } = 16384;
 
+    /// <summary>
+    /// Re-checked before every outbound content announce (outbox drain) and before serving a
+    /// peer's want_ranges pull, so pausing sync or turning private mode on stops outbound
+    /// content immediately — mirroring the Android engine's outboundAllowed gate. Inbound
+    /// stays untouched, in-flight clip_fetch replies for clips announced earlier still
+    /// complete, and pending outbox entries flow again on the first drain tick after the
+    /// gate reopens.
+    /// </summary>
+    public Func<bool> OutboundAllowed { get; init; } = static () => true;
+
     public TimeProvider TimeProvider { get; init; } = TimeProvider.System;
+
+    /// <summary>1 keeps the frozen text contract; 2 enables image_clip_v2.</summary>
+    public int ProtocolVersion { get; init; } = ProtocolLimits.ProtocolVersion;
+
+    /// <summary>
+    /// The local image_sync policy gate. Protocol v2 §3 allows image bodies only when both
+    /// peers opted into image_clip_v2, so the listener refuses the /v2 upgrade while this is
+    /// off (the dialer falls back to /v1), and a live session re-reads the gate before every
+    /// inbound or outbound image so flipping the setting applies without waiting for the
+    /// session to end. Text sync is never affected.
+    /// </summary>
+    public Func<bool> ImageSyncEnabled { get; init; } = static () => true;
+
+    public bool ImageClipEnabled => ProtocolVersion >= ProtocolLimits.ProtocolVersionV2 && ImageSyncEnabled();
 }
 
 /// <summary>Why the session ended; <see cref="ErrorCode"/> is a protocol code when one applies.</summary>
@@ -48,4 +74,10 @@ public sealed record RemoteClipApplied(
     string OriginDeviceId,
     long OriginSeq,
     string Content,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    string Kind = "text",
+    string? ContentHash = null,
+    string? MimeType = null)
+{
+    public bool IsImage => string.Equals(Kind, "image", StringComparison.Ordinal);
+}

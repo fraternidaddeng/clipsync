@@ -1,9 +1,9 @@
 using System.Collections.Concurrent;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using ClipSync.Core.Clipboard;
+using ClipSync.Core.Protocol;
 using ClipSync.Core.Security;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Pairing;
@@ -109,7 +109,9 @@ public sealed class PeerPair : IAsyncDisposable
         int extraWindowsUpserts = 0,
         SyncSessionOptions? serverSessionOptions = null,
         bool useDifferentAndroidSecret = false,
-        IPairingApprover? pairingApprover = null)
+        IPairingApprover? pairingApprover = null,
+        int maxPairingConfirmsPerWindow = PeerServerOptions.DefaultPairingConfirmsPerWindow,
+        int maxSyncAcceptsPerWindow = PeerServerOptions.DefaultSyncAcceptsPerWindow)
     {
         var directory = Path.Combine(Path.GetTempPath(), "clipsync-peer-tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
@@ -164,7 +166,9 @@ public sealed class PeerPair : IAsyncDisposable
             {
                 Certificate = pair.certificate,
                 SessionOptions = serverSessionOptions ?? DefaultSessionOptions(),
-                Port = 0
+                Port = 0,
+                MaxPairingConfirmsPerWindow = maxPairingConfirmsPerWindow,
+                MaxSyncAcceptsPerWindow = maxSyncAcceptsPerWindow
             },
             pair.Logs,
             pair.Pairing);
@@ -193,7 +197,8 @@ public sealed class PeerPair : IAsyncDisposable
     {
         ClientVersion = "0.2.0",
         OutboxDrainInterval = TimeSpan.FromMilliseconds(100),
-        PingInterval = TimeSpan.FromSeconds(60)
+        PingInterval = TimeSpan.FromSeconds(60),
+        ProtocolVersion = ProtocolLimits.ProtocolVersionV2
     };
 
     public static SyncSessionOptions DialerOptions() => DefaultSessionOptions() with
@@ -205,16 +210,18 @@ public sealed class PeerPair : IAsyncDisposable
     /// <summary>Dials the listener and runs a session until the test closes it.</summary>
     public async Task<DialedSession> DialAsync(SyncSessionOptions? options = null)
     {
+        var sessionOptions = options ?? DialerOptions();
         var transport = await ClipSync.Peer.Client.PeerSyncClient.ConnectAsync(
             "127.0.0.1",
             Server.Port,
             ServerFingerprint,
+            sessionOptions.ProtocolVersion,
             CancellationToken.None);
         var engine = new SyncSessionEngine(
             SyncSessionRole.Dialer,
             AndroidStore,
             Protector,
-            options ?? DialerOptions(),
+            sessionOptions,
             authFailureSink: null,
             Logs.CreateLogger("ClipSync.Peer.DialerSession"));
         var committed = new List<RemoteClipApplied>();
@@ -225,8 +232,16 @@ public sealed class PeerPair : IAsyncDisposable
                 committed.AddRange(batch);
             }
         };
+        var readyPeers = new List<string>();
+        engine.SessionReady += peerId =>
+        {
+            lock (readyPeers)
+            {
+                readyPeers.Add(peerId);
+            }
+        };
         var run = engine.RunAsync(transport, CancellationToken.None);
-        var session = new DialedSession(engine, run, committed);
+        var session = new DialedSession(engine, run, committed, readyPeers);
         sessions.Add(session);
         return session;
     }
@@ -236,6 +251,24 @@ public sealed class PeerPair : IAsyncDisposable
         var bytes = Encoding.UTF8.GetBytes(text);
         var hash = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
         return await store.StoreAsync(new AcceptedClipboardContent(text, hash, bytes.Length, "test", DateTimeOffset.UtcNow));
+    }
+
+    public static async Task<StoredImageEvent> CaptureImageAsync(
+        SqliteClipboardEventStore store,
+        byte[] encoded,
+        string contentHash,
+        string mimeType = "image/png",
+        int width = 1,
+        int height = 1)
+    {
+        return await store.StoreImageAsync(new AcceptedImageContent(
+            encoded,
+            contentHash,
+            mimeType,
+            width,
+            height,
+            "test",
+            DateTimeOffset.UtcNow));
     }
 
     public async Task WaitUntilAsync(Func<Task<bool>> condition, TimeSpan? timeout = null)
@@ -279,7 +312,8 @@ public sealed class PeerPair : IAsyncDisposable
 public sealed record DialedSession(
     SyncSessionEngine Engine,
     Task<SyncSessionResult> Run,
-    List<RemoteClipApplied> Committed)
+    List<RemoteClipApplied> Committed,
+    List<string> ReadyPeers)
 {
     public async Task<SyncSessionResult> CloseAsync()
     {

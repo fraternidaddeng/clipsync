@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "type": "clip_payload_chunk",
+  "request_id": "19191919-1919-4191-8191-191919191919",
+  "body": {
+    "transfer_id": "66666666-6666-4666-8666-666666666666",
+    "event_id": "55555555-5555-4555-8555-555555555555",
+    "chunk_index": 0,
+    "chunk_count": 1,
+    "chunk_bytes": 262145,
+    "data": "AA"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "kind": "pairing_error",
+  "version": 1,
+  "error": "PAIRING_RATE_LIMITED"
+}

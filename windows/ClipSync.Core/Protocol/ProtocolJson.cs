@@ -10,7 +10,7 @@ public static class ProtocolJson
         PropertyNameCaseInsensitive = false,
         UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
         NumberHandling = JsonNumberHandling.Strict,
-        MaxDepth = 16
+        MaxDepth = ProtocolLimits.MaxJsonDepth
     };
 
     public static ProtocolEnvelope ParseEnvelope(string json) =>

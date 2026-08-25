@@ -5,7 +5,6 @@ using System.Text;
 using ClipSync.App.Pairing;
 using ClipSync.App.Security;
 using ClipSync.App.Sync;
-using ClipSync.Core.Protocol;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Pairing;
 using ClipSync.Peer.Security;
