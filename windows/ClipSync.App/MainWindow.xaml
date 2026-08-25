@@ -1577,6 +1577,57 @@
                                                                Foreground="{DynamicResource CsText4Brush}">
                                                         <Run Text="{Binding Platform, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding LastSeenText, Mode=OneWay}" />
                                                     </TextBlock>
+                                                    <!-- 设备色手动改（settings-roadmap P1#14）：五个邻近色点，点配对顺位默认色即恢复「跟随」。
+                                                         已撤销的设备退回灰，不再有色可挑。 -->
+                                                    <StackPanel Margin="0,5,0,0"
+                                                                Orientation="Horizontal"
+                                                                Visibility="{Binding IsRevoked, Converter={StaticResource InverseBoolToVisibility}}">
+                                                        <TextBlock Margin="0,0,7,0"
+                                                                   VerticalAlignment="Center"
+                                                                   FontSize="10"
+                                                                   Foreground="{DynamicResource CsText3Brush}"
+                                                                   Text="设备色" />
+                                                        <ItemsControl ItemsSource="{Binding AccentSwatches}">
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <StackPanel Orientation="Horizontal" />
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Button Width="16"
+                                                                            Height="16"
+                                                                            Margin="0,0,6,0"
+                                                                            Command="{Binding DataContext.SetDeviceAccentCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                                            CommandParameter="{Binding}"
+                                                                            Cursor="Hand"
+                                                                            Focusable="False">
+                                                                        <Button.Template>
+                                                                            <ControlTemplate TargetType="Button">
+                                                                                <Border x:Name="Dot"
+                                                                                        Background="{Binding Slot, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
+                                                                                        BorderBrush="{Binding Slot, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Line}"
+                                                                                        BorderThickness="1"
+                                                                                        CornerRadius="8" />
+                                                                                <ControlTemplate.Triggers>
+                                                                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                                                        <Setter TargetName="Dot" Property="BorderBrush" Value="{DynamicResource CsText1Brush}" />
+                                                                                        <Setter TargetName="Dot" Property="BorderThickness" Value="2" />
+                                                                                    </DataTrigger>
+                                                                                </ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Button.Template>
+                                                                    </Button>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                        <!-- 与 Android 通路行同一措辞：颜色来源是事实，不是错误 -->
+                                                        <TextBlock Margin="2,0,0,0"
+                                                                   VerticalAlignment="Center"
+                                                                   FontSize="10"
+                                                                   Foreground="{DynamicResource CsText4Brush}"
+                                                                   Text="{Binding AccentSourceText, Mode=OneWay}" />
+                                                    </StackPanel>
                                                 </StackPanel>
                                             </Grid>
                                         </DataTemplate>

@@ -413,7 +413,7 @@ private fun ClipCard(
         ) {
             val source = item.remoteSourceLabel
             if (source != null) {
-                SourceTag(label = source, pairingOrder = item.sourcePairingOrder)
+                SourceTag(label = source, accentSlot = item.sourceAccentSlot)
             }
             if (item.isImage) {
                 ImageBadge()
@@ -492,16 +492,17 @@ private fun ClipThumbnail(
 
 /**
  * Neighbour-hue source box (charter: 来源标记 = 低彩度着色盒). Only remote
- * clips get one. The hue follows the device's pairing order through the
- * charter ladder (tokens.md §4: slot 1 青灰 … slot 5 灰粉, never a hash);
- * a remote without a pairing slot states the fact in grey instead.
+ * clips get one. The hue is the device's effective slot through the charter
+ * ladder (tokens.md §4: slot 1 青灰 … slot 5 灰粉) — pairing order by default,
+ * a manual per-device choice when one was made (P1#14), never a hash;
+ * a remote without a slot states the fact in grey instead.
  */
 @Composable
-private fun SourceTag(label: String, pairingOrder: Int?, modifier: Modifier = Modifier) {
+private fun SourceTag(label: String, accentSlot: Int?, modifier: Modifier = Modifier) {
     val c = clipSyncColors
-    val tone = pairingOrder?.let { c.device(it) } ?: c.t3
-    val boxBg = pairingOrder?.let { c.deviceBg(it) } ?: c.sf3
-    val boxLn = pairingOrder?.let { c.deviceLn(it) } ?: c.ln2
+    val tone = accentSlot?.let { c.device(it) } ?: c.t3
+    val boxBg = accentSlot?.let { c.deviceBg(it) } ?: c.sf3
+    val boxLn = accentSlot?.let { c.deviceLn(it) } ?: c.ln2
     val shape = RoundedCornerShape(6.dp)
     Row(
         modifier = modifier
@@ -683,7 +684,7 @@ private fun HomeScreenListPreview() {
                         preview = "https://github.com/clipsync/core",
                         createdAtMs = System.currentTimeMillis() - 240_000,
                         remoteSourceLabel = "PC-STUDIO",
-                        sourcePairingOrder = 1,
+                        sourceAccentSlot = 1,
                         format = ClipContentFormat.LINK,
                     ),
                     HomeClipItem(
@@ -704,7 +705,7 @@ private fun HomeScreenListPreview() {
                         preview = "会议纪要：本周五完成 Stage 4 端到端握手测试",
                         createdAtMs = System.currentTimeMillis() - 90_000_000,
                         remoteSourceLabel = "PC-STUDIO",
-                        sourcePairingOrder = 1,
+                        sourceAccentSlot = 1,
                     ),
                 ),
             ),

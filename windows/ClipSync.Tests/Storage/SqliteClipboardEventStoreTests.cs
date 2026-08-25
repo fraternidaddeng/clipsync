@@ -25,7 +25,7 @@ public sealed class SqliteClipboardEventStoreTests
         Assert.Equal("wal", state.JournalMode, ignoreCase: true);
         Assert.True(state.ForeignKeysEnabled);
         Assert.Equal(SqliteClipboardEventStore.SchemaVersion, state.SchemaVersion);
-        Assert.Equal(4, SqliteClipboardEventStore.SchemaVersion);
+        Assert.Equal(5, SqliteClipboardEventStore.SchemaVersion);
     }
 
     [Fact]

@@ -36,6 +36,8 @@
 - [双端] 蓝牙备援传输阶段 1——bt1 握手与帧层（纯逻辑，无平台蓝牙依赖）：`docs/protocol-bt1.md` 定稿安全信道协议（共享 `pair_secret` 的 HMAC-SHA-256 双向认证、HKDF-SHA-256 按方向派生 AES-256-GCM 会话密钥、4 字节大端长度前缀 + 计数器 nonce 帧、7 MiB 明文上限、`BT1_` 错误码）；`protocol/bt1/` 新增跨语言测试向量与消息 fixtures 并纳入 `scripts/validate-protocol.py` 校验；C#（`ClipSync.Core/Security/Bt1`）与 Kotlin（Android `sync` 包）双端实现，针对同一 fixtures 的单测含篡改/重放/乱序/截断/超限负例。尚无任何真实蓝牙 I/O；RFCOMM 传输、降级编排与 UI 均属后续阶段（见 `docs/bluetooth-fallback-plan.md`）。
 - [分发] 最小分发链（阶段 7 裁剪版）：`scripts/package-windows.ps1` 产出自包含 win-x64 便携 ZIP（含运行时/许可/安装指南 + SHA-256，Linux CI 经 `EnableWindowsTargeting` 可产包）；`scripts/package-android.ps1` 产出 Release APK（签名只读 `CLIPSYNC_ANDROID_*` 环境变量，密钥库不入库，另有 Debug/未签名校验路径）；`docs/install.md` 一页中文安装/配对/通路/排障指南（并随 Windows ZIP 分发）。
 
+- [双端] 减弱动效跟随系统（`docs/settings-roadmap.md` P1#13，无应用内开关——系统的选择是事实）：系统开启「减弱动态效果/移除动画」时，2.6 s 赭色「需要你操作」脉动改为静态 act 描边。Android 观察 `ANIMATOR_DURATION_SCALE`（改设置即时生效，无需重启），同时定格通路管道的流动点、tab 切换 Crossfade 改硬切；Windows 以 `SystemParameters.ClientAreaAnimation` 门控通路捕获段脉动光环，静态描边独自承担提醒。
+- [双端] 设备色手动改（`docs/settings-roadmap.md` P1#14，`ui-gap-audit.md` P2 项收口）：通路设备行新增五色点选色器，可把某台设备的邻近色固定为 dev-1..dev-5 中任意一档；点配对顺位默认色即恢复「跟随配对顺位」（存储保持最小——只存覆盖）。颜色属设备身份：撤销/重新配对不清除；历史与浮窗的来源注记盒随生效色。Android 存 `PairingStore`（`device.accent.<id>`），Windows 存 devices 表 `accent_override` 列（schema v4→v5 纯增列迁移）。
 - [Windows] 通路「网络段 · 已配对设备」新增残留设备检测与一键清理：同名同平台的旧档（同一部手机换了身份重新配对留下的幽灵）与超过 14 天未连接的设备以赭色标记（标注各自积压的待发条数），列表上方横幅给出总数与总积压并提供「一键清理」——撤销全部残留、作废其密钥并清空其发件队列，「待发」计数即时回落。
 
 ### 变更

@@ -17,6 +17,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.snap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -97,6 +98,7 @@ import com.clipsync.android.ui.prefs.PreferencesViewModel
 import com.clipsync.android.ui.theme.CharterMotion
 import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
+import com.clipsync.android.ui.theme.LocalReducedMotion
 import com.clipsync.android.ui.theme.clipSyncColors
 import com.clipsync.android.ui.theme.filmGrain
 import kotlinx.coroutines.Dispatchers
@@ -663,10 +665,16 @@ private fun ClipSyncApp(
             },
         ) { padding ->
             // Switching place crossfades on the charter curve (tokens.md §9:
-            // 260–320ms, cubic-bezier(.16,1,.3,1)) instead of a hard cut.
+            // 260–320ms, cubic-bezier(.16,1,.3,1)) instead of a hard cut —
+            // unless the system asks for reduced motion (P1#13): then it IS a cut.
             Crossfade(
                 targetState = tab to pairingOpen,
-                animationSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
+                animationSpec =
+                    if (LocalReducedMotion.current) {
+                        snap()
+                    } else {
+                        CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)
+                    },
                 label = "place",
             ) { (place, pairing) ->
                 when {
@@ -702,6 +710,11 @@ private fun ClipSyncApp(
                             onOpenNotificationSettings = onOpenNotificationSettings,
                             // 收到内容通知的应用内开关（P1#8）；关闭时通路以灰面事实条陈述后果。
                             inboxNotifyEnabled = preferencesState.inboxNotify,
+                            // 设备色是设备行的属性（P1#14）；历史来源盒立即跟色。
+                            onDeviceAccentChange = { deviceId, slot ->
+                                healthViewModel.setDeviceAccent(deviceId, slot)
+                                homeViewModel.refreshPeer()
+                            },
                             // 蓝牙备援挂在网络段下（IA 迁移）；状态仍由 PreferencesViewModel 持有。
                             bluetoothFallback =
                                 BluetoothFallbackUi(

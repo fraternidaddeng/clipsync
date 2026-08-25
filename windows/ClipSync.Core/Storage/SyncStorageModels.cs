@@ -11,7 +11,8 @@ public sealed record PairedDevice(
     long TrustEpoch,
     DateTimeOffset CreatedAt,
     DateTimeOffset? LastSeenAt,
-    DateTimeOffset? RevokedAt)
+    DateTimeOffset? RevokedAt,
+    int? AccentOverride = null)
 {
     public bool IsRevoked => RevokedAt is not null;
 }

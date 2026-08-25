@@ -22,8 +22,7 @@ class FakeKeyValueStore : KeyValueStore {
 
 /** Reversible obfuscation, so tests can verify plaintext never lands in storage. */
 class FakeSecretProtector : SecretProtector {
-    override fun protect(plain: ByteArray): ByteArray =
-        byteArrayOf(0x5A) + plain.map { (it.toInt() xor 0x2F).toByte() }
+    override fun protect(plain: ByteArray): ByteArray = byteArrayOf(0x5A) + plain.map { (it.toInt() xor 0x2F).toByte() }
 
     override fun unprotect(protected: ByteArray): ByteArray {
         require(protected.isNotEmpty() && protected[0] == 0x5A.toByte()) { "not protected by this fake" }
@@ -35,27 +34,29 @@ class PairingStoreTest {
     private val keyValues = FakeKeyValueStore()
     private val store = PairingStore(keyValues, FakeSecretProtector())
 
-    private fun qr(cert: String = CERT_A) = PairingQrPayload(
-        kind = PairingDocumentKinds.QR,
-        version = 1,
-        hosts = listOf("192.168.1.23", "10.0.11.7"),
-        port = 47654,
-        deviceId = WINDOWS_ID,
-        displayName = "DESKTOP-WIN",
-        certSha256 = cert,
-        token = TOKEN,
-        expiresAtMs = 1_755_064_500_000,
-    )
+    private fun qr(cert: String = CERT_A) =
+        PairingQrPayload(
+            kind = PairingDocumentKinds.QR,
+            version = 1,
+            hosts = listOf("192.168.1.23", "10.0.11.7"),
+            port = 47654,
+            deviceId = WINDOWS_ID,
+            displayName = "DESKTOP-WIN",
+            certSha256 = cert,
+            token = TOKEN,
+            expiresAtMs = 1_755_064_500_000,
+        )
 
-    private fun response(epoch: Long = 1) = PairingConfirmResponse(
-        kind = PairingDocumentKinds.CONFIRM_RESPONSE,
-        version = 1,
-        deviceId = WINDOWS_ID,
-        displayName = "DESKTOP-WIN",
-        platform = "windows",
-        pairSecret = TOKEN,
-        trustEpoch = epoch,
-    )
+    private fun response(epoch: Long = 1) =
+        PairingConfirmResponse(
+            kind = PairingDocumentKinds.CONFIRM_RESPONSE,
+            version = 1,
+            deviceId = WINDOWS_ID,
+            displayName = "DESKTOP-WIN",
+            platform = "windows",
+            pairSecret = TOKEN,
+            trustEpoch = epoch,
+        )
 
     @Test
     fun `local device id is generated once and reused`() {
@@ -100,9 +101,10 @@ class PairingStoreTest {
 
     @Test
     fun `secret must be exactly 32 bytes`() {
-        val result = runCatching {
-            store.savePeer(qr(), response(), ByteArray(16), nowMs = 0)
-        }
+        val result =
+            runCatching {
+                store.savePeer(qr(), response(), ByteArray(16), nowMs = 0)
+            }
         assertTrue(result.exceptionOrNull() is IllegalArgumentException)
     }
 
@@ -129,6 +131,52 @@ class PairingStoreTest {
         store.savePeer(qr(), response(), ByteArray(32), nowMs = 0)
         keyValues.map.remove("peer.trust_epoch")
         assertNull(store.peer())
+    }
+
+    @Test
+    fun `device accent persists per device and null clears it`() {
+        assertNull(store.deviceAccent(WINDOWS_ID))
+
+        store.setDeviceAccent(WINDOWS_ID, 4)
+        assertEquals(4, store.deviceAccent(WINDOWS_ID))
+
+        store.setDeviceAccent(WINDOWS_ID, null)
+        assertNull(store.deviceAccent(WINDOWS_ID))
+        assertTrue(keyValues.map.keys.none { it.startsWith("device.accent.") })
+    }
+
+    @Test
+    fun `device accent rejects out-of-range slots and reads corrupt values as null`() {
+        assertTrue(runCatching { store.setDeviceAccent(WINDOWS_ID, 0) }.exceptionOrNull() is IllegalArgumentException)
+        assertTrue(runCatching { store.setDeviceAccent(WINDOWS_ID, 6) }.exceptionOrNull() is IllegalArgumentException)
+
+        keyValues.map["device.accent.$WINDOWS_ID"] = "banana"
+        assertNull(store.deviceAccent(WINDOWS_ID))
+        keyValues.map["device.accent.$WINDOWS_ID"] = "9"
+        assertNull(store.deviceAccent(WINDOWS_ID))
+    }
+
+    @Test
+    fun `manual device colour survives forgetting the pairing`() {
+        store.savePeer(qr(), response(), ByteArray(32), nowMs = 0)
+        store.setDeviceAccent(WINDOWS_ID, 3)
+
+        // Re-pairing the same machine should look the same: the colour is a
+        // fact about the device identity, not about the pairing session.
+        store.forgetPeer()
+        assertNull(store.peer())
+        assertEquals(3, store.deviceAccent(WINDOWS_ID))
+    }
+
+    @Test
+    fun `default accent slots follow pairing order and wrap past five`() {
+        assertEquals(1, DeviceAccents.defaultSlot(0))
+        assertEquals(5, DeviceAccents.defaultSlot(4))
+        assertEquals(1, DeviceAccents.defaultSlot(5))
+        assertTrue(DeviceAccents.isValidSlot(1))
+        assertTrue(DeviceAccents.isValidSlot(5))
+        assertFalse(DeviceAccents.isValidSlot(0))
+        assertFalse(DeviceAccents.isValidSlot(6))
     }
 
     @Test

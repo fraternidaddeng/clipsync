@@ -49,7 +49,7 @@
 
 | 差距 | 现状 | 需要做 |
 |---|---|---|
-| 设备邻近色手动改色 | 两端都已按配对顺位取 `dev-1..dev-5`（Android、Windows 本轮各自合拢）；顺位是推导值，尚不支持手动改色 | 两端补「手动改色」存储（顺位仅作默认值） |
+| ~~设备邻近色手动改色~~ **已解决（2026-08-25，settings-roadmap P1#14）** | 通路设备行五色点选色器：Android 存 `PairingStore`（`device.accent.<id>`），Windows 存 devices 表 `accent_override`（schema v5）；点配对顺位默认色即清除覆盖，历史来源盒随生效色 | — |
 | 动效令牌（Windows 剩余部分） | Android 已接令牌（本轮）；Windows 已做「需要你操作」2.6s 脉动（KeySpline 逐位对齐），其余交互过渡仍无统一缓动/时长档；配对成功的一次性镜面流光两端均未做 | WPF `Storyboard` 接 `cubic-bezier(.16,1,.3,1)` + 180–220ms 档到其余过渡 |
 | QS 磁贴状态 | 磁贴常为可用态，未随服务/暂停状态切 active/inactive | `TileService.qsTile.state` 接 `ClipboardSyncService.connectionStates` |
 | 托盘主题只采样一次 | 深浅任务栏切换后托盘图标不换套（启动时读一次注册表） | 监听 `SystemEvents.UserPreferenceChanged` 重载图标 |

@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -68,6 +69,7 @@ import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.ClipSyncType
+import com.clipsync.android.ui.theme.LocalReducedMotion
 import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.clipSyncColors
 
@@ -114,6 +116,22 @@ data class ConduitTestResult(
 )
 
 /**
+ * One paired device row in the conduit's 已配对设备 area. The neighbour hue is
+ * a property of the device row (P1#14): pairing order supplies the default
+ * slot, a manual override may replace it, and selecting the default clears
+ * the override again.
+ */
+data class ConduitDeviceUi(
+    val deviceId: String,
+    val displayName: String,
+    val platformLabel: String,
+    /** Effective neighbour-hue slot 1..5: the manual override, else the default. */
+    val accentSlot: Int,
+    /** The slot pairing order assigns — the value 「跟随配对顺位」 returns to. */
+    val defaultSlot: Int,
+)
+
+/**
  * The conduit: four segments in the order clipboard content actually travels,
  * which is also the troubleshooting order.
  */
@@ -125,6 +143,8 @@ data class HealthScreenState(
     val pairedDeviceCount: Int,
     /** Display name of the paired Windows peer; null while unpaired. */
     val pairedPeerName: String? = null,
+    /** Paired device rows with their effective neighbour hues (P1#14). */
+    val pairedDevices: List<ConduitDeviceUi> = emptyList(),
     /** 本机写回 — the inbound write axis; null until the capability stack is wired. */
     val localWrite: ConduitSegmentState? = null,
     /** The wizard's three routes; empty until the capability stack is wired. */
@@ -163,6 +183,8 @@ fun HealthScreen(
     onRequestBluetoothDevices: () -> Unit = {},
     onBluetoothDeviceChosen: (BondedBluetoothDevice) -> Unit = {},
     onDismissBluetoothDevices: () -> Unit = {},
+    // 设备色手动改（settings-roadmap P1#14）：slot 1..5 pins a colour, null = 跟随配对顺位.
+    onDeviceAccentChange: ((deviceId: String, slot: Int?) -> Unit)? = null,
 ) {
     val c = clipSyncColors
     // The wizard opens itself when the read segment is the one beckoning.
@@ -322,9 +344,112 @@ fun HealthScreen(
                     .padding(bottom = 8.dp),
                 textAlign = TextAlign.Center,
             )
+            state.pairedDevices.forEach { device ->
+                ConduitDeviceRow(
+                    device = device,
+                    onAccentChange = onDeviceAccentChange,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+            }
         }
     }
 }
+
+/**
+ * A paired device row (P1#14): the device's tinted identity box plus a
+ * five-swatch 设备色 picker. Selecting the pairing-order default clears the
+ * override, so the stored state stays minimal and the fact line stays honest.
+ */
+@Composable
+private fun ConduitDeviceRow(
+    device: ConduitDeviceUi,
+    onAccentChange: ((String, Int?) -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
+    val c = clipSyncColors
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .charterCard()
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            val boxShape = RoundedCornerShape(9.dp)
+            Box(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clip(boxShape)
+                    .background(c.deviceBg(device.accentSlot))
+                    .border(1.dp, c.deviceLn(device.accentSlot), boxShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = ClipSyncIcons.Monitor,
+                    contentDescription = null,
+                    tint = c.device(device.accentSlot),
+                    modifier = Modifier.size(15.dp),
+                )
+            }
+            Spacer(Modifier.width(10.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = device.displayName,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = c.t1,
+                )
+                Text(
+                    text = device.platformLabel,
+                    style = ClipSyncType.meta,
+                    fontSize = 10.sp,
+                    color = c.t4,
+                )
+            }
+        }
+        if (onAccentChange != null) {
+            Spacer(Modifier.height(10.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = "设备色",
+                    style = ClipSyncType.caption,
+                    color = c.t3,
+                )
+                (1..DEVICE_ACCENT_SLOTS).forEach { slot ->
+                    val selected = slot == device.accentSlot
+                    Box(
+                        modifier = Modifier
+                            .size(18.dp)
+                            .clip(CircleShape)
+                            .background(c.device(slot))
+                            .border(
+                                width = if (selected) 2.dp else 1.dp,
+                                color = if (selected) c.t1 else c.deviceLn(slot),
+                                shape = CircleShape,
+                            )
+                            .clickable {
+                                onAccentChange(
+                                    device.deviceId,
+                                    slot.takeIf { it != device.defaultSlot },
+                                )
+                            },
+                    )
+                }
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = if (device.accentSlot == device.defaultSlot) "跟随配对顺位" else "手动指定",
+                    style = ClipSyncType.meta,
+                    fontSize = 10.sp,
+                    color = c.t4,
+                )
+            }
+        }
+    }
+}
+
+private const val DEVICE_ACCENT_SLOTS = 5
 
 /**
  * Honest fact strip (charter: a user's choice is a fact, not an error). With
@@ -789,10 +914,30 @@ private fun FilledTrack(
     }
 }
 
-/** Empty capsule + ochre outline + 2.6s pulse — the reaching hand (tokens.md §9). */
+/**
+ * Empty capsule + ochre outline + 2.6s pulse — the reaching hand (tokens.md §9).
+ * With the system's 减弱动态效果 on (P1#13) the halo never plays: the act-bg
+ * track and 1.5px ochre stroke alone carry the beckoning, statically.
+ */
 @Composable
 private fun PulsingBar(modifier: Modifier = Modifier) {
     val c = clipSyncColors
+    if (LocalReducedMotion.current) {
+        Canvas(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(4.dp),
+        ) {
+            val radius = CornerRadius(size.height / 2f)
+            drawRoundRect(color = c.actBg, cornerRadius = radius)
+            drawRoundRect(
+                color = c.act,
+                cornerRadius = radius,
+                style = Stroke(width = 1.5.dp.toPx()),
+            )
+        }
+        return
+    }
     val transition = rememberInfiniteTransition(label = "needsActionPulse")
     val pulse by transition.animateFloat(
         initialValue = 0f,
@@ -850,20 +995,31 @@ private fun DashedBar(modifier: Modifier = Modifier) {
     }
 }
 
-/** Three phase-shifted dots: content will flow through here (tokens.md §9). */
+/**
+ * Three phase-shifted dots: content will flow through here (tokens.md §9).
+ * Under reduced motion (P1#13) the same three dots hold still — the metaphor
+ * stays, the drift does not.
+ */
 @Composable
 private fun FlowLine(modifier: Modifier = Modifier) {
     val c = clipSyncColors
-    val transition = rememberInfiniteTransition(label = "flowLine")
-    val time by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1800, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart,
-        ),
-        label = "flowTime",
-    )
+    val reducedMotion = LocalReducedMotion.current
+    val time: Float
+    if (reducedMotion) {
+        time = 0f
+    } else {
+        val transition = rememberInfiniteTransition(label = "flowLine")
+        val flowTime by transition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 1800, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart,
+            ),
+            label = "flowTime",
+        )
+        time = flowTime
+    }
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -873,6 +1029,15 @@ private fun FlowLine(modifier: Modifier = Modifier) {
             val spacing = 11.dp.toPx()
             val drift = 5.dp.toPx()
             repeat(3) { index ->
+                if (reducedMotion) {
+                    drawCircle(
+                        color = c.flow,
+                        radius = 2.4.dp.toPx(),
+                        center = Offset(x = 3.dp.toPx() + index * spacing, y = size.height / 2f),
+                        alpha = 0.55f,
+                    )
+                    return@repeat
+                }
                 val phase = (time + index / 3f) % 1f
                 val alpha = if (phase < 0.4f) phase / 0.4f else 1f - (phase - 0.4f) / 0.6f
                 drawCircle(

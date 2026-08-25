@@ -17,6 +17,20 @@ interface KeyValueStore {
     fun write(values: Map<String, String?>)
 }
 
+/**
+ * Neighbour-hue slot arithmetic shared with Windows `DeviceAccent` (charter §3.4):
+ * slots follow pairing order and wrap past five; the order is only the default —
+ * a manual per-device override (P1#14) may replace it.
+ */
+object DeviceAccents {
+    const val SLOTS = 5
+
+    /** Maps a zero-based pairing position to the default slot 1..5, cycling. */
+    fun defaultSlot(pairingPosition: Int): Int = (pairingPosition % SLOTS) + 1
+
+    fun isValidSlot(slot: Int): Boolean = slot in 1..SLOTS
+}
+
 /** The Windows peer this phone trusts, as saved after an approved confirm exchange. */
 data class PairedPeer(
     val deviceId: String,
@@ -127,7 +141,34 @@ class PairingStore(
         return pinned.equals(presentedSha256, ignoreCase = true)
     }
 
-    /** Removes the pairing and its protected secret; local history is untouched. */
+    /**
+     * Manual neighbour-hue override for one device row (P1#14), or null when the
+     * device follows its pairing-order default. Keyed by device id so re-pairing
+     * the same machine keeps the chosen colour; an out-of-range stored value
+     * reads as null rather than surfacing a broken slot.
+     */
+    fun deviceAccent(deviceId: String): Int? =
+        keyValues
+            .read(accentKey(deviceId))
+            ?.toIntOrNull()
+            ?.takeIf(DeviceAccents::isValidSlot)
+
+    /** Persists a manual device colour; null returns the row to its pairing-order default. */
+    fun setDeviceAccent(
+        deviceId: String,
+        slot: Int?,
+    ) {
+        require(slot == null || DeviceAccents.isValidSlot(slot)) {
+            "accent slot must be 1..${DeviceAccents.SLOTS}"
+        }
+        keyValues.write(mapOf(accentKey(deviceId) to slot?.toString()))
+    }
+
+    /**
+     * Removes the pairing and its protected secret; local history is untouched.
+     * Manual device colours survive on purpose: they are display facts about a
+     * device identity, and re-pairing the same machine should look the same.
+     */
     fun forgetPeer() {
         keyValues.write(
             mapOf(
@@ -145,10 +186,16 @@ class PairingStore(
     }
 
     private fun encodeBase64(bytes: ByteArray): String =
-        java.util.Base64.getEncoder().encodeToString(bytes)
+        java.util.Base64
+            .getEncoder()
+            .encodeToString(bytes)
 
     private fun decodeBase64(value: String): ByteArray =
-        java.util.Base64.getDecoder().decode(value)
+        java.util.Base64
+            .getDecoder()
+            .decode(value)
+
+    private fun accentKey(deviceId: String): String = KEY_DEVICE_ACCENT_PREFIX + deviceId
 
     private companion object {
         const val KEY_LOCAL_DEVICE_ID = "local.device_id"
@@ -162,5 +209,6 @@ class PairingStore(
         const val KEY_PEER_PORT = "peer.port"
         const val KEY_PEER_PAIRED_AT = "peer.paired_at_ms"
         const val KEY_PEER_SECRET = "peer.secret_protected"
+        const val KEY_DEVICE_ACCENT_PREFIX = "device.accent."
     }
 }

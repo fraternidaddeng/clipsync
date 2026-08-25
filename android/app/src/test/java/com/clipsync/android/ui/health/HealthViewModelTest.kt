@@ -51,7 +51,9 @@ class HealthViewModelTest {
     private val store = PairingStore(keyValues, FakeSecretProtector())
 
     /** Sync seam fake the tests can push snapshots through. */
-    private class FakeSyncHealthSource(initial: SyncHealth) : SyncHealthSource {
+    private class FakeSyncHealthSource(
+        initial: SyncHealth,
+    ) : SyncHealthSource {
         val flow = MutableStateFlow(initial)
 
         override fun snapshots() = flow
@@ -74,36 +76,40 @@ class HealthViewModelTest {
 
     private fun pair() {
         store.savePeer(
-            qr = PairingQrPayload(
-                kind = PairingDocumentKinds.QR,
-                version = 1,
-                hosts = listOf("192.168.1.23"),
-                port = 47654,
-                deviceId = WINDOWS_ID,
-                displayName = "DESKTOP-WIN",
-                certSha256 = CERT,
-                token = TOKEN,
-                expiresAtMs = 1_755_064_500_000,
-            ),
-            response = PairingConfirmResponse(
-                kind = PairingDocumentKinds.CONFIRM_RESPONSE,
-                version = 1,
-                deviceId = WINDOWS_ID,
-                displayName = "DESKTOP-WIN",
-                platform = "windows",
-                pairSecret = TOKEN,
-                trustEpoch = 1,
-            ),
+            qr =
+                PairingQrPayload(
+                    kind = PairingDocumentKinds.QR,
+                    version = 1,
+                    hosts = listOf("192.168.1.23"),
+                    port = 47654,
+                    deviceId = WINDOWS_ID,
+                    displayName = "DESKTOP-WIN",
+                    certSha256 = CERT,
+                    token = TOKEN,
+                    expiresAtMs = 1_755_064_500_000,
+                ),
+            response =
+                PairingConfirmResponse(
+                    kind = PairingDocumentKinds.CONFIRM_RESPONSE,
+                    version = 1,
+                    deviceId = WINDOWS_ID,
+                    displayName = "DESKTOP-WIN",
+                    platform = "windows",
+                    pairSecret = TOKEN,
+                    trustEpoch = 1,
+                ),
             pairSecret = ByteArray(32),
             nowMs = 1_755_000_000_000,
         )
     }
 
-    private fun backend(mode: ClipboardReadMode, state: CapabilityState) =
-        FakeBackgroundClipboardBackend(
-            mode = mode,
-            report = FakeBackgroundClipboardBackend.capabilityReport(mode, state),
-        )
+    private fun backend(
+        mode: ClipboardReadMode,
+        state: CapabilityState,
+    ) = FakeBackgroundClipboardBackend(
+        mode = mode,
+        report = FakeBackgroundClipboardBackend.capabilityReport(mode, state),
+    )
 
     @Test
     fun `unpaired without backends or sync shows the honest baseline`() {
@@ -126,6 +132,56 @@ class HealthViewModelTest {
     }
 
     @Test
+    fun `paired device row carries the pairing-order colour until a manual one is chosen`() {
+        pair()
+        val model = viewModel()
+
+        val row =
+            model.state.value.pairedDevices
+                .single()
+        assertEquals(WINDOWS_ID, row.deviceId)
+        assertEquals("DESKTOP-WIN", row.displayName)
+        assertEquals("Windows", row.platformLabel)
+        assertEquals(1, row.accentSlot)
+        assertEquals(1, row.defaultSlot)
+
+        // 设备色是设备行的属性（P1#14）：override wins and persists; null returns
+        // the row to its pairing-order default.
+        model.setDeviceAccent(WINDOWS_ID, 4)
+        assertEquals(
+            4,
+            model.state.value.pairedDevices
+                .single()
+                .accentSlot,
+        )
+        assertEquals(
+            1,
+            model.state.value.pairedDevices
+                .single()
+                .defaultSlot,
+        )
+        assertEquals(4, store.deviceAccent(WINDOWS_ID))
+
+        model.setDeviceAccent(WINDOWS_ID, null)
+        assertEquals(
+            1,
+            model.state.value.pairedDevices
+                .single()
+                .accentSlot,
+        )
+        assertNull(store.deviceAccent(WINDOWS_ID))
+    }
+
+    @Test
+    fun `unpaired state carries no device rows`() {
+        assertTrue(
+            viewModel()
+                .state.value.pairedDevices
+                .isEmpty(),
+        )
+    }
+
+    @Test
     fun `refresh picks up a pairing saved after construction`() {
         val model = viewModel()
         assertEquals(ConduitStatus.NEEDS_ACTION, model.state.value.network.status)
@@ -140,9 +196,10 @@ class HealthViewModelTest {
     @Test
     fun `connected sync with peer write ready lights the whole conduit`() {
         pair()
-        val sync = FakeSyncHealthSource(
-            SyncHealth(serviceRunning = true, connected = true, peerWriteState = CapabilityState.READY),
-        )
+        val sync =
+            FakeSyncHealthSource(
+                SyncHealth(serviceRunning = true, connected = true, peerWriteState = CapabilityState.READY),
+            )
         val state = viewModel(syncHealthSource = sync).state.value
         assertEquals(ConduitStatus.READY, state.localService.status)
         assertEquals(ConduitStatus.READY, state.network.status)
@@ -166,9 +223,10 @@ class HealthViewModelTest {
     @Test
     fun `peer throttling shows on the network segment until a session authenticates`() {
         pair()
-        val sync = FakeSyncHealthSource(
-            SyncHealth(serviceRunning = true, connected = false, peerThrottled = true),
-        )
+        val sync =
+            FakeSyncHealthSource(
+                SyncHealth(serviceRunning = true, connected = false, peerThrottled = true),
+            )
         val model = viewModel(syncHealthSource = sync)
         val throttled = model.state.value.network
         assertEquals(ConduitStatus.DEGRADED, throttled.status)
@@ -196,18 +254,20 @@ class HealthViewModelTest {
 
     @Test
     fun `ready background backend makes local read ready`() {
-        val coordinator = ClipboardAccessCoordinator(
-            backends = listOf(backend(ClipboardReadMode.SHIZUKU_EVENT, CapabilityState.READY)),
-        )
+        val coordinator =
+            ClipboardAccessCoordinator(
+                backends = listOf(backend(ClipboardReadMode.SHIZUKU_EVENT, CapabilityState.READY)),
+            )
         val state = viewModel(coordinator).state.value
         assertEquals(ConduitStatus.READY, state.localRead.status)
     }
 
     @Test
     fun `foreground-only backend is degraded even when ready`() {
-        val coordinator = ClipboardAccessCoordinator(
-            backends = listOf(backend(ClipboardReadMode.FOREGROUND_ONLY, CapabilityState.READY)),
-        )
+        val coordinator =
+            ClipboardAccessCoordinator(
+                backends = listOf(backend(ClipboardReadMode.FOREGROUND_ONLY, CapabilityState.READY)),
+            )
         val state = viewModel(coordinator).state.value
         assertEquals(ConduitStatus.DEGRADED, state.localRead.status)
         assertEquals("降级 · 仅前台", state.localRead.statusLabel)
@@ -215,9 +275,10 @@ class HealthViewModelTest {
 
     @Test
     fun `unavailable backends state a fact not an error`() {
-        val coordinator = ClipboardAccessCoordinator(
-            backends = listOf(backend(ClipboardReadMode.SHIZUKU_EVENT, CapabilityState.UNAVAILABLE)),
-        )
+        val coordinator =
+            ClipboardAccessCoordinator(
+                backends = listOf(backend(ClipboardReadMode.SHIZUKU_EVENT, CapabilityState.UNAVAILABLE)),
+            )
         val state = viewModel(coordinator).state.value
         assertEquals(ConduitStatus.UNAVAILABLE, state.localRead.status)
     }
@@ -229,35 +290,40 @@ class HealthViewModelTest {
         var text: String? = null
         var nextWriteResult: ClipboardWriteResult = ClipboardWriteResult.Success
 
-        val writer = object : ClipboardWriter {
-            override fun probe(): CapabilityState = CapabilityState.READY
+        val writer =
+            object : ClipboardWriter {
+                override fun probe(): CapabilityState = CapabilityState.READY
 
-            override fun writeText(text: String, originEventId: String): ClipboardWriteResult {
-                val result = nextWriteResult
-                if (result is ClipboardWriteResult.Success) {
-                    this@FakeClipboardEnvironment.text = text
+                override fun writeText(
+                    text: String,
+                    originEventId: String,
+                ): ClipboardWriteResult {
+                    val result = nextWriteResult
+                    if (result is ClipboardWriteResult.Success) {
+                        this@FakeClipboardEnvironment.text = text
+                    }
+                    return result
                 }
-                return result
             }
-        }
 
-        val readBackend = object : BackgroundClipboardBackend {
-            override val mode = ClipboardReadMode.FOREGROUND_ONLY
+        val readBackend =
+            object : BackgroundClipboardBackend {
+                override val mode = ClipboardReadMode.FOREGROUND_ONLY
 
-            override fun probe() = FakeBackgroundClipboardBackend.capabilityReport(
-                mode,
-                CapabilityState.READY,
-            )
+                override fun probe() =
+                    FakeBackgroundClipboardBackend.capabilityReport(
+                        mode,
+                        CapabilityState.READY,
+                    )
 
-            override fun start(onChanged: (ClipboardChange) -> Unit) = Unit
+                override fun start(onChanged: (ClipboardChange) -> Unit) = Unit
 
-            override fun stop() = Unit
+                override fun stop() = Unit
 
-            override fun readText(): ClipboardReadResult =
-                text?.let { ClipboardReadResult.Success(it) } ?: ClipboardReadResult.Empty
+                override fun readText(): ClipboardReadResult = text?.let { ClipboardReadResult.Success(it) } ?: ClipboardReadResult.Empty
 
-            override fun health() = BackendHealth(BackendHealthState.HEALTHY, 1L)
-        }
+                override fun health() = BackendHealth(BackendHealthState.HEALTHY, 1L)
+            }
     }
 
     private fun capabilityHarness(
@@ -305,7 +371,9 @@ class HealthViewModelTest {
         model.setPreferredReadMode(ClipboardReadMode.OVERLAY_POLLING)
 
         assertEquals(ClipboardReadMode.OVERLAY_POLLING, capabilityStore.preferredReadMode())
-        val polling = model.state.value.routes.first { it.mode == ClipboardReadMode.OVERLAY_POLLING }
+        val polling =
+            model.state.value.routes
+                .first { it.mode == ClipboardReadMode.OVERLAY_POLLING }
         assertTrue(polling.preferred)
     }
 
@@ -315,8 +383,16 @@ class HealthViewModelTest {
         model.runWriteTest()
 
         assertEquals(CapabilityState.READY, capabilityStore.publicWriteState())
-        assertEquals(ConduitStatus.READY, model.state.value.localWrite?.status)
-        assertEquals(true, model.state.value.testResult?.success)
+        assertEquals(
+            ConduitStatus.READY,
+            model.state.value.localWrite
+                ?.status,
+        )
+        assertEquals(
+            true,
+            model.state.value.testResult
+                ?.success,
+        )
         // The test token never survives the test (plan §5.3).
         assertNull(environment.text)
     }
@@ -330,8 +406,16 @@ class HealthViewModelTest {
 
         assertEquals(CapabilityState.UNAVAILABLE, capabilityStore.publicWriteState())
         assertEquals("CLIPBOARD_WRITE_DENIED", capabilityStore.publicWriteErrorCode())
-        assertEquals(ConduitStatus.UNAVAILABLE, model.state.value.localWrite?.status)
-        assertEquals(false, model.state.value.testResult?.success)
+        assertEquals(
+            ConduitStatus.UNAVAILABLE,
+            model.state.value.localWrite
+                ?.status,
+        )
+        assertEquals(
+            false,
+            model.state.value.testResult
+                ?.success,
+        )
     }
 
     @Test
@@ -339,32 +423,38 @@ class HealthViewModelTest {
         // The real backend + probes pair from production, with only the Shizuku
         // API answers faked: channel up, authorization initially denied.
         var prerequisites = RoutePrerequisites(shizukuInstalled = true, shizukuRunning = true)
-        val probes = object : RouteProbes {
-            override fun probe() = prerequisites
-        }
+        val probes =
+            object : RouteProbes {
+                override fun probe() = prerequisites
+            }
         val environment = FakeClipboardEnvironment()
-        val model = HealthViewModel(
-            pairingStore = store,
-            clipboard = ClipboardAccessCoordinator(
-                listOf(
-                    ShizukuClipboardBackend(probes, systemVersion = "test"),
-                    environment.readBackend,
-                ),
-            ),
-            syncHealthSource = null,
-            probeDispatcher = dispatcher,
-            capability = CapabilityWiring(
-                routeProbes = probes,
-                capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore()),
-                writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
-                foregroundBackend = environment.readBackend,
-                clearClipboard = { environment.text = null },
-                nowMs = { 1_755_000_000_000 },
-            ),
-        )
+        val model =
+            HealthViewModel(
+                pairingStore = store,
+                clipboard =
+                    ClipboardAccessCoordinator(
+                        listOf(
+                            ShizukuClipboardBackend(probes, systemVersion = "test"),
+                            environment.readBackend,
+                        ),
+                    ),
+                syncHealthSource = null,
+                probeDispatcher = dispatcher,
+                capability =
+                    CapabilityWiring(
+                        routeProbes = probes,
+                        capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore()),
+                        writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
+                        foregroundBackend = environment.readBackend,
+                        clearClipboard = { environment.text = null },
+                        nowMs = { 1_755_000_000_000 },
+                    ),
+            )
 
         // Channel up but unauthorized: the card offers exactly one in-app action.
-        val before = model.state.value.routes.first { it.id == ReadRouteId.PRIVILEGED }
+        val before =
+            model.state.value.routes
+                .first { it.id == ReadRouteId.PRIVILEGED }
         assertEquals(RouteActionId.REQUEST_PRIVILEGED_PERMISSION, before.nextAction)
         assertEquals(1, before.stepsRemaining)
         assertEquals(CapabilityState.UNAVAILABLE, before.readState)
@@ -375,7 +465,9 @@ class HealthViewModelTest {
         prerequisites = prerequisites.copy(shizukuAuthorized = true)
         model.refresh()
 
-        val after = model.state.value.routes.first { it.id == ReadRouteId.PRIVILEGED }
+        val after =
+            model.state.value.routes
+                .first { it.id == ReadRouteId.PRIVILEGED }
         assertEquals(0, after.stepsRemaining)
         assertNull(after.nextAction) // preferred by default; nothing left to tap
         assertEquals(CapabilityState.DEGRADED, after.readState)
@@ -430,27 +522,30 @@ class HealthViewModelTest {
             clipboard = ClipboardAccessCoordinator(listOf(backend)),
             syncHealthSource = null,
             probeDispatcher = dispatcher,
-            capability = CapabilityWiring(
-                routeProbes = routeProbes,
-                capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore()),
-                writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
-                foregroundBackend = environment.readBackend,
-                clearClipboard = { environment.text = null },
-                peerHealth = peerHealth,
-                nowMs = { 1_755_000_000_000 },
-            ),
+            capability =
+                CapabilityWiring(
+                    routeProbes = routeProbes,
+                    capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore()),
+                    writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
+                    foregroundBackend = environment.readBackend,
+                    clearClipboard = { environment.text = null },
+                    peerHealth = peerHealth,
+                    nowMs = { 1_755_000_000_000 },
+                ),
         )
     }
 
     @Test
     fun `refresh with capability wiring probes each backend exactly once per pass`() {
         val backend = CountingBackend()
-        val model = modelWithCapability(
-            backend,
-            routeProbes = object : RouteProbes {
-                override fun probe() = RoutePrerequisites()
-            },
-        )
+        val model =
+            modelWithCapability(
+                backend,
+                routeProbes =
+                    object : RouteProbes {
+                        override fun probe() = RoutePrerequisites()
+                    },
+            )
         // The init pass runs one ladder probe, not a headline probe plus a ladder probe.
         assertEquals(1, backend.probeCount)
 
@@ -466,22 +561,25 @@ class HealthViewModelTest {
         pair()
         val gate = CompletableDeferred<Unit>()
         var reachabilityProbes = 0
-        val peerHealth = object : PeerHealthApi {
-            override suspend fun probe(peer: PairedPeer): PeerHealthOutcome {
-                reachabilityProbes++
-                if (reachabilityProbes == 1) {
-                    gate.await()
+        val peerHealth =
+            object : PeerHealthApi {
+                override suspend fun probe(peer: PairedPeer): PeerHealthOutcome {
+                    reachabilityProbes++
+                    if (reachabilityProbes == 1) {
+                        gate.await()
+                    }
+                    return PeerHealthOutcome.Unreachable
                 }
-                return PeerHealthOutcome.Unreachable
             }
-        }
-        val model = modelWithCapability(
-            CountingBackend(),
-            routeProbes = object : RouteProbes {
-                override fun probe() = RoutePrerequisites()
-            },
-            peerHealth = peerHealth,
-        )
+        val model =
+            modelWithCapability(
+                CountingBackend(),
+                routeProbes =
+                    object : RouteProbes {
+                        override fun probe() = RoutePrerequisites()
+                    },
+                peerHealth = peerHealth,
+            )
         // The init pass is suspended inside the first reachability probe.
         assertEquals(1, reachabilityProbes)
 
@@ -544,17 +642,19 @@ class HealthViewModelTest {
             clipboard = ClipboardAccessCoordinator(listOf(environment.readBackend)),
             syncHealthSource = null,
             probeDispatcher = dispatcher,
-            capability = CapabilityWiring(
-                routeProbes = object : RouteProbes {
-                    override fun probe() = RoutePrerequisites()
-                },
-                capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore()),
-                writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
-                foregroundBackend = environment.readBackend,
-                clearClipboard = { environment.text = null },
-                peerHealth = peerHealth,
-                nowMs = { 1_755_000_000_000 },
-            ),
+            capability =
+                CapabilityWiring(
+                    routeProbes =
+                        object : RouteProbes {
+                            override fun probe() = RoutePrerequisites()
+                        },
+                    capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore()),
+                    writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
+                    foregroundBackend = environment.readBackend,
+                    clearClipboard = { environment.text = null },
+                    peerHealth = peerHealth,
+                    nowMs = { 1_755_000_000_000 },
+                ),
             reachabilityRefreshTicker = ticker,
         )
     }
@@ -683,9 +783,10 @@ class HealthViewModelTest {
     fun `charter forbids red - no segment ever needs action except network`() {
         // NEEDS_ACTION is reserved for the one segment the user can fix (pairing).
         pair()
-        val sync = FakeSyncHealthSource(
-            SyncHealth(serviceRunning = false, connected = false, peerWriteState = CapabilityState.UNAVAILABLE),
-        )
+        val sync =
+            FakeSyncHealthSource(
+                SyncHealth(serviceRunning = false, connected = false, peerWriteState = CapabilityState.UNAVAILABLE),
+            )
         val state = viewModel(syncHealthSource = sync).state.value
         assertEquals(
             emptyList<ConduitStatus>(),

@@ -3,6 +3,7 @@ package com.clipsync.android.ui.health
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.clipsync.android.pairing.DeviceAccents
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.pairing.PeerClipboardApply
@@ -19,6 +20,7 @@ import com.clipsync.android.platform.clipboard.ClipboardSelfTest
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
 import com.clipsync.android.platform.clipboard.RouteProbes
+import com.clipsync.android.ui.ConduitDeviceUi
 import com.clipsync.android.ui.ConduitSegmentState
 import com.clipsync.android.ui.ConduitStatus
 import com.clipsync.android.ui.ConduitTestResult
@@ -83,7 +85,12 @@ class HealthViewModel(
     // clipboard and sync facts arrive asynchronously via refresh()/snapshots().
     private val mutableState =
         MutableStateFlow(
-            buildHealthScreenState(peer = pairingStore.peer(), clipboard = null, sync = null),
+            buildHealthScreenState(
+                peer = pairingStore.peer(),
+                clipboard = null,
+                sync = null,
+                deviceAccent = pairingStore::deviceAccent,
+            ),
         )
 
     val state: StateFlow<HealthScreenState> = mutableState.asStateFlow()
@@ -290,6 +297,18 @@ class HealthViewModel(
         publish(pairingStore.peer())
     }
 
+    /**
+     * Persists a manual device colour for one conduit device row (P1#14) and
+     * republishes; null returns the row to its pairing-order default.
+     */
+    fun setDeviceAccent(
+        deviceId: String,
+        slot: Int?,
+    ) {
+        pairingStore.setDeviceAccent(deviceId, slot)
+        publish(pairingStore.peer())
+    }
+
     /** Reachability plus the peer's apply self-report, both from the same health probe. */
     private data class PeerProbe(
         val reachability: PeerReachability,
@@ -311,8 +330,13 @@ class HealthViewModel(
 
     private fun publish(peer: PairedPeer?) {
         mutableState.value =
-            buildHealthScreenState(peer, lastClipboardReport, lastSyncHealth, lastFacts)
-                .copy(testResult = testResult)
+            buildHealthScreenState(
+                peer,
+                lastClipboardReport,
+                lastSyncHealth,
+                lastFacts,
+                deviceAccent = pairingStore::deviceAccent,
+            ).copy(testResult = testResult)
     }
 
     companion object {
@@ -364,6 +388,7 @@ internal fun buildHealthScreenState(
     clipboard: CapabilityReport?,
     sync: SyncHealth?,
     facts: CapabilityFacts? = null,
+    deviceAccent: (String) -> Int? = { null },
 ): HealthScreenState {
     val network = networkSegment(peer, sync, facts)
     val state =
@@ -374,6 +399,7 @@ internal fun buildHealthScreenState(
             peerWrite = peerWriteSegment(network.status, sync, facts),
             pairedDeviceCount = if (peer != null) 1 else 0,
             pairedPeerName = peer?.displayName,
+            pairedDevices = conduitDeviceRows(listOfNotNull(peer), deviceAccent),
             localWrite = facts?.let(::localWriteSegmentFromFacts),
             routes = facts?.let(::buildReadRoutes).orEmpty(),
             serviceRunning = sync?.serviceRunning ?: false,
@@ -381,6 +407,25 @@ internal fun buildHealthScreenState(
         )
     return applySingleBeckon(state)
 }
+
+/**
+ * Maps trusted peers in pairing order to conduit device rows (P1#14): the
+ * order supplies each row's default slot, a stored manual override wins.
+ */
+private fun conduitDeviceRows(
+    peers: List<PairedPeer>,
+    deviceAccent: (String) -> Int?,
+): List<ConduitDeviceUi> =
+    peers.mapIndexed { index, peer ->
+        val defaultSlot = DeviceAccents.defaultSlot(index)
+        ConduitDeviceUi(
+            deviceId = peer.deviceId,
+            displayName = peer.displayName,
+            platformLabel = if (peer.platform == "windows") "Windows" else peer.platform,
+            accentSlot = deviceAccent(peer.deviceId) ?: defaultSlot,
+            defaultSlot = defaultSlot,
+        )
+    }
 
 /**
  * Single-beckon rule (charter §5.6): when several segments need action, only

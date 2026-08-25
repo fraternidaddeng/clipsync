@@ -168,6 +168,41 @@ public sealed class DeviceManagementViewModelTests : IAsyncDisposable
         Assert.Equal("Pixel 8", viewModel.RenameText);
     }
 
+    [Fact]
+    public async Task DeviceAccentSwatchTapPinsColourAndDefaultTapClearsIt()
+    {
+        await SeedDeviceAsync();
+        await viewModel.InitializeAsync();
+
+        // First paired device follows pairing order: dev-1, worded as a fact.
+        var device = Assert.Single(viewModel.Devices);
+        Assert.Equal(1, device.AccentIndex);
+        Assert.Equal(1, device.DefaultAccentIndex);
+        Assert.False(device.HasCustomAccent);
+        Assert.Equal("跟随配对顺位", device.AccentSourceText);
+        Assert.Equal(5, device.AccentSwatches.Count);
+        Assert.True(device.AccentSwatches.Single(swatch => swatch.Slot == 1).IsSelected);
+
+        // Tapping the third dot pins dev-3 (设备色手动改, P1#14).
+        await viewModel.SetDeviceAccentCommand.ExecuteAsync(
+            device.AccentSwatches.Single(swatch => swatch.Slot == 3));
+        device = Assert.Single(viewModel.Devices);
+        Assert.Equal(3, device.AccentIndex);
+        Assert.True(device.HasCustomAccent);
+        Assert.Equal("手动指定", device.AccentSourceText);
+        Assert.True(device.AccentSwatches.Single(swatch => swatch.Slot == 3).IsSelected);
+        Assert.Equal(3, (await store.GetDeviceAsync(PeerDeviceId))!.AccentOverride);
+
+        // Tapping the pairing-order default clears the stored override instead of pinning it.
+        var defaultSwatch = device.AccentSwatches.Single(swatch => swatch.IsDefault);
+        Assert.Null(defaultSwatch.OverrideToStore);
+        await viewModel.SetDeviceAccentCommand.ExecuteAsync(defaultSwatch);
+        device = Assert.Single(viewModel.Devices);
+        Assert.Equal(1, device.AccentIndex);
+        Assert.False(device.HasCustomAccent);
+        Assert.Null((await store.GetDeviceAsync(PeerDeviceId))!.AccentOverride);
+    }
+
     private async Task SeedDeviceAsync()
     {
         await store.InitializeAsync();

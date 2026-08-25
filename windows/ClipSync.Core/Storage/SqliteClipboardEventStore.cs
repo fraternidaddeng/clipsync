@@ -8,7 +8,7 @@ namespace ClipSync.Core.Storage;
 
 public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IAsyncDisposable
 {
-    public const int SchemaVersion = 4;
+    public const int SchemaVersion = 5;
     private const int MaximumQueryLimit = 2_000;
     private const int BusyTimeoutMilliseconds = 30_000;
     private const string TextKind = "text";
@@ -669,6 +669,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         new(2, ApplySyncSchemaAsync),
         new(3, ApplyImageSchemaAsync),
         new(4, ApplyContentHashIndexAsync),
+        new(5, ApplyDeviceAccentOverrideAsync),
     ];
 
     private readonly record struct SchemaMigrationStep(
@@ -857,6 +858,24 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
     {
         const string sql = """
             CREATE INDEX IF NOT EXISTS clips_content_hash_idx ON clips(content_hash);
+            """;
+        await ExecuteNonQueryAsync(connection, transaction, sql, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Adjacent v4→v5 step (settings-roadmap P1#14 设备色手动改). Purely additive:
+    /// a nullable per-device accent override (1..5 = charter dev-1..dev-5). NULL keeps
+    /// the pairing-order default. The value belongs to the device identity, so revoke
+    /// and re-pair upserts leave it alone.
+    /// </summary>
+    private static async ValueTask ApplyDeviceAccentOverrideAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        const string sql = """
+            ALTER TABLE devices ADD COLUMN accent_override INTEGER
+                CHECK (accent_override IS NULL OR accent_override BETWEEN 1 AND 5);
             """;
         await ExecuteNonQueryAsync(connection, transaction, sql, cancellationToken).ConfigureAwait(false);
     }

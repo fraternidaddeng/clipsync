@@ -3,15 +3,13 @@ package com.clipsync.android.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.clipsync.android.pairing.DeviceAccents
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
 import com.clipsync.android.platform.clipboard.ClipboardWriter
 import com.clipsync.android.storage.ClipHistoryEntry
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -25,6 +23,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 /** One row of the 一屏 history list. */
 data class HomeClipItem(
@@ -34,11 +35,12 @@ data class HomeClipItem(
     /** Null for clips this phone produced (缺省即本地 — locals carry no tag). */
     val remoteSourceLabel: String?,
     /**
-     * 1-based pairing slot of the origin device (charter §3.4: neighbour hues
-     * follow pairing order, never a hash). Null for locals and for remotes
+     * Effective neighbour-hue slot (1..5) of the origin device: the manual
+     * per-device override when one is set (P1#14), else the pairing-order
+     * default (charter §3.4 — never a hash). Null for locals and for remotes
      * that hold no pairing slot.
      */
-    val sourcePairingOrder: Int? = null,
+    val sourceAccentSlot: Int? = null,
     /** Render-time format tag (ADR 0003) — classified from content, never persisted. */
     val format: ClipContentFormat = ClipContentFormat.PLAIN,
     /** True for image clips (kind = image); the card renders a thumbnail instead of text. */
@@ -51,7 +53,9 @@ data class HomeClipItem(
 sealed interface HomeNotice {
     data object Copied : HomeNotice
 
-    data class CopyFailed(val errorCode: String) : HomeNotice
+    data class CopyFailed(
+        val errorCode: String,
+    ) : HomeNotice
 
     data object DeletedLocal : HomeNotice
 }
@@ -83,7 +87,7 @@ class HomeViewModel(
 
     private val queryInput = MutableStateFlow("")
     private val formatFilterInput = MutableStateFlow<ClipContentFormat?>(null)
-    private val peersSnapshot = MutableStateFlow(pairingStore.pairedPeers())
+    private val peersSnapshot = MutableStateFlow(sourceSnapshot())
     private val localDeviceId = pairingStore.localDeviceId()
     private var noticeClearJob: Job? = null
 
@@ -97,11 +101,11 @@ class HomeViewModel(
                     },
                 peersSnapshot,
                 formatFilterInput,
-            ) { (query, entries), peers, filter ->
+            ) { (query, entries), sources, filter ->
                 // Format filtering happens here, render-time, on the classified
                 // rows (ADR 0003) — the repository query stays untouched.
                 // Format chips are text vocabulary, so images only show under 全部.
-                val rows = entries.map { it.toHomeItem(localDeviceId, peers) }
+                val rows = entries.map { it.toHomeItem(localDeviceId, sources) }
                 Triple(
                     query,
                     if (filter == null) rows else rows.filter { it.format == filter && !it.isImage },
@@ -131,9 +135,26 @@ class HomeViewModel(
         formatFilterInput.value = format
     }
 
-    /** Re-reads the pairing store so remote source tags pick up a new peer name. */
+    /** Re-reads the pairing store so remote source tags pick up a new peer name or device colour. */
     fun refreshPeer() {
-        peersSnapshot.value = pairingStore.pairedPeers()
+        peersSnapshot.value = sourceSnapshot()
+    }
+
+    /**
+     * Peers plus their effective neighbour-hue slots, resolved once per refresh:
+     * a manual override (P1#14) wins, else the pairing-order default.
+     */
+    private fun sourceSnapshot(): SourcePeers {
+        val peers = pairingStore.pairedPeers()
+        return SourcePeers(
+            peers = peers,
+            accentSlots =
+                peers
+                    .mapIndexed { index, peer ->
+                        peer.deviceId to
+                            (pairingStore.deviceAccent(peer.deviceId) ?: DeviceAccents.defaultSlot(index))
+                    }.toMap(),
+        )
     }
 
     /**
@@ -143,18 +164,19 @@ class HomeViewModel(
     fun copy(eventId: String) {
         viewModelScope.launch {
             val entry = history.findVisible(eventId) ?: return@launch
-            val result = if (entry.isImage) {
-                // The blob lives on disk, not in the row; a missing blob is an
-                // honest failure, never a silent empty-text write.
-                val payload = history.imagePayload(entry.eventId)
-                if (payload == null) {
-                    ClipboardWriteResult.Failure(ClipboardWriter.IMAGE_WRITE_UNAVAILABLE)
+            val result =
+                if (entry.isImage) {
+                    // The blob lives on disk, not in the row; a missing blob is an
+                    // honest failure, never a silent empty-text write.
+                    val payload = history.imagePayload(entry.eventId)
+                    if (payload == null) {
+                        ClipboardWriteResult.Failure(ClipboardWriter.IMAGE_WRITE_UNAVAILABLE)
+                    } else {
+                        writeCoordinator.writeImage(payload.bytes, payload.mimeType, entry.eventId).result
+                    }
                 } else {
-                    writeCoordinator.writeImage(payload.bytes, payload.mimeType, entry.eventId).result
+                    writeCoordinator.writeText(entry.content, entry.eventId).result
                 }
-            } else {
-                writeCoordinator.writeText(entry.content, entry.eventId).result
-            }
             showNotice(
                 when (result) {
                     is ClipboardWriteResult.Success -> HomeNotice.Copied
@@ -175,10 +197,11 @@ class HomeViewModel(
     private fun showNotice(notice: HomeNotice) {
         noticeClearJob?.cancel()
         mutableState.update { it.copy(notice = notice) }
-        noticeClearJob = viewModelScope.launch {
-            delayMs(noticeClearAfterMs)
-            mutableState.update { it.copy(notice = null) }
-        }
+        noticeClearJob =
+            viewModelScope.launch {
+                delayMs(noticeClearAfterMs)
+                mutableState.update { it.copy(notice = null) }
+            }
     }
 
     companion object {
@@ -193,28 +216,40 @@ class HomeViewModel(
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                    HomeViewModel(history, writeCoordinator, pairingStore) as T
+                override fun <T : ViewModel> create(modelClass: Class<T>): T = HomeViewModel(history, writeCoordinator, pairingStore) as T
             }
     }
 }
 
-internal fun ClipHistoryEntry.toHomeItem(localDeviceId: String, peers: List<PairedPeer>): HomeClipItem {
+/** Paired peers plus each device's effective neighbour-hue slot (override or default). */
+internal data class SourcePeers(
+    val peers: List<PairedPeer>,
+    val accentSlots: Map<String, Int>,
+)
+
+internal fun ClipHistoryEntry.toHomeItem(
+    localDeviceId: String,
+    sources: SourcePeers,
+): HomeClipItem {
     val remote = originDeviceId != localDeviceId
-    // The device's 1-based pairing slot picks its neighbour hue (charter §3.4:
-    // by pairing order, never a hash); an unslotted remote stays unhued.
-    val slot = peers.indexOfFirst { it.deviceId == originDeviceId }.takeIf { it >= 0 }?.plus(1)
-    val label = when {
-        !remote -> null
-        slot != null -> peers[slot - 1].displayName
-        else -> "远端设备"
-    }
+    val peers = sources.peers
+    // The device's neighbour hue: its manual colour if one was chosen (P1#14),
+    // else its pairing-order slot (charter §3.4: by order, never a hash);
+    // an unslotted remote stays unhued.
+    val peerIndex = peers.indexOfFirst { it.deviceId == originDeviceId }.takeIf { it >= 0 }
+    val slot = peerIndex?.let { sources.accentSlots[originDeviceId] ?: DeviceAccents.defaultSlot(it) }
+    val label =
+        when {
+            !remote -> null
+            peerIndex != null -> peers[peerIndex].displayName
+            else -> "远端设备"
+        }
     return HomeClipItem(
         eventId = eventId,
         preview = if (isImage) "图片" else previewText(content),
         createdAtMs = createdAtMs,
         remoteSourceLabel = label,
-        sourcePairingOrder = if (remote) slot else null,
+        sourceAccentSlot = if (remote) slot else null,
         // Classified from the full content (the preview may be truncated).
         // Image rows carry no text to classify — they get the 图片 tag instead.
         format = if (isImage) ClipContentFormat.PLAIN else classifyClipContent(content),
@@ -224,7 +259,10 @@ internal fun ClipHistoryEntry.toHomeItem(localDeviceId: String, peers: List<Pair
 }
 
 /** Single-paragraph preview: collapse whitespace, cap the length. */
-internal fun previewText(content: String, limit: Int = HomeViewModel.PREVIEW_LIMIT): String {
+internal fun previewText(
+    content: String,
+    limit: Int = HomeViewModel.PREVIEW_LIMIT,
+): String {
     val collapsed = content.replace(Regex("\\s+"), " ").trim()
     return if (collapsed.length <= limit) collapsed else collapsed.take(limit) + "…"
 }

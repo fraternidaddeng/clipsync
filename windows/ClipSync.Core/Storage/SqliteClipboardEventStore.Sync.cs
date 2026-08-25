@@ -282,6 +282,33 @@ public sealed partial class SqliteClipboardEventStore
         return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) == 1;
     }
 
+    /// <summary>
+    /// 设备色手动改（settings-roadmap P1#14）: pins a device's neighbour colour to
+    /// accent slot 1..5, or clears the pin (null) so the pairing-order default rules
+    /// again. Returns false when the device is unknown.
+    /// </summary>
+    public async ValueTask<bool> SetDeviceAccentAsync(
+        string deviceId,
+        int? accentOverride,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(deviceId);
+        if (accentOverride is { } slot && slot is < 1 or > 5)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(accentOverride), slot, "Device accent override must be 1..5 or null.");
+        }
+
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = "UPDATE devices SET accent_override = $accent WHERE device_id = $device_id;";
+        command.Parameters.AddWithValue("$device_id", deviceId);
+        command.Parameters.AddWithValue("$accent", (object?)accentOverride ?? DBNull.Value);
+        return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) == 1;
+    }
+
     /// <summary>Every origin's persisted receive state, including this device's own contiguous history.</summary>
     public async ValueTask<IReadOnlyDictionary<string, OriginReceiveState>> GetKnownVectorAsync(
         CancellationToken cancellationToken = default)
@@ -1170,7 +1197,8 @@ public sealed partial class SqliteClipboardEventStore
         await using var command = connection.CreateCommand();
         command.CommandText = """
             SELECT device_id, display_name, platform, certificate_fingerprint,
-                   pair_secret_protected, trust_epoch, created_at, last_seen_at, revoked_at
+                   pair_secret_protected, trust_epoch, created_at, last_seen_at, revoked_at,
+                   accent_override
             FROM devices
             WHERE $device_id IS NULL OR device_id = $device_id
             ORDER BY created_at, device_id;
@@ -1190,7 +1218,8 @@ public sealed partial class SqliteClipboardEventStore
                 reader.GetInt64(5),
                 DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(6)),
                 reader.IsDBNull(7) ? null : DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(7)),
-                reader.IsDBNull(8) ? null : DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(8))));
+                reader.IsDBNull(8) ? null : DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(8)),
+                reader.IsDBNull(9) ? null : reader.GetInt32(9)));
         }
 
         return devices;

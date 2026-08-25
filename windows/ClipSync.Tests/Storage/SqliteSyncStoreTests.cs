@@ -565,6 +565,37 @@ public sealed class SqliteSyncStoreTests
         Assert.Equal("protected-secret-new", repaired.PairSecretProtected);
     }
 
+    [Fact]
+    public async Task DeviceAccentOverridePersistsSurvivesRepairAndClears()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+
+        // New devices follow pairing order: no override stored.
+        Assert.Null((await store.GetDeviceAsync(PhoneDeviceId))!.AccentOverride);
+
+        // 设备色手动改 (P1#14): the pin persists and out-of-range slots are refused.
+        Assert.True(await store.SetDeviceAccentAsync(PhoneDeviceId, 4));
+        Assert.Equal(4, (await store.GetDeviceAsync(PhoneDeviceId))!.AccentOverride);
+        Assert.False(await store.SetDeviceAccentAsync(TabletDeviceId, 2));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+            () => store.SetDeviceAccentAsync(PhoneDeviceId, 0).AsTask());
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+            () => store.SetDeviceAccentAsync(PhoneDeviceId, 6).AsTask());
+
+        // The colour belongs to the device identity: revoke + re-pair upsert keeps the pin.
+        await store.RevokeDeviceAsync(PhoneDeviceId, BaseTime.AddSeconds(1));
+        await store.UpsertDeviceAsync(
+            Phone() with { PairSecretProtected = "protected-secret-new" },
+            BaseTime.AddSeconds(2));
+        Assert.Equal(4, (await store.GetDeviceAsync(PhoneDeviceId))!.AccentOverride);
+
+        // Null clears the pin, back to 跟随配对顺位.
+        Assert.True(await store.SetDeviceAccentAsync(PhoneDeviceId, null));
+        Assert.Null((await store.GetDeviceAsync(PhoneDeviceId))!.AccentOverride);
+    }
+
     private static NewPairedDevice Phone() =>
         new(PhoneDeviceId, "Phone", "android", "aa".PadLeft(64, 'a'), "protected-secret-phone");
 

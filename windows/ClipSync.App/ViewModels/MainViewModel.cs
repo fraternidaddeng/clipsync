@@ -858,6 +858,24 @@ public partial class MainViewModel(
         await RefreshDevicesAsync();
     }
 
+    /// <summary>
+    /// 设备色手动改（P1#14）: a swatch tap on a conduit device row. Choosing the
+    /// pairing-order default stores null (back to 跟随配对顺位). History reloads too,
+    /// because source-tag tinting reads the device's effective accent.
+    /// </summary>
+    [RelayCommand]
+    private async Task SetDeviceAccentAsync(DeviceAccentSwatch? swatch)
+    {
+        if (swatch is null)
+        {
+            return;
+        }
+
+        await store.SetDeviceAccentAsync(swatch.DeviceId, swatch.OverrideToStore);
+        await RefreshDevicesAsync();
+        await RefreshAsync();
+    }
+
     partial void OnSelectedDeviceChanged(PairedDeviceViewModel? value)
     {
         RenameDeviceCommand.NotifyCanExecuteChanged();
