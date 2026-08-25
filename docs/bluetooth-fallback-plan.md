@@ -1,6 +1,6 @@
 # 蓝牙备援传输实施计划
 
-状态：设计定稿（对应 ADR 0005）。阶段 1 已完成（纯逻辑，见下）；阶段 0 与阶段 2–5 未开始。阶段 1 无平台依赖、不受阶段 0 结论影响，故先行落地；进入阶段 2/3 前仍须补做阶段 0 的实体机验证。
+状态：设计定稿（对应 ADR 0005）。阶段 1 已完成（纯逻辑，见下）；阶段 0 的 spike 工具与运行手册已落库、**等待实体机执行**（无实体机结果前阶段 0 不算完成）；阶段 2–5 未开始。阶段 1 无平台依赖、不受阶段 0 结论影响，故先行落地；进入阶段 2/3 前仍须补做阶段 0 的实体机验证。
 适用分支：`main`。所有阶段遵守仓库既有验收规则：无实体机证据不得标 `READY`；`TreatWarningsAsErrors`、detekt/ktlint 基线、协议 fixtures 由 `scripts/validate-protocol.py` 校验的约束照常适用。
 
 ## 总体形态
@@ -15,6 +15,8 @@
 会话引擎（`SyncSessionEngine` / `SyncEngine`）、协议 schema、数据库、配对流程零改动。
 
 ## 阶段 0：可行性验证（spike，产出证据，不产出功能）
+
+状态：**工具与材料已就绪，等待实体机执行**。运行手册（含逐步操作、期望输出、GO/REVISE 门槛与排障）见 `docs/bluetooth-phase0-spike.md`；结果回填模板见 `docs/bluetooth-phase0-report-template.md`。Windows 监听端 spike 在 `scripts/spike-bt1-windows/`（包装脚本 `scripts/spike-bt1-windows.ps1`，独立于 `ClipSync.sln`，引用 `ClipSync.Core` 的真实 bt1 实现与 `RfcommContract` 冻结 UUID）；Android 客户端 spike 是 debug 构建独有的「ClipSync BT Spike」入口（`android/app/src/debug/java/com/clipsync/android/spike/`，release APK 不含蓝牙权限与 spike 代码，logcat 标签 `ClipSyncSpike`）。双端 spike 项目在无实体机的 CI/Linux 主机上可编译（Windows 侧经 `EnableWindowsTargeting`）。
 
 任务：
 

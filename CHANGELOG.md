@@ -38,6 +38,7 @@
 
 ### 文档 / 测试
 
+- [双端] 蓝牙备援阶段 0 可行性 spike 材料（仅证据收集，非产品功能，无 READY 声明）：运行手册 `docs/bluetooth-phase0-spike.md`（前置条件与 OS bonding/ClipSync 配对的区别、双端逐步操作、期望输出样例、GO/REVISE 门槛、排障表）与空白报告模板 `docs/bluetooth-phase0-report-template.md`；Windows 监听端 spike 控制台工具 `scripts/spike-bt1-windows/`（+ 包装脚本 `scripts/spike-bt1-windows.ps1`）——未打包进程经 WinRT `RfcommServiceProvider` 发布冻结服务 UUID、只收一个连接、复用 `ClipSync.Core` 阶段 1 bt1 实现做真实握手，独立于 `ClipSync.sln` 且经 `EnableWindowsTargeting` 可在 Linux 编译（`TreatWarningsAsErrors` 生效）；Android 客户端 spike 为 debug 构建独有的「ClipSync BT Spike」入口（`android/app/src/debug/`，声明 `BLUETOOTH_CONNECT` 仅入 debug manifest，release APK 无蓝牙权限与 spike 代码）——枚举 bonded 设备、`createRfcommSocketToServiceRecord` 连接、bt1 握手、RTT/上下行吞吐测量，结果以 `SPIKE_RESULT:` 结构化行输出（logcat 标签 `ClipSyncSpike`）便于本地代理采集；`docs/bluetooth-fallback-plan.md` 阶段 0 小节同步链接上述材料。
 - CI 工作流重构为三作业：协议 schema/fixture 校验、Windows 构建 + 全部测试、Android 单元测试 + debug APK 组装；在 `cursor/**` / `feature/**` 分支与 PR 上运行。
 - 测试规模：444 Android JVM + 185 跨平台对端 + 39 Windows 应用层用例；新增 Windows↔Android 全链路脚本化集成测试与真实会话事件驱动的通路页验证。
 - 新增 `docs/verification-without-device.md`（绿测 ≠ 兼容的边界）、`docs/stage-gap-audit.md`、`docs/competitive-analysis.md`、`docs/design/ui-gap-audit.md`、`docs/manual-qa-checklist.md`、`docs/release-notes-template.md`；扩充 `docs/device-validation-matrix.md` 为脚本化检查清单。
