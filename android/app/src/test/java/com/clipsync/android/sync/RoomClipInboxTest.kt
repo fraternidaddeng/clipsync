@@ -25,9 +25,11 @@ class RoomClipInboxTest {
     @Before
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        database = Room.inMemoryDatabaseBuilder(context, ClipSyncDatabase::class.java)
-            .allowMainThreadQueries()
-            .build()
+        database =
+            Room
+                .inMemoryDatabaseBuilder(context, ClipSyncDatabase::class.java)
+                .allowMainThreadQueries()
+                .build()
         store = ClipSyncRepository(database, LOCAL_DEVICE)
         inbox = RoomClipInbox { store }
     }
@@ -38,11 +40,12 @@ class RoomClipInboxTest {
     }
 
     @Test
-    fun `committed remote text resolves by event id`() = runBlocking {
-        store.storeRemoteEvent(remoteText(EVENT_ID, "来自电脑的文本"), sourcePeerId = PEER)
+    fun `committed remote text resolves by event id`() =
+        runBlocking {
+            store.storeRemoteEvent(remoteText(EVENT_ID, "来自电脑的文本"), sourcePeerId = PEER)
 
-        assertEquals("来自电脑的文本", inbox.textFor(EVENT_ID))
-    }
+            assertEquals("来自电脑的文本", inbox.textFor(EVENT_ID))
+        }
 
     @Test
     fun `unknown event id resolves to null`() {
@@ -50,14 +53,15 @@ class RoomClipInboxTest {
     }
 
     @Test
-    fun `deleting the history entry invalidates the notification copy action`() = runBlocking {
-        store.storeRemoteEvent(remoteText(EVENT_ID, "will be deleted"), sourcePeerId = PEER)
-        store.deleteEvent(EVENT_ID, deletedAtMs = 100L)
+    fun `deleting the history entry invalidates the notification copy action`() =
+        runBlocking {
+            store.storeRemoteEvent(remoteText(EVENT_ID, "will be deleted"), sourcePeerId = PEER)
+            store.deleteEvent(EVENT_ID, deletedAtMs = 100L)
 
-        // Deleted is gone — the receiver shows the honest 内容已不存在 toast instead of
-        // resurrecting content from a second store the user cannot clear.
-        assertNull(inbox.textFor(EVENT_ID))
-    }
+            // Deleted is gone — the receiver shows the honest 内容已不存在 toast instead of
+            // resurrecting content from a second store the user cannot clear.
+            assertNull(inbox.textFor(EVENT_ID))
+        }
 
     @Test
     fun `record is a no-op because the Room commit preceding delivery is the record`() {
@@ -77,7 +81,10 @@ class RoomClipInboxTest {
         assertNull(prefs.read("inbox.recent"))
     }
 
-    private fun remoteText(eventId: String, text: String) = RemoteClipEvent(
+    private fun remoteText(
+        eventId: String,
+        text: String,
+    ) = RemoteClipEvent(
         eventId = eventId,
         originDeviceId = PEER,
         originSeq = 1,

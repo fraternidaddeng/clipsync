@@ -39,39 +39,48 @@ object SyncServices {
             }
             val appContext = context.applicationContext
             val store = SharedPrefsKeyValueStore(appContext, name = "clipsync.sync")
-            val settings = SyncSettingsStore(
-                SharedPrefsKeyValueStore(appContext, name = SyncSettingsStore.PREFERENCES_NAME),
-            )
+            val settings =
+                SyncSettingsStore(
+                    SharedPrefsKeyValueStore(appContext, name = SyncSettingsStore.PREFERENCES_NAME),
+                )
             // One-time migration off the SharedPreferences inbox stub: drop its plaintext
             // JSON blob of received texts. Every inbox entry also lives in Room history,
             // which is what RoomClipInbox resolves from.
             RoomClipInbox.purgeLegacyStub(store)
-            services = Services(
-                // Pause/private gates wrap the queue itself so no entry point can bypass
-                // them; inside the gate, the user size cap applies before the 1 MiB rule.
-                outbox = SettingsGatedClipOutbox(
-                    KeyValueClipOutbox(
-                        store,
-                        maxUtf8Bytes = { settings.effectiveMaxSyncTextBytes },
-                    ),
-                    settings,
-                ),
-                inbox = RoomClipInbox { SyncStore.repository(appContext) },
-                // The Stage-4 WebSocket engine registers itself via install(); until then a
-                // queued entry simply waits for the next connection.
-                syncRequester = SyncRequester { },
-            )
+            services =
+                Services(
+                    // Pause/private gates wrap the queue itself so no entry point can bypass
+                    // them; inside the gate, the user size cap applies before the 1 MiB rule.
+                    outbox =
+                        SettingsGatedClipOutbox(
+                            KeyValueClipOutbox(
+                                store,
+                                maxUtf8Bytes = { settings.effectiveMaxSyncTextBytes },
+                            ),
+                            settings,
+                        ),
+                    inbox = RoomClipInbox { SyncStore.repository(appContext) },
+                    // The Stage-4 WebSocket engine registers itself via install(); until then a
+                    // queued entry simply waits for the next connection.
+                    syncRequester = SyncRequester { },
+                )
         }
     }
 
-    fun install(outbox: ClipOutbox, inbox: ClipInbox, syncRequester: SyncRequester) {
+    fun install(
+        outbox: ClipOutbox,
+        inbox: ClipInbox,
+        syncRequester: SyncRequester,
+    ) {
         synchronized(this) {
             services = Services(outbox, inbox, syncRequester)
         }
     }
 
     private fun require(): Services =
-        checkNotNull(services) { "SyncServices.initialize must run in Application.onCreate before use." }
+        checkNotNull(services) {
+            "SyncServices.initialize must run in Application.onCreate before use."
+        }
 
     private data class Services(
         val outbox: ClipOutbox,

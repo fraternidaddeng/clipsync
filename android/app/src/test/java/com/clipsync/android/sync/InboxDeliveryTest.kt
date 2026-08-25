@@ -29,7 +29,9 @@ class InboxDeliveryTest {
         // Robolectric recreates the application per test; the shared write coordinator must
         // not keep a writer bound to the previous test's clipboard.
         SharedClipboardWrites.reset()
-        val store = com.clipsync.android.platform.SharedPrefsKeyValueStore(context, name = "inbox-delivery-test")
+        val store =
+            com.clipsync.android.platform
+                .SharedPrefsKeyValueStore(context, name = "inbox-delivery-test")
         inbox = RecordingClipInbox()
         SyncServices.install(
             outbox = KeyValueClipOutbox(store),
@@ -45,7 +47,11 @@ class InboxDeliveryTest {
     private class RecordingClipInbox : ClipInbox {
         private val items = mutableMapOf<String, String>()
 
-        override fun record(eventId: String, text: String, receivedAtEpochMillis: Long) {
+        override fun record(
+            eventId: String,
+            text: String,
+            receivedAtEpochMillis: Long,
+        ) {
             items[eventId] = text
         }
 
@@ -97,9 +103,11 @@ class InboxDeliveryTest {
 
     @Test
     fun autoApplyGateHonoursThePauseSwitch() {
-        val settings = SyncSettingsStore(
-            com.clipsync.android.platform.SharedPrefsKeyValueStore(context, name = "inbox-delivery-settings"),
-        )
+        val settings =
+            SyncSettingsStore(
+                com.clipsync.android.platform
+                    .SharedPrefsKeyValueStore(context, name = "inbox-delivery-settings"),
+            )
         assertTrue(InboxDelivery.autoApplyAllowed(settings))
 
         settings.syncPaused = true
@@ -112,9 +120,11 @@ class InboxDeliveryTest {
 
     @Test
     fun imageAutoApplyGateIsItsOwnOptInAndDefaultOff() {
-        val settings = SyncSettingsStore(
-            com.clipsync.android.platform.SharedPrefsKeyValueStore(context, name = "inbox-delivery-image-settings"),
-        )
+        val settings =
+            SyncSettingsStore(
+                com.clipsync.android.platform
+                    .SharedPrefsKeyValueStore(context, name = "inbox-delivery-image-settings"),
+            )
         // ADR 0004: the text auto_apply_remote default (on) must never write pixel bytes.
         assertTrue(InboxDelivery.autoApplyAllowed(settings))
         assertFalse(InboxDelivery.autoApplyImagesAllowed(settings))
@@ -134,9 +144,11 @@ class InboxDeliveryTest {
 
     @Test
     fun inboxNotifyGateFollowsThePreference() {
-        val settings = SyncSettingsStore(
-            com.clipsync.android.platform.SharedPrefsKeyValueStore(context, name = "inbox-delivery-notify-settings"),
-        )
+        val settings =
+            SyncSettingsStore(
+                com.clipsync.android.platform
+                    .SharedPrefsKeyValueStore(context, name = "inbox-delivery-notify-settings"),
+            )
         // settings-roadmap P1-8: on by default, an in-app total switch for the surface.
         assertTrue(InboxDelivery.inboxNotificationsAllowed(settings))
 
@@ -155,10 +167,20 @@ class InboxDeliveryTest {
         assertEquals("quiet delivery", inbox.textFor("e6"))
         assertEquals("quiet delivery", clipboardText())
         // Only the notification surface goes quiet.
-        assertEquals(0, org.robolectric.Shadows.shadowOf(manager).allNotifications.size)
+        assertEquals(
+            0,
+            org.robolectric.Shadows
+                .shadowOf(manager)
+                .allNotifications.size,
+        )
 
         InboxDelivery.deliver(context, "e7", "quiet manual copy", 124L, autoApply = false, notify = false)
-        assertEquals(0, org.robolectric.Shadows.shadowOf(manager).allNotifications.size)
+        assertEquals(
+            0,
+            org.robolectric.Shadows
+                .shadowOf(manager)
+                .allNotifications.size,
+        )
     }
 
     @Test
@@ -172,14 +194,20 @@ class InboxDeliveryTest {
 
     private fun clipboardText(): String? {
         val manager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        return manager.primaryClip?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.text?.toString()
+        return manager.primaryClip
+            ?.takeIf { it.itemCount > 0 }
+            ?.getItemAt(0)
+            ?.text
+            ?.toString()
     }
 
     private class FailingWriter : ClipboardWriter {
         override fun probe(): CapabilityState = CapabilityState.READY
 
-        override fun writeText(text: String, originEventId: String): ClipboardWriteResult =
-            ClipboardWriteResult.Failure("CLIPBOARD_WRITE_DENIED")
+        override fun writeText(
+            text: String,
+            originEventId: String,
+        ): ClipboardWriteResult = ClipboardWriteResult.Failure("CLIPBOARD_WRITE_DENIED")
     }
 
     private class RecordingWriter : ClipboardWriter {
@@ -187,7 +215,10 @@ class InboxDeliveryTest {
 
         override fun probe(): CapabilityState = CapabilityState.READY
 
-        override fun writeText(text: String, originEventId: String): ClipboardWriteResult {
+        override fun writeText(
+            text: String,
+            originEventId: String,
+        ): ClipboardWriteResult {
             lastOriginEventId = originEventId
             return ClipboardWriteResult.Success
         }

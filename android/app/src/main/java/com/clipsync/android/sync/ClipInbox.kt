@@ -10,7 +10,11 @@ import kotlinx.coroutines.runBlocking
  * interface instead, so notification listeners of other apps cannot read the content.
  */
 interface ClipInbox {
-    fun record(eventId: String, text: String, receivedAtEpochMillis: Long)
+    fun record(
+        eventId: String,
+        text: String,
+        receivedAtEpochMillis: Long,
+    )
 
     fun textFor(eventId: String): String?
 }
@@ -26,12 +30,15 @@ interface ClipInbox {
 class RoomClipInbox(
     private val repository: () -> ClipSyncRepository,
 ) : ClipInbox {
-
     /**
      * No separate write: the sync engine's transactional Room commit that precedes every
      * delivery is the record-first step the plan requires.
      */
-    override fun record(eventId: String, text: String, receivedAtEpochMillis: Long) = Unit
+    override fun record(
+        eventId: String,
+        text: String,
+        receivedAtEpochMillis: Long,
+    ) = Unit
 
     /**
      * Live text rows only: images never enter the text inbox, and a soft-deleted row
