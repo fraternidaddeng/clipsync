@@ -34,3 +34,14 @@
 - 未修改 `.github/workflows/ci.yml`（触发器无缺陷，无需修复）。
 - 未尝试 `workflow_dispatch` 触发（当前凭证为只读，且写操作被任务规范禁止）。
 - 未修改任何计费/账号设置（任务明确禁止）。
+
+---
+
+## 更新（2026-08-25）：已解决——Actions 已启用并常态运行；工作流扩容 + 发布工作流落地
+
+上文诊断的根因已由仓库所有者在网页端排除：2026-08-25 起 Actions 正常创建运行（首次运行 32827123288 暴露并推动修复了两条真 Windows 缺陷，详见 `docs/manual-qa-results.md` 限制 1/6 的闭环记录；此后 main 推送均触发三作业，`d573080` 时点运行 32850466841 全绿）。本文其余部分保留作诊断存档。
+
+同日两项后续变更：
+
+1. **`ci.yml` 由三作业扩为五作业**：新增 `static-analysis`（Android `detekt` + `ktlintCheck`，基线在 `android/config/`，新违规即红）与 `i18n-parity`（`scripts/check-i18n-parity.py` 校验双端 19 语逐键齐全与占位符一致，另重跑 `scripts/generate-windows-strings.py` + `git diff --exit-code` 把守 resx 生成物与 `strings.json` 同步）。
+2. **新增 `release.yml`**：推送 `v*` tag 触发——windows-latest 跑 `scripts/package-windows.ps1`（便携 ZIP + SHA-256，版本号取自 tag），ubuntu-latest 跑 `scripts/package-android.ps1`（配置了 `CLIPSYNC_ANDROID_KEYSTORE_BASE64` / `_KEYSTORE_PASSWORD` / `_KEY_ALIAS` / `_KEY_PASSWORD` secrets 时产出签名 APK；未配置时如实产出 unsigned APK 并在发布说明明示不可安装），随后创建/更新 GitHub Release 并附全部产物与 `.sha256`。发布说明自动注明诚实边界（发布 ≠ 真机验证通过）。截至本更新**尚未打过任何 tag**，Releases 页仍无产物；该工作流的首次实跑验证待第一个 tag。
