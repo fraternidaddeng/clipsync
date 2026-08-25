@@ -29,7 +29,13 @@ internal static class BitmapFile
             var image = new BitmapImage();
             image.BeginInit();
             image.CacheOption = BitmapCacheOption.OnLoad;
-            image.CreateOptions = BitmapCreateOptions.IgnoreColorProfile | BitmapCreateOptions.IgnoreImageCache;
+            // Never add IgnoreImageCache here: WPF's image cache only applies to
+            // URI-loaded bitmaps, and with a stream-only load (null UriSource) the
+            // flag makes BitmapImage.FinalizeCreation call
+            // ImagingCache.RemoveFromImageCache(null), which throws
+            // ArgumentNullException — swallowed below as "decode failed", so every
+            // TryLoad silently returned null on real Windows (CI run 32827123288).
+            image.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
             image.StreamSource = stream;
             if (decodePixelWidth is > 0)
             {
