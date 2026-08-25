@@ -86,6 +86,14 @@ fun HomeScreen(
     onFormatFilterChange: (ClipContentFormat?) -> Unit = {},
     nowMs: () -> Long = System::currentTimeMillis,
     thumbnail: suspend (contentHash: String) -> Bitmap? = { null },
+    /**
+     * 历史字号 (settings-roadmap P0-1): scales only the preview body — the one place the
+     * app shows someone else's content — on top of sp, so system font size still stacks.
+     * Chrome (headers, meta, badges) keeps the charter type scale untouched.
+     */
+    historyFontScale: Float = 1f,
+    /** 预览行数 (settings-roadmap P1-7): the preview body's maxLines, 2 / 4 / 6. */
+    previewLines: Int = 4,
 ) {
     val c = clipSyncColors
     Column(
@@ -156,6 +164,8 @@ fun HomeScreen(
                         item = item,
                         nowMs = nowMs,
                         thumbnail = thumbnail,
+                        fontScale = historyFontScale,
+                        previewLines = previewLines,
                         onCopy = { onCopy(item.eventId) },
                         onDelete = { onDelete(item.eventId) },
                         modifier = Modifier.animateItem(
@@ -325,6 +335,8 @@ private fun DismissableClipCard(
     item: HomeClipItem,
     nowMs: () -> Long,
     thumbnail: suspend (String) -> Bitmap?,
+    fontScale: Float,
+    previewLines: Int,
     onCopy: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -360,7 +372,14 @@ private fun DismissableClipCard(
             }
         },
     ) {
-        ClipCard(item = item, nowMs = nowMs, thumbnail = thumbnail, onCopy = onCopy)
+        ClipCard(
+            item = item,
+            nowMs = nowMs,
+            thumbnail = thumbnail,
+            fontScale = fontScale,
+            previewLines = previewLines,
+            onCopy = onCopy,
+        )
     }
 }
 
@@ -374,6 +393,8 @@ private fun ClipCard(
     item: HomeClipItem,
     nowMs: () -> Long,
     thumbnail: suspend (String) -> Bitmap?,
+    fontScale: Float,
+    previewLines: Int,
     onCopy: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -411,12 +432,14 @@ private fun ClipCard(
         if (item.isImage) {
             ClipThumbnail(contentHash = item.contentHash, thumbnail = thumbnail)
         } else {
+            // 历史字号 scales only this body (someone else's content), on top of sp so the
+            // system font size still stacks; chrome above keeps the charter scale.
             Text(
                 text = item.preview,
-                fontSize = 13.sp,
-                lineHeight = 19.sp,
+                fontSize = 13.sp * fontScale,
+                lineHeight = 19.sp * fontScale,
                 color = c.t2,
-                maxLines = 4,
+                maxLines = previewLines,
                 overflow = TextOverflow.Ellipsis,
             )
         }

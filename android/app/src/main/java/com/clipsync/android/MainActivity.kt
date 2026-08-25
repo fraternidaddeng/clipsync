@@ -681,6 +681,8 @@ private fun ClipSyncApp(
                             onOpenConduit = { tab = 1 },
                             modifier = Modifier.padding(padding),
                             thumbnail = imageThumbnail,
+                            historyFontScale = preferencesState.historyFontScale,
+                            previewLines = preferencesState.previewLines,
                         )
                     place == 1 && pairing ->
                         Column(Modifier.padding(padding)) {
@@ -728,6 +730,13 @@ private fun ClipSyncApp(
                             },
                             onExportHistory = onExportHistory,
                             onImportHistory = onImportHistory,
+                            onHistoryFontScaleChange = preferencesViewModel::setHistoryFontScale,
+                            onPreviewLinesChange = preferencesViewModel::setPreviewLines,
+                            onSkipSensitiveChange = preferencesViewModel::setSkipSensitive,
+                            onInboxNotifyChange = preferencesViewModel::setInboxNotify,
+                            onRetentionDaysChange = preferencesViewModel::setRetentionDays,
+                            onMaxEntriesChange = preferencesViewModel::setMaxEntries,
+                            onClearHistory = preferencesViewModel::clearHistory,
                             modifier = Modifier.padding(padding),
                         )
                 }
