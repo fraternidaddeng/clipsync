@@ -141,37 +141,40 @@ class MainActivity : ComponentActivity() {
             pairingStore = pairingStore,
             clipboard = captureStack.coordinator,
             // Live facts from the sync foreground service: alive + authenticated session.
-            syncHealthSource = SyncHealthSource {
-                combine(
-                    ClipboardSyncService.serviceRunning,
-                    ClipboardSyncService.connectionStates,
-                    ClipboardSyncService.startErrorCodes,
-                    ClipboardSyncService.peerThrottled,
-                ) { running, connection, startError, throttled ->
-                    SyncHealth(
-                        serviceRunning = running,
-                        connected = connection is SyncConnectionState.Connected,
-                        serviceErrorCode = startError,
-                        peerThrottled = throttled,
-                        // The conduit must state the degraded bt1 path honestly (ADR 0005).
-                        bluetoothFallback = connection is SyncConnectionState.Connected &&
-                            connection.transport == SyncTransportKind.BLUETOOTH,
-                    )
-                }
-            },
-            capability = CapabilityWiring(
-                routeProbes = captureStack.routeProbes,
-                capabilityStore = captureStack.capabilityStore,
-                writeCoordinator = writeCoordinator,
-                foregroundBackend = captureStack.foregroundBackend,
-                clearClipboard = captureStack.foregroundBackend::clear,
-                peerHealth = PeerHealthClient(),
-                // Covers both the API 33+ runtime denial and the surface being
-                // switched off in Settings on any API level.
-                notificationsEnabled = {
-                    NotificationManagerCompat.from(this).areNotificationsEnabled()
+            syncHealthSource =
+                SyncHealthSource {
+                    combine(
+                        ClipboardSyncService.serviceRunning,
+                        ClipboardSyncService.connectionStates,
+                        ClipboardSyncService.startErrorCodes,
+                        ClipboardSyncService.peerThrottled,
+                    ) { running, connection, startError, throttled ->
+                        SyncHealth(
+                            serviceRunning = running,
+                            connected = connection is SyncConnectionState.Connected,
+                            serviceErrorCode = startError,
+                            peerThrottled = throttled,
+                            // The conduit must state the degraded bt1 path honestly (ADR 0005).
+                            bluetoothFallback =
+                                connection is SyncConnectionState.Connected &&
+                                    connection.transport == SyncTransportKind.BLUETOOTH,
+                        )
+                    }
                 },
-            ),
+            capability =
+                CapabilityWiring(
+                    routeProbes = captureStack.routeProbes,
+                    capabilityStore = captureStack.capabilityStore,
+                    writeCoordinator = writeCoordinator,
+                    foregroundBackend = captureStack.foregroundBackend,
+                    clearClipboard = captureStack.foregroundBackend::clear,
+                    peerHealth = PeerHealthClient(),
+                    // Covers both the API 33+ runtime denial and the surface being
+                    // switched off in Settings on any API level.
+                    notificationsEnabled = {
+                        NotificationManagerCompat.from(this).areNotificationsEnabled()
+                    },
+                ),
         )
     }
 
@@ -211,7 +214,8 @@ class MainActivity : ComponentActivity() {
                         // Mirror Windows: a changed retention applies now, not at the next service start.
                         lifecycleScope.launch(Dispatchers.IO) {
                             runCatching {
-                                SyncStore.repository(applicationContext)
+                                SyncStore
+                                    .repository(applicationContext)
                                     .cleanup(syncSettings.effectiveRetentionPolicy(), System.currentTimeMillis())
                             }
                         }
@@ -235,21 +239,23 @@ class MainActivity : ComponentActivity() {
 
     // 导出历史/导入历史 write and read only where the user explicitly points (SAF);
     // the streams are opened lazily on the ViewModel's IO dispatcher.
-    private val exportHistoryLauncher = registerForActivityResult(
-        ActivityResultContracts.CreateDocument("application/octet-stream"),
-    ) { uri ->
-        if (uri != null) {
-            preferencesViewModel.exportHistory { contentResolver.openOutputStream(uri) }
+    private val exportHistoryLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.CreateDocument("application/octet-stream"),
+        ) { uri ->
+            if (uri != null) {
+                preferencesViewModel.exportHistory { contentResolver.openOutputStream(uri) }
+            }
         }
-    }
 
-    private val importHistoryLauncher = registerForActivityResult(
-        ActivityResultContracts.OpenDocument(),
-    ) { uri ->
-        if (uri != null) {
-            preferencesViewModel.importHistory { contentResolver.openInputStream(uri) }
+    private val importHistoryLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.OpenDocument(),
+        ) { uri ->
+            if (uri != null) {
+                preferencesViewModel.importHistory { contentResolver.openInputStream(uri) }
+            }
         }
-    }
 
     /**
      * Denial is respected as-is: the sync service and inbox keep working, only the
@@ -311,9 +317,10 @@ class MainActivity : ComponentActivity() {
                     onServiceStop = { ClipboardSyncService.stop(this) },
                     onOpenNotificationSettings = ::openNotificationSettings,
                     onExportHistory = {
-                        val stamp = java.time.format.DateTimeFormatter
-                            .ofPattern("yyyyMMdd-HHmmss")
-                            .format(java.time.LocalDateTime.now())
+                        val stamp =
+                            java.time.format.DateTimeFormatter
+                                .ofPattern("yyyyMMdd-HHmmss")
+                                .format(java.time.LocalDateTime.now())
                         exportHistoryLauncher.launch("clipsync-history-$stamp.jsonl")
                     },
                     onImportHistory = { importHistoryLauncher.launch(arrayOf("*/*")) },
@@ -365,10 +372,11 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT < 33) {
             return
         }
-        val granted = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.POST_NOTIFICATIONS,
-        ) == PackageManager.PERMISSION_GRANTED
+        val granted =
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS,
+            ) == PackageManager.PERMISSION_GRANTED
         if (!granted) {
             // After two denials the system returns immediately; we never nag beyond that.
             notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -439,7 +447,10 @@ class MainActivity : ComponentActivity() {
     }
 
     /** Resolves a wizard route action to the system surface that can satisfy it. */
-    private fun handleRouteAction(route: ReadRouteUi, action: RouteActionId) {
+    private fun handleRouteAction(
+        route: ReadRouteUi,
+        action: RouteActionId,
+    ) {
         when (action) {
             RouteActionId.REQUEST_PRIVILEGED_PERMISSION ->
                 captureStack.realReaders.requestShizukuAuthorization { granted ->
@@ -454,15 +465,17 @@ class MainActivity : ComponentActivity() {
                 )
                 healthViewModel.noteAdbCommandCopied()
             }
-            RouteActionId.OPEN_OVERLAY_SETTINGS -> startActivitySafely(
-                Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")),
-            )
-            RouteActionId.OPEN_BATTERY_SETTINGS -> startActivitySafely(
-                Intent(
-                    Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                    Uri.parse("package:$packageName"),
-                ),
-            )
+            RouteActionId.OPEN_OVERLAY_SETTINGS ->
+                startActivitySafely(
+                    Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")),
+                )
+            RouteActionId.OPEN_BATTERY_SETTINGS ->
+                startActivitySafely(
+                    Intent(
+                        Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                        Uri.parse("package:$packageName"),
+                    ),
+                )
             RouteActionId.SET_PREFERRED -> healthViewModel.setPreferredReadMode(route.mode)
             RouteActionId.RUN_READ_TEST -> healthViewModel.runReadTest(route.mode)
         }
@@ -488,11 +501,12 @@ class MainActivity : ComponentActivity() {
     private fun deviceLabel(): String {
         val manufacturer = Build.MANUFACTURER.trim()
         val model = Build.MODEL.trim()
-        val label = if (model.startsWith(manufacturer, ignoreCase = true)) {
-            model
-        } else {
-            "$manufacturer $model".trim()
-        }
+        val label =
+            if (model.startsWith(manufacturer, ignoreCase = true)) {
+                model
+            } else {
+                "$manufacturer $model".trim()
+            }
         return label.ifBlank { "Android phone" }
     }
 
@@ -513,8 +527,7 @@ class MainActivity : ComponentActivity() {
                     Intent.FLAG_ACTIVITY_NEW_TASK
                         or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         or Intent.FLAG_ACTIVITY_SINGLE_TOP,
-                )
-                .putExtra(EXTRA_OPEN_TAB, TAB_CONDUIT)
+                ).putExtra(EXTRA_OPEN_TAB, TAB_CONDUIT)
     }
 }
 
@@ -597,8 +610,7 @@ private fun ClipSyncApp(
                     is PairingUiState.Paired -> PersistedPeerKey(state.peer)
                     else -> null
                 }
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
             .drop(1)
             .collect {
                 healthViewModel.refresh()
@@ -606,18 +618,19 @@ private fun ClipSyncApp(
             }
     }
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            // z0: 178° ≈ vertical gradient, light above, dark below…
-            .background(
-                Brush.verticalGradient(
-                    0f to c.bgTop,
-                    0.42f to c.bgMid,
-                    1f to c.bgBottom,
-                ),
-            )
-            // …with film grain on the app background only.
-            .filmGrain(),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                // z0: 178° ≈ vertical gradient, light above, dark below…
+                .background(
+                    Brush.verticalGradient(
+                        0f to c.bgTop,
+                        0.42f to c.bgMid,
+                        1f to c.bgBottom,
+                    ),
+                )
+                // …with film grain on the app background only.
+                .filmGrain(),
     ) {
         if (onboardingOpen) {
             // First-run introduction: once dismissed, the flag is persisted and
@@ -656,56 +669,60 @@ private fun ClipSyncApp(
                 label = "place",
             ) { (place, pairing) ->
                 when {
-                    place == 0 -> HomeScreen(
-                        conduit = healthState,
-                        home = homeState,
-                        onQueryChange = homeViewModel::setQuery,
-                        onFormatFilterChange = homeViewModel::setFormatFilter,
-                        onCopy = homeViewModel::copy,
-                        onDelete = homeViewModel::delete,
-                        onOpenConduit = { tab = 1 },
-                        modifier = Modifier.padding(padding),
-                        thumbnail = imageThumbnail,
-                    )
-                    place == 1 && pairing -> Column(Modifier.padding(padding)) {
-                        BackRow(label = "通路", onBack = { pairingOpen = false })
-                        PairingScreen(viewModel = pairingViewModel)
-                    }
-                    place == 1 -> HealthScreen(
-                        state = healthState,
-                        onPairRequest = { pairingOpen = true },
-                        onRefresh = healthViewModel::refresh,
-                        onRouteAction = onRouteAction,
-                        onServiceStart = onServiceStart,
-                        onServiceStop = onServiceStop,
-                        onTestWrite = healthViewModel::runWriteTest,
-                        onDismissTestResult = healthViewModel::dismissTestResult,
-                        onOpenNotificationSettings = onOpenNotificationSettings,
-                        modifier = Modifier.padding(padding),
-                    )
-                    else -> PreferencesScreen(
-                        state = preferencesState,
-                        onPauseSyncChange = preferencesViewModel::setPauseSync,
-                        onPrivateModeChange = preferencesViewModel::setPrivateMode,
-                        onAutoApplyRemoteChange = preferencesViewModel::setAutoApplyRemote,
-                        onAutoExpireChange = preferencesViewModel::setAutoExpire,
-                        onBootRestoreChange = preferencesViewModel::setBootRestore,
-                        onImageSyncChange = preferencesViewModel::setImageSync,
-                        onAutoApplyImagesChange = preferencesViewModel::setAutoApplyImages,
-                        onBluetoothFallbackChange = preferencesViewModel::setBluetoothFallback,
-                        bluetoothDevices = bluetoothDeviceChoices,
-                        onRequestBluetoothDevices = onRequestBluetoothDevices,
-                        onBluetoothDeviceChosen = onBluetoothDeviceChosen,
-                        onDismissBluetoothDevices = onDismissBluetoothDevices,
-                        pairedDeviceName = healthState.pairedPeerName,
-                        onOpenConduit = {
-                            pairingOpen = false
-                            tab = 1
-                        },
-                        onExportHistory = onExportHistory,
-                        onImportHistory = onImportHistory,
-                        modifier = Modifier.padding(padding),
-                    )
+                    place == 0 ->
+                        HomeScreen(
+                            conduit = healthState,
+                            home = homeState,
+                            onQueryChange = homeViewModel::setQuery,
+                            onFormatFilterChange = homeViewModel::setFormatFilter,
+                            onCopy = homeViewModel::copy,
+                            onDelete = homeViewModel::delete,
+                            onOpenConduit = { tab = 1 },
+                            modifier = Modifier.padding(padding),
+                            thumbnail = imageThumbnail,
+                        )
+                    place == 1 && pairing ->
+                        Column(Modifier.padding(padding)) {
+                            BackRow(label = "通路", onBack = { pairingOpen = false })
+                            PairingScreen(viewModel = pairingViewModel)
+                        }
+                    place == 1 ->
+                        HealthScreen(
+                            state = healthState,
+                            onPairRequest = { pairingOpen = true },
+                            onRefresh = healthViewModel::refresh,
+                            onRouteAction = onRouteAction,
+                            onServiceStart = onServiceStart,
+                            onServiceStop = onServiceStop,
+                            onTestWrite = healthViewModel::runWriteTest,
+                            onDismissTestResult = healthViewModel::dismissTestResult,
+                            onOpenNotificationSettings = onOpenNotificationSettings,
+                            modifier = Modifier.padding(padding),
+                        )
+                    else ->
+                        PreferencesScreen(
+                            state = preferencesState,
+                            onPauseSyncChange = preferencesViewModel::setPauseSync,
+                            onPrivateModeChange = preferencesViewModel::setPrivateMode,
+                            onAutoApplyRemoteChange = preferencesViewModel::setAutoApplyRemote,
+                            onAutoExpireChange = preferencesViewModel::setAutoExpire,
+                            onBootRestoreChange = preferencesViewModel::setBootRestore,
+                            onImageSyncChange = preferencesViewModel::setImageSync,
+                            onAutoApplyImagesChange = preferencesViewModel::setAutoApplyImages,
+                            onBluetoothFallbackChange = preferencesViewModel::setBluetoothFallback,
+                            bluetoothDevices = bluetoothDeviceChoices,
+                            onRequestBluetoothDevices = onRequestBluetoothDevices,
+                            onBluetoothDeviceChosen = onBluetoothDeviceChosen,
+                            onDismissBluetoothDevices = onDismissBluetoothDevices,
+                            pairedDeviceName = healthState.pairedPeerName,
+                            onOpenConduit = {
+                                pairingOpen = false
+                                tab = 1
+                            },
+                            onExportHistory = onExportHistory,
+                            onImportHistory = onImportHistory,
+                            modifier = Modifier.padding(padding),
+                        )
                 }
             }
         }
@@ -717,16 +734,22 @@ private fun ClipSyncApp(
  * class over the full [PairedPeer] (not just the id) so re-pairing the same
  * device — new certificate or trust epoch — still counts as a change.
  */
-private data class PersistedPeerKey(val peer: PairedPeer?)
+private data class PersistedPeerKey(
+    val peer: PairedPeer?,
+)
 
 @Composable
-private fun BackRow(label: String, onBack: () -> Unit) {
+private fun BackRow(
+    label: String,
+    onBack: () -> Unit,
+) {
     val c = clipSyncColors
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onBack)
-            .padding(horizontal = 16.dp, vertical = 10.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onBack)
+                .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(text = "‹", fontSize = 18.sp, color = c.flow)
@@ -742,13 +765,17 @@ private fun BackRow(label: String, onBack: () -> Unit) {
 
 /** Charter dock: hairline on top, z1 face, flow blue marks the active place. */
 @Composable
-private fun ClipSyncDock(selected: Int, onSelect: (Int) -> Unit) {
+private fun ClipSyncDock(
+    selected: Int,
+    onSelect: (Int) -> Unit,
+) {
     val c = clipSyncColors
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(c.sf)
-            .background(Brush.verticalGradient(0f to c.sfGradTop, 1f to Color.Transparent)),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(c.sf)
+                .background(Brush.verticalGradient(0f to c.sfGradTop, 1f to Color.Transparent)),
     ) {
         Box(
             Modifier
@@ -757,10 +784,11 @@ private fun ClipSyncDock(selected: Int, onSelect: (Int) -> Unit) {
                 .background(c.ln),
         )
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.navigationBars)
-                .padding(top = 8.dp, bottom = 10.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .padding(top = 8.dp, bottom = 10.dp),
         ) {
             DockItem(
                 icon = ClipSyncIcons.History,
@@ -798,11 +826,12 @@ private fun DockItem(
     val c = clipSyncColors
     val tint = if (active) c.flow else c.t4
     Column(
-        modifier = modifier.clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = onClick,
-        ),
+        modifier =
+            modifier.clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick,
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {

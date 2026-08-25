@@ -1,5 +1,11 @@
 package com.clipsync.android.sync
 
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.Timeout
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -8,12 +14,6 @@ import java.io.PipedOutputStream
 import java.nio.charset.StandardCharsets
 import java.security.SecureRandom
 import kotlin.concurrent.thread
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
-import org.junit.Assert.assertTrue
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.Timeout
 
 private const val CLIENT_ID = "11111111-1111-4111-8111-111111111111"
 private const val LISTENER_ID = "22222222-2222-4222-8222-222222222222"

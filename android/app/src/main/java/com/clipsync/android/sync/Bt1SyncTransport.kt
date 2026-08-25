@@ -1,14 +1,14 @@
 package com.clipsync.android.sync
 
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-import java.nio.charset.StandardCharsets
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
+import java.nio.charset.StandardCharsets
 
 /**
  * [SyncTransport] over an established bt1 channel, so the unchanged [SyncEngine] session

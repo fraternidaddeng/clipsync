@@ -50,11 +50,16 @@ object Bt1StreamFraming {
      */
     fun readHandshakePayload(input: InputStream): String {
         val declared = readDeclaredLength(input) ?: throw EOFException("bt1 peer closed during the handshake")
-        if (declared > Bt1Frames.MAX_HANDSHAKE_PAYLOAD_LENGTH) {
-            throw Bt1HandshakeException(Bt1ErrorCodes.FRAME_TOO_LARGE, "handshake frame length exceeds 4096 bytes")
-        }
-        if (!Bt1Frames.isAcceptableHandshakePayloadLength(declared)) {
-            throw Bt1HandshakeException(Bt1ErrorCodes.SCHEMA_VIOLATION, "handshake frame length is invalid")
+        val violation =
+            when {
+                declared > Bt1Frames.MAX_HANDSHAKE_PAYLOAD_LENGTH ->
+                    Bt1HandshakeException(Bt1ErrorCodes.FRAME_TOO_LARGE, "handshake frame length exceeds 4096 bytes")
+                !Bt1Frames.isAcceptableHandshakePayloadLength(declared) ->
+                    Bt1HandshakeException(Bt1ErrorCodes.SCHEMA_VIOLATION, "handshake frame length is invalid")
+                else -> null
+            }
+        if (violation != null) {
+            throw violation
         }
         return String(readFully(input, declared.toInt()), StandardCharsets.UTF_8)
     }

@@ -2,9 +2,6 @@ package com.clipsync.android.sync
 
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingStore
-import java.io.IOException
-import kotlin.math.min
-import kotlin.random.Random
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
@@ -15,6 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import java.io.IOException
+import kotlin.math.min
+import kotlin.random.Random
 
 /** Deterministically testable exponential backoff with bounded jitter. */
 class ReconnectBackoff(
@@ -53,7 +53,10 @@ sealed interface SyncConnectionState {
         val transport: SyncTransportKind = SyncTransportKind.IP,
     ) : SyncConnectionState
 
-    data class WaitingRetry(val attempt: Int, val delayMs: Long) : SyncConnectionState
+    data class WaitingRetry(
+        val attempt: Int,
+        val delayMs: Long,
+    ) : SyncConnectionState
 }
 
 /**
@@ -168,30 +171,35 @@ class SyncSupervisor(
             }
 
             mutableState.value = SyncConnectionState.Connected(peer.displayName, connected.kind)
-            val engine = SyncEngine(
-                repository = repository,
-                config = SyncSessionConfig(
-                    localDeviceId = pairing.localDeviceId(),
-                    peerDeviceId = peer.deviceId,
-                    trustEpoch = peer.trustEpoch,
-                    clientVersion = clientVersion,
-                    protocolVersion = connected.protocolVersion,
-                    nowMs = nowMs,
-                    peerStillTrusted = {
-                        val current = pairing.peer()
-                        current != null && current.deviceId == peer.deviceId && current.trustEpoch == peer.trustEpoch
-                    },
-                    outboundAllowed = outboundAllowed,
-                ),
-                pairSecret = secret,
-                onRemoteClipsCommitted = onRemoteClipsCommitted,
-            )
+            val engine =
+                SyncEngine(
+                    repository = repository,
+                    config =
+                        SyncSessionConfig(
+                            localDeviceId = pairing.localDeviceId(),
+                            peerDeviceId = peer.deviceId,
+                            trustEpoch = peer.trustEpoch,
+                            clientVersion = clientVersion,
+                            protocolVersion = connected.protocolVersion,
+                            nowMs = nowMs,
+                            peerStillTrusted = {
+                                val current = pairing.peer()
+                                current != null &&
+                                    current.deviceId == peer.deviceId &&
+                                    current.trustEpoch == peer.trustEpoch
+                            },
+                            outboundAllowed = outboundAllowed,
+                        ),
+                    pairSecret = secret,
+                    onRemoteClipsCommitted = onRemoteClipsCommitted,
+                )
             secret.fill(0)
-            val result = try {
-                runSession(engine, connected, peer)
-            } finally {
-                connected.transport.dispose()
-            }
+            val result =
+                try {
+                    runSession(engine, connected, peer)
+                } finally {
+                    connected.transport.dispose()
+                }
 
             if (result.authenticated) {
                 attempt = 0
@@ -224,20 +232,25 @@ class SyncSupervisor(
         engine: SyncEngine,
         connected: ConnectedTransport,
         peer: PairedPeer,
-    ): SyncSessionResult = coroutineScope {
-        val probe = if (connected.kind == SyncTransportKind.BLUETOOTH) {
-            launch { probeIpWhileOnBluetooth(peer, connected.transport) }
-        } else {
-            null
+    ): SyncSessionResult =
+        coroutineScope {
+            val probe =
+                if (connected.kind == SyncTransportKind.BLUETOOTH) {
+                    launch { probeIpWhileOnBluetooth(peer, connected.transport) }
+                } else {
+                    null
+                }
+            try {
+                engine.run(connected.transport)
+            } finally {
+                probe?.cancel()
+            }
         }
-        try {
-            engine.run(connected.transport)
-        } finally {
-            probe?.cancel()
-        }
-    }
 
-    private suspend fun probeIpWhileOnBluetooth(peer: PairedPeer, bluetoothTransport: SyncTransport) {
+    private suspend fun probeIpWhileOnBluetooth(
+        peer: PairedPeer,
+        bluetoothTransport: SyncTransport,
+    ) {
         while (currentCoroutineContext().isActive) {
             // A network-available nudge tries the IP path right away; otherwise the timer does.
             withTimeoutOrNull(ipProbeIntervalMs) { reconnectNudges.receive() }
@@ -264,7 +277,10 @@ class SyncSupervisor(
     }
 
     /** IP candidates first; the bt1 fallback only after every host failed on connectivity. */
-    private suspend fun dialOnce(peer: PairedPeer, secret: ByteArray): ConnectedTransport? =
+    private suspend fun dialOnce(
+        peer: PairedPeer,
+        secret: ByteArray,
+    ): ConnectedTransport? =
         when (val outcome = connectAnyHost(peer)) {
             is IpDialOutcome.Connected -> outcome.transport
             // Wrong certificate is a trust decision, not a connectivity problem: no Bluetooth
@@ -273,13 +289,17 @@ class SyncSupervisor(
             IpDialOutcome.Unreachable -> dialBluetooth(peer, secret)
         }
 
-    private suspend fun dialBluetooth(peer: PairedPeer, secret: ByteArray): ConnectedTransport? {
+    private suspend fun dialBluetooth(
+        peer: PairedPeer,
+        secret: ByteArray,
+    ): ConnectedTransport? {
         val dialer = bluetoothDialer ?: return null
-        val transport = try {
-            dialer.dial(pairing.localDeviceId(), peer, secret)
-        } catch (_: IOException) {
-            null
-        }
+        val transport =
+            try {
+                dialer.dial(pairing.localDeviceId(), peer, secret)
+            } catch (_: IOException) {
+                null
+            }
         return transport?.let {
             // bt1 carries protocol v1 only: image capability is never declared on Bluetooth
             // (ADR 0005 §4), so the session dials the engine at version 1 unconditionally.
@@ -295,7 +315,9 @@ class SyncSupervisor(
     )
 
     private sealed interface IpDialOutcome {
-        class Connected(val transport: ConnectedTransport) : IpDialOutcome
+        class Connected(
+            val transport: ConnectedTransport,
+        ) : IpDialOutcome
 
         data object PinMismatch : IpDialOutcome
 

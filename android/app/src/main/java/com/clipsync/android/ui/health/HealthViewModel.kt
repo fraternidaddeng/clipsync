@@ -22,7 +22,6 @@ import com.clipsync.android.ui.ConduitSegmentState
 import com.clipsync.android.ui.ConduitStatus
 import com.clipsync.android.ui.ConduitTestResult
 import com.clipsync.android.ui.HealthScreenState
-import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -34,6 +33,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 /**
  * The capability stack behind the conduit page: route prerequisites, the
@@ -80,9 +80,10 @@ class HealthViewModel(
 ) : ViewModel() {
     // Peer presence is known synchronously (same pattern as PairingViewModel);
     // clipboard and sync facts arrive asynchronously via refresh()/snapshots().
-    private val mutableState = MutableStateFlow(
-        buildHealthScreenState(peer = pairingStore.peer(), clipboard = null, sync = null),
-    )
+    private val mutableState =
+        MutableStateFlow(
+            buildHealthScreenState(peer = pairingStore.peer(), clipboard = null, sync = null),
+        )
 
     val state: StateFlow<HealthScreenState> = mutableState.asStateFlow()
 
@@ -131,42 +132,46 @@ class HealthViewModel(
             refreshQueued = true
             return
         }
-        refreshJob = viewModelScope.launch {
-            do {
-                refreshQueued = false
-                refreshOnce()
-            } while (refreshQueued)
-        }
+        refreshJob =
+            viewModelScope.launch {
+                do {
+                    refreshQueued = false
+                    refreshOnce()
+                } while (refreshQueued)
+            }
     }
 
     private suspend fun refreshOnce() {
         val wiring = capability
-        val pass = withContext(probeDispatcher) {
-            val peer = pairingStore.peer()
-            if (wiring == null) {
-                Triple(peer, clipboard.probe(), null)
-            } else {
-                // One ladder pass feeds both the per-route facts and the headline
-                // report; probing twice (probe() then probeAll()) would run every
-                // backend's prerequisite checks twice per refresh.
-                val reports = clipboard.probeAll()
-                val facts = CapabilityFacts(
-                    reports = reports.associateBy { it.readMode },
-                    prerequisites = wiring.routeProbes.probe(),
-                    preferredReadMode = wiring.capabilityStore.preferredReadMode(),
-                    publicWriteState = wiring.capabilityStore.publicWriteState(),
-                    publicWriteErrorCode = wiring.capabilityStore.publicWriteErrorCode(),
-                    notificationsEnabled = wiring.notificationsEnabled?.invoke(),
-                )
-                Triple(peer, ClipboardAccessCoordinator.mostCapable(reports), facts)
+        val pass =
+            withContext(probeDispatcher) {
+                val peer = pairingStore.peer()
+                if (wiring == null) {
+                    Triple(peer, clipboard.probe(), null)
+                } else {
+                    // One ladder pass feeds both the per-route facts and the headline
+                    // report; probing twice (probe() then probeAll()) would run every
+                    // backend's prerequisite checks twice per refresh.
+                    val reports = clipboard.probeAll()
+                    val facts =
+                        CapabilityFacts(
+                            reports = reports.associateBy { it.readMode },
+                            prerequisites = wiring.routeProbes.probe(),
+                            preferredReadMode = wiring.capabilityStore.preferredReadMode(),
+                            publicWriteState = wiring.capabilityStore.publicWriteState(),
+                            publicWriteErrorCode = wiring.capabilityStore.publicWriteErrorCode(),
+                            notificationsEnabled = wiring.notificationsEnabled?.invoke(),
+                        )
+                    Triple(peer, ClipboardAccessCoordinator.mostCapable(reports), facts)
+                }
             }
-        }
         val (peer, report, probedFacts) = pass
-        val facts = if (probedFacts != null && peer != null && wiring?.peerHealth != null) {
-            probedFacts.copy(reachability = probeReachability(wiring.peerHealth, peer))
-        } else {
-            probedFacts
-        }
+        val facts =
+            if (probedFacts != null && peer != null && wiring?.peerHealth != null) {
+                probedFacts.copy(reachability = probeReachability(wiring.peerHealth, peer))
+            } else {
+                probedFacts
+            }
         lastClipboardReport = report
         lastFacts = facts
         publish(peer)
@@ -190,19 +195,23 @@ class HealthViewModel(
         val wiring = capability ?: return
         viewModelScope.launch {
             val token = "clipsync-test-" + UUID.randomUUID().toString().take(8)
-            val (outcome, readBack) = withContext(probeDispatcher) {
-                val written = wiring.writeCoordinator.writeText(
-                    text = token,
-                    originEventId = "capability-write-test-${wiring.nowMs()}",
-                )
-                val back = wiring.foregroundBackend.readText()
-                wiring.clearClipboard()
-                written to back
-            }
-            val verified = outcome.result is ClipboardWriteResult.Success &&
-                (readBack as? ClipboardReadResult.Success)?.text == token
-            val errorCode = (outcome.result as? ClipboardWriteResult.Failure)?.errorCode
-                ?: ERROR_WRITE_UNVERIFIED.takeUnless { verified }
+            val (outcome, readBack) =
+                withContext(probeDispatcher) {
+                    val written =
+                        wiring.writeCoordinator.writeText(
+                            text = token,
+                            originEventId = "capability-write-test-${wiring.nowMs()}",
+                        )
+                    val back = wiring.foregroundBackend.readText()
+                    wiring.clearClipboard()
+                    written to back
+                }
+            val verified =
+                outcome.result is ClipboardWriteResult.Success &&
+                    (readBack as? ClipboardReadResult.Success)?.text == token
+            val errorCode =
+                (outcome.result as? ClipboardWriteResult.Failure)?.errorCode
+                    ?: ERROR_WRITE_UNVERIFIED.takeUnless { verified }
             withContext(probeDispatcher) {
                 wiring.capabilityStore.recordWriteTest(
                     state = if (verified) CapabilityState.READY else CapabilityState.UNAVAILABLE,
@@ -210,15 +219,17 @@ class HealthViewModel(
                     atMs = wiring.nowMs(),
                 )
             }
-            lastFacts = lastFacts?.copy(
-                publicWriteState = wiring.capabilityStore.publicWriteState(),
-                publicWriteErrorCode = wiring.capabilityStore.publicWriteErrorCode(),
-            )
-            testResult = if (verified) {
-                ConduitTestResult("写入测试通过（测试文本已清除）", success = true)
-            } else {
-                ConduitTestResult("写入测试失败：$errorCode", success = false)
-            }
+            lastFacts =
+                lastFacts?.copy(
+                    publicWriteState = wiring.capabilityStore.publicWriteState(),
+                    publicWriteErrorCode = wiring.capabilityStore.publicWriteErrorCode(),
+                )
+            testResult =
+                if (verified) {
+                    ConduitTestResult("写入测试通过（测试文本已清除）", success = true)
+                } else {
+                    ConduitTestResult("写入测试失败：$errorCode", success = false)
+                }
             publish(pairingStore.peer())
         }
     }
@@ -234,14 +245,15 @@ class HealthViewModel(
         val wiring = capability ?: return
         viewModelScope.launch {
             val backend = clipboard.backend(mode)
-            val selfTest = ClipboardSelfTest(
-                writeCoordinator = wiring.writeCoordinator,
-                readBackend = { backend },
-                clearClipboard = {
-                    wiring.clearClipboard()
-                    true
-                },
-            )
+            val selfTest =
+                ClipboardSelfTest(
+                    writeCoordinator = wiring.writeCoordinator,
+                    readBackend = { backend },
+                    clearClipboard = {
+                        wiring.clearClipboard()
+                        true
+                    },
+                )
             val result = withContext(probeDispatcher) { selfTest.runReadTest() }
             val verified = result.passed
             withContext(probeDispatcher) {
@@ -252,11 +264,12 @@ class HealthViewModel(
                     atMs = wiring.nowMs(),
                 )
             }
-            testResult = if (verified) {
-                ConduitTestResult("后台读取测试通过（测试文本已清除）", success = true)
-            } else {
-                ConduitTestResult("后台读取测试失败：${result.errorCode ?: "未知原因"}", success = false)
-            }
+            testResult =
+                if (verified) {
+                    ConduitTestResult("后台读取测试通过（测试文本已清除）", success = true)
+                } else {
+                    ConduitTestResult("后台读取测试失败：${result.errorCode ?: "未知原因"}", success = false)
+                }
             // Re-probe so the just-verified route surfaces as READY (or the failure code shows).
             refresh()
         }
@@ -272,7 +285,10 @@ class HealthViewModel(
         publish(pairingStore.peer())
     }
 
-    private suspend fun probeReachability(peerHealth: PeerHealthApi, peer: PairedPeer): PeerReachability =
+    private suspend fun probeReachability(
+        peerHealth: PeerHealthApi,
+        peer: PairedPeer,
+    ): PeerReachability =
         when (peerHealth.probe(peer)) {
             is PeerHealthOutcome.Reachable -> PeerReachability.REACHABLE
             PeerHealthOutcome.CertificateMismatch -> PeerReachability.CERTIFICATE_MISMATCH
@@ -297,17 +313,18 @@ class HealthViewModel(
             syncHealthSource: SyncHealthSource?,
             capability: CapabilityWiring? = null,
             reachabilityRefreshIntervalMs: Long = REACHABILITY_REFRESH_INTERVAL_MS,
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                HealthViewModel(
-                    pairingStore = pairingStore,
-                    clipboard = clipboard,
-                    syncHealthSource = syncHealthSource,
-                    capability = capability,
-                    reachabilityRefreshTicker = periodicTicker(reachabilityRefreshIntervalMs),
-                ) as T
-        }
+        ): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                    HealthViewModel(
+                        pairingStore = pairingStore,
+                        clipboard = clipboard,
+                        syncHealthSource = syncHealthSource,
+                        capability = capability,
+                        reachabilityRefreshTicker = periodicTicker(reachabilityRefreshIntervalMs),
+                    ) as T
+            }
 
         private fun periodicTicker(intervalMs: Long): Flow<Unit>? =
             if (intervalMs <= 0L) {
@@ -335,18 +352,19 @@ internal fun buildHealthScreenState(
     facts: CapabilityFacts? = null,
 ): HealthScreenState {
     val network = networkSegment(peer, sync, facts)
-    val state = HealthScreenState(
-        localRead = if (facts != null) localReadSegmentFromFacts(facts) else localReadSegment(clipboard),
-        localService = localServiceSegment(sync),
-        network = network,
-        peerWrite = peerWriteSegment(network.status, sync),
-        pairedDeviceCount = if (peer != null) 1 else 0,
-        pairedPeerName = peer?.displayName,
-        localWrite = facts?.let(::localWriteSegmentFromFacts),
-        routes = facts?.let(::buildReadRoutes).orEmpty(),
-        serviceRunning = sync?.serviceRunning ?: false,
-        notificationsEnabled = facts?.notificationsEnabled,
-    )
+    val state =
+        HealthScreenState(
+            localRead = if (facts != null) localReadSegmentFromFacts(facts) else localReadSegment(clipboard),
+            localService = localServiceSegment(sync),
+            network = network,
+            peerWrite = peerWriteSegment(network.status, sync),
+            pairedDeviceCount = if (peer != null) 1 else 0,
+            pairedPeerName = peer?.displayName,
+            localWrite = facts?.let(::localWriteSegmentFromFacts),
+            routes = facts?.let(::buildReadRoutes).orEmpty(),
+            serviceRunning = sync?.serviceRunning ?: false,
+            notificationsEnabled = facts?.notificationsEnabled,
+        )
     return applySingleBeckon(state)
 }
 
@@ -356,14 +374,16 @@ internal fun buildHealthScreenState(
  * actions but stay quiet.
  */
 private fun applySingleBeckon(state: HealthScreenState): HealthScreenState {
-    val pipeOrder = listOfNotNull(
-        state.localRead,
-        state.localService,
-        state.network,
-        state.peerWrite,
-        state.localWrite,
-    )
+    val pipeOrder =
+        listOfNotNull(
+            state.localRead,
+            state.localService,
+            state.network,
+            state.peerWrite,
+            state.localWrite,
+        )
     val beckoner = pipeOrder.firstOrNull { it.status == ConduitStatus.NEEDS_ACTION }
+
     fun ConduitSegmentState.resolve() = copy(beckoning = this === beckoner)
     return state.copy(
         localRead = state.localRead.resolve(),
@@ -399,124 +419,150 @@ private fun localReadSegment(report: CapabilityReport?): ConduitSegmentState {
                     status = ConduitStatus.READY,
                 )
             }
-        CapabilityState.DEGRADED -> ConduitSegmentState(
-            statusLabel = "降级",
-            detail = "读取能力降级（$mode）；部分内容可能需要手动发送。",
-            status = ConduitStatus.DEGRADED,
-        )
-        CapabilityState.UNAVAILABLE -> ConduitSegmentState(
-            statusLabel = "不可用",
-            detail = "后台读取暂不可用；前台复制与分享面板仍然可用。",
-            status = ConduitStatus.UNAVAILABLE,
-        )
-        CapabilityState.UNKNOWN -> ConduitSegmentState(
-            statusLabel = "未探测",
-            detail = "读取能力尚未探测。缺信息 ≠ 坏消息。",
-            status = ConduitStatus.UNPROBED,
-        )
-        CapabilityState.NEEDS_USER_ACTION -> ConduitSegmentState(
-            statusLabel = "待授权",
-            detail = "读取能力需要先完成授权或设置（$mode）。",
-            status = ConduitStatus.DEGRADED,
-        )
+        CapabilityState.DEGRADED ->
+            ConduitSegmentState(
+                statusLabel = "降级",
+                detail = "读取能力降级（$mode）；部分内容可能需要手动发送。",
+                status = ConduitStatus.DEGRADED,
+            )
+        CapabilityState.UNAVAILABLE ->
+            ConduitSegmentState(
+                statusLabel = "不可用",
+                detail = "后台读取暂不可用；前台复制与分享面板仍然可用。",
+                status = ConduitStatus.UNAVAILABLE,
+            )
+        CapabilityState.UNKNOWN ->
+            ConduitSegmentState(
+                statusLabel = "未探测",
+                detail = "读取能力尚未探测。缺信息 ≠ 坏消息。",
+                status = ConduitStatus.UNPROBED,
+            )
+        CapabilityState.NEEDS_USER_ACTION ->
+            ConduitSegmentState(
+                statusLabel = "待授权",
+                detail = "读取能力需要先完成授权或设置（$mode）。",
+                status = ConduitStatus.DEGRADED,
+            )
     }
 }
 
-private fun localServiceSegment(sync: SyncHealth?): ConduitSegmentState = when {
-    sync == null -> ConduitSegmentState(
-        statusLabel = "就绪",
-        detail = "应用运行正常；后台同步服务将在后续阶段接入。",
-        status = ConduitStatus.READY,
-    )
-    sync.serviceRunning -> ConduitSegmentState(
-        statusLabel = "就绪",
-        detail = "同步服务运行中。",
-        status = ConduitStatus.READY,
-        detailLines = listOf(
-            "前台服务只负责保持连接与调度，不等于获得剪贴板权限。",
-            "通知栏会显示常驻通知；停止服务即移除。",
-        ),
-    )
-    sync.serviceErrorCode != null -> ConduitSegmentState(
-        statusLabel = "启动失败",
-        detail = "同步服务启动失败（${sync.serviceErrorCode}）；应用在前台时仍可同步。",
-        status = ConduitStatus.DEGRADED,
-    )
-    else -> ConduitSegmentState(
-        statusLabel = "未运行",
-        detail = "同步服务未运行；应用在前台时仍可同步。",
-        status = ConduitStatus.DEGRADED,
-        detailLines = listOf(
-            "前台服务只负责保持连接与调度，不等于获得剪贴板权限。",
-            "启动后会显示一条常驻通知。",
-        ),
-    )
-}
+private fun localServiceSegment(sync: SyncHealth?): ConduitSegmentState =
+    when {
+        sync == null ->
+            ConduitSegmentState(
+                statusLabel = "就绪",
+                detail = "应用运行正常；后台同步服务将在后续阶段接入。",
+                status = ConduitStatus.READY,
+            )
+        sync.serviceRunning ->
+            ConduitSegmentState(
+                statusLabel = "就绪",
+                detail = "同步服务运行中。",
+                status = ConduitStatus.READY,
+                detailLines =
+                    listOf(
+                        "前台服务只负责保持连接与调度，不等于获得剪贴板权限。",
+                        "通知栏会显示常驻通知；停止服务即移除。",
+                    ),
+            )
+        sync.serviceErrorCode != null ->
+            ConduitSegmentState(
+                statusLabel = "启动失败",
+                detail = "同步服务启动失败（${sync.serviceErrorCode}）；应用在前台时仍可同步。",
+                status = ConduitStatus.DEGRADED,
+            )
+        else ->
+            ConduitSegmentState(
+                statusLabel = "未运行",
+                detail = "同步服务未运行；应用在前台时仍可同步。",
+                status = ConduitStatus.DEGRADED,
+                detailLines =
+                    listOf(
+                        "前台服务只负责保持连接与调度，不等于获得剪贴板权限。",
+                        "启动后会显示一条常驻通知。",
+                    ),
+            )
+    }
 
 private fun networkSegment(
     peer: PairedPeer?,
     sync: SyncHealth?,
     facts: CapabilityFacts? = null,
-): ConduitSegmentState = when {
-    peer == null -> ConduitSegmentState(
-        statusLabel = "需要你操作",
-        detail = "尚未与 Windows 配对。在电脑上打开「剪剪相传」，选择「配对新设备」。",
-        status = ConduitStatus.NEEDS_ACTION,
-    )
-    sync?.connected == true && sync.bluetoothFallback -> ConduitSegmentState(
-        statusLabel = "已连接 · 蓝牙备援",
-        detail = "IP 路径不可达，正在通过蓝牙与「${peer.displayName}」同步（仅文本，速度较慢）。",
-        status = ConduitStatus.READY,
-        detailLines = listOf(
-            "IP 恢复后自动切回，无需操作。",
-            "蓝牙期间复制的图片不会同步，且事后不补传。",
-        ),
-    )
-    sync?.connected == true -> ConduitSegmentState(
-        statusLabel = "已连接",
-        detail = "与「${peer.displayName}」保持连接。",
-        status = ConduitStatus.READY,
-    )
-    sync?.peerThrottled == true -> ConduitSegmentState(
-        statusLabel = "已被对端限流",
-        detail = "「${peer.displayName}」检测到本机多次认证失败，已临时限流。约 30 秒后自动重试。",
-        status = ConduitStatus.DEGRADED,
-        errorDetail = "若持续出现，通常表示配对凭据已失效（例如电脑端撤销或重装后）；重新配对可恢复。",
-    )
-    facts?.reachability == PeerReachability.REACHABLE -> ConduitSegmentState(
-        statusLabel = "对端可达",
-        detail = "与「${peer.displayName}」握手成功（固定证书 TLS）；同步通道尚未接入。",
-        status = ConduitStatus.READY,
-        detailLines = listOf("探测方式：固定证书 TLS 请求 /v1/peer/health。"),
-    )
-    facts?.reachability == PeerReachability.CERTIFICATE_MISMATCH -> ConduitSegmentState(
-        statusLabel = "证书不匹配",
-        detail = "已与「${peer.displayName}」配对，但对端出示了不同的证书。",
-        status = ConduitStatus.DEGRADED,
-        errorDetail = "对端证书与固定指纹不符，连接已被阻止。若非你重装了 Windows 端，请检查网络环境；重新配对可更新指纹。",
-    )
-    facts?.reachability == PeerReachability.UNREACHABLE -> ConduitSegmentState(
-        statusLabel = "已配对 · 不可达",
-        detail = "已与「${peer.displayName}」配对，当前探测不可达。",
-        status = ConduitStatus.DEGRADED,
-        detailLines = listOf(
-            "确认两台设备在同一局域网 / VPN，且 Windows 端正在运行。",
-            "探测方式：固定证书 TLS 请求 /v1/peer/health。",
-        ),
-    )
-    sync == null -> ConduitSegmentState(
-        statusLabel = "已配对 · 未连接",
-        detail = "已与「${peer.displayName}」配对；同步通道尚未接入。",
-        status = ConduitStatus.DEGRADED,
-    )
-    else -> ConduitSegmentState(
-        statusLabel = "已配对 · 未连接",
-        detail = "已与「${peer.displayName}」配对，正在等待连接。",
-        status = ConduitStatus.DEGRADED,
-    )
-}
+): ConduitSegmentState =
+    when {
+        peer == null ->
+            ConduitSegmentState(
+                statusLabel = "需要你操作",
+                detail = "尚未与 Windows 配对。在电脑上打开「剪剪相传」，选择「配对新设备」。",
+                status = ConduitStatus.NEEDS_ACTION,
+            )
+        sync?.connected == true && sync.bluetoothFallback ->
+            ConduitSegmentState(
+                statusLabel = "已连接 · 蓝牙备援",
+                detail = "IP 路径不可达，正在通过蓝牙与「${peer.displayName}」同步（仅文本，速度较慢）。",
+                status = ConduitStatus.READY,
+                detailLines =
+                    listOf(
+                        "IP 恢复后自动切回，无需操作。",
+                        "蓝牙期间复制的图片不会同步，且事后不补传。",
+                    ),
+            )
+        sync?.connected == true ->
+            ConduitSegmentState(
+                statusLabel = "已连接",
+                detail = "与「${peer.displayName}」保持连接。",
+                status = ConduitStatus.READY,
+            )
+        sync?.peerThrottled == true ->
+            ConduitSegmentState(
+                statusLabel = "已被对端限流",
+                detail = "「${peer.displayName}」检测到本机多次认证失败，已临时限流。约 30 秒后自动重试。",
+                status = ConduitStatus.DEGRADED,
+                errorDetail = "若持续出现，通常表示配对凭据已失效（例如电脑端撤销或重装后）；重新配对可恢复。",
+            )
+        facts?.reachability == PeerReachability.REACHABLE ->
+            ConduitSegmentState(
+                statusLabel = "对端可达",
+                detail = "与「${peer.displayName}」握手成功（固定证书 TLS）；同步通道尚未接入。",
+                status = ConduitStatus.READY,
+                detailLines = listOf("探测方式：固定证书 TLS 请求 /v1/peer/health。"),
+            )
+        facts?.reachability == PeerReachability.CERTIFICATE_MISMATCH ->
+            ConduitSegmentState(
+                statusLabel = "证书不匹配",
+                detail = "已与「${peer.displayName}」配对，但对端出示了不同的证书。",
+                status = ConduitStatus.DEGRADED,
+                errorDetail = "对端证书与固定指纹不符，连接已被阻止。若非你重装了 Windows 端，请检查网络环境；重新配对可更新指纹。",
+            )
+        facts?.reachability == PeerReachability.UNREACHABLE ->
+            ConduitSegmentState(
+                statusLabel = "已配对 · 不可达",
+                detail = "已与「${peer.displayName}」配对，当前探测不可达。",
+                status = ConduitStatus.DEGRADED,
+                detailLines =
+                    listOf(
+                        "确认两台设备在同一局域网 / VPN，且 Windows 端正在运行。",
+                        "探测方式：固定证书 TLS 请求 /v1/peer/health。",
+                    ),
+            )
+        sync == null ->
+            ConduitSegmentState(
+                statusLabel = "已配对 · 未连接",
+                detail = "已与「${peer.displayName}」配对；同步通道尚未接入。",
+                status = ConduitStatus.DEGRADED,
+            )
+        else ->
+            ConduitSegmentState(
+                statusLabel = "已配对 · 未连接",
+                detail = "已与「${peer.displayName}」配对，正在等待连接。",
+                status = ConduitStatus.DEGRADED,
+            )
+    }
 
-private fun peerWriteSegment(networkStatus: ConduitStatus, sync: SyncHealth?): ConduitSegmentState {
+private fun peerWriteSegment(
+    networkStatus: ConduitStatus,
+    sync: SyncHealth?,
+): ConduitSegmentState {
     if (networkStatus != ConduitStatus.READY) {
         return ConduitSegmentState(
             statusLabel = "未探测",
@@ -525,30 +571,35 @@ private fun peerWriteSegment(networkStatus: ConduitStatus, sync: SyncHealth?): C
         )
     }
     return when (sync?.peerWriteState) {
-        CapabilityState.READY -> ConduitSegmentState(
-            statusLabel = "就绪",
-            detail = "对端可以自动写入剪贴板。",
-            status = ConduitStatus.READY,
-        )
-        CapabilityState.DEGRADED -> ConduitSegmentState(
-            statusLabel = "降级",
-            detail = "对端写入能力降级，部分内容可能需要手动粘贴。",
-            status = ConduitStatus.DEGRADED,
-        )
-        CapabilityState.UNAVAILABLE -> ConduitSegmentState(
-            statusLabel = "不可用",
-            detail = "对端暂时无法写入剪贴板；内容仍会保存到历史。",
-            status = ConduitStatus.UNAVAILABLE,
-        )
-        CapabilityState.UNKNOWN, null -> ConduitSegmentState(
-            statusLabel = "未探测",
-            detail = "等待对端上报写入能力。",
-            status = ConduitStatus.UNPROBED,
-        )
-        CapabilityState.NEEDS_USER_ACTION -> ConduitSegmentState(
-            statusLabel = "待授权",
-            detail = "对端写入能力需要先完成授权或设置。",
-            status = ConduitStatus.DEGRADED,
-        )
+        CapabilityState.READY ->
+            ConduitSegmentState(
+                statusLabel = "就绪",
+                detail = "对端可以自动写入剪贴板。",
+                status = ConduitStatus.READY,
+            )
+        CapabilityState.DEGRADED ->
+            ConduitSegmentState(
+                statusLabel = "降级",
+                detail = "对端写入能力降级，部分内容可能需要手动粘贴。",
+                status = ConduitStatus.DEGRADED,
+            )
+        CapabilityState.UNAVAILABLE ->
+            ConduitSegmentState(
+                statusLabel = "不可用",
+                detail = "对端暂时无法写入剪贴板；内容仍会保存到历史。",
+                status = ConduitStatus.UNAVAILABLE,
+            )
+        CapabilityState.UNKNOWN, null ->
+            ConduitSegmentState(
+                statusLabel = "未探测",
+                detail = "等待对端上报写入能力。",
+                status = ConduitStatus.UNPROBED,
+            )
+        CapabilityState.NEEDS_USER_ACTION ->
+            ConduitSegmentState(
+                statusLabel = "待授权",
+                detail = "对端写入能力需要先完成授权或设置。",
+                status = ConduitStatus.DEGRADED,
+            )
     }
 }

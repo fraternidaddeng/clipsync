@@ -41,18 +41,8 @@ object Bt1ClientHandshake {
             Bt1HandshakeCodec.serializeHello(Bt1Role.CLIENT, localDeviceId, trustEpoch, nonceClient),
         )
 
-        val listenerHello = readMessage(input, output)
-        if (listenerHello !is Bt1HandshakeMessage.Hello || listenerHello.senderRole != Bt1Role.LISTENER) {
-            fail(output, Bt1ErrorCodes.SCHEMA_VIOLATION, "expected bt1_listener_hello")
-        }
-        if (listenerHello.deviceId != peerDeviceId || listenerHello.deviceId == localDeviceId) {
-            // The bonded radio answered, but it is not the ClipSync peer this device trusts.
-            fail(output, Bt1ErrorCodes.AUTH_FAILED, "listener device id does not match the pairing")
-        }
-        if (listenerHello.trustEpoch != trustEpoch) {
-            fail(output, Bt1ErrorCodes.AUTH_FAILED, "listener trust epoch does not match")
-        }
-        val nonceListener = listenerHello.nonce
+        val nonceListener =
+            readListenerNonce(readMessage(input, output), output, localDeviceId, peerDeviceId, trustEpoch)
 
         val clientProof =
             Bt1AuthProof.compute(
@@ -97,6 +87,27 @@ object Bt1ClientHandshake {
         keys.clientToListener.fill(0)
         keys.listenerToClient.fill(0)
         return channel
+    }
+
+    /** Validates the listener hello against the pairing and returns its nonce. */
+    private fun readListenerNonce(
+        listenerHello: Bt1HandshakeMessage,
+        output: OutputStream,
+        localDeviceId: String,
+        peerDeviceId: String,
+        trustEpoch: Long,
+    ): ByteArray {
+        if (listenerHello !is Bt1HandshakeMessage.Hello || listenerHello.senderRole != Bt1Role.LISTENER) {
+            fail(output, Bt1ErrorCodes.SCHEMA_VIOLATION, "expected bt1_listener_hello")
+        }
+        if (listenerHello.deviceId != peerDeviceId || listenerHello.deviceId == localDeviceId) {
+            // The bonded radio answered, but it is not the ClipSync peer this device trusts.
+            fail(output, Bt1ErrorCodes.AUTH_FAILED, "listener device id does not match the pairing")
+        }
+        if (listenerHello.trustEpoch != trustEpoch) {
+            fail(output, Bt1ErrorCodes.AUTH_FAILED, "listener trust epoch does not match")
+        }
+        return listenerHello.nonce
     }
 
     /**

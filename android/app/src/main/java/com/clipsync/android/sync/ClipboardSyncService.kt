@@ -71,17 +71,19 @@ class ClipboardSyncService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        settings = SyncSettingsStore(
-            SharedPrefsKeyValueStore(applicationContext, name = SyncSettingsStore.PREFERENCES_NAME),
-        )
-        val listener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
-            // A pause/private gate may have flipped (notification action or preferences
-            // screen): the capture session re-checks whether backends may run at all.
-            captureSession?.refreshGates()
-            if (started) {
-                updateNotification(mutableConnectionStates.value)
+        settings =
+            SyncSettingsStore(
+                SharedPrefsKeyValueStore(applicationContext, name = SyncSettingsStore.PREFERENCES_NAME),
+            )
+        val listener =
+            android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+                // A pause/private gate may have flipped (notification action or preferences
+                // screen): the capture session re-checks whether backends may run at all.
+                captureSession?.refreshGates()
+                if (started) {
+                    updateNotification(mutableConnectionStates.value)
+                }
             }
-        }
         settingsListener = listener
         applicationContext
             .getSharedPreferences(SyncSettingsStore.PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -89,7 +91,11 @@ class ClipboardSyncService : Service() {
         mutableServiceRunning.value = true
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int,
+    ): Int {
         // Apply a notification action first so the notification promoted below is honest.
         if (SyncServiceNotification.applyAction(intent?.action, settings)) {
             requestSyncNow()
@@ -97,14 +103,16 @@ class ClipboardSyncService : Service() {
         // The system can refuse the foreground promotion (e.g. FGS-from-background policy on
         // some OEM/API combinations). That must degrade to the honest "需要恢复" notification
         // and a stopped service — never a crash, never a sticky restart loop (plan 5.2).
-        val stateText = if (started) {
-            stateText(mutableConnectionStates.value)
-        } else {
-            getString(R.string.notification_sync_connecting)
-        }
-        val foregroundOk = runCatching {
-            startAsForeground(notification(stateText))
-        }.isSuccess
+        val stateText =
+            if (started) {
+                stateText(mutableConnectionStates.value)
+            } else {
+                getString(R.string.notification_sync_connecting)
+            }
+        val foregroundOk =
+            runCatching {
+                startAsForeground(notification(stateText))
+            }.isSuccess
         if (!foregroundOk) {
             mutableStartErrorCodes.value = START_ERROR_FGS_DENIED
             SyncNotifications.notifyRecoveryNeeded(applicationContext)
@@ -161,57 +169,58 @@ class ClipboardSyncService : Service() {
             syncRequester = { syncNudges.trySend(Unit) },
         )
 
-        val supervisor = SyncSupervisor(
-            pairing = pairing,
-            repository = repository,
-            connector = OkHttpSyncConnector(),
-            clientVersion = clientVersion(),
-            onRemoteClipsCommitted = { committed ->
-                // Clipboard writes run on the main thread (mirrors the Windows dispatcher hop).
-                mainHandler.post {
-                    // Preferences are re-read per batch so toggling applies immediately.
-                    // Paused sync still receives into the inbox but never auto-applies.
-                    // Like Windows, only the newest body of a batch reaches the system
-                    // clipboard; every event still lands in the inbox first. Images have
-                    // their own opt-in write gate (ADR 0004), independent of the text one.
-                    val autoApply = InboxDelivery.autoApplyAllowed(settings)
-                    val autoApplyImage = InboxDelivery.autoApplyImagesAllowed(settings)
-                    val newestEventId = committed.lastOrNull()?.eventId
-                    committed.forEach { applied ->
-                        if (applied.isImage) {
-                            InboxDelivery.deliverImage(
-                                appContext,
-                                applied.eventId,
-                                applied.contentHash,
-                                applied.mimeType,
-                                autoApply = autoApplyImage && applied.eventId == newestEventId,
-                            )
-                        } else {
-                            InboxDelivery.deliver(
-                                appContext,
-                                applied.eventId,
-                                applied.content,
-                                autoApply = autoApply && applied.eventId == newestEventId,
-                            )
+        val supervisor =
+            SyncSupervisor(
+                pairing = pairing,
+                repository = repository,
+                connector = OkHttpSyncConnector(),
+                clientVersion = clientVersion(),
+                onRemoteClipsCommitted = { committed ->
+                    // Clipboard writes run on the main thread (mirrors the Windows dispatcher hop).
+                    mainHandler.post {
+                        // Preferences are re-read per batch so toggling applies immediately.
+                        // Paused sync still receives into the inbox but never auto-applies.
+                        // Like Windows, only the newest body of a batch reaches the system
+                        // clipboard; every event still lands in the inbox first. Images have
+                        // their own opt-in write gate (ADR 0004), independent of the text one.
+                        val autoApply = InboxDelivery.autoApplyAllowed(settings)
+                        val autoApplyImage = InboxDelivery.autoApplyImagesAllowed(settings)
+                        val newestEventId = committed.lastOrNull()?.eventId
+                        committed.forEach { applied ->
+                            if (applied.isImage) {
+                                InboxDelivery.deliverImage(
+                                    appContext,
+                                    applied.eventId,
+                                    applied.contentHash,
+                                    applied.mimeType,
+                                    autoApply = autoApplyImage && applied.eventId == newestEventId,
+                                )
+                            } else {
+                                InboxDelivery.deliver(
+                                    appContext,
+                                    applied.eventId,
+                                    applied.content,
+                                    autoApply = autoApply && applied.eventId == newestEventId,
+                                )
+                            }
                         }
                     }
-                }
-            },
-            // Pause/private stop outbound announces immediately; re-read every drain tick.
-            outboundAllowed = { !settings.syncPaused && !settings.privateMode },
-            // With the preference on, dial protocol v2 first and fall back to v1 listeners.
-            imageSyncEnabled = { settings.imageSyncEnabled },
-            // The peer rate-limited this device after repeated failed auth: mirror the
-            // Windows tray bubble with a content-free notification plus a conduit fact.
-            onAuthThrottled = {
-                mutablePeerThrottled.value = true
-                SyncNotifications.notifyAuthThrottled(appContext)
-            },
-            // bt1 fallback (ADR 0005): dialed once per cycle after every IP host failed. The
-            // connector re-reads the toggle/device/permission per dial, so preference changes
-            // apply on the next reconnect without a service restart.
-            bluetoothDialer = BluetoothSyncConnector(appContext, settings),
-        )
+                },
+                // Pause/private stop outbound announces immediately; re-read every drain tick.
+                outboundAllowed = { !settings.syncPaused && !settings.privateMode },
+                // With the preference on, dial protocol v2 first and fall back to v1 listeners.
+                imageSyncEnabled = { settings.imageSyncEnabled },
+                // The peer rate-limited this device after repeated failed auth: mirror the
+                // Windows tray bubble with a content-free notification plus a conduit fact.
+                onAuthThrottled = {
+                    mutablePeerThrottled.value = true
+                    SyncNotifications.notifyAuthThrottled(appContext)
+                },
+                // bt1 fallback (ADR 0005): dialed once per cycle after every IP host failed. The
+                // connector re-reads the toggle/device/permission per dial, so preference changes
+                // apply on the next reconnect without a service restart.
+                bluetoothDialer = BluetoothSyncConnector(appContext, settings),
+            )
         this.supervisor = supervisor
         // Own the read coordinator for as long as the service is promoted (plan 5.2). The
         // session arbitrates with the activity's visibility ownership, selects the backend by
@@ -290,14 +299,17 @@ class ClipboardSyncService : Service() {
      */
     private fun registerNetworkCallback() {
         val manager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val request = NetworkRequest.Builder()
-            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            .build()
-        val callback = object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                supervisor?.nudgeReconnect()
+        val request =
+            NetworkRequest
+                .Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
+        val callback =
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    supervisor?.nudgeReconnect()
+                }
             }
-        }
         runCatching { manager.registerNetworkCallback(request, callback) }
             .onSuccess { networkCallback = callback }
     }
@@ -309,11 +321,12 @@ class ClipboardSyncService : Service() {
         runCatching { manager.unregisterNetworkCallback(callback) }
     }
 
-    private fun sourceLabel(source: ClipSource): String = when (source) {
-        ClipSource.SHARE_SHEET -> "android.share_sheet"
-        ClipSource.QUICK_TILE -> "android.quick_tile"
-        ClipSource.FOREGROUND_APP -> "android.app"
-    }
+    private fun sourceLabel(source: ClipSource): String =
+        when (source) {
+            ClipSource.SHARE_SHEET -> "android.share_sheet"
+            ClipSource.QUICK_TILE -> "android.quick_tile"
+            ClipSource.FOREGROUND_APP -> "android.app"
+        }
 
     private fun startAsForeground(notification: Notification) {
         // minSdk is 29, where the connectedDevice foreground service type already exists.
@@ -331,18 +344,19 @@ class ClipboardSyncService : Service() {
         runCatching { manager.notify(NOTIFICATION_ID, notification(stateText(state))) }
     }
 
-    private fun stateText(state: SyncConnectionState): String = when (state) {
-        is SyncConnectionState.Connected ->
-            if (state.transport == SyncTransportKind.BLUETOOTH) {
-                // The user must see the degraded path: Bluetooth fallback carries text only.
-                getString(R.string.notification_sync_connected_bluetooth)
-            } else {
-                getString(R.string.notification_sync_connected)
-            }
-        is SyncConnectionState.Connecting -> getString(R.string.notification_sync_connecting)
-        is SyncConnectionState.WaitingRetry -> getString(R.string.notification_sync_reconnecting)
-        is SyncConnectionState.NotPaired -> getString(R.string.notification_sync_not_paired)
-    }
+    private fun stateText(state: SyncConnectionState): String =
+        when (state) {
+            is SyncConnectionState.Connected ->
+                if (state.transport == SyncTransportKind.BLUETOOTH) {
+                    // The user must see the degraded path: Bluetooth fallback carries text only.
+                    getString(R.string.notification_sync_connected_bluetooth)
+                } else {
+                    getString(R.string.notification_sync_connected)
+                }
+            is SyncConnectionState.Connecting -> getString(R.string.notification_sync_connecting)
+            is SyncConnectionState.WaitingRetry -> getString(R.string.notification_sync_reconnecting)
+            is SyncConnectionState.NotPaired -> getString(R.string.notification_sync_not_paired)
+        }
 
     /**
      * The resident notification: connection state as the title, pause status as the text,
@@ -412,12 +426,19 @@ class ClipboardSyncService : Service() {
 
         private fun createRoomRepository(appContext: Context): SyncRepository {
             val pairing = PairingStore(SharedPrefsKeyValueStore(appContext), KeystoreSecretProtector())
-            val settings = SyncSettingsStore(
-                SharedPrefsKeyValueStore(appContext, name = SyncSettingsStore.PREFERENCES_NAME),
-            )
+            val settings =
+                SyncSettingsStore(
+                    SharedPrefsKeyValueStore(appContext, name = SyncSettingsStore.PREFERENCES_NAME),
+                )
             return RoomSyncRepository(
                 store = SyncStore.repository(appContext),
-                fanOutPeerIds = { pairing.peer()?.deviceId?.let(::listOf).orEmpty() },
+                fanOutPeerIds = {
+                    pairing
+                        .peer()
+                        ?.deviceId
+                        ?.let(::listOf)
+                        .orEmpty()
+                },
                 // Re-read per clip so the user cap applies without restarting the service.
                 maxContentUtf8Bytes = { settings.effectiveMaxSyncTextBytes },
             )

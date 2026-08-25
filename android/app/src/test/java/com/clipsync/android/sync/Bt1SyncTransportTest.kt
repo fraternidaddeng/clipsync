@@ -1,14 +1,14 @@
 package com.clipsync.android.sync
 
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.nio.charset.StandardCharsets
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.nio.charset.StandardCharsets
 
 class Bt1SyncTransportTest {
     private val clientToListenerKey = ByteArray(32) { (it + 1).toByte() }
@@ -24,8 +24,6 @@ class Bt1SyncTransportTest {
     private fun listenerEncryptor() = Bt1FrameEncryptor(listenerToClientKey)
 
     private fun listenerDecryptor() = Bt1FrameDecryptor(clientToListenerKey)
-
-    private fun payloadOf(frame: ByteArray): ByteArray = frame.copyOfRange(Bt1Frames.LENGTH_PREFIX_LENGTH, frame.size)
 
     @Test
     fun `sent text arrives as framed ciphertext the peer can decrypt in order`() =

@@ -62,10 +62,11 @@ fun PreferencesScreen(
 ) {
     val c = clipSyncColors
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Text(
             text = "偏好",
@@ -103,8 +104,9 @@ fun PreferencesScreen(
             RowDivider()
             ToggleRow(
                 title = "图片同步",
-                description = "同步复制或分享的 PNG/JPEG 图片（单张最大 16 MiB）。" +
-                    "需要两端都开启；对新连接生效。",
+                description =
+                    "同步复制或分享的 PNG/JPEG 图片（单张最大 16 MiB）。" +
+                        "需要两端都开启；对新连接生效。",
                 checked = state.imageSync,
                 onCheckedChange = onImageSyncChange,
             )
@@ -133,8 +135,9 @@ fun PreferencesScreen(
         ) {
             ToggleRow(
                 title = "蓝牙备援",
-                description = "IP 路径全部不可达时（例如代理/VPN 全局接管），通过系统已配对的蓝牙设备" +
-                    "继续同步文本。仅文本、速度较慢；IP 恢复后自动切回。",
+                description =
+                    "IP 路径全部不可达时（例如代理/VPN 全局接管），通过系统已配对的蓝牙设备" +
+                        "继续同步文本。仅文本、速度较慢；IP 恢复后自动切回。",
                 checked = state.bluetoothFallback,
                 onCheckedChange = onBluetoothFallbackChange,
             )
@@ -142,9 +145,10 @@ fun PreferencesScreen(
                 RowDivider()
                 ActionRow(
                     title = "蓝牙目标设备",
-                    description = state.bluetoothDeviceName
-                        ?.let { "当前：$it" }
-                        ?: "未选择 · 需先在系统设置里与电脑完成蓝牙配对",
+                    description =
+                        state.bluetoothDeviceName
+                            ?.let { "当前：$it" }
+                            ?: "未选择 · 需先在系统设置里与电脑完成蓝牙配对",
                     onClick = onRequestBluetoothDevices,
                 )
                 if (bluetoothDevices != null) {
@@ -188,15 +192,17 @@ fun PreferencesScreen(
         ) {
             ActionRow(
                 title = "导出历史",
-                description = "把全部历史（含删除标记）写成 JSON Lines 备份文件；" +
-                    "不含密钥与配对信息。导出内容为明文，请妥善保管。",
+                description =
+                    "把全部历史（含删除标记）写成 JSON Lines 备份文件；" +
+                        "不含密钥与配对信息。导出内容为明文，请妥善保管。",
                 onClick = onExportHistory,
             )
             RowDivider()
             ActionRow(
                 title = "导入历史",
-                description = "从备份文件合并历史：按「来源设备 + 序号」幂等去重，" +
-                    "重复导入不产生重复条目。校验失败时不做任何改动。",
+                description =
+                    "从备份文件合并历史：按「来源设备 + 序号」幂等去重，" +
+                        "重复导入不产生重复条目。校验失败时不做任何改动。",
                 onClick = onImportHistory,
             )
             if (state.transferStatus != null) {
@@ -205,9 +211,10 @@ fun PreferencesScreen(
                     text = state.transferStatus,
                     style = ClipSyncType.caption,
                     color = c.t3,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 12.dp),
                 )
             }
         }
@@ -234,19 +241,21 @@ fun PreferencesScreen(
             style = ClipSyncType.groupHeader,
             color = c.t4,
             textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
         )
     }
 }
 
 /** The cap is a power-of-two byte count (1 MiB by default); shown in the nearest whole unit. */
-private fun formatByteCap(bytes: Int): String = when {
-    bytes >= 1 shl 20 -> "${bytes / (1 shl 20)} MiB"
-    bytes >= 1 shl 10 -> "${bytes / (1 shl 10)} KiB"
-    else -> "$bytes B"
-}
+private fun formatByteCap(bytes: Int): String =
+    when {
+        bytes >= 1 shl 20 -> "${bytes / (1 shl 20)} MiB"
+        bytes >= 1 shl 10 -> "${bytes / (1 shl 10)} KiB"
+        else -> "$bytes B"
+    }
 
 @Composable
 private fun GroupHeader(text: String) {
@@ -278,9 +287,10 @@ private fun ToggleRow(
 ) {
     val c = clipSyncColors
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
@@ -292,24 +302,29 @@ private fun ToggleRow(
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = c.onFlow,
-                checkedTrackColor = c.flow,
-                uncheckedThumbColor = c.t4,
-                uncheckedTrackColor = c.sfIn,
-                uncheckedBorderColor = c.ln2,
-            ),
+            colors =
+                SwitchDefaults.colors(
+                    checkedThumbColor = c.onFlow,
+                    checkedTrackColor = c.flow,
+                    uncheckedThumbColor = c.t4,
+                    uncheckedTrackColor = c.sfIn,
+                    uncheckedBorderColor = c.ln2,
+                ),
         )
     }
 }
 
 @Composable
-private fun ValueRow(title: String, value: String) {
+private fun ValueRow(
+    title: String,
+    value: String,
+) {
     val c = clipSyncColors
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 14.dp, vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -327,13 +342,18 @@ private fun ValueRow(title: String, value: String) {
  * honest description on the left, a flow-coloured chevron marking the tap target.
  */
 @Composable
-private fun ActionRow(title: String, description: String, onClick: () -> Unit) {
+private fun ActionRow(
+    title: String,
+    description: String,
+    onClick: () -> Unit,
+) {
     val c = clipSyncColors
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
@@ -361,22 +381,25 @@ private fun BondedDeviceChooser(
     if (devices.isEmpty()) {
         RowDivider()
         Text(
-            text = "没有可选的已配对设备。请确认系统蓝牙已开启、连接权限已授予，" +
-                "并先在系统设置里与电脑完成蓝牙配对。",
+            text =
+                "没有可选的已配对设备。请确认系统蓝牙已开启、连接权限已授予，" +
+                    "并先在系统设置里与电脑完成蓝牙配对。",
             style = ClipSyncType.caption,
             color = c.t3,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
         )
     } else {
         devices.forEach { device ->
             RowDivider()
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = { onChosen(device) })
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = { onChosen(device) })
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -395,21 +418,27 @@ private fun BondedDeviceChooser(
         fontSize = 13.sp,
         fontWeight = FontWeight.SemiBold,
         color = c.flow,
-        modifier = Modifier
-            .clickable(onClick = onDismiss)
-            .padding(horizontal = 14.dp, vertical = 10.dp),
+        modifier =
+            Modifier
+                .clickable(onClick = onDismiss)
+                .padding(horizontal = 14.dp, vertical = 10.dp),
     )
 }
 
 /** A row that navigates elsewhere in the app; the chevron says so honestly. */
 @Composable
-private fun LinkRow(title: String, value: String, onClick: () -> Unit) {
+private fun LinkRow(
+    title: String,
+    value: String,
+    onClick: () -> Unit,
+) {
     val c = clipSyncColors
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 14.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -432,9 +461,10 @@ private fun LinkRow(title: String, value: String, onClick: () -> Unit) {
 private fun DeviceEmptyState(onOpenConduit: () -> Unit) {
     val c = clipSyncColors
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 14.dp, vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 14.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Text(text = "尚无已配对设备", fontSize = 14.sp, color = c.t1)
@@ -449,11 +479,12 @@ private fun DeviceEmptyState(onOpenConduit: () -> Unit) {
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
             color = c.flow,
-            modifier = Modifier
-                .clip(shape)
-                .border(1.dp, c.flowLn, shape)
-                .clickable(onClick = onOpenConduit)
-                .padding(horizontal = 14.dp, vertical = 7.dp),
+            modifier =
+                Modifier
+                    .clip(shape)
+                    .border(1.dp, c.flowLn, shape)
+                    .clickable(onClick = onOpenConduit)
+                    .padding(horizontal = 14.dp, vertical = 7.dp),
         )
     }
 }

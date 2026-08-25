@@ -10,14 +10,14 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.storage.SyncSettingsStore
-import java.io.IOException
-import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.util.UUID
 
 /**
  * The real bt1 fallback dial (ADR 0005 phase 3): connects an RFCOMM socket to the
@@ -39,15 +39,15 @@ class BluetoothSyncConnector(
         peer: PairedPeer,
         pairSecret: ByteArray,
     ): SyncTransport? {
-        if (!settings.bluetoothFallbackEnabled) {
-            return null
-        }
-        val address = settings.bluetoothPeerAddress ?: return null
-        if (!hasConnectPermission(context)) {
-            return null
-        }
-        val adapter = adapter(context) ?: return null
-        if (!adapter.isEnabled) {
+        val address = settings.bluetoothPeerAddress
+        val adapter = adapter(context)
+        val ready =
+            settings.bluetoothFallbackEnabled &&
+                address != null &&
+                adapter != null &&
+                adapter.isEnabled &&
+                hasConnectPermission(context)
+        if (!ready || address == null || adapter == null) {
             return null
         }
         val secret = pairSecret.copyOf()

@@ -8,7 +8,9 @@ import com.clipsync.android.pairing.KeyValueStore
  * database is being migrated. Defaults follow the implementation plan (auto-apply on, 2,000
  * entries / 30 days retention, 1 MiB text cap).
  */
-class SyncSettingsStore(private val keyValues: KeyValueStore) {
+class SyncSettingsStore(
+    private val keyValues: KeyValueStore,
+) {
     var autoApplyRemote: Boolean
         get() = readBoolean(KEY_AUTO_APPLY_REMOTE, default = true)
         set(value) = write(KEY_AUTO_APPLY_REMOTE, value.toString())
@@ -108,31 +110,40 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         get() = keyValues.read(KEY_BLUETOOTH_PEER_NAME)?.takeIf { it.isNotEmpty() }
         set(value) = write(KEY_BLUETOOTH_PEER_NAME, value.orEmpty())
 
-    fun retentionPolicy(): RetentionPolicy = RetentionPolicy(
-        maximumEntries = retentionMaxEntries,
-        maximumAgeMs = retentionMaxAgeDays * MILLIS_PER_DAY,
-    )
+    fun retentionPolicy(): RetentionPolicy =
+        RetentionPolicy(
+            maximumEntries = retentionMaxEntries,
+            maximumAgeMs = retentionMaxAgeDays * MILLIS_PER_DAY,
+        )
 
     /**
      * What cleanup should enforce right now: the entry cap always applies; the age limit only
      * while [autoExpireEnabled] is on (an effectively-infinite age matches no row otherwise).
      */
-    fun effectiveRetentionPolicy(): RetentionPolicy = RetentionPolicy(
-        maximumEntries = retentionMaxEntries,
-        maximumAgeMs = if (autoExpireEnabled) retentionMaxAgeDays * MILLIS_PER_DAY else NO_AGE_LIMIT_MS,
-    )
+    fun effectiveRetentionPolicy(): RetentionPolicy =
+        RetentionPolicy(
+            maximumEntries = retentionMaxEntries,
+            maximumAgeMs = if (autoExpireEnabled) retentionMaxAgeDays * MILLIS_PER_DAY else NO_AGE_LIMIT_MS,
+        )
 
     /** The user cap may lower the per-item size, never raise it past the protocol's 1 MiB. */
     val effectiveMaxSyncTextBytes: Int
         get() = minOf(maxSyncTextBytes, DEFAULT_MAX_TEXT_BYTES)
 
-    private fun readBoolean(key: String, default: Boolean): Boolean =
-        keyValues.read(key)?.toBooleanStrictOrNull() ?: default
+    private fun readBoolean(
+        key: String,
+        default: Boolean,
+    ): Boolean = keyValues.read(key)?.toBooleanStrictOrNull() ?: default
 
-    private fun readInt(key: String, default: Int): Int =
-        keyValues.read(key)?.toIntOrNull()?.takeIf { it > 0 } ?: default
+    private fun readInt(
+        key: String,
+        default: Int,
+    ): Int = keyValues.read(key)?.toIntOrNull()?.takeIf { it > 0 } ?: default
 
-    private fun write(key: String, value: String) = keyValues.write(mapOf(key to value))
+    private fun write(
+        key: String,
+        value: String,
+    ) = keyValues.write(mapOf(key to value))
 
     companion object {
         const val PREFERENCES_NAME = "clipsync.settings"
