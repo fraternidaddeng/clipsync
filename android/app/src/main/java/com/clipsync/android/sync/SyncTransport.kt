@@ -1,6 +1,7 @@
 package com.clipsync.android.sync
 
 import java.io.IOException
+import java.net.Proxy
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.security.cert.CertificateException
@@ -71,6 +72,14 @@ class OkHttpSyncConnector(
         sslContext.init(null, arrayOf(trustManager), SecureRandom())
         val client = OkHttpClient.Builder()
             .sslSocketFactory(sslContext.socketFactory, trustManager)
+            // Paired peers are always private LAN or Tailscale (100.64/10) addresses, never
+            // public hostnames, so a device-level HTTP(S) proxy (Wi-Fi proxy setting, or
+            // Clash/Surge running in system-proxy mode) must never sit on this path: it
+            // would either fail the CONNECT to an address only reachable from this device,
+            // or become a man-in-the-middle that the certificate pin then rejects. NO_PROXY
+            // forces a direct socket and also stops OkHttp from consulting the process-wide
+            // ProxySelector, so proxy apps cannot observe or break peer sync.
+            .proxy(Proxy.NO_PROXY)
             // The pin is the whole identity; hostnames are meaningless for LAN IPs.
             .hostnameVerifier { _, _ -> true }
             .connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)

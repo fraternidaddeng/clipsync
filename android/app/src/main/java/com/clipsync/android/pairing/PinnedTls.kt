@@ -3,6 +3,7 @@ package com.clipsync.android.pairing
 import java.io.IOException
 import java.net.ConnectException
 import java.net.NoRouteToHostException
+import java.net.Proxy
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -30,6 +31,14 @@ internal object PinnedTls {
         sslContext.init(null, arrayOf(trustManager), SecureRandom())
         return OkHttpClient.Builder()
             .sslSocketFactory(sslContext.socketFactory, trustManager)
+            // Pairing and health probes talk to private LAN or Tailscale addresses only,
+            // never public hostnames, so a device-level HTTP(S) proxy (Wi-Fi proxy setting,
+            // or Clash/Surge in system-proxy mode) must never sit on this path: it would
+            // either fail the CONNECT to an address only reachable from this device, or
+            // become a man-in-the-middle that the certificate pin then rejects. NO_PROXY
+            // forces a direct socket and stops OkHttp from consulting the process-wide
+            // ProxySelector, so proxy apps cannot observe or break these calls.
+            .proxy(Proxy.NO_PROXY)
             // The pin is the whole identity; hostnames are meaningless for LAN IPs.
             .hostnameVerifier { _, _ -> true }
             .connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
