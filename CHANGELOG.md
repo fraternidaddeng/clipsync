@@ -53,6 +53,10 @@
 - [Android] 收件箱文本解析迁至 Room（硬化项收口）：通知「复制」动作按事件 ID 直查 Room 历史行，收到的文本不再在 SharedPreferences 里留第二份明文（旧 50 条残留一次性清除）；删除历史即令复制动作失效（诚实语义——数据真的没了就不该还能复制出来）。
 - [Windows] 三窗口全部令牌刷 `DynamicResource` 化以支持运行时换肤。
 - [双端] IA 迁移（`docs/settings-roadmap.md` P1 #10–12）：连通性配置从偏好迁回通路网络段——它们改变「内容能不能到达对端」，按判据属通路。**蓝牙备援**（双端；Android 为网络段下方的备援卡片，含目标设备选择与 bonded 设备清单）、**额外监听地址**（Windows，「重启后生效」赭色说明照搬）、**本机证书指纹**（Windows，偏好「信任」卡随之取消）现住在通路页「网络段 · 连接」卡。设置键与行为不变，纯搬家；偏好页各留一个发布版本的链接行（「已移至通路 · 网络」）指路，下个版本删除。`docs/install.md` 的 Tailscale 与蓝牙备援路径说明同步更新。
+- [Windows] 页面切换接动效令牌（ui-gap-audit P2 收口）：历史/通路/偏好三页切换由硬切改为 200ms 宪章缓动淡入（`cubic-bezier(.16,1,.3,1)`，对齐 Android tab Crossfade）；沿用 `ClientAreaAnimation` 门控，系统减弱动效时保持硬切。
+- [双端] 开关读屏文案补全（ui-gap-audit P3 可访问性）：Windows 全部 9 个 CharterToggle 与配对 QR 图补 `AutomationProperties.Name`（引既有标题串，i18n 零负担）；Android 偏好开关行与蓝牙备援卡改整行 `toggleable(Role.Switch)`——TalkBack 一站读出标题+描述+状态、触达区扩到整行，裸 Switch 转纯显示。
+- [Android] 计数文案复数化（i18n 语法收口）：7 个含计数的键（通知洪泛正文、向导剩余步数、预览行数、保留天数、保留条数、导出完成、清空完成）从 `<string>` 转 `<plurals>`，19 语按各自 CLDR 复数域补齐分支（俄语/波兰语全变格、阿拉伯语六分支含双数、西法意葡补百万级 many 构式）——英语「1 step(s) left」这类括号硬凑从此消失；`check-i18n-parity.py` 同步扩展复数键逐键与占位符校验。
+- [Android] Android 12+ 备份/迁移姿态显式化：manifest 补 `dataExtractionRules` 与 `fullBackupContent="false"`（云备份与设备间迁移全域排除，与 `allowBackup=false` 同一裁决——剪贴历史是敏感明文、Keystore 密钥本就不可迁移，半截恢复只会伪装已配对）。
 
 ### 修复
 
@@ -84,6 +88,7 @@
 - 发布工作流 `.github/workflows/release.yml`（2026-08-25）：推送 `v*` tag 即打包 Windows 便携 ZIP（版本号取自 tag）与 Android APK（`CLIPSYNC_ANDROID_*` secrets 配置齐全时签名，否则如实产出 unsigned 并在发布说明明示不可安装），连同 `.sha256` 附到 GitHub Release；发布说明自动注明「发布 ≠ 真机验证通过」的诚实边界。尚未打过任何 tag，首次实跑待第一个发布。
 - 测试规模（截至 main `d573080`，三作业 CI 全绿）：652 Android JVM + 484 跨平台核心/对端 + 186 Windows 应用层用例；新增 Windows↔Android 全链路脚本化集成测试与真实会话事件驱动的通路页验证。
 - 新增 `docs/verification-without-device.md`（绿测 ≠ 兼容的边界）、`docs/stage-gap-audit.md`、`docs/competitive-analysis.md`、`docs/design/ui-gap-audit.md`、`docs/manual-qa-checklist.md`、`docs/release-notes-template.md`；扩充 `docs/device-validation-matrix.md` 为脚本化检查清单。
+- [Android] lintDebug 告警清理（2026-08-25，16 错误 + 46 告警 → 0 错误 + 22 告警）：错误全数清零（RestrictedApi/PrivateApi 系按 shizuku 包路径豁免——特权直读的存在意义就是反射隐藏 API；蓝牙拨号与磁贴旧分支定点 `@SuppressLint` 附因由）；告警侧收掉 ObsoleteSdkInt（minSdk 29 恒真检查与 `-v26` 目录限定）、AutoboxingStateCreation、德语「die die」Typos 误报、SetWorldReadable（脚本供 adb shell/root 异 uid 消费属设计）与 7 处 PluralsCandidate（见「变更」复数化条目）；detekt/ktlint 对 Composable 命名启用规则层豁免，告别基线行号漂移雷区。剩余 22 条均为记录在案的刻意选择（依赖版本通知 19 条 + ApplySharedPref/ModifierParameter/BatteryLife 各 1）。
 
 ### 已知欠账（进行中）
 
