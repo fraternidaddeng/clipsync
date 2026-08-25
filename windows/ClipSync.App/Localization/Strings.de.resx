@@ -277,10 +277,10 @@
     <value>{0} · {1} ausstehend in der Warteschlange</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>{0} Gerät(e) erkannt, die wie veraltete Überbleibsel aussehen; {1} ausstehende Einträge blähen den Zähler auf. Das Aufräumen widerruft sie und leert ihre Sendewarteschlangen.</value>
+    <value>Als veraltete Überbleibsel erkannte Geräte: {0}; ausstehende Einträge, die den Zähler aufblähen: {1}. Das Aufräumen widerruft sie und leert ihre Sendewarteschlangen.</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>{0} Gerät(e) erkannt, die wie veraltete Überbleibsel aussehen. Das Aufräumen widerruft sie; bereits empfangene Inhalte bleiben unberührt.</value>
+    <value>Als veraltete Überbleibsel erkannte Geräte: {0}. Das Aufräumen widerruft sie; bereits empfangene Inhalte bleiben unberührt.</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
     <value>Vermutlich Rest einer Doppelkopplung</value>
@@ -517,7 +517,7 @@
     <value>Der Peer-Dienst konnte nicht starten; Sync ist in dieser Sitzung aus.</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>LAN lauscht auf Port {0} · {1} Gerät(e) verbunden, Inhalte fließen in Echtzeit.</value>
+    <value>LAN lauscht auf Port {0} · verbundene Geräte: {1}, Inhalte fließen in Echtzeit.</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
     <value>LAN lauscht auf Port {0} · wartet auf gekoppelte Geräte; Ereignisse werden erst gespeichert, dann in die Sendewarteschlange gestellt — offline geht nichts verloren.</value>
@@ -558,7 +558,7 @@ Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelö
     <value>Noch einmal bestätigen: Das Leeren ist unwiderruflich. Gesamten Verlauf leeren?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
-    <value>{0} Einträge exportiert (Klartext) → {1}</value>
+    <value>Exportierte Einträge: {0} (Klartext) → {1}</value>
   </data>
   <data name="Transfer_ExportWriteFailed" xml:space="preserve">
     <value>Export fehlgeschlagen: Die gewählte Datei konnte nicht geschrieben werden.</value>

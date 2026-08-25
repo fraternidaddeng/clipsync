@@ -277,10 +277,10 @@
     <value>{0} · {1} do wysłania</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>Wykryto {0} urządzenie(a) wyglądające na pozostałości; {1} oczekujących pozycji zawyża licznik „do wysłania”. Porządkowanie unieważni je i wyczyści ich kolejki.</value>
+    <value>Urządzenia wyglądające na pozostałości: {0}; oczekujące pozycje zawyżające licznik „do wysłania”: {1}. Porządkowanie unieważni je i wyczyści ich kolejki.</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>Wykryto {0} urządzenie(a) wyglądające na pozostałości. Porządkowanie je unieważni; treść, którą już odebrały, pozostaje nietknięta.</value>
+    <value>Urządzenia wyglądające na pozostałości: {0}. Porządkowanie je unieważni; treść, którą już odebrały, pozostaje nietknięta.</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
     <value>Prawdopodobnie pozostałość po podwójnym parowaniu</value>
@@ -517,7 +517,7 @@
     <value>Usługa dla drugiej strony nie uruchomiła się; synchronizacja jest wyłączona w tej sesji.</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>Nasłuch LAN na porcie {0} · połączono {1} urządzenie(a), treść płynie w czasie rzeczywistym.</value>
+    <value>Nasłuch LAN na porcie {0} · połączone urządzenia: {1}, treść płynie w czasie rzeczywistym.</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
     <value>Nasłuch LAN na porcie {0} · oczekiwanie na sparowane urządzenia; zdarzenia trafiają najpierw do magazynu, potem do kolejki wysyłkowej, więc offline nic nie ginie.</value>
@@ -558,7 +558,7 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
     <value>Potwierdź jeszcze raz: czyszczenia nie można cofnąć. Wyczyścić całą historię?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
-    <value>Wyeksportowano {0} rekordów (jawny tekst) → {1}</value>
+    <value>Wyeksportowane rekordy: {0} (jawny tekst) → {1}</value>
   </data>
   <data name="Transfer_ExportWriteFailed" xml:space="preserve">
     <value>Eksport nie powiódł się: nie można zapisać wybranego pliku.</value>

@@ -277,10 +277,10 @@
     <value>{0} · {1} pendentes na fila</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>Detectados {0} aparelho(s) que parecem sobras obsoletas; {1} item(ns) pendente(s) estão inflando o contador. A limpeza os revoga e esvazia suas filas de envio.</value>
+    <value>Aparelhos que parecem sobras obsoletas: {0}; itens pendentes inflando o contador: {1}. A limpeza os revoga e esvazia suas filas de envio.</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>Detectados {0} aparelho(s) que parecem sobras obsoletas. A limpeza os revoga; o conteúdo que já receberam não é afetado.</value>
+    <value>Aparelhos que parecem sobras obsoletas: {0}. A limpeza os revoga; o conteúdo que já receberam não é afetado.</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
     <value>Provável sobra de pareamento duplicado</value>
@@ -517,7 +517,7 @@
     <value>O serviço do par não conseguiu iniciar; a sincronização fica desligada nesta sessão.</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>LAN escutando na porta {0} · {1} aparelho(s) conectado(s), o conteúdo flui em tempo real.</value>
+    <value>LAN escutando na porta {0} · aparelhos conectados: {1}, o conteúdo flui em tempo real.</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
     <value>LAN escutando na porta {0} · aguardando aparelhos pareados; os eventos são gravados antes de entrar na fila de envio, então nada se perde offline.</value>
@@ -558,7 +558,7 @@ Todas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A 
     <value>Confirme de novo: a limpeza não pode ser desfeita. Limpar todo o histórico?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
-    <value>{0} registro(s) exportado(s) (texto puro) → {1}</value>
+    <value>Registros exportados: {0} (texto puro) → {1}</value>
   </data>
   <data name="Transfer_ExportWriteFailed" xml:space="preserve">
     <value>Falha na exportação: não foi possível gravar o arquivo escolhido.</value>

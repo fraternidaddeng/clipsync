@@ -277,10 +277,10 @@
     <value>{0} · {1} pendientes en la cola</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>Se detectaron {0} dispositivos que parecen restos obsoletos; {1} elementos pendientes están inflando el contador. La limpieza los revoca y vacía sus colas de envío.</value>
+    <value>Dispositivos que parecen restos obsoletos: {0}; elementos pendientes que inflan el contador: {1}. La limpieza los revoca y vacía sus colas de envío.</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>Se detectaron {0} dispositivos que parecen restos obsoletos. La limpieza los revoca; el contenido que ya recibieron no se ve afectado.</value>
+    <value>Dispositivos que parecen restos obsoletos: {0}. La limpieza los revoca; el contenido que ya recibieron no se ve afectado.</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
     <value>Posible resto de emparejamiento duplicado</value>
@@ -517,7 +517,7 @@
     <value>El servicio del par no pudo iniciarse; la sincronización queda apagada en esta sesión.</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>LAN escuchando en el puerto {0} · {1} dispositivos conectados, el contenido fluye en tiempo real.</value>
+    <value>LAN escuchando en el puerto {0} · dispositivos conectados: {1}, el contenido fluye en tiempo real.</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
     <value>LAN escuchando en el puerto {0} · esperando dispositivos emparejados; los eventos se guardan antes de entrar en la cola de envío, así que nada se pierde sin conexión.</value>
@@ -558,7 +558,7 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
     <value>Confirma otra vez: el vaciado no se puede deshacer. ¿Vaciar todo el historial?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
-    <value>Se exportaron {0} registros (texto plano) → {1}</value>
+    <value>Registros exportados: {0} (texto plano) → {1}</value>
   </data>
   <data name="Transfer_ExportWriteFailed" xml:space="preserve">
     <value>Exportación fallida: no se pudo escribir el archivo elegido.</value>

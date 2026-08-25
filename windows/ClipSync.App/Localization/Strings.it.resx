@@ -277,10 +277,10 @@
     <value>{0} · {1} in attesa di invio</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>Rilevati {0} dispositivi che sembrano residui obsoleti; {1} elementi in attesa gonfiano il contatore «in uscita». La pulizia li revoca e svuota le loro code di invio.</value>
+    <value>Dispositivi che sembrano residui obsoleti: {0}; elementi in attesa che gonfiano il contatore «in uscita»: {1}. La pulizia li revoca e svuota le loro code di invio.</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>Rilevati {0} dispositivi che sembrano residui obsoleti. La pulizia li revoca; il contenuto già ricevuto non è toccato.</value>
+    <value>Dispositivi che sembrano residui obsoleti: {0}. La pulizia li revoca; il contenuto già ricevuto non è toccato.</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
     <value>Probabile residuo di associazione duplicata</value>
@@ -517,7 +517,7 @@
     <value>Il servizio peer non è riuscito ad avviarsi; la sincronizzazione è spenta per questa sessione.</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>LAN in ascolto sulla porta {0} · {1} dispositivi connessi, il contenuto scorre in tempo reale.</value>
+    <value>LAN in ascolto sulla porta {0} · dispositivi connessi: {1}, il contenuto scorre in tempo reale.</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
     <value>LAN in ascolto sulla porta {0} · in attesa dei dispositivi associati; gli eventi arrivano nell’archivio prima della coda di invio, offline non si perde nulla.</value>
@@ -558,7 +558,7 @@ Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuot
     <value>Conferma ancora una volta: lo svuotamento è irreversibile. Svuotare tutta la cronologia?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
-    <value>Esportati {0} record (in chiaro) → {1}</value>
+    <value>Record esportati: {0} (in chiaro) → {1}</value>
   </data>
   <data name="Transfer_ExportWriteFailed" xml:space="preserve">
     <value>Export non riuscito: impossibile scrivere il file scelto.</value>

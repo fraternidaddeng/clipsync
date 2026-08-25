@@ -277,10 +277,10 @@
     <value>{0} · {1} in de wachtrij</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>Er zijn {0} apparaat(en) gedetecteerd die op achtergebleven resten lijken; {1} wachtende item(s) drijven de wachtrijteller op. Opschonen trekt ze in en leegt hun wachtrijen.</value>
+    <value>Apparaten die op achtergebleven resten lijken: {0}; wachtende items die de teller opdrijven: {1}. Opschonen trekt ze in en leegt hun wachtrijen.</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>Er zijn {0} apparaat(en) gedetecteerd die op achtergebleven resten lijken. Opschonen trekt ze in; al ontvangen inhoud blijft onaangetast.</value>
+    <value>Apparaten die op achtergebleven resten lijken: {0}. Opschonen trekt ze in; al ontvangen inhoud blijft onaangetast.</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
     <value>Waarschijnlijk rest van dubbele koppeling</value>
@@ -517,7 +517,7 @@
     <value>De peer-service kon niet starten; synchronisatie is deze sessie uit.</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>LAN luistert op poort {0} · {1} apparaat(en) verbonden, inhoud stroomt realtime.</value>
+    <value>LAN luistert op poort {0} · verbonden apparaten: {1}, inhoud stroomt realtime.</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
     <value>LAN luistert op poort {0} · wacht op gekoppelde apparaten; gebeurtenissen landen eerst in de opslag en dan in de wachtrij, dus offline gaat niets verloren.</value>
@@ -558,7 +558,7 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
     <value>Bevestig nog een keer: wissen kan niet ongedaan worden gemaakt. Alle geschiedenis wissen?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
-    <value>{0} record(s) geëxporteerd (platte tekst) → {1}</value>
+    <value>Geëxporteerde records: {0} (platte tekst) → {1}</value>
   </data>
   <data name="Transfer_ExportWriteFailed" xml:space="preserve">
     <value>Exporteren mislukt: kon het gekozen bestand niet schrijven.</value>

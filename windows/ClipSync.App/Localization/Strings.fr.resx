@@ -277,10 +277,10 @@
     <value>{0} · {1} en attente dans la file</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>{0} appareil(s) semblant être des restes obsolètes détecté(s) ; {1} élément(s) en attente gonflent le compteur. Le nettoyage les révoque et vide leurs files d’envoi.</value>
+    <value>Appareils semblant être des restes obsolètes : {0} ; éléments en attente gonflant le compteur : {1}. Le nettoyage les révoque et vide leurs files d’envoi.</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>{0} appareil(s) semblant être des restes obsolètes détecté(s). Le nettoyage les révoque ; le contenu qu’ils ont déjà reçu n’est pas affecté.</value>
+    <value>Appareils semblant être des restes obsolètes : {0}. Le nettoyage les révoque ; le contenu qu’ils ont déjà reçu n’est pas affecté.</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
     <value>Probable reste d’appairage en double</value>
@@ -517,7 +517,7 @@
     <value>Le service du pair n’a pas pu démarrer ; la synchronisation est coupée pour cette session.</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>LAN à l’écoute sur le port {0} · {1} appareil(s) connecté(s), le contenu circule en temps réel.</value>
+    <value>LAN à l’écoute sur le port {0} · appareils connectés : {1}, le contenu circule en temps réel.</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
     <value>LAN à l’écoute sur le port {0} · en attente d’appareils appairés ; les événements sont enregistrés avant d’entrer dans la file d’envoi, rien ne se perd hors ligne.</value>
@@ -558,7 +558,7 @@ Toutes les entrées de ce PC (images comprises) seront supprimées en une fois. 
     <value>Confirmez encore : le vidage est irréversible. Vider tout l’historique ?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
-    <value>{0} enregistrement(s) exporté(s) (en clair) → {1}</value>
+    <value>Enregistrements exportés : {0} (en clair) → {1}</value>
   </data>
   <data name="Transfer_ExportWriteFailed" xml:space="preserve">
     <value>Échec de l’export : impossible d’écrire le fichier choisi.</value>

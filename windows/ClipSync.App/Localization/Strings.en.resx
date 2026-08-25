@@ -277,10 +277,10 @@
     <value>{0} · {1} pending in the outbox</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>Detected {0} device(s) that look like stale leftovers; {1} pending item(s) are inflating the outbox count. Cleanup revokes them and clears their outboxes.</value>
+    <value>Devices that look like stale leftovers: {0}; pending items inflating the outbox count: {1}. Cleanup revokes them and clears their outboxes.</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>Detected {0} device(s) that look like stale leftovers. Cleanup revokes them; content they already received is unaffected.</value>
+    <value>Devices that look like stale leftovers: {0}. Cleanup revokes them; content they already received is unaffected.</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
     <value>Likely duplicate-pairing leftover</value>
@@ -517,7 +517,7 @@
     <value>The peer service failed to start; sync is off for this session.</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>LAN listening on port {0} · {1} device(s) connected, content flows in real time.</value>
+    <value>LAN listening on port {0} · devices connected: {1}, content flows in real time.</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
     <value>LAN listening on port {0} · waiting for paired devices; events land in the store before the outbox, so nothing is lost offline.</value>
@@ -558,7 +558,7 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
     <value>Confirm once more: clearing cannot be undone. Clear all history?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
-    <value>Exported {0} record(s) (plaintext) → {1}</value>
+    <value>Exported records: {0} (plaintext) → {1}</value>
   </data>
   <data name="Transfer_ExportWriteFailed" xml:space="preserve">
     <value>Export failed: could not write the chosen file.</value>
