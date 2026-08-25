@@ -159,6 +159,12 @@
 - **限制 1 — Windows 缩略图单测失败：已在 main 提交 `9519716` 修复，待真 Windows 主机重跑 `scripts/build-windows.ps1` 确认后方可闭环。** 两条失败单测系两个独立成因，分别处理：`EnsureThumbnailKeepsOpaquePixels` 一类的逐通道像素全等断言改为共享的 `AssertCenterPixelIsSolid`（alpha ≥ 250、每通道相对编码色 ±3），容忍 WIC Fant 缩放器的定点误差；`LoadForListRegeneratesACorruptCachedThumbnail` 一类的损坏缓存自愈不再依赖静默 TryDelete，改为经唯一临时文件 + 覆盖式 `File.Move` 强制重写缓存，无法产出可解码缓存时 `LoadForList` 返回 null 路径而非坏路径。该提交已在 Linux 验证：解决方案编译干净（`EnableWindowsTargeting`，0 警告）、跨平台套件 471/471 通过；WPF 测试体仍需 Windows 执行，**在真 Windows 主机上 `scripts/build-windows.ps1` exit 0 之前不算验证通过**。
 - **限制 6 — CI 状态：工作流存在，但仓库从未有过任何 Actions 运行。** 仓库有且仅有一个工作流 `.github/workflows/ci.yml`（名称 CI，API 状态 active），含三作业：`validate-protocol`（ubuntu-latest）、`build-windows`（windows-latest，执行 `scripts/build-windows.ps1` 含 App.Tests）、`build-android`（ubuntu-latest）。截至本更新，Actions API 运行总数为 **0**——包括 `9519716` 在内的近期 main 推送均未触发任何运行；仓库级 Actions 权限查询对当前凭证返回 403，无法确认是否在仓库/组织设置中被禁用。因此第 0 节「CI 三作业全绿」仍不可核实，`9519716` 的修复也尚无 CI 验证，目前只能依靠 Windows 主机手动重跑兜底。
 
+### 更新（2026-08-25）：限制 1 与限制 6 闭环——CI 已启用，首次 Windows 运行暴露真因并已修复，三作业全绿
+
+- **限制 6 — CI 已启用并有运行。** Actions 启用后的首次手动运行 32827123288（commit `c71626e`）：协议、Android 两作业绿，`build-windows` 失败——`ClipSync.App.Tests` 首次在真 Windows 执行，6 失败 / 145 通过。
+- **限制 1 的真因与 `9519716` 的误诊。** 6 条失败里 5 条同源，且与 QA 机上当时的失败同一机制：`BitmapFile.TryLoad` 的 `CreateOptions` 含 `IgnoreImageCache`，流式加载（无 `UriSource`）下 WPF `BitmapImage.FinalizeCreation` 调 `ImagingCache.RemoveFromImageCache(null)` 抛 `ArgumentNullException`，被 `TryLoad` 当解码失败吞掉——**每次调用在真 Windows 上都静默返回 null**（列表出图一直靠 `BitmapDecoder` 解 blob 兜底；缩略图缓存从不被绑定）。`9519716` 的 Fant 容差修的是这些测试从未到达的断言，其「返回 null 路径」改动反而把隐藏的缓存解码失败暴露成 4 条新断言失败。真因无法在 Linux 定位（WPF 测试体不可执行），系临时提交 `f6b6dde` 的不吞异常诊断测试在 windows-latest 取到异常栈后确认。第 6 条失败独立：`HistoryDisplayOptions.StoredScaleFor` 把「标准」档存成 `"1"` 而非键契约的 `"1.0"`（`f6b6dde` 修复）。
+- **修复与验证。** `e9601cc` 移除该旗标（`IgnoreColorProfile` 保留）并撤下诊断测试；push 触发的 CI 运行 32830318703 **三作业全绿**：`ClipSync.App.Tests` 172/172、`ClipSync.Tests` 481/481、Android 与协议作业通过。限制 1 与限制 6 至此闭环；第 0 节「CI 三作业全绿」自本次运行起可核实。
+
 ### 更新（2026-08-25）：限制 5「双端图片同步开关不一致」已按「双端默认关」对齐并钉死
 
 - **产品默认取「关」而非「开」**：ADR 0004（「图片自动同步默认关闭」）与设计宪章 §5.9（`settings_image_sync_hint` =「默认关闭。仅 PNG/JPEG。原始字节含 EXIF。…」）都把图片同步定为显式开启的隐私承诺，故对齐方向是**双端默认关**，不是双端默认开。
