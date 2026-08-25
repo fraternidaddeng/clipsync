@@ -67,6 +67,10 @@ object SyncServiceNotification {
         syncPaused: Boolean,
         autoCapturePaused: Boolean,
     ): Notification {
+        // The system template is deliberate: per DESIGN-CHARTER.md, notifications are drawn
+        // by the system (MIUI rewrites them again), so the charter surface here is exactly
+        // the polyline small icon, flow blue via setColor, the fixed Chinese copy, and the
+        // action row — never a custom RemoteViews layout that OEM shades break.
         val builder =
             NotificationCompat
                 .Builder(context, channelId)
@@ -76,6 +80,10 @@ object SyncServiceNotification {
                 .setContentTitle(stateText)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
+                // Mirrors the channel's IMPORTANCE_LOW: a resident state line never buzzes.
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                // A state line is "now" by definition; a stale clock reads like noise.
+                .setShowWhen(false)
                 // Content-free by design, so the lock screen may show it as-is.
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)

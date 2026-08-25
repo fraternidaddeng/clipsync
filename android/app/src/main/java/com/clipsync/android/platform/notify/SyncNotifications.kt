@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationChannelCompat
+import androidx.core.app.NotificationChannelGroupCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -15,8 +16,14 @@ import com.clipsync.android.R
  * Channel and builder helpers for sync notifications. Per the plan, no notification ever
  * contains clipboard text: the inbox notification shows only the fixed title
  * "来自电脑的新文本" plus a 复制 action that resolves the content by event id inside the app.
+ *
+ * All channels live under one 剪贴同步 group so the app's settings page reads as a single
+ * charter surface instead of three stray entries, and every builder wears the same accents:
+ * the polyline small icon plus flow blue (#215F8F) via setColor.
  */
 object SyncNotifications {
+    const val GROUP_ID = "clipsync"
+    const val CHANNEL_SYNC = "clipsync.sync"
     const val CHANNEL_INBOX = "clipsync.inbox"
     const val CHANNEL_RECOVERY = "clipsync.recovery"
     private const val INBOX_NOTIFICATION_ID_BASE = 41_000
@@ -29,24 +36,57 @@ object SyncNotifications {
 
     /** Idempotent; called from Application.onCreate so receivers can post right away. */
     fun ensureChannels(context: Context) {
+        ensureGroup(context)
         val channel = NotificationChannelCompat.Builder(
             CHANNEL_INBOX,
             NotificationManagerCompat.IMPORTANCE_DEFAULT,
         )
             .setName(context.getString(R.string.notification_channel_inbox_name))
             .setDescription(context.getString(R.string.notification_channel_inbox_description))
+            .setGroup(GROUP_ID)
             .build()
         NotificationManagerCompat.from(context).createNotificationChannel(channel)
+        ensureSyncChannel(context)
         ensureRecoveryChannel(context)
     }
 
+    /** One 剪贴同步 group holds every channel; must exist before any channel names it. */
+    private fun ensureGroup(context: Context) {
+        val group = NotificationChannelGroupCompat.Builder(GROUP_ID)
+            .setName(context.getString(R.string.notification_group_name))
+            .setDescription(context.getString(R.string.notification_group_description))
+            .build()
+        NotificationManagerCompat.from(context).createNotificationChannelGroup(group)
+    }
+
+    /**
+     * The resident foreground-service channel. Low importance: a persistent state line must
+     * never buzz, and it must not add a launcher badge. The service re-ensures it before
+     * promoting, so an FGS start never races Application.onCreate.
+     */
+    fun ensureSyncChannel(context: Context) {
+        ensureGroup(context)
+        val channel = NotificationChannelCompat.Builder(
+            CHANNEL_SYNC,
+            NotificationManagerCompat.IMPORTANCE_LOW,
+        )
+            .setName(context.getString(R.string.notification_channel_sync_name))
+            .setDescription(context.getString(R.string.notification_channel_sync_description))
+            .setGroup(GROUP_ID)
+            .setShowBadge(false)
+            .build()
+        NotificationManagerCompat.from(context).createNotificationChannel(channel)
+    }
+
     private fun ensureRecoveryChannel(context: Context) {
+        ensureGroup(context)
         val channel = NotificationChannelCompat.Builder(
             CHANNEL_RECOVERY,
             NotificationManagerCompat.IMPORTANCE_DEFAULT,
         )
             .setName(context.getString(R.string.notification_channel_recovery_name))
             .setDescription(context.getString(R.string.notification_channel_recovery_description))
+            .setGroup(GROUP_ID)
             .build()
         NotificationManagerCompat.from(context).createNotificationChannel(channel)
     }

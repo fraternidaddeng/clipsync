@@ -2,13 +2,14 @@
 <!-- Notification small icon: the polyline mark (docs/design/icons/nav-conduit.svg).
      System surfaces only honour the alpha shape, so the stroke is heavier (2.4)
      than the 24-grid nav weight - matching the 16-grid tray ratio - to survive
-     the status-bar size. -->
+     the status-bar size. No theme-attribute tint: SystemUI inflates this drawable
+     in its own process, where an unresolved theme attr makes the icon fall back
+     to the generic system glyph; the shade tints the alpha shape itself anyway. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
-    android:viewportHeight="24"
-    android:tint="?android:attr/colorControlNormal">
+    android:viewportHeight="24">
     <path
         android:pathData="M4,12h4l2,-5 4,10 2,-5h4"
         android:strokeColor="@android:color/white"

@@ -1,7 +1,6 @@
 package com.clipsync.android.sync
 
 import android.app.Notification
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
@@ -349,17 +348,8 @@ class ClipboardSyncService : Service() {
         )
 
     private fun createNotificationChannel() {
-        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            getString(R.string.notification_channel_sync_name),
-            NotificationManager.IMPORTANCE_LOW,
-        ).apply {
-            description = getString(R.string.notification_channel_sync_description)
-            // A resident state notification must not add a launcher badge.
-            setShowBadge(false)
-        }
-        manager.createNotificationChannel(channel)
+        // Shared with the other channels so all of them sit under the 剪贴同步 group.
+        SyncNotifications.ensureSyncChannel(this)
     }
 
     private fun clientVersion(): String =
@@ -367,7 +357,7 @@ class ClipboardSyncService : Service() {
             .getOrNull() ?: "0.0.0"
 
     companion object {
-        private const val CHANNEL_ID = "clipsync.sync"
+        private const val CHANNEL_ID = SyncNotifications.CHANNEL_SYNC
         private const val NOTIFICATION_ID = 1001
 
         /** Stable code the conduit shows when the foreground promotion was refused. */

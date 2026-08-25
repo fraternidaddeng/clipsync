@@ -2,10 +2,12 @@ package com.clipsync.android.sync
 
 import android.app.Notification
 import android.content.Context
+import androidx.core.app.NotificationCompat
 import androidx.test.core.app.ApplicationProvider
 import com.clipsync.android.MainActivity
 import com.clipsync.android.R
 import com.clipsync.android.pairing.FakeKeyValueStore
+import com.clipsync.android.platform.notify.SyncNotifications
 import com.clipsync.android.storage.SyncSettingsStore
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -36,11 +38,27 @@ class SyncServiceNotificationTest {
     ): Notification =
         SyncServiceNotification.build(
             context,
-            channelId = "clipsync.sync",
+            channelId = SyncNotifications.CHANNEL_SYNC,
             stateText = context.getString(R.string.notification_sync_connected),
             syncPaused = syncPaused,
             autoCapturePaused = capturePaused,
         )
+
+    @Test
+    fun `wears the charter accents - polyline icon, flow blue, low priority, no timestamp`() {
+        val notification = build()
+
+        // The polyline mark is the small icon; flow blue (#215F8F) is the accent the
+        // charter assigns to system surfaces (docs/design/tokens.md).
+        assertEquals(R.drawable.ic_notify_clip, notification.smallIcon.resId)
+        assertEquals(0xFF215F8F.toInt(), notification.color)
+        assertEquals(NotificationCompat.CATEGORY_SERVICE, notification.category)
+        @Suppress("DEPRECATION")
+        assertEquals(NotificationCompat.PRIORITY_LOW, notification.priority)
+        assertEquals(NotificationCompat.VISIBILITY_PUBLIC, notification.visibility)
+        // A resident state line carries no timestamp: it is "now" by definition.
+        assertFalse(notification.extras.getBoolean(Notification.EXTRA_SHOW_WHEN))
+    }
 
     @Test
     fun `default state offers pause-all, pause-capture and sync-now`() {

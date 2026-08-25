@@ -6,7 +6,9 @@
     <string name="share_target_label">发送到电脑</string>
     <string name="qs_tile_label">发送剪贴板</string>
 
-    <!-- 通知：正文永不包含剪贴板内容 -->
+    <!-- 通知：正文永不包含剪贴板内容。所有渠道归入同一“剪贴同步”组，设置页里成组呈现 -->
+    <string name="notification_group_name">剪贴同步</string>
+    <string name="notification_group_description">同步状态、收到的文本与恢复提醒。所有通知均不显示剪贴板内容。</string>
     <string name="notification_channel_inbox_name">收到的文本</string>
     <string name="notification_channel_inbox_description">收到来自已配对电脑的新文本时提醒。通知从不显示剪贴板内容。</string>
     <string name="notification_inbox_title">来自电脑的新文本</string>
