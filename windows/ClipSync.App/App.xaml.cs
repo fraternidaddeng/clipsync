@@ -679,15 +679,29 @@ public partial class App : Application
                 e.ImageBytes,
                 e.ImageMimeType,
                 e.PixelDigest));
-            if (result is CaptureResult.Stored or CaptureResult.StoredImage
-                && MainWindow?.DataContext is MainViewModel viewModel)
+            if (result is CaptureResult.Stored or CaptureResult.StoredImage)
             {
                 LocalDiagnostics.Write(result is CaptureResult.StoredImage ? "capture_image_stored" : "capture_stored");
-                await viewModel.RefreshFromCaptureAsync();
+                // An accepted capture supersedes any lingering 超限 local-only strip.
+                mainViewModel?.NoteCaptureStored();
+                if (MainWindow?.DataContext is MainViewModel viewModel)
+                {
+                    await viewModel.RefreshFromCaptureAsync();
+                }
             }
             else if (result is CaptureResult.Rejected rejected)
             {
                 LocalDiagnostics.Write($"capture_rejected_{rejected.Reason}");
+                if (rejected.Reason == CaptureRejectionReason.TooLarge)
+                {
+                    // 超限内容本机保留 + 明确提示，绝不静默（manual-qa-checklist §3）: banner in
+                    // the main window, and a balloon when the window is hidden in the tray.
+                    mainViewModel?.NoteCaptureRejected(rejected.Reason);
+                    if (MainWindow is not { IsVisible: true })
+                    {
+                        trayIcon?.ShowOversizeClipNotice();
+                    }
+                }
             }
         }
         catch (Exception exception)

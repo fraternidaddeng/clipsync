@@ -153,4 +153,25 @@ class ClipboardCaptureManagerTest {
         assertEquals(1, nudges)
         assertEquals(1, outbox.pending().size)
     }
+
+    @Test
+    fun `oversize text reports its own outcome so the user can be told`() {
+        // One byte over the 1 MiB protocol cap: kept local, never truncated, never queued —
+        // and distinguishable from quiet rejections so the capture path can prompt.
+        val oversize = "x".repeat(KeyValueClipOutbox.MAX_UTF8_BYTES + 1)
+
+        val outcome = manager.onClipboardChanged(change(oversize))
+
+        assertEquals(CaptureOutcome.REJECTED_TOO_LARGE, outcome)
+        assertTrue(outbox.pending().isEmpty())
+        assertEquals(0, nudges)
+    }
+
+    @Test
+    fun `exactly 1 MiB still syncs - the cap is not off by one`() {
+        val atLimit = "x".repeat(KeyValueClipOutbox.MAX_UTF8_BYTES)
+
+        assertEquals(CaptureOutcome.CAPTURED, manager.onClipboardChanged(change(atLimit)))
+        assertEquals(1, outbox.pending().size)
+    }
 }

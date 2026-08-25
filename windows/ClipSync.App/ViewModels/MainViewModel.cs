@@ -188,6 +188,14 @@ public partial class MainViewModel(
     private bool captureFaulted;
 
     /// <summary>
+    /// Honest local-only strip on the history page (charter: 超限内容本机保留 + 明确提示，
+    /// 不静默截断). Empty = hidden; set by an oversize capture rejection, cleared by the
+    /// dismiss button or the next accepted capture. Never contains clipboard content.
+    /// </summary>
+    [ObservableProperty]
+    private string captureNotice = string.Empty;
+
+    /// <summary>
     /// Evidence of the most recent real remote text apply this session; feeds
     /// <see cref="ClipboardApplyState"/>. Written on the dispatcher, read on Kestrel worker
     /// threads — a plain string reference swap is safe cross-thread.
@@ -241,6 +249,25 @@ public partial class MainViewModel(
     /// <summary>Records whether a real remote text apply reached the system clipboard.</summary>
     public void RecordRemoteApplyOutcome(bool ok) =>
         remoteApplyEvidence = ok ? ClipboardApplyStates.Applied : ClipboardApplyStates.Failed;
+
+    /// <summary>
+    /// Surfaces a capture rejection the user must hear about. Only the oversize case speaks:
+    /// paused/private/duplicate/suppressed rejections are expected behaviour, but a silently
+    /// dropped 1 MiB+ copy would break the 明确提示 promise (manual-qa-checklist §3).
+    /// </summary>
+    public void NoteCaptureRejected(CaptureRejectionReason reason)
+    {
+        if (reason == CaptureRejectionReason.TooLarge)
+        {
+            CaptureNotice = "刚复制的文本超过 1 MiB：内容保留在系统剪贴板，未截断，但不记录历史、不同步。";
+        }
+    }
+
+    /// <summary>An accepted capture supersedes the local-only fact; the strip retires.</summary>
+    public void NoteCaptureStored() => CaptureNotice = string.Empty;
+
+    [RelayCommand]
+    private void DismissCaptureNotice() => CaptureNotice = string.Empty;
 
     /// <summary>Raised after a device is revoked so the app layer can drop its live sessions.</summary>
     public event Action<string>? DeviceRevoked;

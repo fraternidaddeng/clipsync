@@ -108,6 +108,18 @@ internal sealed class TrayIconController : IDisposable
     }
 
     /// <summary>
+    /// States that an oversized copy stays local (charter: 超限内容明确提示，不静默截断).
+    /// The size fact only — clipboard content never appears in notifications.
+    /// </summary>
+    public void ShowOversizeClipNotice()
+    {
+        taskbarIcon.ShowBalloonTip(
+            "剪剪相传",
+            "刚复制的文本超过 1 MiB，仅保留在本机剪贴板，不同步（未截断）。",
+            BalloonIcon.Info);
+    }
+
+    /// <summary>
     /// Warns that a device tripped the failed-auth rate limit. Names the device only — no proof
     /// material — and mirrors the persistent diagnostics entry the viewer shows.
     /// </summary>

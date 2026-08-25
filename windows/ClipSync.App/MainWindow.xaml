@@ -641,6 +641,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -702,7 +703,41 @@
                                      Style="{StaticResource FilterChip}" />
                     </StackPanel>
 
-                    <Grid Grid.Row="3">
+                    <!-- 超限不同步事实条：安静的 sf3 底 + 1px 线（同 Android 通知关闭条的语汇），
+                         不是错误红——本机保留是协议承诺的事实，需要被说出而非被指责。
+                         空字符串 = 隐藏；下一次成功捕获或点「知道了」即退场。 -->
+                    <Border Grid.Row="3"
+                            Margin="0,0,0,12"
+                            Padding="12,8"
+                            Background="{DynamicResource CsSurface3Brush}"
+                            BorderBrush="{DynamicResource CsLineBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CaptureNotice}" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right"
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding DismissCaptureNoticeCommand}"
+                                    Content="知道了"
+                                    Style="{StaticResource GhostQuietButton}" />
+                            <TextBlock VerticalAlignment="Center"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource CsText2Brush}"
+                                       Text="{Binding CaptureNotice}"
+                                       TextWrapping="Wrap" />
+                        </DockPanel>
+                    </Border>
+
+                    <Grid Grid.Row="4">
                         <!-- 长列表虚拟化：ListBox 默认已虚拟化（VirtualizingStackPanel），此处显式声明
                              并开启容器回收（Recycling），滚动时复用条目容器而非反复创建/析构，
                              上千条历史时显著降低布局与 GC 压力。视觉零变化。 -->
@@ -985,7 +1020,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <StackPanel Grid.Row="4"
+                    <StackPanel Grid.Row="5"
                                 Margin="0,12,0,0"
                                 Orientation="Horizontal">
                         <Button Command="{Binding CopySelectedCommand}" Content="复制所选" Style="{StaticResource GhostFlowButton}" />

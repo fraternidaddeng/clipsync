@@ -2,6 +2,10 @@ package com.clipsync.android.sync
 
 import android.content.Context
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
+import com.clipsync.android.R
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.AdbLogOverlayBackend
 import com.clipsync.android.platform.clipboard.AndroidRouteProbes
@@ -99,6 +103,7 @@ object SharedClipboardCapture {
                         ImageClipSink.Outcome.Accepted
                 },
             )
+        val mainHandler = Handler(Looper.getMainLooper())
         return CaptureStack(
             capabilityStore = capabilityStore,
             routeProbes = routeProbes,
@@ -108,7 +113,22 @@ object SharedClipboardCapture {
             session =
                 ClipboardCaptureSession(
                     coordinator = coordinator,
-                    onChanged = { change -> captureManager.onClipboardChanged(change) },
+                    onChanged = { change ->
+                        val outcome = captureManager.onClipboardChanged(change)
+                        if (outcome == CaptureOutcome.REJECTED_TOO_LARGE) {
+                            // 超限内容本机保留 + 明确提示，不得静默 (plan 3.3 rule 9): the copy
+                            // stays on the clipboard untruncated, and the user hears why it
+                            // will not appear on the other device. Size fact only, no content.
+                            mainHandler.post {
+                                Toast
+                                    .makeText(
+                                        appContext,
+                                        R.string.toast_capture_too_large,
+                                        Toast.LENGTH_LONG,
+                                    ).show()
+                            }
+                        }
+                    },
                     // Backend-level gate: while sync or auto-capture is paused, or private mode
                     // is on, nothing may even read the clipboard in the background (the
                     // per-event gates above remain the authority for anything that arrives).

@@ -30,8 +30,15 @@ enum class CaptureOutcome {
     /** The change is an image but the image-sync preference (default off) is not enabled. */
     SKIPPED_IMAGE_SYNC_OFF,
 
-    /** The outbox rejected the text (empty, oversized, or a recent duplicate). */
+    /** The outbox rejected the text (empty or a recent duplicate). */
     REJECTED_BY_OUTBOX,
+
+    /**
+     * The text exceeds the 1 MiB protocol cap: kept on the local clipboard, never truncated,
+     * never queued. Split from [REJECTED_BY_OUTBOX] because this one must reach the user —
+     * 超限内容本机保留 + 明确提示，不得静默 (plan 3.3 rule 9, manual-qa-checklist §3).
+     */
+    REJECTED_TOO_LARGE,
 }
 
 /**
@@ -97,6 +104,7 @@ class ClipboardCaptureManager(
                 syncRequester().requestSyncNow()
                 CaptureOutcome.CAPTURED
             }
+            EnqueueResult.TooLarge -> CaptureOutcome.REJECTED_TOO_LARGE
             else -> CaptureOutcome.REJECTED_BY_OUTBOX
         }
     }
