@@ -9,7 +9,7 @@
 
 审计方法：对两个分支做全量文件树 diff（stage-4 有 349 个源文件，当前分支 231 个），再逐一读取当前分支的同步引擎、前台服务、能力后端、入站交付、设置存储、系统入口和 Windows 端 App 装配代码，确认每项能力是「真实实现」「诚实探针占位（stub）」还是「完全缺失」。
 
-> **状态更新（2026-08-25，对照 main `d573080` 核对）**：本审计发现的可执行缺口已全部收口（审计分支已经 PR #5 于 `9129ce5` 并入 main）——A1 Shizuku 三件套自 stage-4 移植（`9b361c8`/`b25c5e2`，含自带特权宿主）并完成接线（`459b038`），读协调器归前台服务持有（`36fc47e`）；A2 前台自动捕获接线（`42c6ee7`）；A3 悬浮窗与 A4 ADB 日志随同一移植系列真实落地；A7 暂停/私密逐层执行（Android `d767905`，Windows 各入口闸门 `7f5e51e`）；W4 睡眠/唤醒恢复（`09a2d6b` + Modern Standby `25d2788`）；W5 `SlidingWindowRateLimiter` 已移植用于预认证连接/配对确认限流（`25d2788`），**会话内帧级速率限流仍未做**；W6 的导出/导入（Windows `5fd7461`、Android `3c51350`、图片感知 v2 格式 `87c0016`）、详情窗（`81db525`）、图片同步双端（Windows `fed1b6f`…`2ae5513`，Android `8275ffa`）、E2eHost（`f5c1efb`）均已落地。**以上全部是代码 + JVM/回环测试级收口；真实 ROM/实体机验证见 `docs/device-validation-matrix.md`——S0–S4 槽位仍全 `NOT_TESTED`。** 表格各行已加收口注记，其余审计文字保留作历史记录。
+> **状态更新（2026-08-25，对照 main `d573080` 核对）**：本审计发现的可执行缺口已全部收口（审计分支已经 PR #5 于 `9129ce5` 并入 main）——A1 Shizuku 三件套自 stage-4 移植（`9b361c8`/`b25c5e2`，含自带特权宿主）并完成接线（`459b038`），读协调器归前台服务持有（`36fc47e`）；A2 前台自动捕获接线（`42c6ee7`）；A3 悬浮窗与 A4 ADB 日志随同一移植系列真实落地；A7 暂停/私密逐层执行（Android `d767905`，Windows 各入口闸门 `7f5e51e`）；W4 睡眠/唤醒恢复（`09a2d6b` + Modern Standby `25d2788`）；W5 限流两段齐（预认证 per-IP 滑窗 `25d2788`，会话内帧级 `FrameRateBudget` `793c0b9`）；W6 的导出/导入（Windows `5fd7461`、Android `3c51350`、图片感知 v2 格式 `87c0016`）、详情窗（`81db525`）、图片同步双端（Windows `fed1b6f`…`2ae5513`，Android `8275ffa`）、E2eHost（`f5c1efb`）均已落地。**以上全部是代码 + JVM/回环测试级收口；真实 ROM/实体机验证见 `docs/device-validation-matrix.md`——S0–S4 槽位仍全 `NOT_TESTED`。** 表格各行已加收口注记，其余审计文字保留作历史记录。
 
 ## 结论摘要
 
@@ -33,7 +33,7 @@
 | A8 | 内容大小上限 / 保留期清理 | ~~Partial~~ → **本次已接线** | Medium | 保留清理：服务启动即跑一次 `ClipSyncRepository.cleanup`，之后每 6 小时一次，偏好变更（保留期/自动过期）立即再跑一次（对齐 Windows 启动+保存设置的行为）；`effectiveRetentionPolicy()` 在自动过期关闭时仍保留条数上限、只停用按龄过期。用户上限：`effectiveMaxSyncTextBytes`（不越过协议 1 MiB）现于 outbox enqueue 与 `recordLocalClip` 两处按次重读执行。 | 偏好页暂无调整保留条数/单条上限的输入控件（显示为只读行），需要时补 UI。 |
 | A9 | `POST_NOTIFICATIONS` 运行时请求与状态展示 | ~~Missing~~ → **已完成（请求 + 状态行）** | Medium | Android 13+ 在「启用同步」的时刻请求（配对完成、点「启动服务」、打开「开机恢复」），拒绝不阻塞服务且不再纠缠（系统两次拒绝后自然静默）；已配对的日常打开不弹窗。`SyncNotifications` 的 `areNotificationsEnabled` 前置检查保持诚实降级。通路页的「通知已关闭」状态行已落地：`CapabilityWiring.notificationsEnabled` 每次 refresh/回到前台重探，关闭时诚实陈述后果并提供系统设置深链（`HealthViewModelTest` 覆盖）。 | 无。 |
 | A10 | 入站通知策略（`InboundNotifyPolicy` 去重/静音） | Missing | Low | stage-4 有独立 notify 策略与测试；当前按事件 ID 更新式通知（不会无限堆叠），收件箱上限 50 条。可接受。 | 出现通知洪泛问题时再移植。 |
-| A11 | 收件箱 Room 化 | Partial | Low | `KeyValueClipInbox` 是 SharedPreferences JSON 占位（代码注释已声明），事件正文本身在 Room 里不丢。 | 顺手迁移即可，不紧急。 |
+| A11 | 收件箱 Room 化 | ~~Partial~~ → **已收口（`f928537`）** | Low | 审计时点：`KeyValueClipInbox` 是 SharedPreferences JSON 占位（代码注释已声明），事件正文本身在 Room 里不丢。**2026-08-25 注：已迁 Room 解析（`RoomClipInbox` 按 event_id 直查历史行），收到的文本不再在偏好文件留第二份明文（旧残留一次性清除），删除历史即失效通知复制动作。** | 已完成。 |
 | A12 | 双语资源（values-zh-rCN） | ~~Missing~~ → **被 P1#16 多语言超额收口** | Low | 审计时点：当前 base strings 即中文；stage-4 是双语。**2026-08-25 注：`docs/settings-roadmap.md` P1#16 落地后，Android 359 键 / Windows 225 键文案全部资源化，19 种语言逐键齐全（缺省/中立资源即 zh-Hans），双端语言选择器可用；未经真机人工 QA 确认。** | 无需动作。 |
 | W1 | Windows 出站 `PeerSyncClient` | **Present-by-design（仅测试使用）** | None | 计划 §4.1 明确第一版由 Android 主动连 Windows。已验证 Windows 监听端会话内 `SyncSessionEngine.RunOutboxLoopAsync` 双向排空 outbox，Windows→Android 推送不需要出站客户端。**不是缺口。** | 无需动作。 |
 | W2 | Windows 入站自动写回 + 回环抑制 | Present | — | `App.OnRemoteClipsCommitted` 按 `auto_apply_remote` 写批次最新一条，`SuppressNextWrite` 防回环。 | 无。 |
