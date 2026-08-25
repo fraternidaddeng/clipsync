@@ -1,0 +1,10 @@
+# ktlint 配置（org.jlleitschuh.gradle.ktlint 经 .editorconfig 读取规则属性）。
+#
+# Composable 函数按 Compose 官方惯例用 PascalCase 命名，standard:function-naming
+# 规则本身提供 @Composable 豁免开关；此前 74 处豁免全靠 baseline 行号匹配存活，
+# 任何触及 Compose UI 文件的行位移都会引爆 ktlintCheck（静态分析 CI 常态把关）。
+# 在规则层豁免后，baseline 里那批条目转为无害的陈旧记录。
+root = true
+
+[*.{kt,kts}]
+ktlint_function_naming_ignore_when_annotated_with = Composable
