@@ -3,6 +3,7 @@
 > 从属于《设计纲领》（`docs/design/DESIGN-CHARTER.md`）与 `docs/product-scope.md`。
 > 本文件回答一个问题：**除通路之外，这个应用还缺哪些「基础设置」，它们住在哪。**
 > 分析与提案；本文件不伴随任何 UI 实现。
+> 状态：**提案定稿，P0/P1 全部未动工**——截至 2026-08-25（人工 QA 记录 `a466cf5` 时点的 main）核实：本文所列新增存储键（`ui.history_font_scale`、`capture.skip_sensitive`、`launch_at_startup` 等）在两端代码中均不存在，§二现状盘点仍与 main 一致。条目动工或落地时更新本行与对应表格。
 > 最后更新：2026-08-25
 
 ---
