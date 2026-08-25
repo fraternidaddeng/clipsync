@@ -53,7 +53,8 @@
 - [Android] 收件箱文本解析迁至 Room（硬化项收口）：通知「复制」动作按事件 ID 直查 Room 历史行，收到的文本不再在 SharedPreferences 里留第二份明文（旧 50 条残留一次性清除）；删除历史即令复制动作失效（诚实语义——数据真的没了就不该还能复制出来）。
 - [Windows] 三窗口全部令牌刷 `DynamicResource` 化以支持运行时换肤。
 - [双端] IA 迁移（`docs/settings-roadmap.md` P1 #10–12）：连通性配置从偏好迁回通路网络段——它们改变「内容能不能到达对端」，按判据属通路。**蓝牙备援**（双端；Android 为网络段下方的备援卡片，含目标设备选择与 bonded 设备清单）、**额外监听地址**（Windows，「重启后生效」赭色说明照搬）、**本机证书指纹**（Windows，偏好「信任」卡随之取消）现住在通路页「网络段 · 连接」卡。设置键与行为不变，纯搬家；偏好页各留一个发布版本的链接行（「已移至通路 · 网络」）指路，下个版本删除。`docs/install.md` 的 Tailscale 与蓝牙备援路径说明同步更新。
-- [Windows] 页面切换接动效令牌（ui-gap-audit P2 收口）：历史/通路/偏好三页切换由硬切改为 200ms 宪章缓动淡入（`cubic-bezier(.16,1,.3,1)`，对齐 Android tab Crossfade）；沿用 `ClientAreaAnimation` 门控，系统减弱动效时保持硬切。
+- [Windows] 页面切换接动效令牌（ui-gap-audit P2 收口）：历史/通路/偏好三页切换由硬切改为 200ms 宪章缓动淡入（`cubic-bezier(.16,1,.3,1)`，对齐 Android tab Crossfade）；沿用 `ClientAreaAnimation` 门控，系统减弱动效时保持硬切。随后详情窗开窗接入同一语汇（`PageFadeIn` 族上移 App 级共享；托盘浮窗刻意不接——无时间性动效是其既有裁决）。
+- [Windows] 计数文案去「(s)」括号硬凑（与 Android 复数化同一轮 i18n 语法收口）：残留设备横幅、LAN 已连接状态行、导出完成、通路网络/设备两段计数、法语托盘状态行等 7 键在 en/de/fr/es/it/nl/pt-BR/pl/ar 诸语改标签式计数（「Devices connected: N」形制，俄语/阿语译文原本就如此规避）——resx 无复数选择机制，标签式是不引入复数引擎的正解，西语/意语「Se detectaron 1 dispositivos」这类单数错配随之消失。
 - [双端] 开关读屏文案补全（ui-gap-audit P3 可访问性）：Windows 全部 9 个 CharterToggle 与配对 QR 图补 `AutomationProperties.Name`（引既有标题串，i18n 零负担）；Android 偏好开关行与蓝牙备援卡改整行 `toggleable(Role.Switch)`——TalkBack 一站读出标题+描述+状态、触达区扩到整行，裸 Switch 转纯显示。
 - [Android] 计数文案复数化（i18n 语法收口）：7 个含计数的键（通知洪泛正文、向导剩余步数、预览行数、保留天数、保留条数、导出完成、清空完成）从 `<string>` 转 `<plurals>`，19 语按各自 CLDR 复数域补齐分支（俄语/波兰语全变格、阿拉伯语六分支含双数、西法意葡补百万级 many 构式）——英语「1 step(s) left」这类括号硬凑从此消失；`check-i18n-parity.py` 同步扩展复数键逐键与占位符校验。
 - [Android] Android 12+ 备份/迁移姿态显式化：manifest 补 `dataExtractionRules` 与 `fullBackupContent="false"`（云备份与设备间迁移全域排除，与 `allowBackup=false` 同一裁决——剪贴历史是敏感明文、Keystore 密钥本就不可迁移，半截恢复只会伪装已配对）。
