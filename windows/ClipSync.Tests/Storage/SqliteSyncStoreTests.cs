@@ -345,10 +345,62 @@ public sealed class SqliteSyncStoreTests
             dropTerminalOutbox: false);
         Assert.Single(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
 
+        // A live ack only clears the tombstone after its own announce went out; while the
+        // row is still pending the ack can only refer to the long-gone content.
         await store.ApplyPeerAckRangesAsync(
             PhoneDeviceId,
             [new OriginSequenceRanges(LocalDeviceId, [new SequenceRange(stored.OriginSequence, stored.OriginSequence)])],
             BaseTime.AddSeconds(4));
+        var pending = await store.GetOutboxBatchAsync(PhoneDeviceId, 10);
+        Assert.Single(pending);
+
+        await store.MarkOutboxAnnouncedAsync([pending[0].Entry.Id]);
+        await store.ApplyPeerAckRangesAsync(
+            PhoneDeviceId,
+            [new OriginSequenceRanges(LocalDeviceId, [new SequenceRange(stored.OriginSequence, stored.OriginSequence)])],
+            BaseTime.AddSeconds(5));
+        Assert.Empty(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
+    }
+
+    [Fact]
+    public async Task LateLiveAckForContentDoesNotDropTheRequeuedTombstone()
+    {
+        // Race regression (CI flake in DeletedAfterAckTravelsAsTombstone): the peer acked
+        // the content announce, but that ack frame is still being processed by the session
+        // when the user deletes the clip locally. The delete re-queues the same
+        // (peer, origin, seq) outbox slot as a pending tombstone; when the stale content
+        // ack lands afterwards it must not drop a tombstone that was never announced —
+        // the peer's vector already covers the sequence, so nothing would ever deliver
+        // the deletion again.
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+        var stored = await store.StoreAsync(Content("later-deleted", BaseTime));
+        var announced = await store.GetOutboxBatchAsync(PhoneDeviceId, 10);
+        await store.MarkOutboxAnnouncedAsync([announced[0].Entry.Id]);
+
+        Assert.True(await store.DeleteAsync(stored.EventId, BaseTime.AddSeconds(1)));
+        var requeued = await store.GetOutboxBatchAsync(PhoneDeviceId, 10);
+        Assert.Single(requeued);
+        Assert.True(requeued[0].Event.IsTerminal);
+
+        // The stale live ack lands after the delete: it confirmed the content, not the tombstone.
+        await store.ApplyPeerAckRangesAsync(
+            PhoneDeviceId,
+            [new OriginSequenceRanges(LocalDeviceId, [new SequenceRange(stored.OriginSequence, stored.OriginSequence)])],
+            BaseTime.AddSeconds(2));
+
+        var kept = await store.GetOutboxBatchAsync(PhoneDeviceId, 10);
+        Assert.Single(kept);
+        Assert.True(kept[0].Event.IsTerminal);
+        Assert.Equal("deleted", kept[0].Event.TerminalReason);
+
+        // Once the tombstone itself was announced, the peer's next ack clears the slot.
+        await store.MarkOutboxAnnouncedAsync([kept[0].Entry.Id]);
+        await store.ApplyPeerAckRangesAsync(
+            PhoneDeviceId,
+            [new OriginSequenceRanges(LocalDeviceId, [new SequenceRange(stored.OriginSequence, stored.OriginSequence)])],
+            BaseTime.AddSeconds(3));
         Assert.Empty(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
     }
 

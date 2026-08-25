@@ -944,7 +944,18 @@ public sealed partial class SqliteClipboardEventStore
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    /// <summary>Removes outbox rows the peer has already persisted according to its known vector or acks, and advances the peer cursor.</summary>
+    /// <summary>
+    /// Removes outbox rows the peer has already persisted according to its known vector or
+    /// acks, and advances the peer cursor. Terminal (tombstone) rows are special: an ack for
+    /// (origin, seq) only proves the peer holds <em>some</em> event at that sequence — for a
+    /// tombstone that proof is the announce itself, so with
+    /// <paramref name="dropTerminalOutbox"/> a terminal row is dropped only once it reached
+    /// the announced state. A still-pending tombstone was never announced (a stale content
+    /// ack can land right after a local delete re-queued the slot) and must stay queued, or
+    /// the deletion would never travel: the peer's vector already covers the sequence, so no
+    /// want_ranges would ever pull it again. With <paramref name="dropTerminalOutbox"/> false
+    /// (persisted-coverage pruning) terminal rows are never dropped.
+    /// </summary>
     public async ValueTask ApplyPeerAckRangesAsync(
         string peerId,
         IReadOnlyList<OriginSequenceRanges> acks,
@@ -1005,11 +1016,21 @@ public sealed partial class SqliteClipboardEventStore
                     remove.Transaction = transaction;
                     if (dropTerminalOutbox)
                     {
+                        // Live-content rows are moot once the peer holds the sequence, in
+                        // any state. Terminal rows leave only after their own announce went
+                        // out (state = announced); a pending tombstone cannot have been
+                        // confirmed by this ack, so it survives to be announced.
                         remove.CommandText = """
                             DELETE FROM outbox
                             WHERE peer_id = $peer_id AND origin_device_id = $origin
-                              AND origin_seq >= $start AND origin_seq <= $end;
+                              AND origin_seq >= $start AND origin_seq <= $end
+                              AND (state = $announced
+                                OR event_id IN (
+                                  SELECT event_id FROM clips
+                                  WHERE deleted_at IS NULL AND terminal_reason IS NULL
+                                ));
                             """;
+                        remove.Parameters.AddWithValue("$announced", OutboxEntryStates.Announced);
                     }
                     else
                     {
