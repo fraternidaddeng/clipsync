@@ -5,7 +5,8 @@
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:win="clr-namespace:System.Windows;assembly=PresentationFramework">
 
     <!-- 历史字号/预览行数（settings-roadmap P0-1 / P1-7）：内容文字的字号阶收敛为
          DynamicResource。这里只是「标准 · 4 行」的初始值；启动与改动时由
@@ -18,6 +19,49 @@
     <sys:Double x:Key="CsFlyoutBodyFontSize">12</sys:Double>
     <sys:Double x:Key="CsFlyoutBodyLineHeight">18</sys:Double>
     <sys:Double x:Key="CsFlyoutBodyMaxHeight">36</sys:Double>
+
+    <!-- 页面/次级面切换过渡（ui-gap-audit P2 动效令牌）：可见即以宪章缓动
+         cubic-bezier(.16,1,.3,1) 在 dur-win 200ms 内淡入，对齐 Android tab Crossfade。
+         主窗三页与详情窗共用；系统关闭动画（减弱动效）时条件不成立、保持硬切——
+         系统的选择是事实。托盘浮窗刻意不接（无时间性动效是其既有裁决）。 -->
+    <Storyboard x:Key="PageFadeIn">
+        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+            <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+            <SplineDoubleKeyFrame KeySpline="0.16,1 0.3,1"
+                                  KeyTime="0:0:0.2"
+                                  Value="1" />
+        </DoubleAnimationUsingKeyFrames>
+    </Storyboard>
+    <!-- Grid（历史页/详情窗）与 ScrollViewer（通路/偏好页）各一份：ScrollViewer 必须
+         BasedOn 主题默认样式，否则显式 Style 会丢掉滚动条模板。 -->
+    <Style x:Key="PageFadeGrid" TargetType="Grid">
+        <Style.Triggers>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsVisible, RelativeSource={RelativeSource Self}}" Value="True" />
+                    <Condition Binding="{Binding Path=(win:SystemParameters.ClientAreaAnimation)}" Value="True" />
+                </MultiDataTrigger.Conditions>
+                <MultiDataTrigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource PageFadeIn}" />
+                </MultiDataTrigger.EnterActions>
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="PageFadeScroll"
+           BasedOn="{StaticResource {x:Type ScrollViewer}}"
+           TargetType="ScrollViewer">
+        <Style.Triggers>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsVisible, RelativeSource={RelativeSource Self}}" Value="True" />
+                    <Condition Binding="{Binding Path=(win:SystemParameters.ClientAreaAnimation)}" Value="True" />
+                </MultiDataTrigger.Conditions>
+                <MultiDataTrigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource PageFadeIn}" />
+                </MultiDataTrigger.EnterActions>
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
 
     <!-- Three voices (tokens.md §6), all shipped with the package (Resources/Fonts/,
          resolved relative to this dictionary): Plus Jakarta Sans carries Latin, Noto Sans SC

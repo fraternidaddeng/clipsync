@@ -47,47 +47,8 @@
         <Geometry x:Key="IconClipText">M5,7 H19 M5,12 H16 M5,17 H12</Geometry>
 
         <!-- ============ 控件样式 ============ -->
-        <!-- 页面切换过渡（ui-gap-audit P2 动效令牌 Windows 剩余部分）：三页可见即以宪章缓动
-             cubic-bezier(.16,1,.3,1) 在 dur-win 200ms 内淡入，对齐 Android tab Crossfade。
-             系统关闭动画（减弱动效）时条件不成立、保持硬切——系统的选择是事实。 -->
-        <Storyboard x:Key="PageFadeIn">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
-                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                <SplineDoubleKeyFrame KeySpline="0.16,1 0.3,1"
-                                      KeyTime="0:0:0.2"
-                                      Value="1" />
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-        <!-- Grid（历史页）与 ScrollViewer（通路/偏好页）各一份：ScrollViewer 必须 BasedOn
-             主题默认样式，否则显式 Style 会丢掉滚动条模板。 -->
-        <Style x:Key="PageFadeGrid" TargetType="Grid">
-            <Style.Triggers>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding IsVisible, RelativeSource={RelativeSource Self}}" Value="True" />
-                        <Condition Binding="{Binding Path=(sys:SystemParameters.ClientAreaAnimation)}" Value="True" />
-                    </MultiDataTrigger.Conditions>
-                    <MultiDataTrigger.EnterActions>
-                        <BeginStoryboard Storyboard="{StaticResource PageFadeIn}" />
-                    </MultiDataTrigger.EnterActions>
-                </MultiDataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="PageFadeScroll"
-               BasedOn="{StaticResource {x:Type ScrollViewer}}"
-               TargetType="ScrollViewer">
-            <Style.Triggers>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding IsVisible, RelativeSource={RelativeSource Self}}" Value="True" />
-                        <Condition Binding="{Binding Path=(sys:SystemParameters.ClientAreaAnimation)}" Value="True" />
-                    </MultiDataTrigger.Conditions>
-                    <MultiDataTrigger.EnterActions>
-                        <BeginStoryboard Storyboard="{StaticResource PageFadeIn}" />
-                    </MultiDataTrigger.EnterActions>
-                </MultiDataTrigger>
-            </Style.Triggers>
-        </Style>
+        <!-- 页面切换过渡 PageFadeIn / PageFadeGrid / PageFadeScroll 已上移 App 级
+             CharterControls.xaml（详情窗共用同一语汇）。 -->
 
         <!-- 左栏导航项：图标 + 文字，选中 = 流动蓝着色盒 -->
         <Style x:Key="NavItem" TargetType="RadioButton">
