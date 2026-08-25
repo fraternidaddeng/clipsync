@@ -3,7 +3,7 @@
 > 从属于《设计纲领》（`docs/design/DESIGN-CHARTER.md`）与 `docs/product-scope.md`。
 > 本文件回答一个问题：**除通路之外，这个应用还缺哪些「基础设置」，它们住在哪。**
 > 分析与提案；本文件不伴随任何 UI 实现。
-> 状态：**提案定稿，P0/P1 全部未动工**——截至 2026-08-25（人工 QA 记录 `a466cf5` 时点的 main）核实：本文所列新增存储键（`ui.history_font_scale`、`capture.skip_sensitive`、`launch_at_startup` 等）在两端代码中均不存在，§二现状盘点仍与 main 一致。条目动工或落地时更新本行与对应表格。
+> 状态：**部分落地**——2026-08-25 更新：Windows 基础设置第 1 批已合入 main（`8bcc61d`），P0 #1/#3/#5 与 P1 #7/#9/#15 的 Windows 半边全部完成（UI + 存储 + 测试）。Android 侧已落存储键与管线/ViewModel（`0e1d040`、`945fbcf`），但偏好页 UI 尚未接线，Android 各项均不算完成。IA 迁移（P1 #10–12）此前已完成。条目动工或落地时更新本行与对应表格。
 > 最后更新：2026-08-25
 
 ---
@@ -84,7 +84,7 @@
 | 历史行为 | 没有「清空全部历史」——只能逐条删 | 中 |
 | 捕获/隐私 | **Android 缺敏感来源排除**。product-scope 承诺「敏感来源排除」；Windows 有屏蔽进程，Android 对 `ClipDescription` 的 `EXTRA_IS_SENSITIVE` 标记（密码管理器都会设）完全没有处理 | 高（范围承诺未兑现） |
 | 通知 | Android 收件通知（自动写入失败/关闭时）无应用内开关，只能去系统整体关渠道 | 中 |
-| 启动/托盘 | **Windows 无开机自启**。托盘应用不自启等于每次开机手动补一步；关闭已经是收进托盘（正确），但链条缺第一环 | 高 |
+| 启动/托盘 | ~~**Windows 无开机自启**。托盘应用不自启等于每次开机手动补一步；关闭已经是收进托盘（正确），但链条缺第一环~~ **已解决**（2026-08-25，P0#3，`8bcc61d`） | ~~高~~ |
 | 快捷键 | Windows 无全局快捷键（呼出托盘浮窗 / 暂停同步） | 中 |
 | 无障碍 | 减弱动效不跟随系统（2.6 s 脉动、浮窗动画照播）；读屏文案缺口已在 `ui-gap-audit.md` P3 追踪 | 低 |
 | 语言 | 全中文硬编码 | 无（见「明确不做」） |
@@ -142,26 +142,26 @@
 
 | # | 名称（ZH） | 端 | 默认 | 存储键 | 影响屏幕 | 复杂度 | 说明 |
 |---|---|---|---|---|---|---|---|
-| 1 | **历史字号**（小 / 标准 / 大） | 双端 | 标准 | Android `ui.history_font_scale`，Windows `ui_history_font_scale`（值 0.9 / 1.0 / 1.15） | 历史列表、详情窗/详情视图、托盘浮窗 | **M** | 只缩放**内容文字**（预览正文、详情正文），不缩放 chrome（组头、meta、按钮）——类型阶其余部分是纲领资产。Android 在 sp 之上再乘系数（系统字体缩放照常叠加）；Windows 把历史区 FontSize 收敛为 DynamicResource 后按系数换字典值 |
+| 1 | **历史字号**（小 / 标准 / 大） | 双端 | 标准 | Android `ui.history_font_scale`，Windows `ui_history_font_scale`（值 0.9 / 1.0 / 1.15） | 历史列表、详情窗/详情视图、托盘浮窗 | **M** | **Windows 已完成（2026-08-25，`8bcc61d`）**；Android 未完成（`ui.history_font_scale` 键与 ViewModel 已落 `0e1d040`/`945fbcf`，UI 未接）。只缩放**内容文字**（预览正文、详情正文），不缩放 chrome（组头、meta、按钮）——类型阶其余部分是纲领资产。Android 在 sp 之上再乘系数（系统字体缩放照常叠加）；Windows 把历史区 FontSize 收敛为 DynamicResource 后按系数换字典值 |
 | 2 | **保留时长可调**（Android 补齐） | Android | 30 天 | 复用 `sync.retention.max_age_days` | 偏好·历史 | **S** | `setRetentionDays` 已存在且带清理副作用，纯 UI 缺口；控件对齐 Windows 步进器（1–3650），与「自动过期清理」联动置灰 |
-| 3 | **开机自启 · 静默入托盘** | Windows | 关 | `launch_at_startup`（settings 表镜像意图；实际机制 HKCU `…\CurrentVersion\Run` + `--minimized` 参数） | 偏好·运行、托盘 | **S** | 一个开关做两件事：写/删 Run 键；带 `--minimized` 启动时不弹主窗只落托盘。不用计划任务、不提权 |
+| 3 | **开机自启 · 静默入托盘** | Windows | 关 | `launch_at_startup`（settings 表镜像意图；实际机制 HKCU `…\CurrentVersion\Run` + `--minimized` 参数） | 偏好·运行、托盘 | **S** | **已完成（2026-08-25，`8bcc61d`）**：一个开关做两件事：写/删 Run 键；带 `--minimized` 启动时不弹主窗只落托盘。不用计划任务、不提权 |
 | 4 | **跳过敏感内容** | Android | 开 | `capture.skip_sensitive` | 偏好·捕获；全部剪贴板读取路线 | **S** | 兑现 product-scope「敏感来源排除」的 Android 半边：凡 `ClipDescription` 带敏感标记（密码管理器等）的复制不进历史、不同步。描述文案如实说明「依赖来源应用的标记」。分享面板是用户显式动作，不受此开关限制 |
-| 5 | **清空历史** | 双端 | —（动作） | 无键 | 偏好·数据、历史列表 | **M** | 一次性本地删除全部条目（含图片 blob），沿用本地删除语义（不远程撤回）；两步确认 + 明示「建议先导出」。M 在于双端各一条批量删除路径与图片清理 |
+| 5 | **清空历史** | 双端 | —（动作） | 无键 | 偏好·数据、历史列表 | **M** | **Windows 已完成（2026-08-25，`8bcc61d`）**；Android 未完成（ViewModel `clearHistory()` 已落 `945fbcf`，UI 未接）。一次性本地删除全部条目（含图片 blob），沿用本地删除语义（不远程撤回）；两步确认 + 明示「建议先导出」。M 在于双端各一条批量删除路径与图片清理 |
 
 ### P1 · 值得做，不挡 v1
 
 | # | 名称（ZH） | 端 | 默认 | 存储键 | 影响屏幕 | 复杂度 | 说明 |
 |---|---|---|---|---|---|---|---|
 | 6 | **外观**（跟随系统 / 日间 / 夜间） | 双端 | 跟随系统 | `ui.theme` / `ui_theme`（`system` \| `day` \| `night`） | 全部窗口/页面 | **M** | 双端主题机制都已就绪（同键双字典 / 双 ColorScheme），只缺覆盖开关。已知风险：Windows 托盘图标按**任务栏**深浅采样，手动覆盖后窗口与托盘可能分家——托盘继续跟任务栏（它活在任务栏里），仅窗口 chrome 跟设置 |
-| 7 | **预览行数**（2 / 4 / 6 行） | 双端 | 4 | `ui.preview_lines` / `ui_preview_lines` | 历史列表 | **S** | Android 改 `maxLines` 常量为设置值；Windows 同理。与历史字号同属「显示」组 |
+| 7 | **预览行数**（2 / 4 / 6 行） | 双端 | 4 | `ui.preview_lines` / `ui_preview_lines` | 历史列表 | **S** | **Windows 已完成（2026-08-25，`8bcc61d`）**；Android 未完成（`ui.preview_lines` 键已落 `0e1d040`，`maxLines` 未接）。Android 改 `maxLines` 常量为设置值；Windows 同理。与历史字号同属「显示」组 |
 | 8 | **收到内容通知** | Android | 开 | `notify.inbox` | 偏好·运行；收件通知路径 | **S** | 应用内total开关，比系统渠道更近一步；关闭后通路页事实条同样如实陈述后果 |
-| 9 | **呼出浮窗快捷键** | Windows | 关 | `hotkey_flyout`（组合键字符串，如 `Ctrl+Alt+V`） | 偏好·运行、托盘浮窗 | **M** | `RegisterHotKey` + 冲突时如实报「已被其他程序占用」；默认关，避免装完就跟人打架 |
+| 9 | **呼出浮窗快捷键** | Windows | 关 | `hotkey_flyout`（组合键字符串，如 `Ctrl+Alt+V`） | 偏好·运行、托盘浮窗 | **M** | **已完成（2026-08-25，`8bcc61d`）**：`RegisterHotKey` + 冲突时如实报「已被其他程序占用」；默认关，避免装完就跟人打架 |
 | 10 | **IA 迁移：蓝牙备援 → 通路网络段** | 双端 | —（搬家） | 键不变 | 通路、偏好 | **M** | **已完成（2026-08-25）**：开关 + 目标设备选择挂在网络段下（Android 为网络段下的备援卡片，Windows 为「网络段 · 连接」卡）；偏好留一个发布版本的链接行 |
 | 11 | **IA 迁移：额外监听地址 → 通路网络段** | Windows | —（搬家） | 键不变 | 通路、偏好 | **S** | **已完成（2026-08-25）**：「重启后生效」的赭色说明照搬 |
 | 12 | **IA 迁移：本机证书指纹 → 通路** | Windows | —（搬家） | — | 通路、偏好 | **S** | **已完成（2026-08-25）**：指纹只在配对仪式中被核对，现与配对同住「网络段 · 连接」卡；偏好「信任」卡取消 |
 | 13 | **减弱动效跟随系统** | 双端 | —（行为，无 UI） | 无键 | 脉动、浮窗、tab 过渡 | **S** | 读系统「减弱动态效果」（Android `ANIMATOR_DURATION_SCALE` / Windows `ClientAreaAnimation`），关掉 2.6 s 脉动改静态描边。缺省即隐藏：不设应用内开关 |
 | 14 | **设备色手动改** | 双端 | 按配对顺位 | 设备行属性（非全局键） | 通路·设备管理 | **M** | 已在 `ui-gap-audit.md` P2 追踪；住在通路设备行（它是设备身份的属性，不是全局偏好），列此仅为完整 |
-| 15 | **保留条数上限可调** | 双端 | 2 000 | Android 复用 `sync.retention.max_entries`；Windows 新增 `retention_max_entries` | 偏好·历史 | **S** | Android 键已存在；Windows 需把硬编码默认接进 settings 表与清理调用 |
+| 15 | **保留条数上限可调** | 双端 | 2 000 | Android 复用 `sync.retention.max_entries`；Windows 新增 `retention_max_entries` | 偏好·历史 | **S** | **Windows 已完成（2026-08-25，`8bcc61d`）**；Android 未完成（ViewModel 已落 `945fbcf`，UI 未接）。Android 键已存在；Windows 已把硬编码默认接进 settings 表与清理调用 |
 
 ### 明确不做（v1 范围裁决）
 
