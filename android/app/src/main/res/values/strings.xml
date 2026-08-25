@@ -20,6 +20,7 @@
     <string name="notification_channel_sync_name">同步状态</string>
     <string name="notification_channel_sync_description">与已配对电脑的连接状态。通知从不显示剪贴板内容。</string>
     <string name="notification_sync_connected">已连接 · 剪贴同步在线</string>
+    <string name="notification_sync_connected_bluetooth">已连接 · 蓝牙备援（仅文本）</string>
     <string name="notification_sync_connecting">正在连接电脑…</string>
     <string name="notification_sync_reconnecting">连接断开 · 等待重连</string>
     <string name="notification_sync_not_paired">未配对 · 同步待命</string>

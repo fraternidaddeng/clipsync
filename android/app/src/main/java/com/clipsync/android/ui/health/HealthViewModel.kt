@@ -463,6 +463,15 @@ private fun networkSegment(
         detail = "尚未与 Windows 配对。在电脑上打开「剪剪相传」，选择「配对新设备」。",
         status = ConduitStatus.NEEDS_ACTION,
     )
+    sync?.connected == true && sync.bluetoothFallback -> ConduitSegmentState(
+        statusLabel = "已连接 · 蓝牙备援",
+        detail = "IP 路径不可达，正在通过蓝牙与「${peer.displayName}」同步（仅文本，速度较慢）。",
+        status = ConduitStatus.READY,
+        detailLines = listOf(
+            "IP 恢复后自动切回，无需操作。",
+            "蓝牙期间复制的图片不会同步，且事后不补传。",
+        ),
+    )
     sync?.connected == true -> ConduitSegmentState(
         statusLabel = "已连接",
         detail = "与「${peer.displayName}」保持连接。",

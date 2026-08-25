@@ -19,6 +19,12 @@ data class SyncHealth(
     val serviceErrorCode: String? = null,
     /** The peer is rate-limiting this device after repeated failed authentication. */
     val peerThrottled: Boolean = false,
+    /**
+     * The live session runs on the bt1 Bluetooth fallback instead of the IP path (ADR 0005).
+     * Only meaningful while [connected]; the conduit must state the degraded scope honestly
+     * (text only, slower, IP probed for the switch back).
+     */
+    val bluetoothFallback: Boolean = false,
 )
 
 /**

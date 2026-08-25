@@ -30,8 +30,18 @@ data class PreferencesUiState(
     /** 远端图片自动写入剪贴板；独立于文本自动写入（ADR 0004），默认关闭。 */
     val autoApplyImages: Boolean = false,
     val maxSyncTextBytes: Int = SyncSettingsStore.DEFAULT_MAX_TEXT_BYTES,
+    /** bt1 蓝牙备援（ADR 0005）；默认关闭，仅当 IP 路径全部不可达时才拨号。 */
+    val bluetoothFallback: Boolean = false,
+    /** 用户选定的蓝牙目标设备名；null 表示尚未选择（备援不会拨号）。 */
+    val bluetoothDeviceName: String? = null,
     /** Result line of the last 导出历史/导入历史 run; null until either has run. */
     val transferStatus: String? = null,
+)
+
+/** One system-bonded Bluetooth device the fallback may dial; display data only. */
+data class BondedBluetoothDevice(
+    val name: String,
+    val address: String,
 )
 
 /**
@@ -64,6 +74,8 @@ class PreferencesViewModel(
         val onBootRestoreChanged: (Boolean) -> Unit = {},
         val onRetentionChanged: () -> Unit = {},
         val onCaptureGatesChanged: () -> Unit = {},
+        /** Enabling asks the host for the BLUETOOTH_CONNECT runtime permission (API 31+). */
+        val onBluetoothFallbackChanged: (Boolean) -> Unit = {},
     )
 
     private val mutableState = MutableStateFlow(
@@ -77,6 +89,8 @@ class PreferencesViewModel(
             imageSync = settings.imageSyncEnabled,
             autoApplyImages = settings.autoApplyImages,
             maxSyncTextBytes = settings.effectiveMaxSyncTextBytes,
+            bluetoothFallback = settings.bluetoothFallbackEnabled,
+            bluetoothDeviceName = settings.bluetoothPeerName,
         ),
     )
 
@@ -137,6 +151,23 @@ class PreferencesViewModel(
     fun setAutoApplyImages(enabled: Boolean) {
         settings.autoApplyImages = enabled
         mutableState.update { it.copy(autoApplyImages = enabled) }
+    }
+
+    /**
+     * 蓝牙备援 (ADR 0005, 默认关): the supervisor's fallback dialer re-reads the toggle per
+     * reconnect cycle, so flipping it applies to the next dial without a service restart.
+     */
+    fun setBluetoothFallback(enabled: Boolean) {
+        settings.bluetoothFallbackEnabled = enabled
+        mutableState.update { it.copy(bluetoothFallback = enabled) }
+        sideEffects.onBluetoothFallbackChanged(enabled)
+    }
+
+    /** Persists the fallback's dial target, chosen from the system-bonded device list. */
+    fun setBluetoothDevice(device: BondedBluetoothDevice) {
+        settings.bluetoothPeerAddress = device.address
+        settings.bluetoothPeerName = device.name
+        mutableState.update { it.copy(bluetoothDeviceName = device.name) }
     }
 
     /**

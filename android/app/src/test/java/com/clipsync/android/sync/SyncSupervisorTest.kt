@@ -272,8 +272,13 @@ class SyncSupervisorTest {
     private class ScriptedListenerTransport(
         private val throttle: Boolean,
         private val localDeviceId: String,
+        /** When false the session stays open after authentication until disposed. */
+        private val closeAfterAuth: Boolean = true,
     ) : SyncTransport {
         private val frames = Channel<TransportFrame>(Channel.UNLIMITED)
+
+        var disposed = false
+            private set
 
         override suspend fun receive(): TransportFrame = frames.receive()
 
@@ -302,7 +307,9 @@ class SyncSupervisorTest {
                 SyncMessageTypes.AUTH -> {
                     // A data message is the dialer's confirmation that auth passed.
                     deliver(SyncMessageTypes.KNOWN_VECTOR, SyncStateBody(origins = emptyList()))
-                    frames.trySend(TransportFrame.Closed)
+                    if (closeAfterAuth) {
+                        frames.trySend(TransportFrame.Closed)
+                    }
                 }
                 else -> {}
             }
@@ -317,6 +324,7 @@ class SyncSupervisorTest {
         }
 
         override fun dispose() {
+            disposed = true
             frames.trySend(TransportFrame.Closed)
         }
     }
@@ -359,5 +367,227 @@ class SyncSupervisorTest {
         runCurrent()
         assertEquals(2, announcements)
         assertTrue(scripts.isEmpty())
+    }
+
+    /** A transport whose session lives until the test (or the supervisor) disposes it. */
+    private class HeldOpenTransport : SyncTransport {
+        private val frames = Channel<TransportFrame>(Channel.UNLIMITED)
+        var disposed = false
+            private set
+
+        override suspend fun receive(): TransportFrame = frames.receive()
+
+        override suspend fun send(text: String) = Unit
+
+        override suspend fun close(code: Int, reason: String) {
+            frames.trySend(TransportFrame.Closed)
+        }
+
+        override fun dispose() {
+            disposed = true
+            frames.trySend(TransportFrame.Closed)
+        }
+    }
+
+    private class ScriptedBluetoothDialer(
+        var behavior: suspend () -> SyncTransport?,
+    ) : BluetoothFallbackDialer {
+        var dials = 0
+            private set
+
+        override suspend fun dial(
+            localDeviceId: String,
+            peer: com.clipsync.android.pairing.PairedPeer,
+            pairSecret: ByteArray,
+        ): SyncTransport? {
+            dials++
+            return behavior()
+        }
+    }
+
+    @Test
+    fun `bluetooth is dialed only after every ip host failed and marks the state`() = runTest {
+        val pairing = pairedStore()
+        val connector = ScriptedConnector { throw IOException("unreachable") }
+        val bluetoothTransport = HeldOpenTransport()
+        val dialer = ScriptedBluetoothDialer { bluetoothTransport }
+        val supervisor = SyncSupervisor(
+            pairing = pairing,
+            repository = InMemorySyncRepository(pairing.localDeviceId()),
+            connector = connector,
+            clientVersion = "0.1.0",
+            backoff = backoffWithoutJitter(),
+            bluetoothDialer = dialer,
+        )
+        backgroundScope.launch { supervisor.run() }
+
+        runCurrent()
+        // Both IP hosts were tried first; only then the one Bluetooth dial followed.
+        assertEquals(listOf(HOST_A, HOST_B), connector.calls)
+        assertEquals(1, dialer.dials)
+        assertEquals(
+            SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH),
+            supervisor.state.value,
+        )
+    }
+
+    @Test
+    fun `a certificate pin mismatch never falls back to bluetooth`() = runTest {
+        val pairing = pairedStore()
+        val connector = ScriptedConnector { host -> throw PinMismatchException(host) }
+        val dialer = ScriptedBluetoothDialer { HeldOpenTransport() }
+        val supervisor = SyncSupervisor(
+            pairing = pairing,
+            repository = InMemorySyncRepository(pairing.localDeviceId()),
+            connector = connector,
+            clientVersion = "0.1.0",
+            backoff = backoffWithoutJitter(),
+            bluetoothDialer = dialer,
+        )
+        backgroundScope.launch { supervisor.run() }
+
+        runCurrent()
+        advanceTimeBy(10_000)
+        runCurrent()
+        // Trust failed, not connectivity: Bluetooth must never mask a wrong certificate.
+        assertEquals(0, dialer.dials)
+    }
+
+    @Test
+    fun `a failed bluetooth dial lands in the same backoff as an unreachable host`() = runTest {
+        val pairing = pairedStore()
+        val connector = ScriptedConnector { throw IOException("unreachable") }
+        val dialer = ScriptedBluetoothDialer { null }
+        val supervisor = SyncSupervisor(
+            pairing = pairing,
+            repository = InMemorySyncRepository(pairing.localDeviceId()),
+            connector = connector,
+            clientVersion = "0.1.0",
+            backoff = backoffWithoutJitter(),
+            bluetoothDialer = dialer,
+        )
+        backgroundScope.launch { supervisor.run() }
+
+        runCurrent()
+        assertEquals(1, dialer.dials)
+        assertEquals(SyncConnectionState.WaitingRetry(0, 1_000), supervisor.state.value)
+
+        advanceTimeBy(1_001)
+        runCurrent()
+        assertEquals(2, dialer.dials)
+        assertEquals(SyncConnectionState.WaitingRetry(1, 2_000), supervisor.state.value)
+    }
+
+    @Test
+    fun `an ip session never dials bluetooth`() = runTest {
+        val pairing = pairedStore()
+        val connector = ScriptedConnector { HeldOpenTransport() }
+        val dialer = ScriptedBluetoothDialer { HeldOpenTransport() }
+        val supervisor = SyncSupervisor(
+            pairing = pairing,
+            repository = InMemorySyncRepository(pairing.localDeviceId()),
+            connector = connector,
+            clientVersion = "0.1.0",
+            backoff = backoffWithoutJitter(),
+            bluetoothDialer = dialer,
+        )
+        backgroundScope.launch { supervisor.run() }
+
+        runCurrent()
+        assertEquals(
+            SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+            supervisor.state.value,
+        )
+        assertEquals(0, dialer.dials)
+    }
+
+    @Test
+    fun `a live bluetooth session switches back once the ip probe connects`() = runTest {
+        val pairing = pairedStore()
+        var ipReachable = false
+        val ipTransport = HeldOpenTransport()
+        val connector = ScriptedConnector {
+            if (ipReachable) ipTransport else throw IOException("unreachable")
+        }
+        // The Bluetooth session must authenticate: virtual time will pass the 15 s handshake
+        // watchdog, which kills an unauthenticated session and would mask the switchback.
+        val bluetoothTransport = ScriptedListenerTransport(
+            throttle = false,
+            localDeviceId = pairing.localDeviceId(),
+            closeAfterAuth = false,
+        )
+        val dialer = ScriptedBluetoothDialer { bluetoothTransport }
+        val supervisor = SyncSupervisor(
+            pairing = pairing,
+            repository = InMemorySyncRepository(pairing.localDeviceId()),
+            connector = connector,
+            clientVersion = "0.1.0",
+            backoff = backoffWithoutJitter(),
+            bluetoothDialer = dialer,
+            ipProbeIntervalMs = 30_000,
+        )
+        backgroundScope.launch { supervisor.run() }
+
+        runCurrent()
+        assertEquals(
+            SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH),
+            supervisor.state.value,
+        )
+
+        // First probe tick: IP still down, the Bluetooth session stays.
+        advanceTimeBy(30_001)
+        runCurrent()
+        assertEquals(
+            SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH),
+            supervisor.state.value,
+        )
+        assertTrue(!bluetoothTransport.disposed)
+
+        // IP comes back; the next probe tick wins a socket and the loop switches over.
+        ipReachable = true
+        advanceTimeBy(30_001)
+        runCurrent()
+        assertTrue(bluetoothTransport.disposed)
+        assertEquals(
+            SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+            supervisor.state.value,
+        )
+        // One Bluetooth dial total: the switchback reused the probe's socket, no re-dial.
+        assertEquals(1, dialer.dials)
+    }
+
+    @Test
+    fun `a reconnect nudge makes the bluetooth session probe ip immediately`() = runTest {
+        val pairing = pairedStore()
+        var ipReachable = false
+        val connector = ScriptedConnector {
+            if (ipReachable) HeldOpenTransport() else throw IOException("unreachable")
+        }
+        val dialer = ScriptedBluetoothDialer { HeldOpenTransport() }
+        val supervisor = SyncSupervisor(
+            pairing = pairing,
+            repository = InMemorySyncRepository(pairing.localDeviceId()),
+            connector = connector,
+            clientVersion = "0.1.0",
+            backoff = backoffWithoutJitter(),
+            bluetoothDialer = dialer,
+            ipProbeIntervalMs = 300_000,
+        )
+        backgroundScope.launch { supervisor.run() }
+
+        runCurrent()
+        assertEquals(
+            SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH),
+            supervisor.state.value,
+        )
+
+        // The network-available callback fires: no need to wait out the probe interval.
+        ipReachable = true
+        supervisor.nudgeReconnect()
+        runCurrent()
+        assertEquals(
+            SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+            supervisor.state.value,
+        )
     }
 }

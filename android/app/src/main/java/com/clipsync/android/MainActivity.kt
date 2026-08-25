@@ -68,11 +68,13 @@ import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.ClipboardCaptureSession
 import com.clipsync.android.platform.clipboard.SharedClipboardWrites
 import com.clipsync.android.storage.SyncSettingsStore
+import com.clipsync.android.sync.BluetoothSyncConnector
 import com.clipsync.android.sync.BootCompletedReceiver
 import com.clipsync.android.sync.ClipboardSyncService
 import com.clipsync.android.sync.SharedClipboardCapture
 import com.clipsync.android.sync.SyncConnectionState
 import com.clipsync.android.sync.SyncStore
+import com.clipsync.android.sync.SyncTransportKind
 import com.clipsync.android.ui.HealthScreen
 import com.clipsync.android.ui.health.CapabilityWiring
 import com.clipsync.android.ui.health.HealthViewModel
@@ -88,6 +90,7 @@ import com.clipsync.android.ui.onboarding.OnboardingScreen
 import com.clipsync.android.ui.pairing.PairingScreen
 import com.clipsync.android.ui.pairing.PairingUiState
 import com.clipsync.android.ui.pairing.PairingViewModel
+import com.clipsync.android.ui.prefs.BondedBluetoothDevice
 import com.clipsync.android.ui.prefs.PreferencesScreen
 import com.clipsync.android.ui.prefs.PreferencesViewModel
 import com.clipsync.android.ui.theme.CharterMotion
@@ -150,6 +153,9 @@ class MainActivity : ComponentActivity() {
                         connected = connection is SyncConnectionState.Connected,
                         serviceErrorCode = startError,
                         peerThrottled = throttled,
+                        // The conduit must state the degraded bt1 path honestly (ADR 0005).
+                        bluetoothFallback = connection is SyncConnectionState.Connected &&
+                            connection.transport == SyncTransportKind.BLUETOOTH,
                     )
                 }
             },
@@ -214,6 +220,14 @@ class MainActivity : ComponentActivity() {
                     // policy: re-evaluate the capture session so a background reader stops (or
                     // resumes) on the very toggle, without waiting for the next lifecycle edge.
                     onCaptureGatesChanged = { captureStack.session.refreshGates() },
+                    // The fallback needs BLUETOOTH_CONNECT on API 31+; ask on the explicit
+                    // enable moment, never per app open. Denial keeps the toggle honest —
+                    // the dialer re-checks the permission per dial and simply stays off.
+                    onBluetoothFallbackChanged = { enabled ->
+                        if (enabled) {
+                            requestBluetoothPermissionIfMissing(thenShowDevices = false)
+                        }
+                    },
                 ),
             historyRepository = { SyncStore.repository(applicationContext) },
         )
@@ -244,6 +258,24 @@ class MainActivity : ComponentActivity() {
      */
     private val notificationsPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+
+    /** Bonded devices for the 蓝牙目标设备 chooser; null keeps the inline chooser collapsed. */
+    private val bluetoothDeviceChoices = MutableStateFlow<List<BondedBluetoothDevice>?>(null)
+
+    /** Set when the permission ask came from the device chooser, so a grant opens it. */
+    private var showDevicesAfterBluetoothGrant = false
+
+    /**
+     * Denial is respected: the 蓝牙备援 toggle stays on but honest — the dialer re-checks
+     * the permission per dial and simply never connects, and the chooser explains itself.
+     */
+    private val bluetoothPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted && showDevicesAfterBluetoothGrant) {
+                bluetoothDeviceChoices.value = queryBondedDevices()
+            }
+            showDevicesAfterBluetoothGrant = false
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -285,6 +317,15 @@ class MainActivity : ComponentActivity() {
                         exportHistoryLauncher.launch("clipsync-history-$stamp.jsonl")
                     },
                     onImportHistory = { importHistoryLauncher.launch(arrayOf("*/*")) },
+                    bluetoothDevices = bluetoothDeviceChoices,
+                    onRequestBluetoothDevices = {
+                        requestBluetoothPermissionIfMissing(thenShowDevices = true)
+                    },
+                    onBluetoothDeviceChosen = { device ->
+                        preferencesViewModel.setBluetoothDevice(device)
+                        bluetoothDeviceChoices.value = null
+                    },
+                    onDismissBluetoothDevices = { bluetoothDeviceChoices.value = null },
                     imageThumbnail = { contentHash ->
                         SyncStore.repository(applicationContext).media?.let { store ->
                             ImageThumbnail.decodePreview(store, contentHash)
@@ -331,6 +372,41 @@ class MainActivity : ComponentActivity() {
         if (!granted) {
             // After two denials the system returns immediately; we never nag beyond that.
             notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    /**
+     * BLUETOOTH_CONNECT exists only on API 31+; below that the install-time BLUETOOTH
+     * permission already covers the fallback, so the devices show right away when asked.
+     */
+    private fun requestBluetoothPermissionIfMissing(thenShowDevices: Boolean) {
+        if (BluetoothSyncConnector.hasConnectPermission(this)) {
+            if (thenShowDevices) {
+                bluetoothDeviceChoices.value = queryBondedDevices()
+            }
+            return
+        }
+        showDevicesAfterBluetoothGrant = thenShowDevices
+        bluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
+    }
+
+    /**
+     * The system-bonded device list for the chooser. Empty (not null) when Bluetooth is off
+     * or nothing is bonded, so the chooser states the honest reason instead of hanging.
+     */
+    private fun queryBondedDevices(): List<BondedBluetoothDevice> {
+        val adapter = BluetoothSyncConnector.adapter(this) ?: return emptyList()
+        return try {
+            adapter.bondedDevices
+                .orEmpty()
+                .map { device ->
+                    BondedBluetoothDevice(
+                        name = device.name ?: device.address,
+                        address = device.address,
+                    )
+                }.sortedBy { it.name }
+        } catch (_: SecurityException) {
+            emptyList()
         }
     }
 
@@ -480,6 +556,10 @@ private fun ClipSyncApp(
     onOpenNotificationSettings: (() -> Unit)? = null,
     onExportHistory: () -> Unit = {},
     onImportHistory: () -> Unit = {},
+    bluetoothDevices: StateFlow<List<BondedBluetoothDevice>?> = MutableStateFlow(null),
+    onRequestBluetoothDevices: () -> Unit = {},
+    onBluetoothDeviceChosen: (BondedBluetoothDevice) -> Unit = {},
+    onDismissBluetoothDevices: () -> Unit = {},
     imageThumbnail: suspend (String) -> android.graphics.Bitmap? = { null },
     tabRequests: StateFlow<Int?> = MutableStateFlow(null),
     onTabRequestConsumed: () -> Unit = {},
@@ -501,6 +581,7 @@ private fun ClipSyncApp(
     val homeState by homeViewModel.state.collectAsState()
     val preferencesState by preferencesViewModel.state.collectAsState()
     val pairingState by pairingViewModel.state.collectAsState()
+    val bluetoothDeviceChoices by bluetoothDevices.collectAsState()
 
     // Pairing completing (or the peer being forgotten) must reflect in the
     // conduit and in the history source tags immediately, not on next start.
@@ -611,6 +692,11 @@ private fun ClipSyncApp(
                         onBootRestoreChange = preferencesViewModel::setBootRestore,
                         onImageSyncChange = preferencesViewModel::setImageSync,
                         onAutoApplyImagesChange = preferencesViewModel::setAutoApplyImages,
+                        onBluetoothFallbackChange = preferencesViewModel::setBluetoothFallback,
+                        bluetoothDevices = bluetoothDeviceChoices,
+                        onRequestBluetoothDevices = onRequestBluetoothDevices,
+                        onBluetoothDeviceChosen = onBluetoothDeviceChosen,
+                        onDismissBluetoothDevices = onDismissBluetoothDevices,
                         pairedDeviceName = healthState.pairedPeerName,
                         onOpenConduit = {
                             pairingOpen = false

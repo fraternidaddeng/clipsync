@@ -207,6 +207,10 @@ class ClipboardSyncService : Service() {
                 mutablePeerThrottled.value = true
                 SyncNotifications.notifyAuthThrottled(appContext)
             },
+            // bt1 fallback (ADR 0005): dialed once per cycle after every IP host failed. The
+            // connector re-reads the toggle/device/permission per dial, so preference changes
+            // apply on the next reconnect without a service restart.
+            bluetoothDialer = BluetoothSyncConnector(appContext, settings),
         )
         this.supervisor = supervisor
         // Own the read coordinator for as long as the service is promoted (plan 5.2). The
@@ -328,7 +332,13 @@ class ClipboardSyncService : Service() {
     }
 
     private fun stateText(state: SyncConnectionState): String = when (state) {
-        is SyncConnectionState.Connected -> getString(R.string.notification_sync_connected)
+        is SyncConnectionState.Connected ->
+            if (state.transport == SyncTransportKind.BLUETOOTH) {
+                // The user must see the degraded path: Bluetooth fallback carries text only.
+                getString(R.string.notification_sync_connected_bluetooth)
+            } else {
+                getString(R.string.notification_sync_connected)
+            }
         is SyncConnectionState.Connecting -> getString(R.string.notification_sync_connecting)
         is SyncConnectionState.WaitingRetry -> getString(R.string.notification_sync_reconnecting)
         is SyncConnectionState.NotPaired -> getString(R.string.notification_sync_not_paired)

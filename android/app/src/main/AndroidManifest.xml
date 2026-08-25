@@ -12,6 +12,17 @@
     <!-- The sync session to the paired Windows peer runs as a connectedDevice foreground service. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <!--
+        bt1 蓝牙备援（ADR 0005，默认关闭）：仅当 IP 路径全部不可达时，向用户在系统设置里
+        已配对（bonded）的目标设备发起 RFCOMM 连接。不申请 BLUETOOTH_SCAN、不做发现、
+        不需要定位权限；API 31+ 用运行时 BLUETOOTH_CONNECT，API 29–30 用安装时 BLUETOOTH。
+    -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_CONNECT"
+        tools:targetApi="s" />
     <!-- API 34+ prerequisite for the connectedDevice type on LAN (Wi-Fi) peers. -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <!-- Status + inbox notifications (API 33+ runtime permission). Denial never blocks sync
@@ -34,6 +45,10 @@
 
     <uses-feature
         android:name="android.hardware.camera.any"
+        android:required="false" />
+    <!-- 蓝牙备援是可选能力；无蓝牙硬件的设备照常安装与同步。 -->
+    <uses-feature
+        android:name="android.hardware.bluetooth"
         android:required="false" />
 
     <application

@@ -1,16 +1,19 @@
 package com.clipsync.android.sync
 
+import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingStore
 import java.io.IOException
 import kotlin.math.min
 import kotlin.random.Random
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 
 /** Deterministically testable exponential backoff with bounded jitter. */
@@ -36,15 +39,35 @@ class ReconnectBackoff(
     }
 }
 
+/** Which link carries an authenticated session: the normal IP path or the bt1 fallback. */
+enum class SyncTransportKind { IP, BLUETOOTH }
+
 /** Connection lifecycle as the notification/UI layer sees it. Never carries clipboard text. */
 sealed interface SyncConnectionState {
     data object NotPaired : SyncConnectionState
 
     data object Connecting : SyncConnectionState
 
-    data class Connected(val peerDisplayName: String) : SyncConnectionState
+    data class Connected(
+        val peerDisplayName: String,
+        val transport: SyncTransportKind = SyncTransportKind.IP,
+    ) : SyncConnectionState
 
     data class WaitingRetry(val attempt: Int, val delayMs: Long) : SyncConnectionState
+}
+
+/**
+ * Dials the bt1 Bluetooth fallback (ADR 0005) and completes its handshake. Returns null when
+ * the fallback is off, its prerequisites are missing (permission, adapter, selected bonded
+ * device), or the dial/handshake failed — the supervisor treats every null the same way it
+ * treats an unreachable host. Implementations must not retain [pairSecret].
+ */
+fun interface BluetoothFallbackDialer {
+    suspend fun dial(
+        localDeviceId: String,
+        peer: PairedPeer,
+        pairSecret: ByteArray,
+    ): SyncTransport?
 }
 
 /**
@@ -53,6 +76,12 @@ sealed interface SyncConnectionState {
  * mutual authentication resets the backoff; a certificate pin mismatch never fails over to the
  * next host because a changed certificate must block, not be retried around. A network-available
  * signal ([nudgeReconnect]) cuts the current wait short without resetting the schedule.
+ *
+ * Bluetooth fallback (ADR 0005): when every IP candidate is unreachable and a
+ * [BluetoothFallbackDialer] is wired, one bt1 dial follows in the same cycle. IP always wins:
+ * a Bluetooth session keeps probing the IP path at a low cadence (plus on every reconnect
+ * nudge), and the first successful IP dial closes the Bluetooth session and carries the next
+ * session. A pin mismatch still stops everything — trust failures never fall back.
  */
 class SyncSupervisor(
     private val pairing: PairingStore,
@@ -78,9 +107,16 @@ class SyncSupervisor(
      * Re-armed only after a session authenticates again. Never carries clipboard content.
      */
     private val onAuthThrottled: () -> Unit = {},
+    /** bt1 fallback dial, tried once per cycle after every IP host failed; null = not wired. */
+    private val bluetoothDialer: BluetoothFallbackDialer? = null,
+    /** How often a live Bluetooth session re-probes the IP path for the switch back. */
+    private val ipProbeIntervalMs: Long = 30_000,
 ) {
     private val mutableState = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)
     private var throttleAnnounced = false
+
+    /** An IP socket the Bluetooth-session probe already connected; the next session uses it. */
+    private var pendingIpTransport: ConnectedTransport? = null
 
     // Conflated so a burst of network-available callbacks collapses into one early retry.
     private val reconnectNudges = Channel<Unit>(Channel.CONFLATED)
@@ -100,11 +136,23 @@ class SyncSupervisor(
 
     /** Runs until the calling coroutine is cancelled (the foreground service scope). */
     suspend fun run() {
+        try {
+            runLoop()
+        } finally {
+            pendingIpTransport?.transport?.dispose()
+            pendingIpTransport = null
+        }
+    }
+
+    private suspend fun runLoop() {
         var attempt = 0
         while (currentCoroutineContext().isActive) {
             val peer = pairing.peer()
             val secret = pairing.pairSecret()
             if (peer == null || secret == null) {
+                // A probe-won IP socket must not outlive the pairing it belongs to.
+                pendingIpTransport?.transport?.dispose()
+                pendingIpTransport = null
                 mutableState.value = SyncConnectionState.NotPaired
                 delay(unpairedPollMs)
                 attempt = 0
@@ -112,14 +160,14 @@ class SyncSupervisor(
             }
 
             mutableState.value = SyncConnectionState.Connecting
-            val connected = connectAnyHost(peer)
+            val connected = takePendingIpTransport() ?: dialOnce(peer, secret)
             if (connected == null) {
                 secret.fill(0)
                 attempt = waitBeforeRetry(attempt)
                 continue
             }
 
-            mutableState.value = SyncConnectionState.Connected(peer.displayName)
+            mutableState.value = SyncConnectionState.Connected(peer.displayName, connected.kind)
             val engine = SyncEngine(
                 repository = repository,
                 config = SyncSessionConfig(
@@ -140,7 +188,7 @@ class SyncSupervisor(
             )
             secret.fill(0)
             val result = try {
-                engine.run(connected.transport)
+                runSession(engine, connected, peer)
             } finally {
                 connected.transport.dispose()
             }
@@ -157,38 +205,130 @@ class SyncSupervisor(
             if (!currentCoroutineContext().isActive) {
                 break
             }
+            // Coming off a Bluetooth session with an IP socket already won by the probe:
+            // start the IP session immediately instead of sitting out a backoff wait.
+            if (pendingIpTransport != null) {
+                continue
+            }
             attempt = waitBeforeRetry(attempt)
         }
     }
 
-    /** A dialed socket together with the wire version it was accepted on. */
-    private class ConnectedTransport(val transport: SyncTransport, val protocolVersion: Int)
+    /**
+     * Runs one session; a Bluetooth session additionally keeps a low-cadence IP probe alive.
+     * When the probe wins an IP socket it parks it in [pendingIpTransport] and disposes the
+     * Bluetooth transport, so the engine returns and the loop switches back to IP at once —
+     * one active session at any moment, never two.
+     */
+    private suspend fun runSession(
+        engine: SyncEngine,
+        connected: ConnectedTransport,
+        peer: PairedPeer,
+    ): SyncSessionResult = coroutineScope {
+        val probe = if (connected.kind == SyncTransportKind.BLUETOOTH) {
+            launch { probeIpWhileOnBluetooth(peer, connected.transport) }
+        } else {
+            null
+        }
+        try {
+            engine.run(connected.transport)
+        } finally {
+            probe?.cancel()
+        }
+    }
+
+    private suspend fun probeIpWhileOnBluetooth(peer: PairedPeer, bluetoothTransport: SyncTransport) {
+        while (currentCoroutineContext().isActive) {
+            // A network-available nudge tries the IP path right away; otherwise the timer does.
+            withTimeoutOrNull(ipProbeIntervalMs) { reconnectNudges.receive() }
+            when (val outcome = connectAnyHost(peer)) {
+                is IpDialOutcome.Connected -> {
+                    pendingIpTransport = outcome.transport
+                    bluetoothTransport.dispose()
+                    return
+                }
+                IpDialOutcome.PinMismatch -> {
+                    // The IP path presents a wrong certificate: never switch onto it. The
+                    // Bluetooth session stays (its trust is the pair secret), probing stops.
+                    return
+                }
+                IpDialOutcome.Unreachable -> {}
+            }
+        }
+    }
+
+    private fun takePendingIpTransport(): ConnectedTransport? {
+        val pending = pendingIpTransport
+        pendingIpTransport = null
+        return pending
+    }
+
+    /** IP candidates first; the bt1 fallback only after every host failed on connectivity. */
+    private suspend fun dialOnce(peer: PairedPeer, secret: ByteArray): ConnectedTransport? =
+        when (val outcome = connectAnyHost(peer)) {
+            is IpDialOutcome.Connected -> outcome.transport
+            // Wrong certificate is a trust decision, not a connectivity problem: no Bluetooth
+            // fallback either, so the user re-pairs instead of the failure being masked.
+            IpDialOutcome.PinMismatch -> null
+            IpDialOutcome.Unreachable -> dialBluetooth(peer, secret)
+        }
+
+    private suspend fun dialBluetooth(peer: PairedPeer, secret: ByteArray): ConnectedTransport? {
+        val dialer = bluetoothDialer ?: return null
+        val transport = try {
+            dialer.dial(pairing.localDeviceId(), peer, secret)
+        } catch (_: IOException) {
+            null
+        }
+        return transport?.let {
+            // bt1 carries protocol v1 only: image capability is never declared on Bluetooth
+            // (ADR 0005 §4), so the session dials the engine at version 1 unconditionally.
+            ConnectedTransport(it, protocolVersion = 1, kind = SyncTransportKind.BLUETOOTH)
+        }
+    }
+
+    /** A dialed socket together with the wire version and link kind it was accepted on. */
+    private class ConnectedTransport(
+        val transport: SyncTransport,
+        val protocolVersion: Int,
+        val kind: SyncTransportKind = SyncTransportKind.IP,
+    )
+
+    private sealed interface IpDialOutcome {
+        class Connected(val transport: ConnectedTransport) : IpDialOutcome
+
+        data object PinMismatch : IpDialOutcome
+
+        data object Unreachable : IpDialOutcome
+    }
 
     /**
-     * Tries every pairing host in preference order; null when none accepted a connection.
-     * With image sync on, each host is dialed on v2 first and once more on v1 when the v2
-     * handshake is refused (a v1-only listener rejects `/v2/peer/sync` before upgrade); a
-     * certificate pin mismatch stops everything because trust, not connectivity, failed.
+     * Tries every pairing host in preference order. With image sync on, each host is dialed
+     * on v2 first and once more on v1 when the v2 handshake is refused (a v1-only listener
+     * rejects `/v2/peer/sync` before upgrade); a certificate pin mismatch stops everything
+     * because trust, not connectivity, failed.
      */
-    private suspend fun connectAnyHost(peer: com.clipsync.android.pairing.PairedPeer): ConnectedTransport? {
+    private suspend fun connectAnyHost(peer: PairedPeer): IpDialOutcome {
         val versions = if (imageSyncEnabled()) listOf(2, 1) else listOf(1)
         for (host in peer.hosts) {
             for (version in versions) {
                 try {
-                    return ConnectedTransport(
-                        connector.connect(host, peer.port, peer.certSha256, version),
-                        version,
+                    return IpDialOutcome.Connected(
+                        ConnectedTransport(
+                            connector.connect(host, peer.port, peer.certSha256, version),
+                            version,
+                        ),
                     )
                 } catch (_: PinMismatchException) {
                     // Wrong certificate is a trust decision, not a connectivity problem: stop
                     // the whole attempt so the user re-pairs instead of silently probing on.
-                    return null
+                    return IpDialOutcome.PinMismatch
                 } catch (_: IOException) {
                     continue
                 }
             }
         }
-        return null
+        return IpDialOutcome.Unreachable
     }
 
     private suspend fun waitBeforeRetry(attempt: Int): Int {

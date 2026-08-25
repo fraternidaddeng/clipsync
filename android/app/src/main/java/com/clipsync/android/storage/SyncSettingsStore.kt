@@ -86,6 +86,28 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         get() = readBoolean(KEY_AUTO_APPLY_IMAGES, default = false)
         set(value) = write(KEY_AUTO_APPLY_IMAGES, value.toString())
 
+    /**
+     * Bluetooth fallback transport (ADR 0005). Off by default: when on and a bonded target
+     * device is selected, the supervisor tries one bt1 RFCOMM dial per reconnect cycle after
+     * every IP candidate failed. Never a primary transport — IP always wins the switch back.
+     */
+    var bluetoothFallbackEnabled: Boolean
+        get() = readBoolean(KEY_BLUETOOTH_FALLBACK, default = false)
+        set(value) = write(KEY_BLUETOOTH_FALLBACK, value.toString())
+
+    /**
+     * MAC address of the bonded device the fallback dials, chosen by the user from the
+     * system-bonded list. Routing metadata only — trust always comes from the pair secret.
+     */
+    var bluetoothPeerAddress: String?
+        get() = keyValues.read(KEY_BLUETOOTH_PEER_ADDRESS)?.takeIf { it.isNotEmpty() }
+        set(value) = write(KEY_BLUETOOTH_PEER_ADDRESS, value.orEmpty())
+
+    /** Display name of the selected bonded device; UI-only, never used for routing or trust. */
+    var bluetoothPeerName: String?
+        get() = keyValues.read(KEY_BLUETOOTH_PEER_NAME)?.takeIf { it.isNotEmpty() }
+        set(value) = write(KEY_BLUETOOTH_PEER_NAME, value.orEmpty())
+
     fun retentionPolicy(): RetentionPolicy = RetentionPolicy(
         maximumEntries = retentionMaxEntries,
         maximumAgeMs = retentionMaxAgeDays * MILLIS_PER_DAY,
@@ -133,5 +155,8 @@ class SyncSettingsStore(private val keyValues: KeyValueStore) {
         private const val KEY_BOOT_RESTORE = "sync.boot_restore"
         private const val KEY_IMAGE_SYNC = "sync.image_sync"
         private const val KEY_AUTO_APPLY_IMAGES = "sync.auto_apply_images"
+        private const val KEY_BLUETOOTH_FALLBACK = "sync.bluetooth_fallback"
+        private const val KEY_BLUETOOTH_PEER_ADDRESS = "sync.bluetooth_peer_address"
+        private const val KEY_BLUETOOTH_PEER_NAME = "sync.bluetooth_peer_name"
     }
 }
