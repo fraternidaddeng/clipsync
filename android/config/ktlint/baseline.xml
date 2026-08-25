@@ -2612,25 +2612,25 @@
     </file>
     <file name="src/test/java/com/clipsync/android/ui/prefs/PreferencesHistoryTransferTest.kt">
         <error line="3" column="1" source="standard:import-ordering" />
-        <error line="41" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="41" column="24" source="standard:chain-method-continuation" />
-        <error line="45" column="21" source="standard:multiline-expression-wrapping" />
-        <error line="58" column="55" source="standard:multiline-expression-wrapping" />
-        <error line="58" column="55" source="standard:function-signature" />
-        <error line="72" column="56" source="standard:multiline-expression-wrapping" />
-        <error line="72" column="56" source="standard:function-signature" />
-        <error line="80" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="80" column="27" source="standard:chain-method-continuation" />
-        <error line="81" column="38" source="standard:chain-method-continuation" />
-        <error line="84" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="48" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="48" column="24" source="standard:chain-method-continuation" />
+        <error line="52" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="65" column="55" source="standard:multiline-expression-wrapping" />
+        <error line="65" column="55" source="standard:function-signature" />
+        <error line="79" column="56" source="standard:multiline-expression-wrapping" />
+        <error line="79" column="56" source="standard:function-signature" />
+        <error line="87" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="87" column="27" source="standard:chain-method-continuation" />
+        <error line="88" column="38" source="standard:chain-method-continuation" />
         <error line="91" column="25" source="standard:multiline-expression-wrapping" />
-        <error line="98" column="26" source="standard:multiline-expression-wrapping" />
-        <error line="111" column="68" source="standard:multiline-expression-wrapping" />
-        <error line="111" column="68" source="standard:function-signature" />
-        <error line="126" column="57" source="standard:multiline-expression-wrapping" />
-        <error line="126" column="57" source="standard:function-signature" />
-        <error line="140" column="39" source="standard:multiline-expression-wrapping" />
-        <error line="140" column="39" source="standard:function-signature" />
+        <error line="98" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="105" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="118" column="68" source="standard:multiline-expression-wrapping" />
+        <error line="118" column="68" source="standard:function-signature" />
+        <error line="133" column="57" source="standard:multiline-expression-wrapping" />
+        <error line="133" column="57" source="standard:function-signature" />
+        <error line="147" column="39" source="standard:multiline-expression-wrapping" />
+        <error line="147" column="39" source="standard:function-signature" />
     </file>
     <file name="src/test/java/com/clipsync/android/ui/theme/CharterTokensTest.kt">
         <error line="3" column="1" source="standard:import-ordering" />

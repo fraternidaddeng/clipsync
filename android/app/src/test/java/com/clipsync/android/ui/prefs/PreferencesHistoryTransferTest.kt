@@ -23,13 +23,20 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * The 偏好 导出历史/导入历史 wiring: streams in, honest status line out. The
  * merge semantics themselves are covered by storage.HistoryTransferTest; here we
  * assert the ViewModel reports counts and failures truthfully.
+ *
+ * P1#16: assertions quote zh-Hans literals, so the resource qualifiers are pinned
+ * to zh-CN (resolving to the default values/, which is zh-Hans). Robolectric
+ * otherwise defaults to en-rUS and would pick values-en. Same philosophy as the
+ * Windows test suite's TestCulture.
  */
 @RunWith(RobolectricTestRunner::class)
+@Config(qualifiers = "zh-rCN")
 class PreferencesHistoryTransferTest {
     private lateinit var database: ClipSyncDatabase
     private lateinit var repository: ClipSyncRepository
