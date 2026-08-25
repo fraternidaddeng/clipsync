@@ -43,6 +43,31 @@ public sealed class ImageThumbnailTests : IDisposable
         return (pixel[0], pixel[1], pixel[2], pixel[3]);
     }
 
+    /// <summary>
+    /// Asserts the centre pixel is visibly the encoded solid colour. Exact equality
+    /// is over-specified here: DecodePixelWidth rides WIC's Fant scaler, whose
+    /// fixed-point weights can come back off by a unit or two per channel even in a
+    /// solid area (observed on real Windows, not on any reference software decoder).
+    /// The bugs these tests net — transparent or blank pixels — land far outside
+    /// this tolerance.
+    /// </summary>
+    internal static void AssertCenterPixelIsSolid(BitmapSource source, byte b, byte g, byte r)
+    {
+        var (actualB, actualG, actualR, actualA) = CenterPixel(source);
+        Assert.InRange((int)actualA, 250, 255);
+        AssertChannelNear(b, actualB, "B");
+        AssertChannelNear(g, actualG, "G");
+        AssertChannelNear(r, actualR, "R");
+    }
+
+    private static void AssertChannelNear(byte expected, byte actual, string channel)
+    {
+        const int Tolerance = 3;
+        Assert.True(
+            Math.Abs(expected - actual) <= Tolerance,
+            $"Channel {channel} was {actual}, expected {expected} ±{Tolerance}.");
+    }
+
     [Fact]
     public void EnsureWritesPngThumbnailAndIsIdempotent()
     {
@@ -127,11 +152,7 @@ public sealed class ImageThumbnailTests : IDisposable
         Assert.NotNull(path);
         var thumbnail = BitmapFile.TryLoad(path!);
         Assert.NotNull(thumbnail);
-        var (b, g, r, a) = CenterPixel(thumbnail!);
-        Assert.Equal(255, a);
-        Assert.Equal(40, b);
-        Assert.Equal(90, g);
-        Assert.Equal(200, r);
+        AssertCenterPixelIsSolid(thumbnail!, b: 40, g: 90, r: 200);
     }
 
     [Fact]
@@ -178,11 +199,7 @@ public sealed class ImageThumbnailTests : IDisposable
         Assert.Equal(cached, path);
         Assert.NotNull(bitmap);
         Assert.True(bitmap!.IsFrozen);
-        var (b, g, r, a) = CenterPixel(bitmap);
-        Assert.Equal(255, a);
-        Assert.Equal(25, b);
-        Assert.Equal(130, g);
-        Assert.Equal(210, r);
+        AssertCenterPixelIsSolid(bitmap, b: 25, g: 130, r: 210);
         // The cache itself was rewritten from the blob and decodes again.
         Assert.NotNull(BitmapFile.TryLoad(cached));
         Assert.Equal(ImageCodecError.Ok, ImageCodec.TryInspectFile(cached, out _));
@@ -206,11 +223,7 @@ public sealed class ImageThumbnailTests : IDisposable
         Assert.Null(path);
         Assert.NotNull(bitmap);
         Assert.True(bitmap!.IsFrozen);
-        var (b, g, r, a) = CenterPixel(bitmap);
-        Assert.Equal(255, a);
-        Assert.Equal(70, b);
-        Assert.Equal(40, g);
-        Assert.Equal(160, r);
+        AssertCenterPixelIsSolid(bitmap, b: 70, g: 40, r: 160);
     }
 
     [Fact]

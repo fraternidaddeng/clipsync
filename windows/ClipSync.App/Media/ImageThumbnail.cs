@@ -14,9 +14,10 @@ internal static class ImageThumbnail
     /// <summary>
     /// Bind-time loader for the history list: returns the cached thumbnail path plus a
     /// decoded, frozen bitmap. A cached file that no longer decodes (truncated by an old
-    /// build, disk fault) is deleted and regenerated from the blob; as a last resort the
-    /// blob itself is decoded bounded. The honest 无预览 placeholder is thereby reserved
-    /// for a blob that is missing or truly undecodable — never for a stale cache.
+    /// build, disk fault) is force-rewritten from the blob; as a last resort the blob
+    /// itself is decoded bounded, and then the returned path is null so no caller ever
+    /// binds a file that does not decode. The honest 无预览 placeholder is thereby
+    /// reserved for a blob that is missing or truly undecodable — never for a stale cache.
     /// </summary>
     public static (string? ThumbnailPath, BitmapSource? Image) LoadForList(
         MediaBlobStore store,
@@ -40,8 +41,7 @@ internal static class ImageThumbnail
             // blob is the source of truth: heal the cache instead of blanking a row
             // whose pixels are still on disk.
             LocalDiagnostics.Write("thumbnail_bind_decode_failed");
-            TryDelete(path);
-            path = Ensure(store, contentHash);
+            path = Regenerate(store, contentHash);
             if (path is not null)
             {
                 image = BitmapFile.TryLoad(path, decodePixelWidth);
@@ -53,13 +53,16 @@ internal static class ImageThumbnail
             }
         }
 
+        // No decodable cache could be produced. Never hand out a path that does not
+        // decode (the detail window binds it); the bounded blob decode still keeps
+        // the row visible whenever pixels exist at all.
         var direct = TryLoadFromBlob(store, contentHash, decodePixelWidth);
         if (direct is not null)
         {
             LocalDiagnostics.Write("thumbnail_blob_bind_fallback");
         }
 
-        return (path, direct);
+        return (null, direct);
     }
 
     public static string? Ensure(MediaBlobStore store, string contentHash)
@@ -73,6 +76,26 @@ internal static class ImageThumbnail
             return destination;
         }
 
+        return WriteFromBlob(store, contentHash, destination);
+    }
+
+    /// <summary>
+    /// Forces a rewrite of the cached thumbnail from the blob. <see cref="Ensure"/>
+    /// cannot heal a corrupt cache: the stale file passes its exists/length gate, and
+    /// the old delete-then-Ensure dance silently kept the corrupt file whenever the
+    /// delete failed (transient scanner/indexer lock on real Windows). The rewrite
+    /// goes through a unique temp file and an overwriting move, so it replaces the
+    /// destination in one step and never trusts what is already there.
+    /// </summary>
+    private static string? Regenerate(MediaBlobStore store, string contentHash)
+    {
+        var destination = store.ThumbnailPath(contentHash);
+        TryDelete(destination);
+        return WriteFromBlob(store, contentHash, destination);
+    }
+
+    private static string? WriteFromBlob(MediaBlobStore store, string contentHash, string destination)
+    {
         string blob;
         try
         {

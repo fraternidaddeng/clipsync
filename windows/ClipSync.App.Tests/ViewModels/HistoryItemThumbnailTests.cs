@@ -44,11 +44,7 @@ public sealed class HistoryItemThumbnailTests : IDisposable
         Assert.Equal(store.ThumbnailPath(image.ContentHash), item.ThumbnailPath);
         var bitmap = Assert.IsAssignableFrom<BitmapSource>(item.ThumbnailImage);
         Assert.True(bitmap.IsFrozen);
-        var (b, g, r, a) = ImageThumbnailTests.CenterPixel(bitmap);
-        Assert.Equal(255, a);
-        Assert.Equal(30, b);
-        Assert.Equal(140, g);
-        Assert.Equal(80, r);
+        ImageThumbnailTests.AssertCenterPixelIsSolid(bitmap, b: 30, g: 140, r: 80);
     }
 
     [Fact]
@@ -92,11 +88,7 @@ public sealed class HistoryItemThumbnailTests : IDisposable
         Assert.Equal(store.ThumbnailPath(image.ContentHash), item.ThumbnailPath);
         var bitmap = Assert.IsAssignableFrom<BitmapSource>(item.ThumbnailImage);
         Assert.True(bitmap.IsFrozen);
-        var (b, g, r, a) = ImageThumbnailTests.CenterPixel(bitmap);
-        Assert.Equal(255, a);
-        Assert.Equal(90, b);
-        Assert.Equal(45, g);
-        Assert.Equal(170, r);
+        ImageThumbnailTests.AssertCenterPixelIsSolid(bitmap, b: 90, g: 45, r: 170);
     }
 
     [Fact]
