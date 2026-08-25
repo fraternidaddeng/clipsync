@@ -40,6 +40,8 @@ data class PreferencesUiState(
     val historyFontScale: Float = SyncSettingsStore.HISTORY_FONT_SCALE_STANDARD,
     /** 预览行数（settings-roadmap P1-7）：2 / 4 / 6，默认 4。 */
     val previewLines: Int = SyncSettingsStore.DEFAULT_PREVIEW_LINES,
+    /** 外观（settings-roadmap P1-6）：system / day / night，默认跟随系统。 */
+    val themeOverride: String = SyncSettingsStore.THEME_SYSTEM,
     /** 跳过敏感内容（settings-roadmap P0-4）：默认开，依赖来源应用的敏感标记。 */
     val skipSensitive: Boolean = true,
     /** 收到内容通知（settings-roadmap P1-8）：应用内总开关，默认开。 */
@@ -105,6 +107,7 @@ class PreferencesViewModel(
                 bluetoothDeviceName = settings.bluetoothPeerName,
                 historyFontScale = settings.historyFontScale,
                 previewLines = settings.previewLines,
+                themeOverride = settings.themeOverride,
                 skipSensitive = settings.skipSensitiveEnabled,
                 inboxNotify = settings.inboxNotifyEnabled,
             ),
@@ -169,6 +172,18 @@ class PreferencesViewModel(
         }
         settings.previewLines = lines
         mutableState.update { it.copy(previewLines = lines) }
+    }
+
+    /**
+     * 外观 (settings-roadmap P1-6): a mode over the two existing palettes, never a colour.
+     * The theme is composed from this state, so picking a chip restyles the app instantly.
+     */
+    fun setThemeOverride(mode: String) {
+        if (mode !in SyncSettingsStore.THEME_CHOICES) {
+            return
+        }
+        settings.themeOverride = mode
+        mutableState.update { it.copy(themeOverride = mode) }
     }
 
     /**

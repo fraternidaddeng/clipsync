@@ -1810,7 +1810,7 @@
                         <TextBlock Style="{StaticResource PageTitle}" Text="偏好" />
                         <TextBlock Style="{StaticResource PageSub}" Text="改动即生效 · 剪贴板正文永不出现在日志里" />
 
-                        <!-- 显示（settings-roadmap P0-1 / P1-7）：只缩放内容文字，chrome 不动 -->
+                        <!-- 显示（settings-roadmap P0-1 / P1-7 / P1-6）：只缩放内容文字，chrome 不动；外观只选日/夜字典 -->
                         <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource GroupHeader}" Text="显 示 · DISPLAY" />
@@ -1872,6 +1872,40 @@
                                                          Content="6 行"
                                                          GroupName="PrefsPreviewLines"
                                                          IsChecked="{Binding PreviewLinesKey, Converter={StaticResource StringMatch}, ConverterParameter=6}"
+                                                         Style="{StaticResource FilterChip}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <!-- 外观（settings-roadmap P1-6）：只在既有日/夜双字典间选择，绝无自定义配色 -->
+                                <Border Padding="16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowName}" Text="外观" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="窗口的日间/夜间配色；托盘图标活在任务栏里，始终跟随任务栏的深浅。" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1"
+                                                    VerticalAlignment="Top"
+                                                    Orientation="Horizontal">
+                                            <RadioButton Click="OnSettingToggled"
+                                                         Content="跟随系统"
+                                                         GroupName="PrefsThemeMode"
+                                                         IsChecked="{Binding ThemeModeKey, Converter={StaticResource StringMatch}, ConverterParameter=system}"
+                                                         Style="{StaticResource FilterChip}" />
+                                            <RadioButton Click="OnSettingToggled"
+                                                         Content="日间"
+                                                         GroupName="PrefsThemeMode"
+                                                         IsChecked="{Binding ThemeModeKey, Converter={StaticResource StringMatch}, ConverterParameter=day}"
+                                                         Style="{StaticResource FilterChip}" />
+                                            <RadioButton Click="OnSettingToggled"
+                                                         Content="夜间"
+                                                         GroupName="PrefsThemeMode"
+                                                         IsChecked="{Binding ThemeModeKey, Converter={StaticResource StringMatch}, ConverterParameter=night}"
                                                          Style="{StaticResource FilterChip}" />
                                         </StackPanel>
                                     </Grid>

@@ -24,4 +24,16 @@ public static class AppearanceOptions
 
     /// <summary>The wire form of a theme key — the key itself, per the roadmap key contract.</summary>
     public static string StoredFor(string? themeKey) => KeyForStored(themeKey);
+
+    /// <summary>
+    /// The forced palette of a mode: true = day tokens, false = night tokens,
+    /// null = no override (follow the Windows theme). Only the two existing charter
+    /// palettes are reachable — a mode is never a colour.
+    /// </summary>
+    public static bool? ForcedLight(string? themeKey) => KeyForStored(themeKey) switch
+    {
+        DayKey => true,
+        NightKey => false,
+        _ => null,
+    };
 }

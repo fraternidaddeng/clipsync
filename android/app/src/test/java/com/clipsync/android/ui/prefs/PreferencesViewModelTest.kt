@@ -25,6 +25,7 @@ class PreferencesViewModelTest {
         assertEquals(SyncSettingsStore.DEFAULT_MAX_ENTRIES, state.maxEntries)
         assertEquals(SyncSettingsStore.HISTORY_FONT_SCALE_STANDARD, state.historyFontScale, 0f)
         assertEquals(SyncSettingsStore.DEFAULT_PREVIEW_LINES, state.previewLines)
+        assertEquals(SyncSettingsStore.THEME_SYSTEM, state.themeOverride)
         assertTrue(state.skipSensitive)
         assertTrue(state.inboxNotify)
     }
@@ -166,6 +167,27 @@ class PreferencesViewModelTest {
         model.setPreviewLines(5)
         assertEquals(SyncSettingsStore.HISTORY_FONT_SCALE_LARGE, model.state.value.historyFontScale, 0f)
         assertEquals(2, model.state.value.previewLines)
+    }
+
+    @Test
+    fun `theme override persists under the roadmap key and ignores off-list values`() {
+        val model = viewModel()
+        model.setThemeOverride(SyncSettingsStore.THEME_NIGHT)
+
+        assertEquals("night", keyValues.map["ui.theme"])
+        assertEquals(SyncSettingsStore.THEME_NIGHT, model.state.value.themeOverride)
+
+        // A new view model over the same store reads the persisted override.
+        assertEquals(SyncSettingsStore.THEME_NIGHT, viewModel().state.value.themeOverride)
+
+        // 跟随系统 is a real choice, not merely the absence of a key.
+        model.setThemeOverride(SyncSettingsStore.THEME_SYSTEM)
+        assertEquals("system", keyValues.map["ui.theme"])
+
+        // A colour is never a mode (charter: the palette is not a user variable).
+        model.setThemeOverride("#ff00ff")
+        assertEquals(SyncSettingsStore.THEME_SYSTEM, model.state.value.themeOverride)
+        assertEquals("system", keyValues.map["ui.theme"])
     }
 
     @Test

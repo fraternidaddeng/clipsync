@@ -86,6 +86,10 @@ public partial class App : Application
         await store.InitializeAsync();
         var viewModel = services.GetRequiredService<MainViewModel>();
         await viewModel.InitializeAsync();
+        // 外观（P1-6）: a stored 日间/夜间 override must pin the palette before any window
+        // shows; 跟随系统 keeps the theme Initialize() already applied. Tray icons keep
+        // sampling the taskbar theme either way.
+        CharterThemeManager.SetMode(viewModel.ThemeModeKey);
         // 历史字号/预览行数 must be in the resource dictionary before any window measures.
         HistoryTypeScaleManager.Apply(viewModel.HistoryFontScale, viewModel.PreviewLines);
         var mainWindow = services.GetRequiredService<MainWindow>();
@@ -177,6 +181,12 @@ public partial class App : Application
             {
                 HistoryTypeScaleManager.Apply(mainViewModel.HistoryFontScale, mainViewModel.PreviewLines);
             }
+        }
+
+        // 外观 chips apply live: every open window restyles through DynamicResource at once.
+        if (e.PropertyName is nameof(MainViewModel.ThemeModeKey) && mainViewModel is not null)
+        {
+            CharterThemeManager.SetMode(mainViewModel.ThemeModeKey);
         }
 
         if (e.PropertyName is nameof(MainViewModel.LaunchAtStartup) && mainViewModel is not null)

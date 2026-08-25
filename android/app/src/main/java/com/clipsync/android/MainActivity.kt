@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,6 +22,7 @@ import androidx.compose.animation.core.snap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +41,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -302,7 +305,10 @@ class MainActivity : ComponentActivity() {
         val showOnboarding =
             firstRunStore.shouldShowOnboarding(alreadyPaired = pairingStore.peer() != null)
         setContent {
-            ClipSyncTheme {
+            // 外观（settings-roadmap P1-6）: the override decides the palette before the
+            // theme composes; 跟随系统 keeps deferring to isSystemInDarkTheme live.
+            val darkTheme = rememberEffectiveDarkTheme()
+            ClipSyncTheme(darkTheme = darkTheme) {
                 SyncServiceController(
                     pairingViewModel = pairingViewModel,
                     onStartService = ::startSyncService,
@@ -352,6 +358,36 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         handleOpenTabIntent(intent)
+    }
+
+    /**
+     * 外观（settings-roadmap P1-6）: the effective palette — a manual 日间/夜间 override
+     * wins, 跟随系统 defers to [isSystemInDarkTheme] live. System-bar icon contrast must
+     * track this effective answer, not the OS theme: a forced 日间 needs dark status/nav
+     * icons even while the system is dark, and vice versa — so edge-to-edge is re-asserted
+     * with an explicit dark answer on every flip.
+     */
+    @Composable
+    private fun rememberEffectiveDarkTheme(): Boolean {
+        val preferencesState by preferencesViewModel.state.collectAsState()
+        val darkTheme =
+            when (preferencesState.themeOverride) {
+                SyncSettingsStore.THEME_DAY -> false
+                SyncSettingsStore.THEME_NIGHT -> true
+                else -> isSystemInDarkTheme()
+            }
+        DisposableEffect(darkTheme) {
+            enableEdgeToEdge(
+                statusBarStyle =
+                    SystemBarStyle.auto(
+                        android.graphics.Color.TRANSPARENT,
+                        android.graphics.Color.TRANSPARENT,
+                    ) { darkTheme },
+                navigationBarStyle = SystemBarStyle.auto(navBarLightScrim, navBarDarkScrim) { darkTheme },
+            )
+            onDispose {}
+        }
+        return darkTheme
     }
 
     private fun handleOpenTabIntent(intent: Intent?) {
@@ -514,6 +550,14 @@ class MainActivity : ComponentActivity() {
     }
 
     companion object {
+        /**
+         * The `enableEdgeToEdge` default three-button navigation-bar scrims (androidx.activity
+         * keeps them private), restated because passing an explicit dark answer requires
+         * passing the scrims too.
+         */
+        private val navBarLightScrim = android.graphics.Color.argb(0xE6, 0xFF, 0xFF, 0xFF)
+        private val navBarDarkScrim = android.graphics.Color.argb(0x80, 0x1B, 0x1B, 0x1B)
+
         /** Int extra selecting the tab to open: 0 一屏(历史) / 1 通路 / 2 偏好. */
         const val EXTRA_OPEN_TAB = "com.clipsync.android.extra.OPEN_TAB"
         const val TAB_HOME = 0
@@ -747,6 +791,7 @@ private fun ClipSyncApp(
                             onImportHistory = onImportHistory,
                             onHistoryFontScaleChange = preferencesViewModel::setHistoryFontScale,
                             onPreviewLinesChange = preferencesViewModel::setPreviewLines,
+                            onThemeOverrideChange = preferencesViewModel::setThemeOverride,
                             onSkipSensitiveChange = preferencesViewModel::setSkipSensitive,
                             onInboxNotifyChange = preferencesViewModel::setInboxNotify,
                             onRetentionDaysChange = preferencesViewModel::setRetentionDays,

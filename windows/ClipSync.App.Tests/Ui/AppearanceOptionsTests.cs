@@ -31,4 +31,20 @@ public sealed class AppearanceOptionsTests
     [Fact]
     public void TheDefaultIsFollowSystem() =>
         Assert.Equal(AppearanceOptions.SystemKey, AppearanceOptions.DefaultKey);
+
+    [Fact]
+    public void DayAndNightForceTheirPaletteAndSystemForcesNothing()
+    {
+        Assert.True(AppearanceOptions.ForcedLight(AppearanceOptions.DayKey));
+        Assert.False(AppearanceOptions.ForcedLight(AppearanceOptions.NightKey));
+        Assert.Null(AppearanceOptions.ForcedLight(AppearanceOptions.SystemKey));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("neon")]
+    [InlineData("#ff00ff")]
+    public void UnreadableModesForceNothing(string? stored) =>
+        Assert.Null(AppearanceOptions.ForcedLight(stored));
 }

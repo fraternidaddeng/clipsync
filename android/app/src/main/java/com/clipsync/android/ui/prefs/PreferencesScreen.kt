@@ -60,6 +60,7 @@ fun PreferencesScreen(
     onImportHistory: () -> Unit = {},
     onHistoryFontScaleChange: (Float) -> Unit = {},
     onPreviewLinesChange: (Int) -> Unit = {},
+    onThemeOverrideChange: (String) -> Unit = {},
     onSkipSensitiveChange: (Boolean) -> Unit = {},
     onInboxNotifyChange: (Boolean) -> Unit = {},
     onRetentionDaysChange: (Int) -> Unit = {},
@@ -107,6 +108,20 @@ fun PreferencesScreen(
                 options = SyncSettingsStore.PREVIEW_LINE_CHOICES.map { "$it 行" to it },
                 selected = state.previewLines,
                 onSelect = onPreviewLinesChange,
+            )
+            RowDivider()
+            // 外观（settings-roadmap P1-6）：只在两套既有配色之间选择，绝无取色器。
+            ChoiceRow(
+                title = "外观",
+                description = "跟随系统或手动固定日间/夜间；配色始终是既有的两套，不可自定义。",
+                options =
+                    listOf(
+                        "跟随系统" to SyncSettingsStore.THEME_SYSTEM,
+                        "日间" to SyncSettingsStore.THEME_DAY,
+                        "夜间" to SyncSettingsStore.THEME_NIGHT,
+                    ),
+                selected = state.themeOverride,
+                onSelect = onThemeOverrideChange,
             )
         }
 

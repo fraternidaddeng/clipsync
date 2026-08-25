@@ -105,6 +105,10 @@ public partial class MainViewModel(
     [ObservableProperty]
     private string previewLinesKey = ClipSync.App.Ui.HistoryDisplayOptions.DefaultLinesKey;
 
+    /// <summary>外观（P1-6）："system" / "day" / "night"，默认跟随系统；托盘图标不受影响。</summary>
+    [ObservableProperty]
+    private string themeModeKey = ClipSync.App.Ui.AppearanceOptions.DefaultKey;
+
     /// <summary>The effective content-text factor the app layer feeds into the resource dictionary.</summary>
     public double HistoryFontScale => ClipSync.App.Ui.HistoryDisplayOptions.ScaleFor(HistoryFontScaleKey);
 
@@ -300,6 +304,8 @@ public partial class MainViewModel(
             await store.GetSettingAsync("ui_history_font_scale"));
         PreviewLinesKey = ClipSync.App.Ui.HistoryDisplayOptions.LinesKeyForStored(
             await store.GetSettingAsync("ui_preview_lines"));
+        ThemeModeKey = ClipSync.App.Ui.AppearanceOptions.KeyForStored(
+            await store.GetSettingAsync("ui_theme"));
         LaunchAtStartup = bool.TryParse(await store.GetSettingAsync("launch_at_startup"), out var launch) && launch;
         FlyoutHotkey = await store.GetSettingAsync("hotkey_flyout") ?? string.Empty;
         BlockedProcesses = await store.GetSettingAsync("blocked_processes") ?? BlockedProcesses;
@@ -696,6 +702,7 @@ public partial class MainViewModel(
         await store.SetSettingAsync("retention_max_entries", RetentionMaxEntries.ToString(System.Globalization.CultureInfo.InvariantCulture));
         await store.SetSettingAsync("ui_history_font_scale", ClipSync.App.Ui.HistoryDisplayOptions.StoredScaleFor(HistoryFontScaleKey));
         await store.SetSettingAsync("ui_preview_lines", ClipSync.App.Ui.HistoryDisplayOptions.StoredLinesFor(PreviewLinesKey));
+        await store.SetSettingAsync("ui_theme", ClipSync.App.Ui.AppearanceOptions.StoredFor(ThemeModeKey));
         await store.SetSettingAsync("launch_at_startup", LaunchAtStartup.ToString());
         await store.SetSettingAsync("hotkey_flyout", FlyoutHotkey);
         await store.SetSettingAsync("blocked_processes", BlockedProcesses);

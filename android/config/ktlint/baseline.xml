@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <baseline version="1.0">
     <file name="src/main/java/com/clipsync/android/MainActivity.kt">
-        <error line="539" column="13" source="standard:function-naming" />
-        <error line="562" column="13" source="standard:function-naming" />
-        <error line="773" column="13" source="standard:function-naming" />
-        <error line="799" column="13" source="standard:function-naming" />
-        <error line="850" column="13" source="standard:function-naming" />
+        <error line="583" column="13" source="standard:function-naming" />
+        <error line="606" column="13" source="standard:function-naming" />
+        <error line="818" column="13" source="standard:function-naming" />
+        <error line="844" column="13" source="standard:function-naming" />
+        <error line="895" column="13" source="standard:function-naming" />
     </file>
     <file name="src/main/java/com/clipsync/android/media/ImageChunks.kt">
         <error line="32" column="24" source="standard:function-signature" />
@@ -1742,19 +1742,19 @@
     </file>
     <file name="src/main/java/com/clipsync/android/ui/prefs/PreferencesScreen.kt">
         <error line="47" column="5" source="standard:function-naming" />
-        <error line="326" column="13" source="standard:function-naming" />
-        <error line="336" column="13" source="standard:function-naming" />
-        <error line="347" column="13" source="standard:function-naming" />
-        <error line="387" column="17" source="standard:function-naming" />
-        <error line="433" column="13" source="standard:function-naming" />
-        <error line="469" column="13" source="standard:function-naming" />
-        <error line="498" column="13" source="standard:function-naming" />
-        <error line="538" column="29" source="standard:chain-method-continuation" />
-        <error line="557" column="13" source="standard:function-naming" />
-        <error line="584" column="13" source="standard:function-naming" />
-        <error line="610" column="13" source="standard:function-naming" />
-        <error line="641" column="13" source="standard:function-naming" />
-        <error line="674" column="13" source="standard:function-naming" />
+        <error line="341" column="13" source="standard:function-naming" />
+        <error line="351" column="13" source="standard:function-naming" />
+        <error line="362" column="13" source="standard:function-naming" />
+        <error line="402" column="17" source="standard:function-naming" />
+        <error line="448" column="13" source="standard:function-naming" />
+        <error line="484" column="13" source="standard:function-naming" />
+        <error line="513" column="13" source="standard:function-naming" />
+        <error line="553" column="29" source="standard:chain-method-continuation" />
+        <error line="572" column="13" source="standard:function-naming" />
+        <error line="599" column="13" source="standard:function-naming" />
+        <error line="625" column="13" source="standard:function-naming" />
+        <error line="656" column="13" source="standard:function-naming" />
+        <error line="689" column="13" source="standard:function-naming" />
     </file>
     <file name="src/main/java/com/clipsync/android/ui/theme/ClipSyncIcons.kt">
         <error line="17" column="1" source="standard:no-empty-first-line-in-class-body" />
@@ -1803,6 +1803,11 @@
         <error line="22" column="24" source="standard:multiline-expression-wrapping" />
         <error line="30" column="27" source="standard:multiline-expression-wrapping" />
         <error line="97" column="21" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/test/java/com/clipsync/android/i18n/LanguageCatalogTest.kt">
+        <error line="54" column="38" source="standard:chain-method-continuation" />
+        <error line="54" column="53" source="standard:chain-method-continuation" />
+        <error line="54" column="61" source="standard:chain-method-continuation" />
     </file>
     <file name="src/test/java/com/clipsync/android/media/ImageClipRoundTripTest.kt">
         <error line="3" column="1" source="standard:import-ordering" />
