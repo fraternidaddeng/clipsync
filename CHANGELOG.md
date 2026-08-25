@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-分支：`cursor/implement-charter-ui-1991`（自 Stage 0–3 基线以来）。
+分支：`main`（自 Stage 0–3 基线 `768fd1c` 以来；早期变更曾在 `cursor/implement-charter-ui-1991` 上推进，该分支已全部并入 main，后续变更直接落在 main）。
 
 ### 新增
 
