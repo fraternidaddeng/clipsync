@@ -22,6 +22,7 @@
   - **收到内容通知**（偏好 · 运行，`notify.inbox`，默认开）：应用内总开关；关闭只静默通知面，同步与历史照常。关闭时通路页以灰面事实条如实陈述后果（「收到内容通知已关闭」，指路偏好 · 运行），与系统级「通知已关闭」横幅同一形制、二者只出现其一。
   - **保留时长 / 保留条数**（偏好 · 历史，−/+ 步进行，与 Windows 步进器同形制）：保留时长 1–3650 天随「自动过期清理」联动置灰（关闭时值槽如实显示「永久保留」），保留条数 100–10000 步进 100 一直生效。
   - **清空历史**（偏好 · 数据，两步就地确认）：首点换成灰面确认条（本机删除、不可撤销、建议先导出），确认后一次删除全部条目含图片 blob，完成后在数据组陈述清空条数。
+- [双端] 外观手动覆盖与多语言的共享底座（`docs/settings-roadmap.md` P1#6 / P1#16——2026-08-25 用户裁决翻案：#6 此前「主动跳过」为误、多语言从「明确不做」改列必做）：偏好键双端落地——`ui.theme` / `ui_theme`（`system`｜`day`｜`night`，默认跟随系统）与 `ui.language` / `ui_language`（`system` 或 BCP-47 标签，默认跟随系统），无法解读的存值一律回落「跟随系统」不报错；19 种语言目录（简体中文、繁體中文、English、日本語、한국어、Español、Français、Deutsch、Português (Brasil)、Русский、العربية、Italiano、Tiếng Việt、ไทย、Bahasa Indonesia、हिन्दी、Türkçe、Polski、Nederlands——各以母语名展示，永不翻译；仅阿拉伯语为 RTL）在 Android（`i18n.LanguageCatalog`）与 Windows（`Ui/LanguageCatalog.cs`）逐条对齐，双端测试钉死防漂移。主题/语言的 UI 开关、接线与全量文案提取待后续批次（RTL 布局策略见路线图 P1#16 注记）。
 - [双端] 设计宪章 UI 全面落地：令牌系统、日/夜主题运行时切换、随包三字族（Noto Sans SC / Plus Jakarta Sans / JetBrains Mono）、超椭圆卡片与动效令牌、polyline 应用图标（Windows ICO + Android 自适应图标）、全中文文案。
 - [Android] 完整同步栈：Room 存储（序号分配、接收向量、outbox 同事务）、pinned-TLS WebSocket 同步引擎、指数退避重连、`connectedDevice` 前台服务。
 - [Android] 三个无权限入口（分享面板、快捷磁贴、通知「复制」动作）与前台自动捕获上行。
