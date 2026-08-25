@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-"""Validate ClipSync protocol v1/v2 schemas and shared fixtures."""
+"""Validate ClipSync protocol v1/v2 schemas, bt1 channel vectors, and shared fixtures."""
 
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
+import struct
 import sys
 import base64
+import uuid
 from pathlib import Path
 from typing import Any, Iterable
 
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
@@ -17,12 +21,21 @@ from referencing import Registry, Resource
 ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL_V1 = ROOT / "protocol" / "v1"
 PROTOCOL_V2 = ROOT / "protocol" / "v2"
+PROTOCOL_BT1 = ROOT / "protocol" / "bt1"
 VALID = PROTOCOL_V1 / "fixtures" / "valid"
 INVALID = PROTOCOL_V1 / "fixtures" / "invalid"
 PAIRING_VALID = PROTOCOL_V1 / "fixtures" / "pairing" / "valid"
 PAIRING_INVALID = PROTOCOL_V1 / "fixtures" / "pairing" / "invalid"
 VALID_V2 = PROTOCOL_V2 / "fixtures" / "valid"
 INVALID_V2 = PROTOCOL_V2 / "fixtures" / "invalid"
+BT1_HANDSHAKE_VECTORS = PROTOCOL_BT1 / "fixtures" / "handshake" / "vectors.json"
+BT1_FRAME_VECTORS = PROTOCOL_BT1 / "fixtures" / "frames" / "vectors.json"
+BT1_HANDSHAKE_VALID = PROTOCOL_BT1 / "fixtures" / "handshake" / "valid"
+BT1_HANDSHAKE_INVALID = PROTOCOL_BT1 / "fixtures" / "handshake" / "invalid"
+
+BT1_AUTH_PREFIX = b"ClipSync/bt1/auth\n"
+BT1_KEYS_INFO = b"ClipSync/bt1/keys"
+BT1_MAX_PLAINTEXT_BYTES = 7 * 1024 * 1024
 
 MAX_IMAGE_ENCODED_BYTES = 16 * 1024 * 1024
 MAX_IMAGE_PIXELS = 32 * 1024 * 1024
@@ -180,6 +193,121 @@ def validate_semantics(message: dict[str, Any]) -> None:
     validate_image_chunks(message)
 
 
+def _b64url_decode_exact(value: str, expected_length: int, label: str) -> bytes:
+    decoded = _b64url_decode(value)
+    if len(decoded) != expected_length:
+        raise SemanticError(f"{label} must decode to exactly {expected_length} bytes")
+    return decoded
+
+
+def validate_bt1_handshake_semantics(message: dict[str, Any]) -> None:
+    kind = message["kind"]
+    if kind in {"bt1_client_hello", "bt1_listener_hello"}:
+        _b64url_decode_exact(message["nonce"], 32, "nonce")
+    elif kind in {"bt1_client_auth", "bt1_listener_auth"}:
+        _b64url_decode_exact(message["proof"], 32, "proof")
+
+
+def _bt1_compute_proof(
+    pair_secret: bytes,
+    role: str,
+    nonce_client: bytes,
+    nonce_listener: bytes,
+    client_device_id: str,
+    listener_device_id: str,
+    trust_epoch: int,
+) -> bytes:
+    message = (
+        BT1_AUTH_PREFIX
+        + role.encode("utf-8")
+        + b"\x00"
+        + nonce_client
+        + nonce_listener
+        + uuid.UUID(client_device_id).bytes
+        + uuid.UUID(listener_device_id).bytes
+        + struct.pack(">q", trust_epoch)
+    )
+    return hmac.new(pair_secret, message, hashlib.sha256).digest()
+
+
+def _bt1_hkdf_sha256(ikm: bytes, salt: bytes, info: bytes, length: int) -> bytes:
+    prk = hmac.new(salt, ikm, hashlib.sha256).digest()
+    okm = b""
+    block = b""
+    counter = 1
+    while len(okm) < length:
+        block = hmac.new(prk, block + info + bytes([counter]), hashlib.sha256).digest()
+        okm += block
+        counter += 1
+    return okm[:length]
+
+
+def check_bt1_handshake_vectors(failures: list[str]) -> int:
+    document = load_json(BT1_HANDSHAKE_VECTORS)
+    vectors = document["vectors"]
+    if not vectors:
+        failures.append("bt1 handshake vector set must not be empty")
+    unique((vector["name"] for vector in vectors), "bt1 handshake vector name")
+    for vector in vectors:
+        name = vector["name"]
+        try:
+            pair_secret = bytes.fromhex(vector["pair_secret_hex"])
+            nonce_client = _b64url_decode_exact(vector["nonce_client_base64url"], 32, "nonce_client")
+            nonce_listener = _b64url_decode_exact(vector["nonce_listener_base64url"], 32, "nonce_listener")
+            if len(pair_secret) != 32:
+                raise SemanticError("pair_secret must be 32 bytes")
+            expected = {
+                "client_proof_base64url": _bt1_compute_proof(
+                    pair_secret, "client", nonce_client, nonce_listener,
+                    vector["client_device_id"], vector["listener_device_id"], vector["trust_epoch"],
+                ),
+                "listener_proof_base64url": _bt1_compute_proof(
+                    pair_secret, "listener", nonce_client, nonce_listener,
+                    vector["client_device_id"], vector["listener_device_id"], vector["trust_epoch"],
+                ),
+            }
+            for field, proof in expected.items():
+                encoded = base64.urlsafe_b64encode(proof).decode("ascii").rstrip("=")
+                if vector[field] != encoded:
+                    raise SemanticError(f"{field} does not match the recomputed proof")
+            okm = _bt1_hkdf_sha256(pair_secret, nonce_client + nonce_listener, BT1_KEYS_INFO, 64)
+            if vector["key_client_to_listener_hex"] != okm[:32].hex():
+                raise SemanticError("key_client_to_listener_hex does not match HKDF output")
+            if vector["key_listener_to_client_hex"] != okm[32:].hex():
+                raise SemanticError("key_listener_to_client_hex does not match HKDF output")
+        except Exception as exc:
+            failures.append(f"bt1 handshake vector failed: {name}: {exc}")
+    return len(vectors)
+
+
+def check_bt1_frame_vectors(failures: list[str]) -> int:
+    document = load_json(BT1_FRAME_VECTORS)
+    vectors = document["vectors"]
+    if not vectors:
+        failures.append("bt1 frame vector set must not be empty")
+    unique((vector["name"] for vector in vectors), "bt1 frame vector name")
+    for vector in vectors:
+        name = vector["name"]
+        try:
+            key = bytes.fromhex(vector["key_hex"])
+            if len(key) != 32:
+                raise SemanticError("key must be 32 bytes")
+            sequence = vector["sequence"]
+            if not 0 <= sequence <= 0xFFFFFFFFFFFFFFFF:
+                raise SemanticError("sequence must fit an unsigned 64-bit counter")
+            plaintext = vector["plaintext_utf8"].encode("utf-8", errors="strict")
+            if not 1 <= len(plaintext) <= BT1_MAX_PLAINTEXT_BYTES:
+                raise SemanticError("plaintext must be 1 byte to 7 MiB")
+            nonce = b"\x00" * 4 + struct.pack(">Q", sequence)
+            ciphertext = AESGCM(key).encrypt(nonce, plaintext, None)
+            frame = struct.pack(">I", len(ciphertext)) + ciphertext
+            if vector["frame_hex"] != frame.hex():
+                raise SemanticError("frame_hex does not match the recomputed frame")
+        except Exception as exc:
+            failures.append(f"bt1 frame vector failed: {name}: {exc}")
+    return len(vectors)
+
+
 def check_fixtures(
     label: str,
     validator: Draft202012Validator,
@@ -237,6 +365,12 @@ def main() -> int:
     )
     pairing_validator = Draft202012Validator(pairing_schema, registry=pairing_registry)
 
+    bt1_schema = load_json(PROTOCOL_BT1 / "handshake.schema.json")
+    bt1_registry = Registry().with_resources(
+        [(bt1_schema["$id"], Resource.from_contents(bt1_schema))]
+    )
+    bt1_validator = Draft202012Validator(bt1_schema, registry=bt1_registry)
+
     failures: list[str] = []
     valid_count, invalid_count = check_fixtures(
         "envelope v1", envelope_validator, VALID, INVALID, validate_semantics, failures
@@ -247,6 +381,16 @@ def main() -> int:
     valid_v2, invalid_v2 = check_fixtures(
         "envelope v2", envelope_v2_validator, VALID_V2, INVALID_V2, validate_semantics, failures
     )
+    bt1_valid, bt1_invalid = check_fixtures(
+        "bt1 handshake",
+        bt1_validator,
+        BT1_HANDSHAKE_VALID,
+        BT1_HANDSHAKE_INVALID,
+        validate_bt1_handshake_semantics,
+        failures,
+    )
+    bt1_handshake_vectors = check_bt1_handshake_vectors(failures)
+    bt1_frame_vectors = check_bt1_frame_vectors(failures)
 
     if failures:
         for failure in failures:
@@ -255,7 +399,9 @@ def main() -> int:
     print(
         f"Validated {valid_count} valid and {invalid_count} invalid protocol v1 fixtures, "
         f"{valid_v2} valid and {invalid_v2} invalid protocol v2 fixtures, "
-        f"plus {pairing_valid} valid and {pairing_invalid} invalid pairing fixtures."
+        f"plus {pairing_valid} valid and {pairing_invalid} invalid pairing fixtures, "
+        f"plus {bt1_valid} valid and {bt1_invalid} invalid bt1 handshake fixtures, "
+        f"{bt1_handshake_vectors} bt1 handshake vectors, and {bt1_frame_vectors} bt1 frame vectors."
     )
     return 0
 

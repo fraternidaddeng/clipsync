@@ -1,0 +1,46 @@
+{
+  "algorithm": "hmac-sha256 + hkdf-sha256",
+  "proof_message_format": "UTF8('ClipSync/bt1/auth\\n') || UTF8(role) || 0x00 || nonce_client || nonce_listener || UUID_BYTES(client_device_id) || UUID_BYTES(listener_device_id) || INT64_BE(trust_epoch)",
+  "key_derivation": "HKDF-SHA-256(ikm=pair_secret, salt=nonce_client||nonce_listener, info=UTF8('ClipSync/bt1/keys'), length=64); key_client_to_listener=okm[0..31], key_listener_to_client=okm[32..63]",
+  "vectors": [
+    {
+      "name": "sequential secret, zero client nonce, epoch 1",
+      "pair_secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "client_device_id": "11111111-1111-4111-8111-111111111111",
+      "listener_device_id": "22222222-2222-4222-8222-222222222222",
+      "trust_epoch": 1,
+      "nonce_client_base64url": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "nonce_listener_base64url": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8",
+      "client_proof_base64url": "hc9jAV2xtP7yyYyhaahlm6L_jC0HCvvOnKfnkJYMVOQ",
+      "listener_proof_base64url": "COBumJmn1pN5YeZmIXm6nkCtmNxOJfFAu30-8956vgM",
+      "key_client_to_listener_hex": "6480a34f8baaae63f7a50f390d262258617b371aff77235241aabad783fe6090",
+      "key_listener_to_client_hex": "b7bd7c95730eddd34c3f1bea4754ce652115c6442903843fa19316a3da809c5f"
+    },
+    {
+      "name": "all-ones secret, descending listener nonce, max epoch",
+      "pair_secret_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "client_device_id": "fedcba98-7654-4321-8765-432187654321",
+      "listener_device_id": "01234567-89ab-4def-8123-456789abcdef",
+      "trust_epoch": 9223372036854775807,
+      "nonce_client_base64url": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8",
+      "nonce_listener_base64url": "__79_Pv6-fj39vX08_Lx8O_u7ezr6uno5-bl5OPi4eA",
+      "client_proof_base64url": "tJLFz934PxiCJHdMscezY2mK8QOzeElQq-0ADWLEtho",
+      "listener_proof_base64url": "Rm9lPCtB1UdlJ2GsVou6-75WlrJoH5KbUk7an6GSx_M",
+      "key_client_to_listener_hex": "731eb07921137ca8c81da6a35e9309a6d57898baae56d88b24dd8f82c457bf11",
+      "key_listener_to_client_hex": "59aa92867c41e79d55ac344a22dee7cf4f8651307685b0792afae8f837464f38"
+    },
+    {
+      "name": "mixed secret, hashed nonces, epoch 42",
+      "pair_secret_hex": "a8401e304548d2149def6c3f86c5767e8f3b73321bef655303d08e55fb6cf17b",
+      "client_device_id": "aaaabbbb-cccc-4ddd-8eee-ffff00001111",
+      "listener_device_id": "99998888-7777-4666-b555-444433332222",
+      "trust_epoch": 42,
+      "nonce_client_base64url": "c-8A0ecIMgoiUHpEHsJVtLxk7nYkFeCQQ6koD91K58s",
+      "nonce_listener_base64url": "tCqd2UtRilz8DAIGW9xz0un84US_GjB9nq8CuQQLew8",
+      "client_proof_base64url": "GgwwfBqe-G_rjZpJF1P63vlzHmJU8Poc_sgB-zFxljY",
+      "listener_proof_base64url": "ssoa6f3UpdTefkFkkpBXIIMXsgHjAsaK5u1TIPYvlzs",
+      "key_client_to_listener_hex": "d0ed1a37358d8b7b5886cf49817258a5a1233e28d054ecde6f666aed6c650939",
+      "key_listener_to_client_hex": "ccaf56d09cb0c858e4c06e7b12d8f069f513b4ea113813bf04dbba968deff53b"
+    }
+  ]
+}

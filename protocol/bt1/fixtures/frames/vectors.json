@@ -1,0 +1,55 @@
+{
+  "cipher": "aes-256-gcm",
+  "frame_format": "UINT32_BE(len(ciphertext)) || ciphertext; ciphertext = AES-256-GCM(key, nonce, plaintext) with the 16-byte tag appended; nonce = 0x00000000 || UINT64_BE(sequence)",
+  "vectors": [
+    {
+      "name": "sequence 0, realistic v1 ping frame",
+      "key_hex": "23daf3a7c355bb9bbf00018af3c3c7253a093e3aa99a0c7cf9e724decefa911f",
+      "sequence": 0,
+      "plaintext_utf8": "{\"version\":1,\"type\":\"ping\",\"request_id\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"body\":{\"sent_at_ms\":1735689600000}}",
+      "frame_hex": "0000008398aba01714bfe994b6b101c0ae02fbe020cb587b3d66ecd7a79dce35f8bcc63fdf1fd19ea01f3661cfde29cbc4c0b1ea06d9c85e4ecca3ba94a3c01a5a818981f59db03d6aff40bb9cd79680c691ad71e81df972da73c849ea518d3127c1d7b0d6aabc1dbfae05fd2e64fd05bf45c47b31f215a2e5142f73d4cf0657ec98b646f9dcc7"
+    },
+    {
+      "name": "sequence 1, same key, counter advanced by one",
+      "key_hex": "23daf3a7c355bb9bbf00018af3c3c7253a093e3aa99a0c7cf9e724decefa911f",
+      "sequence": 1,
+      "plaintext_utf8": "{\"version\":1,\"type\":\"pong\",\"request_id\":\"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb\",\"body\":{\"sent_at_ms\":1735689600123}}",
+      "frame_hex": "000000832cd909927c37f6470050303957ebed655909587f49d1475bab0c3954d5ca662570ac4c123fe0e0da87da0d30bd6ceb18e976e257b943759eb2a57c224a04b78c0e4e2a66e07e5df29080ed31d385b1ef5a089b25471c4eb846e57655ffc176b3185b2312c723b3033b2ee9fe1888b4a0f1398564eba4262e53c654bef3e9c1a8b005d1"
+    },
+    {
+      "name": "sequence 2^32 pins the 64-bit big-endian counter layout",
+      "key_hex": "23daf3a7c355bb9bbf00018af3c3c7253a093e3aa99a0c7cf9e724decefa911f",
+      "sequence": 4294967296,
+      "plaintext_utf8": "counter crosses 32 bits",
+      "frame_hex": "000000271a36d25d39686a76280c1f317bebfaeea326dc0e8bd06ab94fe5cde04fd95a68256725dd0be30a"
+    },
+    {
+      "name": "maximum sequence 2^64-1, the last frame a sender may emit",
+      "key_hex": "23daf3a7c355bb9bbf00018af3c3c7253a093e3aa99a0c7cf9e724decefa911f",
+      "sequence": 18446744073709551615,
+      "plaintext_utf8": "last frame before mandatory close",
+      "frame_hex": "000000319013e2010c26ada00cbc278f115b36a7160c2285ef766782f6e2f14af01e98478eaa5d351bb64ba5c5e22336b88d64ac12"
+    },
+    {
+      "name": "non-ASCII UTF-8 plaintext",
+      "key_hex": "97229b5b388c4956a9c322b3375dbeafd12f5daf779f4f4062faefb28a7732a5",
+      "sequence": 0,
+      "plaintext_utf8": "剪贴板已同步 ✓",
+      "frame_hex": "0000002625a6fd93a2854f7c3f3f000f9baa24b2315e5e6adc4c2a942c81f86a85101407bb0a830ef01c"
+    },
+    {
+      "name": "minimum one-byte plaintext",
+      "key_hex": "97229b5b388c4956a9c322b3375dbeafd12f5daf779f4f4062faefb28a7732a5",
+      "sequence": 7,
+      "plaintext_utf8": "x",
+      "frame_hex": "00000011d9064bd93903a85c71cbb9d880f8f4e79f"
+    },
+    {
+      "name": "client-to-listener key derived from handshake vector 1",
+      "key_hex": "6480a34f8baaae63f7a50f390d262258617b371aff77235241aabad783fe6090",
+      "sequence": 0,
+      "plaintext_utf8": "{\"hello\":\"bt1\"}",
+      "frame_hex": "0000001f658d592f83af63a209baac61c037cb56de8939669180d8ef23b70180520092"
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clipsync.local/protocol/bt1/handshake.schema.json",
+  "title": "ClipSync bt1 secure-channel handshake messages (docs/protocol-bt1.md section 3)",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/clientHello"
+    },
+    {
+      "$ref": "#/$defs/listenerHello"
+    },
+    {
+      "$ref": "#/$defs/clientAuth"
+    },
+    {
+      "$ref": "#/$defs/listenerAuth"
+    },
+    {
+      "$ref": "#/$defs/bt1Error"
+    }
+  ],
+  "$defs": {
+    "deviceId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "base64url256": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{43}$"
+    },
+    "trustEpoch": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9223372036854775807
+    },
+    "channelVersion": {
+      "const": 1
+    },
+    "helloBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "version",
+        "device_id",
+        "trust_epoch",
+        "nonce"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "bt1_client_hello",
+            "bt1_listener_hello"
+          ]
+        },
+        "version": {
+          "$ref": "#/$defs/channelVersion"
+        },
+        "device_id": {
+          "$ref": "#/$defs/deviceId"
+        },
+        "trust_epoch": {
+          "$ref": "#/$defs/trustEpoch"
+        },
+        "nonce": {
+          "$ref": "#/$defs/base64url256"
+        }
+      }
+    },
+    "clientHello": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/helloBody"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "bt1_client_hello"
+            }
+          }
+        }
+      ]
+    },
+    "listenerHello": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/helloBody"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "bt1_listener_hello"
+            }
+          }
+        }
+      ]
+    },
+    "authBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "version",
+        "proof"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "bt1_client_auth",
+            "bt1_listener_auth"
+          ]
+        },
+        "version": {
+          "$ref": "#/$defs/channelVersion"
+        },
+        "proof": {
+          "$ref": "#/$defs/base64url256"
+        }
+      }
+    },
+    "clientAuth": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/authBody"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "bt1_client_auth"
+            }
+          }
+        }
+      ]
+    },
+    "listenerAuth": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/authBody"
+        },
+        {
+          "properties": {
+            "kind": {
+              "const": "bt1_listener_auth"
+            }
+          }
+        }
+      ]
+    },
+    "bt1Error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "version",
+        "code"
+      ],
+      "properties": {
+        "kind": {
+          "const": "bt1_error"
+        },
+        "version": {
+          "$ref": "#/$defs/channelVersion"
+        },
+        "code": {
+          "enum": [
+            "BT1_SCHEMA_VIOLATION",
+            "BT1_VERSION_UNSUPPORTED",
+            "BT1_AUTH_FAILED",
+            "BT1_RATE_LIMITED",
+            "BT1_FRAME_TOO_LARGE"
+          ]
+        }
+      }
+    }
+  }
+}

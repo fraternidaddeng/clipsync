@@ -1,0 +1,7 @@
+{
+  "kind": "bt1_listener_hello",
+  "version": 1,
+  "device_id": "22222222-2222-4222-8222-222222222222",
+  "trust_epoch": 9223372036854775807,
+  "nonce": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8"
+}
