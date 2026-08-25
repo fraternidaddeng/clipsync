@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows.Media.Imaging;
+using ClipSync.App.Diagnostics;
 using ClipSync.Core.Media;
 
 namespace ClipSync.App.Media;
@@ -28,18 +29,26 @@ internal static class ImageThumbnail
         }
         catch (FileNotFoundException)
         {
+            LocalDiagnostics.Write("thumbnail_blob_missing");
             return null;
         }
         catch (ArgumentException)
         {
+            LocalDiagnostics.Write("thumbnail_hash_invalid");
             return null;
         }
 
+        // Unique temp name per attempt: a shared ".part" name makes overlapping
+        // refreshes (capture + timer, or a re-entrant message pump) contend on the
+        // exclusive FileStream — the loser throws IOException and the row silently
+        // loses its thumbnail.
+        var tempPath = destination + "." + Guid.NewGuid().ToString("N") + ".part";
         try
         {
             var source = DecodeBounded(blob);
             if (source is null)
             {
+                LocalDiagnostics.Write("thumbnail_decode_failed");
                 return null;
             }
 
@@ -49,7 +58,6 @@ internal static class ImageThumbnail
                 Directory.CreateDirectory(directory);
             }
 
-            var tempPath = destination + ".part";
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(source));
             using (var output = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None))
@@ -60,22 +68,46 @@ internal static class ImageThumbnail
             File.Move(tempPath, destination, overwrite: true);
             return File.Exists(destination) ? destination : null;
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
-            or NotSupportedException or InvalidOperationException or ArgumentException
-            or FormatException or FileFormatException)
+        catch (Exception exception) when (IsRecoverableImagingError(exception))
         {
-            try
+            TryDelete(tempPath);
+
+            // A concurrent writer may have won the move; its thumbnail is identical
+            // (content-addressed source), so the row still gets its preview.
+            if (File.Exists(destination) && new FileInfo(destination).Length > 0)
             {
-                File.Delete(destination + ".part");
-            }
-            catch (IOException)
-            {
-            }
-            catch (UnauthorizedAccessException)
-            {
+                return destination;
             }
 
+            LocalDiagnostics.Write($"thumbnail_write_failed_{exception.GetType().Name}");
             return null;
+        }
+    }
+
+    /// <summary>
+    /// WIC surfaces decode/encode faults as COMException too; missing it turns a
+    /// bad frame into an unhandled crash inside the history refresh.
+    /// </summary>
+    private static bool IsRecoverableImagingError(Exception exception) =>
+        exception is IOException or UnauthorizedAccessException
+            or NotSupportedException or InvalidOperationException or ArgumentException
+            or FormatException or FileFormatException
+            or System.Runtime.InteropServices.COMException;
+
+    private static void TryDelete(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+        catch (IOException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
         }
     }
 
@@ -125,9 +157,7 @@ internal static class ImageThumbnail
             frame.Freeze();
             return BoundToThumbnailSide(frame);
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
-            or NotSupportedException or InvalidOperationException or ArgumentException
-            or FormatException or FileFormatException)
+        catch (Exception exception) when (IsRecoverableImagingError(exception))
         {
             return null;
         }

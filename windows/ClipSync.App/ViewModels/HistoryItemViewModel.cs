@@ -20,12 +20,20 @@ public sealed record HistoryItemViewModel(
     int? PixelWidth = null,
     int? PixelHeight = null,
     string? ContentHash = null,
-    string? ThumbnailPath = null)
+    string? ThumbnailPath = null,
+    System.Windows.Media.ImageSource? ThumbnailImage = null)
 {
     /// <summary>Shown for remote clips whose origin device is no longer in the paired list.</summary>
     private const string UnknownRemoteLabel = "远端设备";
 
     public bool IsImage => string.Equals(Kind, "image", StringComparison.Ordinal);
+
+    /// <summary>
+    /// True only when the 56 px preview actually decoded. The list template keys
+    /// its honest placeholder (无预览) off this — a load failure must never leave
+    /// an unexplained empty box.
+    /// </summary>
+    public bool HasThumbnail => ThumbnailImage is not null;
 
     /// <summary>
     /// Card body line: the clip text, or for images a factual metadata line
@@ -69,9 +77,21 @@ public sealed record HistoryItemViewModel(
         var isRemote = !string.Equals(entry.OriginDeviceId, localDeviceId, StringComparison.Ordinal);
         var device = isRemote ? deviceLookup?.Invoke(entry.OriginDeviceId) : null;
         string? thumbnail = null;
+        System.Windows.Media.ImageSource? thumbnailImage = null;
         if (entry.IsImage && media is not null && !string.IsNullOrEmpty(entry.ContentHash))
         {
             thumbnail = ClipSync.App.Media.ImageThumbnail.Ensure(media, entry.ContentHash);
+            if (thumbnail is not null)
+            {
+                // Decode once per refresh and freeze: the frozen bitmap is what the
+                // list binds, so container recycling never re-runs a converter and a
+                // transient file error can't blank an already-loaded row.
+                thumbnailImage = ClipSync.App.Media.BitmapFile.TryLoad(thumbnail, decodePixelWidth: 128);
+                if (thumbnailImage is null)
+                {
+                    ClipSync.App.Diagnostics.LocalDiagnostics.Write("thumbnail_bind_decode_failed");
+                }
+            }
         }
 
         return new HistoryItemViewModel(
@@ -93,7 +113,8 @@ public sealed record HistoryItemViewModel(
             entry.PixelWidth,
             entry.PixelHeight,
             entry.ContentHash,
-            thumbnail);
+            thumbnail,
+            thumbnailImage);
     }
 
     private string FormatImagePreview()

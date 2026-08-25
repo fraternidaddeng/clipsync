@@ -47,8 +47,11 @@ internal static class BitmapFile
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
             or NotSupportedException or InvalidOperationException or ArgumentException
-            or FormatException or FileFormatException)
+            or FormatException or FileFormatException
+            or System.Runtime.InteropServices.COMException)
         {
+            // WIC decode faults surface as COMException as well; a corrupt file must
+            // degrade to the honest placeholder, never crash a history refresh.
             return null;
         }
     }
