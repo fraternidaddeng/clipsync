@@ -1,11 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <!-- Phase 2 scaffolding (docs/bluetooth-fallback-plan.md): platform-neutral seams only,
-         no WinRT code yet. When the RfcommServiceProvider implementation lands, this project
-         (and only this project) moves to the net8.0-windows10.0.19041.0 TFM so that
-         ClipSync.Core / ClipSync.Peer keep their portable TFM and their tests keep running
-         on every CI host. -->
-    <TargetFramework>net8.0</TargetFramework>
+    <!-- Dual-target (docs/bluetooth-fallback-plan.md phase 2): the bt1 listener stack
+         (framing, handshake, transport, host) is portable net8.0 so ClipSync.Tests runs it
+         on every CI host; only RfcommServer.cs (the WinRT RfcommServiceProvider seam) is
+         compiled for the Windows TFM, which the WPF app consumes. -->
+    <TargetFrameworks>net8.0;net8.0-windows10.0.19041.0</TargetFrameworks>
     <RootNamespace>ClipSync.Peer.Bluetooth</RootNamespace>
     <AssemblyName>ClipSync.Peer.Bluetooth</AssemblyName>
   </PropertyGroup>

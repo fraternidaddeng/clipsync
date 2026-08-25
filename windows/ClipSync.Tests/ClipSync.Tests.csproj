@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ClipSync.Core\ClipSync.Core.csproj" />
     <ProjectReference Include="..\ClipSync.Peer\ClipSync.Peer.csproj" />
+    <ProjectReference Include="..\ClipSync.Peer.Bluetooth\ClipSync.Peer.Bluetooth.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\protocol\v1\fixtures\**\*.json" Link="protocol-fixtures\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
