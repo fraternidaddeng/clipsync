@@ -81,6 +81,7 @@
                     <Image x:Name="QrImage"
                            Width="280"
                            Height="280"
+                           AutomationProperties.Name="{x:Static loc:Strings.Pairing_ScanInstruction}"
                            RenderOptions.BitmapScalingMode="NearestNeighbor"
                            SnapsToDevicePixels="True" />
                 </Border>

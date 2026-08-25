@@ -612,7 +612,8 @@
                                FontSize="11"
                                Foreground="{DynamicResource CsText3Brush}"
                                Text="{x:Static loc:Strings.Common_PauseCapture}" />
-                    <ToggleButton Click="OnSettingToggled"
+                    <ToggleButton AutomationProperties.Name="{x:Static loc:Strings.Common_PauseCapture}"
+                                  Click="OnSettingToggled"
                                   IsChecked="{Binding IsPaused}"
                                   Style="{StaticResource CharterToggle}" />
                     <TextBlock Margin="20,0,8,0"
@@ -620,7 +621,8 @@
                                FontSize="11"
                                Foreground="{DynamicResource CsText3Brush}"
                                Text="{x:Static loc:Strings.Common_PrivateMode}" />
-                    <ToggleButton Click="OnSettingToggled"
+                    <ToggleButton AutomationProperties.Name="{x:Static loc:Strings.Common_PrivateMode}"
+                                  Click="OnSettingToggled"
                                   IsChecked="{Binding IsPrivateMode}"
                                   Style="{StaticResource CharterToggle}" />
                 </StackPanel>
@@ -1881,6 +1883,7 @@
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
+                                                      AutomationProperties.Name="{x:Static loc:Strings.Conduit_Bluetooth_Title}"
                                                       Click="OnSettingToggled"
                                                       IsChecked="{Binding BluetoothFallbackEnabled}"
                                                       Style="{StaticResource CharterToggle}" />
@@ -2114,6 +2117,7 @@
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"
+                                                  AutomationProperties.Name="{x:Static loc:Strings.Common_PauseCapture}"
                                                   Click="OnSettingToggled"
                                                   IsChecked="{Binding IsPaused}"
                                                   Style="{StaticResource CharterToggle}" />
@@ -2132,6 +2136,7 @@
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
+                                                      AutomationProperties.Name="{x:Static loc:Strings.Common_PrivateMode}"
                                                       Click="OnSettingToggled"
                                                       IsChecked="{Binding IsPrivateMode}"
                                                       Style="{StaticResource CharterToggle}" />
@@ -2174,6 +2179,7 @@
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"
+                                                  AutomationProperties.Name="{x:Static loc:Strings.Prefs_Sync_AutoApply_Title}"
                                                   Click="OnSettingToggled"
                                                   IsChecked="{Binding AutoApplyRemote}"
                                                   Style="{StaticResource CharterToggle}" />
@@ -2192,6 +2198,7 @@
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
+                                                      AutomationProperties.Name="{x:Static loc:Strings.Prefs_Sync_ImageSync_Title}"
                                                       Click="OnSettingToggled"
                                                       IsChecked="{Binding ImageSyncEnabled}"
                                                       Style="{StaticResource CharterToggle}" />
@@ -2211,6 +2218,7 @@
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
+                                                      AutomationProperties.Name="{x:Static loc:Strings.Prefs_Sync_AutoApplyImages_Title}"
                                                       Click="OnSettingToggled"
                                                       IsChecked="{Binding AutoApplyImages}"
                                                       Style="{StaticResource CharterToggle}" />
@@ -2341,6 +2349,7 @@
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"
+                                                  AutomationProperties.Name="{x:Static loc:Strings.Prefs_Startup_Launch_Title}"
                                                   Click="OnSettingToggled"
                                                   IsChecked="{Binding LaunchAtStartup}"
                                                   Style="{StaticResource CharterToggle}" />

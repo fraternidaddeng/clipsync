@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -113,9 +115,10 @@ fun PreferencesScreen(
             ChoiceRow(
                 title = stringResource(R.string.prefs_preview_lines),
                 description = stringResource(R.string.prefs_preview_lines_desc),
-                options = SyncSettingsStore.PREVIEW_LINE_CHOICES.map {
-                    stringResource(R.string.prefs_preview_lines_option, it) to it
-                },
+                options =
+                    SyncSettingsStore.PREVIEW_LINE_CHOICES.map {
+                        stringResource(R.string.prefs_preview_lines_option, it) to it
+                    },
                 selected = state.previewLines,
                 onSelect = onPreviewLinesChange,
             )
@@ -227,11 +230,12 @@ fun PreferencesScreen(
             RowDivider()
             StepperRow(
                 title = stringResource(R.string.prefs_retention_days),
-                value = if (state.autoExpire) {
-                    stringResource(R.string.prefs_retention_days_value, state.retentionDays)
-                } else {
-                    stringResource(R.string.prefs_retention_forever)
-                },
+                value =
+                    if (state.autoExpire) {
+                        stringResource(R.string.prefs_retention_days_value, state.retentionDays)
+                    } else {
+                        stringResource(R.string.prefs_retention_forever)
+                    },
                 enabled = state.autoExpire,
                 canDecrement = state.retentionDays > SyncSettingsStore.MIN_RETENTION_DAYS,
                 canIncrement = state.retentionDays < SyncSettingsStore.MAX_RETENTION_DAYS,
@@ -386,10 +390,17 @@ private fun ToggleRow(
 ) {
     val c = clipSyncColors
     Row(
+        // A11y (ui-gap-audit P3): the whole row is the switch — TalkBack reads title,
+        // description and state as one stop instead of an unlabeled bare switch, and the
+        // touch target grows to the full row. The Switch below is display-only.
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp),
+                .toggleable(
+                    value = checked,
+                    role = Role.Switch,
+                    onValueChange = onCheckedChange,
+                ).padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
@@ -400,7 +411,7 @@ private fun ToggleRow(
         Spacer(Modifier.width(12.dp))
         Switch(
             checked = checked,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = null,
             colors =
                 SwitchDefaults.colors(
                     checkedThumbColor = c.onFlow,
@@ -619,8 +630,7 @@ private fun ClearHistoryRow(onClearHistory: () -> Unit) {
                             .clickable {
                                 confirming = false
                                 onClearHistory()
-                            }
-                            .padding(horizontal = 14.dp, vertical = 7.dp),
+                            }.padding(horizontal = 14.dp, vertical = 7.dp),
                 )
                 Text(
                     text = stringResource(R.string.common_cancel),
