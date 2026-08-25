@@ -1,5 +1,6 @@
 package com.clipsync.android.platform.entry
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -82,6 +83,10 @@ class SendClipboardTileService : TileService() {
     private fun settingsPreferences(): SharedPreferences =
         applicationContext.getSharedPreferences(SyncSettingsStore.PREFERENCES_NAME, Context.MODE_PRIVATE)
 
+    // Lint's StartActivityAndCollapseDeprecated fires on the legacy branch even though it
+    // only runs below API 34, where the PendingIntent overload does not exist yet; the
+    // Kotlin @Suppress("DEPRECATION") below silences the compiler but not this lint id.
+    @SuppressLint("StartActivityAndCollapseDeprecated")
     private fun launchSendActivity() {
         val intent =
             Intent(this, SendClipboardActivity::class.java)

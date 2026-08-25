@@ -1,6 +1,8 @@
 package com.clipsync.android.ui.home
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -55,7 +57,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.annotation.StringRes
 import com.clipsync.android.R
 import com.clipsync.android.i18n.UiText
 import com.clipsync.android.i18n.string
@@ -102,14 +103,16 @@ fun HomeScreen(
 ) {
     val c = clipSyncColors
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp, bottom = 12.dp, start = 2.dp, end = 2.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 12.dp, start = 2.dp, end = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -132,10 +135,12 @@ fun HomeScreen(
         }
         AnimatedVisibility(
             visible = home.notice != null,
-            enter = fadeIn(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
-                expandVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
-            exit = fadeOut(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
-                shrinkVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
+            enter =
+                fadeIn(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                    expandVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
+            exit =
+                fadeOut(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                    shrinkVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
         ) {
             lastNotice?.let { notice ->
                 Column {
@@ -147,44 +152,50 @@ fun HomeScreen(
         Spacer(Modifier.height(12.dp))
         when {
             !home.loaded -> Box(Modifier.weight(1f))
-            home.items.isEmpty() && home.searchActive -> NoMatchState(
-                message = stringResource(R.string.home_no_match_query, home.query.trim()),
-                modifier = Modifier.weight(1f),
-            )
-            home.items.isEmpty() && home.formatFilter != null -> NoMatchState(
-                message = stringResource(
-                    R.string.home_no_match_format,
-                    stringResource(formatLabelRes(home.formatFilter)),
-                ),
-                modifier = Modifier.weight(1f),
-            )
-            home.items.isEmpty() -> EmptyState(
-                paired = conduit.pairedDeviceCount > 0,
-                onPair = onOpenConduit,
-                modifier = Modifier.weight(1f),
-            )
-            else -> LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(home.items, key = { it.eventId }) { item ->
-                    DismissableClipCard(
-                        item = item,
-                        nowMs = nowMs,
-                        thumbnail = thumbnail,
-                        fontScale = historyFontScale,
-                        previewLines = previewLines,
-                        onCopy = { onCopy(item.eventId) },
-                        onDelete = { onDelete(item.eventId) },
-                        modifier = Modifier.animateItem(
-                            fadeInSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
-                            placementSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
-                            fadeOutSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+            home.items.isEmpty() && home.searchActive ->
+                NoMatchState(
+                    message = stringResource(R.string.home_no_match_query, home.query.trim()),
+                    modifier = Modifier.weight(1f),
+                )
+            home.items.isEmpty() && home.formatFilter != null ->
+                NoMatchState(
+                    message =
+                        stringResource(
+                            R.string.home_no_match_format,
+                            stringResource(formatLabelRes(home.formatFilter)),
                         ),
-                    )
+                    modifier = Modifier.weight(1f),
+                )
+            home.items.isEmpty() ->
+                EmptyState(
+                    paired = conduit.pairedDeviceCount > 0,
+                    onPair = onOpenConduit,
+                    modifier = Modifier.weight(1f),
+                )
+            else ->
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(home.items, key = { it.eventId }) { item ->
+                        DismissableClipCard(
+                            item = item,
+                            nowMs = nowMs,
+                            thumbnail = thumbnail,
+                            fontScale = historyFontScale,
+                            previewLines = previewLines,
+                            onCopy = { onCopy(item.eventId) },
+                            onDelete = { onDelete(item.eventId) },
+                            modifier =
+                                Modifier.animateItem(
+                                    fadeInSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
+                                    placementSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
+                                    fadeOutSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+                                ),
+                        )
+                    }
+                    item { Spacer(Modifier.height(4.dp)) }
                 }
-                item { Spacer(Modifier.height(4.dp)) }
-            }
         }
     }
 }
@@ -198,10 +209,11 @@ private fun SearchField(
 ) {
     val c = clipSyncColors
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .charterSunken(corner = 12.dp)
-            .padding(horizontal = 12.dp, vertical = 10.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .charterSunken(corner = 12.dp)
+                .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -238,14 +250,15 @@ private fun SearchField(
 
 /** Chip label for a format (ADR 0003 词汇); PLAIN reads 文本 on the chip row. */
 @StringRes
-internal fun formatLabelRes(format: ClipContentFormat?): Int = when (format) {
-    null -> R.string.format_all
-    ClipContentFormat.LINK -> R.string.format_link
-    ClipContentFormat.OTP -> R.string.format_otp
-    ClipContentFormat.EMAIL -> R.string.format_email
-    ClipContentFormat.CREDENTIAL -> R.string.format_credential
-    ClipContentFormat.PLAIN -> R.string.format_plain
-}
+internal fun formatLabelRes(format: ClipContentFormat?): Int =
+    when (format) {
+        null -> R.string.format_all
+        ClipContentFormat.LINK -> R.string.format_link
+        ClipContentFormat.OTP -> R.string.format_otp
+        ClipContentFormat.EMAIL -> R.string.format_email
+        ClipContentFormat.CREDENTIAL -> R.string.format_credential
+        ClipContentFormat.PLAIN -> R.string.format_plain
+    }
 
 /**
  * Fixed neighbour-hue slot per format (ADR 0003): the badge borrows the
@@ -253,13 +266,14 @@ internal fun formatLabelRes(format: ClipContentFormat?): Int = when (format) {
  * credential is a fact to find again, not an alarm, so no red anywhere.
  * PLAIN carries no badge (缺省即普通文本).
  */
-internal fun formatAccentSlot(format: ClipContentFormat): Int? = when (format) {
-    ClipContentFormat.EMAIL -> 1 // 青灰
-    ClipContentFormat.LINK -> 2 // 水蓝
-    ClipContentFormat.OTP -> 3 // 蓝紫
-    ClipContentFormat.CREDENTIAL -> 4 // 藕紫
-    ClipContentFormat.PLAIN -> null
-}
+internal fun formatAccentSlot(format: ClipContentFormat): Int? =
+    when (format) {
+        ClipContentFormat.EMAIL -> 1 // 青灰
+        ClipContentFormat.LINK -> 2 // 水蓝
+        ClipContentFormat.OTP -> 3 // 蓝紫
+        ClipContentFormat.CREDENTIAL -> 4 // 藕紫
+        ClipContentFormat.PLAIN -> null
+    }
 
 /**
  * The format chips: 全部 plus the five formats, single-select, scrollable.
@@ -273,18 +287,20 @@ private fun FormatFilterRow(
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
-    val options = listOf(
-        null,
-        ClipContentFormat.LINK,
-        ClipContentFormat.OTP,
-        ClipContentFormat.EMAIL,
-        ClipContentFormat.CREDENTIAL,
-        ClipContentFormat.PLAIN,
-    )
+    val options =
+        listOf(
+            null,
+            ClipContentFormat.LINK,
+            ClipContentFormat.OTP,
+            ClipContentFormat.EMAIL,
+            ClipContentFormat.CREDENTIAL,
+            ClipContentFormat.PLAIN,
+        )
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState()),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         options.forEach { option ->
@@ -295,12 +311,13 @@ private fun FormatFilterRow(
                 fontSize = 12.sp,
                 fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
                 color = if (active) c.flow else c.t3,
-                modifier = Modifier
-                    .clip(shape)
-                    .background(if (active) c.flowBg else c.sf3)
-                    .border(1.dp, if (active) c.flowLn else c.ln, shape)
-                    .clickable { onSelect(option) }
-                    .padding(horizontal = 11.dp, vertical = 5.dp),
+                modifier =
+                    Modifier
+                        .clip(shape)
+                        .background(if (active) c.flowBg else c.sf3)
+                        .border(1.dp, if (active) c.flowLn else c.ln, shape)
+                        .clickable { onSelect(option) }
+                        .padding(horizontal = 11.dp, vertical = 5.dp),
             )
         }
     }
@@ -308,32 +325,37 @@ private fun FormatFilterRow(
 
 /** Honest action feedback: state colours only, red strictly for failures. */
 @Composable
-private fun NoticeStrip(notice: HomeNotice, modifier: Modifier = Modifier) {
+private fun NoticeStrip(
+    notice: HomeNotice,
+    modifier: Modifier = Modifier,
+) {
     val c = clipSyncColors
-    val (text, fg, bg, ln) = when (notice) {
-        HomeNotice.Copied ->
-            NoticeStyle(stringResource(R.string.home_notice_copied), c.flow, c.flowBg, c.flowLn)
-        is HomeNotice.CopyFailed ->
-            NoticeStyle(
-                stringResource(R.string.home_notice_copy_failed, notice.errorCode),
-                c.err,
-                c.errBg,
-                c.errLn,
-            )
-        HomeNotice.DeletedLocal ->
-            NoticeStyle(stringResource(R.string.home_notice_deleted), c.t2, c.sf3, c.ln)
-    }
+    val (text, fg, bg, ln) =
+        when (notice) {
+            HomeNotice.Copied ->
+                NoticeStyle(stringResource(R.string.home_notice_copied), c.flow, c.flowBg, c.flowLn)
+            is HomeNotice.CopyFailed ->
+                NoticeStyle(
+                    stringResource(R.string.home_notice_copy_failed, notice.errorCode),
+                    c.err,
+                    c.errBg,
+                    c.errLn,
+                )
+            HomeNotice.DeletedLocal ->
+                NoticeStyle(stringResource(R.string.home_notice_deleted), c.t2, c.sf3, c.ln)
+        }
     val shape = CharterShapes.control
     Text(
         text = text,
         fontSize = 12.sp,
         color = fg,
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(bg)
-            .border(1.dp, ln, shape)
-            .padding(horizontal = 12.dp, vertical = 7.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(bg)
+                .border(1.dp, ln, shape)
+                .padding(horizontal = 12.dp, vertical = 7.dp),
     )
 }
 
@@ -356,16 +378,17 @@ private fun DismissableClipCard(
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            if (value == SwipeToDismissBoxValue.EndToStart) {
-                onDelete()
-                true
-            } else {
-                false
-            }
-        },
-    )
+    val dismissState =
+        rememberSwipeToDismissBoxState(
+            confirmValueChange = { value ->
+                if (value == SwipeToDismissBoxValue.EndToStart) {
+                    onDelete()
+                    true
+                } else {
+                    false
+                }
+            },
+        )
     SwipeToDismissBox(
         state = dismissState,
         enableDismissFromStartToEnd = false,
@@ -374,11 +397,12 @@ private fun DismissableClipCard(
             // Removal is a stated fact, not an error: grey face, honest copy.
             val shape = CharterShapes.card
             Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(shape)
-                    .background(c.sfIn)
-                    .padding(horizontal = 14.dp),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(shape)
+                        .background(c.sfIn)
+                        .padding(horizontal = 14.dp),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -414,11 +438,12 @@ private fun ClipCard(
 ) {
     val c = clipSyncColors
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .charterCard()
-            .clickable(onClick = onCopy)
-            .padding(horizontal = 13.dp, vertical = 10.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .charterCard()
+                .clickable(onClick = onCopy)
+                .padding(horizontal = 13.dp, vertical = 10.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -442,15 +467,16 @@ private fun ClipCard(
             val sameYearPattern = stringResource(R.string.time_pattern_same_year)
             val otherYearPattern = stringResource(R.string.time_pattern_other_year)
             Text(
-                text = remember(item.createdAtMs, yesterday, sameYearPattern, otherYearPattern) {
-                    clipTimeLabel(
-                        item.createdAtMs,
-                        nowMs(),
-                        yesterdayLabel = yesterday,
-                        sameYearPattern = sameYearPattern,
-                        otherYearPattern = otherYearPattern,
-                    )
-                },
+                text =
+                    remember(item.createdAtMs, yesterday, sameYearPattern, otherYearPattern) {
+                        clipTimeLabel(
+                            item.createdAtMs,
+                            nowMs(),
+                            yesterdayLabel = yesterday,
+                            sameYearPattern = sameYearPattern,
+                            otherYearPattern = otherYearPattern,
+                        )
+                    },
                 style = ClipSyncType.meta,
                 fontSize = 10.sp,
                 color = c.t4,
@@ -478,7 +504,12 @@ private fun ClipCard(
  * Bounded history thumbnail (512px cap upstream, ≤120dp here). Loads off the
  * main thread keyed by blob hash; while absent, a quiet grey stand-in states
  * the fact instead of flashing an error.
+ *
+ * Suppression: the producer assigns `value` on its first line, but the
+ * ProduceStateDoesNotAssignValue lint check cannot see it (known false positive
+ * around suspend lambdas/withContext in the producer body).
  */
+@SuppressLint("ProduceStateDoesNotAssignValue")
 @Composable
 private fun ClipThumbnail(
     contentHash: String,
@@ -487,9 +518,10 @@ private fun ClipThumbnail(
 ) {
     val c = clipSyncColors
     val bitmap by produceState<ImageBitmap?>(initialValue = null, contentHash) {
-        value = withContext(Dispatchers.IO) {
-            if (contentHash.isEmpty()) null else thumbnail(contentHash)?.asImageBitmap()
-        }
+        value =
+            withContext(Dispatchers.IO) {
+                if (contentHash.isEmpty()) null else thumbnail(contentHash)?.asImageBitmap()
+            }
     }
     val shape = RoundedCornerShape(8.dp)
     val preview = bitmap
@@ -497,20 +529,22 @@ private fun ClipThumbnail(
         Image(
             bitmap = preview,
             contentDescription = stringResource(R.string.image_clip_description),
-            modifier = modifier
-                .heightIn(max = 120.dp)
-                .clip(shape)
-                .border(1.dp, c.ln2, shape),
+            modifier =
+                modifier
+                    .heightIn(max = 120.dp)
+                    .clip(shape)
+                    .border(1.dp, c.ln2, shape),
             contentScale = ContentScale.Fit,
         )
     } else {
         Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(72.dp)
-                .clip(shape)
-                .background(c.sf3)
-                .border(1.dp, c.ln2, shape),
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .height(72.dp)
+                    .clip(shape)
+                    .background(c.sf3)
+                    .border(1.dp, c.ln2, shape),
             contentAlignment = Alignment.Center,
         ) {
             Text(text = stringResource(R.string.badge_image), fontSize = 11.sp, color = c.t4)
@@ -526,18 +560,23 @@ private fun ClipThumbnail(
  * a remote without a slot states the fact in grey instead.
  */
 @Composable
-private fun SourceTag(label: String, accentSlot: Int?, modifier: Modifier = Modifier) {
+private fun SourceTag(
+    label: String,
+    accentSlot: Int?,
+    modifier: Modifier = Modifier,
+) {
     val c = clipSyncColors
     val tone = accentSlot?.let { c.device(it) } ?: c.t3
     val boxBg = accentSlot?.let { c.deviceBg(it) } ?: c.sf3
     val boxLn = accentSlot?.let { c.deviceLn(it) } ?: c.ln2
     val shape = RoundedCornerShape(6.dp)
     Row(
-        modifier = modifier
-            .clip(shape)
-            .background(boxBg)
-            .border(1.dp, boxLn, shape)
-            .padding(horizontal = 7.dp, vertical = 2.dp),
+        modifier =
+            modifier
+                .clip(shape)
+                .background(boxBg)
+                .border(1.dp, boxLn, shape)
+                .padding(horizontal = 7.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -562,7 +601,10 @@ private fun SourceTag(label: String, accentSlot: Int?, modifier: Modifier = Modi
  * nothing — a quiet card is the default, tags mark the exceptions.
  */
 @Composable
-private fun FormatBadge(format: ClipContentFormat, modifier: Modifier = Modifier) {
+private fun FormatBadge(
+    format: ClipContentFormat,
+    modifier: Modifier = Modifier,
+) {
     val slot = formatAccentSlot(format) ?: return
     val c = clipSyncColors
     val shape = RoundedCornerShape(6.dp)
@@ -571,11 +613,12 @@ private fun FormatBadge(format: ClipContentFormat, modifier: Modifier = Modifier
         fontSize = 10.sp,
         fontWeight = FontWeight.Medium,
         color = c.device(slot),
-        modifier = modifier
-            .clip(shape)
-            .background(c.deviceBg(slot))
-            .border(1.dp, c.deviceLn(slot), shape)
-            .padding(horizontal = 7.dp, vertical = 2.dp),
+        modifier =
+            modifier
+                .clip(shape)
+                .background(c.deviceBg(slot))
+                .border(1.dp, c.deviceLn(slot), shape)
+                .padding(horizontal = 7.dp, vertical = 2.dp),
     )
 }
 
@@ -593,11 +636,12 @@ private fun ImageBadge(modifier: Modifier = Modifier) {
         fontSize = 10.sp,
         fontWeight = FontWeight.Medium,
         color = c.device(IMAGE_BADGE_SLOT),
-        modifier = modifier
-            .clip(shape)
-            .background(c.deviceBg(IMAGE_BADGE_SLOT))
-            .border(1.dp, c.deviceLn(IMAGE_BADGE_SLOT), shape)
-            .padding(horizontal = 7.dp, vertical = 2.dp),
+        modifier =
+            modifier
+                .clip(shape)
+                .background(c.deviceBg(IMAGE_BADGE_SLOT))
+                .border(1.dp, c.deviceLn(IMAGE_BADGE_SLOT), shape)
+                .padding(horizontal = 7.dp, vertical = 2.dp),
     )
 }
 
@@ -617,11 +661,12 @@ private fun LocalOnlyBadge(modifier: Modifier = Modifier) {
         fontSize = 10.sp,
         fontWeight = FontWeight.Medium,
         color = c.t3,
-        modifier = modifier
-            .clip(shape)
-            .background(c.sf3)
-            .border(1.dp, c.ln2, shape)
-            .padding(horizontal = 7.dp, vertical = 2.dp),
+        modifier =
+            modifier
+                .clip(shape)
+                .background(c.sf3)
+                .border(1.dp, c.ln2, shape)
+                .padding(horizontal = 7.dp, vertical = 2.dp),
     )
 }
 
@@ -649,20 +694,22 @@ private fun EmptyState(
                 modifier = Modifier.size(28.dp),
             )
             Text(
-                text = if (paired) {
-                    stringResource(R.string.home_empty_paired_title)
-                } else {
-                    stringResource(R.string.home_empty_unpaired_title)
-                },
+                text =
+                    if (paired) {
+                        stringResource(R.string.home_empty_paired_title)
+                    } else {
+                        stringResource(R.string.home_empty_unpaired_title)
+                    },
                 style = ClipSyncType.brand.copy(fontSize = 18.sp),
                 color = c.t2,
             )
             Text(
-                text = if (paired) {
-                    stringResource(R.string.home_empty_paired_body)
-                } else {
-                    stringResource(R.string.home_empty_unpaired_body)
-                },
+                text =
+                    if (paired) {
+                        stringResource(R.string.home_empty_paired_body)
+                    } else {
+                        stringResource(R.string.home_empty_unpaired_body)
+                    },
                 style = ClipSyncType.caption,
                 color = c.t3,
                 textAlign = TextAlign.Center,
@@ -674,11 +721,12 @@ private fun EmptyState(
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = c.flow,
-                    modifier = Modifier
-                        .clip(shape)
-                        .border(1.dp, c.flowLn, shape)
-                        .clickable(onClick = onPair)
-                        .padding(horizontal = 14.dp, vertical = 7.dp),
+                    modifier =
+                        Modifier
+                            .clip(shape)
+                            .border(1.dp, c.flowLn, shape)
+                            .clickable(onClick = onPair)
+                            .padding(horizontal = 14.dp, vertical = 7.dp),
                 )
             }
         }
@@ -686,7 +734,10 @@ private fun EmptyState(
 }
 
 @Composable
-private fun NoMatchState(message: String, modifier: Modifier = Modifier) {
+private fun NoMatchState(
+    message: String,
+    modifier: Modifier = Modifier,
+) {
     val c = clipSyncColors
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Column(
@@ -730,39 +781,41 @@ private fun HomeScreenListPreview() {
     ClipSyncTheme {
         HomeScreen(
             conduit = buildHealthScreenState(peer = null, clipboard = null, sync = null),
-            home = HomeUiState(
-                loaded = true,
-                items = listOf(
-                    HomeClipItem(
-                        eventId = "e1",
-                        preview = "https://github.com/clipsync/core",
-                        createdAtMs = System.currentTimeMillis() - 240_000,
-                        remoteSourceLabel = UiText.Raw("PC-STUDIO"),
-                        sourceAccentSlot = 1,
-                        format = ClipContentFormat.LINK,
-                    ),
-                    HomeClipItem(
-                        eventId = "e2",
-                        preview = "pwsh .\\scripts\\build-windows.ps1",
-                        createdAtMs = System.currentTimeMillis() - 2_040_000,
-                        remoteSourceLabel = null,
-                    ),
-                    HomeClipItem(
-                        eventId = "e3",
-                        preview = "【剪剪相传】验证码 843921，五分钟内有效。",
-                        createdAtMs = System.currentTimeMillis() - 3_000_000,
-                        remoteSourceLabel = null,
-                        format = ClipContentFormat.OTP,
-                    ),
-                    HomeClipItem(
-                        eventId = "e4",
-                        preview = "会议纪要：本周五完成 Stage 4 端到端握手测试",
-                        createdAtMs = System.currentTimeMillis() - 90_000_000,
-                        remoteSourceLabel = UiText.Raw("PC-STUDIO"),
-                        sourceAccentSlot = 1,
-                    ),
+            home =
+                HomeUiState(
+                    loaded = true,
+                    items =
+                        listOf(
+                            HomeClipItem(
+                                eventId = "e1",
+                                preview = "https://github.com/clipsync/core",
+                                createdAtMs = System.currentTimeMillis() - 240_000,
+                                remoteSourceLabel = UiText.Raw("PC-STUDIO"),
+                                sourceAccentSlot = 1,
+                                format = ClipContentFormat.LINK,
+                            ),
+                            HomeClipItem(
+                                eventId = "e2",
+                                preview = "pwsh .\\scripts\\build-windows.ps1",
+                                createdAtMs = System.currentTimeMillis() - 2_040_000,
+                                remoteSourceLabel = null,
+                            ),
+                            HomeClipItem(
+                                eventId = "e3",
+                                preview = "【剪剪相传】验证码 843921，五分钟内有效。",
+                                createdAtMs = System.currentTimeMillis() - 3_000_000,
+                                remoteSourceLabel = null,
+                                format = ClipContentFormat.OTP,
+                            ),
+                            HomeClipItem(
+                                eventId = "e4",
+                                preview = "会议纪要：本周五完成 Stage 4 端到端握手测试",
+                                createdAtMs = System.currentTimeMillis() - 90_000_000,
+                                remoteSourceLabel = UiText.Raw("PC-STUDIO"),
+                                sourceAccentSlot = 1,
+                            ),
+                        ),
                 ),
-            ),
             onQueryChange = {},
             onCopy = {},
             onDelete = {},

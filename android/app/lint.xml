@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!-- 特权直读（Shizuku）宿主刻意复刻 rikka 内部 IPC 形制（BinderContainer /
+         USER_SERVICE_ARG_* / attachUserService）：自带特权宿主必须与 Shizuku 服务端的
+         私有协议逐位对齐，RestrictedApi 在这个包内是设计事实而非疏忽（见
+         docs/adr/ 特权直读系列）。忽略范围只限该包，其余代码 RestrictedApi 照常报错。 -->
+    <issue id="RestrictedApi">
+        <ignore path="**/platform/clipboard/shizuku/**" />
+    </issue>
+</lint>

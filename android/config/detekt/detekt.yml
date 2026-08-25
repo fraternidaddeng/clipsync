@@ -10,3 +10,11 @@ build:
 config:
   validation: true
   warningsAsErrors: false
+
+naming:
+  # Composable 函数按 Compose 官方惯例用 PascalCase：与 android/.editorconfig 里
+  # ktlint 的同名豁免呼应。此前 74 处豁免全靠 baseline 签名匹配存活，任何触及
+  # Compose 函数签名的改动（如加注解）都会引爆 detekt；规则层豁免后那批基线条目
+  # 转为无害陈旧记录。
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']

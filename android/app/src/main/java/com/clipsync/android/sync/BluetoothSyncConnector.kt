@@ -1,6 +1,7 @@
 package com.clipsync.android.sync
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
@@ -113,6 +114,10 @@ class BluetoothSyncConnector(
             null
         }
 
+    // BLUETOOTH_CONNECT is re-checked by dial() right before every attempt (lint cannot
+    // trace the guarantee across the suspend boundary), and every caller catches the
+    // SecurityException a race with revocation would throw — degrading to "unreachable".
+    @SuppressLint("MissingPermission")
     private fun openTransport(
         socket: BluetoothSocket,
         localDeviceId: String,
