@@ -40,7 +40,7 @@
     <value>Rozumiem</value>
   </data>
   <data name="Common_FollowSystem" xml:space="preserve">
-    <value>Zgodnie z systemem</value>
+    <value>Za systemem</value>
   </data>
   <data name="Common_ClearHistory" xml:space="preserve">
     <value>Wyczyść historię</value>
@@ -70,7 +70,7 @@
     <value>Historia</value>
   </data>
   <data name="History_Subtitle" xml:space="preserve">
-    <value>Wpisy z tego komputera i sparowanych urządzeń · czyszczenie dotyczy tylko tego urządzenia</value>
+    <value>Wpisy z tego PC i sparowanych urządzeń · czyszczenie dotyczy tylko tego urządzenia</value>
   </data>
   <data name="History_Search" xml:space="preserve">
     <value>Szukaj</value>
@@ -79,7 +79,7 @@
     <value>Wszystko</value>
   </data>
   <data name="Filter_Link" xml:space="preserve">
-    <value>Link</value>
+    <value>Łącze</value>
   </data>
   <data name="Filter_Otp" xml:space="preserve">
     <value>Kod</value>
@@ -103,13 +103,13 @@
     <value>Tylko na tym urządzeniu</value>
   </data>
   <data name="History_Empty_Unpaired_Title" xml:space="preserve">
-    <value>Najpierw połącz obie strony</value>
+    <value>Najpierw połącz oba końce</value>
   </data>
   <data name="History_Empty_Paired_Title" xml:space="preserve">
-    <value>Oczekiwanie na pierwszy wpis</value>
+    <value>Czekamy na pierwszy wpis</value>
   </data>
   <data name="History_Empty_Unpaired_Body" xml:space="preserve">
-    <value>Nie sparowano jeszcze z telefonem. Wejście do parowania znajduje się w segmencie sieci na stronie Kanał.</value>
+    <value>Nie sparowano jeszcze z telefonem. Wejście do parowania jest w segmencie sieci na stronie „Kanał”.</value>
   </data>
   <data name="History_Empty_Paired_Body" xml:space="preserve">
     <value>Skopiuj tekst na dowolnym urządzeniu — pojawi się tutaj i popłynie na drugą stronę.</value>
@@ -139,7 +139,7 @@
     <value>Nieznane źródło</value>
   </data>
   <data name="History_LocalSource" xml:space="preserve">
-    <value>Ten komputer</value>
+    <value>Ten PC</value>
   </data>
   <data name="Conduit_Title" xml:space="preserve">
     <value>Kanał</value>
@@ -151,19 +151,19 @@
     <value>Przechwytywanie lokalne</value>
   </data>
   <data name="Conduit_Capture_Ready" xml:space="preserve">
-    <value>Gotowe · nasłuchuje Ctrl+C</value>
+    <value>Gotowe · nasłuch Ctrl+C</value>
   </data>
   <data name="Conduit_Status_Paused" xml:space="preserve">
-    <value>Wstrzymano · nie rejestruje</value>
+    <value>Wstrzymano · brak nagrywania</value>
   </data>
   <data name="Conduit_Status_Private" xml:space="preserve">
-    <value>Tryb prywatny · nie zostawia śladów</value>
+    <value>Tryb prywatny · bez śladów</value>
   </data>
   <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
-    <value>Przechwytywanie ograniczone · dostęp do schowka nie powiódł się</value>
+    <value>Przechwytywanie osłabione · dostęp do schowka nie powiódł się</value>
   </data>
   <data name="Conduit_Capture_Detail" xml:space="preserve">
-    <value>Tryb prywatny i zablokowane procesy zatrzymują treść w tym segmencie.</value>
+    <value>Tryb prywatny i zablokowane procesy zatrzymują treść na tym segmencie.</value>
   </data>
   <data name="Conduit_Service_Name" xml:space="preserve">
     <value>Usługa lokalna</value>
@@ -175,7 +175,7 @@
     <value> · do wysłania </value>
   </data>
   <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
-    <value>Zdarzenia trafiają najpierw do magazynu, potem do kolejki wysyłkowej · </value>
+    <value>Zdarzenia trafiają najpierw do magazynu, potem do kolejki wysyłki · </value>
   </data>
   <data name="Conduit_Network_Name" xml:space="preserve">
     <value>Sieć</value>
@@ -187,7 +187,7 @@
     <value> · połączono </value>
   </data>
   <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
-    <value> urządzenie(a)</value>
+    <value> urządz.</value>
   </data>
   <data name="Conduit_Network_Down" xml:space="preserve">
     <value>Nie działa · synchronizacja wyłączona</value>
@@ -199,13 +199,13 @@
     <value>Sparowano </value>
   </data>
   <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
-    <value> urządzenie(a)</value>
+    <value> urządz.</value>
   </data>
   <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
-    <value>Zdalny tekst jest automatycznie zapisywany do schowka tego komputera.</value>
+    <value>Zdalny tekst jest automatycznie zapisywany w schowku tego PC.</value>
   </data>
   <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
-    <value>Automatyczne stosowanie jest wyłączone: zdalna treść zostaje tylko w historii i wymaga ręcznego skopiowania.</value>
+    <value>Automatyczne stosowanie wyłączone: zdalna treść zostaje tylko w historii i wymaga ręcznego kopiowania.</value>
   </data>
   <data name="Conduit_Devices_Header" xml:space="preserve">
     <value>Segment sieci · sparowane urządzenia</value>
@@ -214,37 +214,37 @@
     <value>Segment sieci · połączenie</value>
   </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
-    <value>Uporządkuj</value>
+    <value>Wyczyść</value>
   </data>
   <data name="Conduit_Bluetooth_Title" xml:space="preserve">
-    <value>Zapasowy Bluetooth</value>
+    <value>Rezerwa Bluetooth</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>Domyślnie wyłączone. Gdy sieć LAN jest blokowana przez VPN lub zaporę, telefon sparowany już przez Bluetooth w ustawieniach systemu nadal synchronizuje tekst (bez obrazów, wolniej).</value>
+    <value>Domyślnie wyłączona. Gdy VPN lub zapora blokuje LAN, telefon już sparowany przez Bluetooth w ustawieniach systemu nadal synchronizuje tekst (bez obrazów, wolniej).</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>Dodatkowe adresy nasłuchu</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>Dla adresów kart wirtualnych, np. Tailscale / WireGuard. Nie ma publicznego przekaźnika.</value>
+    <value>Dla adresów wirtualnych kart, np. Tailscale / WireGuard. Nie ma publicznego przekaźnika.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>Działa po ponownym uruchomieniu</value>
   </data>
   <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
-    <value> · oddziel kolejne adresy przecinkami</value>
+    <value> · kilka adresów rozdziel przecinkami</value>
   </data>
   <data name="Conduit_Fingerprint_Title" xml:space="preserve">
-    <value>Odcisk certyfikatu tego komputera</value>
+    <value>Odcisk certyfikatu tego PC</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>Podczas parowania porównaj go grupa po grupie z odciskiem pokazanym na telefonie. Zmiana odcisku sprawia, że każde sparowane urządzenie prosi o ponowne potwierdzenie.</value>
+    <value>Podczas parowania porównuj go grupa po grupie z odciskiem widocznym na telefonie. Zmiana odcisku sprawia, że każde sparowane urządzenie prosi o ponowne potwierdzenie.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
-    <value>Usługa dla drugiej strony nie działa; w tej sesji nie ma odcisku do pokazania.</value>
+    <value>Usługa drugiej strony nie działa; w tej sesji nie ma odcisku do pokazania.</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
-    <value>Unieważniono</value>
+    <value>Odwołano</value>
   </data>
   <data name="Device_AccentLabel" xml:space="preserve">
     <value>Kolor urządzenia</value>
@@ -253,16 +253,16 @@
     <value>Ustawiony ręcznie</value>
   </data>
   <data name="Device_AccentByOrder" xml:space="preserve">
-    <value>Zgodnie z kolejnością parowania</value>
+    <value>Według kolejności parowania</value>
   </data>
   <data name="Device_Rename" xml:space="preserve">
     <value>Zmień nazwę</value>
   </data>
   <data name="Device_RevokeSelected" xml:space="preserve">
-    <value>Unieważnij wybrane urządzenie</value>
+    <value>Odwołaj wybrane urządzenie</value>
   </data>
   <data name="Device_RevokeNote" xml:space="preserve">
-    <value>Unieważnienie natychmiast rozłącza urządzenie i anuluje jego klucz parowania; treść, którą już odebrało, nigdy nie jest usuwana zdalnie. Ponowne sparowanie po unieważnieniu liczy się jako nowe urządzenie. Gdy ten sam telefon paruje się ponownie pod nową tożsamością, stary wpis jest unieważniany automatycznie, a jego kolejka wysyłkowa czyszczona.</value>
+    <value>Odwołanie natychmiast rozłącza urządzenie i unieważnia jego klucz parowania; treści, które już otrzymało, nigdy nie są usuwane zdalnie. Ponowne parowanie po odwołaniu liczy się jako nowe urządzenie. Gdy ten sam telefon paruje się ponownie z nową tożsamością, stary wpis jest odwoływany automatycznie, a jego kolejka wysyłki czyszczona.</value>
   </data>
   <data name="Device_UnknownRemote" xml:space="preserve">
     <value>Urządzenie zdalne</value>
@@ -274,13 +274,13 @@
     <value>Nieznane urządzenie</value>
   </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
-    <value>{0} · {1} do wysłania</value>
+    <value>{0} · {1} oczekuje na wysłanie</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>Wykryto {0} urządzenie(a) wyglądające na pozostałości; {1} oczekujących pozycji zawyża licznik „do wysłania”. Porządkowanie unieważni je i wyczyści ich kolejki.</value>
+    <value>Wykryto {0} urządzeń wyglądających na stare pozostałości; {1} oczekujących pozycji zawyża licznik „do wysłania”. Czyszczenie odwoła je i opróżni ich kolejki wysyłki.</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>Wykryto {0} urządzenie(a) wyglądające na pozostałości. Porządkowanie je unieważni; treść, którą już odebrały, pozostaje nietknięta.</value>
+    <value>Wykryto {0} urządzeń wyglądających na stare pozostałości. Czyszczenie je odwoła; treści, które już otrzymały, pozostają nietknięte.</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
     <value>Prawdopodobnie pozostałość po podwójnym parowaniu</value>
@@ -295,7 +295,7 @@
     <value>Preferencje</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Zmiany działają natychmiast · treść schowka nigdy nie trafia do dzienników</value>
+    <value>Zmiany działają od razu · zawartość schowka nigdy nie trafia do dzienników</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>WYŚWIETLANIE</value>
@@ -310,7 +310,7 @@
     <value>PRZECHOWYWANIE</value>
   </data>
   <data name="Prefs_Group_Startup" xml:space="preserve">
-    <value>DZIAŁANIE</value>
+    <value>URUCHAMIANIE</value>
   </data>
   <data name="Prefs_Group_Data" xml:space="preserve">
     <value>DANE</value>
@@ -319,7 +319,7 @@
     <value>Rozmiar tekstu historii</value>
   </data>
   <data name="Prefs_FontScale_Desc" xml:space="preserve">
-    <value>Skaluje tylko tekst treści schowka (podglądy historii, treść szczegółów, okienko przy zasobniku); nagłówki grup, plakietki i przyciski pozostają bez zmian.</value>
+    <value>Skaluje tylko tekst treści (podglądy historii, treść szczegółów, okienko przy zasobniku); nagłówki grup, plakietki i przyciski pozostają bez zmian.</value>
   </data>
   <data name="Prefs_FontScale_Small" xml:space="preserve">
     <value>Mały</value>
@@ -331,10 +331,10 @@
     <value>Duży</value>
   </data>
   <data name="Prefs_PreviewLines_Title" xml:space="preserve">
-    <value>Liczba wierszy podglądu</value>
+    <value>Wiersze podglądu</value>
   </data>
   <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
-    <value>Maksymalna liczba wierszy treści na wpis w liście historii; nadmiar jest ucinany wielokropkiem — pełna treść w szczegółach.</value>
+    <value>Maksymalna liczba wierszy treści na wpis w liście historii; nadmiar ucinany wielokropkiem — pełną treść zobacz w szczegółach.</value>
   </data>
   <data name="Prefs_PreviewLines_Two" xml:space="preserve">
     <value>2 wiersze</value>
@@ -361,88 +361,88 @@
     <value>Język</value>
   </data>
   <data name="Prefs_Language_Desc" xml:space="preserve">
-    <value>Język interfejsu — zgodnie z systemem albo ustawiony ręcznie; każdy język zawsze pokazuje swoją rodzimą nazwę.</value>
+    <value>Język interfejsu — za systemem lub wybrany ręcznie; nazwy języków zawsze wyświetlane w ich własnych językach.</value>
   </data>
   <data name="Prefs_Language_RestartNote" xml:space="preserve">
-    <value>Zacznie działać po ponownym uruchomieniu aplikacji.</value>
+    <value>Zadziała po ponownym uruchomieniu aplikacji.</value>
   </data>
   <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
-    <value>Podczas wstrzymania ten komputer nie rejestruje nowej treści; istniejąca historia zostaje zachowana.</value>
+    <value>Podczas wstrzymania ten PC nie zapisuje nowych treści; dotychczasowa historia pozostaje.</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>Gdy włączone, przechwytywanie i synchronizacja całkowicie się zatrzymują, nie zostawiając śladów.</value>
+    <value>Gdy włączony, przechwytywanie i synchronizacja całkiem się zatrzymują, bez śladów.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>Zablokowane procesy</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>Kopie z tych procesów nigdy nie trafiają do historii ani nie są synchronizowane. Oddziel przecinkami lub nowymi wierszami.</value>
+    <value>Kopie z tych procesów nie trafiają do historii ani do synchronizacji. Rozdziel przecinkami lub nowymi wierszami.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>Automatycznie stosuj zdalną treść</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>Tekst z telefonu jest automatycznie zapisywany do schowka tego komputera. Po wyłączeniu zostaje tylko w historii i wymaga ręcznego skopiowania.</value>
+    <value>Tekst z telefonu jest automatycznie zapisywany w schowku tego PC. Po wyłączeniu zostaje tylko w historii i wymaga ręcznego kopiowania.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>Synchronizuj obrazy ze schowka</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Domyślnie wyłączone. Tylko PNG/JPEG; surowe bajty mogą zawierać EXIF i inne metadane, a obie strony potrzebują sesji v2.</value>
+    <value>Domyślnie wyłączone. Tylko PNG/JPEG; surowe bajty mogą zawierać EXIF i inne metadane, a oba końce potrzebują sesji v2.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Automatycznie stosuj zdalne obrazy</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>Obrazy z telefonu są automatycznie zapisywane do schowka tego komputera. Po wyłączeniu zostają tylko w historii i wymagają ręcznego skopiowania.</value>
+    <value>Obrazy z telefonu są automatycznie zapisywane w schowku tego PC. Po wyłączeniu zostają tylko w historii i wymagają ręcznego kopiowania.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
-    <value>Zapasowy Bluetooth · dodatkowe adresy nasłuchu · odcisk certyfikatu</value>
+    <value>Rezerwa Bluetooth · dodatkowe adresy nasłuchu · odcisk certyfikatu</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>Przeniesione do Kanał · segment sieci — decydują, czy treść dotrze do drugiej strony, więc mieszkają obok parowania i zarządzania urządzeniami.</value>
+    <value>Przeniesione do „Kanał · segment sieci” — decydują, czy treść dotrze na drugą stronę, więc mieszkają razem z parowaniem i zarządzaniem urządzeniami.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
-    <value>Przejdź do Kanału</value>
+    <value>Przejdź do kanału</value>
   </data>
   <data name="Prefs_Retention_Days_Title" xml:space="preserve">
     <value>Okres przechowywania</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>Wpisy po terminie są usuwane automatycznie. Czyszczenie odbywa się tylko na tym komputerze i nigdy nie usuwa tego, co druga strona już odebrała.</value>
+    <value>Przeterminowane wpisy są usuwane automatycznie. Czyszczenie odbywa się tylko na tym PC i nigdy nie usuwa zdalnie tego, co druga strona już otrzymała.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>dni</value>
   </data>
   <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
-    <value>Limit liczby wpisów</value>
+    <value>Liczba przechowywanych wpisów</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>Po przekroczeniu limitu najstarsze wpisy są usuwane pierwsze (100–2000, co 100). Czyszczenie odbywa się tylko na tym komputerze.</value>
+    <value>Po przekroczeniu limitu najstarsze wpisy usuwane są pierwsze (100–2000, krok 100). Czyszczenie odbywa się tylko na tym PC.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>wpisów</value>
   </data>
   <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
-    <value>Uruchamiaj przy starcie · cicho do zasobnika</value>
+    <value>Start z systemem · cicho do zasobnika</value>
   </data>
   <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
-    <value>Uruchamia się automatycznie przy logowaniu do Windows i ląduje prosto w zasobniku, bez otwierania okna głównego. Zapisuje tylko wpis autostartu bieżącego użytkownika; nie wymaga uprawnień administratora.</value>
+    <value>Uruchamia się automatycznie przy logowaniu do Windows i ląduje prosto w zasobniku, bez otwierania okna głównego. Zapisuje tylko wpis autostartu bieżącego użytkownika; uprawnienia administratora niepotrzebne.</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
     <value>Skrót okienka podręcznego</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>Naciśnij kombinację w dowolnej aplikacji, aby przywołać okienko przy zasobniku. Kliknij pole i naciśnij wybraną kombinację (musi zawierać Ctrl, Alt lub Win); Backspace czyści. Domyślnie wyłączone.</value>
+    <value>Naciśnij kombinację w dowolnej aplikacji, aby przywołać okienko przy zasobniku. Kliknij pole i naciśnij żądaną kombinację (musi zawierać Ctrl, Alt lub Win); Backspace czyści. Domyślnie wyłączone.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Zapisuje całą historię (wraz ze znacznikami usunięć) jako plik kopii zapasowej JSON Lines; bez kluczy, certyfikatów i danych parowania. Eksport jest jawnym tekstem — przechowuj go bezpiecznie.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>Scala historię z pliku kopii zapasowej: idempotentnie po „urządzeniu źródłowym + numerze”, więc ponowny import nigdy nie duplikuje wpisów ani nie nadpisuje lokalnych usunięć. Błędy walidacji niczego nie zmieniają.</value>
+    <value>Scala historię z pliku kopii zapasowej: idempotentnie po „urządzeniu źródłowym + numerze”, więc ponowny import nie powiela wpisów ani nie cofa lokalnych usunięć. Nieudana walidacja niczego nie zmienia.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>Usuwa wszystkie wpisy na tym komputerze (wraz z obrazami) za jednym razem; wymaga dwóch potwierdzeń i nie można tego cofnąć. Czyszczenie odbywa się tylko na tym komputerze i nigdy nie usuwa tego, co druga strona już odebrała — rozważ najpierw eksport.</value>
+    <value>Usuwa naraz wszystkie wpisy na tym PC (wraz z obrazami); wymaga dwóch potwierdzeń i jest nieodwracalne. Czyszczenie odbywa się tylko na tym PC i nigdy nie usuwa tego, co druga strona już otrzymała — rozważ najpierw eksport.</value>
   </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · ostatnie wpisy</value>
@@ -454,7 +454,7 @@
     <value>Wznów synchronizację</value>
   </data>
   <data name="Flyout_Empty" xml:space="preserve">
-    <value>Nie ma jeszcze wpisów · spróbuj skopiować jakiś tekst</value>
+    <value>Nie ma jeszcze wpisów · spróbuj coś skopiować</value>
   </data>
   <data name="Flyout_PauseOrResume" xml:space="preserve">
     <value>Wstrzymaj lub wznów synchronizację</value>
@@ -472,90 +472,90 @@
     <value>Zakończ</value>
   </data>
   <data name="Tray_Tooltip_Flow" xml:space="preserve">
-    <value>ClipSync · nasłuchuje</value>
+    <value>ClipSync · nasłuch</value>
   </data>
   <data name="Tray_Tooltip_AttentionFormat" xml:space="preserve">
     <value>ClipSync · {0}</value>
   </data>
   <data name="Tray_AttentionFallback" xml:space="preserve">
-    <value>Wymaga działania</value>
+    <value>Wymaga Twojego działania</value>
   </data>
   <data name="Tray_Tooltip_Paused" xml:space="preserve">
     <value>ClipSync · przechwytywanie wstrzymane</value>
   </data>
   <data name="Tray_Tooltip_Private" xml:space="preserve">
-    <value>ClipSync · tryb prywatny, nie zostawia śladów</value>
+    <value>ClipSync · tryb prywatny, bez śladów</value>
   </data>
   <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
     <value>1 nowy wpis od {0}</value>
   </data>
   <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
-    <value>{1} nowych wpisów od {0}</value>
+    <value>Nowe wpisy od {0}: {1}</value>
   </data>
   <data name="Tray_OversizeNotice" xml:space="preserve">
-    <value>Właśnie skopiowany tekst przekracza 1 MiB; zostaje tylko w schowku tego komputera i nie jest synchronizowany (nie został ucięty).</value>
+    <value>Właśnie skopiowany tekst przekracza 1 MiB; zostaje tylko w schowku tego PC i nie jest synchronizowany (nie ucięto go).</value>
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
-    <value>Wykryto powtarzające się błędy uwierzytelniania od „{0}”; urządzenie zostało tymczasowo ograniczone.</value>
+    <value>Powtarzające się błędy uwierzytelniania od „{0}”; urządzenie tymczasowo ograniczono.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
-    <value>Nasłuchuje · synchronizacja nie działa</value>
+    <value>Nasłuch · synchronizacja nie działa</value>
   </data>
   <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
-    <value>Nasłuchuje · połączono {0}</value>
+    <value>Nasłuch · połączono {0}</value>
   </data>
   <data name="Tray_Status_Waiting" xml:space="preserve">
-    <value>Nasłuchuje · czeka na urządzenia</value>
+    <value>Nasłuch · oczekiwanie na urządzenia</value>
   </data>
   <data name="Capture_OversizeNotice" xml:space="preserve">
-    <value>Właśnie skopiowany tekst przekracza 1 MiB: zostaje w schowku systemowym bez ucinania, ale nie trafia do historii i nie jest synchronizowany.</value>
+    <value>Właśnie skopiowany tekst przekracza 1 MiB: zostaje w schowku systemowym bez ucięcia, ale nie trafia do historii ani do synchronizacji.</value>
   </data>
   <data name="Sync_NotStarted" xml:space="preserve">
-    <value>Usługa dla drugiej strony jeszcze nie działa</value>
+    <value>Usługa drugiej strony jeszcze nie wystartowała</value>
   </data>
   <data name="Sync_StartFailed" xml:space="preserve">
-    <value>Usługa dla drugiej strony nie uruchomiła się; synchronizacja jest wyłączona w tej sesji.</value>
+    <value>Usługa drugiej strony nie zdołała wystartować; w tej sesji synchronizacja jest wyłączona.</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>Nasłuch LAN na porcie {0} · połączono {1} urządzenie(a), treść płynie w czasie rzeczywistym.</value>
+    <value>Nasłuch LAN na porcie {0} · połączono {1} urządzeń, treść płynie w czasie rzeczywistym.</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
-    <value>Nasłuch LAN na porcie {0} · oczekiwanie na sparowane urządzenia; zdarzenia trafiają najpierw do magazynu, potem do kolejki wysyłkowej, więc offline nic nie ginie.</value>
+    <value>Nasłuch LAN na porcie {0} · oczekiwanie na sparowane urządzenia; zdarzenia trafiają najpierw do magazynu, potem do kolejki wysyłki — offline nic nie ginie.</value>
   </data>
   <data name="Bt_Disabled" xml:space="preserve">
-    <value>Zapasowy Bluetooth nie jest włączony</value>
+    <value>Rezerwa Bluetooth nie jest włączona</value>
   </data>
   <data name="Bt_UnavailableFormat" xml:space="preserve">
-    <value>Zapasowy Bluetooth niedostępny: {0}</value>
+    <value>Rezerwa Bluetooth niedostępna: {0}</value>
   </data>
   <data name="Bt_SyncingFormat" xml:space="preserve">
-    <value>Zapasowy Bluetooth · synchronizacja z {0} (tylko tekst)</value>
+    <value>Rezerwa Bluetooth · synchronizacja z {0} (tylko tekst)</value>
   </data>
   <data name="Bt_Armed" xml:space="preserve">
-    <value>Zapasowy Bluetooth w gotowości · telefon przełącza się na Bluetooth automatycznie, gdy LAN jest nieosiągalny</value>
+    <value>Rezerwa Bluetooth w gotowości · gdy LAN jest nieosiągalny, telefon sam przechodzi na Bluetooth</value>
   </data>
   <data name="Bt_Starting" xml:space="preserve">
-    <value>Zapasowy Bluetooth uruchamia się…</value>
+    <value>Rezerwa Bluetooth startuje…</value>
   </data>
   <data name="Bt_AdapterUnavailable" xml:space="preserve">
-    <value>Adapter Bluetooth niedostępny lub wyłączony</value>
+    <value>Karta Bluetooth niedostępna lub wyłączona</value>
   </data>
   <data name="Ack_None" xml:space="preserve">
-    <value>Brak potwierdzenia od drugiej strony</value>
+    <value>Brak jeszcze potwierdzenia z drugiej strony</value>
   </data>
   <data name="Ack_UpToFormat" xml:space="preserve">
     <value>Druga strona potwierdziła do {0}</value>
   </data>
   <data name="Transfer_ClearedFormat" xml:space="preserve">
-    <value>Wyczyszczono {0} wpisów historii (wraz z obrazami). Czyszczenie odbywa się tylko na tym komputerze.</value>
+    <value>Wyczyszczono {0} wpisów historii (wraz z obrazami). Czyszczenie odbywa się tylko na tym PC.</value>
   </data>
   <data name="Transfer_ClearConfirmBody" xml:space="preserve">
     <value>Wyczyścić całą historię?
 
-Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za jednym razem. Czyszczenie odbywa się tylko na tym komputerze i nigdy nie usuwa tego, co druga strona już odebrała. Rozważ najpierw „Eksportuj historię”.</value>
+Usunie naraz wszystkie wpisy na tym PC (wraz z obrazami). Czyszczenie odbywa się tylko na tym PC i nie usuwa zdalnie tego, co druga strona już otrzymała. Rozważ najpierw „Eksportuj historię”.</value>
   </data>
   <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
-    <value>Potwierdź jeszcze raz: czyszczenia nie można cofnąć. Wyczyścić całą historię?</value>
+    <value>Potwierdź raz jeszcze: czyszczenia nie da się cofnąć. Na pewno wyczyścić całą historię?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
     <value>Wyeksportowano {0} rekordów (jawny tekst) → {1}</value>
@@ -564,7 +564,7 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
     <value>Eksport nie powiódł się: nie można zapisać wybranego pliku.</value>
   </data>
   <data name="Transfer_ImportedFormat" xml:space="preserve">
-    <value>Import zakończony: dodano {0} · istniało {1} · konflikty {2}</value>
+    <value>Import zakończony: dodano {0} · już było {1} · konflikty {2}</value>
   </data>
   <data name="Transfer_ImportFailedFormat" xml:space="preserve">
     <value>Import nie powiódł się: {0}. Niczego nie zmieniono.</value>
@@ -585,7 +585,7 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
     <value>plik jest uszkodzony (błędny format rekordu)</value>
   </data>
   <data name="Transfer_Error_HashMismatch" xml:space="preserve">
-    <value>plik jest uszkodzony (błąd sumy kontrolnej)</value>
+    <value>plik jest uszkodzony (weryfikacja skrótu nie powiodła się)</value>
   </data>
   <data name="Transfer_Error_CountMismatch" xml:space="preserve">
     <value>plik jest niekompletny (liczba nie zgadza się z nagłówkiem)</value>
@@ -597,37 +597,37 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
     <value>nieznany błąd</value>
   </data>
   <data name="Hotkey_Applied" xml:space="preserve">
-    <value>Aktywny · naciśnij w dowolnej aplikacji, aby przywołać okienko</value>
+    <value>Działa · naciśnij w dowolnej aplikacji, aby przywołać okienko</value>
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
-    <value>Ta kombinacja jest zajęta przez inny program; wybierz inną</value>
+    <value>Ta kombinacja jest zajęta przez inny program; spróbuj innej</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
-    <value>Synchronizacja nie działa w tej sesji (punkt końcowy nie wystartował)</value>
+    <value>W tej sesji synchronizacja nie działa (punkt końcowy nie wystartował)</value>
   </data>
   <data name="Attention_CaptureFaulted" xml:space="preserve">
-    <value>Przechwytywanie schowka ograniczone (ostatni dostęp nie powiódł się)</value>
+    <value>Przechwytywanie schowka osłabione (ostatni dostęp nie powiódł się)</value>
   </data>
   <data name="Attention_NoDevice" xml:space="preserve">
-    <value>Sparuj urządzenie, aby zacząć synchronizację</value>
+    <value>Sparuj urządzenie, aby zacząć synchronizować</value>
   </data>
   <data name="Pairing_Title" xml:space="preserve">
     <value>Sparuj nowe urządzenie</value>
   </data>
   <data name="Pairing_PeerDownBody" xml:space="preserve">
-    <value>Usługa dla drugiej strony nie działa; parowanie jest niedostępne w tej sesji.</value>
+    <value>Usługa drugiej strony nie działa; w tej sesji parowanie jest niemożliwe.</value>
   </data>
   <data name="Pairing_ScanInstruction" xml:space="preserve">
-    <value>Zeskanuj ten kod aplikacją ClipSync na telefonie. Kod QR zawiera adres tego komputera, odcisk certyfikatu i jednorazowy token — nigdy klucz parowania.</value>
+    <value>Zeskanuj ten kod aplikacją ClipSync na telefonie. Kod QR zawiera adres tego PC, odcisk certyfikatu i jednorazowy token — nigdy klucza parowania.</value>
   </data>
   <data name="Pairing_CountdownFormat" xml:space="preserve">
-    <value>Odświeży się za {0:m\:ss}</value>
+    <value>Odnowi się za {0:m\:ss}</value>
   </data>
   <data name="Pairing_NoLanAddress" xml:space="preserve">
-    <value>Nie wykryto adresu LAN. Podłącz ten komputer i telefon do tej samej sieci (albo dodaj adres Tailscale w Preferencjach), a potem otwórz to okno ponownie.</value>
+    <value>Nie wykryto adresu LAN. Umieść ten PC i telefon w tej samej sieci (lub dodaj adres Tailscale w Preferencjach), potem otwórz to okno ponownie.</value>
   </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
-    <value>Sprawdź na telefonie przed zatwierdzeniem</value>
+    <value>Przed zatwierdzeniem porównaj na telefonie</value>
   </data>
   <data name="Pairing_PcName" xml:space="preserve">
     <value>Nazwa komputera</value>
@@ -645,10 +645,10 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
     <value>Zamknij i odrzuć</value>
   </data>
   <data name="Approval_Question" xml:space="preserve">
-    <value>Zezwolić temu urządzeniu na sparowanie?</value>
+    <value>Pozwolić temu urządzeniu się sparować?</value>
   </data>
   <data name="Approval_Body" xml:space="preserve">
-    <value>Urządzenie użyło kodu QR tego komputera, aby poprosić o sparowanie. Zatwierdź tylko wtedy, gdy poniższa nazwa zgadza się z telefonem w twojej ręce.</value>
+    <value>Urządzenie użyło kodu QR tego PC, aby poprosić o sparowanie. Zatwierdź tylko wtedy, gdy nazwa poniżej zgadza się z telefonem w Twojej ręce.</value>
   </data>
   <data name="Approval_PlatformAndroid" xml:space="preserve">
     <value>Urządzenie z Androidem</value>
@@ -660,7 +660,7 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
     <value>To urządzenie było już sparowane. Zatwierdzenie zastąpi jego dotychczasowy klucz parowania, a stara instalacja natychmiast przestanie działać.</value>
   </data>
   <data name="Approval_SupersedeNotice" xml:space="preserve">
-    <value>Na liście jest już urządzenie o tej samej nazwie. Po zatwierdzeniu stary wpis zostanie automatycznie unieważniony, a jego kolejka wysyłkowa wyczyszczona (traktowane jak ponowne parowanie tego samego telefonu).</value>
+    <value>Na liście jest już urządzenie o tej nazwie. Po zatwierdzeniu stary wpis zostanie automatycznie odwołany, a jego kolejka wysyłki wyczyszczona (traktowane jako ponowne parowanie tego samego telefonu).</value>
   </data>
   <data name="Approval_Reject" xml:space="preserve">
     <value>Odrzuć</value>
@@ -681,12 +681,12 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
     <value>ClipSync · dziennik diagnostyczny</value>
   </data>
   <data name="Diag_Heading" xml:space="preserve">
-    <value>Diagnostyka lokalna · tylko kody stanu i czasy, nigdy treść schowka</value>
+    <value>Diagnostyka lokalna · tylko kody stanu i czasy, nigdy zawartość schowka</value>
   </data>
   <data name="Diag_CopyAll" xml:space="preserve">
     <value>Kopiuj wszystko</value>
   </data>
   <data name="Diag_Empty" xml:space="preserve">
-    <value>(brak wpisów diagnostycznych)</value>
+    <value>(brak jeszcze wpisów diagnostycznych)</value>
   </data>
 </root>

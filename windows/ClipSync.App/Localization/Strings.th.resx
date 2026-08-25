@@ -22,7 +22,7 @@
     <value>ClipSync</value>
   </data>
   <data name="Chrome_Minimize" xml:space="preserve">
-    <value>ย่อเก็บ</value>
+    <value>ย่อหน้าต่าง</value>
   </data>
   <data name="Chrome_MaximizeRestore" xml:space="preserve">
     <value>ขยายเต็มจอหรือคืนขนาด</value>
@@ -52,7 +52,7 @@
     <value>นำเข้าประวัติ</value>
   </data>
   <data name="Common_PauseCapture" xml:space="preserve">
-    <value>หยุดเก็บชั่วคราว</value>
+    <value>หยุดจับข้อมูลชั่วคราว</value>
   </data>
   <data name="Common_PrivateMode" xml:space="preserve">
     <value>โหมดส่วนตัว</value>
@@ -70,7 +70,7 @@
     <value>ประวัติ</value>
   </data>
   <data name="History_Subtitle" xml:space="preserve">
-    <value>รายการจากพีซีนี้และอุปกรณ์ที่จับคู่ · การล้างเกิดขึ้นเฉพาะเครื่องนี้</value>
+    <value>รายการคัดลอกจากพีซีนี้และอุปกรณ์ที่จับคู่ · การล้างมีผลกับอุปกรณ์นี้เท่านั้น</value>
   </data>
   <data name="History_Search" xml:space="preserve">
     <value>ค้นหา</value>
@@ -94,13 +94,13 @@
     <value>ข้อความ</value>
   </data>
   <data name="Format_Image" xml:space="preserve">
-    <value>รูป</value>
+    <value>รูปภาพ</value>
   </data>
   <data name="History_NoPreview" xml:space="preserve">
     <value>ไม่มีตัวอย่าง</value>
   </data>
   <data name="History_LocalOnlyBadge" xml:space="preserve">
-    <value>เก็บไว้เฉพาะเครื่องนี้</value>
+    <value>เก็บบนอุปกรณ์นี้เท่านั้น</value>
   </data>
   <data name="History_Empty_Unpaired_Title" xml:space="preserve">
     <value>เชื่อมสองฝั่งเข้าด้วยกันก่อน</value>
@@ -109,13 +109,13 @@
     <value>รอรายการแรก</value>
   </data>
   <data name="History_Empty_Unpaired_Body" xml:space="preserve">
-    <value>ยังไม่ได้จับคู่กับโทรศัพท์ ทางเข้าการจับคู่อยู่ที่ส่วนเครือข่ายของหน้า «เส้นทาง»</value>
+    <value>ยังไม่ได้จับคู่กับโทรศัพท์ ทางเข้าการจับคู่อยู่ที่ช่วงเครือข่ายในหน้า “เส้นทาง”</value>
   </data>
   <data name="History_Empty_Paired_Body" xml:space="preserve">
-    <value>คัดลอกข้อความบนอุปกรณ์ฝั่งไหนก็ได้ — มันจะปรากฏที่นี่และไหลไปอีกฝั่ง</value>
+    <value>คัดลอกข้อความบนอุปกรณ์ใดก็ได้ — มันจะปรากฏที่นี่และไหลไปอีกฝั่ง</value>
   </data>
   <data name="History_Empty_GoPair" xml:space="preserve">
-    <value>จับคู่เลย ›</value>
+    <value>ไปจับคู่ ›</value>
   </data>
   <data name="History_NoMatch_Prefix" xml:space="preserve">
     <value>ไม่มีรายการที่ตรงกับ “</value>
@@ -136,7 +136,7 @@
     <value>ลบที่เลือก</value>
   </data>
   <data name="History_UnknownSource" xml:space="preserve">
-    <value>ไม่ทราบที่มา</value>
+    <value>ไม่ทราบแหล่งที่มา</value>
   </data>
   <data name="History_LocalSource" xml:space="preserve">
     <value>พีซีนี้</value>
@@ -145,10 +145,10 @@
     <value>เส้นทาง</value>
   </data>
   <data name="Conduit_Subtitle" xml:space="preserve">
-    <value>เนื้อหาไหลจากซ้ายไปขวาผ่านสี่ช่วง · ลำดับการอ่านคือลำดับการแก้ปัญหา</value>
+    <value>เนื้อหาไหลจากซ้ายไปขวาผ่านสี่ช่วง · ลำดับการอ่านคือลำดับการไล่ปัญหา</value>
   </data>
   <data name="Conduit_Capture_Name" xml:space="preserve">
-    <value>การเก็บในเครื่อง</value>
+    <value>การจับข้อมูลในเครื่อง</value>
   </data>
   <data name="Conduit_Capture_Ready" xml:space="preserve">
     <value>พร้อม · เฝ้าฟัง Ctrl+C</value>
@@ -160,7 +160,7 @@
     <value>โหมดส่วนตัว · ไม่ทิ้งร่องรอย</value>
   </data>
   <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
-    <value>การเก็บถดถอย · เข้าถึงคลิปบอร์ดไม่สำเร็จ</value>
+    <value>การจับข้อมูลถดถอย · เข้าถึงคลิปบอร์ดไม่ได้</value>
   </data>
   <data name="Conduit_Capture_Detail" xml:space="preserve">
     <value>โหมดส่วนตัวและโปรเซสที่ถูกบล็อกจะหยุดเนื้อหาไว้ที่ช่วงนี้</value>
@@ -175,7 +175,7 @@
     <value> · รอส่ง </value>
   </data>
   <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
-    <value>เหตุการณ์ลงฐานข้อมูลก่อนแล้วจึงเข้าคิวส่ง · </value>
+    <value>เหตุการณ์ลงคลังก่อนแล้วจึงเข้าคิวส่ง · </value>
   </data>
   <data name="Conduit_Network_Name" xml:space="preserve">
     <value>เครือข่าย</value>
@@ -190,10 +190,10 @@
     <value> เครื่อง</value>
   </data>
   <data name="Conduit_Network_Down" xml:space="preserve">
-    <value>ยังไม่ทำงาน · การซิงค์ปิดอยู่</value>
+    <value>ยังไม่เริ่ม · ปิดการซิงค์</value>
   </data>
   <data name="Conduit_Peer_Name" xml:space="preserve">
-    <value>การเขียนฝั่งโน้น</value>
+    <value>การเขียนฝั่งตรงข้าม</value>
   </data>
   <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
     <value>จับคู่แล้ว </value>
@@ -205,28 +205,28 @@
     <value>ข้อความจากระยะไกลถูกเขียนลงคลิปบอร์ดของพีซีนี้โดยอัตโนมัติ</value>
   </data>
   <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
-    <value>ปิดการใช้อัตโนมัติอยู่: เนื้อหาจากระยะไกลอยู่แค่ในประวัติ ต้องคัดลอกเอง</value>
+    <value>ปิดการนำไปใช้อัตโนมัติ: เนื้อหาระยะไกลอยู่ในประวัติเท่านั้น ต้องคัดลอกเอง</value>
   </data>
   <data name="Conduit_Devices_Header" xml:space="preserve">
-    <value>ส่วนเครือข่าย · อุปกรณ์ที่จับคู่</value>
+    <value>ช่วงเครือข่าย · อุปกรณ์ที่จับคู่</value>
   </data>
   <data name="Conduit_Connection_Header" xml:space="preserve">
-    <value>ส่วนเครือข่าย · การเชื่อมต่อ</value>
+    <value>ช่วงเครือข่าย · การเชื่อมต่อ</value>
   </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
-    <value>ล้างทิ้ง</value>
+    <value>ล้างทันที</value>
   </data>
   <data name="Conduit_Bluetooth_Title" xml:space="preserve">
-    <value>ช่องสำรองบลูทูธ</value>
+    <value>บลูทูธสำรอง</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>ปิดเป็นค่าเริ่มต้น เมื่อ LAN ถูก VPN หรือไฟร์วอลล์ขวาง โทรศัพท์ที่จับคู่บลูทูธในการตั้งค่าระบบไว้แล้วจะซิงค์ข้อความต่อได้ (ไม่มีรูป ช้ากว่า)</value>
+    <value>ปิดโดยค่าเริ่มต้น เมื่อ LAN ถูกบล็อกโดย VPN หรือไฟร์วอลล์ โทรศัพท์ที่จับคู่บลูทูธไว้แล้วในการตั้งค่าระบบจะยังซิงค์ข้อความต่อได้ (ไม่มีรูปภาพ และช้ากว่า)</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>ที่อยู่เฝ้าฟังเพิ่มเติม</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>สำหรับที่อยู่ของอะแดปเตอร์เสมือนอย่าง Tailscale / WireGuard ไม่มีรีเลย์สาธารณะให้</value>
+    <value>สำหรับที่อยู่อะแดปเตอร์เสมือนอย่าง Tailscale / WireGuard ไม่มีรีเลย์สาธารณะให้</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>มีผลหลังรีสตาร์ต</value>
@@ -238,13 +238,13 @@
     <value>ลายนิ้วมือใบรับรองของพีซีนี้</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>ตอนจับคู่ ให้เทียบกับลายนิ้วมือที่แสดงบนโทรศัพท์ทีละกลุ่ม ถ้าลายนิ้วมือเปลี่ยน อุปกรณ์ที่จับคู่ทุกเครื่องจะขอยืนยันใหม่</value>
+    <value>ระหว่างจับคู่ ให้เทียบทีละกลุ่มกับลายนิ้วมือที่แสดงบนโทรศัพท์ หากลายนิ้วมือเปลี่ยน อุปกรณ์ที่จับคู่ทุกเครื่องจะขอยืนยันใหม่</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
-    <value>บริการฝั่งโน้นยังไม่ทำงาน รอบนี้ไม่มีลายนิ้วมือให้แสดง</value>
+    <value>บริการฝั่งตรงข้ามยังไม่ทำงาน เซสชันนี้ไม่มีลายนิ้วมือให้แสดง</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
-    <value>เพิกถอนแล้ว</value>
+    <value>ถูกเพิกถอนแล้ว</value>
   </data>
   <data name="Device_AccentLabel" xml:space="preserve">
     <value>สีอุปกรณ์</value>
@@ -262,13 +262,13 @@
     <value>เพิกถอนอุปกรณ์ที่เลือก</value>
   </data>
   <data name="Device_RevokeNote" xml:space="preserve">
-    <value>การเพิกถอนตัดการเชื่อมต่ออุปกรณ์ทันทีและทำให้กุญแจจับคู่ของมันใช้ไม่ได้ เนื้อหาที่อีกฝั่งได้รับไปแล้วจะไม่ถูกลบจากระยะไกล จับคู่ใหม่หลังเพิกถอนถือเป็นอุปกรณ์ใหม่ ถ้าโทรศัพท์เครื่องเดิมจับคู่ใหม่ด้วยตัวตนใหม่ ระเบียนเก่าจะถูกเพิกถอนอัตโนมัติและคิวส่งของมันถูกล้าง</value>
+    <value>การเพิกถอนตัดการเชื่อมต่ออุปกรณ์ทันทีและทำให้กุญแจจับคู่ของมันใช้ไม่ได้ เนื้อหาที่อีกฝั่งได้รับแล้วจะไม่ถูกลบจากระยะไกล การจับคู่ใหม่หลังเพิกถอนถือเป็นอุปกรณ์ใหม่ เมื่อโทรศัพท์เครื่องเดิมจับคู่ใหม่ด้วยตัวตนใหม่ ระเบียนเก่าจะถูกเพิกถอนอัตโนมัติและคิวรอส่งของมันถูกล้าง</value>
   </data>
   <data name="Device_UnknownRemote" xml:space="preserve">
     <value>อุปกรณ์ระยะไกล</value>
   </data>
   <data name="Device_PairedFallback" xml:space="preserve">
-    <value>อุปกรณ์ที่จับคู่</value>
+    <value>อุปกรณ์ที่จับคู่แล้ว</value>
   </data>
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>อุปกรณ์ไม่รู้จัก</value>
@@ -277,10 +277,10 @@
     <value>{0} · ค้างส่ง {1} รายการ</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>พบ {0} เครื่องที่น่าจะเป็นซากค้าง มี {1} รายการค้างส่งดันตัวเลข «รอส่ง» ให้สูงขึ้น การล้างจะเพิกถอนพวกมันและล้างคิวส่ง</value>
+    <value>พบ {0} เครื่องที่น่าจะเป็นซากตกค้าง; {1} รายการค้างกำลังดันตัวเลข “รอส่ง” ให้สูงขึ้น การล้างจะเพิกถอนพวกมันและล้างคิวส่งของพวกมัน</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>พบ {0} เครื่องที่น่าจะเป็นซากค้าง การล้างจะเพิกถอนพวกมัน เนื้อหาที่พวกมันได้รับไปแล้วไม่ถูกกระทบ</value>
+    <value>พบ {0} เครื่องที่น่าจะเป็นซากตกค้าง การล้างจะเพิกถอนพวกมัน เนื้อหาที่พวกมันได้รับแล้วไม่ได้รับผลกระทบ</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
     <value>น่าจะเป็นซากจากการจับคู่ซ้ำ</value>
@@ -295,13 +295,13 @@
     <value>การตั้งค่า</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>การเปลี่ยนแปลงมีผลทันที · เนื้อหาคลิปบอร์ดไม่มีวันปรากฏในบันทึก</value>
+    <value>การเปลี่ยนแปลงมีผลทันที · เนื้อหาคลิปบอร์ดไม่ปรากฏในบันทึกเด็ดขาด</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>การแสดงผล</value>
   </data>
   <data name="Prefs_Group_Capture" xml:space="preserve">
-    <value>การเก็บ</value>
+    <value>การจับข้อมูล</value>
   </data>
   <data name="Prefs_Group_Sync" xml:space="preserve">
     <value>การซิงค์</value>
@@ -310,7 +310,7 @@
     <value>การเก็บรักษา</value>
   </data>
   <data name="Prefs_Group_Startup" xml:space="preserve">
-    <value>การทำงาน</value>
+    <value>การเริ่มทำงาน</value>
   </data>
   <data name="Prefs_Group_Data" xml:space="preserve">
     <value>ข้อมูล</value>
@@ -319,7 +319,7 @@
     <value>ขนาดตัวอักษรประวัติ</value>
   </data>
   <data name="Prefs_FontScale_Desc" xml:space="preserve">
-    <value>ปรับขนาดเฉพาะข้อความเนื้อหา (ตัวอย่างในประวัติ เนื้อหาหน้ารายละเอียด หน้าต่างลอยที่เทรย์) หัวกลุ่ม ป้าย และปุ่มไม่เปลี่ยน</value>
+    <value>ปรับขนาดเฉพาะตัวอักษรของเนื้อหา (ตัวอย่างประวัติ เนื้อหารายละเอียด หน้าต่างลอยที่เทรย์) หัวข้อกลุ่ม ป้าย และปุ่มคงเดิม</value>
   </data>
   <data name="Prefs_FontScale_Small" xml:space="preserve">
     <value>เล็ก</value>
@@ -334,7 +334,7 @@
     <value>จำนวนบรรทัดตัวอย่าง</value>
   </data>
   <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
-    <value>จำนวนบรรทัดเนื้อหาสูงสุดต่อรายการในหน้าประวัติ ส่วนเกินถูกตัดด้วยจุดไข่ปลา — ดูเนื้อหาเต็มได้ในรายละเอียด</value>
+    <value>จำนวนบรรทัดเนื้อหาสูงสุดต่อรายการในรายการประวัติ ส่วนเกินถูกตัดด้วยจุดไข่ปลา — เปิดรายละเอียดเพื่อดูฉบับเต็ม</value>
   </data>
   <data name="Prefs_PreviewLines_Two" xml:space="preserve">
     <value>2 บรรทัด</value>
@@ -349,7 +349,7 @@
     <value>ธีม</value>
   </data>
   <data name="Prefs_Theme_Desc" xml:space="preserve">
-    <value>โทนสีกลางวัน/กลางคืนของหน้าต่าง ไอคอนเทรย์อยู่ในแถบงานและตามเฉดของแถบงานเสมอ</value>
+    <value>ชุดสีกลางวัน/กลางคืนของหน้าต่าง ไอคอนเทรย์อยู่ในแถบงานและตามโทนของแถบงานเสมอ</value>
   </data>
   <data name="Prefs_Theme_Day" xml:space="preserve">
     <value>กลางวัน</value>
@@ -361,88 +361,88 @@
     <value>ภาษา</value>
   </data>
   <data name="Prefs_Language_Desc" xml:space="preserve">
-    <value>ภาษาของหน้าจอ — ตามระบบหรือกำหนดเอง ชื่อภาษาแสดงเป็นภาษาแม่ของตัวเองเสมอ</value>
+    <value>ภาษาของหน้าจอ — ตามระบบหรือเลือกเอง ชื่อภาษาแสดงเป็นภาษาแม่ของแต่ละภาษาเสมอ</value>
   </data>
   <data name="Prefs_Language_RestartNote" xml:space="preserve">
     <value>มีผลหลังรีสตาร์ตแอป</value>
   </data>
   <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
-    <value>ระหว่างหยุดชั่วคราว พีซีนี้ไม่บันทึกเนื้อหาใหม่ ประวัติที่มีอยู่ยังคงอยู่</value>
+    <value>ระหว่างหยุดชั่วคราว พีซีนี้ไม่บันทึกเนื้อหาใหม่ ประวัติเดิมยังอยู่</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>ระหว่างเปิด การเก็บและการซิงค์หยุดทั้งหมด ไม่ทิ้งร่องรอย</value>
+    <value>ระหว่างเปิดใช้ การจับข้อมูลและการซิงค์หยุดทั้งหมด ไม่ทิ้งร่องรอย</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>โปรเซสที่บล็อก</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>การคัดลอกจากโปรเซสเหล่านี้ไม่เข้าประวัติและไม่ซิงค์ คั่นด้วยจุลภาคหรือขึ้นบรรทัดใหม่</value>
+    <value>สิ่งที่คัดลอกจากโปรเซสเหล่านี้ไม่เข้าประวัติและไม่ซิงค์ คั่นด้วยจุลภาคหรือขึ้นบรรทัดใหม่</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
-    <value>ใช้เนื้อหาจากระยะไกลอัตโนมัติ</value>
+    <value>นำเนื้อหาระยะไกลไปใช้อัตโนมัติ</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>ข้อความจากโทรศัพท์ถูกเขียนลงคลิปบอร์ดของพีซีนี้อัตโนมัติ ถ้าปิด จะอยู่แค่ในประวัติและต้องคัดลอกเอง</value>
+    <value>ข้อความจากโทรศัพท์ถูกเขียนลงคลิปบอร์ดของพีซีนี้โดยอัตโนมัติ เมื่อปิด จะอยู่ในประวัติเท่านั้น ต้องคัดลอกเอง</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
-    <value>ซิงค์รูปในคลิปบอร์ด</value>
+    <value>ซิงค์รูปภาพคลิปบอร์ด</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>ปิดเป็นค่าเริ่มต้น รองรับเฉพาะ PNG/JPEG ไบต์ดิบอาจมี EXIF และเมทาดาทาอื่น และทั้งสองฝั่งต้องใช้เซสชัน v2</value>
+    <value>ปิดโดยค่าเริ่มต้น เฉพาะ PNG/JPEG ไบต์ดิบอาจมี EXIF และเมทาดาทาอื่น และทั้งสองฝั่งต้องเป็นเซสชัน v2</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
-    <value>ใช้รูปจากระยะไกลอัตโนมัติ</value>
+    <value>นำรูปภาพระยะไกลไปใช้อัตโนมัติ</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>รูปจากโทรศัพท์ถูกเขียนลงคลิปบอร์ดของพีซีนี้อัตโนมัติ ถ้าปิด จะอยู่แค่ในประวัติและต้องคัดลอกเอง</value>
+    <value>รูปภาพจากโทรศัพท์ถูกเขียนลงคลิปบอร์ดของพีซีนี้โดยอัตโนมัติ เมื่อปิด จะอยู่ในประวัติเท่านั้น ต้องคัดลอกเอง</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
-    <value>ช่องสำรองบลูทูธ · ที่อยู่เฝ้าฟังเพิ่มเติม · ลายนิ้วมือใบรับรอง</value>
+    <value>บลูทูธสำรอง · ที่อยู่เฝ้าฟังเพิ่มเติม · ลายนิ้วมือใบรับรอง</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>ย้ายไปที่ «เส้นทาง · ส่วนเครือข่าย» แล้ว — สิ่งเหล่านี้ชี้ขาดว่าเนื้อหาจะถึงอีกฝั่งได้ไหม จึงอยู่ร่วมกับการจับคู่และการจัดการอุปกรณ์</value>
+    <value>ย้ายไปที่ “เส้นทาง · ช่วงเครือข่าย” แล้ว — พวกมันชี้ขาดว่าเนื้อหาไปถึงอีกฝั่งได้หรือไม่ จึงอยู่กับการจับคู่และการจัดการอุปกรณ์</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>ไปที่เส้นทาง</value>
   </data>
   <data name="Prefs_Retention_Days_Title" xml:space="preserve">
-    <value>ระยะเวลาเก็บ</value>
+    <value>ระยะเวลาเก็บรักษา</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>รายการที่เกินกำหนดถูกลบอัตโนมัติ การล้างเกิดเฉพาะบนพีซีนี้และไม่ลบสิ่งที่อีกฝั่งได้รับไปแล้ว</value>
+    <value>รายการที่เกินกำหนดถูกลบอัตโนมัติ การล้างเกิดบนพีซีนี้เท่านั้น ไม่ลบสิ่งที่อีกฝั่งได้รับแล้วจากระยะไกล</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>วัน</value>
   </data>
   <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
-    <value>จำนวนที่เก็บ</value>
+    <value>จำนวนรายการที่เก็บ</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>เมื่อเกินเพดาน รายการเก่าสุดถูกลบก่อน (100–2000 ทีละ 100) การล้างเกิดเฉพาะบนพีซีนี้</value>
+    <value>เมื่อเกินเพดาน รายการเก่าสุดถูกลบก่อน (100–2000 ขั้นละ 100) การล้างเกิดบนพีซีนี้เท่านั้น</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>รายการ</value>
   </data>
   <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
-    <value>เริ่มพร้อมเครื่อง · เงียบ ๆ ลงเทรย์</value>
+    <value>เริ่มพร้อมเครื่อง · เข้าเทรย์เงียบ ๆ</value>
   </data>
   <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
-    <value>เริ่มอัตโนมัติเมื่อลงชื่อเข้า Windows และลงเทรย์ทันทีโดยไม่เปิดหน้าต่างหลัก เขียนเฉพาะรายการเริ่มต้นของผู้ใช้ปัจจุบัน ไม่ต้องใช้สิทธิ์ผู้ดูแล</value>
+    <value>เริ่มอัตโนมัติเมื่อลงชื่อเข้า Windows และลงเทรย์ทันทีโดยไม่เปิดหน้าต่างหลัก เขียนเฉพาะรายการเริ่มทำงานของผู้ใช้ปัจจุบัน ไม่ต้องใช้สิทธิ์ผู้ดูแลระบบ</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
     <value>คีย์ลัดเรียกหน้าต่างลอย</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>กดคีย์ผสมในแอปไหนก็ได้เพื่อเรียกหน้าต่างลอยที่เทรย์ คลิกช่องแล้วกดคีย์ผสมที่ต้องการ (ต้องมี Ctrl, Alt หรือ Win) กด Backspace เพื่อล้าง ปิดเป็นค่าเริ่มต้น</value>
+    <value>กดคีย์ผสมในแอปใดก็ได้เพื่อเรียกหน้าต่างลอยที่เทรย์ คลิกช่องแล้วกดคีย์ผสมที่ต้องการ (ต้องมี Ctrl, Alt หรือ Win) กด Backspace เพื่อล้าง ปิดโดยค่าเริ่มต้น</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>เขียนประวัติทั้งหมด (รวมเครื่องหมายการลบ) เป็นไฟล์สำรอง JSON Lines ไม่มีกุญแจ ใบรับรอง หรือข้อมูลจับคู่ ไฟล์ส่งออกเป็นข้อความล้วน — เก็บให้ปลอดภัย</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>รวมประวัติจากไฟล์สำรอง: idempotent ตาม «อุปกรณ์ต้นทาง + ลำดับ» นำเข้าซ้ำจึงไม่ทำให้รายการซ้ำ และไม่ทับการลบในเครื่อง ถ้าตรวจสอบไม่ผ่านจะไม่เปลี่ยนอะไรเลย</value>
+    <value>รวมประวัติจากไฟล์สำรอง: ไม่ซ้ำซ้อนตาม “อุปกรณ์ต้นทาง + ลำดับ” การนำเข้าซ้ำไม่สร้างรายการซ้ำและไม่ทับการลบในเครื่อง หากตรวจสอบไม่ผ่านจะไม่เปลี่ยนอะไรเลย</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>ลบทุกรายการบนพีซีนี้ (รวมรูป) ในขั้นตอนเดียว ต้องยืนยันสองครั้งและย้อนกลับไม่ได้ การล้างเกิดเฉพาะบนพีซีนี้และไม่ลบสิ่งที่อีกฝั่งได้รับไปแล้ว — แนะนำให้ส่งออกก่อน</value>
+    <value>ลบทุกรายการบนพีซีนี้ (รวมรูปภาพ) ในครั้งเดียว ต้องยืนยันสองขั้นและกู้คืนไม่ได้ การล้างเกิดบนพีซีนี้เท่านั้น ไม่ลบสิ่งที่อีกฝั่งได้รับแล้ว — ควรส่งออกประวัติก่อน</value>
   </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · รายการล่าสุด</value>
@@ -454,7 +454,7 @@
     <value>ซิงค์ต่อ</value>
   </data>
   <data name="Flyout_Empty" xml:space="preserve">
-    <value>ยังไม่มีรายการ · ลองคัดลอกข้อความสักชิ้น</value>
+    <value>ยังไม่มีรายการ · ลองคัดลอกข้อความดู</value>
   </data>
   <data name="Flyout_PauseOrResume" xml:space="preserve">
     <value>หยุดหรือซิงค์ต่อ</value>
@@ -481,7 +481,7 @@
     <value>ต้องการการดำเนินการจากคุณ</value>
   </data>
   <data name="Tray_Tooltip_Paused" xml:space="preserve">
-    <value>ClipSync · หยุดเก็บชั่วคราว</value>
+    <value>ClipSync · หยุดจับข้อมูลชั่วคราว</value>
   </data>
   <data name="Tray_Tooltip_Private" xml:space="preserve">
     <value>ClipSync · โหมดส่วนตัว ไม่ทิ้งร่องรอย</value>
@@ -493,84 +493,84 @@
     <value>รายการใหม่ {1} รายการจาก {0}</value>
   </data>
   <data name="Tray_OversizeNotice" xml:space="preserve">
-    <value>ข้อความที่เพิ่งคัดลอกเกิน 1 MiB จะอยู่แค่ในคลิปบอร์ดของพีซีนี้ ไม่ซิงค์ (ไม่ถูกตัดทอน)</value>
+    <value>ข้อความที่เพิ่งคัดลอกเกิน 1 MiB จะอยู่ในคลิปบอร์ดของพีซีนี้เท่านั้น ไม่ซิงค์ (ไม่ถูกตัดทอน)</value>
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
-    <value>พบการยืนยันตัวตนล้มเหลวซ้ำ ๆ จาก «{0}» จึงจำกัดอุปกรณ์นั้นชั่วคราว</value>
+    <value>พบ “{0}” ยืนยันตัวตนล้มเหลวซ้ำ ๆ อุปกรณ์ถูกจำกัดชั่วคราว</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
-    <value>กำลังเฝ้าฟัง · การซิงค์ยังไม่ทำงาน</value>
+    <value>กำลังเฝ้าฟัง · การซิงค์ยังไม่เริ่ม</value>
   </data>
   <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
     <value>กำลังเฝ้าฟัง · เชื่อมต่อแล้ว {0} เครื่อง</value>
   </data>
   <data name="Tray_Status_Waiting" xml:space="preserve">
-    <value>กำลังเฝ้าฟัง · รออุปกรณ์เชื่อมเข้ามา</value>
+    <value>กำลังเฝ้าฟัง · รออุปกรณ์เชื่อมต่อ</value>
   </data>
   <data name="Capture_OversizeNotice" xml:space="preserve">
-    <value>ข้อความที่เพิ่งคัดลอกเกิน 1 MiB: ยังอยู่ในคลิปบอร์ดระบบโดยไม่ถูกตัด แต่ไม่บันทึกลงประวัติและไม่ซิงค์</value>
+    <value>ข้อความที่เพิ่งคัดลอกเกิน 1 MiB: ยังอยู่ในคลิปบอร์ดระบบโดยไม่ถูกตัดทอน แต่ไม่บันทึกลงประวัติและไม่ซิงค์</value>
   </data>
   <data name="Sync_NotStarted" xml:space="preserve">
-    <value>บริการฝั่งโน้นยังไม่เริ่ม</value>
+    <value>บริการฝั่งตรงข้ามยังไม่เริ่ม</value>
   </data>
   <data name="Sync_StartFailed" xml:space="preserve">
-    <value>บริการฝั่งโน้นเริ่มไม่สำเร็จ รอบนี้การซิงค์ปิด</value>
+    <value>บริการฝั่งตรงข้ามเริ่มไม่สำเร็จ เซสชันนี้ปิดการซิงค์</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>LAN เฝ้าฟังที่พอร์ต {0} · เชื่อมต่อแล้ว {1} เครื่อง เนื้อหาไหลถึงกันทันที</value>
+    <value>LAN เฝ้าฟังพอร์ต {0} · เชื่อมต่อแล้ว {1} เครื่อง เนื้อหาไหลถึงกันแบบเรียลไทม์</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
-    <value>LAN เฝ้าฟังที่พอร์ต {0} · รออุปกรณ์ที่จับคู่เชื่อมเข้ามา เหตุการณ์ลงฐานข้อมูลก่อนเข้าคิวส่ง หลุดสายก็ไม่หาย</value>
+    <value>LAN เฝ้าฟังพอร์ต {0} · รออุปกรณ์ที่จับคู่ เหตุการณ์ลงคลังก่อนแล้วจึงเข้าคิวส่ง ขาดการเชื่อมต่อก็ไม่หาย</value>
   </data>
   <data name="Bt_Disabled" xml:space="preserve">
-    <value>ยังไม่เปิดช่องสำรองบลูทูธ</value>
+    <value>ยังไม่เปิดบลูทูธสำรอง</value>
   </data>
   <data name="Bt_UnavailableFormat" xml:space="preserve">
-    <value>ช่องสำรองบลูทูธใช้ไม่ได้: {0}</value>
+    <value>บลูทูธสำรองใช้ไม่ได้: {0}</value>
   </data>
   <data name="Bt_SyncingFormat" xml:space="preserve">
-    <value>ช่องสำรองบลูทูธ · กำลังซิงค์กับ {0} (เฉพาะข้อความ)</value>
+    <value>บลูทูธสำรอง · กำลังซิงค์กับ {0} (ข้อความเท่านั้น)</value>
   </data>
   <data name="Bt_Armed" xml:space="preserve">
-    <value>ช่องสำรองบลูทูธพร้อมสแตนด์บาย · เมื่อ LAN เข้าไม่ถึง โทรศัพท์จะสลับไปบลูทูธอัตโนมัติ</value>
+    <value>บลูทูธสำรองพร้อมทำงาน · เมื่อ LAN เข้าถึงไม่ได้ โทรศัพท์จะสลับไปบลูทูธเอง</value>
   </data>
   <data name="Bt_Starting" xml:space="preserve">
-    <value>ช่องสำรองบลูทูธกำลังเริ่ม…</value>
+    <value>บลูทูธสำรองกำลังเริ่ม…</value>
   </data>
   <data name="Bt_AdapterUnavailable" xml:space="preserve">
-    <value>อะแดปเตอร์บลูทูธใช้ไม่ได้หรือถูกปิด</value>
+    <value>อะแดปเตอร์บลูทูธใช้ไม่ได้หรือปิดอยู่</value>
   </data>
   <data name="Ack_None" xml:space="preserve">
-    <value>ยังไม่ได้รับการยืนยันจากฝั่งโน้น</value>
+    <value>ยังไม่ได้รับการยืนยันจากฝั่งตรงข้าม</value>
   </data>
   <data name="Ack_UpToFormat" xml:space="preserve">
-    <value>ฝั่งโน้นยืนยันถึง {0}</value>
+    <value>ฝั่งตรงข้ามยืนยันถึง {0}</value>
   </data>
   <data name="Transfer_ClearedFormat" xml:space="preserve">
-    <value>ล้างประวัติแล้ว {0} รายการ (รวมรูป) การล้างเกิดเฉพาะบนพีซีนี้</value>
+    <value>ล้างประวัติแล้ว {0} รายการ (รวมรูปภาพ) การล้างเกิดบนพีซีนี้เท่านั้น</value>
   </data>
   <data name="Transfer_ClearConfirmBody" xml:space="preserve">
     <value>ล้างประวัติทั้งหมด?
 
-จะลบทุกรายการบนพีซีนี้ (รวมรูป) ในขั้นตอนเดียว การล้างเกิดเฉพาะบนพีซีนี้และไม่ลบสิ่งที่อีกฝั่งได้รับไปแล้ว แนะนำให้ใช้ «ส่งออกประวัติ» ก่อน</value>
+จะลบทุกรายการบนพีซีนี้ (รวมรูปภาพ) ในครั้งเดียว การล้างเกิดบนพีซีนี้เท่านั้น ไม่ลบสิ่งที่อีกฝั่งได้รับแล้วจากระยะไกล ควร “ส่งออกประวัติ” ก่อน</value>
   </data>
   <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
-    <value>ยืนยันอีกครั้ง: ล้างแล้วย้อนกลับไม่ได้ ล้างประวัติทั้งหมดหรือไม่?</value>
+    <value>ยืนยันอีกครั้ง: ล้างแล้วกู้คืนไม่ได้ แน่ใจว่าจะล้างประวัติทั้งหมด?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
     <value>ส่งออกแล้ว {0} ระเบียน (ข้อความล้วน) → {1}</value>
   </data>
   <data name="Transfer_ExportWriteFailed" xml:space="preserve">
-    <value>ส่งออกไม่สำเร็จ: เขียนไฟล์ที่เลือกไม่ได้</value>
+    <value>ส่งออกล้มเหลว: เขียนไฟล์ที่เลือกไม่ได้</value>
   </data>
   <data name="Transfer_ImportedFormat" xml:space="preserve">
-    <value>นำเข้าเสร็จ: เพิ่ม {0} · มีอยู่แล้ว {1} · ขัดแย้ง {2}</value>
+    <value>นำเข้าเสร็จ: เพิ่มใหม่ {0} · มีอยู่แล้ว {1} · ขัดแย้ง {2}</value>
   </data>
   <data name="Transfer_ImportFailedFormat" xml:space="preserve">
-    <value>นำเข้าไม่สำเร็จ: {0} ไม่มีอะไรถูกเปลี่ยน</value>
+    <value>นำเข้าล้มเหลว: {0} ไม่มีการเปลี่ยนแปลงใด ๆ</value>
   </data>
   <data name="Transfer_ImportReadFailed" xml:space="preserve">
-    <value>นำเข้าไม่สำเร็จ: อ่านไฟล์ที่เลือกไม่ได้</value>
+    <value>นำเข้าล้มเหลว: อ่านไฟล์ที่เลือกไม่ได้</value>
   </data>
   <data name="Transfer_FileFilter" xml:space="preserve">
     <value>ไฟล์ส่งออกประวัติ ClipSync (*.jsonl)|*.jsonl|ทุกไฟล์ (*.*)|*.*</value>
@@ -582,61 +582,61 @@
     <value>เวอร์ชันไฟล์ใหม่กว่าที่แอปนี้รองรับ</value>
   </data>
   <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
-    <value>ไฟล์เสียหาย (รูปแบบระเบียนผิด)</value>
+    <value>ไฟล์เสียหาย (ระเบียนผิดรูปแบบ)</value>
   </data>
   <data name="Transfer_Error_HashMismatch" xml:space="preserve">
-    <value>ไฟล์เสียหาย (ตรวจแฮชไม่ผ่าน)</value>
+    <value>ไฟล์เสียหาย (ตรวจสอบแฮชไม่ผ่าน)</value>
   </data>
   <data name="Transfer_Error_CountMismatch" xml:space="preserve">
     <value>ไฟล์ไม่สมบูรณ์ (จำนวนไม่ตรงกับส่วนหัว)</value>
   </data>
   <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
-    <value>ไฟล์มีรายการที่เกินเพดานขนาด (ข้อความ 1 MiB / รูป 16 MiB)</value>
+    <value>ไฟล์มีรายการเกินเพดานขนาด (ข้อความ 1 MiB / รูปภาพ 16 MiB)</value>
   </data>
   <data name="Transfer_Error_Unknown" xml:space="preserve">
     <value>ข้อผิดพลาดไม่ทราบสาเหตุ</value>
   </data>
   <data name="Hotkey_Applied" xml:space="preserve">
-    <value>ใช้งานอยู่ · กดในแอปไหนก็ได้เพื่อเรียกหน้าต่างลอย</value>
+    <value>มีผลแล้ว · กดในแอปใดก็ได้เพื่อเรียกหน้าต่างลอย</value>
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
-    <value>คีย์ผสมนี้ถูกโปรแกรมอื่นใช้แล้ว ลองชุดอื่น</value>
+    <value>คีย์ผสมนี้ถูกโปรแกรมอื่นใช้แล้ว ลองคีย์ผสมอื่น</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
-    <value>รอบนี้การซิงค์ไม่ทำงาน (ปลายทางเริ่มไม่สำเร็จ)</value>
+    <value>เซสชันนี้การซิงค์ไม่ได้เริ่ม (จุดปลายทางเริ่มไม่สำเร็จ)</value>
   </data>
   <data name="Attention_CaptureFaulted" xml:space="preserve">
-    <value>การเก็บคลิปบอร์ดถดถอย (การเข้าถึงครั้งล่าสุดล้มเหลว)</value>
+    <value>การจับคลิปบอร์ดถดถอย (การเข้าถึงครั้งล่าสุดล้มเหลว)</value>
   </data>
   <data name="Attention_NoDevice" xml:space="preserve">
-    <value>จับคู่อุปกรณ์สักเครื่องเพื่อเริ่มซิงค์</value>
+    <value>จับคู่อุปกรณ์หนึ่งเครื่องเพื่อเริ่มซิงค์</value>
   </data>
   <data name="Pairing_Title" xml:space="preserve">
     <value>จับคู่อุปกรณ์ใหม่</value>
   </data>
   <data name="Pairing_PeerDownBody" xml:space="preserve">
-    <value>บริการฝั่งโน้นยังไม่ทำงาน รอบนี้จับคู่ไม่ได้</value>
+    <value>บริการฝั่งตรงข้ามยังไม่ทำงาน เซสชันนี้จับคู่ไม่ได้</value>
   </data>
   <data name="Pairing_ScanInstruction" xml:space="preserve">
-    <value>สแกนรหัสนี้ด้วย ClipSync บนโทรศัพท์ของคุณ คิวอาร์โค้ดมีที่อยู่พีซีนี้ ลายนิ้วมือใบรับรอง และโทเคนใช้ครั้งเดียว — ไม่มีกุญแจจับคู่เด็ดขาด</value>
+    <value>ใช้ ClipSync บนโทรศัพท์สแกนโค้ดนี้ QR โค้ดมีที่อยู่ของพีซีนี้ ลายนิ้วมือใบรับรอง และโทเคนใช้ครั้งเดียว — ไม่มีกุญแจจับคู่เด็ดขาด</value>
   </data>
   <data name="Pairing_CountdownFormat" xml:space="preserve">
     <value>เปลี่ยนใหม่ใน {0:m\:ss}</value>
   </data>
   <data name="Pairing_NoLanAddress" xml:space="preserve">
-    <value>ไม่พบที่อยู่ LAN ให้พีซีนี้กับโทรศัพท์อยู่เครือข่ายเดียวกัน (หรือเพิ่มที่อยู่ Tailscale ในการตั้งค่า) แล้วเปิดหน้าต่างนี้อีกครั้ง</value>
+    <value>ไม่พบที่อยู่ LAN ให้พีซีนี้และโทรศัพท์อยู่เครือข่ายเดียวกัน (หรือเพิ่มที่อยู่ Tailscale ในการตั้งค่า) แล้วเปิดหน้าต่างนี้ใหม่</value>
   </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>ตรวจบนโทรศัพท์ก่อนอนุมัติ</value>
   </data>
   <data name="Pairing_PcName" xml:space="preserve">
-    <value>ชื่อพีซี</value>
+    <value>ชื่อคอมพิวเตอร์</value>
   </data>
   <data name="Pairing_Fingerprint" xml:space="preserve">
     <value>ลายนิ้วมือใบรับรอง</value>
   </data>
   <data name="Pairing_NewCode" xml:space="preserve">
-    <value>ขอรหัสใหม่</value>
+    <value>ขอโค้ดใหม่</value>
   </data>
   <data name="Approval_Title" xml:space="preserve">
     <value>คำขอจับคู่</value>
@@ -648,7 +648,7 @@
     <value>อนุญาตให้อุปกรณ์นี้จับคู่หรือไม่?</value>
   </data>
   <data name="Approval_Body" xml:space="preserve">
-    <value>มีอุปกรณ์ใช้คิวอาร์โค้ดของพีซีนี้ขอจับคู่ อนุมัติเมื่อชื่อด้านล่างตรงกับโทรศัพท์ในมือคุณเท่านั้น</value>
+    <value>มีอุปกรณ์ใช้ QR โค้ดของพีซีนี้ขอจับคู่ อนุมัติเฉพาะเมื่อชื่อด้านล่างตรงกับโทรศัพท์ในมือคุณ</value>
   </data>
   <data name="Approval_PlatformAndroid" xml:space="preserve">
     <value>อุปกรณ์ Android</value>
@@ -657,10 +657,10 @@
     <value>อุปกรณ์ Windows</value>
   </data>
   <data name="Approval_RepairWarning" xml:space="preserve">
-    <value>อุปกรณ์นี้เคยจับคู่แล้ว การอนุมัติจะแทนที่กุญแจจับคู่เดิม และการติดตั้งเก่าจะใช้ไม่ได้ทันที</value>
+    <value>อุปกรณ์นี้เคยจับคู่มาก่อน การอนุมัติจะแทนที่กุญแจจับคู่เดิม และการติดตั้งเก่าจะหยุดทำงานทันที</value>
   </data>
   <data name="Approval_SupersedeNotice" xml:space="preserve">
-    <value>ในรายการมีอุปกรณ์ชื่อเดียวกันอยู่แล้ว หลังอนุมัติ ระเบียนเก่าจะถูกเพิกถอนอัตโนมัติและคิวส่งของมันถูกล้าง (ถือเป็นโทรศัพท์เครื่องเดิมจับคู่ใหม่)</value>
+    <value>ในรายการมีอุปกรณ์ชื่อเดียวกันอยู่แล้ว หลังอนุมัติ ระเบียนเก่าจะถูกเพิกถอนอัตโนมัติและคิวส่งของมันถูกล้าง (ถือว่าโทรศัพท์เครื่องเดิมจับคู่ใหม่)</value>
   </data>
   <data name="Approval_Reject" xml:space="preserve">
     <value>ปฏิเสธ</value>
@@ -672,7 +672,7 @@
     <value>รายละเอียดรายการ</value>
   </data>
   <data name="Detail_SourceFormat" xml:space="preserve">
-    <value>ที่มา: {0}</value>
+    <value>แหล่งที่มา: {0}</value>
   </data>
   <data name="Detail_TimeFormat" xml:space="preserve">
     <value>เวลา: {0}</value>
@@ -681,7 +681,7 @@
     <value>ClipSync · บันทึกวินิจฉัย</value>
   </data>
   <data name="Diag_Heading" xml:space="preserve">
-    <value>วินิจฉัยในเครื่อง · เฉพาะรหัสสถานะกับเวลา ไม่มีเนื้อหาคลิปบอร์ดเด็ดขาด</value>
+    <value>การวินิจฉัยในเครื่อง · เฉพาะรหัสสถานะและเวลา ไม่มีเนื้อหาคลิปบอร์ดเด็ดขาด</value>
   </data>
   <data name="Diag_CopyAll" xml:space="preserve">
     <value>คัดลอกทั้งหมด</value>
