@@ -33,6 +33,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
@@ -57,7 +58,7 @@ class Bt1SpikeActivity : ComponentActivity() {
     private val bondedDevices = mutableStateListOf<BluetoothDevice>()
     private val selectedAddress = mutableStateOf<String?>(null)
     private val useBt1 = mutableStateOf(true)
-    private val transferKiB = mutableStateOf(256)
+    private val transferKiB = mutableIntStateOf(256)
     private val secretHex = mutableStateOf(Bt1SpikeDefaults.DEFAULT_SECRET_HEX)
     private val busy = mutableStateOf(false)
     private val connected = mutableStateOf(false)
@@ -135,8 +136,8 @@ class Bt1SpikeActivity : ComponentActivity() {
                     Text("吞吐量:", style = MaterialTheme.typography.bodyMedium)
                     listOf(64, 256, 1024).forEach { kib ->
                         FilterChip(
-                            selected = transferKiB.value == kib,
-                            onClick = { transferKiB.value = kib },
+                            selected = transferKiB.intValue == kib,
+                            onClick = { transferKiB.intValue = kib },
                             enabled = !busy.value && !connected.value,
                             label = { Text(if (kib >= 1024) "${kib / 1024} MiB" else "$kib KiB") },
                         )
@@ -239,7 +240,7 @@ class Bt1SpikeActivity : ComponentActivity() {
             appendLog("SPIKE_RESULT:error=secret_hex_invalid")
             return
         }
-        val config = Bt1SpikeConfig(useBt1.value, secret, transferKiB.value * 1024)
+        val config = Bt1SpikeConfig(useBt1.value, secret, transferKiB.intValue * 1024)
         busy.value = true
         lifecycleScope.launch(Dispatchers.IO) {
             try {
