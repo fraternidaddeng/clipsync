@@ -1228,7 +1228,21 @@
                                             Padding="0,7,0,0"
                                             BorderBrush="{DynamicResource CsLineBrush}"
                                             BorderThickness="0,1,0,0">
-                                        <TextBlock Style="{StaticResource SegDetail}" Text="{Binding SyncStatus}" />
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource SegDetail}" Text="{Binding SyncStatus}" />
+                                            <!-- 蓝牙备援一行：正在承载会话时用通行色，其余状态保持 detail 灰 -->
+                                            <TextBlock Margin="0,4,0,0" Text="{Binding BluetoothStatus}">
+                                                <TextBlock.Style>
+                                                    <Style BasedOn="{StaticResource SegDetail}" TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding BluetoothSessionActive}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
                                     </Border>
                                 </StackPanel>
                             </ContentControl>
@@ -1615,6 +1629,25 @@
                                                       VerticalAlignment="Top"
                                                       Click="OnSettingToggled"
                                                       IsChecked="{Binding AutoApplyImages}"
+                                                      Style="{StaticResource CharterToggle}" />
+                                    </Grid>
+                                </Border>
+                                <Border Padding="16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowName}" Text="蓝牙备援" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="默认关闭。LAN 被 VPN 或防火墙阻断时，已在系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。" />
+                                        </StackPanel>
+                                        <ToggleButton Grid.Column="1"
+                                                      VerticalAlignment="Top"
+                                                      Click="OnSettingToggled"
+                                                      IsChecked="{Binding BluetoothFallbackEnabled}"
                                                       Style="{StaticResource CharterToggle}" />
                                     </Grid>
                                 </Border>

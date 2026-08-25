@@ -9,6 +9,7 @@ using ClipSync.App.ViewModels;
 using ClipSync.Core.Clipboard;
 using ClipSync.Core.Security;
 using ClipSync.Core.Storage;
+using ClipSync.Peer.Bluetooth;
 using ClipSync.Peer.Pairing;
 using ClipSync.Peer.Sessions;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +35,8 @@ public partial class App : Application
     private MainViewModel? mainViewModel;
     private Win32ClipboardAdapter? clipboardAdapter;
     private PeerSyncHost? syncHost;
+    private BluetoothSyncHost? bluetoothHost;
+    private readonly SemaphoreSlim bluetoothGate = new(1, 1);
     private PairingService? pairingService;
     private PairingQrWindow? pairingWindow;
     private System.Windows.Threading.DispatcherTimer? liveRefreshTimer;
@@ -97,6 +100,7 @@ public partial class App : Application
         LocalDiagnostics.Write("listener_started");
 
         await StartPeerEndpointAsync(dataDirectory, deviceId, store, viewModel);
+        await SyncBluetoothHostAsync();
         UpdateTrayState();
 
         liveRefreshTimer = new System.Windows.Threading.DispatcherTimer { Interval = LiveRefreshInterval };
@@ -138,6 +142,11 @@ public partial class App : Application
             or nameof(MainViewModel.CaptureFaulted))
         {
             UpdateTrayState();
+        }
+
+        if (e.PropertyName is nameof(MainViewModel.BluetoothFallbackEnabled))
+        {
+            _ = SyncBluetoothHostAsync();
         }
     }
 
@@ -208,6 +217,110 @@ public partial class App : Application
             viewModel.UpdatePeerStatus(false, 0, 0);
             peerEndpointUnavailable = true;
         }
+    }
+
+    /// <summary>
+    /// Reconciles the Bluetooth fallback host with the 蓝牙备援 toggle (ADR 0005): starts
+    /// the RFCOMM listener when the setting turned on, tears it down when it turned off.
+    /// A start failure (adapter missing, radio off) surfaces on the conduit page instead
+    /// of pretending the fallback is armed; flipping the toggle retries.
+    /// </summary>
+    private async Task SyncBluetoothHostAsync()
+    {
+        if (mainViewModel is null || services is null)
+        {
+            return;
+        }
+
+        await bluetoothGate.WaitAsync();
+        try
+        {
+            var enabled = mainViewModel.BluetoothFallbackEnabled;
+            if (!enabled)
+            {
+                if (bluetoothHost is not null)
+                {
+                    var stopping = bluetoothHost;
+                    bluetoothHost = null;
+                    DetachBluetoothHost(stopping);
+                    await stopping.DisposeAsync();
+                    LocalDiagnostics.Write("bluetooth_fallback_stopped");
+                }
+
+                mainViewModel.UpdateBluetoothStatus(false, false, null, null);
+                return;
+            }
+
+            if (bluetoothHost is not null)
+            {
+                UpdateBluetoothStatusFromHost();
+                return;
+            }
+
+            var store = services.GetRequiredService<SqliteClipboardEventStore>();
+            var protector = services.GetRequiredService<ISecretProtector>();
+            var viewModel = mainViewModel;
+            var host = new BluetoothSyncHost(
+                store,
+                protector,
+                new RfcommServer(),
+                new BluetoothSyncHostOptions
+                {
+                    SessionOptions = new SyncSessionOptions
+                    {
+                        ClientVersion = typeof(App).Assembly.GetName().Version?.ToString(3) ?? "0.2.0",
+                        Platform = "windows",
+                        // The same pause/private gate as the IP path: outbound content
+                        // stops immediately on either transport.
+                        OutboundAllowed = () => !viewModel.IsPaused && !viewModel.IsPrivateMode
+                    }
+                });
+            host.RemoteClipsCommitted += OnRemoteClipsCommitted;
+            host.SessionsChanged += OnBluetoothSessionsChanged;
+            host.DeviceLockedOut += OnDeviceLockedOut;
+            try
+            {
+                await host.StartAsync();
+                bluetoothHost = host;
+                mainViewModel.UpdateBluetoothStatus(true, true, null, null);
+                LocalDiagnostics.Write("bluetooth_fallback_started");
+            }
+            catch (Exception exception)
+            {
+                DetachBluetoothHost(host);
+                await host.DisposeAsync();
+                mainViewModel.UpdateBluetoothStatus(true, false, null, "蓝牙适配器不可用或已关闭");
+                LocalDiagnostics.Write($"bluetooth_start_failed_{exception.GetType().Name}");
+            }
+        }
+        finally
+        {
+            bluetoothGate.Release();
+        }
+    }
+
+    private void DetachBluetoothHost(BluetoothSyncHost host)
+    {
+        host.RemoteClipsCommitted -= OnRemoteClipsCommitted;
+        host.SessionsChanged -= OnBluetoothSessionsChanged;
+        host.DeviceLockedOut -= OnDeviceLockedOut;
+    }
+
+    /// <summary>The Bluetooth session authenticated or ended (worker thread); refresh the conduit row.</summary>
+    private void OnBluetoothSessionsChanged() => _ = Dispatcher.InvokeAsync(UpdateBluetoothStatusFromHost);
+
+    private void UpdateBluetoothStatusFromHost()
+    {
+        if (mainViewModel is null || bluetoothHost is not { } host)
+        {
+            return;
+        }
+
+        var deviceId = host.ConnectedDeviceId;
+        var deviceName = deviceId is null
+            ? null
+            : mainViewModel.Devices.FirstOrDefault(device => device.DeviceId == deviceId)?.DisplayName ?? "已配对设备";
+        mainViewModel.UpdateBluetoothStatus(true, host.IsListening, deviceName, null);
     }
 
     /// <summary>
@@ -392,6 +505,12 @@ public partial class App : Application
         {
             pairingService.PairingCompleted -= OnPairingCompleted;
             pairingService.CancelTicket();
+        }
+        if (bluetoothHost is not null)
+        {
+            DetachBluetoothHost(bluetoothHost);
+            bluetoothHost.DisposeAsync().AsTask().GetAwaiter().GetResult();
+            bluetoothHost = null;
         }
         if (syncHost is not null)
         {

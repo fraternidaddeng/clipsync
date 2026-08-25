@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <!-- The versioned Windows TFM brings the CsWinRT projections that
+         ClipSync.Peer.Bluetooth's RfcommServiceProvider listener needs; WPF is unaffected.
+         10.0.19041 (Windows 10 2004) is the floor the Bluetooth WinRT surface requires. -->
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <RootNamespace>ClipSync.App</RootNamespace>
     <AssemblyName>ClipSync.App</AssemblyName>
@@ -11,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ClipSync.Core\ClipSync.Core.csproj" />
     <ProjectReference Include="..\ClipSync.Peer\ClipSync.Peer.csproj" />
+    <ProjectReference Include="..\ClipSync.Peer.Bluetooth\ClipSync.Peer.Bluetooth.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Icons\*.ico" />

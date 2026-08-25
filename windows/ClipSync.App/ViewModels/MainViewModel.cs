@@ -93,6 +93,21 @@ public partial class MainViewModel(
     [ObservableProperty]
     private string extraBindAddresses = string.Empty;
 
+    /// <summary>
+    /// Opt-in (default off): keep an RFCOMM listener up so the paired phone can fall back
+    /// to Bluetooth when the LAN path is unreachable (ADR 0005). Text only, protocol v1.
+    /// </summary>
+    [ObservableProperty]
+    private bool bluetoothFallbackEnabled;
+
+    /// <summary>One line for the conduit network segment describing the Bluetooth fallback listener.</summary>
+    [ObservableProperty]
+    private string bluetoothStatus = "蓝牙备援未启用";
+
+    /// <summary>True while a peer is syncing over the Bluetooth fallback right now.</summary>
+    [ObservableProperty]
+    private bool bluetoothSessionActive;
+
     [ObservableProperty]
     private string syncStatus = "对端服务尚未启动";
 
@@ -182,6 +197,7 @@ public partial class MainViewModel(
         ImageSyncEnabled = bool.TryParse(await store.GetSettingAsync("image_sync"), out var imageSync) && imageSync;
         AutoApplyImages = bool.TryParse(await store.GetSettingAsync("auto_apply_images"), out var autoApplyImage) && autoApplyImage;
         ExtraBindAddresses = await store.GetSettingAsync("extra_bind_addresses") ?? string.Empty;
+        BluetoothFallbackEnabled = bool.TryParse(await store.GetSettingAsync("bluetooth_fallback"), out var btFallback) && btFallback;
         ApplySettings();
         await store.CleanupAsync(
             new ClipboardRetentionPolicy(maximumAge: TimeSpan.FromDays(RetentionDays)),
@@ -210,6 +226,25 @@ public partial class MainViewModel(
             : connectedCount > 0
                 ? $"LAN 监听端口 {port} · 已连接 {connectedCount} 台设备，内容实时互通。"
                 : $"LAN 监听端口 {port} · 等待已配对设备连入；事件先落库再入发件队列，断线不丢。";
+    }
+
+    /// <summary>
+    /// Applies a live Bluetooth-fallback snapshot to the conduit network segment. The four
+    /// states are mutually exclusive: disabled, unavailable (adapter missing or radio off),
+    /// armed and waiting, or carrying a session for a named device right now.
+    /// </summary>
+    public void UpdateBluetoothStatus(bool enabled, bool listening, string? connectedDeviceName, string? failureReason)
+    {
+        BluetoothSessionActive = enabled && connectedDeviceName is not null;
+        BluetoothStatus = !enabled
+            ? "蓝牙备援未启用"
+            : failureReason is not null
+                ? $"蓝牙备援不可用：{failureReason}"
+                : connectedDeviceName is not null
+                    ? $"蓝牙备援 · 正与 {connectedDeviceName} 同步（仅文本）"
+                    : listening
+                        ? "蓝牙备援待命 · LAN 不可达时手机自动改走蓝牙"
+                        : "蓝牙备援启动中…";
     }
 
     /// <summary>Re-reads the outbox depth and last peer ack for the conduit local-service segment.</summary>
@@ -519,6 +554,7 @@ public partial class MainViewModel(
         await store.SetSettingAsync("image_sync", ImageSyncEnabled.ToString());
         await store.SetSettingAsync("auto_apply_images", AutoApplyImages.ToString());
         await store.SetSettingAsync("extra_bind_addresses", ExtraBindAddresses);
+        await store.SetSettingAsync("bluetooth_fallback", BluetoothFallbackEnabled.ToString());
         ApplySettings();
         await store.CleanupAsync(
             new ClipboardRetentionPolicy(maximumAge: TimeSpan.FromDays(RetentionDays)),
