@@ -43,6 +43,14 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // Tray-only contract: when a console-subsystem launcher (e.g. `dotnet
+        // ClipSync.App.dll`) hosted this process, an empty console window would otherwise
+        // sit on screen for the whole session. Detach it before anything becomes visible.
+        if (ConsoleWindowGuard.DetachInheritedConsole())
+        {
+            LocalDiagnostics.Write("console_detached");
+        }
+
         // Pick day/night tokens before any window loads, then follow Windows theme changes.
         CharterThemeManager.Initialize();
 
