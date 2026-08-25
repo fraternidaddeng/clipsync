@@ -583,36 +583,35 @@ public partial class App : Application
             try
             {
                 var viewModel = services.GetRequiredService<MainViewModel>();
-                // Paused sync still receives into history but never auto-applies, matching
-                // the Android InboxDelivery.autoApplyAllowed gate.
-                if (!viewModel.IsPaused)
+                // The paused / newest-only / text-vs-image policy is the extracted, tested
+                // RemoteApplyDecision (the Windows mirror of WindowsAndroidSyncChainTest's
+                // scenarios); this handler only executes what it decided. The suppression
+                // window keeps our own listener from re-capturing the write.
+                var decision = RemoteApplyDecision.Decide(
+                    batch,
+                    viewModel.IsPaused,
+                    viewModel.AutoApplyRemote,
+                    viewModel.AutoApplyImages);
+                if (decision is not RemoteApplyDecision.None)
                 {
-                    // Only the newest body of the batch reaches the system clipboard; the
-                    // suppression window keeps our own listener from re-capturing it.
-                    var latest = batch[^1];
                     var policy = services.GetRequiredService<ClipboardCapturePolicy>();
                     var adapter = services.GetRequiredService<Win32ClipboardAdapter>();
-                    if (latest.IsImage)
+                    if (decision is RemoteApplyDecision.ApplyImage image)
                     {
-                        // Images have their own opt-in gate; text's AutoApplyRemote never
-                        // writes pixel bytes to the clipboard on its own.
-                        if (viewModel.AutoApplyImages && latest.ContentHash is not null)
-                        {
-                            var store = services.GetRequiredService<SqliteClipboardEventStore>();
-                            var bytes = store.Media.ReadAllBytes(latest.ContentHash);
-                            policy.SuppressNextImage(latest.ContentHash, DateTimeOffset.UtcNow);
-                            adapter.WriteImage(bytes);
-                            LocalDiagnostics.Write("remote_image_applied");
-                        }
+                        var store = services.GetRequiredService<SqliteClipboardEventStore>();
+                        var bytes = store.Media.ReadAllBytes(image.Clip.ContentHash!);
+                        policy.SuppressNextImage(image.Clip.ContentHash!, DateTimeOffset.UtcNow);
+                        adapter.WriteImage(bytes);
+                        LocalDiagnostics.Write("remote_image_applied");
                     }
-                    else if (viewModel.AutoApplyRemote)
+                    else if (decision is RemoteApplyDecision.ApplyText text)
                     {
-                        policy.SuppressNextWrite(latest.Content, DateTimeOffset.UtcNow);
+                        policy.SuppressNextWrite(text.Clip.Content, DateTimeOffset.UtcNow);
                         // The health endpoint reports real evidence, never "the API exists":
                         // record exactly what this apply attempt did.
                         try
                         {
-                            adapter.WriteText(latest.Content);
+                            adapter.WriteText(text.Clip.Content);
                         }
                         catch
                         {
