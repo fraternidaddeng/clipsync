@@ -191,6 +191,38 @@ public sealed class SqliteSyncStoreTests
     }
 
     [Fact]
+    public async Task TombstoneUpgradeFaultAfterCommitKeepsTombstoneAndSurfacesOriginalFailure()
+    {
+        await using var database = new TemporaryDatabase();
+        var injector = new ThrowOnceFaultInjector(StorageFaultPoint.AfterCommit);
+        await using var store = database.CreateStore(injector);
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+
+        var stored = RemoteEvent("kept body", 1);
+        Assert.IsType<RemoteStoreResult.Stored>(await store.StoreRemoteEventAsync(stored, PhoneDeviceId));
+
+        // The tombstone upgrade commits, then post-commit blob collection fails (in
+        // production: cancellation while a session closes). The injected failure must
+        // surface unmasked — never an InvalidOperationException from rolling back the
+        // already-committed transaction — and the tombstone must stay durable.
+        await Assert.ThrowsAsync<InjectedStorageException>(
+            () => store.StoreRemoteTerminalAsync(
+                new RemoteTerminalMarker(stored.EventId, PhoneDeviceId, 1, "deleted"),
+                PhoneDeviceId,
+                BaseTime.AddSeconds(1)).AsTask());
+
+        Assert.Null(await store.GetByIdAsync(stored.EventId));
+        var tombstone = await store.GetByIdAsync(stored.EventId, includeDeleted: true);
+        Assert.NotNull(tombstone);
+        Assert.True(tombstone.IsDeleted);
+
+        Assert.IsType<RemoteStoreResult.AlreadyPersisted>(await store.StoreRemoteTerminalAsync(
+            new RemoteTerminalMarker(stored.EventId, PhoneDeviceId, 1, "deleted"),
+            PhoneDeviceId,
+            BaseTime.AddSeconds(2)));
+    }
+
+    [Fact]
     public async Task NonDeleteTerminalMarkerAdvancesCursorAndNeverReplacesStoredBody()
     {
         await using var database = new TemporaryDatabase();

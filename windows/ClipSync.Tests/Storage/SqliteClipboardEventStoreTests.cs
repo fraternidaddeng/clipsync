@@ -147,6 +147,27 @@ public sealed class SqliteClipboardEventStoreTests
     }
 
     [Fact]
+    public async Task FailureAfterCommitKeepsDeleteDurableAndSurfacesOriginalFailure()
+    {
+        await using var database = new TemporaryDatabase();
+        var injector = new ThrowOnceFaultInjector(StorageFaultPoint.AfterCommit);
+        await using var store = database.CreateStore(injector);
+
+        var stored = await store.StoreAsync(Content("must stay deleted", BaseTime));
+
+        // The delete commits, then post-commit blob collection fails. The injected
+        // failure must surface unmasked — never an InvalidOperationException from
+        // rolling back the already-committed transaction — and the delete must hold.
+        await Assert.ThrowsAsync<InjectedStorageException>(
+            () => store.DeleteAsync(stored.EventId, BaseTime.AddSeconds(1)).AsTask());
+
+        Assert.Empty(await store.SearchAsync(new ClipboardHistoryQuery()));
+        var tombstone = await store.GetByIdAsync(stored.EventId, includeDeleted: true);
+        Assert.NotNull(tombstone);
+        Assert.True(tombstone.IsDeleted);
+    }
+
+    [Fact]
     public async Task SearchIsLiteralParameterizedAndExcludesSoftDeletedRows()
     {
         await using var database = new TemporaryDatabase();

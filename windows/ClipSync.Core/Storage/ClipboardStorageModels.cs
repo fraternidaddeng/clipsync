@@ -69,7 +69,14 @@ public sealed record DatabaseState(
 public enum StorageFaultPoint
 {
     AfterSequenceAllocated,
-    BeforeCommit
+    BeforeCommit,
+
+    /// <summary>
+    /// Fires between a successful commit and post-commit maintenance (blob collection).
+    /// A failure injected here must surface unmasked and must never roll back the
+    /// already-committed transaction.
+    /// </summary>
+    AfterCommit
 }
 
 public interface IStorageFaultInjector

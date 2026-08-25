@@ -514,6 +514,8 @@ public sealed partial class SqliteClipboardEventStore
         await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
             IsolationLevel.Serializable,
             cancellationToken).ConfigureAwait(false);
+        RemoteStoreResult result;
+        var collectBlobs = false;
         try
         {
             var conflict = await CheckRemoteIdentityAsync(
@@ -524,99 +526,107 @@ public sealed partial class SqliteClipboardEventStore
                 marker.OriginSeq,
                 expectedContentHash: null,
                 cancellationToken).ConfigureAwait(false);
-            if (conflict is not null)
+            if (conflict is RemoteStoreResult.AlreadyPersisted)
             {
-                if (conflict is RemoteStoreResult.AlreadyPersisted)
+                var upgraded = false;
+                if (string.Equals(marker.Reason, ClipUnavailableReasons.Deleted, StringComparison.Ordinal))
                 {
-                    var upgraded = false;
-                    if (string.Equals(marker.Reason, ClipUnavailableReasons.Deleted, StringComparison.Ordinal))
-                    {
-                        await using var tombstone = CreateSoftDeleteCommand(connection, transaction, receivedAt);
-                        tombstone.CommandText += " AND event_id = $event_id;";
-                        tombstone.Parameters.AddWithValue("$event_id", marker.EventId.ToString("D"));
-                        upgraded = await tombstone.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) == 1;
-                        if (upgraded)
-                        {
-                            await DetachClipMediaAsync(
-                                    connection,
-                                    transaction,
-                                    marker.EventId.ToString("D"),
-                                    cancellationToken)
-                                .ConfigureAwait(false);
-                            await EnqueueOutboxFanOutAsync(
-                                    connection,
-                                    transaction,
-                                    marker.EventId,
-                                    marker.OriginDeviceId,
-                                    marker.OriginSeq,
-                                    sourcePeerId,
-                                    cancellationToken)
-                                .ConfigureAwait(false);
-                        }
-                    }
-
-                    var existingState = await AdvanceRemoteReceiveStateAsync(
-                        connection,
-                        transaction,
-                        marker.OriginDeviceId,
-                        marker.OriginSeq,
-                        cancellationToken).ConfigureAwait(false);
-                    await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                    await using var tombstone = CreateSoftDeleteCommand(connection, transaction, receivedAt);
+                    tombstone.CommandText += " AND event_id = $event_id;";
+                    tombstone.Parameters.AddWithValue("$event_id", marker.EventId.ToString("D"));
+                    upgraded = await tombstone.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) == 1;
                     if (upgraded)
                     {
-                        await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
-                        return new RemoteStoreResult.Stored(existingState);
+                        await DetachClipMediaAsync(
+                                connection,
+                                transaction,
+                                marker.EventId.ToString("D"),
+                                cancellationToken)
+                            .ConfigureAwait(false);
+                        await EnqueueOutboxFanOutAsync(
+                                connection,
+                                transaction,
+                                marker.EventId,
+                                marker.OriginDeviceId,
+                                marker.OriginSeq,
+                                sourcePeerId,
+                                cancellationToken)
+                            .ConfigureAwait(false);
                     }
-
-                    return conflict;
                 }
 
-                await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
-                return conflict;
+                var existingState = await AdvanceRemoteReceiveStateAsync(
+                    connection,
+                    transaction,
+                    marker.OriginDeviceId,
+                    marker.OriginSeq,
+                    cancellationToken).ConfigureAwait(false);
+                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                collectBlobs = upgraded;
+                result = upgraded ? new RemoteStoreResult.Stored(existingState) : conflict;
             }
-
-            await using (var insert = connection.CreateCommand())
+            else if (conflict is not null)
             {
-                insert.Transaction = transaction;
-                insert.CommandText = """
-                    INSERT INTO clips (
-                        event_id, origin_device_id, origin_seq, kind, content, content_hash,
-                        source_app, created_at, expires_at, deleted_at, terminal_reason)
-                    VALUES ($event_id, $origin, $seq, 'text', '', '', NULL, $now, NULL, $now, $reason);
-                    """;
-                insert.Parameters.AddWithValue("$event_id", marker.EventId.ToString("D"));
-                insert.Parameters.AddWithValue("$origin", marker.OriginDeviceId);
-                insert.Parameters.AddWithValue("$seq", marker.OriginSeq);
-                insert.Parameters.AddWithValue("$now", receivedAt.ToUnixTimeMilliseconds());
-                insert.Parameters.AddWithValue("$reason", marker.Reason);
-                await insert.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
+                result = conflict;
             }
+            else
+            {
+                await using (var insert = connection.CreateCommand())
+                {
+                    insert.Transaction = transaction;
+                    insert.CommandText = """
+                        INSERT INTO clips (
+                            event_id, origin_device_id, origin_seq, kind, content, content_hash,
+                            source_app, created_at, expires_at, deleted_at, terminal_reason)
+                        VALUES ($event_id, $origin, $seq, 'text', '', '', NULL, $now, NULL, $now, $reason);
+                        """;
+                    insert.Parameters.AddWithValue("$event_id", marker.EventId.ToString("D"));
+                    insert.Parameters.AddWithValue("$origin", marker.OriginDeviceId);
+                    insert.Parameters.AddWithValue("$seq", marker.OriginSeq);
+                    insert.Parameters.AddWithValue("$now", receivedAt.ToUnixTimeMilliseconds());
+                    insert.Parameters.AddWithValue("$reason", marker.Reason);
+                    await insert.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                }
 
-            var state = await AdvanceRemoteReceiveStateAsync(
-                connection,
-                transaction,
-                marker.OriginDeviceId,
-                marker.OriginSeq,
-                cancellationToken).ConfigureAwait(false);
+                var state = await AdvanceRemoteReceiveStateAsync(
+                    connection,
+                    transaction,
+                    marker.OriginDeviceId,
+                    marker.OriginSeq,
+                    cancellationToken).ConfigureAwait(false);
 
-            await EnqueueOutboxFanOutAsync(
-                connection,
-                transaction,
-                marker.EventId,
-                marker.OriginDeviceId,
-                marker.OriginSeq,
-                sourcePeerId,
-                cancellationToken).ConfigureAwait(false);
+                await EnqueueOutboxFanOutAsync(
+                    connection,
+                    transaction,
+                    marker.EventId,
+                    marker.OriginDeviceId,
+                    marker.OriginSeq,
+                    sourcePeerId,
+                    cancellationToken).ConfigureAwait(false);
 
-            await InjectFaultAsync(StorageFaultPoint.BeforeCommit, cancellationToken).ConfigureAwait(false);
-            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-            return new RemoteStoreResult.Stored(state);
+                await InjectFaultAsync(StorageFaultPoint.BeforeCommit, cancellationToken).ConfigureAwait(false);
+                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                result = new RemoteStoreResult.Stored(state);
+            }
         }
         catch
         {
             await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
             throw;
         }
+
+        // A tombstone upgrade may have released the last reference to a media blob.
+        // Collection runs after the try/catch: the transaction is already durable, and a
+        // failure here (for example cancellation during session close) must not attempt
+        // a rollback of the completed transaction.
+        if (collectBlobs)
+        {
+            await InjectFaultAsync(StorageFaultPoint.AfterCommit, cancellationToken).ConfigureAwait(false);
+            await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        return result;
     }
 
     /// <summary>Rows for the requested ranges of one origin, capped to <paramref name="maximumEvents"/>, ordered by sequence.</summary>

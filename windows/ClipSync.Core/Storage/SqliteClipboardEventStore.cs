@@ -359,12 +359,13 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
             IsolationLevel.Serializable,
             cancellationToken).ConfigureAwait(false);
+        bool deleted;
         try
         {
             await using var command = CreateSoftDeleteCommand(connection, transaction, deletedAt);
             command.CommandText += " AND event_id = $event_id;";
             command.Parameters.AddWithValue("$event_id", eventId.ToString("D"));
-            var deleted = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) == 1;
+            deleted = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) == 1;
             if (deleted)
             {
                 await DetachClipMediaAsync(connection, transaction, eventId.ToString("D"), cancellationToken)
@@ -398,18 +399,22 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             }
 
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-            if (deleted)
-            {
-                await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
-            }
-
-            return deleted;
         }
         catch
         {
             await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
             throw;
         }
+
+        // Blob collection runs after the try/catch: the transaction is already durable,
+        // and a failure here (for example cancellation) must not attempt a rollback.
+        if (deleted)
+        {
+            await InjectFaultAsync(StorageFaultPoint.AfterCommit, cancellationToken).ConfigureAwait(false);
+            await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        return deleted;
     }
 
     public async ValueTask<int> ClearAsync(
@@ -422,21 +427,24 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
             IsolationLevel.Serializable,
             cancellationToken).ConfigureAwait(false);
+        int removed;
         try
         {
             await using var command = CreateSoftDeleteCommand(connection, transaction, deletedAt);
             command.CommandText += ";";
-            var removed = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            removed = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             await DetachOrphanedClipMediaAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-            await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
-            return removed;
         }
         catch
         {
             await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
             throw;
         }
+
+        await InjectFaultAsync(StorageFaultPoint.AfterCommit, cancellationToken).ConfigureAwait(false);
+        await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
+        return removed;
     }
 
     public async ValueTask<int> CleanupAsync(
@@ -451,6 +459,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
             IsolationLevel.Serializable,
             cancellationToken).ConfigureAwait(false);
+        int removed;
         try
         {
             await using var command = connection.CreateCommand();
@@ -490,7 +499,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             command.Parameters.AddWithValue("$maximum_entries", policy.MaximumEntries);
             command.Parameters.AddWithValue("$deleted_at", now.ToUnixTimeMilliseconds());
             command.Parameters.AddWithValue("$now", now.ToUnixTimeMilliseconds());
-            var removed = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            removed = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             await using var hardDelete = connection.CreateCommand();
             hardDelete.Transaction = transaction;
             hardDelete.CommandText = """
@@ -503,14 +512,16 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
             await hardDelete.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             await DetachOrphanedClipMediaAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-            await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
-            return removed;
         }
         catch
         {
             await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
             throw;
         }
+
+        await InjectFaultAsync(StorageFaultPoint.AfterCommit, cancellationToken).ConfigureAwait(false);
+        await CollectUnreferencedBlobsAsync(cancellationToken).ConfigureAwait(false);
+        return removed;
     }
 
     public async ValueTask<string?> GetSettingAsync(
