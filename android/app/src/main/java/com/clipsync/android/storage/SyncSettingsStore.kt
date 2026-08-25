@@ -1,5 +1,6 @@
 package com.clipsync.android.storage
 
+import com.clipsync.android.i18n.LanguageCatalog
 import com.clipsync.android.pairing.KeyValueStore
 
 /**
@@ -158,6 +159,36 @@ class SyncSettingsStore(
         get() = readBoolean(KEY_INBOX_NOTIFY, default = true)
         set(value) = write(KEY_INBOX_NOTIFY, value.toString())
 
+    /**
+     * 外观 (settings-roadmap P1-6): manual day/night override on top of the system theme.
+     * Values are [THEME_SYSTEM] / [THEME_DAY] / [THEME_NIGHT]; anything unreadable falls
+     * back to 跟随系统 without erroring.
+     */
+    var themeOverride: String
+        get() = keyValues.read(KEY_THEME)?.takeIf { it in THEME_CHOICES } ?: THEME_SYSTEM
+        set(value) {
+            require(value in THEME_CHOICES) { "The theme override must be one of $THEME_CHOICES." }
+            write(KEY_THEME, value)
+        }
+
+    /**
+     * 语言 (settings-roadmap P1-16): the UI language — [LanguageCatalog.FOLLOW_SYSTEM]
+     * (跟随系统, the default) or one of the [LanguageCatalog.LANGUAGES] BCP-47 tags.
+     * Anything unreadable (including a tag a future catalog no longer offers) falls back
+     * to 跟随系统 without erroring.
+     */
+    var languageTag: String
+        get() =
+            keyValues
+                .read(KEY_LANGUAGE)
+                ?.takeIf { LanguageCatalog.isValidStoredValue(it) } ?: LanguageCatalog.FOLLOW_SYSTEM
+        set(value) {
+            require(LanguageCatalog.isValidStoredValue(value)) {
+                "The language must be ${LanguageCatalog.FOLLOW_SYSTEM} or a catalog tag."
+            }
+            write(KEY_LANGUAGE, value)
+        }
+
     fun retentionPolicy(): RetentionPolicy =
         RetentionPolicy(
             maximumEntries = retentionMaxEntries,
@@ -218,6 +249,12 @@ class SyncSettingsStore(
         const val MIN_MAX_ENTRIES = 100
         const val MAX_MAX_ENTRIES = 10_000
 
+        /** 外观 choices (settings-roadmap P1-6): 跟随系统 / 日间 / 夜间. */
+        const val THEME_SYSTEM = "system"
+        const val THEME_DAY = "day"
+        const val THEME_NIGHT = "night"
+        val THEME_CHOICES = listOf(THEME_SYSTEM, THEME_DAY, THEME_NIGHT)
+
         private const val MILLIS_PER_DAY = 24L * 60 * 60 * 1_000
 
         /** Far above any real clip age; `now - this` stays negative, so no row ever matches. */
@@ -242,6 +279,8 @@ class SyncSettingsStore(
         // (existing sync.* keys stay untouched; a published key is never renamed).
         private const val KEY_HISTORY_FONT_SCALE = "ui.history_font_scale"
         private const val KEY_PREVIEW_LINES = "ui.preview_lines"
+        private const val KEY_THEME = "ui.theme"
+        private const val KEY_LANGUAGE = "ui.language"
         private const val KEY_SKIP_SENSITIVE = "capture.skip_sensitive"
         private const val KEY_INBOX_NOTIFY = "notify.inbox"
     }

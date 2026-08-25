@@ -1,5 +1,6 @@
 package com.clipsync.android.storage
 
+import com.clipsync.android.i18n.LanguageCatalog
 import com.clipsync.android.pairing.KeyValueStore
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -166,6 +167,53 @@ class SyncSettingsStoreTest {
         assertEquals(6, reloaded.previewLines)
         assertFalse(reloaded.skipSensitiveEnabled)
         assertFalse(reloaded.inboxNotifyEnabled)
+    }
+
+    @Test
+    fun appearanceAndLanguageDefaultToFollowSystem() {
+        // settings-roadmap P1-6 / P1-16: both default to 跟随系统.
+        assertEquals(SyncSettingsStore.THEME_SYSTEM, store.themeOverride)
+        assertEquals(LanguageCatalog.FOLLOW_SYSTEM, store.languageTag)
+    }
+
+    @Test
+    fun appearanceAndLanguageRoundTripUnderTheRoadmapKeys() {
+        val backing = FakeKeyValueStore()
+        val settings = SyncSettingsStore(backing)
+
+        settings.themeOverride = SyncSettingsStore.THEME_NIGHT
+        settings.languageTag = "pt-BR"
+
+        // The roadmap prefix rule: ui. keys, values stored verbatim.
+        assertEquals("night", backing.values["ui.theme"])
+        assertEquals("pt-BR", backing.values["ui.language"])
+
+        val reloaded = SyncSettingsStore(backing)
+        assertEquals(SyncSettingsStore.THEME_NIGHT, reloaded.themeOverride)
+        assertEquals("pt-BR", reloaded.languageTag)
+    }
+
+    @Test
+    fun offCatalogThemeAndLanguageValuesAreRejectedAndCorruptOnesFallBack() {
+        try {
+            store.themeOverride = "dark"
+            throw AssertionError("Expected IllegalArgumentException")
+        } catch (expected: IllegalArgumentException) {
+            // Only system / day / night are valid.
+        }
+        try {
+            store.languageTag = "eo"
+            throw AssertionError("Expected IllegalArgumentException")
+        } catch (expected: IllegalArgumentException) {
+            // Only 跟随系统 or a catalog tag is valid.
+        }
+
+        val backing = FakeKeyValueStore()
+        backing.values["ui.theme"] = "blue"
+        backing.values["ui.language"] = "zz-ZZ"
+        val corrupted = SyncSettingsStore(backing)
+        assertEquals(SyncSettingsStore.THEME_SYSTEM, corrupted.themeOverride)
+        assertEquals(LanguageCatalog.FOLLOW_SYSTEM, corrupted.languageTag)
     }
 
     @Test
