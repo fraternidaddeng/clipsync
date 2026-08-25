@@ -69,3 +69,41 @@ jobs:
       - name: Unit tests and assembleDebug
         working-directory: android
         run: ./gradlew testDebugUnitTest assembleDebug --stacktrace
+
+  static-analysis:
+    name: Android static analysis (detekt + ktlint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # Baselines live in android/config/{detekt,ktlint}; new violations fail the job.
+      - name: detekt + ktlintCheck
+        working-directory: android
+        run: ./gradlew detekt ktlintCheck --stacktrace
+
+  i18n-parity:
+    name: i18n parity and generated resources
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cross-platform string parity (keys + placeholders, 19 locales)
+        run: python3 scripts/check-i18n-parity.py
+
+      - name: Windows resx/Designer in sync with strings.json
+        run: |
+          python3 scripts/generate-windows-strings.py
+          git diff --exit-code -- windows/ClipSync.App/Localization
