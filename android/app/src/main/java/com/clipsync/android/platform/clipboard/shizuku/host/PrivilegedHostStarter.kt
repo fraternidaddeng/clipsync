@@ -1,7 +1,6 @@
 package com.clipsync.android.platform.clipboard.shizuku.host
 
 import android.content.Context
-import android.os.Build
 import android.os.UserManager
 import java.io.File
 
@@ -9,11 +8,9 @@ import java.io.File
 internal object PrivilegedHostStarter {
     fun writeScript(context: Context): File? {
         return runCatching {
-            if (Build.VERSION.SDK_INT >= 24) {
-                val um = context.getSystemService(UserManager::class.java)
-                if (um != null && !um.isUserUnlocked) {
-                    return null
-                }
+            val um = context.getSystemService(UserManager::class.java)
+            if (um != null && !um.isUserUnlocked) {
+                return null
             }
             val filesDir = context.getExternalFilesDir(null) ?: return null
             val dir = filesDir.parentFile ?: return null
@@ -22,9 +19,10 @@ internal object PrivilegedHostStarter {
             }
             val script = File(dir, PrivilegedHostConstants.SCRIPT_FILE_NAME)
             val apk = context.applicationInfo.sourceDir
-            val body = PrivilegedHostScript.render() +
-                "# apk hint for operators; the script also resolves pm path\n" +
-                "# --apk=$apk\n"
+            val body =
+                PrivilegedHostScript.render() +
+                    "# apk hint for operators; the script also resolves pm path\n" +
+                    "# --apk=$apk\n"
             script.writeText(body)
             script.setReadable(true, false)
             script.setExecutable(true, false)
