@@ -805,13 +805,14 @@ public sealed partial class SqliteClipboardEventStore
     /// they will never be retransmitted). The rows keep their content and stay in
     /// history; the mark only feeds the 仅本机保留 annotation (ADR 0005 §5).
     /// Terminal and deleted rows are never touched, and an existing mark keeps its
-    /// original timestamp.
+    /// original timestamp. Returns the number of rows newly marked, so callers can
+    /// tell a fresh verdict (history UI must refresh) from a no-op re-announce.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Security",
         "CA2100:Review SQL queries for security vulnerabilities",
         Justification = "IN-list tokens are generated $id{n} names only; event id values are bound with Parameters.AddWithValue.")]
-    public async ValueTask MarkImagesLocalOnlyAsync(
+    public async ValueTask<int> MarkImagesLocalOnlyAsync(
         IReadOnlyList<Guid> eventIds,
         DateTimeOffset markedAt,
         CancellationToken cancellationToken = default)
@@ -820,7 +821,7 @@ public sealed partial class SqliteClipboardEventStore
         await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
         if (eventIds.Count == 0)
         {
-            return;
+            return 0;
         }
 
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -842,19 +843,20 @@ public sealed partial class SqliteClipboardEventStore
               AND local_only_at IS NULL;
             """;
         command.Parameters.AddWithValue("$marked_at", markedAt.ToUnixTimeMilliseconds());
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
     /// Clears a stale 仅本机保留 mark: the image was re-announced with an available
     /// body (an image-capable session reached it after all — the earlier downgraded
     /// announce never advanced the peer's cursor), so the annotation would lie.
+    /// Returns the number of rows whose mark was actually cleared.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Security",
         "CA2100:Review SQL queries for security vulnerabilities",
         Justification = "IN-list tokens are generated $id{n} names only; event id values are bound with Parameters.AddWithValue.")]
-    public async ValueTask ClearImagesLocalOnlyAsync(
+    public async ValueTask<int> ClearImagesLocalOnlyAsync(
         IReadOnlyList<Guid> eventIds,
         CancellationToken cancellationToken = default)
     {
@@ -862,7 +864,7 @@ public sealed partial class SqliteClipboardEventStore
         await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
         if (eventIds.Count == 0)
         {
-            return;
+            return 0;
         }
 
         await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -880,7 +882,7 @@ public sealed partial class SqliteClipboardEventStore
             WHERE event_id IN ({string.Join(", ", parameterNames)})
               AND local_only_at IS NOT NULL;
             """;
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(

@@ -140,6 +140,10 @@ public sealed class ImageSyncGateTests
         // protocol v1 (bt1 sessions never declare image_clip_v2 — ADR 0005 §4), so a
         // captured image travels as a local_only terminal marker.
         var v1 = await pair.DialAsync(PeerPair.DialerOptions() with { ProtocolVersion = 1 });
+        // The listener raises this exactly when a mark actually changed in the store —
+        // it is the App's cue to refresh the open history window (no manual refresh).
+        var markSignals = 0;
+        pair.Server.LocalOnlyMarksChanged += () => Interlocked.Increment(ref markSignals);
         await PeerPair.CaptureAsync(pair.WindowsStore, "v1-warmup");
         await pair.WaitUntilAsync(async () =>
             (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("v1-warmup"));
@@ -155,6 +159,8 @@ public sealed class ImageSyncGateTests
         });
 
         // The origin's history annotates the image 仅本机保留; the text before it is untouched.
+        // The downgraded announce also raised the refresh signal (text-only announces did not).
+        await pair.WaitUntilAsync(() => Task.FromResult(Volatile.Read(ref markSignals) == 1));
         Assert.True((await pair.WindowsStore.GetByIdAsync(image.EventId))!.IsLocalOnly);
         var windowsHistory = await pair.WindowsStore.SearchAsync(new ClipboardHistoryQuery(Limit: 50));
         Assert.All(windowsHistory.Where(item => !item.IsImage), item => Assert.False(item.IsLocalOnly));

@@ -78,6 +78,15 @@ public sealed class SyncSessionEngine : IDisposable
     public event Action<IReadOnlyList<RemoteClipApplied>>? RemoteClipsCommitted;
 
     /// <summary>
+    /// Raised on a worker thread after this session actually changed 仅本机保留 marks in
+    /// the store — a downgraded local_only announce stamped a live image, or an available
+    /// re-announce cleared a stale mark (ADR 0005 §5). The App refreshes the history list
+    /// so the annotation appears (or disappears) while the window is open; a re-announce
+    /// that changed nothing raises nothing.
+    /// </summary>
+    public event Action? LocalOnlyMarksChanged;
+
+    /// <summary>
     /// Raised with the peer device id once the session reaches the ready state (on the
     /// listener this is right after the proof verified). Raised on a worker thread.
     /// </summary>
@@ -1218,14 +1227,21 @@ public sealed class SyncSessionEngine : IDisposable
 
     private async ValueTask ApplyImageLocalOnlyMarksAsync(ImageLocalOnlyMarks marks, CancellationToken token)
     {
+        var changed = 0;
         if (marks.Downgraded.Count > 0)
         {
-            await store.MarkImagesLocalOnlyAsync(marks.Downgraded, clock.GetUtcNow(), token).ConfigureAwait(false);
+            changed += await store.MarkImagesLocalOnlyAsync(marks.Downgraded, clock.GetUtcNow(), token)
+                .ConfigureAwait(false);
         }
 
         if (marks.Available.Count > 0)
         {
-            await store.ClearImagesLocalOnlyAsync(marks.Available, token).ConfigureAwait(false);
+            changed += await store.ClearImagesLocalOnlyAsync(marks.Available, token).ConfigureAwait(false);
+        }
+
+        if (changed > 0)
+        {
+            LocalOnlyMarksChanged?.Invoke();
         }
     }
 

@@ -128,6 +128,12 @@ public sealed class PeerServer : IAsyncDisposable
     public event Action<IReadOnlyList<RemoteClipApplied>>? RemoteClipsCommitted;
 
     /// <summary>
+    /// Raised when any session changed 仅本机保留 marks in the store (ADR 0005 §5), so the
+    /// App can refresh the open history list. Raised on a worker thread.
+    /// </summary>
+    public event Action? LocalOnlyMarksChanged;
+
+    /// <summary>
     /// Raised on a worker thread when a device first crosses the failed-auth rate limit. The App
     /// layer surfaces this (diagnostics entry, tray notice); the payload is the claimed device id.
     /// </summary>
@@ -306,6 +312,7 @@ public sealed class PeerServer : IAsyncDisposable
             authThrottle,
             loggerFactory.CreateLogger("ClipSync.Peer.Session"));
         engine.RemoteClipsCommitted += OnRemoteClipsCommitted;
+        engine.LocalOnlyMarksChanged += OnLocalOnlyMarksChanged;
         engine.SessionReady += OnSessionReady;
 
         var sessionId = Guid.NewGuid();
@@ -319,6 +326,7 @@ public sealed class PeerServer : IAsyncDisposable
         finally
         {
             engine.RemoteClipsCommitted -= OnRemoteClipsCommitted;
+            engine.LocalOnlyMarksChanged -= OnLocalOnlyMarksChanged;
             engine.SessionReady -= OnSessionReady;
             sessions.TryRemove(sessionId, out _);
             SessionsChanged?.Invoke();
@@ -404,6 +412,8 @@ public sealed class PeerServer : IAsyncDisposable
 
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch) =>
         RemoteClipsCommitted?.Invoke(batch);
+
+    private void OnLocalOnlyMarksChanged() => LocalOnlyMarksChanged?.Invoke();
 
     /// <summary>Terminates live sessions for a device, e.g. right after revocation.</summary>
     public void DisconnectDevice(string deviceId)

@@ -290,6 +290,7 @@ public partial class App : Application
                 // of sitting on 未探测 while sync visibly works. Posture + real-apply evidence.
                 clipboardApplyState: () => viewModel.ClipboardApplyState);
             syncHost.RemoteClipsCommitted += OnRemoteClipsCommitted;
+            syncHost.LocalOnlyMarksChanged += OnLocalOnlyMarksChanged;
             syncHost.SessionsChanged += OnPeerSessionsChanged;
             syncHost.DeviceLockedOut += OnDeviceLockedOut;
             syncHost.PeerStatusChanged += OnPeerStatusChanged;
@@ -362,6 +363,7 @@ public partial class App : Application
                     }
                 });
             host.RemoteClipsCommitted += OnRemoteClipsCommitted;
+            host.LocalOnlyMarksChanged += OnLocalOnlyMarksChanged;
             host.SessionsChanged += OnBluetoothSessionsChanged;
             host.DeviceLockedOut += OnDeviceLockedOut;
             try
@@ -388,6 +390,7 @@ public partial class App : Application
     private void DetachBluetoothHost(BluetoothSyncHost host)
     {
         host.RemoteClipsCommitted -= OnRemoteClipsCommitted;
+        host.LocalOnlyMarksChanged -= OnLocalOnlyMarksChanged;
         host.SessionsChanged -= OnBluetoothSessionsChanged;
         host.DeviceLockedOut -= OnDeviceLockedOut;
     }
@@ -527,6 +530,29 @@ public partial class App : Application
         });
     }
 
+    /// <summary>
+    /// A session stamped or cleared 仅本机保留 marks in the store (worker thread; ADR 0005
+    /// §5): refresh the open history list so the annotation appears — or a stale one
+    /// drops — without waiting for the next capture or remote commit.
+    /// </summary>
+    private void OnLocalOnlyMarksChanged()
+    {
+        _ = Dispatcher.InvokeAsync(async () =>
+        {
+            try
+            {
+                if (services?.GetRequiredService<MainViewModel>() is { } viewModel)
+                {
+                    await viewModel.RefreshFromCaptureAsync();
+                }
+            }
+            catch (Exception exception)
+            {
+                LocalDiagnostics.Write($"local_only_refresh_failed_{exception.GetType().Name}");
+            }
+        });
+    }
+
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch)
     {
         _ = Dispatcher.InvokeAsync(async () =>
@@ -626,6 +652,7 @@ public partial class App : Application
         if (syncHost is not null)
         {
             syncHost.RemoteClipsCommitted -= OnRemoteClipsCommitted;
+            syncHost.LocalOnlyMarksChanged -= OnLocalOnlyMarksChanged;
             syncHost.SessionsChanged -= OnPeerSessionsChanged;
             syncHost.DeviceLockedOut -= OnDeviceLockedOut;
             syncHost.PeerStatusChanged -= OnPeerStatusChanged;

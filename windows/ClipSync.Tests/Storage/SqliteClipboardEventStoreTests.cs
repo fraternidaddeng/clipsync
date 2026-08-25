@@ -290,8 +290,9 @@ public sealed class SqliteClipboardEventStoreTests
 
         // The mark only ever lands on live image rows: the text id in the same
         // batch is ignored, and history exposes the fact for the 仅本机保留 badge.
+        // The count reports the one row that actually changed.
         var markedAt = BaseTime.AddSeconds(2);
-        await store.MarkImagesLocalOnlyAsync([image.EventId, text.EventId], markedAt);
+        Assert.Equal(1, await store.MarkImagesLocalOnlyAsync([image.EventId, text.EventId], markedAt));
 
         var history = await store.SearchAsync(new ClipboardHistoryQuery());
         var imageEntry = Assert.Single(history, item => item.IsImage);
@@ -300,8 +301,9 @@ public sealed class SqliteClipboardEventStoreTests
         var textEntry = Assert.Single(history, item => !item.IsImage);
         Assert.False(textEntry.IsLocalOnly);
 
-        // Re-marking keeps the original timestamp; the row still holds its content.
-        await store.MarkImagesLocalOnlyAsync([image.EventId], BaseTime.AddDays(1));
+        // Re-marking is a no-op (zero rows changed) and keeps the original timestamp;
+        // the row still holds its content.
+        Assert.Equal(0, await store.MarkImagesLocalOnlyAsync([image.EventId], BaseTime.AddDays(1)));
         var reread = await store.GetByIdAsync(image.EventId);
         Assert.Equal(markedAt.ToUnixTimeMilliseconds(), reread!.LocalOnlyAt!.Value.ToUnixTimeMilliseconds());
         Assert.Equal(hash, reread.ContentHash);
@@ -317,15 +319,17 @@ public sealed class SqliteClipboardEventStoreTests
         var hash = ClipSync.Core.Media.ImageCodec.HashBytes(png);
         var marked = await store.StoreImageAsync(new AcceptedImageContent(
             png, hash, ClipSync.Core.Media.MediaLimits.MimePng, 1, 1, null, BaseTime));
-        await store.MarkImagesLocalOnlyAsync([marked.EventId], BaseTime.AddSeconds(1));
+        Assert.Equal(1, await store.MarkImagesLocalOnlyAsync([marked.EventId], BaseTime.AddSeconds(1)));
         Assert.True((await store.GetByIdAsync(marked.EventId))!.IsLocalOnly);
 
-        await store.ClearImagesLocalOnlyAsync([marked.EventId]);
+        // Clearing reports the row it changed; clearing an unmarked row is a no-op.
+        Assert.Equal(1, await store.ClearImagesLocalOnlyAsync([marked.EventId]));
         Assert.False((await store.GetByIdAsync(marked.EventId))!.IsLocalOnly);
+        Assert.Equal(0, await store.ClearImagesLocalOnlyAsync([marked.EventId]));
 
         // A soft-deleted image is terminal; the mark must not resurrect on it.
         Assert.True(await store.DeleteAsync(marked.EventId, BaseTime.AddSeconds(2)));
-        await store.MarkImagesLocalOnlyAsync([marked.EventId], BaseTime.AddSeconds(3));
+        Assert.Equal(0, await store.MarkImagesLocalOnlyAsync([marked.EventId], BaseTime.AddSeconds(3)));
         var deleted = await store.GetByIdAsync(marked.EventId, includeDeleted: true);
         Assert.False(deleted!.IsLocalOnly);
     }

@@ -70,6 +70,13 @@ public sealed class BluetoothSyncHost : IAsyncDisposable
     /// <summary>Raised when the Bluetooth session commits remote clip bodies locally.</summary>
     public event Action<IReadOnlyList<RemoteClipApplied>>? RemoteClipsCommitted;
 
+    /// <summary>
+    /// Raised when the Bluetooth session changed 仅本机保留 marks in the store — bt1 carries
+    /// no image bodies (ADR 0005 §4), so a live image announced here gets the downgraded
+    /// marker and the open history list must refresh to show the annotation (§5).
+    /// </summary>
+    public event Action? LocalOnlyMarksChanged;
+
     /// <summary>Raised on a worker thread when the Bluetooth session authenticates or ends.</summary>
     public event Action? SessionsChanged;
 
@@ -250,6 +257,7 @@ public sealed class BluetoothSyncHost : IAsyncDisposable
             authThrottle,
             loggerFactory.CreateLogger("ClipSync.Peer.Bluetooth.Session"));
         engine.RemoteClipsCommitted += OnRemoteClipsCommitted;
+        engine.LocalOnlyMarksChanged += OnLocalOnlyMarksChanged;
         engine.SessionReady += OnSessionReady;
         lock (sessionGate)
         {
@@ -274,6 +282,7 @@ public sealed class BluetoothSyncHost : IAsyncDisposable
         finally
         {
             engine.RemoteClipsCommitted -= OnRemoteClipsCommitted;
+            engine.LocalOnlyMarksChanged -= OnLocalOnlyMarksChanged;
             engine.SessionReady -= OnSessionReady;
             lock (sessionGate)
             {
@@ -327,6 +336,8 @@ public sealed class BluetoothSyncHost : IAsyncDisposable
     }
 
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch) => RemoteClipsCommitted?.Invoke(batch);
+
+    private void OnLocalOnlyMarksChanged() => LocalOnlyMarksChanged?.Invoke();
 
     private void OnSessionReady(string deviceId) => SessionsChanged?.Invoke();
 

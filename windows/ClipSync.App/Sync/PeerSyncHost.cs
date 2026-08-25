@@ -82,6 +82,12 @@ public sealed class PeerSyncHost : IAsyncDisposable
     public event Action<IReadOnlyList<RemoteClipApplied>>? RemoteClipsCommitted;
 
     /// <summary>
+    /// Raised on a worker thread when a session changed 仅本机保留 marks in the store
+    /// (ADR 0005 §5) — the open history list must refresh to show or drop the annotation.
+    /// </summary>
+    public event Action? LocalOnlyMarksChanged;
+
+    /// <summary>
     /// Raised on a worker thread when a peer session authenticates or ends.
     /// Read <see cref="ConnectedDeviceCount"/>/<see cref="ConnectedDeviceIds"/> for the new state.
     /// </summary>
@@ -264,6 +270,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
             var old = server;
             server = null;
             old.RemoteClipsCommitted -= OnRemoteClipsCommitted;
+            old.LocalOnlyMarksChanged -= OnLocalOnlyMarksChanged;
             old.SessionsChanged -= OnSessionsChanged;
             old.DeviceLockedOut -= OnDeviceLockedOut;
             await old.DisposeAsync().ConfigureAwait(false);
@@ -325,6 +332,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
         }
 
         candidate.RemoteClipsCommitted += OnRemoteClipsCommitted;
+        candidate.LocalOnlyMarksChanged += OnLocalOnlyMarksChanged;
         candidate.SessionsChanged += OnSessionsChanged;
         candidate.DeviceLockedOut += OnDeviceLockedOut;
         return candidate;
@@ -332,6 +340,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
 
     private void OnRemoteClipsCommitted(IReadOnlyList<RemoteClipApplied> batch) =>
         RemoteClipsCommitted?.Invoke(batch);
+
+    private void OnLocalOnlyMarksChanged() => LocalOnlyMarksChanged?.Invoke();
 
     private void OnSessionsChanged() => SessionsChanged?.Invoke();
 
@@ -435,6 +445,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
         if (server is not null)
         {
             server.RemoteClipsCommitted -= OnRemoteClipsCommitted;
+            server.LocalOnlyMarksChanged -= OnLocalOnlyMarksChanged;
             server.SessionsChanged -= OnSessionsChanged;
             server.DeviceLockedOut -= OnDeviceLockedOut;
             await server.DisposeAsync().ConfigureAwait(false);
