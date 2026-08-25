@@ -83,9 +83,10 @@ class WindowsAndroidSyncChainTest {
             SharedPrefsKeyValueStore(context, name = SyncSettingsStore.PREFERENCES_NAME),
         )
 
-        // Same shape as ClipboardSyncService: the pause/private gates wrap the queue itself.
+        // Same shape as ClipboardSyncService: the pause/private gates wrap the queue itself,
+        // and the inbox resolves notification copy actions straight from the Room store.
         val servicesStore = SharedPrefsKeyValueStore(context, name = "clipsync.sync")
-        inbox = KeyValueClipInbox(servicesStore)
+        inbox = RoomClipInbox { store }
         SyncServices.install(
             outbox = SettingsGatedClipOutbox(
                 KeyValueClipOutbox(servicesStore, maxUtf8Bytes = { settings.effectiveMaxSyncTextBytes }),

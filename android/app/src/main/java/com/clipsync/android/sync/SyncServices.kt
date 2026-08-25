@@ -37,10 +37,15 @@ object SyncServices {
             if (services != null) {
                 return
             }
-            val store = SharedPrefsKeyValueStore(context, name = "clipsync.sync")
+            val appContext = context.applicationContext
+            val store = SharedPrefsKeyValueStore(appContext, name = "clipsync.sync")
             val settings = SyncSettingsStore(
-                SharedPrefsKeyValueStore(context, name = SyncSettingsStore.PREFERENCES_NAME),
+                SharedPrefsKeyValueStore(appContext, name = SyncSettingsStore.PREFERENCES_NAME),
             )
+            // One-time migration off the SharedPreferences inbox stub: drop its plaintext
+            // JSON blob of received texts. Every inbox entry also lives in Room history,
+            // which is what RoomClipInbox resolves from.
+            RoomClipInbox.purgeLegacyStub(store)
             services = Services(
                 // Pause/private gates wrap the queue itself so no entry point can bypass
                 // them; inside the gate, the user size cap applies before the 1 MiB rule.
@@ -51,7 +56,7 @@ object SyncServices {
                     ),
                     settings,
                 ),
-                inbox = KeyValueClipInbox(store),
+                inbox = RoomClipInbox { SyncStore.repository(appContext) },
                 // The Stage-4 WebSocket engine registers itself via install(); until then a
                 // queued entry simply waits for the next connection.
                 syncRequester = SyncRequester { },

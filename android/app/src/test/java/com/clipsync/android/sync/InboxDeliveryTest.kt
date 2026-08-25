@@ -30,12 +30,26 @@ class InboxDeliveryTest {
         // not keep a writer bound to the previous test's clipboard.
         SharedClipboardWrites.reset()
         val store = com.clipsync.android.platform.SharedPrefsKeyValueStore(context, name = "inbox-delivery-test")
-        inbox = KeyValueClipInbox(store)
+        inbox = RecordingClipInbox()
         SyncServices.install(
             outbox = KeyValueClipOutbox(store),
             inbox = inbox,
             syncRequester = {},
         )
+    }
+
+    /**
+     * Observes the record-first contract: production resolves from the Room store (the
+     * commit that precedes delivery), this fake just remembers what deliver recorded.
+     */
+    private class RecordingClipInbox : ClipInbox {
+        private val items = mutableMapOf<String, String>()
+
+        override fun record(eventId: String, text: String, receivedAtEpochMillis: Long) {
+            items[eventId] = text
+        }
+
+        override fun textFor(eventId: String): String? = items[eventId]
     }
 
     @After
