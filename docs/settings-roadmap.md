@@ -3,7 +3,7 @@
 > 从属于《设计纲领》（`docs/design/DESIGN-CHARTER.md`）与 `docs/product-scope.md`。
 > 本文件回答一个问题：**除通路之外，这个应用还缺哪些「基础设置」，它们住在哪。**
 > 分析与提案；本文件不伴随任何 UI 实现。
-> 状态：**P0 全部落地；P1 里新立 #16 进行中，其余（含翻案的 #6）全部落地**——2026-08-25 更新：P0 #1–#5 双端完成（Windows 第 1 批 `8bcc61d`；Android 存储/管线/ViewModel `0e1d040`/`945fbcf` + 偏好页 7 组 UI 与历史列表接线 `1a6a32f`），**均未经真机人工 QA 确认**——按「未测不得改绿」，落地 ≠ 验证通过。P1 侧：#7/#8/#9/#15 完成（#8 的通路事实条 `49751dd`），IA 迁移 #10–12 此前已完成，#13/#14（减弱动效跟随系统、设备色手动改）在 `4b8dd9f` 完成。**2026-08-25 用户裁决两项翻案：#6（外观手动覆盖）此前「主动跳过（暂缓，不挡 v1）」为误，改列必做；多语言从「明确不做」翻案为必做，新立 #16（进行中）**——两项的共享底座（`ui.theme`/`ui_theme` 与 `ui.language`/`ui_language` 偏好键、19 种语言的双端语言目录 + 目录钉死测试）已在 `ea97333` 落地；**#6 双端 UI 开关与主题接线随后在 `aa91a34` 完成（未经真机人工 QA 确认）**，#16 的全量文案提取待做。历史「仅本机保留」标注（local_only）不是本路线图条目，属 ADR 0005 §5 收口，另行推进。条目动工或落地时更新本行与对应表格。
+> 状态：**P0 全部落地；P1 里新立 #16 进行中，其余（含翻案的 #6）全部落地**——2026-08-25 更新：P0 #1–#5 双端完成（Windows 第 1 批 `8bcc61d`；Android 存储/管线/ViewModel `0e1d040`/`945fbcf` + 偏好页 7 组 UI 与历史列表接线 `1a6a32f`），**均未经真机人工 QA 确认**——按「未测不得改绿」，落地 ≠ 验证通过。P1 侧：#7/#8/#9/#15 完成（#8 的通路事实条 `49751dd`），IA 迁移 #10–12 此前已完成，#13/#14（减弱动效跟随系统、设备色手动改）在 `4b8dd9f` 完成。**2026-08-25 用户裁决两项翻案：#6（外观手动覆盖）此前「主动跳过（暂缓，不挡 v1）」为误，改列必做；多语言从「明确不做」翻案为必做，新立 #16（进行中）**——两项的共享底座（`ui.theme`/`ui_theme` 与 `ui.language`/`ui_language` 偏好键、19 种语言的双端语言目录 + 目录钉死测试）已在 `ea97333` 落地；**#6 双端 UI 开关与主题接线随后在 `aa91a34` 完成（未经真机人工 QA 确认）**；#16 主体推进中——**Android 半边完成**（359 键全量文案提取 + AppCompat per-app locale + 语言选择器 `4c89766`，18 种非缺省语言翻译分四批 `b2398aa`/`af84683`/`85aed94`/`77c12c7`，测试文化钉死 `d7c941c`），**Windows 半边**抽取/选择器/RTL 已落（`8a4bc32`），卫星语言翻译进行中（en/zh-Hant `b6bd2d1`、ja/ko `f76b5c7`）。历史「仅本机保留」标注（local_only）不是本路线图条目，属 ADR 0005 §5 收口，另行推进。条目动工或落地时更新本行与对应表格。
 > 最后更新：2026-08-25
 
 ---
@@ -162,7 +162,7 @@
 | 13 | **减弱动效跟随系统** | 双端 | —（行为，无 UI） | 无键 | 脉动、浮窗、tab 过渡 | **S** | **已完成（2026-08-25）**：Android 观察 `ANIMATOR_DURATION_SCALE`（0 = 系统关动画，`LocalReducedMotion` 全局提供，改设置即时生效）——2.6 s 脉动改静态 act 描边、管道流动点定格、tab 切换 Crossfade 改硬切；Windows 以 `SystemParameters.ClientAreaAnimation`（SPI_GETCLIENTAREAANIMATION）门控通路捕获段脉动光环，静态 act 描边独自承担「需要你操作」。无应用内开关（缺省即隐藏） |
 | 14 | **设备色手动改** | 双端 | 按配对顺位 | 设备行属性（非全局键） | 通路·设备管理 | **M** | **已完成（2026-08-25）**：通路设备行五色点选色器，点配对顺位默认色即清除覆盖（「跟随配对顺位」/「手动指定」如实陈述）。Android 存 `PairingStore`（`device.accent.<id>`），Windows 存 devices 表 `accent_override` 列（schema v5）；覆盖属设备身份，撤销/重配对不清除；历史来源盒随生效色 |
 | 15 | **保留条数上限可调** | 双端 | 2 000 | Android 复用 `sync.retention.max_entries`；Windows 新增 `retention_max_entries` | 偏好·历史 | **S** | **已完成（2026-08-25：Windows `8bcc61d`，Android `945fbcf`+`1a6a32f`）**。Android 键已存在；Windows 已把硬编码默认接进 settings 表与清理调用 |
-| 16 | **语言**（跟随系统 / 19 种语言） | 双端 | 跟随系统 | `ui.language` / `ui_language`（`system` 或下方目录表的 BCP-47 标签） | 全部窗口/页面 | **L** | **必做 · 进行中（2026-08-25 翻案：原「明确不做」裁决作废，用户裁决改列必做）**。偏好键与语言目录已双端落地（`ea97333`：Android `com.clipsync.android.i18n.LanguageCatalog` + `SyncSettingsStore.languageTag`，Windows `ClipSync.App/Ui/LanguageCatalog.cs`；双端各有目录钉死测试防漂移，无法解读的存值一律回落「跟随系统」）。待做：全量文案提取（Android string resources / Windows 资源化——两端文案现全部硬编码中文，这是 L 的主体）、偏好·显示的语言选择器、切换即时生效、19 种语言的翻译本体。阿拉伯语 RTL 策略见下方注记 |
+| 16 | **语言**（跟随系统 / 19 种语言） | 双端 | 跟随系统 | `ui.language` / `ui_language`（`system` 或下方目录表的 BCP-47 标签） | 全部窗口/页面 | **L** | **必做 · 进行中（2026-08-25 翻案：原「明确不做」裁决作废，用户裁决改列必做）**。偏好键与语言目录已双端落地（`ea97333`：Android `com.clipsync.android.i18n.LanguageCatalog` + `SyncSettingsStore.languageTag`，Windows `ClipSync.App/Ui/LanguageCatalog.cs`；双端各有目录钉死测试防漂移，无法解读的存值一律回落「跟随系统」）。**Android 半边已完成（2026-08-25，未经真机人工 QA 确认）**：全部 359 键 UI 文案抽入 string resources，缺省资源即 zh-Hans——**任何缺键按 Android 资源回落规则落回简体中文（这是文档化的回落语言；当前 18 种非缺省语言逐键齐全、回落面为空，`values-*` 与缺省逐键对齐由脚本校验）**；ViewModel/纯构建函数一律持 `UiText`（Res/Raw）延迟到 UI 层解析，切语言不留陈旧文案；`AppCompatDelegate.setApplicationLocales` 在 Application `onCreate`（任何 UI 前）重放存值，选择器落偏好·显示（19 种母语名 + 跟随系统），改动即生效（`4c89766`；翻译 `b2398aa`/`af84683`/`85aed94`/`77c12c7`；Robolectric 资源限定符钉死 zh-rCN `d7c941c`）。**Windows 半边**：225 键抽入 resx + 语言下拉 + 每窗 FlowDirection（`8a4bc32`），卫星语言翻译进行中（en/zh-Hant `b6bd2d1`、ja/ko `f76b5c7`，其余 14 种待落）。阿拉伯语 RTL 策略与两端实际回退范围见下方注记 |
 
 #### P1#16 语言目录（唯一权威表）
 
@@ -190,7 +190,7 @@
 | `pl` | Polski | LTR |
 | `nl` | Nederlands | LTR |
 
-**阿拉伯语 RTL 注记**：语言选择必须支持 `ar`——不许因布局难度砍语言。布局镜像分层承诺：Compose（`LocalLayoutDirection`）与 WPF（`FlowDirection`）若能以合理代价整体镜像则做全镜像；若个别界面（如通路管道图、历史时间线）镜像代价过高，先做「RTL 文字渲染 + LTR 布局」回退，并在本文件与发布说明如实注明回退范围——如实陈述优于假装完成。
+**阿拉伯语 RTL 注记**：语言选择必须支持 `ar`——不许因布局难度砍语言。布局镜像分层承诺：Compose（`LocalLayoutDirection`）与 WPF（`FlowDirection`）若能以合理代价整体镜像则做全镜像；若个别界面（如通路管道图、历史时间线）镜像代价过高，先做「RTL 文字渲染 + LTR 布局」回退，并在本文件与发布说明如实注明回退范围——如实陈述优于假装完成。**2026-08-25 落地范围**：Android 侧 `android:supportsRtl` 为真、per-app locale 切到 `ar` 后 Compose 布局整体自动镜像，文字渲染全程 RTL；**回退面**是两处纯装饰的 Canvas 绘制——通路管道的流线/流动点（`HealthScreen`）与配对扫码取景框角标（`PairingScreen`）——保持 LTR 方向，方向本身无语义、不载文字。Windows 侧每窗按 `WindowFlowDirection` 镜像，指纹/监听地址等机器文本在 XAML 钉回 LeftToRight（`8a4bc32`）。
 
 ### 明确不做（v1 范围裁决）
 
@@ -215,6 +215,6 @@
 3. **P0-1（历史字号）** 两端各自动类型阶管线，先 Android（sp 系数）后 Windows（FontSize 收敛为 DynamicResource）。
 4. **P0-5（清空历史）** 与导出导入同屏，做完数据组闭环。
 5. P1 里 **IA 迁移（10–12）宜打包成一轮**「通路收编连通性配置」的独立改动，避免与功能新增混在一个 diff。
-6. **#6（外观）与 #16（语言）** 2026-08-25 翻案后排在当前队首：共享底座（键 + 目录 + 钉死测试）已在 `ea97333` 落地。#6 先行已兑现（双端开关与接线 `aa91a34`）；剩 #16——主体是全量文案提取与 19 种语言翻译，宜双端并行、按屏幕分批推进，RTL 布局镜像按 P1#16 注记分层落地。
+6. **#6（外观）与 #16（语言）** 2026-08-25 翻案后排在当前队首：共享底座（键 + 目录 + 钉死测试）已在 `ea97333` 落地。#6 先行已兑现（双端开关与接线 `aa91a34`）；#16 双端并行推进——Android 半边（提取 + 选择器 + 18 语翻译）已完成，Windows 半边抽取/选择器已落、卫星语言翻译按批落地中，RTL 按 P1#16 注记分层兑现（Android 全镜像 + 两处装饰性 Canvas 回退，Windows 每窗镜像 + 机器文本钉 LTR）。
 
 新增存储键命名规约：Android 沿用 `clipsync.settings` 一个文件，UI 类键用 `ui.` 前缀、捕获类用 `capture.`、通知类用 `notify.`（现有 `sync.` 键一律不动）；Windows settings 表用对应蛇形键。任何键一经发布只增不改，与协议字段同规。
