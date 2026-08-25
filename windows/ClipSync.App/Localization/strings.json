@@ -9,7 +9,11 @@
     "es",
     "fr",
     "de",
-    "pt-BR"
+    "pt-BR",
+    "ru",
+    "ar",
+    "it",
+    "vi"
   ],
   "strings": {
     "App_Name": {
@@ -21,7 +25,11 @@
       "es": "ClipSync",
       "fr": "ClipSync",
       "de": "ClipSync",
-      "pt-BR": "ClipSync"
+      "pt-BR": "ClipSync",
+      "ru": "ClipSync",
+      "ar": "ClipSync",
+      "it": "ClipSync",
+      "vi": "ClipSync"
     },
     "App_WindowTitle": {
       "zh-Hans": "剪剪相传 ClipSync",
@@ -32,7 +40,11 @@
       "es": "ClipSync",
       "fr": "ClipSync",
       "de": "ClipSync",
-      "pt-BR": "ClipSync"
+      "pt-BR": "ClipSync",
+      "ru": "ClipSync",
+      "ar": "ClipSync",
+      "it": "ClipSync",
+      "vi": "ClipSync"
     },
     "Brand_Wordmark": {
       "zh-Hans": "剪 剪 相 传",
@@ -43,7 +55,11 @@
       "es": "ClipSync",
       "fr": "ClipSync",
       "de": "ClipSync",
-      "pt-BR": "ClipSync"
+      "pt-BR": "ClipSync",
+      "ru": "ClipSync",
+      "ar": "ClipSync",
+      "it": "ClipSync",
+      "vi": "ClipSync"
     },
     "Chrome_Minimize": {
       "zh-Hans": "最小化",
@@ -54,7 +70,11 @@
       "es": "Minimizar",
       "fr": "Réduire",
       "de": "Minimieren",
-      "pt-BR": "Minimizar"
+      "pt-BR": "Minimizar",
+      "ru": "Свернуть",
+      "ar": "تصغير",
+      "it": "Riduci a icona",
+      "vi": "Thu nhỏ"
     },
     "Chrome_MaximizeRestore": {
       "zh-Hans": "最大化或还原",
@@ -65,7 +85,11 @@
       "es": "Maximizar o restaurar",
       "fr": "Agrandir ou restaurer",
       "de": "Maximieren oder wiederherstellen",
-      "pt-BR": "Maximizar ou restaurar"
+      "pt-BR": "Maximizar ou restaurar",
+      "ru": "Развернуть или восстановить",
+      "ar": "تكبير أو استعادة",
+      "it": "Ingrandisci o ripristina",
+      "vi": "Phóng to hoặc khôi phục"
     },
     "Common_Close": {
       "zh-Hans": "关闭",
@@ -76,7 +100,11 @@
       "es": "Cerrar",
       "fr": "Fermer",
       "de": "Schließen",
-      "pt-BR": "Fechar"
+      "pt-BR": "Fechar",
+      "ru": "Закрыть",
+      "ar": "إغلاق",
+      "it": "Chiudi",
+      "vi": "Đóng"
     },
     "Common_Copy": {
       "zh-Hans": "复制",
@@ -87,7 +115,11 @@
       "es": "Copiar",
       "fr": "Copier",
       "de": "Kopieren",
-      "pt-BR": "Copiar"
+      "pt-BR": "Copiar",
+      "ru": "Копировать",
+      "ar": "نسخ",
+      "it": "Copia",
+      "vi": "Sao chép"
     },
     "Common_Refresh": {
       "zh-Hans": "刷新",
@@ -98,7 +130,11 @@
       "es": "Actualizar",
       "fr": "Actualiser",
       "de": "Aktualisieren",
-      "pt-BR": "Atualizar"
+      "pt-BR": "Atualizar",
+      "ru": "Обновить",
+      "ar": "تحديث",
+      "it": "Aggiorna",
+      "vi": "Làm mới"
     },
     "Common_Acknowledge": {
       "zh-Hans": "知道了",
@@ -109,7 +145,11 @@
       "es": "Entendido",
       "fr": "Compris",
       "de": "Verstanden",
-      "pt-BR": "Entendi"
+      "pt-BR": "Entendi",
+      "ru": "Понятно",
+      "ar": "حسنًا",
+      "it": "OK",
+      "vi": "Đã hiểu"
     },
     "Common_FollowSystem": {
       "zh-Hans": "跟随系统",
@@ -120,7 +160,11 @@
       "es": "Seguir al sistema",
       "fr": "Suivre le système",
       "de": "System folgen",
-      "pt-BR": "Seguir o sistema"
+      "pt-BR": "Seguir o sistema",
+      "ru": "Как в системе",
+      "ar": "اتباع النظام",
+      "it": "Segui il sistema",
+      "vi": "Theo hệ thống"
     },
     "Common_ClearHistory": {
       "zh-Hans": "清空历史",
@@ -131,7 +175,11 @@
       "es": "Vaciar historial",
       "fr": "Vider l’historique",
       "de": "Verlauf leeren",
-      "pt-BR": "Limpar histórico"
+      "pt-BR": "Limpar histórico",
+      "ru": "Очистить историю",
+      "ar": "مسح السجل",
+      "it": "Svuota cronologia",
+      "vi": "Xóa lịch sử"
     },
     "Common_ExportHistory": {
       "zh-Hans": "导出历史",
@@ -142,7 +190,11 @@
       "es": "Exportar historial",
       "fr": "Exporter l’historique",
       "de": "Verlauf exportieren",
-      "pt-BR": "Exportar histórico"
+      "pt-BR": "Exportar histórico",
+      "ru": "Экспорт истории",
+      "ar": "تصدير السجل",
+      "it": "Esporta cronologia",
+      "vi": "Xuất lịch sử"
     },
     "Common_ImportHistory": {
       "zh-Hans": "导入历史",
@@ -153,7 +205,11 @@
       "es": "Importar historial",
       "fr": "Importer l’historique",
       "de": "Verlauf importieren",
-      "pt-BR": "Importar histórico"
+      "pt-BR": "Importar histórico",
+      "ru": "Импорт истории",
+      "ar": "استيراد السجل",
+      "it": "Importa cronologia",
+      "vi": "Nhập lịch sử"
     },
     "Common_PauseCapture": {
       "zh-Hans": "暂停捕获",
@@ -164,7 +220,11 @@
       "es": "Pausar captura",
       "fr": "Suspendre la capture",
       "de": "Erfassung pausieren",
-      "pt-BR": "Pausar captura"
+      "pt-BR": "Pausar captura",
+      "ru": "Приостановить захват",
+      "ar": "إيقاف الالتقاط مؤقتًا",
+      "it": "Sospendi acquisizione",
+      "vi": "Tạm dừng ghi nhận"
     },
     "Common_PrivateMode": {
       "zh-Hans": "私密模式",
@@ -175,7 +235,11 @@
       "es": "Modo privado",
       "fr": "Mode privé",
       "de": "Privater Modus",
-      "pt-BR": "Modo privado"
+      "pt-BR": "Modo privado",
+      "ru": "Приватный режим",
+      "ar": "الوضع الخاص",
+      "it": "Modalità privata",
+      "vi": "Chế độ riêng tư"
     },
     "Nav_History": {
       "zh-Hans": "历史",
@@ -186,7 +250,11 @@
       "es": "Historial",
       "fr": "Historique",
       "de": "Verlauf",
-      "pt-BR": "Histórico"
+      "pt-BR": "Histórico",
+      "ru": "История",
+      "ar": "السجل",
+      "it": "Cronologia",
+      "vi": "Lịch sử"
     },
     "Nav_Conduit": {
       "zh-Hans": "通路",
@@ -197,7 +265,11 @@
       "es": "Conducto",
       "fr": "Conduit",
       "de": "Kanal",
-      "pt-BR": "Conduíte"
+      "pt-BR": "Conduíte",
+      "ru": "Канал",
+      "ar": "القناة",
+      "it": "Condotto",
+      "vi": "Đường dẫn"
     },
     "Nav_Prefs": {
       "zh-Hans": "偏好",
@@ -208,7 +280,11 @@
       "es": "Preferencias",
       "fr": "Préférences",
       "de": "Einstellungen",
-      "pt-BR": "Preferências"
+      "pt-BR": "Preferências",
+      "ru": "Настройки",
+      "ar": "التفضيلات",
+      "it": "Preferenze",
+      "vi": "Tùy chọn"
     },
     "History_Title": {
       "zh-Hans": "历史",
@@ -219,7 +295,11 @@
       "es": "Historial",
       "fr": "Historique",
       "de": "Verlauf",
-      "pt-BR": "Histórico"
+      "pt-BR": "Histórico",
+      "ru": "История",
+      "ar": "السجل",
+      "it": "Cronologia",
+      "vi": "Lịch sử"
     },
     "History_Subtitle": {
       "zh-Hans": "本机与已配对设备的剪贴记录 · 清理只发生在本机",
@@ -230,7 +310,11 @@
       "es": "Clips de este PC y de los dispositivos emparejados · la limpieza solo ocurre en este dispositivo",
       "fr": "Clips de ce PC et des appareils appairés · le nettoyage n’a lieu que sur cet appareil",
       "de": "Clips dieses PCs und gekoppelter Geräte · Aufräumen betrifft nur dieses Gerät",
-      "pt-BR": "Clipes deste PC e dos aparelhos pareados · a limpeza só acontece neste aparelho"
+      "pt-BR": "Clipes deste PC e dos aparelhos pareados · a limpeza só acontece neste aparelho",
+      "ru": "Записи с этого ПК и сопряжённых устройств · очистка касается только этого устройства",
+      "ar": "مقتطفات من هذا الحاسوب والأجهزة المقترنة · التنظيف يخص هذا الجهاز فقط",
+      "it": "Clip da questo PC e dai dispositivi associati · la pulizia riguarda solo questo dispositivo",
+      "vi": "Mẩu sao chép từ PC này và các thiết bị đã ghép nối · việc dọn dẹp chỉ ảnh hưởng thiết bị này"
     },
     "History_Search": {
       "zh-Hans": "搜索",
@@ -241,7 +325,11 @@
       "es": "Buscar",
       "fr": "Rechercher",
       "de": "Suchen",
-      "pt-BR": "Buscar"
+      "pt-BR": "Buscar",
+      "ru": "Поиск",
+      "ar": "بحث",
+      "it": "Cerca",
+      "vi": "Tìm kiếm"
     },
     "Filter_All": {
       "zh-Hans": "全部",
@@ -252,7 +340,11 @@
       "es": "Todo",
       "fr": "Tout",
       "de": "Alle",
-      "pt-BR": "Tudo"
+      "pt-BR": "Tudo",
+      "ru": "Все",
+      "ar": "الكل",
+      "it": "Tutto",
+      "vi": "Tất cả"
     },
     "Filter_Link": {
       "zh-Hans": "链接",
@@ -263,7 +355,11 @@
       "es": "Enlace",
       "fr": "Lien",
       "de": "Link",
-      "pt-BR": "Link"
+      "pt-BR": "Link",
+      "ru": "Ссылка",
+      "ar": "رابط",
+      "it": "Link",
+      "vi": "Liên kết"
     },
     "Filter_Otp": {
       "zh-Hans": "验证码",
@@ -274,7 +370,11 @@
       "es": "Código",
       "fr": "Code",
       "de": "Code",
-      "pt-BR": "Código"
+      "pt-BR": "Código",
+      "ru": "Код",
+      "ar": "رمز",
+      "it": "Codice",
+      "vi": "Mã"
     },
     "Filter_Email": {
       "zh-Hans": "账号",
@@ -285,7 +385,11 @@
       "es": "Cuenta",
       "fr": "Compte",
       "de": "Konto",
-      "pt-BR": "Conta"
+      "pt-BR": "Conta",
+      "ru": "Аккаунт",
+      "ar": "حساب",
+      "it": "Account",
+      "vi": "Tài khoản"
     },
     "Filter_Credential": {
       "zh-Hans": "密码",
@@ -296,7 +400,11 @@
       "es": "Contraseña",
       "fr": "Mot de passe",
       "de": "Passwort",
-      "pt-BR": "Senha"
+      "pt-BR": "Senha",
+      "ru": "Пароль",
+      "ar": "كلمة مرور",
+      "it": "Password",
+      "vi": "Mật khẩu"
     },
     "Filter_Plain": {
       "zh-Hans": "文本",
@@ -307,7 +415,11 @@
       "es": "Texto",
       "fr": "Texte",
       "de": "Text",
-      "pt-BR": "Texto"
+      "pt-BR": "Texto",
+      "ru": "Текст",
+      "ar": "نص",
+      "it": "Testo",
+      "vi": "Văn bản"
     },
     "Format_Image": {
       "zh-Hans": "图片",
@@ -318,7 +430,11 @@
       "es": "Imagen",
       "fr": "Image",
       "de": "Bild",
-      "pt-BR": "Imagem"
+      "pt-BR": "Imagem",
+      "ru": "Изображение",
+      "ar": "صورة",
+      "it": "Immagine",
+      "vi": "Hình ảnh"
     },
     "History_NoPreview": {
       "zh-Hans": "无预览",
@@ -329,7 +445,11 @@
       "es": "Sin vista previa",
       "fr": "Pas d’aperçu",
       "de": "Keine Vorschau",
-      "pt-BR": "Sem prévia"
+      "pt-BR": "Sem prévia",
+      "ru": "Без предпросмотра",
+      "ar": "لا معاينة",
+      "it": "Nessuna anteprima",
+      "vi": "Không có xem trước"
     },
     "History_LocalOnlyBadge": {
       "zh-Hans": "仅本机保留",
@@ -340,7 +460,11 @@
       "es": "Solo en este dispositivo",
       "fr": "Conservé sur cet appareil",
       "de": "Nur auf diesem Gerät",
-      "pt-BR": "Mantido neste aparelho"
+      "pt-BR": "Mantido neste aparelho",
+      "ru": "Хранится только здесь",
+      "ar": "محفوظ على هذا الجهاز فقط",
+      "it": "Solo su questo dispositivo",
+      "vi": "Chỉ giữ trên thiết bị này"
     },
     "History_Empty_Unpaired_Title": {
       "zh-Hans": "先把两端接起来",
@@ -351,7 +475,11 @@
       "es": "Primero, conecta ambos extremos",
       "fr": "D’abord, reliez les deux extrémités",
       "de": "Verbinden Sie zuerst beide Seiten",
-      "pt-BR": "Primeiro, conecte as duas pontas"
+      "pt-BR": "Primeiro, conecte as duas pontas",
+      "ru": "Сначала соедините обе стороны",
+      "ar": "أولًا، صِل الطرفين",
+      "it": "Prima collega le due estremità",
+      "vi": "Trước hết, hãy nối hai đầu"
     },
     "History_Empty_Paired_Title": {
       "zh-Hans": "静候第一条剪贴",
@@ -362,7 +490,11 @@
       "es": "Esperando el primer clip",
       "fr": "En attente du premier clip",
       "de": "Warte auf den ersten Clip",
-      "pt-BR": "Aguardando o primeiro clipe"
+      "pt-BR": "Aguardando o primeiro clipe",
+      "ru": "Ждём первую запись",
+      "ar": "بانتظار أول مقتطف",
+      "it": "In attesa della prima clip",
+      "vi": "Đang chờ mẩu đầu tiên"
     },
     "History_Empty_Unpaired_Body": {
       "zh-Hans": "尚未与手机配对。配对入口在「通路」页的网络段。",
@@ -373,7 +505,11 @@
       "es": "Aún no hay emparejamiento con un teléfono. La entrada de emparejamiento está en el segmento de red de la página «Conducto».",
       "fr": "Pas encore appairé avec un téléphone. L’entrée d’appairage se trouve dans le segment réseau de la page « Conduit ».",
       "de": "Noch nicht mit einem Telefon gekoppelt. Der Kopplungseinstieg liegt im Netzwerkabschnitt der Seite „Kanal“.",
-      "pt-BR": "Ainda não há pareamento com um telefone. A entrada de pareamento fica no segmento de rede da página “Conduíte”."
+      "pt-BR": "Ainda não há pareamento com um telefone. A entrada de pareamento fica no segmento de rede da página “Conduíte”.",
+      "ru": "Телефон ещё не сопряжён. Вход в сопряжение — в сегменте «Сеть» на странице «Канал».",
+      "ar": "لم يُقترن بعد بهاتف. مدخل الاقتران في قسم الشبكة بصفحة «القناة».",
+      "it": "Non ancora associato a un telefono. L’ingresso per l’associazione è nel segmento rete della pagina «Condotto».",
+      "vi": "Chưa ghép nối với điện thoại. Lối vào ghép nối nằm ở đoạn mạng của trang “Đường dẫn”."
     },
     "History_Empty_Paired_Body": {
       "zh-Hans": "在任意一端复制文本，它会出现在这里并流向对面。",
@@ -384,7 +520,11 @@
       "es": "Copia texto en cualquiera de los extremos: aparecerá aquí y fluirá hacia el otro lado.",
       "fr": "Copiez du texte d’un côté ou de l’autre : il apparaît ici et s’écoule vers l’autre extrémité.",
       "de": "Kopieren Sie Text auf einer der beiden Seiten — er erscheint hier und fließt zur anderen Seite.",
-      "pt-BR": "Copie texto em qualquer uma das pontas — ele aparece aqui e flui para o outro lado."
+      "pt-BR": "Copie texto em qualquer uma das pontas — ele aparece aqui e flui para o outro lado.",
+      "ru": "Скопируйте текст на любом устройстве — он появится здесь и уйдёт на другую сторону.",
+      "ar": "انسخ نصًا على أي من الجهازين — سيظهر هنا ويتدفق إلى الطرف الآخر.",
+      "it": "Copia del testo su uno dei due dispositivi: apparirà qui e fluirà verso l’altro lato.",
+      "vi": "Sao chép văn bản trên bất kỳ thiết bị nào — nó sẽ xuất hiện ở đây và chảy sang phía bên kia."
     },
     "History_Empty_GoPair": {
       "zh-Hans": "去配对 ›",
@@ -395,7 +535,11 @@
       "es": "Emparejar ahora ›",
       "fr": "Appairer maintenant ›",
       "de": "Jetzt koppeln ›",
-      "pt-BR": "Parear agora ›"
+      "pt-BR": "Parear agora ›",
+      "ru": "К сопряжению ›",
+      "ar": "اقترن الآن ‹",
+      "it": "Associa ora ›",
+      "vi": "Ghép nối ngay ›"
     },
     "History_NoMatch_Prefix": {
       "zh-Hans": "没有匹配「",
@@ -406,7 +550,11 @@
       "es": "No hay entradas que coincidan con «",
       "fr": "Aucune entrée ne correspond à « ",
       "de": "Keine Einträge passen zu „",
-      "pt-BR": "Nenhuma entrada corresponde a “"
+      "pt-BR": "Nenhuma entrada corresponde a “",
+      "ru": "Нет записей по запросу «",
+      "ar": "لا توجد سجلات تطابق «",
+      "it": "Nessuna voce corrisponde a «",
+      "vi": "Không có mục nào khớp “"
     },
     "History_NoMatch_Suffix": {
       "zh-Hans": "」的记录",
@@ -417,7 +565,11 @@
       "es": "»",
       "fr": " »",
       "de": "“",
-      "pt-BR": "”"
+      "pt-BR": "”",
+      "ru": "»",
+      "ar": "»",
+      "it": "»",
+      "vi": "”"
     },
     "History_Empty_Filtered": {
       "zh-Hans": "该形态下暂无记录 · 换个筛选试试",
@@ -428,7 +580,11 @@
       "es": "No hay entradas de este tipo · prueba con otro filtro",
       "fr": "Aucune entrée de ce type · essayez un autre filtre",
       "de": "Keine Einträge dieses Typs · versuchen Sie einen anderen Filter",
-      "pt-BR": "Nenhuma entrada deste tipo · tente outro filtro"
+      "pt-BR": "Nenhuma entrada deste tipo · tente outro filtro",
+      "ru": "Записей этого типа нет · попробуйте другой фильтр",
+      "ar": "لا سجلات من هذا النوع · جرّب مرشحًا آخر",
+      "it": "Nessuna voce di questo tipo · prova un altro filtro",
+      "vi": "Chưa có mục thuộc dạng này · thử bộ lọc khác"
     },
     "History_CopySelected": {
       "zh-Hans": "复制所选",
@@ -439,7 +595,11 @@
       "es": "Copiar selección",
       "fr": "Copier la sélection",
       "de": "Auswahl kopieren",
-      "pt-BR": "Copiar seleção"
+      "pt-BR": "Copiar seleção",
+      "ru": "Копировать выбранное",
+      "ar": "نسخ المحدد",
+      "it": "Copia selezione",
+      "vi": "Sao chép mục đã chọn"
     },
     "History_ViewDetail": {
       "zh-Hans": "查看详情",
@@ -450,7 +610,11 @@
       "es": "Ver detalles",
       "fr": "Voir les détails",
       "de": "Details anzeigen",
-      "pt-BR": "Ver detalhes"
+      "pt-BR": "Ver detalhes",
+      "ru": "Подробности",
+      "ar": "عرض التفاصيل",
+      "it": "Vedi dettagli",
+      "vi": "Xem chi tiết"
     },
     "History_DeleteSelected": {
       "zh-Hans": "删除所选",
@@ -461,7 +625,11 @@
       "es": "Eliminar selección",
       "fr": "Supprimer la sélection",
       "de": "Auswahl löschen",
-      "pt-BR": "Excluir seleção"
+      "pt-BR": "Excluir seleção",
+      "ru": "Удалить выбранное",
+      "ar": "حذف المحدد",
+      "it": "Elimina selezione",
+      "vi": "Xóa mục đã chọn"
     },
     "History_UnknownSource": {
       "zh-Hans": "未知来源",
@@ -472,7 +640,11 @@
       "es": "Origen desconocido",
       "fr": "Source inconnue",
       "de": "Unbekannte Quelle",
-      "pt-BR": "Origem desconhecida"
+      "pt-BR": "Origem desconhecida",
+      "ru": "Неизвестный источник",
+      "ar": "مصدر مجهول",
+      "it": "Origine sconosciuta",
+      "vi": "Nguồn không rõ"
     },
     "History_LocalSource": {
       "zh-Hans": "本机",
@@ -483,7 +655,11 @@
       "es": "Este PC",
       "fr": "Ce PC",
       "de": "Dieser PC",
-      "pt-BR": "Este PC"
+      "pt-BR": "Este PC",
+      "ru": "Этот ПК",
+      "ar": "هذا الحاسوب",
+      "it": "Questo PC",
+      "vi": "PC này"
     },
     "Conduit_Title": {
       "zh-Hans": "通路",
@@ -494,7 +670,11 @@
       "es": "Conducto",
       "fr": "Conduit",
       "de": "Kanal",
-      "pt-BR": "Conduíte"
+      "pt-BR": "Conduíte",
+      "ru": "Канал",
+      "ar": "القناة",
+      "it": "Condotto",
+      "vi": "Đường dẫn"
     },
     "Conduit_Subtitle": {
       "zh-Hans": "内容从左到右流过四段 · 排障顺序即阅读顺序",
@@ -505,7 +685,11 @@
       "es": "El contenido fluye de izquierda a derecha por cuatro segmentos · el orden de lectura es el orden de diagnóstico",
       "fr": "Le contenu traverse quatre segments de gauche à droite · l’ordre de lecture est l’ordre de dépannage",
       "de": "Inhalte fließen von links nach rechts durch vier Abschnitte · die Lesereihenfolge ist die Fehlersuchreihenfolge",
-      "pt-BR": "O conteúdo flui da esquerda para a direita por quatro segmentos · a ordem de leitura é a ordem de diagnóstico"
+      "pt-BR": "O conteúdo flui da esquerda para a direita por quatro segmentos · a ordem de leitura é a ordem de diagnóstico",
+      "ru": "Содержимое проходит четыре сегмента слева направо · порядок чтения — порядок диагностики",
+      "ar": "يمر المحتوى عبر أربعة أقسام بالتسلسل · ترتيب القراءة هو ترتيب استكشاف الأخطاء",
+      "it": "Il contenuto scorre da sinistra a destra attraverso quattro segmenti · l’ordine di lettura è l’ordine di diagnosi",
+      "vi": "Nội dung chảy từ trái sang phải qua bốn đoạn · thứ tự đọc chính là thứ tự chẩn đoán"
     },
     "Conduit_Capture_Name": {
       "zh-Hans": "本机捕获",
@@ -516,7 +700,11 @@
       "es": "Captura local",
       "fr": "Capture locale",
       "de": "Lokale Erfassung",
-      "pt-BR": "Captura local"
+      "pt-BR": "Captura local",
+      "ru": "Локальный захват",
+      "ar": "الالتقاط المحلي",
+      "it": "Acquisizione locale",
+      "vi": "Ghi nhận cục bộ"
     },
     "Conduit_Capture_Ready": {
       "zh-Hans": "就绪 · 监听 Ctrl+C",
@@ -527,7 +715,11 @@
       "es": "Listo · escuchando Ctrl+C",
       "fr": "Prêt · à l’écoute de Ctrl+C",
       "de": "Bereit · lauscht auf Strg+C",
-      "pt-BR": "Pronto · escutando Ctrl+C"
+      "pt-BR": "Pronto · escutando Ctrl+C",
+      "ru": "Готово · слушаем Ctrl+C",
+      "ar": "جاهز · يراقب Ctrl+C",
+      "it": "Pronto · in ascolto di Ctrl+C",
+      "vi": "Sẵn sàng · đang lắng nghe Ctrl+C"
     },
     "Conduit_Status_Paused": {
       "zh-Hans": "已暂停 · 不再记录",
@@ -538,7 +730,11 @@
       "es": "En pausa · no se registra",
       "fr": "En pause · rien n’est enregistré",
       "de": "Pausiert · es wird nichts aufgezeichnet",
-      "pt-BR": "Pausado · nada é registrado"
+      "pt-BR": "Pausado · nada é registrado",
+      "ru": "Приостановлено · запись не ведётся",
+      "ar": "موقوف مؤقتًا · لا تسجيل",
+      "it": "In pausa · nessuna registrazione",
+      "vi": "Đã tạm dừng · không ghi nữa"
     },
     "Conduit_Status_Private": {
       "zh-Hans": "私密模式 · 不留痕迹",
@@ -549,7 +745,11 @@
       "es": "Modo privado · sin dejar rastro",
       "fr": "Mode privé · aucune trace",
       "de": "Privater Modus · hinterlässt keine Spuren",
-      "pt-BR": "Modo privado · sem deixar rastros"
+      "pt-BR": "Modo privado · sem deixar rastros",
+      "ru": "Приватный режим · без следов",
+      "ar": "الوضع الخاص · بلا أثر",
+      "it": "Modalità privata · nessuna traccia",
+      "vi": "Chế độ riêng tư · không để lại dấu vết"
     },
     "Conduit_Status_CaptureFaulted": {
       "zh-Hans": "捕获降级 · 剪贴板访问失败",
@@ -560,7 +760,11 @@
       "es": "Captura degradada · falló el acceso al portapapeles",
       "fr": "Capture dégradée · échec d’accès au presse-papiers",
       "de": "Erfassung beeinträchtigt · Zwischenablagezugriff fehlgeschlagen",
-      "pt-BR": "Captura degradada · falha no acesso à área de transferência"
+      "pt-BR": "Captura degradada · falha no acesso à área de transferência",
+      "ru": "Захват деградировал · нет доступа к буферу обмена",
+      "ar": "الالتقاط متدهور · تعذّر الوصول إلى الحافظة",
+      "it": "Acquisizione degradata · accesso agli appunti non riuscito",
+      "vi": "Ghi nhận suy giảm · truy cập bảng nhớ tạm thất bại"
     },
     "Conduit_Capture_Detail": {
       "zh-Hans": "私密模式与屏蔽进程在这一段拦下内容。",
@@ -571,7 +775,11 @@
       "es": "El modo privado y los procesos bloqueados detienen el contenido en este segmento.",
       "fr": "Le mode privé et les processus bloqués arrêtent le contenu à ce segment.",
       "de": "Privater Modus und blockierte Prozesse stoppen Inhalte an diesem Abschnitt.",
-      "pt-BR": "O modo privado e os processos bloqueados param o conteúdo neste segmento."
+      "pt-BR": "O modo privado e os processos bloqueados param o conteúdo neste segmento.",
+      "ru": "Приватный режим и заблокированные процессы останавливают содержимое на этом сегменте.",
+      "ar": "الوضع الخاص والعمليات المحظورة توقف المحتوى عند هذا القسم.",
+      "it": "La modalità privata e i processi bloccati fermano il contenuto in questo segmento.",
+      "vi": "Chế độ riêng tư và các tiến trình bị chặn giữ nội dung lại ở đoạn này."
     },
     "Conduit_Service_Name": {
       "zh-Hans": "本机服务",
@@ -582,7 +790,11 @@
       "es": "Servicio local",
       "fr": "Service local",
       "de": "Lokaler Dienst",
-      "pt-BR": "Serviço local"
+      "pt-BR": "Serviço local",
+      "ru": "Локальная служба",
+      "ar": "الخدمة المحلية",
+      "it": "Servizio locale",
+      "vi": "Dịch vụ cục bộ"
     },
     "Conduit_Service_ReadyPrefix": {
       "zh-Hans": "就绪 · 历史 ",
@@ -593,7 +805,11 @@
       "es": "Listo · historial ",
       "fr": "Prêt · historique ",
       "de": "Bereit · Verlauf ",
-      "pt-BR": "Pronto · histórico "
+      "pt-BR": "Pronto · histórico ",
+      "ru": "Готово · история ",
+      "ar": "جاهز · السجل ",
+      "it": "Pronto · cronologia ",
+      "vi": "Sẵn sàng · lịch sử "
     },
     "Conduit_Service_ReadyInfix": {
       "zh-Hans": " 条 · 待发 ",
@@ -604,7 +820,11 @@
       "es": " · pendientes ",
       "fr": " · en attente ",
       "de": " · ausstehend ",
-      "pt-BR": " · pendentes "
+      "pt-BR": " · pendentes ",
+      "ru": " · к отправке ",
+      "ar": " · بانتظار الإرسال ",
+      "it": " · in uscita ",
+      "vi": " · chờ gửi "
     },
     "Conduit_Service_DetailPrefix": {
       "zh-Hans": "事件先落库再入发件队列 · ",
@@ -615,7 +835,11 @@
       "es": "Los eventos se guardan antes de entrar en la cola de envío · ",
       "fr": "Les événements sont enregistrés avant d’entrer dans la file d’envoi · ",
       "de": "Ereignisse werden erst gespeichert, dann in die Sendewarteschlange gestellt · ",
-      "pt-BR": "Os eventos são gravados antes de entrar na fila de envio · "
+      "pt-BR": "Os eventos são gravados antes de entrar na fila de envio · ",
+      "ru": "События сначала попадают в хранилище, затем в очередь отправки · ",
+      "ar": "تُحفظ الأحداث في المخزن قبل قائمة الإرسال · ",
+      "it": "Gli eventi arrivano nell’archivio prima della coda di invio · ",
+      "vi": "Sự kiện vào kho trước rồi mới vào hàng đợi gửi · "
     },
     "Conduit_Network_Name": {
       "zh-Hans": "网络",
@@ -626,7 +850,11 @@
       "es": "Red",
       "fr": "Réseau",
       "de": "Netzwerk",
-      "pt-BR": "Rede"
+      "pt-BR": "Rede",
+      "ru": "Сеть",
+      "ar": "الشبكة",
+      "it": "Rete",
+      "vi": "Mạng"
     },
     "Conduit_Network_ReadyPrefix": {
       "zh-Hans": "就绪 · 监听 :",
@@ -637,7 +865,11 @@
       "es": "Listo · escuchando en :",
       "fr": "Prêt · à l’écoute sur :",
       "de": "Bereit · lauscht auf :",
-      "pt-BR": "Pronto · escutando em :"
+      "pt-BR": "Pronto · escutando em :",
+      "ru": "Готово · слушаем :",
+      "ar": "جاهز · يستمع على :",
+      "it": "Pronto · in ascolto su :",
+      "vi": "Sẵn sàng · lắng nghe trên :"
     },
     "Conduit_Network_ReadyInfix": {
       "zh-Hans": " · 已连 ",
@@ -648,7 +880,11 @@
       "es": " · conectados ",
       "fr": " · connectés ",
       "de": " · verbunden ",
-      "pt-BR": " · conectados "
+      "pt-BR": " · conectados ",
+      "ru": " · подключено ",
+      "ar": " · متصل ",
+      "it": " · connessi ",
+      "vi": " · đã kết nối "
     },
     "Conduit_Network_ReadySuffix": {
       "zh-Hans": " 台",
@@ -659,7 +895,11 @@
       "es": " dispositivo(s)",
       "fr": " appareil(s)",
       "de": " Gerät(e)",
-      "pt-BR": " aparelho(s)"
+      "pt-BR": " aparelho(s)",
+      "ru": " устр.",
+      "ar": " جهاز/أجهزة",
+      "it": " dispositivo/i",
+      "vi": " thiết bị"
     },
     "Conduit_Network_Down": {
       "zh-Hans": "未启动 · 同步关闭",
@@ -670,7 +910,11 @@
       "es": "No iniciado · sincronización apagada",
       "fr": "Non démarré · synchronisation coupée",
       "de": "Nicht gestartet · Sync aus",
-      "pt-BR": "Não iniciado · sincronização desligada"
+      "pt-BR": "Não iniciado · sincronização desligada",
+      "ru": "Не запущено · синхронизация выключена",
+      "ar": "غير مشغّل · المزامنة متوقفة",
+      "it": "Non attivo · sincronizzazione spenta",
+      "vi": "Chưa chạy · đồng bộ tắt"
     },
     "Conduit_Peer_Name": {
       "zh-Hans": "对端写入",
@@ -681,7 +925,11 @@
       "es": "Escritura del par",
       "fr": "Écriture du pair",
       "de": "Peer-Schreiben",
-      "pt-BR": "Escrita do par"
+      "pt-BR": "Escrita do par",
+      "ru": "Запись на той стороне",
+      "ar": "كتابة الطرف الآخر",
+      "it": "Scrittura sul peer",
+      "vi": "Ghi ở phía đối diện"
     },
     "Conduit_Peer_PairedPrefix": {
       "zh-Hans": "已配对 ",
@@ -692,7 +940,11 @@
       "es": "Emparejados ",
       "fr": "Appairés ",
       "de": "Gekoppelt ",
-      "pt-BR": "Pareados "
+      "pt-BR": "Pareados ",
+      "ru": "Сопряжено ",
+      "ar": "مقترن ",
+      "it": "Associati ",
+      "vi": "Đã ghép nối "
     },
     "Conduit_Peer_PairedSuffix": {
       "zh-Hans": " 台",
@@ -703,7 +955,11 @@
       "es": " dispositivo(s)",
       "fr": " appareil(s)",
       "de": " Gerät(e)",
-      "pt-BR": " aparelho(s)"
+      "pt-BR": " aparelho(s)",
+      "ru": " устр.",
+      "ar": " جهاز/أجهزة",
+      "it": " dispositivo/i",
+      "vi": " thiết bị"
     },
     "Conduit_Peer_AutoApplyOn": {
       "zh-Hans": "远端文本自动写入本机剪贴板。",
@@ -714,7 +970,11 @@
       "es": "El texto remoto se escribe automáticamente en el portapapeles de este PC.",
       "fr": "Le texte distant est écrit automatiquement dans le presse-papiers de ce PC.",
       "de": "Ferner Text wird automatisch in die Zwischenablage dieses PCs geschrieben.",
-      "pt-BR": "O texto remoto é gravado automaticamente na área de transferência deste PC."
+      "pt-BR": "O texto remoto é gravado automaticamente na área de transferência deste PC.",
+      "ru": "Удалённый текст автоматически записывается в буфер обмена этого ПК.",
+      "ar": "النص البعيد يُكتب تلقائيًا في حافظة هذا الحاسوب.",
+      "it": "Il testo remoto viene scritto automaticamente negli appunti di questo PC.",
+      "vi": "Văn bản từ xa được tự động ghi vào bảng nhớ tạm của PC này."
     },
     "Conduit_Peer_AutoApplyOff": {
       "zh-Hans": "自动应用已关闭：远端内容仅保留在历史，需手动复制。",
@@ -725,7 +985,11 @@
       "es": "La aplicación automática está apagada: el contenido remoto queda solo en el historial y hay que copiarlo a mano.",
       "fr": "L’application automatique est désactivée : le contenu distant reste dans l’historique et doit être copié à la main.",
       "de": "Automatisches Anwenden ist aus: Ferne Inhalte bleiben nur im Verlauf und müssen von Hand kopiert werden.",
-      "pt-BR": "A aplicação automática está desligada: o conteúdo remoto fica só no histórico e precisa ser copiado à mão."
+      "pt-BR": "A aplicação automática está desligada: o conteúdo remoto fica só no histórico e precisa ser copiado à mão.",
+      "ru": "Автоприменение выключено: удалённое содержимое остаётся только в истории, копируйте вручную.",
+      "ar": "التطبيق التلقائي متوقف: يبقى المحتوى البعيد في السجل فقط ويحتاج نسخًا يدويًا.",
+      "it": "L’applicazione automatica è disattivata: il contenuto remoto resta solo nella cronologia e va copiato a mano.",
+      "vi": "Tự động áp dụng đã tắt: nội dung từ xa chỉ nằm trong lịch sử, cần sao chép thủ công."
     },
     "Conduit_Devices_Header": {
       "zh-Hans": "网络段 · 已配对设备",
@@ -736,7 +1000,11 @@
       "es": "Segmento de red · dispositivos emparejados",
       "fr": "Segment réseau · appareils appairés",
       "de": "Netzwerkabschnitt · gekoppelte Geräte",
-      "pt-BR": "Segmento de rede · aparelhos pareados"
+      "pt-BR": "Segmento de rede · aparelhos pareados",
+      "ru": "Сегмент «Сеть» · сопряжённые устройства",
+      "ar": "قسم الشبكة · الأجهزة المقترنة",
+      "it": "Segmento rete · dispositivi associati",
+      "vi": "Đoạn mạng · thiết bị đã ghép nối"
     },
     "Conduit_Connection_Header": {
       "zh-Hans": "网络段 · 连接",
@@ -747,7 +1015,11 @@
       "es": "Segmento de red · conexión",
       "fr": "Segment réseau · connexion",
       "de": "Netzwerkabschnitt · Verbindung",
-      "pt-BR": "Segmento de rede · conexão"
+      "pt-BR": "Segmento de rede · conexão",
+      "ru": "Сегмент «Сеть» · подключение",
+      "ar": "قسم الشبكة · الاتصال",
+      "it": "Segmento rete · connessione",
+      "vi": "Đoạn mạng · kết nối"
     },
     "Conduit_CleanupStale": {
       "zh-Hans": "一键清理",
@@ -758,7 +1030,11 @@
       "es": "Limpiar",
       "fr": "Nettoyer",
       "de": "Aufräumen",
-      "pt-BR": "Limpar"
+      "pt-BR": "Limpar",
+      "ru": "Очистить",
+      "ar": "تنظيف",
+      "it": "Pulisci",
+      "vi": "Dọn dẹp"
     },
     "Conduit_Bluetooth_Title": {
       "zh-Hans": "蓝牙备援",
@@ -769,7 +1045,11 @@
       "es": "Respaldo Bluetooth",
       "fr": "Secours Bluetooth",
       "de": "Bluetooth-Ausweichweg",
-      "pt-BR": "Alternativa Bluetooth"
+      "pt-BR": "Alternativa Bluetooth",
+      "ru": "Bluetooth-резерв",
+      "ar": "احتياطي البلوتوث",
+      "it": "Riserva Bluetooth",
+      "vi": "Dự phòng Bluetooth"
     },
     "Conduit_Bluetooth_Desc": {
       "zh-Hans": "默认关闭。LAN 被 VPN 或防火墙阻断时，已在系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。",
@@ -780,7 +1060,11 @@
       "es": "Apagado por defecto. Cuando una VPN o un cortafuegos bloquea la LAN, un teléfono ya emparejado por Bluetooth en los ajustes del sistema sigue sincronizando texto (sin imágenes, más lento).",
       "fr": "Désactivé par défaut. Quand le LAN est bloqué par un VPN ou un pare-feu, un téléphone déjà appairé en Bluetooth dans les réglages système continue de synchroniser le texte (pas d’images, plus lent).",
       "de": "Standardmäßig aus. Wenn ein VPN oder eine Firewall das LAN blockiert, synchronisiert ein in den Systemeinstellungen bereits per Bluetooth gekoppeltes Telefon weiterhin Text (keine Bilder, langsamer).",
-      "pt-BR": "Desligado por padrão. Quando a LAN é bloqueada por VPN ou firewall, um telefone já pareado por Bluetooth nas configurações do sistema continua sincronizando texto (sem imagens, mais lento)."
+      "pt-BR": "Desligado por padrão. Quando a LAN é bloqueada por VPN ou firewall, um telefone já pareado por Bluetooth nas configurações do sistema continua sincronizando texto (sem imagens, mais lento).",
+      "ru": "По умолчанию выключено. Когда LAN блокируется VPN или брандмауэром, телефон, уже сопряжённый по Bluetooth в настройках системы, продолжает синхронизировать текст (без изображений, медленнее).",
+      "ar": "متوقف افتراضيًا. عندما تُحجب الشبكة المحلية بواسطة VPN أو جدار حماية، يواصل الهاتف المقترن مسبقًا عبر البلوتوث في إعدادات النظام مزامنة النص (بلا صور، وأبطأ).",
+      "it": "Disattivata per impostazione predefinita. Quando la LAN è bloccata da VPN o firewall, un telefono già associato via Bluetooth nelle impostazioni di sistema continua a sincronizzare il testo (niente immagini, più lento).",
+      "vi": "Mặc định tắt. Khi LAN bị VPN hoặc tường lửa chặn, điện thoại đã ghép nối Bluetooth trong cài đặt hệ thống vẫn tiếp tục đồng bộ văn bản (không có hình ảnh, chậm hơn)."
     },
     "Conduit_ExtraBind_Title": {
       "zh-Hans": "额外监听地址",
@@ -791,7 +1075,11 @@
       "es": "Direcciones de escucha adicionales",
       "fr": "Adresses d’écoute supplémentaires",
       "de": "Zusätzliche Lauschadressen",
-      "pt-BR": "Endereços de escuta adicionais"
+      "pt-BR": "Endereços de escuta adicionais",
+      "ru": "Дополнительные адреса прослушивания",
+      "ar": "عناوين استماع إضافية",
+      "it": "Indirizzi di ascolto aggiuntivi",
+      "vi": "Địa chỉ lắng nghe bổ sung"
     },
     "Conduit_ExtraBind_Desc": {
       "zh-Hans": "用于 Tailscale / WireGuard 等虚拟网卡地址。不提供公网中转。",
@@ -802,7 +1090,11 @@
       "es": "Para direcciones de adaptadores virtuales como Tailscale / WireGuard. No se ofrece retransmisión pública.",
       "fr": "Pour les adresses d’adaptateurs virtuels comme Tailscale / WireGuard. Aucun relais public n’est fourni.",
       "de": "Für Adressen virtueller Adapter wie Tailscale / WireGuard. Kein öffentliches Relay.",
-      "pt-BR": "Para endereços de adaptadores virtuais como Tailscale / WireGuard. Nenhum relay público é fornecido."
+      "pt-BR": "Para endereços de adaptadores virtuais como Tailscale / WireGuard. Nenhum relay público é fornecido.",
+      "ru": "Для адресов виртуальных адаптеров, таких как Tailscale / WireGuard. Публичный ретранслятор не предоставляется.",
+      "ar": "لعناوين المحولات الافتراضية مثل Tailscale / WireGuard. لا يوجد ممر عام.",
+      "it": "Per indirizzi di schede virtuali come Tailscale / WireGuard. Nessun relay pubblico.",
+      "vi": "Dành cho địa chỉ bộ điều hợp ảo như Tailscale / WireGuard. Không cung cấp trung chuyển công cộng."
     },
     "Conduit_ExtraBind_RestartNote": {
       "zh-Hans": "重启后生效",
@@ -813,7 +1105,11 @@
       "es": "Se aplica tras reiniciar",
       "fr": "Prend effet après redémarrage",
       "de": "Wirkt nach Neustart",
-      "pt-BR": "Vale após reiniciar"
+      "pt-BR": "Vale após reiniciar",
+      "ru": "Применяется после перезапуска",
+      "ar": "يسري بعد إعادة التشغيل",
+      "it": "Si applica dopo il riavvio",
+      "vi": "Có hiệu lực sau khi khởi động lại"
     },
     "Conduit_ExtraBind_CommaNote": {
       "zh-Hans": " · 逗号分隔多个地址",
@@ -824,7 +1120,11 @@
       "es": " · separa varias direcciones con comas",
       "fr": " · séparez plusieurs adresses par des virgules",
       "de": " · mehrere Adressen mit Kommas trennen",
-      "pt-BR": " · separe vários endereços com vírgulas"
+      "pt-BR": " · separe vários endereços com vírgulas",
+      "ru": " · несколько адресов — через запятую",
+      "ar": " · افصل بين العناوين بفواصل",
+      "it": " · più indirizzi separati da virgole",
+      "vi": " · nhiều địa chỉ cách nhau bằng dấu phẩy"
     },
     "Conduit_Fingerprint_Title": {
       "zh-Hans": "本机证书指纹",
@@ -835,7 +1135,11 @@
       "es": "Huella del certificado de este PC",
       "fr": "Empreinte du certificat de ce PC",
       "de": "Zertifikat-Fingerabdruck dieses PCs",
-      "pt-BR": "Impressão digital do certificado deste PC"
+      "pt-BR": "Impressão digital do certificado deste PC",
+      "ru": "Отпечаток сертификата этого ПК",
+      "ar": "بصمة شهادة هذا الحاسوب",
+      "it": "Impronta del certificato di questo PC",
+      "vi": "Dấu vân tay chứng chỉ của PC này"
     },
     "Conduit_Fingerprint_Desc": {
       "zh-Hans": "配对时请与手机上显示的指纹逐组核对。指纹变更会使所有已配对设备提示重新确认。",
@@ -846,7 +1150,11 @@
       "es": "Al emparejar, compárala grupo a grupo con la huella mostrada en el teléfono. Un cambio de huella hará que todos los dispositivos emparejados pidan confirmar de nuevo.",
       "fr": "Lors de l’appairage, comparez-la groupe par groupe avec l’empreinte affichée sur le téléphone. Un changement d’empreinte oblige tous les appareils appairés à reconfirmer.",
       "de": "Vergleichen Sie ihn beim Koppeln Gruppe für Gruppe mit dem auf dem Telefon angezeigten Fingerabdruck. Eine Änderung des Fingerabdrucks lässt alle gekoppelten Geräte um erneute Bestätigung bitten.",
-      "pt-BR": "Ao parear, compare-a grupo por grupo com a impressão digital mostrada no telefone. Uma mudança na impressão digital faz todos os aparelhos pareados pedirem nova confirmação."
+      "pt-BR": "Ao parear, compare-a grupo por grupo com a impressão digital mostrada no telefone. Uma mudança na impressão digital faz todos os aparelhos pareados pedirem nova confirmação.",
+      "ru": "При сопряжении сверяйте его группа за группой с отпечатком на телефоне. После смены отпечатка все сопряжённые устройства попросят подтвердить заново.",
+      "ar": "عند الاقتران، قارنها مجموعةً بمجموعة مع البصمة المعروضة على الهاتف. تغيّر البصمة يجعل كل الأجهزة المقترنة تطلب إعادة التأكيد.",
+      "it": "Durante l’associazione confrontala gruppo per gruppo con l’impronta mostrata sul telefono. Se l’impronta cambia, ogni dispositivo associato chiederà una nuova conferma.",
+      "vi": "Khi ghép nối, hãy đối chiếu từng cụm với dấu vân tay hiển thị trên điện thoại. Dấu vân tay thay đổi sẽ khiến mọi thiết bị đã ghép nối yêu cầu xác nhận lại."
     },
     "Conduit_Fingerprint_Unavailable": {
       "zh-Hans": "对端服务未启动，本次会话无指纹可示。",
@@ -857,7 +1165,11 @@
       "es": "El servicio del par no está en marcha; no hay huella que mostrar en esta sesión.",
       "fr": "Le service du pair n’est pas démarré ; aucune empreinte à afficher pour cette session.",
       "de": "Der Peer-Dienst läuft nicht; in dieser Sitzung gibt es keinen Fingerabdruck zu zeigen.",
-      "pt-BR": "O serviço do par não está em execução; não há impressão digital para mostrar nesta sessão."
+      "pt-BR": "O serviço do par não está em execução; não há impressão digital para mostrar nesta sessão.",
+      "ru": "Служба обмена не запущена; в этом сеансе отпечаток недоступен.",
+      "ar": "خدمة الطرف الآخر غير مشغّلة؛ لا بصمة لعرضها في هذه الجلسة.",
+      "it": "Il servizio peer non è attivo; nessuna impronta da mostrare in questa sessione.",
+      "vi": "Dịch vụ phía đối diện chưa chạy; phiên này không có dấu vân tay để hiển thị."
     },
     "Device_RevokedBadge": {
       "zh-Hans": "已撤销",
@@ -868,7 +1180,11 @@
       "es": "Revocado",
       "fr": "Révoqué",
       "de": "Widerrufen",
-      "pt-BR": "Revogado"
+      "pt-BR": "Revogado",
+      "ru": "Отозвано",
+      "ar": "أُبطل",
+      "it": "Revocato",
+      "vi": "Đã thu hồi"
     },
     "Device_AccentLabel": {
       "zh-Hans": "设备色",
@@ -879,7 +1195,11 @@
       "es": "Color del dispositivo",
       "fr": "Couleur de l’appareil",
       "de": "Gerätefarbe",
-      "pt-BR": "Cor do aparelho"
+      "pt-BR": "Cor do aparelho",
+      "ru": "Цвет устройства",
+      "ar": "لون الجهاز",
+      "it": "Colore del dispositivo",
+      "vi": "Màu thiết bị"
     },
     "Device_AccentManual": {
       "zh-Hans": "手动指定",
@@ -890,7 +1210,11 @@
       "es": "Asignado a mano",
       "fr": "Définie à la main",
       "de": "Manuell festgelegt",
-      "pt-BR": "Definida à mão"
+      "pt-BR": "Definida à mão",
+      "ru": "Задан вручную",
+      "ar": "محدد يدويًا",
+      "it": "Impostato manualmente",
+      "vi": "Chỉ định thủ công"
     },
     "Device_AccentByOrder": {
       "zh-Hans": "跟随配对顺位",
@@ -901,7 +1225,11 @@
       "es": "Sigue el orden de emparejamiento",
       "fr": "Suit l’ordre d’appairage",
       "de": "Folgt der Kopplungsreihenfolge",
-      "pt-BR": "Segue a ordem de pareamento"
+      "pt-BR": "Segue a ordem de pareamento",
+      "ru": "По порядку сопряжения",
+      "ar": "يتبع ترتيب الاقتران",
+      "it": "Segue l’ordine di associazione",
+      "vi": "Theo thứ tự ghép nối"
     },
     "Device_Rename": {
       "zh-Hans": "重命名",
@@ -912,7 +1240,11 @@
       "es": "Renombrar",
       "fr": "Renommer",
       "de": "Umbenennen",
-      "pt-BR": "Renomear"
+      "pt-BR": "Renomear",
+      "ru": "Переименовать",
+      "ar": "إعادة تسمية",
+      "it": "Rinomina",
+      "vi": "Đổi tên"
     },
     "Device_RevokeSelected": {
       "zh-Hans": "撤销所选设备",
@@ -923,7 +1255,11 @@
       "es": "Revocar dispositivo seleccionado",
       "fr": "Révoquer l’appareil sélectionné",
       "de": "Ausgewähltes Gerät widerrufen",
-      "pt-BR": "Revogar aparelho selecionado"
+      "pt-BR": "Revogar aparelho selecionado",
+      "ru": "Отозвать выбранное устройство",
+      "ar": "إبطال الجهاز المحدد",
+      "it": "Revoca il dispositivo selezionato",
+      "vi": "Thu hồi thiết bị đã chọn"
     },
     "Device_RevokeNote": {
       "zh-Hans": "撤销立即断开该设备并作废其配对密钥；对方已收到的内容不会被远程删除。撤销后重新配对视为新设备。同一部手机换了身份重新配对时，旧记录会被自动撤销并清空其待发队列。",
@@ -934,7 +1270,11 @@
       "es": "Revocar desconecta el dispositivo de inmediato y anula su clave de emparejamiento; el contenido que ya recibió nunca se borra en remoto. Volver a emparejar tras revocar cuenta como dispositivo nuevo. Si el mismo teléfono se vuelve a emparejar con otra identidad, el registro antiguo se revoca solo y su cola de envío se vacía.",
       "fr": "La révocation déconnecte l’appareil immédiatement et invalide sa clé d’appairage ; le contenu qu’il a déjà reçu n’est jamais supprimé à distance. Un nouvel appairage après révocation compte comme un nouvel appareil. Si le même téléphone se réappaire sous une nouvelle identité, l’ancien enregistrement est révoqué automatiquement et sa file d’envoi vidée.",
       "de": "Der Widerruf trennt das Gerät sofort und macht seinen Kopplungsschlüssel ungültig; bereits empfangene Inhalte werden nie aus der Ferne gelöscht. Eine erneute Kopplung nach dem Widerruf zählt als neues Gerät. Koppelt sich dasselbe Telefon unter neuer Identität erneut, wird der alte Eintrag automatisch widerrufen und seine Sendewarteschlange geleert.",
-      "pt-BR": "Revogar desconecta o aparelho na hora e anula sua chave de pareamento; o conteúdo que ele já recebeu nunca é apagado remotamente. Parear de novo após a revogação conta como aparelho novo. Se o mesmo telefone parear de novo com outra identidade, o registro antigo é revogado automaticamente e sua fila de envio é esvaziada."
+      "pt-BR": "Revogar desconecta o aparelho na hora e anula sua chave de pareamento; o conteúdo que ele já recebeu nunca é apagado remotamente. Parear de novo após a revogação conta como aparelho novo. Se o mesmo telefone parear de novo com outra identidade, o registro antigo é revogado automaticamente e sua fila de envio é esvaziada.",
+      "ru": "Отзыв немедленно отключает устройство и аннулирует его ключ сопряжения; уже полученное им содержимое удалённо не удаляется. Повторное сопряжение после отзыва считается новым устройством. Когда тот же телефон сопрягается заново под новой личностью, старая запись отзывается автоматически, а её очередь отправки очищается.",
+      "ar": "الإبطال يفصل الجهاز فورًا ويلغي مفتاح اقترانه؛ المحتوى الذي استلمه لا يُحذف عن بُعد أبدًا. الاقتران بعد الإبطال يُعد جهازًا جديدًا. عندما يعيد الهاتف نفسه الاقتران بهوية جديدة، يُبطل السجل القديم تلقائيًا وتُفرَّغ قائمة إرساله.",
+      "it": "La revoca disconnette subito il dispositivo e annulla la sua chiave di associazione; il contenuto già ricevuto non viene mai eliminato da remoto. Riassociarsi dopo la revoca conta come nuovo dispositivo. Se lo stesso telefono si riassocia con una nuova identità, il vecchio record viene revocato automaticamente e la sua coda di invio svuotata.",
+      "vi": "Thu hồi sẽ ngắt kết nối thiết bị ngay và vô hiệu hóa khóa ghép nối của nó; nội dung nó đã nhận không bao giờ bị xóa từ xa. Ghép nối lại sau khi thu hồi được xem là thiết bị mới. Khi cùng một điện thoại ghép nối lại với danh tính mới, bản ghi cũ sẽ tự động bị thu hồi và hàng đợi gửi của nó bị xóa."
     },
     "Device_UnknownRemote": {
       "zh-Hans": "远端设备",
@@ -945,7 +1285,11 @@
       "es": "Dispositivo remoto",
       "fr": "Appareil distant",
       "de": "Fernes Gerät",
-      "pt-BR": "Aparelho remoto"
+      "pt-BR": "Aparelho remoto",
+      "ru": "Удалённое устройство",
+      "ar": "جهاز بعيد",
+      "it": "Dispositivo remoto",
+      "vi": "Thiết bị từ xa"
     },
     "Device_PairedFallback": {
       "zh-Hans": "已配对设备",
@@ -956,7 +1300,11 @@
       "es": "Dispositivo emparejado",
       "fr": "Appareil appairé",
       "de": "Gekoppeltes Gerät",
-      "pt-BR": "Aparelho pareado"
+      "pt-BR": "Aparelho pareado",
+      "ru": "Сопряжённое устройство",
+      "ar": "جهاز مقترن",
+      "it": "Dispositivo associato",
+      "vi": "Thiết bị đã ghép nối"
     },
     "Device_UnknownFallback": {
       "zh-Hans": "未知设备",
@@ -967,7 +1315,11 @@
       "es": "Dispositivo desconocido",
       "fr": "Appareil inconnu",
       "de": "Unbekanntes Gerät",
-      "pt-BR": "Aparelho desconhecido"
+      "pt-BR": "Aparelho desconhecido",
+      "ru": "Неизвестное устройство",
+      "ar": "جهاز مجهول",
+      "it": "Dispositivo sconosciuto",
+      "vi": "Thiết bị không rõ"
     },
     "Stale_BacklogSuffixFormat": {
       "zh-Hans": "{0} · 积压 {1} 条待发",
@@ -978,7 +1330,11 @@
       "es": "{0} · {1} pendientes en la cola",
       "fr": "{0} · {1} en attente dans la file",
       "de": "{0} · {1} ausstehend in der Warteschlange",
-      "pt-BR": "{0} · {1} pendentes na fila"
+      "pt-BR": "{0} · {1} pendentes na fila",
+      "ru": "{0} · в очереди {1} к отправке",
+      "ar": "{0} · {1} بانتظار الإرسال",
+      "it": "{0} · {1} in attesa di invio",
+      "vi": "{0} · {1} mục chờ gửi"
     },
     "Stale_BannerBacklogFormat": {
       "zh-Hans": "检测到 {0} 台疑似残留设备，积压 {1} 条待发正在推高「待发」计数。清理会撤销它们并清空其发件队列。",
@@ -989,7 +1345,11 @@
       "es": "Se detectaron {0} dispositivos que parecen restos obsoletos; {1} elementos pendientes están inflando el contador. La limpieza los revoca y vacía sus colas de envío.",
       "fr": "{0} appareil(s) semblant être des restes obsolètes détecté(s) ; {1} élément(s) en attente gonflent le compteur. Le nettoyage les révoque et vide leurs files d’envoi.",
       "de": "{0} Gerät(e) erkannt, die wie veraltete Überbleibsel aussehen; {1} ausstehende Einträge blähen den Zähler auf. Das Aufräumen widerruft sie und leert ihre Sendewarteschlangen.",
-      "pt-BR": "Detectados {0} aparelho(s) que parecem sobras obsoletas; {1} item(ns) pendente(s) estão inflando o contador. A limpeza os revoga e esvazia suas filas de envio."
+      "pt-BR": "Detectados {0} aparelho(s) que parecem sobras obsoletas; {1} item(ns) pendente(s) estão inflando o contador. A limpeza os revoga e esvazia suas filas de envio.",
+      "ru": "Обнаружено {0} устройств, похожих на устаревшие остатки; {1} ожидающих записей раздувают счётчик «к отправке». Очистка отзовёт их и опустошит их очереди отправки.",
+      "ar": "رُصد {0} من الأجهزة تبدو بقايا قديمة؛ {1} من العناصر المعلقة تضخّم عدّاد «بانتظار الإرسال». التنظيف يبطلها ويفرّغ قوائم إرسالها.",
+      "it": "Rilevati {0} dispositivi che sembrano residui obsoleti; {1} elementi in attesa gonfiano il contatore «in uscita». La pulizia li revoca e svuota le loro code di invio.",
+      "vi": "Phát hiện {0} thiết bị có vẻ là tàn dư; {1} mục đang chờ làm phồng bộ đếm “chờ gửi”. Dọn dẹp sẽ thu hồi chúng và xóa hàng đợi gửi của chúng."
     },
     "Stale_BannerFormat": {
       "zh-Hans": "检测到 {0} 台疑似残留设备。清理会撤销它们；对方已收到的内容不受影响。",
@@ -1000,7 +1360,11 @@
       "es": "Se detectaron {0} dispositivos que parecen restos obsoletos. La limpieza los revoca; el contenido que ya recibieron no se ve afectado.",
       "fr": "{0} appareil(s) semblant être des restes obsolètes détecté(s). Le nettoyage les révoque ; le contenu qu’ils ont déjà reçu n’est pas affecté.",
       "de": "{0} Gerät(e) erkannt, die wie veraltete Überbleibsel aussehen. Das Aufräumen widerruft sie; bereits empfangene Inhalte bleiben unberührt.",
-      "pt-BR": "Detectados {0} aparelho(s) que parecem sobras obsoletas. A limpeza os revoga; o conteúdo que já receberam não é afetado."
+      "pt-BR": "Detectados {0} aparelho(s) que parecem sobras obsoletas. A limpeza os revoga; o conteúdo que já receberam não é afetado.",
+      "ru": "Обнаружено {0} устройств, похожих на устаревшие остатки. Очистка отзовёт их; уже полученное ими содержимое не пострадает.",
+      "ar": "رُصد {0} من الأجهزة تبدو بقايا قديمة. التنظيف يبطلها؛ المحتوى الذي استلمته لا يتأثر.",
+      "it": "Rilevati {0} dispositivi che sembrano residui obsoleti. La pulizia li revoca; il contenuto già ricevuto non è toccato.",
+      "vi": "Phát hiện {0} thiết bị có vẻ là tàn dư. Dọn dẹp sẽ thu hồi chúng; nội dung chúng đã nhận không bị ảnh hưởng."
     },
     "Stale_DuplicateBadge": {
       "zh-Hans": "疑似重复配对残留",
@@ -1011,7 +1375,11 @@
       "es": "Posible resto de emparejamiento duplicado",
       "fr": "Probable reste d’appairage en double",
       "de": "Vermutlich Rest einer Doppelkopplung",
-      "pt-BR": "Provável sobra de pareamento duplicado"
+      "pt-BR": "Provável sobra de pareamento duplicado",
+      "ru": "Похоже на остаток повторного сопряжения",
+      "ar": "يبدو من بقايا اقتران مكرر",
+      "it": "Probabile residuo di associazione duplicata",
+      "vi": "Nghi là tàn dư ghép nối trùng lặp"
     },
     "Stale_NeverConnected": {
       "zh-Hans": "配对后从未连接",
@@ -1022,7 +1390,11 @@
       "es": "Nunca se conectó desde el emparejamiento",
       "fr": "Jamais connecté depuis l’appairage",
       "de": "Seit der Kopplung nie verbunden",
-      "pt-BR": "Nunca conectou desde o pareamento"
+      "pt-BR": "Nunca conectou desde o pareamento",
+      "ru": "Ни разу не подключалось после сопряжения",
+      "ar": "لم يتصل قط منذ الاقتران",
+      "it": "Mai connesso dall’associazione",
+      "vi": "Chưa từng kết nối kể từ khi ghép nối"
     },
     "Stale_UnseenDaysFormat": {
       "zh-Hans": "超过 {0} 天未连接",
@@ -1033,7 +1405,11 @@
       "es": "Sin conexión desde hace más de {0} días",
       "fr": "Pas de connexion depuis plus de {0} jours",
       "de": "Seit über {0} Tagen nicht verbunden",
-      "pt-BR": "Sem conexão há mais de {0} dias"
+      "pt-BR": "Sem conexão há mais de {0} dias",
+      "ru": "Нет подключения более {0} дн.",
+      "ar": "بلا اتصال منذ أكثر من {0} يومًا",
+      "it": "Non connesso da oltre {0} giorni",
+      "vi": "Không kết nối hơn {0} ngày"
     },
     "Prefs_Title": {
       "zh-Hans": "偏好",
@@ -1044,7 +1420,11 @@
       "es": "Preferencias",
       "fr": "Préférences",
       "de": "Einstellungen",
-      "pt-BR": "Preferências"
+      "pt-BR": "Preferências",
+      "ru": "Настройки",
+      "ar": "التفضيلات",
+      "it": "Preferenze",
+      "vi": "Tùy chọn"
     },
     "Prefs_Subtitle": {
       "zh-Hans": "改动即生效 · 剪贴板正文永不出现在日志里",
@@ -1055,7 +1435,11 @@
       "es": "Los cambios se aplican al instante · el contenido del portapapeles nunca aparece en los registros",
       "fr": "Les changements s’appliquent immédiatement · le contenu du presse-papiers n’apparaît jamais dans les journaux",
       "de": "Änderungen wirken sofort · Zwischenablageinhalte erscheinen nie in Protokollen",
-      "pt-BR": "As mudanças valem na hora · o conteúdo da área de transferência nunca aparece nos logs"
+      "pt-BR": "As mudanças valem na hora · o conteúdo da área de transferência nunca aparece nos logs",
+      "ru": "Изменения применяются сразу · содержимое буфера обмена никогда не попадает в журналы",
+      "ar": "التغييرات تسري فورًا · محتوى الحافظة لا يظهر في السجلات أبدًا",
+      "it": "Le modifiche si applicano subito · il contenuto degli appunti non compare mai nei log",
+      "vi": "Thay đổi có hiệu lực ngay · nội dung bảng nhớ tạm không bao giờ xuất hiện trong nhật ký"
     },
     "Prefs_Group_Display": {
       "zh-Hans": "显 示 · DISPLAY",
@@ -1066,7 +1450,11 @@
       "es": "PANTALLA",
       "fr": "AFFICHAGE",
       "de": "ANZEIGE",
-      "pt-BR": "EXIBIÇÃO"
+      "pt-BR": "EXIBIÇÃO",
+      "ru": "ЭКРАН",
+      "ar": "العرض",
+      "it": "VISUALIZZAZIONE",
+      "vi": "HIỂN THỊ"
     },
     "Prefs_Group_Capture": {
       "zh-Hans": "捕 获 · CAPTURE",
@@ -1077,7 +1465,11 @@
       "es": "CAPTURA",
       "fr": "CAPTURE",
       "de": "ERFASSUNG",
-      "pt-BR": "CAPTURA"
+      "pt-BR": "CAPTURA",
+      "ru": "ЗАХВАТ",
+      "ar": "الالتقاط",
+      "it": "ACQUISIZIONE",
+      "vi": "GHI NHẬN"
     },
     "Prefs_Group_Sync": {
       "zh-Hans": "同 步 · SYNC",
@@ -1088,7 +1480,11 @@
       "es": "SINCRONIZACIÓN",
       "fr": "SYNCHRONISATION",
       "de": "SYNC",
-      "pt-BR": "SINCRONIZAÇÃO"
+      "pt-BR": "SINCRONIZAÇÃO",
+      "ru": "СИНХРОНИЗАЦИЯ",
+      "ar": "المزامنة",
+      "it": "SINCRONIZZAZIONE",
+      "vi": "ĐỒNG BỘ"
     },
     "Prefs_Group_Retention": {
       "zh-Hans": "存 留 · RETENTION",
@@ -1099,7 +1495,11 @@
       "es": "RETENCIÓN",
       "fr": "CONSERVATION",
       "de": "AUFBEWAHRUNG",
-      "pt-BR": "RETENÇÃO"
+      "pt-BR": "RETENÇÃO",
+      "ru": "ХРАНЕНИЕ",
+      "ar": "الاحتفاظ",
+      "it": "CONSERVAZIONE",
+      "vi": "LƯU GIỮ"
     },
     "Prefs_Group_Startup": {
       "zh-Hans": "运 行 · STARTUP",
@@ -1110,7 +1510,11 @@
       "es": "ARRANQUE",
       "fr": "DÉMARRAGE",
       "de": "START",
-      "pt-BR": "INICIALIZAÇÃO"
+      "pt-BR": "INICIALIZAÇÃO",
+      "ru": "ЗАПУСК",
+      "ar": "التشغيل",
+      "it": "AVVIO",
+      "vi": "KHỞI ĐỘNG"
     },
     "Prefs_Group_Data": {
       "zh-Hans": "数 据 · DATA",
@@ -1121,7 +1525,11 @@
       "es": "DATOS",
       "fr": "DONNÉES",
       "de": "DATEN",
-      "pt-BR": "DADOS"
+      "pt-BR": "DADOS",
+      "ru": "ДАННЫЕ",
+      "ar": "البيانات",
+      "it": "DATI",
+      "vi": "DỮ LIỆU"
     },
     "Prefs_FontScale_Title": {
       "zh-Hans": "历史字号",
@@ -1132,7 +1540,11 @@
       "es": "Tamaño del texto del historial",
       "fr": "Taille du texte de l’historique",
       "de": "Textgröße im Verlauf",
-      "pt-BR": "Tamanho do texto do histórico"
+      "pt-BR": "Tamanho do texto do histórico",
+      "ru": "Размер текста истории",
+      "ar": "حجم نص السجل",
+      "it": "Dimensione testo cronologia",
+      "vi": "Cỡ chữ lịch sử"
     },
     "Prefs_FontScale_Desc": {
       "zh-Hans": "只缩放剪贴内容文字（历史预览、详情正文、托盘浮窗）；组头、注记盒与按钮保持不变。",
@@ -1143,7 +1555,11 @@
       "es": "Escala solo el texto del contenido de los clips (vistas previas, cuerpo del detalle, ventana emergente de la bandeja); encabezados, insignias y botones no cambian.",
       "fr": "Ne redimensionne que le texte du contenu des clips (aperçus, corps du détail, fenêtre de la barre d’état) ; en-têtes de groupe, badges et boutons ne changent pas.",
       "de": "Skaliert nur den Inhaltstext der Clips (Verlaufsvorschauen, Detailtext, Tray-Fenster); Gruppenköpfe, Badges und Schaltflächen bleiben unverändert.",
-      "pt-BR": "Redimensiona só o texto do conteúdo dos clipes (prévias do histórico, corpo dos detalhes, janela da bandeja); cabeçalhos de grupo, selos e botões não mudam."
+      "pt-BR": "Redimensiona só o texto do conteúdo dos clipes (prévias do histórico, corpo dos detalhes, janela da bandeja); cabeçalhos de grupo, selos e botões não mudam.",
+      "ru": "Масштабирует только текст записей (предпросмотр истории, текст подробностей, всплывающее окно у трея); заголовки групп, значки и кнопки не меняются.",
+      "ar": "يغيّر حجم نص المقتطفات فقط (معاينات السجل، نص التفاصيل، نافذة الدرج المنبثقة)؛ عناوين المجموعات والشارات والأزرار لا تتغير.",
+      "it": "Scala solo il testo delle clip (anteprime della cronologia, corpo dei dettagli, riquadro della tray); intestazioni di gruppo, badge e pulsanti restano invariati.",
+      "vi": "Chỉ thay đổi cỡ chữ của nội dung (xem trước lịch sử, phần chi tiết, cửa sổ nổi ở khay); tiêu đề nhóm, huy hiệu và nút giữ nguyên."
     },
     "Prefs_FontScale_Small": {
       "zh-Hans": "小",
@@ -1154,7 +1570,11 @@
       "es": "Pequeño",
       "fr": "Petit",
       "de": "Klein",
-      "pt-BR": "Pequeno"
+      "pt-BR": "Pequeno",
+      "ru": "Мелкий",
+      "ar": "صغير",
+      "it": "Piccolo",
+      "vi": "Nhỏ"
     },
     "Prefs_FontScale_Standard": {
       "zh-Hans": "标准",
@@ -1165,7 +1585,11 @@
       "es": "Estándar",
       "fr": "Standard",
       "de": "Standard",
-      "pt-BR": "Padrão"
+      "pt-BR": "Padrão",
+      "ru": "Стандартный",
+      "ar": "قياسي",
+      "it": "Standard",
+      "vi": "Chuẩn"
     },
     "Prefs_FontScale_Large": {
       "zh-Hans": "大",
@@ -1176,7 +1600,11 @@
       "es": "Grande",
       "fr": "Grand",
       "de": "Groß",
-      "pt-BR": "Grande"
+      "pt-BR": "Grande",
+      "ru": "Крупный",
+      "ar": "كبير",
+      "it": "Grande",
+      "vi": "Lớn"
     },
     "Prefs_PreviewLines_Title": {
       "zh-Hans": "预览行数",
@@ -1187,7 +1615,11 @@
       "es": "Líneas de vista previa",
       "fr": "Lignes d’aperçu",
       "de": "Vorschauzeilen",
-      "pt-BR": "Linhas de prévia"
+      "pt-BR": "Linhas de prévia",
+      "ru": "Строк в предпросмотре",
+      "ar": "أسطر المعاينة",
+      "it": "Righe di anteprima",
+      "vi": "Số dòng xem trước"
     },
     "Prefs_PreviewLines_Desc": {
       "zh-Hans": "历史列表每条最多显示的正文行数；超出部分以省略号截断，完整内容看详情。",
@@ -1198,7 +1630,11 @@
       "es": "Máximo de líneas de cuerpo por entrada en la lista del historial; lo que sobra se corta con puntos suspensivos — abre los detalles para ver todo.",
       "fr": "Nombre maximal de lignes de corps affichées par entrée dans la liste ; le surplus est tronqué par des points de suspension — ouvrez les détails pour tout voir.",
       "de": "Maximale Textzeilen pro Eintrag in der Verlaufsliste; Überschuss wird mit Auslassungspunkten abgeschnitten — die Details zeigen alles.",
-      "pt-BR": "Máximo de linhas de corpo mostradas por entrada na lista do histórico; o excesso é cortado com reticências — abra os detalhes para ver tudo."
+      "pt-BR": "Máximo de linhas de corpo mostradas por entrada na lista do histórico; o excesso é cortado com reticências — abra os detalhes para ver tudo.",
+      "ru": "Максимум строк текста на запись в списке истории; лишнее обрезается многоточием — полный текст в подробностях.",
+      "ar": "أقصى عدد أسطر يظهر لكل عنصر في قائمة السجل؛ الزائد يُقص بعلامة الحذف — افتح التفاصيل للنص الكامل.",
+      "it": "Numero massimo di righe mostrate per voce nella lista della cronologia; l’eccedenza è troncata con puntini — apri i dettagli per il contenuto completo.",
+      "vi": "Số dòng nội dung tối đa hiển thị cho mỗi mục trong danh sách lịch sử; phần thừa bị cắt bằng dấu ba chấm — mở chi tiết để xem đầy đủ."
     },
     "Prefs_PreviewLines_Two": {
       "zh-Hans": "2 行",
@@ -1209,7 +1645,11 @@
       "es": "2 líneas",
       "fr": "2 lignes",
       "de": "2 Zeilen",
-      "pt-BR": "2 linhas"
+      "pt-BR": "2 linhas",
+      "ru": "2 строки",
+      "ar": "سطران",
+      "it": "2 righe",
+      "vi": "2 dòng"
     },
     "Prefs_PreviewLines_Four": {
       "zh-Hans": "4 行",
@@ -1220,7 +1660,11 @@
       "es": "4 líneas",
       "fr": "4 lignes",
       "de": "4 Zeilen",
-      "pt-BR": "4 linhas"
+      "pt-BR": "4 linhas",
+      "ru": "4 строки",
+      "ar": "4 أسطر",
+      "it": "4 righe",
+      "vi": "4 dòng"
     },
     "Prefs_PreviewLines_Six": {
       "zh-Hans": "6 行",
@@ -1231,7 +1675,11 @@
       "es": "6 líneas",
       "fr": "6 lignes",
       "de": "6 Zeilen",
-      "pt-BR": "6 linhas"
+      "pt-BR": "6 linhas",
+      "ru": "6 строк",
+      "ar": "6 أسطر",
+      "it": "6 righe",
+      "vi": "6 dòng"
     },
     "Prefs_Theme_Title": {
       "zh-Hans": "外观",
@@ -1242,7 +1690,11 @@
       "es": "Apariencia",
       "fr": "Apparence",
       "de": "Erscheinungsbild",
-      "pt-BR": "Aparência"
+      "pt-BR": "Aparência",
+      "ru": "Оформление",
+      "ar": "المظهر",
+      "it": "Aspetto",
+      "vi": "Giao diện"
     },
     "Prefs_Theme_Desc": {
       "zh-Hans": "窗口的日间/夜间配色；托盘图标活在任务栏里，始终跟随任务栏的深浅。",
@@ -1253,7 +1705,11 @@
       "es": "La paleta día/noche de la ventana; el icono de la bandeja vive en la barra de tareas y siempre sigue su tono.",
       "fr": "La palette jour/nuit de la fenêtre ; l’icône de la barre d’état vit dans la barre des tâches et suit toujours sa teinte.",
       "de": "Die Tag/Nacht-Palette des Fensters; das Tray-Symbol lebt in der Taskleiste und folgt stets deren Helligkeit.",
-      "pt-BR": "A paleta dia/noite da janela; o ícone da bandeja vive na barra de tarefas e sempre segue o tom dela."
+      "pt-BR": "A paleta dia/noite da janela; o ícone da bandeja vive na barra de tarefas e sempre segue o tom dela.",
+      "ru": "Дневная/ночная палитра окна; значок в трее живёт на панели задач и всегда следует её тону.",
+      "ar": "لوحة ألوان النافذة النهارية/الليلية؛ أيقونة الدرج تعيش في شريط المهام وتتبع دومًا درجته.",
+      "it": "La palette giorno/notte della finestra; l’icona nella tray vive nella barra delle applicazioni e ne segue sempre la tonalità.",
+      "vi": "Bảng màu ngày/đêm của cửa sổ; biểu tượng khay sống trong thanh tác vụ và luôn theo tông của thanh tác vụ."
     },
     "Prefs_Theme_Day": {
       "zh-Hans": "日间",
@@ -1264,7 +1720,11 @@
       "es": "Día",
       "fr": "Jour",
       "de": "Tag",
-      "pt-BR": "Dia"
+      "pt-BR": "Dia",
+      "ru": "День",
+      "ar": "نهاري",
+      "it": "Giorno",
+      "vi": "Ngày"
     },
     "Prefs_Theme_Night": {
       "zh-Hans": "夜间",
@@ -1275,7 +1735,11 @@
       "es": "Noche",
       "fr": "Nuit",
       "de": "Nacht",
-      "pt-BR": "Noite"
+      "pt-BR": "Noite",
+      "ru": "Ночь",
+      "ar": "ليلي",
+      "it": "Notte",
+      "vi": "Đêm"
     },
     "Prefs_Language_Title": {
       "zh-Hans": "语言",
@@ -1286,7 +1750,11 @@
       "es": "Idioma",
       "fr": "Langue",
       "de": "Sprache",
-      "pt-BR": "Idioma"
+      "pt-BR": "Idioma",
+      "ru": "Язык",
+      "ar": "اللغة",
+      "it": "Lingua",
+      "vi": "Ngôn ngữ"
     },
     "Prefs_Language_Desc": {
       "zh-Hans": "界面显示语言，跟随系统或手动指定；语言名称始终以各自的母语显示。",
@@ -1297,7 +1765,11 @@
       "es": "El idioma de la interfaz: sigue al sistema o elígelo a mano; cada idioma se muestra siempre en su propio nombre nativo.",
       "fr": "La langue de l’interface : suivez le système ou choisissez-la à la main ; chaque langue s’affiche toujours dans son propre nom natif.",
       "de": "Die Oberflächensprache — dem System folgen oder manuell festlegen; jede Sprache zeigt stets ihren eigenen nativen Namen.",
-      "pt-BR": "O idioma da interface: siga o sistema ou escolha à mão; cada idioma sempre aparece com seu próprio nome nativo."
+      "pt-BR": "O idioma da interface: siga o sistema ou escolha à mão; cada idioma sempre aparece com seu próprio nome nativo.",
+      "ru": "Язык интерфейса — как в системе или вручную; названия языков всегда показаны на их родном языке.",
+      "ar": "لغة الواجهة — اتباع النظام أو تحديد يدوي؛ تُعرض أسماء اللغات دائمًا بلغاتها الأصلية.",
+      "it": "La lingua dell’interfaccia — segui il sistema o impostane una; ogni lingua mostra sempre il proprio nome nativo.",
+      "vi": "Ngôn ngữ giao diện — theo hệ thống hoặc tự chọn; tên các ngôn ngữ luôn hiển thị bằng tiếng bản địa của chúng."
     },
     "Prefs_Language_RestartNote": {
       "zh-Hans": "更换后重启应用生效。",
@@ -1308,7 +1780,11 @@
       "es": "Se aplica tras reiniciar la aplicación.",
       "fr": "Prend effet après redémarrage de l’application.",
       "de": "Wirkt nach Neustart der Anwendung.",
-      "pt-BR": "Vale após reiniciar o aplicativo."
+      "pt-BR": "Vale após reiniciar o aplicativo.",
+      "ru": "Вступает в силу после перезапуска приложения.",
+      "ar": "يسري بعد إعادة تشغيل التطبيق.",
+      "it": "Ha effetto dopo il riavvio dell’app.",
+      "vi": "Có hiệu lực sau khi khởi động lại ứng dụng."
     },
     "Prefs_Capture_Pause_Desc": {
       "zh-Hans": "暂停后本机不再记录新内容，已有历史保留。",
@@ -1319,7 +1795,11 @@
       "es": "En pausa, este PC deja de registrar contenido nuevo; el historial existente se conserva.",
       "fr": "En pause, ce PC n’enregistre plus de nouveau contenu ; l’historique existant est conservé.",
       "de": "Pausiert zeichnet dieser PC keine neuen Inhalte auf; der bestehende Verlauf bleibt erhalten.",
-      "pt-BR": "Em pausa, este PC para de registrar conteúdo novo; o histórico existente é mantido."
+      "pt-BR": "Em pausa, este PC para de registrar conteúdo novo; o histórico existente é mantido.",
+      "ru": "Во время паузы этот ПК не записывает новое содержимое; уже накопленная история сохраняется.",
+      "ar": "أثناء الإيقاف المؤقت لا يسجل هذا الحاسوب محتوى جديدًا؛ السجل الحالي يبقى.",
+      "it": "In pausa questo PC smette di registrare nuovi contenuti; la cronologia esistente resta.",
+      "vi": "Khi tạm dừng, PC này ngừng ghi nội dung mới; lịch sử hiện có vẫn được giữ."
     },
     "Prefs_Capture_Private_Desc": {
       "zh-Hans": "开启期间捕获与同步全部停止，不留任何痕迹。",
@@ -1330,7 +1810,11 @@
       "es": "Mientras está activo, la captura y la sincronización se detienen por completo, sin dejar rastro.",
       "fr": "Tant qu’il est actif, capture et synchronisation s’arrêtent complètement, sans laisser de trace.",
       "de": "Solange aktiv, stoppen Erfassung und Sync vollständig, ohne Spuren zu hinterlassen.",
-      "pt-BR": "Enquanto ativo, captura e sincronização param por completo, sem deixar rastros."
+      "pt-BR": "Enquanto ativo, captura e sincronização param por completo, sem deixar rastros.",
+      "ru": "Пока включён, захват и синхронизация полностью остановлены, следов не остаётся.",
+      "ar": "أثناء تفعيله يتوقف الالتقاط والمزامنة تمامًا بلا أي أثر.",
+      "it": "Quando è attiva, acquisizione e sincronizzazione si fermano del tutto, senza lasciare tracce.",
+      "vi": "Khi bật, ghi nhận và đồng bộ dừng hoàn toàn, không để lại dấu vết."
     },
     "Prefs_Capture_Blocked_Title": {
       "zh-Hans": "屏蔽进程",
@@ -1341,7 +1825,11 @@
       "es": "Procesos bloqueados",
       "fr": "Processus bloqués",
       "de": "Blockierte Prozesse",
-      "pt-BR": "Processos bloqueados"
+      "pt-BR": "Processos bloqueados",
+      "ru": "Заблокированные процессы",
+      "ar": "العمليات المحظورة",
+      "it": "Processi bloccati",
+      "vi": "Tiến trình bị chặn"
     },
     "Prefs_Capture_Blocked_Desc": {
       "zh-Hans": "来自这些进程的复制不进入历史，也不同步。逗号或换行分隔。",
@@ -1352,7 +1840,11 @@
       "es": "Lo copiado desde estos procesos nunca entra en el historial ni se sincroniza. Separa con comas o saltos de línea.",
       "fr": "Les copies venant de ces processus n’entrent jamais dans l’historique et ne sont pas synchronisées. Séparez par des virgules ou des retours à la ligne.",
       "de": "Kopien aus diesen Prozessen gelangen nie in den Verlauf und werden nicht synchronisiert. Mit Kommas oder Zeilenumbrüchen trennen.",
-      "pt-BR": "Cópias vindas desses processos nunca entram no histórico nem sincronizam. Separe com vírgulas ou quebras de linha."
+      "pt-BR": "Cópias vindas desses processos nunca entram no histórico nem sincronizam. Separe com vírgulas ou quebras de linha.",
+      "ru": "Скопированное из этих процессов не попадает ни в историю, ни в синхронизацию. Разделяйте запятыми или переводами строки.",
+      "ar": "ما يُنسخ من هذه العمليات لا يدخل السجل ولا يُزامن. افصل بفواصل أو أسطر جديدة.",
+      "it": "Le copie da questi processi non entrano mai nella cronologia né nella sincronizzazione. Separa con virgole o a capo.",
+      "vi": "Nội dung sao chép từ các tiến trình này không vào lịch sử và không đồng bộ. Cách nhau bằng dấu phẩy hoặc xuống dòng."
     },
     "Prefs_Sync_AutoApply_Title": {
       "zh-Hans": "自动应用远端内容",
@@ -1363,7 +1855,11 @@
       "es": "Aplicar contenido remoto automáticamente",
       "fr": "Appliquer le contenu distant automatiquement",
       "de": "Ferne Inhalte automatisch anwenden",
-      "pt-BR": "Aplicar conteúdo remoto automaticamente"
+      "pt-BR": "Aplicar conteúdo remoto automaticamente",
+      "ru": "Автоприменение удалённого содержимого",
+      "ar": "تطبيق المحتوى البعيد تلقائيًا",
+      "it": "Applica automaticamente il contenuto remoto",
+      "vi": "Tự động áp dụng nội dung từ xa"
     },
     "Prefs_Sync_AutoApply_Desc": {
       "zh-Hans": "手机发来的文本自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。",
@@ -1374,7 +1870,11 @@
       "es": "El texto del teléfono se escribe automáticamente en el portapapeles de este PC. Si está apagado, queda solo en el historial y hay que copiarlo a mano.",
       "fr": "Le texte venu du téléphone est écrit automatiquement dans le presse-papiers de ce PC. Désactivé, il reste dans l’historique et doit être copié à la main.",
       "de": "Text vom Telefon wird automatisch in die Zwischenablage dieses PCs geschrieben. Ausgeschaltet bleibt er nur im Verlauf und muss von Hand kopiert werden.",
-      "pt-BR": "O texto vindo do telefone é gravado automaticamente na área de transferência deste PC. Desligado, fica só no histórico e precisa ser copiado à mão."
+      "pt-BR": "O texto vindo do telefone é gravado automaticamente na área de transferência deste PC. Desligado, fica só no histórico e precisa ser copiado à mão.",
+      "ru": "Текст с телефона автоматически записывается в буфер обмена этого ПК. Если выключено, он остаётся только в истории — копируйте вручную.",
+      "ar": "النص الوارد من الهاتف يُكتب تلقائيًا في حافظة هذا الحاسوب. عند الإيقاف يبقى في السجل فقط ويحتاج نسخًا يدويًا.",
+      "it": "Il testo dal telefono viene scritto automaticamente negli appunti di questo PC. Se disattivato resta solo nella cronologia e va copiato a mano.",
+      "vi": "Văn bản từ điện thoại được tự động ghi vào bảng nhớ tạm của PC này. Khi tắt, nó chỉ nằm trong lịch sử, cần sao chép thủ công."
     },
     "Prefs_Sync_ImageSync_Title": {
       "zh-Hans": "同步剪贴板图片",
@@ -1385,7 +1885,11 @@
       "es": "Sincronizar imágenes del portapapeles",
       "fr": "Synchroniser les images du presse-papiers",
       "de": "Zwischenablagebilder synchronisieren",
-      "pt-BR": "Sincronizar imagens da área de transferência"
+      "pt-BR": "Sincronizar imagens da área de transferência",
+      "ru": "Синхронизировать изображения буфера",
+      "ar": "مزامنة صور الحافظة",
+      "it": "Sincronizza immagini degli appunti",
+      "vi": "Đồng bộ hình ảnh bảng nhớ tạm"
     },
     "Prefs_Sync_ImageSync_Desc": {
       "zh-Hans": "默认关闭。仅 PNG/JPEG；原始字节可能含 EXIF 等元数据，双端需为 v2 会话。",
@@ -1396,7 +1900,11 @@
       "es": "Apagado por defecto. Solo PNG/JPEG; los bytes originales pueden llevar EXIF y otros metadatos, y ambos extremos necesitan una sesión v2.",
       "fr": "Désactivé par défaut. PNG/JPEG uniquement ; les octets d’origine peuvent contenir des métadonnées EXIF, et les deux extrémités doivent être en session v2.",
       "de": "Standardmäßig aus. Nur PNG/JPEG; die Rohbytes können EXIF- und andere Metadaten enthalten, und beide Seiten brauchen eine v2-Sitzung.",
-      "pt-BR": "Desligado por padrão. Só PNG/JPEG; os bytes originais podem trazer EXIF e outros metadados, e as duas pontas precisam de sessão v2."
+      "pt-BR": "Desligado por padrão. Só PNG/JPEG; os bytes originais podem trazer EXIF e outros metadados, e as duas pontas precisam de sessão v2.",
+      "ru": "По умолчанию выключено. Только PNG/JPEG; исходные байты могут содержать EXIF и другие метаданные, обеим сторонам нужен сеанс v2.",
+      "ar": "متوقفة افتراضيًا. PNG/JPEG فقط؛ قد تحمل البايتات الأصلية EXIF وبيانات وصفية أخرى، ويحتاج الطرفان جلسة v2.",
+      "it": "Disattivata per impostazione predefinita. Solo PNG/JPEG; i byte grezzi possono contenere EXIF e altri metadati, ed entrambe le estremità richiedono una sessione v2.",
+      "vi": "Mặc định tắt. Chỉ PNG/JPEG; byte gốc có thể chứa EXIF và siêu dữ liệu khác, hai đầu cần phiên v2."
     },
     "Prefs_Sync_AutoApplyImages_Title": {
       "zh-Hans": "自动应用远端图片",
@@ -1407,7 +1915,11 @@
       "es": "Aplicar imágenes remotas automáticamente",
       "fr": "Appliquer les images distantes automatiquement",
       "de": "Ferne Bilder automatisch anwenden",
-      "pt-BR": "Aplicar imagens remotas automaticamente"
+      "pt-BR": "Aplicar imagens remotas automaticamente",
+      "ru": "Автоприменение удалённых изображений",
+      "ar": "تطبيق الصور البعيدة تلقائيًا",
+      "it": "Applica automaticamente le immagini remote",
+      "vi": "Tự động áp dụng hình ảnh từ xa"
     },
     "Prefs_Sync_AutoApplyImages_Desc": {
       "zh-Hans": "手机发来的图片自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。",
@@ -1418,7 +1930,11 @@
       "es": "Las imágenes del teléfono se escriben automáticamente en el portapapeles de este PC. Si está apagado, quedan solo en el historial y hay que copiarlas a mano.",
       "fr": "Les images venues du téléphone sont écrites automatiquement dans le presse-papiers de ce PC. Désactivé, elles restent dans l’historique et doivent être copiées à la main.",
       "de": "Bilder vom Telefon werden automatisch in die Zwischenablage dieses PCs geschrieben. Ausgeschaltet bleiben sie nur im Verlauf und müssen von Hand kopiert werden.",
-      "pt-BR": "As imagens vindas do telefone são gravadas automaticamente na área de transferência deste PC. Desligado, ficam só no histórico e precisam ser copiadas à mão."
+      "pt-BR": "As imagens vindas do telefone são gravadas automaticamente na área de transferência deste PC. Desligado, ficam só no histórico e precisam ser copiadas à mão.",
+      "ru": "Изображения с телефона автоматически записываются в буфер обмена этого ПК. Если выключено, они остаются только в истории — копируйте вручную.",
+      "ar": "الصور الواردة من الهاتف تُكتب تلقائيًا في حافظة هذا الحاسوب. عند الإيقاف تبقى في السجل فقط وتحتاج نسخًا يدويًا.",
+      "it": "Le immagini dal telefono vengono scritte automaticamente negli appunti di questo PC. Se disattivato restano solo nella cronologia e vanno copiate a mano.",
+      "vi": "Hình ảnh từ điện thoại được tự động ghi vào bảng nhớ tạm của PC này. Khi tắt, chúng chỉ nằm trong lịch sử, cần sao chép thủ công."
     },
     "Prefs_Moved_Title": {
       "zh-Hans": "蓝牙备援 · 额外监听地址 · 本机证书指纹",
@@ -1429,7 +1945,11 @@
       "es": "Respaldo Bluetooth · direcciones de escucha adicionales · huella del certificado",
       "fr": "Secours Bluetooth · adresses d’écoute supplémentaires · empreinte du certificat",
       "de": "Bluetooth-Ausweichweg · zusätzliche Lauschadressen · Zertifikat-Fingerabdruck",
-      "pt-BR": "Alternativa Bluetooth · endereços de escuta adicionais · impressão digital do certificado"
+      "pt-BR": "Alternativa Bluetooth · endereços de escuta adicionais · impressão digital do certificado",
+      "ru": "Bluetooth-резерв · дополнительные адреса · отпечаток сертификата",
+      "ar": "احتياطي البلوتوث · عناوين استماع إضافية · بصمة الشهادة",
+      "it": "Riserva Bluetooth · indirizzi di ascolto aggiuntivi · impronta del certificato",
+      "vi": "Dự phòng Bluetooth · địa chỉ lắng nghe bổ sung · dấu vân tay chứng chỉ"
     },
     "Prefs_Moved_Desc": {
       "zh-Hans": "已移至「通路 · 网络段」——它们决定内容能否到达对端，与配对、设备管理同住。",
@@ -1440,7 +1960,11 @@
       "es": "Movidos a «Conducto · segmento de red»: deciden si el contenido puede llegar al par, así que viven junto al emparejamiento y la gestión de dispositivos.",
       "fr": "Déplacés vers « Conduit · segment réseau » — ils déterminent si le contenu peut atteindre le pair, donc ils habitent avec l’appairage et la gestion des appareils.",
       "de": "Verschoben nach „Kanal · Netzwerkabschnitt“ — sie entscheiden, ob Inhalte den Peer erreichen, und wohnen daher bei Kopplung und Geräteverwaltung.",
-      "pt-BR": "Movidos para “Conduíte · segmento de rede” — eles decidem se o conteúdo consegue chegar ao par, então moram junto do pareamento e da gestão de aparelhos."
+      "pt-BR": "Movidos para “Conduíte · segmento de rede” — eles decidem se o conteúdo consegue chegar ao par, então moram junto do pareamento e da gestão de aparelhos.",
+      "ru": "Перенесены в «Канал · сегмент „Сеть“» — они решают, дойдёт ли содержимое до другой стороны, и живут рядом с сопряжением и управлением устройствами.",
+      "ar": "نُقلت إلى «القناة · قسم الشبكة» — فهي تقرر وصول المحتوى إلى الطرف الآخر، لذا تسكن مع الاقتران وإدارة الأجهزة.",
+      "it": "Spostati in «Condotto · segmento rete» — decidono se il contenuto può raggiungere il peer, quindi convivono con associazione e gestione dei dispositivi.",
+      "vi": "Đã chuyển sang “Đường dẫn · đoạn mạng” — chúng quyết định nội dung có đến được phía bên kia hay không, nên ở cùng ghép nối và quản lý thiết bị."
     },
     "Prefs_Moved_GoToConduit": {
       "zh-Hans": "前往通路",
@@ -1451,7 +1975,11 @@
       "es": "Ir al Conducto",
       "fr": "Aller au Conduit",
       "de": "Zum Kanal",
-      "pt-BR": "Ir ao Conduíte"
+      "pt-BR": "Ir ao Conduíte",
+      "ru": "Открыть канал",
+      "ar": "الذهاب إلى القناة",
+      "it": "Vai al condotto",
+      "vi": "Đến Đường dẫn"
     },
     "Prefs_Retention_Days_Title": {
       "zh-Hans": "保留期限",
@@ -1462,7 +1990,11 @@
       "es": "Período de retención",
       "fr": "Durée de conservation",
       "de": "Aufbewahrungsdauer",
-      "pt-BR": "Período de retenção"
+      "pt-BR": "Período de retenção",
+      "ru": "Срок хранения",
+      "ar": "مدة الاحتفاظ",
+      "it": "Periodo di conservazione",
+      "vi": "Thời hạn lưu giữ"
     },
     "Prefs_Retention_Days_Desc": {
       "zh-Hans": "超期条目自动清除。清理只发生在本机，不远程删除对方已收到的内容。",
@@ -1473,7 +2005,11 @@
       "es": "Las entradas vencidas se eliminan automáticamente. La limpieza ocurre solo en este PC y nunca borra lo que el par ya recibió.",
       "fr": "Les entrées expirées sont supprimées automatiquement. Le nettoyage n’a lieu que sur ce PC et ne supprime jamais ce que le pair a déjà reçu.",
       "de": "Abgelaufene Einträge werden automatisch entfernt. Das Aufräumen geschieht nur auf diesem PC und löscht nie, was der Peer bereits erhalten hat.",
-      "pt-BR": "Entradas vencidas são removidas automaticamente. A limpeza só acontece neste PC e nunca apaga o que o par já recebeu."
+      "pt-BR": "Entradas vencidas são removidas automaticamente. A limpeza só acontece neste PC e nunca apaga o que o par já recebeu.",
+      "ru": "Просроченные записи удаляются автоматически. Очистка происходит только на этом ПК и никогда не удаляет то, что другая сторона уже получила.",
+      "ar": "العناصر المتجاوزة للمهلة تُزال تلقائيًا. التنظيف يحدث على هذا الحاسوب فقط ولا يحذف عن بُعد ما استلمه الطرف الآخر.",
+      "it": "Le voci scadute vengono rimosse automaticamente. La pulizia avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto.",
+      "vi": "Mục quá hạn được tự động xóa. Dọn dẹp chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận."
     },
     "Prefs_Retention_DaysUnit": {
       "zh-Hans": "天",
@@ -1484,7 +2020,11 @@
       "es": "días",
       "fr": "jours",
       "de": "Tage",
-      "pt-BR": "dias"
+      "pt-BR": "dias",
+      "ru": "дн.",
+      "ar": "يوم",
+      "it": "giorni",
+      "vi": "ngày"
     },
     "Prefs_Retention_Entries_Title": {
       "zh-Hans": "保留条数",
@@ -1495,7 +2035,11 @@
       "es": "Límite de entradas",
       "fr": "Nombre conservé",
       "de": "Aufbewahrungsanzahl",
-      "pt-BR": "Limite de entradas"
+      "pt-BR": "Limite de entradas",
+      "ru": "Число записей",
+      "ar": "عدد العناصر المحفوظة",
+      "it": "Numero di voci conservate",
+      "vi": "Số mục lưu giữ"
     },
     "Prefs_Retention_Entries_Desc": {
       "zh-Hans": "超出上限时最旧的条目先被清除（100–2000，每步 100）。清理只发生在本机。",
@@ -1506,7 +2050,11 @@
       "es": "Al superar el tope se eliminan primero las entradas más antiguas (100–2000, en pasos de 100). La limpieza ocurre solo en este PC.",
       "fr": "Au-delà du plafond, les entrées les plus anciennes partent en premier (100–2000, par pas de 100). Le nettoyage n’a lieu que sur ce PC.",
       "de": "Über dem Limit werden die ältesten Einträge zuerst entfernt (100–2000, in 100er-Schritten). Das Aufräumen geschieht nur auf diesem PC.",
-      "pt-BR": "Acima do teto, as entradas mais antigas saem primeiro (100–2000, em passos de 100). A limpeza só acontece neste PC."
+      "pt-BR": "Acima do teto, as entradas mais antigas saem primeiro (100–2000, em passos de 100). A limpeza só acontece neste PC.",
+      "ru": "При превышении лимита первыми удаляются самые старые записи (100–2000, шаг 100). Очистка происходит только на этом ПК.",
+      "ar": "عند تجاوز الحد تُزال الأقدم أولًا (100–2000، بخطوة 100). التنظيف يحدث على هذا الحاسوب فقط.",
+      "it": "Oltre il limite si rimuovono prima le voci più vecchie (100–2000, passi di 100). La pulizia avviene solo su questo PC.",
+      "vi": "Vượt giới hạn thì mục cũ nhất bị xóa trước (100–2000, mỗi bước 100). Dọn dẹp chỉ diễn ra trên PC này."
     },
     "Prefs_Retention_EntriesUnit": {
       "zh-Hans": "条",
@@ -1517,7 +2065,11 @@
       "es": "entradas",
       "fr": "entrées",
       "de": "Einträge",
-      "pt-BR": "entradas"
+      "pt-BR": "entradas",
+      "ru": "записей",
+      "ar": "عنصر",
+      "it": "voci",
+      "vi": "mục"
     },
     "Prefs_Startup_Launch_Title": {
       "zh-Hans": "开机自启 · 静默入托盘",
@@ -1528,7 +2080,11 @@
       "es": "Iniciar con Windows · directo a la bandeja",
       "fr": "Lancer au démarrage · directement dans la barre d’état",
       "de": "Beim Start ausführen · still ins Tray",
-      "pt-BR": "Iniciar com o Windows · direto para a bandeja"
+      "pt-BR": "Iniciar com o Windows · direto para a bandeja",
+      "ru": "Автозапуск · сразу в трей",
+      "ar": "التشغيل عند بدء النظام · إلى الدرج بصمت",
+      "it": "Avvio automatico · direttamente nella tray",
+      "vi": "Khởi động cùng máy · lặng lẽ vào khay"
     },
     "Prefs_Startup_Launch_Desc": {
       "zh-Hans": "随 Windows 登录自动启动并直接落在托盘，不弹主窗口。只写当前用户的启动项，不需要管理员权限。",
@@ -1539,7 +2095,11 @@
       "es": "Arranca automáticamente al iniciar sesión en Windows y aterriza en la bandeja sin abrir la ventana principal. Solo escribe la entrada de inicio del usuario actual; no requiere derechos de administrador.",
       "fr": "Démarre automatiquement à l’ouverture de session Windows et atterrit directement dans la barre d’état sans ouvrir la fenêtre principale. N’écrit que l’entrée de démarrage de l’utilisateur actuel ; aucun droit administrateur requis.",
       "de": "Startet automatisch bei der Windows-Anmeldung und landet direkt im Tray, ohne das Hauptfenster zu öffnen. Schreibt nur den Autostart-Eintrag des aktuellen Benutzers; keine Administratorrechte nötig.",
-      "pt-BR": "Inicia automaticamente no login do Windows e cai direto na bandeja, sem abrir a janela principal. Grava só a entrada de inicialização do usuário atual; não precisa de direitos de administrador."
+      "pt-BR": "Inicia automaticamente no login do Windows e cai direto na bandeja, sem abrir a janela principal. Grava só a entrada de inicialização do usuário atual; não precisa de direitos de administrador.",
+      "ru": "Запускается при входе в Windows и сразу уходит в трей, не открывая главное окно. Пишет только автозапуск текущего пользователя; права администратора не нужны.",
+      "ar": "يبدأ تلقائيًا عند تسجيل الدخول إلى Windows ويستقر مباشرة في الدرج دون فتح النافذة الرئيسية. يكتب إدخال بدء التشغيل للمستخدم الحالي فقط؛ لا حاجة لصلاحيات المسؤول.",
+      "it": "Si avvia all’accesso a Windows e finisce dritto nella tray senza aprire la finestra principale. Scrive solo la voce di avvio dell’utente corrente; non servono diritti di amministratore.",
+      "vi": "Tự khởi động khi đăng nhập Windows và vào thẳng khay, không mở cửa sổ chính. Chỉ ghi mục khởi động của người dùng hiện tại; không cần quyền quản trị."
     },
     "Prefs_Startup_Hotkey_Title": {
       "zh-Hans": "呼出浮窗快捷键",
@@ -1550,7 +2110,11 @@
       "es": "Atajo de la ventana emergente",
       "fr": "Raccourci de la fenêtre rapide",
       "de": "Tastenkürzel fürs Schnellfenster",
-      "pt-BR": "Atalho da janela rápida"
+      "pt-BR": "Atalho da janela rápida",
+      "ru": "Горячая клавиша всплывающего окна",
+      "ar": "اختصار النافذة المنبثقة",
+      "it": "Scorciatoia del riquadro",
+      "vi": "Phím tắt gọi cửa sổ nổi"
     },
     "Prefs_Startup_Hotkey_Desc": {
       "zh-Hans": "在任意应用按下组合键呼出托盘浮窗。点击输入框后按下想要的组合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。默认关闭。",
@@ -1561,7 +2125,11 @@
       "es": "Pulsa la combinación en cualquier aplicación para invocar la ventana de la bandeja. Haz clic en el cuadro y pulsa la combinación deseada (debe incluir Ctrl, Alt o Win); Retroceso la borra. Apagado por defecto.",
       "fr": "Appuyez sur la combinaison dans n’importe quelle application pour invoquer la fenêtre de la barre d’état. Cliquez sur le champ puis appuyez sur la combinaison voulue (doit inclure Ctrl, Alt ou Win) ; Retour arrière pour effacer. Désactivé par défaut.",
       "de": "Drücken Sie die Kombination in jeder beliebigen Anwendung, um das Tray-Schnellfenster aufzurufen. Klicken Sie ins Feld und drücken Sie die gewünschte Kombination (muss Strg, Alt oder Win enthalten); Rücktaste löscht. Standardmäßig aus.",
-      "pt-BR": "Pressione a combinação em qualquer aplicativo para chamar a janela da bandeja. Clique no campo e pressione a combinação desejada (precisa incluir Ctrl, Alt ou Win); Backspace apaga. Desligado por padrão."
+      "pt-BR": "Pressione a combinação em qualquer aplicativo para chamar a janela da bandeja. Clique no campo e pressione a combinação desejada (precisa incluir Ctrl, Alt ou Win); Backspace apaga. Desligado por padrão.",
+      "ru": "Нажмите сочетание в любом приложении, чтобы вызвать всплывающее окно у трея. Щёлкните поле и нажмите нужное сочетание (обязательно с Ctrl, Alt или Win); Backspace — очистить. По умолчанию выключено.",
+      "ar": "اضغط التركيبة في أي تطبيق لاستدعاء نافذة الدرج المنبثقة. انقر الحقل ثم اضغط التركيبة المطلوبة (يجب أن تتضمن Ctrl أو Alt أو Win)؛ اضغط Backspace للمسح. متوقف افتراضيًا.",
+      "it": "Premi la combinazione in qualsiasi app per richiamare il riquadro della tray. Fai clic sul campo, poi premi la combinazione desiderata (deve includere Ctrl, Alt o Win); Backspace per cancellare. Disattivata per impostazione predefinita.",
+      "vi": "Nhấn tổ hợp trong bất kỳ ứng dụng nào để gọi cửa sổ nổi ở khay. Bấm vào ô rồi nhấn tổ hợp mong muốn (phải gồm Ctrl, Alt hoặc Win); nhấn Backspace để xóa. Mặc định tắt."
     },
     "Prefs_Data_Export_Desc": {
       "zh-Hans": "把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥、证书与配对信息。导出内容为明文，请妥善保管。",
@@ -1572,7 +2140,11 @@
       "es": "Escribe todo el historial (incluidos los marcadores de borrado) como archivo de respaldo JSON Lines; sin claves, certificados ni datos de emparejamiento. La exportación es texto plano: guárdala bien.",
       "fr": "Écrit tout l’historique (marqueurs de suppression compris) dans un fichier de sauvegarde JSON Lines ; sans clés, certificats ni données d’appairage. L’export est en clair — conservez-le en lieu sûr.",
       "de": "Schreibt den gesamten Verlauf (einschließlich Löschmarkierungen) als JSON-Lines-Sicherungsdatei; ohne Schlüssel, Zertifikate oder Kopplungsdaten. Der Export ist Klartext — sicher aufbewahren.",
-      "pt-BR": "Grava todo o histórico (incluindo marcadores de exclusão) como arquivo de backup JSON Lines; sem chaves, certificados nem dados de pareamento. A exportação é texto puro — guarde com cuidado."
+      "pt-BR": "Grava todo o histórico (incluindo marcadores de exclusão) como arquivo de backup JSON Lines; sem chaves, certificados nem dados de pareamento. A exportação é texto puro — guarde com cuidado.",
+      "ru": "Записывает всю историю (включая отметки об удалении) в файл резервной копии JSON Lines; без ключей, сертификатов и данных сопряжения. Экспорт в открытом виде — храните бережно.",
+      "ar": "يكتب السجل كاملًا (مع علامات الحذف) في ملف نسخ احتياطي بصيغة JSON Lines؛ بلا مفاتيح أو شهادات أو بيانات اقتران. التصدير نص صريح — احفظه بأمان.",
+      "it": "Scrive l’intera cronologia (inclusi i contrassegni di eliminazione) in un file di backup JSON Lines; senza chiavi, certificati o dati di associazione. L’export è in chiaro — custodiscilo con cura.",
+      "vi": "Ghi toàn bộ lịch sử (gồm dấu xóa) thành tệp sao lưu JSON Lines; không chứa khóa, chứng chỉ hay dữ liệu ghép nối. Bản xuất là văn bản thuần — hãy cất giữ cẩn thận."
     },
     "Prefs_Data_Import_Desc": {
       "zh-Hans": "从备份文件合并历史：按「来源设备 + 序号」幂等去重，重复导入不产生重复条目，也不会覆盖本机已删除的记录。校验失败时不做任何改动。",
@@ -1583,7 +2155,11 @@
       "es": "Combina el historial desde un archivo de respaldo: idempotente por «dispositivo de origen + secuencia», así que reimportar nunca duplica entradas ni pisa borrados locales. Si la validación falla, no cambia nada.",
       "fr": "Fusionne l’historique depuis un fichier de sauvegarde : idempotent sur « appareil source + séquence », donc réimporter ne duplique jamais d’entrées et n’écrase pas les suppressions locales. En cas d’échec de validation, rien ne change.",
       "de": "Führt den Verlauf aus einer Sicherungsdatei zusammen: idempotent über „Quellgerät + Sequenz“, sodass erneutes Importieren nie Einträge dupliziert oder lokale Löschungen überschreibt. Bei Validierungsfehlern ändert sich nichts.",
-      "pt-BR": "Mescla o histórico de um arquivo de backup: idempotente por “aparelho de origem + sequência”, então reimportar nunca duplica entradas nem sobrescreve exclusões locais. Se a validação falhar, nada muda."
+      "pt-BR": "Mescla o histórico de um arquivo de backup: idempotente por “aparelho de origem + sequência”, então reimportar nunca duplica entradas nem sobrescreve exclusões locais. Se a validação falhar, nada muda.",
+      "ru": "Объединяет историю из файла резервной копии: идемпотентно по «устройство-источник + номер», повторный импорт не создаёт дубликатов и не отменяет локальные удаления. При ошибке проверки ничего не меняется.",
+      "ar": "يدمج السجل من ملف نسخ احتياطي: متكرر آمن وفق «جهاز المصدر + الرقم التسلسلي»، فإعادة الاستيراد لا تكرر العناصر ولا تلغي الحذف المحلي. فشل التحقق لا يغيّر شيئًا.",
+      "it": "Unisce la cronologia da un file di backup: idempotente su «dispositivo di origine + numero», quindi reimportare non duplica voci né annulla le eliminazioni locali. Se la verifica fallisce, nulla cambia.",
+      "vi": "Gộp lịch sử từ tệp sao lưu: khử trùng lặp theo “thiết bị nguồn + số thứ tự”, nhập lại không tạo mục trùng và không ghi đè các bản xóa cục bộ. Kiểm tra thất bại thì không thay đổi gì."
     },
     "Prefs_Data_Clear_Desc": {
       "zh-Hans": "一次性删除本机全部条目（含图片），需两步确认且无法恢复。清空只发生在本机，不会远程删除对方已收到的内容；建议先导出历史留底。",
@@ -1594,7 +2170,11 @@
       "es": "Elimina todas las entradas de este PC (imágenes incluidas) de una vez; pide dos confirmaciones y no se puede deshacer. El vaciado ocurre solo en este PC y nunca borra lo que el par ya recibió; considera exportar primero.",
       "fr": "Supprime toutes les entrées de ce PC (images comprises) en une fois ; demande deux confirmations et ne peut pas être annulé. Le vidage n’a lieu que sur ce PC et ne supprime jamais ce que le pair a déjà reçu ; pensez à exporter d’abord.",
       "de": "Löscht alle Einträge dieses PCs (einschließlich Bilder) in einem Schritt; erfordert zwei Bestätigungen und ist nicht rückgängig zu machen. Das Leeren geschieht nur auf diesem PC und löscht nie, was der Peer bereits erhalten hat — vorher exportieren empfohlen.",
-      "pt-BR": "Exclui todas as entradas deste PC (imagens incluídas) de uma vez; exige duas confirmações e não pode ser desfeito. A limpeza só acontece neste PC e nunca apaga o que o par já recebeu; considere exportar antes."
+      "pt-BR": "Exclui todas as entradas deste PC (imagens incluídas) de uma vez; exige duas confirmações e não pode ser desfeito. A limpeza só acontece neste PC e nunca apaga o que o par já recebeu; considere exportar antes.",
+      "ru": "Разом удаляет все записи на этом ПК (включая изображения); требует двух подтверждений и необратимо. Очистка происходит только на этом ПК и не удаляет то, что другая сторона уже получила; сначала стоит экспортировать историю.",
+      "ar": "يحذف كل العناصر على هذا الحاسوب (مع الصور) دفعة واحدة؛ يتطلب تأكيدين ولا يمكن التراجع عنه. المسح يحدث على هذا الحاسوب فقط ولا يحذف ما استلمه الطرف الآخر — فكّر في التصدير أولًا.",
+      "it": "Elimina in un colpo solo tutte le voci su questo PC (immagini incluse); richiede due conferme ed è irreversibile. Lo svuotamento avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto — valuta prima un export.",
+      "vi": "Xóa một lần toàn bộ mục trên PC này (gồm hình ảnh); cần xác nhận hai bước và không thể khôi phục. Việc xóa chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận — nên xuất lịch sử trước."
     },
     "Flyout_WindowTitle": {
       "zh-Hans": "剪剪相传 · 最近剪贴",
@@ -1605,7 +2185,11 @@
       "es": "ClipSync · clips recientes",
       "fr": "ClipSync · clips récents",
       "de": "ClipSync · aktuelle Clips",
-      "pt-BR": "ClipSync · clipes recentes"
+      "pt-BR": "ClipSync · clipes recentes",
+      "ru": "ClipSync · недавние записи",
+      "ar": "ClipSync · أحدث المقتطفات",
+      "it": "ClipSync · clip recenti",
+      "vi": "ClipSync · mẩu gần đây"
     },
     "Flyout_PauseSync": {
       "zh-Hans": "暂停同步",
@@ -1616,7 +2200,11 @@
       "es": "Pausar sincronización",
       "fr": "Suspendre la synchro",
       "de": "Sync pausieren",
-      "pt-BR": "Pausar sincronização"
+      "pt-BR": "Pausar sincronização",
+      "ru": "Приостановить синхронизацию",
+      "ar": "إيقاف المزامنة مؤقتًا",
+      "it": "Sospendi sincronizzazione",
+      "vi": "Tạm dừng đồng bộ"
     },
     "Flyout_ResumeSync": {
       "zh-Hans": "恢复同步",
@@ -1627,7 +2215,11 @@
       "es": "Reanudar sincronización",
       "fr": "Reprendre la synchro",
       "de": "Sync fortsetzen",
-      "pt-BR": "Retomar sincronização"
+      "pt-BR": "Retomar sincronização",
+      "ru": "Возобновить синхронизацию",
+      "ar": "استئناف المزامنة",
+      "it": "Riprendi sincronizzazione",
+      "vi": "Tiếp tục đồng bộ"
     },
     "Flyout_Empty": {
       "zh-Hans": "还没有剪贴记录 · 复制一段文字试试",
@@ -1638,7 +2230,11 @@
       "es": "Aún no hay clips · prueba a copiar algún texto",
       "fr": "Pas encore de clips · essayez de copier du texte",
       "de": "Noch keine Clips · kopieren Sie etwas Text",
-      "pt-BR": "Ainda sem clipes · tente copiar um texto"
+      "pt-BR": "Ainda sem clipes · tente copiar um texto",
+      "ru": "Записей пока нет · попробуйте что-нибудь скопировать",
+      "ar": "لا مقتطفات بعد · جرّب نسخ نص ما",
+      "it": "Ancora nessuna clip · prova a copiare del testo",
+      "vi": "Chưa có mẩu nào · thử sao chép một đoạn văn bản"
     },
     "Flyout_PauseOrResume": {
       "zh-Hans": "暂停或恢复同步",
@@ -1649,7 +2245,11 @@
       "es": "Pausar o reanudar sincronización",
       "fr": "Suspendre ou reprendre la synchronisation",
       "de": "Sync pausieren oder fortsetzen",
-      "pt-BR": "Pausar ou retomar a sincronização"
+      "pt-BR": "Pausar ou retomar a sincronização",
+      "ru": "Приостановить или возобновить синхронизацию",
+      "ar": "إيقاف المزامنة مؤقتًا أو استئنافها",
+      "it": "Sospendi o riprendi la sincronizzazione",
+      "vi": "Tạm dừng hoặc tiếp tục đồng bộ"
     },
     "Flyout_CopyFromFormat": {
       "zh-Hans": "复制来自 {0} 的剪贴",
@@ -1660,7 +2260,11 @@
       "es": "Copiar el clip de {0}",
       "fr": "Copier le clip de {0}",
       "de": "Clip von {0} kopieren",
-      "pt-BR": "Copiar o clipe de {0}"
+      "pt-BR": "Copiar o clipe de {0}",
+      "ru": "Копировать запись от {0}",
+      "ar": "نسخ المقتطف من {0}",
+      "it": "Copia la clip da {0}",
+      "vi": "Sao chép mẩu từ {0}"
     },
     "Tray_Menu_Open": {
       "zh-Hans": "打开剪剪相传",
@@ -1671,7 +2275,11 @@
       "es": "Abrir ClipSync",
       "fr": "Ouvrir ClipSync",
       "de": "ClipSync öffnen",
-      "pt-BR": "Abrir o ClipSync"
+      "pt-BR": "Abrir o ClipSync",
+      "ru": "Открыть ClipSync",
+      "ar": "فتح ClipSync",
+      "it": "Apri ClipSync",
+      "vi": "Mở ClipSync"
     },
     "Tray_Menu_Diagnostics": {
       "zh-Hans": "诊断日志",
@@ -1682,7 +2290,11 @@
       "es": "Registro de diagnóstico",
       "fr": "Journal de diagnostic",
       "de": "Diagnoseprotokoll",
-      "pt-BR": "Log de diagnóstico"
+      "pt-BR": "Log de diagnóstico",
+      "ru": "Журнал диагностики",
+      "ar": "سجل التشخيص",
+      "it": "Log diagnostico",
+      "vi": "Nhật ký chẩn đoán"
     },
     "Tray_Menu_Exit": {
       "zh-Hans": "退出",
@@ -1693,7 +2305,11 @@
       "es": "Salir",
       "fr": "Quitter",
       "de": "Beenden",
-      "pt-BR": "Sair"
+      "pt-BR": "Sair",
+      "ru": "Выход",
+      "ar": "خروج",
+      "it": "Esci",
+      "vi": "Thoát"
     },
     "Tray_Tooltip_Flow": {
       "zh-Hans": "剪剪相传 · 监听中",
@@ -1704,7 +2320,11 @@
       "es": "ClipSync · escuchando",
       "fr": "ClipSync · à l’écoute",
       "de": "ClipSync · lauscht",
-      "pt-BR": "ClipSync · escutando"
+      "pt-BR": "ClipSync · escutando",
+      "ru": "ClipSync · слушаем",
+      "ar": "ClipSync · يستمع",
+      "it": "ClipSync · in ascolto",
+      "vi": "ClipSync · đang lắng nghe"
     },
     "Tray_Tooltip_AttentionFormat": {
       "zh-Hans": "剪剪相传 · {0}",
@@ -1715,7 +2335,11 @@
       "es": "ClipSync · {0}",
       "fr": "ClipSync · {0}",
       "de": "ClipSync · {0}",
-      "pt-BR": "ClipSync · {0}"
+      "pt-BR": "ClipSync · {0}",
+      "ru": "ClipSync · {0}",
+      "ar": "ClipSync · {0}",
+      "it": "ClipSync · {0}",
+      "vi": "ClipSync · {0}"
     },
     "Tray_AttentionFallback": {
       "zh-Hans": "需要你操作",
@@ -1726,7 +2350,11 @@
       "es": "Requiere tu acción",
       "fr": "Votre action est requise",
       "de": "Ihre Aktion ist erforderlich",
-      "pt-BR": "Precisa da sua ação"
+      "pt-BR": "Precisa da sua ação",
+      "ru": "Требуется ваше действие",
+      "ar": "يتطلب إجراءً منك",
+      "it": "Serve un tuo intervento",
+      "vi": "Cần bạn thao tác"
     },
     "Tray_Tooltip_Paused": {
       "zh-Hans": "剪剪相传 · 捕获已暂停",
@@ -1737,7 +2365,11 @@
       "es": "ClipSync · captura en pausa",
       "fr": "ClipSync · capture en pause",
       "de": "ClipSync · Erfassung pausiert",
-      "pt-BR": "ClipSync · captura pausada"
+      "pt-BR": "ClipSync · captura pausada",
+      "ru": "ClipSync · захват приостановлен",
+      "ar": "ClipSync · الالتقاط موقوف مؤقتًا",
+      "it": "ClipSync · acquisizione in pausa",
+      "vi": "ClipSync · đã tạm dừng ghi nhận"
     },
     "Tray_Tooltip_Private": {
       "zh-Hans": "剪剪相传 · 私密模式，不留痕迹",
@@ -1748,7 +2380,11 @@
       "es": "ClipSync · modo privado, sin dejar rastro",
       "fr": "ClipSync · mode privé, aucune trace",
       "de": "ClipSync · privater Modus, keine Spuren",
-      "pt-BR": "ClipSync · modo privado, sem deixar rastros"
+      "pt-BR": "ClipSync · modo privado, sem deixar rastros",
+      "ru": "ClipSync · приватный режим, без следов",
+      "ar": "ClipSync · الوضع الخاص، بلا أثر",
+      "it": "ClipSync · modalità privata, nessuna traccia",
+      "vi": "ClipSync · chế độ riêng tư, không dấu vết"
     },
     "Tray_RemoteClipOneFormat": {
       "zh-Hans": "收到 {0} 的 1 条新剪贴",
@@ -1759,7 +2395,11 @@
       "es": "1 clip nuevo de {0}",
       "fr": "1 nouveau clip de {0}",
       "de": "1 neuer Clip von {0}",
-      "pt-BR": "1 clipe novo de {0}"
+      "pt-BR": "1 clipe novo de {0}",
+      "ru": "1 новая запись от {0}",
+      "ar": "مقتطف جديد واحد من {0}",
+      "it": "1 nuova clip da {0}",
+      "vi": "1 mẩu mới từ {0}"
     },
     "Tray_RemoteClipManyFormat": {
       "zh-Hans": "收到 {0} 的 {1} 条新剪贴",
@@ -1770,7 +2410,11 @@
       "es": "{1} clips nuevos de {0}",
       "fr": "{1} nouveaux clips de {0}",
       "de": "{1} neue Clips von {0}",
-      "pt-BR": "{1} clipes novos de {0}"
+      "pt-BR": "{1} clipes novos de {0}",
+      "ru": "Новых записей от {0}: {1}",
+      "ar": "{1} مقتطفات جديدة من {0}",
+      "it": "{1} nuove clip da {0}",
+      "vi": "{1} mẩu mới từ {0}"
     },
     "Tray_OversizeNotice": {
       "zh-Hans": "刚复制的文本超过 1 MiB，仅保留在本机剪贴板，不同步（未截断）。",
@@ -1781,7 +2425,11 @@
       "es": "El texto recién copiado supera 1 MiB; queda solo en el portapapeles de este PC y no se sincroniza (sin recortar).",
       "fr": "Le texte copié dépasse 1 Mio ; il reste uniquement dans le presse-papiers de ce PC et n’est pas synchronisé (non tronqué).",
       "de": "Der gerade kopierte Text überschreitet 1 MiB; er bleibt nur in der Zwischenablage dieses PCs und wird nicht synchronisiert (nicht gekürzt).",
-      "pt-BR": "O texto recém-copiado passa de 1 MiB; fica só na área de transferência deste PC e não sincroniza (sem cortes)."
+      "pt-BR": "O texto recém-copiado passa de 1 MiB; fica só na área de transferência deste PC e não sincroniza (sem cortes).",
+      "ru": "Только что скопированный текст больше 1 МиБ; он остаётся лишь в буфере обмена этого ПК и не синхронизируется (не обрезан).",
+      "ar": "النص المنسوخ للتو يتجاوز 1 ميبيبايت؛ يبقى في حافظة هذا الحاسوب فقط ولا يُزامن (دون قص).",
+      "it": "Il testo appena copiato supera 1 MiB; resta solo negli appunti di questo PC e non viene sincronizzato (non troncato).",
+      "vi": "Văn bản vừa sao chép vượt 1 MiB; chỉ nằm trong bảng nhớ tạm của PC này, không đồng bộ (không bị cắt)."
     },
     "Tray_AuthThrottleFormat": {
       "zh-Hans": "检测到「{0}」反复认证失败，已临时限流该设备。",
@@ -1792,7 +2440,11 @@
       "es": "Fallos de autenticación repetidos de «{0}»; el dispositivo está limitado temporalmente.",
       "fr": "Échecs d’authentification répétés de « {0} » ; l’appareil est temporairement limité.",
       "de": "Wiederholte Authentifizierungsfehler von „{0}“; das Gerät ist vorübergehend gedrosselt.",
-      "pt-BR": "Falhas de autenticação repetidas de “{0}”; o aparelho está temporariamente limitado."
+      "pt-BR": "Falhas de autenticação repetidas de “{0}”; o aparelho está temporariamente limitado.",
+      "ru": "Повторные сбои аутентификации у «{0}»; устройство временно ограничено.",
+      "ar": "إخفاقات مصادقة متكررة من «{0}»؛ قُيّد الجهاز مؤقتًا.",
+      "it": "Ripetuti errori di autenticazione da «{0}»; il dispositivo è temporaneamente limitato.",
+      "vi": "Phát hiện “{0}” liên tục xác thực thất bại; thiết bị bị hạn chế tạm thời."
     },
     "Tray_Status_ListeningNoSync": {
       "zh-Hans": "监听中 · 同步未启动",
@@ -1803,7 +2455,11 @@
       "es": "Escuchando · sincronización no iniciada",
       "fr": "À l’écoute · synchro non démarrée",
       "de": "Lauscht · Sync nicht gestartet",
-      "pt-BR": "Escutando · sincronização não iniciada"
+      "pt-BR": "Escutando · sincronização não iniciada",
+      "ru": "Слушаем · синхронизация не запущена",
+      "ar": "يستمع · المزامنة غير مشغّلة",
+      "it": "In ascolto · sincronizzazione non attiva",
+      "vi": "Đang lắng nghe · đồng bộ chưa chạy"
     },
     "Tray_Status_ConnectedFormat": {
       "zh-Hans": "监听中 · 已连 {0} 台",
@@ -1814,7 +2470,11 @@
       "es": "Escuchando · {0} conectados",
       "fr": "À l’écoute · {0} connecté(s)",
       "de": "Lauscht · {0} verbunden",
-      "pt-BR": "Escutando · {0} conectados"
+      "pt-BR": "Escutando · {0} conectados",
+      "ru": "Слушаем · подключено {0}",
+      "ar": "يستمع · {0} متصل",
+      "it": "In ascolto · {0} connessi",
+      "vi": "Đang lắng nghe · đã kết nối {0}"
     },
     "Tray_Status_Waiting": {
       "zh-Hans": "监听中 · 等待设备连入",
@@ -1825,7 +2485,11 @@
       "es": "Escuchando · esperando dispositivos",
       "fr": "À l’écoute · en attente d’appareils",
       "de": "Lauscht · wartet auf Geräte",
-      "pt-BR": "Escutando · aguardando aparelhos"
+      "pt-BR": "Escutando · aguardando aparelhos",
+      "ru": "Слушаем · ждём устройства",
+      "ar": "يستمع · بانتظار الأجهزة",
+      "it": "In ascolto · in attesa di dispositivi",
+      "vi": "Đang lắng nghe · chờ thiết bị kết nối"
     },
     "Capture_OversizeNotice": {
       "zh-Hans": "刚复制的文本超过 1 MiB：内容保留在系统剪贴板，未截断，但不记录历史、不同步。",
@@ -1836,7 +2500,11 @@
       "es": "El texto recién copiado supera 1 MiB: queda en el portapapeles del sistema, sin recortar, pero no se registra en el historial ni se sincroniza.",
       "fr": "Le texte copié dépasse 1 Mio : il reste dans le presse-papiers système, non tronqué, mais n’est ni enregistré dans l’historique ni synchronisé.",
       "de": "Der gerade kopierte Text überschreitet 1 MiB: Er bleibt ungekürzt in der Systemzwischenablage, wird aber weder im Verlauf aufgezeichnet noch synchronisiert.",
-      "pt-BR": "O texto recém-copiado passa de 1 MiB: fica na área de transferência do sistema, sem cortes, mas não entra no histórico nem sincroniza."
+      "pt-BR": "O texto recém-copiado passa de 1 MiB: fica na área de transferência do sistema, sem cortes, mas não entra no histórico nem sincroniza.",
+      "ru": "Только что скопированный текст больше 1 МиБ: он остаётся в системном буфере обмена без обрезки, но не попадает в историю и не синхронизируется.",
+      "ar": "النص المنسوخ للتو يتجاوز 1 ميبيبايت: يبقى في حافظة النظام دون قص، لكنه لا يُسجل في السجل ولا يُزامن.",
+      "it": "Il testo appena copiato supera 1 MiB: resta negli appunti di sistema, non troncato, ma non viene registrato nella cronologia né sincronizzato.",
+      "vi": "Văn bản vừa sao chép vượt 1 MiB: vẫn nằm trong bảng nhớ tạm hệ thống, không bị cắt, nhưng không ghi vào lịch sử và không đồng bộ."
     },
     "Sync_NotStarted": {
       "zh-Hans": "对端服务尚未启动",
@@ -1847,7 +2515,11 @@
       "es": "El servicio del par aún no se ha iniciado",
       "fr": "Le service du pair n’est pas encore démarré",
       "de": "Peer-Dienst noch nicht gestartet",
-      "pt-BR": "O serviço do par ainda não foi iniciado"
+      "pt-BR": "O serviço do par ainda não foi iniciado",
+      "ru": "Служба обмена ещё не запущена",
+      "ar": "خدمة الطرف الآخر لم تبدأ بعد",
+      "it": "Servizio peer non ancora avviato",
+      "vi": "Dịch vụ phía đối diện chưa khởi động"
     },
     "Sync_StartFailed": {
       "zh-Hans": "对端服务未能启动，本次会话同步关闭。",
@@ -1858,7 +2530,11 @@
       "es": "El servicio del par no pudo iniciarse; la sincronización queda apagada en esta sesión.",
       "fr": "Le service du pair n’a pas pu démarrer ; la synchronisation est coupée pour cette session.",
       "de": "Der Peer-Dienst konnte nicht starten; Sync ist in dieser Sitzung aus.",
-      "pt-BR": "O serviço do par não conseguiu iniciar; a sincronização fica desligada nesta sessão."
+      "pt-BR": "O serviço do par não conseguiu iniciar; a sincronização fica desligada nesta sessão.",
+      "ru": "Службе обмена не удалось запуститься; в этом сеансе синхронизация выключена.",
+      "ar": "تعذّر بدء خدمة الطرف الآخر؛ المزامنة متوقفة في هذه الجلسة.",
+      "it": "Il servizio peer non è riuscito ad avviarsi; la sincronizzazione è spenta per questa sessione.",
+      "vi": "Dịch vụ phía đối diện không khởi động được; phiên này đồng bộ tắt."
     },
     "Sync_ConnectedFormat": {
       "zh-Hans": "LAN 监听端口 {0} · 已连接 {1} 台设备，内容实时互通。",
@@ -1869,7 +2545,11 @@
       "es": "LAN escuchando en el puerto {0} · {1} dispositivos conectados, el contenido fluye en tiempo real.",
       "fr": "LAN à l’écoute sur le port {0} · {1} appareil(s) connecté(s), le contenu circule en temps réel.",
       "de": "LAN lauscht auf Port {0} · {1} Gerät(e) verbunden, Inhalte fließen in Echtzeit.",
-      "pt-BR": "LAN escutando na porta {0} · {1} aparelho(s) conectado(s), o conteúdo flui em tempo real."
+      "pt-BR": "LAN escutando na porta {0} · {1} aparelho(s) conectado(s), o conteúdo flui em tempo real.",
+      "ru": "LAN-порт {0} · подключено устройств: {1}, содержимое передаётся в реальном времени.",
+      "ar": "استماع LAN على المنفذ {0} · {1} جهاز متصل، والمحتوى يتدفق آنيًا.",
+      "it": "LAN in ascolto sulla porta {0} · {1} dispositivi connessi, il contenuto scorre in tempo reale.",
+      "vi": "LAN lắng nghe cổng {0} · đã kết nối {1} thiết bị, nội dung thông suốt theo thời gian thực."
     },
     "Sync_WaitingFormat": {
       "zh-Hans": "LAN 监听端口 {0} · 等待已配对设备连入；事件先落库再入发件队列，断线不丢。",
@@ -1880,7 +2560,11 @@
       "es": "LAN escuchando en el puerto {0} · esperando dispositivos emparejados; los eventos se guardan antes de entrar en la cola de envío, así que nada se pierde sin conexión.",
       "fr": "LAN à l’écoute sur le port {0} · en attente d’appareils appairés ; les événements sont enregistrés avant d’entrer dans la file d’envoi, rien ne se perd hors ligne.",
       "de": "LAN lauscht auf Port {0} · wartet auf gekoppelte Geräte; Ereignisse werden erst gespeichert, dann in die Sendewarteschlange gestellt — offline geht nichts verloren.",
-      "pt-BR": "LAN escutando na porta {0} · aguardando aparelhos pareados; os eventos são gravados antes de entrar na fila de envio, então nada se perde offline."
+      "pt-BR": "LAN escutando na porta {0} · aguardando aparelhos pareados; os eventos são gravados antes de entrar na fila de envio, então nada se perde offline.",
+      "ru": "LAN-порт {0} · ждём сопряжённые устройства; события сначала попадают в хранилище, затем в очередь отправки — офлайн ничего не теряется.",
+      "ar": "استماع LAN على المنفذ {0} · بانتظار الأجهزة المقترنة؛ تُحفظ الأحداث في المخزن قبل قائمة الإرسال فلا يضيع شيء دون اتصال.",
+      "it": "LAN in ascolto sulla porta {0} · in attesa dei dispositivi associati; gli eventi arrivano nell’archivio prima della coda di invio, offline non si perde nulla.",
+      "vi": "LAN lắng nghe cổng {0} · chờ thiết bị đã ghép nối; sự kiện vào kho trước rồi mới vào hàng đợi gửi, mất mạng không mất dữ liệu."
     },
     "Bt_Disabled": {
       "zh-Hans": "蓝牙备援未启用",
@@ -1891,7 +2575,11 @@
       "es": "Respaldo Bluetooth desactivado",
       "fr": "Secours Bluetooth désactivé",
       "de": "Bluetooth-Ausweichweg nicht aktiviert",
-      "pt-BR": "Alternativa Bluetooth desativada"
+      "pt-BR": "Alternativa Bluetooth desativada",
+      "ru": "Bluetooth-резерв не включён",
+      "ar": "احتياطي البلوتوث غير مفعّل",
+      "it": "Riserva Bluetooth non abilitata",
+      "vi": "Dự phòng Bluetooth chưa bật"
     },
     "Bt_UnavailableFormat": {
       "zh-Hans": "蓝牙备援不可用：{0}",
@@ -1902,7 +2590,11 @@
       "es": "Respaldo Bluetooth no disponible: {0}",
       "fr": "Secours Bluetooth indisponible : {0}",
       "de": "Bluetooth-Ausweichweg nicht verfügbar: {0}",
-      "pt-BR": "Alternativa Bluetooth indisponível: {0}"
+      "pt-BR": "Alternativa Bluetooth indisponível: {0}",
+      "ru": "Bluetooth-резерв недоступен: {0}",
+      "ar": "احتياطي البلوتوث غير متاح: {0}",
+      "it": "Riserva Bluetooth non disponibile: {0}",
+      "vi": "Dự phòng Bluetooth không khả dụng: {0}"
     },
     "Bt_SyncingFormat": {
       "zh-Hans": "蓝牙备援 · 正与 {0} 同步（仅文本）",
@@ -1913,7 +2605,11 @@
       "es": "Respaldo Bluetooth · sincronizando con {0} (solo texto)",
       "fr": "Secours Bluetooth · synchronisation avec {0} (texte uniquement)",
       "de": "Bluetooth-Ausweichweg · synchronisiert mit {0} (nur Text)",
-      "pt-BR": "Alternativa Bluetooth · sincronizando com {0} (só texto)"
+      "pt-BR": "Alternativa Bluetooth · sincronizando com {0} (só texto)",
+      "ru": "Bluetooth-резерв · синхронизация с {0} (только текст)",
+      "ar": "احتياطي البلوتوث · مزامنة مع {0} (نص فقط)",
+      "it": "Riserva Bluetooth · sincronizzazione con {0} (solo testo)",
+      "vi": "Dự phòng Bluetooth · đang đồng bộ với {0} (chỉ văn bản)"
     },
     "Bt_Armed": {
       "zh-Hans": "蓝牙备援待命 · LAN 不可达时手机自动改走蓝牙",
@@ -1924,7 +2620,11 @@
       "es": "Respaldo Bluetooth en espera · el teléfono cambia a Bluetooth automáticamente cuando la LAN no es alcanzable",
       "fr": "Secours Bluetooth en veille · le téléphone bascule automatiquement en Bluetooth quand le LAN est injoignable",
       "de": "Bluetooth-Ausweichweg in Bereitschaft · das Telefon wechselt automatisch zu Bluetooth, wenn das LAN unerreichbar ist",
-      "pt-BR": "Alternativa Bluetooth de prontidão · o telefone muda para Bluetooth automaticamente quando a LAN está inalcançável"
+      "pt-BR": "Alternativa Bluetooth de prontidão · o telefone muda para Bluetooth automaticamente quando a LAN está inalcançável",
+      "ru": "Bluetooth-резерв наготове · когда LAN недоступна, телефон сам переходит на Bluetooth",
+      "ar": "احتياطي البلوتوث جاهز · يتحول الهاتف تلقائيًا إلى البلوتوث حين تتعذر الشبكة المحلية",
+      "it": "Riserva Bluetooth in attesa · il telefono passa da solo al Bluetooth quando la LAN è irraggiungibile",
+      "vi": "Dự phòng Bluetooth trực chờ · khi LAN không tới được, điện thoại tự chuyển sang Bluetooth"
     },
     "Bt_Starting": {
       "zh-Hans": "蓝牙备援启动中…",
@@ -1935,7 +2635,11 @@
       "es": "Iniciando respaldo Bluetooth…",
       "fr": "Démarrage du secours Bluetooth…",
       "de": "Bluetooth-Ausweichweg startet…",
-      "pt-BR": "Iniciando a alternativa Bluetooth…"
+      "pt-BR": "Iniciando a alternativa Bluetooth…",
+      "ru": "Bluetooth-резерв запускается…",
+      "ar": "احتياطي البلوتوث يبدأ…",
+      "it": "Riserva Bluetooth in avvio…",
+      "vi": "Dự phòng Bluetooth đang khởi động…"
     },
     "Bt_AdapterUnavailable": {
       "zh-Hans": "蓝牙适配器不可用或已关闭",
@@ -1946,7 +2650,11 @@
       "es": "Adaptador Bluetooth no disponible o apagado",
       "fr": "Adaptateur Bluetooth indisponible ou éteint",
       "de": "Bluetooth-Adapter nicht verfügbar oder ausgeschaltet",
-      "pt-BR": "Adaptador Bluetooth indisponível ou desligado"
+      "pt-BR": "Adaptador Bluetooth indisponível ou desligado",
+      "ru": "Bluetooth-адаптер недоступен или выключен",
+      "ar": "محول البلوتوث غير متاح أو مطفأ",
+      "it": "Adattatore Bluetooth non disponibile o spento",
+      "vi": "Bộ điều hợp Bluetooth không khả dụng hoặc đã tắt"
     },
     "Ack_None": {
       "zh-Hans": "尚未收到对端确认",
@@ -1957,7 +2665,11 @@
       "es": "Aún sin confirmación del par",
       "fr": "Aucune confirmation du pair pour l’instant",
       "de": "Noch keine Bestätigung vom Peer",
-      "pt-BR": "Ainda sem confirmação do par"
+      "pt-BR": "Ainda sem confirmação do par",
+      "ru": "Подтверждений с той стороны пока нет",
+      "ar": "لا إقرار من الطرف الآخر بعد",
+      "it": "Ancora nessuna conferma dal peer",
+      "vi": "Chưa nhận được xác nhận từ phía đối diện"
     },
     "Ack_UpToFormat": {
       "zh-Hans": "对端确认至 {0}",
@@ -1968,7 +2680,11 @@
       "es": "El par confirmó hasta {0}",
       "fr": "Le pair a confirmé jusqu’à {0}",
       "de": "Peer hat bis {0} bestätigt",
-      "pt-BR": "O par confirmou até {0}"
+      "pt-BR": "O par confirmou até {0}",
+      "ru": "Другая сторона подтвердила до {0}",
+      "ar": "أقرّ الطرف الآخر حتى {0}",
+      "it": "Il peer ha confermato fino a {0}",
+      "vi": "Phía đối diện đã xác nhận đến {0}"
     },
     "Transfer_ClearedFormat": {
       "zh-Hans": "已清空 {0} 条历史记录（含图片）。清空只发生在本机。",
@@ -1979,7 +2695,11 @@
       "es": "Se vaciaron {0} entradas del historial (imágenes incluidas). El vaciado ocurre solo en este PC.",
       "fr": "{0} entrées d’historique vidées (images comprises). Le vidage n’a lieu que sur ce PC.",
       "de": "{0} Verlaufseinträge geleert (einschließlich Bilder). Das Leeren geschieht nur auf diesem PC.",
-      "pt-BR": "{0} entradas do histórico limpas (imagens incluídas). A limpeza só acontece neste PC."
+      "pt-BR": "{0} entradas do histórico limpas (imagens incluídas). A limpeza só acontece neste PC.",
+      "ru": "Очищено записей истории: {0} (включая изображения). Очистка происходит только на этом ПК.",
+      "ar": "مُسح {0} من عناصر السجل (مع الصور). المسح يحدث على هذا الحاسوب فقط.",
+      "it": "Svuotate {0} voci della cronologia (immagini incluse). Lo svuotamento avviene solo su questo PC.",
+      "vi": "Đã xóa {0} mục lịch sử (gồm hình ảnh). Việc xóa chỉ diễn ra trên PC này."
     },
     "Transfer_ClearConfirmBody": {
       "zh-Hans": "清空全部历史？\n\n将一次性删除本机全部条目（含图片）。清空只发生在本机，不会远程删除对方已收到的内容。建议先「导出历史」留底。",
@@ -1990,7 +2710,11 @@
       "es": "¿Vaciar todo el historial?\n\nSe eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. El vaciado ocurre solo en este PC y nunca borra lo que el par ya recibió. Considera «Exportar historial» primero.",
       "fr": "Vider tout l’historique ?\n\nToutes les entrées de ce PC (images comprises) seront supprimées en une fois. Le vidage n’a lieu que sur ce PC et ne supprime jamais ce que le pair a déjà reçu. Pensez à « Exporter l’historique » d’abord.",
       "de": "Gesamten Verlauf leeren?\n\nAlle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelöscht. Das Leeren geschieht nur auf diesem PC und löscht nie, was der Peer bereits erhalten hat. Vorher „Verlauf exportieren“ empfohlen.",
-      "pt-BR": "Limpar todo o histórico?\n\nTodas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A limpeza só acontece neste PC e nunca apaga o que o par já recebeu. Considere “Exportar histórico” antes."
+      "pt-BR": "Limpar todo o histórico?\n\nTodas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A limpeza só acontece neste PC e nunca apaga o que o par já recebeu. Considere “Exportar histórico” antes.",
+      "ru": "Очистить всю историю?\n\nРазом удалит все записи на этом ПК (включая изображения). Очистка происходит только на этом ПК и не удаляет то, что другая сторона уже получила. Сначала стоит сделать «Экспорт истории».",
+      "ar": "مسح كل السجل؟\n\nسيحذف كل العناصر على هذا الحاسوب (مع الصور) دفعة واحدة. المسح يحدث على هذا الحاسوب فقط ولا يحذف ما استلمه الطرف الآخر. فكّر في «تصدير السجل» أولًا.",
+      "it": "Svuotare tutta la cronologia?\n\nElimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuotamento avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto. Valuta prima «Esporta cronologia».",
+      "vi": "Xóa toàn bộ lịch sử?\n\nSẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc xóa chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận. Nên “Xuất lịch sử” trước."
     },
     "Transfer_ClearConfirmAgain": {
       "zh-Hans": "再确认一次：清空后无法恢复。确定清空全部历史？",
@@ -2001,7 +2725,11 @@
       "es": "Confirma otra vez: el vaciado no se puede deshacer. ¿Vaciar todo el historial?",
       "fr": "Confirmez encore : le vidage est irréversible. Vider tout l’historique ?",
       "de": "Noch einmal bestätigen: Das Leeren ist unwiderruflich. Gesamten Verlauf leeren?",
-      "pt-BR": "Confirme de novo: a limpeza não pode ser desfeita. Limpar todo o histórico?"
+      "pt-BR": "Confirme de novo: a limpeza não pode ser desfeita. Limpar todo o histórico?",
+      "ru": "Подтвердите ещё раз: очистку нельзя отменить. Очистить всю историю?",
+      "ar": "أكّد مرة أخرى: المسح لا يمكن التراجع عنه. أتريد مسح كل السجل؟",
+      "it": "Conferma ancora una volta: lo svuotamento è irreversibile. Svuotare tutta la cronologia?",
+      "vi": "Xác nhận lần nữa: xóa xong không thể khôi phục. Chắc chắn xóa toàn bộ lịch sử?"
     },
     "Transfer_ExportedFormat": {
       "zh-Hans": "已导出 {0} 条记录（明文）→ {1}",
@@ -2012,7 +2740,11 @@
       "es": "Se exportaron {0} registros (texto plano) → {1}",
       "fr": "{0} enregistrement(s) exporté(s) (en clair) → {1}",
       "de": "{0} Einträge exportiert (Klartext) → {1}",
-      "pt-BR": "{0} registro(s) exportado(s) (texto puro) → {1}"
+      "pt-BR": "{0} registro(s) exportado(s) (texto puro) → {1}",
+      "ru": "Экспортировано записей: {0} (в открытом виде) → {1}",
+      "ar": "صُدّر {0} من السجلات (نص صريح) ← {1}",
+      "it": "Esportati {0} record (in chiaro) → {1}",
+      "vi": "Đã xuất {0} bản ghi (văn bản thuần) → {1}"
     },
     "Transfer_ExportWriteFailed": {
       "zh-Hans": "导出失败：无法写入所选文件。",
@@ -2023,7 +2755,11 @@
       "es": "Exportación fallida: no se pudo escribir el archivo elegido.",
       "fr": "Échec de l’export : impossible d’écrire le fichier choisi.",
       "de": "Export fehlgeschlagen: Die gewählte Datei konnte nicht geschrieben werden.",
-      "pt-BR": "Falha na exportação: não foi possível gravar o arquivo escolhido."
+      "pt-BR": "Falha na exportação: não foi possível gravar o arquivo escolhido.",
+      "ru": "Экспорт не удался: не получилось записать выбранный файл.",
+      "ar": "فشل التصدير: تعذّرت الكتابة في الملف المحدد.",
+      "it": "Export non riuscito: impossibile scrivere il file scelto.",
+      "vi": "Xuất thất bại: không ghi được tệp đã chọn."
     },
     "Transfer_ImportedFormat": {
       "zh-Hans": "导入完成：新增 {0} · 已存在 {1} · 冲突 {2}",
@@ -2034,7 +2770,11 @@
       "es": "Importación completa: añadidos {0} · existentes {1} · conflictos {2}",
       "fr": "Import terminé : ajoutés {0} · existants {1} · conflits {2}",
       "de": "Import abgeschlossen: hinzugefügt {0} · vorhanden {1} · Konflikte {2}",
-      "pt-BR": "Importação concluída: adicionados {0} · existentes {1} · conflitos {2}"
+      "pt-BR": "Importação concluída: adicionados {0} · existentes {1} · conflitos {2}",
+      "ru": "Импорт завершён: добавлено {0} · уже было {1} · конфликтов {2}",
+      "ar": "اكتمل الاستيراد: أُضيف {0} · موجود {1} · تعارضات {2}",
+      "it": "Import completato: aggiunti {0} · già presenti {1} · conflitti {2}",
+      "vi": "Nhập xong: thêm mới {0} · đã có {1} · xung đột {2}"
     },
     "Transfer_ImportFailedFormat": {
       "zh-Hans": "导入失败：{0}。未做任何改动。",
@@ -2045,7 +2785,11 @@
       "es": "Importación fallida: {0}. No se cambió nada.",
       "fr": "Échec de l’import : {0}. Rien n’a été modifié.",
       "de": "Import fehlgeschlagen: {0}. Nichts wurde geändert.",
-      "pt-BR": "Falha na importação: {0}. Nada foi alterado."
+      "pt-BR": "Falha na importação: {0}. Nada foi alterado.",
+      "ru": "Импорт не удался: {0}. Ничего не изменено.",
+      "ar": "فشل الاستيراد: {0}. لم يتغير شيء.",
+      "it": "Import non riuscito: {0}. Nulla è stato modificato.",
+      "vi": "Nhập thất bại: {0}. Không thay đổi gì."
     },
     "Transfer_ImportReadFailed": {
       "zh-Hans": "导入失败：无法读取所选文件。",
@@ -2056,7 +2800,11 @@
       "es": "Importación fallida: no se pudo leer el archivo elegido.",
       "fr": "Échec de l’import : impossible de lire le fichier choisi.",
       "de": "Import fehlgeschlagen: Die gewählte Datei konnte nicht gelesen werden.",
-      "pt-BR": "Falha na importação: não foi possível ler o arquivo escolhido."
+      "pt-BR": "Falha na importação: não foi possível ler o arquivo escolhido.",
+      "ru": "Импорт не удался: не получилось прочитать выбранный файл.",
+      "ar": "فشل الاستيراد: تعذّرت قراءة الملف المحدد.",
+      "it": "Import non riuscito: impossibile leggere il file scelto.",
+      "vi": "Nhập thất bại: không đọc được tệp đã chọn."
     },
     "Transfer_FileFilter": {
       "zh-Hans": "ClipSync 历史导出 (*.jsonl)|*.jsonl|所有文件 (*.*)|*.*",
@@ -2067,7 +2815,11 @@
       "es": "Exportación de historial de ClipSync (*.jsonl)|*.jsonl|Todos los archivos (*.*)|*.*",
       "fr": "Export d’historique ClipSync (*.jsonl)|*.jsonl|Tous les fichiers (*.*)|*.*",
       "de": "ClipSync-Verlaufsexport (*.jsonl)|*.jsonl|Alle Dateien (*.*)|*.*",
-      "pt-BR": "Exportação de histórico do ClipSync (*.jsonl)|*.jsonl|Todos os arquivos (*.*)|*.*"
+      "pt-BR": "Exportação de histórico do ClipSync (*.jsonl)|*.jsonl|Todos os arquivos (*.*)|*.*",
+      "ru": "Экспорт истории ClipSync (*.jsonl)|*.jsonl|Все файлы (*.*)|*.*",
+      "ar": "تصدير سجل ClipSync (*.jsonl)|*.jsonl|كل الملفات (*.*)|*.*",
+      "it": "Export cronologia ClipSync (*.jsonl)|*.jsonl|Tutti i file (*.*)|*.*",
+      "vi": "Xuất lịch sử ClipSync (*.jsonl)|*.jsonl|Mọi tệp (*.*)|*.*"
     },
     "Transfer_Error_BadHeader": {
       "zh-Hans": "这不是 ClipSync 历史导出文件",
@@ -2078,7 +2830,11 @@
       "es": "esto no es un archivo de exportación de historial de ClipSync",
       "fr": "ce n’est pas un fichier d’export d’historique ClipSync",
       "de": "dies ist keine ClipSync-Verlaufsexportdatei",
-      "pt-BR": "isto não é um arquivo de exportação de histórico do ClipSync"
+      "pt-BR": "isto não é um arquivo de exportação de histórico do ClipSync",
+      "ru": "это не файл экспорта истории ClipSync",
+      "ar": "هذا ليس ملف تصدير سجل ClipSync",
+      "it": "questo non è un file di export della cronologia ClipSync",
+      "vi": "đây không phải tệp xuất lịch sử ClipSync"
     },
     "Transfer_Error_UnsupportedVersion": {
       "zh-Hans": "文件版本高于本应用支持的版本",
@@ -2089,7 +2845,11 @@
       "es": "la versión del archivo es más nueva de lo que admite esta aplicación",
       "fr": "la version du fichier est plus récente que ce que cette application prend en charge",
       "de": "die Dateiversion ist neuer, als diese Anwendung unterstützt",
-      "pt-BR": "a versão do arquivo é mais nova do que este aplicativo suporta"
+      "pt-BR": "a versão do arquivo é mais nova do que este aplicativo suporta",
+      "ru": "версия файла новее, чем поддерживает это приложение",
+      "ar": "إصدار الملف أحدث مما يدعمه هذا التطبيق",
+      "it": "la versione del file è più recente di quella supportata dall’app",
+      "vi": "phiên bản tệp cao hơn mức ứng dụng hỗ trợ"
     },
     "Transfer_Error_MalformedRecord": {
       "zh-Hans": "文件内容损坏（记录格式错误）",
@@ -2100,7 +2860,11 @@
       "es": "el archivo está dañado (registro con formato incorrecto)",
       "fr": "le fichier est corrompu (enregistrement mal formé)",
       "de": "die Datei ist beschädigt (fehlerhafter Datensatz)",
-      "pt-BR": "o arquivo está corrompido (registro malformado)"
+      "pt-BR": "o arquivo está corrompido (registro malformado)",
+      "ru": "файл повреждён (неверный формат записи)",
+      "ar": "الملف تالف (سجل مشوه)",
+      "it": "il file è danneggiato (record malformato)",
+      "vi": "tệp bị hỏng (bản ghi sai định dạng)"
     },
     "Transfer_Error_HashMismatch": {
       "zh-Hans": "文件内容损坏（哈希校验失败）",
@@ -2111,7 +2875,11 @@
       "es": "el archivo está dañado (falló la comprobación de hash)",
       "fr": "le fichier est corrompu (échec de la vérification du hachage)",
       "de": "die Datei ist beschädigt (Hash-Prüfung fehlgeschlagen)",
-      "pt-BR": "o arquivo está corrompido (falha na verificação de hash)"
+      "pt-BR": "o arquivo está corrompido (falha na verificação de hash)",
+      "ru": "файл повреждён (не сошлась хеш-проверка)",
+      "ar": "الملف تالف (فشل التحقق من التجزئة)",
+      "it": "il file è danneggiato (verifica hash fallita)",
+      "vi": "tệp bị hỏng (kiểm tra băm thất bại)"
     },
     "Transfer_Error_CountMismatch": {
       "zh-Hans": "文件不完整（条数与头部不符）",
@@ -2122,7 +2890,11 @@
       "es": "el archivo está incompleto (el recuento no coincide con la cabecera)",
       "fr": "le fichier est incomplet (le compte ne correspond pas à l’en-tête)",
       "de": "die Datei ist unvollständig (Anzahl stimmt nicht mit dem Kopf überein)",
-      "pt-BR": "o arquivo está incompleto (a contagem não bate com o cabeçalho)"
+      "pt-BR": "o arquivo está incompleto (a contagem não bate com o cabeçalho)",
+      "ru": "файл неполный (число записей не совпадает с заголовком)",
+      "ar": "الملف ناقص (العدد لا يطابق الترويسة)",
+      "it": "il file è incompleto (il conteggio non corrisponde all’intestazione)",
+      "vi": "tệp không đầy đủ (số lượng không khớp phần đầu)"
     },
     "Transfer_Error_ContentTooLarge": {
       "zh-Hans": "文件包含超出大小上限的条目（文本 1 MiB / 图片 16 MiB）",
@@ -2133,7 +2905,11 @@
       "es": "el archivo contiene una entrada que supera los límites de tamaño (texto 1 MiB / imágenes 16 MiB)",
       "fr": "le fichier contient une entrée dépassant les plafonds de taille (texte 1 Mio / images 16 Mio)",
       "de": "die Datei enthält einen Eintrag über den Größenlimits (Text 1 MiB / Bilder 16 MiB)",
-      "pt-BR": "o arquivo contém uma entrada acima dos limites de tamanho (texto 1 MiB / imagens 16 MiB)"
+      "pt-BR": "o arquivo contém uma entrada acima dos limites de tamanho (texto 1 MiB / imagens 16 MiB)",
+      "ru": "в файле есть запись сверх лимита размера (текст 1 МиБ / изображения 16 МиБ)",
+      "ar": "الملف يحوي عنصرًا يتجاوز حدود الحجم (نص 1 ميبيبايت / صور 16 ميبيبايت)",
+      "it": "il file contiene una voce oltre i limiti di dimensione (testo 1 MiB / immagini 16 MiB)",
+      "vi": "tệp chứa mục vượt giới hạn kích thước (văn bản 1 MiB / hình ảnh 16 MiB)"
     },
     "Transfer_Error_Unknown": {
       "zh-Hans": "未知错误",
@@ -2144,7 +2920,11 @@
       "es": "error desconocido",
       "fr": "erreur inconnue",
       "de": "unbekannter Fehler",
-      "pt-BR": "erro desconhecido"
+      "pt-BR": "erro desconhecido",
+      "ru": "неизвестная ошибка",
+      "ar": "خطأ مجهول",
+      "it": "errore sconosciuto",
+      "vi": "lỗi không xác định"
     },
     "Hotkey_Applied": {
       "zh-Hans": "已生效 · 在任意应用按下即呼出浮窗",
@@ -2155,7 +2935,11 @@
       "es": "Activo · púlsalo en cualquier aplicación para invocar la ventana emergente",
       "fr": "Actif · appuyez dessus dans n’importe quelle application pour invoquer la fenêtre rapide",
       "de": "Aktiv · in jeder Anwendung drücken, um das Schnellfenster aufzurufen",
-      "pt-BR": "Ativo · pressione em qualquer aplicativo para chamar a janela rápida"
+      "pt-BR": "Ativo · pressione em qualquer aplicativo para chamar a janela rápida",
+      "ru": "Действует · нажмите в любом приложении, чтобы вызвать окно",
+      "ar": "مفعّل · اضغطه في أي تطبيق لاستدعاء النافذة المنبثقة",
+      "it": "Attiva · premila in qualsiasi app per richiamare il riquadro",
+      "vi": "Đã hiệu lực · nhấn trong bất kỳ ứng dụng nào để gọi cửa sổ nổi"
     },
     "Hotkey_Conflict": {
       "zh-Hans": "该组合已被其他程序占用，请换一个组合",
@@ -2166,7 +2950,11 @@
       "es": "Esa combinación la usa otro programa; prueba con otra",
       "fr": "Cette combinaison est prise par un autre programme ; essayez-en une autre",
       "de": "Diese Kombination wird von einem anderen Programm belegt; versuchen Sie eine andere",
-      "pt-BR": "Essa combinação já é usada por outro programa; tente outra"
+      "pt-BR": "Essa combinação já é usada por outro programa; tente outra",
+      "ru": "Это сочетание занято другой программой; выберите другое",
+      "ar": "هذه التركيبة يشغلها برنامج آخر؛ جرّب تركيبة مختلفة",
+      "it": "Combinazione già usata da un altro programma; provane un’altra",
+      "vi": "Tổ hợp này đã bị chương trình khác chiếm; hãy chọn tổ hợp khác"
     },
     "Attention_PeerDown": {
       "zh-Hans": "本次会话同步未启动（端点启动失败）",
@@ -2177,7 +2965,11 @@
       "es": "Sincronización no iniciada en esta sesión (falló el arranque del punto de conexión)",
       "fr": "Synchro non démarrée pour cette session (échec du démarrage du point de terminaison)",
       "de": "Sync in dieser Sitzung nicht gestartet (Endpunktstart fehlgeschlagen)",
-      "pt-BR": "Sincronização não iniciada nesta sessão (falha ao iniciar o ponto de conexão)"
+      "pt-BR": "Sincronização não iniciada nesta sessão (falha ao iniciar o ponto de conexão)",
+      "ru": "В этом сеансе синхронизация не запущена (конечной точке не удалось стартовать)",
+      "ar": "المزامنة غير مشغّلة في هذه الجلسة (فشل بدء نقطة النهاية)",
+      "it": "Sincronizzazione non attiva in questa sessione (avvio dell’endpoint fallito)",
+      "vi": "Phiên này đồng bộ chưa chạy (điểm cuối khởi động thất bại)"
     },
     "Attention_CaptureFaulted": {
       "zh-Hans": "剪贴板捕获降级（上次访问失败）",
@@ -2188,7 +2980,11 @@
       "es": "Captura del portapapeles degradada (falló el último acceso)",
       "fr": "Capture du presse-papiers dégradée (dernier accès en échec)",
       "de": "Zwischenablageerfassung beeinträchtigt (letzter Zugriff fehlgeschlagen)",
-      "pt-BR": "Captura da área de transferência degradada (último acesso falhou)"
+      "pt-BR": "Captura da área de transferência degradada (último acesso falhou)",
+      "ru": "Захват буфера обмена деградировал (последний доступ не удался)",
+      "ar": "التقاط الحافظة متدهور (فشل آخر وصول)",
+      "it": "Acquisizione degli appunti degradata (ultimo accesso fallito)",
+      "vi": "Ghi nhận bảng nhớ tạm suy giảm (lần truy cập trước thất bại)"
     },
     "Attention_NoDevice": {
       "zh-Hans": "配对一台设备开始同步",
@@ -2199,7 +2995,11 @@
       "es": "Empareja un dispositivo para empezar a sincronizar",
       "fr": "Appairez un appareil pour commencer la synchronisation",
       "de": "Koppeln Sie ein Gerät, um den Sync zu starten",
-      "pt-BR": "Pareie um aparelho para começar a sincronizar"
+      "pt-BR": "Pareie um aparelho para começar a sincronizar",
+      "ru": "Сопрягите устройство, чтобы начать синхронизацию",
+      "ar": "اقترن بجهاز لبدء المزامنة",
+      "it": "Associa un dispositivo per iniziare a sincronizzare",
+      "vi": "Ghép nối một thiết bị để bắt đầu đồng bộ"
     },
     "Pairing_Title": {
       "zh-Hans": "配对新设备",
@@ -2210,7 +3010,11 @@
       "es": "Emparejar nuevo dispositivo",
       "fr": "Appairer un nouvel appareil",
       "de": "Neues Gerät koppeln",
-      "pt-BR": "Parear novo aparelho"
+      "pt-BR": "Parear novo aparelho",
+      "ru": "Сопряжение нового устройства",
+      "ar": "اقتران جهاز جديد",
+      "it": "Associa nuovo dispositivo",
+      "vi": "Ghép nối thiết bị mới"
     },
     "Pairing_PeerDownBody": {
       "zh-Hans": "对端服务未启动，本次会话无法配对。",
@@ -2221,7 +3025,11 @@
       "es": "El servicio del par no está en marcha; no se puede emparejar en esta sesión.",
       "fr": "Le service du pair n’est pas démarré ; l’appairage est indisponible pour cette session.",
       "de": "Der Peer-Dienst läuft nicht; Kopplung ist in dieser Sitzung nicht möglich.",
-      "pt-BR": "O serviço do par não está em execução; não dá para parear nesta sessão."
+      "pt-BR": "O serviço do par não está em execução; não dá para parear nesta sessão.",
+      "ru": "Служба обмена не запущена; в этом сеансе сопряжение недоступно.",
+      "ar": "خدمة الطرف الآخر غير مشغّلة؛ الاقتران متعذر في هذه الجلسة.",
+      "it": "Il servizio peer non è attivo; in questa sessione non è possibile associare.",
+      "vi": "Dịch vụ phía đối diện chưa chạy; phiên này không thể ghép nối."
     },
     "Pairing_ScanInstruction": {
       "zh-Hans": "用手机上的「剪剪相传」扫描此码。二维码包含本机地址、证书指纹与一次性令牌，绝不包含配对密钥。",
@@ -2232,7 +3040,11 @@
       "es": "Escanea este código con ClipSync en tu teléfono. El código QR lleva la dirección de este PC, la huella del certificado y un token de un solo uso; nunca la clave de emparejamiento.",
       "fr": "Scannez ce code avec ClipSync sur votre téléphone. Le code QR contient l’adresse de ce PC, l’empreinte du certificat et un jeton à usage unique — jamais la clé d’appairage.",
       "de": "Scannen Sie diesen Code mit ClipSync auf Ihrem Telefon. Der QR-Code enthält die Adresse dieses PCs, den Zertifikat-Fingerabdruck und ein Einmal-Token — niemals den Kopplungsschlüssel.",
-      "pt-BR": "Escaneie este código com o ClipSync no seu telefone. O código QR carrega o endereço deste PC, a impressão digital do certificado e um token de uso único — nunca a chave de pareamento."
+      "pt-BR": "Escaneie este código com o ClipSync no seu telefone. O código QR carrega o endereço deste PC, a impressão digital do certificado e um token de uso único — nunca a chave de pareamento.",
+      "ru": "Отсканируйте этот код приложением ClipSync на телефоне. QR-код содержит адрес этого ПК, отпечаток сертификата и одноразовый токен — никогда не ключ сопряжения.",
+      "ar": "امسح هذا الرمز بتطبيق ClipSync على هاتفك. يحمل رمز QR عنوان هذا الحاسوب وبصمة الشهادة ورمزًا لمرة واحدة — ولا يحمل مفتاح الاقتران أبدًا.",
+      "it": "Scansiona questo codice con ClipSync sul telefono. Il codice QR contiene l’indirizzo di questo PC, l’impronta del certificato e un token monouso — mai la chiave di associazione.",
+      "vi": "Dùng ClipSync trên điện thoại quét mã này. Mã QR chứa địa chỉ của PC này, dấu vân tay chứng chỉ và mã thông báo dùng một lần — không bao giờ chứa khóa ghép nối."
     },
     "Pairing_CountdownFormat": {
       "zh-Hans": "{0:m\\:ss} 后自动更换",
@@ -2243,7 +3055,11 @@
       "es": "Se renueva en {0:m\\:ss}",
       "fr": "Renouvellement dans {0:m\\:ss}",
       "de": "Erneuert sich in {0:m\\:ss}",
-      "pt-BR": "Renova em {0:m\\:ss}"
+      "pt-BR": "Renova em {0:m\\:ss}",
+      "ru": "Обновится через {0:m\\:ss}",
+      "ar": "يتجدد خلال {0:m\\:ss}",
+      "it": "Si rinnova tra {0:m\\:ss}",
+      "vi": "Tự đổi sau {0:m\\:ss}"
     },
     "Pairing_NoLanAddress": {
       "zh-Hans": "未检测到局域网地址。请把本机和手机接入同一网络（或在偏好里添加 Tailscale 地址），再重新打开此窗口。",
@@ -2254,7 +3070,11 @@
       "es": "No se detectó ninguna dirección LAN. Conecta este PC y el teléfono a la misma red (o añade una dirección de Tailscale en Preferencias) y vuelve a abrir esta ventana.",
       "fr": "Aucune adresse LAN détectée. Mettez ce PC et le téléphone sur le même réseau (ou ajoutez une adresse Tailscale dans les Préférences), puis rouvrez cette fenêtre.",
       "de": "Keine LAN-Adresse erkannt. Bringen Sie diesen PC und das Telefon ins selbe Netzwerk (oder fügen Sie in den Einstellungen eine Tailscale-Adresse hinzu) und öffnen Sie dieses Fenster erneut.",
-      "pt-BR": "Nenhum endereço de LAN detectado. Coloque este PC e o telefone na mesma rede (ou adicione um endereço Tailscale nas Preferências) e reabra esta janela."
+      "pt-BR": "Nenhum endereço de LAN detectado. Coloque este PC e o telefone na mesma rede (ou adicione um endereço Tailscale nas Preferências) e reabra esta janela.",
+      "ru": "Адрес локальной сети не обнаружен. Подключите этот ПК и телефон к одной сети (или добавьте адрес Tailscale в настройках) и снова откройте это окно.",
+      "ar": "لم يُكتشف عنوان شبكة محلية. صِل هذا الحاسوب والهاتف بالشبكة نفسها (أو أضف عنوان Tailscale في التفضيلات)، ثم افتح هذه النافذة من جديد.",
+      "it": "Nessun indirizzo LAN rilevato. Metti questo PC e il telefono sulla stessa rete (o aggiungi un indirizzo Tailscale nelle Preferenze), poi riapri questa finestra.",
+      "vi": "Không phát hiện địa chỉ mạng LAN. Hãy đưa PC này và điện thoại vào cùng một mạng (hoặc thêm địa chỉ Tailscale trong Tùy chọn), rồi mở lại cửa sổ này."
     },
     "Pairing_VerifyHeading": {
       "zh-Hans": "确 认 前 请 在 手 机 上 核 对",
@@ -2265,7 +3085,11 @@
       "es": "Verifica en el teléfono antes de aprobar",
       "fr": "Vérifiez sur le téléphone avant d’approuver",
       "de": "Vor dem Genehmigen am Telefon prüfen",
-      "pt-BR": "Confira no telefone antes de aprovar"
+      "pt-BR": "Confira no telefone antes de aprovar",
+      "ru": "Перед одобрением сверьте на телефоне",
+      "ar": "تحقق على الهاتف قبل الموافقة",
+      "it": "Verifica sul telefono prima di approvare",
+      "vi": "Đối chiếu trên điện thoại trước khi phê duyệt"
     },
     "Pairing_PcName": {
       "zh-Hans": "电脑名称",
@@ -2276,7 +3100,11 @@
       "es": "Nombre del PC",
       "fr": "Nom du PC",
       "de": "PC-Name",
-      "pt-BR": "Nome do PC"
+      "pt-BR": "Nome do PC",
+      "ru": "Имя компьютера",
+      "ar": "اسم الحاسوب",
+      "it": "Nome del PC",
+      "vi": "Tên máy tính"
     },
     "Pairing_Fingerprint": {
       "zh-Hans": "证书指纹",
@@ -2287,7 +3115,11 @@
       "es": "Huella del certificado",
       "fr": "Empreinte du certificat",
       "de": "Zertifikat-Fingerabdruck",
-      "pt-BR": "Impressão digital do certificado"
+      "pt-BR": "Impressão digital do certificado",
+      "ru": "Отпечаток сертификата",
+      "ar": "بصمة الشهادة",
+      "it": "Impronta del certificato",
+      "vi": "Dấu vân tay chứng chỉ"
     },
     "Pairing_NewCode": {
       "zh-Hans": "换一个码",
@@ -2298,7 +3130,11 @@
       "es": "Nuevo código",
       "fr": "Nouveau code",
       "de": "Neuer Code",
-      "pt-BR": "Novo código"
+      "pt-BR": "Novo código",
+      "ru": "Новый код",
+      "ar": "رمز جديد",
+      "it": "Nuovo codice",
+      "vi": "Đổi mã khác"
     },
     "Approval_Title": {
       "zh-Hans": "配对请求",
@@ -2309,7 +3145,11 @@
       "es": "Solicitud de emparejamiento",
       "fr": "Demande d’appairage",
       "de": "Kopplungsanfrage",
-      "pt-BR": "Pedido de pareamento"
+      "pt-BR": "Pedido de pareamento",
+      "ru": "Запрос на сопряжение",
+      "ar": "طلب اقتران",
+      "it": "Richiesta di associazione",
+      "vi": "Yêu cầu ghép nối"
     },
     "Approval_CloseReject": {
       "zh-Hans": "关闭并拒绝",
@@ -2320,7 +3160,11 @@
       "es": "Cerrar y rechazar",
       "fr": "Fermer et refuser",
       "de": "Schließen und ablehnen",
-      "pt-BR": "Fechar e recusar"
+      "pt-BR": "Fechar e recusar",
+      "ru": "Закрыть и отклонить",
+      "ar": "إغلاق ورفض",
+      "it": "Chiudi e rifiuta",
+      "vi": "Đóng và từ chối"
     },
     "Approval_Question": {
       "zh-Hans": "允许此设备配对吗？",
@@ -2331,7 +3175,11 @@
       "es": "¿Permitir que este dispositivo se empareje?",
       "fr": "Autoriser cet appareil à s’appairer ?",
       "de": "Diesem Gerät die Kopplung erlauben?",
-      "pt-BR": "Permitir que este aparelho pareie?"
+      "pt-BR": "Permitir que este aparelho pareie?",
+      "ru": "Разрешить сопряжение этому устройству?",
+      "ar": "أتسمح لهذا الجهاز بالاقتران؟",
+      "it": "Consentire a questo dispositivo di associarsi?",
+      "vi": "Cho phép thiết bị này ghép nối?"
     },
     "Approval_Body": {
       "zh-Hans": "有设备用本机显示的二维码请求配对。仅当下方名称与你手中的手机一致时批准。",
@@ -2342,7 +3190,11 @@
       "es": "Un dispositivo usó el código QR mostrado por este PC para pedir emparejamiento. Aprueba solo si el nombre de abajo coincide con el teléfono que tienes en la mano.",
       "fr": "Un appareil a utilisé le code QR affiché par ce PC pour demander l’appairage. N’approuvez que si le nom ci-dessous correspond au téléphone que vous tenez.",
       "de": "Ein Gerät hat mit dem von diesem PC angezeigten QR-Code eine Kopplung angefragt. Genehmigen Sie nur, wenn der Name unten zum Telefon in Ihrer Hand passt.",
-      "pt-BR": "Um aparelho usou o código QR mostrado por este PC para pedir pareamento. Aprove só se o nome abaixo bater com o telefone na sua mão."
+      "pt-BR": "Um aparelho usou o código QR mostrado por este PC para pedir pareamento. Aprove só se o nome abaixo bater com o telefone na sua mão.",
+      "ru": "Устройство запросило сопряжение по QR-коду этого ПК. Одобряйте, только если имя ниже совпадает с телефоном у вас в руках.",
+      "ar": "استخدم جهازٌ رمز QR الخاص بهذا الحاسوب لطلب الاقتران. وافق فقط إذا طابق الاسم أدناه الهاتف الذي بيدك.",
+      "it": "Un dispositivo ha usato il codice QR di questo PC per chiedere l’associazione. Approva solo se il nome qui sotto corrisponde al telefono che hai in mano.",
+      "vi": "Một thiết bị đã dùng mã QR của PC này để yêu cầu ghép nối. Chỉ phê duyệt khi tên bên dưới trùng với chiếc điện thoại trong tay bạn."
     },
     "Approval_PlatformAndroid": {
       "zh-Hans": "Android 设备",
@@ -2353,7 +3205,11 @@
       "es": "Dispositivo Android",
       "fr": "Appareil Android",
       "de": "Android-Gerät",
-      "pt-BR": "Aparelho Android"
+      "pt-BR": "Aparelho Android",
+      "ru": "Устройство Android",
+      "ar": "جهاز Android",
+      "it": "Dispositivo Android",
+      "vi": "Thiết bị Android"
     },
     "Approval_PlatformWindows": {
       "zh-Hans": "Windows 设备",
@@ -2364,7 +3220,11 @@
       "es": "Dispositivo Windows",
       "fr": "Appareil Windows",
       "de": "Windows-Gerät",
-      "pt-BR": "Aparelho Windows"
+      "pt-BR": "Aparelho Windows",
+      "ru": "Устройство Windows",
+      "ar": "جهاز Windows",
+      "it": "Dispositivo Windows",
+      "vi": "Thiết bị Windows"
     },
     "Approval_RepairWarning": {
       "zh-Hans": "该设备此前已配对。批准会替换它原有的配对密钥，旧的安装立即失效。",
@@ -2375,7 +3235,11 @@
       "es": "Este dispositivo ya estuvo emparejado. Aprobar reemplaza su clave de emparejamiento y la instalación antigua deja de funcionar de inmediato.",
       "fr": "Cet appareil était déjà appairé. Approuver remplace sa clé d’appairage existante et l’ancienne installation cesse de fonctionner immédiatement.",
       "de": "Dieses Gerät war bereits gekoppelt. Genehmigen ersetzt seinen bestehenden Kopplungsschlüssel; die alte Installation funktioniert sofort nicht mehr.",
-      "pt-BR": "Este aparelho já foi pareado antes. Aprovar substitui a chave de pareamento existente e a instalação antiga para de funcionar na hora."
+      "pt-BR": "Este aparelho já foi pareado antes. Aprovar substitui a chave de pareamento existente e a instalação antiga para de funcionar na hora.",
+      "ru": "Это устройство уже было сопряжено. Одобрение заменит его ключ сопряжения, и старая установка сразу перестанет работать.",
+      "ar": "سبق اقتران هذا الجهاز. الموافقة تستبدل مفتاح اقترانه الحالي، ويتوقف التثبيت القديم فورًا.",
+      "it": "Questo dispositivo era già associato. Approvando sostituisci la sua chiave di associazione e la vecchia installazione smette subito di funzionare.",
+      "vi": "Thiết bị này từng ghép nối. Phê duyệt sẽ thay khóa ghép nối cũ, bản cài đặt cũ mất hiệu lực ngay."
     },
     "Approval_SupersedeNotice": {
       "zh-Hans": "列表中已有同名设备。批准后旧记录将被自动撤销并清空其待发队列（视为同一部手机重新配对）。",
@@ -2386,7 +3250,11 @@
       "es": "Ya hay un dispositivo con el mismo nombre en la lista. Al aprobar, el registro antiguo se revoca automáticamente y su cola de envío se vacía (se trata como el mismo teléfono reemparejándose).",
       "fr": "Un appareil du même nom figure déjà dans la liste. Approuver révoque automatiquement l’ancien enregistrement et vide sa file d’envoi (traité comme le même téléphone qui se réappaire).",
       "de": "Ein gleichnamiges Gerät steht bereits in der Liste. Beim Genehmigen wird der alte Eintrag automatisch widerrufen und seine Sendewarteschlange geleert (gilt als dasselbe Telefon, das sich neu koppelt).",
-      "pt-BR": "Já existe um aparelho com o mesmo nome na lista. Ao aprovar, o registro antigo é revogado automaticamente e sua fila de envio esvaziada (tratado como o mesmo telefone pareando de novo)."
+      "pt-BR": "Já existe um aparelho com o mesmo nome na lista. Ao aprovar, o registro antigo é revogado automaticamente e sua fila de envio esvaziada (tratado como o mesmo telefone pareando de novo).",
+      "ru": "Устройство с таким именем уже в списке. После одобрения старая запись будет отозвана автоматически, а её очередь отправки очищена (считается повторным сопряжением того же телефона).",
+      "ar": "يوجد في القائمة جهاز بالاسم نفسه. بعد الموافقة يُبطل السجل القديم تلقائيًا وتُفرَّغ قائمة إرساله (يُعد الهاتف نفسه يعيد الاقتران).",
+      "it": "In elenco c’è già un dispositivo con lo stesso nome. Approvando, il vecchio record viene revocato automaticamente e la sua coda di invio svuotata (trattato come lo stesso telefono che si riassocia).",
+      "vi": "Danh sách đã có thiết bị trùng tên. Sau khi phê duyệt, bản ghi cũ sẽ tự động bị thu hồi và hàng đợi gửi của nó bị xóa (xem như cùng một điện thoại ghép nối lại)."
     },
     "Approval_Reject": {
       "zh-Hans": "拒绝",
@@ -2397,7 +3265,11 @@
       "es": "Rechazar",
       "fr": "Refuser",
       "de": "Ablehnen",
-      "pt-BR": "Recusar"
+      "pt-BR": "Recusar",
+      "ru": "Отклонить",
+      "ar": "رفض",
+      "it": "Rifiuta",
+      "vi": "Từ chối"
     },
     "Approval_Approve": {
       "zh-Hans": "批准配对",
@@ -2408,7 +3280,11 @@
       "es": "Aprobar emparejamiento",
       "fr": "Approuver l’appairage",
       "de": "Kopplung genehmigen",
-      "pt-BR": "Aprovar pareamento"
+      "pt-BR": "Aprovar pareamento",
+      "ru": "Одобрить сопряжение",
+      "ar": "الموافقة على الاقتران",
+      "it": "Approva associazione",
+      "vi": "Phê duyệt ghép nối"
     },
     "Detail_Title": {
       "zh-Hans": "剪贴详情",
@@ -2419,7 +3295,11 @@
       "es": "Detalles del clip",
       "fr": "Détails du clip",
       "de": "Clip-Details",
-      "pt-BR": "Detalhes do clipe"
+      "pt-BR": "Detalhes do clipe",
+      "ru": "Подробности записи",
+      "ar": "تفاصيل المقتطف",
+      "it": "Dettagli clip",
+      "vi": "Chi tiết mẩu sao chép"
     },
     "Detail_SourceFormat": {
       "zh-Hans": "来源：{0}",
@@ -2430,7 +3310,11 @@
       "es": "Origen: {0}",
       "fr": "Source : {0}",
       "de": "Quelle: {0}",
-      "pt-BR": "Origem: {0}"
+      "pt-BR": "Origem: {0}",
+      "ru": "Источник: {0}",
+      "ar": "المصدر: {0}",
+      "it": "Origine: {0}",
+      "vi": "Nguồn: {0}"
     },
     "Detail_TimeFormat": {
       "zh-Hans": "时间：{0}",
@@ -2441,7 +3325,11 @@
       "es": "Hora: {0}",
       "fr": "Heure : {0}",
       "de": "Zeit: {0}",
-      "pt-BR": "Hora: {0}"
+      "pt-BR": "Hora: {0}",
+      "ru": "Время: {0}",
+      "ar": "الوقت: {0}",
+      "it": "Ora: {0}",
+      "vi": "Thời gian: {0}"
     },
     "Diag_Title": {
       "zh-Hans": "剪剪相传 · 诊断日志",
@@ -2452,7 +3340,11 @@
       "es": "ClipSync · registro de diagnóstico",
       "fr": "ClipSync · journal de diagnostic",
       "de": "ClipSync · Diagnoseprotokoll",
-      "pt-BR": "ClipSync · log de diagnóstico"
+      "pt-BR": "ClipSync · log de diagnóstico",
+      "ru": "ClipSync · журнал диагностики",
+      "ar": "ClipSync · سجل التشخيص",
+      "it": "ClipSync · log diagnostico",
+      "vi": "ClipSync · nhật ký chẩn đoán"
     },
     "Diag_Heading": {
       "zh-Hans": "本机诊断 · 仅状态码与时间，绝不含剪贴板正文",
@@ -2463,7 +3355,11 @@
       "es": "Diagnóstico local · solo códigos de estado y horas, nunca contenido del portapapeles",
       "fr": "Diagnostic local · uniquement codes d’état et heures, jamais le contenu du presse-papiers",
       "de": "Lokale Diagnose · nur Statuscodes und Zeiten, nie Zwischenablageinhalte",
-      "pt-BR": "Diagnóstico local · só códigos de status e horários, nunca o conteúdo da área de transferência"
+      "pt-BR": "Diagnóstico local · só códigos de status e horários, nunca o conteúdo da área de transferência",
+      "ru": "Локальная диагностика · только коды состояния и время, никогда — содержимое буфера обмена",
+      "ar": "تشخيص محلي · رموز الحالة والأوقات فقط، ومحتوى الحافظة لا يظهر أبدًا",
+      "it": "Diagnostica locale · solo codici di stato e orari, mai il contenuto degli appunti",
+      "vi": "Chẩn đoán cục bộ · chỉ mã trạng thái và thời gian, không bao giờ có nội dung bảng nhớ tạm"
     },
     "Diag_CopyAll": {
       "zh-Hans": "复制全部",
@@ -2474,7 +3370,11 @@
       "es": "Copiar todo",
       "fr": "Tout copier",
       "de": "Alles kopieren",
-      "pt-BR": "Copiar tudo"
+      "pt-BR": "Copiar tudo",
+      "ru": "Копировать всё",
+      "ar": "نسخ الكل",
+      "it": "Copia tutto",
+      "vi": "Sao chép tất cả"
     },
     "Diag_Empty": {
       "zh-Hans": "（暂无诊断记录）",
@@ -2485,7 +3385,11 @@
       "es": "(sin registros de diagnóstico todavía)",
       "fr": "(aucune entrée de diagnostic pour l’instant)",
       "de": "(noch keine Diagnoseeinträge)",
-      "pt-BR": "(ainda sem registros de diagnóstico)"
+      "pt-BR": "(ainda sem registros de diagnóstico)",
+      "ru": "(диагностических записей пока нет)",
+      "ar": "(لا إدخالات تشخيصية بعد)",
+      "it": "(ancora nessuna voce diagnostica)",
+      "vi": "(chưa có mục chẩn đoán)"
     }
   }
 }

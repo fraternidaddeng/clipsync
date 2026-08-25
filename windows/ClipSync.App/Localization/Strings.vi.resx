@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="App_WindowTitle" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Brand_Wordmark" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Chrome_Minimize" xml:space="preserve">
+    <value>Thu nhỏ</value>
+  </data>
+  <data name="Chrome_MaximizeRestore" xml:space="preserve">
+    <value>Phóng to hoặc khôi phục</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Đóng</value>
+  </data>
+  <data name="Common_Copy" xml:space="preserve">
+    <value>Sao chép</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>Làm mới</value>
+  </data>
+  <data name="Common_Acknowledge" xml:space="preserve">
+    <value>Đã hiểu</value>
+  </data>
+  <data name="Common_FollowSystem" xml:space="preserve">
+    <value>Theo hệ thống</value>
+  </data>
+  <data name="Common_ClearHistory" xml:space="preserve">
+    <value>Xóa lịch sử</value>
+  </data>
+  <data name="Common_ExportHistory" xml:space="preserve">
+    <value>Xuất lịch sử</value>
+  </data>
+  <data name="Common_ImportHistory" xml:space="preserve">
+    <value>Nhập lịch sử</value>
+  </data>
+  <data name="Common_PauseCapture" xml:space="preserve">
+    <value>Tạm dừng ghi nhận</value>
+  </data>
+  <data name="Common_PrivateMode" xml:space="preserve">
+    <value>Chế độ riêng tư</value>
+  </data>
+  <data name="Nav_History" xml:space="preserve">
+    <value>Lịch sử</value>
+  </data>
+  <data name="Nav_Conduit" xml:space="preserve">
+    <value>Đường dẫn</value>
+  </data>
+  <data name="Nav_Prefs" xml:space="preserve">
+    <value>Tùy chọn</value>
+  </data>
+  <data name="History_Title" xml:space="preserve">
+    <value>Lịch sử</value>
+  </data>
+  <data name="History_Subtitle" xml:space="preserve">
+    <value>Mẩu sao chép từ PC này và các thiết bị đã ghép nối · việc dọn dẹp chỉ ảnh hưởng thiết bị này</value>
+  </data>
+  <data name="History_Search" xml:space="preserve">
+    <value>Tìm kiếm</value>
+  </data>
+  <data name="Filter_All" xml:space="preserve">
+    <value>Tất cả</value>
+  </data>
+  <data name="Filter_Link" xml:space="preserve">
+    <value>Liên kết</value>
+  </data>
+  <data name="Filter_Otp" xml:space="preserve">
+    <value>Mã</value>
+  </data>
+  <data name="Filter_Email" xml:space="preserve">
+    <value>Tài khoản</value>
+  </data>
+  <data name="Filter_Credential" xml:space="preserve">
+    <value>Mật khẩu</value>
+  </data>
+  <data name="Filter_Plain" xml:space="preserve">
+    <value>Văn bản</value>
+  </data>
+  <data name="Format_Image" xml:space="preserve">
+    <value>Hình ảnh</value>
+  </data>
+  <data name="History_NoPreview" xml:space="preserve">
+    <value>Không có xem trước</value>
+  </data>
+  <data name="History_LocalOnlyBadge" xml:space="preserve">
+    <value>Chỉ giữ trên thiết bị này</value>
+  </data>
+  <data name="History_Empty_Unpaired_Title" xml:space="preserve">
+    <value>Trước hết, hãy nối hai đầu</value>
+  </data>
+  <data name="History_Empty_Paired_Title" xml:space="preserve">
+    <value>Đang chờ mẩu đầu tiên</value>
+  </data>
+  <data name="History_Empty_Unpaired_Body" xml:space="preserve">
+    <value>Chưa ghép nối với điện thoại. Lối vào ghép nối nằm ở đoạn mạng của trang “Đường dẫn”.</value>
+  </data>
+  <data name="History_Empty_Paired_Body" xml:space="preserve">
+    <value>Sao chép văn bản trên bất kỳ thiết bị nào — nó sẽ xuất hiện ở đây và chảy sang phía bên kia.</value>
+  </data>
+  <data name="History_Empty_GoPair" xml:space="preserve">
+    <value>Ghép nối ngay ›</value>
+  </data>
+  <data name="History_NoMatch_Prefix" xml:space="preserve">
+    <value>Không có mục nào khớp “</value>
+  </data>
+  <data name="History_NoMatch_Suffix" xml:space="preserve">
+    <value>”</value>
+  </data>
+  <data name="History_Empty_Filtered" xml:space="preserve">
+    <value>Chưa có mục thuộc dạng này · thử bộ lọc khác</value>
+  </data>
+  <data name="History_CopySelected" xml:space="preserve">
+    <value>Sao chép mục đã chọn</value>
+  </data>
+  <data name="History_ViewDetail" xml:space="preserve">
+    <value>Xem chi tiết</value>
+  </data>
+  <data name="History_DeleteSelected" xml:space="preserve">
+    <value>Xóa mục đã chọn</value>
+  </data>
+  <data name="History_UnknownSource" xml:space="preserve">
+    <value>Nguồn không rõ</value>
+  </data>
+  <data name="History_LocalSource" xml:space="preserve">
+    <value>PC này</value>
+  </data>
+  <data name="Conduit_Title" xml:space="preserve">
+    <value>Đường dẫn</value>
+  </data>
+  <data name="Conduit_Subtitle" xml:space="preserve">
+    <value>Nội dung chảy từ trái sang phải qua bốn đoạn · thứ tự đọc chính là thứ tự chẩn đoán</value>
+  </data>
+  <data name="Conduit_Capture_Name" xml:space="preserve">
+    <value>Ghi nhận cục bộ</value>
+  </data>
+  <data name="Conduit_Capture_Ready" xml:space="preserve">
+    <value>Sẵn sàng · đang lắng nghe Ctrl+C</value>
+  </data>
+  <data name="Conduit_Status_Paused" xml:space="preserve">
+    <value>Đã tạm dừng · không ghi nữa</value>
+  </data>
+  <data name="Conduit_Status_Private" xml:space="preserve">
+    <value>Chế độ riêng tư · không để lại dấu vết</value>
+  </data>
+  <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
+    <value>Ghi nhận suy giảm · truy cập bảng nhớ tạm thất bại</value>
+  </data>
+  <data name="Conduit_Capture_Detail" xml:space="preserve">
+    <value>Chế độ riêng tư và các tiến trình bị chặn giữ nội dung lại ở đoạn này.</value>
+  </data>
+  <data name="Conduit_Service_Name" xml:space="preserve">
+    <value>Dịch vụ cục bộ</value>
+  </data>
+  <data name="Conduit_Service_ReadyPrefix" xml:space="preserve">
+    <value>Sẵn sàng · lịch sử </value>
+  </data>
+  <data name="Conduit_Service_ReadyInfix" xml:space="preserve">
+    <value> · chờ gửi </value>
+  </data>
+  <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
+    <value>Sự kiện vào kho trước rồi mới vào hàng đợi gửi · </value>
+  </data>
+  <data name="Conduit_Network_Name" xml:space="preserve">
+    <value>Mạng</value>
+  </data>
+  <data name="Conduit_Network_ReadyPrefix" xml:space="preserve">
+    <value>Sẵn sàng · lắng nghe trên :</value>
+  </data>
+  <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
+    <value> · đã kết nối </value>
+  </data>
+  <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
+    <value> thiết bị</value>
+  </data>
+  <data name="Conduit_Network_Down" xml:space="preserve">
+    <value>Chưa chạy · đồng bộ tắt</value>
+  </data>
+  <data name="Conduit_Peer_Name" xml:space="preserve">
+    <value>Ghi ở phía đối diện</value>
+  </data>
+  <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
+    <value>Đã ghép nối </value>
+  </data>
+  <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
+    <value> thiết bị</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
+    <value>Văn bản từ xa được tự động ghi vào bảng nhớ tạm của PC này.</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
+    <value>Tự động áp dụng đã tắt: nội dung từ xa chỉ nằm trong lịch sử, cần sao chép thủ công.</value>
+  </data>
+  <data name="Conduit_Devices_Header" xml:space="preserve">
+    <value>Đoạn mạng · thiết bị đã ghép nối</value>
+  </data>
+  <data name="Conduit_Connection_Header" xml:space="preserve">
+    <value>Đoạn mạng · kết nối</value>
+  </data>
+  <data name="Conduit_CleanupStale" xml:space="preserve">
+    <value>Dọn dẹp</value>
+  </data>
+  <data name="Conduit_Bluetooth_Title" xml:space="preserve">
+    <value>Dự phòng Bluetooth</value>
+  </data>
+  <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
+    <value>Mặc định tắt. Khi LAN bị VPN hoặc tường lửa chặn, điện thoại đã ghép nối Bluetooth trong cài đặt hệ thống vẫn tiếp tục đồng bộ văn bản (không có hình ảnh, chậm hơn).</value>
+  </data>
+  <data name="Conduit_ExtraBind_Title" xml:space="preserve">
+    <value>Địa chỉ lắng nghe bổ sung</value>
+  </data>
+  <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
+    <value>Dành cho địa chỉ bộ điều hợp ảo như Tailscale / WireGuard. Không cung cấp trung chuyển công cộng.</value>
+  </data>
+  <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
+    <value>Có hiệu lực sau khi khởi động lại</value>
+  </data>
+  <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
+    <value> · nhiều địa chỉ cách nhau bằng dấu phẩy</value>
+  </data>
+  <data name="Conduit_Fingerprint_Title" xml:space="preserve">
+    <value>Dấu vân tay chứng chỉ của PC này</value>
+  </data>
+  <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
+    <value>Khi ghép nối, hãy đối chiếu từng cụm với dấu vân tay hiển thị trên điện thoại. Dấu vân tay thay đổi sẽ khiến mọi thiết bị đã ghép nối yêu cầu xác nhận lại.</value>
+  </data>
+  <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
+    <value>Dịch vụ phía đối diện chưa chạy; phiên này không có dấu vân tay để hiển thị.</value>
+  </data>
+  <data name="Device_RevokedBadge" xml:space="preserve">
+    <value>Đã thu hồi</value>
+  </data>
+  <data name="Device_AccentLabel" xml:space="preserve">
+    <value>Màu thiết bị</value>
+  </data>
+  <data name="Device_AccentManual" xml:space="preserve">
+    <value>Chỉ định thủ công</value>
+  </data>
+  <data name="Device_AccentByOrder" xml:space="preserve">
+    <value>Theo thứ tự ghép nối</value>
+  </data>
+  <data name="Device_Rename" xml:space="preserve">
+    <value>Đổi tên</value>
+  </data>
+  <data name="Device_RevokeSelected" xml:space="preserve">
+    <value>Thu hồi thiết bị đã chọn</value>
+  </data>
+  <data name="Device_RevokeNote" xml:space="preserve">
+    <value>Thu hồi sẽ ngắt kết nối thiết bị ngay và vô hiệu hóa khóa ghép nối của nó; nội dung nó đã nhận không bao giờ bị xóa từ xa. Ghép nối lại sau khi thu hồi được xem là thiết bị mới. Khi cùng một điện thoại ghép nối lại với danh tính mới, bản ghi cũ sẽ tự động bị thu hồi và hàng đợi gửi của nó bị xóa.</value>
+  </data>
+  <data name="Device_UnknownRemote" xml:space="preserve">
+    <value>Thiết bị từ xa</value>
+  </data>
+  <data name="Device_PairedFallback" xml:space="preserve">
+    <value>Thiết bị đã ghép nối</value>
+  </data>
+  <data name="Device_UnknownFallback" xml:space="preserve">
+    <value>Thiết bị không rõ</value>
+  </data>
+  <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
+    <value>{0} · {1} mục chờ gửi</value>
+  </data>
+  <data name="Stale_BannerBacklogFormat" xml:space="preserve">
+    <value>Phát hiện {0} thiết bị có vẻ là tàn dư; {1} mục đang chờ làm phồng bộ đếm “chờ gửi”. Dọn dẹp sẽ thu hồi chúng và xóa hàng đợi gửi của chúng.</value>
+  </data>
+  <data name="Stale_BannerFormat" xml:space="preserve">
+    <value>Phát hiện {0} thiết bị có vẻ là tàn dư. Dọn dẹp sẽ thu hồi chúng; nội dung chúng đã nhận không bị ảnh hưởng.</value>
+  </data>
+  <data name="Stale_DuplicateBadge" xml:space="preserve">
+    <value>Nghi là tàn dư ghép nối trùng lặp</value>
+  </data>
+  <data name="Stale_NeverConnected" xml:space="preserve">
+    <value>Chưa từng kết nối kể từ khi ghép nối</value>
+  </data>
+  <data name="Stale_UnseenDaysFormat" xml:space="preserve">
+    <value>Không kết nối hơn {0} ngày</value>
+  </data>
+  <data name="Prefs_Title" xml:space="preserve">
+    <value>Tùy chọn</value>
+  </data>
+  <data name="Prefs_Subtitle" xml:space="preserve">
+    <value>Thay đổi có hiệu lực ngay · nội dung bảng nhớ tạm không bao giờ xuất hiện trong nhật ký</value>
+  </data>
+  <data name="Prefs_Group_Display" xml:space="preserve">
+    <value>HIỂN THỊ</value>
+  </data>
+  <data name="Prefs_Group_Capture" xml:space="preserve">
+    <value>GHI NHẬN</value>
+  </data>
+  <data name="Prefs_Group_Sync" xml:space="preserve">
+    <value>ĐỒNG BỘ</value>
+  </data>
+  <data name="Prefs_Group_Retention" xml:space="preserve">
+    <value>LƯU GIỮ</value>
+  </data>
+  <data name="Prefs_Group_Startup" xml:space="preserve">
+    <value>KHỞI ĐỘNG</value>
+  </data>
+  <data name="Prefs_Group_Data" xml:space="preserve">
+    <value>DỮ LIỆU</value>
+  </data>
+  <data name="Prefs_FontScale_Title" xml:space="preserve">
+    <value>Cỡ chữ lịch sử</value>
+  </data>
+  <data name="Prefs_FontScale_Desc" xml:space="preserve">
+    <value>Chỉ thay đổi cỡ chữ của nội dung (xem trước lịch sử, phần chi tiết, cửa sổ nổi ở khay); tiêu đề nhóm, huy hiệu và nút giữ nguyên.</value>
+  </data>
+  <data name="Prefs_FontScale_Small" xml:space="preserve">
+    <value>Nhỏ</value>
+  </data>
+  <data name="Prefs_FontScale_Standard" xml:space="preserve">
+    <value>Chuẩn</value>
+  </data>
+  <data name="Prefs_FontScale_Large" xml:space="preserve">
+    <value>Lớn</value>
+  </data>
+  <data name="Prefs_PreviewLines_Title" xml:space="preserve">
+    <value>Số dòng xem trước</value>
+  </data>
+  <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
+    <value>Số dòng nội dung tối đa hiển thị cho mỗi mục trong danh sách lịch sử; phần thừa bị cắt bằng dấu ba chấm — mở chi tiết để xem đầy đủ.</value>
+  </data>
+  <data name="Prefs_PreviewLines_Two" xml:space="preserve">
+    <value>2 dòng</value>
+  </data>
+  <data name="Prefs_PreviewLines_Four" xml:space="preserve">
+    <value>4 dòng</value>
+  </data>
+  <data name="Prefs_PreviewLines_Six" xml:space="preserve">
+    <value>6 dòng</value>
+  </data>
+  <data name="Prefs_Theme_Title" xml:space="preserve">
+    <value>Giao diện</value>
+  </data>
+  <data name="Prefs_Theme_Desc" xml:space="preserve">
+    <value>Bảng màu ngày/đêm của cửa sổ; biểu tượng khay sống trong thanh tác vụ và luôn theo tông của thanh tác vụ.</value>
+  </data>
+  <data name="Prefs_Theme_Day" xml:space="preserve">
+    <value>Ngày</value>
+  </data>
+  <data name="Prefs_Theme_Night" xml:space="preserve">
+    <value>Đêm</value>
+  </data>
+  <data name="Prefs_Language_Title" xml:space="preserve">
+    <value>Ngôn ngữ</value>
+  </data>
+  <data name="Prefs_Language_Desc" xml:space="preserve">
+    <value>Ngôn ngữ giao diện — theo hệ thống hoặc tự chọn; tên các ngôn ngữ luôn hiển thị bằng tiếng bản địa của chúng.</value>
+  </data>
+  <data name="Prefs_Language_RestartNote" xml:space="preserve">
+    <value>Có hiệu lực sau khi khởi động lại ứng dụng.</value>
+  </data>
+  <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
+    <value>Khi tạm dừng, PC này ngừng ghi nội dung mới; lịch sử hiện có vẫn được giữ.</value>
+  </data>
+  <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
+    <value>Khi bật, ghi nhận và đồng bộ dừng hoàn toàn, không để lại dấu vết.</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
+    <value>Tiến trình bị chặn</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
+    <value>Nội dung sao chép từ các tiến trình này không vào lịch sử và không đồng bộ. Cách nhau bằng dấu phẩy hoặc xuống dòng.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
+    <value>Tự động áp dụng nội dung từ xa</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
+    <value>Văn bản từ điện thoại được tự động ghi vào bảng nhớ tạm của PC này. Khi tắt, nó chỉ nằm trong lịch sử, cần sao chép thủ công.</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
+    <value>Đồng bộ hình ảnh bảng nhớ tạm</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
+    <value>Mặc định tắt. Chỉ PNG/JPEG; byte gốc có thể chứa EXIF và siêu dữ liệu khác, hai đầu cần phiên v2.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
+    <value>Tự động áp dụng hình ảnh từ xa</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
+    <value>Hình ảnh từ điện thoại được tự động ghi vào bảng nhớ tạm của PC này. Khi tắt, chúng chỉ nằm trong lịch sử, cần sao chép thủ công.</value>
+  </data>
+  <data name="Prefs_Moved_Title" xml:space="preserve">
+    <value>Dự phòng Bluetooth · địa chỉ lắng nghe bổ sung · dấu vân tay chứng chỉ</value>
+  </data>
+  <data name="Prefs_Moved_Desc" xml:space="preserve">
+    <value>Đã chuyển sang “Đường dẫn · đoạn mạng” — chúng quyết định nội dung có đến được phía bên kia hay không, nên ở cùng ghép nối và quản lý thiết bị.</value>
+  </data>
+  <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
+    <value>Đến Đường dẫn</value>
+  </data>
+  <data name="Prefs_Retention_Days_Title" xml:space="preserve">
+    <value>Thời hạn lưu giữ</value>
+  </data>
+  <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
+    <value>Mục quá hạn được tự động xóa. Dọn dẹp chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận.</value>
+  </data>
+  <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
+    <value>ngày</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
+    <value>Số mục lưu giữ</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
+    <value>Vượt giới hạn thì mục cũ nhất bị xóa trước (100–2000, mỗi bước 100). Dọn dẹp chỉ diễn ra trên PC này.</value>
+  </data>
+  <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
+    <value>mục</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
+    <value>Khởi động cùng máy · lặng lẽ vào khay</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
+    <value>Tự khởi động khi đăng nhập Windows và vào thẳng khay, không mở cửa sổ chính. Chỉ ghi mục khởi động của người dùng hiện tại; không cần quyền quản trị.</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
+    <value>Phím tắt gọi cửa sổ nổi</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
+    <value>Nhấn tổ hợp trong bất kỳ ứng dụng nào để gọi cửa sổ nổi ở khay. Bấm vào ô rồi nhấn tổ hợp mong muốn (phải gồm Ctrl, Alt hoặc Win); nhấn Backspace để xóa. Mặc định tắt.</value>
+  </data>
+  <data name="Prefs_Data_Export_Desc" xml:space="preserve">
+    <value>Ghi toàn bộ lịch sử (gồm dấu xóa) thành tệp sao lưu JSON Lines; không chứa khóa, chứng chỉ hay dữ liệu ghép nối. Bản xuất là văn bản thuần — hãy cất giữ cẩn thận.</value>
+  </data>
+  <data name="Prefs_Data_Import_Desc" xml:space="preserve">
+    <value>Gộp lịch sử từ tệp sao lưu: khử trùng lặp theo “thiết bị nguồn + số thứ tự”, nhập lại không tạo mục trùng và không ghi đè các bản xóa cục bộ. Kiểm tra thất bại thì không thay đổi gì.</value>
+  </data>
+  <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
+    <value>Xóa một lần toàn bộ mục trên PC này (gồm hình ảnh); cần xác nhận hai bước và không thể khôi phục. Việc xóa chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận — nên xuất lịch sử trước.</value>
+  </data>
+  <data name="Flyout_WindowTitle" xml:space="preserve">
+    <value>ClipSync · mẩu gần đây</value>
+  </data>
+  <data name="Flyout_PauseSync" xml:space="preserve">
+    <value>Tạm dừng đồng bộ</value>
+  </data>
+  <data name="Flyout_ResumeSync" xml:space="preserve">
+    <value>Tiếp tục đồng bộ</value>
+  </data>
+  <data name="Flyout_Empty" xml:space="preserve">
+    <value>Chưa có mẩu nào · thử sao chép một đoạn văn bản</value>
+  </data>
+  <data name="Flyout_PauseOrResume" xml:space="preserve">
+    <value>Tạm dừng hoặc tiếp tục đồng bộ</value>
+  </data>
+  <data name="Flyout_CopyFromFormat" xml:space="preserve">
+    <value>Sao chép mẩu từ {0}</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>Mở ClipSync</value>
+  </data>
+  <data name="Tray_Menu_Diagnostics" xml:space="preserve">
+    <value>Nhật ký chẩn đoán</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>Thoát</value>
+  </data>
+  <data name="Tray_Tooltip_Flow" xml:space="preserve">
+    <value>ClipSync · đang lắng nghe</value>
+  </data>
+  <data name="Tray_Tooltip_AttentionFormat" xml:space="preserve">
+    <value>ClipSync · {0}</value>
+  </data>
+  <data name="Tray_AttentionFallback" xml:space="preserve">
+    <value>Cần bạn thao tác</value>
+  </data>
+  <data name="Tray_Tooltip_Paused" xml:space="preserve">
+    <value>ClipSync · đã tạm dừng ghi nhận</value>
+  </data>
+  <data name="Tray_Tooltip_Private" xml:space="preserve">
+    <value>ClipSync · chế độ riêng tư, không dấu vết</value>
+  </data>
+  <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
+    <value>1 mẩu mới từ {0}</value>
+  </data>
+  <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
+    <value>{1} mẩu mới từ {0}</value>
+  </data>
+  <data name="Tray_OversizeNotice" xml:space="preserve">
+    <value>Văn bản vừa sao chép vượt 1 MiB; chỉ nằm trong bảng nhớ tạm của PC này, không đồng bộ (không bị cắt).</value>
+  </data>
+  <data name="Tray_AuthThrottleFormat" xml:space="preserve">
+    <value>Phát hiện “{0}” liên tục xác thực thất bại; thiết bị bị hạn chế tạm thời.</value>
+  </data>
+  <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
+    <value>Đang lắng nghe · đồng bộ chưa chạy</value>
+  </data>
+  <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
+    <value>Đang lắng nghe · đã kết nối {0}</value>
+  </data>
+  <data name="Tray_Status_Waiting" xml:space="preserve">
+    <value>Đang lắng nghe · chờ thiết bị kết nối</value>
+  </data>
+  <data name="Capture_OversizeNotice" xml:space="preserve">
+    <value>Văn bản vừa sao chép vượt 1 MiB: vẫn nằm trong bảng nhớ tạm hệ thống, không bị cắt, nhưng không ghi vào lịch sử và không đồng bộ.</value>
+  </data>
+  <data name="Sync_NotStarted" xml:space="preserve">
+    <value>Dịch vụ phía đối diện chưa khởi động</value>
+  </data>
+  <data name="Sync_StartFailed" xml:space="preserve">
+    <value>Dịch vụ phía đối diện không khởi động được; phiên này đồng bộ tắt.</value>
+  </data>
+  <data name="Sync_ConnectedFormat" xml:space="preserve">
+    <value>LAN lắng nghe cổng {0} · đã kết nối {1} thiết bị, nội dung thông suốt theo thời gian thực.</value>
+  </data>
+  <data name="Sync_WaitingFormat" xml:space="preserve">
+    <value>LAN lắng nghe cổng {0} · chờ thiết bị đã ghép nối; sự kiện vào kho trước rồi mới vào hàng đợi gửi, mất mạng không mất dữ liệu.</value>
+  </data>
+  <data name="Bt_Disabled" xml:space="preserve">
+    <value>Dự phòng Bluetooth chưa bật</value>
+  </data>
+  <data name="Bt_UnavailableFormat" xml:space="preserve">
+    <value>Dự phòng Bluetooth không khả dụng: {0}</value>
+  </data>
+  <data name="Bt_SyncingFormat" xml:space="preserve">
+    <value>Dự phòng Bluetooth · đang đồng bộ với {0} (chỉ văn bản)</value>
+  </data>
+  <data name="Bt_Armed" xml:space="preserve">
+    <value>Dự phòng Bluetooth trực chờ · khi LAN không tới được, điện thoại tự chuyển sang Bluetooth</value>
+  </data>
+  <data name="Bt_Starting" xml:space="preserve">
+    <value>Dự phòng Bluetooth đang khởi động…</value>
+  </data>
+  <data name="Bt_AdapterUnavailable" xml:space="preserve">
+    <value>Bộ điều hợp Bluetooth không khả dụng hoặc đã tắt</value>
+  </data>
+  <data name="Ack_None" xml:space="preserve">
+    <value>Chưa nhận được xác nhận từ phía đối diện</value>
+  </data>
+  <data name="Ack_UpToFormat" xml:space="preserve">
+    <value>Phía đối diện đã xác nhận đến {0}</value>
+  </data>
+  <data name="Transfer_ClearedFormat" xml:space="preserve">
+    <value>Đã xóa {0} mục lịch sử (gồm hình ảnh). Việc xóa chỉ diễn ra trên PC này.</value>
+  </data>
+  <data name="Transfer_ClearConfirmBody" xml:space="preserve">
+    <value>Xóa toàn bộ lịch sử?
+
+Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc xóa chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận. Nên “Xuất lịch sử” trước.</value>
+  </data>
+  <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
+    <value>Xác nhận lần nữa: xóa xong không thể khôi phục. Chắc chắn xóa toàn bộ lịch sử?</value>
+  </data>
+  <data name="Transfer_ExportedFormat" xml:space="preserve">
+    <value>Đã xuất {0} bản ghi (văn bản thuần) → {1}</value>
+  </data>
+  <data name="Transfer_ExportWriteFailed" xml:space="preserve">
+    <value>Xuất thất bại: không ghi được tệp đã chọn.</value>
+  </data>
+  <data name="Transfer_ImportedFormat" xml:space="preserve">
+    <value>Nhập xong: thêm mới {0} · đã có {1} · xung đột {2}</value>
+  </data>
+  <data name="Transfer_ImportFailedFormat" xml:space="preserve">
+    <value>Nhập thất bại: {0}. Không thay đổi gì.</value>
+  </data>
+  <data name="Transfer_ImportReadFailed" xml:space="preserve">
+    <value>Nhập thất bại: không đọc được tệp đã chọn.</value>
+  </data>
+  <data name="Transfer_FileFilter" xml:space="preserve">
+    <value>Xuất lịch sử ClipSync (*.jsonl)|*.jsonl|Mọi tệp (*.*)|*.*</value>
+  </data>
+  <data name="Transfer_Error_BadHeader" xml:space="preserve">
+    <value>đây không phải tệp xuất lịch sử ClipSync</value>
+  </data>
+  <data name="Transfer_Error_UnsupportedVersion" xml:space="preserve">
+    <value>phiên bản tệp cao hơn mức ứng dụng hỗ trợ</value>
+  </data>
+  <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
+    <value>tệp bị hỏng (bản ghi sai định dạng)</value>
+  </data>
+  <data name="Transfer_Error_HashMismatch" xml:space="preserve">
+    <value>tệp bị hỏng (kiểm tra băm thất bại)</value>
+  </data>
+  <data name="Transfer_Error_CountMismatch" xml:space="preserve">
+    <value>tệp không đầy đủ (số lượng không khớp phần đầu)</value>
+  </data>
+  <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
+    <value>tệp chứa mục vượt giới hạn kích thước (văn bản 1 MiB / hình ảnh 16 MiB)</value>
+  </data>
+  <data name="Transfer_Error_Unknown" xml:space="preserve">
+    <value>lỗi không xác định</value>
+  </data>
+  <data name="Hotkey_Applied" xml:space="preserve">
+    <value>Đã hiệu lực · nhấn trong bất kỳ ứng dụng nào để gọi cửa sổ nổi</value>
+  </data>
+  <data name="Hotkey_Conflict" xml:space="preserve">
+    <value>Tổ hợp này đã bị chương trình khác chiếm; hãy chọn tổ hợp khác</value>
+  </data>
+  <data name="Attention_PeerDown" xml:space="preserve">
+    <value>Phiên này đồng bộ chưa chạy (điểm cuối khởi động thất bại)</value>
+  </data>
+  <data name="Attention_CaptureFaulted" xml:space="preserve">
+    <value>Ghi nhận bảng nhớ tạm suy giảm (lần truy cập trước thất bại)</value>
+  </data>
+  <data name="Attention_NoDevice" xml:space="preserve">
+    <value>Ghép nối một thiết bị để bắt đầu đồng bộ</value>
+  </data>
+  <data name="Pairing_Title" xml:space="preserve">
+    <value>Ghép nối thiết bị mới</value>
+  </data>
+  <data name="Pairing_PeerDownBody" xml:space="preserve">
+    <value>Dịch vụ phía đối diện chưa chạy; phiên này không thể ghép nối.</value>
+  </data>
+  <data name="Pairing_ScanInstruction" xml:space="preserve">
+    <value>Dùng ClipSync trên điện thoại quét mã này. Mã QR chứa địa chỉ của PC này, dấu vân tay chứng chỉ và mã thông báo dùng một lần — không bao giờ chứa khóa ghép nối.</value>
+  </data>
+  <data name="Pairing_CountdownFormat" xml:space="preserve">
+    <value>Tự đổi sau {0:m\:ss}</value>
+  </data>
+  <data name="Pairing_NoLanAddress" xml:space="preserve">
+    <value>Không phát hiện địa chỉ mạng LAN. Hãy đưa PC này và điện thoại vào cùng một mạng (hoặc thêm địa chỉ Tailscale trong Tùy chọn), rồi mở lại cửa sổ này.</value>
+  </data>
+  <data name="Pairing_VerifyHeading" xml:space="preserve">
+    <value>Đối chiếu trên điện thoại trước khi phê duyệt</value>
+  </data>
+  <data name="Pairing_PcName" xml:space="preserve">
+    <value>Tên máy tính</value>
+  </data>
+  <data name="Pairing_Fingerprint" xml:space="preserve">
+    <value>Dấu vân tay chứng chỉ</value>
+  </data>
+  <data name="Pairing_NewCode" xml:space="preserve">
+    <value>Đổi mã khác</value>
+  </data>
+  <data name="Approval_Title" xml:space="preserve">
+    <value>Yêu cầu ghép nối</value>
+  </data>
+  <data name="Approval_CloseReject" xml:space="preserve">
+    <value>Đóng và từ chối</value>
+  </data>
+  <data name="Approval_Question" xml:space="preserve">
+    <value>Cho phép thiết bị này ghép nối?</value>
+  </data>
+  <data name="Approval_Body" xml:space="preserve">
+    <value>Một thiết bị đã dùng mã QR của PC này để yêu cầu ghép nối. Chỉ phê duyệt khi tên bên dưới trùng với chiếc điện thoại trong tay bạn.</value>
+  </data>
+  <data name="Approval_PlatformAndroid" xml:space="preserve">
+    <value>Thiết bị Android</value>
+  </data>
+  <data name="Approval_PlatformWindows" xml:space="preserve">
+    <value>Thiết bị Windows</value>
+  </data>
+  <data name="Approval_RepairWarning" xml:space="preserve">
+    <value>Thiết bị này từng ghép nối. Phê duyệt sẽ thay khóa ghép nối cũ, bản cài đặt cũ mất hiệu lực ngay.</value>
+  </data>
+  <data name="Approval_SupersedeNotice" xml:space="preserve">
+    <value>Danh sách đã có thiết bị trùng tên. Sau khi phê duyệt, bản ghi cũ sẽ tự động bị thu hồi và hàng đợi gửi của nó bị xóa (xem như cùng một điện thoại ghép nối lại).</value>
+  </data>
+  <data name="Approval_Reject" xml:space="preserve">
+    <value>Từ chối</value>
+  </data>
+  <data name="Approval_Approve" xml:space="preserve">
+    <value>Phê duyệt ghép nối</value>
+  </data>
+  <data name="Detail_Title" xml:space="preserve">
+    <value>Chi tiết mẩu sao chép</value>
+  </data>
+  <data name="Detail_SourceFormat" xml:space="preserve">
+    <value>Nguồn: {0}</value>
+  </data>
+  <data name="Detail_TimeFormat" xml:space="preserve">
+    <value>Thời gian: {0}</value>
+  </data>
+  <data name="Diag_Title" xml:space="preserve">
+    <value>ClipSync · nhật ký chẩn đoán</value>
+  </data>
+  <data name="Diag_Heading" xml:space="preserve">
+    <value>Chẩn đoán cục bộ · chỉ mã trạng thái và thời gian, không bao giờ có nội dung bảng nhớ tạm</value>
+  </data>
+  <data name="Diag_CopyAll" xml:space="preserve">
+    <value>Sao chép tất cả</value>
+  </data>
+  <data name="Diag_Empty" xml:space="preserve">
+    <value>(chưa có mục chẩn đoán)</value>
+  </data>
+</root>

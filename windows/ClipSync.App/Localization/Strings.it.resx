@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="App_WindowTitle" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Brand_Wordmark" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Chrome_Minimize" xml:space="preserve">
+    <value>Riduci a icona</value>
+  </data>
+  <data name="Chrome_MaximizeRestore" xml:space="preserve">
+    <value>Ingrandisci o ripristina</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Chiudi</value>
+  </data>
+  <data name="Common_Copy" xml:space="preserve">
+    <value>Copia</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>Aggiorna</value>
+  </data>
+  <data name="Common_Acknowledge" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Common_FollowSystem" xml:space="preserve">
+    <value>Segui il sistema</value>
+  </data>
+  <data name="Common_ClearHistory" xml:space="preserve">
+    <value>Svuota cronologia</value>
+  </data>
+  <data name="Common_ExportHistory" xml:space="preserve">
+    <value>Esporta cronologia</value>
+  </data>
+  <data name="Common_ImportHistory" xml:space="preserve">
+    <value>Importa cronologia</value>
+  </data>
+  <data name="Common_PauseCapture" xml:space="preserve">
+    <value>Sospendi acquisizione</value>
+  </data>
+  <data name="Common_PrivateMode" xml:space="preserve">
+    <value>Modalità privata</value>
+  </data>
+  <data name="Nav_History" xml:space="preserve">
+    <value>Cronologia</value>
+  </data>
+  <data name="Nav_Conduit" xml:space="preserve">
+    <value>Condotto</value>
+  </data>
+  <data name="Nav_Prefs" xml:space="preserve">
+    <value>Preferenze</value>
+  </data>
+  <data name="History_Title" xml:space="preserve">
+    <value>Cronologia</value>
+  </data>
+  <data name="History_Subtitle" xml:space="preserve">
+    <value>Clip da questo PC e dai dispositivi associati · la pulizia riguarda solo questo dispositivo</value>
+  </data>
+  <data name="History_Search" xml:space="preserve">
+    <value>Cerca</value>
+  </data>
+  <data name="Filter_All" xml:space="preserve">
+    <value>Tutto</value>
+  </data>
+  <data name="Filter_Link" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="Filter_Otp" xml:space="preserve">
+    <value>Codice</value>
+  </data>
+  <data name="Filter_Email" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="Filter_Credential" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Filter_Plain" xml:space="preserve">
+    <value>Testo</value>
+  </data>
+  <data name="Format_Image" xml:space="preserve">
+    <value>Immagine</value>
+  </data>
+  <data name="History_NoPreview" xml:space="preserve">
+    <value>Nessuna anteprima</value>
+  </data>
+  <data name="History_LocalOnlyBadge" xml:space="preserve">
+    <value>Solo su questo dispositivo</value>
+  </data>
+  <data name="History_Empty_Unpaired_Title" xml:space="preserve">
+    <value>Prima collega le due estremità</value>
+  </data>
+  <data name="History_Empty_Paired_Title" xml:space="preserve">
+    <value>In attesa della prima clip</value>
+  </data>
+  <data name="History_Empty_Unpaired_Body" xml:space="preserve">
+    <value>Non ancora associato a un telefono. L’ingresso per l’associazione è nel segmento rete della pagina «Condotto».</value>
+  </data>
+  <data name="History_Empty_Paired_Body" xml:space="preserve">
+    <value>Copia del testo su uno dei due dispositivi: apparirà qui e fluirà verso l’altro lato.</value>
+  </data>
+  <data name="History_Empty_GoPair" xml:space="preserve">
+    <value>Associa ora ›</value>
+  </data>
+  <data name="History_NoMatch_Prefix" xml:space="preserve">
+    <value>Nessuna voce corrisponde a «</value>
+  </data>
+  <data name="History_NoMatch_Suffix" xml:space="preserve">
+    <value>»</value>
+  </data>
+  <data name="History_Empty_Filtered" xml:space="preserve">
+    <value>Nessuna voce di questo tipo · prova un altro filtro</value>
+  </data>
+  <data name="History_CopySelected" xml:space="preserve">
+    <value>Copia selezione</value>
+  </data>
+  <data name="History_ViewDetail" xml:space="preserve">
+    <value>Vedi dettagli</value>
+  </data>
+  <data name="History_DeleteSelected" xml:space="preserve">
+    <value>Elimina selezione</value>
+  </data>
+  <data name="History_UnknownSource" xml:space="preserve">
+    <value>Origine sconosciuta</value>
+  </data>
+  <data name="History_LocalSource" xml:space="preserve">
+    <value>Questo PC</value>
+  </data>
+  <data name="Conduit_Title" xml:space="preserve">
+    <value>Condotto</value>
+  </data>
+  <data name="Conduit_Subtitle" xml:space="preserve">
+    <value>Il contenuto scorre da sinistra a destra attraverso quattro segmenti · l’ordine di lettura è l’ordine di diagnosi</value>
+  </data>
+  <data name="Conduit_Capture_Name" xml:space="preserve">
+    <value>Acquisizione locale</value>
+  </data>
+  <data name="Conduit_Capture_Ready" xml:space="preserve">
+    <value>Pronto · in ascolto di Ctrl+C</value>
+  </data>
+  <data name="Conduit_Status_Paused" xml:space="preserve">
+    <value>In pausa · nessuna registrazione</value>
+  </data>
+  <data name="Conduit_Status_Private" xml:space="preserve">
+    <value>Modalità privata · nessuna traccia</value>
+  </data>
+  <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
+    <value>Acquisizione degradata · accesso agli appunti non riuscito</value>
+  </data>
+  <data name="Conduit_Capture_Detail" xml:space="preserve">
+    <value>La modalità privata e i processi bloccati fermano il contenuto in questo segmento.</value>
+  </data>
+  <data name="Conduit_Service_Name" xml:space="preserve">
+    <value>Servizio locale</value>
+  </data>
+  <data name="Conduit_Service_ReadyPrefix" xml:space="preserve">
+    <value>Pronto · cronologia </value>
+  </data>
+  <data name="Conduit_Service_ReadyInfix" xml:space="preserve">
+    <value> · in uscita </value>
+  </data>
+  <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
+    <value>Gli eventi arrivano nell’archivio prima della coda di invio · </value>
+  </data>
+  <data name="Conduit_Network_Name" xml:space="preserve">
+    <value>Rete</value>
+  </data>
+  <data name="Conduit_Network_ReadyPrefix" xml:space="preserve">
+    <value>Pronto · in ascolto su :</value>
+  </data>
+  <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
+    <value> · connessi </value>
+  </data>
+  <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
+    <value> dispositivo/i</value>
+  </data>
+  <data name="Conduit_Network_Down" xml:space="preserve">
+    <value>Non attivo · sincronizzazione spenta</value>
+  </data>
+  <data name="Conduit_Peer_Name" xml:space="preserve">
+    <value>Scrittura sul peer</value>
+  </data>
+  <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
+    <value>Associati </value>
+  </data>
+  <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
+    <value> dispositivo/i</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
+    <value>Il testo remoto viene scritto automaticamente negli appunti di questo PC.</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
+    <value>L’applicazione automatica è disattivata: il contenuto remoto resta solo nella cronologia e va copiato a mano.</value>
+  </data>
+  <data name="Conduit_Devices_Header" xml:space="preserve">
+    <value>Segmento rete · dispositivi associati</value>
+  </data>
+  <data name="Conduit_Connection_Header" xml:space="preserve">
+    <value>Segmento rete · connessione</value>
+  </data>
+  <data name="Conduit_CleanupStale" xml:space="preserve">
+    <value>Pulisci</value>
+  </data>
+  <data name="Conduit_Bluetooth_Title" xml:space="preserve">
+    <value>Riserva Bluetooth</value>
+  </data>
+  <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
+    <value>Disattivata per impostazione predefinita. Quando la LAN è bloccata da VPN o firewall, un telefono già associato via Bluetooth nelle impostazioni di sistema continua a sincronizzare il testo (niente immagini, più lento).</value>
+  </data>
+  <data name="Conduit_ExtraBind_Title" xml:space="preserve">
+    <value>Indirizzi di ascolto aggiuntivi</value>
+  </data>
+  <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
+    <value>Per indirizzi di schede virtuali come Tailscale / WireGuard. Nessun relay pubblico.</value>
+  </data>
+  <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
+    <value>Si applica dopo il riavvio</value>
+  </data>
+  <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
+    <value> · più indirizzi separati da virgole</value>
+  </data>
+  <data name="Conduit_Fingerprint_Title" xml:space="preserve">
+    <value>Impronta del certificato di questo PC</value>
+  </data>
+  <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
+    <value>Durante l’associazione confrontala gruppo per gruppo con l’impronta mostrata sul telefono. Se l’impronta cambia, ogni dispositivo associato chiederà una nuova conferma.</value>
+  </data>
+  <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
+    <value>Il servizio peer non è attivo; nessuna impronta da mostrare in questa sessione.</value>
+  </data>
+  <data name="Device_RevokedBadge" xml:space="preserve">
+    <value>Revocato</value>
+  </data>
+  <data name="Device_AccentLabel" xml:space="preserve">
+    <value>Colore del dispositivo</value>
+  </data>
+  <data name="Device_AccentManual" xml:space="preserve">
+    <value>Impostato manualmente</value>
+  </data>
+  <data name="Device_AccentByOrder" xml:space="preserve">
+    <value>Segue l’ordine di associazione</value>
+  </data>
+  <data name="Device_Rename" xml:space="preserve">
+    <value>Rinomina</value>
+  </data>
+  <data name="Device_RevokeSelected" xml:space="preserve">
+    <value>Revoca il dispositivo selezionato</value>
+  </data>
+  <data name="Device_RevokeNote" xml:space="preserve">
+    <value>La revoca disconnette subito il dispositivo e annulla la sua chiave di associazione; il contenuto già ricevuto non viene mai eliminato da remoto. Riassociarsi dopo la revoca conta come nuovo dispositivo. Se lo stesso telefono si riassocia con una nuova identità, il vecchio record viene revocato automaticamente e la sua coda di invio svuotata.</value>
+  </data>
+  <data name="Device_UnknownRemote" xml:space="preserve">
+    <value>Dispositivo remoto</value>
+  </data>
+  <data name="Device_PairedFallback" xml:space="preserve">
+    <value>Dispositivo associato</value>
+  </data>
+  <data name="Device_UnknownFallback" xml:space="preserve">
+    <value>Dispositivo sconosciuto</value>
+  </data>
+  <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
+    <value>{0} · {1} in attesa di invio</value>
+  </data>
+  <data name="Stale_BannerBacklogFormat" xml:space="preserve">
+    <value>Rilevati {0} dispositivi che sembrano residui obsoleti; {1} elementi in attesa gonfiano il contatore «in uscita». La pulizia li revoca e svuota le loro code di invio.</value>
+  </data>
+  <data name="Stale_BannerFormat" xml:space="preserve">
+    <value>Rilevati {0} dispositivi che sembrano residui obsoleti. La pulizia li revoca; il contenuto già ricevuto non è toccato.</value>
+  </data>
+  <data name="Stale_DuplicateBadge" xml:space="preserve">
+    <value>Probabile residuo di associazione duplicata</value>
+  </data>
+  <data name="Stale_NeverConnected" xml:space="preserve">
+    <value>Mai connesso dall’associazione</value>
+  </data>
+  <data name="Stale_UnseenDaysFormat" xml:space="preserve">
+    <value>Non connesso da oltre {0} giorni</value>
+  </data>
+  <data name="Prefs_Title" xml:space="preserve">
+    <value>Preferenze</value>
+  </data>
+  <data name="Prefs_Subtitle" xml:space="preserve">
+    <value>Le modifiche si applicano subito · il contenuto degli appunti non compare mai nei log</value>
+  </data>
+  <data name="Prefs_Group_Display" xml:space="preserve">
+    <value>VISUALIZZAZIONE</value>
+  </data>
+  <data name="Prefs_Group_Capture" xml:space="preserve">
+    <value>ACQUISIZIONE</value>
+  </data>
+  <data name="Prefs_Group_Sync" xml:space="preserve">
+    <value>SINCRONIZZAZIONE</value>
+  </data>
+  <data name="Prefs_Group_Retention" xml:space="preserve">
+    <value>CONSERVAZIONE</value>
+  </data>
+  <data name="Prefs_Group_Startup" xml:space="preserve">
+    <value>AVVIO</value>
+  </data>
+  <data name="Prefs_Group_Data" xml:space="preserve">
+    <value>DATI</value>
+  </data>
+  <data name="Prefs_FontScale_Title" xml:space="preserve">
+    <value>Dimensione testo cronologia</value>
+  </data>
+  <data name="Prefs_FontScale_Desc" xml:space="preserve">
+    <value>Scala solo il testo delle clip (anteprime della cronologia, corpo dei dettagli, riquadro della tray); intestazioni di gruppo, badge e pulsanti restano invariati.</value>
+  </data>
+  <data name="Prefs_FontScale_Small" xml:space="preserve">
+    <value>Piccolo</value>
+  </data>
+  <data name="Prefs_FontScale_Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Prefs_FontScale_Large" xml:space="preserve">
+    <value>Grande</value>
+  </data>
+  <data name="Prefs_PreviewLines_Title" xml:space="preserve">
+    <value>Righe di anteprima</value>
+  </data>
+  <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
+    <value>Numero massimo di righe mostrate per voce nella lista della cronologia; l’eccedenza è troncata con puntini — apri i dettagli per il contenuto completo.</value>
+  </data>
+  <data name="Prefs_PreviewLines_Two" xml:space="preserve">
+    <value>2 righe</value>
+  </data>
+  <data name="Prefs_PreviewLines_Four" xml:space="preserve">
+    <value>4 righe</value>
+  </data>
+  <data name="Prefs_PreviewLines_Six" xml:space="preserve">
+    <value>6 righe</value>
+  </data>
+  <data name="Prefs_Theme_Title" xml:space="preserve">
+    <value>Aspetto</value>
+  </data>
+  <data name="Prefs_Theme_Desc" xml:space="preserve">
+    <value>La palette giorno/notte della finestra; l’icona nella tray vive nella barra delle applicazioni e ne segue sempre la tonalità.</value>
+  </data>
+  <data name="Prefs_Theme_Day" xml:space="preserve">
+    <value>Giorno</value>
+  </data>
+  <data name="Prefs_Theme_Night" xml:space="preserve">
+    <value>Notte</value>
+  </data>
+  <data name="Prefs_Language_Title" xml:space="preserve">
+    <value>Lingua</value>
+  </data>
+  <data name="Prefs_Language_Desc" xml:space="preserve">
+    <value>La lingua dell’interfaccia — segui il sistema o impostane una; ogni lingua mostra sempre il proprio nome nativo.</value>
+  </data>
+  <data name="Prefs_Language_RestartNote" xml:space="preserve">
+    <value>Ha effetto dopo il riavvio dell’app.</value>
+  </data>
+  <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
+    <value>In pausa questo PC smette di registrare nuovi contenuti; la cronologia esistente resta.</value>
+  </data>
+  <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
+    <value>Quando è attiva, acquisizione e sincronizzazione si fermano del tutto, senza lasciare tracce.</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
+    <value>Processi bloccati</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
+    <value>Le copie da questi processi non entrano mai nella cronologia né nella sincronizzazione. Separa con virgole o a capo.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
+    <value>Applica automaticamente il contenuto remoto</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
+    <value>Il testo dal telefono viene scritto automaticamente negli appunti di questo PC. Se disattivato resta solo nella cronologia e va copiato a mano.</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
+    <value>Sincronizza immagini degli appunti</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
+    <value>Disattivata per impostazione predefinita. Solo PNG/JPEG; i byte grezzi possono contenere EXIF e altri metadati, ed entrambe le estremità richiedono una sessione v2.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
+    <value>Applica automaticamente le immagini remote</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
+    <value>Le immagini dal telefono vengono scritte automaticamente negli appunti di questo PC. Se disattivato restano solo nella cronologia e vanno copiate a mano.</value>
+  </data>
+  <data name="Prefs_Moved_Title" xml:space="preserve">
+    <value>Riserva Bluetooth · indirizzi di ascolto aggiuntivi · impronta del certificato</value>
+  </data>
+  <data name="Prefs_Moved_Desc" xml:space="preserve">
+    <value>Spostati in «Condotto · segmento rete» — decidono se il contenuto può raggiungere il peer, quindi convivono con associazione e gestione dei dispositivi.</value>
+  </data>
+  <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
+    <value>Vai al condotto</value>
+  </data>
+  <data name="Prefs_Retention_Days_Title" xml:space="preserve">
+    <value>Periodo di conservazione</value>
+  </data>
+  <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
+    <value>Le voci scadute vengono rimosse automaticamente. La pulizia avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto.</value>
+  </data>
+  <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
+    <value>giorni</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
+    <value>Numero di voci conservate</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
+    <value>Oltre il limite si rimuovono prima le voci più vecchie (100–2000, passi di 100). La pulizia avviene solo su questo PC.</value>
+  </data>
+  <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
+    <value>voci</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
+    <value>Avvio automatico · direttamente nella tray</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
+    <value>Si avvia all’accesso a Windows e finisce dritto nella tray senza aprire la finestra principale. Scrive solo la voce di avvio dell’utente corrente; non servono diritti di amministratore.</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
+    <value>Scorciatoia del riquadro</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
+    <value>Premi la combinazione in qualsiasi app per richiamare il riquadro della tray. Fai clic sul campo, poi premi la combinazione desiderata (deve includere Ctrl, Alt o Win); Backspace per cancellare. Disattivata per impostazione predefinita.</value>
+  </data>
+  <data name="Prefs_Data_Export_Desc" xml:space="preserve">
+    <value>Scrive l’intera cronologia (inclusi i contrassegni di eliminazione) in un file di backup JSON Lines; senza chiavi, certificati o dati di associazione. L’export è in chiaro — custodiscilo con cura.</value>
+  </data>
+  <data name="Prefs_Data_Import_Desc" xml:space="preserve">
+    <value>Unisce la cronologia da un file di backup: idempotente su «dispositivo di origine + numero», quindi reimportare non duplica voci né annulla le eliminazioni locali. Se la verifica fallisce, nulla cambia.</value>
+  </data>
+  <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
+    <value>Elimina in un colpo solo tutte le voci su questo PC (immagini incluse); richiede due conferme ed è irreversibile. Lo svuotamento avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto — valuta prima un export.</value>
+  </data>
+  <data name="Flyout_WindowTitle" xml:space="preserve">
+    <value>ClipSync · clip recenti</value>
+  </data>
+  <data name="Flyout_PauseSync" xml:space="preserve">
+    <value>Sospendi sincronizzazione</value>
+  </data>
+  <data name="Flyout_ResumeSync" xml:space="preserve">
+    <value>Riprendi sincronizzazione</value>
+  </data>
+  <data name="Flyout_Empty" xml:space="preserve">
+    <value>Ancora nessuna clip · prova a copiare del testo</value>
+  </data>
+  <data name="Flyout_PauseOrResume" xml:space="preserve">
+    <value>Sospendi o riprendi la sincronizzazione</value>
+  </data>
+  <data name="Flyout_CopyFromFormat" xml:space="preserve">
+    <value>Copia la clip da {0}</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>Apri ClipSync</value>
+  </data>
+  <data name="Tray_Menu_Diagnostics" xml:space="preserve">
+    <value>Log diagnostico</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>Esci</value>
+  </data>
+  <data name="Tray_Tooltip_Flow" xml:space="preserve">
+    <value>ClipSync · in ascolto</value>
+  </data>
+  <data name="Tray_Tooltip_AttentionFormat" xml:space="preserve">
+    <value>ClipSync · {0}</value>
+  </data>
+  <data name="Tray_AttentionFallback" xml:space="preserve">
+    <value>Serve un tuo intervento</value>
+  </data>
+  <data name="Tray_Tooltip_Paused" xml:space="preserve">
+    <value>ClipSync · acquisizione in pausa</value>
+  </data>
+  <data name="Tray_Tooltip_Private" xml:space="preserve">
+    <value>ClipSync · modalità privata, nessuna traccia</value>
+  </data>
+  <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
+    <value>1 nuova clip da {0}</value>
+  </data>
+  <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
+    <value>{1} nuove clip da {0}</value>
+  </data>
+  <data name="Tray_OversizeNotice" xml:space="preserve">
+    <value>Il testo appena copiato supera 1 MiB; resta solo negli appunti di questo PC e non viene sincronizzato (non troncato).</value>
+  </data>
+  <data name="Tray_AuthThrottleFormat" xml:space="preserve">
+    <value>Ripetuti errori di autenticazione da «{0}»; il dispositivo è temporaneamente limitato.</value>
+  </data>
+  <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
+    <value>In ascolto · sincronizzazione non attiva</value>
+  </data>
+  <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
+    <value>In ascolto · {0} connessi</value>
+  </data>
+  <data name="Tray_Status_Waiting" xml:space="preserve">
+    <value>In ascolto · in attesa di dispositivi</value>
+  </data>
+  <data name="Capture_OversizeNotice" xml:space="preserve">
+    <value>Il testo appena copiato supera 1 MiB: resta negli appunti di sistema, non troncato, ma non viene registrato nella cronologia né sincronizzato.</value>
+  </data>
+  <data name="Sync_NotStarted" xml:space="preserve">
+    <value>Servizio peer non ancora avviato</value>
+  </data>
+  <data name="Sync_StartFailed" xml:space="preserve">
+    <value>Il servizio peer non è riuscito ad avviarsi; la sincronizzazione è spenta per questa sessione.</value>
+  </data>
+  <data name="Sync_ConnectedFormat" xml:space="preserve">
+    <value>LAN in ascolto sulla porta {0} · {1} dispositivi connessi, il contenuto scorre in tempo reale.</value>
+  </data>
+  <data name="Sync_WaitingFormat" xml:space="preserve">
+    <value>LAN in ascolto sulla porta {0} · in attesa dei dispositivi associati; gli eventi arrivano nell’archivio prima della coda di invio, offline non si perde nulla.</value>
+  </data>
+  <data name="Bt_Disabled" xml:space="preserve">
+    <value>Riserva Bluetooth non abilitata</value>
+  </data>
+  <data name="Bt_UnavailableFormat" xml:space="preserve">
+    <value>Riserva Bluetooth non disponibile: {0}</value>
+  </data>
+  <data name="Bt_SyncingFormat" xml:space="preserve">
+    <value>Riserva Bluetooth · sincronizzazione con {0} (solo testo)</value>
+  </data>
+  <data name="Bt_Armed" xml:space="preserve">
+    <value>Riserva Bluetooth in attesa · il telefono passa da solo al Bluetooth quando la LAN è irraggiungibile</value>
+  </data>
+  <data name="Bt_Starting" xml:space="preserve">
+    <value>Riserva Bluetooth in avvio…</value>
+  </data>
+  <data name="Bt_AdapterUnavailable" xml:space="preserve">
+    <value>Adattatore Bluetooth non disponibile o spento</value>
+  </data>
+  <data name="Ack_None" xml:space="preserve">
+    <value>Ancora nessuna conferma dal peer</value>
+  </data>
+  <data name="Ack_UpToFormat" xml:space="preserve">
+    <value>Il peer ha confermato fino a {0}</value>
+  </data>
+  <data name="Transfer_ClearedFormat" xml:space="preserve">
+    <value>Svuotate {0} voci della cronologia (immagini incluse). Lo svuotamento avviene solo su questo PC.</value>
+  </data>
+  <data name="Transfer_ClearConfirmBody" xml:space="preserve">
+    <value>Svuotare tutta la cronologia?
+
+Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuotamento avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto. Valuta prima «Esporta cronologia».</value>
+  </data>
+  <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
+    <value>Conferma ancora una volta: lo svuotamento è irreversibile. Svuotare tutta la cronologia?</value>
+  </data>
+  <data name="Transfer_ExportedFormat" xml:space="preserve">
+    <value>Esportati {0} record (in chiaro) → {1}</value>
+  </data>
+  <data name="Transfer_ExportWriteFailed" xml:space="preserve">
+    <value>Export non riuscito: impossibile scrivere il file scelto.</value>
+  </data>
+  <data name="Transfer_ImportedFormat" xml:space="preserve">
+    <value>Import completato: aggiunti {0} · già presenti {1} · conflitti {2}</value>
+  </data>
+  <data name="Transfer_ImportFailedFormat" xml:space="preserve">
+    <value>Import non riuscito: {0}. Nulla è stato modificato.</value>
+  </data>
+  <data name="Transfer_ImportReadFailed" xml:space="preserve">
+    <value>Import non riuscito: impossibile leggere il file scelto.</value>
+  </data>
+  <data name="Transfer_FileFilter" xml:space="preserve">
+    <value>Export cronologia ClipSync (*.jsonl)|*.jsonl|Tutti i file (*.*)|*.*</value>
+  </data>
+  <data name="Transfer_Error_BadHeader" xml:space="preserve">
+    <value>questo non è un file di export della cronologia ClipSync</value>
+  </data>
+  <data name="Transfer_Error_UnsupportedVersion" xml:space="preserve">
+    <value>la versione del file è più recente di quella supportata dall’app</value>
+  </data>
+  <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
+    <value>il file è danneggiato (record malformato)</value>
+  </data>
+  <data name="Transfer_Error_HashMismatch" xml:space="preserve">
+    <value>il file è danneggiato (verifica hash fallita)</value>
+  </data>
+  <data name="Transfer_Error_CountMismatch" xml:space="preserve">
+    <value>il file è incompleto (il conteggio non corrisponde all’intestazione)</value>
+  </data>
+  <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
+    <value>il file contiene una voce oltre i limiti di dimensione (testo 1 MiB / immagini 16 MiB)</value>
+  </data>
+  <data name="Transfer_Error_Unknown" xml:space="preserve">
+    <value>errore sconosciuto</value>
+  </data>
+  <data name="Hotkey_Applied" xml:space="preserve">
+    <value>Attiva · premila in qualsiasi app per richiamare il riquadro</value>
+  </data>
+  <data name="Hotkey_Conflict" xml:space="preserve">
+    <value>Combinazione già usata da un altro programma; provane un’altra</value>
+  </data>
+  <data name="Attention_PeerDown" xml:space="preserve">
+    <value>Sincronizzazione non attiva in questa sessione (avvio dell’endpoint fallito)</value>
+  </data>
+  <data name="Attention_CaptureFaulted" xml:space="preserve">
+    <value>Acquisizione degli appunti degradata (ultimo accesso fallito)</value>
+  </data>
+  <data name="Attention_NoDevice" xml:space="preserve">
+    <value>Associa un dispositivo per iniziare a sincronizzare</value>
+  </data>
+  <data name="Pairing_Title" xml:space="preserve">
+    <value>Associa nuovo dispositivo</value>
+  </data>
+  <data name="Pairing_PeerDownBody" xml:space="preserve">
+    <value>Il servizio peer non è attivo; in questa sessione non è possibile associare.</value>
+  </data>
+  <data name="Pairing_ScanInstruction" xml:space="preserve">
+    <value>Scansiona questo codice con ClipSync sul telefono. Il codice QR contiene l’indirizzo di questo PC, l’impronta del certificato e un token monouso — mai la chiave di associazione.</value>
+  </data>
+  <data name="Pairing_CountdownFormat" xml:space="preserve">
+    <value>Si rinnova tra {0:m\:ss}</value>
+  </data>
+  <data name="Pairing_NoLanAddress" xml:space="preserve">
+    <value>Nessun indirizzo LAN rilevato. Metti questo PC e il telefono sulla stessa rete (o aggiungi un indirizzo Tailscale nelle Preferenze), poi riapri questa finestra.</value>
+  </data>
+  <data name="Pairing_VerifyHeading" xml:space="preserve">
+    <value>Verifica sul telefono prima di approvare</value>
+  </data>
+  <data name="Pairing_PcName" xml:space="preserve">
+    <value>Nome del PC</value>
+  </data>
+  <data name="Pairing_Fingerprint" xml:space="preserve">
+    <value>Impronta del certificato</value>
+  </data>
+  <data name="Pairing_NewCode" xml:space="preserve">
+    <value>Nuovo codice</value>
+  </data>
+  <data name="Approval_Title" xml:space="preserve">
+    <value>Richiesta di associazione</value>
+  </data>
+  <data name="Approval_CloseReject" xml:space="preserve">
+    <value>Chiudi e rifiuta</value>
+  </data>
+  <data name="Approval_Question" xml:space="preserve">
+    <value>Consentire a questo dispositivo di associarsi?</value>
+  </data>
+  <data name="Approval_Body" xml:space="preserve">
+    <value>Un dispositivo ha usato il codice QR di questo PC per chiedere l’associazione. Approva solo se il nome qui sotto corrisponde al telefono che hai in mano.</value>
+  </data>
+  <data name="Approval_PlatformAndroid" xml:space="preserve">
+    <value>Dispositivo Android</value>
+  </data>
+  <data name="Approval_PlatformWindows" xml:space="preserve">
+    <value>Dispositivo Windows</value>
+  </data>
+  <data name="Approval_RepairWarning" xml:space="preserve">
+    <value>Questo dispositivo era già associato. Approvando sostituisci la sua chiave di associazione e la vecchia installazione smette subito di funzionare.</value>
+  </data>
+  <data name="Approval_SupersedeNotice" xml:space="preserve">
+    <value>In elenco c’è già un dispositivo con lo stesso nome. Approvando, il vecchio record viene revocato automaticamente e la sua coda di invio svuotata (trattato come lo stesso telefono che si riassocia).</value>
+  </data>
+  <data name="Approval_Reject" xml:space="preserve">
+    <value>Rifiuta</value>
+  </data>
+  <data name="Approval_Approve" xml:space="preserve">
+    <value>Approva associazione</value>
+  </data>
+  <data name="Detail_Title" xml:space="preserve">
+    <value>Dettagli clip</value>
+  </data>
+  <data name="Detail_SourceFormat" xml:space="preserve">
+    <value>Origine: {0}</value>
+  </data>
+  <data name="Detail_TimeFormat" xml:space="preserve">
+    <value>Ora: {0}</value>
+  </data>
+  <data name="Diag_Title" xml:space="preserve">
+    <value>ClipSync · log diagnostico</value>
+  </data>
+  <data name="Diag_Heading" xml:space="preserve">
+    <value>Diagnostica locale · solo codici di stato e orari, mai il contenuto degli appunti</value>
+  </data>
+  <data name="Diag_CopyAll" xml:space="preserve">
+    <value>Copia tutto</value>
+  </data>
+  <data name="Diag_Empty" xml:space="preserve">
+    <value>(ancora nessuna voce diagnostica)</value>
+  </data>
+</root>

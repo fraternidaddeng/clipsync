@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="App_WindowTitle" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Brand_Wordmark" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Chrome_Minimize" xml:space="preserve">
+    <value>تصغير</value>
+  </data>
+  <data name="Chrome_MaximizeRestore" xml:space="preserve">
+    <value>تكبير أو استعادة</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="Common_Copy" xml:space="preserve">
+    <value>نسخ</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="Common_Acknowledge" xml:space="preserve">
+    <value>حسنًا</value>
+  </data>
+  <data name="Common_FollowSystem" xml:space="preserve">
+    <value>اتباع النظام</value>
+  </data>
+  <data name="Common_ClearHistory" xml:space="preserve">
+    <value>مسح السجل</value>
+  </data>
+  <data name="Common_ExportHistory" xml:space="preserve">
+    <value>تصدير السجل</value>
+  </data>
+  <data name="Common_ImportHistory" xml:space="preserve">
+    <value>استيراد السجل</value>
+  </data>
+  <data name="Common_PauseCapture" xml:space="preserve">
+    <value>إيقاف الالتقاط مؤقتًا</value>
+  </data>
+  <data name="Common_PrivateMode" xml:space="preserve">
+    <value>الوضع الخاص</value>
+  </data>
+  <data name="Nav_History" xml:space="preserve">
+    <value>السجل</value>
+  </data>
+  <data name="Nav_Conduit" xml:space="preserve">
+    <value>القناة</value>
+  </data>
+  <data name="Nav_Prefs" xml:space="preserve">
+    <value>التفضيلات</value>
+  </data>
+  <data name="History_Title" xml:space="preserve">
+    <value>السجل</value>
+  </data>
+  <data name="History_Subtitle" xml:space="preserve">
+    <value>مقتطفات من هذا الحاسوب والأجهزة المقترنة · التنظيف يخص هذا الجهاز فقط</value>
+  </data>
+  <data name="History_Search" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="Filter_All" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="Filter_Link" xml:space="preserve">
+    <value>رابط</value>
+  </data>
+  <data name="Filter_Otp" xml:space="preserve">
+    <value>رمز</value>
+  </data>
+  <data name="Filter_Email" xml:space="preserve">
+    <value>حساب</value>
+  </data>
+  <data name="Filter_Credential" xml:space="preserve">
+    <value>كلمة مرور</value>
+  </data>
+  <data name="Filter_Plain" xml:space="preserve">
+    <value>نص</value>
+  </data>
+  <data name="Format_Image" xml:space="preserve">
+    <value>صورة</value>
+  </data>
+  <data name="History_NoPreview" xml:space="preserve">
+    <value>لا معاينة</value>
+  </data>
+  <data name="History_LocalOnlyBadge" xml:space="preserve">
+    <value>محفوظ على هذا الجهاز فقط</value>
+  </data>
+  <data name="History_Empty_Unpaired_Title" xml:space="preserve">
+    <value>أولًا، صِل الطرفين</value>
+  </data>
+  <data name="History_Empty_Paired_Title" xml:space="preserve">
+    <value>بانتظار أول مقتطف</value>
+  </data>
+  <data name="History_Empty_Unpaired_Body" xml:space="preserve">
+    <value>لم يُقترن بعد بهاتف. مدخل الاقتران في قسم الشبكة بصفحة «القناة».</value>
+  </data>
+  <data name="History_Empty_Paired_Body" xml:space="preserve">
+    <value>انسخ نصًا على أي من الجهازين — سيظهر هنا ويتدفق إلى الطرف الآخر.</value>
+  </data>
+  <data name="History_Empty_GoPair" xml:space="preserve">
+    <value>اقترن الآن ‹</value>
+  </data>
+  <data name="History_NoMatch_Prefix" xml:space="preserve">
+    <value>لا توجد سجلات تطابق «</value>
+  </data>
+  <data name="History_NoMatch_Suffix" xml:space="preserve">
+    <value>»</value>
+  </data>
+  <data name="History_Empty_Filtered" xml:space="preserve">
+    <value>لا سجلات من هذا النوع · جرّب مرشحًا آخر</value>
+  </data>
+  <data name="History_CopySelected" xml:space="preserve">
+    <value>نسخ المحدد</value>
+  </data>
+  <data name="History_ViewDetail" xml:space="preserve">
+    <value>عرض التفاصيل</value>
+  </data>
+  <data name="History_DeleteSelected" xml:space="preserve">
+    <value>حذف المحدد</value>
+  </data>
+  <data name="History_UnknownSource" xml:space="preserve">
+    <value>مصدر مجهول</value>
+  </data>
+  <data name="History_LocalSource" xml:space="preserve">
+    <value>هذا الحاسوب</value>
+  </data>
+  <data name="Conduit_Title" xml:space="preserve">
+    <value>القناة</value>
+  </data>
+  <data name="Conduit_Subtitle" xml:space="preserve">
+    <value>يمر المحتوى عبر أربعة أقسام بالتسلسل · ترتيب القراءة هو ترتيب استكشاف الأخطاء</value>
+  </data>
+  <data name="Conduit_Capture_Name" xml:space="preserve">
+    <value>الالتقاط المحلي</value>
+  </data>
+  <data name="Conduit_Capture_Ready" xml:space="preserve">
+    <value>جاهز · يراقب Ctrl+C</value>
+  </data>
+  <data name="Conduit_Status_Paused" xml:space="preserve">
+    <value>موقوف مؤقتًا · لا تسجيل</value>
+  </data>
+  <data name="Conduit_Status_Private" xml:space="preserve">
+    <value>الوضع الخاص · بلا أثر</value>
+  </data>
+  <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
+    <value>الالتقاط متدهور · تعذّر الوصول إلى الحافظة</value>
+  </data>
+  <data name="Conduit_Capture_Detail" xml:space="preserve">
+    <value>الوضع الخاص والعمليات المحظورة توقف المحتوى عند هذا القسم.</value>
+  </data>
+  <data name="Conduit_Service_Name" xml:space="preserve">
+    <value>الخدمة المحلية</value>
+  </data>
+  <data name="Conduit_Service_ReadyPrefix" xml:space="preserve">
+    <value>جاهز · السجل </value>
+  </data>
+  <data name="Conduit_Service_ReadyInfix" xml:space="preserve">
+    <value> · بانتظار الإرسال </value>
+  </data>
+  <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
+    <value>تُحفظ الأحداث في المخزن قبل قائمة الإرسال · </value>
+  </data>
+  <data name="Conduit_Network_Name" xml:space="preserve">
+    <value>الشبكة</value>
+  </data>
+  <data name="Conduit_Network_ReadyPrefix" xml:space="preserve">
+    <value>جاهز · يستمع على :</value>
+  </data>
+  <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
+    <value> · متصل </value>
+  </data>
+  <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
+    <value> جهاز/أجهزة</value>
+  </data>
+  <data name="Conduit_Network_Down" xml:space="preserve">
+    <value>غير مشغّل · المزامنة متوقفة</value>
+  </data>
+  <data name="Conduit_Peer_Name" xml:space="preserve">
+    <value>كتابة الطرف الآخر</value>
+  </data>
+  <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
+    <value>مقترن </value>
+  </data>
+  <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
+    <value> جهاز/أجهزة</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
+    <value>النص البعيد يُكتب تلقائيًا في حافظة هذا الحاسوب.</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
+    <value>التطبيق التلقائي متوقف: يبقى المحتوى البعيد في السجل فقط ويحتاج نسخًا يدويًا.</value>
+  </data>
+  <data name="Conduit_Devices_Header" xml:space="preserve">
+    <value>قسم الشبكة · الأجهزة المقترنة</value>
+  </data>
+  <data name="Conduit_Connection_Header" xml:space="preserve">
+    <value>قسم الشبكة · الاتصال</value>
+  </data>
+  <data name="Conduit_CleanupStale" xml:space="preserve">
+    <value>تنظيف</value>
+  </data>
+  <data name="Conduit_Bluetooth_Title" xml:space="preserve">
+    <value>احتياطي البلوتوث</value>
+  </data>
+  <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
+    <value>متوقف افتراضيًا. عندما تُحجب الشبكة المحلية بواسطة VPN أو جدار حماية، يواصل الهاتف المقترن مسبقًا عبر البلوتوث في إعدادات النظام مزامنة النص (بلا صور، وأبطأ).</value>
+  </data>
+  <data name="Conduit_ExtraBind_Title" xml:space="preserve">
+    <value>عناوين استماع إضافية</value>
+  </data>
+  <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
+    <value>لعناوين المحولات الافتراضية مثل Tailscale / WireGuard. لا يوجد ممر عام.</value>
+  </data>
+  <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
+    <value>يسري بعد إعادة التشغيل</value>
+  </data>
+  <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
+    <value> · افصل بين العناوين بفواصل</value>
+  </data>
+  <data name="Conduit_Fingerprint_Title" xml:space="preserve">
+    <value>بصمة شهادة هذا الحاسوب</value>
+  </data>
+  <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
+    <value>عند الاقتران، قارنها مجموعةً بمجموعة مع البصمة المعروضة على الهاتف. تغيّر البصمة يجعل كل الأجهزة المقترنة تطلب إعادة التأكيد.</value>
+  </data>
+  <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
+    <value>خدمة الطرف الآخر غير مشغّلة؛ لا بصمة لعرضها في هذه الجلسة.</value>
+  </data>
+  <data name="Device_RevokedBadge" xml:space="preserve">
+    <value>أُبطل</value>
+  </data>
+  <data name="Device_AccentLabel" xml:space="preserve">
+    <value>لون الجهاز</value>
+  </data>
+  <data name="Device_AccentManual" xml:space="preserve">
+    <value>محدد يدويًا</value>
+  </data>
+  <data name="Device_AccentByOrder" xml:space="preserve">
+    <value>يتبع ترتيب الاقتران</value>
+  </data>
+  <data name="Device_Rename" xml:space="preserve">
+    <value>إعادة تسمية</value>
+  </data>
+  <data name="Device_RevokeSelected" xml:space="preserve">
+    <value>إبطال الجهاز المحدد</value>
+  </data>
+  <data name="Device_RevokeNote" xml:space="preserve">
+    <value>الإبطال يفصل الجهاز فورًا ويلغي مفتاح اقترانه؛ المحتوى الذي استلمه لا يُحذف عن بُعد أبدًا. الاقتران بعد الإبطال يُعد جهازًا جديدًا. عندما يعيد الهاتف نفسه الاقتران بهوية جديدة، يُبطل السجل القديم تلقائيًا وتُفرَّغ قائمة إرساله.</value>
+  </data>
+  <data name="Device_UnknownRemote" xml:space="preserve">
+    <value>جهاز بعيد</value>
+  </data>
+  <data name="Device_PairedFallback" xml:space="preserve">
+    <value>جهاز مقترن</value>
+  </data>
+  <data name="Device_UnknownFallback" xml:space="preserve">
+    <value>جهاز مجهول</value>
+  </data>
+  <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
+    <value>{0} · {1} بانتظار الإرسال</value>
+  </data>
+  <data name="Stale_BannerBacklogFormat" xml:space="preserve">
+    <value>رُصد {0} من الأجهزة تبدو بقايا قديمة؛ {1} من العناصر المعلقة تضخّم عدّاد «بانتظار الإرسال». التنظيف يبطلها ويفرّغ قوائم إرسالها.</value>
+  </data>
+  <data name="Stale_BannerFormat" xml:space="preserve">
+    <value>رُصد {0} من الأجهزة تبدو بقايا قديمة. التنظيف يبطلها؛ المحتوى الذي استلمته لا يتأثر.</value>
+  </data>
+  <data name="Stale_DuplicateBadge" xml:space="preserve">
+    <value>يبدو من بقايا اقتران مكرر</value>
+  </data>
+  <data name="Stale_NeverConnected" xml:space="preserve">
+    <value>لم يتصل قط منذ الاقتران</value>
+  </data>
+  <data name="Stale_UnseenDaysFormat" xml:space="preserve">
+    <value>بلا اتصال منذ أكثر من {0} يومًا</value>
+  </data>
+  <data name="Prefs_Title" xml:space="preserve">
+    <value>التفضيلات</value>
+  </data>
+  <data name="Prefs_Subtitle" xml:space="preserve">
+    <value>التغييرات تسري فورًا · محتوى الحافظة لا يظهر في السجلات أبدًا</value>
+  </data>
+  <data name="Prefs_Group_Display" xml:space="preserve">
+    <value>العرض</value>
+  </data>
+  <data name="Prefs_Group_Capture" xml:space="preserve">
+    <value>الالتقاط</value>
+  </data>
+  <data name="Prefs_Group_Sync" xml:space="preserve">
+    <value>المزامنة</value>
+  </data>
+  <data name="Prefs_Group_Retention" xml:space="preserve">
+    <value>الاحتفاظ</value>
+  </data>
+  <data name="Prefs_Group_Startup" xml:space="preserve">
+    <value>التشغيل</value>
+  </data>
+  <data name="Prefs_Group_Data" xml:space="preserve">
+    <value>البيانات</value>
+  </data>
+  <data name="Prefs_FontScale_Title" xml:space="preserve">
+    <value>حجم نص السجل</value>
+  </data>
+  <data name="Prefs_FontScale_Desc" xml:space="preserve">
+    <value>يغيّر حجم نص المقتطفات فقط (معاينات السجل، نص التفاصيل، نافذة الدرج المنبثقة)؛ عناوين المجموعات والشارات والأزرار لا تتغير.</value>
+  </data>
+  <data name="Prefs_FontScale_Small" xml:space="preserve">
+    <value>صغير</value>
+  </data>
+  <data name="Prefs_FontScale_Standard" xml:space="preserve">
+    <value>قياسي</value>
+  </data>
+  <data name="Prefs_FontScale_Large" xml:space="preserve">
+    <value>كبير</value>
+  </data>
+  <data name="Prefs_PreviewLines_Title" xml:space="preserve">
+    <value>أسطر المعاينة</value>
+  </data>
+  <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
+    <value>أقصى عدد أسطر يظهر لكل عنصر في قائمة السجل؛ الزائد يُقص بعلامة الحذف — افتح التفاصيل للنص الكامل.</value>
+  </data>
+  <data name="Prefs_PreviewLines_Two" xml:space="preserve">
+    <value>سطران</value>
+  </data>
+  <data name="Prefs_PreviewLines_Four" xml:space="preserve">
+    <value>4 أسطر</value>
+  </data>
+  <data name="Prefs_PreviewLines_Six" xml:space="preserve">
+    <value>6 أسطر</value>
+  </data>
+  <data name="Prefs_Theme_Title" xml:space="preserve">
+    <value>المظهر</value>
+  </data>
+  <data name="Prefs_Theme_Desc" xml:space="preserve">
+    <value>لوحة ألوان النافذة النهارية/الليلية؛ أيقونة الدرج تعيش في شريط المهام وتتبع دومًا درجته.</value>
+  </data>
+  <data name="Prefs_Theme_Day" xml:space="preserve">
+    <value>نهاري</value>
+  </data>
+  <data name="Prefs_Theme_Night" xml:space="preserve">
+    <value>ليلي</value>
+  </data>
+  <data name="Prefs_Language_Title" xml:space="preserve">
+    <value>اللغة</value>
+  </data>
+  <data name="Prefs_Language_Desc" xml:space="preserve">
+    <value>لغة الواجهة — اتباع النظام أو تحديد يدوي؛ تُعرض أسماء اللغات دائمًا بلغاتها الأصلية.</value>
+  </data>
+  <data name="Prefs_Language_RestartNote" xml:space="preserve">
+    <value>يسري بعد إعادة تشغيل التطبيق.</value>
+  </data>
+  <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
+    <value>أثناء الإيقاف المؤقت لا يسجل هذا الحاسوب محتوى جديدًا؛ السجل الحالي يبقى.</value>
+  </data>
+  <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
+    <value>أثناء تفعيله يتوقف الالتقاط والمزامنة تمامًا بلا أي أثر.</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
+    <value>العمليات المحظورة</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
+    <value>ما يُنسخ من هذه العمليات لا يدخل السجل ولا يُزامن. افصل بفواصل أو أسطر جديدة.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
+    <value>تطبيق المحتوى البعيد تلقائيًا</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
+    <value>النص الوارد من الهاتف يُكتب تلقائيًا في حافظة هذا الحاسوب. عند الإيقاف يبقى في السجل فقط ويحتاج نسخًا يدويًا.</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
+    <value>مزامنة صور الحافظة</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
+    <value>متوقفة افتراضيًا. PNG/JPEG فقط؛ قد تحمل البايتات الأصلية EXIF وبيانات وصفية أخرى، ويحتاج الطرفان جلسة v2.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
+    <value>تطبيق الصور البعيدة تلقائيًا</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
+    <value>الصور الواردة من الهاتف تُكتب تلقائيًا في حافظة هذا الحاسوب. عند الإيقاف تبقى في السجل فقط وتحتاج نسخًا يدويًا.</value>
+  </data>
+  <data name="Prefs_Moved_Title" xml:space="preserve">
+    <value>احتياطي البلوتوث · عناوين استماع إضافية · بصمة الشهادة</value>
+  </data>
+  <data name="Prefs_Moved_Desc" xml:space="preserve">
+    <value>نُقلت إلى «القناة · قسم الشبكة» — فهي تقرر وصول المحتوى إلى الطرف الآخر، لذا تسكن مع الاقتران وإدارة الأجهزة.</value>
+  </data>
+  <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
+    <value>الذهاب إلى القناة</value>
+  </data>
+  <data name="Prefs_Retention_Days_Title" xml:space="preserve">
+    <value>مدة الاحتفاظ</value>
+  </data>
+  <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
+    <value>العناصر المتجاوزة للمهلة تُزال تلقائيًا. التنظيف يحدث على هذا الحاسوب فقط ولا يحذف عن بُعد ما استلمه الطرف الآخر.</value>
+  </data>
+  <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
+    <value>يوم</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
+    <value>عدد العناصر المحفوظة</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
+    <value>عند تجاوز الحد تُزال الأقدم أولًا (100–2000، بخطوة 100). التنظيف يحدث على هذا الحاسوب فقط.</value>
+  </data>
+  <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
+    <value>عنصر</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
+    <value>التشغيل عند بدء النظام · إلى الدرج بصمت</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
+    <value>يبدأ تلقائيًا عند تسجيل الدخول إلى Windows ويستقر مباشرة في الدرج دون فتح النافذة الرئيسية. يكتب إدخال بدء التشغيل للمستخدم الحالي فقط؛ لا حاجة لصلاحيات المسؤول.</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
+    <value>اختصار النافذة المنبثقة</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
+    <value>اضغط التركيبة في أي تطبيق لاستدعاء نافذة الدرج المنبثقة. انقر الحقل ثم اضغط التركيبة المطلوبة (يجب أن تتضمن Ctrl أو Alt أو Win)؛ اضغط Backspace للمسح. متوقف افتراضيًا.</value>
+  </data>
+  <data name="Prefs_Data_Export_Desc" xml:space="preserve">
+    <value>يكتب السجل كاملًا (مع علامات الحذف) في ملف نسخ احتياطي بصيغة JSON Lines؛ بلا مفاتيح أو شهادات أو بيانات اقتران. التصدير نص صريح — احفظه بأمان.</value>
+  </data>
+  <data name="Prefs_Data_Import_Desc" xml:space="preserve">
+    <value>يدمج السجل من ملف نسخ احتياطي: متكرر آمن وفق «جهاز المصدر + الرقم التسلسلي»، فإعادة الاستيراد لا تكرر العناصر ولا تلغي الحذف المحلي. فشل التحقق لا يغيّر شيئًا.</value>
+  </data>
+  <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
+    <value>يحذف كل العناصر على هذا الحاسوب (مع الصور) دفعة واحدة؛ يتطلب تأكيدين ولا يمكن التراجع عنه. المسح يحدث على هذا الحاسوب فقط ولا يحذف ما استلمه الطرف الآخر — فكّر في التصدير أولًا.</value>
+  </data>
+  <data name="Flyout_WindowTitle" xml:space="preserve">
+    <value>ClipSync · أحدث المقتطفات</value>
+  </data>
+  <data name="Flyout_PauseSync" xml:space="preserve">
+    <value>إيقاف المزامنة مؤقتًا</value>
+  </data>
+  <data name="Flyout_ResumeSync" xml:space="preserve">
+    <value>استئناف المزامنة</value>
+  </data>
+  <data name="Flyout_Empty" xml:space="preserve">
+    <value>لا مقتطفات بعد · جرّب نسخ نص ما</value>
+  </data>
+  <data name="Flyout_PauseOrResume" xml:space="preserve">
+    <value>إيقاف المزامنة مؤقتًا أو استئنافها</value>
+  </data>
+  <data name="Flyout_CopyFromFormat" xml:space="preserve">
+    <value>نسخ المقتطف من {0}</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>فتح ClipSync</value>
+  </data>
+  <data name="Tray_Menu_Diagnostics" xml:space="preserve">
+    <value>سجل التشخيص</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>خروج</value>
+  </data>
+  <data name="Tray_Tooltip_Flow" xml:space="preserve">
+    <value>ClipSync · يستمع</value>
+  </data>
+  <data name="Tray_Tooltip_AttentionFormat" xml:space="preserve">
+    <value>ClipSync · {0}</value>
+  </data>
+  <data name="Tray_AttentionFallback" xml:space="preserve">
+    <value>يتطلب إجراءً منك</value>
+  </data>
+  <data name="Tray_Tooltip_Paused" xml:space="preserve">
+    <value>ClipSync · الالتقاط موقوف مؤقتًا</value>
+  </data>
+  <data name="Tray_Tooltip_Private" xml:space="preserve">
+    <value>ClipSync · الوضع الخاص، بلا أثر</value>
+  </data>
+  <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
+    <value>مقتطف جديد واحد من {0}</value>
+  </data>
+  <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
+    <value>{1} مقتطفات جديدة من {0}</value>
+  </data>
+  <data name="Tray_OversizeNotice" xml:space="preserve">
+    <value>النص المنسوخ للتو يتجاوز 1 ميبيبايت؛ يبقى في حافظة هذا الحاسوب فقط ولا يُزامن (دون قص).</value>
+  </data>
+  <data name="Tray_AuthThrottleFormat" xml:space="preserve">
+    <value>إخفاقات مصادقة متكررة من «{0}»؛ قُيّد الجهاز مؤقتًا.</value>
+  </data>
+  <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
+    <value>يستمع · المزامنة غير مشغّلة</value>
+  </data>
+  <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
+    <value>يستمع · {0} متصل</value>
+  </data>
+  <data name="Tray_Status_Waiting" xml:space="preserve">
+    <value>يستمع · بانتظار الأجهزة</value>
+  </data>
+  <data name="Capture_OversizeNotice" xml:space="preserve">
+    <value>النص المنسوخ للتو يتجاوز 1 ميبيبايت: يبقى في حافظة النظام دون قص، لكنه لا يُسجل في السجل ولا يُزامن.</value>
+  </data>
+  <data name="Sync_NotStarted" xml:space="preserve">
+    <value>خدمة الطرف الآخر لم تبدأ بعد</value>
+  </data>
+  <data name="Sync_StartFailed" xml:space="preserve">
+    <value>تعذّر بدء خدمة الطرف الآخر؛ المزامنة متوقفة في هذه الجلسة.</value>
+  </data>
+  <data name="Sync_ConnectedFormat" xml:space="preserve">
+    <value>استماع LAN على المنفذ {0} · {1} جهاز متصل، والمحتوى يتدفق آنيًا.</value>
+  </data>
+  <data name="Sync_WaitingFormat" xml:space="preserve">
+    <value>استماع LAN على المنفذ {0} · بانتظار الأجهزة المقترنة؛ تُحفظ الأحداث في المخزن قبل قائمة الإرسال فلا يضيع شيء دون اتصال.</value>
+  </data>
+  <data name="Bt_Disabled" xml:space="preserve">
+    <value>احتياطي البلوتوث غير مفعّل</value>
+  </data>
+  <data name="Bt_UnavailableFormat" xml:space="preserve">
+    <value>احتياطي البلوتوث غير متاح: {0}</value>
+  </data>
+  <data name="Bt_SyncingFormat" xml:space="preserve">
+    <value>احتياطي البلوتوث · مزامنة مع {0} (نص فقط)</value>
+  </data>
+  <data name="Bt_Armed" xml:space="preserve">
+    <value>احتياطي البلوتوث جاهز · يتحول الهاتف تلقائيًا إلى البلوتوث حين تتعذر الشبكة المحلية</value>
+  </data>
+  <data name="Bt_Starting" xml:space="preserve">
+    <value>احتياطي البلوتوث يبدأ…</value>
+  </data>
+  <data name="Bt_AdapterUnavailable" xml:space="preserve">
+    <value>محول البلوتوث غير متاح أو مطفأ</value>
+  </data>
+  <data name="Ack_None" xml:space="preserve">
+    <value>لا إقرار من الطرف الآخر بعد</value>
+  </data>
+  <data name="Ack_UpToFormat" xml:space="preserve">
+    <value>أقرّ الطرف الآخر حتى {0}</value>
+  </data>
+  <data name="Transfer_ClearedFormat" xml:space="preserve">
+    <value>مُسح {0} من عناصر السجل (مع الصور). المسح يحدث على هذا الحاسوب فقط.</value>
+  </data>
+  <data name="Transfer_ClearConfirmBody" xml:space="preserve">
+    <value>مسح كل السجل؟
+
+سيحذف كل العناصر على هذا الحاسوب (مع الصور) دفعة واحدة. المسح يحدث على هذا الحاسوب فقط ولا يحذف ما استلمه الطرف الآخر. فكّر في «تصدير السجل» أولًا.</value>
+  </data>
+  <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
+    <value>أكّد مرة أخرى: المسح لا يمكن التراجع عنه. أتريد مسح كل السجل؟</value>
+  </data>
+  <data name="Transfer_ExportedFormat" xml:space="preserve">
+    <value>صُدّر {0} من السجلات (نص صريح) ← {1}</value>
+  </data>
+  <data name="Transfer_ExportWriteFailed" xml:space="preserve">
+    <value>فشل التصدير: تعذّرت الكتابة في الملف المحدد.</value>
+  </data>
+  <data name="Transfer_ImportedFormat" xml:space="preserve">
+    <value>اكتمل الاستيراد: أُضيف {0} · موجود {1} · تعارضات {2}</value>
+  </data>
+  <data name="Transfer_ImportFailedFormat" xml:space="preserve">
+    <value>فشل الاستيراد: {0}. لم يتغير شيء.</value>
+  </data>
+  <data name="Transfer_ImportReadFailed" xml:space="preserve">
+    <value>فشل الاستيراد: تعذّرت قراءة الملف المحدد.</value>
+  </data>
+  <data name="Transfer_FileFilter" xml:space="preserve">
+    <value>تصدير سجل ClipSync (*.jsonl)|*.jsonl|كل الملفات (*.*)|*.*</value>
+  </data>
+  <data name="Transfer_Error_BadHeader" xml:space="preserve">
+    <value>هذا ليس ملف تصدير سجل ClipSync</value>
+  </data>
+  <data name="Transfer_Error_UnsupportedVersion" xml:space="preserve">
+    <value>إصدار الملف أحدث مما يدعمه هذا التطبيق</value>
+  </data>
+  <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
+    <value>الملف تالف (سجل مشوه)</value>
+  </data>
+  <data name="Transfer_Error_HashMismatch" xml:space="preserve">
+    <value>الملف تالف (فشل التحقق من التجزئة)</value>
+  </data>
+  <data name="Transfer_Error_CountMismatch" xml:space="preserve">
+    <value>الملف ناقص (العدد لا يطابق الترويسة)</value>
+  </data>
+  <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
+    <value>الملف يحوي عنصرًا يتجاوز حدود الحجم (نص 1 ميبيبايت / صور 16 ميبيبايت)</value>
+  </data>
+  <data name="Transfer_Error_Unknown" xml:space="preserve">
+    <value>خطأ مجهول</value>
+  </data>
+  <data name="Hotkey_Applied" xml:space="preserve">
+    <value>مفعّل · اضغطه في أي تطبيق لاستدعاء النافذة المنبثقة</value>
+  </data>
+  <data name="Hotkey_Conflict" xml:space="preserve">
+    <value>هذه التركيبة يشغلها برنامج آخر؛ جرّب تركيبة مختلفة</value>
+  </data>
+  <data name="Attention_PeerDown" xml:space="preserve">
+    <value>المزامنة غير مشغّلة في هذه الجلسة (فشل بدء نقطة النهاية)</value>
+  </data>
+  <data name="Attention_CaptureFaulted" xml:space="preserve">
+    <value>التقاط الحافظة متدهور (فشل آخر وصول)</value>
+  </data>
+  <data name="Attention_NoDevice" xml:space="preserve">
+    <value>اقترن بجهاز لبدء المزامنة</value>
+  </data>
+  <data name="Pairing_Title" xml:space="preserve">
+    <value>اقتران جهاز جديد</value>
+  </data>
+  <data name="Pairing_PeerDownBody" xml:space="preserve">
+    <value>خدمة الطرف الآخر غير مشغّلة؛ الاقتران متعذر في هذه الجلسة.</value>
+  </data>
+  <data name="Pairing_ScanInstruction" xml:space="preserve">
+    <value>امسح هذا الرمز بتطبيق ClipSync على هاتفك. يحمل رمز QR عنوان هذا الحاسوب وبصمة الشهادة ورمزًا لمرة واحدة — ولا يحمل مفتاح الاقتران أبدًا.</value>
+  </data>
+  <data name="Pairing_CountdownFormat" xml:space="preserve">
+    <value>يتجدد خلال {0:m\:ss}</value>
+  </data>
+  <data name="Pairing_NoLanAddress" xml:space="preserve">
+    <value>لم يُكتشف عنوان شبكة محلية. صِل هذا الحاسوب والهاتف بالشبكة نفسها (أو أضف عنوان Tailscale في التفضيلات)، ثم افتح هذه النافذة من جديد.</value>
+  </data>
+  <data name="Pairing_VerifyHeading" xml:space="preserve">
+    <value>تحقق على الهاتف قبل الموافقة</value>
+  </data>
+  <data name="Pairing_PcName" xml:space="preserve">
+    <value>اسم الحاسوب</value>
+  </data>
+  <data name="Pairing_Fingerprint" xml:space="preserve">
+    <value>بصمة الشهادة</value>
+  </data>
+  <data name="Pairing_NewCode" xml:space="preserve">
+    <value>رمز جديد</value>
+  </data>
+  <data name="Approval_Title" xml:space="preserve">
+    <value>طلب اقتران</value>
+  </data>
+  <data name="Approval_CloseReject" xml:space="preserve">
+    <value>إغلاق ورفض</value>
+  </data>
+  <data name="Approval_Question" xml:space="preserve">
+    <value>أتسمح لهذا الجهاز بالاقتران؟</value>
+  </data>
+  <data name="Approval_Body" xml:space="preserve">
+    <value>استخدم جهازٌ رمز QR الخاص بهذا الحاسوب لطلب الاقتران. وافق فقط إذا طابق الاسم أدناه الهاتف الذي بيدك.</value>
+  </data>
+  <data name="Approval_PlatformAndroid" xml:space="preserve">
+    <value>جهاز Android</value>
+  </data>
+  <data name="Approval_PlatformWindows" xml:space="preserve">
+    <value>جهاز Windows</value>
+  </data>
+  <data name="Approval_RepairWarning" xml:space="preserve">
+    <value>سبق اقتران هذا الجهاز. الموافقة تستبدل مفتاح اقترانه الحالي، ويتوقف التثبيت القديم فورًا.</value>
+  </data>
+  <data name="Approval_SupersedeNotice" xml:space="preserve">
+    <value>يوجد في القائمة جهاز بالاسم نفسه. بعد الموافقة يُبطل السجل القديم تلقائيًا وتُفرَّغ قائمة إرساله (يُعد الهاتف نفسه يعيد الاقتران).</value>
+  </data>
+  <data name="Approval_Reject" xml:space="preserve">
+    <value>رفض</value>
+  </data>
+  <data name="Approval_Approve" xml:space="preserve">
+    <value>الموافقة على الاقتران</value>
+  </data>
+  <data name="Detail_Title" xml:space="preserve">
+    <value>تفاصيل المقتطف</value>
+  </data>
+  <data name="Detail_SourceFormat" xml:space="preserve">
+    <value>المصدر: {0}</value>
+  </data>
+  <data name="Detail_TimeFormat" xml:space="preserve">
+    <value>الوقت: {0}</value>
+  </data>
+  <data name="Diag_Title" xml:space="preserve">
+    <value>ClipSync · سجل التشخيص</value>
+  </data>
+  <data name="Diag_Heading" xml:space="preserve">
+    <value>تشخيص محلي · رموز الحالة والأوقات فقط، ومحتوى الحافظة لا يظهر أبدًا</value>
+  </data>
+  <data name="Diag_CopyAll" xml:space="preserve">
+    <value>نسخ الكل</value>
+  </data>
+  <data name="Diag_Empty" xml:space="preserve">
+    <value>(لا إدخالات تشخيصية بعد)</value>
+  </data>
+</root>

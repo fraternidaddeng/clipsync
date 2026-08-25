@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="App_WindowTitle" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Brand_Wordmark" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Chrome_Minimize" xml:space="preserve">
+    <value>Свернуть</value>
+  </data>
+  <data name="Chrome_MaximizeRestore" xml:space="preserve">
+    <value>Развернуть или восстановить</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="Common_Copy" xml:space="preserve">
+    <value>Копировать</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="Common_Acknowledge" xml:space="preserve">
+    <value>Понятно</value>
+  </data>
+  <data name="Common_FollowSystem" xml:space="preserve">
+    <value>Как в системе</value>
+  </data>
+  <data name="Common_ClearHistory" xml:space="preserve">
+    <value>Очистить историю</value>
+  </data>
+  <data name="Common_ExportHistory" xml:space="preserve">
+    <value>Экспорт истории</value>
+  </data>
+  <data name="Common_ImportHistory" xml:space="preserve">
+    <value>Импорт истории</value>
+  </data>
+  <data name="Common_PauseCapture" xml:space="preserve">
+    <value>Приостановить захват</value>
+  </data>
+  <data name="Common_PrivateMode" xml:space="preserve">
+    <value>Приватный режим</value>
+  </data>
+  <data name="Nav_History" xml:space="preserve">
+    <value>История</value>
+  </data>
+  <data name="Nav_Conduit" xml:space="preserve">
+    <value>Канал</value>
+  </data>
+  <data name="Nav_Prefs" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="History_Title" xml:space="preserve">
+    <value>История</value>
+  </data>
+  <data name="History_Subtitle" xml:space="preserve">
+    <value>Записи с этого ПК и сопряжённых устройств · очистка касается только этого устройства</value>
+  </data>
+  <data name="History_Search" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="Filter_All" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="Filter_Link" xml:space="preserve">
+    <value>Ссылка</value>
+  </data>
+  <data name="Filter_Otp" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="Filter_Email" xml:space="preserve">
+    <value>Аккаунт</value>
+  </data>
+  <data name="Filter_Credential" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="Filter_Plain" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="Format_Image" xml:space="preserve">
+    <value>Изображение</value>
+  </data>
+  <data name="History_NoPreview" xml:space="preserve">
+    <value>Без предпросмотра</value>
+  </data>
+  <data name="History_LocalOnlyBadge" xml:space="preserve">
+    <value>Хранится только здесь</value>
+  </data>
+  <data name="History_Empty_Unpaired_Title" xml:space="preserve">
+    <value>Сначала соедините обе стороны</value>
+  </data>
+  <data name="History_Empty_Paired_Title" xml:space="preserve">
+    <value>Ждём первую запись</value>
+  </data>
+  <data name="History_Empty_Unpaired_Body" xml:space="preserve">
+    <value>Телефон ещё не сопряжён. Вход в сопряжение — в сегменте «Сеть» на странице «Канал».</value>
+  </data>
+  <data name="History_Empty_Paired_Body" xml:space="preserve">
+    <value>Скопируйте текст на любом устройстве — он появится здесь и уйдёт на другую сторону.</value>
+  </data>
+  <data name="History_Empty_GoPair" xml:space="preserve">
+    <value>К сопряжению ›</value>
+  </data>
+  <data name="History_NoMatch_Prefix" xml:space="preserve">
+    <value>Нет записей по запросу «</value>
+  </data>
+  <data name="History_NoMatch_Suffix" xml:space="preserve">
+    <value>»</value>
+  </data>
+  <data name="History_Empty_Filtered" xml:space="preserve">
+    <value>Записей этого типа нет · попробуйте другой фильтр</value>
+  </data>
+  <data name="History_CopySelected" xml:space="preserve">
+    <value>Копировать выбранное</value>
+  </data>
+  <data name="History_ViewDetail" xml:space="preserve">
+    <value>Подробности</value>
+  </data>
+  <data name="History_DeleteSelected" xml:space="preserve">
+    <value>Удалить выбранное</value>
+  </data>
+  <data name="History_UnknownSource" xml:space="preserve">
+    <value>Неизвестный источник</value>
+  </data>
+  <data name="History_LocalSource" xml:space="preserve">
+    <value>Этот ПК</value>
+  </data>
+  <data name="Conduit_Title" xml:space="preserve">
+    <value>Канал</value>
+  </data>
+  <data name="Conduit_Subtitle" xml:space="preserve">
+    <value>Содержимое проходит четыре сегмента слева направо · порядок чтения — порядок диагностики</value>
+  </data>
+  <data name="Conduit_Capture_Name" xml:space="preserve">
+    <value>Локальный захват</value>
+  </data>
+  <data name="Conduit_Capture_Ready" xml:space="preserve">
+    <value>Готово · слушаем Ctrl+C</value>
+  </data>
+  <data name="Conduit_Status_Paused" xml:space="preserve">
+    <value>Приостановлено · запись не ведётся</value>
+  </data>
+  <data name="Conduit_Status_Private" xml:space="preserve">
+    <value>Приватный режим · без следов</value>
+  </data>
+  <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
+    <value>Захват деградировал · нет доступа к буферу обмена</value>
+  </data>
+  <data name="Conduit_Capture_Detail" xml:space="preserve">
+    <value>Приватный режим и заблокированные процессы останавливают содержимое на этом сегменте.</value>
+  </data>
+  <data name="Conduit_Service_Name" xml:space="preserve">
+    <value>Локальная служба</value>
+  </data>
+  <data name="Conduit_Service_ReadyPrefix" xml:space="preserve">
+    <value>Готово · история </value>
+  </data>
+  <data name="Conduit_Service_ReadyInfix" xml:space="preserve">
+    <value> · к отправке </value>
+  </data>
+  <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
+    <value>События сначала попадают в хранилище, затем в очередь отправки · </value>
+  </data>
+  <data name="Conduit_Network_Name" xml:space="preserve">
+    <value>Сеть</value>
+  </data>
+  <data name="Conduit_Network_ReadyPrefix" xml:space="preserve">
+    <value>Готово · слушаем :</value>
+  </data>
+  <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
+    <value> · подключено </value>
+  </data>
+  <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
+    <value> устр.</value>
+  </data>
+  <data name="Conduit_Network_Down" xml:space="preserve">
+    <value>Не запущено · синхронизация выключена</value>
+  </data>
+  <data name="Conduit_Peer_Name" xml:space="preserve">
+    <value>Запись на той стороне</value>
+  </data>
+  <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
+    <value>Сопряжено </value>
+  </data>
+  <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
+    <value> устр.</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
+    <value>Удалённый текст автоматически записывается в буфер обмена этого ПК.</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
+    <value>Автоприменение выключено: удалённое содержимое остаётся только в истории, копируйте вручную.</value>
+  </data>
+  <data name="Conduit_Devices_Header" xml:space="preserve">
+    <value>Сегмент «Сеть» · сопряжённые устройства</value>
+  </data>
+  <data name="Conduit_Connection_Header" xml:space="preserve">
+    <value>Сегмент «Сеть» · подключение</value>
+  </data>
+  <data name="Conduit_CleanupStale" xml:space="preserve">
+    <value>Очистить</value>
+  </data>
+  <data name="Conduit_Bluetooth_Title" xml:space="preserve">
+    <value>Bluetooth-резерв</value>
+  </data>
+  <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
+    <value>По умолчанию выключено. Когда LAN блокируется VPN или брандмауэром, телефон, уже сопряжённый по Bluetooth в настройках системы, продолжает синхронизировать текст (без изображений, медленнее).</value>
+  </data>
+  <data name="Conduit_ExtraBind_Title" xml:space="preserve">
+    <value>Дополнительные адреса прослушивания</value>
+  </data>
+  <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
+    <value>Для адресов виртуальных адаптеров, таких как Tailscale / WireGuard. Публичный ретранслятор не предоставляется.</value>
+  </data>
+  <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
+    <value>Применяется после перезапуска</value>
+  </data>
+  <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
+    <value> · несколько адресов — через запятую</value>
+  </data>
+  <data name="Conduit_Fingerprint_Title" xml:space="preserve">
+    <value>Отпечаток сертификата этого ПК</value>
+  </data>
+  <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
+    <value>При сопряжении сверяйте его группа за группой с отпечатком на телефоне. После смены отпечатка все сопряжённые устройства попросят подтвердить заново.</value>
+  </data>
+  <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
+    <value>Служба обмена не запущена; в этом сеансе отпечаток недоступен.</value>
+  </data>
+  <data name="Device_RevokedBadge" xml:space="preserve">
+    <value>Отозвано</value>
+  </data>
+  <data name="Device_AccentLabel" xml:space="preserve">
+    <value>Цвет устройства</value>
+  </data>
+  <data name="Device_AccentManual" xml:space="preserve">
+    <value>Задан вручную</value>
+  </data>
+  <data name="Device_AccentByOrder" xml:space="preserve">
+    <value>По порядку сопряжения</value>
+  </data>
+  <data name="Device_Rename" xml:space="preserve">
+    <value>Переименовать</value>
+  </data>
+  <data name="Device_RevokeSelected" xml:space="preserve">
+    <value>Отозвать выбранное устройство</value>
+  </data>
+  <data name="Device_RevokeNote" xml:space="preserve">
+    <value>Отзыв немедленно отключает устройство и аннулирует его ключ сопряжения; уже полученное им содержимое удалённо не удаляется. Повторное сопряжение после отзыва считается новым устройством. Когда тот же телефон сопрягается заново под новой личностью, старая запись отзывается автоматически, а её очередь отправки очищается.</value>
+  </data>
+  <data name="Device_UnknownRemote" xml:space="preserve">
+    <value>Удалённое устройство</value>
+  </data>
+  <data name="Device_PairedFallback" xml:space="preserve">
+    <value>Сопряжённое устройство</value>
+  </data>
+  <data name="Device_UnknownFallback" xml:space="preserve">
+    <value>Неизвестное устройство</value>
+  </data>
+  <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
+    <value>{0} · в очереди {1} к отправке</value>
+  </data>
+  <data name="Stale_BannerBacklogFormat" xml:space="preserve">
+    <value>Обнаружено {0} устройств, похожих на устаревшие остатки; {1} ожидающих записей раздувают счётчик «к отправке». Очистка отзовёт их и опустошит их очереди отправки.</value>
+  </data>
+  <data name="Stale_BannerFormat" xml:space="preserve">
+    <value>Обнаружено {0} устройств, похожих на устаревшие остатки. Очистка отзовёт их; уже полученное ими содержимое не пострадает.</value>
+  </data>
+  <data name="Stale_DuplicateBadge" xml:space="preserve">
+    <value>Похоже на остаток повторного сопряжения</value>
+  </data>
+  <data name="Stale_NeverConnected" xml:space="preserve">
+    <value>Ни разу не подключалось после сопряжения</value>
+  </data>
+  <data name="Stale_UnseenDaysFormat" xml:space="preserve">
+    <value>Нет подключения более {0} дн.</value>
+  </data>
+  <data name="Prefs_Title" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="Prefs_Subtitle" xml:space="preserve">
+    <value>Изменения применяются сразу · содержимое буфера обмена никогда не попадает в журналы</value>
+  </data>
+  <data name="Prefs_Group_Display" xml:space="preserve">
+    <value>ЭКРАН</value>
+  </data>
+  <data name="Prefs_Group_Capture" xml:space="preserve">
+    <value>ЗАХВАТ</value>
+  </data>
+  <data name="Prefs_Group_Sync" xml:space="preserve">
+    <value>СИНХРОНИЗАЦИЯ</value>
+  </data>
+  <data name="Prefs_Group_Retention" xml:space="preserve">
+    <value>ХРАНЕНИЕ</value>
+  </data>
+  <data name="Prefs_Group_Startup" xml:space="preserve">
+    <value>ЗАПУСК</value>
+  </data>
+  <data name="Prefs_Group_Data" xml:space="preserve">
+    <value>ДАННЫЕ</value>
+  </data>
+  <data name="Prefs_FontScale_Title" xml:space="preserve">
+    <value>Размер текста истории</value>
+  </data>
+  <data name="Prefs_FontScale_Desc" xml:space="preserve">
+    <value>Масштабирует только текст записей (предпросмотр истории, текст подробностей, всплывающее окно у трея); заголовки групп, значки и кнопки не меняются.</value>
+  </data>
+  <data name="Prefs_FontScale_Small" xml:space="preserve">
+    <value>Мелкий</value>
+  </data>
+  <data name="Prefs_FontScale_Standard" xml:space="preserve">
+    <value>Стандартный</value>
+  </data>
+  <data name="Prefs_FontScale_Large" xml:space="preserve">
+    <value>Крупный</value>
+  </data>
+  <data name="Prefs_PreviewLines_Title" xml:space="preserve">
+    <value>Строк в предпросмотре</value>
+  </data>
+  <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
+    <value>Максимум строк текста на запись в списке истории; лишнее обрезается многоточием — полный текст в подробностях.</value>
+  </data>
+  <data name="Prefs_PreviewLines_Two" xml:space="preserve">
+    <value>2 строки</value>
+  </data>
+  <data name="Prefs_PreviewLines_Four" xml:space="preserve">
+    <value>4 строки</value>
+  </data>
+  <data name="Prefs_PreviewLines_Six" xml:space="preserve">
+    <value>6 строк</value>
+  </data>
+  <data name="Prefs_Theme_Title" xml:space="preserve">
+    <value>Оформление</value>
+  </data>
+  <data name="Prefs_Theme_Desc" xml:space="preserve">
+    <value>Дневная/ночная палитра окна; значок в трее живёт на панели задач и всегда следует её тону.</value>
+  </data>
+  <data name="Prefs_Theme_Day" xml:space="preserve">
+    <value>День</value>
+  </data>
+  <data name="Prefs_Theme_Night" xml:space="preserve">
+    <value>Ночь</value>
+  </data>
+  <data name="Prefs_Language_Title" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="Prefs_Language_Desc" xml:space="preserve">
+    <value>Язык интерфейса — как в системе или вручную; названия языков всегда показаны на их родном языке.</value>
+  </data>
+  <data name="Prefs_Language_RestartNote" xml:space="preserve">
+    <value>Вступает в силу после перезапуска приложения.</value>
+  </data>
+  <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
+    <value>Во время паузы этот ПК не записывает новое содержимое; уже накопленная история сохраняется.</value>
+  </data>
+  <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
+    <value>Пока включён, захват и синхронизация полностью остановлены, следов не остаётся.</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
+    <value>Заблокированные процессы</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
+    <value>Скопированное из этих процессов не попадает ни в историю, ни в синхронизацию. Разделяйте запятыми или переводами строки.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
+    <value>Автоприменение удалённого содержимого</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
+    <value>Текст с телефона автоматически записывается в буфер обмена этого ПК. Если выключено, он остаётся только в истории — копируйте вручную.</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
+    <value>Синхронизировать изображения буфера</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
+    <value>По умолчанию выключено. Только PNG/JPEG; исходные байты могут содержать EXIF и другие метаданные, обеим сторонам нужен сеанс v2.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
+    <value>Автоприменение удалённых изображений</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
+    <value>Изображения с телефона автоматически записываются в буфер обмена этого ПК. Если выключено, они остаются только в истории — копируйте вручную.</value>
+  </data>
+  <data name="Prefs_Moved_Title" xml:space="preserve">
+    <value>Bluetooth-резерв · дополнительные адреса · отпечаток сертификата</value>
+  </data>
+  <data name="Prefs_Moved_Desc" xml:space="preserve">
+    <value>Перенесены в «Канал · сегмент „Сеть“» — они решают, дойдёт ли содержимое до другой стороны, и живут рядом с сопряжением и управлением устройствами.</value>
+  </data>
+  <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
+    <value>Открыть канал</value>
+  </data>
+  <data name="Prefs_Retention_Days_Title" xml:space="preserve">
+    <value>Срок хранения</value>
+  </data>
+  <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
+    <value>Просроченные записи удаляются автоматически. Очистка происходит только на этом ПК и никогда не удаляет то, что другая сторона уже получила.</value>
+  </data>
+  <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
+    <value>дн.</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
+    <value>Число записей</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
+    <value>При превышении лимита первыми удаляются самые старые записи (100–2000, шаг 100). Очистка происходит только на этом ПК.</value>
+  </data>
+  <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
+    <value>записей</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
+    <value>Автозапуск · сразу в трей</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
+    <value>Запускается при входе в Windows и сразу уходит в трей, не открывая главное окно. Пишет только автозапуск текущего пользователя; права администратора не нужны.</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
+    <value>Горячая клавиша всплывающего окна</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
+    <value>Нажмите сочетание в любом приложении, чтобы вызвать всплывающее окно у трея. Щёлкните поле и нажмите нужное сочетание (обязательно с Ctrl, Alt или Win); Backspace — очистить. По умолчанию выключено.</value>
+  </data>
+  <data name="Prefs_Data_Export_Desc" xml:space="preserve">
+    <value>Записывает всю историю (включая отметки об удалении) в файл резервной копии JSON Lines; без ключей, сертификатов и данных сопряжения. Экспорт в открытом виде — храните бережно.</value>
+  </data>
+  <data name="Prefs_Data_Import_Desc" xml:space="preserve">
+    <value>Объединяет историю из файла резервной копии: идемпотентно по «устройство-источник + номер», повторный импорт не создаёт дубликатов и не отменяет локальные удаления. При ошибке проверки ничего не меняется.</value>
+  </data>
+  <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
+    <value>Разом удаляет все записи на этом ПК (включая изображения); требует двух подтверждений и необратимо. Очистка происходит только на этом ПК и не удаляет то, что другая сторона уже получила; сначала стоит экспортировать историю.</value>
+  </data>
+  <data name="Flyout_WindowTitle" xml:space="preserve">
+    <value>ClipSync · недавние записи</value>
+  </data>
+  <data name="Flyout_PauseSync" xml:space="preserve">
+    <value>Приостановить синхронизацию</value>
+  </data>
+  <data name="Flyout_ResumeSync" xml:space="preserve">
+    <value>Возобновить синхронизацию</value>
+  </data>
+  <data name="Flyout_Empty" xml:space="preserve">
+    <value>Записей пока нет · попробуйте что-нибудь скопировать</value>
+  </data>
+  <data name="Flyout_PauseOrResume" xml:space="preserve">
+    <value>Приостановить или возобновить синхронизацию</value>
+  </data>
+  <data name="Flyout_CopyFromFormat" xml:space="preserve">
+    <value>Копировать запись от {0}</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>Открыть ClipSync</value>
+  </data>
+  <data name="Tray_Menu_Diagnostics" xml:space="preserve">
+    <value>Журнал диагностики</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>Выход</value>
+  </data>
+  <data name="Tray_Tooltip_Flow" xml:space="preserve">
+    <value>ClipSync · слушаем</value>
+  </data>
+  <data name="Tray_Tooltip_AttentionFormat" xml:space="preserve">
+    <value>ClipSync · {0}</value>
+  </data>
+  <data name="Tray_AttentionFallback" xml:space="preserve">
+    <value>Требуется ваше действие</value>
+  </data>
+  <data name="Tray_Tooltip_Paused" xml:space="preserve">
+    <value>ClipSync · захват приостановлен</value>
+  </data>
+  <data name="Tray_Tooltip_Private" xml:space="preserve">
+    <value>ClipSync · приватный режим, без следов</value>
+  </data>
+  <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
+    <value>1 новая запись от {0}</value>
+  </data>
+  <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
+    <value>Новых записей от {0}: {1}</value>
+  </data>
+  <data name="Tray_OversizeNotice" xml:space="preserve">
+    <value>Только что скопированный текст больше 1 МиБ; он остаётся лишь в буфере обмена этого ПК и не синхронизируется (не обрезан).</value>
+  </data>
+  <data name="Tray_AuthThrottleFormat" xml:space="preserve">
+    <value>Повторные сбои аутентификации у «{0}»; устройство временно ограничено.</value>
+  </data>
+  <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
+    <value>Слушаем · синхронизация не запущена</value>
+  </data>
+  <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
+    <value>Слушаем · подключено {0}</value>
+  </data>
+  <data name="Tray_Status_Waiting" xml:space="preserve">
+    <value>Слушаем · ждём устройства</value>
+  </data>
+  <data name="Capture_OversizeNotice" xml:space="preserve">
+    <value>Только что скопированный текст больше 1 МиБ: он остаётся в системном буфере обмена без обрезки, но не попадает в историю и не синхронизируется.</value>
+  </data>
+  <data name="Sync_NotStarted" xml:space="preserve">
+    <value>Служба обмена ещё не запущена</value>
+  </data>
+  <data name="Sync_StartFailed" xml:space="preserve">
+    <value>Службе обмена не удалось запуститься; в этом сеансе синхронизация выключена.</value>
+  </data>
+  <data name="Sync_ConnectedFormat" xml:space="preserve">
+    <value>LAN-порт {0} · подключено устройств: {1}, содержимое передаётся в реальном времени.</value>
+  </data>
+  <data name="Sync_WaitingFormat" xml:space="preserve">
+    <value>LAN-порт {0} · ждём сопряжённые устройства; события сначала попадают в хранилище, затем в очередь отправки — офлайн ничего не теряется.</value>
+  </data>
+  <data name="Bt_Disabled" xml:space="preserve">
+    <value>Bluetooth-резерв не включён</value>
+  </data>
+  <data name="Bt_UnavailableFormat" xml:space="preserve">
+    <value>Bluetooth-резерв недоступен: {0}</value>
+  </data>
+  <data name="Bt_SyncingFormat" xml:space="preserve">
+    <value>Bluetooth-резерв · синхронизация с {0} (только текст)</value>
+  </data>
+  <data name="Bt_Armed" xml:space="preserve">
+    <value>Bluetooth-резерв наготове · когда LAN недоступна, телефон сам переходит на Bluetooth</value>
+  </data>
+  <data name="Bt_Starting" xml:space="preserve">
+    <value>Bluetooth-резерв запускается…</value>
+  </data>
+  <data name="Bt_AdapterUnavailable" xml:space="preserve">
+    <value>Bluetooth-адаптер недоступен или выключен</value>
+  </data>
+  <data name="Ack_None" xml:space="preserve">
+    <value>Подтверждений с той стороны пока нет</value>
+  </data>
+  <data name="Ack_UpToFormat" xml:space="preserve">
+    <value>Другая сторона подтвердила до {0}</value>
+  </data>
+  <data name="Transfer_ClearedFormat" xml:space="preserve">
+    <value>Очищено записей истории: {0} (включая изображения). Очистка происходит только на этом ПК.</value>
+  </data>
+  <data name="Transfer_ClearConfirmBody" xml:space="preserve">
+    <value>Очистить всю историю?
+
+Разом удалит все записи на этом ПК (включая изображения). Очистка происходит только на этом ПК и не удаляет то, что другая сторона уже получила. Сначала стоит сделать «Экспорт истории».</value>
+  </data>
+  <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
+    <value>Подтвердите ещё раз: очистку нельзя отменить. Очистить всю историю?</value>
+  </data>
+  <data name="Transfer_ExportedFormat" xml:space="preserve">
+    <value>Экспортировано записей: {0} (в открытом виде) → {1}</value>
+  </data>
+  <data name="Transfer_ExportWriteFailed" xml:space="preserve">
+    <value>Экспорт не удался: не получилось записать выбранный файл.</value>
+  </data>
+  <data name="Transfer_ImportedFormat" xml:space="preserve">
+    <value>Импорт завершён: добавлено {0} · уже было {1} · конфликтов {2}</value>
+  </data>
+  <data name="Transfer_ImportFailedFormat" xml:space="preserve">
+    <value>Импорт не удался: {0}. Ничего не изменено.</value>
+  </data>
+  <data name="Transfer_ImportReadFailed" xml:space="preserve">
+    <value>Импорт не удался: не получилось прочитать выбранный файл.</value>
+  </data>
+  <data name="Transfer_FileFilter" xml:space="preserve">
+    <value>Экспорт истории ClipSync (*.jsonl)|*.jsonl|Все файлы (*.*)|*.*</value>
+  </data>
+  <data name="Transfer_Error_BadHeader" xml:space="preserve">
+    <value>это не файл экспорта истории ClipSync</value>
+  </data>
+  <data name="Transfer_Error_UnsupportedVersion" xml:space="preserve">
+    <value>версия файла новее, чем поддерживает это приложение</value>
+  </data>
+  <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
+    <value>файл повреждён (неверный формат записи)</value>
+  </data>
+  <data name="Transfer_Error_HashMismatch" xml:space="preserve">
+    <value>файл повреждён (не сошлась хеш-проверка)</value>
+  </data>
+  <data name="Transfer_Error_CountMismatch" xml:space="preserve">
+    <value>файл неполный (число записей не совпадает с заголовком)</value>
+  </data>
+  <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
+    <value>в файле есть запись сверх лимита размера (текст 1 МиБ / изображения 16 МиБ)</value>
+  </data>
+  <data name="Transfer_Error_Unknown" xml:space="preserve">
+    <value>неизвестная ошибка</value>
+  </data>
+  <data name="Hotkey_Applied" xml:space="preserve">
+    <value>Действует · нажмите в любом приложении, чтобы вызвать окно</value>
+  </data>
+  <data name="Hotkey_Conflict" xml:space="preserve">
+    <value>Это сочетание занято другой программой; выберите другое</value>
+  </data>
+  <data name="Attention_PeerDown" xml:space="preserve">
+    <value>В этом сеансе синхронизация не запущена (конечной точке не удалось стартовать)</value>
+  </data>
+  <data name="Attention_CaptureFaulted" xml:space="preserve">
+    <value>Захват буфера обмена деградировал (последний доступ не удался)</value>
+  </data>
+  <data name="Attention_NoDevice" xml:space="preserve">
+    <value>Сопрягите устройство, чтобы начать синхронизацию</value>
+  </data>
+  <data name="Pairing_Title" xml:space="preserve">
+    <value>Сопряжение нового устройства</value>
+  </data>
+  <data name="Pairing_PeerDownBody" xml:space="preserve">
+    <value>Служба обмена не запущена; в этом сеансе сопряжение недоступно.</value>
+  </data>
+  <data name="Pairing_ScanInstruction" xml:space="preserve">
+    <value>Отсканируйте этот код приложением ClipSync на телефоне. QR-код содержит адрес этого ПК, отпечаток сертификата и одноразовый токен — никогда не ключ сопряжения.</value>
+  </data>
+  <data name="Pairing_CountdownFormat" xml:space="preserve">
+    <value>Обновится через {0:m\:ss}</value>
+  </data>
+  <data name="Pairing_NoLanAddress" xml:space="preserve">
+    <value>Адрес локальной сети не обнаружен. Подключите этот ПК и телефон к одной сети (или добавьте адрес Tailscale в настройках) и снова откройте это окно.</value>
+  </data>
+  <data name="Pairing_VerifyHeading" xml:space="preserve">
+    <value>Перед одобрением сверьте на телефоне</value>
+  </data>
+  <data name="Pairing_PcName" xml:space="preserve">
+    <value>Имя компьютера</value>
+  </data>
+  <data name="Pairing_Fingerprint" xml:space="preserve">
+    <value>Отпечаток сертификата</value>
+  </data>
+  <data name="Pairing_NewCode" xml:space="preserve">
+    <value>Новый код</value>
+  </data>
+  <data name="Approval_Title" xml:space="preserve">
+    <value>Запрос на сопряжение</value>
+  </data>
+  <data name="Approval_CloseReject" xml:space="preserve">
+    <value>Закрыть и отклонить</value>
+  </data>
+  <data name="Approval_Question" xml:space="preserve">
+    <value>Разрешить сопряжение этому устройству?</value>
+  </data>
+  <data name="Approval_Body" xml:space="preserve">
+    <value>Устройство запросило сопряжение по QR-коду этого ПК. Одобряйте, только если имя ниже совпадает с телефоном у вас в руках.</value>
+  </data>
+  <data name="Approval_PlatformAndroid" xml:space="preserve">
+    <value>Устройство Android</value>
+  </data>
+  <data name="Approval_PlatformWindows" xml:space="preserve">
+    <value>Устройство Windows</value>
+  </data>
+  <data name="Approval_RepairWarning" xml:space="preserve">
+    <value>Это устройство уже было сопряжено. Одобрение заменит его ключ сопряжения, и старая установка сразу перестанет работать.</value>
+  </data>
+  <data name="Approval_SupersedeNotice" xml:space="preserve">
+    <value>Устройство с таким именем уже в списке. После одобрения старая запись будет отозвана автоматически, а её очередь отправки очищена (считается повторным сопряжением того же телефона).</value>
+  </data>
+  <data name="Approval_Reject" xml:space="preserve">
+    <value>Отклонить</value>
+  </data>
+  <data name="Approval_Approve" xml:space="preserve">
+    <value>Одобрить сопряжение</value>
+  </data>
+  <data name="Detail_Title" xml:space="preserve">
+    <value>Подробности записи</value>
+  </data>
+  <data name="Detail_SourceFormat" xml:space="preserve">
+    <value>Источник: {0}</value>
+  </data>
+  <data name="Detail_TimeFormat" xml:space="preserve">
+    <value>Время: {0}</value>
+  </data>
+  <data name="Diag_Title" xml:space="preserve">
+    <value>ClipSync · журнал диагностики</value>
+  </data>
+  <data name="Diag_Heading" xml:space="preserve">
+    <value>Локальная диагностика · только коды состояния и время, никогда — содержимое буфера обмена</value>
+  </data>
+  <data name="Diag_CopyAll" xml:space="preserve">
+    <value>Копировать всё</value>
+  </data>
+  <data name="Diag_Empty" xml:space="preserve">
+    <value>(диагностических записей пока нет)</value>
+  </data>
+</root>
