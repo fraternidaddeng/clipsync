@@ -103,6 +103,21 @@ class PreferencesHistoryTransferTest {
     }
 
     @Test
+    fun clearHistoryRemovesEveryVisibleEntryAndReportsTheCount() = runBlocking {
+        repository.storeLocalEvent(draft("clip one"), emptyList())
+        repository.storeLocalEvent(draft("clip two"), emptyList())
+        repository.storeLocalEvent(draft("clip three"), emptyList())
+
+        viewModel.clearHistory()
+        val status = awaitTransferStatus()
+
+        // settings-roadmap P0-5: honest count, local-only semantics stated.
+        assertTrue("actual status: $status", status.contains("已清空 3 条"))
+        assertTrue(status.contains("仅本机"))
+        assertTrue(repository.searchHistory().isEmpty())
+    }
+
+    @Test
     fun foreignFilesFailWithAStatusLineAndNoChanges() = runBlocking {
         viewModel.importHistory { ByteArrayInputStream("{\"hello\":\"world\"}\n".toByteArray()) }
         val status = awaitTransferStatus()

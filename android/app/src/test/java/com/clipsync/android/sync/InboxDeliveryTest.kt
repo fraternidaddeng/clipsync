@@ -119,6 +119,35 @@ class InboxDeliveryTest {
     }
 
     @Test
+    fun inboxNotifyGateFollowsThePreference() {
+        val settings = SyncSettingsStore(
+            com.clipsync.android.platform.SharedPrefsKeyValueStore(context, name = "inbox-delivery-notify-settings"),
+        )
+        // settings-roadmap P1-8: on by default, an in-app total switch for the surface.
+        assertTrue(InboxDelivery.inboxNotificationsAllowed(settings))
+
+        settings.inboxNotifyEnabled = false
+        assertFalse(InboxDelivery.inboxNotificationsAllowed(settings))
+    }
+
+    @Test
+    fun notifyOffStillRecordsAndAppliesButPostsNoNotification() {
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+
+        val applied = InboxDelivery.deliver(context, "e6", "quiet delivery", 123L, autoApply = true, notify = false)
+
+        // The delivery itself is untouched: history/inbox record and the clipboard write.
+        assertTrue(applied)
+        assertEquals("quiet delivery", inbox.textFor("e6"))
+        assertEquals("quiet delivery", clipboardText())
+        // Only the notification surface goes quiet.
+        assertEquals(0, org.robolectric.Shadows.shadowOf(manager).allNotifications.size)
+
+        InboxDelivery.deliver(context, "e7", "quiet manual copy", 124L, autoApply = false, notify = false)
+        assertEquals(0, org.robolectric.Shadows.shadowOf(manager).allNotifications.size)
+    }
+
+    @Test
     fun defaultWriterRegistersCaptureLoopSuppression() {
         InboxDelivery.deliver(context, "e5", "auto applied body", 123L, autoApply = true)
 

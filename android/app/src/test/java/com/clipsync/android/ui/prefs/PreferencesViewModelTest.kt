@@ -21,6 +21,12 @@ class PreferencesViewModelTest {
         assertTrue(state.autoApplyRemote)
         assertTrue(state.autoExpire)
         assertEquals(SyncSettingsStore.DEFAULT_MAX_AGE_DAYS, state.retentionDays)
+        // settings-roadmap basic settings: their defaults surface without any stored key.
+        assertEquals(SyncSettingsStore.DEFAULT_MAX_ENTRIES, state.maxEntries)
+        assertEquals(SyncSettingsStore.HISTORY_FONT_SCALE_STANDARD, state.historyFontScale, 0f)
+        assertEquals(SyncSettingsStore.DEFAULT_PREVIEW_LINES, state.previewLines)
+        assertTrue(state.skipSensitive)
+        assertTrue(state.inboxNotify)
     }
 
     @Test
@@ -134,6 +140,64 @@ class PreferencesViewModelTest {
         // Unrelated toggles never trigger cleanup.
         model.setPauseSync(true)
         assertEquals(2, cleanups)
+    }
+
+    @Test
+    fun `display, capture and notify settings persist under the roadmap keys`() {
+        val model = viewModel()
+        model.setHistoryFontScale(SyncSettingsStore.HISTORY_FONT_SCALE_LARGE)
+        model.setPreviewLines(2)
+        model.setSkipSensitive(false)
+        model.setInboxNotify(false)
+
+        assertEquals("1.15", keyValues.map["ui.history_font_scale"])
+        assertEquals("2", keyValues.map["ui.preview_lines"])
+        assertEquals("false", keyValues.map["capture.skip_sensitive"])
+        assertEquals("false", keyValues.map["notify.inbox"])
+
+        val state = model.state.value
+        assertEquals(SyncSettingsStore.HISTORY_FONT_SCALE_LARGE, state.historyFontScale, 0f)
+        assertEquals(2, state.previewLines)
+        assertFalse(state.skipSensitive)
+        assertFalse(state.inboxNotify)
+
+        // Off-step values are ignored instead of crashing or persisting garbage.
+        model.setHistoryFontScale(3f)
+        model.setPreviewLines(5)
+        assertEquals(SyncSettingsStore.HISTORY_FONT_SCALE_LARGE, model.state.value.historyFontScale, 0f)
+        assertEquals(2, model.state.value.previewLines)
+    }
+
+    @Test
+    fun `max entries persists, clamps to the stepper bounds and cleans up immediately`() {
+        var cleanups = 0
+        val model =
+            PreferencesViewModel(
+                settings,
+                PreferencesViewModel.SideEffects(onRetentionChanged = { cleanups++ }),
+            )
+        assertEquals(SyncSettingsStore.DEFAULT_MAX_ENTRIES, model.state.value.maxEntries)
+
+        model.setMaxEntries(500)
+        assertEquals("500", keyValues.map["sync.retention.max_entries"])
+        assertEquals(500, model.state.value.maxEntries)
+        assertEquals(1, cleanups)
+
+        // The stepper bounds hold even against programmatic extremes.
+        model.setMaxEntries(1)
+        assertEquals(SyncSettingsStore.MIN_MAX_ENTRIES, model.state.value.maxEntries)
+        model.setMaxEntries(1_000_000)
+        assertEquals(SyncSettingsStore.MAX_MAX_ENTRIES, model.state.value.maxEntries)
+    }
+
+    @Test
+    fun `retention days clamp to the windows-aligned stepper bounds`() {
+        val model = viewModel()
+        model.setRetentionDays(0)
+        assertEquals(SyncSettingsStore.MIN_RETENTION_DAYS, model.state.value.retentionDays)
+
+        model.setRetentionDays(9_999)
+        assertEquals(SyncSettingsStore.MAX_RETENTION_DAYS, model.state.value.retentionDays)
     }
 
     @Test

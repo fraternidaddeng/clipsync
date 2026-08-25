@@ -24,6 +24,8 @@ data class PreferencesUiState(
     val autoApplyRemote: Boolean = true,
     val autoExpire: Boolean = true,
     val retentionDays: Int = SyncSettingsStore.DEFAULT_MAX_AGE_DAYS,
+    /** 保留条数上限（settings-roadmap P1-15）；条数上限始终生效，与过期开关无关。 */
+    val maxEntries: Int = SyncSettingsStore.DEFAULT_MAX_ENTRIES,
     val bootRestore: Boolean = false,
     /** 图像剪贴板同步（协议 v2）；按章程默认关闭。 */
     val imageSync: Boolean = false,
@@ -34,7 +36,15 @@ data class PreferencesUiState(
     val bluetoothFallback: Boolean = false,
     /** 用户选定的蓝牙目标设备名；null 表示尚未选择（备援不会拨号）。 */
     val bluetoothDeviceName: String? = null,
-    /** Result line of the last 导出历史/导入历史 run; null until either has run. */
+    /** 历史字号（settings-roadmap P0-1）：只缩放历史内容文字，0.9 / 1.0 / 1.15。 */
+    val historyFontScale: Float = SyncSettingsStore.HISTORY_FONT_SCALE_STANDARD,
+    /** 预览行数（settings-roadmap P1-7）：2 / 4 / 6，默认 4。 */
+    val previewLines: Int = SyncSettingsStore.DEFAULT_PREVIEW_LINES,
+    /** 跳过敏感内容（settings-roadmap P0-4）：默认开，依赖来源应用的敏感标记。 */
+    val skipSensitive: Boolean = true,
+    /** 收到内容通知（settings-roadmap P1-8）：应用内总开关，默认开。 */
+    val inboxNotify: Boolean = true,
+    /** Result line of the last 导出历史/导入历史/清空历史 run; null until one has run. */
     val transferStatus: String? = null,
 )
 
@@ -86,12 +96,17 @@ class PreferencesViewModel(
                 autoApplyRemote = settings.autoApplyRemote,
                 autoExpire = settings.autoExpireEnabled,
                 retentionDays = settings.retentionMaxAgeDays,
+                maxEntries = settings.retentionMaxEntries,
                 bootRestore = settings.bootRestoreEnabled,
                 imageSync = settings.imageSyncEnabled,
                 autoApplyImages = settings.autoApplyImages,
                 maxSyncTextBytes = settings.effectiveMaxSyncTextBytes,
                 bluetoothFallback = settings.bluetoothFallbackEnabled,
                 bluetoothDeviceName = settings.bluetoothPeerName,
+                historyFontScale = settings.historyFontScale,
+                previewLines = settings.previewLines,
+                skipSensitive = settings.skipSensitiveEnabled,
+                inboxNotify = settings.inboxNotifyEnabled,
             ),
         )
 
@@ -124,9 +139,54 @@ class PreferencesViewModel(
     }
 
     fun setRetentionDays(days: Int) {
-        settings.retentionMaxAgeDays = days
-        mutableState.update { it.copy(retentionDays = days) }
+        val clamped = days.coerceIn(SyncSettingsStore.MIN_RETENTION_DAYS, SyncSettingsStore.MAX_RETENTION_DAYS)
+        settings.retentionMaxAgeDays = clamped
+        mutableState.update { it.copy(retentionDays = clamped) }
         sideEffects.onRetentionChanged()
+    }
+
+    /** 保留条数上限 (settings-roadmap P1-15): the cap always applies; a lowered cap cleans now. */
+    fun setMaxEntries(entries: Int) {
+        val clamped = entries.coerceIn(SyncSettingsStore.MIN_MAX_ENTRIES, SyncSettingsStore.MAX_MAX_ENTRIES)
+        settings.retentionMaxEntries = clamped
+        mutableState.update { it.copy(maxEntries = clamped) }
+        sideEffects.onRetentionChanged()
+    }
+
+    /** 历史字号 (settings-roadmap P0-1): content-text-only scale, one of the three roadmap steps. */
+    fun setHistoryFontScale(scale: Float) {
+        if (scale !in SyncSettingsStore.HISTORY_FONT_SCALES) {
+            return
+        }
+        settings.historyFontScale = scale
+        mutableState.update { it.copy(historyFontScale = scale) }
+    }
+
+    /** 预览行数 (settings-roadmap P1-7): history preview maxLines, 2 / 4 / 6. */
+    fun setPreviewLines(lines: Int) {
+        if (lines !in SyncSettingsStore.PREVIEW_LINE_CHOICES) {
+            return
+        }
+        settings.previewLines = lines
+        mutableState.update { it.copy(previewLines = lines) }
+    }
+
+    /**
+     * 跳过敏感内容 (settings-roadmap P0-4): the capture policy re-reads the key per event,
+     * so flipping applies to the very next copy without a service restart.
+     */
+    fun setSkipSensitive(enabled: Boolean) {
+        settings.skipSensitiveEnabled = enabled
+        mutableState.update { it.copy(skipSensitive = enabled) }
+    }
+
+    /**
+     * 收到内容通知 (settings-roadmap P1-8): the delivery path re-reads the key per inbound
+     * batch. Off silences only the notification surface; sync and history keep working.
+     */
+    fun setInboxNotify(enabled: Boolean) {
+        settings.inboxNotifyEnabled = enabled
+        mutableState.update { it.copy(inboxNotify = enabled) }
     }
 
     /** The preference is written first so the receiver's boot-time re-check agrees. */
@@ -216,6 +276,24 @@ class PreferencesViewModel(
                     "导入失败：无法读取所选文件。"
                 }
             mutableState.update { it.copy(transferStatus = status) }
+        }
+    }
+
+    /**
+     * 清空历史 (settings-roadmap P0-5): one local batch delete of every visible entry,
+     * with the same local-delete semantics as the per-row swipe — soft-deleted terminal
+     * markers, never a remote recall — plus image-blob garbage collection. The two-step
+     * confirmation lives in the UI; this method is the already-confirmed action.
+     */
+    fun clearHistory() {
+        val repository = historyRepository() ?: return
+        viewModelScope.launch(ioDispatcher) {
+            val now = nowMs()
+            val cleared = repository.clearHistory(now)
+            repository.collectMediaGarbage(now)
+            mutableState.update {
+                it.copy(transferStatus = "已清空 $cleared 条历史（仅本机，不影响对端）。")
+            }
         }
     }
 

@@ -133,4 +133,61 @@ class SyncSettingsStoreTest {
         store.maxSyncTextBytes = 8_388_608 // stored, but the wire cap still rules
         assertEquals(1_048_576, store.effectiveMaxSyncTextBytes)
     }
+
+    @Test
+    fun basicSettingsDefaultsFollowTheRoadmap() {
+        // settings-roadmap P0-1 / P1-7: 标准字号, 4 preview lines.
+        assertEquals(SyncSettingsStore.HISTORY_FONT_SCALE_STANDARD, store.historyFontScale, 0f)
+        assertEquals(SyncSettingsStore.DEFAULT_PREVIEW_LINES, store.previewLines)
+        // P0-4: 跳过敏感内容 is on by default (a privacy promise, not an opt-in).
+        assertTrue(store.skipSensitiveEnabled)
+        // P1-8: 收到内容通知 defaults on; only the user turns the surface off.
+        assertTrue(store.inboxNotifyEnabled)
+    }
+
+    @Test
+    fun basicSettingsRoundTripUnderTheRoadmapKeys() {
+        val backing = FakeKeyValueStore()
+        val settings = SyncSettingsStore(backing)
+
+        settings.historyFontScale = SyncSettingsStore.HISTORY_FONT_SCALE_LARGE
+        settings.previewLines = 6
+        settings.skipSensitiveEnabled = false
+        settings.inboxNotifyEnabled = false
+
+        // The roadmap prefix rule: ui. / capture. / notify. — never new sync.* keys.
+        assertEquals("1.15", backing.values["ui.history_font_scale"])
+        assertEquals("6", backing.values["ui.preview_lines"])
+        assertEquals("false", backing.values["capture.skip_sensitive"])
+        assertEquals("false", backing.values["notify.inbox"])
+
+        val reloaded = SyncSettingsStore(backing)
+        assertEquals(SyncSettingsStore.HISTORY_FONT_SCALE_LARGE, reloaded.historyFontScale, 0f)
+        assertEquals(6, reloaded.previewLines)
+        assertFalse(reloaded.skipSensitiveEnabled)
+        assertFalse(reloaded.inboxNotifyEnabled)
+    }
+
+    @Test
+    fun offStepValuesForFontScaleAndPreviewLinesAreRejectedAndCorruptOnesFallBack() {
+        try {
+            store.historyFontScale = 2.0f
+            throw AssertionError("Expected IllegalArgumentException")
+        } catch (expected: IllegalArgumentException) {
+            // Only the three roadmap steps are valid.
+        }
+        try {
+            store.previewLines = 3
+            throw AssertionError("Expected IllegalArgumentException")
+        } catch (expected: IllegalArgumentException) {
+            // Only 2 / 4 / 6 are valid.
+        }
+
+        val backing = FakeKeyValueStore()
+        backing.values["ui.history_font_scale"] = "999"
+        backing.values["ui.preview_lines"] = "0"
+        val corrupted = SyncSettingsStore(backing)
+        assertEquals(SyncSettingsStore.HISTORY_FONT_SCALE_STANDARD, corrupted.historyFontScale, 0f)
+        assertEquals(SyncSettingsStore.DEFAULT_PREVIEW_LINES, corrupted.previewLines)
+    }
 }

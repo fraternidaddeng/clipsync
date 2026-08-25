@@ -79,6 +79,38 @@ class ClipboardCaptureManagerTest {
     }
 
     @Test
+    fun `sensitive-marked clips enter neither history nor sync by default`() {
+        // settings-roadmap P0-4: the preference defaults on — no setup required.
+        val outcome = manager.onClipboardChanged(change("hunter2").copy(isSensitive = true))
+
+        assertEquals(CaptureOutcome.SKIPPED_SENSITIVE, outcome)
+        assertTrue(outbox.pending().isEmpty())
+        assertEquals(0, nudges)
+
+        // An unmarked clip still flows: only the source-app marker gates.
+        assertEquals(CaptureOutcome.CAPTURED, manager.onClipboardChanged(change("plain note")))
+    }
+
+    @Test
+    fun `turning the skip-sensitive preference off applies to the very next copy`() {
+        settings.skipSensitiveEnabled = false
+
+        val outcome = manager.onClipboardChanged(change("hunter2").copy(isSensitive = true))
+
+        assertEquals(CaptureOutcome.CAPTURED, outcome)
+        assertEquals("hunter2", outbox.pending().single().text)
+    }
+
+    @Test
+    fun `private mode still wins the outcome over the sensitive marker`() {
+        settings.privateMode = true
+
+        val outcome = manager.onClipboardChanged(change("hunter2").copy(isSensitive = true))
+
+        assertEquals(CaptureOutcome.SKIPPED_PRIVATE_MODE, outcome)
+    }
+
+    @Test
     fun `toggling pause off applies to the very next change`() {
         settings.syncPaused = true
         assertEquals(CaptureOutcome.SKIPPED_SYNC_PAUSED, manager.onClipboardChanged(change("one")))
