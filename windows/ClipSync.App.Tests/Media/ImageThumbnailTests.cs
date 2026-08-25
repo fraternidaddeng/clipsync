@@ -160,6 +160,72 @@ public sealed class ImageThumbnailTests : IDisposable
     }
 
     [Fact]
+    public void LoadForListRegeneratesACorruptCachedThumbnail()
+    {
+        // A cached file left truncated/garbled (old build, disk fault) passes the
+        // exists/length gate but cannot decode. The blob is intact, so the row must
+        // heal itself instead of showing 无预览 forever.
+        var store = new MediaBlobStore(root);
+        var png = ImageCodec.EncodePngBgra(320, 200, SolidBgra(320, 200, b: 25, g: 130, r: 210));
+        var image = store.CommitBytes(png);
+        var cached = store.ThumbnailPath(image.ContentHash);
+        var garbage = new byte[64];
+        Array.Fill(garbage, (byte)0xAB);
+        File.WriteAllBytes(cached, garbage);
+
+        var (path, bitmap) = ImageThumbnail.LoadForList(store, image.ContentHash, decodePixelWidth: 128);
+
+        Assert.Equal(cached, path);
+        Assert.NotNull(bitmap);
+        Assert.True(bitmap!.IsFrozen);
+        var (b, g, r, a) = CenterPixel(bitmap);
+        Assert.Equal(255, a);
+        Assert.Equal(25, b);
+        Assert.Equal(130, g);
+        Assert.Equal(210, r);
+        // The cache itself was rewritten from the blob and decodes again.
+        Assert.NotNull(BitmapFile.TryLoad(cached));
+        Assert.Equal(ImageCodecError.Ok, ImageCodec.TryInspectFile(cached, out _));
+    }
+
+    [Fact]
+    public void LoadForListFallsBackToTheBlobWhenTheCacheCannotBeWritten()
+    {
+        // With the thumbs directory unavailable (a file squats on its name), Ensure
+        // can never produce a cache — the bind still decodes the blob directly, so a
+        // row whose pixels exist never blanks.
+        var store = new MediaBlobStore(root);
+        var png = ImageCodec.EncodePngBgra(96, 96, SolidBgra(96, 96, b: 70, g: 40, r: 160));
+        var image = store.CommitBytes(png);
+        var thumbsDirectory = Path.Combine(root, MediaBlobStore.ThumbnailsDirectoryName);
+        Directory.Delete(thumbsDirectory, recursive: true);
+        File.WriteAllText(thumbsDirectory, "not a directory");
+
+        var (path, bitmap) = ImageThumbnail.LoadForList(store, image.ContentHash, decodePixelWidth: 128);
+
+        Assert.Null(path);
+        Assert.NotNull(bitmap);
+        Assert.True(bitmap!.IsFrozen);
+        var (b, g, r, a) = CenterPixel(bitmap);
+        Assert.Equal(255, a);
+        Assert.Equal(70, b);
+        Assert.Equal(40, g);
+        Assert.Equal(160, r);
+    }
+
+    [Fact]
+    public void LoadForListReturnsNullImageOnlyWhenTheBlobIsMissing()
+    {
+        var store = new MediaBlobStore(root);
+        var missing = new string('b', 64);
+
+        var (path, bitmap) = ImageThumbnail.LoadForList(store, missing, decodePixelWidth: 128);
+
+        Assert.Null(path);
+        Assert.Null(bitmap);
+    }
+
+    [Fact]
     public void EnsureLeavesNoTempFilesBehind()
     {
         var store = new MediaBlobStore(root);

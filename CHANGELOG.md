@@ -32,6 +32,7 @@
 - [Windows] 启动时不再遗留空控制台窗口：当进程被控制台方式拉起（如 `dotnet ClipSync.App.dll`，窗口标题为 dotnet.exe 路径）时，应用在 `OnStartup` 里检测并分离继承来的控制台（`GetConsoleWindow` + `FreeConsole`），保持纯托盘启动；应用运行时自身不派生任何子进程。
 - [Android] 通知栏不再回落成系统默认图标（绿色机器人）：小图标去掉主题属性着色（SystemUI 跨进程解析不了主题属性时会整体回退），三个通知渠道归入统一「剪贴同步」渠道组，前台服务通知补齐宪章配色（polyline 图标 + 流动蓝 #215F8F）、低优先级与无时间戳。
 - [Windows] 历史列表图片缩略图不再显示为空灰块：修复并发刷新下缩略图临时文件互相踢掉导致的静默失败（改为每次尝试独立临时名，输者复用赢者成品）；WIC 解码/编码故障（含 COMException）降级而非中断刷新；位图在 `FromEntry` 一次解码并冻结后绑定，容器回收不再重解码；确实无法出图时显示诚实的「无预览」占位而非空灰块。
+- [Windows] 历史列表追加三处修复：(1) 缩略图管线自愈——缓存缩略图文件损坏（旧版本遗留、磁盘故障）时绑定即删除并从 blob 重建，重建仍失败则直接按 128px 有界解码原始 blob 兜底，「无预览」占位从此只在 blob 缺失或真不可解码时出现（新增诊断码 `thumbnail_cache_regenerated` / `thumbnail_blob_bind_fallback`），占位字形与文字由 text-4 提升为 text-3 保证可辨；(2) 来源应用无法识别时不再显示裸英文「Unknown source」——改为与设备/形态注记盒同形制的中性灰注记盒「未知来源」（accent 0 灰族令牌：`CsSurface3`/`CsLine2`/`CsText3`），元信息行只留时间，详情窗同步显示「来源：未知来源」；(3) 条目布局跨类型统一——所有条目共享固定 56px 左槽（图片=缩略图或「无预览」，文本=安静的三行文字线字形占位），右侧标题、注记盒、元信息行纵向对齐并整体居中，图片行与文本行不再左缘参差（链接/账号/验证码/密码/图片形态注记全部保留）。
 - [双端] 开启系统代理（Clash/Surge 等）时同步不再被劫持或断连：Android 端 OkHttp（同步、配对、健康探测）显式 `Proxy.NO_PROXY` 直连，Windows 端 `ClientWebSocket.Options.Proxy = null` 直连；TUN/VPN/全局模式的放行方法见 `docs/install.md` 第 5 节。
 - [Windows] 合并 tray-diagnostics 后的 `DiagnosticsWindow` 构建错误。
 - [Android] 自动写入通知配色与 Compose 弃用告警。

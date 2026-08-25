@@ -11,6 +11,57 @@ namespace ClipSync.App.Media;
 /// </summary>
 internal static class ImageThumbnail
 {
+    /// <summary>
+    /// Bind-time loader for the history list: returns the cached thumbnail path plus a
+    /// decoded, frozen bitmap. A cached file that no longer decodes (truncated by an old
+    /// build, disk fault) is deleted and regenerated from the blob; as a last resort the
+    /// blob itself is decoded bounded. The honest 无预览 placeholder is thereby reserved
+    /// for a blob that is missing or truly undecodable — never for a stale cache.
+    /// </summary>
+    public static (string? ThumbnailPath, BitmapSource? Image) LoadForList(
+        MediaBlobStore store,
+        string contentHash,
+        int decodePixelWidth)
+    {
+        ArgumentNullException.ThrowIfNull(store);
+        ArgumentException.ThrowIfNullOrWhiteSpace(contentHash);
+        ArgumentOutOfRangeException.ThrowIfLessThan(decodePixelWidth, 1);
+
+        var path = Ensure(store, contentHash);
+        if (path is not null)
+        {
+            var image = BitmapFile.TryLoad(path, decodePixelWidth);
+            if (image is not null)
+            {
+                return (path, image);
+            }
+
+            // The cache passed the exists/length gate but its pixels are gone. The
+            // blob is the source of truth: heal the cache instead of blanking a row
+            // whose pixels are still on disk.
+            LocalDiagnostics.Write("thumbnail_bind_decode_failed");
+            TryDelete(path);
+            path = Ensure(store, contentHash);
+            if (path is not null)
+            {
+                image = BitmapFile.TryLoad(path, decodePixelWidth);
+                if (image is not null)
+                {
+                    LocalDiagnostics.Write("thumbnail_cache_regenerated");
+                    return (path, image);
+                }
+            }
+        }
+
+        var direct = TryLoadFromBlob(store, contentHash, decodePixelWidth);
+        if (direct is not null)
+        {
+            LocalDiagnostics.Write("thumbnail_blob_bind_fallback");
+        }
+
+        return (path, direct);
+    }
+
     public static string? Ensure(MediaBlobStore store, string contentHash)
     {
         ArgumentNullException.ThrowIfNull(store);
@@ -109,6 +160,29 @@ internal static class ImageThumbnail
         catch (UnauthorizedAccessException)
         {
         }
+    }
+
+    /// <summary>
+    /// Direct bounded decode of the original blob for the list bind — used only when
+    /// the thumbnail cache cannot be produced (e.g. thumbs directory unwritable).
+    /// </summary>
+    private static BitmapSource? TryLoadFromBlob(MediaBlobStore store, string contentHash, int decodePixelWidth)
+    {
+        string blob;
+        try
+        {
+            blob = store.RequirePath(contentHash);
+        }
+        catch (FileNotFoundException)
+        {
+            return null;
+        }
+        catch (ArgumentException)
+        {
+            return null;
+        }
+
+        return BitmapFile.TryLoad(blob, decodePixelWidth) ?? DecodeWithDecoder(blob);
     }
 
     private static BitmapSource? DecodeBounded(string blobPath)

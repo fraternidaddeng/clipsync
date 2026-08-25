@@ -71,6 +71,35 @@ public sealed class HistoryItemThumbnailTests : IDisposable
     }
 
     [Fact]
+    public void FromEntryHealsACorruptCachedThumbnail()
+    {
+        // Regression net for the "blob exists but the 56 px box stays grey" bug: a
+        // stale cache file that no longer decodes must be regenerated from the blob
+        // at bind time, never surfacing the 无预览 placeholder.
+        var png = ImageCodec.EncodePngBgra(
+            320,
+            200,
+            ImageThumbnailTests.SolidBgra(320, 200, b: 90, g: 45, r: 170));
+        var image = store.CommitBytes(png);
+        var garbage = new byte[128];
+        Array.Fill(garbage, (byte)0xCD);
+        File.WriteAllBytes(store.ThumbnailPath(image.ContentHash), garbage);
+
+        var item = HistoryItemViewModel.FromEntry(ImageEntry(image), LocalDeviceId, media: store);
+
+        Assert.True(item.HasThumbnail);
+        Assert.False(item.ShowsNoPreview);
+        Assert.Equal(store.ThumbnailPath(image.ContentHash), item.ThumbnailPath);
+        var bitmap = Assert.IsAssignableFrom<BitmapSource>(item.ThumbnailImage);
+        Assert.True(bitmap.IsFrozen);
+        var (b, g, r, a) = ImageThumbnailTests.CenterPixel(bitmap);
+        Assert.Equal(255, a);
+        Assert.Equal(90, b);
+        Assert.Equal(45, g);
+        Assert.Equal(170, r);
+    }
+
+    [Fact]
     public void FromEntryFallsBackToPlaceholderStateWhenBlobIsMissing()
     {
         var entry = new ClipboardHistoryEntry(
@@ -93,6 +122,7 @@ public sealed class HistoryItemThumbnailTests : IDisposable
 
         Assert.True(item.IsImage);
         Assert.False(item.HasThumbnail);
+        Assert.True(item.ShowsNoPreview);
         Assert.Null(item.ThumbnailImage);
         Assert.Null(item.ThumbnailPath);
         // The metadata line stays honest even without a preview.

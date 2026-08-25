@@ -39,6 +39,8 @@
         <Geometry x:Key="IconSearch">M10.5,4 A6.5,6.5 0 1 0 10.5,17 A6.5,6.5 0 1 0 10.5,4 M15.4,15.4 L20,20</Geometry>
         <!-- 相框 + 山形 + 斜杠：缩略图缺失时的「无预览」占位 -->
         <Geometry x:Key="IconNoPreview">M6,4.5 H18 A1.5,1.5 0 0 1 19.5,6 V18 A1.5,1.5 0 0 1 18,19.5 H6 A1.5,1.5 0 0 1 4.5,18 V6 A1.5,1.5 0 0 1 6,4.5 Z M4.5,15.5 L9.5,10.5 L13,14 M14.5,12.5 L16,11 L19.5,14.5 M4,4 L20,20</Geometry>
+        <!-- 三行文字线：文本条目在统一 56px 左槽里的安静占位字形 -->
+        <Geometry x:Key="IconClipText">M5,7 H19 M5,12 H16 M5,17 H12</Geometry>
 
         <!-- ============ 控件样式 ============ -->
         <!-- 左栏导航项：图标 + 文字，选中 = 流动蓝着色盒 -->
@@ -717,9 +719,10 @@
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <!-- 图片条目：56px 缩略图靠左，安静圆角盒；文本条目不占位。
-                                             位图在 FromEntry 里解码并冻结（容器回收不再重解码）；
-                                             解码失败时给诚实的「无预览」占位，不留无解释的空灰块 -->
+                                        <!-- 统一 56px 左槽：所有条目共享同一纵向结构，标题/注记盒/元信息
+                                             跨类型对齐（宪章间距 12）。图片=缩略图（FromEntry 一次解码并
+                                             冻结，容器回收不再重解码；缓存损坏时自愈重建、blob 兜底），
+                                             图片确实无像素可出=诚实「无预览」，文本=安静字形占位。 -->
                                         <Border Width="56"
                                                 Height="56"
                                                 Margin="0,0,12,0"
@@ -728,26 +731,41 @@
                                                 BorderBrush="{DynamicResource CsLineBrush}"
                                                 BorderThickness="1"
                                                 ClipToBounds="True"
-                                                CornerRadius="8"
-                                                Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}">
+                                                CornerRadius="8">
                                             <Grid>
+                                                <!-- 文本条目占位字形：三行文字线，安静不喧宾 -->
+                                                <Viewbox Width="18"
+                                                         Height="18"
+                                                         HorizontalAlignment="Center"
+                                                         VerticalAlignment="Center"
+                                                         Visibility="{Binding IsImage, Converter={StaticResource InverseBoolToVisibility}}">
+                                                    <Canvas Width="24" Height="24">
+                                                        <Path Data="{StaticResource IconClipText}"
+                                                              Stroke="{DynamicResource CsText4Brush}"
+                                                              StrokeThickness="1.7"
+                                                              StrokeStartLineCap="Round"
+                                                              StrokeEndLineCap="Round"
+                                                              StrokeLineJoin="Round" />
+                                                    </Canvas>
+                                                </Viewbox>
+                                                <!-- 仅当 blob 缺失或真不可解码：诚实「无预览」，用 text-3 保证可辨 -->
                                                 <StackPanel HorizontalAlignment="Center"
                                                             VerticalAlignment="Center"
-                                                            Visibility="{Binding HasThumbnail, Converter={StaticResource InverseBoolToVisibility}}">
-                                                    <Viewbox Width="16" Height="16" HorizontalAlignment="Center">
+                                                            Visibility="{Binding ShowsNoPreview, Converter={StaticResource BoolToVisibility}}">
+                                                    <Viewbox Width="18" Height="18" HorizontalAlignment="Center">
                                                         <Canvas Width="24" Height="24">
                                                             <Path Data="{StaticResource IconNoPreview}"
-                                                                  Stroke="{DynamicResource CsText4Brush}"
+                                                                  Stroke="{DynamicResource CsText3Brush}"
                                                                   StrokeThickness="1.7"
                                                                   StrokeStartLineCap="Round"
                                                                   StrokeEndLineCap="Round"
                                                                   StrokeLineJoin="Round" />
                                                         </Canvas>
                                                     </Viewbox>
-                                                    <TextBlock Margin="0,3,0,0"
+                                                    <TextBlock Margin="0,4,0,0"
                                                                HorizontalAlignment="Center"
                                                                FontSize="9"
-                                                               Foreground="{DynamicResource CsText4Brush}"
+                                                               Foreground="{DynamicResource CsText3Brush}"
                                                                Text="无预览" />
                                                 </StackPanel>
                                                 <Image Source="{Binding ThumbnailImage}"
@@ -755,48 +773,61 @@
                                                        Visibility="{Binding HasThumbnail, Converter={StaticResource BoolToVisibility}}" />
                                             </Grid>
                                         </Border>
-                                        <StackPanel Grid.Column="1">
-                                        <TextBlock MaxHeight="56"
-                                                   FontSize="13"
-                                                   Foreground="{DynamicResource CsText2Brush}"
-                                                   Text="{Binding Preview, Mode=OneWay}"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   TextWrapping="Wrap" />
-                                        <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
-                                            <!-- 远端来源用该设备的邻近色注记盒（按配对顺位）；本机条目不加盒，保持安静 -->
-                                            <Border Margin="0,0,7,0"
-                                                    Padding="7,1"
-                                                    VerticalAlignment="Center"
-                                                    Background="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Background}"
-                                                    BorderBrush="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Line}"
-                                                    BorderThickness="1"
-                                                    CornerRadius="6"
-                                                    Visibility="{Binding IsRemote, Converter={StaticResource BoolToVisibility}}">
-                                                <TextBlock FontSize="9"
-                                                           Foreground="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
-                                                           Text="{Binding OriginLabel}" />
-                                            </Border>
-                                            <!-- 形态注记盒（ADR 0003）：固定邻近色槽位，密码用藕紫不是红——
-                                                 它是待找回的事实，不是警报；普通文本不加盒 -->
-                                            <Border Margin="0,0,7,0"
-                                                    Padding="7,1"
-                                                    VerticalAlignment="Center"
-                                                    Background="{Binding FormatAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Background}"
-                                                    BorderBrush="{Binding FormatAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Line}"
-                                                    BorderThickness="1"
-                                                    CornerRadius="6"
-                                                    Visibility="{Binding HasFormatBadge, Converter={StaticResource BoolToVisibility}}">
-                                                <TextBlock FontSize="9"
-                                                           Foreground="{Binding FormatAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
-                                                           Text="{Binding FormatLabel}" />
-                                            </Border>
-                                            <TextBlock VerticalAlignment="Center"
-                                                       FontFamily="{StaticResource CsMono}"
-                                                       FontSize="10.5"
-                                                       Foreground="{DynamicResource CsText4Brush}">
-                                                <Run Text="{Binding Source, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding CreatedAt, Mode=OneWay}" />
-                                            </TextBlock>
-                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock MaxHeight="56"
+                                                       FontSize="13"
+                                                       Foreground="{DynamicResource CsText2Brush}"
+                                                       Text="{Binding Preview, Mode=OneWay}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       TextWrapping="Wrap" />
+                                            <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                                                <!-- 远端来源用该设备的邻近色注记盒（按配对顺位）；本机条目不加盒，保持安静 -->
+                                                <Border Margin="0,0,7,0"
+                                                        Padding="7,1"
+                                                        VerticalAlignment="Center"
+                                                        Background="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Background}"
+                                                        BorderBrush="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Line}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        Visibility="{Binding IsRemote, Converter={StaticResource BoolToVisibility}}">
+                                                    <TextBlock FontSize="9"
+                                                               Foreground="{Binding OriginAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
+                                                               Text="{Binding OriginLabel}" />
+                                                </Border>
+                                                <!-- 形态注记盒（ADR 0003）：固定邻近色槽位，密码用藕紫不是红——
+                                                     它是待找回的事实，不是警报；普通文本不加盒 -->
+                                                <Border Margin="0,0,7,0"
+                                                        Padding="7,1"
+                                                        VerticalAlignment="Center"
+                                                        Background="{Binding FormatAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Background}"
+                                                        BorderBrush="{Binding FormatAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Line}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        Visibility="{Binding HasFormatBadge, Converter={StaticResource BoolToVisibility}}">
+                                                    <TextBlock FontSize="9"
+                                                               Foreground="{Binding FormatAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
+                                                               Text="{Binding FormatLabel}" />
+                                                </Border>
+                                                <!-- 来源应用不可识别：与其它注记盒同形制的中性灰盒（accent 0 灰族），
+                                                     事实陈述不是警报；可识别来源留在下方元信息行，保持安静 -->
+                                                <Border Margin="0,0,7,0"
+                                                        Padding="7,1"
+                                                        VerticalAlignment="Center"
+                                                        Background="{DynamicResource CsSurface3Brush}"
+                                                        BorderBrush="{DynamicResource CsLine2Brush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        Visibility="{Binding IsSourceKnown, Converter={StaticResource InverseBoolToVisibility}}">
+                                                    <TextBlock FontSize="9"
+                                                               Foreground="{DynamicResource CsText3Brush}"
+                                                               Text="{Binding Source, Mode=OneWay}" />
+                                                </Border>
+                                                <TextBlock VerticalAlignment="Center"
+                                                           FontFamily="{StaticResource CsMono}"
+                                                           FontSize="10.5"
+                                                           Foreground="{DynamicResource CsText4Brush}"
+                                                           Text="{Binding MetaLine, Mode=OneWay}" />
+                                            </StackPanel>
                                         </StackPanel>
                                     </Grid>
                                 </DataTemplate>

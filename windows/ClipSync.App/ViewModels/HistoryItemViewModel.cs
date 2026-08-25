@@ -21,10 +21,14 @@ public sealed record HistoryItemViewModel(
     int? PixelHeight = null,
     string? ContentHash = null,
     string? ThumbnailPath = null,
-    System.Windows.Media.ImageSource? ThumbnailImage = null)
+    System.Windows.Media.ImageSource? ThumbnailImage = null,
+    bool IsSourceKnown = true)
 {
     /// <summary>Shown for remote clips whose origin device is no longer in the paired list.</summary>
     private const string UnknownRemoteLabel = "远端设备";
+
+    /// <summary>Shown in a quiet grey annotation box when the source app could not be resolved.</summary>
+    internal const string UnknownSourceLabel = "未知来源";
 
     public bool IsImage => string.Equals(Kind, "image", StringComparison.Ordinal);
 
@@ -34,6 +38,15 @@ public sealed record HistoryItemViewModel(
     /// an unexplained empty box.
     /// </summary>
     public bool HasThumbnail => ThumbnailImage is not null;
+
+    /// <summary>Image rows whose pixels could not be produced at all show the 无预览 badge.</summary>
+    public bool ShowsNoPreview => IsImage && !HasThumbnail;
+
+    /// <summary>
+    /// Metadata line under the pills: "source · time" for a resolved source app; the
+    /// unresolved case moves 未知来源 into its grey annotation box, so only the time stays.
+    /// </summary>
+    public string MetaLine => IsSourceKnown ? $"{Source} · {CreatedAt}" : CreatedAt;
 
     /// <summary>
     /// Card body line: the clip text, or for images a factual metadata line
@@ -80,24 +93,20 @@ public sealed record HistoryItemViewModel(
         System.Windows.Media.ImageSource? thumbnailImage = null;
         if (entry.IsImage && media is not null && !string.IsNullOrEmpty(entry.ContentHash))
         {
-            thumbnail = ClipSync.App.Media.ImageThumbnail.Ensure(media, entry.ContentHash);
-            if (thumbnail is not null)
-            {
-                // Decode once per refresh and freeze: the frozen bitmap is what the
-                // list binds, so container recycling never re-runs a converter and a
-                // transient file error can't blank an already-loaded row.
-                thumbnailImage = ClipSync.App.Media.BitmapFile.TryLoad(thumbnail, decodePixelWidth: 128);
-                if (thumbnailImage is null)
-                {
-                    ClipSync.App.Diagnostics.LocalDiagnostics.Write("thumbnail_bind_decode_failed");
-                }
-            }
+            // Decode once per refresh and freeze: the frozen bitmap is what the list
+            // binds, so container recycling never re-runs a converter and a transient
+            // file error can't blank an already-loaded row. LoadForList self-heals a
+            // corrupt cached thumbnail and falls back to the blob, so the 无预览
+            // placeholder appears only when no pixels can be produced at all.
+            (thumbnail, thumbnailImage) =
+                ClipSync.App.Media.ImageThumbnail.LoadForList(media, entry.ContentHash, decodePixelWidth: 128);
         }
 
+        var isSourceKnown = !string.IsNullOrWhiteSpace(entry.SourceProcess);
         return new HistoryItemViewModel(
             entry.EventId,
             entry.Text,
-            entry.SourceProcess ?? "Unknown source",
+            isSourceKnown ? entry.SourceProcess! : UnknownSourceLabel,
             entry.CreatedAt.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture),
             isRemote,
             isRemote ? device?.DisplayName ?? UnknownRemoteLabel : "本机",
@@ -114,7 +123,8 @@ public sealed record HistoryItemViewModel(
             entry.PixelHeight,
             entry.ContentHash,
             thumbnail,
-            thumbnailImage);
+            thumbnailImage,
+            isSourceKnown);
     }
 
     private string FormatImagePreview()
