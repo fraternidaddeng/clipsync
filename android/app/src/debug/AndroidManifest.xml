@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    DEBUG-ONLY manifest overlay for the phase 0 Bluetooth RFCOMM spike
+    (docs/bluetooth-phase0-spike.md). Merged into debug builds only: the release APK
+    gains neither the Bluetooth permissions nor the spike activity. The production
+    permissions land in the MAIN manifest during phase 3, not here.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- API 29-30: install-time Bluetooth permission (ADR 0005 §2). -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <!-- API 31+: runtime permission; the spike activity requests it. No BLUETOOTH_SCAN:
+         the spike only talks to already-bonded devices, exactly like phase 3 will. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <application>
+        <!-- Second launcher icon, debug builds only: "ClipSync BT Spike". -->
+        <activity
+            android:name="com.clipsync.android.spike.Bt1SpikeActivity"
+            android:exported="true"
+            android:label="ClipSync BT Spike">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
