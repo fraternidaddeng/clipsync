@@ -1,6 +1,6 @@
 # Android 实体机验证矩阵
 
-状态：设备盘点模板 + 脚本化检查清单（2026-08-24 扩充）。**尚未提供或连接任何实体设备，以下结果全部为 `NOT_TESTED`，不得视为兼容性声明。** 本页新增的检查步骤与 READY 判据只是把「人到场之后要做什么、做到什么程度算过」预先写死，防止临场即兴降低标准。
+状态：设备盘点模板 + 脚本化检查清单（2026-08-24 扩充；2026-08-25 增补蓝牙 spike 证据）。**剪贴板通路矩阵（S0–S4）尚未在任何实体设备上执行，各槽位结果全部为 `NOT_TESTED`，不得视为兼容性声明。** 例外：蓝牙备援阶段 0 spike 已于 2026-08-25 在一对真机上执行并判定 GO（见下方「蓝牙备援 spike 证据」小节），但该 spike 不涉及本页的剪贴板通路检查，矩阵槽位状态不因此改变。本页的检查步骤与 READY 判据只是把「人到场之后要做什么、做到什么程度算过」预先写死，防止临场即兴降低标准。
 
 参考：`feature/stage-4` 谱系在 Redmi Note 11T Pro / MIUI 14 上的实测结果已存档在 [`stage-4-lineage/device-validation-matrix.md`](stage-4-lineage/device-validation-matrix.md)（含 MIUI 后台剪贴板拒绝、Shizuku 版本可用性、P95 延迟等 ROM 行为数据）。那些结论属于另一条代码谱系，**不填入本表**，但排期实机验证时应先读它避开已知坑。
 
@@ -156,6 +156,16 @@
 | Overlay polling | 至少 3 | P95 ≤ 轮询间隔 + 1 s | 无残留窗口、持续焦点或无界唤醒 |
 | Foreground/manual | 所有无特殊权限设备 | 功能性验收 | 分享、磁贴、通知复制及断线补同步不被阻塞 |
 
+## 蓝牙备援 spike 证据（阶段 0，非 S0–S4 通路检查）
+
+来源：`docs/bluetooth-phase0-report.md`（含双端完整日志）；构建 commit `c2a5359`；执行日期 2026-08-25。证据走 spike 工具路径（`scripts/spike-bt1-windows/` + debug 版「ClipSync BT Spike」），**不是产品内 `BluetoothSyncHost`/`BluetoothSyncConnector` 路径**，不构成蓝牙备援 READY；产品路径矩阵属阶段 5。
+
+| 设备对 | Windows 端 | Android 端 | 模式/档位 | 轮次 | connect_ms | rtt_ms_median | 上行 KiB/s | 下行 KiB/s | 门槛判定 |
+|---|---|---|---|---|---|---|---|---|---|
+| W-1 × A-1 | Lenovo 21STA001CD，Windows 25H2（build 26200），Realtek USB 适配器（驱动 18.4028.0.3005） | Redmi Note 11T Pro（xaga），Android 13 / SDK 33，MIUI `TP1A.220624.014` | bt1 · 256 KiB | 3/3 通过 | 667 / 1665 / 2152 | 31.4 / 31.2 / 30.5 | 166.3 / 176.7 / 153.9 | 154.9 / 160.6 / 175.7 | G-W1、G-A1、G-C1、G-P1–P3、G-S1 全 PASS → **GO** |
+
+蓝牙侧已知缺口（阶段 3/5 补）：1 MiB 档、锁屏 ≥10 分钟连接存活、第二连接拒收演示、第二种适配器（Intel 未测）、第二个 OEM、raw 模式。OEM 行为备注：小米上 Windows「添加设备」常扫不到手机，需从手机系统蓝牙「可用设备」点击 PC 发起 bonding。
+
 ## 执行记录
 
-目前无实体机执行记录。首个测试开始时，为每台设备新增带日期的记录，包含操作者、构建 commit、前提、按 S0–S4 执行的步骤、原始计数（不含剪贴板正文）、结论和已知缺口。
+剪贴板通路（S0–S4）目前无实体机执行记录；蓝牙备援阶段 0 spike 的执行记录见上节与 `docs/bluetooth-phase0-report.md`。首个 S0–S4 测试开始时，为每台设备新增带日期的记录，包含操作者、构建 commit、前提、按 S0–S4 执行的步骤、原始计数（不含剪贴板正文）、结论和已知缺口。

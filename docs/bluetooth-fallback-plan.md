@@ -1,6 +1,6 @@
 # 蓝牙备援传输实施计划
 
-状态：软件实现完成（对应 ADR 0005）。阶段 1–4 的代码与单测均已落地（见各阶段状态）；阶段 0 的 spike 工具与运行手册已落库、**等待实体机执行**；阶段 5 的实体机矩阵未开始。诚实边界：双端功能默认关闭，全部逻辑在无蓝牙硬件的单测里验证（内存流伪装 socket），**尚无任何实体机蓝牙互连证据**——补齐阶段 0/5 的实测前，不得在文档或 UI 中宣称蓝牙备援 READY。
+状态：软件实现完成（对应 ADR 0005），**阶段 0 实体机 spike 已完成并判定 GO**（2026-08-25，报告 `docs/bluetooth-phase0-report.md`）。阶段 1–4 的代码与单测均已落地（见各阶段状态）；阶段 5 的实体机矩阵未开始。诚实边界：双端功能默认关闭；阶段 0 只证明一对真机上 RFCOMM 链路与 bt1 信道可行（走 spike 工具路径，非产品内 `BluetoothSyncHost`/`BluetoothSyncConnector` 路径），补齐阶段 5 的产品级实测前，不得在文档或 UI 中宣称蓝牙备援 READY。
 适用分支：`main`。所有阶段遵守仓库既有验收规则：无实体机证据不得标 `READY`；`TreatWarningsAsErrors`、detekt/ktlint 基线、协议 fixtures 由 `scripts/validate-protocol.py` 校验的约束照常适用。
 
 ## 总体形态
@@ -16,7 +16,7 @@
 
 ## 阶段 0：可行性验证（spike，产出证据，不产出功能）
 
-状态：**工具与材料已就绪，等待实体机执行**。运行手册（含逐步操作、期望输出、GO/REVISE 门槛与排障）见 `docs/bluetooth-phase0-spike.md`；结果回填模板见 `docs/bluetooth-phase0-report-template.md`。Windows 监听端 spike 在 `scripts/spike-bt1-windows/`（包装脚本 `scripts/spike-bt1-windows.ps1`，独立于 `ClipSync.sln`，引用 `ClipSync.Core` 的真实 bt1 实现与 `RfcommContract` 冻结 UUID）；Android 客户端 spike 是 debug 构建独有的「ClipSync BT Spike」入口（`android/app/src/debug/java/com/clipsync/android/spike/`，release APK 不含蓝牙权限与 spike 代码，logcat 标签 `ClipSyncSpike`）。双端 spike 项目在无实体机的 CI/Linux 主机上可编译（Windows 侧经 `EnableWindowsTargeting`）。
+状态：**已完成（GO，2026-08-25）**。报告见 `docs/bluetooth-phase0-report.md`（含双端完整日志与逐门槛判定）：G-W1、G-A1、G-C1、G-S1 全过，G-P1–P3 在一对真机上达标，结论为 GO——阶段 2 值得开工（且事实上阶段 1–4 的软件已先行落地）。运行手册（含逐步操作、期望输出、GO/REVISE 门槛与排障）见 `docs/bluetooth-phase0-spike.md`；结果回填模板见 `docs/bluetooth-phase0-report-template.md`。Windows 监听端 spike 在 `scripts/spike-bt1-windows/`（包装脚本 `scripts/spike-bt1-windows.ps1`，独立于 `ClipSync.sln`，引用 `ClipSync.Core` 的真实 bt1 实现与 `RfcommContract` 冻结 UUID）；Android 客户端 spike 是 debug 构建独有的「ClipSync BT Spike」入口（`android/app/src/debug/java/com/clipsync/android/spike/`，release APK 不含蓝牙权限与 spike 代码，logcat 标签 `ClipSyncSpike`）。双端 spike 项目在无实体机的 CI/Linux 主机上可编译（Windows 侧经 `EnableWindowsTargeting`）。
 
 任务：
 
@@ -27,6 +27,15 @@
 验收：spike 报告落入 `docs/`（含吞吐数据与适配器矩阵）；任一平台不可行则回到 ADR 修订，不进入阶段 1。
 
 主要风险：Windows 桌面（非 MSIX）对 WinRT 蓝牙 API 的访问在个别系统版本上受限；OEM Android 蓝牙栈对 RFCOMM secure socket 的差异。
+
+### 阶段 0 实测结果摘要（2026-08-25，详见 `docs/bluetooth-phase0-report.md`）
+
+- 设备对：Lenovo 21STA001CD（Windows 25H2 build 26200，Realtek USB 蓝牙适配器，驱动 18.4028.0.3005）× Redmi Note 11T Pro（Android 13 / SDK 33，MIUI 版 `TP1A.220624.014`）。
+- bt1 模式 256 KiB 档**连续 3 轮全通**（G-S1）：`connect_ms` 667 / 1665 / 2152（均 ≤ 5000，G-P1）；`bt1_handshake_ms` 103–110；`rtt_ms_median` 30.5–31.4 ms（G-P2 上限 500）；上行 153.9–176.7 KiB/s、下行 154.9–175.7 KiB/s（G-P3 下限 50）。
+- Windows 核心答案（G-W1）：未打包 .NET 8 进程 `winrt_rfcomm_provider=ok` 且 `sdp_published=true`——**不必为监听角色改成 MSIX**。
+- Android 核心答案（G-A1）：`BLUETOOTH_CONNECT` 授权流、bonded 枚举、`connect=ok` 全部成立。
+- 实操发现：小米上 Windows「添加设备」常扫不到手机，正确路径是从手机系统蓝牙「可用设备」列表点击 PC 发起 bonding（已回填 `docs/install.md` 第 7 节与运行手册排障表）；`connect_ms` 三轮 0.7→2.2 s 递增波动，阶段 2/3 的重连与 30 秒拨号看门狗保持必要，不得假设亚秒建连。
+- **已知缺口（转入阶段 3/5）**：1 MiB 档、锁屏 ≥10 分钟连接存活（Doze 观察项，FGS 下的正式结论属阶段 3/5）、第二连接拒收演示、第二种适配器（仅测 Realtek，未测 Intel）与第二个 OEM 均未测；raw 模式未跑（bt1 三轮直通，无需拆链路排障）。spike 用公开测试密钥，与真实 pair secret 无关。
 
 ## 阶段 1：bt1 握手与帧层（纯逻辑，无平台依赖）
 
@@ -42,7 +51,7 @@
 
 ## 阶段 2：Windows RFCOMM 服务端
 
-状态：**软件完成（实体机验证待做）**。`ClipSync.Peer.Bluetooth` 双 TFM（可移植 `net8.0` 承载全部可测逻辑 + `net8.0-windows10.0.19041.0` 仅承载 WinRT 的 `RfcommServer`）：`Bt1StreamFrames`（异步帧 I/O）、`Bt1ListenerHandshake`（监听侧握手，未知设备/撤销/epoch 不符/证明错误/限速全路径）、`Bt1SyncTransport`（`ISyncTransport` 适配器）、`BluetoothSyncHost`（单会话接受循环 + `AuthThrottle` + 每地址接受限速 + 无线电故障重启，内部会话强制协议 v1）。App 层：`蓝牙备援` 设置开关（默认关）、通路页网络段状态行（未启用/待命/同步中/适配器不可用）、暂停/私密门与 IP 路径共用。`ClipSync.Tests` 用内存双工流跑到真实 `SyncSessionEngine` 的端到端双向同步（无 WinRT、无硬件）。`RfcommServer` 本体只能在实体机上验证。
+状态：**软件完成（实体机验证待做）**。`ClipSync.Peer.Bluetooth` 双 TFM（可移植 `net8.0` 承载全部可测逻辑 + `net8.0-windows10.0.19041.0` 仅承载 WinRT 的 `RfcommServer`）：`Bt1StreamFrames`（异步帧 I/O）、`Bt1ListenerHandshake`（监听侧握手，未知设备/撤销/epoch 不符/证明错误/限速全路径）、`Bt1SyncTransport`（`ISyncTransport` 适配器）、`BluetoothSyncHost`（单会话接受循环 + `AuthThrottle` + 每地址接受限速 + 无线电故障重启，内部会话强制协议 v1）。App 层：`蓝牙备援` 设置开关（默认关）、通路页网络段状态行（未启用/待命/同步中/适配器不可用）、暂停/私密门与 IP 路径共用。`ClipSync.Tests` 用内存双工流跑到真实 `SyncSessionEngine` 的端到端双向同步（无 WinRT、无硬件）。`RfcommServer` 本体只能在实体机上验证——阶段 0 spike 已在真机证实其依赖的未打包 WinRT `RfcommServiceProvider` 路径可行（G-W1），但产品内 `RfcommServer`/`BluetoothSyncHost` 的实机端到端仍属阶段 5。
 
 任务：
 
@@ -54,7 +63,7 @@
 
 ## 阶段 3：Android RFCOMM 客户端
 
-状态：**软件完成（实体机验证待做）**。`Bt1StreamFraming`（阻塞帧 I/O）、`Bt1ClientHandshake`（拨号侧握手）、`Bt1SyncTransport`（`SyncTransport` 适配器）、`BluetoothSyncConnector`（RFCOMM 拨号：每次拨号复查开关/选定设备/运行时权限/适配器状态，30 秒看门狗经关 socket 中止阻塞 I/O）。Manifest 权限（`BLUETOOTH` maxSdk 30 + `BLUETOOTH_CONNECT`）、偏好页开关 + bonded 设备选择器、授权引导与拒绝降级均已落地。单测经内存管道覆盖握手正反例与帧层攻击负例。
+状态：**软件完成（实体机验证待做）**。阶段 0 spike 已在真机证实授权流、bonded 枚举与 `createRfcommSocketToServiceRecord` 连通 Windows 端成立（G-A1，Redmi Note 11T Pro / Android 13），但产品内 `BluetoothSyncConnector` 路径的实机端到端仍属阶段 5。`Bt1StreamFraming`（阻塞帧 I/O）、`Bt1ClientHandshake`（拨号侧握手）、`Bt1SyncTransport`（`SyncTransport` 适配器）、`BluetoothSyncConnector`（RFCOMM 拨号：每次拨号复查开关/选定设备/运行时权限/适配器状态，30 秒看门狗经关 socket 中止阻塞 I/O）。Manifest 权限（`BLUETOOTH` maxSdk 30 + `BLUETOOTH_CONNECT`）、偏好页开关 + bonded 设备选择器、授权引导与拒绝降级均已落地。单测经内存管道覆盖握手正反例与帧层攻击负例。
 
 任务：
 
@@ -94,4 +103,4 @@ BLE GATT（含在线提示信标）、蓝牙首次配对、图片正文过蓝牙
 
 - **低风险、机械性**：阶段 1（纯逻辑 + 共享向量，模式与现有协议 fixtures 完全一致）、阶段 4 的状态机改动（`SyncSupervisor` 已为可脚本化测试而设计）。
 - **中风险**：阶段 2 的 TFM/程序集切分（一次性构建工程问题）、阶段 3 的权限与 OEM 差异。
-- **高不确定性、决定成败**：阶段 0 的两项平台验证（Windows 非打包应用的 WinRT 蓝牙访问、OEM RFCOMM 稳定性）——因此放在最前，失败即止损回 ADR。
+- **高不确定性、决定成败**：阶段 0 的两项平台验证（Windows 非打包应用的 WinRT 蓝牙访问、OEM RFCOMM 稳定性）——因此放在最前，失败即止损回 ADR。**2026-08-25 已解除**：两项验证均在真机通过（见阶段 0 结果摘要），剩余不确定性收敛为适配器/OEM 矩阵宽度（阶段 5）。
