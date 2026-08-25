@@ -7,4 +7,22 @@
     <issue id="RestrictedApi">
         <ignore path="**/platform/clipboard/shizuku/**" />
     </issue>
+
+    <!-- 同一裁决的另一面：特权直读要在 shell/root 语境下反射 IClipboard / ActivityThread
+         等隐藏 API（HiddenApis.kt 集中列名），这正是该通道存在的意义——普通 SDK 面根本
+         没有跨应用剪贴板读取。反射点全部集中在本包并有降级路径，PrivateApi 系告警在
+         这里同样是设计事实。范围外的反射照常报错。 -->
+    <issue id="PrivateApi">
+        <ignore path="**/platform/clipboard/shizuku/**" />
+    </issue>
+    <issue id="DiscouragedPrivateApi">
+        <ignore path="**/platform/clipboard/shizuku/**" />
+    </issue>
+
+    <!-- 德语关系从句「Kopien, die die Quell-App … markiert」中 die（关系代词）紧跟
+         die（冠词）是正确语法，lint 的重复词启发在此为误报；按消息精确豁免，其余拼写
+         检查照常生效。 -->
+    <issue id="Typos">
+        <ignore regexp="Repeated word &quot;die&quot; in message" />
+    </issue>
 </lint>
