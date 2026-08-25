@@ -51,6 +51,7 @@
 
 ### 变更
 
+- [双端] 图标与诊断窗的两处令牌偏差归位（strict-audit §2.2 P3 收口）：应用图标底渐变底 stop 从 `#D6E0EC` 归正为 tokens `bg-grad` 的 `#DAE3EE`（中停位 0.45→0.42 同步对齐；SVG 源、Android 自适应图标背景、重生成的 Windows `app.ico` 三处一致）；Windows 诊断窗日志区改用随包 JetBrains Mono（机器的声音，pack URI 直引、不引主题字典保持自包含），Consolas 退为加载失败兜底。
 - [Android] 能力路线去品牌化：Shizuku 在 UI 中呈现为「特权直读」。
 - [Android] 收件箱文本解析迁至 Room（硬化项收口）：通知「复制」动作按事件 ID 直查 Room 历史行，收到的文本不再在 SharedPreferences 里留第二份明文（旧 50 条残留一次性清除）；删除历史即令复制动作失效（诚实语义——数据真的没了就不该还能复制出来）。
 - [Windows] 三窗口全部令牌刷 `DynamicResource` 化以支持运行时换肤。

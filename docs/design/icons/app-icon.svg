@@ -8,8 +8,8 @@
   <defs>
     <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#e9eff6"/>
-      <stop offset="0.45" stop-color="#e2e9f2"/>
-      <stop offset="1" stop-color="#d6e0ec"/>
+      <stop offset="0.42" stop-color="#e2e9f2"/>
+      <stop offset="1" stop-color="#dae3ee"/>
     </linearGradient>
     <linearGradient id="toplight" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/>

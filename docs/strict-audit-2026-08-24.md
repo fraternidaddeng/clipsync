@@ -83,9 +83,9 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 | 端 | 结论 |
 |---|---|
 | Android Compose | `ui/` 全部色值只在 `Theme.kt`，与 `tokens.md` **逐字节一致**（含半透明变体的 alpha 字节：flow-bg 0x1A=10%、act-ln 0x47=28% 等逐一核对无误）；`token-migration-checklist.md` 的 Theme.kt 部分全部落实 |
-| Android XML | `colors.xml` 仅 `cs_flow`（通知强调色，正当）；**`styles.xml`/`values-night/styles.xml` 直写状态栏/导航栏色 `#E2E9F2`/`#0C1116`**（ui-gap-audit 已记 P3）；launcher 背景渐变底 stop `#D6E0EC` 与 tokens `bg-grad` 底值 `#DAE3EE` 不一致（图标资产轻微偏差，P3） |
+| Android XML | `colors.xml` 仅 `cs_flow`（通知强调色，正当）；~~`styles.xml`/`values-night/styles.xml` 直写状态栏/导航栏色~~ **已修复（2026-08-25）**：`cs_bg` 入 `values(-night)/colors.xml`，两套 styles 改引；~~launcher 背景渐变底 stop `#D6E0EC` 与 tokens `bg-grad` 底值 `#DAE3EE` 不一致~~ **已修复（2026-08-25）**：SVG 源与 `ic_launcher_background.xml` 底 stop 改 `#DAE3EE`、中停位 0.45→0.42 同步对齐 tokens，Windows `app.ico` 随源重生成 |
 | Windows XAML | 三个视图窗口 + 托盘浮窗**零十六进制字面量**，全部经 `CharterTokens(.Night).xaml` 资源键（迁移清单「XAML 页面里不再出现任何十六进制字面量」达成）；夜间字典逐键对应 |
-| Windows C# | 仅 `DiagnosticsWindow.cs` 用 `Consolas, Cascadia Mono`（未走随包 JetBrains Mono，P3）；其余命中为 CRC32 多项式/Win32 常量误报 |
+| Windows C# | ~~仅 `DiagnosticsWindow.cs` 用 `Consolas, Cascadia Mono`（未走随包 JetBrains Mono，P3）~~ **已修复（2026-08-25）**：诊断窗日志区以 pack URI 直引随包 JetBrains Mono（保持不依赖主题字典的自包含裁决），Consolas 退为加载失败兜底；其余命中为 CRC32 多项式/Win32 常量误报 |
 | 红色纪律 | `MainWindow.xaml` 无 `CsErr` 引用；已吊销设备 = 灰色事实；err 只在配对重配对警示与窗控关闭钮悬停出现——「红色只留给 error」达标 |
 
 ### 2.3 其余纲领项

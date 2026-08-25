@@ -19,6 +19,14 @@ internal sealed class DiagnosticsWindow : Window
     private static readonly Brush PrimaryText = Frozen(Color.FromRgb(0xE3, 0xE9, 0xF0));
     private static readonly Brush MutedText = Frozen(Color.FromRgb(0xB6, 0xC2, 0xD0));
 
+    /// <summary>
+    /// The bundled machine voice (tokens §6), addressed by pack URI rather than the theme
+    /// dictionaries — this window stays self-contained. Consolas remains the load-failure fallback.
+    /// </summary>
+    private static readonly FontFamily LogFont = new(
+        new Uri("pack://application:,,,/Resources/"),
+        "./Fonts/#JetBrains Mono, Consolas, Cascadia Mono");
+
     private readonly TextBox logView;
 
     public DiagnosticsWindow()
@@ -75,7 +83,7 @@ internal sealed class DiagnosticsWindow : Window
             TextWrapping = TextWrapping.NoWrap,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-            FontFamily = new FontFamily("Consolas, Cascadia Mono"),
+            FontFamily = LogFont,
             FontSize = 12,
             Background = LogBackground,
             Foreground = PrimaryText,
