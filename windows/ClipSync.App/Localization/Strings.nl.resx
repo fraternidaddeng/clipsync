@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="App_WindowTitle" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Brand_Wordmark" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Chrome_Minimize" xml:space="preserve">
+    <value>Minimaliseren</value>
+  </data>
+  <data name="Chrome_MaximizeRestore" xml:space="preserve">
+    <value>Maximaliseren of herstellen</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Sluiten</value>
+  </data>
+  <data name="Common_Copy" xml:space="preserve">
+    <value>Kopiëren</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>Vernieuwen</value>
+  </data>
+  <data name="Common_Acknowledge" xml:space="preserve">
+    <value>Begrepen</value>
+  </data>
+  <data name="Common_FollowSystem" xml:space="preserve">
+    <value>Systeem volgen</value>
+  </data>
+  <data name="Common_ClearHistory" xml:space="preserve">
+    <value>Geschiedenis wissen</value>
+  </data>
+  <data name="Common_ExportHistory" xml:space="preserve">
+    <value>Geschiedenis exporteren</value>
+  </data>
+  <data name="Common_ImportHistory" xml:space="preserve">
+    <value>Geschiedenis importeren</value>
+  </data>
+  <data name="Common_PauseCapture" xml:space="preserve">
+    <value>Vastleggen pauzeren</value>
+  </data>
+  <data name="Common_PrivateMode" xml:space="preserve">
+    <value>Privémodus</value>
+  </data>
+  <data name="Nav_History" xml:space="preserve">
+    <value>Geschiedenis</value>
+  </data>
+  <data name="Nav_Conduit" xml:space="preserve">
+    <value>Kanaal</value>
+  </data>
+  <data name="Nav_Prefs" xml:space="preserve">
+    <value>Voorkeuren</value>
+  </data>
+  <data name="History_Title" xml:space="preserve">
+    <value>Geschiedenis</value>
+  </data>
+  <data name="History_Subtitle" xml:space="preserve">
+    <value>Clips van deze pc en gekoppelde apparaten · opschonen geldt alleen voor dit apparaat</value>
+  </data>
+  <data name="History_Search" xml:space="preserve">
+    <value>Zoeken</value>
+  </data>
+  <data name="Filter_All" xml:space="preserve">
+    <value>Alles</value>
+  </data>
+  <data name="Filter_Link" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="Filter_Otp" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Filter_Email" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="Filter_Credential" xml:space="preserve">
+    <value>Wachtwoord</value>
+  </data>
+  <data name="Filter_Plain" xml:space="preserve">
+    <value>Tekst</value>
+  </data>
+  <data name="Format_Image" xml:space="preserve">
+    <value>Afbeelding</value>
+  </data>
+  <data name="History_NoPreview" xml:space="preserve">
+    <value>Geen voorbeeld</value>
+  </data>
+  <data name="History_LocalOnlyBadge" xml:space="preserve">
+    <value>Alleen op dit apparaat</value>
+  </data>
+  <data name="History_Empty_Unpaired_Title" xml:space="preserve">
+    <value>Verbind eerst beide kanten</value>
+  </data>
+  <data name="History_Empty_Paired_Title" xml:space="preserve">
+    <value>Wacht op de eerste clip</value>
+  </data>
+  <data name="History_Empty_Unpaired_Body" xml:space="preserve">
+    <value>Nog niet gekoppeld met een telefoon. De koppelingsingang zit in het netwerksegment van de Kanaal-pagina.</value>
+  </data>
+  <data name="History_Empty_Paired_Body" xml:space="preserve">
+    <value>Kopieer tekst op een van beide apparaten — die verschijnt hier en stroomt naar de andere kant.</value>
+  </data>
+  <data name="History_Empty_GoPair" xml:space="preserve">
+    <value>Nu koppelen ›</value>
+  </data>
+  <data name="History_NoMatch_Prefix" xml:space="preserve">
+    <value>Geen items komen overeen met “</value>
+  </data>
+  <data name="History_NoMatch_Suffix" xml:space="preserve">
+    <value>”</value>
+  </data>
+  <data name="History_Empty_Filtered" xml:space="preserve">
+    <value>Geen items van dit type · probeer een ander filter</value>
+  </data>
+  <data name="History_CopySelected" xml:space="preserve">
+    <value>Selectie kopiëren</value>
+  </data>
+  <data name="History_ViewDetail" xml:space="preserve">
+    <value>Details bekijken</value>
+  </data>
+  <data name="History_DeleteSelected" xml:space="preserve">
+    <value>Selectie verwijderen</value>
+  </data>
+  <data name="History_UnknownSource" xml:space="preserve">
+    <value>Onbekende bron</value>
+  </data>
+  <data name="History_LocalSource" xml:space="preserve">
+    <value>Deze pc</value>
+  </data>
+  <data name="Conduit_Title" xml:space="preserve">
+    <value>Kanaal</value>
+  </data>
+  <data name="Conduit_Subtitle" xml:space="preserve">
+    <value>Inhoud stroomt van links naar rechts door vier segmenten · leesvolgorde is probleemoplosvolgorde</value>
+  </data>
+  <data name="Conduit_Capture_Name" xml:space="preserve">
+    <value>Lokaal vastleggen</value>
+  </data>
+  <data name="Conduit_Capture_Ready" xml:space="preserve">
+    <value>Gereed · luistert naar Ctrl+C</value>
+  </data>
+  <data name="Conduit_Status_Paused" xml:space="preserve">
+    <value>Gepauzeerd · registreert niet meer</value>
+  </data>
+  <data name="Conduit_Status_Private" xml:space="preserve">
+    <value>Privémodus · laat geen sporen na</value>
+  </data>
+  <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
+    <value>Vastleggen verminderd · klembordtoegang mislukt</value>
+  </data>
+  <data name="Conduit_Capture_Detail" xml:space="preserve">
+    <value>Privémodus en geblokkeerde processen houden inhoud in dit segment tegen.</value>
+  </data>
+  <data name="Conduit_Service_Name" xml:space="preserve">
+    <value>Lokale service</value>
+  </data>
+  <data name="Conduit_Service_ReadyPrefix" xml:space="preserve">
+    <value>Gereed · geschiedenis </value>
+  </data>
+  <data name="Conduit_Service_ReadyInfix" xml:space="preserve">
+    <value> · wachtrij </value>
+  </data>
+  <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
+    <value>Gebeurtenissen landen eerst in de opslag en dan in de wachtrij · </value>
+  </data>
+  <data name="Conduit_Network_Name" xml:space="preserve">
+    <value>Netwerk</value>
+  </data>
+  <data name="Conduit_Network_ReadyPrefix" xml:space="preserve">
+    <value>Gereed · luistert op :</value>
+  </data>
+  <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
+    <value> · verbonden </value>
+  </data>
+  <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
+    <value> apparaat(en)</value>
+  </data>
+  <data name="Conduit_Network_Down" xml:space="preserve">
+    <value>Niet actief · synchronisatie uit</value>
+  </data>
+  <data name="Conduit_Peer_Name" xml:space="preserve">
+    <value>Schrijven op peer</value>
+  </data>
+  <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
+    <value>Gekoppeld </value>
+  </data>
+  <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
+    <value> apparaat(en)</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
+    <value>Externe tekst wordt automatisch naar het klembord van deze pc geschreven.</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
+    <value>Automatisch toepassen staat uit: externe inhoud blijft alleen in de geschiedenis en moet handmatig worden gekopieerd.</value>
+  </data>
+  <data name="Conduit_Devices_Header" xml:space="preserve">
+    <value>Netwerksegment · gekoppelde apparaten</value>
+  </data>
+  <data name="Conduit_Connection_Header" xml:space="preserve">
+    <value>Netwerksegment · verbinding</value>
+  </data>
+  <data name="Conduit_CleanupStale" xml:space="preserve">
+    <value>Opschonen</value>
+  </data>
+  <data name="Conduit_Bluetooth_Title" xml:space="preserve">
+    <value>Bluetooth-terugval</value>
+  </data>
+  <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
+    <value>Standaard uit. Wanneer het LAN wordt geblokkeerd door een VPN of firewall, blijft een telefoon die al via Bluetooth in de systeeminstellingen is gekoppeld tekst synchroniseren (geen afbeeldingen, langzamer).</value>
+  </data>
+  <data name="Conduit_ExtraBind_Title" xml:space="preserve">
+    <value>Extra luisteradressen</value>
+  </data>
+  <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
+    <value>Voor virtuele-adapteradressen zoals Tailscale / WireGuard. Er is geen publieke relay.</value>
+  </data>
+  <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
+    <value>Geldt na herstart</value>
+  </data>
+  <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
+    <value> · scheid meerdere adressen met komma’s</value>
+  </data>
+  <data name="Conduit_Fingerprint_Title" xml:space="preserve">
+    <value>Certificaatvingerafdruk van deze pc</value>
+  </data>
+  <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
+    <value>Vergelijk bij het koppelen groep voor groep met de vingerafdruk op de telefoon. Na een wijziging van de vingerafdruk vraagt elk gekoppeld apparaat om herbevestiging.</value>
+  </data>
+  <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
+    <value>De peer-service draait niet; er is deze sessie geen vingerafdruk te tonen.</value>
+  </data>
+  <data name="Device_RevokedBadge" xml:space="preserve">
+    <value>Ingetrokken</value>
+  </data>
+  <data name="Device_AccentLabel" xml:space="preserve">
+    <value>Apparaatkleur</value>
+  </data>
+  <data name="Device_AccentManual" xml:space="preserve">
+    <value>Handmatig ingesteld</value>
+  </data>
+  <data name="Device_AccentByOrder" xml:space="preserve">
+    <value>Volgt koppelvolgorde</value>
+  </data>
+  <data name="Device_Rename" xml:space="preserve">
+    <value>Hernoemen</value>
+  </data>
+  <data name="Device_RevokeSelected" xml:space="preserve">
+    <value>Geselecteerd apparaat intrekken</value>
+  </data>
+  <data name="Device_RevokeNote" xml:space="preserve">
+    <value>Intrekken verbreekt de verbinding met het apparaat onmiddellijk en maakt zijn koppelsleutel ongeldig; al ontvangen inhoud wordt nooit op afstand verwijderd. Opnieuw koppelen na intrekking telt als een nieuw apparaat. Wanneer dezelfde telefoon zich onder een nieuwe identiteit opnieuw koppelt, wordt het oude record automatisch ingetrokken en zijn wachtrij geleegd.</value>
+  </data>
+  <data name="Device_UnknownRemote" xml:space="preserve">
+    <value>Extern apparaat</value>
+  </data>
+  <data name="Device_PairedFallback" xml:space="preserve">
+    <value>Gekoppeld apparaat</value>
+  </data>
+  <data name="Device_UnknownFallback" xml:space="preserve">
+    <value>Onbekend apparaat</value>
+  </data>
+  <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
+    <value>{0} · {1} in de wachtrij</value>
+  </data>
+  <data name="Stale_BannerBacklogFormat" xml:space="preserve">
+    <value>Er zijn {0} apparaat(en) gedetecteerd die op achtergebleven resten lijken; {1} wachtende item(s) drijven de wachtrijteller op. Opschonen trekt ze in en leegt hun wachtrijen.</value>
+  </data>
+  <data name="Stale_BannerFormat" xml:space="preserve">
+    <value>Er zijn {0} apparaat(en) gedetecteerd die op achtergebleven resten lijken. Opschonen trekt ze in; al ontvangen inhoud blijft onaangetast.</value>
+  </data>
+  <data name="Stale_DuplicateBadge" xml:space="preserve">
+    <value>Waarschijnlijk rest van dubbele koppeling</value>
+  </data>
+  <data name="Stale_NeverConnected" xml:space="preserve">
+    <value>Nooit verbonden sinds koppeling</value>
+  </data>
+  <data name="Stale_UnseenDaysFormat" xml:space="preserve">
+    <value>Al meer dan {0} dagen niet verbonden</value>
+  </data>
+  <data name="Prefs_Title" xml:space="preserve">
+    <value>Voorkeuren</value>
+  </data>
+  <data name="Prefs_Subtitle" xml:space="preserve">
+    <value>Wijzigingen gelden onmiddellijk · klembordinhoud verschijnt nooit in logboeken</value>
+  </data>
+  <data name="Prefs_Group_Display" xml:space="preserve">
+    <value>WEERGAVE</value>
+  </data>
+  <data name="Prefs_Group_Capture" xml:space="preserve">
+    <value>VASTLEGGEN</value>
+  </data>
+  <data name="Prefs_Group_Sync" xml:space="preserve">
+    <value>SYNCHRONISATIE</value>
+  </data>
+  <data name="Prefs_Group_Retention" xml:space="preserve">
+    <value>BEWAREN</value>
+  </data>
+  <data name="Prefs_Group_Startup" xml:space="preserve">
+    <value>OPSTARTEN</value>
+  </data>
+  <data name="Prefs_Group_Data" xml:space="preserve">
+    <value>GEGEVENS</value>
+  </data>
+  <data name="Prefs_FontScale_Title" xml:space="preserve">
+    <value>Tekstgrootte geschiedenis</value>
+  </data>
+  <data name="Prefs_FontScale_Desc" xml:space="preserve">
+    <value>Schaalt alleen de tekst van klembordinhoud (geschiedenisvoorbeelden, detailtekst, systeemvakvenster); groepskoppen, badges en knoppen blijven onveranderd.</value>
+  </data>
+  <data name="Prefs_FontScale_Small" xml:space="preserve">
+    <value>Klein</value>
+  </data>
+  <data name="Prefs_FontScale_Standard" xml:space="preserve">
+    <value>Standaard</value>
+  </data>
+  <data name="Prefs_FontScale_Large" xml:space="preserve">
+    <value>Groot</value>
+  </data>
+  <data name="Prefs_PreviewLines_Title" xml:space="preserve">
+    <value>Voorbeeldregels</value>
+  </data>
+  <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
+    <value>Maximaal aantal tekstregels per item in de geschiedenislijst; overloop wordt afgekapt met een beletselteken — open de details voor de volledige inhoud.</value>
+  </data>
+  <data name="Prefs_PreviewLines_Two" xml:space="preserve">
+    <value>2 regels</value>
+  </data>
+  <data name="Prefs_PreviewLines_Four" xml:space="preserve">
+    <value>4 regels</value>
+  </data>
+  <data name="Prefs_PreviewLines_Six" xml:space="preserve">
+    <value>6 regels</value>
+  </data>
+  <data name="Prefs_Theme_Title" xml:space="preserve">
+    <value>Uiterlijk</value>
+  </data>
+  <data name="Prefs_Theme_Desc" xml:space="preserve">
+    <value>Het dag-/nachtpalet van het venster; het systeemvakpictogram leeft in de taakbalk en volgt altijd de tint van de taakbalk.</value>
+  </data>
+  <data name="Prefs_Theme_Day" xml:space="preserve">
+    <value>Dag</value>
+  </data>
+  <data name="Prefs_Theme_Night" xml:space="preserve">
+    <value>Nacht</value>
+  </data>
+  <data name="Prefs_Language_Title" xml:space="preserve">
+    <value>Taal</value>
+  </data>
+  <data name="Prefs_Language_Desc" xml:space="preserve">
+    <value>De interfacetaal — volg het systeem of stel er handmatig een in; elke taal toont altijd zijn eigen oorspronkelijke naam.</value>
+  </data>
+  <data name="Prefs_Language_RestartNote" xml:space="preserve">
+    <value>Wordt van kracht na het herstarten van de app.</value>
+  </data>
+  <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
+    <value>Tijdens de pauze registreert deze pc geen nieuwe inhoud; bestaande geschiedenis blijft bewaard.</value>
+  </data>
+  <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
+    <value>Zolang dit aanstaat, stoppen vastleggen en synchroniseren volledig, zonder sporen na te laten.</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
+    <value>Geblokkeerde processen</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
+    <value>Kopieën uit deze processen komen nooit in de geschiedenis en synchroniseren niet. Scheid met komma’s of regeleinden.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
+    <value>Externe inhoud automatisch toepassen</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
+    <value>Tekst van de telefoon wordt automatisch naar het klembord van deze pc geschreven. Uitgeschakeld blijft die alleen in de geschiedenis en moet die handmatig worden gekopieerd.</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
+    <value>Klembordafbeeldingen synchroniseren</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
+    <value>Standaard uit. Alleen PNG/JPEG; ruwe bytes kunnen EXIF en andere metadata bevatten, en beide kanten hebben een v2-sessie nodig.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
+    <value>Externe afbeeldingen automatisch toepassen</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
+    <value>Afbeeldingen van de telefoon worden automatisch naar het klembord van deze pc geschreven. Uitgeschakeld blijven ze alleen in de geschiedenis en moeten ze handmatig worden gekopieerd.</value>
+  </data>
+  <data name="Prefs_Moved_Title" xml:space="preserve">
+    <value>Bluetooth-terugval · extra luisteradressen · certificaatvingerafdruk</value>
+  </data>
+  <data name="Prefs_Moved_Desc" xml:space="preserve">
+    <value>Verplaatst naar Kanaal · netwerksegment — ze bepalen of inhoud de peer kan bereiken, dus ze wonen bij koppeling en apparaatbeheer.</value>
+  </data>
+  <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
+    <value>Naar Kanaal</value>
+  </data>
+  <data name="Prefs_Retention_Days_Title" xml:space="preserve">
+    <value>Bewaartermijn</value>
+  </data>
+  <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
+    <value>Items over de termijn worden automatisch verwijderd. Opschonen gebeurt alleen op deze pc en verwijdert nooit wat de peer al heeft ontvangen.</value>
+  </data>
+  <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
+    <value>dagen</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
+    <value>Bewaaraantal</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
+    <value>Boven de limiet worden de oudste items eerst verwijderd (100–2000, stappen van 100). Opschonen gebeurt alleen op deze pc.</value>
+  </data>
+  <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
+    <value>items</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
+    <value>Starten bij aanmelden · stil naar systeemvak</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
+    <value>Start automatisch bij het aanmelden bij Windows en landt direct in het systeemvak zonder het hoofdvenster te openen. Schrijft alleen de opstartvermelding van de huidige gebruiker; geen beheerdersrechten nodig.</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
+    <value>Sneltoets voor zwevend venster</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
+    <value>Druk in elke app op de combinatie om het zwevende venster op te roepen. Klik op het vak en druk dan op de gewenste combinatie (moet Ctrl, Alt of Win bevatten); druk op Backspace om te wissen. Standaard uit.</value>
+  </data>
+  <data name="Prefs_Data_Export_Desc" xml:space="preserve">
+    <value>Schrijft de hele geschiedenis (inclusief verwijdermarkeringen) als een JSON Lines-back-upbestand; geen sleutels, certificaten of koppelgegevens. De export is platte tekst — bewaar hem veilig.</value>
+  </data>
+  <data name="Prefs_Data_Import_Desc" xml:space="preserve">
+    <value>Voegt geschiedenis uit een back-upbestand samen: idempotent op “bronapparaat + volgnummer”, dus opnieuw importeren dupliceert nooit items en overschrijft geen lokale verwijderingen. Bij validatiefouten verandert er niets.</value>
+  </data>
+  <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
+    <value>Verwijdert in één stap alle items op deze pc (inclusief afbeeldingen); vereist twee bevestigingen en kan niet ongedaan worden gemaakt. Wissen gebeurt alleen op deze pc en verwijdert nooit wat de peer al heeft ontvangen — overweeg eerst te exporteren.</value>
+  </data>
+  <data name="Flyout_WindowTitle" xml:space="preserve">
+    <value>ClipSync · recente clips</value>
+  </data>
+  <data name="Flyout_PauseSync" xml:space="preserve">
+    <value>Synchronisatie pauzeren</value>
+  </data>
+  <data name="Flyout_ResumeSync" xml:space="preserve">
+    <value>Synchronisatie hervatten</value>
+  </data>
+  <data name="Flyout_Empty" xml:space="preserve">
+    <value>Nog geen clips · probeer wat tekst te kopiëren</value>
+  </data>
+  <data name="Flyout_PauseOrResume" xml:space="preserve">
+    <value>Synchronisatie pauzeren of hervatten</value>
+  </data>
+  <data name="Flyout_CopyFromFormat" xml:space="preserve">
+    <value>De clip van {0} kopiëren</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>ClipSync openen</value>
+  </data>
+  <data name="Tray_Menu_Diagnostics" xml:space="preserve">
+    <value>Diagnoselogboek</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>Afsluiten</value>
+  </data>
+  <data name="Tray_Tooltip_Flow" xml:space="preserve">
+    <value>ClipSync · luistert</value>
+  </data>
+  <data name="Tray_Tooltip_AttentionFormat" xml:space="preserve">
+    <value>ClipSync · {0}</value>
+  </data>
+  <data name="Tray_AttentionFallback" xml:space="preserve">
+    <value>Actie nodig</value>
+  </data>
+  <data name="Tray_Tooltip_Paused" xml:space="preserve">
+    <value>ClipSync · vastleggen gepauzeerd</value>
+  </data>
+  <data name="Tray_Tooltip_Private" xml:space="preserve">
+    <value>ClipSync · privémodus, laat geen sporen na</value>
+  </data>
+  <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
+    <value>1 nieuwe clip van {0}</value>
+  </data>
+  <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
+    <value>{1} nieuwe clips van {0}</value>
+  </data>
+  <data name="Tray_OversizeNotice" xml:space="preserve">
+    <value>De zojuist gekopieerde tekst is groter dan 1 MiB; die blijft alleen op het klembord van deze pc en wordt niet gesynchroniseerd (niet afgekapt).</value>
+  </data>
+  <data name="Tray_AuthThrottleFormat" xml:space="preserve">
+    <value>Herhaalde authenticatiefouten van “{0}”; het apparaat is tijdelijk afgeremd.</value>
+  </data>
+  <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
+    <value>Luistert · synchronisatie niet actief</value>
+  </data>
+  <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
+    <value>Luistert · {0} verbonden</value>
+  </data>
+  <data name="Tray_Status_Waiting" xml:space="preserve">
+    <value>Luistert · wacht op apparaten</value>
+  </data>
+  <data name="Capture_OversizeNotice" xml:space="preserve">
+    <value>De zojuist gekopieerde tekst is groter dan 1 MiB: die blijft onafgekapt op het systeemklembord, maar wordt niet in de geschiedenis opgenomen en niet gesynchroniseerd.</value>
+  </data>
+  <data name="Sync_NotStarted" xml:space="preserve">
+    <value>Peer-service nog niet gestart</value>
+  </data>
+  <data name="Sync_StartFailed" xml:space="preserve">
+    <value>De peer-service kon niet starten; synchronisatie is deze sessie uit.</value>
+  </data>
+  <data name="Sync_ConnectedFormat" xml:space="preserve">
+    <value>LAN luistert op poort {0} · {1} apparaat(en) verbonden, inhoud stroomt realtime.</value>
+  </data>
+  <data name="Sync_WaitingFormat" xml:space="preserve">
+    <value>LAN luistert op poort {0} · wacht op gekoppelde apparaten; gebeurtenissen landen eerst in de opslag en dan in de wachtrij, dus offline gaat niets verloren.</value>
+  </data>
+  <data name="Bt_Disabled" xml:space="preserve">
+    <value>Bluetooth-terugval niet ingeschakeld</value>
+  </data>
+  <data name="Bt_UnavailableFormat" xml:space="preserve">
+    <value>Bluetooth-terugval niet beschikbaar: {0}</value>
+  </data>
+  <data name="Bt_SyncingFormat" xml:space="preserve">
+    <value>Bluetooth-terugval · synchroniseert met {0} (alleen tekst)</value>
+  </data>
+  <data name="Bt_Armed" xml:space="preserve">
+    <value>Bluetooth-terugval stand-by · de telefoon schakelt automatisch over op Bluetooth wanneer het LAN onbereikbaar is</value>
+  </data>
+  <data name="Bt_Starting" xml:space="preserve">
+    <value>Bluetooth-terugval start…</value>
+  </data>
+  <data name="Bt_AdapterUnavailable" xml:space="preserve">
+    <value>Bluetooth-adapter niet beschikbaar of uitgeschakeld</value>
+  </data>
+  <data name="Ack_None" xml:space="preserve">
+    <value>Nog geen bevestiging van de peer</value>
+  </data>
+  <data name="Ack_UpToFormat" xml:space="preserve">
+    <value>Peer bevestigde tot {0}</value>
+  </data>
+  <data name="Transfer_ClearedFormat" xml:space="preserve">
+    <value>{0} geschiedenisitems gewist (inclusief afbeeldingen). Wissen gebeurt alleen op deze pc.</value>
+  </data>
+  <data name="Transfer_ClearConfirmBody" xml:space="preserve">
+    <value>Alle geschiedenis wissen?
+
+Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wissen gebeurt alleen op deze pc en verwijdert nooit wat de peer al heeft ontvangen. Overweeg eerst “Geschiedenis exporteren”.</value>
+  </data>
+  <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
+    <value>Bevestig nog een keer: wissen kan niet ongedaan worden gemaakt. Alle geschiedenis wissen?</value>
+  </data>
+  <data name="Transfer_ExportedFormat" xml:space="preserve">
+    <value>{0} record(s) geëxporteerd (platte tekst) → {1}</value>
+  </data>
+  <data name="Transfer_ExportWriteFailed" xml:space="preserve">
+    <value>Exporteren mislukt: kon het gekozen bestand niet schrijven.</value>
+  </data>
+  <data name="Transfer_ImportedFormat" xml:space="preserve">
+    <value>Import voltooid: {0} toegevoegd · {1} bestaand · {2} conflicten</value>
+  </data>
+  <data name="Transfer_ImportFailedFormat" xml:space="preserve">
+    <value>Importeren mislukt: {0}. Er is niets gewijzigd.</value>
+  </data>
+  <data name="Transfer_ImportReadFailed" xml:space="preserve">
+    <value>Importeren mislukt: kon het gekozen bestand niet lezen.</value>
+  </data>
+  <data name="Transfer_FileFilter" xml:space="preserve">
+    <value>ClipSync-geschiedenisexport (*.jsonl)|*.jsonl|Alle bestanden (*.*)|*.*</value>
+  </data>
+  <data name="Transfer_Error_BadHeader" xml:space="preserve">
+    <value>dit is geen ClipSync-geschiedenisexportbestand</value>
+  </data>
+  <data name="Transfer_Error_UnsupportedVersion" xml:space="preserve">
+    <value>de bestandsversie is nieuwer dan deze app ondersteunt</value>
+  </data>
+  <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
+    <value>het bestand is beschadigd (misvormd record)</value>
+  </data>
+  <data name="Transfer_Error_HashMismatch" xml:space="preserve">
+    <value>het bestand is beschadigd (hashcontrole mislukt)</value>
+  </data>
+  <data name="Transfer_Error_CountMismatch" xml:space="preserve">
+    <value>het bestand is onvolledig (aantal komt niet overeen met de header)</value>
+  </data>
+  <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
+    <value>het bestand bevat een item boven de groottelimieten (tekst 1 MiB / afbeeldingen 16 MiB)</value>
+  </data>
+  <data name="Transfer_Error_Unknown" xml:space="preserve">
+    <value>onbekende fout</value>
+  </data>
+  <data name="Hotkey_Applied" xml:space="preserve">
+    <value>Actief · druk erop in elke app om het zwevende venster op te roepen</value>
+  </data>
+  <data name="Hotkey_Conflict" xml:space="preserve">
+    <value>Die combinatie is al in gebruik door een ander programma; probeer een andere</value>
+  </data>
+  <data name="Attention_PeerDown" xml:space="preserve">
+    <value>Synchronisatie draait deze sessie niet (eindpunt kon niet starten)</value>
+  </data>
+  <data name="Attention_CaptureFaulted" xml:space="preserve">
+    <value>Klembord vastleggen verminderd (laatste toegang mislukt)</value>
+  </data>
+  <data name="Attention_NoDevice" xml:space="preserve">
+    <value>Koppel een apparaat om te beginnen met synchroniseren</value>
+  </data>
+  <data name="Pairing_Title" xml:space="preserve">
+    <value>Nieuw apparaat koppelen</value>
+  </data>
+  <data name="Pairing_PeerDownBody" xml:space="preserve">
+    <value>De peer-service draait niet; koppelen is deze sessie niet mogelijk.</value>
+  </data>
+  <data name="Pairing_ScanInstruction" xml:space="preserve">
+    <value>Scan deze code met ClipSync op je telefoon. De QR-code bevat het adres van deze pc, de certificaatvingerafdruk en een eenmalig token — nooit de koppelsleutel.</value>
+  </data>
+  <data name="Pairing_CountdownFormat" xml:space="preserve">
+    <value>Vernieuwt over {0:m\:ss}</value>
+  </data>
+  <data name="Pairing_NoLanAddress" xml:space="preserve">
+    <value>Geen LAN-adres gedetecteerd. Zet deze pc en de telefoon op hetzelfde netwerk (of voeg een Tailscale-adres toe in Voorkeuren) en open dit venster opnieuw.</value>
+  </data>
+  <data name="Pairing_VerifyHeading" xml:space="preserve">
+    <value>Controleer op de telefoon vóór goedkeuring</value>
+  </data>
+  <data name="Pairing_PcName" xml:space="preserve">
+    <value>Pc-naam</value>
+  </data>
+  <data name="Pairing_Fingerprint" xml:space="preserve">
+    <value>Certificaatvingerafdruk</value>
+  </data>
+  <data name="Pairing_NewCode" xml:space="preserve">
+    <value>Nieuwe code</value>
+  </data>
+  <data name="Approval_Title" xml:space="preserve">
+    <value>Koppelverzoek</value>
+  </data>
+  <data name="Approval_CloseReject" xml:space="preserve">
+    <value>Sluiten en weigeren</value>
+  </data>
+  <data name="Approval_Question" xml:space="preserve">
+    <value>Dit apparaat laten koppelen?</value>
+  </data>
+  <data name="Approval_Body" xml:space="preserve">
+    <value>Een apparaat heeft met de QR-code van deze pc om koppeling gevraagd. Keur alleen goed als de naam hieronder overeenkomt met de telefoon in je hand.</value>
+  </data>
+  <data name="Approval_PlatformAndroid" xml:space="preserve">
+    <value>Android-apparaat</value>
+  </data>
+  <data name="Approval_PlatformWindows" xml:space="preserve">
+    <value>Windows-apparaat</value>
+  </data>
+  <data name="Approval_RepairWarning" xml:space="preserve">
+    <value>Dit apparaat was eerder gekoppeld. Goedkeuren vervangt zijn bestaande koppelsleutel en de oude installatie stopt onmiddellijk met werken.</value>
+  </data>
+  <data name="Approval_SupersedeNotice" xml:space="preserve">
+    <value>Er staat al een apparaat met dezelfde naam in de lijst. Na goedkeuring wordt het oude record automatisch ingetrokken en zijn wachtrij geleegd (behandeld als dezelfde telefoon die opnieuw koppelt).</value>
+  </data>
+  <data name="Approval_Reject" xml:space="preserve">
+    <value>Weigeren</value>
+  </data>
+  <data name="Approval_Approve" xml:space="preserve">
+    <value>Koppeling goedkeuren</value>
+  </data>
+  <data name="Detail_Title" xml:space="preserve">
+    <value>Clipdetails</value>
+  </data>
+  <data name="Detail_SourceFormat" xml:space="preserve">
+    <value>Bron: {0}</value>
+  </data>
+  <data name="Detail_TimeFormat" xml:space="preserve">
+    <value>Tijd: {0}</value>
+  </data>
+  <data name="Diag_Title" xml:space="preserve">
+    <value>ClipSync · diagnoselogboek</value>
+  </data>
+  <data name="Diag_Heading" xml:space="preserve">
+    <value>Lokale diagnostiek · alleen statuscodes en tijden, nooit klembordinhoud</value>
+  </data>
+  <data name="Diag_CopyAll" xml:space="preserve">
+    <value>Alles kopiëren</value>
+  </data>
+  <data name="Diag_Empty" xml:space="preserve">
+    <value>(nog geen diagnosevermeldingen)</value>
+  </data>
+</root>

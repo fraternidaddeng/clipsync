@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="App_WindowTitle" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Brand_Wordmark" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Chrome_Minimize" xml:space="preserve">
+    <value>Simge durumuna küçült</value>
+  </data>
+  <data name="Chrome_MaximizeRestore" xml:space="preserve">
+    <value>Ekranı kapla veya geri yükle</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Kapat</value>
+  </data>
+  <data name="Common_Copy" xml:space="preserve">
+    <value>Kopyala</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>Yenile</value>
+  </data>
+  <data name="Common_Acknowledge" xml:space="preserve">
+    <value>Anladım</value>
+  </data>
+  <data name="Common_FollowSystem" xml:space="preserve">
+    <value>Sistemi izle</value>
+  </data>
+  <data name="Common_ClearHistory" xml:space="preserve">
+    <value>Geçmişi temizle</value>
+  </data>
+  <data name="Common_ExportHistory" xml:space="preserve">
+    <value>Geçmişi dışa aktar</value>
+  </data>
+  <data name="Common_ImportHistory" xml:space="preserve">
+    <value>Geçmişi içe aktar</value>
+  </data>
+  <data name="Common_PauseCapture" xml:space="preserve">
+    <value>Yakalamayı duraklat</value>
+  </data>
+  <data name="Common_PrivateMode" xml:space="preserve">
+    <value>Özel mod</value>
+  </data>
+  <data name="Nav_History" xml:space="preserve">
+    <value>Geçmiş</value>
+  </data>
+  <data name="Nav_Conduit" xml:space="preserve">
+    <value>Kanal</value>
+  </data>
+  <data name="Nav_Prefs" xml:space="preserve">
+    <value>Tercihler</value>
+  </data>
+  <data name="History_Title" xml:space="preserve">
+    <value>Geçmiş</value>
+  </data>
+  <data name="History_Subtitle" xml:space="preserve">
+    <value>Bu bilgisayardan ve eşleştirilmiş cihazlardan kayıtlar · temizlik yalnızca bu cihazı etkiler</value>
+  </data>
+  <data name="History_Search" xml:space="preserve">
+    <value>Ara</value>
+  </data>
+  <data name="Filter_All" xml:space="preserve">
+    <value>Tümü</value>
+  </data>
+  <data name="Filter_Link" xml:space="preserve">
+    <value>Bağlantı</value>
+  </data>
+  <data name="Filter_Otp" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="Filter_Email" xml:space="preserve">
+    <value>Hesap</value>
+  </data>
+  <data name="Filter_Credential" xml:space="preserve">
+    <value>Parola</value>
+  </data>
+  <data name="Filter_Plain" xml:space="preserve">
+    <value>Metin</value>
+  </data>
+  <data name="Format_Image" xml:space="preserve">
+    <value>Görsel</value>
+  </data>
+  <data name="History_NoPreview" xml:space="preserve">
+    <value>Önizleme yok</value>
+  </data>
+  <data name="History_LocalOnlyBadge" xml:space="preserve">
+    <value>Yalnızca bu cihazda</value>
+  </data>
+  <data name="History_Empty_Unpaired_Title" xml:space="preserve">
+    <value>Önce iki ucu birbirine bağla</value>
+  </data>
+  <data name="History_Empty_Paired_Title" xml:space="preserve">
+    <value>İlk kayıt bekleniyor</value>
+  </data>
+  <data name="History_Empty_Unpaired_Body" xml:space="preserve">
+    <value>Henüz bir telefonla eşleştirilmedi. Eşleştirme girişi, Kanal sayfasının ağ bölümündedir.</value>
+  </data>
+  <data name="History_Empty_Paired_Body" xml:space="preserve">
+    <value>Herhangi bir cihazda metin kopyala — burada görünür ve karşı tarafa akar.</value>
+  </data>
+  <data name="History_Empty_GoPair" xml:space="preserve">
+    <value>Şimdi eşleştir ›</value>
+  </data>
+  <data name="History_NoMatch_Prefix" xml:space="preserve">
+    <value>“</value>
+  </data>
+  <data name="History_NoMatch_Suffix" xml:space="preserve">
+    <value>” ile eşleşen kayıt yok</value>
+  </data>
+  <data name="History_Empty_Filtered" xml:space="preserve">
+    <value>Bu türde kayıt yok · başka bir filtre dene</value>
+  </data>
+  <data name="History_CopySelected" xml:space="preserve">
+    <value>Seçileni kopyala</value>
+  </data>
+  <data name="History_ViewDetail" xml:space="preserve">
+    <value>Ayrıntıları gör</value>
+  </data>
+  <data name="History_DeleteSelected" xml:space="preserve">
+    <value>Seçileni sil</value>
+  </data>
+  <data name="History_UnknownSource" xml:space="preserve">
+    <value>Bilinmeyen kaynak</value>
+  </data>
+  <data name="History_LocalSource" xml:space="preserve">
+    <value>Bu bilgisayar</value>
+  </data>
+  <data name="Conduit_Title" xml:space="preserve">
+    <value>Kanal</value>
+  </data>
+  <data name="Conduit_Subtitle" xml:space="preserve">
+    <value>İçerik soldan sağa dört bölümden akar · okuma sırası sorun giderme sırasıdır</value>
+  </data>
+  <data name="Conduit_Capture_Name" xml:space="preserve">
+    <value>Yerel yakalama</value>
+  </data>
+  <data name="Conduit_Capture_Ready" xml:space="preserve">
+    <value>Hazır · Ctrl+C dinleniyor</value>
+  </data>
+  <data name="Conduit_Status_Paused" xml:space="preserve">
+    <value>Duraklatıldı · kayıt yapılmıyor</value>
+  </data>
+  <data name="Conduit_Status_Private" xml:space="preserve">
+    <value>Özel mod · iz bırakmaz</value>
+  </data>
+  <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
+    <value>Yakalama kısıtlı · panoya erişim başarısız</value>
+  </data>
+  <data name="Conduit_Capture_Detail" xml:space="preserve">
+    <value>Özel mod ve engellenen süreçler içeriği bu bölümde durdurur.</value>
+  </data>
+  <data name="Conduit_Service_Name" xml:space="preserve">
+    <value>Yerel hizmet</value>
+  </data>
+  <data name="Conduit_Service_ReadyPrefix" xml:space="preserve">
+    <value>Hazır · geçmiş </value>
+  </data>
+  <data name="Conduit_Service_ReadyInfix" xml:space="preserve">
+    <value> · giden kutusu </value>
+  </data>
+  <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
+    <value>Olaylar önce depoya, sonra giden kuyruğuna düşer · </value>
+  </data>
+  <data name="Conduit_Network_Name" xml:space="preserve">
+    <value>Ağ</value>
+  </data>
+  <data name="Conduit_Network_ReadyPrefix" xml:space="preserve">
+    <value>Hazır · dinleniyor :</value>
+  </data>
+  <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
+    <value> · bağlı </value>
+  </data>
+  <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
+    <value> cihaz</value>
+  </data>
+  <data name="Conduit_Network_Down" xml:space="preserve">
+    <value>Çalışmıyor · eşitleme kapalı</value>
+  </data>
+  <data name="Conduit_Peer_Name" xml:space="preserve">
+    <value>Karşı taraf yazma</value>
+  </data>
+  <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
+    <value>Eşleştirilmiş </value>
+  </data>
+  <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
+    <value> cihaz</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
+    <value>Uzak metin bu bilgisayarın panosuna otomatik yazılır.</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
+    <value>Otomatik uygulama kapalı: uzak içerik yalnızca geçmişte kalır ve elle kopyalanması gerekir.</value>
+  </data>
+  <data name="Conduit_Devices_Header" xml:space="preserve">
+    <value>Ağ bölümü · eşleştirilmiş cihazlar</value>
+  </data>
+  <data name="Conduit_Connection_Header" xml:space="preserve">
+    <value>Ağ bölümü · bağlantı</value>
+  </data>
+  <data name="Conduit_CleanupStale" xml:space="preserve">
+    <value>Temizle</value>
+  </data>
+  <data name="Conduit_Bluetooth_Title" xml:space="preserve">
+    <value>Bluetooth yedeği</value>
+  </data>
+  <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
+    <value>Varsayılan olarak kapalı. LAN bir VPN veya güvenlik duvarı tarafından engellendiğinde, sistem ayarlarında zaten Bluetooth ile eşleştirilmiş bir telefon metni eşitlemeye devam eder (görsel yok, daha yavaş).</value>
+  </data>
+  <data name="Conduit_ExtraBind_Title" xml:space="preserve">
+    <value>Ek dinleme adresleri</value>
+  </data>
+  <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
+    <value>Tailscale / WireGuard gibi sanal bağdaştırıcı adresleri için. Genel aktarma sunucusu sağlanmaz.</value>
+  </data>
+  <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
+    <value>Yeniden başlatınca geçerli olur</value>
+  </data>
+  <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
+    <value> · birden çok adresi virgülle ayır</value>
+  </data>
+  <data name="Conduit_Fingerprint_Title" xml:space="preserve">
+    <value>Bu bilgisayarın sertifika parmak izi</value>
+  </data>
+  <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
+    <value>Eşleştirirken telefonda gösterilen parmak iziyle grup grup karşılaştır. Parmak izi değişirse tüm eşleştirilmiş cihazlar yeniden doğrulama ister.</value>
+  </data>
+  <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
+    <value>Karşı taraf hizmeti çalışmıyor; bu oturumda gösterilecek parmak izi yok.</value>
+  </data>
+  <data name="Device_RevokedBadge" xml:space="preserve">
+    <value>İptal edildi</value>
+  </data>
+  <data name="Device_AccentLabel" xml:space="preserve">
+    <value>Cihaz rengi</value>
+  </data>
+  <data name="Device_AccentManual" xml:space="preserve">
+    <value>Elle belirlendi</value>
+  </data>
+  <data name="Device_AccentByOrder" xml:space="preserve">
+    <value>Eşleştirme sırasını izler</value>
+  </data>
+  <data name="Device_Rename" xml:space="preserve">
+    <value>Yeniden adlandır</value>
+  </data>
+  <data name="Device_RevokeSelected" xml:space="preserve">
+    <value>Seçilen cihazı iptal et</value>
+  </data>
+  <data name="Device_RevokeNote" xml:space="preserve">
+    <value>İptal, cihazın bağlantısını hemen keser ve eşleştirme anahtarını geçersiz kılar; cihazın zaten aldığı içerik asla uzaktan silinmez. İptal sonrası yeniden eşleştirme yeni cihaz sayılır. Aynı telefon yeni bir kimlikle yeniden eşleştiğinde eski kayıt otomatik iptal edilir ve giden kuyruğu temizlenir.</value>
+  </data>
+  <data name="Device_UnknownRemote" xml:space="preserve">
+    <value>Uzak cihaz</value>
+  </data>
+  <data name="Device_PairedFallback" xml:space="preserve">
+    <value>Eşleştirilmiş cihaz</value>
+  </data>
+  <data name="Device_UnknownFallback" xml:space="preserve">
+    <value>Bilinmeyen cihaz</value>
+  </data>
+  <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
+    <value>{0} · giden kutusunda {1} bekliyor</value>
+  </data>
+  <data name="Stale_BannerBacklogFormat" xml:space="preserve">
+    <value>Kalıntıya benzeyen {0} cihaz algılandı; bekleyen {1} öğe «giden» sayacını şişiriyor. Temizlik bunları iptal eder ve giden kuyruklarını boşaltır.</value>
+  </data>
+  <data name="Stale_BannerFormat" xml:space="preserve">
+    <value>Kalıntıya benzeyen {0} cihaz algılandı. Temizlik bunları iptal eder; zaten aldıkları içerik etkilenmez.</value>
+  </data>
+  <data name="Stale_DuplicateBadge" xml:space="preserve">
+    <value>Muhtemel yinelenen eşleştirme kalıntısı</value>
+  </data>
+  <data name="Stale_NeverConnected" xml:space="preserve">
+    <value>Eşleştirmeden beri hiç bağlanmadı</value>
+  </data>
+  <data name="Stale_UnseenDaysFormat" xml:space="preserve">
+    <value>{0} günden uzun süredir bağlanmadı</value>
+  </data>
+  <data name="Prefs_Title" xml:space="preserve">
+    <value>Tercihler</value>
+  </data>
+  <data name="Prefs_Subtitle" xml:space="preserve">
+    <value>Değişiklikler anında geçerli · pano içeriği asla günlüklere yazılmaz</value>
+  </data>
+  <data name="Prefs_Group_Display" xml:space="preserve">
+    <value>GÖRÜNÜM</value>
+  </data>
+  <data name="Prefs_Group_Capture" xml:space="preserve">
+    <value>YAKALAMA</value>
+  </data>
+  <data name="Prefs_Group_Sync" xml:space="preserve">
+    <value>EŞİTLEME</value>
+  </data>
+  <data name="Prefs_Group_Retention" xml:space="preserve">
+    <value>SAKLAMA</value>
+  </data>
+  <data name="Prefs_Group_Startup" xml:space="preserve">
+    <value>ÇALIŞMA</value>
+  </data>
+  <data name="Prefs_Group_Data" xml:space="preserve">
+    <value>VERİ</value>
+  </data>
+  <data name="Prefs_FontScale_Title" xml:space="preserve">
+    <value>Geçmiş yazı boyutu</value>
+  </data>
+  <data name="Prefs_FontScale_Desc" xml:space="preserve">
+    <value>Yalnızca pano içeriği metnini ölçekler (geçmiş önizlemeleri, ayrıntı gövdesi, tepsi penceresi); grup başlıkları, rozetler ve düğmeler değişmez.</value>
+  </data>
+  <data name="Prefs_FontScale_Small" xml:space="preserve">
+    <value>Küçük</value>
+  </data>
+  <data name="Prefs_FontScale_Standard" xml:space="preserve">
+    <value>Standart</value>
+  </data>
+  <data name="Prefs_FontScale_Large" xml:space="preserve">
+    <value>Büyük</value>
+  </data>
+  <data name="Prefs_PreviewLines_Title" xml:space="preserve">
+    <value>Önizleme satırları</value>
+  </data>
+  <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
+    <value>Geçmiş listesinde her kayıt için gösterilecek en fazla gövde satırı; taşan kısım üç noktayla kesilir — tam içerik için ayrıntıları aç.</value>
+  </data>
+  <data name="Prefs_PreviewLines_Two" xml:space="preserve">
+    <value>2 satır</value>
+  </data>
+  <data name="Prefs_PreviewLines_Four" xml:space="preserve">
+    <value>4 satır</value>
+  </data>
+  <data name="Prefs_PreviewLines_Six" xml:space="preserve">
+    <value>6 satır</value>
+  </data>
+  <data name="Prefs_Theme_Title" xml:space="preserve">
+    <value>Görünüm</value>
+  </data>
+  <data name="Prefs_Theme_Desc" xml:space="preserve">
+    <value>Pencerenin gündüz/gece paleti; tepsi simgesi görev çubuğunda yaşar ve her zaman görev çubuğunun tonunu izler.</value>
+  </data>
+  <data name="Prefs_Theme_Day" xml:space="preserve">
+    <value>Gündüz</value>
+  </data>
+  <data name="Prefs_Theme_Night" xml:space="preserve">
+    <value>Gece</value>
+  </data>
+  <data name="Prefs_Language_Title" xml:space="preserve">
+    <value>Dil</value>
+  </data>
+  <data name="Prefs_Language_Desc" xml:space="preserve">
+    <value>Arayüz dili — sistemi izle ya da elle belirle; her dil her zaman kendi ana dilindeki adıyla gösterilir.</value>
+  </data>
+  <data name="Prefs_Language_RestartNote" xml:space="preserve">
+    <value>Uygulama yeniden başlatılınca geçerli olur.</value>
+  </data>
+  <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
+    <value>Duraklatılınca bu bilgisayar yeni içerik kaydetmez; mevcut geçmiş korunur.</value>
+  </data>
+  <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
+    <value>Açıkken yakalama ve eşitleme tamamen durur, hiçbir iz kalmaz.</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
+    <value>Engellenen süreçler</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
+    <value>Bu süreçlerden gelen kopyalar geçmişe girmez ve eşitlenmez. Virgülle veya satır sonuyla ayır.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
+    <value>Uzak içeriği otomatik uygula</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
+    <value>Telefondan gelen metin bu bilgisayarın panosuna otomatik yazılır. Kapalıyken yalnızca geçmişte kalır ve elle kopyalanması gerekir.</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
+    <value>Pano görsellerini eşitle</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
+    <value>Varsayılan olarak kapalı. Yalnızca PNG/JPEG; ham baytlar EXIF ve başka üst veriler taşıyabilir, iki ucun da v2 oturumu gerekir.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
+    <value>Uzak görselleri otomatik uygula</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
+    <value>Telefondan gelen görseller bu bilgisayarın panosuna otomatik yazılır. Kapalıyken yalnızca geçmişte kalır ve elle kopyalanması gerekir.</value>
+  </data>
+  <data name="Prefs_Moved_Title" xml:space="preserve">
+    <value>Bluetooth yedeği · ek dinleme adresleri · sertifika parmak izi</value>
+  </data>
+  <data name="Prefs_Moved_Desc" xml:space="preserve">
+    <value>Kanal · ağ bölümüne taşındı — içeriğin karşı tarafa ulaşıp ulaşamayacağını belirledikleri için eşleştirme ve cihaz yönetimiyle birlikte otururlar.</value>
+  </data>
+  <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
+    <value>Kanala git</value>
+  </data>
+  <data name="Prefs_Retention_Days_Title" xml:space="preserve">
+    <value>Saklama süresi</value>
+  </data>
+  <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
+    <value>Süresi dolan kayıtlar otomatik silinir. Temizlik yalnızca bu bilgisayarda olur ve karşı tarafın zaten aldığını asla silmez.</value>
+  </data>
+  <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
+    <value>gün</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
+    <value>Saklama adedi</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
+    <value>Sınır aşılınca en eski kayıtlar önce silinir (100–2000, 100'er adım). Temizlik yalnızca bu bilgisayarda olur.</value>
+  </data>
+  <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
+    <value>kayıt</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
+    <value>Açılışta başlat · sessizce tepsiye</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
+    <value>Windows oturumu açılınca otomatik başlar ve ana pencereyi açmadan doğrudan tepsiye iner. Yalnızca geçerli kullanıcının başlangıç girdisini yazar; yönetici hakkı gerekmez.</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
+    <value>Tepsi penceresi kısayolu</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
+    <value>Herhangi bir uygulamada kombinasyona basarak tepsi penceresini çağır. Kutuya tıkla ve istediğin kombinasyona bas (Ctrl, Alt veya Win içermeli); Backspace temizler. Varsayılan olarak kapalı.</value>
+  </data>
+  <data name="Prefs_Data_Export_Desc" xml:space="preserve">
+    <value>Tüm geçmişi (silme işaretleri dahil) JSON Lines yedek dosyası olarak yazar; anahtar, sertifika veya eşleştirme verisi içermez. Dışa aktarım düz metindir — güvenle sakla.</value>
+  </data>
+  <data name="Prefs_Data_Import_Desc" xml:space="preserve">
+    <value>Yedek dosyasından geçmişi birleştirir: «kaynak cihaz + sıra numarası» üzerinde idempotenttir, yani yeniden içe aktarma asla kayıt çoğaltmaz ve yerel silmeleri ezmez. Doğrulama hataları hiçbir şeyi değiştirmez.</value>
+  </data>
+  <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
+    <value>Bu bilgisayardaki tüm kayıtları (görseller dahil) tek adımda siler; iki onay ister ve geri alınamaz. Temizlik yalnızca bu bilgisayarda olur ve karşı tarafın zaten aldığını asla silmez — önce dışa aktarmayı düşün.</value>
+  </data>
+  <data name="Flyout_WindowTitle" xml:space="preserve">
+    <value>ClipSync · son kayıtlar</value>
+  </data>
+  <data name="Flyout_PauseSync" xml:space="preserve">
+    <value>Eşitlemeyi duraklat</value>
+  </data>
+  <data name="Flyout_ResumeSync" xml:space="preserve">
+    <value>Eşitlemeyi sürdür</value>
+  </data>
+  <data name="Flyout_Empty" xml:space="preserve">
+    <value>Henüz kayıt yok · bir metin kopyalamayı dene</value>
+  </data>
+  <data name="Flyout_PauseOrResume" xml:space="preserve">
+    <value>Eşitlemeyi duraklat veya sürdür</value>
+  </data>
+  <data name="Flyout_CopyFromFormat" xml:space="preserve">
+    <value>{0} kaynağından gelen kaydı kopyala</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>ClipSync'i aç</value>
+  </data>
+  <data name="Tray_Menu_Diagnostics" xml:space="preserve">
+    <value>Tanılama günlüğü</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>Çıkış</value>
+  </data>
+  <data name="Tray_Tooltip_Flow" xml:space="preserve">
+    <value>ClipSync · dinleniyor</value>
+  </data>
+  <data name="Tray_Tooltip_AttentionFormat" xml:space="preserve">
+    <value>ClipSync · {0}</value>
+  </data>
+  <data name="Tray_AttentionFallback" xml:space="preserve">
+    <value>İşlem gerekli</value>
+  </data>
+  <data name="Tray_Tooltip_Paused" xml:space="preserve">
+    <value>ClipSync · yakalama duraklatıldı</value>
+  </data>
+  <data name="Tray_Tooltip_Private" xml:space="preserve">
+    <value>ClipSync · özel mod, iz bırakmaz</value>
+  </data>
+  <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
+    <value>{0} kaynağından 1 yeni kayıt</value>
+  </data>
+  <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
+    <value>{0} kaynağından {1} yeni kayıt</value>
+  </data>
+  <data name="Tray_OversizeNotice" xml:space="preserve">
+    <value>Az önce kopyalanan metin 1 MiB'ı aşıyor; yalnızca bu bilgisayarın panosunda kalır ve eşitlenmez (kesilmedi).</value>
+  </data>
+  <data name="Tray_AuthThrottleFormat" xml:space="preserve">
+    <value>«{0}» cihazından art arda kimlik doğrulama hataları algılandı; cihaz geçici olarak kısıtlandı.</value>
+  </data>
+  <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
+    <value>Dinleniyor · eşitleme çalışmıyor</value>
+  </data>
+  <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
+    <value>Dinleniyor · {0} bağlı</value>
+  </data>
+  <data name="Tray_Status_Waiting" xml:space="preserve">
+    <value>Dinleniyor · cihaz bekleniyor</value>
+  </data>
+  <data name="Capture_OversizeNotice" xml:space="preserve">
+    <value>Az önce kopyalanan metin 1 MiB'ı aşıyor: sistem panosunda kesilmeden kalır ama geçmişe kaydedilmez ve eşitlenmez.</value>
+  </data>
+  <data name="Sync_NotStarted" xml:space="preserve">
+    <value>Karşı taraf hizmeti henüz başlamadı</value>
+  </data>
+  <data name="Sync_StartFailed" xml:space="preserve">
+    <value>Karşı taraf hizmeti başlatılamadı; bu oturumda eşitleme kapalı.</value>
+  </data>
+  <data name="Sync_ConnectedFormat" xml:space="preserve">
+    <value>LAN {0} portunda dinleniyor · {1} cihaz bağlı, içerik gerçek zamanlı akıyor.</value>
+  </data>
+  <data name="Sync_WaitingFormat" xml:space="preserve">
+    <value>LAN {0} portunda dinleniyor · eşleştirilmiş cihazlar bekleniyor; olaylar önce depoya, sonra giden kuyruğuna düşer, çevrimdışında hiçbir şey kaybolmaz.</value>
+  </data>
+  <data name="Bt_Disabled" xml:space="preserve">
+    <value>Bluetooth yedeği etkin değil</value>
+  </data>
+  <data name="Bt_UnavailableFormat" xml:space="preserve">
+    <value>Bluetooth yedeği kullanılamıyor: {0}</value>
+  </data>
+  <data name="Bt_SyncingFormat" xml:space="preserve">
+    <value>Bluetooth yedeği · {0} ile eşitleniyor (yalnızca metin)</value>
+  </data>
+  <data name="Bt_Armed" xml:space="preserve">
+    <value>Bluetooth yedeği hazırda · LAN ulaşılamaz olunca telefon otomatik olarak Bluetooth'a geçer</value>
+  </data>
+  <data name="Bt_Starting" xml:space="preserve">
+    <value>Bluetooth yedeği başlatılıyor…</value>
+  </data>
+  <data name="Bt_AdapterUnavailable" xml:space="preserve">
+    <value>Bluetooth bağdaştırıcısı kullanılamıyor veya kapalı</value>
+  </data>
+  <data name="Ack_None" xml:space="preserve">
+    <value>Henüz karşı taraf onayı yok</value>
+  </data>
+  <data name="Ack_UpToFormat" xml:space="preserve">
+    <value>Karşı taraf {0} numarasına kadar onayladı</value>
+  </data>
+  <data name="Transfer_ClearedFormat" xml:space="preserve">
+    <value>{0} geçmiş kaydı temizlendi (görseller dahil). Temizlik yalnızca bu bilgisayarda olur.</value>
+  </data>
+  <data name="Transfer_ClearConfirmBody" xml:space="preserve">
+    <value>Tüm geçmiş temizlensin mi?
+
+Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik yalnızca bu bilgisayarda olur ve karşı tarafın zaten aldığını asla silmez. Önce «Geçmişi dışa aktar» seçeneğini düşün.</value>
+  </data>
+  <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
+    <value>Bir kez daha onayla: temizlik geri alınamaz. Tüm geçmiş temizlensin mi?</value>
+  </data>
+  <data name="Transfer_ExportedFormat" xml:space="preserve">
+    <value>{0} kayıt dışa aktarıldı (düz metin) → {1}</value>
+  </data>
+  <data name="Transfer_ExportWriteFailed" xml:space="preserve">
+    <value>Dışa aktarma başarısız: seçilen dosya yazılamadı.</value>
+  </data>
+  <data name="Transfer_ImportedFormat" xml:space="preserve">
+    <value>İçe aktarma tamamlandı: eklenen {0} · zaten var {1} · çakışma {2}</value>
+  </data>
+  <data name="Transfer_ImportFailedFormat" xml:space="preserve">
+    <value>İçe aktarma başarısız: {0}. Hiçbir şey değiştirilmedi.</value>
+  </data>
+  <data name="Transfer_ImportReadFailed" xml:space="preserve">
+    <value>İçe aktarma başarısız: seçilen dosya okunamadı.</value>
+  </data>
+  <data name="Transfer_FileFilter" xml:space="preserve">
+    <value>ClipSync geçmiş dışa aktarımı (*.jsonl)|*.jsonl|Tüm dosyalar (*.*)|*.*</value>
+  </data>
+  <data name="Transfer_Error_BadHeader" xml:space="preserve">
+    <value>bu bir ClipSync geçmiş dışa aktarım dosyası değil</value>
+  </data>
+  <data name="Transfer_Error_UnsupportedVersion" xml:space="preserve">
+    <value>dosya sürümü bu uygulamanın desteklediğinden daha yeni</value>
+  </data>
+  <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
+    <value>dosya bozuk (hatalı kayıt biçimi)</value>
+  </data>
+  <data name="Transfer_Error_HashMismatch" xml:space="preserve">
+    <value>dosya bozuk (sağlama doğrulaması başarısız)</value>
+  </data>
+  <data name="Transfer_Error_CountMismatch" xml:space="preserve">
+    <value>dosya eksik (adet üst bilgiyle uyuşmuyor)</value>
+  </data>
+  <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
+    <value>dosyada boyut sınırlarını aşan bir kayıt var (metin 1 MiB / görsel 16 MiB)</value>
+  </data>
+  <data name="Transfer_Error_Unknown" xml:space="preserve">
+    <value>bilinmeyen hata</value>
+  </data>
+  <data name="Hotkey_Applied" xml:space="preserve">
+    <value>Etkin · herhangi bir uygulamada basınca tepsi penceresi açılır</value>
+  </data>
+  <data name="Hotkey_Conflict" xml:space="preserve">
+    <value>Bu kombinasyon başka bir program tarafından kullanılıyor; farklı bir kombinasyon dene</value>
+  </data>
+  <data name="Attention_PeerDown" xml:space="preserve">
+    <value>Bu oturumda eşitleme çalışmıyor (uç nokta başlatılamadı)</value>
+  </data>
+  <data name="Attention_CaptureFaulted" xml:space="preserve">
+    <value>Pano yakalama kısıtlı (son erişim başarısız)</value>
+  </data>
+  <data name="Attention_NoDevice" xml:space="preserve">
+    <value>Eşitlemeye başlamak için bir cihaz eşleştir</value>
+  </data>
+  <data name="Pairing_Title" xml:space="preserve">
+    <value>Yeni cihaz eşleştir</value>
+  </data>
+  <data name="Pairing_PeerDownBody" xml:space="preserve">
+    <value>Karşı taraf hizmeti çalışmıyor; bu oturumda eşleştirme yapılamaz.</value>
+  </data>
+  <data name="Pairing_ScanInstruction" xml:space="preserve">
+    <value>Bu kodu telefonundaki ClipSync ile tara. QR kodu bu bilgisayarın adresini, sertifika parmak izini ve tek kullanımlık bir belirteç taşır — eşleştirme anahtarını asla taşımaz.</value>
+  </data>
+  <data name="Pairing_CountdownFormat" xml:space="preserve">
+    <value>{0:m\:ss} sonra yenilenir</value>
+  </data>
+  <data name="Pairing_NoLanAddress" xml:space="preserve">
+    <value>LAN adresi algılanmadı. Bu bilgisayarı ve telefonu aynı ağa bağla (veya Tercihler'e bir Tailscale adresi ekle), sonra bu pencereyi yeniden aç.</value>
+  </data>
+  <data name="Pairing_VerifyHeading" xml:space="preserve">
+    <value>Onaylamadan önce telefonda doğrula</value>
+  </data>
+  <data name="Pairing_PcName" xml:space="preserve">
+    <value>Bilgisayar adı</value>
+  </data>
+  <data name="Pairing_Fingerprint" xml:space="preserve">
+    <value>Sertifika parmak izi</value>
+  </data>
+  <data name="Pairing_NewCode" xml:space="preserve">
+    <value>Yeni kod</value>
+  </data>
+  <data name="Approval_Title" xml:space="preserve">
+    <value>Eşleştirme isteği</value>
+  </data>
+  <data name="Approval_CloseReject" xml:space="preserve">
+    <value>Kapat ve reddet</value>
+  </data>
+  <data name="Approval_Question" xml:space="preserve">
+    <value>Bu cihazın eşleşmesine izin verilsin mi?</value>
+  </data>
+  <data name="Approval_Body" xml:space="preserve">
+    <value>Bir cihaz bu bilgisayarın QR kodunu kullanarak eşleştirme istedi. Yalnızca aşağıdaki ad elindeki telefonla uyuşuyorsa onayla.</value>
+  </data>
+  <data name="Approval_PlatformAndroid" xml:space="preserve">
+    <value>Android cihaz</value>
+  </data>
+  <data name="Approval_PlatformWindows" xml:space="preserve">
+    <value>Windows cihaz</value>
+  </data>
+  <data name="Approval_RepairWarning" xml:space="preserve">
+    <value>Bu cihaz daha önce eşleştirilmişti. Onaylamak mevcut eşleştirme anahtarını değiştirir ve eski kurulum hemen çalışmaz olur.</value>
+  </data>
+  <data name="Approval_SupersedeNotice" xml:space="preserve">
+    <value>Listede aynı adla bir cihaz zaten var. Onaydan sonra eski kayıt otomatik iptal edilir ve giden kuyruğu temizlenir (aynı telefonun yeniden eşleşmesi sayılır).</value>
+  </data>
+  <data name="Approval_Reject" xml:space="preserve">
+    <value>Reddet</value>
+  </data>
+  <data name="Approval_Approve" xml:space="preserve">
+    <value>Eşleştirmeyi onayla</value>
+  </data>
+  <data name="Detail_Title" xml:space="preserve">
+    <value>Kayıt ayrıntıları</value>
+  </data>
+  <data name="Detail_SourceFormat" xml:space="preserve">
+    <value>Kaynak: {0}</value>
+  </data>
+  <data name="Detail_TimeFormat" xml:space="preserve">
+    <value>Zaman: {0}</value>
+  </data>
+  <data name="Diag_Title" xml:space="preserve">
+    <value>ClipSync · tanılama günlüğü</value>
+  </data>
+  <data name="Diag_Heading" xml:space="preserve">
+    <value>Yerel tanılama · yalnızca durum kodları ve zamanlar, asla pano içeriği</value>
+  </data>
+  <data name="Diag_CopyAll" xml:space="preserve">
+    <value>Tümünü kopyala</value>
+  </data>
+  <data name="Diag_Empty" xml:space="preserve">
+    <value>(henüz tanılama kaydı yok)</value>
+  </data>
+</root>
