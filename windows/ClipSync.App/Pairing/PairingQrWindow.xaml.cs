@@ -1,6 +1,8 @@
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using ClipSync.App.Localization;
@@ -19,6 +21,15 @@ public partial class PairingQrWindow : Window
 {
     /// <summary>The QR's intended edge in device-independent units (matches the XAML frame).</summary>
     private const double QrEdgeDips = 280;
+
+    // 配对成功的一次性镜面流光（tokens §9 唯一豁免；technique_lab §05 配方）：带宽 36% 窗宽、
+    // 倾斜 18°、左缘从 -40% 平移到 130%，宪章缓动 0.9s（dur 的 Windows 皮），走完停一拍再关窗。
+    private const double SheenBandWidthFraction = 0.36;
+    private const double SheenTravelStartFraction = -0.4;
+    private const double SheenTravelEndFraction = 1.3;
+    private const double SheenAngleDegrees = 18;
+    private const int SheenTravelMs = 900;
+    private const int SheenRestMs = 350;
 
     private readonly PairingService pairing;
     private readonly PeerSyncHost host;
@@ -137,7 +148,61 @@ public partial class PairingQrWindow : Window
     }
 
     private void OnPairingCompleted(PairedDevice device) =>
-        _ = Dispatcher.InvokeAsync(Close);
+        _ = Dispatcher.InvokeAsync(CelebrateThenClose);
+
+    /// <summary>
+    /// The ritual's closing beat: one mirror sheen sweeps the window, then it closes.
+    /// With animations off (减弱动效) the window closes immediately, exactly as before —
+    /// the system's choice is a fact.
+    /// </summary>
+    private void CelebrateThenClose()
+    {
+        // The pairing is done: no fresh ticket may replace the success beat.
+        countdown.Stop();
+        if (!SystemParameters.ClientAreaAnimation)
+        {
+            Close();
+            return;
+        }
+
+        var width = ActualWidth;
+        var height = ActualHeight;
+        SheenBand.Width = width * SheenBandWidthFraction;
+        // Triple-height overdraw so the 18° lean still covers the window; the host clips.
+        SheenBand.Height = height * 3;
+        Canvas.SetLeft(SheenBand, 0);
+        Canvas.SetTop(SheenBand, -height);
+        var translate = new TranslateTransform(width * SheenTravelStartFraction, 0);
+        SheenBand.RenderTransform = new TransformGroup
+        {
+            Children =
+            {
+                new RotateTransform(SheenAngleDegrees, SheenBand.Width / 2, height * 1.5),
+                translate
+            }
+        };
+        SheenHost.Visibility = Visibility.Visible;
+
+        var sweep = new DoubleAnimationUsingKeyFrames();
+        sweep.KeyFrames.Add(new SplineDoubleKeyFrame(
+            width * SheenTravelEndFraction,
+            KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(SheenTravelMs)),
+            new KeySpline(0.16, 1, 0.3, 1)));
+        sweep.Completed += OnSheenCompleted;
+        translate.BeginAnimation(TranslateTransform.XProperty, sweep);
+    }
+
+    /// <summary>The sweep is done; hold one quiet beat (停顿比划过更重要), then close.</summary>
+    private void OnSheenCompleted(object? sender, EventArgs e)
+    {
+        var rest = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(SheenRestMs) };
+        rest.Tick += (_, _) =>
+        {
+            rest.Stop();
+            Close();
+        };
+        rest.Start();
+    }
 
     private void OnRegenerateClicked(object sender, RoutedEventArgs e) => RefreshTicket();
 

@@ -11,6 +11,8 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,10 +46,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -58,9 +67,11 @@ import androidx.core.content.ContextCompat
 import com.clipsync.android.R
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingQrPayload
+import com.clipsync.android.ui.theme.CharterMotion
 import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncFonts
 import com.clipsync.android.ui.theme.ClipSyncType
+import com.clipsync.android.ui.theme.LocalReducedMotion
 import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.clipSyncColors
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
@@ -334,6 +345,7 @@ private fun PairedContent(peer: PairedPeer, viewModel: PairingViewModel) {
         Modifier
             .fillMaxWidth()
             .charterCard()
+            .pairingSuccessSheen()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -392,6 +404,67 @@ private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel) {
     }
     Button(onClick = viewModel::reset, shape = ControlShape, modifier = Modifier.fillMaxWidth()) {
         Text(stringResource(R.string.pairing_restart))
+    }
+}
+
+/** The sheen band is 36% of the container's width (technique_lab §05). */
+private const val SHEEN_BAND_WIDTH_FRACTION = 0.36f
+
+/** The band's left edge travels from -40% to 130% of the width: 1.7 widths in total. */
+private const val SHEEN_TRAVEL_START_FRACTION = -0.4f
+private const val SHEEN_TRAVEL_WIDTH_FRACTION = 1.7f
+
+/** White at 85% opacity at the band's centre, transparent at both edges. */
+private const val SHEEN_PEAK_ALPHA = 0.85f
+private const val SHEEN_PEAK_STOP = 0.5f
+
+/** Vertical overdraw so the leaned band still covers the card; the clip crops the rest. */
+private const val SHEEN_OVERDRAW_FACTOR = 3f
+
+/** The band leans 18° like the charter demo; one sweep runs 1.3s on Android (skin). */
+private const val SHEEN_ANGLE_DEGREES = 18f
+private const val SHEEN_TRAVEL_MS = 1300
+
+/**
+ * 配对成功的一次性镜面流光（tokens.md §9 唯一豁免：「仅配对成功可考虑一次」；配方按
+ * technique_lab §05）：一条容器宽 36% 的白色渐变带，倾斜 18°，以宪章缓动从 -40% 平移到
+ * 130%，只走一遍——停顿比划过本身更重要，所以走完即静止，绝不循环。减弱动效时不出场
+ * （系统的选择是事实），此时配对完成卡与其他卡面完全一致。
+ */
+@Composable
+private fun Modifier.pairingSuccessSheen(): Modifier {
+    if (LocalReducedMotion.current) {
+        return this
+    }
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        progress.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = SHEEN_TRAVEL_MS, easing = CharterMotion.Ease),
+        )
+    }
+    return drawWithContent {
+        drawContent()
+        val value = progress.value
+        if (value >= 1f) {
+            return@drawWithContent
+        }
+        val band = size.width * SHEEN_BAND_WIDTH_FRACTION
+        val left = size.width * (SHEEN_TRAVEL_START_FRACTION + SHEEN_TRAVEL_WIDTH_FRACTION * value)
+        rotate(degrees = SHEEN_ANGLE_DEGREES, pivot = Offset(left + band / 2f, size.height / 2f)) {
+            drawRect(
+                brush = Brush.horizontalGradient(
+                    0f to Color.Transparent,
+                    SHEEN_PEAK_STOP to Color.White.copy(alpha = SHEEN_PEAK_ALPHA),
+                    1f to Color.Transparent,
+                    startX = left,
+                    endX = left + band,
+                ),
+                // 竖向大幅超采样：18° 旋转后仍盖满整卡，多余部分被卡面 clip 裁掉。
+                topLeft = Offset(left, -size.height),
+                size = Size(band, size.height * SHEEN_OVERDRAW_FACTOR),
+            )
+        }
     }
 }
 

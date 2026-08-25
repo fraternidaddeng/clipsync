@@ -20,7 +20,8 @@
                       UseAeroCaptionButtons="False" />
     </WindowChrome.WindowChrome>
 
-    <DockPanel Background="{DynamicResource CsBgBrush}">
+    <Grid>
+        <DockPanel Background="{DynamicResource CsBgBrush}">
 
         <!-- 标题栏：折线标记 + 窗名（Serif，配对仪式是全应用三处衬线之一） -->
         <Border DockPanel.Dock="Top"
@@ -171,5 +172,24 @@
                         Style="{StaticResource GhostQuietButton}" />
             </StackPanel>
         </StackPanel>
-    </DockPanel>
+        </DockPanel>
+
+        <!-- 配对成功的一次性镜面流光（tokens §9 唯一豁免；technique_lab §05 配方）：
+             一条窗宽 36% 的白色渐变带，倾斜 18°，宪章缓动从 -40% 平移到 130% 只走一遍，
+             随后关窗。几何与动画在代码里按实际窗尺寸装配；减弱动效时直接关窗（现状不变）。 -->
+        <Canvas x:Name="SheenHost"
+                ClipToBounds="True"
+                IsHitTestVisible="False"
+                Visibility="Collapsed">
+            <Rectangle x:Name="SheenBand">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Offset="0" Color="Transparent" />
+                        <GradientStop Offset="0.5" Color="#D9FFFFFF" />
+                        <GradientStop Offset="1" Color="Transparent" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Canvas>
+    </Grid>
 </Window>

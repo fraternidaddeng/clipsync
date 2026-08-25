@@ -50,7 +50,7 @@
 | 差距 | 现状 | 需要做 |
 |---|---|---|
 | ~~设备邻近色手动改色~~ **已解决（2026-08-25，settings-roadmap P1#14）** | 通路设备行五色点选色器：Android 存 `PairingStore`（`device.accent.<id>`），Windows 存 devices 表 `accent_override`（schema v5）；点配对顺位默认色即清除覆盖，历史来源盒随生效色 | — |
-| 动效令牌（Windows 剩余部分） | Android 已接令牌（本轮）；Windows 已做「需要你操作」2.6s 脉动（KeySpline 逐位对齐）；**页面切换过渡已接（2026-08-25）**：历史/通路/偏好三页可见即 `PageFadeIn` 淡入——宪章缓动 `cubic-bezier(.16,1,.3,1)` + dur-win 200ms，对齐 Android tab Crossfade，系统「减弱动效」时保持硬切；**详情窗开窗同语汇（2026-08-25）**：`PageFadeIn` 族上移 App 级 `CharterControls.xaml`，详情窗内容随开窗淡入（托盘浮窗刻意不接——无时间性动效是其既有裁决；配对两窗 `SizeToContent` 首布局尚待实机核验，不在此轮加动效）；剩余：悬停/主题切换仍即时（悬停按 tokens 本就只跳阴影档），配对成功的一次性镜面流光两端均未做（tokens §九列为「可考虑」，非欠账） | — |
+| 动效令牌（Windows 剩余部分） | Android 已接令牌（本轮）；Windows 已做「需要你操作」2.6s 脉动（KeySpline 逐位对齐）；**页面切换过渡已接（2026-08-25）**：历史/通路/偏好三页可见即 `PageFadeIn` 淡入——宪章缓动 `cubic-bezier(.16,1,.3,1)` + dur-win 200ms，对齐 Android tab Crossfade，系统「减弱动效」时保持硬切；**详情窗开窗同语汇（2026-08-25）**：`PageFadeIn` 族上移 App 级 `CharterControls.xaml`，详情窗内容随开窗淡入（托盘浮窗刻意不接——无时间性动效是其既有裁决；配对两窗 `SizeToContent` 首布局尚待实机核验，不在此轮加动效）；剩余：悬停/主题切换仍即时（悬停按 tokens 本就只跳阴影档）；**配对成功的一次性镜面流光已做（2026-08-25，两端）**：technique_lab §05 配方（36% 宽白渐变带、18° 倾斜、-40%→130%、宪章缓动、一次性不循环），Android 配对完成卡 / Windows 二维码窗关窗前，减弱动效时两端均不出场；首次连接场景刻意未接（连接是反复事件，一次性豁免只给配对仪式） | — |
 | ~~QS 磁贴状态~~ **已解决（2026-08-25）** | 磁贴在 QS 面板打开期间跟随 `connectionStates` 与 暂停/私密 偏好：仅已连接为 active，其余（排队/被拒）为 inactive——保持可点，外观说实话；纯映射 `SendClipboardTileState` 有单元测试 | — |
 | ~~托盘主题只采样一次~~ **已解决（2026-08-25）** | 托盘监听 `SystemEvents.UserPreferenceChanged`（General/VisualStyle），派发到 UI 线程重读任务栏主题并整套换图标（换完再释放旧套）；外观手动覆盖不钉托盘——托盘住在任务栏里 | — |
 
