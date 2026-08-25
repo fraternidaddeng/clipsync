@@ -40,6 +40,8 @@
 
 ## 阶段 2：Windows RFCOMM 服务端
 
+状态：未开始（仅项目骨架）。`windows/ClipSync.Peer.Bluetooth/` 已建立占位程序集（暂为可移植 `net8.0`，WinRT 代码落地时才切 `net8.0-windows10.0.19041.0` TFM），内含 `IRfcommServer`/`IRfcommConnection` 平台接缝接口与 `RfcommContract`（SDP Service UUID `5f7f1d9c-2d6b-4e8d-9f1b-ef9ed49b0bec`，双端共用，发布后冻结）。无任何 WinRT 依赖或蓝牙 I/O。
+
 任务：
 
 - 新程序集 `ClipSync.Peer.Bluetooth`：`RfcommServiceProvider` 发布 ClipSync Service UUID、单连接接受、bt1 握手、`ISyncTransport` 适配器把解密后的 JSON 文本交给现有 `SyncSessionEngine`。

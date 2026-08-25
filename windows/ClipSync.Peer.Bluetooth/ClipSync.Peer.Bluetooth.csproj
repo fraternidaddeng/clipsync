@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Phase 2 scaffolding (docs/bluetooth-fallback-plan.md): platform-neutral seams only,
+         no WinRT code yet. When the RfcommServiceProvider implementation lands, this project
+         (and only this project) moves to the net8.0-windows10.0.19041.0 TFM so that
+         ClipSync.Core / ClipSync.Peer keep their portable TFM and their tests keep running
+         on every CI host. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>ClipSync.Peer.Bluetooth</RootNamespace>
+    <AssemblyName>ClipSync.Peer.Bluetooth</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ClipSync.Peer\ClipSync.Peer.csproj" />
+  </ItemGroup>
+</Project>
