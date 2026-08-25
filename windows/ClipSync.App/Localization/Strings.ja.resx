@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="App_WindowTitle" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Brand_Wordmark" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Chrome_Minimize" xml:space="preserve">
+    <value>最小化</value>
+  </data>
+  <data name="Chrome_MaximizeRestore" xml:space="preserve">
+    <value>最大化または元に戻す</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="Common_Copy" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="Common_Acknowledge" xml:space="preserve">
+    <value>了解</value>
+  </data>
+  <data name="Common_FollowSystem" xml:space="preserve">
+    <value>システムに従う</value>
+  </data>
+  <data name="Common_ClearHistory" xml:space="preserve">
+    <value>履歴を消去</value>
+  </data>
+  <data name="Common_ExportHistory" xml:space="preserve">
+    <value>履歴をエクスポート</value>
+  </data>
+  <data name="Common_ImportHistory" xml:space="preserve">
+    <value>履歴をインポート</value>
+  </data>
+  <data name="Common_PauseCapture" xml:space="preserve">
+    <value>キャプチャを一時停止</value>
+  </data>
+  <data name="Common_PrivateMode" xml:space="preserve">
+    <value>プライベートモード</value>
+  </data>
+  <data name="Nav_History" xml:space="preserve">
+    <value>履歴</value>
+  </data>
+  <data name="Nav_Conduit" xml:space="preserve">
+    <value>経路</value>
+  </data>
+  <data name="Nav_Prefs" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="History_Title" xml:space="preserve">
+    <value>履歴</value>
+  </data>
+  <data name="History_Subtitle" xml:space="preserve">
+    <value>この PC とペアリング済み端末のクリップ記録 · 削除はこの端末内のみ</value>
+  </data>
+  <data name="History_Search" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="Filter_All" xml:space="preserve">
+    <value>すべて</value>
+  </data>
+  <data name="Filter_Link" xml:space="preserve">
+    <value>リンク</value>
+  </data>
+  <data name="Filter_Otp" xml:space="preserve">
+    <value>認証コード</value>
+  </data>
+  <data name="Filter_Email" xml:space="preserve">
+    <value>アカウント</value>
+  </data>
+  <data name="Filter_Credential" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="Filter_Plain" xml:space="preserve">
+    <value>テキスト</value>
+  </data>
+  <data name="Format_Image" xml:space="preserve">
+    <value>画像</value>
+  </data>
+  <data name="History_NoPreview" xml:space="preserve">
+    <value>プレビューなし</value>
+  </data>
+  <data name="History_LocalOnlyBadge" xml:space="preserve">
+    <value>この端末にのみ保持</value>
+  </data>
+  <data name="History_Empty_Unpaired_Title" xml:space="preserve">
+    <value>まず両端をつなぎましょう</value>
+  </data>
+  <data name="History_Empty_Paired_Title" xml:space="preserve">
+    <value>最初のクリップを待っています</value>
+  </data>
+  <data name="History_Empty_Unpaired_Body" xml:space="preserve">
+    <value>まだスマートフォンとペアリングしていません。ペアリングの入口は「経路」ページのネットワーク区間にあります。</value>
+  </data>
+  <data name="History_Empty_Paired_Body" xml:space="preserve">
+    <value>どちらの端末でテキストをコピーしても、ここに表示され、相手側へ流れます。</value>
+  </data>
+  <data name="History_Empty_GoPair" xml:space="preserve">
+    <value>ペアリングへ ›</value>
+  </data>
+  <data name="History_NoMatch_Prefix" xml:space="preserve">
+    <value>「</value>
+  </data>
+  <data name="History_NoMatch_Suffix" xml:space="preserve">
+    <value>」に一致する記録はありません</value>
+  </data>
+  <data name="History_Empty_Filtered" xml:space="preserve">
+    <value>この種類の記録はありません · 別のフィルターを試してください</value>
+  </data>
+  <data name="History_CopySelected" xml:space="preserve">
+    <value>選択項目をコピー</value>
+  </data>
+  <data name="History_ViewDetail" xml:space="preserve">
+    <value>詳細を表示</value>
+  </data>
+  <data name="History_DeleteSelected" xml:space="preserve">
+    <value>選択項目を削除</value>
+  </data>
+  <data name="History_UnknownSource" xml:space="preserve">
+    <value>不明なソース</value>
+  </data>
+  <data name="History_LocalSource" xml:space="preserve">
+    <value>この PC</value>
+  </data>
+  <data name="Conduit_Title" xml:space="preserve">
+    <value>経路</value>
+  </data>
+  <data name="Conduit_Subtitle" xml:space="preserve">
+    <value>内容は左から右へ四つの区間を流れます · 読む順序がそのままトラブルシューティングの順序</value>
+  </data>
+  <data name="Conduit_Capture_Name" xml:space="preserve">
+    <value>ローカルキャプチャ</value>
+  </data>
+  <data name="Conduit_Capture_Ready" xml:space="preserve">
+    <value>準備完了 · Ctrl+C を監視中</value>
+  </data>
+  <data name="Conduit_Status_Paused" xml:space="preserve">
+    <value>一時停止中 · 記録しません</value>
+  </data>
+  <data name="Conduit_Status_Private" xml:space="preserve">
+    <value>プライベートモード · 痕跡を残しません</value>
+  </data>
+  <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
+    <value>キャプチャ劣化 · クリップボードへのアクセスに失敗</value>
+  </data>
+  <data name="Conduit_Capture_Detail" xml:space="preserve">
+    <value>プライベートモードとブロック対象プロセスはこの区間で内容を止めます。</value>
+  </data>
+  <data name="Conduit_Service_Name" xml:space="preserve">
+    <value>ローカルサービス</value>
+  </data>
+  <data name="Conduit_Service_ReadyPrefix" xml:space="preserve">
+    <value>準備完了 · 履歴 </value>
+  </data>
+  <data name="Conduit_Service_ReadyInfix" xml:space="preserve">
+    <value> 件 · 送信待ち </value>
+  </data>
+  <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
+    <value>イベントは保存してから送信キューへ · </value>
+  </data>
+  <data name="Conduit_Network_Name" xml:space="preserve">
+    <value>ネットワーク</value>
+  </data>
+  <data name="Conduit_Network_ReadyPrefix" xml:space="preserve">
+    <value>準備完了 · 監視中 :</value>
+  </data>
+  <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
+    <value> · 接続 </value>
+  </data>
+  <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
+    <value> 台</value>
+  </data>
+  <data name="Conduit_Network_Down" xml:space="preserve">
+    <value>未起動 · 同期オフ</value>
+  </data>
+  <data name="Conduit_Peer_Name" xml:space="preserve">
+    <value>相手側書き込み</value>
+  </data>
+  <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
+    <value>ペアリング済み </value>
+  </data>
+  <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
+    <value> 台</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
+    <value>リモートのテキストはこの PC のクリップボードへ自動で書き込まれます。</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
+    <value>自動適用はオフ：リモートの内容は履歴にのみ残り、手動でのコピーが必要です。</value>
+  </data>
+  <data name="Conduit_Devices_Header" xml:space="preserve">
+    <value>ネットワーク区間 · ペアリング済み端末</value>
+  </data>
+  <data name="Conduit_Connection_Header" xml:space="preserve">
+    <value>ネットワーク区間 · 接続</value>
+  </data>
+  <data name="Conduit_CleanupStale" xml:space="preserve">
+    <value>一括クリーンアップ</value>
+  </data>
+  <data name="Conduit_Bluetooth_Title" xml:space="preserve">
+    <value>Bluetooth フォールバック</value>
+  </data>
+  <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
+    <value>既定ではオフ。LAN が VPN やファイアウォールで遮断されたとき、システム設定で Bluetooth ペアリング済みのスマートフォンはテキストの同期を継続できます（画像なし、低速）。</value>
+  </data>
+  <data name="Conduit_ExtraBind_Title" xml:space="preserve">
+    <value>追加の待ち受けアドレス</value>
+  </data>
+  <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
+    <value>Tailscale / WireGuard などの仮想アダプターのアドレス用。公開中継は提供しません。</value>
+  </data>
+  <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
+    <value>再起動後に有効</value>
+  </data>
+  <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
+    <value> · 複数のアドレスはカンマで区切ります</value>
+  </data>
+  <data name="Conduit_Fingerprint_Title" xml:space="preserve">
+    <value>この PC の証明書フィンガープリント</value>
+  </data>
+  <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
+    <value>ペアリング時はスマートフォンに表示されるフィンガープリントとグループごとに照合してください。フィンガープリントが変わると、すべてのペアリング済み端末に再確認が求められます。</value>
+  </data>
+  <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
+    <value>相手側サービスが起動していないため、このセッションでは表示できるフィンガープリントがありません。</value>
+  </data>
+  <data name="Device_RevokedBadge" xml:space="preserve">
+    <value>取り消し済み</value>
+  </data>
+  <data name="Device_AccentLabel" xml:space="preserve">
+    <value>端末カラー</value>
+  </data>
+  <data name="Device_AccentManual" xml:space="preserve">
+    <value>手動設定</value>
+  </data>
+  <data name="Device_AccentByOrder" xml:space="preserve">
+    <value>ペアリング順に従う</value>
+  </data>
+  <data name="Device_Rename" xml:space="preserve">
+    <value>名前を変更</value>
+  </data>
+  <data name="Device_RevokeSelected" xml:space="preserve">
+    <value>選択した端末を取り消す</value>
+  </data>
+  <data name="Device_RevokeNote" xml:space="preserve">
+    <value>取り消すと端末は即座に切断され、ペアリングキーは無効になります。相手側が受信済みの内容がリモートで削除されることはありません。取り消し後の再ペアリングは新しい端末として扱われます。同じスマートフォンが新しい識別情報で再ペアリングした場合、古い記録は自動的に取り消され、その送信キューも消去されます。</value>
+  </data>
+  <data name="Device_UnknownRemote" xml:space="preserve">
+    <value>リモート端末</value>
+  </data>
+  <data name="Device_PairedFallback" xml:space="preserve">
+    <value>ペアリング済み端末</value>
+  </data>
+  <data name="Device_UnknownFallback" xml:space="preserve">
+    <value>不明な端末</value>
+  </data>
+  <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
+    <value>{0} · 送信待ち {1} 件が滞留</value>
+  </data>
+  <data name="Stale_BannerBacklogFormat" xml:space="preserve">
+    <value>残留の疑いがある端末を {0} 台検出しました。滞留中の送信待ち {1} 件が「送信待ち」件数を押し上げています。クリーンアップで取り消し、送信キューを消去します。</value>
+  </data>
+  <data name="Stale_BannerFormat" xml:space="preserve">
+    <value>残留の疑いがある端末を {0} 台検出しました。クリーンアップで取り消します。相手側が受信済みの内容には影響しません。</value>
+  </data>
+  <data name="Stale_DuplicateBadge" xml:space="preserve">
+    <value>重複ペアリングの残留の疑い</value>
+  </data>
+  <data name="Stale_NeverConnected" xml:space="preserve">
+    <value>ペアリング後一度も接続なし</value>
+  </data>
+  <data name="Stale_UnseenDaysFormat" xml:space="preserve">
+    <value>{0} 日以上接続なし</value>
+  </data>
+  <data name="Prefs_Title" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Prefs_Subtitle" xml:space="preserve">
+    <value>変更は即時反映 · クリップボードの本文がログに載ることはありません</value>
+  </data>
+  <data name="Prefs_Group_Display" xml:space="preserve">
+    <value>表 示 · DISPLAY</value>
+  </data>
+  <data name="Prefs_Group_Capture" xml:space="preserve">
+    <value>キャプチャ · CAPTURE</value>
+  </data>
+  <data name="Prefs_Group_Sync" xml:space="preserve">
+    <value>同 期 · SYNC</value>
+  </data>
+  <data name="Prefs_Group_Retention" xml:space="preserve">
+    <value>保 持 · RETENTION</value>
+  </data>
+  <data name="Prefs_Group_Startup" xml:space="preserve">
+    <value>起 動 · STARTUP</value>
+  </data>
+  <data name="Prefs_Group_Data" xml:space="preserve">
+    <value>データ · DATA</value>
+  </data>
+  <data name="Prefs_FontScale_Title" xml:space="preserve">
+    <value>履歴の文字サイズ</value>
+  </data>
+  <data name="Prefs_FontScale_Desc" xml:space="preserve">
+    <value>クリップ内容のテキストのみ拡大縮小します（履歴プレビュー、詳細本文、トレイのフライアウト）。グループ見出し、バッジ、ボタンは変わりません。</value>
+  </data>
+  <data name="Prefs_FontScale_Small" xml:space="preserve">
+    <value>小</value>
+  </data>
+  <data name="Prefs_FontScale_Standard" xml:space="preserve">
+    <value>標準</value>
+  </data>
+  <data name="Prefs_FontScale_Large" xml:space="preserve">
+    <value>大</value>
+  </data>
+  <data name="Prefs_PreviewLines_Title" xml:space="preserve">
+    <value>プレビュー行数</value>
+  </data>
+  <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
+    <value>履歴一覧で 1 件あたりに表示する本文の最大行数。超えた分は省略記号で切り詰められ、全文は詳細で確認できます。</value>
+  </data>
+  <data name="Prefs_PreviewLines_Two" xml:space="preserve">
+    <value>2 行</value>
+  </data>
+  <data name="Prefs_PreviewLines_Four" xml:space="preserve">
+    <value>4 行</value>
+  </data>
+  <data name="Prefs_PreviewLines_Six" xml:space="preserve">
+    <value>6 行</value>
+  </data>
+  <data name="Prefs_Theme_Title" xml:space="preserve">
+    <value>外観</value>
+  </data>
+  <data name="Prefs_Theme_Desc" xml:space="preserve">
+    <value>ウィンドウの昼/夜配色。トレイアイコンはタスクバーに住んでおり、常にタスクバーの明暗に従います。</value>
+  </data>
+  <data name="Prefs_Theme_Day" xml:space="preserve">
+    <value>昼</value>
+  </data>
+  <data name="Prefs_Theme_Night" xml:space="preserve">
+    <value>夜</value>
+  </data>
+  <data name="Prefs_Language_Title" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="Prefs_Language_Desc" xml:space="preserve">
+    <value>表示言語。システムに従うか手動で指定します。言語名は常にそれぞれの母語で表示されます。</value>
+  </data>
+  <data name="Prefs_Language_RestartNote" xml:space="preserve">
+    <value>変更後はアプリの再起動で有効になります。</value>
+  </data>
+  <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
+    <value>一時停止中はこの PC で新しい内容を記録しません。既存の履歴は保持されます。</value>
+  </data>
+  <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
+    <value>オンの間はキャプチャと同期を完全に停止し、痕跡を残しません。</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
+    <value>ブロック対象プロセス</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
+    <value>これらのプロセスからのコピーは履歴に入らず、同期もされません。カンマまたは改行で区切ります。</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
+    <value>リモート内容の自動適用</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
+    <value>スマートフォンから届いたテキストをこの PC のクリップボードへ自動で書き込みます。オフの場合は履歴にのみ残り、手動でのコピーが必要です。</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
+    <value>クリップボード画像の同期</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
+    <value>既定ではオフ。PNG/JPEG のみ。元のバイト列には EXIF などのメタデータが含まれる場合があり、両端が v2 セッションである必要があります。</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
+    <value>リモート画像の自動適用</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
+    <value>スマートフォンから届いた画像をこの PC のクリップボードへ自動で書き込みます。オフの場合は履歴にのみ残り、手動でのコピーが必要です。</value>
+  </data>
+  <data name="Prefs_Moved_Title" xml:space="preserve">
+    <value>Bluetooth フォールバック · 追加の待ち受けアドレス · 証明書フィンガープリント</value>
+  </data>
+  <data name="Prefs_Moved_Desc" xml:space="preserve">
+    <value>「経路 · ネットワーク区間」へ移動しました——内容が相手側に届くかどうかを決める設定のため、ペアリングや端末管理と同居しています。</value>
+  </data>
+  <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
+    <value>経路へ</value>
+  </data>
+  <data name="Prefs_Retention_Days_Title" xml:space="preserve">
+    <value>保持期間</value>
+  </data>
+  <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
+    <value>期限を過ぎた項目は自動的に削除されます。削除はこの PC 内でのみ行われ、相手側が受信済みの内容をリモートで削除することはありません。</value>
+  </data>
+  <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
+    <value>日</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
+    <value>保持件数</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
+    <value>上限を超えると古い項目から削除されます（100–2000、100 刻み）。削除はこの PC 内でのみ行われます。</value>
+  </data>
+  <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
+    <value>件</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
+    <value>起動時に自動開始 · 静かにトレイへ</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
+    <value>Windows へのサインインと同時に自動起動し、メインウィンドウを開かずそのままトレイに入ります。現在のユーザーのスタートアップ項目のみ書き込み、管理者権限は不要です。</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
+    <value>フライアウト呼び出しホットキー</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
+    <value>どのアプリでも組み合わせを押すとトレイのフライアウトを呼び出せます。入力欄をクリックして希望の組み合わせを押してください（Ctrl、Alt、Win のいずれかを含む必要があります）。Backspace で消去。既定ではオフ。</value>
+  </data>
+  <data name="Prefs_Data_Export_Desc" xml:space="preserve">
+    <value>全履歴（削除マーカーを含む）を JSON Lines のバックアップファイルとして書き出します。キー、証明書、ペアリング情報は含みません。エクスポートは平文です——大切に保管してください。</value>
+  </data>
+  <data name="Prefs_Data_Import_Desc" xml:space="preserve">
+    <value>バックアップファイルから履歴を統合します。「ソース端末 + 連番」で冪等に重複排除するため、再インポートで項目が重複したり、この端末で削除済みの記録が上書きされたりすることはありません。検証に失敗した場合は何も変更しません。</value>
+  </data>
+  <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
+    <value>この PC の全項目（画像を含む）を一括削除します。二段階の確認が必要で、元に戻せません。消去はこの PC 内でのみ行われ、相手側が受信済みの内容をリモートで削除することはありません。先に履歴をエクスポートしておくことをおすすめします。</value>
+  </data>
+  <data name="Flyout_WindowTitle" xml:space="preserve">
+    <value>ClipSync · 最近のクリップ</value>
+  </data>
+  <data name="Flyout_PauseSync" xml:space="preserve">
+    <value>同期を一時停止</value>
+  </data>
+  <data name="Flyout_ResumeSync" xml:space="preserve">
+    <value>同期を再開</value>
+  </data>
+  <data name="Flyout_Empty" xml:space="preserve">
+    <value>まだクリップ記録がありません · テキストをコピーしてみてください</value>
+  </data>
+  <data name="Flyout_PauseOrResume" xml:space="preserve">
+    <value>同期の一時停止/再開</value>
+  </data>
+  <data name="Flyout_CopyFromFormat" xml:space="preserve">
+    <value>{0} からのクリップをコピー</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>ClipSync を開く</value>
+  </data>
+  <data name="Tray_Menu_Diagnostics" xml:space="preserve">
+    <value>診断ログ</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="Tray_Tooltip_Flow" xml:space="preserve">
+    <value>ClipSync · 監視中</value>
+  </data>
+  <data name="Tray_Tooltip_AttentionFormat" xml:space="preserve">
+    <value>ClipSync · {0}</value>
+  </data>
+  <data name="Tray_AttentionFallback" xml:space="preserve">
+    <value>操作が必要です</value>
+  </data>
+  <data name="Tray_Tooltip_Paused" xml:space="preserve">
+    <value>ClipSync · キャプチャ一時停止中</value>
+  </data>
+  <data name="Tray_Tooltip_Private" xml:space="preserve">
+    <value>ClipSync · プライベートモード、痕跡を残しません</value>
+  </data>
+  <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
+    <value>{0} から新しいクリップが 1 件</value>
+  </data>
+  <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
+    <value>{0} から新しいクリップが {1} 件</value>
+  </data>
+  <data name="Tray_OversizeNotice" xml:space="preserve">
+    <value>コピーしたテキストが 1 MiB を超えています。この PC のクリップボードにのみ残り、同期されません（切り詰めなし）。</value>
+  </data>
+  <data name="Tray_AuthThrottleFormat" xml:space="preserve">
+    <value>「{0}」の認証失敗が繰り返し検出されたため、この端末を一時的に制限しています。</value>
+  </data>
+  <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
+    <value>監視中 · 同期は未起動</value>
+  </data>
+  <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
+    <value>監視中 · {0} 台接続</value>
+  </data>
+  <data name="Tray_Status_Waiting" xml:space="preserve">
+    <value>監視中 · 端末の接続を待っています</value>
+  </data>
+  <data name="Capture_OversizeNotice" xml:space="preserve">
+    <value>コピーしたテキストが 1 MiB を超えています。内容はシステムのクリップボードに切り詰めなしで残りますが、履歴に記録されず、同期もされません。</value>
+  </data>
+  <data name="Sync_NotStarted" xml:space="preserve">
+    <value>相手側サービスは未起動です</value>
+  </data>
+  <data name="Sync_StartFailed" xml:space="preserve">
+    <value>相手側サービスを起動できなかったため、このセッションでは同期はオフです。</value>
+  </data>
+  <data name="Sync_ConnectedFormat" xml:space="preserve">
+    <value>LAN ポート {0} で待ち受け中 · {1} 台接続、内容はリアルタイムで行き来します。</value>
+  </data>
+  <data name="Sync_WaitingFormat" xml:space="preserve">
+    <value>LAN ポート {0} で待ち受け中 · ペアリング済み端末の接続を待っています。イベントは保存してから送信キューに入るため、切断しても失われません。</value>
+  </data>
+  <data name="Bt_Disabled" xml:space="preserve">
+    <value>Bluetooth フォールバックは無効です</value>
+  </data>
+  <data name="Bt_UnavailableFormat" xml:space="preserve">
+    <value>Bluetooth フォールバックを利用できません：{0}</value>
+  </data>
+  <data name="Bt_SyncingFormat" xml:space="preserve">
+    <value>Bluetooth フォールバック · {0} と同期中（テキストのみ）</value>
+  </data>
+  <data name="Bt_Armed" xml:space="preserve">
+    <value>Bluetooth フォールバック待機中 · LAN が届かないときスマートフォンは自動的に Bluetooth へ切り替えます</value>
+  </data>
+  <data name="Bt_Starting" xml:space="preserve">
+    <value>Bluetooth フォールバックを起動中…</value>
+  </data>
+  <data name="Bt_AdapterUnavailable" xml:space="preserve">
+    <value>Bluetooth アダプターが利用できないかオフになっています</value>
+  </data>
+  <data name="Ack_None" xml:space="preserve">
+    <value>相手側からの確認はまだありません</value>
+  </data>
+  <data name="Ack_UpToFormat" xml:space="preserve">
+    <value>相手側は {0} まで確認済み</value>
+  </data>
+  <data name="Transfer_ClearedFormat" xml:space="preserve">
+    <value>履歴 {0} 件（画像を含む）を消去しました。消去はこの PC 内でのみ行われます。</value>
+  </data>
+  <data name="Transfer_ClearConfirmBody" xml:space="preserve">
+    <value>全履歴を消去しますか？
+
+この PC の全項目（画像を含む）を一括削除します。消去はこの PC 内でのみ行われ、相手側が受信済みの内容をリモートで削除することはありません。先に「履歴をエクスポート」しておくことをおすすめします。</value>
+  </data>
+  <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
+    <value>もう一度確認：消去後は元に戻せません。全履歴を消去しますか？</value>
+  </data>
+  <data name="Transfer_ExportedFormat" xml:space="preserve">
+    <value>{0} 件の記録をエクスポートしました（平文）→ {1}</value>
+  </data>
+  <data name="Transfer_ExportWriteFailed" xml:space="preserve">
+    <value>エクスポート失敗：選択したファイルに書き込めませんでした。</value>
+  </data>
+  <data name="Transfer_ImportedFormat" xml:space="preserve">
+    <value>インポート完了：追加 {0} · 既存 {1} · 競合 {2}</value>
+  </data>
+  <data name="Transfer_ImportFailedFormat" xml:space="preserve">
+    <value>インポート失敗：{0}。何も変更していません。</value>
+  </data>
+  <data name="Transfer_ImportReadFailed" xml:space="preserve">
+    <value>インポート失敗：選択したファイルを読み取れませんでした。</value>
+  </data>
+  <data name="Transfer_FileFilter" xml:space="preserve">
+    <value>ClipSync 履歴エクスポート (*.jsonl)|*.jsonl|すべてのファイル (*.*)|*.*</value>
+  </data>
+  <data name="Transfer_Error_BadHeader" xml:space="preserve">
+    <value>ClipSync の履歴エクスポートファイルではありません</value>
+  </data>
+  <data name="Transfer_Error_UnsupportedVersion" xml:space="preserve">
+    <value>ファイルのバージョンがこのアプリの対応より新しいです</value>
+  </data>
+  <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
+    <value>ファイルの内容が壊れています（記録の形式エラー）</value>
+  </data>
+  <data name="Transfer_Error_HashMismatch" xml:space="preserve">
+    <value>ファイルの内容が壊れています（ハッシュ検証に失敗）</value>
+  </data>
+  <data name="Transfer_Error_CountMismatch" xml:space="preserve">
+    <value>ファイルが不完全です（件数がヘッダーと一致しません）</value>
+  </data>
+  <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
+    <value>サイズ上限を超える項目が含まれています（テキスト 1 MiB / 画像 16 MiB）</value>
+  </data>
+  <data name="Transfer_Error_Unknown" xml:space="preserve">
+    <value>不明なエラー</value>
+  </data>
+  <data name="Hotkey_Applied" xml:space="preserve">
+    <value>有効 · どのアプリでも押せばフライアウトを呼び出せます</value>
+  </data>
+  <data name="Hotkey_Conflict" xml:space="preserve">
+    <value>その組み合わせは他のプログラムが使用しています。別の組み合わせを試してください</value>
+  </data>
+  <data name="Attention_PeerDown" xml:space="preserve">
+    <value>このセッションでは同期が未起動です（エンドポイントの起動に失敗）</value>
+  </data>
+  <data name="Attention_CaptureFaulted" xml:space="preserve">
+    <value>クリップボードキャプチャが劣化しています（前回のアクセスに失敗）</value>
+  </data>
+  <data name="Attention_NoDevice" xml:space="preserve">
+    <value>端末をペアリングして同期を始めましょう</value>
+  </data>
+  <data name="Pairing_Title" xml:space="preserve">
+    <value>新しい端末とペアリング</value>
+  </data>
+  <data name="Pairing_PeerDownBody" xml:space="preserve">
+    <value>相手側サービスが起動していないため、このセッションではペアリングできません。</value>
+  </data>
+  <data name="Pairing_ScanInstruction" xml:space="preserve">
+    <value>スマートフォンの ClipSync でこのコードをスキャンしてください。QR コードにはこの PC のアドレス、証明書フィンガープリント、ワンタイムトークンが含まれます——ペアリングキーは決して含まれません。</value>
+  </data>
+  <data name="Pairing_CountdownFormat" xml:space="preserve">
+    <value>{0:m\:ss} 後に自動更新</value>
+  </data>
+  <data name="Pairing_NoLanAddress" xml:space="preserve">
+    <value>LAN アドレスが見つかりません。この PC とスマートフォンを同じネットワークに接続し（または設定で Tailscale アドレスを追加し）、このウィンドウを開き直してください。</value>
+  </data>
+  <data name="Pairing_VerifyHeading" xml:space="preserve">
+    <value>承認する前にスマートフォンで確認</value>
+  </data>
+  <data name="Pairing_PcName" xml:space="preserve">
+    <value>PC 名</value>
+  </data>
+  <data name="Pairing_Fingerprint" xml:space="preserve">
+    <value>証明書フィンガープリント</value>
+  </data>
+  <data name="Pairing_NewCode" xml:space="preserve">
+    <value>新しいコード</value>
+  </data>
+  <data name="Approval_Title" xml:space="preserve">
+    <value>ペアリング要求</value>
+  </data>
+  <data name="Approval_CloseReject" xml:space="preserve">
+    <value>閉じて拒否</value>
+  </data>
+  <data name="Approval_Question" xml:space="preserve">
+    <value>この端末とのペアリングを許可しますか？</value>
+  </data>
+  <data name="Approval_Body" xml:space="preserve">
+    <value>この PC に表示された QR コードを使ってペアリングを要求している端末があります。下の名前が手元のスマートフォンと一致する場合のみ承認してください。</value>
+  </data>
+  <data name="Approval_PlatformAndroid" xml:space="preserve">
+    <value>Android 端末</value>
+  </data>
+  <data name="Approval_PlatformWindows" xml:space="preserve">
+    <value>Windows 端末</value>
+  </data>
+  <data name="Approval_RepairWarning" xml:space="preserve">
+    <value>この端末は以前ペアリング済みです。承認すると既存のペアリングキーが置き換えられ、古いインストールは即座に無効になります。</value>
+  </data>
+  <data name="Approval_SupersedeNotice" xml:space="preserve">
+    <value>同名の端末が既に一覧にあります。承認すると古い記録は自動的に取り消され、その送信キューも消去されます（同じスマートフォンの再ペアリングとして扱われます）。</value>
+  </data>
+  <data name="Approval_Reject" xml:space="preserve">
+    <value>拒否</value>
+  </data>
+  <data name="Approval_Approve" xml:space="preserve">
+    <value>ペアリングを承認</value>
+  </data>
+  <data name="Detail_Title" xml:space="preserve">
+    <value>クリップの詳細</value>
+  </data>
+  <data name="Detail_SourceFormat" xml:space="preserve">
+    <value>ソース：{0}</value>
+  </data>
+  <data name="Detail_TimeFormat" xml:space="preserve">
+    <value>時刻：{0}</value>
+  </data>
+  <data name="Diag_Title" xml:space="preserve">
+    <value>ClipSync · 診断ログ</value>
+  </data>
+  <data name="Diag_Heading" xml:space="preserve">
+    <value>ローカル診断 · ステータスコードと時刻のみ、クリップボードの本文は決して含みません</value>
+  </data>
+  <data name="Diag_CopyAll" xml:space="preserve">
+    <value>すべてコピー</value>
+  </data>
+  <data name="Diag_Empty" xml:space="preserve">
+    <value>（診断記録はまだありません）</value>
+  </data>
+</root>
