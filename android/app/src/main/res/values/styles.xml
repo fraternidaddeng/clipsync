@@ -6,8 +6,8 @@
     <style name="Theme.ClipSync" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">#E2E9F2</item>
-        <item name="android:statusBarColor">#E2E9F2</item>
+        <item name="android:navigationBarColor">@color/cs_bg</item>
+        <item name="android:statusBarColor">@color/cs_bg</item>
     </style>
 
     <!-- Invisible host for the Quick Settings tile's one-shot clipboard read. -->

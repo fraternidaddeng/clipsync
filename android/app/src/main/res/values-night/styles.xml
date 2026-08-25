@@ -3,7 +3,7 @@
     <style name="Theme.ClipSync" parent="Theme.AppCompat.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:navigationBarColor">#0C1116</item>
-        <item name="android:statusBarColor">#0C1116</item>
+        <item name="android:navigationBarColor">@color/cs_bg</item>
+        <item name="android:statusBarColor">@color/cs_bg</item>
     </style>
 </resources>

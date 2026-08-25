@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Charter z0 bg night value (tokens.md §2); same key as values/colors.xml. -->
+    <color name="cs_bg">#0C1116</color>
+</resources>

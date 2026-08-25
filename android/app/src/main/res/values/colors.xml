@@ -3,4 +3,8 @@
     <!-- Charter flow blue (tokens.md): the notification accent. System surfaces
          get the day value; they render on system chrome, not on the app bg. -->
     <color name="cs_flow">#215F8F</color>
+    <!-- Charter z0 bg (tokens.md §2): the app background. Window chrome (status /
+         navigation bar) uses it so the system bars sit on the same surface as the
+         Compose UI; values-night carries the night value. -->
+    <color name="cs_bg">#E2E9F2</color>
 </resources>
