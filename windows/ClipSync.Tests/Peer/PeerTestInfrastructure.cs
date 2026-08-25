@@ -198,7 +198,11 @@ public sealed class PeerPair : IAsyncDisposable
         ClientVersion = "0.2.0",
         OutboxDrainInterval = TimeSpan.FromMilliseconds(100),
         PingInterval = TimeSpan.FromSeconds(60),
-        ProtocolVersion = ProtocolLimits.ProtocolVersionV2
+        ProtocolVersion = ProtocolLimits.ProtocolVersionV2,
+        // Production defaults the gate to off (opt-in per ADR 0004, same as Android); the
+        // integration suite opts in explicitly so the v2 image paths stay exercised. Tests
+        // that cover the off/flip behaviour override this (ImageSyncGateTests).
+        ImageSyncEnabled = static () => true
     };
 
     public static SyncSessionOptions DialerOptions() => DefaultSessionOptions() with

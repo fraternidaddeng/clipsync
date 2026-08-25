@@ -151,3 +151,10 @@
 
 - **限制 1 — Windows 缩略图单测失败：已在 main 提交 `9519716` 修复，待真 Windows 主机重跑 `scripts/build-windows.ps1` 确认后方可闭环。** 两条失败单测系两个独立成因，分别处理：`EnsureThumbnailKeepsOpaquePixels` 一类的逐通道像素全等断言改为共享的 `AssertCenterPixelIsSolid`（alpha ≥ 250、每通道相对编码色 ±3），容忍 WIC Fant 缩放器的定点误差；`LoadForListRegeneratesACorruptCachedThumbnail` 一类的损坏缓存自愈不再依赖静默 TryDelete，改为经唯一临时文件 + 覆盖式 `File.Move` 强制重写缓存，无法产出可解码缓存时 `LoadForList` 返回 null 路径而非坏路径。该提交已在 Linux 验证：解决方案编译干净（`EnableWindowsTargeting`，0 警告）、跨平台套件 471/471 通过；WPF 测试体仍需 Windows 执行，**在真 Windows 主机上 `scripts/build-windows.ps1` exit 0 之前不算验证通过**。
 - **限制 6 — CI 状态：工作流存在，但仓库从未有过任何 Actions 运行。** 仓库有且仅有一个工作流 `.github/workflows/ci.yml`（名称 CI，API 状态 active），含三作业：`validate-protocol`（ubuntu-latest）、`build-windows`（windows-latest，执行 `scripts/build-windows.ps1` 含 App.Tests）、`build-android`（ubuntu-latest）。截至本更新，Actions API 运行总数为 **0**——包括 `9519716` 在内的近期 main 推送均未触发任何运行；仓库级 Actions 权限查询对当前凭证返回 403，无法确认是否在仓库/组织设置中被禁用。因此第 0 节「CI 三作业全绿」仍不可核实，`9519716` 的修复也尚无 CI 验证，目前只能依靠 Windows 主机手动重跑兜底。
+
+### 更新（2026-08-25）：限制 5「双端图片同步开关不一致」已按「双端默认关」对齐并钉死
+
+- **产品默认取「关」而非「开」**：ADR 0004（「图片自动同步默认关闭」）与设计宪章 §5.9（`settings_image_sync_hint` =「默认关闭。仅 PNG/JPEG。原始字节含 EXIF。…」）都把图片同步定为显式开启的隐私承诺，故对齐方向是**双端默认关**，不是双端默认开。
+- **出厂默认核实**：Android `SyncSettingsStore.imageSyncEnabled`（`sync.image_sync`）默认 `false`；Windows 偏好页 `image_sync` 设置读取为 fail-closed（未存值/坏值一律解析为关），`MainViewModel.imageSyncEnabled` 字段默认亦为关。**QA 机上 Windows 显示「开」是该机此前手动开启后的持久化状态**（该机历史里已有图片缩略图即为旁证），不是出厂默认——两端出厂默认本就一致为关。
+- **真正修复的缺口（Windows 库层 fail-open 默认）**：`SyncSessionOptions.ImageSyncEnabled` 与 `PeerSyncHost` 的未接线兜底闸原为 `() => true`——生产 App 有接线所以未暴露，但任何忘记接线的宿主（如新增的承载进程）会静默参与 image_clip_v2 收发图片，与「默认关」相悖。现双双改为 `() => false`（未接线宿主表现为纯 v1 文本对端）；测试套件在 `PeerPair.DefaultSessionOptions` 显式开启以继续覆盖 v2 图片路径。
+- **测试钉死**：Windows 新增 `ImageSyncGateTests.ImageSyncGateDefaultsOffMatchingTheAndroidDefault`（默认闸关、v2 路由下 `ImageClipEnabled` 仍为假）；Android 新增 `ImageSyncDefaultAlignmentTest`（`imageSyncEnabled` 默认关且可往返、`auto_apply_images` 独立于文本闸默认关、坏持久化值回落为关）。图片同步的**双向真机验收**仍未做（见第 3 节），本更新只闭「默认值不一致」一项。

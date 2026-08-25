@@ -67,7 +67,9 @@ public sealed class PeerSyncHost : IAsyncDisposable
         // 图片同步 gate: while off, the listener refuses /v2 upgrades (dialers fall back to
         // v1) and live sessions accept/serve no image bodies; re-read so the toggle applies
         // immediately (strict audit §3: the setting must govern inbound, not only capture).
-        this.imageSyncEnabled = imageSyncEnabled ?? (static () => true);
+        // Fail-closed when unwired: image sync is opt-in on both platforms (ADR 0004), so a
+        // caller that forgets the gate gets the same off-by-default as Android, not silent on.
+        this.imageSyncEnabled = imageSyncEnabled ?? (static () => false);
         CertificateFingerprint = PeerCertificate.Fingerprint(certificate);
     }
 

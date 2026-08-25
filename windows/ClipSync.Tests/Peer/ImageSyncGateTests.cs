@@ -3,6 +3,7 @@ using ClipSync.Core.Media;
 using ClipSync.Core.Protocol;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Client;
+using ClipSync.Peer.Sessions;
 
 namespace ClipSync.Tests.Peer;
 
@@ -15,6 +16,19 @@ namespace ClipSync.Tests.Peer;
 /// </summary>
 public sealed class ImageSyncGateTests
 {
+    [Fact]
+    public void ImageSyncGateDefaultsOffMatchingTheAndroidDefault()
+    {
+        // Manual-QA limitation #5 (2026-08-25): the two platforms must default the same.
+        // Image sync is opt-in everywhere (ADR 0004 / DESIGN-CHARTER §5.9): Android's
+        // SyncSettingsStore.imageSyncEnabled defaults to false, so an unwired Windows
+        // session-options gate must fail closed too — even on a /v2 route.
+        var options = new SyncSessionOptions { ClientVersion = "0.2.0" };
+        Assert.False(options.ImageSyncEnabled());
+        Assert.False(options.ImageClipEnabled);
+        Assert.False((options with { ProtocolVersion = ProtocolLimits.ProtocolVersionV2 }).ImageClipEnabled);
+    }
+
     [Fact]
     public async Task ListenerRefusesV2UpgradeWhileImageSyncIsOffAndV1TextStillFlows()
     {

@@ -49,6 +49,7 @@
 - [Android] 自动写入通知配色与 Compose 弃用告警。
 - [Android] 远端图片自动写入改为独立开关「自动写入远端图片」（`auto_apply_images`，默认关）：文本「自动写入剪贴板」不再连带把图片写进本机剪贴板，与 Windows 端及 ADR 0004（图片写入门独立于文本自动应用）对齐；暂停同步仍同时关断两者，图片照常进入历史可手动复制。
 - [Windows] 同一部手机重新配对不再积累幽灵设备（2026-08-25 人工 QA 缺陷 2：设备表出现两台同名 `Xiaomi 22041216C`，未撤销的旧档 `80d29726-…` outbox 积压 42 条 pending，把通路「待发」带高）：配对确认时若列表已有同名同平台的活跃设备，视为同一部手机换了身份（如清除应用数据后）重新配对——确认窗以赭色提示「将替换旧记录」，批准后旧记录在同一事务内自动撤销（作废配对密钥、trust epoch +1）并清空其 outbox 积压，其在线会话被立即断开；设备撤销连带清空该设备发件队列为既有行为，本次补充测试锁定。
+- [双端] 图片同步默认值双端对齐为**默认关**（2026-08-25 人工 QA 限制 5「双端图片同步开关不一致（Win 开 / Android 关）」）：产品默认按 ADR 0004 与设计宪章 §5.9（`settings_image_sync_hint`「默认关闭」）统一为**双端关闭、显式开启**——Android `SyncSettingsStore.imageSyncEnabled`（`sync.image_sync`）与 Windows 偏好页 `image_sync` 设置本就默认关（QA 机上 Windows 为「开」系该机历史上手动开启后的持久化状态，非出厂默认）；真正修掉的是 Windows 端两处**未接线即放行**的库层默认：`SyncSessionOptions.ImageSyncEnabled` 与 `PeerSyncHost` 的兜底闸原为 `() => true`（任何忘记接线的宿主会静默参与 image_clip_v2 收发图片，与双端「默认关」相悖），现改为 fail-closed `() => false`——未接线的宿主表现为纯 v1 文本对端（拒绝 `/v2` 升级、图片一律 `unsupported_media`/`local_only`）；测试套件在 `PeerPair.DefaultSessionOptions` 显式开启以继续覆盖 v2 图片路径，新增 Windows `ImageSyncGateTests.ImageSyncGateDefaultsOffMatchingTheAndroidDefault` 与 Android `ImageSyncDefaultAlignmentTest` 双向钉死默认值。
 
 ### 文档 / 测试
 

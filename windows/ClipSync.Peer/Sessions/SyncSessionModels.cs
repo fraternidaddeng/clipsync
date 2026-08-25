@@ -58,9 +58,12 @@ public sealed record SyncSessionOptions
     /// peers opted into image_clip_v2, so the listener refuses the /v2 upgrade while this is
     /// off (the dialer falls back to /v1), and a live session re-reads the gate before every
     /// inbound or outbound image so flipping the setting applies without waiting for the
-    /// session to end. Text sync is never affected.
+    /// session to end. Text sync is never affected. Fail-closed default: image sync is
+    /// opt-in on both platforms (ADR 0004 / DESIGN-CHARTER §5.9, mirrored by Android's
+    /// SyncSettingsStore.imageSyncEnabled), so a host that never wires the gate must behave
+    /// like a v1 text-only peer instead of silently trading image bodies.
     /// </summary>
-    public Func<bool> ImageSyncEnabled { get; init; } = static () => true;
+    public Func<bool> ImageSyncEnabled { get; init; } = static () => false;
 
     public bool ImageClipEnabled => ProtocolVersion >= ProtocolLimits.ProtocolVersionV2 && ImageSyncEnabled();
 }
