@@ -8,7 +8,7 @@
 
 ### 新增
 
-- [Windows] 基础设置第一批（`docs/settings-roadmap.md` 的 Windows 半边，P0-1/P0-3/P0-5 + P1-7/P1-9/P1-15；外观手动覆盖暂缓）：
+- [Windows] 基础设置第一批（`docs/settings-roadmap.md` 的 Windows 半边，P0-1/P0-3/P0-5 + P1-7/P1-9/P1-15；外观手动覆盖当时暂缓，同日翻案后已落地——见下方外观条目）：
   - **历史字号**（偏好 · 显示，`ui_history_font_scale`，小/标准/大 = 0.9/1.0/1.15）：只缩放剪贴内容文字——历史预览正文、详情窗正文、托盘浮窗正文；组头、注记盒、元信息与按钮的纲领类型阶不动。历史区字号收敛为 `DynamicResource`，改动即全窗生效。
   - **预览行数**（偏好 · 显示，`ui_preview_lines`，2/4/6 行，默认 4）：历史列表每条的正文行数上限；行高显式化后截断永远落在整行边界，托盘浮窗保持两行封顶。
   - **开机自启 · 静默入托盘**（偏好 · 运行，`launch_at_startup`，默认关）：开关写入/删除当前用户 `HKCU\…\CurrentVersion\Run` 项（不用计划任务、不提权），自启带 `--minimized` 参数只落托盘；启动时重申注册表项，程序挪位后自愈。相应地，**手动启动现在直接打开主窗口**（此前一律纯托盘启动），自启路径保持安静。
@@ -72,10 +72,11 @@
 - [双端] **蓝牙备援阶段 0 spike 实测完成，判定 GO**（2026-08-25，报告 `docs/bluetooth-phase0-report.md` 含双端完整日志）：Lenovo/Realtek Windows 25H2 × Redmi Note 11T Pro（Android 13/MIUI）bt1 模式 256 KiB 档连续 3 轮全通——未打包进程 WinRT `RfcommServiceProvider` 发布 SDP 成立（G-W1，无需 MSIX）、Android 授权流/bonded 枚举/建连成立（G-A1）、bt1 端到端成立（G-C1）、建连 0.7–2.2 s（G-P1 ≤5 s）、RTT 中位约 31 ms（G-P2 ≤500）、吞吐 150–180 KiB/s（G-P3 ≥50）、稳定性 3/3（G-S1）。随之更新：`docs/bluetooth-fallback-plan.md` 阶段 0 → 已完成（含结果摘要与阶段 3/5 缺口清单）、ADR 0005 状态与限制表改用实测校准值、`docs/device-validation-matrix.md` 新增蓝牙 spike 证据行、`docs/install.md`/spike 运行手册补充小米实测配对路径（Windows 扫不到手机时从手机「可用设备」发起）。**纠正 `docs/install.md` 第 7 节错误陈述**：蓝牙窗口内复制的图片「恢复 IP 后按序补传」为误——按 ADR 0005 §4，图片事件在蓝牙会话中以 `local_only` 终止标记推进游标，**事后不会补传**（历史中标注「仅本机保留」），现与 ADR/应用内文案一致。仍无任何 READY 声明：spike 走工具路径，应用内蓝牙备援的整机验证属阶段 5。
 - [双端] 蓝牙备援阶段 0 可行性 spike 材料（仅证据收集，非产品功能，无 READY 声明）：运行手册 `docs/bluetooth-phase0-spike.md`（前置条件与 OS bonding/ClipSync 配对的区别、双端逐步操作、期望输出样例、GO/REVISE 门槛、排障表）与空白报告模板 `docs/bluetooth-phase0-report-template.md`；Windows 监听端 spike 控制台工具 `scripts/spike-bt1-windows/`（+ 包装脚本 `scripts/spike-bt1-windows.ps1`）——未打包进程经 WinRT `RfcommServiceProvider` 发布冻结服务 UUID、只收一个连接、复用 `ClipSync.Core` 阶段 1 bt1 实现做真实握手，独立于 `ClipSync.sln` 且经 `EnableWindowsTargeting` 可在 Linux 编译（`TreatWarningsAsErrors` 生效）；Android 客户端 spike 为 debug 构建独有的「ClipSync BT Spike」入口（`android/app/src/debug/`，声明 `BLUETOOTH_CONNECT` 仅入 debug manifest，release APK 无蓝牙权限与 spike 代码）——枚举 bonded 设备、`createRfcommSocketToServiceRecord` 连接、bt1 握手、RTT/上下行吞吐测量，结果以 `SPIKE_RESULT:` 结构化行输出（logcat 标签 `ClipSyncSpike`）便于本地代理采集；`docs/bluetooth-fallback-plan.md` 阶段 0 小节同步链接上述材料。
 - CI 工作流重构为三作业：协议 schema/fixture 校验、Windows 构建 + 全部测试、Android 单元测试 + debug APK 组装；在 `cursor/**` / `feature/**` 分支与 PR 上运行。
-- 测试规模：444 Android JVM + 185 跨平台对端 + 39 Windows 应用层用例；新增 Windows↔Android 全链路脚本化集成测试与真实会话事件驱动的通路页验证。
+- 测试规模（截至 main `d573080`，三作业 CI 全绿）：652 Android JVM + 484 跨平台核心/对端 + 186 Windows 应用层用例；新增 Windows↔Android 全链路脚本化集成测试与真实会话事件驱动的通路页验证。
 - 新增 `docs/verification-without-device.md`（绿测 ≠ 兼容的边界）、`docs/stage-gap-audit.md`、`docs/competitive-analysis.md`、`docs/design/ui-gap-audit.md`、`docs/manual-qa-checklist.md`、`docs/release-notes-template.md`；扩充 `docs/device-validation-matrix.md` 为脚本化检查清单。
 
 ### 已知欠账（进行中）
 
-- 发布产物上传（GitHub Releases / 发布 CI）、历史导出导入——并行任务推进中，见 `docs/competitive-analysis.md` 状态更新。
-- 实体机验证：蓝牙备援阶段 0 spike 已有一对真机 GO 证据（见「文档 / 测试」）；剪贴板通路矩阵（S0–S4）与蓝牙阶段 5 产品路径验证仍为零。图片同步（protocol v2）未做。
+- 发布产物上传（GitHub Releases / 发布 CI）仍未做。历史导出/导入已落地（Windows `5fd7461`、Android `3c51350`、图片感知 v2 格式 `87c0016`），自本清单移除。
+- 会话内 WebSocket 帧级速率限流仍未做（预认证 per-IP 滑窗限流已落地，`25d2788`）；收件箱 Room 化、入站通知洪泛策略未做。
+- 实体机验证：2026-08-25 首轮人工 QA（`docs/manual-qa-results.md`，判定不能出 RC）覆盖了前台双向文本同步等少数项；蓝牙备援阶段 0 spike 已有一对真机 GO 证据（见「文档 / 测试」）；剪贴板通路矩阵（S0–S4）与蓝牙阶段 5 产品路径验证仍为零。图片同步（protocol v2）双端代码已落地，真机图片互拷未验证。
