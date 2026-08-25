@@ -1,6 +1,6 @@
 # 蓝牙备援传输实施计划
 
-状态：设计定稿（对应 ADR 0005）。阶段 1 已完成（纯逻辑，见下）；阶段 0 的 spike 工具与运行手册已落库、**等待实体机执行**（无实体机结果前阶段 0 不算完成）；阶段 2–5 未开始。阶段 1 无平台依赖、不受阶段 0 结论影响，故先行落地；进入阶段 2/3 前仍须补做阶段 0 的实体机验证。
+状态：软件实现完成（对应 ADR 0005）。阶段 1–4 的代码与单测均已落地（见各阶段状态）；阶段 0 的 spike 工具与运行手册已落库、**等待实体机执行**；阶段 5 的实体机矩阵未开始。诚实边界：双端功能默认关闭，全部逻辑在无蓝牙硬件的单测里验证（内存流伪装 socket），**尚无任何实体机蓝牙互连证据**——补齐阶段 0/5 的实测前，不得在文档或 UI 中宣称蓝牙备援 READY。
 适用分支：`main`。所有阶段遵守仓库既有验收规则：无实体机证据不得标 `READY`；`TreatWarningsAsErrors`、detekt/ktlint 基线、协议 fixtures 由 `scripts/validate-protocol.py` 校验的约束照常适用。
 
 ## 总体形态
@@ -42,7 +42,7 @@
 
 ## 阶段 2：Windows RFCOMM 服务端
 
-状态：未开始（仅项目骨架）。`windows/ClipSync.Peer.Bluetooth/` 已建立占位程序集（暂为可移植 `net8.0`，WinRT 代码落地时才切 `net8.0-windows10.0.19041.0` TFM），内含 `IRfcommServer`/`IRfcommConnection` 平台接缝接口与 `RfcommContract`（SDP Service UUID `5f7f1d9c-2d6b-4e8d-9f1b-ef9ed49b0bec`，双端共用，发布后冻结）。无任何 WinRT 依赖或蓝牙 I/O。
+状态：**软件完成（实体机验证待做）**。`ClipSync.Peer.Bluetooth` 双 TFM（可移植 `net8.0` 承载全部可测逻辑 + `net8.0-windows10.0.19041.0` 仅承载 WinRT 的 `RfcommServer`）：`Bt1StreamFrames`（异步帧 I/O）、`Bt1ListenerHandshake`（监听侧握手，未知设备/撤销/epoch 不符/证明错误/限速全路径）、`Bt1SyncTransport`（`ISyncTransport` 适配器）、`BluetoothSyncHost`（单会话接受循环 + `AuthThrottle` + 每地址接受限速 + 无线电故障重启，内部会话强制协议 v1）。App 层：`蓝牙备援` 设置开关（默认关）、通路页网络段状态行（未启用/待命/同步中/适配器不可用）、暂停/私密门与 IP 路径共用。`ClipSync.Tests` 用内存双工流跑到真实 `SyncSessionEngine` 的端到端双向同步（无 WinRT、无硬件）。`RfcommServer` 本体只能在实体机上验证。
 
 任务：
 
@@ -54,6 +54,8 @@
 
 ## 阶段 3：Android RFCOMM 客户端
 
+状态：**软件完成（实体机验证待做）**。`Bt1StreamFraming`（阻塞帧 I/O）、`Bt1ClientHandshake`（拨号侧握手）、`Bt1SyncTransport`（`SyncTransport` 适配器）、`BluetoothSyncConnector`（RFCOMM 拨号：每次拨号复查开关/选定设备/运行时权限/适配器状态，30 秒看门狗经关 socket 中止阻塞 I/O）。Manifest 权限（`BLUETOOTH` maxSdk 30 + `BLUETOOTH_CONNECT`）、偏好页开关 + bonded 设备选择器、授权引导与拒绝降级均已落地。单测经内存管道覆盖握手正反例与帧层攻击负例。
+
 任务：
 
 - `BluetoothSyncConnector`：从 bonded 列表按用户选定的设备建 RFCOMM 连接，bt1 握手后包装成 `SyncTransport`。
@@ -63,6 +65,8 @@
 验收：单测覆盖握手/帧层与权限缺失降级；实体机与 Windows 端完成双向文本同步。
 
 ## 阶段 4：降级编排与回切
+
+状态：**软件完成**。`SyncSupervisor`：IP 候选全部失败后追加一次蓝牙拨号（证书 pin 不符除外——安全失败绝不降级）；蓝牙会话内周期探测 IP 并响应 `nudgeReconnect`，IP 握手成功后优雅关闭蓝牙回切；`SyncConnectionState.Connected` 带 `SyncTransportKind` 传输标记，通知与通路页显示「蓝牙备援」。Windows 侧 HTTPS 监听与 RFCOMM 监听并存（蓝牙侧单会话）。`SyncSupervisorTest` 覆盖：IP 失败→蓝牙成功、pin 不符不降级、蓝牙失败同退避、IP 会话不拨蓝牙、蓝牙中 IP 恢复→回切、nudge 立即探测。
 
 任务：
 
