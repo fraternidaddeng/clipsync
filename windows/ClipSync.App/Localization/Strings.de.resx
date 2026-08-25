@@ -184,10 +184,10 @@
     <value>Bereit · lauscht auf :</value>
   </data>
   <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
-    <value> · verbunden </value>
+    <value> · verbundene Geräte: </value>
   </data>
   <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
-    <value> Gerät(e)</value>
+    <value></value>
   </data>
   <data name="Conduit_Network_Down" xml:space="preserve">
     <value>Nicht gestartet · Sync aus</value>
@@ -196,10 +196,10 @@
     <value>Peer-Schreiben</value>
   </data>
   <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
-    <value>Gekoppelt </value>
+    <value>Gekoppelte Geräte: </value>
   </data>
   <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
-    <value> Gerät(e)</value>
+    <value></value>
   </data>
   <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
     <value>Ferner Text wird automatisch in die Zwischenablage dieses PCs geschrieben.</value>

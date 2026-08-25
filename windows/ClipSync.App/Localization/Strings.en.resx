@@ -184,10 +184,10 @@
     <value>Ready · listening on :</value>
   </data>
   <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
-    <value> · connected </value>
+    <value> · devices connected: </value>
   </data>
   <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
-    <value> device(s)</value>
+    <value></value>
   </data>
   <data name="Conduit_Network_Down" xml:space="preserve">
     <value>Not running · sync off</value>
@@ -196,10 +196,10 @@
     <value>Peer write</value>
   </data>
   <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
-    <value>Paired </value>
+    <value>Paired devices: </value>
   </data>
   <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
-    <value> device(s)</value>
+    <value></value>
   </data>
   <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
     <value>Remote text is written to this PC’s clipboard automatically.</value>

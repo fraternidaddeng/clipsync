@@ -184,10 +184,10 @@
     <value>Gotowe · nasłuch na :</value>
   </data>
   <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
-    <value> · połączono </value>
+    <value> · połączone urządzenia: </value>
   </data>
   <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
-    <value> urządzenie(a)</value>
+    <value></value>
   </data>
   <data name="Conduit_Network_Down" xml:space="preserve">
     <value>Nie działa · synchronizacja wyłączona</value>
@@ -196,10 +196,10 @@
     <value>Zapis po drugiej stronie</value>
   </data>
   <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
-    <value>Sparowano </value>
+    <value>Sparowane urządzenia: </value>
   </data>
   <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
-    <value> urządzenie(a)</value>
+    <value></value>
   </data>
   <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
     <value>Zdalny tekst jest automatycznie zapisywany do schowka tego komputera.</value>

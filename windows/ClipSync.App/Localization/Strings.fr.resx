@@ -184,10 +184,10 @@
     <value>Prêt · à l’écoute sur :</value>
   </data>
   <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
-    <value> · connectés </value>
+    <value> · appareils connectés : </value>
   </data>
   <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
-    <value> appareil(s)</value>
+    <value></value>
   </data>
   <data name="Conduit_Network_Down" xml:space="preserve">
     <value>Non démarré · synchronisation coupée</value>
@@ -196,10 +196,10 @@
     <value>Écriture du pair</value>
   </data>
   <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
-    <value>Appairés </value>
+    <value>Appareils appairés : </value>
   </data>
   <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
-    <value> appareil(s)</value>
+    <value></value>
   </data>
   <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
     <value>Le texte distant est écrit automatiquement dans le presse-papiers de ce PC.</value>
@@ -502,7 +502,7 @@
     <value>À l’écoute · synchro non démarrée</value>
   </data>
   <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
-    <value>À l’écoute · {0} connecté(s)</value>
+    <value>À l’écoute · connectés : {0}</value>
   </data>
   <data name="Tray_Status_Waiting" xml:space="preserve">
     <value>À l’écoute · en attente d’appareils</value>

@@ -184,10 +184,10 @@
     <value>Pronto · in ascolto su :</value>
   </data>
   <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
-    <value> · connessi </value>
+    <value> · dispositivi connessi: </value>
   </data>
   <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
-    <value> dispositivo/i</value>
+    <value></value>
   </data>
   <data name="Conduit_Network_Down" xml:space="preserve">
     <value>Non attivo · sincronizzazione spenta</value>
@@ -196,10 +196,10 @@
     <value>Scrittura sul peer</value>
   </data>
   <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
-    <value>Associati </value>
+    <value>Dispositivi associati: </value>
   </data>
   <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
-    <value> dispositivo/i</value>
+    <value></value>
   </data>
   <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
     <value>Il testo remoto viene scritto automaticamente negli appunti di questo PC.</value>
@@ -502,7 +502,7 @@
     <value>In ascolto · sincronizzazione non attiva</value>
   </data>
   <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
-    <value>In ascolto · {0} connessi</value>
+    <value>In ascolto · connessi: {0}</value>
   </data>
   <data name="Tray_Status_Waiting" xml:space="preserve">
     <value>In ascolto · in attesa di dispositivi</value>

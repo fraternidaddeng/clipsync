@@ -184,10 +184,10 @@
     <value>جاهز · يستمع على :</value>
   </data>
   <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
-    <value> · متصل </value>
+    <value> · الأجهزة المتصلة: </value>
   </data>
   <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
-    <value> جهاز/أجهزة</value>
+    <value></value>
   </data>
   <data name="Conduit_Network_Down" xml:space="preserve">
     <value>غير مشغّل · المزامنة متوقفة</value>
@@ -196,10 +196,10 @@
     <value>كتابة الطرف الآخر</value>
   </data>
   <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
-    <value>مقترن </value>
+    <value>الأجهزة المقترنة: </value>
   </data>
   <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
-    <value> جهاز/أجهزة</value>
+    <value></value>
   </data>
   <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
     <value>النص البعيد يُكتب تلقائيًا في حافظة هذا الحاسوب.</value>

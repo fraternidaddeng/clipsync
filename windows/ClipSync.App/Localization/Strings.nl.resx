@@ -184,10 +184,10 @@
     <value>Gereed · luistert op :</value>
   </data>
   <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
-    <value> · verbonden </value>
+    <value> · verbonden apparaten: </value>
   </data>
   <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
-    <value> apparaat(en)</value>
+    <value></value>
   </data>
   <data name="Conduit_Network_Down" xml:space="preserve">
     <value>Niet actief · synchronisatie uit</value>
@@ -196,10 +196,10 @@
     <value>Schrijven op peer</value>
   </data>
   <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
-    <value>Gekoppeld </value>
+    <value>Gekoppelde apparaten: </value>
   </data>
   <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
-    <value> apparaat(en)</value>
+    <value></value>
   </data>
   <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
     <value>Externe tekst wordt automatisch naar het klembord van deze pc geschreven.</value>

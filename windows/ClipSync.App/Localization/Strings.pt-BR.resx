@@ -184,10 +184,10 @@
     <value>Pronto · escutando em :</value>
   </data>
   <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
-    <value> · conectados </value>
+    <value> · aparelhos conectados: </value>
   </data>
   <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
-    <value> aparelho(s)</value>
+    <value></value>
   </data>
   <data name="Conduit_Network_Down" xml:space="preserve">
     <value>Não iniciado · sincronização desligada</value>
@@ -196,10 +196,10 @@
     <value>Escrita do par</value>
   </data>
   <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
-    <value>Pareados </value>
+    <value>Aparelhos pareados: </value>
   </data>
   <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
-    <value> aparelho(s)</value>
+    <value></value>
   </data>
   <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
     <value>O texto remoto é gravado automaticamente na área de transferência deste PC.</value>
@@ -502,7 +502,7 @@
     <value>Escutando · sincronização não iniciada</value>
   </data>
   <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
-    <value>Escutando · {0} conectados</value>
+    <value>Escutando · conectados: {0}</value>
   </data>
   <data name="Tray_Status_Waiting" xml:space="preserve">
     <value>Escutando · aguardando aparelhos</value>
