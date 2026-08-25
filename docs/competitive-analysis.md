@@ -7,7 +7,7 @@
 
 > **状态更新（2026-08-25，对照 main `d573080` 核对）**：本文指出的执行欠账多数已收口，少数如实保留——
 > - **CI：已解决并实跑**。工作流三作业（`c456080`）；2026-08-25 Actions 启用后在 main 上实际运行，`d573080` 时点三作业全绿（运行 32850466841：`ClipSync.Tests` 484、`ClipSync.App.Tests` 186、Android 套件与协议校验通过）。
-> - **打包分发（阶段 7 裁剪版）：已解决（commit `eedf009`）**。打包脚本 + SHA-256 + `docs/install.md` 已落地并实跑验证。**发布产物上传（GitHub Releases / CI 自动发布）仍未做。**
+> - **打包分发（阶段 7 裁剪版）：已解决（commit `eedf009`）**。打包脚本 + SHA-256 + `docs/install.md` 已落地并实跑验证。**发布 CI 随后亦落地（`release.yml`：tag `v*` 触发自动打包并附产物到 GitHub Release），但尚未打过任何 tag——Releases 页仍无产物；商店/F-Droid 上架未做。**
 > - **历史导出/导入：已解决**（Windows `5fd7461`、Android `3c51350`，图片感知的 v2 格式 `87c0016`）。
 > - **图片同步 Android 半边：已解决（`8275ffa`——媒体层、Room v2、协议 v2 引擎分块、UI）**，双端链路补齐（默认双端关闭，`7466f52` 钉死 fail-closed）；**真机图片互拷未验证**。
 > - **阶段 6 硬化：已全部解决**——Windows 睡眠/唤醒快速恢复（`09a2d6b` + Modern Standby `25d2788`）；限流两段齐（预认证 per-IP 滑窗 `25d2788`，会话内帧级 `FrameRateBudget` `793c0b9`）；收件箱 Room 化随后落地（`f928537`）。
@@ -101,7 +101,7 @@
 
 ### B. 还没做（计划内欠账）
 
-3. **打包分发（阶段 7）——最小分发链已解决（commit `eedf009`）。** `scripts/package-windows.ps1` 产出自包含 win-x64 便携 ZIP（内含运行时、许可与安装指南，附 SHA-256），`scripts/package-android.ps1` 产出环境变量签名的 Release APK（附 SHA-256，密钥库与密码不入库），`docs/install.md` 提供一页中文安装/配对/授权/排障文档；两个脚本已在 Linux 上实跑验证（Windows 端经 `EnableWindowsTargeting`，Android 端签名/Debug/未签名三路径 + apksigner 验签）。**仍未做**：GitHub Releases 产物上传与发布 CI、商店/F-Droid 上架。
+3. **打包分发（阶段 7）——最小分发链已解决（commit `eedf009`）。** `scripts/package-windows.ps1` 产出自包含 win-x64 便携 ZIP（内含运行时、许可与安装指南，附 SHA-256），`scripts/package-android.ps1` 产出环境变量签名的 Release APK（附 SHA-256，密钥库与密码不入库），`docs/install.md` 提供一页中文安装/配对/授权/排障文档；两个脚本已在 Linux 上实跑验证（Windows 端经 `EnableWindowsTargeting`，Android 端签名/Debug/未签名三路径 + apksigner 验签）。**发布 CI 随后落地（`release.yml`：tag `v*` 触发打包并附产物与 `.sha256` 到 GitHub Release，发布说明自动注明「发布 ≠ 真机验证通过」）；尚未打过任何 tag，Releases 页仍无产物。仍未做**：商店/F-Droid 上架。
 4. **图片同步——双端已落地，真机未验（原「Android 端未接线」已解决）。** 协议 v1 只有纯文本（`kind` 固定为 `const: "text"`，未预留 MIME 字段）；protocol v2 与 Windows 端完整链路自 `feature/stage-4` 移植合入，Android 端 v2 图片收发亦已接线（`8275ffa`：媒体层、Room v2、引擎分块、历史缩略图；`3fda692` 独立的「自动写入远端图片」闸）。默认双端关闭（`7466f52` fail-closed 钉死）。**剩余欠账是跨端「截图过去」的真机互拷验证与大图性能实测。**
 5. **阶段 6 硬化残项——已全部收口**：Windows 睡眠/唤醒会话快速恢复（`09a2d6b` + Modern Standby `25d2788`）；历史导出/导入（Windows `5fd7461`、Android `3c51350`、图片感知 v2 格式 `87c0016`）；会话内 WebSocket 帧级速率限流（`793c0b9`，预认证 per-IP 滑窗此前已做 `25d2788`）。
 6. **小项**：收件箱 Room 化已收口（`f928537`）；入站通知洪泛上限已收口（`17fda6e`，`InboxNotificationGate` 固定窗合并计数卡）；Windows 衬线字体（`2db37d2` 已随包）与空状态（`8e53c5e`）已收口，其余 UI 残项见 `ui-gap-audit.md`。
@@ -129,7 +129,7 @@
 | 文件传输 | ➖ 用 LocalSend | ✅ | ✅ | ✅ | ✅ | ⚠️ |
 | iOS / macOS / Linux | ➖ | ✅（深浅不一） | ✅（iOS 未充分测试） | ✅ 桌面 | ✅ | ✅ |
 | 跨公网（NAT 穿透/中转） | ➖ 需 VPN/端口转发 | ❌ LAN | ✅ 中转可选 | ✅ 服务器天然跨网 | ✅ | ✅ 卖点 |
-| 可下载的发布产物 | ⚠️ 打包脚本 + SHA-256 + 安装文档已落地（`eedf009`）；Releases 上传未做 | ✅ 商店+F-Droid | ✅ | ✅ | ✅ | ✅ |
+| 可下载的发布产物 | ⚠️ 打包脚本 + SHA-256 + 安装文档已落地（`eedf009`），发布 CI 已就绪（`release.yml`）；尚未打 tag，Releases 页仍无产物 | ✅ 商店+F-Droid | ✅ | ✅ | ✅ | ✅ |
 | 真实设备用户验证史 | **⚠️ 首轮人工 QA（2026-08-25，单一设备对，判定不能出 RC）；矩阵仍全 `NOT_TESTED`** | ✅ 多年 | ✅ | ✅ | ✅ | ⚠️ 较新 |
 | 自动化测试纪律 | ✅ 1322 用例+边界文档（`d573080` 时点） | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ |
 
@@ -140,7 +140,7 @@
 ### P0 —— 没有这两件事，产品等于不存在
 
 1. **首台实体机验证闭环**：拿一台真机（优先 AOSP/Pixel 或手头任意一台），跑通「安装 → 扫码配对 → 双向同步 → 断线补齐 → 至少一档后台读取实测 READY」，把结果（含 P95、错误码）写进 `device-validation-matrix.md`。当前所有核心卖点都压在这一步上；也只有它能告诉我们三档后端的真实成色。*（进行中：2026-08-25 首轮人工 QA 已在一台 D3 系统族真机上跑通安装与既有配对下的前台双向同步，见 `docs/manual-qa-results.md`；但扫码配对仪式、断线补齐、后台读取三档、P95 全部未测，矩阵槽位不变，闭环未成。）*
-2. **最小分发链**（阶段 7 裁剪版）：Windows 便携 ZIP + Android 签名 APK + 一页安装/配对/授权文档 + SHA-256 校验。不求商店上架，求「换台设备 10 分钟能装起来」。*（已解决（commit `eedf009`）：打包脚本 + 签名流程 + `docs/install.md` + SHA-256 已落地并实跑验证；发布 CI 上传仍未做。）*
+2. **最小分发链**（阶段 7 裁剪版）：Windows 便携 ZIP + Android 签名 APK + 一页安装/配对/授权文档 + SHA-256 校验。不求商店上架，求「换台设备 10 分钟能装起来」。*（已解决（commit `eedf009`）：打包脚本 + 签名流程 + `docs/install.md` + SHA-256 已落地并实跑验证；发布 CI 亦已落地（`release.yml`，tag 触发），尚未打 tag 实跑。）*
 
 ### P1 —— 补齐日常使用的体验底线
 
