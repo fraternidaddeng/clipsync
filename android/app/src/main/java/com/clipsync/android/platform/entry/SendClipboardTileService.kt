@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
  * watched, so flipping 暂停 from the notification action next to the panel updates the tile.
  */
 class SendClipboardTileService : TileService() {
-
     private var listeningScope: CoroutineScope? = null
     private var settingsListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
@@ -84,8 +83,9 @@ class SendClipboardTileService : TileService() {
         applicationContext.getSharedPreferences(SyncSettingsStore.PREFERENCES_NAME, Context.MODE_PRIVATE)
 
     private fun launchSendActivity() {
-        val intent = Intent(this, SendClipboardActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val intent =
+            Intent(this, SendClipboardActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startActivityAndCollapse(
                 PendingIntent.getActivity(

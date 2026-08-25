@@ -7,7 +7,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class SendClipboardTileStateTest {
-
     private val connected = SyncConnectionState.Connected("桌面")
 
     @Test
