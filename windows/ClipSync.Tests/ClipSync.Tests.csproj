@@ -23,6 +23,7 @@
   <ItemGroup>
     <None Include="..\..\protocol\v1\fixtures\**\*.json" Link="protocol-fixtures\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\protocol\v2\fixtures\**\*.json" Link="protocol-fixtures-v2\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\protocol\bt1\fixtures\**\*.json" Link="protocol-fixtures-bt1\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\protocol\v2\fixtures\media\*.png;..\..\protocol\v2\fixtures\media\*.jpg" Link="protocol-fixtures-v2\media\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
