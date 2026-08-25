@@ -83,8 +83,9 @@ class SyncNotificationsTest {
     fun `auto-applied status keeps the accents and stays content-free`() {
         assertTrue(SyncNotifications.notifyAutoApplied(context, "evt-7"))
 
-        val notification = shadowOf(manager)
-            .getNotification(null, SyncNotifications.notificationIdFor("evt-7"))
+        val notification =
+            shadowOf(manager)
+                .getNotification(null, SyncNotifications.notificationIdFor("evt-7"))
         assertCharterAccents(notification)
         assertEquals(
             context.getString(R.string.notification_applied_text),
