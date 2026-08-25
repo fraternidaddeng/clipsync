@@ -136,3 +136,13 @@
 - 私密模式、密码器黑名单、Android 暂停全入口、托盘四态+浮窗+诊断卫生。
 - 通知锁屏/DND/复制动作、历史删除 tombstone、导出往返。
 - 绿 CI + Windows 缩略图单测 + Release 打包校验。
+
+## 跟进（2026-08-25，QA 后文档收尾）
+
+针对第 9 节与「本轮已知限制」的**文档侧**跟进已在 main 上完成：
+
+- `CHANGELOG.md`：Unreleased 的分支引用由 `cursor/implement-charter-ui-1991` 改为 `main`（该分支已全部并入 main，后续变更直接落在 main），闭掉第 9 节「分支名仍写 cursor/implement-charter-ui-1991」一项。版本号与发布说明仍未启动，`[Unreleased]` 保持不变。
+- `docs/device-validation-matrix.md`：补记本轮会话为「非矩阵执行」交叉引用（执行记录新增小节）；按「未测不得改绿」，D3 及所有槽位维持 `NOT_TESTED`。
+- `docs/settings-roadmap.md`：新增状态行——提案定稿、P0/P1 全部未动工（对照本轮 QA 时点的 main 核实存储键均不存在）。
+
+**代码侧**缺陷不在本次跟进范围，仍按「本轮已知限制」清单开放：Windows 缩略图单测失败（限制 1）、幽灵设备 outbox 积压（限制 2）、Android「对端写入」未探测（限制 3）、超限文本无用户提示（限制 4）、双端图同步开关不一致（限制 5）、CI 状态未核实（限制 6）。
