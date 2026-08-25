@@ -5,7 +5,11 @@
     "zh-Hant",
     "en",
     "ja",
-    "ko"
+    "ko",
+    "es",
+    "fr",
+    "de",
+    "pt-BR"
   ],
   "strings": {
     "App_Name": {
@@ -13,1575 +17,2475 @@
       "zh-Hant": "剪剪相傳",
       "en": "ClipSync",
       "ja": "ClipSync",
-      "ko": "ClipSync"
+      "ko": "ClipSync",
+      "es": "ClipSync",
+      "fr": "ClipSync",
+      "de": "ClipSync",
+      "pt-BR": "ClipSync"
     },
     "App_WindowTitle": {
       "zh-Hans": "剪剪相传 ClipSync",
       "zh-Hant": "剪剪相傳 ClipSync",
       "en": "ClipSync",
       "ja": "ClipSync",
-      "ko": "ClipSync"
+      "ko": "ClipSync",
+      "es": "ClipSync",
+      "fr": "ClipSync",
+      "de": "ClipSync",
+      "pt-BR": "ClipSync"
     },
     "Brand_Wordmark": {
       "zh-Hans": "剪 剪 相 传",
       "zh-Hant": "剪 剪 相 傳",
       "en": "ClipSync",
       "ja": "ClipSync",
-      "ko": "ClipSync"
+      "ko": "ClipSync",
+      "es": "ClipSync",
+      "fr": "ClipSync",
+      "de": "ClipSync",
+      "pt-BR": "ClipSync"
     },
     "Chrome_Minimize": {
       "zh-Hans": "最小化",
       "zh-Hant": "最小化",
       "en": "Minimize",
       "ja": "最小化",
-      "ko": "최소화"
+      "ko": "최소화",
+      "es": "Minimizar",
+      "fr": "Réduire",
+      "de": "Minimieren",
+      "pt-BR": "Minimizar"
     },
     "Chrome_MaximizeRestore": {
       "zh-Hans": "最大化或还原",
       "zh-Hant": "最大化或還原",
       "en": "Maximize or restore",
       "ja": "最大化または元に戻す",
-      "ko": "최대화 또는 복원"
+      "ko": "최대화 또는 복원",
+      "es": "Maximizar o restaurar",
+      "fr": "Agrandir ou restaurer",
+      "de": "Maximieren oder wiederherstellen",
+      "pt-BR": "Maximizar ou restaurar"
     },
     "Common_Close": {
       "zh-Hans": "关闭",
       "zh-Hant": "關閉",
       "en": "Close",
       "ja": "閉じる",
-      "ko": "닫기"
+      "ko": "닫기",
+      "es": "Cerrar",
+      "fr": "Fermer",
+      "de": "Schließen",
+      "pt-BR": "Fechar"
     },
     "Common_Copy": {
       "zh-Hans": "复制",
       "zh-Hant": "複製",
       "en": "Copy",
       "ja": "コピー",
-      "ko": "복사"
+      "ko": "복사",
+      "es": "Copiar",
+      "fr": "Copier",
+      "de": "Kopieren",
+      "pt-BR": "Copiar"
     },
     "Common_Refresh": {
       "zh-Hans": "刷新",
       "zh-Hant": "重新整理",
       "en": "Refresh",
       "ja": "更新",
-      "ko": "새로 고침"
+      "ko": "새로 고침",
+      "es": "Actualizar",
+      "fr": "Actualiser",
+      "de": "Aktualisieren",
+      "pt-BR": "Atualizar"
     },
     "Common_Acknowledge": {
       "zh-Hans": "知道了",
       "zh-Hant": "知道了",
       "en": "Got it",
       "ja": "了解",
-      "ko": "확인"
+      "ko": "확인",
+      "es": "Entendido",
+      "fr": "Compris",
+      "de": "Verstanden",
+      "pt-BR": "Entendi"
     },
     "Common_FollowSystem": {
       "zh-Hans": "跟随系统",
       "zh-Hant": "跟隨系統",
       "en": "Follow system",
       "ja": "システムに従う",
-      "ko": "시스템 따름"
+      "ko": "시스템 따름",
+      "es": "Seguir al sistema",
+      "fr": "Suivre le système",
+      "de": "System folgen",
+      "pt-BR": "Seguir o sistema"
     },
     "Common_ClearHistory": {
       "zh-Hans": "清空历史",
       "zh-Hant": "清空歷史",
       "en": "Clear history",
       "ja": "履歴を消去",
-      "ko": "기록 비우기"
+      "ko": "기록 비우기",
+      "es": "Vaciar historial",
+      "fr": "Vider l’historique",
+      "de": "Verlauf leeren",
+      "pt-BR": "Limpar histórico"
     },
     "Common_ExportHistory": {
       "zh-Hans": "导出历史",
       "zh-Hant": "匯出歷史",
       "en": "Export history",
       "ja": "履歴をエクスポート",
-      "ko": "기록 내보내기"
+      "ko": "기록 내보내기",
+      "es": "Exportar historial",
+      "fr": "Exporter l’historique",
+      "de": "Verlauf exportieren",
+      "pt-BR": "Exportar histórico"
     },
     "Common_ImportHistory": {
       "zh-Hans": "导入历史",
       "zh-Hant": "匯入歷史",
       "en": "Import history",
       "ja": "履歴をインポート",
-      "ko": "기록 가져오기"
+      "ko": "기록 가져오기",
+      "es": "Importar historial",
+      "fr": "Importer l’historique",
+      "de": "Verlauf importieren",
+      "pt-BR": "Importar histórico"
     },
     "Common_PauseCapture": {
       "zh-Hans": "暂停捕获",
       "zh-Hant": "暫停擷取",
       "en": "Pause capture",
       "ja": "キャプチャを一時停止",
-      "ko": "캡처 일시중지"
+      "ko": "캡처 일시중지",
+      "es": "Pausar captura",
+      "fr": "Suspendre la capture",
+      "de": "Erfassung pausieren",
+      "pt-BR": "Pausar captura"
     },
     "Common_PrivateMode": {
       "zh-Hans": "私密模式",
       "zh-Hant": "私密模式",
       "en": "Private mode",
       "ja": "プライベートモード",
-      "ko": "비공개 모드"
+      "ko": "비공개 모드",
+      "es": "Modo privado",
+      "fr": "Mode privé",
+      "de": "Privater Modus",
+      "pt-BR": "Modo privado"
     },
     "Nav_History": {
       "zh-Hans": "历史",
       "zh-Hant": "歷史",
       "en": "History",
       "ja": "履歴",
-      "ko": "기록"
+      "ko": "기록",
+      "es": "Historial",
+      "fr": "Historique",
+      "de": "Verlauf",
+      "pt-BR": "Histórico"
     },
     "Nav_Conduit": {
       "zh-Hans": "通路",
       "zh-Hant": "通路",
       "en": "Conduit",
       "ja": "経路",
-      "ko": "통로"
+      "ko": "통로",
+      "es": "Conducto",
+      "fr": "Conduit",
+      "de": "Kanal",
+      "pt-BR": "Conduíte"
     },
     "Nav_Prefs": {
       "zh-Hans": "偏好",
       "zh-Hant": "偏好",
       "en": "Preferences",
       "ja": "設定",
-      "ko": "환경설정"
+      "ko": "환경설정",
+      "es": "Preferencias",
+      "fr": "Préférences",
+      "de": "Einstellungen",
+      "pt-BR": "Preferências"
     },
     "History_Title": {
       "zh-Hans": "历史",
       "zh-Hant": "歷史",
       "en": "History",
       "ja": "履歴",
-      "ko": "기록"
+      "ko": "기록",
+      "es": "Historial",
+      "fr": "Historique",
+      "de": "Verlauf",
+      "pt-BR": "Histórico"
     },
     "History_Subtitle": {
       "zh-Hans": "本机与已配对设备的剪贴记录 · 清理只发生在本机",
       "zh-Hant": "本機與已配對裝置的剪貼記錄 · 清理只發生在本機",
       "en": "Clips from this PC and paired devices · cleanup affects this device only",
       "ja": "この PC とペアリング済み端末のクリップ記録 · 削除はこの端末内のみ",
-      "ko": "이 PC와 페어링된 기기의 클립 기록 · 정리는 이 기기에서만 일어납니다"
+      "ko": "이 PC와 페어링된 기기의 클립 기록 · 정리는 이 기기에서만 일어납니다",
+      "es": "Clips de este PC y de los dispositivos emparejados · la limpieza solo ocurre en este dispositivo",
+      "fr": "Clips de ce PC et des appareils appairés · le nettoyage n’a lieu que sur cet appareil",
+      "de": "Clips dieses PCs und gekoppelter Geräte · Aufräumen betrifft nur dieses Gerät",
+      "pt-BR": "Clipes deste PC e dos aparelhos pareados · a limpeza só acontece neste aparelho"
     },
     "History_Search": {
       "zh-Hans": "搜索",
       "zh-Hant": "搜尋",
       "en": "Search",
       "ja": "検索",
-      "ko": "검색"
+      "ko": "검색",
+      "es": "Buscar",
+      "fr": "Rechercher",
+      "de": "Suchen",
+      "pt-BR": "Buscar"
     },
     "Filter_All": {
       "zh-Hans": "全部",
       "zh-Hant": "全部",
       "en": "All",
       "ja": "すべて",
-      "ko": "전체"
+      "ko": "전체",
+      "es": "Todo",
+      "fr": "Tout",
+      "de": "Alle",
+      "pt-BR": "Tudo"
     },
     "Filter_Link": {
       "zh-Hans": "链接",
       "zh-Hant": "連結",
       "en": "Link",
       "ja": "リンク",
-      "ko": "링크"
+      "ko": "링크",
+      "es": "Enlace",
+      "fr": "Lien",
+      "de": "Link",
+      "pt-BR": "Link"
     },
     "Filter_Otp": {
       "zh-Hans": "验证码",
       "zh-Hant": "驗證碼",
       "en": "Code",
       "ja": "認証コード",
-      "ko": "인증번호"
+      "ko": "인증번호",
+      "es": "Código",
+      "fr": "Code",
+      "de": "Code",
+      "pt-BR": "Código"
     },
     "Filter_Email": {
       "zh-Hans": "账号",
       "zh-Hant": "帳號",
       "en": "Account",
       "ja": "アカウント",
-      "ko": "계정"
+      "ko": "계정",
+      "es": "Cuenta",
+      "fr": "Compte",
+      "de": "Konto",
+      "pt-BR": "Conta"
     },
     "Filter_Credential": {
       "zh-Hans": "密码",
       "zh-Hant": "密碼",
       "en": "Password",
       "ja": "パスワード",
-      "ko": "비밀번호"
+      "ko": "비밀번호",
+      "es": "Contraseña",
+      "fr": "Mot de passe",
+      "de": "Passwort",
+      "pt-BR": "Senha"
     },
     "Filter_Plain": {
       "zh-Hans": "文本",
       "zh-Hant": "文字",
       "en": "Text",
       "ja": "テキスト",
-      "ko": "텍스트"
+      "ko": "텍스트",
+      "es": "Texto",
+      "fr": "Texte",
+      "de": "Text",
+      "pt-BR": "Texto"
     },
     "Format_Image": {
       "zh-Hans": "图片",
       "zh-Hant": "圖片",
       "en": "Image",
       "ja": "画像",
-      "ko": "이미지"
+      "ko": "이미지",
+      "es": "Imagen",
+      "fr": "Image",
+      "de": "Bild",
+      "pt-BR": "Imagem"
     },
     "History_NoPreview": {
       "zh-Hans": "无预览",
       "zh-Hant": "無預覽",
       "en": "No preview",
       "ja": "プレビューなし",
-      "ko": "미리보기 없음"
+      "ko": "미리보기 없음",
+      "es": "Sin vista previa",
+      "fr": "Pas d’aperçu",
+      "de": "Keine Vorschau",
+      "pt-BR": "Sem prévia"
     },
     "History_LocalOnlyBadge": {
       "zh-Hans": "仅本机保留",
       "zh-Hant": "僅本機保留",
       "en": "Kept on this device",
       "ja": "この端末にのみ保持",
-      "ko": "이 기기에만 보관"
+      "ko": "이 기기에만 보관",
+      "es": "Solo en este dispositivo",
+      "fr": "Conservé sur cet appareil",
+      "de": "Nur auf diesem Gerät",
+      "pt-BR": "Mantido neste aparelho"
     },
     "History_Empty_Unpaired_Title": {
       "zh-Hans": "先把两端接起来",
       "zh-Hant": "先把兩端接起來",
       "en": "First, connect both ends",
       "ja": "まず両端をつなぎましょう",
-      "ko": "먼저 양쪽을 연결하세요"
+      "ko": "먼저 양쪽을 연결하세요",
+      "es": "Primero, conecta ambos extremos",
+      "fr": "D’abord, reliez les deux extrémités",
+      "de": "Verbinden Sie zuerst beide Seiten",
+      "pt-BR": "Primeiro, conecte as duas pontas"
     },
     "History_Empty_Paired_Title": {
       "zh-Hans": "静候第一条剪贴",
       "zh-Hant": "靜候第一筆剪貼",
       "en": "Awaiting the first clip",
       "ja": "最初のクリップを待っています",
-      "ko": "첫 클립을 기다리는 중"
+      "ko": "첫 클립을 기다리는 중",
+      "es": "Esperando el primer clip",
+      "fr": "En attente du premier clip",
+      "de": "Warte auf den ersten Clip",
+      "pt-BR": "Aguardando o primeiro clipe"
     },
     "History_Empty_Unpaired_Body": {
       "zh-Hans": "尚未与手机配对。配对入口在「通路」页的网络段。",
       "zh-Hant": "尚未與手機配對。配對入口在「通路」頁的網路段。",
       "en": "Not paired with a phone yet. The pairing entrance is in the network segment of the Conduit page.",
       "ja": "まだスマートフォンとペアリングしていません。ペアリングの入口は「経路」ページのネットワーク区間にあります。",
-      "ko": "아직 휴대폰과 페어링하지 않았습니다. 페어링 입구는 통로 페이지의 네트워크 구간에 있습니다."
+      "ko": "아직 휴대폰과 페어링하지 않았습니다. 페어링 입구는 통로 페이지의 네트워크 구간에 있습니다.",
+      "es": "Aún no hay emparejamiento con un teléfono. La entrada de emparejamiento está en el segmento de red de la página «Conducto».",
+      "fr": "Pas encore appairé avec un téléphone. L’entrée d’appairage se trouve dans le segment réseau de la page « Conduit ».",
+      "de": "Noch nicht mit einem Telefon gekoppelt. Der Kopplungseinstieg liegt im Netzwerkabschnitt der Seite „Kanal“.",
+      "pt-BR": "Ainda não há pareamento com um telefone. A entrada de pareamento fica no segmento de rede da página “Conduíte”."
     },
     "History_Empty_Paired_Body": {
       "zh-Hans": "在任意一端复制文本，它会出现在这里并流向对面。",
       "zh-Hant": "在任一端複製文字，它會出現在這裡並流向對面。",
       "en": "Copy text on either device — it appears here and flows to the other side.",
       "ja": "どちらの端末でテキストをコピーしても、ここに表示され、相手側へ流れます。",
-      "ko": "어느 기기에서든 텍스트를 복사하면 여기에 나타나고 상대편으로 흘러갑니다."
+      "ko": "어느 기기에서든 텍스트를 복사하면 여기에 나타나고 상대편으로 흘러갑니다.",
+      "es": "Copia texto en cualquiera de los extremos: aparecerá aquí y fluirá hacia el otro lado.",
+      "fr": "Copiez du texte d’un côté ou de l’autre : il apparaît ici et s’écoule vers l’autre extrémité.",
+      "de": "Kopieren Sie Text auf einer der beiden Seiten — er erscheint hier und fließt zur anderen Seite.",
+      "pt-BR": "Copie texto em qualquer uma das pontas — ele aparece aqui e flui para o outro lado."
     },
     "History_Empty_GoPair": {
       "zh-Hans": "去配对 ›",
       "zh-Hant": "去配對 ›",
       "en": "Pair now ›",
       "ja": "ペアリングへ ›",
-      "ko": "페어링하기 ›"
+      "ko": "페어링하기 ›",
+      "es": "Emparejar ahora ›",
+      "fr": "Appairer maintenant ›",
+      "de": "Jetzt koppeln ›",
+      "pt-BR": "Parear agora ›"
     },
     "History_NoMatch_Prefix": {
       "zh-Hans": "没有匹配「",
       "zh-Hant": "沒有符合「",
       "en": "No entries match “",
       "ja": "「",
-      "ko": "일치하는 기록 없음: “"
+      "ko": "일치하는 기록 없음: “",
+      "es": "No hay entradas que coincidan con «",
+      "fr": "Aucune entrée ne correspond à « ",
+      "de": "Keine Einträge passen zu „",
+      "pt-BR": "Nenhuma entrada corresponde a “"
     },
     "History_NoMatch_Suffix": {
       "zh-Hans": "」的记录",
       "zh-Hant": "」的記錄",
       "en": "”",
       "ja": "」に一致する記録はありません",
-      "ko": "”"
+      "ko": "”",
+      "es": "»",
+      "fr": " »",
+      "de": "“",
+      "pt-BR": "”"
     },
     "History_Empty_Filtered": {
       "zh-Hans": "该形态下暂无记录 · 换个筛选试试",
       "zh-Hant": "該形態下暫無記錄 · 換個篩選試試",
       "en": "No entries of this type · try another filter",
       "ja": "この種類の記録はありません · 別のフィルターを試してください",
-      "ko": "이 유형의 기록이 없습니다 · 다른 필터를 시도해 보세요"
+      "ko": "이 유형의 기록이 없습니다 · 다른 필터를 시도해 보세요",
+      "es": "No hay entradas de este tipo · prueba con otro filtro",
+      "fr": "Aucune entrée de ce type · essayez un autre filtre",
+      "de": "Keine Einträge dieses Typs · versuchen Sie einen anderen Filter",
+      "pt-BR": "Nenhuma entrada deste tipo · tente outro filtro"
     },
     "History_CopySelected": {
       "zh-Hans": "复制所选",
       "zh-Hant": "複製所選",
       "en": "Copy selected",
       "ja": "選択項目をコピー",
-      "ko": "선택 항목 복사"
+      "ko": "선택 항목 복사",
+      "es": "Copiar selección",
+      "fr": "Copier la sélection",
+      "de": "Auswahl kopieren",
+      "pt-BR": "Copiar seleção"
     },
     "History_ViewDetail": {
       "zh-Hans": "查看详情",
       "zh-Hant": "檢視詳情",
       "en": "View details",
       "ja": "詳細を表示",
-      "ko": "상세 보기"
+      "ko": "상세 보기",
+      "es": "Ver detalles",
+      "fr": "Voir les détails",
+      "de": "Details anzeigen",
+      "pt-BR": "Ver detalhes"
     },
     "History_DeleteSelected": {
       "zh-Hans": "删除所选",
       "zh-Hant": "刪除所選",
       "en": "Delete selected",
       "ja": "選択項目を削除",
-      "ko": "선택 항목 삭제"
+      "ko": "선택 항목 삭제",
+      "es": "Eliminar selección",
+      "fr": "Supprimer la sélection",
+      "de": "Auswahl löschen",
+      "pt-BR": "Excluir seleção"
     },
     "History_UnknownSource": {
       "zh-Hans": "未知来源",
       "zh-Hant": "未知來源",
       "en": "Unknown source",
       "ja": "不明なソース",
-      "ko": "알 수 없는 출처"
+      "ko": "알 수 없는 출처",
+      "es": "Origen desconocido",
+      "fr": "Source inconnue",
+      "de": "Unbekannte Quelle",
+      "pt-BR": "Origem desconhecida"
     },
     "History_LocalSource": {
       "zh-Hans": "本机",
       "zh-Hant": "本機",
       "en": "This PC",
       "ja": "この PC",
-      "ko": "이 PC"
+      "ko": "이 PC",
+      "es": "Este PC",
+      "fr": "Ce PC",
+      "de": "Dieser PC",
+      "pt-BR": "Este PC"
     },
     "Conduit_Title": {
       "zh-Hans": "通路",
       "zh-Hant": "通路",
       "en": "Conduit",
       "ja": "経路",
-      "ko": "통로"
+      "ko": "통로",
+      "es": "Conducto",
+      "fr": "Conduit",
+      "de": "Kanal",
+      "pt-BR": "Conduíte"
     },
     "Conduit_Subtitle": {
       "zh-Hans": "内容从左到右流过四段 · 排障顺序即阅读顺序",
       "zh-Hant": "內容從左到右流過四段 · 排障順序即閱讀順序",
       "en": "Content flows left to right through four segments · reading order is troubleshooting order",
       "ja": "内容は左から右へ四つの区間を流れます · 読む順序がそのままトラブルシューティングの順序",
-      "ko": "내용은 왼쪽에서 오른쪽으로 네 구간을 흐릅니다 · 읽는 순서가 곧 문제 해결 순서"
+      "ko": "내용은 왼쪽에서 오른쪽으로 네 구간을 흐릅니다 · 읽는 순서가 곧 문제 해결 순서",
+      "es": "El contenido fluye de izquierda a derecha por cuatro segmentos · el orden de lectura es el orden de diagnóstico",
+      "fr": "Le contenu traverse quatre segments de gauche à droite · l’ordre de lecture est l’ordre de dépannage",
+      "de": "Inhalte fließen von links nach rechts durch vier Abschnitte · die Lesereihenfolge ist die Fehlersuchreihenfolge",
+      "pt-BR": "O conteúdo flui da esquerda para a direita por quatro segmentos · a ordem de leitura é a ordem de diagnóstico"
     },
     "Conduit_Capture_Name": {
       "zh-Hans": "本机捕获",
       "zh-Hant": "本機擷取",
       "en": "Local capture",
       "ja": "ローカルキャプチャ",
-      "ko": "로컬 캡처"
+      "ko": "로컬 캡처",
+      "es": "Captura local",
+      "fr": "Capture locale",
+      "de": "Lokale Erfassung",
+      "pt-BR": "Captura local"
     },
     "Conduit_Capture_Ready": {
       "zh-Hans": "就绪 · 监听 Ctrl+C",
       "zh-Hant": "就緒 · 監聽 Ctrl+C",
       "en": "Ready · listening for Ctrl+C",
       "ja": "準備完了 · Ctrl+C を監視中",
-      "ko": "준비됨 · Ctrl+C 감지 중"
+      "ko": "준비됨 · Ctrl+C 감지 중",
+      "es": "Listo · escuchando Ctrl+C",
+      "fr": "Prêt · à l’écoute de Ctrl+C",
+      "de": "Bereit · lauscht auf Strg+C",
+      "pt-BR": "Pronto · escutando Ctrl+C"
     },
     "Conduit_Status_Paused": {
       "zh-Hans": "已暂停 · 不再记录",
       "zh-Hant": "已暫停 · 不再記錄",
       "en": "Paused · not recording",
       "ja": "一時停止中 · 記録しません",
-      "ko": "일시중지됨 · 기록하지 않음"
+      "ko": "일시중지됨 · 기록하지 않음",
+      "es": "En pausa · no se registra",
+      "fr": "En pause · rien n’est enregistré",
+      "de": "Pausiert · es wird nichts aufgezeichnet",
+      "pt-BR": "Pausado · nada é registrado"
     },
     "Conduit_Status_Private": {
       "zh-Hans": "私密模式 · 不留痕迹",
       "zh-Hant": "私密模式 · 不留痕跡",
       "en": "Private mode · leaves no trace",
       "ja": "プライベートモード · 痕跡を残しません",
-      "ko": "비공개 모드 · 흔적을 남기지 않음"
+      "ko": "비공개 모드 · 흔적을 남기지 않음",
+      "es": "Modo privado · sin dejar rastro",
+      "fr": "Mode privé · aucune trace",
+      "de": "Privater Modus · hinterlässt keine Spuren",
+      "pt-BR": "Modo privado · sem deixar rastros"
     },
     "Conduit_Status_CaptureFaulted": {
       "zh-Hans": "捕获降级 · 剪贴板访问失败",
       "zh-Hant": "擷取降級 · 剪貼簿存取失敗",
       "en": "Capture degraded · clipboard access failed",
       "ja": "キャプチャ劣化 · クリップボードへのアクセスに失敗",
-      "ko": "캡처 저하 · 클립보드 접근 실패"
+      "ko": "캡처 저하 · 클립보드 접근 실패",
+      "es": "Captura degradada · falló el acceso al portapapeles",
+      "fr": "Capture dégradée · échec d’accès au presse-papiers",
+      "de": "Erfassung beeinträchtigt · Zwischenablagezugriff fehlgeschlagen",
+      "pt-BR": "Captura degradada · falha no acesso à área de transferência"
     },
     "Conduit_Capture_Detail": {
       "zh-Hans": "私密模式与屏蔽进程在这一段拦下内容。",
       "zh-Hant": "私密模式與封鎖處理程序在這一段攔下內容。",
       "en": "Private mode and blocked processes stop content at this segment.",
       "ja": "プライベートモードとブロック対象プロセスはこの区間で内容を止めます。",
-      "ko": "비공개 모드와 차단된 프로세스는 이 구간에서 내용을 막습니다."
+      "ko": "비공개 모드와 차단된 프로세스는 이 구간에서 내용을 막습니다.",
+      "es": "El modo privado y los procesos bloqueados detienen el contenido en este segmento.",
+      "fr": "Le mode privé et les processus bloqués arrêtent le contenu à ce segment.",
+      "de": "Privater Modus und blockierte Prozesse stoppen Inhalte an diesem Abschnitt.",
+      "pt-BR": "O modo privado e os processos bloqueados param o conteúdo neste segmento."
     },
     "Conduit_Service_Name": {
       "zh-Hans": "本机服务",
       "zh-Hant": "本機服務",
       "en": "Local service",
       "ja": "ローカルサービス",
-      "ko": "로컬 서비스"
+      "ko": "로컬 서비스",
+      "es": "Servicio local",
+      "fr": "Service local",
+      "de": "Lokaler Dienst",
+      "pt-BR": "Serviço local"
     },
     "Conduit_Service_ReadyPrefix": {
       "zh-Hans": "就绪 · 历史 ",
       "zh-Hant": "就緒 · 歷史 ",
       "en": "Ready · history ",
       "ja": "準備完了 · 履歴 ",
-      "ko": "준비됨 · 기록 "
+      "ko": "준비됨 · 기록 ",
+      "es": "Listo · historial ",
+      "fr": "Prêt · historique ",
+      "de": "Bereit · Verlauf ",
+      "pt-BR": "Pronto · histórico "
     },
     "Conduit_Service_ReadyInfix": {
       "zh-Hans": " 条 · 待发 ",
       "zh-Hant": " 筆 · 待傳 ",
       "en": " · outbox ",
       "ja": " 件 · 送信待ち ",
-      "ko": "건 · 발신 대기 "
+      "ko": "건 · 발신 대기 ",
+      "es": " · pendientes ",
+      "fr": " · en attente ",
+      "de": " · ausstehend ",
+      "pt-BR": " · pendentes "
     },
     "Conduit_Service_DetailPrefix": {
       "zh-Hans": "事件先落库再入发件队列 · ",
       "zh-Hant": "事件先落庫再入寄件佇列 · ",
       "en": "Events land in the store before the outbox · ",
       "ja": "イベントは保存してから送信キューへ · ",
-      "ko": "이벤트는 먼저 저장된 뒤 발신 대기열로 들어갑니다 · "
+      "ko": "이벤트는 먼저 저장된 뒤 발신 대기열로 들어갑니다 · ",
+      "es": "Los eventos se guardan antes de entrar en la cola de envío · ",
+      "fr": "Les événements sont enregistrés avant d’entrer dans la file d’envoi · ",
+      "de": "Ereignisse werden erst gespeichert, dann in die Sendewarteschlange gestellt · ",
+      "pt-BR": "Os eventos são gravados antes de entrar na fila de envio · "
     },
     "Conduit_Network_Name": {
       "zh-Hans": "网络",
       "zh-Hant": "網路",
       "en": "Network",
       "ja": "ネットワーク",
-      "ko": "네트워크"
+      "ko": "네트워크",
+      "es": "Red",
+      "fr": "Réseau",
+      "de": "Netzwerk",
+      "pt-BR": "Rede"
     },
     "Conduit_Network_ReadyPrefix": {
       "zh-Hans": "就绪 · 监听 :",
       "zh-Hant": "就緒 · 監聽 :",
       "en": "Ready · listening on :",
       "ja": "準備完了 · 監視中 :",
-      "ko": "준비됨 · 수신 대기 :"
+      "ko": "준비됨 · 수신 대기 :",
+      "es": "Listo · escuchando en :",
+      "fr": "Prêt · à l’écoute sur :",
+      "de": "Bereit · lauscht auf :",
+      "pt-BR": "Pronto · escutando em :"
     },
     "Conduit_Network_ReadyInfix": {
       "zh-Hans": " · 已连 ",
       "zh-Hant": " · 已連 ",
       "en": " · connected ",
       "ja": " · 接続 ",
-      "ko": " · 연결 "
+      "ko": " · 연결 ",
+      "es": " · conectados ",
+      "fr": " · connectés ",
+      "de": " · verbunden ",
+      "pt-BR": " · conectados "
     },
     "Conduit_Network_ReadySuffix": {
       "zh-Hans": " 台",
       "zh-Hant": " 台",
       "en": " device(s)",
       "ja": " 台",
-      "ko": "대"
+      "ko": "대",
+      "es": " dispositivo(s)",
+      "fr": " appareil(s)",
+      "de": " Gerät(e)",
+      "pt-BR": " aparelho(s)"
     },
     "Conduit_Network_Down": {
       "zh-Hans": "未启动 · 同步关闭",
       "zh-Hant": "未啟動 · 同步關閉",
       "en": "Not running · sync off",
       "ja": "未起動 · 同期オフ",
-      "ko": "시작되지 않음 · 동기화 꺼짐"
+      "ko": "시작되지 않음 · 동기화 꺼짐",
+      "es": "No iniciado · sincronización apagada",
+      "fr": "Non démarré · synchronisation coupée",
+      "de": "Nicht gestartet · Sync aus",
+      "pt-BR": "Não iniciado · sincronização desligada"
     },
     "Conduit_Peer_Name": {
       "zh-Hans": "对端写入",
       "zh-Hant": "對端寫入",
       "en": "Peer write",
       "ja": "相手側書き込み",
-      "ko": "상대편 쓰기"
+      "ko": "상대편 쓰기",
+      "es": "Escritura del par",
+      "fr": "Écriture du pair",
+      "de": "Peer-Schreiben",
+      "pt-BR": "Escrita do par"
     },
     "Conduit_Peer_PairedPrefix": {
       "zh-Hans": "已配对 ",
       "zh-Hant": "已配對 ",
       "en": "Paired ",
       "ja": "ペアリング済み ",
-      "ko": "페어링됨 "
+      "ko": "페어링됨 ",
+      "es": "Emparejados ",
+      "fr": "Appairés ",
+      "de": "Gekoppelt ",
+      "pt-BR": "Pareados "
     },
     "Conduit_Peer_PairedSuffix": {
       "zh-Hans": " 台",
       "zh-Hant": " 台",
       "en": " device(s)",
       "ja": " 台",
-      "ko": "대"
+      "ko": "대",
+      "es": " dispositivo(s)",
+      "fr": " appareil(s)",
+      "de": " Gerät(e)",
+      "pt-BR": " aparelho(s)"
     },
     "Conduit_Peer_AutoApplyOn": {
       "zh-Hans": "远端文本自动写入本机剪贴板。",
       "zh-Hant": "遠端文字自動寫入本機剪貼簿。",
       "en": "Remote text is written to this PC’s clipboard automatically.",
       "ja": "リモートのテキストはこの PC のクリップボードへ自動で書き込まれます。",
-      "ko": "원격 텍스트가 이 PC의 클립보드에 자동으로 기록됩니다."
+      "ko": "원격 텍스트가 이 PC의 클립보드에 자동으로 기록됩니다.",
+      "es": "El texto remoto se escribe automáticamente en el portapapeles de este PC.",
+      "fr": "Le texte distant est écrit automatiquement dans le presse-papiers de ce PC.",
+      "de": "Ferner Text wird automatisch in die Zwischenablage dieses PCs geschrieben.",
+      "pt-BR": "O texto remoto é gravado automaticamente na área de transferência deste PC."
     },
     "Conduit_Peer_AutoApplyOff": {
       "zh-Hans": "自动应用已关闭：远端内容仅保留在历史，需手动复制。",
       "zh-Hant": "自動套用已關閉：遠端內容僅保留在歷史，需手動複製。",
       "en": "Auto-apply is off: remote content stays in history only and needs manual copying.",
       "ja": "自動適用はオフ：リモートの内容は履歴にのみ残り、手動でのコピーが必要です。",
-      "ko": "자동 적용이 꺼져 있습니다: 원격 내용은 기록에만 남으며 수동으로 복사해야 합니다."
+      "ko": "자동 적용이 꺼져 있습니다: 원격 내용은 기록에만 남으며 수동으로 복사해야 합니다.",
+      "es": "La aplicación automática está apagada: el contenido remoto queda solo en el historial y hay que copiarlo a mano.",
+      "fr": "L’application automatique est désactivée : le contenu distant reste dans l’historique et doit être copié à la main.",
+      "de": "Automatisches Anwenden ist aus: Ferne Inhalte bleiben nur im Verlauf und müssen von Hand kopiert werden.",
+      "pt-BR": "A aplicação automática está desligada: o conteúdo remoto fica só no histórico e precisa ser copiado à mão."
     },
     "Conduit_Devices_Header": {
       "zh-Hans": "网络段 · 已配对设备",
       "zh-Hant": "網路段 · 已配對裝置",
       "en": "Network segment · paired devices",
       "ja": "ネットワーク区間 · ペアリング済み端末",
-      "ko": "네트워크 구간 · 페어링된 기기"
+      "ko": "네트워크 구간 · 페어링된 기기",
+      "es": "Segmento de red · dispositivos emparejados",
+      "fr": "Segment réseau · appareils appairés",
+      "de": "Netzwerkabschnitt · gekoppelte Geräte",
+      "pt-BR": "Segmento de rede · aparelhos pareados"
     },
     "Conduit_Connection_Header": {
       "zh-Hans": "网络段 · 连接",
       "zh-Hant": "網路段 · 連線",
       "en": "Network segment · connection",
       "ja": "ネットワーク区間 · 接続",
-      "ko": "네트워크 구간 · 연결"
+      "ko": "네트워크 구간 · 연결",
+      "es": "Segmento de red · conexión",
+      "fr": "Segment réseau · connexion",
+      "de": "Netzwerkabschnitt · Verbindung",
+      "pt-BR": "Segmento de rede · conexão"
     },
     "Conduit_CleanupStale": {
       "zh-Hans": "一键清理",
       "zh-Hant": "一鍵清理",
       "en": "Clean up",
       "ja": "一括クリーンアップ",
-      "ko": "일괄 정리"
+      "ko": "일괄 정리",
+      "es": "Limpiar",
+      "fr": "Nettoyer",
+      "de": "Aufräumen",
+      "pt-BR": "Limpar"
     },
     "Conduit_Bluetooth_Title": {
       "zh-Hans": "蓝牙备援",
       "zh-Hant": "藍牙備援",
       "en": "Bluetooth fallback",
       "ja": "Bluetooth フォールバック",
-      "ko": "블루투스 대체 경로"
+      "ko": "블루투스 대체 경로",
+      "es": "Respaldo Bluetooth",
+      "fr": "Secours Bluetooth",
+      "de": "Bluetooth-Ausweichweg",
+      "pt-BR": "Alternativa Bluetooth"
     },
     "Conduit_Bluetooth_Desc": {
       "zh-Hans": "默认关闭。LAN 被 VPN 或防火墙阻断时，已在系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。",
       "zh-Hant": "預設關閉。LAN 被 VPN 或防火牆阻斷時，已在系統設定中藍牙配對的手機可繼續同步文字（不含圖片，速度較慢）。",
       "en": "Off by default. When the LAN is blocked by a VPN or firewall, a phone already Bluetooth-paired in system settings keeps syncing text (no images, slower).",
       "ja": "既定ではオフ。LAN が VPN やファイアウォールで遮断されたとき、システム設定で Bluetooth ペアリング済みのスマートフォンはテキストの同期を継続できます（画像なし、低速）。",
-      "ko": "기본값은 꺼짐. LAN이 VPN이나 방화벽에 막혔을 때, 시스템 설정에서 이미 블루투스로 페어링된 휴대폰은 텍스트 동기화를 계속할 수 있습니다(이미지 제외, 속도 느림)."
+      "ko": "기본값은 꺼짐. LAN이 VPN이나 방화벽에 막혔을 때, 시스템 설정에서 이미 블루투스로 페어링된 휴대폰은 텍스트 동기화를 계속할 수 있습니다(이미지 제외, 속도 느림).",
+      "es": "Apagado por defecto. Cuando una VPN o un cortafuegos bloquea la LAN, un teléfono ya emparejado por Bluetooth en los ajustes del sistema sigue sincronizando texto (sin imágenes, más lento).",
+      "fr": "Désactivé par défaut. Quand le LAN est bloqué par un VPN ou un pare-feu, un téléphone déjà appairé en Bluetooth dans les réglages système continue de synchroniser le texte (pas d’images, plus lent).",
+      "de": "Standardmäßig aus. Wenn ein VPN oder eine Firewall das LAN blockiert, synchronisiert ein in den Systemeinstellungen bereits per Bluetooth gekoppeltes Telefon weiterhin Text (keine Bilder, langsamer).",
+      "pt-BR": "Desligado por padrão. Quando a LAN é bloqueada por VPN ou firewall, um telefone já pareado por Bluetooth nas configurações do sistema continua sincronizando texto (sem imagens, mais lento)."
     },
     "Conduit_ExtraBind_Title": {
       "zh-Hans": "额外监听地址",
       "zh-Hant": "額外監聽位址",
       "en": "Extra listen addresses",
       "ja": "追加の待ち受けアドレス",
-      "ko": "추가 수신 대기 주소"
+      "ko": "추가 수신 대기 주소",
+      "es": "Direcciones de escucha adicionales",
+      "fr": "Adresses d’écoute supplémentaires",
+      "de": "Zusätzliche Lauschadressen",
+      "pt-BR": "Endereços de escuta adicionais"
     },
     "Conduit_ExtraBind_Desc": {
       "zh-Hans": "用于 Tailscale / WireGuard 等虚拟网卡地址。不提供公网中转。",
       "zh-Hant": "用於 Tailscale / WireGuard 等虛擬網卡位址。不提供公網中繼。",
       "en": "For virtual-adapter addresses such as Tailscale / WireGuard. No public relay is provided.",
       "ja": "Tailscale / WireGuard などの仮想アダプターのアドレス用。公開中継は提供しません。",
-      "ko": "Tailscale / WireGuard 등 가상 어댑터 주소용. 공용 중계는 제공하지 않습니다."
+      "ko": "Tailscale / WireGuard 등 가상 어댑터 주소용. 공용 중계는 제공하지 않습니다.",
+      "es": "Para direcciones de adaptadores virtuales como Tailscale / WireGuard. No se ofrece retransmisión pública.",
+      "fr": "Pour les adresses d’adaptateurs virtuels comme Tailscale / WireGuard. Aucun relais public n’est fourni.",
+      "de": "Für Adressen virtueller Adapter wie Tailscale / WireGuard. Kein öffentliches Relay.",
+      "pt-BR": "Para endereços de adaptadores virtuais como Tailscale / WireGuard. Nenhum relay público é fornecido."
     },
     "Conduit_ExtraBind_RestartNote": {
       "zh-Hans": "重启后生效",
       "zh-Hant": "重新啟動後生效",
       "en": "Applies after restart",
       "ja": "再起動後に有効",
-      "ko": "재시작 후 적용"
+      "ko": "재시작 후 적용",
+      "es": "Se aplica tras reiniciar",
+      "fr": "Prend effet après redémarrage",
+      "de": "Wirkt nach Neustart",
+      "pt-BR": "Vale após reiniciar"
     },
     "Conduit_ExtraBind_CommaNote": {
       "zh-Hans": " · 逗号分隔多个地址",
       "zh-Hant": " · 逗號分隔多個位址",
       "en": " · separate multiple addresses with commas",
       "ja": " · 複数のアドレスはカンマで区切ります",
-      "ko": " · 여러 주소는 쉼표로 구분"
+      "ko": " · 여러 주소는 쉼표로 구분",
+      "es": " · separa varias direcciones con comas",
+      "fr": " · séparez plusieurs adresses par des virgules",
+      "de": " · mehrere Adressen mit Kommas trennen",
+      "pt-BR": " · separe vários endereços com vírgulas"
     },
     "Conduit_Fingerprint_Title": {
       "zh-Hans": "本机证书指纹",
       "zh-Hant": "本機憑證指紋",
       "en": "This PC’s certificate fingerprint",
       "ja": "この PC の証明書フィンガープリント",
-      "ko": "이 PC의 인증서 지문"
+      "ko": "이 PC의 인증서 지문",
+      "es": "Huella del certificado de este PC",
+      "fr": "Empreinte du certificat de ce PC",
+      "de": "Zertifikat-Fingerabdruck dieses PCs",
+      "pt-BR": "Impressão digital do certificado deste PC"
     },
     "Conduit_Fingerprint_Desc": {
       "zh-Hans": "配对时请与手机上显示的指纹逐组核对。指纹变更会使所有已配对设备提示重新确认。",
       "zh-Hant": "配對時請與手機上顯示的指紋逐組核對。指紋變更會使所有已配對裝置提示重新確認。",
       "en": "When pairing, compare it group by group with the fingerprint shown on the phone. A fingerprint change makes every paired device ask to re-confirm.",
       "ja": "ペアリング時はスマートフォンに表示されるフィンガープリントとグループごとに照合してください。フィンガープリントが変わると、すべてのペアリング済み端末に再確認が求められます。",
-      "ko": "페어링할 때 휴대폰에 표시된 지문과 그룹별로 대조하세요. 지문이 바뀌면 모든 페어링된 기기에 재확인을 요청합니다."
+      "ko": "페어링할 때 휴대폰에 표시된 지문과 그룹별로 대조하세요. 지문이 바뀌면 모든 페어링된 기기에 재확인을 요청합니다.",
+      "es": "Al emparejar, compárala grupo a grupo con la huella mostrada en el teléfono. Un cambio de huella hará que todos los dispositivos emparejados pidan confirmar de nuevo.",
+      "fr": "Lors de l’appairage, comparez-la groupe par groupe avec l’empreinte affichée sur le téléphone. Un changement d’empreinte oblige tous les appareils appairés à reconfirmer.",
+      "de": "Vergleichen Sie ihn beim Koppeln Gruppe für Gruppe mit dem auf dem Telefon angezeigten Fingerabdruck. Eine Änderung des Fingerabdrucks lässt alle gekoppelten Geräte um erneute Bestätigung bitten.",
+      "pt-BR": "Ao parear, compare-a grupo por grupo com a impressão digital mostrada no telefone. Uma mudança na impressão digital faz todos os aparelhos pareados pedirem nova confirmação."
     },
     "Conduit_Fingerprint_Unavailable": {
       "zh-Hans": "对端服务未启动，本次会话无指纹可示。",
       "zh-Hant": "對端服務未啟動，本次工作階段無指紋可示。",
       "en": "The peer service is not running; no fingerprint to show this session.",
       "ja": "相手側サービスが起動していないため、このセッションでは表示できるフィンガープリントがありません。",
-      "ko": "상대편 서비스가 실행되지 않아 이번 세션에는 표시할 지문이 없습니다."
+      "ko": "상대편 서비스가 실행되지 않아 이번 세션에는 표시할 지문이 없습니다.",
+      "es": "El servicio del par no está en marcha; no hay huella que mostrar en esta sesión.",
+      "fr": "Le service du pair n’est pas démarré ; aucune empreinte à afficher pour cette session.",
+      "de": "Der Peer-Dienst läuft nicht; in dieser Sitzung gibt es keinen Fingerabdruck zu zeigen.",
+      "pt-BR": "O serviço do par não está em execução; não há impressão digital para mostrar nesta sessão."
     },
     "Device_RevokedBadge": {
       "zh-Hans": "已撤销",
       "zh-Hant": "已撤銷",
       "en": "Revoked",
       "ja": "取り消し済み",
-      "ko": "해지됨"
+      "ko": "해지됨",
+      "es": "Revocado",
+      "fr": "Révoqué",
+      "de": "Widerrufen",
+      "pt-BR": "Revogado"
     },
     "Device_AccentLabel": {
       "zh-Hans": "设备色",
       "zh-Hant": "裝置色",
       "en": "Device colour",
       "ja": "端末カラー",
-      "ko": "기기 색상"
+      "ko": "기기 색상",
+      "es": "Color del dispositivo",
+      "fr": "Couleur de l’appareil",
+      "de": "Gerätefarbe",
+      "pt-BR": "Cor do aparelho"
     },
     "Device_AccentManual": {
       "zh-Hans": "手动指定",
       "zh-Hant": "手動指定",
       "en": "Manually set",
       "ja": "手動設定",
-      "ko": "수동 설정"
+      "ko": "수동 설정",
+      "es": "Asignado a mano",
+      "fr": "Définie à la main",
+      "de": "Manuell festgelegt",
+      "pt-BR": "Definida à mão"
     },
     "Device_AccentByOrder": {
       "zh-Hans": "跟随配对顺位",
       "zh-Hant": "跟隨配對順位",
       "en": "Follows pairing order",
       "ja": "ペアリング順に従う",
-      "ko": "페어링 순서를 따름"
+      "ko": "페어링 순서를 따름",
+      "es": "Sigue el orden de emparejamiento",
+      "fr": "Suit l’ordre d’appairage",
+      "de": "Folgt der Kopplungsreihenfolge",
+      "pt-BR": "Segue a ordem de pareamento"
     },
     "Device_Rename": {
       "zh-Hans": "重命名",
       "zh-Hant": "重新命名",
       "en": "Rename",
       "ja": "名前を変更",
-      "ko": "이름 바꾸기"
+      "ko": "이름 바꾸기",
+      "es": "Renombrar",
+      "fr": "Renommer",
+      "de": "Umbenennen",
+      "pt-BR": "Renomear"
     },
     "Device_RevokeSelected": {
       "zh-Hans": "撤销所选设备",
       "zh-Hant": "撤銷所選裝置",
       "en": "Revoke selected device",
       "ja": "選択した端末を取り消す",
-      "ko": "선택한 기기 해지"
+      "ko": "선택한 기기 해지",
+      "es": "Revocar dispositivo seleccionado",
+      "fr": "Révoquer l’appareil sélectionné",
+      "de": "Ausgewähltes Gerät widerrufen",
+      "pt-BR": "Revogar aparelho selecionado"
     },
     "Device_RevokeNote": {
       "zh-Hans": "撤销立即断开该设备并作废其配对密钥；对方已收到的内容不会被远程删除。撤销后重新配对视为新设备。同一部手机换了身份重新配对时，旧记录会被自动撤销并清空其待发队列。",
       "zh-Hant": "撤銷立即斷開該裝置並作廢其配對金鑰；對方已收到的內容不會被遠端刪除。撤銷後重新配對視為新裝置。同一部手機換了身分重新配對時，舊記錄會被自動撤銷並清空其寄件佇列。",
       "en": "Revoking disconnects the device immediately and voids its pairing key; content it already received is never deleted remotely. Pairing again after revocation counts as a new device. When the same phone re-pairs under a new identity, the old record is revoked automatically and its outbox cleared.",
       "ja": "取り消すと端末は即座に切断され、ペアリングキーは無効になります。相手側が受信済みの内容がリモートで削除されることはありません。取り消し後の再ペアリングは新しい端末として扱われます。同じスマートフォンが新しい識別情報で再ペアリングした場合、古い記録は自動的に取り消され、その送信キューも消去されます。",
-      "ko": "해지하면 해당 기기가 즉시 연결 해제되고 페어링 키가 무효화됩니다. 상대편이 이미 받은 내용은 원격으로 삭제되지 않습니다. 해지 후 다시 페어링하면 새 기기로 간주됩니다. 같은 휴대폰이 새 신원으로 다시 페어링하면 이전 기록은 자동으로 해지되고 발신 대기열도 비워집니다."
+      "ko": "해지하면 해당 기기가 즉시 연결 해제되고 페어링 키가 무효화됩니다. 상대편이 이미 받은 내용은 원격으로 삭제되지 않습니다. 해지 후 다시 페어링하면 새 기기로 간주됩니다. 같은 휴대폰이 새 신원으로 다시 페어링하면 이전 기록은 자동으로 해지되고 발신 대기열도 비워집니다.",
+      "es": "Revocar desconecta el dispositivo de inmediato y anula su clave de emparejamiento; el contenido que ya recibió nunca se borra en remoto. Volver a emparejar tras revocar cuenta como dispositivo nuevo. Si el mismo teléfono se vuelve a emparejar con otra identidad, el registro antiguo se revoca solo y su cola de envío se vacía.",
+      "fr": "La révocation déconnecte l’appareil immédiatement et invalide sa clé d’appairage ; le contenu qu’il a déjà reçu n’est jamais supprimé à distance. Un nouvel appairage après révocation compte comme un nouvel appareil. Si le même téléphone se réappaire sous une nouvelle identité, l’ancien enregistrement est révoqué automatiquement et sa file d’envoi vidée.",
+      "de": "Der Widerruf trennt das Gerät sofort und macht seinen Kopplungsschlüssel ungültig; bereits empfangene Inhalte werden nie aus der Ferne gelöscht. Eine erneute Kopplung nach dem Widerruf zählt als neues Gerät. Koppelt sich dasselbe Telefon unter neuer Identität erneut, wird der alte Eintrag automatisch widerrufen und seine Sendewarteschlange geleert.",
+      "pt-BR": "Revogar desconecta o aparelho na hora e anula sua chave de pareamento; o conteúdo que ele já recebeu nunca é apagado remotamente. Parear de novo após a revogação conta como aparelho novo. Se o mesmo telefone parear de novo com outra identidade, o registro antigo é revogado automaticamente e sua fila de envio é esvaziada."
     },
     "Device_UnknownRemote": {
       "zh-Hans": "远端设备",
       "zh-Hant": "遠端裝置",
       "en": "Remote device",
       "ja": "リモート端末",
-      "ko": "원격 기기"
+      "ko": "원격 기기",
+      "es": "Dispositivo remoto",
+      "fr": "Appareil distant",
+      "de": "Fernes Gerät",
+      "pt-BR": "Aparelho remoto"
     },
     "Device_PairedFallback": {
       "zh-Hans": "已配对设备",
       "zh-Hant": "已配對裝置",
       "en": "Paired device",
       "ja": "ペアリング済み端末",
-      "ko": "페어링된 기기"
+      "ko": "페어링된 기기",
+      "es": "Dispositivo emparejado",
+      "fr": "Appareil appairé",
+      "de": "Gekoppeltes Gerät",
+      "pt-BR": "Aparelho pareado"
     },
     "Device_UnknownFallback": {
       "zh-Hans": "未知设备",
       "zh-Hant": "未知裝置",
       "en": "Unknown device",
       "ja": "不明な端末",
-      "ko": "알 수 없는 기기"
+      "ko": "알 수 없는 기기",
+      "es": "Dispositivo desconocido",
+      "fr": "Appareil inconnu",
+      "de": "Unbekanntes Gerät",
+      "pt-BR": "Aparelho desconhecido"
     },
     "Stale_BacklogSuffixFormat": {
       "zh-Hans": "{0} · 积压 {1} 条待发",
       "zh-Hant": "{0} · 積壓 {1} 筆待傳",
       "en": "{0} · {1} pending in the outbox",
       "ja": "{0} · 送信待ち {1} 件が滞留",
-      "ko": "{0} · 발신 대기 {1}건 적체"
+      "ko": "{0} · 발신 대기 {1}건 적체",
+      "es": "{0} · {1} pendientes en la cola",
+      "fr": "{0} · {1} en attente dans la file",
+      "de": "{0} · {1} ausstehend in der Warteschlange",
+      "pt-BR": "{0} · {1} pendentes na fila"
     },
     "Stale_BannerBacklogFormat": {
       "zh-Hans": "检测到 {0} 台疑似残留设备，积压 {1} 条待发正在推高「待发」计数。清理会撤销它们并清空其发件队列。",
       "zh-Hant": "偵測到 {0} 台疑似殘留裝置，積壓 {1} 筆待傳正在推高「待傳」計數。清理會撤銷它們並清空其寄件佇列。",
       "en": "Detected {0} device(s) that look like stale leftovers; {1} pending item(s) are inflating the outbox count. Cleanup revokes them and clears their outboxes.",
       "ja": "残留の疑いがある端末を {0} 台検出しました。滞留中の送信待ち {1} 件が「送信待ち」件数を押し上げています。クリーンアップで取り消し、送信キューを消去します。",
-      "ko": "잔류로 의심되는 기기 {0}대를 감지했습니다. 적체된 발신 대기 {1}건이 ‘발신 대기’ 수를 끌어올리고 있습니다. 정리하면 해지되고 발신 대기열이 비워집니다."
+      "ko": "잔류로 의심되는 기기 {0}대를 감지했습니다. 적체된 발신 대기 {1}건이 ‘발신 대기’ 수를 끌어올리고 있습니다. 정리하면 해지되고 발신 대기열이 비워집니다.",
+      "es": "Se detectaron {0} dispositivos que parecen restos obsoletos; {1} elementos pendientes están inflando el contador. La limpieza los revoca y vacía sus colas de envío.",
+      "fr": "{0} appareil(s) semblant être des restes obsolètes détecté(s) ; {1} élément(s) en attente gonflent le compteur. Le nettoyage les révoque et vide leurs files d’envoi.",
+      "de": "{0} Gerät(e) erkannt, die wie veraltete Überbleibsel aussehen; {1} ausstehende Einträge blähen den Zähler auf. Das Aufräumen widerruft sie und leert ihre Sendewarteschlangen.",
+      "pt-BR": "Detectados {0} aparelho(s) que parecem sobras obsoletas; {1} item(ns) pendente(s) estão inflando o contador. A limpeza os revoga e esvazia suas filas de envio."
     },
     "Stale_BannerFormat": {
       "zh-Hans": "检测到 {0} 台疑似残留设备。清理会撤销它们；对方已收到的内容不受影响。",
       "zh-Hant": "偵測到 {0} 台疑似殘留裝置。清理會撤銷它們；對方已收到的內容不受影響。",
       "en": "Detected {0} device(s) that look like stale leftovers. Cleanup revokes them; content they already received is unaffected.",
       "ja": "残留の疑いがある端末を {0} 台検出しました。クリーンアップで取り消します。相手側が受信済みの内容には影響しません。",
-      "ko": "잔류로 의심되는 기기 {0}대를 감지했습니다. 정리하면 해지됩니다. 상대편이 이미 받은 내용은 영향받지 않습니다."
+      "ko": "잔류로 의심되는 기기 {0}대를 감지했습니다. 정리하면 해지됩니다. 상대편이 이미 받은 내용은 영향받지 않습니다.",
+      "es": "Se detectaron {0} dispositivos que parecen restos obsoletos. La limpieza los revoca; el contenido que ya recibieron no se ve afectado.",
+      "fr": "{0} appareil(s) semblant être des restes obsolètes détecté(s). Le nettoyage les révoque ; le contenu qu’ils ont déjà reçu n’est pas affecté.",
+      "de": "{0} Gerät(e) erkannt, die wie veraltete Überbleibsel aussehen. Das Aufräumen widerruft sie; bereits empfangene Inhalte bleiben unberührt.",
+      "pt-BR": "Detectados {0} aparelho(s) que parecem sobras obsoletas. A limpeza os revoga; o conteúdo que já receberam não é afetado."
     },
     "Stale_DuplicateBadge": {
       "zh-Hans": "疑似重复配对残留",
       "zh-Hant": "疑似重複配對殘留",
       "en": "Likely duplicate-pairing leftover",
       "ja": "重複ペアリングの残留の疑い",
-      "ko": "중복 페어링 잔류 의심"
+      "ko": "중복 페어링 잔류 의심",
+      "es": "Posible resto de emparejamiento duplicado",
+      "fr": "Probable reste d’appairage en double",
+      "de": "Vermutlich Rest einer Doppelkopplung",
+      "pt-BR": "Provável sobra de pareamento duplicado"
     },
     "Stale_NeverConnected": {
       "zh-Hans": "配对后从未连接",
       "zh-Hant": "配對後從未連線",
       "en": "Never connected since pairing",
       "ja": "ペアリング後一度も接続なし",
-      "ko": "페어링 후 연결된 적 없음"
+      "ko": "페어링 후 연결된 적 없음",
+      "es": "Nunca se conectó desde el emparejamiento",
+      "fr": "Jamais connecté depuis l’appairage",
+      "de": "Seit der Kopplung nie verbunden",
+      "pt-BR": "Nunca conectou desde o pareamento"
     },
     "Stale_UnseenDaysFormat": {
       "zh-Hans": "超过 {0} 天未连接",
       "zh-Hant": "超過 {0} 天未連線",
       "en": "Not connected for over {0} days",
       "ja": "{0} 日以上接続なし",
-      "ko": "{0}일 넘게 연결 없음"
+      "ko": "{0}일 넘게 연결 없음",
+      "es": "Sin conexión desde hace más de {0} días",
+      "fr": "Pas de connexion depuis plus de {0} jours",
+      "de": "Seit über {0} Tagen nicht verbunden",
+      "pt-BR": "Sem conexão há mais de {0} dias"
     },
     "Prefs_Title": {
       "zh-Hans": "偏好",
       "zh-Hant": "偏好",
       "en": "Preferences",
       "ja": "設定",
-      "ko": "환경설정"
+      "ko": "환경설정",
+      "es": "Preferencias",
+      "fr": "Préférences",
+      "de": "Einstellungen",
+      "pt-BR": "Preferências"
     },
     "Prefs_Subtitle": {
       "zh-Hans": "改动即生效 · 剪贴板正文永不出现在日志里",
       "zh-Hant": "改動即生效 · 剪貼簿內文永不出現在日誌裡",
       "en": "Changes apply immediately · clipboard content never appears in logs",
       "ja": "変更は即時反映 · クリップボードの本文がログに載ることはありません",
-      "ko": "변경은 즉시 적용 · 클립보드 본문은 로그에 절대 남지 않습니다"
+      "ko": "변경은 즉시 적용 · 클립보드 본문은 로그에 절대 남지 않습니다",
+      "es": "Los cambios se aplican al instante · el contenido del portapapeles nunca aparece en los registros",
+      "fr": "Les changements s’appliquent immédiatement · le contenu du presse-papiers n’apparaît jamais dans les journaux",
+      "de": "Änderungen wirken sofort · Zwischenablageinhalte erscheinen nie in Protokollen",
+      "pt-BR": "As mudanças valem na hora · o conteúdo da área de transferência nunca aparece nos logs"
     },
     "Prefs_Group_Display": {
       "zh-Hans": "显 示 · DISPLAY",
       "zh-Hant": "顯 示 · DISPLAY",
       "en": "DISPLAY",
       "ja": "表 示 · DISPLAY",
-      "ko": "표 시 · DISPLAY"
+      "ko": "표 시 · DISPLAY",
+      "es": "PANTALLA",
+      "fr": "AFFICHAGE",
+      "de": "ANZEIGE",
+      "pt-BR": "EXIBIÇÃO"
     },
     "Prefs_Group_Capture": {
       "zh-Hans": "捕 获 · CAPTURE",
       "zh-Hant": "擷 取 · CAPTURE",
       "en": "CAPTURE",
       "ja": "キャプチャ · CAPTURE",
-      "ko": "캡 처 · CAPTURE"
+      "ko": "캡 처 · CAPTURE",
+      "es": "CAPTURA",
+      "fr": "CAPTURE",
+      "de": "ERFASSUNG",
+      "pt-BR": "CAPTURA"
     },
     "Prefs_Group_Sync": {
       "zh-Hans": "同 步 · SYNC",
       "zh-Hant": "同 步 · SYNC",
       "en": "SYNC",
       "ja": "同 期 · SYNC",
-      "ko": "동기화 · SYNC"
+      "ko": "동기화 · SYNC",
+      "es": "SINCRONIZACIÓN",
+      "fr": "SYNCHRONISATION",
+      "de": "SYNC",
+      "pt-BR": "SINCRONIZAÇÃO"
     },
     "Prefs_Group_Retention": {
       "zh-Hans": "存 留 · RETENTION",
       "zh-Hant": "存 留 · RETENTION",
       "en": "RETENTION",
       "ja": "保 持 · RETENTION",
-      "ko": "보 관 · RETENTION"
+      "ko": "보 관 · RETENTION",
+      "es": "RETENCIÓN",
+      "fr": "CONSERVATION",
+      "de": "AUFBEWAHRUNG",
+      "pt-BR": "RETENÇÃO"
     },
     "Prefs_Group_Startup": {
       "zh-Hans": "运 行 · STARTUP",
       "zh-Hant": "執 行 · STARTUP",
       "en": "STARTUP",
       "ja": "起 動 · STARTUP",
-      "ko": "실 행 · STARTUP"
+      "ko": "실 행 · STARTUP",
+      "es": "ARRANQUE",
+      "fr": "DÉMARRAGE",
+      "de": "START",
+      "pt-BR": "INICIALIZAÇÃO"
     },
     "Prefs_Group_Data": {
       "zh-Hans": "数 据 · DATA",
       "zh-Hant": "資 料 · DATA",
       "en": "DATA",
       "ja": "データ · DATA",
-      "ko": "데이터 · DATA"
+      "ko": "데이터 · DATA",
+      "es": "DATOS",
+      "fr": "DONNÉES",
+      "de": "DATEN",
+      "pt-BR": "DADOS"
     },
     "Prefs_FontScale_Title": {
       "zh-Hans": "历史字号",
       "zh-Hant": "歷史字級",
       "en": "History text size",
       "ja": "履歴の文字サイズ",
-      "ko": "기록 글자 크기"
+      "ko": "기록 글자 크기",
+      "es": "Tamaño del texto del historial",
+      "fr": "Taille du texte de l’historique",
+      "de": "Textgröße im Verlauf",
+      "pt-BR": "Tamanho do texto do histórico"
     },
     "Prefs_FontScale_Desc": {
       "zh-Hans": "只缩放剪贴内容文字（历史预览、详情正文、托盘浮窗）；组头、注记盒与按钮保持不变。",
       "zh-Hant": "只縮放剪貼內容文字（歷史預覽、詳情內文、系統匣浮窗）；組頭、註記盒與按鈕保持不變。",
       "en": "Scales only clip content text (history previews, detail body, tray flyout); group headers, badges, and buttons are unchanged.",
       "ja": "クリップ内容のテキストのみ拡大縮小します（履歴プレビュー、詳細本文、トレイのフライアウト）。グループ見出し、バッジ、ボタンは変わりません。",
-      "ko": "클립 내용 텍스트만 확대/축소합니다(기록 미리보기, 상세 본문, 트레이 플라이아웃). 그룹 머리글, 배지, 버튼은 그대로입니다."
+      "ko": "클립 내용 텍스트만 확대/축소합니다(기록 미리보기, 상세 본문, 트레이 플라이아웃). 그룹 머리글, 배지, 버튼은 그대로입니다.",
+      "es": "Escala solo el texto del contenido de los clips (vistas previas, cuerpo del detalle, ventana emergente de la bandeja); encabezados, insignias y botones no cambian.",
+      "fr": "Ne redimensionne que le texte du contenu des clips (aperçus, corps du détail, fenêtre de la barre d’état) ; en-têtes de groupe, badges et boutons ne changent pas.",
+      "de": "Skaliert nur den Inhaltstext der Clips (Verlaufsvorschauen, Detailtext, Tray-Fenster); Gruppenköpfe, Badges und Schaltflächen bleiben unverändert.",
+      "pt-BR": "Redimensiona só o texto do conteúdo dos clipes (prévias do histórico, corpo dos detalhes, janela da bandeja); cabeçalhos de grupo, selos e botões não mudam."
     },
     "Prefs_FontScale_Small": {
       "zh-Hans": "小",
       "zh-Hant": "小",
       "en": "Small",
       "ja": "小",
-      "ko": "작게"
+      "ko": "작게",
+      "es": "Pequeño",
+      "fr": "Petit",
+      "de": "Klein",
+      "pt-BR": "Pequeno"
     },
     "Prefs_FontScale_Standard": {
       "zh-Hans": "标准",
       "zh-Hant": "標準",
       "en": "Standard",
       "ja": "標準",
-      "ko": "표준"
+      "ko": "표준",
+      "es": "Estándar",
+      "fr": "Standard",
+      "de": "Standard",
+      "pt-BR": "Padrão"
     },
     "Prefs_FontScale_Large": {
       "zh-Hans": "大",
       "zh-Hant": "大",
       "en": "Large",
       "ja": "大",
-      "ko": "크게"
+      "ko": "크게",
+      "es": "Grande",
+      "fr": "Grand",
+      "de": "Groß",
+      "pt-BR": "Grande"
     },
     "Prefs_PreviewLines_Title": {
       "zh-Hans": "预览行数",
       "zh-Hant": "預覽行數",
       "en": "Preview lines",
       "ja": "プレビュー行数",
-      "ko": "미리보기 줄 수"
+      "ko": "미리보기 줄 수",
+      "es": "Líneas de vista previa",
+      "fr": "Lignes d’aperçu",
+      "de": "Vorschauzeilen",
+      "pt-BR": "Linhas de prévia"
     },
     "Prefs_PreviewLines_Desc": {
       "zh-Hans": "历史列表每条最多显示的正文行数；超出部分以省略号截断，完整内容看详情。",
       "zh-Hant": "歷史清單每筆最多顯示的內文行數；超出部分以刪節號截斷，完整內容看詳情。",
       "en": "Maximum body lines shown per entry in the history list; overflow is truncated with an ellipsis — open details for the full content.",
       "ja": "履歴一覧で 1 件あたりに表示する本文の最大行数。超えた分は省略記号で切り詰められ、全文は詳細で確認できます。",
-      "ko": "기록 목록에서 항목마다 표시하는 본문 최대 줄 수. 넘치는 부분은 말줄임표로 잘리며 전체 내용은 상세에서 볼 수 있습니다."
+      "ko": "기록 목록에서 항목마다 표시하는 본문 최대 줄 수. 넘치는 부분은 말줄임표로 잘리며 전체 내용은 상세에서 볼 수 있습니다.",
+      "es": "Máximo de líneas de cuerpo por entrada en la lista del historial; lo que sobra se corta con puntos suspensivos — abre los detalles para ver todo.",
+      "fr": "Nombre maximal de lignes de corps affichées par entrée dans la liste ; le surplus est tronqué par des points de suspension — ouvrez les détails pour tout voir.",
+      "de": "Maximale Textzeilen pro Eintrag in der Verlaufsliste; Überschuss wird mit Auslassungspunkten abgeschnitten — die Details zeigen alles.",
+      "pt-BR": "Máximo de linhas de corpo mostradas por entrada na lista do histórico; o excesso é cortado com reticências — abra os detalhes para ver tudo."
     },
     "Prefs_PreviewLines_Two": {
       "zh-Hans": "2 行",
       "zh-Hant": "2 行",
       "en": "2 lines",
       "ja": "2 行",
-      "ko": "2줄"
+      "ko": "2줄",
+      "es": "2 líneas",
+      "fr": "2 lignes",
+      "de": "2 Zeilen",
+      "pt-BR": "2 linhas"
     },
     "Prefs_PreviewLines_Four": {
       "zh-Hans": "4 行",
       "zh-Hant": "4 行",
       "en": "4 lines",
       "ja": "4 行",
-      "ko": "4줄"
+      "ko": "4줄",
+      "es": "4 líneas",
+      "fr": "4 lignes",
+      "de": "4 Zeilen",
+      "pt-BR": "4 linhas"
     },
     "Prefs_PreviewLines_Six": {
       "zh-Hans": "6 行",
       "zh-Hant": "6 行",
       "en": "6 lines",
       "ja": "6 行",
-      "ko": "6줄"
+      "ko": "6줄",
+      "es": "6 líneas",
+      "fr": "6 lignes",
+      "de": "6 Zeilen",
+      "pt-BR": "6 linhas"
     },
     "Prefs_Theme_Title": {
       "zh-Hans": "外观",
       "zh-Hant": "外觀",
       "en": "Appearance",
       "ja": "外観",
-      "ko": "외관"
+      "ko": "외관",
+      "es": "Apariencia",
+      "fr": "Apparence",
+      "de": "Erscheinungsbild",
+      "pt-BR": "Aparência"
     },
     "Prefs_Theme_Desc": {
       "zh-Hans": "窗口的日间/夜间配色；托盘图标活在任务栏里，始终跟随任务栏的深浅。",
       "zh-Hant": "視窗的日間/夜間配色；系統匣圖示活在工作列裡，始終跟隨工作列的深淺。",
       "en": "The window’s day/night palette; the tray icon lives in the taskbar and always follows the taskbar’s shade.",
       "ja": "ウィンドウの昼/夜配色。トレイアイコンはタスクバーに住んでおり、常にタスクバーの明暗に従います。",
-      "ko": "창의 주간/야간 배색. 트레이 아이콘은 작업 표시줄에 살며 항상 작업 표시줄의 명암을 따릅니다."
+      "ko": "창의 주간/야간 배색. 트레이 아이콘은 작업 표시줄에 살며 항상 작업 표시줄의 명암을 따릅니다.",
+      "es": "La paleta día/noche de la ventana; el icono de la bandeja vive en la barra de tareas y siempre sigue su tono.",
+      "fr": "La palette jour/nuit de la fenêtre ; l’icône de la barre d’état vit dans la barre des tâches et suit toujours sa teinte.",
+      "de": "Die Tag/Nacht-Palette des Fensters; das Tray-Symbol lebt in der Taskleiste und folgt stets deren Helligkeit.",
+      "pt-BR": "A paleta dia/noite da janela; o ícone da bandeja vive na barra de tarefas e sempre segue o tom dela."
     },
     "Prefs_Theme_Day": {
       "zh-Hans": "日间",
       "zh-Hant": "日間",
       "en": "Day",
       "ja": "昼",
-      "ko": "주간"
+      "ko": "주간",
+      "es": "Día",
+      "fr": "Jour",
+      "de": "Tag",
+      "pt-BR": "Dia"
     },
     "Prefs_Theme_Night": {
       "zh-Hans": "夜间",
       "zh-Hant": "夜間",
       "en": "Night",
       "ja": "夜",
-      "ko": "야간"
+      "ko": "야간",
+      "es": "Noche",
+      "fr": "Nuit",
+      "de": "Nacht",
+      "pt-BR": "Noite"
     },
     "Prefs_Language_Title": {
       "zh-Hans": "语言",
       "zh-Hant": "語言",
       "en": "Language",
       "ja": "言語",
-      "ko": "언어"
+      "ko": "언어",
+      "es": "Idioma",
+      "fr": "Langue",
+      "de": "Sprache",
+      "pt-BR": "Idioma"
     },
     "Prefs_Language_Desc": {
       "zh-Hans": "界面显示语言，跟随系统或手动指定；语言名称始终以各自的母语显示。",
       "zh-Hant": "介面顯示語言，跟隨系統或手動指定；語言名稱始終以各自的母語顯示。",
       "en": "The UI language — follow the system or set one manually; each language always shows its own native name.",
       "ja": "表示言語。システムに従うか手動で指定します。言語名は常にそれぞれの母語で表示されます。",
-      "ko": "인터페이스 표시 언어. 시스템을 따르거나 직접 지정합니다. 언어 이름은 항상 각자의 모국어로 표시됩니다."
+      "ko": "인터페이스 표시 언어. 시스템을 따르거나 직접 지정합니다. 언어 이름은 항상 각자의 모국어로 표시됩니다.",
+      "es": "El idioma de la interfaz: sigue al sistema o elígelo a mano; cada idioma se muestra siempre en su propio nombre nativo.",
+      "fr": "La langue de l’interface : suivez le système ou choisissez-la à la main ; chaque langue s’affiche toujours dans son propre nom natif.",
+      "de": "Die Oberflächensprache — dem System folgen oder manuell festlegen; jede Sprache zeigt stets ihren eigenen nativen Namen.",
+      "pt-BR": "O idioma da interface: siga o sistema ou escolha à mão; cada idioma sempre aparece com seu próprio nome nativo."
     },
     "Prefs_Language_RestartNote": {
       "zh-Hans": "更换后重启应用生效。",
       "zh-Hant": "更換後重新啟動應用程式生效。",
       "en": "Takes effect after restarting the app.",
       "ja": "変更後はアプリの再起動で有効になります。",
-      "ko": "변경 후 앱을 재시작하면 적용됩니다."
+      "ko": "변경 후 앱을 재시작하면 적용됩니다.",
+      "es": "Se aplica tras reiniciar la aplicación.",
+      "fr": "Prend effet après redémarrage de l’application.",
+      "de": "Wirkt nach Neustart der Anwendung.",
+      "pt-BR": "Vale após reiniciar o aplicativo."
     },
     "Prefs_Capture_Pause_Desc": {
       "zh-Hans": "暂停后本机不再记录新内容，已有历史保留。",
       "zh-Hant": "暫停後本機不再記錄新內容，既有歷史保留。",
       "en": "While paused, this PC stops recording new content; existing history is kept.",
       "ja": "一時停止中はこの PC で新しい内容を記録しません。既存の履歴は保持されます。",
-      "ko": "일시중지 중에는 이 PC에서 새 내용을 기록하지 않습니다. 기존 기록은 유지됩니다."
+      "ko": "일시중지 중에는 이 PC에서 새 내용을 기록하지 않습니다. 기존 기록은 유지됩니다.",
+      "es": "En pausa, este PC deja de registrar contenido nuevo; el historial existente se conserva.",
+      "fr": "En pause, ce PC n’enregistre plus de nouveau contenu ; l’historique existant est conservé.",
+      "de": "Pausiert zeichnet dieser PC keine neuen Inhalte auf; der bestehende Verlauf bleibt erhalten.",
+      "pt-BR": "Em pausa, este PC para de registrar conteúdo novo; o histórico existente é mantido."
     },
     "Prefs_Capture_Private_Desc": {
       "zh-Hans": "开启期间捕获与同步全部停止，不留任何痕迹。",
       "zh-Hant": "開啟期間擷取與同步全部停止，不留任何痕跡。",
       "en": "While on, capture and sync stop entirely, leaving no trace.",
       "ja": "オンの間はキャプチャと同期を完全に停止し、痕跡を残しません。",
-      "ko": "켜져 있는 동안 캡처와 동기화가 모두 멈추고 흔적을 남기지 않습니다."
+      "ko": "켜져 있는 동안 캡처와 동기화가 모두 멈추고 흔적을 남기지 않습니다.",
+      "es": "Mientras está activo, la captura y la sincronización se detienen por completo, sin dejar rastro.",
+      "fr": "Tant qu’il est actif, capture et synchronisation s’arrêtent complètement, sans laisser de trace.",
+      "de": "Solange aktiv, stoppen Erfassung und Sync vollständig, ohne Spuren zu hinterlassen.",
+      "pt-BR": "Enquanto ativo, captura e sincronização param por completo, sem deixar rastros."
     },
     "Prefs_Capture_Blocked_Title": {
       "zh-Hans": "屏蔽进程",
       "zh-Hant": "封鎖處理程序",
       "en": "Blocked processes",
       "ja": "ブロック対象プロセス",
-      "ko": "차단할 프로세스"
+      "ko": "차단할 프로세스",
+      "es": "Procesos bloqueados",
+      "fr": "Processus bloqués",
+      "de": "Blockierte Prozesse",
+      "pt-BR": "Processos bloqueados"
     },
     "Prefs_Capture_Blocked_Desc": {
       "zh-Hans": "来自这些进程的复制不进入历史，也不同步。逗号或换行分隔。",
       "zh-Hant": "來自這些處理程序的複製不進入歷史，也不同步。逗號或換行分隔。",
       "en": "Copies from these processes never enter history or sync. Separate with commas or line breaks.",
       "ja": "これらのプロセスからのコピーは履歴に入らず、同期もされません。カンマまたは改行で区切ります。",
-      "ko": "이 프로세스들에서 복사한 내용은 기록에 들어가지 않고 동기화되지도 않습니다. 쉼표나 줄바꿈으로 구분합니다."
+      "ko": "이 프로세스들에서 복사한 내용은 기록에 들어가지 않고 동기화되지도 않습니다. 쉼표나 줄바꿈으로 구분합니다.",
+      "es": "Lo copiado desde estos procesos nunca entra en el historial ni se sincroniza. Separa con comas o saltos de línea.",
+      "fr": "Les copies venant de ces processus n’entrent jamais dans l’historique et ne sont pas synchronisées. Séparez par des virgules ou des retours à la ligne.",
+      "de": "Kopien aus diesen Prozessen gelangen nie in den Verlauf und werden nicht synchronisiert. Mit Kommas oder Zeilenumbrüchen trennen.",
+      "pt-BR": "Cópias vindas desses processos nunca entram no histórico nem sincronizam. Separe com vírgulas ou quebras de linha."
     },
     "Prefs_Sync_AutoApply_Title": {
       "zh-Hans": "自动应用远端内容",
       "zh-Hant": "自動套用遠端內容",
       "en": "Auto-apply remote content",
       "ja": "リモート内容の自動適用",
-      "ko": "원격 내용 자동 적용"
+      "ko": "원격 내용 자동 적용",
+      "es": "Aplicar contenido remoto automáticamente",
+      "fr": "Appliquer le contenu distant automatiquement",
+      "de": "Ferne Inhalte automatisch anwenden",
+      "pt-BR": "Aplicar conteúdo remoto automaticamente"
     },
     "Prefs_Sync_AutoApply_Desc": {
       "zh-Hans": "手机发来的文本自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。",
       "zh-Hant": "手機傳來的文字自動寫入本機剪貼簿。關閉後只保留在歷史中，需手動複製。",
       "en": "Text from the phone is written to this PC’s clipboard automatically. When off it stays in history only and needs manual copying.",
       "ja": "スマートフォンから届いたテキストをこの PC のクリップボードへ自動で書き込みます。オフの場合は履歴にのみ残り、手動でのコピーが必要です。",
-      "ko": "휴대폰에서 온 텍스트를 이 PC의 클립보드에 자동으로 기록합니다. 끄면 기록에만 남으며 수동으로 복사해야 합니다."
+      "ko": "휴대폰에서 온 텍스트를 이 PC의 클립보드에 자동으로 기록합니다. 끄면 기록에만 남으며 수동으로 복사해야 합니다.",
+      "es": "El texto del teléfono se escribe automáticamente en el portapapeles de este PC. Si está apagado, queda solo en el historial y hay que copiarlo a mano.",
+      "fr": "Le texte venu du téléphone est écrit automatiquement dans le presse-papiers de ce PC. Désactivé, il reste dans l’historique et doit être copié à la main.",
+      "de": "Text vom Telefon wird automatisch in die Zwischenablage dieses PCs geschrieben. Ausgeschaltet bleibt er nur im Verlauf und muss von Hand kopiert werden.",
+      "pt-BR": "O texto vindo do telefone é gravado automaticamente na área de transferência deste PC. Desligado, fica só no histórico e precisa ser copiado à mão."
     },
     "Prefs_Sync_ImageSync_Title": {
       "zh-Hans": "同步剪贴板图片",
       "zh-Hant": "同步剪貼簿圖片",
       "en": "Sync clipboard images",
       "ja": "クリップボード画像の同期",
-      "ko": "클립보드 이미지 동기화"
+      "ko": "클립보드 이미지 동기화",
+      "es": "Sincronizar imágenes del portapapeles",
+      "fr": "Synchroniser les images du presse-papiers",
+      "de": "Zwischenablagebilder synchronisieren",
+      "pt-BR": "Sincronizar imagens da área de transferência"
     },
     "Prefs_Sync_ImageSync_Desc": {
       "zh-Hans": "默认关闭。仅 PNG/JPEG；原始字节可能含 EXIF 等元数据，双端需为 v2 会话。",
       "zh-Hant": "預設關閉。僅 PNG/JPEG；原始位元組可能含 EXIF 等中繼資料，雙端需為 v2 工作階段。",
       "en": "Off by default. PNG/JPEG only; raw bytes may carry EXIF and other metadata, and both ends need a v2 session.",
       "ja": "既定ではオフ。PNG/JPEG のみ。元のバイト列には EXIF などのメタデータが含まれる場合があり、両端が v2 セッションである必要があります。",
-      "ko": "기본값은 꺼짐. PNG/JPEG만 지원. 원본 바이트에 EXIF 등 메타데이터가 포함될 수 있으며 양쪽 모두 v2 세션이어야 합니다."
+      "ko": "기본값은 꺼짐. PNG/JPEG만 지원. 원본 바이트에 EXIF 등 메타데이터가 포함될 수 있으며 양쪽 모두 v2 세션이어야 합니다.",
+      "es": "Apagado por defecto. Solo PNG/JPEG; los bytes originales pueden llevar EXIF y otros metadatos, y ambos extremos necesitan una sesión v2.",
+      "fr": "Désactivé par défaut. PNG/JPEG uniquement ; les octets d’origine peuvent contenir des métadonnées EXIF, et les deux extrémités doivent être en session v2.",
+      "de": "Standardmäßig aus. Nur PNG/JPEG; die Rohbytes können EXIF- und andere Metadaten enthalten, und beide Seiten brauchen eine v2-Sitzung.",
+      "pt-BR": "Desligado por padrão. Só PNG/JPEG; os bytes originais podem trazer EXIF e outros metadados, e as duas pontas precisam de sessão v2."
     },
     "Prefs_Sync_AutoApplyImages_Title": {
       "zh-Hans": "自动应用远端图片",
       "zh-Hant": "自動套用遠端圖片",
       "en": "Auto-apply remote images",
       "ja": "リモート画像の自動適用",
-      "ko": "원격 이미지 자동 적용"
+      "ko": "원격 이미지 자동 적용",
+      "es": "Aplicar imágenes remotas automáticamente",
+      "fr": "Appliquer les images distantes automatiquement",
+      "de": "Ferne Bilder automatisch anwenden",
+      "pt-BR": "Aplicar imagens remotas automaticamente"
     },
     "Prefs_Sync_AutoApplyImages_Desc": {
       "zh-Hans": "手机发来的图片自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。",
       "zh-Hant": "手機傳來的圖片自動寫入本機剪貼簿。關閉後只保留在歷史中，需手動複製。",
       "en": "Images from the phone are written to this PC’s clipboard automatically. When off they stay in history only and need manual copying.",
       "ja": "スマートフォンから届いた画像をこの PC のクリップボードへ自動で書き込みます。オフの場合は履歴にのみ残り、手動でのコピーが必要です。",
-      "ko": "휴대폰에서 온 이미지를 이 PC의 클립보드에 자동으로 기록합니다. 끄면 기록에만 남으며 수동으로 복사해야 합니다."
+      "ko": "휴대폰에서 온 이미지를 이 PC의 클립보드에 자동으로 기록합니다. 끄면 기록에만 남으며 수동으로 복사해야 합니다.",
+      "es": "Las imágenes del teléfono se escriben automáticamente en el portapapeles de este PC. Si está apagado, quedan solo en el historial y hay que copiarlas a mano.",
+      "fr": "Les images venues du téléphone sont écrites automatiquement dans le presse-papiers de ce PC. Désactivé, elles restent dans l’historique et doivent être copiées à la main.",
+      "de": "Bilder vom Telefon werden automatisch in die Zwischenablage dieses PCs geschrieben. Ausgeschaltet bleiben sie nur im Verlauf und müssen von Hand kopiert werden.",
+      "pt-BR": "As imagens vindas do telefone são gravadas automaticamente na área de transferência deste PC. Desligado, ficam só no histórico e precisam ser copiadas à mão."
     },
     "Prefs_Moved_Title": {
       "zh-Hans": "蓝牙备援 · 额外监听地址 · 本机证书指纹",
       "zh-Hant": "藍牙備援 · 額外監聽位址 · 本機憑證指紋",
       "en": "Bluetooth fallback · extra listen addresses · certificate fingerprint",
       "ja": "Bluetooth フォールバック · 追加の待ち受けアドレス · 証明書フィンガープリント",
-      "ko": "블루투스 대체 경로 · 추가 수신 대기 주소 · 인증서 지문"
+      "ko": "블루투스 대체 경로 · 추가 수신 대기 주소 · 인증서 지문",
+      "es": "Respaldo Bluetooth · direcciones de escucha adicionales · huella del certificado",
+      "fr": "Secours Bluetooth · adresses d’écoute supplémentaires · empreinte du certificat",
+      "de": "Bluetooth-Ausweichweg · zusätzliche Lauschadressen · Zertifikat-Fingerabdruck",
+      "pt-BR": "Alternativa Bluetooth · endereços de escuta adicionais · impressão digital do certificado"
     },
     "Prefs_Moved_Desc": {
       "zh-Hans": "已移至「通路 · 网络段」——它们决定内容能否到达对端，与配对、设备管理同住。",
       "zh-Hant": "已移至「通路 · 網路段」——它們決定內容能否到達對端，與配對、裝置管理同住。",
       "en": "Moved to Conduit · network segment — they decide whether content can reach the peer, so they live with pairing and device management.",
       "ja": "「経路 · ネットワーク区間」へ移動しました——内容が相手側に届くかどうかを決める設定のため、ペアリングや端末管理と同居しています。",
-      "ko": "‘통로 · 네트워크 구간’으로 옮겼습니다 — 내용이 상대편에 도달할 수 있는지를 결정하는 설정이라 페어링·기기 관리와 함께 있습니다."
+      "ko": "‘통로 · 네트워크 구간’으로 옮겼습니다 — 내용이 상대편에 도달할 수 있는지를 결정하는 설정이라 페어링·기기 관리와 함께 있습니다.",
+      "es": "Movidos a «Conducto · segmento de red»: deciden si el contenido puede llegar al par, así que viven junto al emparejamiento y la gestión de dispositivos.",
+      "fr": "Déplacés vers « Conduit · segment réseau » — ils déterminent si le contenu peut atteindre le pair, donc ils habitent avec l’appairage et la gestion des appareils.",
+      "de": "Verschoben nach „Kanal · Netzwerkabschnitt“ — sie entscheiden, ob Inhalte den Peer erreichen, und wohnen daher bei Kopplung und Geräteverwaltung.",
+      "pt-BR": "Movidos para “Conduíte · segmento de rede” — eles decidem se o conteúdo consegue chegar ao par, então moram junto do pareamento e da gestão de aparelhos."
     },
     "Prefs_Moved_GoToConduit": {
       "zh-Hans": "前往通路",
       "zh-Hant": "前往通路",
       "en": "Go to Conduit",
       "ja": "経路へ",
-      "ko": "통로로 이동"
+      "ko": "통로로 이동",
+      "es": "Ir al Conducto",
+      "fr": "Aller au Conduit",
+      "de": "Zum Kanal",
+      "pt-BR": "Ir ao Conduíte"
     },
     "Prefs_Retention_Days_Title": {
       "zh-Hans": "保留期限",
       "zh-Hant": "保留期限",
       "en": "Retention period",
       "ja": "保持期間",
-      "ko": "보관 기간"
+      "ko": "보관 기간",
+      "es": "Período de retención",
+      "fr": "Durée de conservation",
+      "de": "Aufbewahrungsdauer",
+      "pt-BR": "Período de retenção"
     },
     "Prefs_Retention_Days_Desc": {
       "zh-Hans": "超期条目自动清除。清理只发生在本机，不远程删除对方已收到的内容。",
       "zh-Hant": "逾期條目自動清除。清理只發生在本機，不遠端刪除對方已收到的內容。",
       "en": "Entries past the deadline are removed automatically. Cleanup happens on this PC only and never deletes what the peer already received.",
       "ja": "期限を過ぎた項目は自動的に削除されます。削除はこの PC 内でのみ行われ、相手側が受信済みの内容をリモートで削除することはありません。",
-      "ko": "기한이 지난 항목은 자동으로 정리됩니다. 정리는 이 PC에서만 일어나며 상대편이 이미 받은 내용을 원격으로 삭제하지 않습니다."
+      "ko": "기한이 지난 항목은 자동으로 정리됩니다. 정리는 이 PC에서만 일어나며 상대편이 이미 받은 내용을 원격으로 삭제하지 않습니다.",
+      "es": "Las entradas vencidas se eliminan automáticamente. La limpieza ocurre solo en este PC y nunca borra lo que el par ya recibió.",
+      "fr": "Les entrées expirées sont supprimées automatiquement. Le nettoyage n’a lieu que sur ce PC et ne supprime jamais ce que le pair a déjà reçu.",
+      "de": "Abgelaufene Einträge werden automatisch entfernt. Das Aufräumen geschieht nur auf diesem PC und löscht nie, was der Peer bereits erhalten hat.",
+      "pt-BR": "Entradas vencidas são removidas automaticamente. A limpeza só acontece neste PC e nunca apaga o que o par já recebeu."
     },
     "Prefs_Retention_DaysUnit": {
       "zh-Hans": "天",
       "zh-Hant": "天",
       "en": "days",
       "ja": "日",
-      "ko": "일"
+      "ko": "일",
+      "es": "días",
+      "fr": "jours",
+      "de": "Tage",
+      "pt-BR": "dias"
     },
     "Prefs_Retention_Entries_Title": {
       "zh-Hans": "保留条数",
       "zh-Hant": "保留筆數",
       "en": "Retention count",
       "ja": "保持件数",
-      "ko": "보관 개수"
+      "ko": "보관 개수",
+      "es": "Límite de entradas",
+      "fr": "Nombre conservé",
+      "de": "Aufbewahrungsanzahl",
+      "pt-BR": "Limite de entradas"
     },
     "Prefs_Retention_Entries_Desc": {
       "zh-Hans": "超出上限时最旧的条目先被清除（100–2000，每步 100）。清理只发生在本机。",
       "zh-Hant": "超出上限時最舊的條目先被清除（100–2000，每步 100）。清理只發生在本機。",
       "en": "When over the cap, the oldest entries are removed first (100–2000, steps of 100). Cleanup happens on this PC only.",
       "ja": "上限を超えると古い項目から削除されます（100–2000、100 刻み）。削除はこの PC 内でのみ行われます。",
-      "ko": "상한을 넘으면 가장 오래된 항목부터 정리됩니다(100–2000, 100 단위). 정리는 이 PC에서만 일어납니다."
+      "ko": "상한을 넘으면 가장 오래된 항목부터 정리됩니다(100–2000, 100 단위). 정리는 이 PC에서만 일어납니다.",
+      "es": "Al superar el tope se eliminan primero las entradas más antiguas (100–2000, en pasos de 100). La limpieza ocurre solo en este PC.",
+      "fr": "Au-delà du plafond, les entrées les plus anciennes partent en premier (100–2000, par pas de 100). Le nettoyage n’a lieu que sur ce PC.",
+      "de": "Über dem Limit werden die ältesten Einträge zuerst entfernt (100–2000, in 100er-Schritten). Das Aufräumen geschieht nur auf diesem PC.",
+      "pt-BR": "Acima do teto, as entradas mais antigas saem primeiro (100–2000, em passos de 100). A limpeza só acontece neste PC."
     },
     "Prefs_Retention_EntriesUnit": {
       "zh-Hans": "条",
       "zh-Hant": "筆",
       "en": "entries",
       "ja": "件",
-      "ko": "개"
+      "ko": "개",
+      "es": "entradas",
+      "fr": "entrées",
+      "de": "Einträge",
+      "pt-BR": "entradas"
     },
     "Prefs_Startup_Launch_Title": {
       "zh-Hans": "开机自启 · 静默入托盘",
       "zh-Hant": "開機自動啟動 · 靜默入系統匣",
       "en": "Launch at startup · silently to tray",
       "ja": "起動時に自動開始 · 静かにトレイへ",
-      "ko": "부팅 시 자동 시작 · 조용히 트레이로"
+      "ko": "부팅 시 자동 시작 · 조용히 트레이로",
+      "es": "Iniciar con Windows · directo a la bandeja",
+      "fr": "Lancer au démarrage · directement dans la barre d’état",
+      "de": "Beim Start ausführen · still ins Tray",
+      "pt-BR": "Iniciar com o Windows · direto para a bandeja"
     },
     "Prefs_Startup_Launch_Desc": {
       "zh-Hans": "随 Windows 登录自动启动并直接落在托盘，不弹主窗口。只写当前用户的启动项，不需要管理员权限。",
       "zh-Hant": "隨 Windows 登入自動啟動並直接落在系統匣，不彈主視窗。只寫目前使用者的啟動項，不需要系統管理員權限。",
       "en": "Starts automatically at Windows sign-in and lands straight in the tray without opening the main window. Writes only the current user’s startup entry; no administrator rights needed.",
       "ja": "Windows へのサインインと同時に自動起動し、メインウィンドウを開かずそのままトレイに入ります。現在のユーザーのスタートアップ項目のみ書き込み、管理者権限は不要です。",
-      "ko": "Windows 로그인과 함께 자동으로 시작해 메인 창을 열지 않고 곧장 트레이로 들어갑니다. 현재 사용자의 시작 항목만 기록하며 관리자 권한이 필요 없습니다."
+      "ko": "Windows 로그인과 함께 자동으로 시작해 메인 창을 열지 않고 곧장 트레이로 들어갑니다. 현재 사용자의 시작 항목만 기록하며 관리자 권한이 필요 없습니다.",
+      "es": "Arranca automáticamente al iniciar sesión en Windows y aterriza en la bandeja sin abrir la ventana principal. Solo escribe la entrada de inicio del usuario actual; no requiere derechos de administrador.",
+      "fr": "Démarre automatiquement à l’ouverture de session Windows et atterrit directement dans la barre d’état sans ouvrir la fenêtre principale. N’écrit que l’entrée de démarrage de l’utilisateur actuel ; aucun droit administrateur requis.",
+      "de": "Startet automatisch bei der Windows-Anmeldung und landet direkt im Tray, ohne das Hauptfenster zu öffnen. Schreibt nur den Autostart-Eintrag des aktuellen Benutzers; keine Administratorrechte nötig.",
+      "pt-BR": "Inicia automaticamente no login do Windows e cai direto na bandeja, sem abrir a janela principal. Grava só a entrada de inicialização do usuário atual; não precisa de direitos de administrador."
     },
     "Prefs_Startup_Hotkey_Title": {
       "zh-Hans": "呼出浮窗快捷键",
       "zh-Hant": "呼出浮窗快速鍵",
       "en": "Flyout hotkey",
       "ja": "フライアウト呼び出しホットキー",
-      "ko": "플라이아웃 호출 단축키"
+      "ko": "플라이아웃 호출 단축키",
+      "es": "Atajo de la ventana emergente",
+      "fr": "Raccourci de la fenêtre rapide",
+      "de": "Tastenkürzel fürs Schnellfenster",
+      "pt-BR": "Atalho da janela rápida"
     },
     "Prefs_Startup_Hotkey_Desc": {
       "zh-Hans": "在任意应用按下组合键呼出托盘浮窗。点击输入框后按下想要的组合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。默认关闭。",
       "zh-Hant": "在任意應用程式按下組合鍵呼出系統匣浮窗。點擊輸入框後按下想要的組合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。預設關閉。",
       "en": "Press the combination in any app to summon the tray flyout. Click the box, then press the combination you want (must include Ctrl, Alt, or Win); press Backspace to clear. Off by default.",
       "ja": "どのアプリでも組み合わせを押すとトレイのフライアウトを呼び出せます。入力欄をクリックして希望の組み合わせを押してください（Ctrl、Alt、Win のいずれかを含む必要があります）。Backspace で消去。既定ではオフ。",
-      "ko": "어느 앱에서든 조합 키를 누르면 트레이 플라이아웃이 나타납니다. 입력란을 클릭한 뒤 원하는 조합을 누르세요(Ctrl, Alt, Win 중 하나 포함 필수). Backspace로 지웁니다. 기본값은 꺼짐."
+      "ko": "어느 앱에서든 조합 키를 누르면 트레이 플라이아웃이 나타납니다. 입력란을 클릭한 뒤 원하는 조합을 누르세요(Ctrl, Alt, Win 중 하나 포함 필수). Backspace로 지웁니다. 기본값은 꺼짐.",
+      "es": "Pulsa la combinación en cualquier aplicación para invocar la ventana de la bandeja. Haz clic en el cuadro y pulsa la combinación deseada (debe incluir Ctrl, Alt o Win); Retroceso la borra. Apagado por defecto.",
+      "fr": "Appuyez sur la combinaison dans n’importe quelle application pour invoquer la fenêtre de la barre d’état. Cliquez sur le champ puis appuyez sur la combinaison voulue (doit inclure Ctrl, Alt ou Win) ; Retour arrière pour effacer. Désactivé par défaut.",
+      "de": "Drücken Sie die Kombination in jeder beliebigen Anwendung, um das Tray-Schnellfenster aufzurufen. Klicken Sie ins Feld und drücken Sie die gewünschte Kombination (muss Strg, Alt oder Win enthalten); Rücktaste löscht. Standardmäßig aus.",
+      "pt-BR": "Pressione a combinação em qualquer aplicativo para chamar a janela da bandeja. Clique no campo e pressione a combinação desejada (precisa incluir Ctrl, Alt ou Win); Backspace apaga. Desligado por padrão."
     },
     "Prefs_Data_Export_Desc": {
       "zh-Hans": "把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥、证书与配对信息。导出内容为明文，请妥善保管。",
       "zh-Hant": "把全部歷史（含刪除標記）寫成 JSON Lines 備份檔；不含金鑰、憑證與配對資訊。匯出內容為明文，請妥善保管。",
       "en": "Writes the whole history (including deletion markers) as a JSON Lines backup file; no keys, certificates, or pairing data. The export is plaintext — keep it safe.",
       "ja": "全履歴（削除マーカーを含む）を JSON Lines のバックアップファイルとして書き出します。キー、証明書、ペアリング情報は含みません。エクスポートは平文です——大切に保管してください。",
-      "ko": "전체 기록(삭제 표시 포함)을 JSON Lines 백업 파일로 저장합니다. 키, 인증서, 페어링 정보는 포함되지 않습니다. 내보낸 내용은 평문이니 안전하게 보관하세요."
+      "ko": "전체 기록(삭제 표시 포함)을 JSON Lines 백업 파일로 저장합니다. 키, 인증서, 페어링 정보는 포함되지 않습니다. 내보낸 내용은 평문이니 안전하게 보관하세요.",
+      "es": "Escribe todo el historial (incluidos los marcadores de borrado) como archivo de respaldo JSON Lines; sin claves, certificados ni datos de emparejamiento. La exportación es texto plano: guárdala bien.",
+      "fr": "Écrit tout l’historique (marqueurs de suppression compris) dans un fichier de sauvegarde JSON Lines ; sans clés, certificats ni données d’appairage. L’export est en clair — conservez-le en lieu sûr.",
+      "de": "Schreibt den gesamten Verlauf (einschließlich Löschmarkierungen) als JSON-Lines-Sicherungsdatei; ohne Schlüssel, Zertifikate oder Kopplungsdaten. Der Export ist Klartext — sicher aufbewahren.",
+      "pt-BR": "Grava todo o histórico (incluindo marcadores de exclusão) como arquivo de backup JSON Lines; sem chaves, certificados nem dados de pareamento. A exportação é texto puro — guarde com cuidado."
     },
     "Prefs_Data_Import_Desc": {
       "zh-Hans": "从备份文件合并历史：按「来源设备 + 序号」幂等去重，重复导入不产生重复条目，也不会覆盖本机已删除的记录。校验失败时不做任何改动。",
       "zh-Hant": "從備份檔合併歷史：按「來源裝置 + 序號」冪等去重，重複匯入不產生重複條目，也不會覆蓋本機已刪除的記錄。驗證失敗時不做任何改動。",
       "en": "Merges history from a backup file: idempotent on “source device + sequence”, so re-importing never duplicates entries or overrides local deletions. Validation failures change nothing.",
       "ja": "バックアップファイルから履歴を統合します。「ソース端末 + 連番」で冪等に重複排除するため、再インポートで項目が重複したり、この端末で削除済みの記録が上書きされたりすることはありません。検証に失敗した場合は何も変更しません。",
-      "ko": "백업 파일에서 기록을 병합합니다. ‘출처 기기 + 순번’으로 멱등하게 중복을 제거하므로 다시 가져와도 항목이 중복되지 않고 이 기기에서 삭제된 기록을 덮어쓰지도 않습니다. 검증에 실패하면 아무것도 바꾸지 않습니다."
+      "ko": "백업 파일에서 기록을 병합합니다. ‘출처 기기 + 순번’으로 멱등하게 중복을 제거하므로 다시 가져와도 항목이 중복되지 않고 이 기기에서 삭제된 기록을 덮어쓰지도 않습니다. 검증에 실패하면 아무것도 바꾸지 않습니다.",
+      "es": "Combina el historial desde un archivo de respaldo: idempotente por «dispositivo de origen + secuencia», así que reimportar nunca duplica entradas ni pisa borrados locales. Si la validación falla, no cambia nada.",
+      "fr": "Fusionne l’historique depuis un fichier de sauvegarde : idempotent sur « appareil source + séquence », donc réimporter ne duplique jamais d’entrées et n’écrase pas les suppressions locales. En cas d’échec de validation, rien ne change.",
+      "de": "Führt den Verlauf aus einer Sicherungsdatei zusammen: idempotent über „Quellgerät + Sequenz“, sodass erneutes Importieren nie Einträge dupliziert oder lokale Löschungen überschreibt. Bei Validierungsfehlern ändert sich nichts.",
+      "pt-BR": "Mescla o histórico de um arquivo de backup: idempotente por “aparelho de origem + sequência”, então reimportar nunca duplica entradas nem sobrescreve exclusões locais. Se a validação falhar, nada muda."
     },
     "Prefs_Data_Clear_Desc": {
       "zh-Hans": "一次性删除本机全部条目（含图片），需两步确认且无法恢复。清空只发生在本机，不会远程删除对方已收到的内容；建议先导出历史留底。",
       "zh-Hant": "一次性刪除本機全部條目（含圖片），需兩步確認且無法復原。清空只發生在本機，不會遠端刪除對方已收到的內容；建議先匯出歷史留底。",
       "en": "Deletes all entries on this PC (including images) in one step; takes two confirmations and cannot be undone. Clearing happens on this PC only and never deletes what the peer already received — consider exporting first.",
       "ja": "この PC の全項目（画像を含む）を一括削除します。二段階の確認が必要で、元に戻せません。消去はこの PC 内でのみ行われ、相手側が受信済みの内容をリモートで削除することはありません。先に履歴をエクスポートしておくことをおすすめします。",
-      "ko": "이 PC의 모든 항목(이미지 포함)을 한 번에 삭제합니다. 두 단계 확인이 필요하며 되돌릴 수 없습니다. 비우기는 이 PC에서만 일어나며 상대편이 이미 받은 내용을 원격으로 삭제하지 않습니다. 먼저 기록을 내보내 두는 것을 권장합니다."
+      "ko": "이 PC의 모든 항목(이미지 포함)을 한 번에 삭제합니다. 두 단계 확인이 필요하며 되돌릴 수 없습니다. 비우기는 이 PC에서만 일어나며 상대편이 이미 받은 내용을 원격으로 삭제하지 않습니다. 먼저 기록을 내보내 두는 것을 권장합니다.",
+      "es": "Elimina todas las entradas de este PC (imágenes incluidas) de una vez; pide dos confirmaciones y no se puede deshacer. El vaciado ocurre solo en este PC y nunca borra lo que el par ya recibió; considera exportar primero.",
+      "fr": "Supprime toutes les entrées de ce PC (images comprises) en une fois ; demande deux confirmations et ne peut pas être annulé. Le vidage n’a lieu que sur ce PC et ne supprime jamais ce que le pair a déjà reçu ; pensez à exporter d’abord.",
+      "de": "Löscht alle Einträge dieses PCs (einschließlich Bilder) in einem Schritt; erfordert zwei Bestätigungen und ist nicht rückgängig zu machen. Das Leeren geschieht nur auf diesem PC und löscht nie, was der Peer bereits erhalten hat — vorher exportieren empfohlen.",
+      "pt-BR": "Exclui todas as entradas deste PC (imagens incluídas) de uma vez; exige duas confirmações e não pode ser desfeito. A limpeza só acontece neste PC e nunca apaga o que o par já recebeu; considere exportar antes."
     },
     "Flyout_WindowTitle": {
       "zh-Hans": "剪剪相传 · 最近剪贴",
       "zh-Hant": "剪剪相傳 · 最近剪貼",
       "en": "ClipSync · recent clips",
       "ja": "ClipSync · 最近のクリップ",
-      "ko": "ClipSync · 최근 클립"
+      "ko": "ClipSync · 최근 클립",
+      "es": "ClipSync · clips recientes",
+      "fr": "ClipSync · clips récents",
+      "de": "ClipSync · aktuelle Clips",
+      "pt-BR": "ClipSync · clipes recentes"
     },
     "Flyout_PauseSync": {
       "zh-Hans": "暂停同步",
       "zh-Hant": "暫停同步",
       "en": "Pause sync",
       "ja": "同期を一時停止",
-      "ko": "동기화 일시중지"
+      "ko": "동기화 일시중지",
+      "es": "Pausar sincronización",
+      "fr": "Suspendre la synchro",
+      "de": "Sync pausieren",
+      "pt-BR": "Pausar sincronização"
     },
     "Flyout_ResumeSync": {
       "zh-Hans": "恢复同步",
       "zh-Hant": "恢復同步",
       "en": "Resume sync",
       "ja": "同期を再開",
-      "ko": "동기화 재개"
+      "ko": "동기화 재개",
+      "es": "Reanudar sincronización",
+      "fr": "Reprendre la synchro",
+      "de": "Sync fortsetzen",
+      "pt-BR": "Retomar sincronização"
     },
     "Flyout_Empty": {
       "zh-Hans": "还没有剪贴记录 · 复制一段文字试试",
       "zh-Hant": "還沒有剪貼記錄 · 複製一段文字試試",
       "en": "No clips yet · try copying some text",
       "ja": "まだクリップ記録がありません · テキストをコピーしてみてください",
-      "ko": "아직 클립 기록이 없습니다 · 텍스트를 복사해 보세요"
+      "ko": "아직 클립 기록이 없습니다 · 텍스트를 복사해 보세요",
+      "es": "Aún no hay clips · prueba a copiar algún texto",
+      "fr": "Pas encore de clips · essayez de copier du texte",
+      "de": "Noch keine Clips · kopieren Sie etwas Text",
+      "pt-BR": "Ainda sem clipes · tente copiar um texto"
     },
     "Flyout_PauseOrResume": {
       "zh-Hans": "暂停或恢复同步",
       "zh-Hant": "暫停或恢復同步",
       "en": "Pause or resume sync",
       "ja": "同期の一時停止/再開",
-      "ko": "동기화 일시중지 또는 재개"
+      "ko": "동기화 일시중지 또는 재개",
+      "es": "Pausar o reanudar sincronización",
+      "fr": "Suspendre ou reprendre la synchronisation",
+      "de": "Sync pausieren oder fortsetzen",
+      "pt-BR": "Pausar ou retomar a sincronização"
     },
     "Flyout_CopyFromFormat": {
       "zh-Hans": "复制来自 {0} 的剪贴",
       "zh-Hant": "複製來自 {0} 的剪貼",
       "en": "Copy the clip from {0}",
       "ja": "{0} からのクリップをコピー",
-      "ko": "{0}의 클립 복사"
+      "ko": "{0}의 클립 복사",
+      "es": "Copiar el clip de {0}",
+      "fr": "Copier le clip de {0}",
+      "de": "Clip von {0} kopieren",
+      "pt-BR": "Copiar o clipe de {0}"
     },
     "Tray_Menu_Open": {
       "zh-Hans": "打开剪剪相传",
       "zh-Hant": "開啟剪剪相傳",
       "en": "Open ClipSync",
       "ja": "ClipSync を開く",
-      "ko": "ClipSync 열기"
+      "ko": "ClipSync 열기",
+      "es": "Abrir ClipSync",
+      "fr": "Ouvrir ClipSync",
+      "de": "ClipSync öffnen",
+      "pt-BR": "Abrir o ClipSync"
     },
     "Tray_Menu_Diagnostics": {
       "zh-Hans": "诊断日志",
       "zh-Hant": "診斷日誌",
       "en": "Diagnostic log",
       "ja": "診断ログ",
-      "ko": "진단 로그"
+      "ko": "진단 로그",
+      "es": "Registro de diagnóstico",
+      "fr": "Journal de diagnostic",
+      "de": "Diagnoseprotokoll",
+      "pt-BR": "Log de diagnóstico"
     },
     "Tray_Menu_Exit": {
       "zh-Hans": "退出",
       "zh-Hant": "結束",
       "en": "Exit",
       "ja": "終了",
-      "ko": "종료"
+      "ko": "종료",
+      "es": "Salir",
+      "fr": "Quitter",
+      "de": "Beenden",
+      "pt-BR": "Sair"
     },
     "Tray_Tooltip_Flow": {
       "zh-Hans": "剪剪相传 · 监听中",
       "zh-Hant": "剪剪相傳 · 監聽中",
       "en": "ClipSync · listening",
       "ja": "ClipSync · 監視中",
-      "ko": "ClipSync · 감지 중"
+      "ko": "ClipSync · 감지 중",
+      "es": "ClipSync · escuchando",
+      "fr": "ClipSync · à l’écoute",
+      "de": "ClipSync · lauscht",
+      "pt-BR": "ClipSync · escutando"
     },
     "Tray_Tooltip_AttentionFormat": {
       "zh-Hans": "剪剪相传 · {0}",
       "zh-Hant": "剪剪相傳 · {0}",
       "en": "ClipSync · {0}",
       "ja": "ClipSync · {0}",
-      "ko": "ClipSync · {0}"
+      "ko": "ClipSync · {0}",
+      "es": "ClipSync · {0}",
+      "fr": "ClipSync · {0}",
+      "de": "ClipSync · {0}",
+      "pt-BR": "ClipSync · {0}"
     },
     "Tray_AttentionFallback": {
       "zh-Hans": "需要你操作",
       "zh-Hant": "需要你操作",
       "en": "Needs your action",
       "ja": "操作が必要です",
-      "ko": "조치가 필요합니다"
+      "ko": "조치가 필요합니다",
+      "es": "Requiere tu acción",
+      "fr": "Votre action est requise",
+      "de": "Ihre Aktion ist erforderlich",
+      "pt-BR": "Precisa da sua ação"
     },
     "Tray_Tooltip_Paused": {
       "zh-Hans": "剪剪相传 · 捕获已暂停",
       "zh-Hant": "剪剪相傳 · 擷取已暫停",
       "en": "ClipSync · capture paused",
       "ja": "ClipSync · キャプチャ一時停止中",
-      "ko": "ClipSync · 캡처 일시중지됨"
+      "ko": "ClipSync · 캡처 일시중지됨",
+      "es": "ClipSync · captura en pausa",
+      "fr": "ClipSync · capture en pause",
+      "de": "ClipSync · Erfassung pausiert",
+      "pt-BR": "ClipSync · captura pausada"
     },
     "Tray_Tooltip_Private": {
       "zh-Hans": "剪剪相传 · 私密模式，不留痕迹",
       "zh-Hant": "剪剪相傳 · 私密模式，不留痕跡",
       "en": "ClipSync · private mode, leaves no trace",
       "ja": "ClipSync · プライベートモード、痕跡を残しません",
-      "ko": "ClipSync · 비공개 모드, 흔적을 남기지 않음"
+      "ko": "ClipSync · 비공개 모드, 흔적을 남기지 않음",
+      "es": "ClipSync · modo privado, sin dejar rastro",
+      "fr": "ClipSync · mode privé, aucune trace",
+      "de": "ClipSync · privater Modus, keine Spuren",
+      "pt-BR": "ClipSync · modo privado, sem deixar rastros"
     },
     "Tray_RemoteClipOneFormat": {
       "zh-Hans": "收到 {0} 的 1 条新剪贴",
       "zh-Hant": "收到 {0} 的 1 筆新剪貼",
       "en": "1 new clip from {0}",
       "ja": "{0} から新しいクリップが 1 件",
-      "ko": "{0}에서 새 클립 1건"
+      "ko": "{0}에서 새 클립 1건",
+      "es": "1 clip nuevo de {0}",
+      "fr": "1 nouveau clip de {0}",
+      "de": "1 neuer Clip von {0}",
+      "pt-BR": "1 clipe novo de {0}"
     },
     "Tray_RemoteClipManyFormat": {
       "zh-Hans": "收到 {0} 的 {1} 条新剪贴",
       "zh-Hant": "收到 {0} 的 {1} 筆新剪貼",
       "en": "{1} new clips from {0}",
       "ja": "{0} から新しいクリップが {1} 件",
-      "ko": "{0}에서 새 클립 {1}건"
+      "ko": "{0}에서 새 클립 {1}건",
+      "es": "{1} clips nuevos de {0}",
+      "fr": "{1} nouveaux clips de {0}",
+      "de": "{1} neue Clips von {0}",
+      "pt-BR": "{1} clipes novos de {0}"
     },
     "Tray_OversizeNotice": {
       "zh-Hans": "刚复制的文本超过 1 MiB，仅保留在本机剪贴板，不同步（未截断）。",
       "zh-Hant": "剛複製的文字超過 1 MiB，僅保留在本機剪貼簿，不同步（未截斷）。",
       "en": "The text just copied exceeds 1 MiB; it stays on this PC’s clipboard only and is not synced (not truncated).",
       "ja": "コピーしたテキストが 1 MiB を超えています。この PC のクリップボードにのみ残り、同期されません（切り詰めなし）。",
-      "ko": "방금 복사한 텍스트가 1 MiB를 넘습니다. 이 PC의 클립보드에만 남고 동기화되지 않습니다(잘리지 않음)."
+      "ko": "방금 복사한 텍스트가 1 MiB를 넘습니다. 이 PC의 클립보드에만 남고 동기화되지 않습니다(잘리지 않음).",
+      "es": "El texto recién copiado supera 1 MiB; queda solo en el portapapeles de este PC y no se sincroniza (sin recortar).",
+      "fr": "Le texte copié dépasse 1 Mio ; il reste uniquement dans le presse-papiers de ce PC et n’est pas synchronisé (non tronqué).",
+      "de": "Der gerade kopierte Text überschreitet 1 MiB; er bleibt nur in der Zwischenablage dieses PCs und wird nicht synchronisiert (nicht gekürzt).",
+      "pt-BR": "O texto recém-copiado passa de 1 MiB; fica só na área de transferência deste PC e não sincroniza (sem cortes)."
     },
     "Tray_AuthThrottleFormat": {
       "zh-Hans": "检测到「{0}」反复认证失败，已临时限流该设备。",
       "zh-Hant": "偵測到「{0}」反覆驗證失敗，已暫時限流該裝置。",
       "en": "Repeated authentication failures from “{0}”; the device is temporarily throttled.",
       "ja": "「{0}」の認証失敗が繰り返し検出されたため、この端末を一時的に制限しています。",
-      "ko": "‘{0}’의 반복된 인증 실패가 감지되어 해당 기기를 일시적으로 제한했습니다."
+      "ko": "‘{0}’의 반복된 인증 실패가 감지되어 해당 기기를 일시적으로 제한했습니다.",
+      "es": "Fallos de autenticación repetidos de «{0}»; el dispositivo está limitado temporalmente.",
+      "fr": "Échecs d’authentification répétés de « {0} » ; l’appareil est temporairement limité.",
+      "de": "Wiederholte Authentifizierungsfehler von „{0}“; das Gerät ist vorübergehend gedrosselt.",
+      "pt-BR": "Falhas de autenticação repetidas de “{0}”; o aparelho está temporariamente limitado."
     },
     "Tray_Status_ListeningNoSync": {
       "zh-Hans": "监听中 · 同步未启动",
       "zh-Hant": "監聽中 · 同步未啟動",
       "en": "Listening · sync not running",
       "ja": "監視中 · 同期は未起動",
-      "ko": "감지 중 · 동기화 시작 안 됨"
+      "ko": "감지 중 · 동기화 시작 안 됨",
+      "es": "Escuchando · sincronización no iniciada",
+      "fr": "À l’écoute · synchro non démarrée",
+      "de": "Lauscht · Sync nicht gestartet",
+      "pt-BR": "Escutando · sincronização não iniciada"
     },
     "Tray_Status_ConnectedFormat": {
       "zh-Hans": "监听中 · 已连 {0} 台",
       "zh-Hant": "監聽中 · 已連 {0} 台",
       "en": "Listening · {0} connected",
       "ja": "監視中 · {0} 台接続",
-      "ko": "감지 중 · {0}대 연결됨"
+      "ko": "감지 중 · {0}대 연결됨",
+      "es": "Escuchando · {0} conectados",
+      "fr": "À l’écoute · {0} connecté(s)",
+      "de": "Lauscht · {0} verbunden",
+      "pt-BR": "Escutando · {0} conectados"
     },
     "Tray_Status_Waiting": {
       "zh-Hans": "监听中 · 等待设备连入",
       "zh-Hant": "監聽中 · 等待裝置連入",
       "en": "Listening · waiting for devices",
       "ja": "監視中 · 端末の接続を待っています",
-      "ko": "감지 중 · 기기 연결 대기"
+      "ko": "감지 중 · 기기 연결 대기",
+      "es": "Escuchando · esperando dispositivos",
+      "fr": "À l’écoute · en attente d’appareils",
+      "de": "Lauscht · wartet auf Geräte",
+      "pt-BR": "Escutando · aguardando aparelhos"
     },
     "Capture_OversizeNotice": {
       "zh-Hans": "刚复制的文本超过 1 MiB：内容保留在系统剪贴板，未截断，但不记录历史、不同步。",
       "zh-Hant": "剛複製的文字超過 1 MiB：內容保留在系統剪貼簿，未截斷，但不記錄歷史、不同步。",
       "en": "The text just copied exceeds 1 MiB: it stays on the system clipboard, untruncated, but is not recorded in history or synced.",
       "ja": "コピーしたテキストが 1 MiB を超えています。内容はシステムのクリップボードに切り詰めなしで残りますが、履歴に記録されず、同期もされません。",
-      "ko": "방금 복사한 텍스트가 1 MiB를 넘습니다. 내용은 시스템 클립보드에 잘리지 않고 남지만 기록에 저장되지 않고 동기화되지도 않습니다."
+      "ko": "방금 복사한 텍스트가 1 MiB를 넘습니다. 내용은 시스템 클립보드에 잘리지 않고 남지만 기록에 저장되지 않고 동기화되지도 않습니다.",
+      "es": "El texto recién copiado supera 1 MiB: queda en el portapapeles del sistema, sin recortar, pero no se registra en el historial ni se sincroniza.",
+      "fr": "Le texte copié dépasse 1 Mio : il reste dans le presse-papiers système, non tronqué, mais n’est ni enregistré dans l’historique ni synchronisé.",
+      "de": "Der gerade kopierte Text überschreitet 1 MiB: Er bleibt ungekürzt in der Systemzwischenablage, wird aber weder im Verlauf aufgezeichnet noch synchronisiert.",
+      "pt-BR": "O texto recém-copiado passa de 1 MiB: fica na área de transferência do sistema, sem cortes, mas não entra no histórico nem sincroniza."
     },
     "Sync_NotStarted": {
       "zh-Hans": "对端服务尚未启动",
       "zh-Hant": "對端服務尚未啟動",
       "en": "Peer service not started yet",
       "ja": "相手側サービスは未起動です",
-      "ko": "상대편 서비스가 아직 시작되지 않았습니다"
+      "ko": "상대편 서비스가 아직 시작되지 않았습니다",
+      "es": "El servicio del par aún no se ha iniciado",
+      "fr": "Le service du pair n’est pas encore démarré",
+      "de": "Peer-Dienst noch nicht gestartet",
+      "pt-BR": "O serviço do par ainda não foi iniciado"
     },
     "Sync_StartFailed": {
       "zh-Hans": "对端服务未能启动，本次会话同步关闭。",
       "zh-Hant": "對端服務未能啟動，本次工作階段同步關閉。",
       "en": "The peer service failed to start; sync is off for this session.",
       "ja": "相手側サービスを起動できなかったため、このセッションでは同期はオフです。",
-      "ko": "상대편 서비스를 시작하지 못해 이번 세션에는 동기화가 꺼져 있습니다."
+      "ko": "상대편 서비스를 시작하지 못해 이번 세션에는 동기화가 꺼져 있습니다.",
+      "es": "El servicio del par no pudo iniciarse; la sincronización queda apagada en esta sesión.",
+      "fr": "Le service du pair n’a pas pu démarrer ; la synchronisation est coupée pour cette session.",
+      "de": "Der Peer-Dienst konnte nicht starten; Sync ist in dieser Sitzung aus.",
+      "pt-BR": "O serviço do par não conseguiu iniciar; a sincronização fica desligada nesta sessão."
     },
     "Sync_ConnectedFormat": {
       "zh-Hans": "LAN 监听端口 {0} · 已连接 {1} 台设备，内容实时互通。",
       "zh-Hant": "LAN 監聽連接埠 {0} · 已連線 {1} 台裝置，內容即時互通。",
       "en": "LAN listening on port {0} · {1} device(s) connected, content flows in real time.",
       "ja": "LAN ポート {0} で待ち受け中 · {1} 台接続、内容はリアルタイムで行き来します。",
-      "ko": "LAN 포트 {0} 수신 대기 · 기기 {1}대 연결, 내용이 실시간으로 오갑니다."
+      "ko": "LAN 포트 {0} 수신 대기 · 기기 {1}대 연결, 내용이 실시간으로 오갑니다.",
+      "es": "LAN escuchando en el puerto {0} · {1} dispositivos conectados, el contenido fluye en tiempo real.",
+      "fr": "LAN à l’écoute sur le port {0} · {1} appareil(s) connecté(s), le contenu circule en temps réel.",
+      "de": "LAN lauscht auf Port {0} · {1} Gerät(e) verbunden, Inhalte fließen in Echtzeit.",
+      "pt-BR": "LAN escutando na porta {0} · {1} aparelho(s) conectado(s), o conteúdo flui em tempo real."
     },
     "Sync_WaitingFormat": {
       "zh-Hans": "LAN 监听端口 {0} · 等待已配对设备连入；事件先落库再入发件队列，断线不丢。",
       "zh-Hant": "LAN 監聽連接埠 {0} · 等待已配對裝置連入；事件先落庫再入寄件佇列，斷線不丟。",
       "en": "LAN listening on port {0} · waiting for paired devices; events land in the store before the outbox, so nothing is lost offline.",
       "ja": "LAN ポート {0} で待ち受け中 · ペアリング済み端末の接続を待っています。イベントは保存してから送信キューに入るため、切断しても失われません。",
-      "ko": "LAN 포트 {0} 수신 대기 · 페어링된 기기의 연결을 기다립니다. 이벤트는 먼저 저장된 뒤 발신 대기열로 들어가므로 연결이 끊겨도 잃지 않습니다."
+      "ko": "LAN 포트 {0} 수신 대기 · 페어링된 기기의 연결을 기다립니다. 이벤트는 먼저 저장된 뒤 발신 대기열로 들어가므로 연결이 끊겨도 잃지 않습니다.",
+      "es": "LAN escuchando en el puerto {0} · esperando dispositivos emparejados; los eventos se guardan antes de entrar en la cola de envío, así que nada se pierde sin conexión.",
+      "fr": "LAN à l’écoute sur le port {0} · en attente d’appareils appairés ; les événements sont enregistrés avant d’entrer dans la file d’envoi, rien ne se perd hors ligne.",
+      "de": "LAN lauscht auf Port {0} · wartet auf gekoppelte Geräte; Ereignisse werden erst gespeichert, dann in die Sendewarteschlange gestellt — offline geht nichts verloren.",
+      "pt-BR": "LAN escutando na porta {0} · aguardando aparelhos pareados; os eventos são gravados antes de entrar na fila de envio, então nada se perde offline."
     },
     "Bt_Disabled": {
       "zh-Hans": "蓝牙备援未启用",
       "zh-Hant": "藍牙備援未啟用",
       "en": "Bluetooth fallback not enabled",
       "ja": "Bluetooth フォールバックは無効です",
-      "ko": "블루투스 대체 경로가 꺼져 있습니다"
+      "ko": "블루투스 대체 경로가 꺼져 있습니다",
+      "es": "Respaldo Bluetooth desactivado",
+      "fr": "Secours Bluetooth désactivé",
+      "de": "Bluetooth-Ausweichweg nicht aktiviert",
+      "pt-BR": "Alternativa Bluetooth desativada"
     },
     "Bt_UnavailableFormat": {
       "zh-Hans": "蓝牙备援不可用：{0}",
       "zh-Hant": "藍牙備援不可用：{0}",
       "en": "Bluetooth fallback unavailable: {0}",
       "ja": "Bluetooth フォールバックを利用できません：{0}",
-      "ko": "블루투스 대체 경로를 사용할 수 없습니다: {0}"
+      "ko": "블루투스 대체 경로를 사용할 수 없습니다: {0}",
+      "es": "Respaldo Bluetooth no disponible: {0}",
+      "fr": "Secours Bluetooth indisponible : {0}",
+      "de": "Bluetooth-Ausweichweg nicht verfügbar: {0}",
+      "pt-BR": "Alternativa Bluetooth indisponível: {0}"
     },
     "Bt_SyncingFormat": {
       "zh-Hans": "蓝牙备援 · 正与 {0} 同步（仅文本）",
       "zh-Hant": "藍牙備援 · 正與 {0} 同步（僅文字）",
       "en": "Bluetooth fallback · syncing with {0} (text only)",
       "ja": "Bluetooth フォールバック · {0} と同期中（テキストのみ）",
-      "ko": "블루투스 대체 경로 · {0}와(과) 동기화 중(텍스트만)"
+      "ko": "블루투스 대체 경로 · {0}와(과) 동기화 중(텍스트만)",
+      "es": "Respaldo Bluetooth · sincronizando con {0} (solo texto)",
+      "fr": "Secours Bluetooth · synchronisation avec {0} (texte uniquement)",
+      "de": "Bluetooth-Ausweichweg · synchronisiert mit {0} (nur Text)",
+      "pt-BR": "Alternativa Bluetooth · sincronizando com {0} (só texto)"
     },
     "Bt_Armed": {
       "zh-Hans": "蓝牙备援待命 · LAN 不可达时手机自动改走蓝牙",
       "zh-Hant": "藍牙備援待命 · LAN 不可達時手機自動改走藍牙",
       "en": "Bluetooth fallback standing by · the phone switches to Bluetooth automatically when the LAN is unreachable",
       "ja": "Bluetooth フォールバック待機中 · LAN が届かないときスマートフォンは自動的に Bluetooth へ切り替えます",
-      "ko": "블루투스 대체 경로 대기 중 · LAN에 닿지 않으면 휴대폰이 자동으로 블루투스로 전환합니다"
+      "ko": "블루투스 대체 경로 대기 중 · LAN에 닿지 않으면 휴대폰이 자동으로 블루투스로 전환합니다",
+      "es": "Respaldo Bluetooth en espera · el teléfono cambia a Bluetooth automáticamente cuando la LAN no es alcanzable",
+      "fr": "Secours Bluetooth en veille · le téléphone bascule automatiquement en Bluetooth quand le LAN est injoignable",
+      "de": "Bluetooth-Ausweichweg in Bereitschaft · das Telefon wechselt automatisch zu Bluetooth, wenn das LAN unerreichbar ist",
+      "pt-BR": "Alternativa Bluetooth de prontidão · o telefone muda para Bluetooth automaticamente quando a LAN está inalcançável"
     },
     "Bt_Starting": {
       "zh-Hans": "蓝牙备援启动中…",
       "zh-Hant": "藍牙備援啟動中…",
       "en": "Bluetooth fallback starting…",
       "ja": "Bluetooth フォールバックを起動中…",
-      "ko": "블루투스 대체 경로 시작 중…"
+      "ko": "블루투스 대체 경로 시작 중…",
+      "es": "Iniciando respaldo Bluetooth…",
+      "fr": "Démarrage du secours Bluetooth…",
+      "de": "Bluetooth-Ausweichweg startet…",
+      "pt-BR": "Iniciando a alternativa Bluetooth…"
     },
     "Bt_AdapterUnavailable": {
       "zh-Hans": "蓝牙适配器不可用或已关闭",
       "zh-Hant": "藍牙介面卡不可用或已關閉",
       "en": "Bluetooth adapter unavailable or turned off",
       "ja": "Bluetooth アダプターが利用できないかオフになっています",
-      "ko": "블루투스 어댑터를 사용할 수 없거나 꺼져 있습니다"
+      "ko": "블루투스 어댑터를 사용할 수 없거나 꺼져 있습니다",
+      "es": "Adaptador Bluetooth no disponible o apagado",
+      "fr": "Adaptateur Bluetooth indisponible ou éteint",
+      "de": "Bluetooth-Adapter nicht verfügbar oder ausgeschaltet",
+      "pt-BR": "Adaptador Bluetooth indisponível ou desligado"
     },
     "Ack_None": {
       "zh-Hans": "尚未收到对端确认",
       "zh-Hant": "尚未收到對端確認",
       "en": "No peer acknowledgement yet",
       "ja": "相手側からの確認はまだありません",
-      "ko": "아직 상대편 확인을 받지 못했습니다"
+      "ko": "아직 상대편 확인을 받지 못했습니다",
+      "es": "Aún sin confirmación del par",
+      "fr": "Aucune confirmation du pair pour l’instant",
+      "de": "Noch keine Bestätigung vom Peer",
+      "pt-BR": "Ainda sem confirmação do par"
     },
     "Ack_UpToFormat": {
       "zh-Hans": "对端确认至 {0}",
       "zh-Hant": "對端確認至 {0}",
       "en": "Peer acknowledged up to {0}",
       "ja": "相手側は {0} まで確認済み",
-      "ko": "상대편이 {0}까지 확인했습니다"
+      "ko": "상대편이 {0}까지 확인했습니다",
+      "es": "El par confirmó hasta {0}",
+      "fr": "Le pair a confirmé jusqu’à {0}",
+      "de": "Peer hat bis {0} bestätigt",
+      "pt-BR": "O par confirmou até {0}"
     },
     "Transfer_ClearedFormat": {
       "zh-Hans": "已清空 {0} 条历史记录（含图片）。清空只发生在本机。",
       "zh-Hant": "已清空 {0} 筆歷史記錄（含圖片）。清空只發生在本機。",
       "en": "Cleared {0} history entries (including images). Clearing happens on this PC only.",
       "ja": "履歴 {0} 件（画像を含む）を消去しました。消去はこの PC 内でのみ行われます。",
-      "ko": "기록 {0}건(이미지 포함)을 비웠습니다. 비우기는 이 PC에서만 일어납니다."
+      "ko": "기록 {0}건(이미지 포함)을 비웠습니다. 비우기는 이 PC에서만 일어납니다.",
+      "es": "Se vaciaron {0} entradas del historial (imágenes incluidas). El vaciado ocurre solo en este PC.",
+      "fr": "{0} entrées d’historique vidées (images comprises). Le vidage n’a lieu que sur ce PC.",
+      "de": "{0} Verlaufseinträge geleert (einschließlich Bilder). Das Leeren geschieht nur auf diesem PC.",
+      "pt-BR": "{0} entradas do histórico limpas (imagens incluídas). A limpeza só acontece neste PC."
     },
     "Transfer_ClearConfirmBody": {
       "zh-Hans": "清空全部历史？\n\n将一次性删除本机全部条目（含图片）。清空只发生在本机，不会远程删除对方已收到的内容。建议先「导出历史」留底。",
       "zh-Hant": "清空全部歷史？\n\n將一次性刪除本機全部條目（含圖片）。清空只發生在本機，不會遠端刪除對方已收到的內容。建議先「匯出歷史」留底。",
       "en": "Clear all history?\n\nThis deletes every entry on this PC (including images) in one step. Clearing happens on this PC only and never deletes what the peer already received. Consider “Export history” first.",
       "ja": "全履歴を消去しますか？\n\nこの PC の全項目（画像を含む）を一括削除します。消去はこの PC 内でのみ行われ、相手側が受信済みの内容をリモートで削除することはありません。先に「履歴をエクスポート」しておくことをおすすめします。",
-      "ko": "전체 기록을 비울까요?\n\n이 PC의 모든 항목(이미지 포함)을 한 번에 삭제합니다. 비우기는 이 PC에서만 일어나며 상대편이 이미 받은 내용을 원격으로 삭제하지 않습니다. 먼저 ‘기록 내보내기’를 해 두는 것을 권장합니다."
+      "ko": "전체 기록을 비울까요?\n\n이 PC의 모든 항목(이미지 포함)을 한 번에 삭제합니다. 비우기는 이 PC에서만 일어나며 상대편이 이미 받은 내용을 원격으로 삭제하지 않습니다. 먼저 ‘기록 내보내기’를 해 두는 것을 권장합니다.",
+      "es": "¿Vaciar todo el historial?\n\nSe eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. El vaciado ocurre solo en este PC y nunca borra lo que el par ya recibió. Considera «Exportar historial» primero.",
+      "fr": "Vider tout l’historique ?\n\nToutes les entrées de ce PC (images comprises) seront supprimées en une fois. Le vidage n’a lieu que sur ce PC et ne supprime jamais ce que le pair a déjà reçu. Pensez à « Exporter l’historique » d’abord.",
+      "de": "Gesamten Verlauf leeren?\n\nAlle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelöscht. Das Leeren geschieht nur auf diesem PC und löscht nie, was der Peer bereits erhalten hat. Vorher „Verlauf exportieren“ empfohlen.",
+      "pt-BR": "Limpar todo o histórico?\n\nTodas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A limpeza só acontece neste PC e nunca apaga o que o par já recebeu. Considere “Exportar histórico” antes."
     },
     "Transfer_ClearConfirmAgain": {
       "zh-Hans": "再确认一次：清空后无法恢复。确定清空全部历史？",
       "zh-Hant": "再確認一次：清空後無法復原。確定清空全部歷史？",
       "en": "Confirm once more: clearing cannot be undone. Clear all history?",
       "ja": "もう一度確認：消去後は元に戻せません。全履歴を消去しますか？",
-      "ko": "한 번 더 확인: 비운 뒤에는 되돌릴 수 없습니다. 전체 기록을 비울까요?"
+      "ko": "한 번 더 확인: 비운 뒤에는 되돌릴 수 없습니다. 전체 기록을 비울까요?",
+      "es": "Confirma otra vez: el vaciado no se puede deshacer. ¿Vaciar todo el historial?",
+      "fr": "Confirmez encore : le vidage est irréversible. Vider tout l’historique ?",
+      "de": "Noch einmal bestätigen: Das Leeren ist unwiderruflich. Gesamten Verlauf leeren?",
+      "pt-BR": "Confirme de novo: a limpeza não pode ser desfeita. Limpar todo o histórico?"
     },
     "Transfer_ExportedFormat": {
       "zh-Hans": "已导出 {0} 条记录（明文）→ {1}",
       "zh-Hant": "已匯出 {0} 筆記錄（明文）→ {1}",
       "en": "Exported {0} record(s) (plaintext) → {1}",
       "ja": "{0} 件の記録をエクスポートしました（平文）→ {1}",
-      "ko": "기록 {0}건을 내보냈습니다(평문) → {1}"
+      "ko": "기록 {0}건을 내보냈습니다(평문) → {1}",
+      "es": "Se exportaron {0} registros (texto plano) → {1}",
+      "fr": "{0} enregistrement(s) exporté(s) (en clair) → {1}",
+      "de": "{0} Einträge exportiert (Klartext) → {1}",
+      "pt-BR": "{0} registro(s) exportado(s) (texto puro) → {1}"
     },
     "Transfer_ExportWriteFailed": {
       "zh-Hans": "导出失败：无法写入所选文件。",
       "zh-Hant": "匯出失敗：無法寫入所選檔案。",
       "en": "Export failed: could not write the chosen file.",
       "ja": "エクスポート失敗：選択したファイルに書き込めませんでした。",
-      "ko": "내보내기 실패: 선택한 파일에 쓸 수 없습니다."
+      "ko": "내보내기 실패: 선택한 파일에 쓸 수 없습니다.",
+      "es": "Exportación fallida: no se pudo escribir el archivo elegido.",
+      "fr": "Échec de l’export : impossible d’écrire le fichier choisi.",
+      "de": "Export fehlgeschlagen: Die gewählte Datei konnte nicht geschrieben werden.",
+      "pt-BR": "Falha na exportação: não foi possível gravar o arquivo escolhido."
     },
     "Transfer_ImportedFormat": {
       "zh-Hans": "导入完成：新增 {0} · 已存在 {1} · 冲突 {2}",
       "zh-Hant": "匯入完成：新增 {0} · 已存在 {1} · 衝突 {2}",
       "en": "Import complete: added {0} · existing {1} · conflicts {2}",
       "ja": "インポート完了：追加 {0} · 既存 {1} · 競合 {2}",
-      "ko": "가져오기 완료: 추가 {0} · 기존 {1} · 충돌 {2}"
+      "ko": "가져오기 완료: 추가 {0} · 기존 {1} · 충돌 {2}",
+      "es": "Importación completa: añadidos {0} · existentes {1} · conflictos {2}",
+      "fr": "Import terminé : ajoutés {0} · existants {1} · conflits {2}",
+      "de": "Import abgeschlossen: hinzugefügt {0} · vorhanden {1} · Konflikte {2}",
+      "pt-BR": "Importação concluída: adicionados {0} · existentes {1} · conflitos {2}"
     },
     "Transfer_ImportFailedFormat": {
       "zh-Hans": "导入失败：{0}。未做任何改动。",
       "zh-Hant": "匯入失敗：{0}。未做任何改動。",
       "en": "Import failed: {0}. Nothing was changed.",
       "ja": "インポート失敗：{0}。何も変更していません。",
-      "ko": "가져오기 실패: {0}. 아무것도 바꾸지 않았습니다."
+      "ko": "가져오기 실패: {0}. 아무것도 바꾸지 않았습니다.",
+      "es": "Importación fallida: {0}. No se cambió nada.",
+      "fr": "Échec de l’import : {0}. Rien n’a été modifié.",
+      "de": "Import fehlgeschlagen: {0}. Nichts wurde geändert.",
+      "pt-BR": "Falha na importação: {0}. Nada foi alterado."
     },
     "Transfer_ImportReadFailed": {
       "zh-Hans": "导入失败：无法读取所选文件。",
       "zh-Hant": "匯入失敗：無法讀取所選檔案。",
       "en": "Import failed: could not read the chosen file.",
       "ja": "インポート失敗：選択したファイルを読み取れませんでした。",
-      "ko": "가져오기 실패: 선택한 파일을 읽을 수 없습니다."
+      "ko": "가져오기 실패: 선택한 파일을 읽을 수 없습니다.",
+      "es": "Importación fallida: no se pudo leer el archivo elegido.",
+      "fr": "Échec de l’import : impossible de lire le fichier choisi.",
+      "de": "Import fehlgeschlagen: Die gewählte Datei konnte nicht gelesen werden.",
+      "pt-BR": "Falha na importação: não foi possível ler o arquivo escolhido."
     },
     "Transfer_FileFilter": {
       "zh-Hans": "ClipSync 历史导出 (*.jsonl)|*.jsonl|所有文件 (*.*)|*.*",
       "zh-Hant": "ClipSync 歷史匯出 (*.jsonl)|*.jsonl|所有檔案 (*.*)|*.*",
       "en": "ClipSync history export (*.jsonl)|*.jsonl|All files (*.*)|*.*",
       "ja": "ClipSync 履歴エクスポート (*.jsonl)|*.jsonl|すべてのファイル (*.*)|*.*",
-      "ko": "ClipSync 기록 내보내기 (*.jsonl)|*.jsonl|모든 파일 (*.*)|*.*"
+      "ko": "ClipSync 기록 내보내기 (*.jsonl)|*.jsonl|모든 파일 (*.*)|*.*",
+      "es": "Exportación de historial de ClipSync (*.jsonl)|*.jsonl|Todos los archivos (*.*)|*.*",
+      "fr": "Export d’historique ClipSync (*.jsonl)|*.jsonl|Tous les fichiers (*.*)|*.*",
+      "de": "ClipSync-Verlaufsexport (*.jsonl)|*.jsonl|Alle Dateien (*.*)|*.*",
+      "pt-BR": "Exportação de histórico do ClipSync (*.jsonl)|*.jsonl|Todos os arquivos (*.*)|*.*"
     },
     "Transfer_Error_BadHeader": {
       "zh-Hans": "这不是 ClipSync 历史导出文件",
       "zh-Hant": "這不是 ClipSync 歷史匯出檔案",
       "en": "this is not a ClipSync history export file",
       "ja": "ClipSync の履歴エクスポートファイルではありません",
-      "ko": "ClipSync 기록 내보내기 파일이 아닙니다"
+      "ko": "ClipSync 기록 내보내기 파일이 아닙니다",
+      "es": "esto no es un archivo de exportación de historial de ClipSync",
+      "fr": "ce n’est pas un fichier d’export d’historique ClipSync",
+      "de": "dies ist keine ClipSync-Verlaufsexportdatei",
+      "pt-BR": "isto não é um arquivo de exportação de histórico do ClipSync"
     },
     "Transfer_Error_UnsupportedVersion": {
       "zh-Hans": "文件版本高于本应用支持的版本",
       "zh-Hant": "檔案版本高於本應用程式支援的版本",
       "en": "the file version is newer than this app supports",
       "ja": "ファイルのバージョンがこのアプリの対応より新しいです",
-      "ko": "파일 버전이 이 앱이 지원하는 버전보다 높습니다"
+      "ko": "파일 버전이 이 앱이 지원하는 버전보다 높습니다",
+      "es": "la versión del archivo es más nueva de lo que admite esta aplicación",
+      "fr": "la version du fichier est plus récente que ce que cette application prend en charge",
+      "de": "die Dateiversion ist neuer, als diese Anwendung unterstützt",
+      "pt-BR": "a versão do arquivo é mais nova do que este aplicativo suporta"
     },
     "Transfer_Error_MalformedRecord": {
       "zh-Hans": "文件内容损坏（记录格式错误）",
       "zh-Hant": "檔案內容損壞（記錄格式錯誤）",
       "en": "the file is corrupted (malformed record)",
       "ja": "ファイルの内容が壊れています（記録の形式エラー）",
-      "ko": "파일 내용이 손상되었습니다(레코드 형식 오류)"
+      "ko": "파일 내용이 손상되었습니다(레코드 형식 오류)",
+      "es": "el archivo está dañado (registro con formato incorrecto)",
+      "fr": "le fichier est corrompu (enregistrement mal formé)",
+      "de": "die Datei ist beschädigt (fehlerhafter Datensatz)",
+      "pt-BR": "o arquivo está corrompido (registro malformado)"
     },
     "Transfer_Error_HashMismatch": {
       "zh-Hans": "文件内容损坏（哈希校验失败）",
       "zh-Hant": "檔案內容損壞（雜湊驗證失敗）",
       "en": "the file is corrupted (hash check failed)",
       "ja": "ファイルの内容が壊れています（ハッシュ検証に失敗）",
-      "ko": "파일 내용이 손상되었습니다(해시 검증 실패)"
+      "ko": "파일 내용이 손상되었습니다(해시 검증 실패)",
+      "es": "el archivo está dañado (falló la comprobación de hash)",
+      "fr": "le fichier est corrompu (échec de la vérification du hachage)",
+      "de": "die Datei ist beschädigt (Hash-Prüfung fehlgeschlagen)",
+      "pt-BR": "o arquivo está corrompido (falha na verificação de hash)"
     },
     "Transfer_Error_CountMismatch": {
       "zh-Hans": "文件不完整（条数与头部不符）",
       "zh-Hant": "檔案不完整（筆數與檔頭不符）",
       "en": "the file is incomplete (count does not match the header)",
       "ja": "ファイルが不完全です（件数がヘッダーと一致しません）",
-      "ko": "파일이 불완전합니다(개수가 헤더와 다름)"
+      "ko": "파일이 불완전합니다(개수가 헤더와 다름)",
+      "es": "el archivo está incompleto (el recuento no coincide con la cabecera)",
+      "fr": "le fichier est incomplet (le compte ne correspond pas à l’en-tête)",
+      "de": "die Datei ist unvollständig (Anzahl stimmt nicht mit dem Kopf überein)",
+      "pt-BR": "o arquivo está incompleto (a contagem não bate com o cabeçalho)"
     },
     "Transfer_Error_ContentTooLarge": {
       "zh-Hans": "文件包含超出大小上限的条目（文本 1 MiB / 图片 16 MiB）",
       "zh-Hant": "檔案包含超出大小上限的條目（文字 1 MiB / 圖片 16 MiB）",
       "en": "the file contains an entry over the size caps (text 1 MiB / images 16 MiB)",
       "ja": "サイズ上限を超える項目が含まれています（テキスト 1 MiB / 画像 16 MiB）",
-      "ko": "크기 상한을 넘는 항목이 들어 있습니다(텍스트 1 MiB / 이미지 16 MiB)"
+      "ko": "크기 상한을 넘는 항목이 들어 있습니다(텍스트 1 MiB / 이미지 16 MiB)",
+      "es": "el archivo contiene una entrada que supera los límites de tamaño (texto 1 MiB / imágenes 16 MiB)",
+      "fr": "le fichier contient une entrée dépassant les plafonds de taille (texte 1 Mio / images 16 Mio)",
+      "de": "die Datei enthält einen Eintrag über den Größenlimits (Text 1 MiB / Bilder 16 MiB)",
+      "pt-BR": "o arquivo contém uma entrada acima dos limites de tamanho (texto 1 MiB / imagens 16 MiB)"
     },
     "Transfer_Error_Unknown": {
       "zh-Hans": "未知错误",
       "zh-Hant": "未知錯誤",
       "en": "unknown error",
       "ja": "不明なエラー",
-      "ko": "알 수 없는 오류"
+      "ko": "알 수 없는 오류",
+      "es": "error desconocido",
+      "fr": "erreur inconnue",
+      "de": "unbekannter Fehler",
+      "pt-BR": "erro desconhecido"
     },
     "Hotkey_Applied": {
       "zh-Hans": "已生效 · 在任意应用按下即呼出浮窗",
       "zh-Hant": "已生效 · 在任意應用程式按下即呼出浮窗",
       "en": "Active · press it in any app to summon the flyout",
       "ja": "有効 · どのアプリでも押せばフライアウトを呼び出せます",
-      "ko": "적용됨 · 어느 앱에서든 누르면 플라이아웃이 나타납니다"
+      "ko": "적용됨 · 어느 앱에서든 누르면 플라이아웃이 나타납니다",
+      "es": "Activo · púlsalo en cualquier aplicación para invocar la ventana emergente",
+      "fr": "Actif · appuyez dessus dans n’importe quelle application pour invoquer la fenêtre rapide",
+      "de": "Aktiv · in jeder Anwendung drücken, um das Schnellfenster aufzurufen",
+      "pt-BR": "Ativo · pressione em qualquer aplicativo para chamar a janela rápida"
     },
     "Hotkey_Conflict": {
       "zh-Hans": "该组合已被其他程序占用，请换一个组合",
       "zh-Hant": "該組合已被其他程式佔用，請換一個組合",
       "en": "That combination is taken by another program; try a different one",
       "ja": "その組み合わせは他のプログラムが使用しています。別の組み合わせを試してください",
-      "ko": "그 조합은 다른 프로그램이 사용 중입니다. 다른 조합을 시도하세요"
+      "ko": "그 조합은 다른 프로그램이 사용 중입니다. 다른 조합을 시도하세요",
+      "es": "Esa combinación la usa otro programa; prueba con otra",
+      "fr": "Cette combinaison est prise par un autre programme ; essayez-en une autre",
+      "de": "Diese Kombination wird von einem anderen Programm belegt; versuchen Sie eine andere",
+      "pt-BR": "Essa combinação já é usada por outro programa; tente outra"
     },
     "Attention_PeerDown": {
       "zh-Hans": "本次会话同步未启动（端点启动失败）",
       "zh-Hant": "本次工作階段同步未啟動（端點啟動失敗）",
       "en": "Sync not running this session (endpoint failed to start)",
       "ja": "このセッションでは同期が未起動です（エンドポイントの起動に失敗）",
-      "ko": "이번 세션에는 동기화가 시작되지 않았습니다(엔드포인트 시작 실패)"
+      "ko": "이번 세션에는 동기화가 시작되지 않았습니다(엔드포인트 시작 실패)",
+      "es": "Sincronización no iniciada en esta sesión (falló el arranque del punto de conexión)",
+      "fr": "Synchro non démarrée pour cette session (échec du démarrage du point de terminaison)",
+      "de": "Sync in dieser Sitzung nicht gestartet (Endpunktstart fehlgeschlagen)",
+      "pt-BR": "Sincronização não iniciada nesta sessão (falha ao iniciar o ponto de conexão)"
     },
     "Attention_CaptureFaulted": {
       "zh-Hans": "剪贴板捕获降级（上次访问失败）",
       "zh-Hant": "剪貼簿擷取降級（上次存取失敗）",
       "en": "Clipboard capture degraded (last access failed)",
       "ja": "クリップボードキャプチャが劣化しています（前回のアクセスに失敗）",
-      "ko": "클립보드 캡처가 저하되었습니다(최근 접근 실패)"
+      "ko": "클립보드 캡처가 저하되었습니다(최근 접근 실패)",
+      "es": "Captura del portapapeles degradada (falló el último acceso)",
+      "fr": "Capture du presse-papiers dégradée (dernier accès en échec)",
+      "de": "Zwischenablageerfassung beeinträchtigt (letzter Zugriff fehlgeschlagen)",
+      "pt-BR": "Captura da área de transferência degradada (último acesso falhou)"
     },
     "Attention_NoDevice": {
       "zh-Hans": "配对一台设备开始同步",
       "zh-Hant": "配對一台裝置開始同步",
       "en": "Pair a device to start syncing",
       "ja": "端末をペアリングして同期を始めましょう",
-      "ko": "기기를 페어링해 동기화를 시작하세요"
+      "ko": "기기를 페어링해 동기화를 시작하세요",
+      "es": "Empareja un dispositivo para empezar a sincronizar",
+      "fr": "Appairez un appareil pour commencer la synchronisation",
+      "de": "Koppeln Sie ein Gerät, um den Sync zu starten",
+      "pt-BR": "Pareie um aparelho para começar a sincronizar"
     },
     "Pairing_Title": {
       "zh-Hans": "配对新设备",
       "zh-Hant": "配對新裝置",
       "en": "Pair new device",
       "ja": "新しい端末とペアリング",
-      "ko": "새 기기 페어링"
+      "ko": "새 기기 페어링",
+      "es": "Emparejar nuevo dispositivo",
+      "fr": "Appairer un nouvel appareil",
+      "de": "Neues Gerät koppeln",
+      "pt-BR": "Parear novo aparelho"
     },
     "Pairing_PeerDownBody": {
       "zh-Hans": "对端服务未启动，本次会话无法配对。",
       "zh-Hant": "對端服務未啟動，本次工作階段無法配對。",
       "en": "The peer service is not running; pairing is unavailable this session.",
       "ja": "相手側サービスが起動していないため、このセッションではペアリングできません。",
-      "ko": "상대편 서비스가 실행되지 않아 이번 세션에는 페어링할 수 없습니다."
+      "ko": "상대편 서비스가 실행되지 않아 이번 세션에는 페어링할 수 없습니다.",
+      "es": "El servicio del par no está en marcha; no se puede emparejar en esta sesión.",
+      "fr": "Le service du pair n’est pas démarré ; l’appairage est indisponible pour cette session.",
+      "de": "Der Peer-Dienst läuft nicht; Kopplung ist in dieser Sitzung nicht möglich.",
+      "pt-BR": "O serviço do par não está em execução; não dá para parear nesta sessão."
     },
     "Pairing_ScanInstruction": {
       "zh-Hans": "用手机上的「剪剪相传」扫描此码。二维码包含本机地址、证书指纹与一次性令牌，绝不包含配对密钥。",
       "zh-Hant": "用手機上的「剪剪相傳」掃描此碼。QR 碼包含本機位址、憑證指紋與一次性權杖，絕不包含配對金鑰。",
       "en": "Scan this code with ClipSync on your phone. The QR code carries this PC’s address, certificate fingerprint, and a one-time token — never the pairing key.",
       "ja": "スマートフォンの ClipSync でこのコードをスキャンしてください。QR コードにはこの PC のアドレス、証明書フィンガープリント、ワンタイムトークンが含まれます——ペアリングキーは決して含まれません。",
-      "ko": "휴대폰의 ClipSync로 이 코드를 스캔하세요. QR 코드에는 이 PC의 주소, 인증서 지문, 일회용 토큰이 담겨 있으며 페어링 키는 절대 포함되지 않습니다."
+      "ko": "휴대폰의 ClipSync로 이 코드를 스캔하세요. QR 코드에는 이 PC의 주소, 인증서 지문, 일회용 토큰이 담겨 있으며 페어링 키는 절대 포함되지 않습니다.",
+      "es": "Escanea este código con ClipSync en tu teléfono. El código QR lleva la dirección de este PC, la huella del certificado y un token de un solo uso; nunca la clave de emparejamiento.",
+      "fr": "Scannez ce code avec ClipSync sur votre téléphone. Le code QR contient l’adresse de ce PC, l’empreinte du certificat et un jeton à usage unique — jamais la clé d’appairage.",
+      "de": "Scannen Sie diesen Code mit ClipSync auf Ihrem Telefon. Der QR-Code enthält die Adresse dieses PCs, den Zertifikat-Fingerabdruck und ein Einmal-Token — niemals den Kopplungsschlüssel.",
+      "pt-BR": "Escaneie este código com o ClipSync no seu telefone. O código QR carrega o endereço deste PC, a impressão digital do certificado e um token de uso único — nunca a chave de pareamento."
     },
     "Pairing_CountdownFormat": {
       "zh-Hans": "{0:m\\:ss} 后自动更换",
       "zh-Hant": "{0:m\\:ss} 後自動更換",
       "en": "Refreshes in {0:m\\:ss}",
       "ja": "{0:m\\:ss} 後に自動更新",
-      "ko": "{0:m\\:ss} 후 자동 갱신"
+      "ko": "{0:m\\:ss} 후 자동 갱신",
+      "es": "Se renueva en {0:m\\:ss}",
+      "fr": "Renouvellement dans {0:m\\:ss}",
+      "de": "Erneuert sich in {0:m\\:ss}",
+      "pt-BR": "Renova em {0:m\\:ss}"
     },
     "Pairing_NoLanAddress": {
       "zh-Hans": "未检测到局域网地址。请把本机和手机接入同一网络（或在偏好里添加 Tailscale 地址），再重新打开此窗口。",
       "zh-Hant": "未偵測到區域網路位址。請把本機和手機接入同一網路（或在偏好裡新增 Tailscale 位址），再重新開啟此視窗。",
       "en": "No LAN address detected. Put this PC and the phone on the same network (or add a Tailscale address in Preferences), then reopen this window.",
       "ja": "LAN アドレスが見つかりません。この PC とスマートフォンを同じネットワークに接続し（または設定で Tailscale アドレスを追加し）、このウィンドウを開き直してください。",
-      "ko": "LAN 주소를 찾지 못했습니다. 이 PC와 휴대폰을 같은 네트워크에 연결하거나(또는 환경설정에서 Tailscale 주소를 추가하고) 이 창을 다시 여세요."
+      "ko": "LAN 주소를 찾지 못했습니다. 이 PC와 휴대폰을 같은 네트워크에 연결하거나(또는 환경설정에서 Tailscale 주소를 추가하고) 이 창을 다시 여세요.",
+      "es": "No se detectó ninguna dirección LAN. Conecta este PC y el teléfono a la misma red (o añade una dirección de Tailscale en Preferencias) y vuelve a abrir esta ventana.",
+      "fr": "Aucune adresse LAN détectée. Mettez ce PC et le téléphone sur le même réseau (ou ajoutez une adresse Tailscale dans les Préférences), puis rouvrez cette fenêtre.",
+      "de": "Keine LAN-Adresse erkannt. Bringen Sie diesen PC und das Telefon ins selbe Netzwerk (oder fügen Sie in den Einstellungen eine Tailscale-Adresse hinzu) und öffnen Sie dieses Fenster erneut.",
+      "pt-BR": "Nenhum endereço de LAN detectado. Coloque este PC e o telefone na mesma rede (ou adicione um endereço Tailscale nas Preferências) e reabra esta janela."
     },
     "Pairing_VerifyHeading": {
       "zh-Hans": "确 认 前 请 在 手 机 上 核 对",
       "zh-Hant": "確 認 前 請 在 手 機 上 核 對",
       "en": "Verify on the phone before approving",
       "ja": "承認する前にスマートフォンで確認",
-      "ko": "승인 전에 휴대폰에서 대조하세요"
+      "ko": "승인 전에 휴대폰에서 대조하세요",
+      "es": "Verifica en el teléfono antes de aprobar",
+      "fr": "Vérifiez sur le téléphone avant d’approuver",
+      "de": "Vor dem Genehmigen am Telefon prüfen",
+      "pt-BR": "Confira no telefone antes de aprovar"
     },
     "Pairing_PcName": {
       "zh-Hans": "电脑名称",
       "zh-Hant": "電腦名稱",
       "en": "PC name",
       "ja": "PC 名",
-      "ko": "PC 이름"
+      "ko": "PC 이름",
+      "es": "Nombre del PC",
+      "fr": "Nom du PC",
+      "de": "PC-Name",
+      "pt-BR": "Nome do PC"
     },
     "Pairing_Fingerprint": {
       "zh-Hans": "证书指纹",
       "zh-Hant": "憑證指紋",
       "en": "Certificate fingerprint",
       "ja": "証明書フィンガープリント",
-      "ko": "인증서 지문"
+      "ko": "인증서 지문",
+      "es": "Huella del certificado",
+      "fr": "Empreinte du certificat",
+      "de": "Zertifikat-Fingerabdruck",
+      "pt-BR": "Impressão digital do certificado"
     },
     "Pairing_NewCode": {
       "zh-Hans": "换一个码",
       "zh-Hant": "換一個碼",
       "en": "New code",
       "ja": "新しいコード",
-      "ko": "새 코드"
+      "ko": "새 코드",
+      "es": "Nuevo código",
+      "fr": "Nouveau code",
+      "de": "Neuer Code",
+      "pt-BR": "Novo código"
     },
     "Approval_Title": {
       "zh-Hans": "配对请求",
       "zh-Hant": "配對請求",
       "en": "Pairing request",
       "ja": "ペアリング要求",
-      "ko": "페어링 요청"
+      "ko": "페어링 요청",
+      "es": "Solicitud de emparejamiento",
+      "fr": "Demande d’appairage",
+      "de": "Kopplungsanfrage",
+      "pt-BR": "Pedido de pareamento"
     },
     "Approval_CloseReject": {
       "zh-Hans": "关闭并拒绝",
       "zh-Hant": "關閉並拒絕",
       "en": "Close and decline",
       "ja": "閉じて拒否",
-      "ko": "닫고 거절"
+      "ko": "닫고 거절",
+      "es": "Cerrar y rechazar",
+      "fr": "Fermer et refuser",
+      "de": "Schließen und ablehnen",
+      "pt-BR": "Fechar e recusar"
     },
     "Approval_Question": {
       "zh-Hans": "允许此设备配对吗？",
       "zh-Hant": "允許此裝置配對嗎？",
       "en": "Allow this device to pair?",
       "ja": "この端末とのペアリングを許可しますか？",
-      "ko": "이 기기의 페어링을 허용할까요?"
+      "ko": "이 기기의 페어링을 허용할까요?",
+      "es": "¿Permitir que este dispositivo se empareje?",
+      "fr": "Autoriser cet appareil à s’appairer ?",
+      "de": "Diesem Gerät die Kopplung erlauben?",
+      "pt-BR": "Permitir que este aparelho pareie?"
     },
     "Approval_Body": {
       "zh-Hans": "有设备用本机显示的二维码请求配对。仅当下方名称与你手中的手机一致时批准。",
       "zh-Hant": "有裝置用本機顯示的 QR 碼請求配對。僅當下方名稱與你手中的手機一致時批准。",
       "en": "A device used this PC’s QR code to request pairing. Approve only if the name below matches the phone in your hand.",
       "ja": "この PC に表示された QR コードを使ってペアリングを要求している端末があります。下の名前が手元のスマートフォンと一致する場合のみ承認してください。",
-      "ko": "이 PC에 표시된 QR 코드로 페어링을 요청한 기기가 있습니다. 아래 이름이 손에 든 휴대폰과 일치할 때만 승인하세요."
+      "ko": "이 PC에 표시된 QR 코드로 페어링을 요청한 기기가 있습니다. 아래 이름이 손에 든 휴대폰과 일치할 때만 승인하세요.",
+      "es": "Un dispositivo usó el código QR mostrado por este PC para pedir emparejamiento. Aprueba solo si el nombre de abajo coincide con el teléfono que tienes en la mano.",
+      "fr": "Un appareil a utilisé le code QR affiché par ce PC pour demander l’appairage. N’approuvez que si le nom ci-dessous correspond au téléphone que vous tenez.",
+      "de": "Ein Gerät hat mit dem von diesem PC angezeigten QR-Code eine Kopplung angefragt. Genehmigen Sie nur, wenn der Name unten zum Telefon in Ihrer Hand passt.",
+      "pt-BR": "Um aparelho usou o código QR mostrado por este PC para pedir pareamento. Aprove só se o nome abaixo bater com o telefone na sua mão."
     },
     "Approval_PlatformAndroid": {
       "zh-Hans": "Android 设备",
       "zh-Hant": "Android 裝置",
       "en": "Android device",
       "ja": "Android 端末",
-      "ko": "Android 기기"
+      "ko": "Android 기기",
+      "es": "Dispositivo Android",
+      "fr": "Appareil Android",
+      "de": "Android-Gerät",
+      "pt-BR": "Aparelho Android"
     },
     "Approval_PlatformWindows": {
       "zh-Hans": "Windows 设备",
       "zh-Hant": "Windows 裝置",
       "en": "Windows device",
       "ja": "Windows 端末",
-      "ko": "Windows 기기"
+      "ko": "Windows 기기",
+      "es": "Dispositivo Windows",
+      "fr": "Appareil Windows",
+      "de": "Windows-Gerät",
+      "pt-BR": "Aparelho Windows"
     },
     "Approval_RepairWarning": {
       "zh-Hans": "该设备此前已配对。批准会替换它原有的配对密钥，旧的安装立即失效。",
       "zh-Hant": "該裝置此前已配對。批准會替換它原有的配對金鑰，舊的安裝立即失效。",
       "en": "This device was paired before. Approving replaces its existing pairing key, and the old install stops working immediately.",
       "ja": "この端末は以前ペアリング済みです。承認すると既存のペアリングキーが置き換えられ、古いインストールは即座に無効になります。",
-      "ko": "이 기기는 이전에 페어링된 적이 있습니다. 승인하면 기존 페어링 키가 교체되고 이전 설치는 즉시 무효화됩니다."
+      "ko": "이 기기는 이전에 페어링된 적이 있습니다. 승인하면 기존 페어링 키가 교체되고 이전 설치는 즉시 무효화됩니다.",
+      "es": "Este dispositivo ya estuvo emparejado. Aprobar reemplaza su clave de emparejamiento y la instalación antigua deja de funcionar de inmediato.",
+      "fr": "Cet appareil était déjà appairé. Approuver remplace sa clé d’appairage existante et l’ancienne installation cesse de fonctionner immédiatement.",
+      "de": "Dieses Gerät war bereits gekoppelt. Genehmigen ersetzt seinen bestehenden Kopplungsschlüssel; die alte Installation funktioniert sofort nicht mehr.",
+      "pt-BR": "Este aparelho já foi pareado antes. Aprovar substitui a chave de pareamento existente e a instalação antiga para de funcionar na hora."
     },
     "Approval_SupersedeNotice": {
       "zh-Hans": "列表中已有同名设备。批准后旧记录将被自动撤销并清空其待发队列（视为同一部手机重新配对）。",
       "zh-Hant": "清單中已有同名裝置。批准後舊記錄將被自動撤銷並清空其寄件佇列（視為同一部手機重新配對）。",
       "en": "A device with the same name is already listed. Approving revokes the old record automatically and clears its outbox (treated as the same phone re-pairing).",
       "ja": "同名の端末が既に一覧にあります。承認すると古い記録は自動的に取り消され、その送信キューも消去されます（同じスマートフォンの再ペアリングとして扱われます）。",
-      "ko": "목록에 같은 이름의 기기가 이미 있습니다. 승인하면 이전 기록이 자동으로 해지되고 발신 대기열이 비워집니다(같은 휴대폰의 재페어링으로 간주)."
+      "ko": "목록에 같은 이름의 기기가 이미 있습니다. 승인하면 이전 기록이 자동으로 해지되고 발신 대기열이 비워집니다(같은 휴대폰의 재페어링으로 간주).",
+      "es": "Ya hay un dispositivo con el mismo nombre en la lista. Al aprobar, el registro antiguo se revoca automáticamente y su cola de envío se vacía (se trata como el mismo teléfono reemparejándose).",
+      "fr": "Un appareil du même nom figure déjà dans la liste. Approuver révoque automatiquement l’ancien enregistrement et vide sa file d’envoi (traité comme le même téléphone qui se réappaire).",
+      "de": "Ein gleichnamiges Gerät steht bereits in der Liste. Beim Genehmigen wird der alte Eintrag automatisch widerrufen und seine Sendewarteschlange geleert (gilt als dasselbe Telefon, das sich neu koppelt).",
+      "pt-BR": "Já existe um aparelho com o mesmo nome na lista. Ao aprovar, o registro antigo é revogado automaticamente e sua fila de envio esvaziada (tratado como o mesmo telefone pareando de novo)."
     },
     "Approval_Reject": {
       "zh-Hans": "拒绝",
       "zh-Hant": "拒絕",
       "en": "Decline",
       "ja": "拒否",
-      "ko": "거절"
+      "ko": "거절",
+      "es": "Rechazar",
+      "fr": "Refuser",
+      "de": "Ablehnen",
+      "pt-BR": "Recusar"
     },
     "Approval_Approve": {
       "zh-Hans": "批准配对",
       "zh-Hant": "批准配對",
       "en": "Approve pairing",
       "ja": "ペアリングを承認",
-      "ko": "페어링 승인"
+      "ko": "페어링 승인",
+      "es": "Aprobar emparejamiento",
+      "fr": "Approuver l’appairage",
+      "de": "Kopplung genehmigen",
+      "pt-BR": "Aprovar pareamento"
     },
     "Detail_Title": {
       "zh-Hans": "剪贴详情",
       "zh-Hant": "剪貼詳情",
       "en": "Clip details",
       "ja": "クリップの詳細",
-      "ko": "클립 상세"
+      "ko": "클립 상세",
+      "es": "Detalles del clip",
+      "fr": "Détails du clip",
+      "de": "Clip-Details",
+      "pt-BR": "Detalhes do clipe"
     },
     "Detail_SourceFormat": {
       "zh-Hans": "来源：{0}",
       "zh-Hant": "來源：{0}",
       "en": "Source: {0}",
       "ja": "ソース：{0}",
-      "ko": "출처: {0}"
+      "ko": "출처: {0}",
+      "es": "Origen: {0}",
+      "fr": "Source : {0}",
+      "de": "Quelle: {0}",
+      "pt-BR": "Origem: {0}"
     },
     "Detail_TimeFormat": {
       "zh-Hans": "时间：{0}",
       "zh-Hant": "時間：{0}",
       "en": "Time: {0}",
       "ja": "時刻：{0}",
-      "ko": "시각: {0}"
+      "ko": "시각: {0}",
+      "es": "Hora: {0}",
+      "fr": "Heure : {0}",
+      "de": "Zeit: {0}",
+      "pt-BR": "Hora: {0}"
     },
     "Diag_Title": {
       "zh-Hans": "剪剪相传 · 诊断日志",
       "zh-Hant": "剪剪相傳 · 診斷日誌",
       "en": "ClipSync · diagnostic log",
       "ja": "ClipSync · 診断ログ",
-      "ko": "ClipSync · 진단 로그"
+      "ko": "ClipSync · 진단 로그",
+      "es": "ClipSync · registro de diagnóstico",
+      "fr": "ClipSync · journal de diagnostic",
+      "de": "ClipSync · Diagnoseprotokoll",
+      "pt-BR": "ClipSync · log de diagnóstico"
     },
     "Diag_Heading": {
       "zh-Hans": "本机诊断 · 仅状态码与时间，绝不含剪贴板正文",
       "zh-Hant": "本機診斷 · 僅狀態碼與時間，絕不含剪貼簿內文",
       "en": "Local diagnostics · status codes and times only, never clipboard content",
       "ja": "ローカル診断 · ステータスコードと時刻のみ、クリップボードの本文は決して含みません",
-      "ko": "로컬 진단 · 상태 코드와 시각만 기록하며 클립보드 본문은 절대 담지 않습니다"
+      "ko": "로컬 진단 · 상태 코드와 시각만 기록하며 클립보드 본문은 절대 담지 않습니다",
+      "es": "Diagnóstico local · solo códigos de estado y horas, nunca contenido del portapapeles",
+      "fr": "Diagnostic local · uniquement codes d’état et heures, jamais le contenu du presse-papiers",
+      "de": "Lokale Diagnose · nur Statuscodes und Zeiten, nie Zwischenablageinhalte",
+      "pt-BR": "Diagnóstico local · só códigos de status e horários, nunca o conteúdo da área de transferência"
     },
     "Diag_CopyAll": {
       "zh-Hans": "复制全部",
       "zh-Hant": "複製全部",
       "en": "Copy all",
       "ja": "すべてコピー",
-      "ko": "전체 복사"
+      "ko": "전체 복사",
+      "es": "Copiar todo",
+      "fr": "Tout copier",
+      "de": "Alles kopieren",
+      "pt-BR": "Copiar tudo"
     },
     "Diag_Empty": {
       "zh-Hans": "（暂无诊断记录）",
       "zh-Hant": "（暫無診斷記錄）",
       "en": "(no diagnostic entries yet)",
       "ja": "（診断記録はまだありません）",
-      "ko": "(아직 진단 기록이 없습니다)"
+      "ko": "(아직 진단 기록이 없습니다)",
+      "es": "(sin registros de diagnóstico todavía)",
+      "fr": "(aucune entrée de diagnostic pour l’instant)",
+      "de": "(noch keine Diagnoseeinträge)",
+      "pt-BR": "(ainda sem registros de diagnóstico)"
     }
   }
 }

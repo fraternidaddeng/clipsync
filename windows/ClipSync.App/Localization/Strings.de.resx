@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="App_WindowTitle" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Brand_Wordmark" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Chrome_Minimize" xml:space="preserve">
+    <value>Minimieren</value>
+  </data>
+  <data name="Chrome_MaximizeRestore" xml:space="preserve">
+    <value>Maximieren oder wiederherstellen</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Common_Copy" xml:space="preserve">
+    <value>Kopieren</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="Common_Acknowledge" xml:space="preserve">
+    <value>Verstanden</value>
+  </data>
+  <data name="Common_FollowSystem" xml:space="preserve">
+    <value>System folgen</value>
+  </data>
+  <data name="Common_ClearHistory" xml:space="preserve">
+    <value>Verlauf leeren</value>
+  </data>
+  <data name="Common_ExportHistory" xml:space="preserve">
+    <value>Verlauf exportieren</value>
+  </data>
+  <data name="Common_ImportHistory" xml:space="preserve">
+    <value>Verlauf importieren</value>
+  </data>
+  <data name="Common_PauseCapture" xml:space="preserve">
+    <value>Erfassung pausieren</value>
+  </data>
+  <data name="Common_PrivateMode" xml:space="preserve">
+    <value>Privater Modus</value>
+  </data>
+  <data name="Nav_History" xml:space="preserve">
+    <value>Verlauf</value>
+  </data>
+  <data name="Nav_Conduit" xml:space="preserve">
+    <value>Kanal</value>
+  </data>
+  <data name="Nav_Prefs" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="History_Title" xml:space="preserve">
+    <value>Verlauf</value>
+  </data>
+  <data name="History_Subtitle" xml:space="preserve">
+    <value>Clips dieses PCs und gekoppelter Geräte · Aufräumen betrifft nur dieses Gerät</value>
+  </data>
+  <data name="History_Search" xml:space="preserve">
+    <value>Suchen</value>
+  </data>
+  <data name="Filter_All" xml:space="preserve">
+    <value>Alle</value>
+  </data>
+  <data name="Filter_Link" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="Filter_Otp" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Filter_Email" xml:space="preserve">
+    <value>Konto</value>
+  </data>
+  <data name="Filter_Credential" xml:space="preserve">
+    <value>Passwort</value>
+  </data>
+  <data name="Filter_Plain" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Format_Image" xml:space="preserve">
+    <value>Bild</value>
+  </data>
+  <data name="History_NoPreview" xml:space="preserve">
+    <value>Keine Vorschau</value>
+  </data>
+  <data name="History_LocalOnlyBadge" xml:space="preserve">
+    <value>Nur auf diesem Gerät</value>
+  </data>
+  <data name="History_Empty_Unpaired_Title" xml:space="preserve">
+    <value>Verbinden Sie zuerst beide Seiten</value>
+  </data>
+  <data name="History_Empty_Paired_Title" xml:space="preserve">
+    <value>Warte auf den ersten Clip</value>
+  </data>
+  <data name="History_Empty_Unpaired_Body" xml:space="preserve">
+    <value>Noch nicht mit einem Telefon gekoppelt. Der Kopplungseinstieg liegt im Netzwerkabschnitt der Seite „Kanal“.</value>
+  </data>
+  <data name="History_Empty_Paired_Body" xml:space="preserve">
+    <value>Kopieren Sie Text auf einer der beiden Seiten — er erscheint hier und fließt zur anderen Seite.</value>
+  </data>
+  <data name="History_Empty_GoPair" xml:space="preserve">
+    <value>Jetzt koppeln ›</value>
+  </data>
+  <data name="History_NoMatch_Prefix" xml:space="preserve">
+    <value>Keine Einträge passen zu „</value>
+  </data>
+  <data name="History_NoMatch_Suffix" xml:space="preserve">
+    <value>“</value>
+  </data>
+  <data name="History_Empty_Filtered" xml:space="preserve">
+    <value>Keine Einträge dieses Typs · versuchen Sie einen anderen Filter</value>
+  </data>
+  <data name="History_CopySelected" xml:space="preserve">
+    <value>Auswahl kopieren</value>
+  </data>
+  <data name="History_ViewDetail" xml:space="preserve">
+    <value>Details anzeigen</value>
+  </data>
+  <data name="History_DeleteSelected" xml:space="preserve">
+    <value>Auswahl löschen</value>
+  </data>
+  <data name="History_UnknownSource" xml:space="preserve">
+    <value>Unbekannte Quelle</value>
+  </data>
+  <data name="History_LocalSource" xml:space="preserve">
+    <value>Dieser PC</value>
+  </data>
+  <data name="Conduit_Title" xml:space="preserve">
+    <value>Kanal</value>
+  </data>
+  <data name="Conduit_Subtitle" xml:space="preserve">
+    <value>Inhalte fließen von links nach rechts durch vier Abschnitte · die Lesereihenfolge ist die Fehlersuchreihenfolge</value>
+  </data>
+  <data name="Conduit_Capture_Name" xml:space="preserve">
+    <value>Lokale Erfassung</value>
+  </data>
+  <data name="Conduit_Capture_Ready" xml:space="preserve">
+    <value>Bereit · lauscht auf Strg+C</value>
+  </data>
+  <data name="Conduit_Status_Paused" xml:space="preserve">
+    <value>Pausiert · es wird nichts aufgezeichnet</value>
+  </data>
+  <data name="Conduit_Status_Private" xml:space="preserve">
+    <value>Privater Modus · hinterlässt keine Spuren</value>
+  </data>
+  <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
+    <value>Erfassung beeinträchtigt · Zwischenablagezugriff fehlgeschlagen</value>
+  </data>
+  <data name="Conduit_Capture_Detail" xml:space="preserve">
+    <value>Privater Modus und blockierte Prozesse stoppen Inhalte an diesem Abschnitt.</value>
+  </data>
+  <data name="Conduit_Service_Name" xml:space="preserve">
+    <value>Lokaler Dienst</value>
+  </data>
+  <data name="Conduit_Service_ReadyPrefix" xml:space="preserve">
+    <value>Bereit · Verlauf </value>
+  </data>
+  <data name="Conduit_Service_ReadyInfix" xml:space="preserve">
+    <value> · ausstehend </value>
+  </data>
+  <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
+    <value>Ereignisse werden erst gespeichert, dann in die Sendewarteschlange gestellt · </value>
+  </data>
+  <data name="Conduit_Network_Name" xml:space="preserve">
+    <value>Netzwerk</value>
+  </data>
+  <data name="Conduit_Network_ReadyPrefix" xml:space="preserve">
+    <value>Bereit · lauscht auf :</value>
+  </data>
+  <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
+    <value> · verbunden </value>
+  </data>
+  <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
+    <value> Gerät(e)</value>
+  </data>
+  <data name="Conduit_Network_Down" xml:space="preserve">
+    <value>Nicht gestartet · Sync aus</value>
+  </data>
+  <data name="Conduit_Peer_Name" xml:space="preserve">
+    <value>Peer-Schreiben</value>
+  </data>
+  <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
+    <value>Gekoppelt </value>
+  </data>
+  <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
+    <value> Gerät(e)</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
+    <value>Ferner Text wird automatisch in die Zwischenablage dieses PCs geschrieben.</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
+    <value>Automatisches Anwenden ist aus: Ferne Inhalte bleiben nur im Verlauf und müssen von Hand kopiert werden.</value>
+  </data>
+  <data name="Conduit_Devices_Header" xml:space="preserve">
+    <value>Netzwerkabschnitt · gekoppelte Geräte</value>
+  </data>
+  <data name="Conduit_Connection_Header" xml:space="preserve">
+    <value>Netzwerkabschnitt · Verbindung</value>
+  </data>
+  <data name="Conduit_CleanupStale" xml:space="preserve">
+    <value>Aufräumen</value>
+  </data>
+  <data name="Conduit_Bluetooth_Title" xml:space="preserve">
+    <value>Bluetooth-Ausweichweg</value>
+  </data>
+  <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
+    <value>Standardmäßig aus. Wenn ein VPN oder eine Firewall das LAN blockiert, synchronisiert ein in den Systemeinstellungen bereits per Bluetooth gekoppeltes Telefon weiterhin Text (keine Bilder, langsamer).</value>
+  </data>
+  <data name="Conduit_ExtraBind_Title" xml:space="preserve">
+    <value>Zusätzliche Lauschadressen</value>
+  </data>
+  <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
+    <value>Für Adressen virtueller Adapter wie Tailscale / WireGuard. Kein öffentliches Relay.</value>
+  </data>
+  <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
+    <value>Wirkt nach Neustart</value>
+  </data>
+  <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
+    <value> · mehrere Adressen mit Kommas trennen</value>
+  </data>
+  <data name="Conduit_Fingerprint_Title" xml:space="preserve">
+    <value>Zertifikat-Fingerabdruck dieses PCs</value>
+  </data>
+  <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
+    <value>Vergleichen Sie ihn beim Koppeln Gruppe für Gruppe mit dem auf dem Telefon angezeigten Fingerabdruck. Eine Änderung des Fingerabdrucks lässt alle gekoppelten Geräte um erneute Bestätigung bitten.</value>
+  </data>
+  <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
+    <value>Der Peer-Dienst läuft nicht; in dieser Sitzung gibt es keinen Fingerabdruck zu zeigen.</value>
+  </data>
+  <data name="Device_RevokedBadge" xml:space="preserve">
+    <value>Widerrufen</value>
+  </data>
+  <data name="Device_AccentLabel" xml:space="preserve">
+    <value>Gerätefarbe</value>
+  </data>
+  <data name="Device_AccentManual" xml:space="preserve">
+    <value>Manuell festgelegt</value>
+  </data>
+  <data name="Device_AccentByOrder" xml:space="preserve">
+    <value>Folgt der Kopplungsreihenfolge</value>
+  </data>
+  <data name="Device_Rename" xml:space="preserve">
+    <value>Umbenennen</value>
+  </data>
+  <data name="Device_RevokeSelected" xml:space="preserve">
+    <value>Ausgewähltes Gerät widerrufen</value>
+  </data>
+  <data name="Device_RevokeNote" xml:space="preserve">
+    <value>Der Widerruf trennt das Gerät sofort und macht seinen Kopplungsschlüssel ungültig; bereits empfangene Inhalte werden nie aus der Ferne gelöscht. Eine erneute Kopplung nach dem Widerruf zählt als neues Gerät. Koppelt sich dasselbe Telefon unter neuer Identität erneut, wird der alte Eintrag automatisch widerrufen und seine Sendewarteschlange geleert.</value>
+  </data>
+  <data name="Device_UnknownRemote" xml:space="preserve">
+    <value>Fernes Gerät</value>
+  </data>
+  <data name="Device_PairedFallback" xml:space="preserve">
+    <value>Gekoppeltes Gerät</value>
+  </data>
+  <data name="Device_UnknownFallback" xml:space="preserve">
+    <value>Unbekanntes Gerät</value>
+  </data>
+  <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
+    <value>{0} · {1} ausstehend in der Warteschlange</value>
+  </data>
+  <data name="Stale_BannerBacklogFormat" xml:space="preserve">
+    <value>{0} Gerät(e) erkannt, die wie veraltete Überbleibsel aussehen; {1} ausstehende Einträge blähen den Zähler auf. Das Aufräumen widerruft sie und leert ihre Sendewarteschlangen.</value>
+  </data>
+  <data name="Stale_BannerFormat" xml:space="preserve">
+    <value>{0} Gerät(e) erkannt, die wie veraltete Überbleibsel aussehen. Das Aufräumen widerruft sie; bereits empfangene Inhalte bleiben unberührt.</value>
+  </data>
+  <data name="Stale_DuplicateBadge" xml:space="preserve">
+    <value>Vermutlich Rest einer Doppelkopplung</value>
+  </data>
+  <data name="Stale_NeverConnected" xml:space="preserve">
+    <value>Seit der Kopplung nie verbunden</value>
+  </data>
+  <data name="Stale_UnseenDaysFormat" xml:space="preserve">
+    <value>Seit über {0} Tagen nicht verbunden</value>
+  </data>
+  <data name="Prefs_Title" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="Prefs_Subtitle" xml:space="preserve">
+    <value>Änderungen wirken sofort · Zwischenablageinhalte erscheinen nie in Protokollen</value>
+  </data>
+  <data name="Prefs_Group_Display" xml:space="preserve">
+    <value>ANZEIGE</value>
+  </data>
+  <data name="Prefs_Group_Capture" xml:space="preserve">
+    <value>ERFASSUNG</value>
+  </data>
+  <data name="Prefs_Group_Sync" xml:space="preserve">
+    <value>SYNC</value>
+  </data>
+  <data name="Prefs_Group_Retention" xml:space="preserve">
+    <value>AUFBEWAHRUNG</value>
+  </data>
+  <data name="Prefs_Group_Startup" xml:space="preserve">
+    <value>START</value>
+  </data>
+  <data name="Prefs_Group_Data" xml:space="preserve">
+    <value>DATEN</value>
+  </data>
+  <data name="Prefs_FontScale_Title" xml:space="preserve">
+    <value>Textgröße im Verlauf</value>
+  </data>
+  <data name="Prefs_FontScale_Desc" xml:space="preserve">
+    <value>Skaliert nur den Inhaltstext der Clips (Verlaufsvorschauen, Detailtext, Tray-Fenster); Gruppenköpfe, Badges und Schaltflächen bleiben unverändert.</value>
+  </data>
+  <data name="Prefs_FontScale_Small" xml:space="preserve">
+    <value>Klein</value>
+  </data>
+  <data name="Prefs_FontScale_Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Prefs_FontScale_Large" xml:space="preserve">
+    <value>Groß</value>
+  </data>
+  <data name="Prefs_PreviewLines_Title" xml:space="preserve">
+    <value>Vorschauzeilen</value>
+  </data>
+  <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
+    <value>Maximale Textzeilen pro Eintrag in der Verlaufsliste; Überschuss wird mit Auslassungspunkten abgeschnitten — die Details zeigen alles.</value>
+  </data>
+  <data name="Prefs_PreviewLines_Two" xml:space="preserve">
+    <value>2 Zeilen</value>
+  </data>
+  <data name="Prefs_PreviewLines_Four" xml:space="preserve">
+    <value>4 Zeilen</value>
+  </data>
+  <data name="Prefs_PreviewLines_Six" xml:space="preserve">
+    <value>6 Zeilen</value>
+  </data>
+  <data name="Prefs_Theme_Title" xml:space="preserve">
+    <value>Erscheinungsbild</value>
+  </data>
+  <data name="Prefs_Theme_Desc" xml:space="preserve">
+    <value>Die Tag/Nacht-Palette des Fensters; das Tray-Symbol lebt in der Taskleiste und folgt stets deren Helligkeit.</value>
+  </data>
+  <data name="Prefs_Theme_Day" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="Prefs_Theme_Night" xml:space="preserve">
+    <value>Nacht</value>
+  </data>
+  <data name="Prefs_Language_Title" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
+  <data name="Prefs_Language_Desc" xml:space="preserve">
+    <value>Die Oberflächensprache — dem System folgen oder manuell festlegen; jede Sprache zeigt stets ihren eigenen nativen Namen.</value>
+  </data>
+  <data name="Prefs_Language_RestartNote" xml:space="preserve">
+    <value>Wirkt nach Neustart der Anwendung.</value>
+  </data>
+  <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
+    <value>Pausiert zeichnet dieser PC keine neuen Inhalte auf; der bestehende Verlauf bleibt erhalten.</value>
+  </data>
+  <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
+    <value>Solange aktiv, stoppen Erfassung und Sync vollständig, ohne Spuren zu hinterlassen.</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
+    <value>Blockierte Prozesse</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
+    <value>Kopien aus diesen Prozessen gelangen nie in den Verlauf und werden nicht synchronisiert. Mit Kommas oder Zeilenumbrüchen trennen.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
+    <value>Ferne Inhalte automatisch anwenden</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
+    <value>Text vom Telefon wird automatisch in die Zwischenablage dieses PCs geschrieben. Ausgeschaltet bleibt er nur im Verlauf und muss von Hand kopiert werden.</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
+    <value>Zwischenablagebilder synchronisieren</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
+    <value>Standardmäßig aus. Nur PNG/JPEG; die Rohbytes können EXIF- und andere Metadaten enthalten, und beide Seiten brauchen eine v2-Sitzung.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
+    <value>Ferne Bilder automatisch anwenden</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
+    <value>Bilder vom Telefon werden automatisch in die Zwischenablage dieses PCs geschrieben. Ausgeschaltet bleiben sie nur im Verlauf und müssen von Hand kopiert werden.</value>
+  </data>
+  <data name="Prefs_Moved_Title" xml:space="preserve">
+    <value>Bluetooth-Ausweichweg · zusätzliche Lauschadressen · Zertifikat-Fingerabdruck</value>
+  </data>
+  <data name="Prefs_Moved_Desc" xml:space="preserve">
+    <value>Verschoben nach „Kanal · Netzwerkabschnitt“ — sie entscheiden, ob Inhalte den Peer erreichen, und wohnen daher bei Kopplung und Geräteverwaltung.</value>
+  </data>
+  <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
+    <value>Zum Kanal</value>
+  </data>
+  <data name="Prefs_Retention_Days_Title" xml:space="preserve">
+    <value>Aufbewahrungsdauer</value>
+  </data>
+  <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
+    <value>Abgelaufene Einträge werden automatisch entfernt. Das Aufräumen geschieht nur auf diesem PC und löscht nie, was der Peer bereits erhalten hat.</value>
+  </data>
+  <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
+    <value>Tage</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
+    <value>Aufbewahrungsanzahl</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
+    <value>Über dem Limit werden die ältesten Einträge zuerst entfernt (100–2000, in 100er-Schritten). Das Aufräumen geschieht nur auf diesem PC.</value>
+  </data>
+  <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
+    <value>Einträge</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
+    <value>Beim Start ausführen · still ins Tray</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
+    <value>Startet automatisch bei der Windows-Anmeldung und landet direkt im Tray, ohne das Hauptfenster zu öffnen. Schreibt nur den Autostart-Eintrag des aktuellen Benutzers; keine Administratorrechte nötig.</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
+    <value>Tastenkürzel fürs Schnellfenster</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
+    <value>Drücken Sie die Kombination in jeder beliebigen Anwendung, um das Tray-Schnellfenster aufzurufen. Klicken Sie ins Feld und drücken Sie die gewünschte Kombination (muss Strg, Alt oder Win enthalten); Rücktaste löscht. Standardmäßig aus.</value>
+  </data>
+  <data name="Prefs_Data_Export_Desc" xml:space="preserve">
+    <value>Schreibt den gesamten Verlauf (einschließlich Löschmarkierungen) als JSON-Lines-Sicherungsdatei; ohne Schlüssel, Zertifikate oder Kopplungsdaten. Der Export ist Klartext — sicher aufbewahren.</value>
+  </data>
+  <data name="Prefs_Data_Import_Desc" xml:space="preserve">
+    <value>Führt den Verlauf aus einer Sicherungsdatei zusammen: idempotent über „Quellgerät + Sequenz“, sodass erneutes Importieren nie Einträge dupliziert oder lokale Löschungen überschreibt. Bei Validierungsfehlern ändert sich nichts.</value>
+  </data>
+  <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
+    <value>Löscht alle Einträge dieses PCs (einschließlich Bilder) in einem Schritt; erfordert zwei Bestätigungen und ist nicht rückgängig zu machen. Das Leeren geschieht nur auf diesem PC und löscht nie, was der Peer bereits erhalten hat — vorher exportieren empfohlen.</value>
+  </data>
+  <data name="Flyout_WindowTitle" xml:space="preserve">
+    <value>ClipSync · aktuelle Clips</value>
+  </data>
+  <data name="Flyout_PauseSync" xml:space="preserve">
+    <value>Sync pausieren</value>
+  </data>
+  <data name="Flyout_ResumeSync" xml:space="preserve">
+    <value>Sync fortsetzen</value>
+  </data>
+  <data name="Flyout_Empty" xml:space="preserve">
+    <value>Noch keine Clips · kopieren Sie etwas Text</value>
+  </data>
+  <data name="Flyout_PauseOrResume" xml:space="preserve">
+    <value>Sync pausieren oder fortsetzen</value>
+  </data>
+  <data name="Flyout_CopyFromFormat" xml:space="preserve">
+    <value>Clip von {0} kopieren</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>ClipSync öffnen</value>
+  </data>
+  <data name="Tray_Menu_Diagnostics" xml:space="preserve">
+    <value>Diagnoseprotokoll</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>Beenden</value>
+  </data>
+  <data name="Tray_Tooltip_Flow" xml:space="preserve">
+    <value>ClipSync · lauscht</value>
+  </data>
+  <data name="Tray_Tooltip_AttentionFormat" xml:space="preserve">
+    <value>ClipSync · {0}</value>
+  </data>
+  <data name="Tray_AttentionFallback" xml:space="preserve">
+    <value>Ihre Aktion ist erforderlich</value>
+  </data>
+  <data name="Tray_Tooltip_Paused" xml:space="preserve">
+    <value>ClipSync · Erfassung pausiert</value>
+  </data>
+  <data name="Tray_Tooltip_Private" xml:space="preserve">
+    <value>ClipSync · privater Modus, keine Spuren</value>
+  </data>
+  <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
+    <value>1 neuer Clip von {0}</value>
+  </data>
+  <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
+    <value>{1} neue Clips von {0}</value>
+  </data>
+  <data name="Tray_OversizeNotice" xml:space="preserve">
+    <value>Der gerade kopierte Text überschreitet 1 MiB; er bleibt nur in der Zwischenablage dieses PCs und wird nicht synchronisiert (nicht gekürzt).</value>
+  </data>
+  <data name="Tray_AuthThrottleFormat" xml:space="preserve">
+    <value>Wiederholte Authentifizierungsfehler von „{0}“; das Gerät ist vorübergehend gedrosselt.</value>
+  </data>
+  <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
+    <value>Lauscht · Sync nicht gestartet</value>
+  </data>
+  <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
+    <value>Lauscht · {0} verbunden</value>
+  </data>
+  <data name="Tray_Status_Waiting" xml:space="preserve">
+    <value>Lauscht · wartet auf Geräte</value>
+  </data>
+  <data name="Capture_OversizeNotice" xml:space="preserve">
+    <value>Der gerade kopierte Text überschreitet 1 MiB: Er bleibt ungekürzt in der Systemzwischenablage, wird aber weder im Verlauf aufgezeichnet noch synchronisiert.</value>
+  </data>
+  <data name="Sync_NotStarted" xml:space="preserve">
+    <value>Peer-Dienst noch nicht gestartet</value>
+  </data>
+  <data name="Sync_StartFailed" xml:space="preserve">
+    <value>Der Peer-Dienst konnte nicht starten; Sync ist in dieser Sitzung aus.</value>
+  </data>
+  <data name="Sync_ConnectedFormat" xml:space="preserve">
+    <value>LAN lauscht auf Port {0} · {1} Gerät(e) verbunden, Inhalte fließen in Echtzeit.</value>
+  </data>
+  <data name="Sync_WaitingFormat" xml:space="preserve">
+    <value>LAN lauscht auf Port {0} · wartet auf gekoppelte Geräte; Ereignisse werden erst gespeichert, dann in die Sendewarteschlange gestellt — offline geht nichts verloren.</value>
+  </data>
+  <data name="Bt_Disabled" xml:space="preserve">
+    <value>Bluetooth-Ausweichweg nicht aktiviert</value>
+  </data>
+  <data name="Bt_UnavailableFormat" xml:space="preserve">
+    <value>Bluetooth-Ausweichweg nicht verfügbar: {0}</value>
+  </data>
+  <data name="Bt_SyncingFormat" xml:space="preserve">
+    <value>Bluetooth-Ausweichweg · synchronisiert mit {0} (nur Text)</value>
+  </data>
+  <data name="Bt_Armed" xml:space="preserve">
+    <value>Bluetooth-Ausweichweg in Bereitschaft · das Telefon wechselt automatisch zu Bluetooth, wenn das LAN unerreichbar ist</value>
+  </data>
+  <data name="Bt_Starting" xml:space="preserve">
+    <value>Bluetooth-Ausweichweg startet…</value>
+  </data>
+  <data name="Bt_AdapterUnavailable" xml:space="preserve">
+    <value>Bluetooth-Adapter nicht verfügbar oder ausgeschaltet</value>
+  </data>
+  <data name="Ack_None" xml:space="preserve">
+    <value>Noch keine Bestätigung vom Peer</value>
+  </data>
+  <data name="Ack_UpToFormat" xml:space="preserve">
+    <value>Peer hat bis {0} bestätigt</value>
+  </data>
+  <data name="Transfer_ClearedFormat" xml:space="preserve">
+    <value>{0} Verlaufseinträge geleert (einschließlich Bilder). Das Leeren geschieht nur auf diesem PC.</value>
+  </data>
+  <data name="Transfer_ClearConfirmBody" xml:space="preserve">
+    <value>Gesamten Verlauf leeren?
+
+Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelöscht. Das Leeren geschieht nur auf diesem PC und löscht nie, was der Peer bereits erhalten hat. Vorher „Verlauf exportieren“ empfohlen.</value>
+  </data>
+  <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
+    <value>Noch einmal bestätigen: Das Leeren ist unwiderruflich. Gesamten Verlauf leeren?</value>
+  </data>
+  <data name="Transfer_ExportedFormat" xml:space="preserve">
+    <value>{0} Einträge exportiert (Klartext) → {1}</value>
+  </data>
+  <data name="Transfer_ExportWriteFailed" xml:space="preserve">
+    <value>Export fehlgeschlagen: Die gewählte Datei konnte nicht geschrieben werden.</value>
+  </data>
+  <data name="Transfer_ImportedFormat" xml:space="preserve">
+    <value>Import abgeschlossen: hinzugefügt {0} · vorhanden {1} · Konflikte {2}</value>
+  </data>
+  <data name="Transfer_ImportFailedFormat" xml:space="preserve">
+    <value>Import fehlgeschlagen: {0}. Nichts wurde geändert.</value>
+  </data>
+  <data name="Transfer_ImportReadFailed" xml:space="preserve">
+    <value>Import fehlgeschlagen: Die gewählte Datei konnte nicht gelesen werden.</value>
+  </data>
+  <data name="Transfer_FileFilter" xml:space="preserve">
+    <value>ClipSync-Verlaufsexport (*.jsonl)|*.jsonl|Alle Dateien (*.*)|*.*</value>
+  </data>
+  <data name="Transfer_Error_BadHeader" xml:space="preserve">
+    <value>dies ist keine ClipSync-Verlaufsexportdatei</value>
+  </data>
+  <data name="Transfer_Error_UnsupportedVersion" xml:space="preserve">
+    <value>die Dateiversion ist neuer, als diese Anwendung unterstützt</value>
+  </data>
+  <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
+    <value>die Datei ist beschädigt (fehlerhafter Datensatz)</value>
+  </data>
+  <data name="Transfer_Error_HashMismatch" xml:space="preserve">
+    <value>die Datei ist beschädigt (Hash-Prüfung fehlgeschlagen)</value>
+  </data>
+  <data name="Transfer_Error_CountMismatch" xml:space="preserve">
+    <value>die Datei ist unvollständig (Anzahl stimmt nicht mit dem Kopf überein)</value>
+  </data>
+  <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
+    <value>die Datei enthält einen Eintrag über den Größenlimits (Text 1 MiB / Bilder 16 MiB)</value>
+  </data>
+  <data name="Transfer_Error_Unknown" xml:space="preserve">
+    <value>unbekannter Fehler</value>
+  </data>
+  <data name="Hotkey_Applied" xml:space="preserve">
+    <value>Aktiv · in jeder Anwendung drücken, um das Schnellfenster aufzurufen</value>
+  </data>
+  <data name="Hotkey_Conflict" xml:space="preserve">
+    <value>Diese Kombination wird von einem anderen Programm belegt; versuchen Sie eine andere</value>
+  </data>
+  <data name="Attention_PeerDown" xml:space="preserve">
+    <value>Sync in dieser Sitzung nicht gestartet (Endpunktstart fehlgeschlagen)</value>
+  </data>
+  <data name="Attention_CaptureFaulted" xml:space="preserve">
+    <value>Zwischenablageerfassung beeinträchtigt (letzter Zugriff fehlgeschlagen)</value>
+  </data>
+  <data name="Attention_NoDevice" xml:space="preserve">
+    <value>Koppeln Sie ein Gerät, um den Sync zu starten</value>
+  </data>
+  <data name="Pairing_Title" xml:space="preserve">
+    <value>Neues Gerät koppeln</value>
+  </data>
+  <data name="Pairing_PeerDownBody" xml:space="preserve">
+    <value>Der Peer-Dienst läuft nicht; Kopplung ist in dieser Sitzung nicht möglich.</value>
+  </data>
+  <data name="Pairing_ScanInstruction" xml:space="preserve">
+    <value>Scannen Sie diesen Code mit ClipSync auf Ihrem Telefon. Der QR-Code enthält die Adresse dieses PCs, den Zertifikat-Fingerabdruck und ein Einmal-Token — niemals den Kopplungsschlüssel.</value>
+  </data>
+  <data name="Pairing_CountdownFormat" xml:space="preserve">
+    <value>Erneuert sich in {0:m\:ss}</value>
+  </data>
+  <data name="Pairing_NoLanAddress" xml:space="preserve">
+    <value>Keine LAN-Adresse erkannt. Bringen Sie diesen PC und das Telefon ins selbe Netzwerk (oder fügen Sie in den Einstellungen eine Tailscale-Adresse hinzu) und öffnen Sie dieses Fenster erneut.</value>
+  </data>
+  <data name="Pairing_VerifyHeading" xml:space="preserve">
+    <value>Vor dem Genehmigen am Telefon prüfen</value>
+  </data>
+  <data name="Pairing_PcName" xml:space="preserve">
+    <value>PC-Name</value>
+  </data>
+  <data name="Pairing_Fingerprint" xml:space="preserve">
+    <value>Zertifikat-Fingerabdruck</value>
+  </data>
+  <data name="Pairing_NewCode" xml:space="preserve">
+    <value>Neuer Code</value>
+  </data>
+  <data name="Approval_Title" xml:space="preserve">
+    <value>Kopplungsanfrage</value>
+  </data>
+  <data name="Approval_CloseReject" xml:space="preserve">
+    <value>Schließen und ablehnen</value>
+  </data>
+  <data name="Approval_Question" xml:space="preserve">
+    <value>Diesem Gerät die Kopplung erlauben?</value>
+  </data>
+  <data name="Approval_Body" xml:space="preserve">
+    <value>Ein Gerät hat mit dem von diesem PC angezeigten QR-Code eine Kopplung angefragt. Genehmigen Sie nur, wenn der Name unten zum Telefon in Ihrer Hand passt.</value>
+  </data>
+  <data name="Approval_PlatformAndroid" xml:space="preserve">
+    <value>Android-Gerät</value>
+  </data>
+  <data name="Approval_PlatformWindows" xml:space="preserve">
+    <value>Windows-Gerät</value>
+  </data>
+  <data name="Approval_RepairWarning" xml:space="preserve">
+    <value>Dieses Gerät war bereits gekoppelt. Genehmigen ersetzt seinen bestehenden Kopplungsschlüssel; die alte Installation funktioniert sofort nicht mehr.</value>
+  </data>
+  <data name="Approval_SupersedeNotice" xml:space="preserve">
+    <value>Ein gleichnamiges Gerät steht bereits in der Liste. Beim Genehmigen wird der alte Eintrag automatisch widerrufen und seine Sendewarteschlange geleert (gilt als dasselbe Telefon, das sich neu koppelt).</value>
+  </data>
+  <data name="Approval_Reject" xml:space="preserve">
+    <value>Ablehnen</value>
+  </data>
+  <data name="Approval_Approve" xml:space="preserve">
+    <value>Kopplung genehmigen</value>
+  </data>
+  <data name="Detail_Title" xml:space="preserve">
+    <value>Clip-Details</value>
+  </data>
+  <data name="Detail_SourceFormat" xml:space="preserve">
+    <value>Quelle: {0}</value>
+  </data>
+  <data name="Detail_TimeFormat" xml:space="preserve">
+    <value>Zeit: {0}</value>
+  </data>
+  <data name="Diag_Title" xml:space="preserve">
+    <value>ClipSync · Diagnoseprotokoll</value>
+  </data>
+  <data name="Diag_Heading" xml:space="preserve">
+    <value>Lokale Diagnose · nur Statuscodes und Zeiten, nie Zwischenablageinhalte</value>
+  </data>
+  <data name="Diag_CopyAll" xml:space="preserve">
+    <value>Alles kopieren</value>
+  </data>
+  <data name="Diag_Empty" xml:space="preserve">
+    <value>(noch keine Diagnoseeinträge)</value>
+  </data>
+</root>
