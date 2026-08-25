@@ -54,9 +54,17 @@ public static class HistoryDisplayOptions
         };
     }
 
-    /// <summary>The wire form of a scale key — the factor itself, per the roadmap key contract.</summary>
-    public static string StoredScaleFor(string? scaleKey) =>
-        ScaleFor(scaleKey).ToString(CultureInfo.InvariantCulture);
+    /// <summary>
+    /// The wire form of a scale key — the factor's literal spelling per the roadmap
+    /// key contract ("0.9" / "1.0" / "1.15"). Spelled out rather than formatted:
+    /// 1.0.ToString() drops the fraction ("1"), which breaks the documented wire form.
+    /// </summary>
+    public static string StoredScaleFor(string? scaleKey) => scaleKey switch
+    {
+        SmallScaleKey => "0.9",
+        LargeScaleKey => "1.15",
+        _ => "1.0",
+    };
 
     public static int LinesFor(string? linesKey) => linesKey switch
     {
