@@ -80,11 +80,14 @@ public sealed class PeerSyncIntegrationTests
         var session = await pair.DialAsync();
         await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ConnectedDeviceCount == 1));
         Assert.Equal([PeerPair.AndroidDeviceId], pair.Server.ConnectedDeviceIds);
-        Assert.True(Volatile.Read(ref changes) >= 1);
+        // ConnectedDeviceCount flips with Engine.IsReady, while SessionsChanged is raised
+        // separately on a worker thread — the count condition above can be observed before
+        // the handler runs, so the event itself must be awaited, not asserted.
+        await pair.WaitUntilAsync(() => Task.FromResult(Volatile.Read(ref changes) >= 1));
 
         await session.CloseAsync();
         await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ConnectedDeviceCount == 0));
-        Assert.True(Volatile.Read(ref changes) >= 2);
+        await pair.WaitUntilAsync(() => Task.FromResult(Volatile.Read(ref changes) >= 2));
     }
 
     [Fact]
