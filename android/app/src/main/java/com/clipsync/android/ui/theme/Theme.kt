@@ -3,6 +3,7 @@ package com.clipsync.android.ui.theme
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,7 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
@@ -29,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -191,7 +194,60 @@ val ClipSyncNightColors =
         grainAlpha = 0.042f,
     )
 
-val LocalClipSyncColors = staticCompositionLocalOf { ClipSyncDayColors }
+// A tracking local (not static): during the dur-theme crossfade the palette changes
+// every frame, and only actual readers should recompose — a static local would
+// re-tree the whole app per frame for the 450ms of the switch.
+val LocalClipSyncColors = compositionLocalOf { ClipSyncDayColors }
+
+/** The blend point where the semantic [ClipSyncColors.isDark] flag flips. */
+private const val THEME_BLEND_MIDPOINT = 0.5f
+
+/**
+ * Linear blend of two palettes for the day/night crossfade (tokens.md §9
+ * `dur-theme`). Colours interpolate per-channel; [ClipSyncColors.isDark] — a
+ * semantic flag, not a colour — flips at the halfway point.
+ */
+fun lerp(
+    start: ClipSyncColors,
+    stop: ClipSyncColors,
+    fraction: Float,
+): ClipSyncColors =
+    ClipSyncColors(
+        isDark = if (fraction < THEME_BLEND_MIDPOINT) start.isDark else stop.isDark,
+        bg = lerp(start.bg, stop.bg, fraction),
+        bgTop = lerp(start.bgTop, stop.bgTop, fraction),
+        bgMid = lerp(start.bgMid, stop.bgMid, fraction),
+        bgBottom = lerp(start.bgBottom, stop.bgBottom, fraction),
+        sf = lerp(start.sf, stop.sf, fraction),
+        sfUp = lerp(start.sfUp, stop.sfUp, fraction),
+        sfIn = lerp(start.sfIn, stop.sfIn, fraction),
+        sf3 = lerp(start.sf3, stop.sf3, fraction),
+        sfGradTop = lerp(start.sfGradTop, stop.sfGradTop, fraction),
+        ln = lerp(start.ln, stop.ln, fraction),
+        ln2 = lerp(start.ln2, stop.ln2, fraction),
+        t1 = lerp(start.t1, stop.t1, fraction),
+        t2 = lerp(start.t2, stop.t2, fraction),
+        t3 = lerp(start.t3, stop.t3, fraction),
+        t4 = lerp(start.t4, stop.t4, fraction),
+        flow = lerp(start.flow, stop.flow, fraction),
+        flowBg = lerp(start.flowBg, stop.flowBg, fraction),
+        flowLn = lerp(start.flowLn, stop.flowLn, fraction),
+        onFlow = lerp(start.onFlow, stop.onFlow, fraction),
+        act = lerp(start.act, stop.act, fraction),
+        actBg = lerp(start.actBg, stop.actBg, fraction),
+        actLn = lerp(start.actLn, stop.actLn, fraction),
+        err = lerp(start.err, stop.err, fraction),
+        errBg = lerp(start.errBg, stop.errBg, fraction),
+        errLn = lerp(start.errLn, stop.errLn, fraction),
+        dev1 = lerp(start.dev1, stop.dev1, fraction),
+        dev2 = lerp(start.dev2, stop.dev2, fraction),
+        dev3 = lerp(start.dev3, stop.dev3, fraction),
+        dev4 = lerp(start.dev4, stop.dev4, fraction),
+        dev5 = lerp(start.dev5, stop.dev5, fraction),
+        shadow = lerp(start.shadow, stop.shadow, fraction),
+        grainTint = lerp(start.grainTint, stop.grainTint, fraction),
+        grainAlpha = start.grainAlpha + (stop.grainAlpha - start.grainAlpha) * fraction,
+    )
 
 val clipSyncColors: ClipSyncColors
     @Composable
@@ -383,6 +439,9 @@ object CharterMotion {
     /** The needs-action outline pulse period: 2.6s infinite loop. */
     const val PULSE_MS = 2600
 
+    /** 日夜切换交叉淡化 (tokens.md §9 `dur-theme` 400–450ms; Android speaks the slower end). */
+    const val DUR_THEME_MS = 450
+
     /** A charter-eased tween for interaction transitions. */
     fun <T> spec(durationMillis: Int = DUR_STANDARD_MS): FiniteAnimationSpec<T> =
         tween(durationMillis = durationMillis, easing = Ease)
@@ -539,7 +598,7 @@ fun ClipSyncTheme(
     // Dynamic color is deliberately disabled: the charter fixes the palette to
     // the grey-blue ladder and bans hue 100–180 outright, which Material You
     // wallpaper extraction cannot guarantee.
-    val colors = if (darkTheme) ClipSyncNightColors else ClipSyncDayColors
+    val colors = themeColors(darkTheme, reducedMotion)
     CompositionLocalProvider(
         LocalClipSyncColors provides colors,
         LocalReducedMotion provides reducedMotion,
@@ -550,5 +609,33 @@ fun ClipSyncTheme(
             typography = ClipSyncTypography,
             content = content,
         )
+    }
+}
+
+/**
+ * The palette in effect: day/night switches crossfade over `dur-theme`
+ * (tokens.md §9, 450ms on the charter curve) instead of a hard cut — the whole
+ * surface ladder, text ladder and state hues glide together. 减弱动效 keeps the
+ * cut, exactly as before. The first composition starts on target, so app launch
+ * never plays the transition.
+ */
+@Composable
+private fun themeColors(
+    darkTheme: Boolean,
+    reducedMotion: Boolean,
+): ClipSyncColors {
+    val target = if (darkTheme) ClipSyncNightColors else ClipSyncDayColors
+    if (reducedMotion) {
+        return target
+    }
+    val night by animateFloatAsState(
+        targetValue = if (darkTheme) 1f else 0f,
+        animationSpec = tween(CharterMotion.DUR_THEME_MS, easing = CharterMotion.Ease),
+        label = "dur-theme",
+    )
+    return when (night) {
+        0f -> ClipSyncDayColors
+        1f -> ClipSyncNightColors
+        else -> lerp(ClipSyncDayColors, ClipSyncNightColors, night)
     }
 }

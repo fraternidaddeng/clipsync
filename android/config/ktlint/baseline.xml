@@ -1547,7 +1547,7 @@
         <error line="26" column="18" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/ui/theme/Theme.kt">
-        <error line="387" column="82" source="standard:function-signature" />
+        <error line="446" column="82" source="standard:function-signature" />
     </file>
     <file name="src/test/java/com/clipsync/android/e2e/AckIdempotencyTest.kt">
         <error line="36" column="20" source="standard:multiline-expression-wrapping" />
@@ -2320,8 +2320,5 @@
         <error line="133" column="57" source="standard:function-signature" />
         <error line="147" column="39" source="standard:multiline-expression-wrapping" />
         <error line="147" column="39" source="standard:function-signature" />
-    </file>
-    <file name="src/test/java/com/clipsync/android/ui/theme/CharterTokensTest.kt">
-        <error line="3" column="1" source="standard:import-ordering" />
     </file>
 </baseline>

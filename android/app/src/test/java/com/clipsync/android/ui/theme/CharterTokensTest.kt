@@ -1,10 +1,10 @@
 package com.clipsync.android.ui.theme
 
-import kotlin.math.abs
-import kotlin.math.pow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.math.abs
+import kotlin.math.pow
 
 /**
  * Charter token invariants (docs/design/tokens.md): the neighbour-hue ladder
@@ -38,6 +38,26 @@ class CharterTokensTest {
             ClipSyncDayColors.dev2.copy(alpha = 0.11f),
             ClipSyncDayColors.deviceBg(2),
         )
+    }
+
+    @Test
+    fun `theme crossfade blend hits both palettes exactly and mixes between`() {
+        // dur-theme (tokens.md §9): the endpoints must be the canonical palettes —
+        // a settled theme renders token-exact colours, never a rounding neighbour.
+        assertEquals(ClipSyncDayColors, lerp(ClipSyncDayColors, ClipSyncNightColors, 0f))
+        assertEquals(ClipSyncNightColors, lerp(ClipSyncDayColors, ClipSyncNightColors, 1f))
+
+        val mid = lerp(ClipSyncDayColors, ClipSyncNightColors, 0.5f)
+        // Colours really interpolate: the midpoint background sits strictly between
+        // the day and night backgrounds on every channel (day is lighter throughout).
+        assertTrue(mid.bg.red < ClipSyncDayColors.bg.red && mid.bg.red > ClipSyncNightColors.bg.red)
+        assertTrue(mid.bg.green < ClipSyncDayColors.bg.green && mid.bg.green > ClipSyncNightColors.bg.green)
+        assertTrue(mid.bg.blue < ClipSyncDayColors.bg.blue && mid.bg.blue > ClipSyncNightColors.bg.blue)
+        // Grain strength glides with the palette (day 0.030 → night 0.042).
+        assertEquals(0.036f, mid.grainAlpha, 1e-4f)
+        // The semantic flag flips at the midpoint, never a blended non-answer.
+        assertTrue(lerp(ClipSyncDayColors, ClipSyncNightColors, 0.49f).isDark.not())
+        assertTrue(mid.isDark)
     }
 
     @Test
