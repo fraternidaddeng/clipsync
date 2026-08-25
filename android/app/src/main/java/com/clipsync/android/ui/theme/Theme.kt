@@ -384,7 +384,8 @@ object CharterMotion {
     const val PULSE_MS = 2600
 
     /** A charter-eased tween for interaction transitions. */
-    fun <T> spec(durationMillis: Int = DUR_STANDARD_MS): FiniteAnimationSpec<T> = tween(durationMillis = durationMillis, easing = Ease)
+    fun <T> spec(durationMillis: Int = DUR_STANDARD_MS): FiniteAnimationSpec<T> =
+        tween(durationMillis = durationMillis, easing = Ease)
 }
 
 // ---------------------------------------------------------------------------

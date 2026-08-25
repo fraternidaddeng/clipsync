@@ -216,7 +216,8 @@ class HomeViewModel(
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T = HomeViewModel(history, writeCoordinator, pairingStore) as T
+                override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                    HomeViewModel(history, writeCoordinator, pairingStore) as T
             }
     }
 }

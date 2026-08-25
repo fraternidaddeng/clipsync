@@ -417,7 +417,7 @@ private fun ConduitDeviceRow(
                     style = ClipSyncType.caption,
                     color = c.t3,
                 )
-                (1..DEVICE_ACCENT_SLOTS).forEach { slot ->
+                for (slot in 1..DEVICE_ACCENT_SLOTS) {
                     val selected = slot == device.accentSlot
                     Box(
                         modifier = Modifier

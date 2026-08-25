@@ -320,7 +320,8 @@ class HealthViewModelTest {
 
                 override fun stop() = Unit
 
-                override fun readText(): ClipboardReadResult = text?.let { ClipboardReadResult.Success(it) } ?: ClipboardReadResult.Empty
+                override fun readText(): ClipboardReadResult =
+                    text?.let { ClipboardReadResult.Success(it) } ?: ClipboardReadResult.Empty
 
                 override fun health() = BackendHealth(BackendHealthState.HEALTHY, 1L)
             }
