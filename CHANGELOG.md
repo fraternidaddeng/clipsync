@@ -39,6 +39,8 @@
 
 ### 修复
 
+- [双端] 通路「对端写入」不再永远「未探测」（人工 QA 2026-08-25 缺陷 3）：Windows `/v1/peer/health` 新增 `clipboard_apply_text` 自报字段（`off`/`paused`/`unverified`/`applied`/`failed`——off/paused 是对端用户的姿态设置，其余是本会话最近一次真实剪贴板写入的证据，绝不「API 存在即就绪」）；Android 健康探测解析该字段并映射到对端写入段：已验证/已开启 → 就绪，对端关闭自动写入、对端已暂停、写入失败 → 降级并注明「依据：对端在 /v1/peer/health 的自报」。旧版对端或字段缺失时仍显示诚实的「未探测 · 对端未上报」而非负面猜测。IP 同步正常时顶栏不再停留「通路部分接通」。
+- [双端] 超限文本（>1 MiB）拒绝不再静默（人工 QA 2026-08-25 缺陷 4）：Windows 主窗历史页显示事实条「刚复制的文本超过 1 MiB：内容保留在系统剪贴板，未截断，但不记录历史、不同步」（「知道了」可关闭，下一次成功捕获自动退场），主窗隐藏在托盘时补发气泡通知；Android 自动捕获同场景弹出 Toast「复制的文本超过 1 MiB：仅保留在本机剪贴板，不同步（未截断）」。提示只陈述尺寸事实，绝不含剪贴内容；暂停/私密/去重等预期内的拒绝保持安静。
 - [Windows] 启动时不再遗留空控制台窗口：当进程被控制台方式拉起（如 `dotnet ClipSync.App.dll`，窗口标题为 dotnet.exe 路径）时，应用在 `OnStartup` 里检测并分离继承来的控制台（`GetConsoleWindow` + `FreeConsole`），保持纯托盘启动；应用运行时自身不派生任何子进程。
 - [Android] 通知栏不再回落成系统默认图标（绿色机器人）：小图标去掉主题属性着色（SystemUI 跨进程解析不了主题属性时会整体回退），三个通知渠道归入统一「剪贴同步」渠道组，前台服务通知补齐宪章配色（polyline 图标 + 流动蓝 #215F8F）、低优先级与无时间戳。
 - [Windows] 历史列表图片缩略图不再显示为空灰块：修复并发刷新下缩略图临时文件互相踢掉导致的静默失败（改为每次尝试独立临时名，输者复用赢者成品）；WIC 解码/编码故障（含 COMException）降级而非中断刷新；位图在 `FromEntry` 一次解码并冻结后绑定，容器回收不再重解码；确实无法出图时显示诚实的「无预览」占位而非空灰块。
@@ -58,6 +60,7 @@
 - CI 工作流重构为三作业：协议 schema/fixture 校验、Windows 构建 + 全部测试、Android 单元测试 + debug APK 组装；在 `cursor/**` / `feature/**` 分支与 PR 上运行。
 - 测试规模：444 Android JVM + 185 跨平台对端 + 39 Windows 应用层用例；新增 Windows↔Android 全链路脚本化集成测试与真实会话事件驱动的通路页验证。
 - 新增 `docs/verification-without-device.md`（绿测 ≠ 兼容的边界）、`docs/stage-gap-audit.md`、`docs/competitive-analysis.md`、`docs/design/ui-gap-audit.md`、`docs/manual-qa-checklist.md`、`docs/release-notes-template.md`；扩充 `docs/device-validation-matrix.md` 为脚本化检查清单。
+- [双端] 澄清人工 QA 2026-08-25 缺陷 5（「双端图片同步开关不一致：Win 开 / Android 关」）：两端代码默认值一致为**关**（Windows `image_sync` 设置缺省 False，Android `sync.image_sync` 缺省 false，均遵循 ADR 0004 图片同步默认关闭）；QA 机器上 Windows 显示「开」是该机此前手动开启后的持久化用户设置，不是默认值分歧，无需改代码。已在 `docs/manual-qa-results.md` 附注。
 
 ### 已知欠账（进行中）
 
