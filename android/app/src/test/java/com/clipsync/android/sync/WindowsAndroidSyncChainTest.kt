@@ -15,9 +15,10 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -112,8 +113,15 @@ class WindowsAndroidSyncChainTest {
 
     @After
     fun tearDown() {
+        // cancel() alone is fire-and-forget: the engine invokes onRemoteClipsCommitted inline
+        // on Dispatchers.Default, and sendAcks runs before raiseCommitted, so a test that only
+        // awaited the ack can reach tearDown while InboxDelivery.deliver is still executing.
+        // A leaked deliver would steal per-window budget from the JVM-global
+        // InboxDelivery.notificationGate installed by a later test (seen on CI:
+        // InboxDeliveryTest.imageArrivalCardsShareTheTextFloodGate counted 1 card, not 2).
+        // Joining guarantees nothing from this class survives into the next one.
+        runBlocking { engineScope.coroutineContext.job.cancelAndJoin() }
         InboxDelivery.writerFactory = InboxDelivery.defaultWriterFactory
-        engineScope.cancel()
         database.close()
     }
 

@@ -13,9 +13,10 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -91,7 +92,10 @@ class WindowsAndroidImageSyncChainTest {
 
     @After
     fun tearDown() {
-        engineScope.cancel()
+        // cancel() alone is fire-and-forget: joining keeps a still-running engine from racing
+        // the database close / blob-directory delete below or leaking work into later tests
+        // (same JVM-wide-state hazard as WindowsAndroidSyncChainTest.tearDown).
+        runBlocking { engineScope.coroutineContext.job.cancelAndJoin() }
         database.close()
         mediaRoot.deleteRecursively()
     }
