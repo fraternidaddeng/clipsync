@@ -1,18 +1,18 @@
 # 无实体设备的自动化验证边界（verification without device）
 
-- 日期：2026-08-24
-- 分支：`cursor/implement-charter-ui-1991`
+- 日期：2026-08-24（2026-08-25 更新套件规模与运行状态，核对至 main `d573080`）
+- 分支：`main`（原 `cursor/implement-charter-ui-1991`，已经 PR #5 全部并入）
 - 目的：明确「JVM/CI 自动化测试已经证明了什么」与「必须在实体设备上人工 QA 什么」，避免把绿色的测试结果误读为整机可用性声明。实体机验收标准见 `docs/device-validation-matrix.md`。
 
 ## 如何运行
 
-| 套件 | 命令 | 运行环境 | 当前规模 |
+| 套件 | 命令 | 运行环境 | 当前规模（main `d573080`，全绿） |
 |---|---|---|---|
-| Android JVM 单元/集成测试 | `cd android && ./gradlew testDebugUnitTest` | 任意装有 JDK 17+ 与 Android SDK 的机器（无需模拟器/设备；Robolectric 提供 Android 框架） | 496 个用例 |
-| Android 仪器化测试（androidTest） | `cd android && ./gradlew connectedDebugAndroidTest` | 已连接的 Android 设备或模拟器（API 29+；CI 上需要可用的 KVM）。Room 1→2 迁移、DAO 真 SQLite、前台服务启停冒烟；执行记录与嵌套 KVM 失败的绕行见 `docs/android-instrumentation-test-report.md` | 6 个用例（迁移 2 + DAO 3 + FGS 1） |
-| Windows 核心/对端测试 | `cd windows && dotnet test ClipSync.Tests/ClipSync.Tests.csproj` | 任意 .NET 8 平台（Linux/macOS/Windows；真实 Kestrel + TLS + WebSocket 回环） | 378 个用例 |
-| Windows 应用层测试 | `cd windows && dotnet test ClipSync.App.Tests/ClipSync.App.Tests.csproj` | 仅 Windows（WPF/DPAPI/Win32 剪贴板；CI 的 `windows-latest` 作业执行） | 59 个测试方法 |
-| 协议 fixture 校验 | `python3 scripts/validate-protocol.py` 或 `scripts/validate-protocol.ps1` | 任意平台 | v1：12 valid + 37 invalid；v2：15 valid + 15 invalid；配对：5 valid + 7 invalid |
+| Android JVM 单元/集成测试 | `cd android && ./gradlew testDebugUnitTest` | 任意装有 JDK 17+ 与 Android SDK 的机器（无需模拟器/设备；Robolectric 提供 Android 框架） | 652 个用例（其中 1 例条件性跳过） |
+| Android 仪器化测试（androidTest） | `cd android && ./gradlew connectedDebugAndroidTest` | 已连接的 Android 设备或模拟器（API 29+；CI 上需要可用的 KVM）。Room 迁移（1→2、2→3）、DAO 真 SQLite、前台服务启停冒烟；执行记录与嵌套 KVM 失败的绕行见 `docs/android-instrumentation-test-report.md` | 7 个用例（迁移 3 + DAO 3 + FGS 1） |
+| Windows 核心/对端测试 | `cd windows && dotnet test ClipSync.Tests/ClipSync.Tests.csproj` | 任意 .NET 8 平台（Linux/macOS/Windows；真实 Kestrel + TLS + WebSocket 回环） | 484 个用例 |
+| Windows 应用层测试 | `cd windows && dotnet test ClipSync.App.Tests/ClipSync.App.Tests.csproj` | 仅 Windows（WPF/DPAPI/Win32 剪贴板；CI 的 `windows-latest` 作业执行——2026-08-25 Actions 启用后实跑，`d573080` 时点运行 32850466841 全绿） | 186 个用例 |
+| 协议 fixture 校验 | `python3 scripts/validate-protocol.py` 或 `scripts/validate-protocol.ps1` | 任意平台 | v1：12 valid + 37 invalid；v2：15 valid + 15 invalid；配对：5 valid + 7 invalid；bt1：6 valid + 13 invalid 握手 fixtures，另 3 组握手向量 + 7 组帧向量 |
 
 非 Windows 机器上可用 `dotnet build ClipSync.App.Tests/ClipSync.App.Tests.csproj -p:EnableWindowsTargeting=true` 做编译级检查，但 WPF 测试本体只能在 Windows 上执行。
 
@@ -42,7 +42,7 @@
 - 暂停/私密在**每一层**关闭出站：捕获管理器、settings 闸门包裹的队列、引擎 outboundAllowed；恢复后下一次排空 tick 补投，无丢失。
 - 自动写入的 Windows 剪贴不会回传（共享写协调器的一次性内容抑制），且相同文本的真实二次复制仍然上行。
 
-既有 Android 套件继续覆盖：`SyncEngine` 协议状态机全错误路径、`RoomSyncRepository`/`ClipSyncRepository` 事务不变量、重连退避、`SyncSupervisor` 生命周期、pinned-TLS 连接器（MockWebServer + 真 TLS）、配对存取、开机恢复链、通知策略、以及 Shizuku/ADB 日志/悬浮窗后端的**纯逻辑**部分（解析器、状态机、数据最小化不变量——注意这些后端的真实读取要靠实体 ROM 验证）。
+既有 Android 套件继续覆盖：`SyncEngine` 协议状态机全错误路径、`RoomSyncRepository`/`ClipSyncRepository` 事务不变量、重连退避、`SyncSupervisor` 生命周期、pinned-TLS 连接器（MockWebServer + 真 TLS）、配对存取、开机恢复链、通知策略、以及 Shizuku/ADB 日志/悬浮窗后端的**纯逻辑**部分（解析器、状态机、数据最小化不变量——注意这些后端的真实读取要靠实体 ROM 验证）。2026-08-25 后并入的套件还覆盖：bt1 蓝牙安全信道（握手正反例、帧层篡改/重放/乱序/截断负例、传输层——但**无真实蓝牙 I/O**，RFCOMM 实体行为见 spike 报告与阶段 5 计划）、设置闸门（敏感标记跳过、收件通知、图片同步 fail-closed 默认）、19 语语言目录与逐键齐全性钉死、E2E 压力套件。
 
 ### 图片同步（协议 v2，从 feature/stage-4 移植；双端 + 共享 fixture）
 
@@ -53,7 +53,7 @@
 3. **v1/v2 共存边界（双端）**——v1 解析器必须拒绝全部 v2 图片帧（两端各有专测），文本 fixture 与 v1 校验保持冻结；Windows 存储层测试覆盖 `local_only` 终止标记（v2 发图给 v1 peer 时推进游标的通道）的落库、传播与幂等。
 4. **Windows 端到端集成（`Peer/PeerSyncIntegrationTests`）**——`ImageClipTravelsOverV2WithBytesIntact`：真实 Kestrel + TLS pin + WebSocket 的 v2 会话上，图片经 begin/chunk/end 分块传输、重组、内容寻址落库，字节精确一致；配套用例覆盖 ack 后删除的 tombstone 传播。存储层由 `MediaBlobStoreTests`（幂等提交、GIF 魔数拒绝、过期临时件回收）、schema-3 迁移测试与捕获策略测试补齐。
 
-Android 侧的引擎级图片链路（`SyncEngine` 的 chunk 状态机在真实会话事件下的行为）目前依赖上述 wire 层往返测试与 Windows 集成测试间接覆盖，Android 自己的会话级图片集成测试尚未补齐——这是已知缺口，不是已证明项。
+Android 侧的引擎级图片链路（`SyncEngine` 的 chunk 状态机在真实会话事件下的行为）目前依赖上述 wire 层往返测试与 Windows 集成测试间接覆盖；`SyncEngineTest` 已有 v1 会话图片降级 `local_only` 与 v2 会话图片公告两条引擎级直测，但完整的会话级 chunk 传输集成测试（如 `WindowsAndroidSyncChainTest` 的图片版）仍未补齐——这是已知缺口，不是已证明项。
 
 ### Windows 应用层（`windows/ClipSync.App.Tests`，仅 Windows CI 执行）
 
@@ -64,6 +64,8 @@ Android 侧的引擎级图片链路（`SyncEngine` 的 chunk 状态机在真实�
 ## 自动化测试**不能**证明、必须人工 QA 的
 
 以下每一项都超出 JVM/回环测试的能力范围（依赖真实 OS 行为、OEM 策略、硬件或人的观感）。上线前按清单逐项过，实体机记录格式见 `docs/device-validation-matrix.md`。
+
+> **进展（2026-08-25）**：首轮人工 QA 会话（`docs/manual-qa-results.md`，真 Windows × 一台 D3 系统族真机）触及了本清单的一小部分——前台双向文本同步、回环抑制（单样本）、同文二次复制、Windows 暂停捕获；该轮判定「不能出 RC」，矩阵槽位不变。下列复选框仍是发布前的完整人工验收范围，逐项勾选须以按清单执行的记录为准，不因该轮部分触及而改动。
 
 ### Android（实体机，至少覆盖矩阵中的四个系统族）
 
