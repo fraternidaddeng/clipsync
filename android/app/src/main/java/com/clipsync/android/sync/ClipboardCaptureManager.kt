@@ -18,6 +18,12 @@ enum class CaptureOutcome {
     /** 仅暂停自动捕获 (plan 5.2): auto-capture is off while sync and inbound keep running. */
     SKIPPED_CAPTURE_PAUSED,
 
+    /**
+     * 跳过敏感内容 (settings-roadmap P0-4): the source app marked this clip sensitive and the
+     * preference (default on) says such clips enter neither history nor sync.
+     */
+    SKIPPED_SENSITIVE,
+
     /** The change is a clip this app just wrote itself (auto-apply, history copy). */
     SKIPPED_OWN_WRITE,
 
@@ -62,6 +68,12 @@ class ClipboardCaptureManager(
             // when both are set, and this one stops only local auto-capture — explicit
             // share/tile sends and inbound delivery are gated elsewhere and keep working.
             return CaptureOutcome.SKIPPED_CAPTURE_PAUSED
+        }
+        if (change.isSensitive && settings.skipSensitiveEnabled) {
+            // 跳过敏感内容 (settings-roadmap P0-4): a source-app sensitive marker keeps the
+            // clip out of history and sync. Only auto-capture is gated here — the share
+            // panel is an explicit user action and bypasses this manager entirely.
+            return CaptureOutcome.SKIPPED_SENSITIVE
         }
         if (change.isImage) {
             if (!settings.imageSyncEnabled) {

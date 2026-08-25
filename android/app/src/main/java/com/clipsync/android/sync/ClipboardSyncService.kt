@@ -185,6 +185,9 @@ class ClipboardSyncService : Service() {
                         // their own opt-in write gate (ADR 0004), independent of the text one.
                         val autoApply = InboxDelivery.autoApplyAllowed(settings)
                         val autoApplyImage = InboxDelivery.autoApplyImagesAllowed(settings)
+                        // 收到内容通知 (settings-roadmap P1-8): re-read per batch like the
+                        // apply gates, so toggling applies to the very next received clip.
+                        val notify = InboxDelivery.inboxNotificationsAllowed(settings)
                         val newestEventId = committed.lastOrNull()?.eventId
                         committed.forEach { applied ->
                             if (applied.isImage) {
@@ -194,6 +197,7 @@ class ClipboardSyncService : Service() {
                                     applied.contentHash,
                                     applied.mimeType,
                                     autoApply = autoApplyImage && applied.eventId == newestEventId,
+                                    notify = notify,
                                 )
                             } else {
                                 InboxDelivery.deliver(
@@ -201,6 +205,7 @@ class ClipboardSyncService : Service() {
                                     applied.eventId,
                                     applied.content,
                                     autoApply = autoApply && applied.eventId == newestEventId,
+                                    notify = notify,
                                 )
                             }
                         }

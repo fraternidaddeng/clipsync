@@ -52,7 +52,13 @@ internal class ShizukuClipboardSessionProxy(
             }
             reply.readException()
             when (reply.readInt()) {
-                ShizukuClipboardBinderContract.READ_TEXT -> SessionRead.Text(reply.readString().orEmpty())
+                ShizukuClipboardBinderContract.READ_TEXT ->
+                    SessionRead.Text(
+                        reply.readString().orEmpty(),
+                        // Trailing sensitive flag; a reply from an older service is short
+                        // here and readInt past the parcel end yields 0 (not sensitive).
+                        isSensitive = reply.readInt() == 1,
+                    )
                 ShizukuClipboardBinderContract.READ_EMPTY -> SessionRead.Empty
                 else -> SessionRead.Failed(
                     reply.readString() ?: ShizukuErrorCodes.USERSERVICE_DEAD,

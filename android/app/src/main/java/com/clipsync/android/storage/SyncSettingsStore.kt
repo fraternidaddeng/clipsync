@@ -110,6 +110,54 @@ class SyncSettingsStore(
         get() = keyValues.read(KEY_BLUETOOTH_PEER_NAME)?.takeIf { it.isNotEmpty() }
         set(value) = write(KEY_BLUETOOTH_PEER_NAME, value.orEmpty())
 
+    /**
+     * 历史字号 (settings-roadmap P0-1): multiplies only the history content text (preview
+     * body), never the chrome — group headers, meta lines and buttons keep the charter type
+     * scale. Applied on top of sp, so the system font size still stacks. Only the three
+     * roadmap steps are valid; anything else falls back to 标准.
+     */
+    var historyFontScale: Float
+        get() =
+            keyValues
+                .read(KEY_HISTORY_FONT_SCALE)
+                ?.toFloatOrNull()
+                ?.takeIf { it in HISTORY_FONT_SCALES } ?: HISTORY_FONT_SCALE_STANDARD
+        set(value) {
+            require(value in HISTORY_FONT_SCALES) { "The history font scale must be one of $HISTORY_FONT_SCALES." }
+            write(KEY_HISTORY_FONT_SCALE, value.toString())
+        }
+
+    /** 预览行数 (settings-roadmap P1-7): history preview maxLines, 2 / 4 / 6, default 4. */
+    var previewLines: Int
+        get() =
+            keyValues
+                .read(KEY_PREVIEW_LINES)
+                ?.toIntOrNull()
+                ?.takeIf { it in PREVIEW_LINE_CHOICES } ?: DEFAULT_PREVIEW_LINES
+        set(value) {
+            require(value in PREVIEW_LINE_CHOICES) { "The preview line count must be one of $PREVIEW_LINE_CHOICES." }
+            write(KEY_PREVIEW_LINES, value.toString())
+        }
+
+    /**
+     * 跳过敏感内容 (settings-roadmap P0-4, product-scope 敏感来源排除): copies whose
+     * ClipDescription carries the sensitive marker (password managers set it) are neither
+     * recorded nor synced. On by default; relies on the source app setting the marker.
+     * Explicit share-panel sends are a deliberate user action and are never gated by this.
+     */
+    var skipSensitiveEnabled: Boolean
+        get() = readBoolean(KEY_SKIP_SENSITIVE, default = true)
+        set(value) = write(KEY_SKIP_SENSITIVE, value.toString())
+
+    /**
+     * 收到内容通知 (settings-roadmap P1-8): the in-app switch for the inbox notifications
+     * (「收到内容」 and the content-free applied status). On by default; sync and history
+     * recording continue unchanged when off — only this notification surface goes quiet.
+     */
+    var inboxNotifyEnabled: Boolean
+        get() = readBoolean(KEY_INBOX_NOTIFY, default = true)
+        set(value) = write(KEY_INBOX_NOTIFY, value.toString())
+
     fun retentionPolicy(): RetentionPolicy =
         RetentionPolicy(
             maximumEntries = retentionMaxEntries,
@@ -150,6 +198,25 @@ class SyncSettingsStore(
         const val DEFAULT_MAX_ENTRIES = 2_000
         const val DEFAULT_MAX_AGE_DAYS = 30
         const val DEFAULT_MAX_TEXT_BYTES = 1_048_576
+
+        /** 历史字号 steps (settings-roadmap P0-1): 小 / 标准 / 大. */
+        const val HISTORY_FONT_SCALE_SMALL = 0.9f
+        const val HISTORY_FONT_SCALE_STANDARD = 1.0f
+        const val HISTORY_FONT_SCALE_LARGE = 1.15f
+        val HISTORY_FONT_SCALES = listOf(HISTORY_FONT_SCALE_SMALL, HISTORY_FONT_SCALE_STANDARD, HISTORY_FONT_SCALE_LARGE)
+
+        /** 预览行数 choices (settings-roadmap P1-7). */
+        val PREVIEW_LINE_CHOICES = listOf(2, 4, 6)
+        const val DEFAULT_PREVIEW_LINES = 4
+
+        /** 保留时长 stepper bounds, aligned with the Windows 偏好·存留 stepper. */
+        const val MIN_RETENTION_DAYS = 1
+        const val MAX_RETENTION_DAYS = 3_650
+
+        /** 保留条数 stepper bounds (settings-roadmap P1-15). */
+        const val MIN_MAX_ENTRIES = 100
+        const val MAX_MAX_ENTRIES = 10_000
+
         private const val MILLIS_PER_DAY = 24L * 60 * 60 * 1_000
 
         /** Far above any real clip age; `now - this` stays negative, so no row ever matches. */
@@ -169,5 +236,12 @@ class SyncSettingsStore(
         private const val KEY_BLUETOOTH_FALLBACK = "sync.bluetooth_fallback"
         private const val KEY_BLUETOOTH_PEER_ADDRESS = "sync.bluetooth_peer_address"
         private const val KEY_BLUETOOTH_PEER_NAME = "sync.bluetooth_peer_name"
+
+        // Non-sync keys follow the roadmap prefix rule: ui. / capture. / notify.
+        // (existing sync.* keys stay untouched; a published key is never renamed).
+        private const val KEY_HISTORY_FONT_SCALE = "ui.history_font_scale"
+        private const val KEY_PREVIEW_LINES = "ui.preview_lines"
+        private const val KEY_SKIP_SENSITIVE = "capture.skip_sensitive"
+        private const val KEY_INBOX_NOTIFY = "notify.inbox"
     }
 }

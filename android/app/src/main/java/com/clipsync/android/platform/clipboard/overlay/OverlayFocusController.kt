@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import com.clipsync.android.platform.clipboard.ClipSensitivity
 import com.clipsync.android.platform.clipboard.ClipboardReadResult
 
 /**
@@ -111,7 +112,7 @@ class OverlayFocusController internal constructor(
                     if (clip.value.isNotEmpty()) {
                         lastError = null
                         lastSuccessAt = nowEpochMillis()
-                        return ClipboardReadResult.Success(clip.value)
+                        return ClipboardReadResult.Success(clip.value, clip.isSensitive)
                     }
                     lastFailure = ClipboardReadResult.Empty
                 }
@@ -236,7 +237,11 @@ data class OverlayWindowSpec(
 )
 
 sealed interface OverlayClipRead {
-    data class Text(val value: String) : OverlayClipRead
+    data class Text(
+        val value: String,
+        /** The source app marked the clip sensitive on its ClipDescription. */
+        val isSensitive: Boolean = false,
+    ) : OverlayClipRead
 
     data object Empty : OverlayClipRead
 
@@ -309,7 +314,10 @@ internal class AndroidOverlayPlatform(
             }
             val text = clip.getItemAt(0).text?.toString()
             if (!text.isNullOrEmpty()) {
-                return OverlayClipRead.Text(text)
+                return OverlayClipRead.Text(
+                    text,
+                    ClipSensitivity.isMarkedSensitive(clip.description),
+                )
             }
             val description = clip.description
             val hasTextMime = description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) ||

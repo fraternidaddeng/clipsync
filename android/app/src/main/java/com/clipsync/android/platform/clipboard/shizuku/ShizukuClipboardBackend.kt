@@ -149,7 +149,7 @@ class ShizukuClipboardBackend internal constructor(
             is SessionRead.Text -> {
                 lastReadSuccessAtEpochMillis = nowEpochMillis()
                 lastErrorCode = null
-                ClipboardReadResult.Success(read.value)
+                ClipboardReadResult.Success(read.value, read.isSensitive)
             }
             SessionRead.Empty -> ClipboardReadResult.Empty
             is SessionRead.Failed -> {
@@ -228,6 +228,7 @@ class ShizukuClipboardBackend internal constructor(
                         text = read.text,
                         contentHash = hash,
                         observedAtEpochMillis = observedAt,
+                        isSensitive = read.isSensitive,
                     ),
                 )
             }
