@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="App_WindowTitle" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Brand_Wordmark" xml:space="preserve">
+    <value>ClipSync</value>
+  </data>
+  <data name="Chrome_Minimize" xml:space="preserve">
+    <value>Minimize</value>
+  </data>
+  <data name="Chrome_MaximizeRestore" xml:space="preserve">
+    <value>Maximize or restore</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Common_Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Common_Acknowledge" xml:space="preserve">
+    <value>Got it</value>
+  </data>
+  <data name="Common_FollowSystem" xml:space="preserve">
+    <value>Follow system</value>
+  </data>
+  <data name="Common_ClearHistory" xml:space="preserve">
+    <value>Clear history</value>
+  </data>
+  <data name="Common_ExportHistory" xml:space="preserve">
+    <value>Export history</value>
+  </data>
+  <data name="Common_ImportHistory" xml:space="preserve">
+    <value>Import history</value>
+  </data>
+  <data name="Common_PauseCapture" xml:space="preserve">
+    <value>Pause capture</value>
+  </data>
+  <data name="Common_PrivateMode" xml:space="preserve">
+    <value>Private mode</value>
+  </data>
+  <data name="Nav_History" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="Nav_Conduit" xml:space="preserve">
+    <value>Conduit</value>
+  </data>
+  <data name="Nav_Prefs" xml:space="preserve">
+    <value>Preferences</value>
+  </data>
+  <data name="History_Title" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="History_Subtitle" xml:space="preserve">
+    <value>Clips from this PC and paired devices · cleanup affects this device only</value>
+  </data>
+  <data name="History_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Filter_All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Filter_Link" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="Filter_Otp" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Filter_Email" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="Filter_Credential" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Filter_Plain" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Format_Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="History_NoPreview" xml:space="preserve">
+    <value>No preview</value>
+  </data>
+  <data name="History_LocalOnlyBadge" xml:space="preserve">
+    <value>Kept on this device</value>
+  </data>
+  <data name="History_Empty_Unpaired_Title" xml:space="preserve">
+    <value>First, connect both ends</value>
+  </data>
+  <data name="History_Empty_Paired_Title" xml:space="preserve">
+    <value>Awaiting the first clip</value>
+  </data>
+  <data name="History_Empty_Unpaired_Body" xml:space="preserve">
+    <value>Not paired with a phone yet. The pairing entrance is in the network segment of the Conduit page.</value>
+  </data>
+  <data name="History_Empty_Paired_Body" xml:space="preserve">
+    <value>Copy text on either device — it appears here and flows to the other side.</value>
+  </data>
+  <data name="History_Empty_GoPair" xml:space="preserve">
+    <value>Pair now ›</value>
+  </data>
+  <data name="History_NoMatch_Prefix" xml:space="preserve">
+    <value>No entries match “</value>
+  </data>
+  <data name="History_NoMatch_Suffix" xml:space="preserve">
+    <value>”</value>
+  </data>
+  <data name="History_Empty_Filtered" xml:space="preserve">
+    <value>No entries of this type · try another filter</value>
+  </data>
+  <data name="History_CopySelected" xml:space="preserve">
+    <value>Copy selected</value>
+  </data>
+  <data name="History_ViewDetail" xml:space="preserve">
+    <value>View details</value>
+  </data>
+  <data name="History_DeleteSelected" xml:space="preserve">
+    <value>Delete selected</value>
+  </data>
+  <data name="History_UnknownSource" xml:space="preserve">
+    <value>Unknown source</value>
+  </data>
+  <data name="History_LocalSource" xml:space="preserve">
+    <value>This PC</value>
+  </data>
+  <data name="Conduit_Title" xml:space="preserve">
+    <value>Conduit</value>
+  </data>
+  <data name="Conduit_Subtitle" xml:space="preserve">
+    <value>Content flows left to right through four segments · reading order is troubleshooting order</value>
+  </data>
+  <data name="Conduit_Capture_Name" xml:space="preserve">
+    <value>Local capture</value>
+  </data>
+  <data name="Conduit_Capture_Ready" xml:space="preserve">
+    <value>Ready · listening for Ctrl+C</value>
+  </data>
+  <data name="Conduit_Status_Paused" xml:space="preserve">
+    <value>Paused · not recording</value>
+  </data>
+  <data name="Conduit_Status_Private" xml:space="preserve">
+    <value>Private mode · leaves no trace</value>
+  </data>
+  <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
+    <value>Capture degraded · clipboard access failed</value>
+  </data>
+  <data name="Conduit_Capture_Detail" xml:space="preserve">
+    <value>Private mode and blocked processes stop content at this segment.</value>
+  </data>
+  <data name="Conduit_Service_Name" xml:space="preserve">
+    <value>Local service</value>
+  </data>
+  <data name="Conduit_Service_ReadyPrefix" xml:space="preserve">
+    <value>Ready · history </value>
+  </data>
+  <data name="Conduit_Service_ReadyInfix" xml:space="preserve">
+    <value> · outbox </value>
+  </data>
+  <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
+    <value>Events land in the store before the outbox · </value>
+  </data>
+  <data name="Conduit_Network_Name" xml:space="preserve">
+    <value>Network</value>
+  </data>
+  <data name="Conduit_Network_ReadyPrefix" xml:space="preserve">
+    <value>Ready · listening on :</value>
+  </data>
+  <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
+    <value> · connected </value>
+  </data>
+  <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
+    <value> device(s)</value>
+  </data>
+  <data name="Conduit_Network_Down" xml:space="preserve">
+    <value>Not running · sync off</value>
+  </data>
+  <data name="Conduit_Peer_Name" xml:space="preserve">
+    <value>Peer write</value>
+  </data>
+  <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
+    <value>Paired </value>
+  </data>
+  <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
+    <value> device(s)</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
+    <value>Remote text is written to this PC’s clipboard automatically.</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
+    <value>Auto-apply is off: remote content stays in history only and needs manual copying.</value>
+  </data>
+  <data name="Conduit_Devices_Header" xml:space="preserve">
+    <value>Network segment · paired devices</value>
+  </data>
+  <data name="Conduit_Connection_Header" xml:space="preserve">
+    <value>Network segment · connection</value>
+  </data>
+  <data name="Conduit_CleanupStale" xml:space="preserve">
+    <value>Clean up</value>
+  </data>
+  <data name="Conduit_Bluetooth_Title" xml:space="preserve">
+    <value>Bluetooth fallback</value>
+  </data>
+  <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
+    <value>Off by default. When the LAN is blocked by a VPN or firewall, a phone already Bluetooth-paired in system settings keeps syncing text (no images, slower).</value>
+  </data>
+  <data name="Conduit_ExtraBind_Title" xml:space="preserve">
+    <value>Extra listen addresses</value>
+  </data>
+  <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
+    <value>For virtual-adapter addresses such as Tailscale / WireGuard. No public relay is provided.</value>
+  </data>
+  <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
+    <value>Applies after restart</value>
+  </data>
+  <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
+    <value> · separate multiple addresses with commas</value>
+  </data>
+  <data name="Conduit_Fingerprint_Title" xml:space="preserve">
+    <value>This PC’s certificate fingerprint</value>
+  </data>
+  <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
+    <value>When pairing, compare it group by group with the fingerprint shown on the phone. A fingerprint change makes every paired device ask to re-confirm.</value>
+  </data>
+  <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
+    <value>The peer service is not running; no fingerprint to show this session.</value>
+  </data>
+  <data name="Device_RevokedBadge" xml:space="preserve">
+    <value>Revoked</value>
+  </data>
+  <data name="Device_AccentLabel" xml:space="preserve">
+    <value>Device colour</value>
+  </data>
+  <data name="Device_AccentManual" xml:space="preserve">
+    <value>Manually set</value>
+  </data>
+  <data name="Device_AccentByOrder" xml:space="preserve">
+    <value>Follows pairing order</value>
+  </data>
+  <data name="Device_Rename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="Device_RevokeSelected" xml:space="preserve">
+    <value>Revoke selected device</value>
+  </data>
+  <data name="Device_RevokeNote" xml:space="preserve">
+    <value>Revoking disconnects the device immediately and voids its pairing key; content it already received is never deleted remotely. Pairing again after revocation counts as a new device. When the same phone re-pairs under a new identity, the old record is revoked automatically and its outbox cleared.</value>
+  </data>
+  <data name="Device_UnknownRemote" xml:space="preserve">
+    <value>Remote device</value>
+  </data>
+  <data name="Device_PairedFallback" xml:space="preserve">
+    <value>Paired device</value>
+  </data>
+  <data name="Device_UnknownFallback" xml:space="preserve">
+    <value>Unknown device</value>
+  </data>
+  <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
+    <value>{0} · {1} pending in the outbox</value>
+  </data>
+  <data name="Stale_BannerBacklogFormat" xml:space="preserve">
+    <value>Detected {0} device(s) that look like stale leftovers; {1} pending item(s) are inflating the outbox count. Cleanup revokes them and clears their outboxes.</value>
+  </data>
+  <data name="Stale_BannerFormat" xml:space="preserve">
+    <value>Detected {0} device(s) that look like stale leftovers. Cleanup revokes them; content they already received is unaffected.</value>
+  </data>
+  <data name="Stale_DuplicateBadge" xml:space="preserve">
+    <value>Likely duplicate-pairing leftover</value>
+  </data>
+  <data name="Stale_NeverConnected" xml:space="preserve">
+    <value>Never connected since pairing</value>
+  </data>
+  <data name="Stale_UnseenDaysFormat" xml:space="preserve">
+    <value>Not connected for over {0} days</value>
+  </data>
+  <data name="Prefs_Title" xml:space="preserve">
+    <value>Preferences</value>
+  </data>
+  <data name="Prefs_Subtitle" xml:space="preserve">
+    <value>Changes apply immediately · clipboard content never appears in logs</value>
+  </data>
+  <data name="Prefs_Group_Display" xml:space="preserve">
+    <value>DISPLAY</value>
+  </data>
+  <data name="Prefs_Group_Capture" xml:space="preserve">
+    <value>CAPTURE</value>
+  </data>
+  <data name="Prefs_Group_Sync" xml:space="preserve">
+    <value>SYNC</value>
+  </data>
+  <data name="Prefs_Group_Retention" xml:space="preserve">
+    <value>RETENTION</value>
+  </data>
+  <data name="Prefs_Group_Startup" xml:space="preserve">
+    <value>STARTUP</value>
+  </data>
+  <data name="Prefs_Group_Data" xml:space="preserve">
+    <value>DATA</value>
+  </data>
+  <data name="Prefs_FontScale_Title" xml:space="preserve">
+    <value>History text size</value>
+  </data>
+  <data name="Prefs_FontScale_Desc" xml:space="preserve">
+    <value>Scales only clip content text (history previews, detail body, tray flyout); group headers, badges, and buttons are unchanged.</value>
+  </data>
+  <data name="Prefs_FontScale_Small" xml:space="preserve">
+    <value>Small</value>
+  </data>
+  <data name="Prefs_FontScale_Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Prefs_FontScale_Large" xml:space="preserve">
+    <value>Large</value>
+  </data>
+  <data name="Prefs_PreviewLines_Title" xml:space="preserve">
+    <value>Preview lines</value>
+  </data>
+  <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
+    <value>Maximum body lines shown per entry in the history list; overflow is truncated with an ellipsis — open details for the full content.</value>
+  </data>
+  <data name="Prefs_PreviewLines_Two" xml:space="preserve">
+    <value>2 lines</value>
+  </data>
+  <data name="Prefs_PreviewLines_Four" xml:space="preserve">
+    <value>4 lines</value>
+  </data>
+  <data name="Prefs_PreviewLines_Six" xml:space="preserve">
+    <value>6 lines</value>
+  </data>
+  <data name="Prefs_Theme_Title" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="Prefs_Theme_Desc" xml:space="preserve">
+    <value>The window’s day/night palette; the tray icon lives in the taskbar and always follows the taskbar’s shade.</value>
+  </data>
+  <data name="Prefs_Theme_Day" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="Prefs_Theme_Night" xml:space="preserve">
+    <value>Night</value>
+  </data>
+  <data name="Prefs_Language_Title" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Prefs_Language_Desc" xml:space="preserve">
+    <value>The UI language — follow the system or set one manually; each language always shows its own native name.</value>
+  </data>
+  <data name="Prefs_Language_RestartNote" xml:space="preserve">
+    <value>Takes effect after restarting the app.</value>
+  </data>
+  <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
+    <value>While paused, this PC stops recording new content; existing history is kept.</value>
+  </data>
+  <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
+    <value>While on, capture and sync stop entirely, leaving no trace.</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
+    <value>Blocked processes</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
+    <value>Copies from these processes never enter history or sync. Separate with commas or line breaks.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
+    <value>Auto-apply remote content</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
+    <value>Text from the phone is written to this PC’s clipboard automatically. When off it stays in history only and needs manual copying.</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
+    <value>Sync clipboard images</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
+    <value>Off by default. PNG/JPEG only; raw bytes may carry EXIF and other metadata, and both ends need a v2 session.</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
+    <value>Auto-apply remote images</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
+    <value>Images from the phone are written to this PC’s clipboard automatically. When off they stay in history only and need manual copying.</value>
+  </data>
+  <data name="Prefs_Moved_Title" xml:space="preserve">
+    <value>Bluetooth fallback · extra listen addresses · certificate fingerprint</value>
+  </data>
+  <data name="Prefs_Moved_Desc" xml:space="preserve">
+    <value>Moved to Conduit · network segment — they decide whether content can reach the peer, so they live with pairing and device management.</value>
+  </data>
+  <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
+    <value>Go to Conduit</value>
+  </data>
+  <data name="Prefs_Retention_Days_Title" xml:space="preserve">
+    <value>Retention period</value>
+  </data>
+  <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
+    <value>Entries past the deadline are removed automatically. Cleanup happens on this PC only and never deletes what the peer already received.</value>
+  </data>
+  <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
+    <value>Retention count</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
+    <value>When over the cap, the oldest entries are removed first (100–2000, steps of 100). Cleanup happens on this PC only.</value>
+  </data>
+  <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
+    <value>entries</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
+    <value>Launch at startup · silently to tray</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
+    <value>Starts automatically at Windows sign-in and lands straight in the tray without opening the main window. Writes only the current user’s startup entry; no administrator rights needed.</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
+    <value>Flyout hotkey</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
+    <value>Press the combination in any app to summon the tray flyout. Click the box, then press the combination you want (must include Ctrl, Alt, or Win); press Backspace to clear. Off by default.</value>
+  </data>
+  <data name="Prefs_Data_Export_Desc" xml:space="preserve">
+    <value>Writes the whole history (including deletion markers) as a JSON Lines backup file; no keys, certificates, or pairing data. The export is plaintext — keep it safe.</value>
+  </data>
+  <data name="Prefs_Data_Import_Desc" xml:space="preserve">
+    <value>Merges history from a backup file: idempotent on “source device + sequence”, so re-importing never duplicates entries or overrides local deletions. Validation failures change nothing.</value>
+  </data>
+  <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
+    <value>Deletes all entries on this PC (including images) in one step; takes two confirmations and cannot be undone. Clearing happens on this PC only and never deletes what the peer already received — consider exporting first.</value>
+  </data>
+  <data name="Flyout_WindowTitle" xml:space="preserve">
+    <value>ClipSync · recent clips</value>
+  </data>
+  <data name="Flyout_PauseSync" xml:space="preserve">
+    <value>Pause sync</value>
+  </data>
+  <data name="Flyout_ResumeSync" xml:space="preserve">
+    <value>Resume sync</value>
+  </data>
+  <data name="Flyout_Empty" xml:space="preserve">
+    <value>No clips yet · try copying some text</value>
+  </data>
+  <data name="Flyout_PauseOrResume" xml:space="preserve">
+    <value>Pause or resume sync</value>
+  </data>
+  <data name="Flyout_CopyFromFormat" xml:space="preserve">
+    <value>Copy the clip from {0}</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>Open ClipSync</value>
+  </data>
+  <data name="Tray_Menu_Diagnostics" xml:space="preserve">
+    <value>Diagnostic log</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="Tray_Tooltip_Flow" xml:space="preserve">
+    <value>ClipSync · listening</value>
+  </data>
+  <data name="Tray_Tooltip_AttentionFormat" xml:space="preserve">
+    <value>ClipSync · {0}</value>
+  </data>
+  <data name="Tray_AttentionFallback" xml:space="preserve">
+    <value>Needs your action</value>
+  </data>
+  <data name="Tray_Tooltip_Paused" xml:space="preserve">
+    <value>ClipSync · capture paused</value>
+  </data>
+  <data name="Tray_Tooltip_Private" xml:space="preserve">
+    <value>ClipSync · private mode, leaves no trace</value>
+  </data>
+  <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
+    <value>1 new clip from {0}</value>
+  </data>
+  <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
+    <value>{1} new clips from {0}</value>
+  </data>
+  <data name="Tray_OversizeNotice" xml:space="preserve">
+    <value>The text just copied exceeds 1 MiB; it stays on this PC’s clipboard only and is not synced (not truncated).</value>
+  </data>
+  <data name="Tray_AuthThrottleFormat" xml:space="preserve">
+    <value>Repeated authentication failures from “{0}”; the device is temporarily throttled.</value>
+  </data>
+  <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
+    <value>Listening · sync not running</value>
+  </data>
+  <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
+    <value>Listening · {0} connected</value>
+  </data>
+  <data name="Tray_Status_Waiting" xml:space="preserve">
+    <value>Listening · waiting for devices</value>
+  </data>
+  <data name="Capture_OversizeNotice" xml:space="preserve">
+    <value>The text just copied exceeds 1 MiB: it stays on the system clipboard, untruncated, but is not recorded in history or synced.</value>
+  </data>
+  <data name="Sync_NotStarted" xml:space="preserve">
+    <value>Peer service not started yet</value>
+  </data>
+  <data name="Sync_StartFailed" xml:space="preserve">
+    <value>The peer service failed to start; sync is off for this session.</value>
+  </data>
+  <data name="Sync_ConnectedFormat" xml:space="preserve">
+    <value>LAN listening on port {0} · {1} device(s) connected, content flows in real time.</value>
+  </data>
+  <data name="Sync_WaitingFormat" xml:space="preserve">
+    <value>LAN listening on port {0} · waiting for paired devices; events land in the store before the outbox, so nothing is lost offline.</value>
+  </data>
+  <data name="Bt_Disabled" xml:space="preserve">
+    <value>Bluetooth fallback not enabled</value>
+  </data>
+  <data name="Bt_UnavailableFormat" xml:space="preserve">
+    <value>Bluetooth fallback unavailable: {0}</value>
+  </data>
+  <data name="Bt_SyncingFormat" xml:space="preserve">
+    <value>Bluetooth fallback · syncing with {0} (text only)</value>
+  </data>
+  <data name="Bt_Armed" xml:space="preserve">
+    <value>Bluetooth fallback standing by · the phone switches to Bluetooth automatically when the LAN is unreachable</value>
+  </data>
+  <data name="Bt_Starting" xml:space="preserve">
+    <value>Bluetooth fallback starting…</value>
+  </data>
+  <data name="Bt_AdapterUnavailable" xml:space="preserve">
+    <value>Bluetooth adapter unavailable or turned off</value>
+  </data>
+  <data name="Ack_None" xml:space="preserve">
+    <value>No peer acknowledgement yet</value>
+  </data>
+  <data name="Ack_UpToFormat" xml:space="preserve">
+    <value>Peer acknowledged up to {0}</value>
+  </data>
+  <data name="Transfer_ClearedFormat" xml:space="preserve">
+    <value>Cleared {0} history entries (including images). Clearing happens on this PC only.</value>
+  </data>
+  <data name="Transfer_ClearConfirmBody" xml:space="preserve">
+    <value>Clear all history?
+
+This deletes every entry on this PC (including images) in one step. Clearing happens on this PC only and never deletes what the peer already received. Consider “Export history” first.</value>
+  </data>
+  <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
+    <value>Confirm once more: clearing cannot be undone. Clear all history?</value>
+  </data>
+  <data name="Transfer_ExportedFormat" xml:space="preserve">
+    <value>Exported {0} record(s) (plaintext) → {1}</value>
+  </data>
+  <data name="Transfer_ExportWriteFailed" xml:space="preserve">
+    <value>Export failed: could not write the chosen file.</value>
+  </data>
+  <data name="Transfer_ImportedFormat" xml:space="preserve">
+    <value>Import complete: added {0} · existing {1} · conflicts {2}</value>
+  </data>
+  <data name="Transfer_ImportFailedFormat" xml:space="preserve">
+    <value>Import failed: {0}. Nothing was changed.</value>
+  </data>
+  <data name="Transfer_ImportReadFailed" xml:space="preserve">
+    <value>Import failed: could not read the chosen file.</value>
+  </data>
+  <data name="Transfer_FileFilter" xml:space="preserve">
+    <value>ClipSync history export (*.jsonl)|*.jsonl|All files (*.*)|*.*</value>
+  </data>
+  <data name="Transfer_Error_BadHeader" xml:space="preserve">
+    <value>this is not a ClipSync history export file</value>
+  </data>
+  <data name="Transfer_Error_UnsupportedVersion" xml:space="preserve">
+    <value>the file version is newer than this app supports</value>
+  </data>
+  <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
+    <value>the file is corrupted (malformed record)</value>
+  </data>
+  <data name="Transfer_Error_HashMismatch" xml:space="preserve">
+    <value>the file is corrupted (hash check failed)</value>
+  </data>
+  <data name="Transfer_Error_CountMismatch" xml:space="preserve">
+    <value>the file is incomplete (count does not match the header)</value>
+  </data>
+  <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
+    <value>the file contains an entry over the size caps (text 1 MiB / images 16 MiB)</value>
+  </data>
+  <data name="Transfer_Error_Unknown" xml:space="preserve">
+    <value>unknown error</value>
+  </data>
+  <data name="Hotkey_Applied" xml:space="preserve">
+    <value>Active · press it in any app to summon the flyout</value>
+  </data>
+  <data name="Hotkey_Conflict" xml:space="preserve">
+    <value>That combination is taken by another program; try a different one</value>
+  </data>
+  <data name="Attention_PeerDown" xml:space="preserve">
+    <value>Sync not running this session (endpoint failed to start)</value>
+  </data>
+  <data name="Attention_CaptureFaulted" xml:space="preserve">
+    <value>Clipboard capture degraded (last access failed)</value>
+  </data>
+  <data name="Attention_NoDevice" xml:space="preserve">
+    <value>Pair a device to start syncing</value>
+  </data>
+  <data name="Pairing_Title" xml:space="preserve">
+    <value>Pair new device</value>
+  </data>
+  <data name="Pairing_PeerDownBody" xml:space="preserve">
+    <value>The peer service is not running; pairing is unavailable this session.</value>
+  </data>
+  <data name="Pairing_ScanInstruction" xml:space="preserve">
+    <value>Scan this code with ClipSync on your phone. The QR code carries this PC’s address, certificate fingerprint, and a one-time token — never the pairing key.</value>
+  </data>
+  <data name="Pairing_CountdownFormat" xml:space="preserve">
+    <value>Refreshes in {0:m\:ss}</value>
+  </data>
+  <data name="Pairing_NoLanAddress" xml:space="preserve">
+    <value>No LAN address detected. Put this PC and the phone on the same network (or add a Tailscale address in Preferences), then reopen this window.</value>
+  </data>
+  <data name="Pairing_VerifyHeading" xml:space="preserve">
+    <value>Verify on the phone before approving</value>
+  </data>
+  <data name="Pairing_PcName" xml:space="preserve">
+    <value>PC name</value>
+  </data>
+  <data name="Pairing_Fingerprint" xml:space="preserve">
+    <value>Certificate fingerprint</value>
+  </data>
+  <data name="Pairing_NewCode" xml:space="preserve">
+    <value>New code</value>
+  </data>
+  <data name="Approval_Title" xml:space="preserve">
+    <value>Pairing request</value>
+  </data>
+  <data name="Approval_CloseReject" xml:space="preserve">
+    <value>Close and decline</value>
+  </data>
+  <data name="Approval_Question" xml:space="preserve">
+    <value>Allow this device to pair?</value>
+  </data>
+  <data name="Approval_Body" xml:space="preserve">
+    <value>A device used this PC’s QR code to request pairing. Approve only if the name below matches the phone in your hand.</value>
+  </data>
+  <data name="Approval_PlatformAndroid" xml:space="preserve">
+    <value>Android device</value>
+  </data>
+  <data name="Approval_PlatformWindows" xml:space="preserve">
+    <value>Windows device</value>
+  </data>
+  <data name="Approval_RepairWarning" xml:space="preserve">
+    <value>This device was paired before. Approving replaces its existing pairing key, and the old install stops working immediately.</value>
+  </data>
+  <data name="Approval_SupersedeNotice" xml:space="preserve">
+    <value>A device with the same name is already listed. Approving revokes the old record automatically and clears its outbox (treated as the same phone re-pairing).</value>
+  </data>
+  <data name="Approval_Reject" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="Approval_Approve" xml:space="preserve">
+    <value>Approve pairing</value>
+  </data>
+  <data name="Detail_Title" xml:space="preserve">
+    <value>Clip details</value>
+  </data>
+  <data name="Detail_SourceFormat" xml:space="preserve">
+    <value>Source: {0}</value>
+  </data>
+  <data name="Detail_TimeFormat" xml:space="preserve">
+    <value>Time: {0}</value>
+  </data>
+  <data name="Diag_Title" xml:space="preserve">
+    <value>ClipSync · diagnostic log</value>
+  </data>
+  <data name="Diag_Heading" xml:space="preserve">
+    <value>Local diagnostics · status codes and times only, never clipboard content</value>
+  </data>
+  <data name="Diag_CopyAll" xml:space="preserve">
+    <value>Copy all</value>
+  </data>
+  <data name="Diag_Empty" xml:space="preserve">
+    <value>(no diagnostic entries yet)</value>
+  </data>
+</root>

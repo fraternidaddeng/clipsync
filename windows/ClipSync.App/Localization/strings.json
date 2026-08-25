@@ -1,252 +1,1135 @@
 {
   "$comment": "语言（settings-roadmap P1#16）Windows 端文案唯一事实来源。中立语言 zh-Hans 与既有硬编码文案逐字一致；其余语言为卫星资源，缺键按键回落 zh-Hans。改动后运行 scripts/generate-windows-strings.py 重新生成 Strings.resx / Strings.<culture>.resx / Strings.Designer.cs。带 Format 后缀的键是 string.Format 复合格式串，占位符个数与序号在所有语言中必须一致。带 Prefix/Infix/Suffix 后缀的键是 XAML Run 拼接件，首尾空格有意义。",
-  "languages": ["zh-Hans"],
+  "languages": [
+    "zh-Hans",
+    "zh-Hant",
+    "en"
+  ],
   "strings": {
-    "App_Name": { "zh-Hans": "剪剪相传" },
-    "App_WindowTitle": { "zh-Hans": "剪剪相传 ClipSync" },
-    "Brand_Wordmark": { "zh-Hans": "剪 剪 相 传" },
-
-    "Chrome_Minimize": { "zh-Hans": "最小化" },
-    "Chrome_MaximizeRestore": { "zh-Hans": "最大化或还原" },
-
-    "Common_Close": { "zh-Hans": "关闭" },
-    "Common_Copy": { "zh-Hans": "复制" },
-    "Common_Refresh": { "zh-Hans": "刷新" },
-    "Common_Acknowledge": { "zh-Hans": "知道了" },
-    "Common_FollowSystem": { "zh-Hans": "跟随系统" },
-    "Common_ClearHistory": { "zh-Hans": "清空历史" },
-    "Common_ExportHistory": { "zh-Hans": "导出历史" },
-    "Common_ImportHistory": { "zh-Hans": "导入历史" },
-    "Common_PauseCapture": { "zh-Hans": "暂停捕获" },
-    "Common_PrivateMode": { "zh-Hans": "私密模式" },
-
-    "Nav_History": { "zh-Hans": "历史" },
-    "Nav_Conduit": { "zh-Hans": "通路" },
-    "Nav_Prefs": { "zh-Hans": "偏好" },
-
-    "History_Title": { "zh-Hans": "历史" },
-    "History_Subtitle": { "zh-Hans": "本机与已配对设备的剪贴记录 · 清理只发生在本机" },
-    "History_Search": { "zh-Hans": "搜索" },
-    "Filter_All": { "zh-Hans": "全部" },
-    "Filter_Link": { "zh-Hans": "链接" },
-    "Filter_Otp": { "zh-Hans": "验证码" },
-    "Filter_Email": { "zh-Hans": "账号" },
-    "Filter_Credential": { "zh-Hans": "密码" },
-    "Filter_Plain": { "zh-Hans": "文本" },
-    "Format_Image": { "zh-Hans": "图片" },
-    "History_NoPreview": { "zh-Hans": "无预览" },
-    "History_LocalOnlyBadge": { "zh-Hans": "仅本机保留" },
-    "History_Empty_Unpaired_Title": { "zh-Hans": "先把两端接起来" },
-    "History_Empty_Paired_Title": { "zh-Hans": "静候第一条剪贴" },
-    "History_Empty_Unpaired_Body": { "zh-Hans": "尚未与手机配对。配对入口在「通路」页的网络段。" },
-    "History_Empty_Paired_Body": { "zh-Hans": "在任意一端复制文本，它会出现在这里并流向对面。" },
-    "History_Empty_GoPair": { "zh-Hans": "去配对 ›" },
-    "History_NoMatch_Prefix": { "zh-Hans": "没有匹配「" },
-    "History_NoMatch_Suffix": { "zh-Hans": "」的记录" },
-    "History_Empty_Filtered": { "zh-Hans": "该形态下暂无记录 · 换个筛选试试" },
-    "History_CopySelected": { "zh-Hans": "复制所选" },
-    "History_ViewDetail": { "zh-Hans": "查看详情" },
-    "History_DeleteSelected": { "zh-Hans": "删除所选" },
-    "History_UnknownSource": { "zh-Hans": "未知来源" },
-    "History_LocalSource": { "zh-Hans": "本机" },
-
-    "Conduit_Title": { "zh-Hans": "通路" },
-    "Conduit_Subtitle": { "zh-Hans": "内容从左到右流过四段 · 排障顺序即阅读顺序" },
-    "Conduit_Capture_Name": { "zh-Hans": "本机捕获" },
-    "Conduit_Capture_Ready": { "zh-Hans": "就绪 · 监听 Ctrl+C" },
-    "Conduit_Status_Paused": { "zh-Hans": "已暂停 · 不再记录" },
-    "Conduit_Status_Private": { "zh-Hans": "私密模式 · 不留痕迹" },
-    "Conduit_Status_CaptureFaulted": { "zh-Hans": "捕获降级 · 剪贴板访问失败" },
-    "Conduit_Capture_Detail": { "zh-Hans": "私密模式与屏蔽进程在这一段拦下内容。" },
-    "Conduit_Service_Name": { "zh-Hans": "本机服务" },
-    "Conduit_Service_ReadyPrefix": { "zh-Hans": "就绪 · 历史 " },
-    "Conduit_Service_ReadyInfix": { "zh-Hans": " 条 · 待发 " },
-    "Conduit_Service_DetailPrefix": { "zh-Hans": "事件先落库再入发件队列 · " },
-    "Conduit_Network_Name": { "zh-Hans": "网络" },
-    "Conduit_Network_ReadyPrefix": { "zh-Hans": "就绪 · 监听 :" },
-    "Conduit_Network_ReadyInfix": { "zh-Hans": " · 已连 " },
-    "Conduit_Network_ReadySuffix": { "zh-Hans": " 台" },
-    "Conduit_Network_Down": { "zh-Hans": "未启动 · 同步关闭" },
-    "Conduit_Peer_Name": { "zh-Hans": "对端写入" },
-    "Conduit_Peer_PairedPrefix": { "zh-Hans": "已配对 " },
-    "Conduit_Peer_PairedSuffix": { "zh-Hans": " 台" },
-    "Conduit_Peer_AutoApplyOn": { "zh-Hans": "远端文本自动写入本机剪贴板。" },
-    "Conduit_Peer_AutoApplyOff": { "zh-Hans": "自动应用已关闭：远端内容仅保留在历史，需手动复制。" },
-    "Conduit_Devices_Header": { "zh-Hans": "网络段 · 已配对设备" },
-    "Conduit_Connection_Header": { "zh-Hans": "网络段 · 连接" },
-    "Conduit_CleanupStale": { "zh-Hans": "一键清理" },
-    "Conduit_Bluetooth_Title": { "zh-Hans": "蓝牙备援" },
-    "Conduit_Bluetooth_Desc": { "zh-Hans": "默认关闭。LAN 被 VPN 或防火墙阻断时，已在系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。" },
-    "Conduit_ExtraBind_Title": { "zh-Hans": "额外监听地址" },
-    "Conduit_ExtraBind_Desc": { "zh-Hans": "用于 Tailscale / WireGuard 等虚拟网卡地址。不提供公网中转。" },
-    "Conduit_ExtraBind_RestartNote": { "zh-Hans": "重启后生效" },
-    "Conduit_ExtraBind_CommaNote": { "zh-Hans": " · 逗号分隔多个地址" },
-    "Conduit_Fingerprint_Title": { "zh-Hans": "本机证书指纹" },
-    "Conduit_Fingerprint_Desc": { "zh-Hans": "配对时请与手机上显示的指纹逐组核对。指纹变更会使所有已配对设备提示重新确认。" },
-    "Conduit_Fingerprint_Unavailable": { "zh-Hans": "对端服务未启动，本次会话无指纹可示。" },
-
-    "Device_RevokedBadge": { "zh-Hans": "已撤销" },
-    "Device_AccentLabel": { "zh-Hans": "设备色" },
-    "Device_AccentManual": { "zh-Hans": "手动指定" },
-    "Device_AccentByOrder": { "zh-Hans": "跟随配对顺位" },
-    "Device_Rename": { "zh-Hans": "重命名" },
-    "Device_RevokeSelected": { "zh-Hans": "撤销所选设备" },
-    "Device_RevokeNote": { "zh-Hans": "撤销立即断开该设备并作废其配对密钥；对方已收到的内容不会被远程删除。撤销后重新配对视为新设备。同一部手机换了身份重新配对时，旧记录会被自动撤销并清空其待发队列。" },
-    "Device_UnknownRemote": { "zh-Hans": "远端设备" },
-    "Device_PairedFallback": { "zh-Hans": "已配对设备" },
-    "Device_UnknownFallback": { "zh-Hans": "未知设备" },
-
-    "Stale_BacklogSuffixFormat": { "zh-Hans": "{0} · 积压 {1} 条待发" },
-    "Stale_BannerBacklogFormat": { "zh-Hans": "检测到 {0} 台疑似残留设备，积压 {1} 条待发正在推高「待发」计数。清理会撤销它们并清空其发件队列。" },
-    "Stale_BannerFormat": { "zh-Hans": "检测到 {0} 台疑似残留设备。清理会撤销它们；对方已收到的内容不受影响。" },
-    "Stale_DuplicateBadge": { "zh-Hans": "疑似重复配对残留" },
-    "Stale_NeverConnected": { "zh-Hans": "配对后从未连接" },
-    "Stale_UnseenDaysFormat": { "zh-Hans": "超过 {0} 天未连接" },
-
-    "Prefs_Title": { "zh-Hans": "偏好" },
-    "Prefs_Subtitle": { "zh-Hans": "改动即生效 · 剪贴板正文永不出现在日志里" },
-    "Prefs_Group_Display": { "zh-Hans": "显 示 · DISPLAY" },
-    "Prefs_Group_Capture": { "zh-Hans": "捕 获 · CAPTURE" },
-    "Prefs_Group_Sync": { "zh-Hans": "同 步 · SYNC" },
-    "Prefs_Group_Retention": { "zh-Hans": "存 留 · RETENTION" },
-    "Prefs_Group_Startup": { "zh-Hans": "运 行 · STARTUP" },
-    "Prefs_Group_Data": { "zh-Hans": "数 据 · DATA" },
-    "Prefs_FontScale_Title": { "zh-Hans": "历史字号" },
-    "Prefs_FontScale_Desc": { "zh-Hans": "只缩放剪贴内容文字（历史预览、详情正文、托盘浮窗）；组头、注记盒与按钮保持不变。" },
-    "Prefs_FontScale_Small": { "zh-Hans": "小" },
-    "Prefs_FontScale_Standard": { "zh-Hans": "标准" },
-    "Prefs_FontScale_Large": { "zh-Hans": "大" },
-    "Prefs_PreviewLines_Title": { "zh-Hans": "预览行数" },
-    "Prefs_PreviewLines_Desc": { "zh-Hans": "历史列表每条最多显示的正文行数；超出部分以省略号截断，完整内容看详情。" },
-    "Prefs_PreviewLines_Two": { "zh-Hans": "2 行" },
-    "Prefs_PreviewLines_Four": { "zh-Hans": "4 行" },
-    "Prefs_PreviewLines_Six": { "zh-Hans": "6 行" },
-    "Prefs_Theme_Title": { "zh-Hans": "外观" },
-    "Prefs_Theme_Desc": { "zh-Hans": "窗口的日间/夜间配色；托盘图标活在任务栏里，始终跟随任务栏的深浅。" },
-    "Prefs_Theme_Day": { "zh-Hans": "日间" },
-    "Prefs_Theme_Night": { "zh-Hans": "夜间" },
-    "Prefs_Language_Title": { "zh-Hans": "语言" },
-    "Prefs_Language_Desc": { "zh-Hans": "界面显示语言，跟随系统或手动指定；语言名称始终以各自的母语显示。" },
-    "Prefs_Language_RestartNote": { "zh-Hans": "更换后重启应用生效。" },
-    "Prefs_Capture_Pause_Desc": { "zh-Hans": "暂停后本机不再记录新内容，已有历史保留。" },
-    "Prefs_Capture_Private_Desc": { "zh-Hans": "开启期间捕获与同步全部停止，不留任何痕迹。" },
-    "Prefs_Capture_Blocked_Title": { "zh-Hans": "屏蔽进程" },
-    "Prefs_Capture_Blocked_Desc": { "zh-Hans": "来自这些进程的复制不进入历史，也不同步。逗号或换行分隔。" },
-    "Prefs_Sync_AutoApply_Title": { "zh-Hans": "自动应用远端内容" },
-    "Prefs_Sync_AutoApply_Desc": { "zh-Hans": "手机发来的文本自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。" },
-    "Prefs_Sync_ImageSync_Title": { "zh-Hans": "同步剪贴板图片" },
-    "Prefs_Sync_ImageSync_Desc": { "zh-Hans": "默认关闭。仅 PNG/JPEG；原始字节可能含 EXIF 等元数据，双端需为 v2 会话。" },
-    "Prefs_Sync_AutoApplyImages_Title": { "zh-Hans": "自动应用远端图片" },
-    "Prefs_Sync_AutoApplyImages_Desc": { "zh-Hans": "手机发来的图片自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。" },
-    "Prefs_Moved_Title": { "zh-Hans": "蓝牙备援 · 额外监听地址 · 本机证书指纹" },
-    "Prefs_Moved_Desc": { "zh-Hans": "已移至「通路 · 网络段」——它们决定内容能否到达对端，与配对、设备管理同住。" },
-    "Prefs_Moved_GoToConduit": { "zh-Hans": "前往通路" },
-    "Prefs_Retention_Days_Title": { "zh-Hans": "保留期限" },
-    "Prefs_Retention_Days_Desc": { "zh-Hans": "超期条目自动清除。清理只发生在本机，不远程删除对方已收到的内容。" },
-    "Prefs_Retention_DaysUnit": { "zh-Hans": "天" },
-    "Prefs_Retention_Entries_Title": { "zh-Hans": "保留条数" },
-    "Prefs_Retention_Entries_Desc": { "zh-Hans": "超出上限时最旧的条目先被清除（100–2000，每步 100）。清理只发生在本机。" },
-    "Prefs_Retention_EntriesUnit": { "zh-Hans": "条" },
-    "Prefs_Startup_Launch_Title": { "zh-Hans": "开机自启 · 静默入托盘" },
-    "Prefs_Startup_Launch_Desc": { "zh-Hans": "随 Windows 登录自动启动并直接落在托盘，不弹主窗口。只写当前用户的启动项，不需要管理员权限。" },
-    "Prefs_Startup_Hotkey_Title": { "zh-Hans": "呼出浮窗快捷键" },
-    "Prefs_Startup_Hotkey_Desc": { "zh-Hans": "在任意应用按下组合键呼出托盘浮窗。点击输入框后按下想要的组合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。默认关闭。" },
-    "Prefs_Data_Export_Desc": { "zh-Hans": "把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥、证书与配对信息。导出内容为明文，请妥善保管。" },
-    "Prefs_Data_Import_Desc": { "zh-Hans": "从备份文件合并历史：按「来源设备 + 序号」幂等去重，重复导入不产生重复条目，也不会覆盖本机已删除的记录。校验失败时不做任何改动。" },
-    "Prefs_Data_Clear_Desc": { "zh-Hans": "一次性删除本机全部条目（含图片），需两步确认且无法恢复。清空只发生在本机，不会远程删除对方已收到的内容；建议先导出历史留底。" },
-
-    "Flyout_WindowTitle": { "zh-Hans": "剪剪相传 · 最近剪贴" },
-    "Flyout_PauseSync": { "zh-Hans": "暂停同步" },
-    "Flyout_ResumeSync": { "zh-Hans": "恢复同步" },
-    "Flyout_Empty": { "zh-Hans": "还没有剪贴记录 · 复制一段文字试试" },
-    "Flyout_PauseOrResume": { "zh-Hans": "暂停或恢复同步" },
-    "Flyout_CopyFromFormat": { "zh-Hans": "复制来自 {0} 的剪贴" },
-
-    "Tray_Menu_Open": { "zh-Hans": "打开剪剪相传" },
-    "Tray_Menu_Diagnostics": { "zh-Hans": "诊断日志" },
-    "Tray_Menu_Exit": { "zh-Hans": "退出" },
-    "Tray_Tooltip_Flow": { "zh-Hans": "剪剪相传 · 监听中" },
-    "Tray_Tooltip_AttentionFormat": { "zh-Hans": "剪剪相传 · {0}" },
-    "Tray_AttentionFallback": { "zh-Hans": "需要你操作" },
-    "Tray_Tooltip_Paused": { "zh-Hans": "剪剪相传 · 捕获已暂停" },
-    "Tray_Tooltip_Private": { "zh-Hans": "剪剪相传 · 私密模式，不留痕迹" },
-    "Tray_RemoteClipOneFormat": { "zh-Hans": "收到 {0} 的 1 条新剪贴" },
-    "Tray_RemoteClipManyFormat": { "zh-Hans": "收到 {0} 的 {1} 条新剪贴" },
-    "Tray_OversizeNotice": { "zh-Hans": "刚复制的文本超过 1 MiB，仅保留在本机剪贴板，不同步（未截断）。" },
-    "Tray_AuthThrottleFormat": { "zh-Hans": "检测到「{0}」反复认证失败，已临时限流该设备。" },
-    "Tray_Status_ListeningNoSync": { "zh-Hans": "监听中 · 同步未启动" },
-    "Tray_Status_ConnectedFormat": { "zh-Hans": "监听中 · 已连 {0} 台" },
-    "Tray_Status_Waiting": { "zh-Hans": "监听中 · 等待设备连入" },
-
-    "Capture_OversizeNotice": { "zh-Hans": "刚复制的文本超过 1 MiB：内容保留在系统剪贴板，未截断，但不记录历史、不同步。" },
-
-    "Sync_NotStarted": { "zh-Hans": "对端服务尚未启动" },
-    "Sync_StartFailed": { "zh-Hans": "对端服务未能启动，本次会话同步关闭。" },
-    "Sync_ConnectedFormat": { "zh-Hans": "LAN 监听端口 {0} · 已连接 {1} 台设备，内容实时互通。" },
-    "Sync_WaitingFormat": { "zh-Hans": "LAN 监听端口 {0} · 等待已配对设备连入；事件先落库再入发件队列，断线不丢。" },
-
-    "Bt_Disabled": { "zh-Hans": "蓝牙备援未启用" },
-    "Bt_UnavailableFormat": { "zh-Hans": "蓝牙备援不可用：{0}" },
-    "Bt_SyncingFormat": { "zh-Hans": "蓝牙备援 · 正与 {0} 同步（仅文本）" },
-    "Bt_Armed": { "zh-Hans": "蓝牙备援待命 · LAN 不可达时手机自动改走蓝牙" },
-    "Bt_Starting": { "zh-Hans": "蓝牙备援启动中…" },
-    "Bt_AdapterUnavailable": { "zh-Hans": "蓝牙适配器不可用或已关闭" },
-
-    "Ack_None": { "zh-Hans": "尚未收到对端确认" },
-    "Ack_UpToFormat": { "zh-Hans": "对端确认至 {0}" },
-
-    "Transfer_ClearedFormat": { "zh-Hans": "已清空 {0} 条历史记录（含图片）。清空只发生在本机。" },
-    "Transfer_ClearConfirmBody": { "zh-Hans": "清空全部历史？\n\n将一次性删除本机全部条目（含图片）。清空只发生在本机，不会远程删除对方已收到的内容。建议先「导出历史」留底。" },
-    "Transfer_ClearConfirmAgain": { "zh-Hans": "再确认一次：清空后无法恢复。确定清空全部历史？" },
-    "Transfer_ExportedFormat": { "zh-Hans": "已导出 {0} 条记录（明文）→ {1}" },
-    "Transfer_ExportWriteFailed": { "zh-Hans": "导出失败：无法写入所选文件。" },
-    "Transfer_ImportedFormat": { "zh-Hans": "导入完成：新增 {0} · 已存在 {1} · 冲突 {2}" },
-    "Transfer_ImportFailedFormat": { "zh-Hans": "导入失败：{0}。未做任何改动。" },
-    "Transfer_ImportReadFailed": { "zh-Hans": "导入失败：无法读取所选文件。" },
-    "Transfer_FileFilter": { "zh-Hans": "ClipSync 历史导出 (*.jsonl)|*.jsonl|所有文件 (*.*)|*.*" },
-    "Transfer_Error_BadHeader": { "zh-Hans": "这不是 ClipSync 历史导出文件" },
-    "Transfer_Error_UnsupportedVersion": { "zh-Hans": "文件版本高于本应用支持的版本" },
-    "Transfer_Error_MalformedRecord": { "zh-Hans": "文件内容损坏（记录格式错误）" },
-    "Transfer_Error_HashMismatch": { "zh-Hans": "文件内容损坏（哈希校验失败）" },
-    "Transfer_Error_CountMismatch": { "zh-Hans": "文件不完整（条数与头部不符）" },
-    "Transfer_Error_ContentTooLarge": { "zh-Hans": "文件包含超出大小上限的条目（文本 1 MiB / 图片 16 MiB）" },
-    "Transfer_Error_Unknown": { "zh-Hans": "未知错误" },
-
-    "Hotkey_Applied": { "zh-Hans": "已生效 · 在任意应用按下即呼出浮窗" },
-    "Hotkey_Conflict": { "zh-Hans": "该组合已被其他程序占用，请换一个组合" },
-
-    "Attention_PeerDown": { "zh-Hans": "本次会话同步未启动（端点启动失败）" },
-    "Attention_CaptureFaulted": { "zh-Hans": "剪贴板捕获降级（上次访问失败）" },
-    "Attention_NoDevice": { "zh-Hans": "配对一台设备开始同步" },
-
-    "Pairing_Title": { "zh-Hans": "配对新设备" },
-    "Pairing_PeerDownBody": { "zh-Hans": "对端服务未启动，本次会话无法配对。" },
-    "Pairing_ScanInstruction": { "zh-Hans": "用手机上的「剪剪相传」扫描此码。二维码包含本机地址、证书指纹与一次性令牌，绝不包含配对密钥。" },
-    "Pairing_CountdownFormat": { "zh-Hans": "{0:m\\:ss} 后自动更换" },
-    "Pairing_NoLanAddress": { "zh-Hans": "未检测到局域网地址。请把本机和手机接入同一网络（或在偏好里添加 Tailscale 地址），再重新打开此窗口。" },
-    "Pairing_VerifyHeading": { "zh-Hans": "确 认 前 请 在 手 机 上 核 对" },
-    "Pairing_PcName": { "zh-Hans": "电脑名称" },
-    "Pairing_Fingerprint": { "zh-Hans": "证书指纹" },
-    "Pairing_NewCode": { "zh-Hans": "换一个码" },
-
-    "Approval_Title": { "zh-Hans": "配对请求" },
-    "Approval_CloseReject": { "zh-Hans": "关闭并拒绝" },
-    "Approval_Question": { "zh-Hans": "允许此设备配对吗？" },
-    "Approval_Body": { "zh-Hans": "有设备用本机显示的二维码请求配对。仅当下方名称与你手中的手机一致时批准。" },
-    "Approval_PlatformAndroid": { "zh-Hans": "Android 设备" },
-    "Approval_PlatformWindows": { "zh-Hans": "Windows 设备" },
-    "Approval_RepairWarning": { "zh-Hans": "该设备此前已配对。批准会替换它原有的配对密钥，旧的安装立即失效。" },
-    "Approval_SupersedeNotice": { "zh-Hans": "列表中已有同名设备。批准后旧记录将被自动撤销并清空其待发队列（视为同一部手机重新配对）。" },
-    "Approval_Reject": { "zh-Hans": "拒绝" },
-    "Approval_Approve": { "zh-Hans": "批准配对" },
-
-    "Detail_Title": { "zh-Hans": "剪贴详情" },
-    "Detail_SourceFormat": { "zh-Hans": "来源：{0}" },
-    "Detail_TimeFormat": { "zh-Hans": "时间：{0}" },
-
-    "Diag_Title": { "zh-Hans": "剪剪相传 · 诊断日志" },
-    "Diag_Heading": { "zh-Hans": "本机诊断 · 仅状态码与时间，绝不含剪贴板正文" },
-    "Diag_CopyAll": { "zh-Hans": "复制全部" },
-    "Diag_Empty": { "zh-Hans": "（暂无诊断记录）" }
+    "App_Name": {
+      "zh-Hans": "剪剪相传",
+      "zh-Hant": "剪剪相傳",
+      "en": "ClipSync"
+    },
+    "App_WindowTitle": {
+      "zh-Hans": "剪剪相传 ClipSync",
+      "zh-Hant": "剪剪相傳 ClipSync",
+      "en": "ClipSync"
+    },
+    "Brand_Wordmark": {
+      "zh-Hans": "剪 剪 相 传",
+      "zh-Hant": "剪 剪 相 傳",
+      "en": "ClipSync"
+    },
+    "Chrome_Minimize": {
+      "zh-Hans": "最小化",
+      "zh-Hant": "最小化",
+      "en": "Minimize"
+    },
+    "Chrome_MaximizeRestore": {
+      "zh-Hans": "最大化或还原",
+      "zh-Hant": "最大化或還原",
+      "en": "Maximize or restore"
+    },
+    "Common_Close": {
+      "zh-Hans": "关闭",
+      "zh-Hant": "關閉",
+      "en": "Close"
+    },
+    "Common_Copy": {
+      "zh-Hans": "复制",
+      "zh-Hant": "複製",
+      "en": "Copy"
+    },
+    "Common_Refresh": {
+      "zh-Hans": "刷新",
+      "zh-Hant": "重新整理",
+      "en": "Refresh"
+    },
+    "Common_Acknowledge": {
+      "zh-Hans": "知道了",
+      "zh-Hant": "知道了",
+      "en": "Got it"
+    },
+    "Common_FollowSystem": {
+      "zh-Hans": "跟随系统",
+      "zh-Hant": "跟隨系統",
+      "en": "Follow system"
+    },
+    "Common_ClearHistory": {
+      "zh-Hans": "清空历史",
+      "zh-Hant": "清空歷史",
+      "en": "Clear history"
+    },
+    "Common_ExportHistory": {
+      "zh-Hans": "导出历史",
+      "zh-Hant": "匯出歷史",
+      "en": "Export history"
+    },
+    "Common_ImportHistory": {
+      "zh-Hans": "导入历史",
+      "zh-Hant": "匯入歷史",
+      "en": "Import history"
+    },
+    "Common_PauseCapture": {
+      "zh-Hans": "暂停捕获",
+      "zh-Hant": "暫停擷取",
+      "en": "Pause capture"
+    },
+    "Common_PrivateMode": {
+      "zh-Hans": "私密模式",
+      "zh-Hant": "私密模式",
+      "en": "Private mode"
+    },
+    "Nav_History": {
+      "zh-Hans": "历史",
+      "zh-Hant": "歷史",
+      "en": "History"
+    },
+    "Nav_Conduit": {
+      "zh-Hans": "通路",
+      "zh-Hant": "通路",
+      "en": "Conduit"
+    },
+    "Nav_Prefs": {
+      "zh-Hans": "偏好",
+      "zh-Hant": "偏好",
+      "en": "Preferences"
+    },
+    "History_Title": {
+      "zh-Hans": "历史",
+      "zh-Hant": "歷史",
+      "en": "History"
+    },
+    "History_Subtitle": {
+      "zh-Hans": "本机与已配对设备的剪贴记录 · 清理只发生在本机",
+      "zh-Hant": "本機與已配對裝置的剪貼記錄 · 清理只發生在本機",
+      "en": "Clips from this PC and paired devices · cleanup affects this device only"
+    },
+    "History_Search": {
+      "zh-Hans": "搜索",
+      "zh-Hant": "搜尋",
+      "en": "Search"
+    },
+    "Filter_All": {
+      "zh-Hans": "全部",
+      "zh-Hant": "全部",
+      "en": "All"
+    },
+    "Filter_Link": {
+      "zh-Hans": "链接",
+      "zh-Hant": "連結",
+      "en": "Link"
+    },
+    "Filter_Otp": {
+      "zh-Hans": "验证码",
+      "zh-Hant": "驗證碼",
+      "en": "Code"
+    },
+    "Filter_Email": {
+      "zh-Hans": "账号",
+      "zh-Hant": "帳號",
+      "en": "Account"
+    },
+    "Filter_Credential": {
+      "zh-Hans": "密码",
+      "zh-Hant": "密碼",
+      "en": "Password"
+    },
+    "Filter_Plain": {
+      "zh-Hans": "文本",
+      "zh-Hant": "文字",
+      "en": "Text"
+    },
+    "Format_Image": {
+      "zh-Hans": "图片",
+      "zh-Hant": "圖片",
+      "en": "Image"
+    },
+    "History_NoPreview": {
+      "zh-Hans": "无预览",
+      "zh-Hant": "無預覽",
+      "en": "No preview"
+    },
+    "History_LocalOnlyBadge": {
+      "zh-Hans": "仅本机保留",
+      "zh-Hant": "僅本機保留",
+      "en": "Kept on this device"
+    },
+    "History_Empty_Unpaired_Title": {
+      "zh-Hans": "先把两端接起来",
+      "zh-Hant": "先把兩端接起來",
+      "en": "First, connect both ends"
+    },
+    "History_Empty_Paired_Title": {
+      "zh-Hans": "静候第一条剪贴",
+      "zh-Hant": "靜候第一筆剪貼",
+      "en": "Awaiting the first clip"
+    },
+    "History_Empty_Unpaired_Body": {
+      "zh-Hans": "尚未与手机配对。配对入口在「通路」页的网络段。",
+      "zh-Hant": "尚未與手機配對。配對入口在「通路」頁的網路段。",
+      "en": "Not paired with a phone yet. The pairing entrance is in the network segment of the Conduit page."
+    },
+    "History_Empty_Paired_Body": {
+      "zh-Hans": "在任意一端复制文本，它会出现在这里并流向对面。",
+      "zh-Hant": "在任一端複製文字，它會出現在這裡並流向對面。",
+      "en": "Copy text on either device — it appears here and flows to the other side."
+    },
+    "History_Empty_GoPair": {
+      "zh-Hans": "去配对 ›",
+      "zh-Hant": "去配對 ›",
+      "en": "Pair now ›"
+    },
+    "History_NoMatch_Prefix": {
+      "zh-Hans": "没有匹配「",
+      "zh-Hant": "沒有符合「",
+      "en": "No entries match “"
+    },
+    "History_NoMatch_Suffix": {
+      "zh-Hans": "」的记录",
+      "zh-Hant": "」的記錄",
+      "en": "”"
+    },
+    "History_Empty_Filtered": {
+      "zh-Hans": "该形态下暂无记录 · 换个筛选试试",
+      "zh-Hant": "該形態下暫無記錄 · 換個篩選試試",
+      "en": "No entries of this type · try another filter"
+    },
+    "History_CopySelected": {
+      "zh-Hans": "复制所选",
+      "zh-Hant": "複製所選",
+      "en": "Copy selected"
+    },
+    "History_ViewDetail": {
+      "zh-Hans": "查看详情",
+      "zh-Hant": "檢視詳情",
+      "en": "View details"
+    },
+    "History_DeleteSelected": {
+      "zh-Hans": "删除所选",
+      "zh-Hant": "刪除所選",
+      "en": "Delete selected"
+    },
+    "History_UnknownSource": {
+      "zh-Hans": "未知来源",
+      "zh-Hant": "未知來源",
+      "en": "Unknown source"
+    },
+    "History_LocalSource": {
+      "zh-Hans": "本机",
+      "zh-Hant": "本機",
+      "en": "This PC"
+    },
+    "Conduit_Title": {
+      "zh-Hans": "通路",
+      "zh-Hant": "通路",
+      "en": "Conduit"
+    },
+    "Conduit_Subtitle": {
+      "zh-Hans": "内容从左到右流过四段 · 排障顺序即阅读顺序",
+      "zh-Hant": "內容從左到右流過四段 · 排障順序即閱讀順序",
+      "en": "Content flows left to right through four segments · reading order is troubleshooting order"
+    },
+    "Conduit_Capture_Name": {
+      "zh-Hans": "本机捕获",
+      "zh-Hant": "本機擷取",
+      "en": "Local capture"
+    },
+    "Conduit_Capture_Ready": {
+      "zh-Hans": "就绪 · 监听 Ctrl+C",
+      "zh-Hant": "就緒 · 監聽 Ctrl+C",
+      "en": "Ready · listening for Ctrl+C"
+    },
+    "Conduit_Status_Paused": {
+      "zh-Hans": "已暂停 · 不再记录",
+      "zh-Hant": "已暫停 · 不再記錄",
+      "en": "Paused · not recording"
+    },
+    "Conduit_Status_Private": {
+      "zh-Hans": "私密模式 · 不留痕迹",
+      "zh-Hant": "私密模式 · 不留痕跡",
+      "en": "Private mode · leaves no trace"
+    },
+    "Conduit_Status_CaptureFaulted": {
+      "zh-Hans": "捕获降级 · 剪贴板访问失败",
+      "zh-Hant": "擷取降級 · 剪貼簿存取失敗",
+      "en": "Capture degraded · clipboard access failed"
+    },
+    "Conduit_Capture_Detail": {
+      "zh-Hans": "私密模式与屏蔽进程在这一段拦下内容。",
+      "zh-Hant": "私密模式與封鎖處理程序在這一段攔下內容。",
+      "en": "Private mode and blocked processes stop content at this segment."
+    },
+    "Conduit_Service_Name": {
+      "zh-Hans": "本机服务",
+      "zh-Hant": "本機服務",
+      "en": "Local service"
+    },
+    "Conduit_Service_ReadyPrefix": {
+      "zh-Hans": "就绪 · 历史 ",
+      "zh-Hant": "就緒 · 歷史 ",
+      "en": "Ready · history "
+    },
+    "Conduit_Service_ReadyInfix": {
+      "zh-Hans": " 条 · 待发 ",
+      "zh-Hant": " 筆 · 待傳 ",
+      "en": " · outbox "
+    },
+    "Conduit_Service_DetailPrefix": {
+      "zh-Hans": "事件先落库再入发件队列 · ",
+      "zh-Hant": "事件先落庫再入寄件佇列 · ",
+      "en": "Events land in the store before the outbox · "
+    },
+    "Conduit_Network_Name": {
+      "zh-Hans": "网络",
+      "zh-Hant": "網路",
+      "en": "Network"
+    },
+    "Conduit_Network_ReadyPrefix": {
+      "zh-Hans": "就绪 · 监听 :",
+      "zh-Hant": "就緒 · 監聽 :",
+      "en": "Ready · listening on :"
+    },
+    "Conduit_Network_ReadyInfix": {
+      "zh-Hans": " · 已连 ",
+      "zh-Hant": " · 已連 ",
+      "en": " · connected "
+    },
+    "Conduit_Network_ReadySuffix": {
+      "zh-Hans": " 台",
+      "zh-Hant": " 台",
+      "en": " device(s)"
+    },
+    "Conduit_Network_Down": {
+      "zh-Hans": "未启动 · 同步关闭",
+      "zh-Hant": "未啟動 · 同步關閉",
+      "en": "Not running · sync off"
+    },
+    "Conduit_Peer_Name": {
+      "zh-Hans": "对端写入",
+      "zh-Hant": "對端寫入",
+      "en": "Peer write"
+    },
+    "Conduit_Peer_PairedPrefix": {
+      "zh-Hans": "已配对 ",
+      "zh-Hant": "已配對 ",
+      "en": "Paired "
+    },
+    "Conduit_Peer_PairedSuffix": {
+      "zh-Hans": " 台",
+      "zh-Hant": " 台",
+      "en": " device(s)"
+    },
+    "Conduit_Peer_AutoApplyOn": {
+      "zh-Hans": "远端文本自动写入本机剪贴板。",
+      "zh-Hant": "遠端文字自動寫入本機剪貼簿。",
+      "en": "Remote text is written to this PC’s clipboard automatically."
+    },
+    "Conduit_Peer_AutoApplyOff": {
+      "zh-Hans": "自动应用已关闭：远端内容仅保留在历史，需手动复制。",
+      "zh-Hant": "自動套用已關閉：遠端內容僅保留在歷史，需手動複製。",
+      "en": "Auto-apply is off: remote content stays in history only and needs manual copying."
+    },
+    "Conduit_Devices_Header": {
+      "zh-Hans": "网络段 · 已配对设备",
+      "zh-Hant": "網路段 · 已配對裝置",
+      "en": "Network segment · paired devices"
+    },
+    "Conduit_Connection_Header": {
+      "zh-Hans": "网络段 · 连接",
+      "zh-Hant": "網路段 · 連線",
+      "en": "Network segment · connection"
+    },
+    "Conduit_CleanupStale": {
+      "zh-Hans": "一键清理",
+      "zh-Hant": "一鍵清理",
+      "en": "Clean up"
+    },
+    "Conduit_Bluetooth_Title": {
+      "zh-Hans": "蓝牙备援",
+      "zh-Hant": "藍牙備援",
+      "en": "Bluetooth fallback"
+    },
+    "Conduit_Bluetooth_Desc": {
+      "zh-Hans": "默认关闭。LAN 被 VPN 或防火墙阻断时，已在系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。",
+      "zh-Hant": "預設關閉。LAN 被 VPN 或防火牆阻斷時，已在系統設定中藍牙配對的手機可繼續同步文字（不含圖片，速度較慢）。",
+      "en": "Off by default. When the LAN is blocked by a VPN or firewall, a phone already Bluetooth-paired in system settings keeps syncing text (no images, slower)."
+    },
+    "Conduit_ExtraBind_Title": {
+      "zh-Hans": "额外监听地址",
+      "zh-Hant": "額外監聽位址",
+      "en": "Extra listen addresses"
+    },
+    "Conduit_ExtraBind_Desc": {
+      "zh-Hans": "用于 Tailscale / WireGuard 等虚拟网卡地址。不提供公网中转。",
+      "zh-Hant": "用於 Tailscale / WireGuard 等虛擬網卡位址。不提供公網中繼。",
+      "en": "For virtual-adapter addresses such as Tailscale / WireGuard. No public relay is provided."
+    },
+    "Conduit_ExtraBind_RestartNote": {
+      "zh-Hans": "重启后生效",
+      "zh-Hant": "重新啟動後生效",
+      "en": "Applies after restart"
+    },
+    "Conduit_ExtraBind_CommaNote": {
+      "zh-Hans": " · 逗号分隔多个地址",
+      "zh-Hant": " · 逗號分隔多個位址",
+      "en": " · separate multiple addresses with commas"
+    },
+    "Conduit_Fingerprint_Title": {
+      "zh-Hans": "本机证书指纹",
+      "zh-Hant": "本機憑證指紋",
+      "en": "This PC’s certificate fingerprint"
+    },
+    "Conduit_Fingerprint_Desc": {
+      "zh-Hans": "配对时请与手机上显示的指纹逐组核对。指纹变更会使所有已配对设备提示重新确认。",
+      "zh-Hant": "配對時請與手機上顯示的指紋逐組核對。指紋變更會使所有已配對裝置提示重新確認。",
+      "en": "When pairing, compare it group by group with the fingerprint shown on the phone. A fingerprint change makes every paired device ask to re-confirm."
+    },
+    "Conduit_Fingerprint_Unavailable": {
+      "zh-Hans": "对端服务未启动，本次会话无指纹可示。",
+      "zh-Hant": "對端服務未啟動，本次工作階段無指紋可示。",
+      "en": "The peer service is not running; no fingerprint to show this session."
+    },
+    "Device_RevokedBadge": {
+      "zh-Hans": "已撤销",
+      "zh-Hant": "已撤銷",
+      "en": "Revoked"
+    },
+    "Device_AccentLabel": {
+      "zh-Hans": "设备色",
+      "zh-Hant": "裝置色",
+      "en": "Device colour"
+    },
+    "Device_AccentManual": {
+      "zh-Hans": "手动指定",
+      "zh-Hant": "手動指定",
+      "en": "Manually set"
+    },
+    "Device_AccentByOrder": {
+      "zh-Hans": "跟随配对顺位",
+      "zh-Hant": "跟隨配對順位",
+      "en": "Follows pairing order"
+    },
+    "Device_Rename": {
+      "zh-Hans": "重命名",
+      "zh-Hant": "重新命名",
+      "en": "Rename"
+    },
+    "Device_RevokeSelected": {
+      "zh-Hans": "撤销所选设备",
+      "zh-Hant": "撤銷所選裝置",
+      "en": "Revoke selected device"
+    },
+    "Device_RevokeNote": {
+      "zh-Hans": "撤销立即断开该设备并作废其配对密钥；对方已收到的内容不会被远程删除。撤销后重新配对视为新设备。同一部手机换了身份重新配对时，旧记录会被自动撤销并清空其待发队列。",
+      "zh-Hant": "撤銷立即斷開該裝置並作廢其配對金鑰；對方已收到的內容不會被遠端刪除。撤銷後重新配對視為新裝置。同一部手機換了身分重新配對時，舊記錄會被自動撤銷並清空其寄件佇列。",
+      "en": "Revoking disconnects the device immediately and voids its pairing key; content it already received is never deleted remotely. Pairing again after revocation counts as a new device. When the same phone re-pairs under a new identity, the old record is revoked automatically and its outbox cleared."
+    },
+    "Device_UnknownRemote": {
+      "zh-Hans": "远端设备",
+      "zh-Hant": "遠端裝置",
+      "en": "Remote device"
+    },
+    "Device_PairedFallback": {
+      "zh-Hans": "已配对设备",
+      "zh-Hant": "已配對裝置",
+      "en": "Paired device"
+    },
+    "Device_UnknownFallback": {
+      "zh-Hans": "未知设备",
+      "zh-Hant": "未知裝置",
+      "en": "Unknown device"
+    },
+    "Stale_BacklogSuffixFormat": {
+      "zh-Hans": "{0} · 积压 {1} 条待发",
+      "zh-Hant": "{0} · 積壓 {1} 筆待傳",
+      "en": "{0} · {1} pending in the outbox"
+    },
+    "Stale_BannerBacklogFormat": {
+      "zh-Hans": "检测到 {0} 台疑似残留设备，积压 {1} 条待发正在推高「待发」计数。清理会撤销它们并清空其发件队列。",
+      "zh-Hant": "偵測到 {0} 台疑似殘留裝置，積壓 {1} 筆待傳正在推高「待傳」計數。清理會撤銷它們並清空其寄件佇列。",
+      "en": "Detected {0} device(s) that look like stale leftovers; {1} pending item(s) are inflating the outbox count. Cleanup revokes them and clears their outboxes."
+    },
+    "Stale_BannerFormat": {
+      "zh-Hans": "检测到 {0} 台疑似残留设备。清理会撤销它们；对方已收到的内容不受影响。",
+      "zh-Hant": "偵測到 {0} 台疑似殘留裝置。清理會撤銷它們；對方已收到的內容不受影響。",
+      "en": "Detected {0} device(s) that look like stale leftovers. Cleanup revokes them; content they already received is unaffected."
+    },
+    "Stale_DuplicateBadge": {
+      "zh-Hans": "疑似重复配对残留",
+      "zh-Hant": "疑似重複配對殘留",
+      "en": "Likely duplicate-pairing leftover"
+    },
+    "Stale_NeverConnected": {
+      "zh-Hans": "配对后从未连接",
+      "zh-Hant": "配對後從未連線",
+      "en": "Never connected since pairing"
+    },
+    "Stale_UnseenDaysFormat": {
+      "zh-Hans": "超过 {0} 天未连接",
+      "zh-Hant": "超過 {0} 天未連線",
+      "en": "Not connected for over {0} days"
+    },
+    "Prefs_Title": {
+      "zh-Hans": "偏好",
+      "zh-Hant": "偏好",
+      "en": "Preferences"
+    },
+    "Prefs_Subtitle": {
+      "zh-Hans": "改动即生效 · 剪贴板正文永不出现在日志里",
+      "zh-Hant": "改動即生效 · 剪貼簿內文永不出現在日誌裡",
+      "en": "Changes apply immediately · clipboard content never appears in logs"
+    },
+    "Prefs_Group_Display": {
+      "zh-Hans": "显 示 · DISPLAY",
+      "zh-Hant": "顯 示 · DISPLAY",
+      "en": "DISPLAY"
+    },
+    "Prefs_Group_Capture": {
+      "zh-Hans": "捕 获 · CAPTURE",
+      "zh-Hant": "擷 取 · CAPTURE",
+      "en": "CAPTURE"
+    },
+    "Prefs_Group_Sync": {
+      "zh-Hans": "同 步 · SYNC",
+      "zh-Hant": "同 步 · SYNC",
+      "en": "SYNC"
+    },
+    "Prefs_Group_Retention": {
+      "zh-Hans": "存 留 · RETENTION",
+      "zh-Hant": "存 留 · RETENTION",
+      "en": "RETENTION"
+    },
+    "Prefs_Group_Startup": {
+      "zh-Hans": "运 行 · STARTUP",
+      "zh-Hant": "執 行 · STARTUP",
+      "en": "STARTUP"
+    },
+    "Prefs_Group_Data": {
+      "zh-Hans": "数 据 · DATA",
+      "zh-Hant": "資 料 · DATA",
+      "en": "DATA"
+    },
+    "Prefs_FontScale_Title": {
+      "zh-Hans": "历史字号",
+      "zh-Hant": "歷史字級",
+      "en": "History text size"
+    },
+    "Prefs_FontScale_Desc": {
+      "zh-Hans": "只缩放剪贴内容文字（历史预览、详情正文、托盘浮窗）；组头、注记盒与按钮保持不变。",
+      "zh-Hant": "只縮放剪貼內容文字（歷史預覽、詳情內文、系統匣浮窗）；組頭、註記盒與按鈕保持不變。",
+      "en": "Scales only clip content text (history previews, detail body, tray flyout); group headers, badges, and buttons are unchanged."
+    },
+    "Prefs_FontScale_Small": {
+      "zh-Hans": "小",
+      "zh-Hant": "小",
+      "en": "Small"
+    },
+    "Prefs_FontScale_Standard": {
+      "zh-Hans": "标准",
+      "zh-Hant": "標準",
+      "en": "Standard"
+    },
+    "Prefs_FontScale_Large": {
+      "zh-Hans": "大",
+      "zh-Hant": "大",
+      "en": "Large"
+    },
+    "Prefs_PreviewLines_Title": {
+      "zh-Hans": "预览行数",
+      "zh-Hant": "預覽行數",
+      "en": "Preview lines"
+    },
+    "Prefs_PreviewLines_Desc": {
+      "zh-Hans": "历史列表每条最多显示的正文行数；超出部分以省略号截断，完整内容看详情。",
+      "zh-Hant": "歷史清單每筆最多顯示的內文行數；超出部分以刪節號截斷，完整內容看詳情。",
+      "en": "Maximum body lines shown per entry in the history list; overflow is truncated with an ellipsis — open details for the full content."
+    },
+    "Prefs_PreviewLines_Two": {
+      "zh-Hans": "2 行",
+      "zh-Hant": "2 行",
+      "en": "2 lines"
+    },
+    "Prefs_PreviewLines_Four": {
+      "zh-Hans": "4 行",
+      "zh-Hant": "4 行",
+      "en": "4 lines"
+    },
+    "Prefs_PreviewLines_Six": {
+      "zh-Hans": "6 行",
+      "zh-Hant": "6 行",
+      "en": "6 lines"
+    },
+    "Prefs_Theme_Title": {
+      "zh-Hans": "外观",
+      "zh-Hant": "外觀",
+      "en": "Appearance"
+    },
+    "Prefs_Theme_Desc": {
+      "zh-Hans": "窗口的日间/夜间配色；托盘图标活在任务栏里，始终跟随任务栏的深浅。",
+      "zh-Hant": "視窗的日間/夜間配色；系統匣圖示活在工作列裡，始終跟隨工作列的深淺。",
+      "en": "The window’s day/night palette; the tray icon lives in the taskbar and always follows the taskbar’s shade."
+    },
+    "Prefs_Theme_Day": {
+      "zh-Hans": "日间",
+      "zh-Hant": "日間",
+      "en": "Day"
+    },
+    "Prefs_Theme_Night": {
+      "zh-Hans": "夜间",
+      "zh-Hant": "夜間",
+      "en": "Night"
+    },
+    "Prefs_Language_Title": {
+      "zh-Hans": "语言",
+      "zh-Hant": "語言",
+      "en": "Language"
+    },
+    "Prefs_Language_Desc": {
+      "zh-Hans": "界面显示语言，跟随系统或手动指定；语言名称始终以各自的母语显示。",
+      "zh-Hant": "介面顯示語言，跟隨系統或手動指定；語言名稱始終以各自的母語顯示。",
+      "en": "The UI language — follow the system or set one manually; each language always shows its own native name."
+    },
+    "Prefs_Language_RestartNote": {
+      "zh-Hans": "更换后重启应用生效。",
+      "zh-Hant": "更換後重新啟動應用程式生效。",
+      "en": "Takes effect after restarting the app."
+    },
+    "Prefs_Capture_Pause_Desc": {
+      "zh-Hans": "暂停后本机不再记录新内容，已有历史保留。",
+      "zh-Hant": "暫停後本機不再記錄新內容，既有歷史保留。",
+      "en": "While paused, this PC stops recording new content; existing history is kept."
+    },
+    "Prefs_Capture_Private_Desc": {
+      "zh-Hans": "开启期间捕获与同步全部停止，不留任何痕迹。",
+      "zh-Hant": "開啟期間擷取與同步全部停止，不留任何痕跡。",
+      "en": "While on, capture and sync stop entirely, leaving no trace."
+    },
+    "Prefs_Capture_Blocked_Title": {
+      "zh-Hans": "屏蔽进程",
+      "zh-Hant": "封鎖處理程序",
+      "en": "Blocked processes"
+    },
+    "Prefs_Capture_Blocked_Desc": {
+      "zh-Hans": "来自这些进程的复制不进入历史，也不同步。逗号或换行分隔。",
+      "zh-Hant": "來自這些處理程序的複製不進入歷史，也不同步。逗號或換行分隔。",
+      "en": "Copies from these processes never enter history or sync. Separate with commas or line breaks."
+    },
+    "Prefs_Sync_AutoApply_Title": {
+      "zh-Hans": "自动应用远端内容",
+      "zh-Hant": "自動套用遠端內容",
+      "en": "Auto-apply remote content"
+    },
+    "Prefs_Sync_AutoApply_Desc": {
+      "zh-Hans": "手机发来的文本自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。",
+      "zh-Hant": "手機傳來的文字自動寫入本機剪貼簿。關閉後只保留在歷史中，需手動複製。",
+      "en": "Text from the phone is written to this PC’s clipboard automatically. When off it stays in history only and needs manual copying."
+    },
+    "Prefs_Sync_ImageSync_Title": {
+      "zh-Hans": "同步剪贴板图片",
+      "zh-Hant": "同步剪貼簿圖片",
+      "en": "Sync clipboard images"
+    },
+    "Prefs_Sync_ImageSync_Desc": {
+      "zh-Hans": "默认关闭。仅 PNG/JPEG；原始字节可能含 EXIF 等元数据，双端需为 v2 会话。",
+      "zh-Hant": "預設關閉。僅 PNG/JPEG；原始位元組可能含 EXIF 等中繼資料，雙端需為 v2 工作階段。",
+      "en": "Off by default. PNG/JPEG only; raw bytes may carry EXIF and other metadata, and both ends need a v2 session."
+    },
+    "Prefs_Sync_AutoApplyImages_Title": {
+      "zh-Hans": "自动应用远端图片",
+      "zh-Hant": "自動套用遠端圖片",
+      "en": "Auto-apply remote images"
+    },
+    "Prefs_Sync_AutoApplyImages_Desc": {
+      "zh-Hans": "手机发来的图片自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。",
+      "zh-Hant": "手機傳來的圖片自動寫入本機剪貼簿。關閉後只保留在歷史中，需手動複製。",
+      "en": "Images from the phone are written to this PC’s clipboard automatically. When off they stay in history only and need manual copying."
+    },
+    "Prefs_Moved_Title": {
+      "zh-Hans": "蓝牙备援 · 额外监听地址 · 本机证书指纹",
+      "zh-Hant": "藍牙備援 · 額外監聽位址 · 本機憑證指紋",
+      "en": "Bluetooth fallback · extra listen addresses · certificate fingerprint"
+    },
+    "Prefs_Moved_Desc": {
+      "zh-Hans": "已移至「通路 · 网络段」——它们决定内容能否到达对端，与配对、设备管理同住。",
+      "zh-Hant": "已移至「通路 · 網路段」——它們決定內容能否到達對端，與配對、裝置管理同住。",
+      "en": "Moved to Conduit · network segment — they decide whether content can reach the peer, so they live with pairing and device management."
+    },
+    "Prefs_Moved_GoToConduit": {
+      "zh-Hans": "前往通路",
+      "zh-Hant": "前往通路",
+      "en": "Go to Conduit"
+    },
+    "Prefs_Retention_Days_Title": {
+      "zh-Hans": "保留期限",
+      "zh-Hant": "保留期限",
+      "en": "Retention period"
+    },
+    "Prefs_Retention_Days_Desc": {
+      "zh-Hans": "超期条目自动清除。清理只发生在本机，不远程删除对方已收到的内容。",
+      "zh-Hant": "逾期條目自動清除。清理只發生在本機，不遠端刪除對方已收到的內容。",
+      "en": "Entries past the deadline are removed automatically. Cleanup happens on this PC only and never deletes what the peer already received."
+    },
+    "Prefs_Retention_DaysUnit": {
+      "zh-Hans": "天",
+      "zh-Hant": "天",
+      "en": "days"
+    },
+    "Prefs_Retention_Entries_Title": {
+      "zh-Hans": "保留条数",
+      "zh-Hant": "保留筆數",
+      "en": "Retention count"
+    },
+    "Prefs_Retention_Entries_Desc": {
+      "zh-Hans": "超出上限时最旧的条目先被清除（100–2000，每步 100）。清理只发生在本机。",
+      "zh-Hant": "超出上限時最舊的條目先被清除（100–2000，每步 100）。清理只發生在本機。",
+      "en": "When over the cap, the oldest entries are removed first (100–2000, steps of 100). Cleanup happens on this PC only."
+    },
+    "Prefs_Retention_EntriesUnit": {
+      "zh-Hans": "条",
+      "zh-Hant": "筆",
+      "en": "entries"
+    },
+    "Prefs_Startup_Launch_Title": {
+      "zh-Hans": "开机自启 · 静默入托盘",
+      "zh-Hant": "開機自動啟動 · 靜默入系統匣",
+      "en": "Launch at startup · silently to tray"
+    },
+    "Prefs_Startup_Launch_Desc": {
+      "zh-Hans": "随 Windows 登录自动启动并直接落在托盘，不弹主窗口。只写当前用户的启动项，不需要管理员权限。",
+      "zh-Hant": "隨 Windows 登入自動啟動並直接落在系統匣，不彈主視窗。只寫目前使用者的啟動項，不需要系統管理員權限。",
+      "en": "Starts automatically at Windows sign-in and lands straight in the tray without opening the main window. Writes only the current user’s startup entry; no administrator rights needed."
+    },
+    "Prefs_Startup_Hotkey_Title": {
+      "zh-Hans": "呼出浮窗快捷键",
+      "zh-Hant": "呼出浮窗快速鍵",
+      "en": "Flyout hotkey"
+    },
+    "Prefs_Startup_Hotkey_Desc": {
+      "zh-Hans": "在任意应用按下组合键呼出托盘浮窗。点击输入框后按下想要的组合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。默认关闭。",
+      "zh-Hant": "在任意應用程式按下組合鍵呼出系統匣浮窗。點擊輸入框後按下想要的組合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。預設關閉。",
+      "en": "Press the combination in any app to summon the tray flyout. Click the box, then press the combination you want (must include Ctrl, Alt, or Win); press Backspace to clear. Off by default."
+    },
+    "Prefs_Data_Export_Desc": {
+      "zh-Hans": "把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥、证书与配对信息。导出内容为明文，请妥善保管。",
+      "zh-Hant": "把全部歷史（含刪除標記）寫成 JSON Lines 備份檔；不含金鑰、憑證與配對資訊。匯出內容為明文，請妥善保管。",
+      "en": "Writes the whole history (including deletion markers) as a JSON Lines backup file; no keys, certificates, or pairing data. The export is plaintext — keep it safe."
+    },
+    "Prefs_Data_Import_Desc": {
+      "zh-Hans": "从备份文件合并历史：按「来源设备 + 序号」幂等去重，重复导入不产生重复条目，也不会覆盖本机已删除的记录。校验失败时不做任何改动。",
+      "zh-Hant": "從備份檔合併歷史：按「來源裝置 + 序號」冪等去重，重複匯入不產生重複條目，也不會覆蓋本機已刪除的記錄。驗證失敗時不做任何改動。",
+      "en": "Merges history from a backup file: idempotent on “source device + sequence”, so re-importing never duplicates entries or overrides local deletions. Validation failures change nothing."
+    },
+    "Prefs_Data_Clear_Desc": {
+      "zh-Hans": "一次性删除本机全部条目（含图片），需两步确认且无法恢复。清空只发生在本机，不会远程删除对方已收到的内容；建议先导出历史留底。",
+      "zh-Hant": "一次性刪除本機全部條目（含圖片），需兩步確認且無法復原。清空只發生在本機，不會遠端刪除對方已收到的內容；建議先匯出歷史留底。",
+      "en": "Deletes all entries on this PC (including images) in one step; takes two confirmations and cannot be undone. Clearing happens on this PC only and never deletes what the peer already received — consider exporting first."
+    },
+    "Flyout_WindowTitle": {
+      "zh-Hans": "剪剪相传 · 最近剪贴",
+      "zh-Hant": "剪剪相傳 · 最近剪貼",
+      "en": "ClipSync · recent clips"
+    },
+    "Flyout_PauseSync": {
+      "zh-Hans": "暂停同步",
+      "zh-Hant": "暫停同步",
+      "en": "Pause sync"
+    },
+    "Flyout_ResumeSync": {
+      "zh-Hans": "恢复同步",
+      "zh-Hant": "恢復同步",
+      "en": "Resume sync"
+    },
+    "Flyout_Empty": {
+      "zh-Hans": "还没有剪贴记录 · 复制一段文字试试",
+      "zh-Hant": "還沒有剪貼記錄 · 複製一段文字試試",
+      "en": "No clips yet · try copying some text"
+    },
+    "Flyout_PauseOrResume": {
+      "zh-Hans": "暂停或恢复同步",
+      "zh-Hant": "暫停或恢復同步",
+      "en": "Pause or resume sync"
+    },
+    "Flyout_CopyFromFormat": {
+      "zh-Hans": "复制来自 {0} 的剪贴",
+      "zh-Hant": "複製來自 {0} 的剪貼",
+      "en": "Copy the clip from {0}"
+    },
+    "Tray_Menu_Open": {
+      "zh-Hans": "打开剪剪相传",
+      "zh-Hant": "開啟剪剪相傳",
+      "en": "Open ClipSync"
+    },
+    "Tray_Menu_Diagnostics": {
+      "zh-Hans": "诊断日志",
+      "zh-Hant": "診斷日誌",
+      "en": "Diagnostic log"
+    },
+    "Tray_Menu_Exit": {
+      "zh-Hans": "退出",
+      "zh-Hant": "結束",
+      "en": "Exit"
+    },
+    "Tray_Tooltip_Flow": {
+      "zh-Hans": "剪剪相传 · 监听中",
+      "zh-Hant": "剪剪相傳 · 監聽中",
+      "en": "ClipSync · listening"
+    },
+    "Tray_Tooltip_AttentionFormat": {
+      "zh-Hans": "剪剪相传 · {0}",
+      "zh-Hant": "剪剪相傳 · {0}",
+      "en": "ClipSync · {0}"
+    },
+    "Tray_AttentionFallback": {
+      "zh-Hans": "需要你操作",
+      "zh-Hant": "需要你操作",
+      "en": "Needs your action"
+    },
+    "Tray_Tooltip_Paused": {
+      "zh-Hans": "剪剪相传 · 捕获已暂停",
+      "zh-Hant": "剪剪相傳 · 擷取已暫停",
+      "en": "ClipSync · capture paused"
+    },
+    "Tray_Tooltip_Private": {
+      "zh-Hans": "剪剪相传 · 私密模式，不留痕迹",
+      "zh-Hant": "剪剪相傳 · 私密模式，不留痕跡",
+      "en": "ClipSync · private mode, leaves no trace"
+    },
+    "Tray_RemoteClipOneFormat": {
+      "zh-Hans": "收到 {0} 的 1 条新剪贴",
+      "zh-Hant": "收到 {0} 的 1 筆新剪貼",
+      "en": "1 new clip from {0}"
+    },
+    "Tray_RemoteClipManyFormat": {
+      "zh-Hans": "收到 {0} 的 {1} 条新剪贴",
+      "zh-Hant": "收到 {0} 的 {1} 筆新剪貼",
+      "en": "{1} new clips from {0}"
+    },
+    "Tray_OversizeNotice": {
+      "zh-Hans": "刚复制的文本超过 1 MiB，仅保留在本机剪贴板，不同步（未截断）。",
+      "zh-Hant": "剛複製的文字超過 1 MiB，僅保留在本機剪貼簿，不同步（未截斷）。",
+      "en": "The text just copied exceeds 1 MiB; it stays on this PC’s clipboard only and is not synced (not truncated)."
+    },
+    "Tray_AuthThrottleFormat": {
+      "zh-Hans": "检测到「{0}」反复认证失败，已临时限流该设备。",
+      "zh-Hant": "偵測到「{0}」反覆驗證失敗，已暫時限流該裝置。",
+      "en": "Repeated authentication failures from “{0}”; the device is temporarily throttled."
+    },
+    "Tray_Status_ListeningNoSync": {
+      "zh-Hans": "监听中 · 同步未启动",
+      "zh-Hant": "監聽中 · 同步未啟動",
+      "en": "Listening · sync not running"
+    },
+    "Tray_Status_ConnectedFormat": {
+      "zh-Hans": "监听中 · 已连 {0} 台",
+      "zh-Hant": "監聽中 · 已連 {0} 台",
+      "en": "Listening · {0} connected"
+    },
+    "Tray_Status_Waiting": {
+      "zh-Hans": "监听中 · 等待设备连入",
+      "zh-Hant": "監聽中 · 等待裝置連入",
+      "en": "Listening · waiting for devices"
+    },
+    "Capture_OversizeNotice": {
+      "zh-Hans": "刚复制的文本超过 1 MiB：内容保留在系统剪贴板，未截断，但不记录历史、不同步。",
+      "zh-Hant": "剛複製的文字超過 1 MiB：內容保留在系統剪貼簿，未截斷，但不記錄歷史、不同步。",
+      "en": "The text just copied exceeds 1 MiB: it stays on the system clipboard, untruncated, but is not recorded in history or synced."
+    },
+    "Sync_NotStarted": {
+      "zh-Hans": "对端服务尚未启动",
+      "zh-Hant": "對端服務尚未啟動",
+      "en": "Peer service not started yet"
+    },
+    "Sync_StartFailed": {
+      "zh-Hans": "对端服务未能启动，本次会话同步关闭。",
+      "zh-Hant": "對端服務未能啟動，本次工作階段同步關閉。",
+      "en": "The peer service failed to start; sync is off for this session."
+    },
+    "Sync_ConnectedFormat": {
+      "zh-Hans": "LAN 监听端口 {0} · 已连接 {1} 台设备，内容实时互通。",
+      "zh-Hant": "LAN 監聽連接埠 {0} · 已連線 {1} 台裝置，內容即時互通。",
+      "en": "LAN listening on port {0} · {1} device(s) connected, content flows in real time."
+    },
+    "Sync_WaitingFormat": {
+      "zh-Hans": "LAN 监听端口 {0} · 等待已配对设备连入；事件先落库再入发件队列，断线不丢。",
+      "zh-Hant": "LAN 監聽連接埠 {0} · 等待已配對裝置連入；事件先落庫再入寄件佇列，斷線不丟。",
+      "en": "LAN listening on port {0} · waiting for paired devices; events land in the store before the outbox, so nothing is lost offline."
+    },
+    "Bt_Disabled": {
+      "zh-Hans": "蓝牙备援未启用",
+      "zh-Hant": "藍牙備援未啟用",
+      "en": "Bluetooth fallback not enabled"
+    },
+    "Bt_UnavailableFormat": {
+      "zh-Hans": "蓝牙备援不可用：{0}",
+      "zh-Hant": "藍牙備援不可用：{0}",
+      "en": "Bluetooth fallback unavailable: {0}"
+    },
+    "Bt_SyncingFormat": {
+      "zh-Hans": "蓝牙备援 · 正与 {0} 同步（仅文本）",
+      "zh-Hant": "藍牙備援 · 正與 {0} 同步（僅文字）",
+      "en": "Bluetooth fallback · syncing with {0} (text only)"
+    },
+    "Bt_Armed": {
+      "zh-Hans": "蓝牙备援待命 · LAN 不可达时手机自动改走蓝牙",
+      "zh-Hant": "藍牙備援待命 · LAN 不可達時手機自動改走藍牙",
+      "en": "Bluetooth fallback standing by · the phone switches to Bluetooth automatically when the LAN is unreachable"
+    },
+    "Bt_Starting": {
+      "zh-Hans": "蓝牙备援启动中…",
+      "zh-Hant": "藍牙備援啟動中…",
+      "en": "Bluetooth fallback starting…"
+    },
+    "Bt_AdapterUnavailable": {
+      "zh-Hans": "蓝牙适配器不可用或已关闭",
+      "zh-Hant": "藍牙介面卡不可用或已關閉",
+      "en": "Bluetooth adapter unavailable or turned off"
+    },
+    "Ack_None": {
+      "zh-Hans": "尚未收到对端确认",
+      "zh-Hant": "尚未收到對端確認",
+      "en": "No peer acknowledgement yet"
+    },
+    "Ack_UpToFormat": {
+      "zh-Hans": "对端确认至 {0}",
+      "zh-Hant": "對端確認至 {0}",
+      "en": "Peer acknowledged up to {0}"
+    },
+    "Transfer_ClearedFormat": {
+      "zh-Hans": "已清空 {0} 条历史记录（含图片）。清空只发生在本机。",
+      "zh-Hant": "已清空 {0} 筆歷史記錄（含圖片）。清空只發生在本機。",
+      "en": "Cleared {0} history entries (including images). Clearing happens on this PC only."
+    },
+    "Transfer_ClearConfirmBody": {
+      "zh-Hans": "清空全部历史？\n\n将一次性删除本机全部条目（含图片）。清空只发生在本机，不会远程删除对方已收到的内容。建议先「导出历史」留底。",
+      "zh-Hant": "清空全部歷史？\n\n將一次性刪除本機全部條目（含圖片）。清空只發生在本機，不會遠端刪除對方已收到的內容。建議先「匯出歷史」留底。",
+      "en": "Clear all history?\n\nThis deletes every entry on this PC (including images) in one step. Clearing happens on this PC only and never deletes what the peer already received. Consider “Export history” first."
+    },
+    "Transfer_ClearConfirmAgain": {
+      "zh-Hans": "再确认一次：清空后无法恢复。确定清空全部历史？",
+      "zh-Hant": "再確認一次：清空後無法復原。確定清空全部歷史？",
+      "en": "Confirm once more: clearing cannot be undone. Clear all history?"
+    },
+    "Transfer_ExportedFormat": {
+      "zh-Hans": "已导出 {0} 条记录（明文）→ {1}",
+      "zh-Hant": "已匯出 {0} 筆記錄（明文）→ {1}",
+      "en": "Exported {0} record(s) (plaintext) → {1}"
+    },
+    "Transfer_ExportWriteFailed": {
+      "zh-Hans": "导出失败：无法写入所选文件。",
+      "zh-Hant": "匯出失敗：無法寫入所選檔案。",
+      "en": "Export failed: could not write the chosen file."
+    },
+    "Transfer_ImportedFormat": {
+      "zh-Hans": "导入完成：新增 {0} · 已存在 {1} · 冲突 {2}",
+      "zh-Hant": "匯入完成：新增 {0} · 已存在 {1} · 衝突 {2}",
+      "en": "Import complete: added {0} · existing {1} · conflicts {2}"
+    },
+    "Transfer_ImportFailedFormat": {
+      "zh-Hans": "导入失败：{0}。未做任何改动。",
+      "zh-Hant": "匯入失敗：{0}。未做任何改動。",
+      "en": "Import failed: {0}. Nothing was changed."
+    },
+    "Transfer_ImportReadFailed": {
+      "zh-Hans": "导入失败：无法读取所选文件。",
+      "zh-Hant": "匯入失敗：無法讀取所選檔案。",
+      "en": "Import failed: could not read the chosen file."
+    },
+    "Transfer_FileFilter": {
+      "zh-Hans": "ClipSync 历史导出 (*.jsonl)|*.jsonl|所有文件 (*.*)|*.*",
+      "zh-Hant": "ClipSync 歷史匯出 (*.jsonl)|*.jsonl|所有檔案 (*.*)|*.*",
+      "en": "ClipSync history export (*.jsonl)|*.jsonl|All files (*.*)|*.*"
+    },
+    "Transfer_Error_BadHeader": {
+      "zh-Hans": "这不是 ClipSync 历史导出文件",
+      "zh-Hant": "這不是 ClipSync 歷史匯出檔案",
+      "en": "this is not a ClipSync history export file"
+    },
+    "Transfer_Error_UnsupportedVersion": {
+      "zh-Hans": "文件版本高于本应用支持的版本",
+      "zh-Hant": "檔案版本高於本應用程式支援的版本",
+      "en": "the file version is newer than this app supports"
+    },
+    "Transfer_Error_MalformedRecord": {
+      "zh-Hans": "文件内容损坏（记录格式错误）",
+      "zh-Hant": "檔案內容損壞（記錄格式錯誤）",
+      "en": "the file is corrupted (malformed record)"
+    },
+    "Transfer_Error_HashMismatch": {
+      "zh-Hans": "文件内容损坏（哈希校验失败）",
+      "zh-Hant": "檔案內容損壞（雜湊驗證失敗）",
+      "en": "the file is corrupted (hash check failed)"
+    },
+    "Transfer_Error_CountMismatch": {
+      "zh-Hans": "文件不完整（条数与头部不符）",
+      "zh-Hant": "檔案不完整（筆數與檔頭不符）",
+      "en": "the file is incomplete (count does not match the header)"
+    },
+    "Transfer_Error_ContentTooLarge": {
+      "zh-Hans": "文件包含超出大小上限的条目（文本 1 MiB / 图片 16 MiB）",
+      "zh-Hant": "檔案包含超出大小上限的條目（文字 1 MiB / 圖片 16 MiB）",
+      "en": "the file contains an entry over the size caps (text 1 MiB / images 16 MiB)"
+    },
+    "Transfer_Error_Unknown": {
+      "zh-Hans": "未知错误",
+      "zh-Hant": "未知錯誤",
+      "en": "unknown error"
+    },
+    "Hotkey_Applied": {
+      "zh-Hans": "已生效 · 在任意应用按下即呼出浮窗",
+      "zh-Hant": "已生效 · 在任意應用程式按下即呼出浮窗",
+      "en": "Active · press it in any app to summon the flyout"
+    },
+    "Hotkey_Conflict": {
+      "zh-Hans": "该组合已被其他程序占用，请换一个组合",
+      "zh-Hant": "該組合已被其他程式佔用，請換一個組合",
+      "en": "That combination is taken by another program; try a different one"
+    },
+    "Attention_PeerDown": {
+      "zh-Hans": "本次会话同步未启动（端点启动失败）",
+      "zh-Hant": "本次工作階段同步未啟動（端點啟動失敗）",
+      "en": "Sync not running this session (endpoint failed to start)"
+    },
+    "Attention_CaptureFaulted": {
+      "zh-Hans": "剪贴板捕获降级（上次访问失败）",
+      "zh-Hant": "剪貼簿擷取降級（上次存取失敗）",
+      "en": "Clipboard capture degraded (last access failed)"
+    },
+    "Attention_NoDevice": {
+      "zh-Hans": "配对一台设备开始同步",
+      "zh-Hant": "配對一台裝置開始同步",
+      "en": "Pair a device to start syncing"
+    },
+    "Pairing_Title": {
+      "zh-Hans": "配对新设备",
+      "zh-Hant": "配對新裝置",
+      "en": "Pair new device"
+    },
+    "Pairing_PeerDownBody": {
+      "zh-Hans": "对端服务未启动，本次会话无法配对。",
+      "zh-Hant": "對端服務未啟動，本次工作階段無法配對。",
+      "en": "The peer service is not running; pairing is unavailable this session."
+    },
+    "Pairing_ScanInstruction": {
+      "zh-Hans": "用手机上的「剪剪相传」扫描此码。二维码包含本机地址、证书指纹与一次性令牌，绝不包含配对密钥。",
+      "zh-Hant": "用手機上的「剪剪相傳」掃描此碼。QR 碼包含本機位址、憑證指紋與一次性權杖，絕不包含配對金鑰。",
+      "en": "Scan this code with ClipSync on your phone. The QR code carries this PC’s address, certificate fingerprint, and a one-time token — never the pairing key."
+    },
+    "Pairing_CountdownFormat": {
+      "zh-Hans": "{0:m\\:ss} 后自动更换",
+      "zh-Hant": "{0:m\\:ss} 後自動更換",
+      "en": "Refreshes in {0:m\\:ss}"
+    },
+    "Pairing_NoLanAddress": {
+      "zh-Hans": "未检测到局域网地址。请把本机和手机接入同一网络（或在偏好里添加 Tailscale 地址），再重新打开此窗口。",
+      "zh-Hant": "未偵測到區域網路位址。請把本機和手機接入同一網路（或在偏好裡新增 Tailscale 位址），再重新開啟此視窗。",
+      "en": "No LAN address detected. Put this PC and the phone on the same network (or add a Tailscale address in Preferences), then reopen this window."
+    },
+    "Pairing_VerifyHeading": {
+      "zh-Hans": "确 认 前 请 在 手 机 上 核 对",
+      "zh-Hant": "確 認 前 請 在 手 機 上 核 對",
+      "en": "Verify on the phone before approving"
+    },
+    "Pairing_PcName": {
+      "zh-Hans": "电脑名称",
+      "zh-Hant": "電腦名稱",
+      "en": "PC name"
+    },
+    "Pairing_Fingerprint": {
+      "zh-Hans": "证书指纹",
+      "zh-Hant": "憑證指紋",
+      "en": "Certificate fingerprint"
+    },
+    "Pairing_NewCode": {
+      "zh-Hans": "换一个码",
+      "zh-Hant": "換一個碼",
+      "en": "New code"
+    },
+    "Approval_Title": {
+      "zh-Hans": "配对请求",
+      "zh-Hant": "配對請求",
+      "en": "Pairing request"
+    },
+    "Approval_CloseReject": {
+      "zh-Hans": "关闭并拒绝",
+      "zh-Hant": "關閉並拒絕",
+      "en": "Close and decline"
+    },
+    "Approval_Question": {
+      "zh-Hans": "允许此设备配对吗？",
+      "zh-Hant": "允許此裝置配對嗎？",
+      "en": "Allow this device to pair?"
+    },
+    "Approval_Body": {
+      "zh-Hans": "有设备用本机显示的二维码请求配对。仅当下方名称与你手中的手机一致时批准。",
+      "zh-Hant": "有裝置用本機顯示的 QR 碼請求配對。僅當下方名稱與你手中的手機一致時批准。",
+      "en": "A device used this PC’s QR code to request pairing. Approve only if the name below matches the phone in your hand."
+    },
+    "Approval_PlatformAndroid": {
+      "zh-Hans": "Android 设备",
+      "zh-Hant": "Android 裝置",
+      "en": "Android device"
+    },
+    "Approval_PlatformWindows": {
+      "zh-Hans": "Windows 设备",
+      "zh-Hant": "Windows 裝置",
+      "en": "Windows device"
+    },
+    "Approval_RepairWarning": {
+      "zh-Hans": "该设备此前已配对。批准会替换它原有的配对密钥，旧的安装立即失效。",
+      "zh-Hant": "該裝置此前已配對。批准會替換它原有的配對金鑰，舊的安裝立即失效。",
+      "en": "This device was paired before. Approving replaces its existing pairing key, and the old install stops working immediately."
+    },
+    "Approval_SupersedeNotice": {
+      "zh-Hans": "列表中已有同名设备。批准后旧记录将被自动撤销并清空其待发队列（视为同一部手机重新配对）。",
+      "zh-Hant": "清單中已有同名裝置。批准後舊記錄將被自動撤銷並清空其寄件佇列（視為同一部手機重新配對）。",
+      "en": "A device with the same name is already listed. Approving revokes the old record automatically and clears its outbox (treated as the same phone re-pairing)."
+    },
+    "Approval_Reject": {
+      "zh-Hans": "拒绝",
+      "zh-Hant": "拒絕",
+      "en": "Decline"
+    },
+    "Approval_Approve": {
+      "zh-Hans": "批准配对",
+      "zh-Hant": "批准配對",
+      "en": "Approve pairing"
+    },
+    "Detail_Title": {
+      "zh-Hans": "剪贴详情",
+      "zh-Hant": "剪貼詳情",
+      "en": "Clip details"
+    },
+    "Detail_SourceFormat": {
+      "zh-Hans": "来源：{0}",
+      "zh-Hant": "來源：{0}",
+      "en": "Source: {0}"
+    },
+    "Detail_TimeFormat": {
+      "zh-Hans": "时间：{0}",
+      "zh-Hant": "時間：{0}",
+      "en": "Time: {0}"
+    },
+    "Diag_Title": {
+      "zh-Hans": "剪剪相传 · 诊断日志",
+      "zh-Hant": "剪剪相傳 · 診斷日誌",
+      "en": "ClipSync · diagnostic log"
+    },
+    "Diag_Heading": {
+      "zh-Hans": "本机诊断 · 仅状态码与时间，绝不含剪贴板正文",
+      "zh-Hant": "本機診斷 · 僅狀態碼與時間，絕不含剪貼簿內文",
+      "en": "Local diagnostics · status codes and times only, never clipboard content"
+    },
+    "Diag_CopyAll": {
+      "zh-Hans": "复制全部",
+      "zh-Hant": "複製全部",
+      "en": "Copy all"
+    },
+    "Diag_Empty": {
+      "zh-Hans": "（暂无诊断记录）",
+      "zh-Hant": "（暫無診斷記錄）",
+      "en": "(no diagnostic entries yet)"
+    }
   }
 }

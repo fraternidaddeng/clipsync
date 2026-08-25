@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>剪剪相傳</value>
+  </data>
+  <data name="App_WindowTitle" xml:space="preserve">
+    <value>剪剪相傳 ClipSync</value>
+  </data>
+  <data name="Brand_Wordmark" xml:space="preserve">
+    <value>剪 剪 相 傳</value>
+  </data>
+  <data name="Chrome_Minimize" xml:space="preserve">
+    <value>最小化</value>
+  </data>
+  <data name="Chrome_MaximizeRestore" xml:space="preserve">
+    <value>最大化或還原</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="Common_Copy" xml:space="preserve">
+    <value>複製</value>
+  </data>
+  <data name="Common_Refresh" xml:space="preserve">
+    <value>重新整理</value>
+  </data>
+  <data name="Common_Acknowledge" xml:space="preserve">
+    <value>知道了</value>
+  </data>
+  <data name="Common_FollowSystem" xml:space="preserve">
+    <value>跟隨系統</value>
+  </data>
+  <data name="Common_ClearHistory" xml:space="preserve">
+    <value>清空歷史</value>
+  </data>
+  <data name="Common_ExportHistory" xml:space="preserve">
+    <value>匯出歷史</value>
+  </data>
+  <data name="Common_ImportHistory" xml:space="preserve">
+    <value>匯入歷史</value>
+  </data>
+  <data name="Common_PauseCapture" xml:space="preserve">
+    <value>暫停擷取</value>
+  </data>
+  <data name="Common_PrivateMode" xml:space="preserve">
+    <value>私密模式</value>
+  </data>
+  <data name="Nav_History" xml:space="preserve">
+    <value>歷史</value>
+  </data>
+  <data name="Nav_Conduit" xml:space="preserve">
+    <value>通路</value>
+  </data>
+  <data name="Nav_Prefs" xml:space="preserve">
+    <value>偏好</value>
+  </data>
+  <data name="History_Title" xml:space="preserve">
+    <value>歷史</value>
+  </data>
+  <data name="History_Subtitle" xml:space="preserve">
+    <value>本機與已配對裝置的剪貼記錄 · 清理只發生在本機</value>
+  </data>
+  <data name="History_Search" xml:space="preserve">
+    <value>搜尋</value>
+  </data>
+  <data name="Filter_All" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="Filter_Link" xml:space="preserve">
+    <value>連結</value>
+  </data>
+  <data name="Filter_Otp" xml:space="preserve">
+    <value>驗證碼</value>
+  </data>
+  <data name="Filter_Email" xml:space="preserve">
+    <value>帳號</value>
+  </data>
+  <data name="Filter_Credential" xml:space="preserve">
+    <value>密碼</value>
+  </data>
+  <data name="Filter_Plain" xml:space="preserve">
+    <value>文字</value>
+  </data>
+  <data name="Format_Image" xml:space="preserve">
+    <value>圖片</value>
+  </data>
+  <data name="History_NoPreview" xml:space="preserve">
+    <value>無預覽</value>
+  </data>
+  <data name="History_LocalOnlyBadge" xml:space="preserve">
+    <value>僅本機保留</value>
+  </data>
+  <data name="History_Empty_Unpaired_Title" xml:space="preserve">
+    <value>先把兩端接起來</value>
+  </data>
+  <data name="History_Empty_Paired_Title" xml:space="preserve">
+    <value>靜候第一筆剪貼</value>
+  </data>
+  <data name="History_Empty_Unpaired_Body" xml:space="preserve">
+    <value>尚未與手機配對。配對入口在「通路」頁的網路段。</value>
+  </data>
+  <data name="History_Empty_Paired_Body" xml:space="preserve">
+    <value>在任一端複製文字，它會出現在這裡並流向對面。</value>
+  </data>
+  <data name="History_Empty_GoPair" xml:space="preserve">
+    <value>去配對 ›</value>
+  </data>
+  <data name="History_NoMatch_Prefix" xml:space="preserve">
+    <value>沒有符合「</value>
+  </data>
+  <data name="History_NoMatch_Suffix" xml:space="preserve">
+    <value>」的記錄</value>
+  </data>
+  <data name="History_Empty_Filtered" xml:space="preserve">
+    <value>該形態下暫無記錄 · 換個篩選試試</value>
+  </data>
+  <data name="History_CopySelected" xml:space="preserve">
+    <value>複製所選</value>
+  </data>
+  <data name="History_ViewDetail" xml:space="preserve">
+    <value>檢視詳情</value>
+  </data>
+  <data name="History_DeleteSelected" xml:space="preserve">
+    <value>刪除所選</value>
+  </data>
+  <data name="History_UnknownSource" xml:space="preserve">
+    <value>未知來源</value>
+  </data>
+  <data name="History_LocalSource" xml:space="preserve">
+    <value>本機</value>
+  </data>
+  <data name="Conduit_Title" xml:space="preserve">
+    <value>通路</value>
+  </data>
+  <data name="Conduit_Subtitle" xml:space="preserve">
+    <value>內容從左到右流過四段 · 排障順序即閱讀順序</value>
+  </data>
+  <data name="Conduit_Capture_Name" xml:space="preserve">
+    <value>本機擷取</value>
+  </data>
+  <data name="Conduit_Capture_Ready" xml:space="preserve">
+    <value>就緒 · 監聽 Ctrl+C</value>
+  </data>
+  <data name="Conduit_Status_Paused" xml:space="preserve">
+    <value>已暫停 · 不再記錄</value>
+  </data>
+  <data name="Conduit_Status_Private" xml:space="preserve">
+    <value>私密模式 · 不留痕跡</value>
+  </data>
+  <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
+    <value>擷取降級 · 剪貼簿存取失敗</value>
+  </data>
+  <data name="Conduit_Capture_Detail" xml:space="preserve">
+    <value>私密模式與封鎖處理程序在這一段攔下內容。</value>
+  </data>
+  <data name="Conduit_Service_Name" xml:space="preserve">
+    <value>本機服務</value>
+  </data>
+  <data name="Conduit_Service_ReadyPrefix" xml:space="preserve">
+    <value>就緒 · 歷史 </value>
+  </data>
+  <data name="Conduit_Service_ReadyInfix" xml:space="preserve">
+    <value> 筆 · 待傳 </value>
+  </data>
+  <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
+    <value>事件先落庫再入寄件佇列 · </value>
+  </data>
+  <data name="Conduit_Network_Name" xml:space="preserve">
+    <value>網路</value>
+  </data>
+  <data name="Conduit_Network_ReadyPrefix" xml:space="preserve">
+    <value>就緒 · 監聽 :</value>
+  </data>
+  <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
+    <value> · 已連 </value>
+  </data>
+  <data name="Conduit_Network_ReadySuffix" xml:space="preserve">
+    <value> 台</value>
+  </data>
+  <data name="Conduit_Network_Down" xml:space="preserve">
+    <value>未啟動 · 同步關閉</value>
+  </data>
+  <data name="Conduit_Peer_Name" xml:space="preserve">
+    <value>對端寫入</value>
+  </data>
+  <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
+    <value>已配對 </value>
+  </data>
+  <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
+    <value> 台</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
+    <value>遠端文字自動寫入本機剪貼簿。</value>
+  </data>
+  <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
+    <value>自動套用已關閉：遠端內容僅保留在歷史，需手動複製。</value>
+  </data>
+  <data name="Conduit_Devices_Header" xml:space="preserve">
+    <value>網路段 · 已配對裝置</value>
+  </data>
+  <data name="Conduit_Connection_Header" xml:space="preserve">
+    <value>網路段 · 連線</value>
+  </data>
+  <data name="Conduit_CleanupStale" xml:space="preserve">
+    <value>一鍵清理</value>
+  </data>
+  <data name="Conduit_Bluetooth_Title" xml:space="preserve">
+    <value>藍牙備援</value>
+  </data>
+  <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
+    <value>預設關閉。LAN 被 VPN 或防火牆阻斷時，已在系統設定中藍牙配對的手機可繼續同步文字（不含圖片，速度較慢）。</value>
+  </data>
+  <data name="Conduit_ExtraBind_Title" xml:space="preserve">
+    <value>額外監聽位址</value>
+  </data>
+  <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
+    <value>用於 Tailscale / WireGuard 等虛擬網卡位址。不提供公網中繼。</value>
+  </data>
+  <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
+    <value>重新啟動後生效</value>
+  </data>
+  <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
+    <value> · 逗號分隔多個位址</value>
+  </data>
+  <data name="Conduit_Fingerprint_Title" xml:space="preserve">
+    <value>本機憑證指紋</value>
+  </data>
+  <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
+    <value>配對時請與手機上顯示的指紋逐組核對。指紋變更會使所有已配對裝置提示重新確認。</value>
+  </data>
+  <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
+    <value>對端服務未啟動，本次工作階段無指紋可示。</value>
+  </data>
+  <data name="Device_RevokedBadge" xml:space="preserve">
+    <value>已撤銷</value>
+  </data>
+  <data name="Device_AccentLabel" xml:space="preserve">
+    <value>裝置色</value>
+  </data>
+  <data name="Device_AccentManual" xml:space="preserve">
+    <value>手動指定</value>
+  </data>
+  <data name="Device_AccentByOrder" xml:space="preserve">
+    <value>跟隨配對順位</value>
+  </data>
+  <data name="Device_Rename" xml:space="preserve">
+    <value>重新命名</value>
+  </data>
+  <data name="Device_RevokeSelected" xml:space="preserve">
+    <value>撤銷所選裝置</value>
+  </data>
+  <data name="Device_RevokeNote" xml:space="preserve">
+    <value>撤銷立即斷開該裝置並作廢其配對金鑰；對方已收到的內容不會被遠端刪除。撤銷後重新配對視為新裝置。同一部手機換了身分重新配對時，舊記錄會被自動撤銷並清空其寄件佇列。</value>
+  </data>
+  <data name="Device_UnknownRemote" xml:space="preserve">
+    <value>遠端裝置</value>
+  </data>
+  <data name="Device_PairedFallback" xml:space="preserve">
+    <value>已配對裝置</value>
+  </data>
+  <data name="Device_UnknownFallback" xml:space="preserve">
+    <value>未知裝置</value>
+  </data>
+  <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
+    <value>{0} · 積壓 {1} 筆待傳</value>
+  </data>
+  <data name="Stale_BannerBacklogFormat" xml:space="preserve">
+    <value>偵測到 {0} 台疑似殘留裝置，積壓 {1} 筆待傳正在推高「待傳」計數。清理會撤銷它們並清空其寄件佇列。</value>
+  </data>
+  <data name="Stale_BannerFormat" xml:space="preserve">
+    <value>偵測到 {0} 台疑似殘留裝置。清理會撤銷它們；對方已收到的內容不受影響。</value>
+  </data>
+  <data name="Stale_DuplicateBadge" xml:space="preserve">
+    <value>疑似重複配對殘留</value>
+  </data>
+  <data name="Stale_NeverConnected" xml:space="preserve">
+    <value>配對後從未連線</value>
+  </data>
+  <data name="Stale_UnseenDaysFormat" xml:space="preserve">
+    <value>超過 {0} 天未連線</value>
+  </data>
+  <data name="Prefs_Title" xml:space="preserve">
+    <value>偏好</value>
+  </data>
+  <data name="Prefs_Subtitle" xml:space="preserve">
+    <value>改動即生效 · 剪貼簿內文永不出現在日誌裡</value>
+  </data>
+  <data name="Prefs_Group_Display" xml:space="preserve">
+    <value>顯 示 · DISPLAY</value>
+  </data>
+  <data name="Prefs_Group_Capture" xml:space="preserve">
+    <value>擷 取 · CAPTURE</value>
+  </data>
+  <data name="Prefs_Group_Sync" xml:space="preserve">
+    <value>同 步 · SYNC</value>
+  </data>
+  <data name="Prefs_Group_Retention" xml:space="preserve">
+    <value>存 留 · RETENTION</value>
+  </data>
+  <data name="Prefs_Group_Startup" xml:space="preserve">
+    <value>執 行 · STARTUP</value>
+  </data>
+  <data name="Prefs_Group_Data" xml:space="preserve">
+    <value>資 料 · DATA</value>
+  </data>
+  <data name="Prefs_FontScale_Title" xml:space="preserve">
+    <value>歷史字級</value>
+  </data>
+  <data name="Prefs_FontScale_Desc" xml:space="preserve">
+    <value>只縮放剪貼內容文字（歷史預覽、詳情內文、系統匣浮窗）；組頭、註記盒與按鈕保持不變。</value>
+  </data>
+  <data name="Prefs_FontScale_Small" xml:space="preserve">
+    <value>小</value>
+  </data>
+  <data name="Prefs_FontScale_Standard" xml:space="preserve">
+    <value>標準</value>
+  </data>
+  <data name="Prefs_FontScale_Large" xml:space="preserve">
+    <value>大</value>
+  </data>
+  <data name="Prefs_PreviewLines_Title" xml:space="preserve">
+    <value>預覽行數</value>
+  </data>
+  <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
+    <value>歷史清單每筆最多顯示的內文行數；超出部分以刪節號截斷，完整內容看詳情。</value>
+  </data>
+  <data name="Prefs_PreviewLines_Two" xml:space="preserve">
+    <value>2 行</value>
+  </data>
+  <data name="Prefs_PreviewLines_Four" xml:space="preserve">
+    <value>4 行</value>
+  </data>
+  <data name="Prefs_PreviewLines_Six" xml:space="preserve">
+    <value>6 行</value>
+  </data>
+  <data name="Prefs_Theme_Title" xml:space="preserve">
+    <value>外觀</value>
+  </data>
+  <data name="Prefs_Theme_Desc" xml:space="preserve">
+    <value>視窗的日間/夜間配色；系統匣圖示活在工作列裡，始終跟隨工作列的深淺。</value>
+  </data>
+  <data name="Prefs_Theme_Day" xml:space="preserve">
+    <value>日間</value>
+  </data>
+  <data name="Prefs_Theme_Night" xml:space="preserve">
+    <value>夜間</value>
+  </data>
+  <data name="Prefs_Language_Title" xml:space="preserve">
+    <value>語言</value>
+  </data>
+  <data name="Prefs_Language_Desc" xml:space="preserve">
+    <value>介面顯示語言，跟隨系統或手動指定；語言名稱始終以各自的母語顯示。</value>
+  </data>
+  <data name="Prefs_Language_RestartNote" xml:space="preserve">
+    <value>更換後重新啟動應用程式生效。</value>
+  </data>
+  <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
+    <value>暫停後本機不再記錄新內容，既有歷史保留。</value>
+  </data>
+  <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
+    <value>開啟期間擷取與同步全部停止，不留任何痕跡。</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
+    <value>封鎖處理程序</value>
+  </data>
+  <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
+    <value>來自這些處理程序的複製不進入歷史，也不同步。逗號或換行分隔。</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
+    <value>自動套用遠端內容</value>
+  </data>
+  <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
+    <value>手機傳來的文字自動寫入本機剪貼簿。關閉後只保留在歷史中，需手動複製。</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
+    <value>同步剪貼簿圖片</value>
+  </data>
+  <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
+    <value>預設關閉。僅 PNG/JPEG；原始位元組可能含 EXIF 等中繼資料，雙端需為 v2 工作階段。</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
+    <value>自動套用遠端圖片</value>
+  </data>
+  <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
+    <value>手機傳來的圖片自動寫入本機剪貼簿。關閉後只保留在歷史中，需手動複製。</value>
+  </data>
+  <data name="Prefs_Moved_Title" xml:space="preserve">
+    <value>藍牙備援 · 額外監聽位址 · 本機憑證指紋</value>
+  </data>
+  <data name="Prefs_Moved_Desc" xml:space="preserve">
+    <value>已移至「通路 · 網路段」——它們決定內容能否到達對端，與配對、裝置管理同住。</value>
+  </data>
+  <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
+    <value>前往通路</value>
+  </data>
+  <data name="Prefs_Retention_Days_Title" xml:space="preserve">
+    <value>保留期限</value>
+  </data>
+  <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
+    <value>逾期條目自動清除。清理只發生在本機，不遠端刪除對方已收到的內容。</value>
+  </data>
+  <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
+    <value>天</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
+    <value>保留筆數</value>
+  </data>
+  <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
+    <value>超出上限時最舊的條目先被清除（100–2000，每步 100）。清理只發生在本機。</value>
+  </data>
+  <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
+    <value>筆</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
+    <value>開機自動啟動 · 靜默入系統匣</value>
+  </data>
+  <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
+    <value>隨 Windows 登入自動啟動並直接落在系統匣，不彈主視窗。只寫目前使用者的啟動項，不需要系統管理員權限。</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
+    <value>呼出浮窗快速鍵</value>
+  </data>
+  <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
+    <value>在任意應用程式按下組合鍵呼出系統匣浮窗。點擊輸入框後按下想要的組合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。預設關閉。</value>
+  </data>
+  <data name="Prefs_Data_Export_Desc" xml:space="preserve">
+    <value>把全部歷史（含刪除標記）寫成 JSON Lines 備份檔；不含金鑰、憑證與配對資訊。匯出內容為明文，請妥善保管。</value>
+  </data>
+  <data name="Prefs_Data_Import_Desc" xml:space="preserve">
+    <value>從備份檔合併歷史：按「來源裝置 + 序號」冪等去重，重複匯入不產生重複條目，也不會覆蓋本機已刪除的記錄。驗證失敗時不做任何改動。</value>
+  </data>
+  <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
+    <value>一次性刪除本機全部條目（含圖片），需兩步確認且無法復原。清空只發生在本機，不會遠端刪除對方已收到的內容；建議先匯出歷史留底。</value>
+  </data>
+  <data name="Flyout_WindowTitle" xml:space="preserve">
+    <value>剪剪相傳 · 最近剪貼</value>
+  </data>
+  <data name="Flyout_PauseSync" xml:space="preserve">
+    <value>暫停同步</value>
+  </data>
+  <data name="Flyout_ResumeSync" xml:space="preserve">
+    <value>恢復同步</value>
+  </data>
+  <data name="Flyout_Empty" xml:space="preserve">
+    <value>還沒有剪貼記錄 · 複製一段文字試試</value>
+  </data>
+  <data name="Flyout_PauseOrResume" xml:space="preserve">
+    <value>暫停或恢復同步</value>
+  </data>
+  <data name="Flyout_CopyFromFormat" xml:space="preserve">
+    <value>複製來自 {0} 的剪貼</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>開啟剪剪相傳</value>
+  </data>
+  <data name="Tray_Menu_Diagnostics" xml:space="preserve">
+    <value>診斷日誌</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>結束</value>
+  </data>
+  <data name="Tray_Tooltip_Flow" xml:space="preserve">
+    <value>剪剪相傳 · 監聽中</value>
+  </data>
+  <data name="Tray_Tooltip_AttentionFormat" xml:space="preserve">
+    <value>剪剪相傳 · {0}</value>
+  </data>
+  <data name="Tray_AttentionFallback" xml:space="preserve">
+    <value>需要你操作</value>
+  </data>
+  <data name="Tray_Tooltip_Paused" xml:space="preserve">
+    <value>剪剪相傳 · 擷取已暫停</value>
+  </data>
+  <data name="Tray_Tooltip_Private" xml:space="preserve">
+    <value>剪剪相傳 · 私密模式，不留痕跡</value>
+  </data>
+  <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
+    <value>收到 {0} 的 1 筆新剪貼</value>
+  </data>
+  <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
+    <value>收到 {0} 的 {1} 筆新剪貼</value>
+  </data>
+  <data name="Tray_OversizeNotice" xml:space="preserve">
+    <value>剛複製的文字超過 1 MiB，僅保留在本機剪貼簿，不同步（未截斷）。</value>
+  </data>
+  <data name="Tray_AuthThrottleFormat" xml:space="preserve">
+    <value>偵測到「{0}」反覆驗證失敗，已暫時限流該裝置。</value>
+  </data>
+  <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
+    <value>監聽中 · 同步未啟動</value>
+  </data>
+  <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
+    <value>監聽中 · 已連 {0} 台</value>
+  </data>
+  <data name="Tray_Status_Waiting" xml:space="preserve">
+    <value>監聽中 · 等待裝置連入</value>
+  </data>
+  <data name="Capture_OversizeNotice" xml:space="preserve">
+    <value>剛複製的文字超過 1 MiB：內容保留在系統剪貼簿，未截斷，但不記錄歷史、不同步。</value>
+  </data>
+  <data name="Sync_NotStarted" xml:space="preserve">
+    <value>對端服務尚未啟動</value>
+  </data>
+  <data name="Sync_StartFailed" xml:space="preserve">
+    <value>對端服務未能啟動，本次工作階段同步關閉。</value>
+  </data>
+  <data name="Sync_ConnectedFormat" xml:space="preserve">
+    <value>LAN 監聽連接埠 {0} · 已連線 {1} 台裝置，內容即時互通。</value>
+  </data>
+  <data name="Sync_WaitingFormat" xml:space="preserve">
+    <value>LAN 監聽連接埠 {0} · 等待已配對裝置連入；事件先落庫再入寄件佇列，斷線不丟。</value>
+  </data>
+  <data name="Bt_Disabled" xml:space="preserve">
+    <value>藍牙備援未啟用</value>
+  </data>
+  <data name="Bt_UnavailableFormat" xml:space="preserve">
+    <value>藍牙備援不可用：{0}</value>
+  </data>
+  <data name="Bt_SyncingFormat" xml:space="preserve">
+    <value>藍牙備援 · 正與 {0} 同步（僅文字）</value>
+  </data>
+  <data name="Bt_Armed" xml:space="preserve">
+    <value>藍牙備援待命 · LAN 不可達時手機自動改走藍牙</value>
+  </data>
+  <data name="Bt_Starting" xml:space="preserve">
+    <value>藍牙備援啟動中…</value>
+  </data>
+  <data name="Bt_AdapterUnavailable" xml:space="preserve">
+    <value>藍牙介面卡不可用或已關閉</value>
+  </data>
+  <data name="Ack_None" xml:space="preserve">
+    <value>尚未收到對端確認</value>
+  </data>
+  <data name="Ack_UpToFormat" xml:space="preserve">
+    <value>對端確認至 {0}</value>
+  </data>
+  <data name="Transfer_ClearedFormat" xml:space="preserve">
+    <value>已清空 {0} 筆歷史記錄（含圖片）。清空只發生在本機。</value>
+  </data>
+  <data name="Transfer_ClearConfirmBody" xml:space="preserve">
+    <value>清空全部歷史？
+
+將一次性刪除本機全部條目（含圖片）。清空只發生在本機，不會遠端刪除對方已收到的內容。建議先「匯出歷史」留底。</value>
+  </data>
+  <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
+    <value>再確認一次：清空後無法復原。確定清空全部歷史？</value>
+  </data>
+  <data name="Transfer_ExportedFormat" xml:space="preserve">
+    <value>已匯出 {0} 筆記錄（明文）→ {1}</value>
+  </data>
+  <data name="Transfer_ExportWriteFailed" xml:space="preserve">
+    <value>匯出失敗：無法寫入所選檔案。</value>
+  </data>
+  <data name="Transfer_ImportedFormat" xml:space="preserve">
+    <value>匯入完成：新增 {0} · 已存在 {1} · 衝突 {2}</value>
+  </data>
+  <data name="Transfer_ImportFailedFormat" xml:space="preserve">
+    <value>匯入失敗：{0}。未做任何改動。</value>
+  </data>
+  <data name="Transfer_ImportReadFailed" xml:space="preserve">
+    <value>匯入失敗：無法讀取所選檔案。</value>
+  </data>
+  <data name="Transfer_FileFilter" xml:space="preserve">
+    <value>ClipSync 歷史匯出 (*.jsonl)|*.jsonl|所有檔案 (*.*)|*.*</value>
+  </data>
+  <data name="Transfer_Error_BadHeader" xml:space="preserve">
+    <value>這不是 ClipSync 歷史匯出檔案</value>
+  </data>
+  <data name="Transfer_Error_UnsupportedVersion" xml:space="preserve">
+    <value>檔案版本高於本應用程式支援的版本</value>
+  </data>
+  <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
+    <value>檔案內容損壞（記錄格式錯誤）</value>
+  </data>
+  <data name="Transfer_Error_HashMismatch" xml:space="preserve">
+    <value>檔案內容損壞（雜湊驗證失敗）</value>
+  </data>
+  <data name="Transfer_Error_CountMismatch" xml:space="preserve">
+    <value>檔案不完整（筆數與檔頭不符）</value>
+  </data>
+  <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
+    <value>檔案包含超出大小上限的條目（文字 1 MiB / 圖片 16 MiB）</value>
+  </data>
+  <data name="Transfer_Error_Unknown" xml:space="preserve">
+    <value>未知錯誤</value>
+  </data>
+  <data name="Hotkey_Applied" xml:space="preserve">
+    <value>已生效 · 在任意應用程式按下即呼出浮窗</value>
+  </data>
+  <data name="Hotkey_Conflict" xml:space="preserve">
+    <value>該組合已被其他程式佔用，請換一個組合</value>
+  </data>
+  <data name="Attention_PeerDown" xml:space="preserve">
+    <value>本次工作階段同步未啟動（端點啟動失敗）</value>
+  </data>
+  <data name="Attention_CaptureFaulted" xml:space="preserve">
+    <value>剪貼簿擷取降級（上次存取失敗）</value>
+  </data>
+  <data name="Attention_NoDevice" xml:space="preserve">
+    <value>配對一台裝置開始同步</value>
+  </data>
+  <data name="Pairing_Title" xml:space="preserve">
+    <value>配對新裝置</value>
+  </data>
+  <data name="Pairing_PeerDownBody" xml:space="preserve">
+    <value>對端服務未啟動，本次工作階段無法配對。</value>
+  </data>
+  <data name="Pairing_ScanInstruction" xml:space="preserve">
+    <value>用手機上的「剪剪相傳」掃描此碼。QR 碼包含本機位址、憑證指紋與一次性權杖，絕不包含配對金鑰。</value>
+  </data>
+  <data name="Pairing_CountdownFormat" xml:space="preserve">
+    <value>{0:m\:ss} 後自動更換</value>
+  </data>
+  <data name="Pairing_NoLanAddress" xml:space="preserve">
+    <value>未偵測到區域網路位址。請把本機和手機接入同一網路（或在偏好裡新增 Tailscale 位址），再重新開啟此視窗。</value>
+  </data>
+  <data name="Pairing_VerifyHeading" xml:space="preserve">
+    <value>確 認 前 請 在 手 機 上 核 對</value>
+  </data>
+  <data name="Pairing_PcName" xml:space="preserve">
+    <value>電腦名稱</value>
+  </data>
+  <data name="Pairing_Fingerprint" xml:space="preserve">
+    <value>憑證指紋</value>
+  </data>
+  <data name="Pairing_NewCode" xml:space="preserve">
+    <value>換一個碼</value>
+  </data>
+  <data name="Approval_Title" xml:space="preserve">
+    <value>配對請求</value>
+  </data>
+  <data name="Approval_CloseReject" xml:space="preserve">
+    <value>關閉並拒絕</value>
+  </data>
+  <data name="Approval_Question" xml:space="preserve">
+    <value>允許此裝置配對嗎？</value>
+  </data>
+  <data name="Approval_Body" xml:space="preserve">
+    <value>有裝置用本機顯示的 QR 碼請求配對。僅當下方名稱與你手中的手機一致時批准。</value>
+  </data>
+  <data name="Approval_PlatformAndroid" xml:space="preserve">
+    <value>Android 裝置</value>
+  </data>
+  <data name="Approval_PlatformWindows" xml:space="preserve">
+    <value>Windows 裝置</value>
+  </data>
+  <data name="Approval_RepairWarning" xml:space="preserve">
+    <value>該裝置此前已配對。批准會替換它原有的配對金鑰，舊的安裝立即失效。</value>
+  </data>
+  <data name="Approval_SupersedeNotice" xml:space="preserve">
+    <value>清單中已有同名裝置。批准後舊記錄將被自動撤銷並清空其寄件佇列（視為同一部手機重新配對）。</value>
+  </data>
+  <data name="Approval_Reject" xml:space="preserve">
+    <value>拒絕</value>
+  </data>
+  <data name="Approval_Approve" xml:space="preserve">
+    <value>批准配對</value>
+  </data>
+  <data name="Detail_Title" xml:space="preserve">
+    <value>剪貼詳情</value>
+  </data>
+  <data name="Detail_SourceFormat" xml:space="preserve">
+    <value>來源：{0}</value>
+  </data>
+  <data name="Detail_TimeFormat" xml:space="preserve">
+    <value>時間：{0}</value>
+  </data>
+  <data name="Diag_Title" xml:space="preserve">
+    <value>剪剪相傳 · 診斷日誌</value>
+  </data>
+  <data name="Diag_Heading" xml:space="preserve">
+    <value>本機診斷 · 僅狀態碼與時間，絕不含剪貼簿內文</value>
+  </data>
+  <data name="Diag_CopyAll" xml:space="preserve">
+    <value>複製全部</value>
+  </data>
+  <data name="Diag_Empty" xml:space="preserve">
+    <value>（暫無診斷記錄）</value>
+  </data>
+</root>
