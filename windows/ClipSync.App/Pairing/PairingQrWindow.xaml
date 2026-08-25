@@ -1,7 +1,8 @@
 <Window x:Class="ClipSync.App.Pairing.PairingQrWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="配对新设备"
+        xmlns:loc="clr-namespace:ClipSync.App.Localization"
+        Title="{x:Static loc:Strings.Pairing_Title}"
         Icon="/Assets/Icons/app.ico"
         Width="460"
         SizeToContent="Height"
@@ -50,10 +51,10 @@
                                FontSize="13"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource CsText1Brush}"
-                               Text="配对新设备" />
+                               Text="{x:Static loc:Strings.Pairing_Title}" />
                 </StackPanel>
                 <Button Grid.Column="1"
-                        AutomationProperties.Name="关闭"
+                        AutomationProperties.Name="{x:Static loc:Strings.Common_Close}"
                         Click="OnCloseClicked"
                         Style="{StaticResource CsCaptionCloseButton}">
                     <Path Data="{StaticResource CsGlyphClose}" Style="{StaticResource CsCaptionGlyph}" />
@@ -64,7 +65,7 @@
         <StackPanel Margin="24,18,24,20">
             <TextBlock FontSize="11.5"
                        Foreground="{DynamicResource CsText3Brush}"
-                       Text="用手机上的「剪剪相传」扫描此码。二维码包含本机地址、证书指纹与一次性令牌，绝不包含配对密钥。"
+                       Text="{x:Static loc:Strings.Pairing_ScanInstruction}"
                        TextWrapping="Wrap" />
 
             <!-- 二维码：静区必须纯白（灰蓝底会干扰识别）；四角定位框用流动蓝提示「入口」 -->
@@ -113,7 +114,7 @@
                     Visibility="Collapsed">
                 <TextBlock FontSize="11"
                            Foreground="{DynamicResource CsActBrush}"
-                           Text="未检测到局域网地址。请把本机和手机接入同一网络（或在偏好里添加 Tailscale 地址），再重新打开此窗口。"
+                           Text="{x:Static loc:Strings.Pairing_NoLanAddress}"
                            TextWrapping="Wrap" />
             </Border>
 
@@ -128,11 +129,11 @@
                     <TextBlock FontFamily="{StaticResource CsMono}"
                                FontSize="10"
                                Foreground="{DynamicResource CsText4Brush}"
-                               Text="确 认 前 请 在 手 机 上 核 对" />
+                               Text="{x:Static loc:Strings.Pairing_VerifyHeading}" />
                     <TextBlock Margin="0,8,0,0"
                                FontSize="11"
                                Foreground="{DynamicResource CsText3Brush}"
-                               Text="电脑名称" />
+                               Text="{x:Static loc:Strings.Pairing_PcName}" />
                     <TextBlock x:Name="DeviceNameText"
                                Margin="0,1,0,0"
                                FontSize="13"
@@ -141,7 +142,7 @@
                     <TextBlock Margin="0,8,0,0"
                                FontSize="11"
                                Foreground="{DynamicResource CsText3Brush}"
-                               Text="证书指纹" />
+                               Text="{x:Static loc:Strings.Pairing_Fingerprint}" />
                     <TextBlock x:Name="FingerprintText"
                                Margin="0,2,0,0"
                                FontFamily="{StaticResource CsMono}"
@@ -157,12 +158,12 @@
                         Orientation="Horizontal">
                 <Button MinWidth="110"
                         Click="OnRegenerateClicked"
-                        Content="换一个码"
+                        Content="{x:Static loc:Strings.Pairing_NewCode}"
                         Style="{StaticResource GhostFlowButton}" />
                 <Button MinWidth="110"
                         Margin="10,0,0,0"
                         Click="OnCloseClicked"
-                        Content="关闭"
+                        Content="{x:Static loc:Strings.Common_Close}"
                         Style="{StaticResource GhostQuietButton}" />
             </StackPanel>
         </StackPanel>

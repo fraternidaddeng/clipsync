@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Input;
+using ClipSync.App.Localization;
 using ClipSync.App.Media;
 using ClipSync.App.ViewModels;
 
@@ -19,9 +20,11 @@ public partial class DetailWindow : Window
         ArgumentNullException.ThrowIfNull(copy);
 
         InitializeComponent();
+        // 阿拉伯语 RTL（P1#16）：整窗镜像，正文方向交给文字本身。
+        FlowDirection = LocalizationManager.WindowFlowDirection;
         this.copy = copy;
-        SourceText.Text = $"来源：{detail.Source}";
-        CreatedAtText.Text = $"时间：{detail.CreatedAt}";
+        SourceText.Text = Strings.Format(nameof(Strings.Detail_SourceFormat), detail.Source);
+        CreatedAtText.Text = Strings.Format(nameof(Strings.Detail_TimeFormat), detail.CreatedAt);
         ApplyBody(detail);
         PreviewKeyDown += OnPreviewKeyDown;
     }
@@ -49,7 +52,7 @@ public partial class DetailWindow : Window
     {
         if (detail.PixelWidth is null || detail.PixelHeight is null)
         {
-            return string.IsNullOrEmpty(detail.MimeType) ? "图片" : detail.MimeType;
+            return string.IsNullOrEmpty(detail.MimeType) ? Strings.Format_Image : detail.MimeType;
         }
 
         var size = detail.EncodedBytes is null
@@ -57,7 +60,7 @@ public partial class DetailWindow : Window
             : detail.EncodedBytes.Value < 1024
                 ? $"{detail.EncodedBytes.Value} B"
                 : $"{detail.EncodedBytes.Value / 1024.0:0.#} KiB";
-        return $"{detail.MimeType ?? "图片"} {detail.PixelWidth}×{detail.PixelHeight} · {size}";
+        return $"{detail.MimeType ?? Strings.Format_Image} {detail.PixelWidth}×{detail.PixelHeight} · {size}";
     }
 
     private void OnCopyClicked(object sender, RoutedEventArgs e) => copy();

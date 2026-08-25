@@ -10,6 +10,9 @@ public partial class MainWindow : Window
     public MainWindow(MainViewModel viewModel)
     {
         InitializeComponent();
+        // 阿拉伯语 RTL（P1#16）：整窗镜像（导航、通路四段、偏好行随文化方向翻转）；
+        // 指纹、快捷键、监听地址等机器文本在 XAML 里各自钉回 LTR。
+        FlowDirection = Localization.LocalizationManager.WindowFlowDirection;
         this.viewModel = viewModel;
         DataContext = viewModel;
         Loaded += OnLoaded;
@@ -42,6 +45,16 @@ public partial class MainWindow : Window
     // 改动即生效：开关在点击时保存，文本框在失焦时保存（没有「保存设置」按钮）。
     private async void OnSettingToggled(object sender, RoutedEventArgs e) =>
         await viewModel.SaveSettingsFromUiAsync();
+
+    // 语言（P1#16）：下拉改选即落库；界面语言重启后生效（行内赭注如实陈述）。
+    // IsLoaded 闸门滤掉窗口构造期间绑定初始化触发的 SelectionChanged。
+    private async void OnLanguageSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if (IsLoaded)
+        {
+            await viewModel.SaveSettingsFromUiAsync();
+        }
+    }
 
     private async void OnSettingLostFocus(object sender, RoutedEventArgs e) =>
         await viewModel.SaveSettingsFromUiAsync();

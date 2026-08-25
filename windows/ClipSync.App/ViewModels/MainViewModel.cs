@@ -1,3 +1,4 @@
+using ClipSync.App.Localization;
 using ClipSync.Core.Clipboard;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Server;
@@ -8,6 +9,12 @@ using System.IO;
 using System.Text;
 
 namespace ClipSync.App.ViewModels;
+
+/// <summary>
+/// One row of the 偏好·显示 language picker（P1#16）: 跟随系统 first, then the catalog
+/// languages in catalog order, each shown by its endonym (never translated).
+/// </summary>
+public sealed record LanguageOption(string Key, string DisplayName);
 
 /// <summary>
 /// Full clip body plus metadata for the detail window. The history list only
@@ -109,6 +116,27 @@ public partial class MainViewModel(
     [ObservableProperty]
     private string themeModeKey = ClipSync.App.Ui.AppearanceOptions.DefaultKey;
 
+    /// <summary>
+    /// 语言（P1#16）：「system」（跟随系统，默认）或目录里的 BCP-47 标签。启动时由
+    /// App 层在任何窗口构造前应用为进程 UI 文化；运行中改选只落库，重启后生效。
+    /// </summary>
+    [ObservableProperty]
+    private string languageKey = ClipSync.App.Ui.LanguageCatalog.FollowSystemKey;
+
+    /// <summary>
+    /// Picker rows: 跟随系统（localized）+ the 19 catalog languages by endonym. Computed at
+    /// bind time so the 跟随系统 label resolves after the startup culture is applied.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Performance",
+        "CA1822:Mark members as static",
+        Justification = "WPF {Binding} 只解析实例属性；语言下拉的 ItemsSource 绑在 DataContext 上。")]
+    public IReadOnlyList<LanguageOption> LanguageOptions =>
+        new[] { new LanguageOption(ClipSync.App.Ui.LanguageCatalog.FollowSystemKey, Strings.Common_FollowSystem) }
+            .Concat(ClipSync.App.Ui.LanguageCatalog.Languages
+                .Select(language => new LanguageOption(language.Tag, language.NativeName)))
+            .ToArray();
+
     /// <summary>The effective content-text factor the app layer feeds into the resource dictionary.</summary>
     public double HistoryFontScale => ClipSync.App.Ui.HistoryDisplayOptions.ScaleFor(HistoryFontScaleKey);
 
@@ -156,14 +184,14 @@ public partial class MainViewModel(
 
     /// <summary>One line for the conduit network segment describing the Bluetooth fallback listener.</summary>
     [ObservableProperty]
-    private string bluetoothStatus = "蓝牙备援未启用";
+    private string bluetoothStatus = Strings.Bt_Disabled;
 
     /// <summary>True while a peer is syncing over the Bluetooth fallback right now.</summary>
     [ObservableProperty]
     private bool bluetoothSessionActive;
 
     [ObservableProperty]
-    private string syncStatus = "对端服务尚未启动";
+    private string syncStatus = Strings.Sync_NotStarted;
 
     /// <summary>True while the peer endpoint is listening; drives the conduit page's network segment.</summary>
     [ObservableProperty]
@@ -184,7 +212,7 @@ public partial class MainViewModel(
 
     /// <summary>When a peer last confirmed receipt, phrased for the conduit detail row.</summary>
     [ObservableProperty]
-    private string lastAckText = "尚未收到对端确认";
+    private string lastAckText = Strings.Ack_None;
 
     /// <summary>True after the clipboard adapter reported a fault; cleared on the next successful capture.</summary>
     [ObservableProperty]
@@ -233,12 +261,12 @@ public partial class MainViewModel(
     /// the conduit capture segment so the same fact reads the same everywhere.
     /// </summary>
     public string TrayStatusText =>
-        IsPrivateMode ? "私密模式 · 不留痕迹"
-        : IsPaused ? "已暂停 · 不再记录"
-        : CaptureFaulted ? "捕获降级 · 剪贴板访问失败"
-        : !PeerOnline ? "监听中 · 同步未启动"
-        : ConnectedDeviceCount > 0 ? $"监听中 · 已连 {ConnectedDeviceCount} 台"
-        : "监听中 · 等待设备连入";
+        IsPrivateMode ? Strings.Conduit_Status_Private
+        : IsPaused ? Strings.Conduit_Status_Paused
+        : CaptureFaulted ? Strings.Conduit_Status_CaptureFaulted
+        : !PeerOnline ? Strings.Tray_Status_ListeningNoSync
+        : ConnectedDeviceCount > 0 ? Strings.Format(nameof(Strings.Tray_Status_ConnectedFormat), ConnectedDeviceCount)
+        : Strings.Tray_Status_Waiting;
 
     /// <summary>
     /// The clipboard apply posture reported on <c>/v1/peer/health</c> so the phone's 对端写入
@@ -263,7 +291,7 @@ public partial class MainViewModel(
     {
         if (reason == CaptureRejectionReason.TooLarge)
         {
-            CaptureNotice = "刚复制的文本超过 1 MiB：内容保留在系统剪贴板，未截断，但不记录历史、不同步。";
+            CaptureNotice = Strings.Capture_OversizeNotice;
         }
     }
 
@@ -306,6 +334,8 @@ public partial class MainViewModel(
             await store.GetSettingAsync("ui_preview_lines"));
         ThemeModeKey = ClipSync.App.Ui.AppearanceOptions.KeyForStored(
             await store.GetSettingAsync("ui_theme"));
+        LanguageKey = ClipSync.App.Ui.LanguageCatalog.KeyForStored(
+            await store.GetSettingAsync("ui_language"));
         LaunchAtStartup = bool.TryParse(await store.GetSettingAsync("launch_at_startup"), out var launch) && launch;
         FlyoutHotkey = await store.GetSettingAsync("hotkey_flyout") ?? string.Empty;
         BlockedProcesses = await store.GetSettingAsync("blocked_processes") ?? BlockedProcesses;
@@ -340,10 +370,10 @@ public partial class MainViewModel(
         PeerPort = port;
         ConnectedDeviceCount = online ? connectedCount : 0;
         SyncStatus = !online
-            ? "对端服务未能启动，本次会话同步关闭。"
+            ? Strings.Sync_StartFailed
             : connectedCount > 0
-                ? $"LAN 监听端口 {port} · 已连接 {connectedCount} 台设备，内容实时互通。"
-                : $"LAN 监听端口 {port} · 等待已配对设备连入；事件先落库再入发件队列，断线不丢。";
+                ? Strings.Format(nameof(Strings.Sync_ConnectedFormat), port, connectedCount)
+                : Strings.Format(nameof(Strings.Sync_WaitingFormat), port);
     }
 
     /// <summary>
@@ -355,14 +385,14 @@ public partial class MainViewModel(
     {
         BluetoothSessionActive = enabled && connectedDeviceName is not null;
         BluetoothStatus = !enabled
-            ? "蓝牙备援未启用"
+            ? Strings.Bt_Disabled
             : failureReason is not null
-                ? $"蓝牙备援不可用：{failureReason}"
+                ? Strings.Format(nameof(Strings.Bt_UnavailableFormat), failureReason)
                 : connectedDeviceName is not null
-                    ? $"蓝牙备援 · 正与 {connectedDeviceName} 同步（仅文本）"
+                    ? Strings.Format(nameof(Strings.Bt_SyncingFormat), connectedDeviceName)
                     : listening
-                        ? "蓝牙备援待命 · LAN 不可达时手机自动改走蓝牙"
-                        : "蓝牙备援启动中…";
+                        ? Strings.Bt_Armed
+                        : Strings.Bt_Starting;
     }
 
     /// <summary>Re-reads the outbox depth and last peer ack for the conduit local-service segment.</summary>
@@ -371,8 +401,10 @@ public partial class MainViewModel(
         var status = await store.GetOutboxStatusAsync();
         OutboxPendingCount = status.PendingCount;
         LastAckText = status.LastPeerAckAt is { } ackedAt
-            ? $"对端确认至 {ackedAt.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture)}"
-            : "尚未收到对端确认";
+            ? Strings.Format(
+                nameof(Strings.Ack_UpToFormat),
+                ackedAt.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture))
+            : Strings.Ack_None;
     }
 
     /// <summary>
@@ -568,16 +600,15 @@ public partial class MainViewModel(
         }
 
         var removed = await store.ClearAsync(DateTimeOffset.UtcNow);
-        HistoryTransferStatus = $"已清空 {removed} 条历史记录（含图片）。清空只发生在本机。";
+        HistoryTransferStatus = Strings.Format(nameof(Strings.Transfer_ClearedFormat), removed);
         await RefreshAsync();
     }
 
     private static bool ConfirmClearHistory()
     {
         var first = System.Windows.MessageBox.Show(
-            "清空全部历史？\n\n将一次性删除本机全部条目（含图片）。清空只发生在本机，"
-                + "不会远程删除对方已收到的内容。建议先「导出历史」留底。",
-            "剪剪相传",
+            Strings.Transfer_ClearConfirmBody,
+            Strings.App_Name,
             System.Windows.MessageBoxButton.OKCancel,
             System.Windows.MessageBoxImage.Warning);
         if (first != System.Windows.MessageBoxResult.OK)
@@ -586,8 +617,8 @@ public partial class MainViewModel(
         }
 
         return System.Windows.MessageBox.Show(
-            "再确认一次：清空后无法恢复。确定清空全部历史？",
-            "剪剪相传",
+            Strings.Transfer_ClearConfirmAgain,
+            Strings.App_Name,
             System.Windows.MessageBoxButton.OKCancel,
             System.Windows.MessageBoxImage.Warning) == System.Windows.MessageBoxResult.OK;
     }
@@ -612,12 +643,12 @@ public partial class MainViewModel(
             await using (var writer = new StreamWriter(path, append: false, new UTF8Encoding(false)))
             {
                 var count = await store.ExportHistoryAsync(writer, DateTimeOffset.UtcNow);
-                HistoryTransferStatus = $"已导出 {count} 条记录（明文）→ {path}";
+                HistoryTransferStatus = Strings.Format(nameof(Strings.Transfer_ExportedFormat), count, path);
             }
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
-            HistoryTransferStatus = "导出失败：无法写入所选文件。";
+            HistoryTransferStatus = Strings.Transfer_ExportWriteFailed;
         }
     }
 
@@ -643,39 +674,40 @@ public partial class MainViewModel(
                 result = await store.ImportHistoryAsync(reader);
             }
 
-            HistoryTransferStatus =
-                $"导入完成：新增 {result.Imported} · 已存在 {result.Skipped} · 冲突 {result.Conflicts}";
+            HistoryTransferStatus = Strings.Format(
+                nameof(Strings.Transfer_ImportedFormat), result.Imported, result.Skipped, result.Conflicts);
             await RefreshAsync();
         }
         catch (HistoryTransferException exception)
         {
-            HistoryTransferStatus = $"导入失败：{DescribeTransferError(exception.ErrorCode)}。未做任何改动。";
+            HistoryTransferStatus = Strings.Format(
+                nameof(Strings.Transfer_ImportFailedFormat), DescribeTransferError(exception.ErrorCode));
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
-            HistoryTransferStatus = "导入失败：无法读取所选文件。";
+            HistoryTransferStatus = Strings.Transfer_ImportReadFailed;
         }
     }
 
     private static string DescribeTransferError(string errorCode) => errorCode switch
     {
-        HistoryTransferErrorCodes.BadHeader => "这不是 ClipSync 历史导出文件",
-        HistoryTransferErrorCodes.UnsupportedVersion => "文件版本高于本应用支持的版本",
-        HistoryTransferErrorCodes.MalformedRecord => "文件内容损坏（记录格式错误）",
-        HistoryTransferErrorCodes.HashMismatch => "文件内容损坏（哈希校验失败）",
-        HistoryTransferErrorCodes.CountMismatch => "文件不完整（条数与头部不符）",
-        HistoryTransferErrorCodes.ContentTooLarge => "文件包含超出大小上限的条目（文本 1 MiB / 图片 16 MiB）",
-        _ => "未知错误"
+        HistoryTransferErrorCodes.BadHeader => Strings.Transfer_Error_BadHeader,
+        HistoryTransferErrorCodes.UnsupportedVersion => Strings.Transfer_Error_UnsupportedVersion,
+        HistoryTransferErrorCodes.MalformedRecord => Strings.Transfer_Error_MalformedRecord,
+        HistoryTransferErrorCodes.HashMismatch => Strings.Transfer_Error_HashMismatch,
+        HistoryTransferErrorCodes.CountMismatch => Strings.Transfer_Error_CountMismatch,
+        HistoryTransferErrorCodes.ContentTooLarge => Strings.Transfer_Error_ContentTooLarge,
+        _ => Strings.Transfer_Error_Unknown
     };
 
     private static string? PickExportPath()
     {
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
-            Title = "导出历史",
+            Title = Strings.Common_ExportHistory,
             FileName = $"clipsync-history-{DateTime.Now:yyyyMMdd-HHmmss}.jsonl",
             DefaultExt = HistoryExportFormat.SuggestedExtension,
-            Filter = "ClipSync 历史导出 (*.jsonl)|*.jsonl|所有文件 (*.*)|*.*"
+            Filter = Strings.Transfer_FileFilter
         };
         return dialog.ShowDialog() == true ? dialog.FileName : null;
     }
@@ -684,9 +716,9 @@ public partial class MainViewModel(
     {
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "导入历史",
+            Title = Strings.Common_ImportHistory,
             DefaultExt = HistoryExportFormat.SuggestedExtension,
-            Filter = "ClipSync 历史导出 (*.jsonl)|*.jsonl|所有文件 (*.*)|*.*"
+            Filter = Strings.Transfer_FileFilter
         };
         return dialog.ShowDialog() == true ? dialog.FileName : null;
     }
@@ -703,6 +735,7 @@ public partial class MainViewModel(
         await store.SetSettingAsync("ui_history_font_scale", ClipSync.App.Ui.HistoryDisplayOptions.StoredScaleFor(HistoryFontScaleKey));
         await store.SetSettingAsync("ui_preview_lines", ClipSync.App.Ui.HistoryDisplayOptions.StoredLinesFor(PreviewLinesKey));
         await store.SetSettingAsync("ui_theme", ClipSync.App.Ui.AppearanceOptions.StoredFor(ThemeModeKey));
+        await store.SetSettingAsync("ui_language", ClipSync.App.Ui.LanguageCatalog.StoredFor(LanguageKey));
         await store.SetSettingAsync("launch_at_startup", LaunchAtStartup.ToString());
         await store.SetSettingAsync("hotkey_flyout", FlyoutHotkey);
         await store.SetSettingAsync("blocked_processes", BlockedProcesses);
@@ -743,7 +776,7 @@ public partial class MainViewModel(
                 staleBacklog += pending;
                 if (pending > 0)
                 {
-                    staleReason = $"{staleReason} · 积压 {pending} 条待发";
+                    staleReason = Strings.Format(nameof(Strings.Stale_BacklogSuffixFormat), staleReason, pending);
                 }
             }
 
@@ -756,8 +789,8 @@ public partial class MainViewModel(
         StaleBannerText = staleCount == 0
             ? string.Empty
             : staleBacklog > 0
-                ? $"检测到 {staleCount} 台疑似残留设备，积压 {staleBacklog} 条待发正在推高「待发」计数。清理会撤销它们并清空其发件队列。"
-                : $"检测到 {staleCount} 台疑似残留设备。清理会撤销它们；对方已收到的内容不受影响。";
+                ? Strings.Format(nameof(Strings.Stale_BannerBacklogFormat), staleCount, staleBacklog)
+                : Strings.Format(nameof(Strings.Stale_BannerFormat), staleCount);
     }
 
     /// <summary>
@@ -784,13 +817,15 @@ public partial class MainViewModel(
             && IsFresher(other, device));
         if (hasFresherTwin)
         {
-            return "疑似重复配对残留";
+            return Strings.Stale_DuplicateBadge;
         }
 
         var lastActivity = device.LastSeenAt ?? device.CreatedAt;
         if (now - lastActivity > TimeSpan.FromDays(StaleAfterDays))
         {
-            return device.LastSeenAt is null ? "配对后从未连接" : $"超过 {StaleAfterDays} 天未连接";
+            return device.LastSeenAt is null
+                ? Strings.Stale_NeverConnected
+                : Strings.Format(nameof(Strings.Stale_UnseenDaysFormat), StaleAfterDays);
         }
 
         return null;

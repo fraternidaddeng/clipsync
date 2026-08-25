@@ -1,3 +1,4 @@
+using ClipSync.App.Localization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,17 +23,19 @@ internal sealed class DiagnosticsWindow : Window
 
     public DiagnosticsWindow()
     {
-        Title = "剪剪相传 · 诊断日志";
+        Title = Strings.Diag_Title;
         Width = 520;
         Height = 440;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
         Background = PanelBackground;
+        // 阿拉伯语 RTL（P1#16）：整窗镜像；日志正文是机器文本，保持 LTR。
+        FlowDirection = LocalizationManager.WindowFlowDirection;
 
         var root = new DockPanel { Margin = new Thickness(14) };
 
         var heading = new TextBlock
         {
-            Text = "本机诊断 · 仅状态码与时间，绝不含剪贴板正文",
+            Text = Strings.Diag_Heading,
             Foreground = MutedText,
             FontSize = 12,
             Margin = new Thickness(0, 0, 0, 10),
@@ -49,14 +52,14 @@ internal sealed class DiagnosticsWindow : Window
         };
         var refreshButton = new Button
         {
-            Content = "刷新",
+            Content = Strings.Common_Refresh,
             Padding = new Thickness(14, 4, 14, 4),
             Margin = new Thickness(0, 0, 8, 0),
         };
         refreshButton.Click += (_, _) => Reload();
         var copyButton = new Button
         {
-            Content = "复制全部",
+            Content = Strings.Diag_CopyAll,
             Padding = new Thickness(14, 4, 14, 4),
         };
         copyButton.Click += (_, _) => CopyAll();
@@ -68,6 +71,7 @@ internal sealed class DiagnosticsWindow : Window
         logView = new TextBox
         {
             IsReadOnly = true,
+            FlowDirection = FlowDirection.LeftToRight,
             TextWrapping = TextWrapping.NoWrap,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
@@ -89,7 +93,7 @@ internal sealed class DiagnosticsWindow : Window
         var snapshot = LocalDiagnostics.Snapshot();
         if (snapshot.Count == 0)
         {
-            logView.Text = "（暂无诊断记录）";
+            logView.Text = Strings.Diag_Empty;
             return;
         }
 

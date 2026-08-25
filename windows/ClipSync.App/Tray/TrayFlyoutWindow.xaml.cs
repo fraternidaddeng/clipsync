@@ -27,6 +27,8 @@ public partial class TrayFlyoutWindow : Window
     public TrayFlyoutWindow(MainViewModel viewModel)
     {
         InitializeComponent();
+        // 阿拉伯语 RTL（P1#16）：浮窗整体镜像。
+        FlowDirection = Localization.LocalizationManager.WindowFlowDirection;
         this.viewModel = viewModel;
         DataContext = viewModel;
         autoHideTimer = new DispatcherTimer { Interval = AutoHideDelay };

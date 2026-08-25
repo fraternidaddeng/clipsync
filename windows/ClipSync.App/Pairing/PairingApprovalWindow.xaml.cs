@@ -1,4 +1,5 @@
 using System.Windows;
+using ClipSync.App.Localization;
 using ClipSync.Peer.Pairing;
 
 namespace ClipSync.App.Pairing;
@@ -12,11 +13,13 @@ public partial class PairingApprovalWindow : Window
     public PairingApprovalWindow(PairingCandidate candidate)
     {
         InitializeComponent();
+        // 阿拉伯语 RTL（P1#16）：批准仪式整窗镜像。
+        FlowDirection = LocalizationManager.WindowFlowDirection;
         DeviceNameText.Text = candidate.DisplayName;
         PlatformText.Text = candidate.Platform switch
         {
-            "android" => "Android 设备",
-            "windows" => "Windows 设备",
+            "android" => Strings.Approval_PlatformAndroid,
+            "windows" => Strings.Approval_PlatformWindows,
             _ => candidate.Platform
         };
         RepairWarningBox.Visibility = candidate.IsRepair ? Visibility.Visible : Visibility.Collapsed;

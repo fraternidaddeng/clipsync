@@ -1,7 +1,8 @@
 <Window x:Class="ClipSync.App.DetailWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="剪贴详情"
+        xmlns:loc="clr-namespace:ClipSync.App.Localization"
+        Title="{x:Static loc:Strings.Detail_Title}"
         Width="560"
         Height="480"
         MinWidth="420"
@@ -60,12 +61,12 @@
                     HorizontalAlignment="Right"
                     Orientation="Horizontal">
             <Button Click="OnCopyClicked"
-                    Content="复制"
+                    Content="{x:Static loc:Strings.Common_Copy}"
                     Padding="16,6"
                     Style="{StaticResource GhostFlowButton}" />
             <Button Margin="8,0,0,0"
                     Click="OnCloseClicked"
-                    Content="关闭"
+                    Content="{x:Static loc:Strings.Common_Close}"
                     IsCancel="True"
                     Padding="16,6"
                     Style="{StaticResource GhostQuietButton}" />

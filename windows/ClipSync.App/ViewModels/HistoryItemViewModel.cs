@@ -1,3 +1,4 @@
+using ClipSync.App.Localization;
 using ClipSync.App.Ui;
 using ClipSync.Core.Clipboard;
 using ClipSync.Core.Media;
@@ -26,10 +27,10 @@ public sealed record HistoryItemViewModel(
     bool IsLocalOnly = false)
 {
     /// <summary>Shown for remote clips whose origin device is no longer in the paired list.</summary>
-    private const string UnknownRemoteLabel = "远端设备";
+    private static string UnknownRemoteLabel => Strings.Device_UnknownRemote;
 
     /// <summary>Shown in a quiet grey annotation box when the source app could not be resolved.</summary>
-    internal const string UnknownSourceLabel = "未知来源";
+    internal static string UnknownSourceLabel => Strings.History_UnknownSource;
 
     public bool IsImage => string.Equals(Kind, "image", StringComparison.Ordinal);
 
@@ -56,12 +57,12 @@ public sealed record HistoryItemViewModel(
     public string Preview => IsImage ? FormatImagePreview() : Text;
 
     /// <summary>Badge text per format (ADR 0003 词汇); plain text carries no badge.</summary>
-    public string FormatLabel => IsImage ? "图片" : Format switch
+    public string FormatLabel => IsImage ? Strings.Format_Image : Format switch
     {
-        ClipContentFormat.Link => "链接",
-        ClipContentFormat.Email => "账号",
-        ClipContentFormat.Otp => "验证码",
-        ClipContentFormat.Credential => "密码",
+        ClipContentFormat.Link => Strings.Filter_Link,
+        ClipContentFormat.Email => Strings.Filter_Email,
+        ClipContentFormat.Otp => Strings.Filter_Otp,
+        ClipContentFormat.Credential => Strings.Filter_Credential,
         _ => string.Empty,
     };
 
@@ -81,6 +82,9 @@ public sealed record HistoryItemViewModel(
 
     /// <summary>A quiet card is the default: only non-plain formats (and images) show a badge.</summary>
     public bool HasFormatBadge => IsImage || Format != ClipContentFormat.Plain;
+
+    /// <summary>Accessible name for the flyout copy card, resolved in the current UI language.</summary>
+    public string CopyAccessibleName => Strings.Format(nameof(Strings.Flyout_CopyFromFormat), OriginLabel);
 
     /// <summary>
     /// 仅本机保留 (ADR 0005 §5): this local image was terminated as a `local_only`
@@ -118,7 +122,7 @@ public sealed record HistoryItemViewModel(
             isSourceKnown ? entry.SourceProcess! : UnknownSourceLabel,
             entry.CreatedAt.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture),
             isRemote,
-            isRemote ? device?.DisplayName ?? UnknownRemoteLabel : "本机",
+            isRemote ? device?.DisplayName ?? UnknownRemoteLabel : Strings.History_LocalSource,
             // Unknown origins keep the quiet grey box; the neighbour hue belongs to a
             // device that is still in the paired list.
             device?.AccentIndex ?? DeviceAccent.None,
@@ -141,7 +145,7 @@ public sealed record HistoryItemViewModel(
     {
         if (PixelWidth is null || PixelHeight is null)
         {
-            return string.IsNullOrEmpty(MimeType) ? "图片" : MimeType;
+            return string.IsNullOrEmpty(MimeType) ? Strings.Format_Image : MimeType;
         }
 
         var size = EncodedBytes is null
@@ -149,6 +153,6 @@ public sealed record HistoryItemViewModel(
             : EncodedBytes.Value < 1024
                 ? $"{EncodedBytes.Value} B"
                 : $"{EncodedBytes.Value / 1024.0:0.#} KiB";
-        return $"{MimeType ?? "图片"} {PixelWidth}×{PixelHeight} · {size}";
+        return $"{MimeType ?? Strings.Format_Image} {PixelWidth}×{PixelHeight} · {size}";
     }
 }

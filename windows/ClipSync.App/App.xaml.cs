@@ -1,5 +1,6 @@
 using ClipSync.App.Clipboard;
 using ClipSync.App.Diagnostics;
+using ClipSync.App.Localization;
 using ClipSync.App.Pairing;
 using ClipSync.App.Security;
 using ClipSync.App.Startup;
@@ -84,6 +85,11 @@ public partial class App : Application
 
         var store = services.GetRequiredService<SqliteClipboardEventStore>();
         await store.InitializeAsync();
+        // 语言（P1#16）: the stored override must become the process UI culture before the
+        // first view model or window constructs — status lines, tray strings and every
+        // {x:Static} XAML lookup resolve against it. 跟随系统 leaves the OS account
+        // language in charge. Changing the picker later only persists; restart applies.
+        LocalizationManager.ApplyLanguage(await store.GetSettingAsync("ui_language"));
         var viewModel = services.GetRequiredService<MainViewModel>();
         await viewModel.InitializeAsync();
         // 外观（P1-6）: a stored 日间/夜间 override must pin the palette before any window
@@ -232,8 +238,8 @@ public partial class App : Application
         mainViewModel.FlyoutHotkeyConflict = !applied;
         mainViewModel.FlyoutHotkeyStatus =
             gesture.Length == 0 ? string.Empty
-            : applied ? "已生效 · 在任意应用按下即呼出浮窗"
-            : "该组合已被其他程序占用，请换一个组合";
+            : applied ? Strings.Hotkey_Applied
+            : Strings.Hotkey_Conflict;
         if (!applied)
         {
             LocalDiagnostics.Write("flyout_hotkey_unavailable");
@@ -259,9 +265,9 @@ public partial class App : Application
 
         var hasUsableDevice = mainViewModel.Devices.Any(device => !device.IsRevoked);
         var attentionReason =
-            peerEndpointUnavailable ? "本次会话同步未启动（端点启动失败）"
-            : mainViewModel.CaptureFaulted ? "剪贴板捕获降级（上次访问失败）"
-            : !hasUsableDevice ? "配对一台设备开始同步"
+            peerEndpointUnavailable ? Strings.Attention_PeerDown
+            : mainViewModel.CaptureFaulted ? Strings.Attention_CaptureFaulted
+            : !hasUsableDevice ? Strings.Attention_NoDevice
             : null;
         var state = TrayStateMapper.Map(mainViewModel.IsPrivateMode, mainViewModel.IsPaused, attentionReason is not null);
         trayIcon.SetState(state, attentionReason);
@@ -387,7 +393,7 @@ public partial class App : Application
             {
                 DetachBluetoothHost(host);
                 await host.DisposeAsync();
-                mainViewModel.UpdateBluetoothStatus(true, false, null, "蓝牙适配器不可用或已关闭");
+                mainViewModel.UpdateBluetoothStatus(true, false, null, Strings.Bt_AdapterUnavailable);
                 LocalDiagnostics.Write($"bluetooth_start_failed_{exception.GetType().Name}");
             }
         }
@@ -418,7 +424,8 @@ public partial class App : Application
         var deviceId = host.ConnectedDeviceId;
         var deviceName = deviceId is null
             ? null
-            : mainViewModel.Devices.FirstOrDefault(device => device.DeviceId == deviceId)?.DisplayName ?? "已配对设备";
+            : mainViewModel.Devices.FirstOrDefault(device => device.DeviceId == deviceId)?.DisplayName
+                ?? Strings.Device_PairedFallback;
         mainViewModel.UpdateBluetoothStatus(true, host.IsListening, deviceName, null);
     }
 
@@ -481,8 +488,8 @@ public partial class App : Application
         {
             MessageBox.Show(
                 owner,
-                "对端服务未启动，本次会话无法配对。",
-                "剪剪相传",
+                Strings.Pairing_PeerDownBody,
+                Strings.App_Name,
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
             return;
@@ -535,7 +542,8 @@ public partial class App : Application
         _ = Dispatcher.InvokeAsync(() =>
         {
             var label = mainViewModel?.Devices
-                .FirstOrDefault(device => device.DeviceId == deviceId)?.DisplayName ?? "未知设备";
+                .FirstOrDefault(device => device.DeviceId == deviceId)?.DisplayName
+                ?? Strings.Device_UnknownFallback;
             trayIcon?.ShowAuthThrottleNotice(label);
         });
     }
@@ -628,7 +636,8 @@ public partial class App : Application
                 // appears in notifications (or logs).
                 var originId = batch[^1].OriginDeviceId;
                 var deviceLabel = viewModel.Devices
-                    .FirstOrDefault(device => device.DeviceId == originId)?.DisplayName ?? "远端设备";
+                    .FirstOrDefault(device => device.DeviceId == originId)?.DisplayName
+                    ?? Strings.Device_UnknownRemote;
                 trayIcon?.ShowRemoteClipNotice(deviceLabel, batch.Count);
             }
             catch (Exception exception)

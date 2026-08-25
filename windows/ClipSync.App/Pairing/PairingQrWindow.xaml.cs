@@ -2,6 +2,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using ClipSync.App.Localization;
 using ClipSync.App.Sync;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Pairing;
@@ -23,6 +24,8 @@ public partial class PairingQrWindow : Window
     public PairingQrWindow(PairingService pairing, PeerSyncHost host)
     {
         InitializeComponent();
+        // 阿拉伯语 RTL（P1#16）：整窗镜像；二维码与指纹是机器文本，XAML 里钉回 LTR。
+        FlowDirection = LocalizationManager.WindowFlowDirection;
         this.pairing = pairing;
         this.host = host;
 
@@ -91,7 +94,7 @@ public partial class PairingQrWindow : Window
             remaining = TimeSpan.Zero;
         }
 
-        CountdownText.Text = $"{remaining:m\\:ss} 后自动更换";
+        CountdownText.Text = Strings.Format(nameof(Strings.Pairing_CountdownFormat), remaining);
     }
 
     /// <summary>Four-character groups, eight per line: humans compare groups, not character streams.</summary>

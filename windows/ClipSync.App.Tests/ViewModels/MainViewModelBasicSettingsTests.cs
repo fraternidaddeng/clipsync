@@ -9,7 +9,7 @@ using Microsoft.Data.Sqlite;
 namespace ClipSync.App.Tests.ViewModels;
 
 /// <summary>
-/// 基础设置（settings-roadmap P0-1/P0-5/P1-7/P1-9/P1-15 的 Windows 半边）: defaults,
+/// 基础设置（settings-roadmap P0-1/P0-5/P1-6/P1-7/P1-9/P1-15/P1-16 的 Windows 半边）: defaults,
 /// persistence through the settings table under the roadmap key contract, fallback for
 /// unreadable stored values, the confirmed 清空历史 command, and the adjustable
 /// entry-cap cleanup. 开机自启's registry mechanism lives in StartupRegistrationTests;
@@ -46,10 +46,26 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
         Assert.Equal(1.0, viewModel.HistoryFontScale);
         Assert.Equal("4", viewModel.PreviewLinesKey);
         Assert.Equal(4, viewModel.PreviewLines);
+        Assert.Equal(AppearanceOptions.SystemKey, viewModel.ThemeModeKey);
+        Assert.Equal(LanguageCatalog.FollowSystemKey, viewModel.LanguageKey);
         Assert.Equal(2000, viewModel.RetentionMaxEntries);
         Assert.False(viewModel.LaunchAtStartup);
         Assert.Equal(string.Empty, viewModel.FlyoutHotkey);
         Assert.Equal(string.Empty, viewModel.FlyoutHotkeyStatus);
+    }
+
+    [Fact]
+    public async Task LanguagePickerListsFollowSystemFirstThenTheCatalogByEndonym()
+    {
+        var viewModel = CreateViewModel();
+        await viewModel.InitializeAsync();
+
+        var options = viewModel.LanguageOptions;
+        Assert.Equal(LanguageCatalog.Languages.Count + 1, options.Count);
+        Assert.Equal(LanguageCatalog.FollowSystemKey, options[0].Key);
+        Assert.Equal(
+            LanguageCatalog.Languages.Select(language => (language.Tag, language.NativeName)),
+            options.Skip(1).Select(option => (option.Key, option.DisplayName)));
     }
 
     [Fact]
@@ -59,6 +75,8 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
         await viewModel.InitializeAsync();
         viewModel.HistoryFontScaleKey = HistoryDisplayOptions.LargeScaleKey;
         viewModel.PreviewLinesKey = "6";
+        viewModel.ThemeModeKey = AppearanceOptions.NightKey;
+        viewModel.LanguageKey = "ar";
         viewModel.RetentionMaxEntries = 500;
         viewModel.LaunchAtStartup = true;
         viewModel.FlyoutHotkey = "Ctrl+Alt+V";
@@ -68,6 +86,8 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
         // The wire forms follow the roadmap key contract: factor and plain numbers.
         Assert.Equal("1.15", await store.GetSettingAsync("ui_history_font_scale"));
         Assert.Equal("6", await store.GetSettingAsync("ui_preview_lines"));
+        Assert.Equal("night", await store.GetSettingAsync("ui_theme"));
+        Assert.Equal("ar", await store.GetSettingAsync("ui_language"));
         Assert.Equal("500", await store.GetSettingAsync("retention_max_entries"));
         Assert.Equal("True", await store.GetSettingAsync("launch_at_startup"));
         Assert.Equal("Ctrl+Alt+V", await store.GetSettingAsync("hotkey_flyout"));
@@ -77,6 +97,8 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
         Assert.Equal(HistoryDisplayOptions.LargeScaleKey, reloaded.HistoryFontScaleKey);
         Assert.Equal(1.15, reloaded.HistoryFontScale);
         Assert.Equal(6, reloaded.PreviewLines);
+        Assert.Equal(AppearanceOptions.NightKey, reloaded.ThemeModeKey);
+        Assert.Equal("ar", reloaded.LanguageKey);
         Assert.Equal(500, reloaded.RetentionMaxEntries);
         Assert.True(reloaded.LaunchAtStartup);
         Assert.Equal("Ctrl+Alt+V", reloaded.FlyoutHotkey);
@@ -88,6 +110,8 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
         await store.InitializeAsync();
         await store.SetSettingAsync("ui_history_font_scale", "gigantic");
         await store.SetSettingAsync("ui_preview_lines", "17");
+        await store.SetSettingAsync("ui_theme", "sepia");
+        await store.SetSettingAsync("ui_language", "tlh");
         await store.SetSettingAsync("retention_max_entries", "999999");
         await store.SetSettingAsync("launch_at_startup", "sideways");
 
@@ -96,6 +120,8 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
 
         Assert.Equal(HistoryDisplayOptions.StandardScaleKey, viewModel.HistoryFontScaleKey);
         Assert.Equal("4", viewModel.PreviewLinesKey);
+        Assert.Equal(AppearanceOptions.SystemKey, viewModel.ThemeModeKey);
+        Assert.Equal(LanguageCatalog.FollowSystemKey, viewModel.LanguageKey);
         Assert.Equal(2000, viewModel.RetentionMaxEntries);
         Assert.False(viewModel.LaunchAtStartup);
     }

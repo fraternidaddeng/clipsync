@@ -1,7 +1,8 @@
 <Window x:Class="ClipSync.App.Pairing.PairingApprovalWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="配对请求"
+        xmlns:loc="clr-namespace:ClipSync.App.Localization"
+        Title="{x:Static loc:Strings.Approval_Title}"
         Icon="/Assets/Icons/app.ico"
         Width="440"
         SizeToContent="Height"
@@ -51,10 +52,10 @@
                                FontSize="13"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource CsText1Brush}"
-                               Text="配对请求" />
+                               Text="{x:Static loc:Strings.Approval_Title}" />
                 </StackPanel>
                 <Button Grid.Column="1"
-                        AutomationProperties.Name="关闭并拒绝"
+                        AutomationProperties.Name="{x:Static loc:Strings.Approval_CloseReject}"
                         Click="OnRejectClicked"
                         Style="{StaticResource CsCaptionCloseButton}">
                     <Path Data="{StaticResource CsGlyphClose}" Style="{StaticResource CsCaptionGlyph}" />
@@ -67,11 +68,11 @@
                        FontSize="17"
                        FontWeight="SemiBold"
                        Foreground="{DynamicResource CsText1Brush}"
-                       Text="允许此设备配对吗？" />
+                       Text="{x:Static loc:Strings.Approval_Question}" />
             <TextBlock Margin="0,8,0,0"
                        FontSize="11.5"
                        Foreground="{DynamicResource CsText2Brush}"
-                       Text="有设备用本机显示的二维码请求配对。仅当下方名称与你手中的手机一致时批准。"
+                       Text="{x:Static loc:Strings.Approval_Body}"
                        TextWrapping="Wrap" />
 
             <!-- 请求方：设备邻近色着色盒（顺位 1 · 青灰），身份用形 -->
@@ -132,7 +133,7 @@
                 <TextBlock FontSize="11"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource CsErrBrush}"
-                           Text="该设备此前已配对。批准会替换它原有的配对密钥，旧的安装立即失效。"
+                           Text="{x:Static loc:Strings.Approval_RepairWarning}"
                            TextWrapping="Wrap" />
             </Border>
 
@@ -148,7 +149,7 @@
                 <TextBlock FontSize="11"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource CsActBrush}"
-                           Text="列表中已有同名设备。批准后旧记录将被自动撤销并清空其待发队列（视为同一部手机重新配对）。"
+                           Text="{x:Static loc:Strings.Approval_SupersedeNotice}"
                            TextWrapping="Wrap" />
             </Border>
 
@@ -157,12 +158,12 @@
                         Orientation="Horizontal">
                 <Button MinWidth="100"
                         Click="OnRejectClicked"
-                        Content="拒绝"
+                        Content="{x:Static loc:Strings.Approval_Reject}"
                         Style="{StaticResource GhostQuietButton}" />
                 <Button MinWidth="120"
                         Margin="10,0,0,0"
                         Click="OnApproveClicked"
-                        Content="批准配对"
+                        Content="{x:Static loc:Strings.Approval_Approve}"
                         Style="{StaticResource PrimaryButton}" />
             </StackPanel>
         </StackPanel>

@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System.Windows;assembly=PresentationFramework"
         xmlns:ui="clr-namespace:ClipSync.App.Ui"
-        Title="剪剪相传 ClipSync"
+        xmlns:loc="clr-namespace:ClipSync.App.Localization"
+        Title="{x:Static loc:Strings.App_WindowTitle}"
         Icon="Assets/Icons/app.ico"
         Width="1020"
         Height="680"
@@ -205,6 +206,114 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CsFlowLineBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 凹陷下拉框（语言选择器，P1#16）：闭合态与凹陷输入框同一 z−1 语汇，
+             弹出面用 z1 卡片底 + 1px 线；19 种语言 chip 放不下，这是偏好页唯一的下拉 -->
+        <Style x:Key="InsetComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="{DynamicResource CsSurfaceInBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CsLineBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="MaxDropDownHeight" Value="320" />
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
+                        <Setter Property="Padding" Value="10,6" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBoxItem">
+                                    <Border x:Name="Bd"
+                                            Padding="{TemplateBinding Padding}"
+                                            Background="Transparent"
+                                            CornerRadius="6">
+                                        <ContentPresenter />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsHighlighted" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsSurface3Brush}" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsFlowBgBrush}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="Bd"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ContentPresenter Margin="{TemplateBinding Padding}"
+                                                      VerticalAlignment="Center"
+                                                      Content="{TemplateBinding SelectionBoxItem}"
+                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                      IsHitTestVisible="False" />
+                                    <Path Grid.Column="1"
+                                          Margin="0,1,10,0"
+                                          VerticalAlignment="Center"
+                                          Data="M0,0 L4,4 L8,0"
+                                          Stroke="{DynamicResource CsText3Brush}"
+                                          StrokeThickness="1.4" />
+                                </Grid>
+                            </Border>
+                            <ToggleButton ClickMode="Press"
+                                          Focusable="False"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="Transparent" />
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <Popup AllowsTransparency="True"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   Placement="Bottom"
+                                   PopupAnimation="Fade"
+                                   StaysOpen="False">
+                                <Border MinWidth="{TemplateBinding ActualWidth}"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Margin="0,4,0,0"
+                                        Padding="4"
+                                        Background="{DynamicResource CsSurfaceBrush}"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="10">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CsFlowLineBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
                                 <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CsFlowLineBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -449,7 +558,7 @@
                                FontSize="13"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource CsText1Brush}"
-                               Text="剪 剪 相 传" />
+                               Text="{x:Static loc:Strings.Brand_Wordmark}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1"
@@ -460,7 +569,7 @@
                                VerticalAlignment="Center"
                                FontSize="11"
                                Foreground="{DynamicResource CsText3Brush}"
-                               Text="暂停捕获" />
+                               Text="{x:Static loc:Strings.Common_PauseCapture}" />
                     <ToggleButton Click="OnSettingToggled"
                                   IsChecked="{Binding IsPaused}"
                                   Style="{StaticResource CharterToggle}" />
@@ -468,7 +577,7 @@
                                VerticalAlignment="Center"
                                FontSize="11"
                                Foreground="{DynamicResource CsText3Brush}"
-                               Text="私密模式" />
+                               Text="{x:Static loc:Strings.Common_PrivateMode}" />
                     <ToggleButton Click="OnSettingToggled"
                                   IsChecked="{Binding IsPrivateMode}"
                                   Style="{StaticResource CharterToggle}" />
@@ -530,12 +639,12 @@
                 <StackPanel Grid.Column="3"
                             Margin="16,0,0,0"
                             Orientation="Horizontal">
-                    <Button AutomationProperties.Name="最小化"
+                    <Button AutomationProperties.Name="{x:Static loc:Strings.Chrome_Minimize}"
                             Click="OnMinimizeClicked"
                             Style="{StaticResource CsCaptionButton}">
                         <Path Data="{StaticResource CsGlyphMinimize}" Style="{StaticResource CsCaptionGlyph}" />
                     </Button>
-                    <Button AutomationProperties.Name="最大化或还原"
+                    <Button AutomationProperties.Name="{x:Static loc:Strings.Chrome_MaximizeRestore}"
                             Click="OnMaxRestoreClicked"
                             Style="{StaticResource CsCaptionButton}">
                         <Path>
@@ -551,7 +660,7 @@
                             </Path.Style>
                         </Path>
                     </Button>
-                    <Button AutomationProperties.Name="关闭"
+                    <Button AutomationProperties.Name="{x:Static loc:Strings.Common_Close}"
                             Click="OnCloseClicked"
                             Style="{StaticResource CsCaptionCloseButton}">
                         <Path Data="{StaticResource CsGlyphClose}" Style="{StaticResource CsCaptionGlyph}" />
@@ -590,7 +699,7 @@
                             <TextBlock Margin="0,4,0,0"
                                        HorizontalAlignment="Center"
                                        FontSize="10.5"
-                                       Text="历史" />
+                                       Text="{x:Static loc:Strings.Nav_History}" />
                         </StackPanel>
                     </RadioButton>
                     <RadioButton x:Name="NavConduit" GroupName="Nav" Style="{StaticResource NavItem}">
@@ -608,7 +717,7 @@
                             <TextBlock Margin="0,4,0,0"
                                        HorizontalAlignment="Center"
                                        FontSize="10.5"
-                                       Text="通路" />
+                                       Text="{x:Static loc:Strings.Nav_Conduit}" />
                         </StackPanel>
                     </RadioButton>
                     <RadioButton x:Name="NavPrefs" GroupName="Nav" Style="{StaticResource NavItem}">
@@ -626,7 +735,7 @@
                             <TextBlock Margin="0,4,0,0"
                                        HorizontalAlignment="Center"
                                        FontSize="10.5"
-                                       Text="偏好" />
+                                       Text="{x:Static loc:Strings.Nav_Prefs}" />
                         </StackPanel>
                     </RadioButton>
                 </StackPanel>
@@ -647,15 +756,15 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel>
-                        <TextBlock Style="{StaticResource PageTitle}" Text="历史" />
-                        <TextBlock Style="{StaticResource PageSub}" Text="本机与已配对设备的剪贴记录 · 清理只发生在本机" />
+                        <TextBlock Style="{StaticResource PageTitle}" Text="{x:Static loc:Strings.History_Title}" />
+                        <TextBlock Style="{StaticResource PageSub}" Text="{x:Static loc:Strings.History_Subtitle}" />
                     </StackPanel>
 
                     <DockPanel Grid.Row="1" Margin="0,0,0,10">
                         <Button DockPanel.Dock="Right"
                                 Margin="8,0,0,0"
                                 Command="{Binding SearchCommand}"
-                                Content="搜索"
+                                Content="{x:Static loc:Strings.History_Search}"
                                 Style="{StaticResource GhostFlowButton}" />
                         <TextBox Height="32"
                                  Style="{StaticResource InsetTextBox}"
@@ -672,33 +781,33 @@
                                 Orientation="Horizontal">
                         <RadioButton Command="{Binding SetFormatFilterCommand}"
                                      CommandParameter="all"
-                                     Content="全部"
+                                     Content="{x:Static loc:Strings.Filter_All}"
                                      GroupName="HistoryFormatFilter"
                                      IsChecked="True"
                                      Style="{StaticResource FilterChip}" />
                         <RadioButton Command="{Binding SetFormatFilterCommand}"
                                      CommandParameter="link"
-                                     Content="链接"
+                                     Content="{x:Static loc:Strings.Filter_Link}"
                                      GroupName="HistoryFormatFilter"
                                      Style="{StaticResource FilterChip}" />
                         <RadioButton Command="{Binding SetFormatFilterCommand}"
                                      CommandParameter="otp"
-                                     Content="验证码"
+                                     Content="{x:Static loc:Strings.Filter_Otp}"
                                      GroupName="HistoryFormatFilter"
                                      Style="{StaticResource FilterChip}" />
                         <RadioButton Command="{Binding SetFormatFilterCommand}"
                                      CommandParameter="email"
-                                     Content="账号"
+                                     Content="{x:Static loc:Strings.Filter_Email}"
                                      GroupName="HistoryFormatFilter"
                                      Style="{StaticResource FilterChip}" />
                         <RadioButton Command="{Binding SetFormatFilterCommand}"
                                      CommandParameter="credential"
-                                     Content="密码"
+                                     Content="{x:Static loc:Strings.Filter_Credential}"
                                      GroupName="HistoryFormatFilter"
                                      Style="{StaticResource FilterChip}" />
                         <RadioButton Command="{Binding SetFormatFilterCommand}"
                                      CommandParameter="plain"
-                                     Content="文本"
+                                     Content="{x:Static loc:Strings.Filter_Plain}"
                                      GroupName="HistoryFormatFilter"
                                      Style="{StaticResource FilterChip}" />
                     </StackPanel>
@@ -727,7 +836,7 @@
                                     Margin="10,0,0,0"
                                     VerticalAlignment="Center"
                                     Command="{Binding DismissCaptureNoticeCommand}"
-                                    Content="知道了"
+                                    Content="{x:Static loc:Strings.Common_Acknowledge}"
                                     Style="{StaticResource GhostQuietButton}" />
                             <TextBlock VerticalAlignment="Center"
                                        FontSize="12"
@@ -804,7 +913,7 @@
                                                                HorizontalAlignment="Center"
                                                                FontSize="9"
                                                                Foreground="{DynamicResource CsText3Brush}"
-                                                               Text="无预览" />
+                                                               Text="{x:Static loc:Strings.History_NoPreview}" />
                                                 </StackPanel>
                                                 <Image Source="{Binding ThumbnailImage}"
                                                        Stretch="UniformToFill"
@@ -863,7 +972,7 @@
                                                         Visibility="{Binding ShowsLocalOnlyBadge, Converter={StaticResource BoolToVisibility}}">
                                                     <TextBlock FontSize="9"
                                                                Foreground="{DynamicResource CsText3Brush}"
-                                                               Text="仅本机保留" />
+                                                               Text="{x:Static loc:Strings.History_LocalOnlyBadge}" />
                                                 </Border>
                                                 <!-- 来源应用不可识别：与其它注记盒同形制的中性灰盒（accent 0 灰族），
                                                      事实陈述不是警报；可识别来源留在下方元信息行，保持安静 -->
@@ -927,10 +1036,10 @@
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Foreground" Value="{DynamicResource CsText2Brush}" />
-                                        <Setter Property="Text" Value="先把两端接起来" />
+                                        <Setter Property="Text" Value="{x:Static loc:Strings.History_Empty_Unpaired_Title}" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding HasPairedDevices}" Value="True">
-                                                <Setter Property="Text" Value="静候第一条剪贴" />
+                                                <Setter Property="Text" Value="{x:Static loc:Strings.History_Empty_Paired_Title}" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -944,10 +1053,10 @@
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
-                                        <Setter Property="Text" Value="尚未与手机配对。配对入口在「通路」页的网络段。" />
+                                        <Setter Property="Text" Value="{x:Static loc:Strings.History_Empty_Unpaired_Body}" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding HasPairedDevices}" Value="True">
-                                                <Setter Property="Text" Value="在任意一端复制文本，它会出现在这里并流向对面。" />
+                                                <Setter Property="Text" Value="{x:Static loc:Strings.History_Empty_Paired_Body}" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -956,7 +1065,7 @@
                             <Button Margin="0,12,0,0"
                                     HorizontalAlignment="Center"
                                     Click="OnGoToConduitClicked"
-                                    Content="去配对 ›"
+                                    Content="{x:Static loc:Strings.History_Empty_GoPair}"
                                     FontSize="12.5"
                                     Padding="16,6">
                                 <Button.Style>
@@ -1006,7 +1115,7 @@
                                        FontSize="11"
                                        Foreground="{DynamicResource CsText3Brush}"
                                        TextAlignment="Center">
-                                <Run Text="没有匹配「" /><Run Text="{Binding ActiveQuery, Mode=OneWay}" /><Run Text="」的记录" />
+                                <Run Text="{x:Static loc:Strings.History_NoMatch_Prefix}" /><Run Text="{Binding ActiveQuery, Mode=OneWay}" /><Run Text="{x:Static loc:Strings.History_NoMatch_Suffix}" />
                             </TextBlock>
                         </StackPanel>
 
@@ -1030,7 +1139,7 @@
                             <TextBlock HorizontalAlignment="Center"
                                        FontSize="11"
                                        Foreground="{DynamicResource CsText3Brush}"
-                                       Text="该形态下暂无记录 · 换个筛选试试"
+                                       Text="{x:Static loc:Strings.History_Empty_Filtered}"
                                        TextAlignment="Center" />
                         </StackPanel>
                     </Grid>
@@ -1038,22 +1147,22 @@
                     <StackPanel Grid.Row="5"
                                 Margin="0,12,0,0"
                                 Orientation="Horizontal">
-                        <Button Command="{Binding CopySelectedCommand}" Content="复制所选" Style="{StaticResource GhostFlowButton}" />
+                        <Button Command="{Binding CopySelectedCommand}" Content="{x:Static loc:Strings.History_CopySelected}" Style="{StaticResource GhostFlowButton}" />
                         <Button Margin="8,0,0,0"
                                 Command="{Binding ViewSelectedCommand}"
-                                Content="查看详情"
+                                Content="{x:Static loc:Strings.History_ViewDetail}"
                                 Style="{StaticResource GhostQuietButton}" />
                         <Button Margin="8,0,0,0"
                                 Command="{Binding DeleteSelectedCommand}"
-                                Content="删除所选"
+                                Content="{x:Static loc:Strings.History_DeleteSelected}"
                                 Style="{StaticResource GhostQuietButton}" />
                         <Button Margin="8,0,0,0"
                                 Command="{Binding ClearCommand}"
-                                Content="清空历史"
+                                Content="{x:Static loc:Strings.Common_ClearHistory}"
                                 Style="{StaticResource GhostQuietButton}" />
                         <Button Margin="8,0,0,0"
                                 Command="{Binding RefreshCommand}"
-                                Content="刷新"
+                                Content="{x:Static loc:Strings.Common_Refresh}"
                                 Style="{StaticResource GhostQuietButton}" />
                     </StackPanel>
                 </Grid>
@@ -1063,8 +1172,8 @@
                               VerticalScrollBarVisibility="Auto"
                               Visibility="{Binding IsChecked, ElementName=NavConduit, Converter={StaticResource BoolToVisibility}}">
                     <StackPanel Margin="24,18,24,20">
-                        <TextBlock Style="{StaticResource PageTitle}" Text="通路" />
-                        <TextBlock Style="{StaticResource PageSub}" Text="内容从左到右流过四段 · 排障顺序即阅读顺序" />
+                        <TextBlock Style="{StaticResource PageTitle}" Text="{x:Static loc:Strings.Conduit_Title}" />
+                        <TextBlock Style="{StaticResource PageSub}" Text="{x:Static loc:Strings.Conduit_Subtitle}" />
 
                         <!-- 四段管道：本机捕获 → 本机服务 → 网络 → 对端写入 -->
                         <Grid Margin="0,0,0,14">
@@ -1106,24 +1215,24 @@
                                                 </Path>
                                             </Canvas>
                                         </Viewbox>
-                                        <TextBlock Margin="7,0,0,0" Style="{StaticResource SegName}" Text="本机捕获" />
+                                        <TextBlock Margin="7,0,0,0" Style="{StaticResource SegName}" Text="{x:Static loc:Strings.Conduit_Capture_Name}" />
                                     </StackPanel>
                                     <TextBlock>
                                         <TextBlock.Style>
                                             <Style BasedOn="{StaticResource SegStatus}" TargetType="TextBlock">
-                                                <Setter Property="Text" Value="就绪 · 监听 Ctrl+C" />
+                                                <Setter Property="Text" Value="{x:Static loc:Strings.Conduit_Capture_Ready}" />
                                                 <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsPaused}" Value="True">
-                                                        <Setter Property="Text" Value="已暂停 · 不再记录" />
+                                                        <Setter Property="Text" Value="{x:Static loc:Strings.Conduit_Status_Paused}" />
                                                         <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
-                                                        <Setter Property="Text" Value="私密模式 · 不留痕迹" />
+                                                        <Setter Property="Text" Value="{x:Static loc:Strings.Conduit_Status_Private}" />
                                                         <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding CaptureFaulted}" Value="True">
-                                                        <Setter Property="Text" Value="捕获降级 · 剪贴板访问失败" />
+                                                        <Setter Property="Text" Value="{x:Static loc:Strings.Conduit_Status_CaptureFaulted}" />
                                                         <Setter Property="Foreground" Value="{DynamicResource CsActBrush}" />
                                                         <Setter Property="FontWeight" Value="SemiBold" />
                                                     </DataTrigger>
@@ -1222,7 +1331,7 @@
                                             Padding="0,7,0,0"
                                             BorderBrush="{DynamicResource CsLineBrush}"
                                             BorderThickness="0,1,0,0">
-                                        <TextBlock Style="{StaticResource SegDetail}" Text="私密模式与屏蔽进程在这一段拦下内容。" />
+                                        <TextBlock Style="{StaticResource SegDetail}" Text="{x:Static loc:Strings.Conduit_Capture_Detail}" />
                                     </Border>
                                 </StackPanel>
                             </ContentControl>
@@ -1243,10 +1352,10 @@
                                                       StrokeLineJoin="Round" />
                                             </Canvas>
                                         </Viewbox>
-                                        <TextBlock Margin="7,0,0,0" Style="{StaticResource SegName}" Text="本机服务" />
+                                        <TextBlock Margin="7,0,0,0" Style="{StaticResource SegName}" Text="{x:Static loc:Strings.Conduit_Service_Name}" />
                                     </StackPanel>
                                     <TextBlock Foreground="{DynamicResource CsFlowBrush}" Style="{StaticResource SegStatus}">
-                                        <Run Text="就绪 · 历史 " /><Run Text="{Binding History.Count, Mode=OneWay}" /><Run Text=" 条 · 待发 " /><Run Text="{Binding OutboxPendingCount, Mode=OneWay}" />
+                                        <Run Text="{x:Static loc:Strings.Conduit_Service_ReadyPrefix}" /><Run Text="{Binding History.Count, Mode=OneWay}" /><Run Text="{x:Static loc:Strings.Conduit_Service_ReadyInfix}" /><Run Text="{Binding OutboxPendingCount, Mode=OneWay}" />
                                     </TextBlock>
                                     <Border Height="4"
                                             Margin="0,7,0,0"
@@ -1259,7 +1368,7 @@
                                             BorderBrush="{DynamicResource CsLineBrush}"
                                             BorderThickness="0,1,0,0">
                                         <TextBlock Style="{StaticResource SegDetail}">
-                                            <Run Text="事件先落库再入发件队列 · " /><Run Text="{Binding LastAckText, Mode=OneWay}" />
+                                            <Run Text="{x:Static loc:Strings.Conduit_Service_DetailPrefix}" /><Run Text="{Binding LastAckText, Mode=OneWay}" />
                                         </TextBlock>
                                     </Border>
                                 </StackPanel>
@@ -1291,15 +1400,15 @@
                                                 </Path>
                                             </Canvas>
                                         </Viewbox>
-                                        <TextBlock Margin="7,0,0,0" Style="{StaticResource SegName}" Text="网络" />
+                                        <TextBlock Margin="7,0,0,0" Style="{StaticResource SegName}" Text="{x:Static loc:Strings.Conduit_Network_Name}" />
                                     </StackPanel>
                                     <TextBlock Foreground="{DynamicResource CsFlowBrush}" Visibility="{Binding PeerOnline, Converter={StaticResource BoolToVisibility}}">
                                         <TextBlock.Style>
                                             <Style BasedOn="{StaticResource SegStatus}" TargetType="TextBlock" />
                                         </TextBlock.Style>
-                                        <Run Text="就绪 · 监听 :" /><Run Text="{Binding PeerPort, Mode=OneWay}" /><Run Text=" · 已连 " /><Run Text="{Binding ConnectedDeviceCount, Mode=OneWay}" /><Run Text=" 台" />
+                                        <Run Text="{x:Static loc:Strings.Conduit_Network_ReadyPrefix}" /><Run Text="{Binding PeerPort, Mode=OneWay}" /><Run Text="{x:Static loc:Strings.Conduit_Network_ReadyInfix}" /><Run Text="{Binding ConnectedDeviceCount, Mode=OneWay}" /><Run Text="{x:Static loc:Strings.Conduit_Network_ReadySuffix}" />
                                     </TextBlock>
-                                    <TextBlock Text="未启动 · 同步关闭">
+                                    <TextBlock Text="{x:Static loc:Strings.Conduit_Network_Down}">
                                         <TextBlock.Style>
                                             <Style BasedOn="{StaticResource SegStatus}" TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
@@ -1365,7 +1474,7 @@
                                                 </Path>
                                             </Canvas>
                                         </Viewbox>
-                                        <TextBlock Margin="7,0,0,0" Style="{StaticResource SegName}" Text="对端写入" />
+                                        <TextBlock Margin="7,0,0,0" Style="{StaticResource SegName}" Text="{x:Static loc:Strings.Conduit_Peer_Name}" />
                                     </StackPanel>
                                     <TextBlock>
                                         <TextBlock.Style>
@@ -1378,7 +1487,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
-                                        <Run Text="已配对 " /><Run Text="{Binding Devices.Count, Mode=OneWay}" /><Run Text=" 台" />
+                                        <Run Text="{x:Static loc:Strings.Conduit_Peer_PairedPrefix}" /><Run Text="{Binding Devices.Count, Mode=OneWay}" /><Run Text="{x:Static loc:Strings.Conduit_Peer_PairedSuffix}" />
                                     </TextBlock>
                                     <Border Height="4"
                                             Margin="0,7,0,0"
@@ -1404,10 +1513,10 @@
                                         <TextBlock>
                                             <TextBlock.Style>
                                                 <Style BasedOn="{StaticResource SegDetail}" TargetType="TextBlock">
-                                                    <Setter Property="Text" Value="远端文本自动写入本机剪贴板。" />
+                                                    <Setter Property="Text" Value="{x:Static loc:Strings.Conduit_Peer_AutoApplyOn}" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding AutoApplyRemote}" Value="False">
-                                                            <Setter Property="Text" Value="自动应用已关闭：远端内容仅保留在历史，需手动复制。" />
+                                                            <Setter Property="Text" Value="{x:Static loc:Strings.Conduit_Peer_AutoApplyOff}" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -1442,7 +1551,7 @@
                                                    FontSize="13"
                                                    FontWeight="SemiBold"
                                                    Foreground="{DynamicResource CsText1Brush}"
-                                                   Text="网络段 · 已配对设备" />
+                                                   Text="{x:Static loc:Strings.Conduit_Devices_Header}" />
                                     </StackPanel>
                                     <Button Grid.Column="1"
                                             Click="OnPairNewDeviceClicked"
@@ -1458,7 +1567,7 @@
                                                           StrokeLineJoin="Round" />
                                                 </Canvas>
                                             </Viewbox>
-                                            <TextBlock VerticalAlignment="Center" Text="配对新设备" />
+                                            <TextBlock VerticalAlignment="Center" Text="{x:Static loc:Strings.Pairing_Title}" />
                                         </StackPanel>
                                     </Button>
                                 </Grid>
@@ -1486,7 +1595,7 @@
                                                 Margin="10,0,0,0"
                                                 VerticalAlignment="Center"
                                                 Command="{Binding CleanupStaleDevicesCommand}"
-                                                Content="一键清理"
+                                                Content="{x:Static loc:Strings.Conduit_CleanupStale}"
                                                 Style="{StaticResource GhostQuietButton}" />
                                     </Grid>
                                 </Border>
@@ -1572,7 +1681,7 @@
                                                                 BorderThickness="1"
                                                                 CornerRadius="6"
                                                                 Visibility="{Binding IsRevoked, Converter={StaticResource BoolToVisibility}}">
-                                                            <TextBlock FontSize="9" Foreground="{DynamicResource CsText3Brush}" Text="已撤销" />
+                                                            <TextBlock FontSize="9" Foreground="{DynamicResource CsText3Brush}" Text="{x:Static loc:Strings.Device_RevokedBadge}" />
                                                         </Border>
                                                         <!-- 残留标记：赭色提醒（同机重复配对或长期未连接），一键清理的对象 -->
                                                         <Border Margin="7,0,0,0"
@@ -1601,7 +1710,7 @@
                                                                    VerticalAlignment="Center"
                                                                    FontSize="10"
                                                                    Foreground="{DynamicResource CsText3Brush}"
-                                                                   Text="设备色" />
+                                                                   Text="{x:Static loc:Strings.Device_AccentLabel}" />
                                                         <ItemsControl ItemsSource="{Binding AccentSwatches}">
                                                             <ItemsControl.ItemsPanel>
                                                                 <ItemsPanelTemplate>
@@ -1666,12 +1775,12 @@
                                         <Button Grid.Column="1"
                                                 Margin="8,0,0,0"
                                                 Command="{Binding RenameDeviceCommand}"
-                                                Content="重命名"
+                                                Content="{x:Static loc:Strings.Device_Rename}"
                                                 Style="{StaticResource GhostQuietButton}" />
                                         <Button Grid.Column="2"
                                                 Margin="8,0,0,0"
                                                 Command="{Binding RevokeDeviceCommand}"
-                                                Content="撤销所选设备"
+                                                Content="{x:Static loc:Strings.Device_RevokeSelected}"
                                                 Style="{StaticResource GhostDangerButton}" />
                                     </Grid>
                                 </Border>
@@ -1683,7 +1792,7 @@
                                         CornerRadius="0,0,11,11">
                                     <TextBlock FontSize="10.5"
                                                Foreground="{DynamicResource CsText4Brush}"
-                                               Text="撤销立即断开该设备并作废其配对密钥；对方已收到的内容不会被远程删除。撤销后重新配对视为新设备。同一部手机换了身份重新配对时，旧记录会被自动撤销并清空其待发队列。"
+                                               Text="{x:Static loc:Strings.Device_RevokeNote}"
                                                TextWrapping="Wrap" />
                                 </Border>
                             </StackPanel>
@@ -1710,7 +1819,7 @@
                                                    FontSize="13"
                                                    FontWeight="SemiBold"
                                                    Foreground="{DynamicResource CsText1Brush}"
-                                                   Text="网络段 · 连接" />
+                                                   Text="{x:Static loc:Strings.Conduit_Connection_Header}" />
                                     </StackPanel>
                                 </Grid>
                                 <Border Padding="16,12"
@@ -1722,8 +1831,8 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="蓝牙备援" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="默认关闭。LAN 被 VPN 或防火墙阻断时，已在系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Conduit_Bluetooth_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Conduit_Bluetooth_Desc}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -1741,17 +1850,18 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="额外监听地址" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="用于 Tailscale / WireGuard 等虚拟网卡地址。不提供公网中转。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Conduit_ExtraBind_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Conduit_ExtraBind_Desc}" />
                                             <!-- 「重启后生效」用赭色说明，不用弹窗 -->
                                             <TextBlock Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource CsText4Brush}">
-                                                <Run FontWeight="SemiBold" Foreground="{DynamicResource CsActBrush}" Text="重启后生效" /><Run Text=" · 逗号分隔多个地址" />
+                                                <Run FontWeight="SemiBold" Foreground="{DynamicResource CsActBrush}" Text="{x:Static loc:Strings.Conduit_ExtraBind_RestartNote}" /><Run Text="{x:Static loc:Strings.Conduit_ExtraBind_CommaNote}" />
                                             </TextBlock>
                                         </StackPanel>
                                         <TextBox Grid.Column="1"
                                                  Width="220"
                                                  Height="30"
                                                  VerticalAlignment="Top"
+                                                 FlowDirection="LeftToRight"
                                                  FontFamily="{StaticResource CsMono}"
                                                  FontSize="11.5"
                                                  LostFocus="OnSettingLostFocus"
@@ -1769,9 +1879,11 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="本机证书指纹" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="配对时请与手机上显示的指纹逐组核对。指纹变更会使所有已配对设备提示重新确认。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Conduit_Fingerprint_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Conduit_Fingerprint_Desc}" />
+                                            <!-- 指纹是机器文本：RTL 语言下仍保持 LTR 组序，逐组核对不换向 -->
                                             <TextBlock Margin="0,6,0,0"
+                                                       FlowDirection="LeftToRight"
                                                        FontFamily="{StaticResource CsMono}"
                                                        FontSize="13"
                                                        LineHeight="24"
@@ -1783,7 +1895,7 @@
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding LocalFingerprint}" Value="">
                                                                 <Setter Property="Foreground" Value="{DynamicResource CsText4Brush}" />
-                                                                <Setter Property="Text" Value="对端服务未启动，本次会话无指纹可示。" />
+                                                                <Setter Property="Text" Value="{x:Static loc:Strings.Conduit_Fingerprint_Unavailable}" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -1793,7 +1905,7 @@
                                         <Button Grid.Column="1"
                                                 VerticalAlignment="Top"
                                                 Command="{Binding CopyFingerprintCommand}"
-                                                Content="复制"
+                                                Content="{x:Static loc:Strings.Common_Copy}"
                                                 Style="{StaticResource GhostQuietButton}" />
                                     </Grid>
                                 </Border>
@@ -1807,37 +1919,37 @@
                               VerticalScrollBarVisibility="Auto"
                               Visibility="{Binding IsChecked, ElementName=NavPrefs, Converter={StaticResource BoolToVisibility}}">
                     <StackPanel Margin="24,18,24,20">
-                        <TextBlock Style="{StaticResource PageTitle}" Text="偏好" />
-                        <TextBlock Style="{StaticResource PageSub}" Text="改动即生效 · 剪贴板正文永不出现在日志里" />
+                        <TextBlock Style="{StaticResource PageTitle}" Text="{x:Static loc:Strings.Prefs_Title}" />
+                        <TextBlock Style="{StaticResource PageSub}" Text="{x:Static loc:Strings.Prefs_Subtitle}" />
 
                         <!-- 显示（settings-roadmap P0-1 / P1-7 / P1-6）：只缩放内容文字，chrome 不动；外观只选日/夜字典 -->
                         <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
-                                <TextBlock Style="{StaticResource GroupHeader}" Text="显 示 · DISPLAY" />
+                                <TextBlock Style="{StaticResource GroupHeader}" Text="{x:Static loc:Strings.Prefs_Group_Display}" />
                                 <Grid Margin="16,9,16,12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Margin="0,0,16,0">
-                                        <TextBlock Style="{StaticResource RowName}" Text="历史字号" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="只缩放剪贴内容文字（历史预览、详情正文、托盘浮窗）；组头、注记盒与按钮保持不变。" />
+                                        <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_FontScale_Title}" />
+                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_FontScale_Desc}" />
                                     </StackPanel>
                                     <StackPanel Grid.Column="1"
                                                 VerticalAlignment="Top"
                                                 Orientation="Horizontal">
                                         <RadioButton Click="OnSettingToggled"
-                                                     Content="小"
+                                                     Content="{x:Static loc:Strings.Prefs_FontScale_Small}"
                                                      GroupName="PrefsFontScale"
                                                      IsChecked="{Binding HistoryFontScaleKey, Converter={StaticResource StringMatch}, ConverterParameter=small}"
                                                      Style="{StaticResource FilterChip}" />
                                         <RadioButton Click="OnSettingToggled"
-                                                     Content="标准"
+                                                     Content="{x:Static loc:Strings.Prefs_FontScale_Standard}"
                                                      GroupName="PrefsFontScale"
                                                      IsChecked="{Binding HistoryFontScaleKey, Converter={StaticResource StringMatch}, ConverterParameter=standard}"
                                                      Style="{StaticResource FilterChip}" />
                                         <RadioButton Click="OnSettingToggled"
-                                                     Content="大"
+                                                     Content="{x:Static loc:Strings.Prefs_FontScale_Large}"
                                                      GroupName="PrefsFontScale"
                                                      IsChecked="{Binding HistoryFontScaleKey, Converter={StaticResource StringMatch}, ConverterParameter=large}"
                                                      Style="{StaticResource FilterChip}" />
@@ -1852,24 +1964,24 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="预览行数" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="历史列表每条最多显示的正文行数；超出部分以省略号截断，完整内容看详情。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_PreviewLines_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_PreviewLines_Desc}" />
                                         </StackPanel>
                                         <StackPanel Grid.Column="1"
                                                     VerticalAlignment="Top"
                                                     Orientation="Horizontal">
                                             <RadioButton Click="OnSettingToggled"
-                                                         Content="2 行"
+                                                         Content="{x:Static loc:Strings.Prefs_PreviewLines_Two}"
                                                          GroupName="PrefsPreviewLines"
                                                          IsChecked="{Binding PreviewLinesKey, Converter={StaticResource StringMatch}, ConverterParameter=2}"
                                                          Style="{StaticResource FilterChip}" />
                                             <RadioButton Click="OnSettingToggled"
-                                                         Content="4 行"
+                                                         Content="{x:Static loc:Strings.Prefs_PreviewLines_Four}"
                                                          GroupName="PrefsPreviewLines"
                                                          IsChecked="{Binding PreviewLinesKey, Converter={StaticResource StringMatch}, ConverterParameter=4}"
                                                          Style="{StaticResource FilterChip}" />
                                             <RadioButton Click="OnSettingToggled"
-                                                         Content="6 行"
+                                                         Content="{x:Static loc:Strings.Prefs_PreviewLines_Six}"
                                                          GroupName="PrefsPreviewLines"
                                                          IsChecked="{Binding PreviewLinesKey, Converter={StaticResource StringMatch}, ConverterParameter=6}"
                                                          Style="{StaticResource FilterChip}" />
@@ -1886,28 +1998,56 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="外观" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="窗口的日间/夜间配色；托盘图标活在任务栏里，始终跟随任务栏的深浅。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Theme_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Theme_Desc}" />
                                         </StackPanel>
                                         <StackPanel Grid.Column="1"
                                                     VerticalAlignment="Top"
                                                     Orientation="Horizontal">
                                             <RadioButton Click="OnSettingToggled"
-                                                         Content="跟随系统"
+                                                         Content="{x:Static loc:Strings.Common_FollowSystem}"
                                                          GroupName="PrefsThemeMode"
                                                          IsChecked="{Binding ThemeModeKey, Converter={StaticResource StringMatch}, ConverterParameter=system}"
                                                          Style="{StaticResource FilterChip}" />
                                             <RadioButton Click="OnSettingToggled"
-                                                         Content="日间"
+                                                         Content="{x:Static loc:Strings.Prefs_Theme_Day}"
                                                          GroupName="PrefsThemeMode"
                                                          IsChecked="{Binding ThemeModeKey, Converter={StaticResource StringMatch}, ConverterParameter=day}"
                                                          Style="{StaticResource FilterChip}" />
                                             <RadioButton Click="OnSettingToggled"
-                                                         Content="夜间"
+                                                         Content="{x:Static loc:Strings.Prefs_Theme_Night}"
                                                          GroupName="PrefsThemeMode"
                                                          IsChecked="{Binding ThemeModeKey, Converter={StaticResource StringMatch}, ConverterParameter=night}"
                                                          Style="{StaticResource FilterChip}" />
                                         </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <!-- 语言（settings-roadmap P1#16）：19 种语言 + 跟随系统，chip 放不下改用下拉；
+                                     语言名恒以各自母语显示（不翻译）；更换后重启生效 -->
+                                <Border Padding="16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Language_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}"><Run Text="{x:Static loc:Strings.Prefs_Language_Desc}" /><Run FontWeight="SemiBold"
+     Foreground="{DynamicResource CsActBrush}"
+     Text="{x:Static loc:Strings.Prefs_Language_RestartNote}" /></TextBlock>
+                                        </StackPanel>
+                                        <ComboBox Grid.Column="1"
+                                                  MinWidth="176"
+                                                  VerticalAlignment="Top"
+                                                  AutomationProperties.Name="{x:Static loc:Strings.Prefs_Language_Title}"
+                                                  DisplayMemberPath="DisplayName"
+                                                  ItemsSource="{Binding LanguageOptions, Mode=OneTime}"
+                                                  SelectedValue="{Binding LanguageKey}"
+                                                  SelectedValuePath="Key"
+                                                  SelectionChanged="OnLanguageSelectionChanged"
+                                                  Style="{StaticResource InsetComboBox}" />
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -1916,15 +2056,15 @@
                         <!-- 捕获 -->
                         <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
-                                <TextBlock Style="{StaticResource GroupHeader}" Text="捕 获 · CAPTURE" />
+                                <TextBlock Style="{StaticResource GroupHeader}" Text="{x:Static loc:Strings.Prefs_Group_Capture}" />
                                 <Grid Margin="16,9,16,12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Margin="0,0,16,0">
-                                        <TextBlock Style="{StaticResource RowName}" Text="暂停捕获" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="暂停后本机不再记录新内容，已有历史保留。" />
+                                        <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Common_PauseCapture}" />
+                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Capture_Pause_Desc}" />
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"
@@ -1941,8 +2081,8 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="私密模式" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="开启期间捕获与同步全部停止，不留任何痕迹。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Common_PrivateMode}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Capture_Private_Desc}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -1955,8 +2095,8 @@
                                         BorderBrush="{DynamicResource CsLineBrush}"
                                         BorderThickness="0,1,0,0">
                                     <StackPanel>
-                                        <TextBlock Style="{StaticResource RowName}" Text="屏蔽进程" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="来自这些进程的复制不进入历史，也不同步。逗号或换行分隔。" />
+                                        <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Capture_Blocked_Title}" />
+                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Capture_Blocked_Desc}" />
                                         <TextBox Height="88"
                                                  Margin="0,8,0,0"
                                                  AcceptsReturn="True"
@@ -1976,15 +2116,15 @@
                         <!-- 同步 -->
                         <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
-                                <TextBlock Style="{StaticResource GroupHeader}" Text="同 步 · SYNC" />
+                                <TextBlock Style="{StaticResource GroupHeader}" Text="{x:Static loc:Strings.Prefs_Group_Sync}" />
                                 <Grid Margin="16,9,16,12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Margin="0,0,16,0">
-                                        <TextBlock Style="{StaticResource RowName}" Text="自动应用远端内容" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="手机发来的文本自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。" />
+                                        <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApply_Title}" />
+                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApply_Desc}" />
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"
@@ -2001,8 +2141,8 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="同步剪贴板图片" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="默认关闭。仅 PNG/JPEG；原始字节可能含 EXIF 等元数据，双端需为 v2 会话。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Sync_ImageSync_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Sync_ImageSync_Desc}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -2020,8 +2160,8 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="自动应用远端图片" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="手机发来的图片自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApplyImages_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApplyImages_Desc}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -2041,13 +2181,13 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="蓝牙备援 · 额外监听地址 · 本机证书指纹" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="已移至「通路 · 网络段」——它们决定内容能否到达对端，与配对、设备管理同住。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Moved_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Moved_Desc}" />
                                         </StackPanel>
                                         <Button Grid.Column="1"
                                                 VerticalAlignment="Top"
                                                 Click="OnGoToConduitClicked"
-                                                Content="前往通路"
+                                                Content="{x:Static loc:Strings.Prefs_Moved_GoToConduit}"
                                                 Style="{StaticResource GhostQuietButton}" />
                                     </Grid>
                                 </Border>
@@ -2057,15 +2197,15 @@
                         <!-- 存留 -->
                         <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
-                                <TextBlock Style="{StaticResource GroupHeader}" Text="存 留 · RETENTION" />
+                                <TextBlock Style="{StaticResource GroupHeader}" Text="{x:Static loc:Strings.Prefs_Group_Retention}" />
                                 <Grid Margin="16,9,16,12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Margin="0,0,16,0">
-                                        <TextBlock Style="{StaticResource RowName}" Text="保留期限" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="超期条目自动清除。清理只发生在本机，不远程删除对方已收到的内容。" />
+                                        <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Retention_Days_Title}" />
+                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Retention_Days_Desc}" />
                                     </StackPanel>
                                     <Border Grid.Column="1"
                                             VerticalAlignment="Top"
@@ -2091,7 +2231,7 @@
                                                        VerticalAlignment="Center"
                                                        FontSize="10.5"
                                                        Foreground="{DynamicResource CsText4Brush}"
-                                                       Text="天" />
+                                                       Text="{x:Static loc:Strings.Prefs_Retention_DaysUnit}" />
                                         </StackPanel>
                                     </Border>
                                 </Grid>
@@ -2105,8 +2245,8 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="保留条数" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="超出上限时最旧的条目先被清除（100–2000，每步 100）。清理只发生在本机。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Retention_Entries_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Retention_Entries_Desc}" />
                                         </StackPanel>
                                         <Border Grid.Column="1"
                                                 VerticalAlignment="Top"
@@ -2132,7 +2272,7 @@
                                                            VerticalAlignment="Center"
                                                            FontSize="10.5"
                                                            Foreground="{DynamicResource CsText4Brush}"
-                                                           Text="条" />
+                                                           Text="{x:Static loc:Strings.Prefs_Retention_EntriesUnit}" />
                                             </StackPanel>
                                         </Border>
                                     </Grid>
@@ -2143,15 +2283,15 @@
                         <!-- 运行（settings-roadmap P0-3 / P1-9）：应用怎么跑，不碰内容 -->
                         <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
-                                <TextBlock Style="{StaticResource GroupHeader}" Text="运 行 · STARTUP" />
+                                <TextBlock Style="{StaticResource GroupHeader}" Text="{x:Static loc:Strings.Prefs_Group_Startup}" />
                                 <Grid Margin="16,9,16,12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Margin="0,0,16,0">
-                                        <TextBlock Style="{StaticResource RowName}" Text="开机自启 · 静默入托盘" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="随 Windows 登录自动启动并直接落在托盘，不弹主窗口。只写当前用户的启动项，不需要管理员权限。" />
+                                        <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Startup_Launch_Title}" />
+                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Startup_Launch_Desc}" />
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"
@@ -2168,8 +2308,8 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="呼出浮窗快捷键" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="在任意应用按下组合键呼出托盘浮窗。点击输入框后按下想要的组合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。默认关闭。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Startup_Hotkey_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Startup_Hotkey_Desc}" />
                                             <!-- 注册结果如实陈述：被占用 = 赭色「需要你操作」，生效 = 安静灰 -->
                                             <TextBlock Margin="0,5,0,0"
                                                        FontSize="10.5"
@@ -2195,7 +2335,7 @@
                                                  Width="150"
                                                  Height="30"
                                                  VerticalAlignment="Top"
-                                                 AutomationProperties.Name="呼出浮窗快捷键"
+                                                 AutomationProperties.Name="{x:Static loc:Strings.Prefs_Startup_Hotkey_Title}"
                                                  FontFamily="{StaticResource CsMono}"
                                                  FontSize="11.5"
                                                  IsReadOnly="True"
@@ -2213,20 +2353,20 @@
                         <!-- 数据 -->
                         <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
-                                <TextBlock Style="{StaticResource GroupHeader}" Text="数 据 · DATA" />
+                                <TextBlock Style="{StaticResource GroupHeader}" Text="{x:Static loc:Strings.Prefs_Group_Data}" />
                                 <Grid Margin="16,9,16,12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Margin="0,0,16,0">
-                                        <TextBlock Style="{StaticResource RowName}" Text="导出历史" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥、证书与配对信息。导出内容为明文，请妥善保管。" />
+                                        <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Common_ExportHistory}" />
+                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Data_Export_Desc}" />
                                     </StackPanel>
                                     <Button Grid.Column="1"
                                             VerticalAlignment="Top"
                                             Command="{Binding ExportHistoryCommand}"
-                                            Content="导出历史"
+                                            Content="{x:Static loc:Strings.Common_ExportHistory}"
                                             Style="{StaticResource GhostQuietButton}" />
                                 </Grid>
                                 <Border Padding="16,12"
@@ -2238,13 +2378,13 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="导入历史" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="从备份文件合并历史：按「来源设备 + 序号」幂等去重，重复导入不产生重复条目，也不会覆盖本机已删除的记录。校验失败时不做任何改动。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Common_ImportHistory}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Data_Import_Desc}" />
                                         </StackPanel>
                                         <Button Grid.Column="1"
                                                 VerticalAlignment="Top"
                                                 Command="{Binding ImportHistoryCommand}"
-                                                Content="导入历史"
+                                                Content="{x:Static loc:Strings.Common_ImportHistory}"
                                                 Style="{StaticResource GhostQuietButton}" />
                                     </Grid>
                                 </Border>
@@ -2258,13 +2398,13 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="清空历史" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="一次性删除本机全部条目（含图片），需两步确认且无法恢复。清空只发生在本机，不会远程删除对方已收到的内容；建议先导出历史留底。" />
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Common_ClearHistory}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Data_Clear_Desc}" />
                                         </StackPanel>
                                         <Button Grid.Column="1"
                                                 VerticalAlignment="Top"
                                                 Command="{Binding ClearCommand}"
-                                                Content="清空历史"
+                                                Content="{x:Static loc:Strings.Common_ClearHistory}"
                                                 Style="{StaticResource GhostDangerButton}" />
                                     </Grid>
                                 </Border>

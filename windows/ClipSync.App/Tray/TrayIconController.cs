@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using ClipSync.App.Diagnostics;
+using ClipSync.App.Localization;
 
 namespace ClipSync.App.Tray;
 
@@ -39,20 +40,20 @@ internal sealed class TrayIconController : IDisposable
     public static TrayIconController Create(Window mainWindow, Action exit, Action? showFlyout = null)
     {
         var menu = new ContextMenu();
-        var openItem = new MenuItem { Header = "打开剪剪相传" };
+        var openItem = new MenuItem { Header = Strings.Tray_Menu_Open };
         openItem.Click += (_, _) => Show(mainWindow);
         menu.Items.Add(openItem);
-        var diagnosticsItem = new MenuItem { Header = "诊断日志" };
+        var diagnosticsItem = new MenuItem { Header = Strings.Tray_Menu_Diagnostics };
         menu.Items.Add(diagnosticsItem);
         menu.Items.Add(new Separator());
-        var exitItem = new MenuItem { Header = "退出" };
+        var exitItem = new MenuItem { Header = Strings.Tray_Menu_Exit };
         exitItem.Click += (_, _) => exit();
         menu.Items.Add(exitItem);
 
         var stateIcons = LoadStateIcons();
         var taskbarIcon = new TaskbarIcon
         {
-            ToolTipText = "剪剪相传 · 监听中",
+            ToolTipText = Strings.Tray_Tooltip_Flow,
             Icon = stateIcons[TrayState.Flow],
             ContextMenu = menu
         };
@@ -79,10 +80,11 @@ internal sealed class TrayIconController : IDisposable
     {
         var toolTip = state switch
         {
-            TrayState.Attention => $"剪剪相传 · {attentionDetail ?? "需要你操作"}",
-            TrayState.Paused => "剪剪相传 · 捕获已暂停",
-            TrayState.Private => "剪剪相传 · 私密模式，不留痕迹",
-            _ => "剪剪相传 · 监听中",
+            TrayState.Attention => Strings.Format(
+                nameof(Strings.Tray_Tooltip_AttentionFormat), attentionDetail ?? Strings.Tray_AttentionFallback),
+            TrayState.Paused => Strings.Tray_Tooltip_Paused,
+            TrayState.Private => Strings.Tray_Tooltip_Private,
+            _ => Strings.Tray_Tooltip_Flow,
         };
         if (state == currentState && toolTip == currentToolTip)
         {
@@ -102,9 +104,9 @@ internal sealed class TrayIconController : IDisposable
     public void ShowRemoteClipNotice(string deviceLabel, int count)
     {
         var message = count == 1
-            ? $"收到 {deviceLabel} 的 1 条新剪贴"
-            : $"收到 {deviceLabel} 的 {count} 条新剪贴";
-        taskbarIcon.ShowBalloonTip("剪剪相传", message, BalloonIcon.Info);
+            ? Strings.Format(nameof(Strings.Tray_RemoteClipOneFormat), deviceLabel)
+            : Strings.Format(nameof(Strings.Tray_RemoteClipManyFormat), deviceLabel, count);
+        taskbarIcon.ShowBalloonTip(Strings.App_Name, message, BalloonIcon.Info);
     }
 
     /// <summary>
@@ -114,8 +116,8 @@ internal sealed class TrayIconController : IDisposable
     public void ShowOversizeClipNotice()
     {
         taskbarIcon.ShowBalloonTip(
-            "剪剪相传",
-            "刚复制的文本超过 1 MiB，仅保留在本机剪贴板，不同步（未截断）。",
+            Strings.App_Name,
+            Strings.Tray_OversizeNotice,
             BalloonIcon.Info);
     }
 
@@ -126,8 +128,8 @@ internal sealed class TrayIconController : IDisposable
     public void ShowAuthThrottleNotice(string deviceLabel)
     {
         taskbarIcon.ShowBalloonTip(
-            "剪剪相传",
-            $"检测到「{deviceLabel}」反复认证失败，已临时限流该设备。",
+            Strings.App_Name,
+            Strings.Format(nameof(Strings.Tray_AuthThrottleFormat), deviceLabel),
             BalloonIcon.Warning);
     }
 

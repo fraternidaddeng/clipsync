@@ -33,7 +33,9 @@ public sealed record PairedDeviceViewModel(
     public bool HasCustomAccent => AccentIndex != DefaultAccentIndex;
 
     /// <summary>"跟随配对顺位" or "手动指定" — the same fact wording as the Android conduit row.</summary>
-    public string AccentSourceText => HasCustomAccent ? "手动指定" : "跟随配对顺位";
+    public string AccentSourceText => HasCustomAccent
+        ? Localization.Strings.Device_AccentManual
+        : Localization.Strings.Device_AccentByOrder;
 
     /// <summary>The five charter neighbour hues as picker dots; the effective one is marked selected.</summary>
     public IReadOnlyList<DeviceAccentSwatch> AccentSwatches =>

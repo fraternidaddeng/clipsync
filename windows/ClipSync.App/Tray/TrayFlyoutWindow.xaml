@@ -1,8 +1,9 @@
 <Window x:Class="ClipSync.App.Tray.TrayFlyoutWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:ClipSync.App.Localization"
         xmlns:ui="clr-namespace:ClipSync.App.Ui"
-        Title="剪剪相传 · 最近剪贴"
+        Title="{x:Static loc:Strings.Flyout_WindowTitle}"
         Width="464"
         AllowsTransparency="True"
         Background="Transparent"
@@ -73,7 +74,7 @@
             <Setter Property="FontSize" Value="10.5" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="{StaticResource CsFlowBrush}" />
-            <Setter Property="Content" Value="暂停同步" />
+            <Setter Property="Content" Value="{x:Static loc:Strings.Flyout_PauseSync}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -92,7 +93,7 @@
                             </Trigger>
                             <!-- 已暂停 = 陈述事实的灰，不是错误的红 -->
                             <DataTrigger Binding="{Binding IsPaused}" Value="True">
-                                <Setter Property="Content" Value="恢复同步" />
+                                <Setter Property="Content" Value="{x:Static loc:Strings.Flyout_ResumeSync}" />
                                 <Setter Property="Foreground" Value="{StaticResource CsText3Brush}" />
                                 <Setter TargetName="Bd" Property="Background" Value="{StaticResource CsSurfaceInBrush}" />
                                 <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource CsLine2Brush}" />
@@ -136,7 +137,7 @@
                                        FontSize="13"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource CsText1Brush}"
-                                       Text="剪 剪 相 传" />
+                                       Text="{x:Static loc:Strings.Brand_Wordmark}" />
                         </StackPanel>
                         <StackPanel HorizontalAlignment="Right"
                                     Orientation="Horizontal"
@@ -196,7 +197,7 @@
                               ItemsSource="{Binding RecentHistory}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button AutomationProperties.Name="{Binding OriginLabel, StringFormat=复制来自 {0} 的剪贴}"
+                            <Button AutomationProperties.Name="{Binding CopyAccessibleName}"
                                     Click="OnClipCardClicked"
                                     Style="{StaticResource ClipCard}">
                                 <StackPanel>
@@ -241,7 +242,7 @@
                            HorizontalAlignment="Center"
                            FontSize="11"
                            Foreground="{StaticResource CsText4Brush}"
-                           Text="还没有剪贴记录 · 复制一段文字试试">
+                           Text="{x:Static loc:Strings.Flyout_Empty}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -293,7 +294,7 @@
                         </StackPanel>
                         <Button HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                AutomationProperties.Name="暂停或恢复同步"
+                                AutomationProperties.Name="{x:Static loc:Strings.Flyout_PauseOrResume}"
                                 Click="OnPauseClicked"
                                 Style="{StaticResource PausePill}" />
                     </Grid>
