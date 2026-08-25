@@ -36,6 +36,14 @@ public static class PeerSyncClient
         var socket = new ClientWebSocket();
         try
         {
+            // Peers are paired private LAN or Tailscale addresses, never public hostnames,
+            // so the system proxy (WinINet settings, or Clash/Surge in system-proxy mode;
+            // also HTTPS_PROXY/ALL_PROXY environment variables) must never sit on this
+            // path: the proxy either cannot reach an address that is only routable from
+            // this machine, or becomes a man-in-the-middle that the certificate pin then
+            // rejects. ClientWebSocket defaults to the system proxy; null means "connect
+            // directly", keeping sync working even when a global proxy is switched on.
+            socket.Options.Proxy = null;
             socket.Options.SetRequestHeader("X-Protocol-Version", protocolVersion.ToString(CultureInfo.InvariantCulture));
             socket.Options.RemoteCertificateValidationCallback = (_, certificate, _, _) =>
             {
