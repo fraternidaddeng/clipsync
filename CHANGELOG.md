@@ -60,7 +60,6 @@
 - CI 工作流重构为三作业：协议 schema/fixture 校验、Windows 构建 + 全部测试、Android 单元测试 + debug APK 组装；在 `cursor/**` / `feature/**` 分支与 PR 上运行。
 - 测试规模：444 Android JVM + 185 跨平台对端 + 39 Windows 应用层用例；新增 Windows↔Android 全链路脚本化集成测试与真实会话事件驱动的通路页验证。
 - 新增 `docs/verification-without-device.md`（绿测 ≠ 兼容的边界）、`docs/stage-gap-audit.md`、`docs/competitive-analysis.md`、`docs/design/ui-gap-audit.md`、`docs/manual-qa-checklist.md`、`docs/release-notes-template.md`；扩充 `docs/device-validation-matrix.md` 为脚本化检查清单。
-- [双端] 澄清人工 QA 2026-08-25 缺陷 5（「双端图片同步开关不一致：Win 开 / Android 关」）：两端代码默认值一致为**关**（Windows `image_sync` 设置缺省 False，Android `sync.image_sync` 缺省 false，均遵循 ADR 0004 图片同步默认关闭）；QA 机器上 Windows 显示「开」是该机此前手动开启后的持久化用户设置，不是默认值分歧，无需改代码。已在 `docs/manual-qa-results.md` 附注。
 
 ### 已知欠账（进行中）
 
