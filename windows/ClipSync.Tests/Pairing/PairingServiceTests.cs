@@ -10,6 +10,7 @@ public sealed class PairingServiceTests : IAsyncDisposable
 {
     private const string WindowsDeviceId = "11111111-1111-4111-8111-111111111111";
     private const string AndroidDeviceId = "22222222-2222-4222-8222-222222222222";
+    private const string GhostDeviceId = "33333333-3333-4333-8333-333333333333";
 
     private readonly string directory;
     private readonly SqliteClipboardEventStore store;
@@ -189,6 +190,69 @@ public sealed class PairingServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task ConfirmUnderNewDeviceIdSupersedesTheSameNameGhost()
+    {
+        // The same phone paired earlier under a different device id (its app data was
+        // cleared since), and there is outbox backlog queued for that stale identity.
+        await store.UpsertDeviceAsync(
+            new NewPairedDevice(GhostDeviceId, "Pixel 8", "android", string.Empty, "protected-secret-ghost"),
+            clock.GetUtcNow());
+        await store.StoreAsync(Content("queued for the ghost"));
+        Assert.Single(await store.GetOutboxBatchAsync(GhostDeviceId, 10));
+
+        PairingCandidate? seen = null;
+        var service = CreateService(new DelegateApprover((candidate, _) =>
+        {
+            seen = candidate;
+            return Task.FromResult(true);
+        }));
+        IReadOnlyList<string>? superseded = null;
+        service.PeersSuperseded += ids => superseded = ids;
+
+        var outcome = await service.ConfirmAsync(
+            Request(service.IssueTicket().Token), CancellationToken.None);
+
+        Assert.IsType<PairingConfirmOutcome.Approved>(outcome);
+        Assert.NotNull(seen);
+        Assert.False(seen.IsRepair);
+        Assert.True(seen.ReplacesSameNamePeer);
+
+        // The ghost is revoked with its secret void and its backlog gone; the new identity is active.
+        var ghost = await store.GetDeviceAsync(GhostDeviceId);
+        Assert.NotNull(ghost);
+        Assert.True(ghost.IsRevoked);
+        Assert.Equal(string.Empty, ghost.PairSecretProtected);
+        Assert.Empty(await store.GetOutboxBatchAsync(GhostDeviceId, 10));
+        Assert.False((await store.GetDeviceAsync(AndroidDeviceId))!.IsRevoked);
+        Assert.Equal(new[] { GhostDeviceId }, superseded);
+    }
+
+    [Fact]
+    public async Task ConfirmLeavesDifferentlyNamedDevicesAlone()
+    {
+        await store.UpsertDeviceAsync(
+            new NewPairedDevice(GhostDeviceId, "Old Tablet", "android", string.Empty, "protected-secret-tablet"),
+            clock.GetUtcNow());
+
+        PairingCandidate? seen = null;
+        var service = CreateService(new DelegateApprover((candidate, _) =>
+        {
+            seen = candidate;
+            return Task.FromResult(true);
+        }));
+        IReadOnlyList<string>? superseded = null;
+        service.PeersSuperseded += ids => superseded = ids;
+
+        Assert.IsType<PairingConfirmOutcome.Approved>(
+            await service.ConfirmAsync(Request(service.IssueTicket().Token), CancellationToken.None));
+
+        Assert.NotNull(seen);
+        Assert.False(seen.ReplacesSameNamePeer);
+        Assert.Null(superseded);
+        Assert.False((await store.GetDeviceAsync(GhostDeviceId))!.IsRevoked);
+    }
+
+    [Fact]
     public async Task ConfirmForOwnDeviceIdIsSchemaViolation()
     {
         var service = CreateService(AutoApprove());
@@ -223,6 +287,14 @@ public sealed class PairingServiceTests : IAsyncDisposable
         DisplayName = "Pixel 8",
         Platform = "android"
     };
+
+    private static ClipSync.Core.Clipboard.AcceptedClipboardContent Content(string text)
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes(text);
+        var hash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(bytes)).ToLowerInvariant();
+        return new ClipSync.Core.Clipboard.AcceptedClipboardContent(
+            text, hash, bytes.Length, "notepad", DateTimeOffset.FromUnixTimeMilliseconds(1_700_000_000_000));
+    }
 
     public async ValueTask DisposeAsync()
     {

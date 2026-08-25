@@ -176,6 +176,79 @@ public sealed partial class SqliteClipboardEventStore
         }
     }
 
+    /// <summary>
+    /// Revokes every other non-revoked device that carries the same display name and platform
+    /// as <paramref name="keepDeviceId"/>, dropping their outbox rows in the same transaction.
+    /// Called at pairing-confirm time so a phone that re-pairs under a fresh device id (for
+    /// example after its app data was cleared) replaces its old record instead of leaving a
+    /// ghost that accumulates outbox backlog forever. Returns the superseded device ids.
+    /// </summary>
+    public async ValueTask<IReadOnlyList<string>> SupersedeReplacedPeersAsync(
+        string keepDeviceId,
+        string displayName,
+        string platform,
+        DateTimeOffset now,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(keepDeviceId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(platform);
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(
+            IsolationLevel.Serializable,
+            cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var ghosts = new List<string>();
+            await using (var find = connection.CreateCommand())
+            {
+                find.Transaction = transaction;
+                find.CommandText = """
+                    SELECT device_id FROM devices
+                    WHERE device_id <> $keep AND revoked_at IS NULL
+                      AND display_name = $display_name AND platform = $platform
+                    ORDER BY created_at, device_id;
+                    """;
+                find.Parameters.AddWithValue("$keep", keepDeviceId);
+                find.Parameters.AddWithValue("$display_name", displayName);
+                find.Parameters.AddWithValue("$platform", platform);
+                await using var reader = await find.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+                while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    ghosts.Add(reader.GetString(0));
+                }
+            }
+
+            foreach (var ghostId in ghosts)
+            {
+                await using var supersede = connection.CreateCommand();
+                supersede.Transaction = transaction;
+                supersede.CommandText = """
+                    UPDATE devices
+                    SET revoked_at = $now,
+                        pair_secret_protected = '',
+                        trust_epoch = trust_epoch + 1
+                    WHERE device_id = $device_id;
+
+                    DELETE FROM outbox WHERE peer_id = $device_id;
+                    """;
+                supersede.Parameters.AddWithValue("$device_id", ghostId);
+                supersede.Parameters.AddWithValue("$now", now.ToUnixTimeMilliseconds());
+                await supersede.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            return ghosts;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
+            throw;
+        }
+    }
+
     public async ValueTask UpdateDeviceLastSeenAsync(
         string deviceId,
         DateTimeOffset now,
@@ -863,6 +936,30 @@ public sealed partial class SqliteClipboardEventStore
         return new OutboxStatus(
             reader.GetInt32(0),
             reader.IsDBNull(1) ? null : DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(1)));
+    }
+
+    /// <summary>
+    /// Outbox depth per peer (pending + announced — acked rows are deleted), matching the
+    /// counting rule of <see cref="GetOutboxStatusAsync"/>. Peers with no backlog are absent.
+    /// Lets the device list show which paired device a swollen 待发 count belongs to.
+    /// </summary>
+    public async ValueTask<IReadOnlyDictionary<string, int>> GetOutboxDepthByPeerAsync(
+        CancellationToken cancellationToken = default)
+    {
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT peer_id, COUNT(*) FROM outbox GROUP BY peer_id;";
+
+        var depths = new Dictionary<string, int>(StringComparer.Ordinal);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            depths[reader.GetString(0)] = reader.GetInt32(1);
+        }
+
+        return depths;
     }
 
     public async ValueTask<IReadOnlyDictionary<string, OriginReceiveState>> GetPeerCursorsAsync(

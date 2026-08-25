@@ -12,6 +12,7 @@ public sealed class SqliteSyncStoreTests
     private const string LocalDeviceId = "11111111-1111-4111-8111-111111111111";
     private const string PhoneDeviceId = "22222222-2222-4222-8222-222222222222";
     private const string TabletDeviceId = "33333333-3333-4333-8333-333333333333";
+    private const string GhostDeviceId = "44444444-4444-4444-8444-444444444444";
     private static readonly DateTimeOffset BaseTime = DateTimeOffset.FromUnixTimeMilliseconds(1_700_000_000_000);
 
     [Fact]
@@ -380,6 +381,71 @@ public sealed class SqliteSyncStoreTests
         var repaired = await store.UpsertDeviceAsync(Phone(), BaseTime.AddSeconds(3));
         Assert.False(repaired.IsRevoked);
         Assert.Equal(3, repaired.TrustEpoch);
+    }
+
+    [Fact]
+    public async Task SupersedeReplacedPeersRevokesSameNameGhostsAndDropsTheirOutbox()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+
+        // The same phone paired earlier under a different device id (app data cleared since),
+        // plus an unrelated tablet that must stay untouched.
+        await store.UpsertDeviceAsync(
+            new NewPairedDevice(GhostDeviceId, "Phone", "android", "cc".PadLeft(64, 'c'), "protected-secret-ghost"),
+            BaseTime);
+        await store.UpsertDeviceAsync(Tablet(), BaseTime);
+        await store.StoreAsync(Content("queued before re-pair", BaseTime.AddSeconds(1)));
+        Assert.Single(await store.GetOutboxBatchAsync(GhostDeviceId, 10));
+        Assert.Single(await store.GetOutboxBatchAsync(TabletDeviceId, 10));
+
+        // The phone re-pairs under a fresh id but the same display name and platform.
+        await store.UpsertDeviceAsync(Phone(), BaseTime.AddSeconds(2));
+        var superseded = await store.SupersedeReplacedPeersAsync(
+            PhoneDeviceId, "Phone", "android", BaseTime.AddSeconds(3));
+
+        Assert.Equal(new[] { GhostDeviceId }, superseded);
+        var ghost = await store.GetDeviceAsync(GhostDeviceId);
+        Assert.NotNull(ghost);
+        Assert.True(ghost.IsRevoked);
+        Assert.Equal(string.Empty, ghost.PairSecretProtected);
+        Assert.Equal(2, ghost.TrustEpoch);
+        Assert.Empty(await store.GetOutboxBatchAsync(GhostDeviceId, 10));
+
+        // The fresh pairing and the differently named tablet keep their state and backlog.
+        Assert.False((await store.GetDeviceAsync(PhoneDeviceId))!.IsRevoked);
+        Assert.False((await store.GetDeviceAsync(TabletDeviceId))!.IsRevoked);
+        Assert.Single(await store.GetOutboxBatchAsync(TabletDeviceId, 10));
+
+        // Idempotent: with the ghost already revoked there is nothing left to supersede.
+        Assert.Empty(await store.SupersedeReplacedPeersAsync(
+            PhoneDeviceId, "Phone", "android", BaseTime.AddSeconds(4)));
+    }
+
+    [Fact]
+    public async Task OutboxDepthByPeerReportsEachPeersBacklog()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+        await store.UpsertDeviceAsync(Tablet(), BaseTime);
+        Assert.Empty(await store.GetOutboxDepthByPeerAsync());
+
+        await store.StoreAsync(Content("first", BaseTime.AddSeconds(1)));
+        await store.StoreAsync(Content("second", BaseTime.AddSeconds(2)));
+
+        var depths = await store.GetOutboxDepthByPeerAsync();
+        Assert.Equal(2, depths[PhoneDeviceId]);
+        Assert.Equal(2, depths[TabletDeviceId]);
+
+        // Acked rows leave the outbox, and peers with no backlog are absent from the map.
+        await store.ApplyPeerAckRangesAsync(
+            PhoneDeviceId,
+            new[] { new OriginSequenceRanges(LocalDeviceId, new[] { new SequenceRange(1, 2) }) },
+            BaseTime.AddSeconds(3));
+        depths = await store.GetOutboxDepthByPeerAsync();
+        Assert.False(depths.ContainsKey(PhoneDeviceId));
+        Assert.Equal(2, depths[TabletDeviceId]);
     }
 
     [Fact]

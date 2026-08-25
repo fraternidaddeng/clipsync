@@ -191,6 +191,7 @@ public partial class App : Application
                 new WpfPairingApprover(Dispatcher),
                 new PairingServiceOptions { LocalDisplayName = LocalDisplayName() });
             pairingService.PairingCompleted += OnPairingCompleted;
+            pairingService.PeersSuperseded += OnPeersSuperseded;
             viewModel.DeviceRevoked += OnDeviceRevoked;
             // 一键暂停/私密模式 must stop outbound content immediately, not only capture:
             // the gate is re-read inside every session, so the tray toggle applies live.
@@ -414,6 +415,18 @@ public partial class App : Application
     private void OnDeviceRevoked(string deviceId) => syncHost?.DisconnectDevice(deviceId);
 
     /// <summary>
+    /// A confirmed pairing superseded stale same-name records (same phone, fresh device id):
+    /// their secrets are already void, so drop any session they might still hold.
+    /// </summary>
+    private void OnPeersSuperseded(IReadOnlyList<string> deviceIds)
+    {
+        foreach (var deviceId in deviceIds)
+        {
+            syncHost?.DisconnectDevice(deviceId);
+        }
+    }
+
+    /// <summary>
     /// A device just tripped the failed-auth rate limit (worker thread). Record it for the
     /// diagnostics viewer and warn the user; the balloon names the device only, never proof
     /// material or clipboard content.
@@ -504,6 +517,7 @@ public partial class App : Application
         if (pairingService is not null)
         {
             pairingService.PairingCompleted -= OnPairingCompleted;
+            pairingService.PeersSuperseded -= OnPeersSuperseded;
             pairingService.CancelTicket();
         }
         if (bluetoothHost is not null)

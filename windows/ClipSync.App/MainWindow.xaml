@@ -1400,6 +1400,34 @@
                                     </Button>
                                 </Grid>
 
+                                <!-- 残留设备提醒：赭色是唯一允许打断用户的颜色（needs your action）。
+                                     同名重复配对的旧档或长期未连接的设备在这里一键撤销并清空其待发积压 -->
+                                <Border Margin="16,0,16,10"
+                                        Padding="12,9"
+                                        Background="{DynamicResource CsActBgBrush}"
+                                        BorderBrush="{DynamicResource CsActLineBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="9"
+                                        Visibility="{Binding HasStaleDevices, Converter={StaticResource BoolToVisibility}}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock VerticalAlignment="Center"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource CsActBrush}"
+                                                   Text="{Binding StaleBannerText}"
+                                                   TextWrapping="Wrap" />
+                                        <Button Grid.Column="1"
+                                                Margin="10,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Command="{Binding CleanupStaleDevicesCommand}"
+                                                Content="一键清理"
+                                                Style="{StaticResource GhostQuietButton}" />
+                                    </Grid>
+                                </Border>
+
                                 <ListBox MaxHeight="220"
                                          Background="Transparent"
                                          BorderThickness="0"
@@ -1483,6 +1511,17 @@
                                                                 Visibility="{Binding IsRevoked, Converter={StaticResource BoolToVisibility}}">
                                                             <TextBlock FontSize="9" Foreground="{DynamicResource CsText3Brush}" Text="已撤销" />
                                                         </Border>
+                                                        <!-- 残留标记：赭色提醒（同机重复配对或长期未连接），一键清理的对象 -->
+                                                        <Border Margin="7,0,0,0"
+                                                                Padding="7,1"
+                                                                VerticalAlignment="Center"
+                                                                Background="{DynamicResource CsActBgBrush}"
+                                                                BorderBrush="{DynamicResource CsActLineBrush}"
+                                                                BorderThickness="1"
+                                                                CornerRadius="6"
+                                                                Visibility="{Binding IsStale, Converter={StaticResource BoolToVisibility}}">
+                                                            <TextBlock FontSize="9" Foreground="{DynamicResource CsActBrush}" Text="{Binding StaleReason}" />
+                                                        </Border>
                                                     </StackPanel>
                                                     <TextBlock Margin="0,1,0,0"
                                                                FontFamily="{StaticResource CsMono}"
@@ -1530,7 +1569,7 @@
                                         CornerRadius="0,0,11,11">
                                     <TextBlock FontSize="10.5"
                                                Foreground="{DynamicResource CsText4Brush}"
-                                               Text="撤销立即断开该设备并作废其配对密钥；对方已收到的内容不会被远程删除。撤销后重新配对视为新设备。"
+                                               Text="撤销立即断开该设备并作废其配对密钥；对方已收到的内容不会被远程删除。撤销后重新配对视为新设备。同一部手机换了身份重新配对时，旧记录会被自动撤销并清空其待发队列。"
                                                TextWrapping="Wrap" />
                                 </Border>
                             </StackPanel>

@@ -22,6 +22,8 @@
 - [双端] 蓝牙备援传输阶段 1——bt1 握手与帧层（纯逻辑，无平台蓝牙依赖）：`docs/protocol-bt1.md` 定稿安全信道协议（共享 `pair_secret` 的 HMAC-SHA-256 双向认证、HKDF-SHA-256 按方向派生 AES-256-GCM 会话密钥、4 字节大端长度前缀 + 计数器 nonce 帧、7 MiB 明文上限、`BT1_` 错误码）；`protocol/bt1/` 新增跨语言测试向量与消息 fixtures 并纳入 `scripts/validate-protocol.py` 校验；C#（`ClipSync.Core/Security/Bt1`）与 Kotlin（Android `sync` 包）双端实现，针对同一 fixtures 的单测含篡改/重放/乱序/截断/超限负例。尚无任何真实蓝牙 I/O；RFCOMM 传输、降级编排与 UI 均属后续阶段（见 `docs/bluetooth-fallback-plan.md`）。
 - [分发] 最小分发链（阶段 7 裁剪版）：`scripts/package-windows.ps1` 产出自包含 win-x64 便携 ZIP（含运行时/许可/安装指南 + SHA-256，Linux CI 经 `EnableWindowsTargeting` 可产包）；`scripts/package-android.ps1` 产出 Release APK（签名只读 `CLIPSYNC_ANDROID_*` 环境变量，密钥库不入库，另有 Debug/未签名校验路径）；`docs/install.md` 一页中文安装/配对/通路/排障指南（并随 Windows ZIP 分发）。
 
+- [Windows] 通路「网络段 · 已配对设备」新增残留设备检测与一键清理：同名同平台的旧档（同一部手机换了身份重新配对留下的幽灵）与超过 14 天未连接的设备以赭色标记（标注各自积压的待发条数），列表上方横幅给出总数与总积压并提供「一键清理」——撤销全部残留、作废其密钥并清空其发件队列，「待发」计数即时回落。
+
 ### 变更
 
 - [Android] 能力路线去品牌化：Shizuku 在 UI 中呈现为「特权直读」。
@@ -38,6 +40,7 @@
 - [Windows] 合并 tray-diagnostics 后的 `DiagnosticsWindow` 构建错误。
 - [Android] 自动写入通知配色与 Compose 弃用告警。
 - [Android] 远端图片自动写入改为独立开关「自动写入远端图片」（`auto_apply_images`，默认关）：文本「自动写入剪贴板」不再连带把图片写进本机剪贴板，与 Windows 端及 ADR 0004（图片写入门独立于文本自动应用）对齐；暂停同步仍同时关断两者，图片照常进入历史可手动复制。
+- [Windows] 同一部手机重新配对不再积累幽灵设备（2026-08-25 人工 QA 缺陷 2：设备表出现两台同名 `Xiaomi 22041216C`，未撤销的旧档 `80d29726-…` outbox 积压 42 条 pending，把通路「待发」带高）：配对确认时若列表已有同名同平台的活跃设备，视为同一部手机换了身份（如清除应用数据后）重新配对——确认窗以赭色提示「将替换旧记录」，批准后旧记录在同一事务内自动撤销（作废配对密钥、trust epoch +1）并清空其 outbox 积压，其在线会话被立即断开；设备撤销连带清空该设备发件队列为既有行为，本次补充测试锁定。
 
 ### 文档 / 测试
 

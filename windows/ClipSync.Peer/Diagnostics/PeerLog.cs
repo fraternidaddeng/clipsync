@@ -67,4 +67,8 @@ public static partial class PeerLog
     [LoggerMessage(EventId = 18, Level = LogLevel.Information,
         Message = "refusing /v2 sync upgrade: image sync is disabled locally")]
     public static partial void V2RefusedImageSyncDisabled(ILogger logger);
+
+    [LoggerMessage(EventId = 19, Level = LogLevel.Information,
+        Message = "pairing superseded stale peer device={GhostDeviceId} replacedBy={NewDeviceId}")]
+    public static partial void PairingSupersededGhost(ILogger logger, string ghostDeviceId, string newDeviceId);
 }

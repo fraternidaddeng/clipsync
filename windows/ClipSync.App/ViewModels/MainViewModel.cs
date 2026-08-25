@@ -49,6 +49,21 @@ public partial class MainViewModel(
     [ObservableProperty]
     private bool hasPairedDevices;
 
+    /// <summary>A device that has not connected for this long gets the stale badge.</summary>
+    private const int StaleAfterDays = 14;
+
+    /// <summary>Non-revoked devices flagged stale (duplicate re-pair ghosts or long unseen).</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasStaleDevices))]
+    [NotifyCanExecuteChangedFor(nameof(CleanupStaleDevicesCommand))]
+    private int staleDeviceCount;
+
+    public bool HasStaleDevices => StaleDeviceCount > 0;
+
+    /// <summary>One line above the device list explaining the flagged leftovers and their backlog.</summary>
+    [ObservableProperty]
+    private string staleBannerText = string.Empty;
+
     [ObservableProperty]
     private HistoryItemViewModel? selectedItem;
 
@@ -569,14 +584,111 @@ public partial class MainViewModel(
         // ListDevicesAsync orders by created_at: the position IS the pairing order,
         // which assigns each device its neighbour hue (dev-1..dev-5, cycling).
         var devices = await store.ListDevicesAsync();
+        var backlog = await store.GetOutboxDepthByPeerAsync();
+        var now = DateTimeOffset.UtcNow;
         Devices.Clear();
+        var staleCount = 0;
+        var staleBacklog = 0;
         for (var position = 0; position < devices.Count; position++)
         {
-            Devices.Add(PairedDeviceViewModel.FromDevice(devices[position], position));
+            var device = devices[position];
+            var pending = backlog.GetValueOrDefault(device.DeviceId);
+            var staleReason = DescribeStaleness(device, devices, now);
+            if (staleReason is not null)
+            {
+                staleCount++;
+                staleBacklog += pending;
+                if (pending > 0)
+                {
+                    staleReason = $"{staleReason} · 积压 {pending} 条待发";
+                }
+            }
+
+            Devices.Add(PairedDeviceViewModel.FromDevice(device, position, pending, staleReason));
         }
 
         SelectedDevice = Devices.FirstOrDefault(device => device.DeviceId == selectedId);
         HasPairedDevices = Devices.Any(device => !device.IsRevoked);
+        StaleDeviceCount = staleCount;
+        StaleBannerText = staleCount == 0
+            ? string.Empty
+            : staleBacklog > 0
+                ? $"检测到 {staleCount} 台疑似残留设备，积压 {staleBacklog} 条待发正在推高「待发」计数。清理会撤销它们并清空其发件队列。"
+                : $"检测到 {staleCount} 台疑似残留设备。清理会撤销它们；对方已收到的内容不受影响。";
+    }
+
+    /// <summary>
+    /// The charter treats re-pairing the same phone as replacing its old record, so an active
+    /// device is a leftover when a same-named, same-platform sibling has been active more
+    /// recently (the "two rows both named Xiaomi 22041216C" case), or when it simply has not
+    /// connected for <see cref="StaleAfterDays"/> days. Returns the badge text, or null for
+    /// healthy devices. Revoked rows are already grey facts and are never flagged.
+    /// </summary>
+    private static string? DescribeStaleness(
+        PairedDevice device,
+        IReadOnlyList<PairedDevice> devices,
+        DateTimeOffset now)
+    {
+        if (device.IsRevoked)
+        {
+            return null;
+        }
+
+        var hasFresherTwin = devices.Any(other => !other.IsRevoked
+            && !string.Equals(other.DeviceId, device.DeviceId, StringComparison.Ordinal)
+            && string.Equals(other.DisplayName, device.DisplayName, StringComparison.Ordinal)
+            && string.Equals(other.Platform, device.Platform, StringComparison.Ordinal)
+            && IsFresher(other, device));
+        if (hasFresherTwin)
+        {
+            return "疑似重复配对残留";
+        }
+
+        var lastActivity = device.LastSeenAt ?? device.CreatedAt;
+        if (now - lastActivity > TimeSpan.FromDays(StaleAfterDays))
+        {
+            return device.LastSeenAt is null ? "配对后从未连接" : $"超过 {StaleAfterDays} 天未连接";
+        }
+
+        return null;
+    }
+
+    /// <summary>Deterministic freshness order: last activity, then pairing time, then device id.</summary>
+    private static bool IsFresher(PairedDevice left, PairedDevice right)
+    {
+        var leftSeen = (left.LastSeenAt ?? left.CreatedAt).ToUnixTimeMilliseconds();
+        var rightSeen = (right.LastSeenAt ?? right.CreatedAt).ToUnixTimeMilliseconds();
+        if (leftSeen != rightSeen)
+        {
+            return leftSeen > rightSeen;
+        }
+
+        if (left.CreatedAt != right.CreatedAt)
+        {
+            return left.CreatedAt > right.CreatedAt;
+        }
+
+        return string.CompareOrdinal(left.DeviceId, right.DeviceId) > 0;
+    }
+
+    /// <summary>
+    /// One tap: revokes every flagged leftover. The store clears each secret, bumps the trust
+    /// epoch, and drops the peer's outbox rows in the same transaction, so the 待发 count
+    /// deflates immediately; DeviceRevoked lets the app layer kick any live session.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(HasStaleDevices))]
+    private async Task CleanupStaleDevicesAsync()
+    {
+        foreach (var device in Devices.Where(device => device.IsStale).ToArray())
+        {
+            if (await store.RevokeDeviceAsync(device.DeviceId, DateTimeOffset.UtcNow))
+            {
+                DeviceRevoked?.Invoke(device.DeviceId);
+            }
+        }
+
+        await RefreshDevicesAsync();
+        await RefreshOutboxAsync();
     }
 
     [RelayCommand(CanExecute = nameof(HasDeviceSelection))]

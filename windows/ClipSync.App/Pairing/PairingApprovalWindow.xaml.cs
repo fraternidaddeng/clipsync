@@ -20,6 +20,7 @@ public partial class PairingApprovalWindow : Window
             _ => candidate.Platform
         };
         RepairWarningBox.Visibility = candidate.IsRepair ? Visibility.Visible : Visibility.Collapsed;
+        SupersedeNoticeBox.Visibility = candidate.ReplacesSameNamePeer ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public bool Approved { get; private set; }

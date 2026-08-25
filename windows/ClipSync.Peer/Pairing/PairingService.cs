@@ -57,6 +57,12 @@ public sealed class PairingService
     /// <summary>Raised after a pairing (or re-pairing) commits, for UI refresh.</summary>
     public event Action<PairedDevice>? PairingCompleted;
 
+    /// <summary>
+    /// Raised when a confirmed pairing superseded stale same-name records (same phone,
+    /// fresh device id). The app layer must drop any live sessions of these device ids.
+    /// </summary>
+    public event Action<IReadOnlyList<string>>? PeersSuperseded;
+
     /// <summary>Issues a fresh one-time token; any previous ticket is invalidated.</summary>
     public PairingTicket IssueTicket()
     {
@@ -125,11 +131,21 @@ public sealed class PairingService
         }
 
         var existing = await store.GetDeviceAsync(request.DeviceId, cancellationToken).ConfigureAwait(false);
+        var displayName = request.DisplayName.Trim();
+        // A same-named active device under a different id is the same phone re-pairing after
+        // it lost its identity (cleared app data). Surfaced to the approver, and superseded
+        // after approval so ghosts never accumulate outbox backlog.
+        var replacesSameNamePeer = (await store.ListDevicesAsync(cancellationToken).ConfigureAwait(false))
+            .Any(device => !device.IsRevoked
+                && !string.Equals(device.DeviceId, request.DeviceId, StringComparison.Ordinal)
+                && string.Equals(device.DisplayName, displayName, StringComparison.Ordinal)
+                && string.Equals(device.Platform, request.Platform, StringComparison.Ordinal));
         var candidate = new PairingCandidate(
             request.DeviceId,
-            request.DisplayName.Trim(),
+            displayName,
             request.Platform,
-            IsRepair: existing is not null);
+            IsRepair: existing is not null,
+            ReplacesSameNamePeer: replacesSameNamePeer);
 
         bool approved;
         using var timeoutSource = new CancellationTokenSource(options.ApprovalTimeout, clock);
@@ -161,6 +177,25 @@ public sealed class PairingService
                 protectedSecret),
             clock.GetUtcNow(),
             cancellationToken).ConfigureAwait(false);
+
+        if (candidate.ReplacesSameNamePeer)
+        {
+            var superseded = await store.SupersedeReplacedPeersAsync(
+                device.DeviceId,
+                device.DisplayName,
+                device.Platform,
+                clock.GetUtcNow(),
+                cancellationToken).ConfigureAwait(false);
+            if (superseded.Count > 0)
+            {
+                foreach (var ghostId in superseded)
+                {
+                    PeerLog.PairingSupersededGhost(logger, ghostId, device.DeviceId);
+                }
+
+                PeersSuperseded?.Invoke(superseded);
+            }
+        }
 
         var response = new PairingConfirmResponse
         {

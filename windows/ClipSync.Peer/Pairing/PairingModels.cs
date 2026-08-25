@@ -113,8 +113,17 @@ public sealed record PairingErrorBody
 /// <summary>A one-time pairing token handed to the QR renderer.</summary>
 public sealed record PairingTicket(string Token, DateTimeOffset ExpiresAt);
 
-/// <summary>What the approval UI shows before a pairing is saved.</summary>
-public sealed record PairingCandidate(string DeviceId, string DisplayName, string Platform, bool IsRepair);
+/// <summary>
+/// What the approval UI shows before a pairing is saved. <paramref name="ReplacesSameNamePeer"/>
+/// is true when another non-revoked device already carries this display name and platform —
+/// the same-phone-re-paired-under-a-fresh-id case — so approval will supersede the old record.
+/// </summary>
+public sealed record PairingCandidate(
+    string DeviceId,
+    string DisplayName,
+    string Platform,
+    bool IsRepair,
+    bool ReplacesSameNamePeer = false);
 
 /// <summary>
 /// Bridges the confirm endpoint to the user. Implementations show the candidate's name and
