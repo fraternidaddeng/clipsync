@@ -414,7 +414,9 @@ class SyncEngine(
                 if (events.isEmpty()) {
                     break
                 }
-                send(SyncMessageTypes.CLIP_ANNOUNCE, ClipAnnounceBody(events.map(::buildHeader)))
+                val marks = ImageLocalOnlyMarks()
+                send(SyncMessageTypes.CLIP_ANNOUNCE, ClipAnnounceBody(events.map { buildHeader(it, marks) }))
+                applyImageLocalOnlyMarks(marks)
                 if (events.size < SyncLimits.MAX_ANNOUNCE_CLIPS) {
                     break
                 }
@@ -577,6 +579,7 @@ class SyncEngine(
 
         val payloadItems = mutableListOf<ClipPayloadItemDto>()
         val terminalHeaders = mutableListOf<ClipHeaderDto>()
+        val marks = ImageLocalOnlyMarks()
         var missing = 0
         for (id in fetch.eventIds) {
             val item = byId[id]
@@ -592,11 +595,15 @@ class SyncEngine(
                 if (!isV2) {
                     // A v1 peer cannot carry image bodies; answer with the terminal marker
                     // buildHeader produces (`local_only`) so its sequence gap still closes.
-                    terminalHeaders.add(buildHeader(item))
+                    terminalHeaders.add(buildHeader(item, marks))
                     continue
                 }
                 if (!sendImagePayload(item)) {
                     return false
+                }
+                // The body went out in full, so any stale 仅本机保留 badge is wrong now.
+                if (item.originDeviceId == config.localDeviceId) {
+                    marks.available.add(item.eventId)
                 }
                 continue
             }
@@ -622,6 +629,7 @@ class SyncEngine(
         for (batch in chunkPayloads(payloadItems)) {
             send(SyncMessageTypes.CLIP_PAYLOAD, ClipPayloadBody(batch))
         }
+        applyImageLocalOnlyMarks(marks)
         if (missing > 0) {
             send(
                 SyncMessageTypes.ERROR,
@@ -738,7 +746,9 @@ class SyncEngine(
             if (batch.isEmpty()) {
                 return
             }
-            send(SyncMessageTypes.CLIP_ANNOUNCE, ClipAnnounceBody(batch.map { buildHeader(it.event) }))
+            val marks = ImageLocalOnlyMarks()
+            send(SyncMessageTypes.CLIP_ANNOUNCE, ClipAnnounceBody(batch.map { buildHeader(it.event, marks) }))
+            applyImageLocalOnlyMarks(marks)
             repository.markOutboxAnnounced(batch.map { it.entryId })
             if (batch.size < SyncLimits.MAX_ANNOUNCE_CLIPS) {
                 return
@@ -785,48 +795,79 @@ class SyncEngine(
         )
     }
 
-    private fun buildHeader(item: SyncableClipEvent): ClipHeaderDto {
+    /**
+     * Image event ids whose headers one send downgraded to `local_only` or announced available;
+     * applied to the store only after the frame actually went out.
+     */
+    private class ImageLocalOnlyMarks {
+        val downgraded = mutableListOf<String>()
+        val available = mutableListOf<String>()
+    }
+
+    /**
+     * Persists the 仅本机保留 marks (ADR 0005 §5): a downgraded local image gets the history
+     * badge, and an available announce (or a delivered body) clears a stale badge left by an
+     * earlier text-only session.
+     */
+    private suspend fun applyImageLocalOnlyMarks(marks: ImageLocalOnlyMarks) {
+        if (marks.downgraded.isNotEmpty()) {
+            repository.markImagesLocalOnly(marks.downgraded, config.nowMs())
+        }
+        if (marks.available.isNotEmpty()) {
+            repository.clearImagesLocalOnly(marks.available)
+        }
+    }
+
+    private fun buildHeader(item: SyncableClipEvent, marks: ImageLocalOnlyMarks? = null): ClipHeaderDto {
         // Images cannot travel a v1 session: announce them as `local_only` terminal markers so
         // the peer's contiguous cursor still advances (docs/protocol-v2.md section 7).
         val v1Image = item.isImage && !isV2
-        if (item.isTerminal || v1Image) {
-            return ClipHeaderDto(
-                eventId = item.eventId,
-                originDeviceId = item.originDeviceId,
-                originSeq = item.originSeq,
-                availability = ClipAvailability.UNAVAILABLE,
-                reason = if (v1Image) "local_only" else item.terminalReason,
-            )
-        }
-        if (item.isImage) {
-            return ClipHeaderDto(
+        return when {
+            item.isTerminal || v1Image -> {
+                if (v1Image && !item.isTerminal && item.originDeviceId == config.localDeviceId) {
+                    marks?.downgraded?.add(item.eventId)
+                }
+                ClipHeaderDto(
+                    eventId = item.eventId,
+                    originDeviceId = item.originDeviceId,
+                    originSeq = item.originSeq,
+                    availability = ClipAvailability.UNAVAILABLE,
+                    reason = if (v1Image) "local_only" else item.terminalReason,
+                )
+            }
+            item.isImage -> {
+                if (item.originDeviceId == config.localDeviceId) {
+                    marks?.available?.add(item.eventId)
+                }
+                ClipHeaderDto(
+                    eventId = item.eventId,
+                    originDeviceId = item.originDeviceId,
+                    originSeq = item.originSeq,
+                    availability = ClipAvailability.AVAILABLE,
+                    kind = MediaLimits.KIND_IMAGE,
+                    contentHash = item.contentHash,
+                    mimeType = item.mimeType,
+                    encodedBytes = item.encodedBytes?.toLong(),
+                    pixelWidth = item.pixelWidth?.toLong(),
+                    pixelHeight = item.pixelHeight?.toLong(),
+                    sourceApp = item.sourceApp,
+                    createdAtMs = item.createdAtMs,
+                    expiresAtMs = item.expiresAtMs,
+                )
+            }
+            else -> ClipHeaderDto(
                 eventId = item.eventId,
                 originDeviceId = item.originDeviceId,
                 originSeq = item.originSeq,
                 availability = ClipAvailability.AVAILABLE,
-                kind = MediaLimits.KIND_IMAGE,
+                kind = "text",
                 contentHash = item.contentHash,
-                mimeType = item.mimeType,
-                encodedBytes = item.encodedBytes?.toLong(),
-                pixelWidth = item.pixelWidth?.toLong(),
-                pixelHeight = item.pixelHeight?.toLong(),
+                utf8Bytes = item.content!!.toByteArray(StandardCharsets.UTF_8).size.toLong(),
                 sourceApp = item.sourceApp,
                 createdAtMs = item.createdAtMs,
                 expiresAtMs = item.expiresAtMs,
             )
         }
-        return ClipHeaderDto(
-            eventId = item.eventId,
-            originDeviceId = item.originDeviceId,
-            originSeq = item.originSeq,
-            availability = ClipAvailability.AVAILABLE,
-            kind = "text",
-            contentHash = item.contentHash,
-            utf8Bytes = item.content!!.toByteArray(StandardCharsets.UTF_8).size.toLong(),
-            sourceApp = item.sourceApp,
-            createdAtMs = item.createdAtMs,
-            expiresAtMs = item.expiresAtMs,
-        )
     }
 
     // ---- Protocol v2 image body transfer (docs/protocol-v2.md section 5) ----

@@ -47,6 +47,12 @@ data class HomeClipItem(
     val isImage: Boolean = false,
     /** Blob hash for image clips — keys the thumbnail lookup. Empty for text. */
     val contentHash: String = "",
+    /**
+     * 仅本机保留 (ADR 0005 §5): this local image was terminated as a `local_only` marker
+     * on a text-only path (Bluetooth fallback window), so the peer's cursor moved past
+     * it and it will never sync — IP recovery does not retransmit.
+     */
+    val isLocalOnly: Boolean = false,
 )
 
 /** Transient, honest feedback for the last item action. */
@@ -256,6 +262,7 @@ internal fun ClipHistoryEntry.toHomeItem(
         format = if (isImage) ClipContentFormat.PLAIN else classifyClipContent(content),
         isImage = isImage,
         contentHash = if (isImage) contentHash else "",
+        isLocalOnly = isImage && isLocalOnly,
     )
 }
 

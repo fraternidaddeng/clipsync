@@ -110,6 +110,14 @@ class RoomSyncRepository(
         store.markOutboxAnnounced(entryIds)
     }
 
+    override suspend fun markImagesLocalOnly(eventIds: List<String>, nowMs: Long) {
+        store.markImagesLocalOnly(eventIds, nowMs)
+    }
+
+    override suspend fun clearImagesLocalOnly(eventIds: List<String>) {
+        store.clearImagesLocalOnly(eventIds)
+    }
+
     override suspend fun recordLocalClip(text: String, sourceApp: String?, nowMs: Long): SyncableClipEvent? {
         val utf8Bytes = text.toByteArray(StandardCharsets.UTF_8).size
         val cap = minOf(SyncLimits.MAX_CONTENT_UTF8_BYTES, maxContentUtf8Bytes())

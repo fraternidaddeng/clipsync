@@ -25,6 +25,9 @@ class InMemorySyncRepository(
 
     private val outbox = ArrayList<OutboxEntry>()
 
+    /** Event ids of local images announced as `local_only` markers (ADR 0005 §4). */
+    private val localOnlyEventIds = HashSet<String>()
+
     override suspend fun knownVector(): Map<String, OriginReceiveState> = synchronized(lock) {
         receiveStates.toMap()
     }
@@ -129,6 +132,56 @@ class InMemorySyncRepository(
     override suspend fun markOutboxAnnounced(entryIds: List<Long>): Unit = synchronized(lock) {
         val ids = entryIds.toHashSet()
         outbox.forEach { if (it.id in ids) it.announced = true }
+    }
+
+    override suspend fun markImagesLocalOnly(eventIds: List<String>, nowMs: Long): Unit =
+        synchronized(lock) {
+            eventIds.forEach { id ->
+                val event = eventsById[id]
+                if (event != null && !event.isTerminal && event.isImage) {
+                    localOnlyEventIds.add(id)
+                }
+            }
+        }
+
+    override suspend fun clearImagesLocalOnly(eventIds: List<String>): Unit = synchronized(lock) {
+        localOnlyEventIds.removeAll(eventIds.toSet())
+    }
+
+    /** Test hook: event ids currently badged 仅本机保留. */
+    fun imagesMarkedLocalOnly(): Set<String> = synchronized(lock) { localOnlyEventIds.toSet() }
+
+    /**
+     * Test hook: injects a local image event straight into the store and outbox, standing in
+     * for the Room repository's `recordLocalImageClip` (the in-memory store has no blob store).
+     */
+    fun injectLocalImageEventForTest(
+        contentHash: String,
+        encodedBytes: Int,
+        nowMs: Long,
+    ): SyncableClipEvent = synchronized(lock) {
+        val seq = nextLocalSeq++
+        val event = SyncableClipEvent(
+            eventId = UUID.randomUUID().toString(),
+            originDeviceId = localDeviceId,
+            originSeq = seq,
+            isTerminal = false,
+            content = "",
+            contentHash = contentHash,
+            sourceApp = null,
+            createdAtMs = nowMs,
+            kind = com.clipsync.android.media.MediaLimits.KIND_IMAGE,
+            mimeType = com.clipsync.android.media.MediaLimits.MIME_PNG,
+            encodedBytes = encodedBytes,
+            pixelWidth = 1,
+            pixelHeight = 1,
+        )
+        eventsByKey[event.originDeviceId to seq] = event
+        eventsById[event.eventId] = event
+        val state = receiveStates[localDeviceId] ?: OriginReceiveState.EMPTY
+        receiveStates[localDeviceId] = state.accept(seq)
+        outbox.add(OutboxEntry(nextOutboxId++, event.originDeviceId to seq, announced = false))
+        event
     }
 
     override suspend fun recordLocalClip(text: String, sourceApp: String?, nowMs: Long): SyncableClipEvent? {

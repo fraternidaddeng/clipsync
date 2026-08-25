@@ -36,6 +36,7 @@ class ClipSyncDatabaseMigrationTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         context.deleteDatabase(HELPER_DB)
         context.deleteDatabase(PRODUCTION_OPEN_DB)
+        context.deleteDatabase(MIGRATION_2_3_DB)
     }
 
     @Test
@@ -116,6 +117,40 @@ class ClipSyncDatabaseMigrationTest {
         }
     }
 
+    @Test
+    fun migrate2To3AddsTheLocalOnlyColumnAndKeepsExistingRows() {
+        helper.createDatabase(MIGRATION_2_3_DB, 2).apply {
+            execSQL(
+                """
+                INSERT INTO clips (
+                    event_id, origin_device_id, origin_seq, kind, content, content_hash,
+                    source_app, created_at, expires_at, deleted_at, terminal_reason, applied_at
+                ) VALUES (
+                    '$EVENT_ID', '$ORIGIN_ID', 1, 'text', 'hello', '${"aa".repeat(32)}',
+                    NULL, 1, NULL, NULL, NULL, NULL
+                )
+                """.trimIndent(),
+            )
+            close()
+        }
+
+        helper.runMigrationsAndValidate(MIGRATION_2_3_DB, 3, true, ClipSyncDatabase.MIGRATION_2_3).use { migrated ->
+            // Pre-migration rows survive with a null mark: nothing is retroactively badged.
+            migrated.query("SELECT content, local_only_at FROM clips WHERE event_id='$EVENT_ID'").use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals("hello", cursor.getString(0))
+                assertTrue(cursor.isNull(1))
+            }
+
+            // The new column accepts the 仅本机保留 mark immediately after the migration.
+            migrated.execSQL("UPDATE clips SET local_only_at = 42 WHERE event_id='$EVENT_ID'")
+            migrated.query("SELECT local_only_at FROM clips WHERE event_id='$EVENT_ID'").use { cursor ->
+                assertTrue(cursor.moveToFirst())
+                assertEquals(42L, cursor.getLong(0))
+            }
+        }
+    }
+
     /** Creates an on-disk database at schema v1 (from `schemas/1.json`) with one clip row. */
     private fun seedVersion1Database(name: String) {
         helper.createDatabase(name, 1).apply {
@@ -138,6 +173,7 @@ class ClipSyncDatabaseMigrationTest {
     private companion object {
         const val HELPER_DB = "migration-1-2.db"
         const val PRODUCTION_OPEN_DB = "migration-production-open.db"
+        const val MIGRATION_2_3_DB = "migration-2-3.db"
         const val EVENT_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
         const val ORIGIN_ID = "11111111-1111-4111-8111-111111111111"
     }

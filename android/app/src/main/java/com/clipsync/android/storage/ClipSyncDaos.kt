@@ -139,6 +139,28 @@ interface ClipEventDao {
     )
     suspend fun countLiveImagesByHash(contentHash: String): Int
 
+    /**
+     * Marks live local images that a text-only session announced as `local_only` (ADR 0005 §4).
+     * First mark wins so the badge keeps the original downgrade time across reconnects.
+     */
+    @Query(
+        """
+        UPDATE clips SET local_only_at = :markedAtMs
+        WHERE event_id IN (:eventIds) AND deleted_at IS NULL
+          AND kind = 'image' AND local_only_at IS NULL
+        """,
+    )
+    suspend fun markImagesLocalOnly(eventIds: List<String>, markedAtMs: Long): Int
+
+    /** Clears the mark when a v2 session later announces the image as available again. */
+    @Query(
+        """
+        UPDATE clips SET local_only_at = NULL
+        WHERE event_id IN (:eventIds) AND local_only_at IS NOT NULL
+        """,
+    )
+    suspend fun clearImagesLocalOnly(eventIds: List<String>): Int
+
     @Query("SELECT COUNT(*) FROM clips WHERE deleted_at IS NULL")
     suspend fun countVisible(): Int
 

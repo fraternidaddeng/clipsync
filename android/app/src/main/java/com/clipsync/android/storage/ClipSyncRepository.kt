@@ -343,6 +343,23 @@ class ClipSyncRepository(
         }
     }
 
+    /**
+     * Marks live local images that a text-only session downgraded to `local_only` markers
+     * (ADR 0005 §4), so history can badge them 仅本机保留. First mark wins.
+     */
+    suspend fun markImagesLocalOnly(eventIds: List<String>, markedAtMs: Long) {
+        if (eventIds.isNotEmpty()) {
+            clips.markImagesLocalOnly(eventIds, markedAtMs)
+        }
+    }
+
+    /** Clears the 仅本机保留 mark when a later v2 session announces the image as available. */
+    suspend fun clearImagesLocalOnly(eventIds: List<String>) {
+        if (eventIds.isNotEmpty()) {
+            clips.clearImagesLocalOnly(eventIds)
+        }
+    }
+
     /** Returns announced-but-unacked entries to pending, e.g. at the start of a new session. */
     suspend fun resetOutboxToPending(peerId: String) = outbox.resetToPending(peerId)
 

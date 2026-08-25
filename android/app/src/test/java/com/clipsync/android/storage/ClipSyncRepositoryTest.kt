@@ -339,6 +339,45 @@ class ClipSyncRepositoryTest {
         assertEquals(1, repository.searchHistory().size)
     }
 
+    // ---- 仅本机保留 marks (ADR 0005 §5) ----
+
+    @Test
+    fun markImagesLocalOnlyBadgesOnlyLiveImagesAndSurfacesInHistory() = runBlocking {
+        val image = repository.storeLocalImageEvent(imageDraft("ab"), listOf(PEER))
+        val text = repository.storeLocalEvent(draft("plain text"), listOf(PEER))
+
+        repository.markImagesLocalOnly(listOf(image.eventId, text.eventId), NOW + 5)
+
+        val entries = repository.searchHistory().associateBy { it.eventId }
+        val imageEntry = entries.getValue(image.eventId)
+        assertTrue(imageEntry.isLocalOnly)
+        assertEquals(NOW + 5, imageEntry.localOnlyAtMs)
+        // Text rows always sync over v1; they must never wear the badge.
+        assertFalse(entries.getValue(text.eventId).isLocalOnly)
+
+        // First mark wins: reconnect churn must not move the original downgrade time.
+        repository.markImagesLocalOnly(listOf(image.eventId), NOW + 99)
+        assertEquals(
+            NOW + 5,
+            repository.searchHistory().first { it.eventId == image.eventId }.localOnlyAtMs,
+        )
+    }
+
+    @Test
+    fun clearImagesLocalOnlyRemovesTheBadgeAndDeletedRowsAreNeverMarked() = runBlocking {
+        val image = repository.storeLocalImageEvent(imageDraft("ab"), listOf(PEER))
+        repository.markImagesLocalOnly(listOf(image.eventId), NOW + 5)
+
+        repository.clearImagesLocalOnly(listOf(image.eventId))
+        assertFalse(repository.searchHistory().single { it.eventId == image.eventId }.isLocalOnly)
+
+        val deleted = repository.storeLocalImageEvent(imageDraft("cd"), listOf(PEER))
+        repository.deleteEvent(deleted.eventId, NOW + 6)
+        repository.markImagesLocalOnly(listOf(deleted.eventId), NOW + 7)
+        val row = database.clipEvents().getByEventId(deleted.eventId, includeDeleted = true)
+        assertNull(row!!.localOnlyAtMs)
+    }
+
     // ---- Sync projection ----
 
     @Test
@@ -375,6 +414,16 @@ class ClipSyncRepositoryTest {
         contentHash = Sha256ContentHasher.hash(text),
         sourceApp = "com.example.app",
         capturedAtMs = capturedAtMs,
+    )
+
+    private fun imageDraft(hashByte: String) = LocalImageDraft(
+        contentHash = hashByte.repeat(32),
+        mimeType = "image/png",
+        encodedBytes = 68,
+        pixelWidth = 1,
+        pixelHeight = 1,
+        sourceApp = null,
+        capturedAtMs = NOW,
     )
 
     private fun remoteEvent(seq: Long) = RemoteClipEvent(

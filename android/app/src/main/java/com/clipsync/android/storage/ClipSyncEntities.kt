@@ -45,6 +45,13 @@ data class ClipEventEntity(
     /** When the remote event was written to this device's system clipboard; null while inbox-only. */
     @ColumnInfo(name = "applied_at")
     val appliedAtMs: Long?,
+    /**
+     * When this local image was announced to a peer as a `local_only` terminal marker because a
+     * text-only session (Bluetooth fallback / image gate off) could not carry it (ADR 0005 §4).
+     * The row keeps its content — it stays usable here — but history badges it 仅本机保留.
+     */
+    @ColumnInfo(name = "local_only_at")
+    val localOnlyAtMs: Long? = null,
 )
 
 /** One (event, peer) send obligation. Rows disappear only when the peer acknowledges the range. */

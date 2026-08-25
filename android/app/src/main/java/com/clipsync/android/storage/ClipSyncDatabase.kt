@@ -13,8 +13,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * SharedPreferences ([SyncSettingsStore]), not in Room.
  *
  * Version 1 is the baseline schema; version 2 adds the image-sync tables (`media_blobs`,
- * `clip_media`). Every later change must ship an explicit [Migration] in [MIGRATIONS];
- * destructive fallbacks are never enabled because history must survive upgrades.
+ * `clip_media`); version 3 adds `clips.local_only_at` (the 仅本机保留 badge, ADR 0005 §5).
+ * Every later change must ship an explicit [Migration] in [MIGRATIONS]; destructive fallbacks
+ * are never enabled because history must survive upgrades.
  */
 @Database(
     entities = [
@@ -45,7 +46,7 @@ abstract class ClipSyncDatabase : RoomDatabase() {
     abstract fun clipMedia(): ClipMediaDao
 
     companion object {
-        const val SCHEMA_VERSION = 2
+        const val SCHEMA_VERSION = 3
         const val DEFAULT_NAME = "clipsync.db"
 
         /** v1 -> v2: the two image-sync tables; existing clips rows are untouched. */
@@ -81,8 +82,15 @@ abstract class ClipSyncDatabase : RoomDatabase() {
             }
         }
 
+        /** v2 -> v3: the nullable `local_only_at` mark on clips; existing rows stay null. */
+        val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `clips` ADD COLUMN `local_only_at` INTEGER")
+            }
+        }
+
         /** Chronological migrations, one per version step. */
-        val MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_1_2)
+        val MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
 
         /** Opens the on-disk database in WAL mode, matching the Windows store's journal setup. */
         fun build(context: Context, name: String = DEFAULT_NAME): ClipSyncDatabase =

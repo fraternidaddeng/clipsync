@@ -38,9 +38,9 @@ class ClipSyncDatabaseTest {
     }
 
     @Test
-    fun schemaVersionIsTwo() {
+    fun schemaVersionIsThree() {
         assertEquals(ClipSyncDatabase.SCHEMA_VERSION, database.openHelper.writableDatabase.version)
-        assertEquals(2, ClipSyncDatabase.SCHEMA_VERSION)
+        assertEquals(3, ClipSyncDatabase.SCHEMA_VERSION)
     }
 
     @Test

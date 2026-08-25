@@ -27,6 +27,7 @@
     <ID>CyclomaticComplexMethod:ProtocolStrictJson.kt$ProtocolStrictJson.StrictScanner$private fun scanNumber()</ID>
     <ID>CyclomaticComplexMethod:SyncEngine.kt$SyncEngine$private suspend fun dispatch(text: String): Boolean</ID>
     <ID>CyclomaticComplexMethod:SyncEngine.kt$SyncEngine$private suspend fun handleClipAnnounce(announce: ClipAnnounceBody): Boolean</ID>
+    <ID>CyclomaticComplexMethod:SyncEngine.kt$SyncEngine$private suspend fun handleClipFetch(fetch: ClipFetchBody): Boolean</ID>
     <ID>CyclomaticComplexMethod:SyncEngine.kt$SyncEngine$suspend fun run(sessionTransport: SyncTransport): SyncSessionResult</ID>
     <ID>CyclomaticComplexMethod:SyncMessages.kt$SyncWire$fun encode(type: String, requestId: String, body: Any, version: Int = ProtocolJson.PROTOCOL_V1): String</ID>
     <ID>CyclomaticComplexMethod:SyncMessages.kt$SyncWire$private fun decodeBody(type: String, body: JsonObject): Any</ID>
@@ -64,6 +65,7 @@
     <ID>FunctionNaming:HomeScreen.kt$@Composable private fun FormatBadge(format: ClipContentFormat, modifier: Modifier = Modifier)</ID>
     <ID>FunctionNaming:HomeScreen.kt$@Composable private fun FormatFilterRow( selected: ClipContentFormat?, onSelect: (ClipContentFormat?) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
     <ID>FunctionNaming:HomeScreen.kt$@Composable private fun ImageBadge(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:HomeScreen.kt$@Composable private fun LocalOnlyBadge(modifier: Modifier = Modifier)</ID>
     <ID>FunctionNaming:HomeScreen.kt$@Composable private fun NoMatchState(message: String, modifier: Modifier = Modifier)</ID>
     <ID>FunctionNaming:HomeScreen.kt$@Composable private fun NoticeStrip(notice: HomeNotice, modifier: Modifier = Modifier)</ID>
     <ID>FunctionNaming:HomeScreen.kt$@Composable private fun SearchField( query: String, onQueryChange: (String) -&gt; Unit, modifier: Modifier = Modifier, )</ID>
@@ -127,6 +129,7 @@
     <ID>LongMethod:PrivilegedHostScript.kt$PrivilegedHostScript$fun render( packageName: String = PrivilegedHostConstants.PACKAGE_NAME, mainClass: String = PrivilegedHostConstants.HOST_MAIN_CLASS, processName: String = PrivilegedHostConstants.HOST_PROCESS_NAME, ): String</ID>
     <ID>LongMethod:ProtocolJson.kt$ProtocolJson$private fun validateBody(type: String, body: kotlinx.serialization.json.JsonObject, version: Int)</ID>
     <ID>LongMethod:SyncEngine.kt$SyncEngine$private suspend fun handleClipAnnounce(announce: ClipAnnounceBody): Boolean</ID>
+    <ID>LongMethod:SyncEngine.kt$SyncEngine$private suspend fun handleClipFetch(fetch: ClipFetchBody): Boolean</ID>
     <ID>LongMethod:SyncEngine.kt$SyncEngine$private suspend fun handleClipPayloadEnd(end: ClipPayloadEndBody): Boolean</ID>
     <ID>LongMethod:SyncEngine.kt$SyncEngine$suspend fun run(sessionTransport: SyncTransport): SyncSessionResult</ID>
     <ID>LongMethod:SyncEngineTest.kt$SyncEngineTest$@Test fun `full session - handshake, pull, push, and acks`()</ID>
@@ -167,6 +170,7 @@
     <ID>MagicNumber:ClipContentFormat.kt$0x7E</ID>
     <ID>MagicNumber:ClipContentFormat.kt$3</ID>
     <ID>MagicNumber:ClipContentFormat.kt$4</ID>
+    <ID>MagicNumber:ClipSyncDatabase.kt$ClipSyncDatabase.Companion.&lt;no name provided&gt;$3</ID>
     <ID>MagicNumber:ClipSyncIcons.kt$ClipSyncIcons$1.7f</ID>
     <ID>MagicNumber:ClipSyncIcons.kt$ClipSyncIcons$1.8f</ID>
     <ID>MagicNumber:ClipSyncIcons.kt$ClipSyncIcons$1.9f</ID>
@@ -455,7 +459,6 @@
     <ID>ReturnCount:ShizukuClipboardBinder.kt$ChangeCallbackBinder$override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean</ID>
     <ID>ReturnCount:ShizukuClipboardBinder.kt$ShizukuClipboardSessionProxy$override fun pingHealth(): String?</ID>
     <ID>ReturnCount:ShizukuClipboardWriter.kt$ShizukuClipboardWriter$override fun writeText(text: String, originEventId: String): ClipboardWriteResult</ID>
-    <ID>ReturnCount:SyncEngine.kt$SyncEngine$private fun buildHeader(item: SyncableClipEvent): ClipHeaderDto</ID>
     <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun dispatch(text: String): Boolean</ID>
     <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun drainOutbox()</ID>
     <ID>ReturnCount:SyncEngine.kt$SyncEngine$private suspend fun handleChallenge(body: ChallengeBody, requestId: String): Boolean</ID>

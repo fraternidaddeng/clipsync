@@ -1,5 +1,6 @@
 package com.clipsync.android.sync
 
+import com.clipsync.android.protocol.ProtocolJson
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import kotlinx.coroutines.CompletableDeferred
@@ -43,8 +44,13 @@ private class FakeTransport : SyncTransport {
         incoming.trySend(TransportFrame.Closed)
     }
 
-    fun deliver(type: String, body: Any, requestId: String = SyncWire.newRequestId()): String {
-        incoming.trySend(TransportFrame.Text(SyncWire.encode(type, requestId, body)))
+    fun deliver(
+        type: String,
+        body: Any,
+        requestId: String = SyncWire.newRequestId(),
+        version: Int = ProtocolJson.PROTOCOL_V1,
+    ): String {
+        incoming.trySend(TransportFrame.Text(SyncWire.encode(type, requestId, body, version)))
         return requestId
     }
 
@@ -57,9 +63,9 @@ private class FakeTransport : SyncTransport {
     }
 
     /** Next sent message of [type]; protocol pings in between are skipped. */
-    suspend fun awaitSent(type: String): SyncMessage {
+    suspend fun awaitSent(type: String, version: Int = ProtocolJson.PROTOCOL_V1): SyncMessage {
         while (true) {
-            val message = SyncWire.decode(outgoing.receive())
+            val message = SyncWire.decode(outgoing.receive(), version)
             if (message.type == SyncMessageTypes.PING && type != SyncMessageTypes.PING) {
                 continue
             }
@@ -623,6 +629,94 @@ class SyncEngineTest {
         val error = transport.awaitSent(SyncMessageTypes.ERROR).body as ErrorBody
         assertEquals(SyncErrorCodes.RATE_LIMITED, error.code)
         assertTrue(error.retryable)
+
+        transport.peerCloses()
+        assertTrue(result.await().authenticated)
+    }
+
+    @Test
+    fun `v1 session downgrades a local image to local_only and marks it for the history badge`() = runTest {
+        val repository = InMemorySyncRepository(LOCAL_ID)
+        val image = repository.injectLocalImageEventForTest(
+            contentHash = "ab".repeat(32),
+            encodedBytes = 68,
+            nowMs = 1_775_999_999_000,
+        )
+        val engine = SyncEngine(repository, config(), SECRET)
+        val transport = FakeTransport()
+        val result = CompletableDeferred<SyncSessionResult>()
+        backgroundScope.launchEngine(engine, transport, result)
+
+        transport.awaitSent(SyncMessageTypes.HELLO)
+        transport.deliver(SyncMessageTypes.CHALLENGE, challengeBody())
+        transport.awaitSent(SyncMessageTypes.AUTH)
+        transport.awaitSent(SyncMessageTypes.KNOWN_VECTOR)
+        // The listener's own vector confirms auth passed (its first data message).
+        transport.deliver(SyncMessageTypes.KNOWN_VECTOR, SyncStateBody(emptyList()))
+
+        // The outbox drain announces the image as a `local_only` terminal marker (ADR 0005 §4):
+        // this text-only session cannot carry the body and the peer's cursor moves past it.
+        val announce = transport.awaitSent(SyncMessageTypes.CLIP_ANNOUNCE).body as ClipAnnounceBody
+        val header = announce.clips.single()
+        assertEquals(image.eventId, header.eventId)
+        assertEquals(ClipAvailability.UNAVAILABLE, header.availability)
+        assertEquals("local_only", header.reason)
+
+        // The origin persists the mark so history shows 仅本机保留 (ADR 0005 §5).
+        transport.deliver(SyncMessageTypes.PING, PingBody(sentAtMs = 1)) // fence: marks applied
+        transport.awaitSent(SyncMessageTypes.PONG)
+        assertEquals(setOf(image.eventId), repository.imagesMarkedLocalOnly())
+
+        transport.peerCloses()
+        assertTrue(result.await().authenticated)
+    }
+
+    @Test
+    fun `v2 session announces the image available and clears a stale local_only mark`() = runTest {
+        val repository = InMemorySyncRepository(LOCAL_ID)
+        val image = repository.injectLocalImageEventForTest(
+            contentHash = "ab".repeat(32),
+            encodedBytes = 68,
+            nowMs = 1_775_999_999_000,
+        )
+        // A bluetooth window marked it earlier; IP is back and a v2 session can now carry it.
+        repository.markImagesLocalOnly(listOf(image.eventId), 1_775_999_999_500)
+        val engine = SyncEngine(
+            repository,
+            config().copy(protocolVersion = ProtocolJson.PROTOCOL_V2),
+            SECRET,
+        )
+        val transport = FakeTransport()
+        val result = CompletableDeferred<SyncSessionResult>()
+        backgroundScope.launchEngine(engine, transport, result)
+
+        transport.awaitSent(SyncMessageTypes.HELLO, ProtocolJson.PROTOCOL_V2)
+        transport.deliver(SyncMessageTypes.CHALLENGE, challengeBody(), version = ProtocolJson.PROTOCOL_V2)
+        transport.awaitSent(SyncMessageTypes.AUTH, ProtocolJson.PROTOCOL_V2)
+        transport.awaitSent(SyncMessageTypes.KNOWN_VECTOR, ProtocolJson.PROTOCOL_V2)
+        // The listener's own vector confirms auth passed (its first data message).
+        transport.deliver(
+            SyncMessageTypes.KNOWN_VECTOR,
+            SyncStateBody(emptyList()),
+            version = ProtocolJson.PROTOCOL_V2,
+        )
+
+        val announce = transport
+            .awaitSent(SyncMessageTypes.CLIP_ANNOUNCE, ProtocolJson.PROTOCOL_V2)
+            .body as ClipAnnounceBody
+        val header = announce.clips.single()
+        assertEquals(image.eventId, header.eventId)
+        assertEquals(ClipAvailability.AVAILABLE, header.availability)
+        assertEquals("image", header.kind)
+
+        // The badge is stale the moment the peer can fetch the body: the mark is cleared.
+        transport.deliver(
+            SyncMessageTypes.PING,
+            PingBody(sentAtMs = 1),
+            version = ProtocolJson.PROTOCOL_V2,
+        ) // fence: marks applied
+        transport.awaitSent(SyncMessageTypes.PONG, ProtocolJson.PROTOCOL_V2)
+        assertTrue(repository.imagesMarkedLocalOnly().isEmpty())
 
         transport.peerCloses()
         assertTrue(result.await().authenticated)

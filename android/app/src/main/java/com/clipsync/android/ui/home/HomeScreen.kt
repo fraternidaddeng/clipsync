@@ -417,6 +417,9 @@ private fun ClipCard(
             }
             if (item.isImage) {
                 ImageBadge()
+                if (item.isLocalOnly) {
+                    LocalOnlyBadge()
+                }
             } else {
                 FormatBadge(format = item.format)
             }
@@ -574,6 +577,28 @@ private fun ImageBadge(modifier: Modifier = Modifier) {
 }
 
 private const val IMAGE_BADGE_SLOT = 5
+
+/**
+ * 仅本机保留 (ADR 0005 §5): this image was terminated as `local_only` during a text-only
+ * window (Bluetooth fallback), so it will never reach the peer. A quiet neutral-grey
+ * annotation — unavailability is a fact, not an error, so it never wears state colour.
+ */
+@Composable
+private fun LocalOnlyBadge(modifier: Modifier = Modifier) {
+    val c = clipSyncColors
+    val shape = RoundedCornerShape(6.dp)
+    Text(
+        text = "仅本机保留",
+        fontSize = 10.sp,
+        fontWeight = FontWeight.Medium,
+        color = c.t3,
+        modifier = modifier
+            .clip(shape)
+            .background(c.sf3)
+            .border(1.dp, c.ln2, shape)
+            .padding(horizontal = 7.dp, vertical = 2.dp),
+    )
+}
 
 /**
  * The history empty state — one of the app's serif moments (charter 3.5).

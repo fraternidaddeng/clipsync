@@ -151,4 +151,14 @@ interface SyncRepository {
         sourceApp: String?,
         nowMs: Long,
     ): SyncableClipEvent? = null
+
+    /**
+     * Marks live local images announced to the peer as `local_only` terminal markers because
+     * the session cannot carry image bodies (ADR 0005 §4), so history can badge them
+     * 仅本机保留 (ADR 0005 §5). First mark wins; deleted/text rows are ignored.
+     */
+    suspend fun markImagesLocalOnly(eventIds: List<String>, nowMs: Long) {}
+
+    /** Clears the 仅本机保留 mark when a v2 session announces the image as available again. */
+    suspend fun clearImagesLocalOnly(eventIds: List<String>) {}
 }

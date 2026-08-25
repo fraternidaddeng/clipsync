@@ -123,10 +123,19 @@ data class ClipHistoryEntry(
     val deletedAtMs: Long?,
     val appliedAtMs: Long?,
     val kind: String = ClipKinds.TEXT,
+    val localOnlyAtMs: Long? = null,
 ) {
     val isDeleted: Boolean get() = deletedAtMs != null
     val isApplied: Boolean get() = appliedAtMs != null
     val isImage: Boolean get() = kind == ClipKinds.IMAGE
+
+    /**
+     * True when this local image was delivered to a peer as a `local_only` terminal marker
+     * (ADR 0005 §4: a text-only session — Bluetooth fallback or the image gate off — advanced
+     * the peer's cursor past it). It stays usable here but will never sync, so history badges
+     * it 仅本机保留 (ADR 0005 §5).
+     */
+    val isLocalOnly: Boolean get() = localOnlyAtMs != null
 }
 
 /** A clips row projected for sync: either an available body or a terminal marker. */
@@ -189,6 +198,7 @@ internal fun ClipEventEntity.toHistoryEntry(): ClipHistoryEntry = ClipHistoryEnt
     deletedAtMs = deletedAtMs,
     appliedAtMs = appliedAtMs,
     kind = kind,
+    localOnlyAtMs = localOnlyAtMs,
 )
 
 internal fun ClipEventEntity.toSyncable(media: ClipMediaRef? = null): SyncableClipEvent = SyncableClipEvent(
