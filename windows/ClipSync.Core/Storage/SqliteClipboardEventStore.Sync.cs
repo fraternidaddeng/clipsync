@@ -798,6 +798,91 @@ public sealed partial class SqliteClipboardEventStore
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// Records that these live local image events were delivered to the peer as
+    /// `local_only` terminal markers (ADR 0005 §4: a text-only session — Bluetooth
+    /// fallback or the image gate off — advanced the peer's cursor past them, and
+    /// they will never be retransmitted). The rows keep their content and stay in
+    /// history; the mark only feeds the 仅本机保留 annotation (ADR 0005 §5).
+    /// Terminal and deleted rows are never touched, and an existing mark keeps its
+    /// original timestamp.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Security",
+        "CA2100:Review SQL queries for security vulnerabilities",
+        Justification = "IN-list tokens are generated $id{n} names only; event id values are bound with Parameters.AddWithValue.")]
+    public async ValueTask MarkImagesLocalOnlyAsync(
+        IReadOnlyList<Guid> eventIds,
+        DateTimeOffset markedAt,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(eventIds);
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        if (eventIds.Count == 0)
+        {
+            return;
+        }
+
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        var parameterNames = new string[eventIds.Count];
+        for (var index = 0; index < eventIds.Count; index++)
+        {
+            parameterNames[index] = $"$id{index}";
+            command.Parameters.AddWithValue(parameterNames[index], eventIds[index].ToString("D"));
+        }
+
+        command.CommandText = $"""
+            UPDATE clips
+            SET local_only_at = $marked_at
+            WHERE event_id IN ({string.Join(", ", parameterNames)})
+              AND kind = 'image'
+              AND terminal_reason IS NULL
+              AND deleted_at IS NULL
+              AND local_only_at IS NULL;
+            """;
+        command.Parameters.AddWithValue("$marked_at", markedAt.ToUnixTimeMilliseconds());
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Clears a stale 仅本机保留 mark: the image was re-announced with an available
+    /// body (an image-capable session reached it after all — the earlier downgraded
+    /// announce never advanced the peer's cursor), so the annotation would lie.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Security",
+        "CA2100:Review SQL queries for security vulnerabilities",
+        Justification = "IN-list tokens are generated $id{n} names only; event id values are bound with Parameters.AddWithValue.")]
+    public async ValueTask ClearImagesLocalOnlyAsync(
+        IReadOnlyList<Guid> eventIds,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(eventIds);
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        if (eventIds.Count == 0)
+        {
+            return;
+        }
+
+        await using var connection = await OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var command = connection.CreateCommand();
+        var parameterNames = new string[eventIds.Count];
+        for (var index = 0; index < eventIds.Count; index++)
+        {
+            parameterNames[index] = $"$id{index}";
+            command.Parameters.AddWithValue(parameterNames[index], eventIds[index].ToString("D"));
+        }
+
+        command.CommandText = $"""
+            UPDATE clips
+            SET local_only_at = NULL
+            WHERE event_id IN ({string.Join(", ", parameterNames)})
+              AND local_only_at IS NOT NULL;
+            """;
+        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     [System.Diagnostics.CodeAnalysis.SuppressMessage(
         "Security",
         "CA2100:Review SQL queries for security vulnerabilities",

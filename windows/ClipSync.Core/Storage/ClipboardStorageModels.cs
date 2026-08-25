@@ -19,11 +19,20 @@ public sealed record ClipboardHistoryEntry(
     string? MimeType = null,
     int? EncodedBytes = null,
     int? PixelWidth = null,
-    int? PixelHeight = null)
+    int? PixelHeight = null,
+    DateTimeOffset? LocalOnlyAt = null)
 {
     public bool IsDeleted => DeletedAt is not null;
 
     public bool IsImage => string.Equals(Kind, "image", StringComparison.Ordinal);
+
+    /// <summary>
+    /// True when this local image was delivered to the peer as a `local_only` terminal
+    /// marker (ADR 0005 §4: a text-only session — Bluetooth fallback or the image gate
+    /// off — advanced the peer's cursor past it). It stays usable here but will never
+    /// sync, so history annotates it 仅本机保留 (ADR 0005 §5).
+    /// </summary>
+    public bool IsLocalOnly => LocalOnlyAt is not null;
 }
 
 public sealed class ClipboardRetentionPolicy

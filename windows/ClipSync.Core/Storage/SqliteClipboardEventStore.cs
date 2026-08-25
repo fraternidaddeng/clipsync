@@ -8,7 +8,7 @@ namespace ClipSync.Core.Storage;
 
 public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IAsyncDisposable
 {
-    public const int SchemaVersion = 5;
+    public const int SchemaVersion = 6;
     private const int MaximumQueryLimit = 2_000;
     private const int BusyTimeoutMilliseconds = 30_000;
     private const string TextKind = "text";
@@ -280,7 +280,8 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
                 b.mime_type,
                 b.encoded_bytes,
                 b.pixel_width,
-                b.pixel_height
+                b.pixel_height,
+                c.local_only_at
             FROM clips c
             LEFT JOIN clip_media m ON m.event_id = c.event_id
             LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
@@ -331,7 +332,8 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
                 b.mime_type,
                 b.encoded_bytes,
                 b.pixel_width,
-                b.pixel_height
+                b.pixel_height,
+                c.local_only_at
             FROM clips c
             LEFT JOIN clip_media m ON m.event_id = c.event_id
             LEFT JOIN media_blobs b ON b.content_hash = m.content_hash
@@ -670,6 +672,7 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         new(3, ApplyImageSchemaAsync),
         new(4, ApplyContentHashIndexAsync),
         new(5, ApplyDeviceAccentOverrideAsync),
+        new(6, ApplyImageLocalOnlyMarkAsync),
     ];
 
     private readonly record struct SchemaMigrationStep(
@@ -880,6 +883,24 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         await ExecuteNonQueryAsync(connection, transaction, sql, cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// Adjacent v5→v6 step (ADR 0005 §5 仅本机保留). Purely additive: the moment a live
+    /// local image event was delivered to the peer as a `local_only` terminal marker
+    /// (ADR 0005 §4 — a v1/Bluetooth session or the image gate off). Unlike
+    /// `terminal_reason`, the row keeps its content: the image stays usable here, it
+    /// just provably never reaches the peer, and history annotates that fact.
+    /// </summary>
+    private static async ValueTask ApplyImageLocalOnlyMarkAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        const string sql = """
+            ALTER TABLE clips ADD COLUMN local_only_at INTEGER;
+            """;
+        await ExecuteNonQueryAsync(connection, transaction, sql, cancellationToken).ConfigureAwait(false);
+    }
+
     private async ValueTask AdvanceLocalReceiveStateAsync(
         SqliteConnection connection,
         SqliteTransaction transaction,
@@ -937,7 +958,10 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
                 reader.FieldCount > 10 && !reader.IsDBNull(10) ? reader.GetString(10) : null,
                 reader.FieldCount > 11 && !reader.IsDBNull(11) ? reader.GetInt32(11) : null,
                 reader.FieldCount > 12 && !reader.IsDBNull(12) ? reader.GetInt32(12) : null,
-                reader.FieldCount > 13 && !reader.IsDBNull(13) ? reader.GetInt32(13) : null));
+                reader.FieldCount > 13 && !reader.IsDBNull(13) ? reader.GetInt32(13) : null,
+                reader.FieldCount > 14 && !reader.IsDBNull(14)
+                    ? DateTimeOffset.FromUnixTimeMilliseconds(reader.GetInt64(14))
+                    : null));
         }
 
         return entries;

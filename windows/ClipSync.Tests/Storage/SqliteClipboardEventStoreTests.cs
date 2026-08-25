@@ -25,7 +25,7 @@ public sealed class SqliteClipboardEventStoreTests
         Assert.Equal("wal", state.JournalMode, ignoreCase: true);
         Assert.True(state.ForeignKeysEnabled);
         Assert.Equal(SqliteClipboardEventStore.SchemaVersion, state.SchemaVersion);
-        Assert.Equal(5, SqliteClipboardEventStore.SchemaVersion);
+        Assert.Equal(6, SqliteClipboardEventStore.SchemaVersion);
     }
 
     [Fact]
@@ -275,6 +275,59 @@ public sealed class SqliteClipboardEventStoreTests
         Assert.True(deleted.IsDeleted);
         Assert.Equal("image", deleted.Kind);
         Assert.False(store.Media.Exists(hash));
+    }
+
+    [Fact]
+    public async Task MarkImagesLocalOnlyMarksOnlyLiveImagesAndSurfacesInHistory()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        var png = ClipSync.Core.Media.ImageCodec.EncodePngBgra(1, 1, [0, 0, 0, 0]);
+        var hash = ClipSync.Core.Media.ImageCodec.HashBytes(png);
+        var image = await store.StoreImageAsync(new AcceptedImageContent(
+            png, hash, ClipSync.Core.Media.MediaLimits.MimePng, 1, 1, "paint", BaseTime));
+        var text = await store.StoreAsync(Content("text stays unmarked", BaseTime.AddSeconds(1)));
+
+        // The mark only ever lands on live image rows: the text id in the same
+        // batch is ignored, and history exposes the fact for the 仅本机保留 badge.
+        var markedAt = BaseTime.AddSeconds(2);
+        await store.MarkImagesLocalOnlyAsync([image.EventId, text.EventId], markedAt);
+
+        var history = await store.SearchAsync(new ClipboardHistoryQuery());
+        var imageEntry = Assert.Single(history, item => item.IsImage);
+        Assert.True(imageEntry.IsLocalOnly);
+        Assert.Equal(markedAt.ToUnixTimeMilliseconds(), imageEntry.LocalOnlyAt!.Value.ToUnixTimeMilliseconds());
+        var textEntry = Assert.Single(history, item => !item.IsImage);
+        Assert.False(textEntry.IsLocalOnly);
+
+        // Re-marking keeps the original timestamp; the row still holds its content.
+        await store.MarkImagesLocalOnlyAsync([image.EventId], BaseTime.AddDays(1));
+        var reread = await store.GetByIdAsync(image.EventId);
+        Assert.Equal(markedAt.ToUnixTimeMilliseconds(), reread!.LocalOnlyAt!.Value.ToUnixTimeMilliseconds());
+        Assert.Equal(hash, reread.ContentHash);
+        Assert.True(store.Media.Exists(hash));
+    }
+
+    [Fact]
+    public async Task ClearImagesLocalOnlyRemovesTheMarkAndDeletedRowsAreNeverMarked()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        var png = ClipSync.Core.Media.ImageCodec.EncodePngBgra(1, 1, [255, 0, 0, 255]);
+        var hash = ClipSync.Core.Media.ImageCodec.HashBytes(png);
+        var marked = await store.StoreImageAsync(new AcceptedImageContent(
+            png, hash, ClipSync.Core.Media.MediaLimits.MimePng, 1, 1, null, BaseTime));
+        await store.MarkImagesLocalOnlyAsync([marked.EventId], BaseTime.AddSeconds(1));
+        Assert.True((await store.GetByIdAsync(marked.EventId))!.IsLocalOnly);
+
+        await store.ClearImagesLocalOnlyAsync([marked.EventId]);
+        Assert.False((await store.GetByIdAsync(marked.EventId))!.IsLocalOnly);
+
+        // A soft-deleted image is terminal; the mark must not resurrect on it.
+        Assert.True(await store.DeleteAsync(marked.EventId, BaseTime.AddSeconds(2)));
+        await store.MarkImagesLocalOnlyAsync([marked.EventId], BaseTime.AddSeconds(3));
+        var deleted = await store.GetByIdAsync(marked.EventId, includeDeleted: true);
+        Assert.False(deleted!.IsLocalOnly);
     }
 
     private static AcceptedClipboardContent Content(string text, DateTimeOffset capturedAt)

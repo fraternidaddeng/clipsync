@@ -668,16 +668,18 @@ public sealed class SyncSessionEngine : IDisposable
                     break;
                 }
 
+                var marks = new ImageLocalOnlyMarks();
                 var headers = new List<ClipHeaderDto>(events.Count);
                 foreach (var item in events)
                 {
-                    headers.Add(BuildHeader(item));
+                    headers.Add(BuildHeader(item, marks));
                 }
 
                 await SendAsync(ProtocolMessageTypes.ClipAnnounce, new ClipAnnounceBody
                 {
                     Clips = headers.ToArray()
                 }, token).ConfigureAwait(false);
+                await ApplyImageLocalOnlyMarksAsync(marks, token).ConfigureAwait(false);
 
                 if (events.Count < ProtocolLimits.MaxAnnounceClips)
                 {
@@ -865,6 +867,7 @@ public sealed class SyncSessionEngine : IDisposable
 
         var payloadItems = new List<ClipPayloadItemDto>();
         var terminalHeaders = new List<ClipHeaderDto>();
+        var marks = new ImageLocalOnlyMarks();
         var missing = 0;
         foreach (var id in ids)
         {
@@ -884,13 +887,19 @@ public sealed class SyncSessionEngine : IDisposable
             {
                 if (!ImageClipAllowed)
                 {
-                    terminalHeaders.Add(BuildHeader(item));
+                    terminalHeaders.Add(BuildHeader(item, marks));
                     continue;
                 }
 
                 if (!await SendImagePayloadAsync(item, token).ConfigureAwait(false))
                 {
                     return false;
+                }
+
+                // The body is on the wire: an earlier text-only session's mark is stale.
+                if (string.Equals(item.OriginDeviceId, store.LocalDeviceId, StringComparison.Ordinal))
+                {
+                    marks.Available.Add(item.EventId);
                 }
 
                 continue;
@@ -920,6 +929,8 @@ public sealed class SyncSessionEngine : IDisposable
         {
             await SendAsync(ProtocolMessageTypes.ClipPayload, new ClipPayloadBody { Clips = batch }, token).ConfigureAwait(false);
         }
+
+        await ApplyImageLocalOnlyMarksAsync(marks, token).ConfigureAwait(false);
 
         if (missing > 0)
         {
@@ -1079,6 +1090,7 @@ public sealed class SyncSessionEngine : IDisposable
                 return;
             }
 
+            var marks = new ImageLocalOnlyMarks();
             var headers = new List<ClipHeaderDto>(batch.Count);
             var dropped = new List<long>();
             foreach (var row in batch)
@@ -1090,7 +1102,7 @@ public sealed class SyncSessionEngine : IDisposable
                     continue;
                 }
 
-                headers.Add(BuildHeader(row.Event));
+                headers.Add(BuildHeader(row.Event, marks));
             }
 
             if (dropped.Count > 0)
@@ -1112,6 +1124,7 @@ public sealed class SyncSessionEngine : IDisposable
             {
                 Clips = headers.ToArray()
             }, token).ConfigureAwait(false);
+            await ApplyImageLocalOnlyMarksAsync(marks, token).ConfigureAwait(false);
             await store.MarkOutboxAnnouncedAsync(
                 batch.Where(row => !dropped.Contains(row.Entry.Id)).Select(row => row.Entry.Id).ToArray(),
                 token).ConfigureAwait(false);
@@ -1190,13 +1203,48 @@ public sealed class SyncSessionEngine : IDisposable
         };
     }
 
-    private ClipHeaderDto BuildHeader(SyncableClipEvent item)
+    /// <summary>
+    /// Image events collected while building one announce batch, applied to the store
+    /// only after the batch was actually sent: downgraded ones get the persistent
+    /// 仅本机保留 mark (ADR 0005 §5), available ones clear a stale mark left by an
+    /// earlier text-only session whose announce never reached the peer.
+    /// </summary>
+    private sealed class ImageLocalOnlyMarks
+    {
+        public List<Guid> Downgraded { get; } = [];
+
+        public List<Guid> Available { get; } = [];
+    }
+
+    private async ValueTask ApplyImageLocalOnlyMarksAsync(ImageLocalOnlyMarks marks, CancellationToken token)
+    {
+        if (marks.Downgraded.Count > 0)
+        {
+            await store.MarkImagesLocalOnlyAsync(marks.Downgraded, clock.GetUtcNow(), token).ConfigureAwait(false);
+        }
+
+        if (marks.Available.Count > 0)
+        {
+            await store.ClearImagesLocalOnlyAsync(marks.Available, token).ConfigureAwait(false);
+        }
+    }
+
+    private ClipHeaderDto BuildHeader(SyncableClipEvent item, ImageLocalOnlyMarks? marks = null)
     {
         // Images are downgraded to a local_only marker on v1 sessions and while the local
         // image_sync gate is off, so the origin cursor still advances without image bodies.
-        if (item.IsTerminal || (item.IsImage && !ImageClipAllowed))
+        var downgradedImage = item.IsImage && !ImageClipAllowed;
+        if (marks is not null
+            && item.IsImage
+            && !item.IsTerminal
+            && string.Equals(item.OriginDeviceId, store.LocalDeviceId, StringComparison.Ordinal))
         {
-            var reason = item.IsImage && !ImageClipAllowed
+            (downgradedImage ? marks.Downgraded : marks.Available).Add(item.EventId);
+        }
+
+        if (item.IsTerminal || downgradedImage)
+        {
+            var reason = downgradedImage
                 ? ClipUnavailableReasons.LocalOnly
                 : item.TerminalReason;
 

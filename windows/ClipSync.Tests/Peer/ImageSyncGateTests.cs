@@ -121,7 +121,60 @@ public sealed class ImageSyncGateTests
         var items = await pair.AndroidStore.SearchAsync(new ClipboardHistoryQuery(Limit: 50));
         Assert.DoesNotContain(items, item => item.IsImage);
 
+        // ADR 0005 §5: the origin's history row now carries the 仅本机保留 mark —
+        // the peer's cursor moved past the image and it will never be retransmitted.
+        var originEntry = await pair.WindowsStore.GetByIdAsync(stored.EventId);
+        Assert.NotNull(originEntry);
+        Assert.True(originEntry.IsLocalOnly);
+
         var result = await session.CloseAsync();
         Assert.True(result.Authenticated);
+    }
+
+    [Fact]
+    public async Task V1SessionMarksOriginImageLocalOnlyAndALaterV2SessionNeverBackfillsIt()
+    {
+        await using var pair = await PeerPair.CreateAsync();
+
+        // The Bluetooth-window shape: both image gates are on, but the session runs
+        // protocol v1 (bt1 sessions never declare image_clip_v2 — ADR 0005 §4), so a
+        // captured image travels as a local_only terminal marker.
+        var v1 = await pair.DialAsync(PeerPair.DialerOptions() with { ProtocolVersion = 1 });
+        await PeerPair.CaptureAsync(pair.WindowsStore, "v1-warmup");
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("v1-warmup"));
+
+        var png = ImageCodec.EncodePngBgra(2, 1, [255, 0, 0, 255, 0, 255, 0, 255]);
+        var hash = ImageCodec.HashBytes(png);
+        var image = await PeerPair.CaptureImageAsync(pair.WindowsStore, png, hash, "image/png", width: 2, height: 1);
+        await pair.WaitUntilAsync(async () =>
+        {
+            var vector = await pair.AndroidStore.GetKnownVectorAsync();
+            return vector.TryGetValue(PeerPair.WindowsDeviceId, out var state)
+                && state.ContiguousSeq >= image.OriginSequence;
+        });
+
+        // The origin's history annotates the image 仅本机保留; the text before it is untouched.
+        Assert.True((await pair.WindowsStore.GetByIdAsync(image.EventId))!.IsLocalOnly);
+        var windowsHistory = await pair.WindowsStore.SearchAsync(new ClipboardHistoryQuery(Limit: 50));
+        Assert.All(windowsHistory.Where(item => !item.IsImage), item => Assert.False(item.IsLocalOnly));
+
+        // A text after the image still flows: the marker closed the sequence gap.
+        await PeerPair.CaptureAsync(pair.WindowsStore, "text-after-image");
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("text-after-image"));
+        Assert.True((await v1.CloseAsync()).Authenticated);
+
+        // IP recovery: an image-capable v2 session syncs new text but never backfills
+        // the terminated image (origin-authoritative, irreversible), so the mark stays.
+        var v2 = await pair.DialAsync();
+        await PeerPair.CaptureAsync(pair.WindowsStore, "post-recovery");
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("post-recovery"));
+
+        var androidItems = await pair.AndroidStore.SearchAsync(new ClipboardHistoryQuery(Limit: 50));
+        Assert.DoesNotContain(androidItems, item => item.IsImage);
+        Assert.True((await pair.WindowsStore.GetByIdAsync(image.EventId))!.IsLocalOnly);
+        Assert.True((await v2.CloseAsync()).Authenticated);
     }
 }

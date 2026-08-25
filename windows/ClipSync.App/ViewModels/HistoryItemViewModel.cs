@@ -22,7 +22,8 @@ public sealed record HistoryItemViewModel(
     string? ContentHash = null,
     string? ThumbnailPath = null,
     System.Windows.Media.ImageSource? ThumbnailImage = null,
-    bool IsSourceKnown = true)
+    bool IsSourceKnown = true,
+    bool IsLocalOnly = false)
 {
     /// <summary>Shown for remote clips whose origin device is no longer in the paired list.</summary>
     private const string UnknownRemoteLabel = "远端设备";
@@ -81,6 +82,14 @@ public sealed record HistoryItemViewModel(
     /// <summary>A quiet card is the default: only non-plain formats (and images) show a badge.</summary>
     public bool HasFormatBadge => IsImage || Format != ClipContentFormat.Plain;
 
+    /// <summary>
+    /// 仅本机保留 (ADR 0005 §5): this local image was terminated as a `local_only`
+    /// marker on a text-only path (Bluetooth fallback, or the image gate off), so
+    /// the peer's cursor moved past it and it will never sync — IP recovery does
+    /// not retransmit. A factual grey annotation, not an alarm.
+    /// </summary>
+    public bool ShowsLocalOnlyBadge => IsImage && IsLocalOnly;
+
     public static HistoryItemViewModel FromEntry(
         ClipboardHistoryEntry entry,
         string localDeviceId,
@@ -124,7 +133,8 @@ public sealed record HistoryItemViewModel(
             entry.ContentHash,
             thumbnail,
             thumbnailImage,
-            isSourceKnown);
+            isSourceKnown,
+            entry.IsLocalOnly);
     }
 
     private string FormatImagePreview()

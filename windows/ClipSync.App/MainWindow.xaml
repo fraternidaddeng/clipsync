@@ -850,6 +850,21 @@
                                                                Foreground="{Binding FormatAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
                                                                Text="{Binding FormatLabel}" />
                                                 </Border>
+                                                <!-- 仅本机保留（ADR 0005 §5）：蓝牙备援等仅文本窗口内以 local_only
+                                                     终止的本机图片——对端游标已越过、IP 恢复也不补传。中性灰注记盒，
+                                                     事实陈述不是警报 -->
+                                                <Border Margin="0,0,7,0"
+                                                        Padding="7,1"
+                                                        VerticalAlignment="Center"
+                                                        Background="{DynamicResource CsSurface3Brush}"
+                                                        BorderBrush="{DynamicResource CsLine2Brush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        Visibility="{Binding ShowsLocalOnlyBadge, Converter={StaticResource BoolToVisibility}}">
+                                                    <TextBlock FontSize="9"
+                                                               Foreground="{DynamicResource CsText3Brush}"
+                                                               Text="仅本机保留" />
+                                                </Border>
                                                 <!-- 来源应用不可识别：与其它注记盒同形制的中性灰盒（accent 0 灰族），
                                                      事实陈述不是警报；可识别来源留在下方元信息行，保持安静 -->
                                                 <Border Margin="0,0,7,0"
