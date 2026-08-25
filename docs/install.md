@@ -44,6 +44,40 @@
   3. 打开剪剪相传 → **偏好** → 「额外监听地址」填入该地址（默认只监听局域网私有网段，Tailscale 的虚拟网卡地址需手动加入），**重启应用**生效。
   4. 之后配对二维码会带上 Tailscale 地址，Android 端正常扫码即可；已配对设备也会通过该地址重连。
 
+### 开着 Clash / Surge 等代理时（全局模式必读）
+
+同步走的是两台设备之间的**直连**（电脑端 TCP `47654`，Tailscale 场景为 `100.x` 地址），任何时候都不该经过代理。两端代码已显式绕过系统 HTTP(S) 代理（Android OkHttp 用 `Proxy.NO_PROXY`，Windows 用 `ClientWebSocket.Options.Proxy = null`），所以只开「系统代理」通常不影响同步；但 **TUN / VPN / 增强模式和全局（Global）模式在 IP 层接管全部流量，应用自己绕不开**，需要在代理软件里放行局域网：
+
+- **Clash（Clash Verge / mihomo / Clash for Android）**
+  - 首选开启「**绕过局域网 / Bypass LAN**」（TUN 场景对应 `route-exclude-address`）。注意**全局模式下规则表不生效**，这个开关依然有效，务必打开。
+  - 规则模式下也可以在规则**最前面**给电脑 IP（示例 `192.168.1.23`，在电脑上用 `ipconfig` 查）加直连：
+
+```yaml
+rules:
+  # 剪剪相传：电脑 192.168.1.23 的 47654 端口直连（mihomo/Clash.Meta 语法）
+  - AND,((IP-CIDR,192.168.1.23/32),(DST-PORT,47654)),DIRECT
+  # 更省事的写法：整台电脑直连，或放行常见内网网段与 Tailscale 网段
+  - IP-CIDR,192.168.1.23/32,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve # Tailscale
+```
+
+- **Surge（macOS / iOS）**：设置里保持「**跳过代理 / Skip Proxy**」包含内网网段；增强模式/全局代理时在 `[Rule]` 最前面加：
+
+```text
+[Rule]
+# 剪剪相传：电脑 192.168.1.23 的 47654 端口直连
+AND,((DEST-PORT,47654),(IP-CIDR,192.168.1.23/32)),DIRECT
+# 更省事的写法：整台电脑直连；Tailscale 场景再放行 100.64/10
+IP-CIDR,192.168.1.23/32,DIRECT,no-resolve
+IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+```
+
+- 手机上跑 Clash for Android（VPN 模式）时同样要开「绕过局域网」，或把上面的直连规则加进手机端配置。
+- 电脑端口被占用时程序会自动换端口（见第 3 节），改规则前先在剪剪相传里确认当前监听端口。改完代理配置后无需重新配对，重连即可。
+
 ## 6. 配对（约两分钟）
 
 1. **Windows**：托盘 → 打开剪剪相传 → **通路** → 「配对新设备」，屏幕出示二维码。二维码只含本机地址、端口、证书指纹与一次性令牌（有倒计时，过期重新出示），**绝不包含配对密钥**。
@@ -70,7 +104,8 @@ Android 10 起系统禁止普通应用后台读剪贴板，剪剪相传把它拆
 | 现象 | 排查顺序 |
 |---|---|
 | 扫码报「码已过期」 | 一次性令牌超时，Windows 端重新出示二维码即可 |
-| 扫码后连不上 | ① 两台设备是否同一网段（AP 隔离/访客网络会挡）② Windows 防火墙是否放行专用网络 TCP 47654 / UDP 47653 ③ Tailscale 场景是否已填「额外监听地址」并重启 |
+| 扫码后连不上 | ① 两台设备是否同一网段（AP 隔离/访客网络会挡）② Windows 防火墙是否放行专用网络 TCP 47654 / UDP 47653 ③ Tailscale 场景是否已填「额外监听地址」并重启 ④ 任一台开着 Clash/Surge 等代理时见第 5 节代理小节 |
+| 开着 Clash/Surge 等代理时连不上或不同步 | 见第 5 节「开着 Clash / Surge 等代理时」：开启「绕过局域网」，或给电脑 IP 与 47654 端口加 DIRECT 直连规则；TUN/VPN/全局模式必须放行局域网 |
 | 配对成功但不同步 | ① 两端「暂停」「私密模式」开关 ② Android 通路页当前档位状态 ③ 超过 1 MiB 的文本按协议「仅本地保留」，不属于丢失 |
 | Android 后台经常断 | 把剪剪相传加入电池优化白名单/允许自启动（国产 ROM 常见）；确认前台服务通知还在 |
 | 启动时弹出空的控制台/PowerShell 窗口（标题是 dotnet 路径） | 说明是经 `dotnet ClipSync.App.dll` / `dotnet run` 等控制台方式拉起的：`dotnet.exe` 是控制台程序，会带出一个空窗口。请直接运行（或让开机自启项指向）`ClipSync.App.exe`。应用自身也会在启动时自动分离继承来的控制台，作为兜底 |
