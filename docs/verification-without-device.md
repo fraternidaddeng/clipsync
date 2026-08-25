@@ -8,7 +8,7 @@
 
 | 套件 | 命令 | 运行环境 | 当前规模（main `d573080`，全绿） |
 |---|---|---|---|
-| Android JVM 单元/集成测试 | `cd android && ./gradlew testDebugUnitTest` | 任意装有 JDK 17+ 与 Android SDK 的机器（无需模拟器/设备；Robolectric 提供 Android 框架） | 652 个用例（其中 1 例条件性跳过） |
+| Android JVM 单元/集成测试 | `cd android && ./gradlew testDebugUnitTest` | 任意装有 JDK 17+ 与 Android SDK 的机器（无需模拟器/设备；Robolectric 提供 Android 框架） | 656 个用例（其中 1 例条件性跳过；含本次新增的 4 例会话级图片集成测试） |
 | Android 仪器化测试（androidTest） | `cd android && ./gradlew connectedDebugAndroidTest` | 已连接的 Android 设备或模拟器（API 29+；CI 上需要可用的 KVM）。Room 迁移（1→2、2→3）、DAO 真 SQLite、前台服务启停冒烟；执行记录与嵌套 KVM 失败的绕行见 `docs/android-instrumentation-test-report.md` | 7 个用例（迁移 3 + DAO 3 + FGS 1） |
 | Windows 核心/对端测试 | `cd windows && dotnet test ClipSync.Tests/ClipSync.Tests.csproj` | 任意 .NET 8 平台（Linux/macOS/Windows；真实 Kestrel + TLS + WebSocket 回环） | 484 个用例 |
 | Windows 应用层测试 | `cd windows && dotnet test ClipSync.App.Tests/ClipSync.App.Tests.csproj` | 仅 Windows（WPF/DPAPI/Win32 剪贴板；CI 的 `windows-latest` 作业执行——2026-08-25 Actions 启用后实跑，`d573080` 时点运行 32850466841 全绿） | 186 个用例 |
@@ -53,7 +53,7 @@
 3. **v1/v2 共存边界（双端）**——v1 解析器必须拒绝全部 v2 图片帧（两端各有专测），文本 fixture 与 v1 校验保持冻结；Windows 存储层测试覆盖 `local_only` 终止标记（v2 发图给 v1 peer 时推进游标的通道）的落库、传播与幂等。
 4. **Windows 端到端集成（`Peer/PeerSyncIntegrationTests`）**——`ImageClipTravelsOverV2WithBytesIntact`：真实 Kestrel + TLS pin + WebSocket 的 v2 会话上，图片经 begin/chunk/end 分块传输、重组、内容寻址落库，字节精确一致；配套用例覆盖 ack 后删除的 tombstone 传播。存储层由 `MediaBlobStoreTests`（幂等提交、GIF 魔数拒绝、过期临时件回收）、schema-3 迁移测试与捕获策略测试补齐。
 
-Android 侧的引擎级图片链路（`SyncEngine` 的 chunk 状态机在真实会话事件下的行为）目前依赖上述 wire 层往返测试与 Windows 集成测试间接覆盖；`SyncEngineTest` 已有 v1 会话图片降级 `local_only` 与 v2 会话图片公告两条引擎级直测，但完整的会话级 chunk 传输集成测试（如 `WindowsAndroidSyncChainTest` 的图片版）仍未补齐——这是已知缺口，不是已证明项。
+Android 侧的引擎级图片链路（`SyncEngine` 的 chunk 状态机在真实会话事件下的行为）由 `sync/WindowsAndroidImageSyncChainTest` 直接覆盖（2026-08-25 补齐，此前为已知缺口；`SyncEngineTest` 另有 v1 会话图片降级 `local_only` 与 v2 会话图片公告两条引擎级直测）：脚本化传输层扮演 Windows v2 监听端，`SyncEngine` 跑在 Room 真库 + 真内容寻址 blob 存储（临时目录）上，图片用的就是上文第 2 层的共享二进制 fixture。已证明：（a）入站 announce → want_ranges → clip_fetch → `clip_payload_begin/chunk/end` → ack——按 manifest 公示的 41+42 分块重组、blob 落盘字节精确、Room 行/媒体元数据/接收向量同事务推进、ack 只在提交后发出、完成后无残留临时件、committed 回调携带服务层转交 `InboxDelivery.deliverImage` 所需的全部字段；（b）出站 announce（含完整 v2 blob 元数据）→ 对端 clip_fetch → begin/chunk/end 字节精确流出 → 对端 ack 后 outbox 义务彻底清除；（c）同 hash 二次公告不再发起第二次传输，直接从本地 blob 落库并 ack（协议 v2 hash 去重）；（d）v1 会话把本地图片降级为 `local_only` 终止标记推进对端游标，Room 持久化仅本机保留 badge 且本机字节仍在。
 
 ### Windows 应用层（`windows/ClipSync.App.Tests`，仅 Windows CI 执行）
 
