@@ -39,6 +39,17 @@ public sealed record SyncSessionOptions
     public long MaxRequestedSequencesPerMessage { get; init; } = 16384;
 
     /// <summary>
+    /// Inbound frames admitted per <see cref="FrameRateWindow"/> before the session is closed
+    /// with a retryable RATE_LIMITED (stage-6 hardening W5). The default sustains ~340 Mbit/s
+    /// of 256 KiB image chunks — far above any legitimate clipboard workload — while a
+    /// tight-loop flood of small frames exhausts it within seconds.
+    /// </summary>
+    public int MaxFramesPerRateWindow { get; init; } = 10_000;
+
+    /// <summary>The fixed window <see cref="MaxFramesPerRateWindow"/> is measured over.</summary>
+    public TimeSpan FrameRateWindow { get; init; } = TimeSpan.FromMinutes(1);
+
+    /// <summary>
     /// Re-checked before every outbound content announce (outbox drain) and before serving a
     /// peer's want_ranges pull, so pausing sync or turning private mode on stops outbound
     /// content immediately — mirroring the Android engine's outboundAllowed gate. Inbound

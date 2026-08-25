@@ -35,6 +35,7 @@ public sealed class SyncSessionEngine : IDisposable
     private readonly Dictionary<Guid, IncomingImageTransfer> incomingImages = [];
     private readonly SemaphoreSlim imageDownloadSlots = new(MediaLimits.MaxConcurrentDownloads, MediaLimits.MaxConcurrentDownloads);
     private readonly ReplayWindow replayWindow = new(capacity: 512);
+    private readonly FrameRateBudget frameBudget;
     private readonly object completionLock = new();
     private int protocolVersion;
 
@@ -66,6 +67,7 @@ public sealed class SyncSessionEngine : IDisposable
         authFailures = authFailureSink;
         this.logger = logger ?? NullLogger.Instance;
         clock = options.TimeProvider;
+        frameBudget = new FrameRateBudget(clock, options.MaxFramesPerRateWindow, options.FrameRateWindow);
         protocolVersion = options.ProtocolVersion is 1 or 2 ? options.ProtocolVersion : ProtocolLimits.ProtocolVersion;
 
         if (role == SyncSessionRole.Dialer && string.IsNullOrWhiteSpace(options.ExpectedPeerDeviceId))
@@ -166,6 +168,25 @@ public sealed class SyncSessionEngine : IDisposable
                     // When the peer closed before we authenticated, its last reported error
                     // (for example a retryable RATE_LIMITED) is the best available reason.
                     Complete(new SyncSessionResult(IsAuthenticated, IsAuthenticated ? null : lastPeerErrorCode, "peer_closed"));
+                    break;
+                }
+
+                if (!frameBudget.TryAdmit())
+                {
+                    // Per-session flood guard (stage-6 hardening W5): every frame costs a
+                    // parse and a replay hash before its type is known, so the budget is
+                    // enforced ahead of dispatch. Retryable, mirroring the auth throttle: a
+                    // healthy peer reconnects with backoff and resumes via want_ranges; a
+                    // flooding one meets the same wall on its next session.
+                    PeerLog.FrameRateLimited(logger);
+                    await SendAsync(ProtocolMessageTypes.Error, new ErrorBody
+                    {
+                        Code = ProtocolErrorCodes.RateLimited,
+                        Retryable = true,
+                        RetryAfterMs = 30_000
+                    }, token).ConfigureAwait(false);
+                    Complete(new SyncSessionResult(IsAuthenticated, ProtocolErrorCodes.RateLimited, "frame_rate_limited"));
+                    await transport.CloseAsync(WebSocketCloseStatus.PolicyViolation, "rate_limited", token).ConfigureAwait(false);
                     break;
                 }
 

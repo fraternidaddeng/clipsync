@@ -71,4 +71,8 @@ public static partial class PeerLog
     [LoggerMessage(EventId = 19, Level = LogLevel.Information,
         Message = "pairing superseded stale peer device={GhostDeviceId} replacedBy={NewDeviceId}")]
     public static partial void PairingSupersededGhost(ILogger logger, string ghostDeviceId, string newDeviceId);
+
+    [LoggerMessage(EventId = 20, Level = LogLevel.Warning,
+        Message = "closing session: inbound frame rate limit exhausted")]
+    public static partial void FrameRateLimited(ILogger logger);
 }

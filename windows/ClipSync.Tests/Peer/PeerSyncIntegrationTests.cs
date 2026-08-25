@@ -557,6 +557,50 @@ public sealed class PeerSyncIntegrationTests
         await sendTask.WaitAsync(TimeSpan.FromSeconds(10));
     }
 
+    [Fact]
+    public async Task FrameFloodClosesTheSessionWithRetryableRateLimited()
+    {
+        // Stage-6 hardening W5: the per-session frame budget must stop a tight frame loop
+        // even though every frame is individually valid (pings are answered pre-auth).
+        await using var pair = await PeerPair.CreateAsync(
+            serverSessionOptions: PeerPair.DefaultSessionOptions() with { MaxFramesPerRateWindow = 5 });
+        var transport = await ClipSync.Peer.Client.PeerSyncClient.ConnectAsync(
+            "127.0.0.1",
+            pair.Server.Port,
+            pair.ServerFingerprint,
+            CancellationToken.None);
+        await using var _ = transport;
+
+        for (var frame = 0; frame < 8; frame++)
+        {
+            var json = ProtocolWriter.Serialize(
+                ProtocolMessageTypes.Ping,
+                Guid.NewGuid(),
+                new PingBody { SentAtMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() });
+            await transport.SendTextAsync(json, CancellationToken.None);
+        }
+
+        // Expect budget-many pongs, then one retryable RATE_LIMITED error, then the close.
+        var sawRetryableRateLimited = false;
+        for (var reads = 0; reads < 16; reads++)
+        {
+            var frame = await ReceiveWithTimeoutAsync(transport);
+            if (frame is ClipSync.Peer.Transport.TransportFrame.Text text
+                && text.Payload.Contains(ProtocolErrorCodes.RateLimited, StringComparison.Ordinal)
+                && text.Payload.Contains("\"retryable\":true", StringComparison.Ordinal))
+            {
+                sawRetryableRateLimited = true;
+            }
+
+            if (frame is ClipSync.Peer.Transport.TransportFrame.Closed)
+            {
+                break;
+            }
+        }
+
+        Assert.True(sawRetryableRateLimited, "expected a retryable RATE_LIMITED error frame before close");
+    }
+
     private static async Task<ClipSync.Peer.Transport.TransportFrame> ReceiveWithTimeoutAsync(
         ClipSync.Peer.Transport.ISyncTransport transport)
     {
