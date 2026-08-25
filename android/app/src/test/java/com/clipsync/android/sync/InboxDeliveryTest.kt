@@ -11,6 +11,7 @@ import com.clipsync.android.storage.SyncSettingsStore
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -226,11 +227,13 @@ class InboxDeliveryTest {
             )
 
         assertFalse(applied)
-        assertEquals(
-            0,
-            org.robolectric.Shadows
-                .shadowOf(manager)
-                .allNotifications.size,
+        val shadow = org.robolectric.Shadows.shadowOf(manager)
+        assertNull(
+            "quiet mode must not post the image arrival card",
+            shadow.getNotification(
+                com.clipsync.android.platform.notify.SyncNotifications
+                    .notificationIdFor("img-2"),
+            ),
         )
     }
 
@@ -242,13 +245,22 @@ class InboxDeliveryTest {
         InboxDelivery.deliver(context, "mix-text", "text body", 123L)
         InboxDelivery.deliverImage(context, "mix-img", contentHash = null, mimeType = null)
 
-        // One surface, one budget: the image card coalesces into the same counting card.
+        // One surface, one budget: the text card spent it, so the image card must coalesce
+        // into the counting card instead of posting its own. Assertions are targeted per id
+        // (never a global notification count) so unrelated posts cannot blur the verdict.
         val shadow = org.robolectric.Shadows.shadowOf(manager)
-        assertEquals(2, shadow.allNotifications.size)
-        val summary =
-            shadow.getNotification(
-                com.clipsync.android.platform.notify.SyncNotifications.INBOX_FLOOD_NOTIFICATION_ID,
-            )
+        val posted = shadow.allNotifications.size
+        val sync = com.clipsync.android.platform.notify.SyncNotifications
+        assertNotNull(
+            "text card must post (posted=$posted)",
+            shadow.getNotification(sync.notificationIdFor("mix-text")),
+        )
+        assertNull(
+            "image card must coalesce, not post its own (posted=$posted)",
+            shadow.getNotification(sync.notificationIdFor("mix-img")),
+        )
+        val summary = shadow.getNotification(sync.INBOX_FLOOD_NOTIFICATION_ID)
+        assertNotNull("counting card must post (posted=$posted)", summary)
         assertEquals(1, summary.number)
     }
 
