@@ -64,7 +64,7 @@
 | ~~高 DPI 的 QR 整数缩放~~ **已解决（2026-08-25）** | `RenderPngForDpi` 按 `VisualTreeHelper.GetDpi` 取整每模块物理像素（就近 280dip 目标边、最小 1），`Image` 按位图物理尺寸精确布局杜绝重采样；跨屏 DPI 变化重栅格同一票据（不重发）；NearestNeighbor 兜底；纯计算 `PixelsPerModule` 有参数化测试 | — |
 | 可访问性 | **开关读屏已过一遍（2026-08-25）**：Windows 全部 9 个 `CharterToggle`（标题栏暂停/私密 + 偏好 7 项）补 `AutomationProperties.Name`（引各行既有标题串），配对 QR 图以 `Pairing_ScanInstruction` 作读屏名；Android `ToggleRow`/蓝牙备援卡改整行 `toggleable(Role.Switch)`——TalkBack 一站读出标题+描述+状态、触达区扩到整行，裸 Switch 转纯显示。剩余：设备五色点选器刻意 `Focusable=False`（颜色是身份槽位、无用户可读名，tokens §4）；装饰性图标 `contentDescription=null` 为正确用法（旁有可见文字）；`t4` 压 `sf3` 的对比度边缘案例仍待实机核验 | 对比度边缘案例实机核验；如需要给色点补读屏名需先裁决颜色命名 |
 | ~~Android 状态栏色硬编码~~ **已解决（2026-08-25）** | `cs_bg`（tokens §2 z0 底）入 `values/colors.xml` + `values-night/colors.xml`，两套 `styles.xml` 的状态栏/导航栏改引 `@color/cs_bg`；夜值随 AppCompat 夜间模式（含外观手动覆盖）解析 | — |
-| 历史图片项 | 74dp 缩略条（纲领 §六 待裁决）完全未做——当前阶段仅文本同步 | 随图片同步阶段一起做 |
+| 历史图片项 | ~~完全未做——当前阶段仅文本同步~~ 图片同步（protocol v2）落地后缩略图已双端就位：Android 历史卡内联缩略图（Fit 最高 120dp，超椭圆卡面内 8dp 圆角 + 发丝线，无预览时 72dp 灰面占位）；Windows 历史行 56px 左槽缩略图（含缓存自愈与「无预览」诚实占位）。与纲领 §六 暂定的「74dp 缩略条（历史是索引不是相册）」形制不同 | 74dp 缩略条 vs 现行形制属纲领 §六 待用户裁决项（「你可能想要更大」正是现状）；裁决前不动，真机上看过实际观感再定 |
 
 ---
 

@@ -133,7 +133,7 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 2. **Overlay 器械测试缺失（plan 5.7 明文要求）**——`androidTest` 只有 Room 迁移 2 + DAO 3 + FGS 冒烟 1；窗口创建/释放、永不可触摸、焦点恢复、熄屏不残留等不变量只有 JVM 假件版（`OverlayLifecycleInvariantTest`），未在真 WindowManager 上验证。
 3. **可跳过的 Shizuku 设备测试缺失（plan 5.7）**——授权后读取/事件/写入/Binder 重启恢复没有 on-device 套件（现只有 JVM 反射适配器与状态机测试）。
 4. ~~器械测试从未真机执行~~ **已在模拟器执行，真机仍待**——6/6 用例在 API 35 模拟器（QEMU TCG 软件模拟）上全部通过（`android-instrumentation-test-report.md`）；进程/FGS 存活另在 API 29/33/35 三级实测（`emulator-survival-report.md`）。嵌套 KVM 宿主内核缺陷已留证。真机（OEM ROM）执行仍待办。
-5. **Android 会话级图片集成测试缺失**——`SyncEngine` 的 chunk 状态机靠 wire 层往返 + Windows 集成测试间接覆盖（`verification-without-device.md` 已自认）。
+5. ~~Android 会话级图片集成测试缺失~~ **已修复（2026-08-25）**——`sync/WindowsAndroidImageSyncChainTest` 直接覆盖 `SyncEngine` chunk 状态机（脚本化 Windows v2 监听端 × Room 真库 × 真 blob 存储，双向字节精确 + hash 去重 + v1 `local_only` 降级）；随后跨端 E2E 亦补图片段（`CrossClientImageSyncE2eTest` 对真实 `ClipSync.E2eHost` 走 `/v2`，随 `e2e-stage4` CI 作业常跑）。
 6. ~~压力/幂等套件缺失~~ **已修复（`f5c1efb`）**——`LoopSuppressionStressTest`（1000 次混合方向零回声）、`ModeSwitchIdempotencyTest`、`AckIdempotencyTest` 均按本分支架构重写落地，随 `testDebugUnitTest` 常跑。
 7. ~~跨端 E2E harness 缺失~~ **已修复（`f5c1efb`）并实测通过**——`windows/ClipSync.E2eHost` + `scripts/run-e2e-stage4.ps1` 落地；最终集成轮在本 Linux 环境实际执行，输出 **E2E-PASS**（真实 `SyncEngine` + pinned TLS WebSocket 对真实 Kestrel 宿主，双向各收敛恰好一次）。
 8. **WPF 应用层测试只能在 Windows CI 执行**——本环境仅编译级检查（通过，0 警告）；59 个测试方法未在本轮执行。
@@ -162,8 +162,8 @@ Shizuku / adb-log / overlay 三条后台读取路线的**真实实现全部在**
 
 ### 6.3 文档漂移（审计文档自身欠账）
 
-- `docs/stage-gap-audit.md` 状态表严重过期：A1（Shizuku）/A2（前台捕获）/A3（overlay）/A4（adb 日志）标注 Stub/Missing，实际真实实现均已落地接线。
-- `docs/design/ui-gap-audit.md` P3「历史图片项…完全未做——当前阶段仅文本同步」已过期（图片缩略已落地）。
+- ~~`docs/stage-gap-audit.md` 状态表严重过期~~：A1（Shizuku）/A2（前台捕获）/A3（overlay）/A4（adb 日志）标注 Stub/Missing，实际真实实现均已落地接线。**已更正（2026-08-25）**：该文档顶部状态更新与表格行内注记已对照 main 全面刷新。
+- ~~`docs/design/ui-gap-audit.md` P3「历史图片项…完全未做——当前阶段仅文本同步」已过期（图片缩略已落地）~~ **已更正（2026-08-25）**：该行已改述双端缩略图现状，仅存的 74dp 缩略条形制问题保留为纲领 §六 待用户裁决项。
 - ~~`stage-4-merge-gap-audit.md` §6「重复 stub 待删」~~：本审计进行期间已由 `8560b6e` 更正（顶层三枚同名文件是诚实探针适配器而非死代码），不再是漂移项。
 
 ---
