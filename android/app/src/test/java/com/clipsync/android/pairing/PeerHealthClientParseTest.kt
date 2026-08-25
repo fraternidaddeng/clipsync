@@ -11,7 +11,8 @@ import org.junit.Test
  */
 class PeerHealthClientParseTest {
     private fun body(token: String) =
-        """{"version":1,"device_id":"11111111-1111-4111-8111-111111111111","port":47654,"clipboard_apply_text":"$token"}"""
+        """{"version":1,"device_id":"11111111-1111-4111-8111-111111111111",""" +
+            """"port":47654,"clipboard_apply_text":"$token"}"""
 
     @Test
     fun `parses every published token`() {

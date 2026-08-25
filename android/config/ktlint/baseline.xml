@@ -170,7 +170,6 @@
         <error line="70" column="71" source="standard:function-signature" />
         <error line="73" column="27" source="standard:multiline-expression-wrapping" />
         <error line="73" column="34" source="standard:chain-method-continuation" />
-        <error line="112" column="25" source="standard:chain-method-continuation" />
     </file>
     <file name="src/main/java/com/clipsync/android/pairing/PinnedTls.kt">
         <error line="3" column="1" source="standard:import-ordering" />

@@ -116,17 +116,7 @@ object SharedClipboardCapture {
                     onChanged = { change ->
                         val outcome = captureManager.onClipboardChanged(change)
                         if (outcome == CaptureOutcome.REJECTED_TOO_LARGE) {
-                            // 超限内容本机保留 + 明确提示，不得静默 (plan 3.3 rule 9): the copy
-                            // stays on the clipboard untruncated, and the user hears why it
-                            // will not appear on the other device. Size fact only, no content.
-                            mainHandler.post {
-                                Toast
-                                    .makeText(
-                                        appContext,
-                                        R.string.toast_capture_too_large,
-                                        Toast.LENGTH_LONG,
-                                    ).show()
-                            }
+                            announceOversizeRejection(appContext, mainHandler)
                         }
                     },
                     // Backend-level gate: while sync or auto-capture is paused, or private mode
@@ -137,6 +127,22 @@ object SharedClipboardCapture {
                     },
                 ),
         )
+    }
+
+    /**
+     * 超限内容本机保留 + 明确提示，不得静默 (plan 3.3 rule 9): the copy stays on the
+     * clipboard untruncated, and the user hears why it will not appear on the
+     * other device. Size fact only, no content.
+     */
+    private fun announceOversizeRejection(
+        appContext: Context,
+        mainHandler: Handler,
+    ) {
+        mainHandler.post {
+            Toast
+                .makeText(appContext, R.string.toast_capture_too_large, Toast.LENGTH_LONG)
+                .show()
+        }
     }
 
     private fun buildCoordinator(

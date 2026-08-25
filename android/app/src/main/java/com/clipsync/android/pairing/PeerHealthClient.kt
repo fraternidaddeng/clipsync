@@ -104,16 +104,16 @@ class PeerHealthClient(
          * the conduit must state the absence honestly rather than guess.
          */
         fun parseClipboardApply(body: String?): PeerClipboardApply? {
-            if (body.isNullOrBlank()) {
-                return null
-            }
             val token =
-                runCatching {
-                    Json.parseToJsonElement(body)
-                        .jsonObject["clipboard_apply_text"]
-                        ?.jsonPrimitive
-                        ?.contentOrNull
-                }.getOrNull() ?: return null
+                body?.takeUnless { it.isBlank() }?.let { payload ->
+                    runCatching {
+                        Json
+                            .parseToJsonElement(payload)
+                            .jsonObject["clipboard_apply_text"]
+                            ?.jsonPrimitive
+                            ?.contentOrNull
+                    }.getOrNull()
+                }
             return when (token) {
                 "off" -> PeerClipboardApply.OFF
                 "paused" -> PeerClipboardApply.PAUSED
