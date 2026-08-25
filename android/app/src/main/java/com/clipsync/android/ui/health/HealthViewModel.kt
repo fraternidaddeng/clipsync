@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingStore
+import com.clipsync.android.pairing.PeerClipboardApply
 import com.clipsync.android.pairing.PeerHealthApi
 import com.clipsync.android.pairing.PeerHealthOutcome
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackend
@@ -168,7 +169,11 @@ class HealthViewModel(
         val (peer, report, probedFacts) = pass
         val facts =
             if (probedFacts != null && peer != null && wiring?.peerHealth != null) {
-                probedFacts.copy(reachability = probeReachability(wiring.peerHealth, peer))
+                val probe = probeReachability(wiring.peerHealth, peer)
+                probedFacts.copy(
+                    reachability = probe.reachability,
+                    peerClipboardApply = probe.clipboardApply,
+                )
             } else {
                 probedFacts
             }
@@ -285,14 +290,23 @@ class HealthViewModel(
         publish(pairingStore.peer())
     }
 
+    /** Reachability plus the peer's apply self-report, both from the same health probe. */
+    private data class PeerProbe(
+        val reachability: PeerReachability,
+        val clipboardApply: PeerClipboardApply?,
+    )
+
     private suspend fun probeReachability(
         peerHealth: PeerHealthApi,
         peer: PairedPeer,
-    ): PeerReachability =
-        when (peerHealth.probe(peer)) {
-            is PeerHealthOutcome.Reachable -> PeerReachability.REACHABLE
-            PeerHealthOutcome.CertificateMismatch -> PeerReachability.CERTIFICATE_MISMATCH
-            PeerHealthOutcome.Unreachable -> PeerReachability.UNREACHABLE
+    ): PeerProbe =
+        when (val outcome = peerHealth.probe(peer)) {
+            is PeerHealthOutcome.Reachable ->
+                PeerProbe(PeerReachability.REACHABLE, outcome.clipboardApplyText)
+            PeerHealthOutcome.CertificateMismatch ->
+                PeerProbe(PeerReachability.CERTIFICATE_MISMATCH, clipboardApply = null)
+            PeerHealthOutcome.Unreachable ->
+                PeerProbe(PeerReachability.UNREACHABLE, clipboardApply = null)
         }
 
     private fun publish(peer: PairedPeer?) {
@@ -357,7 +371,7 @@ internal fun buildHealthScreenState(
             localRead = if (facts != null) localReadSegmentFromFacts(facts) else localReadSegment(clipboard),
             localService = localServiceSegment(sync),
             network = network,
-            peerWrite = peerWriteSegment(network.status, sync),
+            peerWrite = peerWriteSegment(network.status, sync, facts),
             pairedDeviceCount = if (peer != null) 1 else 0,
             pairedPeerName = peer?.displayName,
             localWrite = facts?.let(::localWriteSegmentFromFacts),
@@ -562,6 +576,7 @@ private fun networkSegment(
 private fun peerWriteSegment(
     networkStatus: ConduitStatus,
     sync: SyncHealth?,
+    facts: CapabilityFacts? = null,
 ): ConduitSegmentState {
     if (networkStatus != ConduitStatus.READY) {
         return ConduitSegmentState(
@@ -589,17 +604,68 @@ private fun peerWriteSegment(
                 detail = "对端暂时无法写入剪贴板；内容仍会保存到历史。",
                 status = ConduitStatus.UNAVAILABLE,
             )
-        CapabilityState.UNKNOWN, null ->
-            ConduitSegmentState(
-                statusLabel = "未探测",
-                detail = "等待对端上报写入能力。",
-                status = ConduitStatus.UNPROBED,
-            )
+        // No engine-level report: the peer's health self-report is the live source today.
+        CapabilityState.UNKNOWN, null -> peerWriteFromHealthReport(facts?.peerClipboardApply)
         CapabilityState.NEEDS_USER_ACTION ->
             ConduitSegmentState(
                 statusLabel = "待授权",
                 detail = "对端写入能力需要先完成授权或设置。",
                 status = ConduitStatus.DEGRADED,
+            )
+    }
+}
+
+/**
+ * 对端写入 from the peer's `/v1/peer/health` self-report. The peer states its own posture
+ * (自动写入 on/off/paused) and the outcome of its most recent real clipboard write — relayed
+ * here with attribution, so a working sync path finally reads as working instead of the
+ * eternal 未探测 (manual QA 2026-08-25 defect #3).
+ */
+private fun peerWriteFromHealthReport(apply: PeerClipboardApply?): ConduitSegmentState {
+    val attribution = "依据：对端在 /v1/peer/health 的自报，随通路探测刷新。"
+    return when (apply) {
+        PeerClipboardApply.APPLIED ->
+            ConduitSegmentState(
+                statusLabel = "已验证",
+                detail = "对端已开启自动写入，最近一次内容已实际写入其剪贴板。",
+                status = ConduitStatus.READY,
+                detailLines = listOf(attribution),
+            )
+        PeerClipboardApply.UNVERIFIED ->
+            ConduitSegmentState(
+                statusLabel = "已开启",
+                detail = "对端已开启自动写入；等待第一条内容实际写入后即为已验证。",
+                status = ConduitStatus.READY,
+                detailLines = listOf(attribution),
+            )
+        PeerClipboardApply.OFF ->
+            ConduitSegmentState(
+                statusLabel = "对端关闭自动写入",
+                detail = "内容会进入对端历史，需在对端手动复制。这是对端的设置，不是故障。",
+                status = ConduitStatus.DEGRADED,
+                detailLines = listOf(attribution),
+            )
+        PeerClipboardApply.PAUSED ->
+            ConduitSegmentState(
+                statusLabel = "对端已暂停",
+                detail = "对端暂停了同步：内容仍会进入其历史，但不写入其剪贴板。",
+                status = ConduitStatus.DEGRADED,
+                detailLines = listOf(attribution),
+            )
+        PeerClipboardApply.FAILED ->
+            ConduitSegmentState(
+                statusLabel = "写入失败",
+                detail = "对端已开启自动写入，内容也会进入其历史。",
+                status = ConduitStatus.DEGRADED,
+                errorDetail = "对端报告最近一次剪贴板写入失败；内容可在对端历史手动复制。",
+                detailLines = listOf(attribution),
+            )
+        null ->
+            ConduitSegmentState(
+                statusLabel = "未探测",
+                detail = "对端未上报写入能力（对端版本较旧，或本轮探测尚未返回）。缺信息 ≠ 坏消息。",
+                status = ConduitStatus.UNPROBED,
+                detailLines = listOf("对端写入状态来自 /v1/peer/health 的自报字段 clipboard_apply_text。"),
             )
     }
 }

@@ -20,11 +20,43 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ClipSync.Peer.Server;
 
+/// <summary>
+/// Vocabulary of the health endpoint's <c>clipboard_apply_text</c> field: the listener's
+/// honest self-report of whether remote text actually reaches its clipboard. Posture states
+/// ("off", "paused") are user choices; the rest is evidence from the most recent real apply
+/// this session — never "the API exists so it works".
+/// </summary>
+public static class ClipboardApplyStates
+{
+    /// <summary>自动写入 is switched off: remote text lands in history only.</summary>
+    public const string Off = "off";
+
+    /// <summary>Sync is paused: inbound still stores to history but never auto-applies.</summary>
+    public const string Paused = "paused";
+
+    /// <summary>Auto-apply is on but no remote text has been applied yet this session.</summary>
+    public const string Unverified = "unverified";
+
+    /// <summary>The most recent remote text apply reached the system clipboard.</summary>
+    public const string Applied = "applied";
+
+    /// <summary>The most recent remote text apply threw; content stayed in history.</summary>
+    public const string Failed = "failed";
+}
+
 public sealed record PeerServerOptions
 {
     public required X509Certificate2 Certificate { get; init; }
 
     public required SyncSessionOptions SessionOptions { get; init; }
+
+    /// <summary>
+    /// Live self-report for the health endpoint's <c>clipboard_apply_text</c> field (one of
+    /// <see cref="ClipboardApplyStates"/>). Re-read per request so posture toggles apply
+    /// immediately. Null (or a null return) omits the field entirely; peers must read the
+    /// absence as "not reported", never as bad news.
+    /// </summary>
+    public Func<string?>? ClipboardApplyState { get; init; }
 
     /// <summary>Addresses to bind; defaults to loopback only. The App layer adds LAN addresses.</summary>
     public IReadOnlyList<IPAddress> BindAddresses { get; init; } = [IPAddress.Loopback];
@@ -180,12 +212,26 @@ public sealed class PeerServer : IAsyncDisposable
             await next();
         });
 
-        host.MapGet("/v1/peer/health", () => Results.Json(new
+        host.MapGet("/v1/peer/health", () =>
         {
-            version = ProtocolLimits.ProtocolVersion,
-            device_id = store.LocalDeviceId,
-            port = Port
-        }));
+            // The apply posture lets the phone's 对端写入 segment state facts instead of
+            // sitting on 未探测 forever. Status words only — never clipboard content.
+            var applyState = options.ClipboardApplyState?.Invoke();
+            return applyState is null
+                ? Results.Json(new
+                {
+                    version = ProtocolLimits.ProtocolVersion,
+                    device_id = store.LocalDeviceId,
+                    port = Port
+                })
+                : Results.Json(new
+                {
+                    version = ProtocolLimits.ProtocolVersion,
+                    device_id = store.LocalDeviceId,
+                    port = Port,
+                    clipboard_apply_text = applyState
+                });
+        });
 
         host.Map("/v1/peer/sync", context => HandleSyncAsync(context, ProtocolLimits.ProtocolVersion));
         host.Map("/v2/peer/sync", context => HandleSyncAsync(context, ProtocolLimits.ProtocolVersionV2));

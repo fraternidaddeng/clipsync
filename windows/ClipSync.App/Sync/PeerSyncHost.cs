@@ -36,6 +36,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
     private readonly SyncResilienceOptions? resilienceOptions;
     private readonly Func<bool> outboundAllowed;
     private readonly Func<bool> imageSyncEnabled;
+    private readonly Func<string?>? clipboardApplyState;
     private PeerServer? server;
     private UdpDiscoveryBroadcaster? broadcaster;
     private Timer? beaconTimer;
@@ -53,7 +54,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
         ISystemStateEvents? systemEvents = null,
         SyncResilienceOptions? resilienceOptions = null,
         Func<bool>? outboundAllowed = null,
-        Func<bool>? imageSyncEnabled = null)
+        Func<bool>? imageSyncEnabled = null,
+        Func<string?>? clipboardApplyState = null)
     {
         this.store = store ?? throw new ArgumentNullException(nameof(store));
         this.secretProtector = secretProtector ?? throw new ArgumentNullException(nameof(secretProtector));
@@ -70,6 +72,9 @@ public sealed class PeerSyncHost : IAsyncDisposable
         // Fail-closed when unwired: image sync is opt-in on both platforms (ADR 0004), so a
         // caller that forgets the gate gets the same off-by-default as Android, not silent on.
         this.imageSyncEnabled = imageSyncEnabled ?? (static () => false);
+        // Health-endpoint self-report of the local clipboard apply posture, so the paired
+        // phone's 对端写入 segment can state facts. Null keeps the field off the wire.
+        this.clipboardApplyState = clipboardApplyState;
         CertificateFingerprint = PeerCertificate.Fingerprint(certificate);
     }
 
@@ -296,7 +301,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
             Certificate = certificate,
             SessionOptions = sessionOptions,
             BindAddresses = addresses,
-            Port = preferredPort
+            Port = preferredPort,
+            ClipboardApplyState = clipboardApplyState
         }, pairingService: pairingService);
         try
         {
@@ -312,7 +318,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
                 Certificate = certificate,
                 SessionOptions = sessionOptions,
                 BindAddresses = addresses,
-                Port = 0
+                Port = 0,
+                ClipboardApplyState = clipboardApplyState
             }, pairingService: pairingService);
             await candidate.StartAsync(cancellationToken).ConfigureAwait(false);
         }

@@ -7,6 +7,7 @@ import com.clipsync.android.pairing.PairingConfirmResponse
 import com.clipsync.android.pairing.PairingDocumentKinds
 import com.clipsync.android.pairing.PairingQrPayload
 import com.clipsync.android.pairing.PairingStore
+import com.clipsync.android.pairing.PeerClipboardApply
 import com.clipsync.android.pairing.PeerHealthApi
 import com.clipsync.android.pairing.PeerHealthOutcome
 import com.clipsync.android.platform.clipboard.BackendHealth
@@ -27,6 +28,7 @@ import com.clipsync.android.platform.clipboard.RoutePrerequisites
 import com.clipsync.android.platform.clipboard.RouteProbes
 import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
 import com.clipsync.android.ui.ConduitStatus
+import com.clipsync.android.ui.HealthScreenState
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -262,12 +264,14 @@ class HealthViewModelTest {
         prerequisites: RoutePrerequisites = RoutePrerequisites(),
         environment: FakeClipboardEnvironment = FakeClipboardEnvironment(),
         notificationsEnabled: (() -> Boolean)? = null,
+        peerHealth: PeerHealthApi? = null,
+        syncHealthSource: SyncHealthSource? = null,
     ): Triple<HealthViewModel, ClipboardCapabilityStore, FakeClipboardEnvironment> {
         val capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore())
         val model = HealthViewModel(
             pairingStore = store,
             clipboard = ClipboardAccessCoordinator(listOf(environment.readBackend)),
-            syncHealthSource = null,
+            syncHealthSource = syncHealthSource,
             probeDispatcher = dispatcher,
             capability = CapabilityWiring(
                 routeProbes = object : RouteProbes {
@@ -277,6 +281,7 @@ class HealthViewModelTest {
                 writeCoordinator = ClipboardWriteCoordinator(publicWriter = environment.writer),
                 foregroundBackend = environment.readBackend,
                 clearClipboard = { environment.text = null },
+                peerHealth = peerHealth,
                 notificationsEnabled = notificationsEnabled,
                 nowMs = { 1_755_000_000_000 },
             ),
@@ -569,6 +574,101 @@ class HealthViewModelTest {
         modelWithReachabilityTicker(peerHealth, flowOf(Unit))
         // No peer: neither the init refresh nor the tick has anything to probe.
         assertEquals(0, peerHealth.probeCount)
+    }
+
+    // ---- 对端写入 from the peer's health self-report (manual QA 2026-08-25 defect #3) ------
+
+    /** Peer that always answers the same way; enough for the mapping tests. */
+    private class FixedPeerHealth(private val outcome: PeerHealthOutcome) : PeerHealthApi {
+        override suspend fun probe(peer: PairedPeer): PeerHealthOutcome = outcome
+    }
+
+    private fun reachable(apply: PeerClipboardApply?) =
+        FixedPeerHealth(PeerHealthOutcome.Reachable(viaHost = "192.168.1.23", clipboardApplyText = apply))
+
+    private fun peerWriteWith(
+        peerHealth: PeerHealthApi,
+        sync: SyncHealthSource? = null,
+    ): HealthScreenState {
+        pair()
+        val (model, _, _) = capabilityHarness(peerHealth = peerHealth, syncHealthSource = sync)
+        return model.state.value
+    }
+
+    @Test
+    fun `qa defect - working sync no longer leaves peer write on eternal unprobed`() {
+        // The exact manual-QA scene: IP sync connected and visibly working, yet 对端写入
+        // read 未探测 and the band stayed on 通路部分接通. The peer's health self-report
+        // now closes the gap: applied evidence lights the segment.
+        val state = peerWriteWith(
+            reachable(PeerClipboardApply.APPLIED),
+            sync = FakeSyncHealthSource(SyncHealth(serviceRunning = true, connected = true)),
+        )
+        assertEquals(ConduitStatus.READY, state.network.status)
+        assertEquals(ConduitStatus.READY, state.peerWrite.status)
+        assertEquals("已验证", state.peerWrite.statusLabel)
+        // The claim carries its attribution so the user can see where the fact comes from.
+        assertTrue(state.peerWrite.detailLines.any { it.contains("/v1/peer/health") })
+    }
+
+    @Test
+    fun `peer auto-apply on but nothing applied yet reads ready awaiting evidence`() {
+        val segment = peerWriteWith(reachable(PeerClipboardApply.UNVERIFIED)).peerWrite
+        assertEquals(ConduitStatus.READY, segment.status)
+        assertEquals("已开启", segment.statusLabel)
+    }
+
+    @Test
+    fun `peer turned auto-apply off - a setting stated as a fact, not a failure`() {
+        val segment = peerWriteWith(reachable(PeerClipboardApply.OFF)).peerWrite
+        assertEquals(ConduitStatus.DEGRADED, segment.status)
+        assertEquals("对端关闭自动写入", segment.statusLabel)
+        assertNull(segment.errorDetail)
+    }
+
+    @Test
+    fun `paused peer degrades the segment while naming the pause`() {
+        val segment = peerWriteWith(reachable(PeerClipboardApply.PAUSED)).peerWrite
+        assertEquals(ConduitStatus.DEGRADED, segment.status)
+        assertEquals("对端已暂停", segment.statusLabel)
+    }
+
+    @Test
+    fun `failed apply on the peer degrades with the failure spelled out`() {
+        val segment = peerWriteWith(reachable(PeerClipboardApply.FAILED)).peerWrite
+        assertEquals(ConduitStatus.DEGRADED, segment.status)
+        assertEquals("写入失败", segment.statusLabel)
+        assertTrue(segment.errorDetail!!.contains("写入失败"))
+    }
+
+    @Test
+    fun `older peer without the report field stays unprobed and says why`() {
+        val segment = peerWriteWith(reachable(apply = null)).peerWrite
+        assertEquals(ConduitStatus.UNPROBED, segment.status)
+        assertEquals("未探测", segment.statusLabel)
+        assertTrue(segment.detail.contains("对端未上报"))
+    }
+
+    @Test
+    fun `unreachable peer keeps peer write unprobed because the network gates it`() {
+        val state = peerWriteWith(FixedPeerHealth(PeerHealthOutcome.Unreachable))
+        assertEquals(ConduitStatus.DEGRADED, state.network.status)
+        assertEquals(ConduitStatus.UNPROBED, state.peerWrite.status)
+    }
+
+    @Test
+    fun `engine-level peer write report outranks the health self-report`() {
+        val state = peerWriteWith(
+            reachable(PeerClipboardApply.APPLIED),
+            sync = FakeSyncHealthSource(
+                SyncHealth(
+                    serviceRunning = true,
+                    connected = true,
+                    peerWriteState = CapabilityState.UNAVAILABLE,
+                ),
+            ),
+        )
+        assertEquals(ConduitStatus.UNAVAILABLE, state.peerWrite.status)
     }
 
     @Test

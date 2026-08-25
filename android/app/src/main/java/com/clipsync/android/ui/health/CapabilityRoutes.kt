@@ -1,5 +1,6 @@
 package com.clipsync.android.ui.health
 
+import com.clipsync.android.pairing.PeerClipboardApply
 import com.clipsync.android.platform.clipboard.CapabilityReport
 import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
@@ -84,6 +85,11 @@ data class CapabilityFacts(
     val publicWriteState: CapabilityState,
     val publicWriteErrorCode: String? = null,
     val reachability: PeerReachability = PeerReachability.UNKNOWN,
+    /**
+     * The peer's clipboard apply posture from the same `/v1/peer/health` probe; null while
+     * unreachable or when the peer does not report (older build). Feeds 对端写入.
+     */
+    val peerClipboardApply: PeerClipboardApply? = null,
     /** Null = notification probe not wired; false = the surface is off right now. */
     val notificationsEnabled: Boolean? = null,
 )

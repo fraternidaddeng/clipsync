@@ -285,7 +285,10 @@ public partial class App : Application
                 outboundAllowed: () => !viewModel.IsPaused && !viewModel.IsPrivateMode,
                 // 图片同步 governs inbound acceptance too, not only capture: while off, the
                 // /v2 route is refused and live sessions take no image bodies (audit §3 P1).
-                imageSyncEnabled: () => viewModel.ImageSyncEnabled);
+                imageSyncEnabled: () => viewModel.ImageSyncEnabled,
+                // Health-endpoint self-report: the phone's 对端写入 segment reads this instead
+                // of sitting on 未探测 while sync visibly works. Posture + real-apply evidence.
+                clipboardApplyState: () => viewModel.ClipboardApplyState);
             syncHost.RemoteClipsCommitted += OnRemoteClipsCommitted;
             syncHost.SessionsChanged += OnPeerSessionsChanged;
             syncHost.DeviceLockedOut += OnDeviceLockedOut;
@@ -561,7 +564,19 @@ public partial class App : Application
                     else if (viewModel.AutoApplyRemote)
                     {
                         policy.SuppressNextWrite(latest.Content, DateTimeOffset.UtcNow);
-                        adapter.WriteText(latest.Content);
+                        // The health endpoint reports real evidence, never "the API exists":
+                        // record exactly what this apply attempt did.
+                        try
+                        {
+                            adapter.WriteText(latest.Content);
+                        }
+                        catch
+                        {
+                            viewModel.RecordRemoteApplyOutcome(ok: false);
+                            throw;
+                        }
+
+                        viewModel.RecordRemoteApplyOutcome(ok: true);
                         LocalDiagnostics.Write("remote_applied");
                     }
                 }

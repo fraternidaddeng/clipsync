@@ -1,5 +1,6 @@
 using ClipSync.Core.Clipboard;
 using ClipSync.Core.Storage;
+using ClipSync.Peer.Server;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
@@ -186,6 +187,13 @@ public partial class MainViewModel(
     [NotifyPropertyChangedFor(nameof(TrayStatusText))]
     private bool captureFaulted;
 
+    /// <summary>
+    /// Evidence of the most recent real remote text apply this session; feeds
+    /// <see cref="ClipboardApplyState"/>. Written on the dispatcher, read on Kestrel worker
+    /// threads — a plain string reference swap is safe cross-thread.
+    /// </summary>
+    private volatile string remoteApplyEvidence = ClipboardApplyStates.Unverified;
+
     /// <summary>Local certificate fingerprint, pre-formatted in groups of four for human comparison.</summary>
     [ObservableProperty]
     private string localFingerprint = string.Empty;
@@ -219,6 +227,20 @@ public partial class MainViewModel(
         : !PeerOnline ? "监听中 · 同步未启动"
         : ConnectedDeviceCount > 0 ? $"监听中 · 已连 {ConnectedDeviceCount} 台"
         : "监听中 · 等待设备连入";
+
+    /// <summary>
+    /// The clipboard apply posture reported on <c>/v1/peer/health</c> so the phone's 对端写入
+    /// segment states facts instead of 未探测 forever: the user's posture first (off/paused),
+    /// then the evidence of the most recent real apply this session (unverified/applied/failed).
+    /// </summary>
+    public string ClipboardApplyState =>
+        !AutoApplyRemote ? ClipboardApplyStates.Off
+        : IsPaused ? ClipboardApplyStates.Paused
+        : remoteApplyEvidence;
+
+    /// <summary>Records whether a real remote text apply reached the system clipboard.</summary>
+    public void RecordRemoteApplyOutcome(bool ok) =>
+        remoteApplyEvidence = ok ? ClipboardApplyStates.Applied : ClipboardApplyStates.Failed;
 
     /// <summary>Raised after a device is revoked so the app layer can drop its live sessions.</summary>
     public event Action<string>? DeviceRevoked;

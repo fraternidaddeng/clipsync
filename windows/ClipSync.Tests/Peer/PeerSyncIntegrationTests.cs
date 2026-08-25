@@ -2,6 +2,7 @@ using System.Net.WebSockets;
 using ClipSync.Core.Protocol;
 using ClipSync.Core.Storage;
 using ClipSync.Core.Sync;
+using ClipSync.Peer.Server;
 using ClipSync.Peer.Sessions;
 
 namespace ClipSync.Tests.Peer;
@@ -415,6 +416,34 @@ public sealed class PeerSyncIntegrationTests
         var body = await healthy.Content.ReadAsStringAsync();
         Assert.Contains(PeerPair.WindowsDeviceId, body);
         Assert.DoesNotContain("secret", body, StringComparison.OrdinalIgnoreCase);
+        // No apply-state delegate wired: the field stays off the wire entirely, so peers
+        // read the absence as "not reported" instead of a fabricated posture.
+        Assert.DoesNotContain("clipboard_apply_text", body, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task HealthEndpointReportsTheLiveClipboardApplyPosture()
+    {
+        // The phone's 对端写入 conduit segment reads exactly this self-report; QA 2026-08-25
+        // found it stuck on 未探测 because the field never existed. The delegate must be
+        // re-read per request so a posture toggle (pause, 自动写入 off) applies immediately.
+        var applyState = ClipboardApplyStates.Unverified;
+        await using var pair = await PeerPair.CreateAsync(
+            clipboardApplyState: () => Volatile.Read(ref applyState));
+        using var client = pair.CreatePinnedHttpClient();
+
+        var first = await client.GetStringAsync("/v1/peer/health");
+        Assert.Contains("\"clipboard_apply_text\":\"unverified\"", first, StringComparison.Ordinal);
+
+        // A real remote apply succeeded; the very next probe must say so.
+        Volatile.Write(ref applyState, ClipboardApplyStates.Applied);
+        var afterApply = await client.GetStringAsync("/v1/peer/health");
+        Assert.Contains("\"clipboard_apply_text\":\"applied\"", afterApply, StringComparison.Ordinal);
+
+        // The user paused sync; posture outranks stale evidence on the next probe.
+        Volatile.Write(ref applyState, ClipboardApplyStates.Paused);
+        var afterPause = await client.GetStringAsync("/v1/peer/health");
+        Assert.Contains("\"clipboard_apply_text\":\"paused\"", afterPause, StringComparison.Ordinal);
     }
 
     [Fact]

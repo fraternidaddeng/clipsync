@@ -111,7 +111,8 @@ public sealed class PeerPair : IAsyncDisposable
         bool useDifferentAndroidSecret = false,
         IPairingApprover? pairingApprover = null,
         int maxPairingConfirmsPerWindow = PeerServerOptions.DefaultPairingConfirmsPerWindow,
-        int maxSyncAcceptsPerWindow = PeerServerOptions.DefaultSyncAcceptsPerWindow)
+        int maxSyncAcceptsPerWindow = PeerServerOptions.DefaultSyncAcceptsPerWindow,
+        Func<string?>? clipboardApplyState = null)
     {
         var directory = Path.Combine(Path.GetTempPath(), "clipsync-peer-tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
@@ -168,7 +169,8 @@ public sealed class PeerPair : IAsyncDisposable
                 SessionOptions = serverSessionOptions ?? DefaultSessionOptions(),
                 Port = 0,
                 MaxPairingConfirmsPerWindow = maxPairingConfirmsPerWindow,
-                MaxSyncAcceptsPerWindow = maxSyncAcceptsPerWindow
+                MaxSyncAcceptsPerWindow = maxSyncAcceptsPerWindow,
+                ClipboardApplyState = clipboardApplyState
             },
             pair.Logs,
             pair.Pairing);
