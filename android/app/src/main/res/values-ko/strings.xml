@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">‘복사’를 누르면 클립보드에 들어갑니다</string>
     <string name="notification_action_copy">복사</string>
     <string name="notification_applied_text">클립보드에 자동으로 기록했습니다</string>
+    <string name="notification_inbox_flood_title">여러 항목을 수신했습니다</string>
+    <string name="notification_inbox_flood_text">%1$d개 항목을 추가로 수신했습니다. 앱에서 확인하세요</string>
 
     <string name="notification_channel_sync_name">동기화 상태</string>
     <string name="notification_channel_sync_description">페어링된 PC와의 연결 상태. 알림에 클립보드 내용이 표시되지 않습니다.</string>

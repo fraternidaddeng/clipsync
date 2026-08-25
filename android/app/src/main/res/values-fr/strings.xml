@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">Touchez « Copier » pour le placer dans le presse-papiers</string>
     <string name="notification_action_copy">Copier</string>
     <string name="notification_applied_text">Écrit automatiquement dans le presse-papiers</string>
+    <string name="notification_inbox_flood_title">Plusieurs éléments reçus</string>
+    <string name="notification_inbox_flood_text">%1$d éléments de plus reçus sans alerte individuelle ; ouvrez l’application pour les voir</string>
 
     <string name="notification_channel_sync_name">État de synchronisation</string>
     <string name="notification_channel_sync_description">État de connexion avec votre PC appairé. Les notifications n’affichent jamais le contenu du presse-papiers.</string>

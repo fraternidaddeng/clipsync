@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">Dotknij „Kopiuj”, aby umieścić go w schowku</string>
     <string name="notification_action_copy">Kopiuj</string>
     <string name="notification_applied_text">Automatycznie zapisano w schowku</string>
+    <string name="notification_inbox_flood_title">Otrzymano wiele elementów</string>
+    <string name="notification_inbox_flood_text">Otrzymano jeszcze %1$d bez osobnych powiadomień; zobacz je w aplikacji</string>
 
     <string name="notification_channel_sync_name">Stan synchronizacji</string>
     <string name="notification_channel_sync_description">Stan połączenia ze sparowanym PC. Powiadomienia nigdy nie pokazują zawartości schowka.</string>

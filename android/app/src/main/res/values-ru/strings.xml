@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">Нажмите «Копировать», чтобы поместить его в буфер обмена</string>
     <string name="notification_action_copy">Копировать</string>
     <string name="notification_applied_text">Автоматически записано в буфер обмена</string>
+    <string name="notification_inbox_flood_title">Получено несколько элементов</string>
+    <string name="notification_inbox_flood_text">Получено ещё %1$d без отдельных уведомлений — посмотрите их в приложении</string>
 
     <string name="notification_channel_sync_name">Статус синхронизации</string>
     <string name="notification_channel_sync_description">Состояние соединения с сопряжённым ПК. Уведомления никогда не показывают содержимое буфера обмена.</string>

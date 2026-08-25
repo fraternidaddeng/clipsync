@@ -61,6 +61,9 @@ class InboxDeliveryTest {
     @After
     fun tearDown() {
         InboxDelivery.writerFactory = InboxDelivery.defaultWriterFactory
+        // The gate is JVM-wide state on the InboxDelivery object: a flood test must not
+        // leave a spent window behind for the next test's notifications.
+        InboxDelivery.notificationGate = InboxNotificationGate()
     }
 
     @Test
@@ -181,6 +184,26 @@ class InboxDeliveryTest {
                 .shadowOf(manager)
                 .allNotifications.size,
         )
+    }
+
+    @Test
+    fun notificationFloodCoalescesIntoOneCountingCard() {
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        InboxDelivery.notificationGate = InboxNotificationGate(maxPerWindow = 2, windowMillis = 60_000L)
+
+        repeat(5) { InboxDelivery.deliver(context, "flood-$it", "clip $it", 123L + it) }
+
+        // Two per-event cards plus exactly one coalesced summary — not five separate posts.
+        val shadow = org.robolectric.Shadows.shadowOf(manager)
+        assertEquals(3, shadow.allNotifications.size)
+        val summary =
+            shadow.getNotification(
+                com.clipsync.android.platform.notify.SyncNotifications.INBOX_FLOOD_NOTIFICATION_ID,
+            )
+        // The counting card carries the suppressed total of the window (3 of 5 coalesced).
+        assertEquals(3, summary.number)
+        // Every clip is still recorded: the gate shapes announcements, never delivery.
+        repeat(5) { assertEquals("clip $it", inbox.textFor("flood-$it")) }
     }
 
     @Test

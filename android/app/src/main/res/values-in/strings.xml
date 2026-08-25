@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">Ketuk “Salin” untuk menaruhnya di papan klip</string>
     <string name="notification_action_copy">Salin</string>
     <string name="notification_applied_text">Otomatis ditulis ke papan klip</string>
+    <string name="notification_inbox_flood_title">Beberapa item diterima</string>
+    <string name="notification_inbox_flood_text">%1$d item lagi diterima tanpa pemberitahuan terpisah; lihat di aplikasi</string>
 
     <string name="notification_channel_sync_name">Status sinkronisasi</string>
     <string name="notification_channel_sync_description">Status koneksi dengan PC yang dipasangkan. Notifikasi tidak pernah menampilkan isi papan klip.</string>

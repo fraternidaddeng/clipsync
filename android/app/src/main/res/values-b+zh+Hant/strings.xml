@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">點按「複製」即可放入剪貼簿</string>
     <string name="notification_action_copy">複製</string>
     <string name="notification_applied_text">已自動寫入剪貼簿</string>
+    <string name="notification_inbox_flood_title">收到多則內容</string>
+    <string name="notification_inbox_flood_text">另有 %1$d 則未單獨通知，開啟應用程式即可查看</string>
 
     <string name="notification_channel_sync_name">同步狀態</string>
     <string name="notification_channel_sync_description">與已配對電腦的連線狀態。通知絕不顯示剪貼簿內容。</string>

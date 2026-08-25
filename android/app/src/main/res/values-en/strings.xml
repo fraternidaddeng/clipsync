@@ -17,6 +17,8 @@
     <string name="notification_inbox_text">Tap “Copy” to put it on the clipboard</string>
     <string name="notification_action_copy">Copy</string>
     <string name="notification_applied_text">Written to the clipboard automatically</string>
+    <string name="notification_inbox_flood_title">Multiple items received</string>
+    <string name="notification_inbox_flood_text">%1$d more arrived without separate alerts — open the app to view them</string>
 
     <string name="notification_channel_sync_name">Sync status</string>
     <string name="notification_channel_sync_description">Connection status with your paired PC. Notifications never show clipboard content.</string>

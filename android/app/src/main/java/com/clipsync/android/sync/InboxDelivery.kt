@@ -44,6 +44,13 @@ object InboxDelivery {
     var writerFactory: (Context) -> ClipboardWriter = defaultWriterFactory
 
     /**
+     * Flood cap for the whole inbox notification surface (hardening): per-event
+     * notifications post up to the window budget, the rest of a burst coalesces into
+     * one counting card. Replaceable seam for tests; production keeps the defaults.
+     */
+    var notificationGate: InboxNotificationGate = InboxNotificationGate()
+
+    /**
      * Plan 3.4 gate: inbound auto-apply obeys both the auto_apply_remote preference and the
      * pause switch. Receiving into the inbox is never gated — only the automatic write is.
      */
@@ -74,14 +81,26 @@ object InboxDelivery {
         SyncServices.inbox.record(eventId, text, receivedAtEpochMillis)
         if (autoApply && writerFactory(context).writeText(text, eventId) is ClipboardWriteResult.Success) {
             if (notify) {
-                SyncNotifications.notifyAutoApplied(context, eventId)
+                notifyGated(context) { SyncNotifications.notifyAutoApplied(context, eventId) }
             }
             return true
         }
         if (notify) {
-            SyncNotifications.notifyInboxItem(context, eventId)
+            notifyGated(context) { SyncNotifications.notifyInboxItem(context, eventId) }
         }
         return false
+    }
+
+    /** Routes one announcement through the flood gate: per-event card or the counting card. */
+    private fun notifyGated(
+        context: Context,
+        post: () -> Unit,
+    ) {
+        when (val verdict = notificationGate.admit(System.currentTimeMillis())) {
+            InboxNotificationGate.Verdict.Post -> post()
+            is InboxNotificationGate.Verdict.Coalesce ->
+                SyncNotifications.notifyInboxFlood(context, verdict.suppressedInWindow)
+        }
     }
 
     /**
@@ -105,7 +124,7 @@ object InboxDelivery {
         val bytes = runCatching { media.readAllBytes(contentHash) }.getOrNull() ?: return false
         if (writerFactory(context).writeImage(bytes, mimeType, eventId) is ClipboardWriteResult.Success) {
             if (notify) {
-                SyncNotifications.notifyAutoApplied(context, eventId)
+                notifyGated(context) { SyncNotifications.notifyAutoApplied(context, eventId) }
             }
             return true
         }

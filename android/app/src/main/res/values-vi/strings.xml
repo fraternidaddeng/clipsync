@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">Nhấn “Sao chép” để đưa vào bảng nhớ tạm</string>
     <string name="notification_action_copy">Sao chép</string>
     <string name="notification_applied_text">Đã tự động ghi vào bảng nhớ tạm</string>
+    <string name="notification_inbox_flood_title">Đã nhận nhiều mục</string>
+    <string name="notification_inbox_flood_text">Đã nhận thêm %1$d mục mà không có thông báo riêng; xem trong ứng dụng</string>
 
     <string name="notification_channel_sync_name">Trạng thái đồng bộ</string>
     <string name="notification_channel_sync_description">Trạng thái kết nối với PC đã ghép nối. Thông báo không bao giờ hiển thị nội dung bảng nhớ tạm.</string>

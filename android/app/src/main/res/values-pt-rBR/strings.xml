@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">Toque em “Copiar” para colocá-lo na área de transferência</string>
     <string name="notification_action_copy">Copiar</string>
     <string name="notification_applied_text">Gravado na área de transferência automaticamente</string>
+    <string name="notification_inbox_flood_title">Vários itens recebidos</string>
+    <string name="notification_inbox_flood_text">Mais %1$d itens recebidos sem aviso individual; veja-os no aplicativo</string>
 
     <string name="notification_channel_sync_name">Status de sincronização</string>
     <string name="notification_channel_sync_description">Status da conexão com o PC pareado. As notificações nunca mostram o conteúdo da área de transferência.</string>

@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">انقر على «نسخ» لوضعه في الحافظة</string>
     <string name="notification_action_copy">نسخ</string>
     <string name="notification_applied_text">كُتب في الحافظة تلقائيًا</string>
+    <string name="notification_inbox_flood_title">تم استلام عدة عناصر</string>
+    <string name="notification_inbox_flood_text">تم استلام %1$d عناصر أخرى دون تنبيه منفصل؛ اعرضها في التطبيق</string>
 
     <string name="notification_channel_sync_name">حالة المزامنة</string>
     <string name="notification_channel_sync_description">حالة الاتصال بالحاسوب المقترن. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>

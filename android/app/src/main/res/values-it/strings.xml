@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">Tocca «Copia» per metterlo negli appunti</string>
     <string name="notification_action_copy">Copia</string>
     <string name="notification_applied_text">Scritto automaticamente negli appunti</string>
+    <string name="notification_inbox_flood_title">Ricevuti più elementi</string>
+    <string name="notification_inbox_flood_text">Ricevuti altri %1$d elementi senza avviso singolo; aprili nell’app</string>
 
     <string name="notification_channel_sync_name">Stato di sincronizzazione</string>
     <string name="notification_channel_sync_description">Stato della connessione con il PC associato. Le notifiche non mostrano mai il contenuto degli appunti.</string>

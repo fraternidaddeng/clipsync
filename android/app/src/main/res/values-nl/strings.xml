@@ -17,6 +17,8 @@
     <string name="notification_inbox_text">Tik op “Kopiëren” om het op het klembord te zetten</string>
     <string name="notification_action_copy">Kopiëren</string>
     <string name="notification_applied_text">Automatisch naar het klembord geschreven</string>
+    <string name="notification_inbox_flood_title">Meerdere items ontvangen</string>
+    <string name="notification_inbox_flood_text">Nog %1$d items ontvangen zonder aparte melding; bekijk ze in de app</string>
 
     <string name="notification_channel_sync_name">Synchronisatiestatus</string>
     <string name="notification_channel_sync_description">Verbindingsstatus met je gekoppelde pc. Meldingen tonen nooit klembordinhoud.</string>

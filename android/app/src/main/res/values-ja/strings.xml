@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">「コピー」をタップするとクリップボードに入ります</string>
     <string name="notification_action_copy">コピー</string>
     <string name="notification_applied_text">クリップボードに自動で書き込みました</string>
+    <string name="notification_inbox_flood_title">複数のアイテムを受信しました</string>
+    <string name="notification_inbox_flood_text">ほかに %1$d 件を受信しました。アプリで確認できます</string>
 
     <string name="notification_channel_sync_name">同期状態</string>
     <string name="notification_channel_sync_description">ペアリング済みの PC との接続状態。通知にクリップボードの内容が表示されることはありません。</string>

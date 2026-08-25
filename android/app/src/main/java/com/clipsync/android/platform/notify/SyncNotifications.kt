@@ -30,9 +30,10 @@ object SyncNotifications {
 
     // The per-event inbox ids span [41_000, 41_000 + 0x7FFF] = [41_000, 73_767]; the fixed
     // ids below must stay outside that range or an unlucky event-id hash replaces (and
-    // cancelInboxItem cancels) the recovery / auth-throttle notification.
+    // cancelInboxItem cancels) the recovery / auth-throttle / flood-summary notification.
     const val RECOVERY_NOTIFICATION_ID = 74_001
     const val AUTH_THROTTLE_NOTIFICATION_ID = 74_002
+    const val INBOX_FLOOD_NOTIFICATION_ID = 74_003
 
     /** Idempotent; called from Application.onCreate so receivers can post right away. */
     fun ensureChannels(context: Context) {
@@ -205,6 +206,52 @@ object SyncNotifications {
         eventId: String,
     ) {
         NotificationManagerCompat.from(context).cancel(notificationIdFor(eventId))
+    }
+
+    /**
+     * The coalesced inbox notification (hardening: notification flood cap): once the
+     * per-window budget of per-event notifications is spent, one counting card stands in
+     * for the rest of the burst. Count updates replace it in place without re-alerting;
+     * like every other notification it names no clipboard content.
+     */
+    fun notifyInboxFlood(
+        context: Context,
+        suppressedInWindow: Int,
+    ): Boolean {
+        val manager = NotificationManagerCompat.from(context)
+        if (!manager.areNotificationsEnabled()) {
+            return false
+        }
+        val openApp =
+            PendingIntent.getActivity(
+                context,
+                INBOX_FLOOD_NOTIFICATION_ID,
+                Intent(context, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+        val notification =
+            NotificationCompat
+                .Builder(context, CHANNEL_INBOX)
+                .setSmallIcon(R.drawable.ic_notify_clip)
+                .setColor(ContextCompat.getColor(context, R.color.cs_flow))
+                .setContentTitle(context.getString(R.string.notification_inbox_flood_title))
+                .setContentText(context.getString(R.string.notification_inbox_flood_text, suppressedInWindow))
+                .setNumber(suppressedInWindow)
+                .setContentIntent(openApp)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                // No clipboard text is present, so the lock screen may show it as-is.
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setCategory(NotificationCompat.CATEGORY_STATUS)
+                .build()
+        return try {
+            manager.notify(INBOX_FLOOD_NOTIFICATION_ID, notification)
+            true
+        } catch (_: SecurityException) {
+            // POST_NOTIFICATIONS revoked between the check and the call.
+            false
+        }
     }
 
     /**

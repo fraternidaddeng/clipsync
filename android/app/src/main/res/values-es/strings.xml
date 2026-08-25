@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">Toca «Copiar» para ponerlo en el portapapeles</string>
     <string name="notification_action_copy">Copiar</string>
     <string name="notification_applied_text">Escrito en el portapapeles automáticamente</string>
+    <string name="notification_inbox_flood_title">Varios elementos recibidos</string>
+    <string name="notification_inbox_flood_text">Se recibieron %1$d elementos más sin aviso individual; míralos en la aplicación</string>
 
     <string name="notification_channel_sync_name">Estado de sincronización</string>
     <string name="notification_channel_sync_description">Estado de conexión con tu PC emparejado. Las notificaciones nunca muestran el contenido del portapapeles.</string>

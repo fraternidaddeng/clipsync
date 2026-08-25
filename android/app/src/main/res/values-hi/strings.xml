@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">क्लिपबोर्ड में डालने के लिए “कॉपी करें” पर टैप करें</string>
     <string name="notification_action_copy">कॉपी करें</string>
     <string name="notification_applied_text">क्लिपबोर्ड में अपने आप लिख दिया गया</string>
+    <string name="notification_inbox_flood_title">कई आइटम मिले</string>
+    <string name="notification_inbox_flood_text">%1$d और आइटम बिना अलग सूचना के मिले; उन्हें ऐप में देखें</string>
 
     <string name="notification_channel_sync_name">सिंक स्थिति</string>
     <string name="notification_channel_sync_description">जोड़े गए PC से कनेक्शन की स्थिति। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>

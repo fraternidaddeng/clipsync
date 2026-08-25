@@ -16,6 +16,8 @@
     <string name="notification_inbox_text">Panoya koymak için “Kopyala”ya dokunun</string>
     <string name="notification_action_copy">Kopyala</string>
     <string name="notification_applied_text">Panoya otomatik yazıldı</string>
+    <string name="notification_inbox_flood_title">Birden çok öğe alındı</string>
+    <string name="notification_inbox_flood_text">Ayrı bildirim olmadan %1$d öğe daha alındı; uygulamadan görüntüleyin</string>
 
     <string name="notification_channel_sync_name">Eşitleme durumu</string>
     <string name="notification_channel_sync_description">Eşleştirilmiş PC ile bağlantı durumu. Bildirimler pano içeriğini asla göstermez.</string>
