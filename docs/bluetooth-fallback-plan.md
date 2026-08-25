@@ -1,6 +1,6 @@
 # 蓝牙备援传输实施计划
 
-状态：设计定稿（对应 ADR 0005），未开始实现。
+状态：设计定稿（对应 ADR 0005）。阶段 1 已完成（纯逻辑，见下）；阶段 0 与阶段 2–5 未开始。阶段 1 无平台依赖、不受阶段 0 结论影响，故先行落地；进入阶段 2/3 前仍须补做阶段 0 的实体机验证。
 适用分支：`main`。所有阶段遵守仓库既有验收规则：无实体机证据不得标 `READY`；`TreatWarningsAsErrors`、detekt/ktlint 基线、协议 fixtures 由 `scripts/validate-protocol.py` 校验的约束照常适用。
 
 ## 总体形态
@@ -27,6 +27,8 @@
 主要风险：Windows 桌面（非 MSIX）对 WinRT 蓝牙 API 的访问在个别系统版本上受限；OEM Android 蓝牙栈对 RFCOMM secure socket 的差异。
 
 ## 阶段 1：bt1 握手与帧层（纯逻辑，无平台依赖）
+
+状态：**已完成**。协议定稿于 `docs/protocol-bt1.md`；共享向量与消息 fixtures 在 `protocol/bt1/`（由 `scripts/generate-bt1-vectors.py` 生成，`scripts/validate-protocol.py` 校验：3 组握手向量、7 组帧向量、6 正例 + 13 负例消息）；C# 实现在 `windows/ClipSync.Core/Security/Bt1/`（无 WinRT 依赖），Kotlin 实现在 `android/.../sync/Bt1*.kt`；双端共 64 个单测（C# 30 + Kotlin 34）针对同一 fixtures 全绿，含篡改/重放/乱序/截断/超限负例。无任何真实蓝牙 I/O——这正是本阶段的验收边界。
 
 任务：
 
