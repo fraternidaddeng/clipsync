@@ -40,10 +40,10 @@
     <value>समझ गया</value>
   </data>
   <data name="Common_FollowSystem" xml:space="preserve">
-    <value>सिस्टम के अनुसार</value>
+    <value>सिस्टम का अनुसरण</value>
   </data>
   <data name="Common_ClearHistory" xml:space="preserve">
-    <value>इतिहास साफ़ करें</value>
+    <value>इतिहास मिटाएँ</value>
   </data>
   <data name="Common_ExportHistory" xml:space="preserve">
     <value>इतिहास निर्यात करें</value>
@@ -70,7 +70,7 @@
     <value>इतिहास</value>
   </data>
   <data name="History_Subtitle" xml:space="preserve">
-    <value>इस PC और पेयर किए डिवाइसों की क्लिप प्रविष्टियाँ · सफ़ाई सिर्फ़ इस डिवाइस पर होती है</value>
+    <value>इस PC और युग्मित डिवाइसों की क्लिप प्रविष्टियाँ · सफ़ाई केवल इसी डिवाइस पर होती है</value>
   </data>
   <data name="History_Search" xml:space="preserve">
     <value>खोजें</value>
@@ -91,7 +91,7 @@
     <value>पासवर्ड</value>
   </data>
   <data name="Filter_Plain" xml:space="preserve">
-    <value>टेक्स्ट</value>
+    <value>पाठ</value>
   </data>
   <data name="Format_Image" xml:space="preserve">
     <value>चित्र</value>
@@ -100,7 +100,7 @@
     <value>कोई पूर्वावलोकन नहीं</value>
   </data>
   <data name="History_LocalOnlyBadge" xml:space="preserve">
-    <value>सिर्फ़ इस डिवाइस पर</value>
+    <value>केवल इसी डिवाइस पर</value>
   </data>
   <data name="History_Empty_Unpaired_Title" xml:space="preserve">
     <value>पहले दोनों सिरों को जोड़ें</value>
@@ -109,13 +109,13 @@
     <value>पहली क्लिप की प्रतीक्षा</value>
   </data>
   <data name="History_Empty_Unpaired_Body" xml:space="preserve">
-    <value>अभी फ़ोन से पेयर नहीं हुआ। पेयरिंग का प्रवेश “मार्ग” पृष्ठ के नेटवर्क खंड में है।</value>
+    <value>अभी किसी फ़ोन से युग्मित नहीं। पेयरिंग का प्रवेश «मार्ग» पृष्ठ के नेटवर्क खंड में है।</value>
   </data>
   <data name="History_Empty_Paired_Body" xml:space="preserve">
-    <value>किसी भी डिवाइस पर टेक्स्ट कॉपी करें — वह यहाँ दिखेगा और दूसरी ओर बह जाएगा।</value>
+    <value>किसी भी डिवाइस पर पाठ कॉपी करें — वह यहाँ दिखेगा और दूसरी ओर बह जाएगा।</value>
   </data>
   <data name="History_Empty_GoPair" xml:space="preserve">
-    <value>पेयर करें ›</value>
+    <value>अभी पेयर करें ›</value>
   </data>
   <data name="History_NoMatch_Prefix" xml:space="preserve">
     <value>“</value>
@@ -124,7 +124,7 @@
     <value>” से मेल खाती कोई प्रविष्टि नहीं</value>
   </data>
   <data name="History_Empty_Filtered" xml:space="preserve">
-    <value>इस प्रकार की कोई प्रविष्टि नहीं · दूसरा फ़िल्टर आज़माएँ</value>
+    <value>इस प्रकार की कोई प्रविष्टि नहीं · कोई और फ़िल्टर आज़माएँ</value>
   </data>
   <data name="History_CopySelected" xml:space="preserve">
     <value>चयनित कॉपी करें</value>
@@ -145,7 +145,7 @@
     <value>मार्ग</value>
   </data>
   <data name="Conduit_Subtitle" xml:space="preserve">
-    <value>सामग्री बाएँ से दाएँ चार खंडों से गुज़रती है · पढ़ने का क्रम ही समस्या-समाधान का क्रम है</value>
+    <value>सामग्री बाएँ से दाएँ चार खंडों से बहती है · पढ़ने का क्रम ही समस्या-समाधान का क्रम है</value>
   </data>
   <data name="Conduit_Capture_Name" xml:space="preserve">
     <value>स्थानीय कैप्चर</value>
@@ -154,16 +154,16 @@
     <value>तैयार · Ctrl+C सुन रहा है</value>
   </data>
   <data name="Conduit_Status_Paused" xml:space="preserve">
-    <value>रुका हुआ · रिकॉर्ड नहीं हो रहा</value>
+    <value>रोका गया · अब रिकॉर्ड नहीं हो रहा</value>
   </data>
   <data name="Conduit_Status_Private" xml:space="preserve">
-    <value>निजी मोड · कोई निशान नहीं</value>
+    <value>निजी मोड · कोई निशान नहीं छोड़ता</value>
   </data>
   <data name="Conduit_Status_CaptureFaulted" xml:space="preserve">
-    <value>कैप्चर अवनत · क्लिपबोर्ड तक पहुँच विफल</value>
+    <value>कैप्चर सीमित · क्लिपबोर्ड तक पहुँच विफल</value>
   </data>
   <data name="Conduit_Capture_Detail" xml:space="preserve">
-    <value>निजी मोड और अवरुद्ध प्रोसेस सामग्री को इसी खंड पर रोक देते हैं।</value>
+    <value>निजी मोड और अवरुद्ध प्रक्रियाएँ सामग्री को इसी खंड में रोक देती हैं।</value>
   </data>
   <data name="Conduit_Service_Name" xml:space="preserve">
     <value>स्थानीय सेवा</value>
@@ -175,7 +175,7 @@
     <value> · भेजने हेतु </value>
   </data>
   <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
-    <value>घटनाएँ पहले भंडार में, फिर भेजने की कतार में जाती हैं · </value>
+    <value>घटनाएँ पहले भंडार में, फिर प्रेषण कतार में जाती हैं · </value>
   </data>
   <data name="Conduit_Network_Name" xml:space="preserve">
     <value>नेटवर्क</value>
@@ -190,58 +190,58 @@
     <value> डिवाइस</value>
   </data>
   <data name="Conduit_Network_Down" xml:space="preserve">
-    <value>चालू नहीं · सिंक बंद</value>
+    <value>चालू नहीं · समन्वयन बंद</value>
   </data>
   <data name="Conduit_Peer_Name" xml:space="preserve">
-    <value>सामने की ओर लेखन</value>
+    <value>दूसरे छोर का लेखन</value>
   </data>
   <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
-    <value>पेयर किए </value>
+    <value>युग्मित </value>
   </data>
   <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
     <value> डिवाइस</value>
   </data>
   <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
-    <value>दूरस्थ टेक्स्ट अपने आप इस PC के क्लिपबोर्ड में लिखा जाता है।</value>
+    <value>दूरस्थ पाठ इस PC के क्लिपबोर्ड में स्वतः लिखा जाता है।</value>
   </data>
   <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
-    <value>स्वतः लागू बंद है: दूरस्थ सामग्री सिर्फ़ इतिहास में रहती है, हाथ से कॉपी करनी होगी।</value>
+    <value>स्वतः लागू करना बंद है: दूरस्थ सामग्री केवल इतिहास में रहती है और उसे हाथ से कॉपी करना पड़ता है।</value>
   </data>
   <data name="Conduit_Devices_Header" xml:space="preserve">
-    <value>नेटवर्क खंड · पेयर किए डिवाइस</value>
+    <value>नेटवर्क खंड · युग्मित डिवाइस</value>
   </data>
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>नेटवर्क खंड · कनेक्शन</value>
   </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
-    <value>साफ़ करें</value>
+    <value>सफ़ाई करें</value>
   </data>
   <data name="Conduit_Bluetooth_Title" xml:space="preserve">
-    <value>ब्लूटूथ बैकअप</value>
+    <value>ब्लूटूथ फ़ॉलबैक</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>डिफ़ॉल्ट रूप से बंद। जब VPN या फ़ायरवॉल LAN रोक दे, तो सिस्टम सेटिंग्स में पहले से ब्लूटूथ-पेयर किया फ़ोन टेक्स्ट सिंक जारी रखता है (चित्र नहीं, धीमा)।</value>
+    <value>डिफ़ॉल्ट रूप से बंद। जब LAN को VPN या फ़ायरवॉल रोक दे, तो सिस्टम सेटिंग्स में पहले से ब्लूटूथ-युग्मित फ़ोन पाठ का समन्वयन जारी रखता है (चित्र नहीं, धीमा)।</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>अतिरिक्त श्रवण पते</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>Tailscale / WireGuard जैसे वर्चुअल एडैप्टर पतों के लिए। कोई सार्वजनिक रिले नहीं दिया जाता।</value>
+    <value>Tailscale / WireGuard जैसे वर्चुअल एडेप्टर पतों के लिए। कोई सार्वजनिक रिले नहीं दिया जाता।</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>पुनरारंभ के बाद लागू</value>
   </data>
   <data name="Conduit_ExtraBind_CommaNote" xml:space="preserve">
-    <value> · कई पते अल्पविराम से अलग करें</value>
+    <value> · कई पतों को अल्पविराम से अलग करें</value>
   </data>
   <data name="Conduit_Fingerprint_Title" xml:space="preserve">
-    <value>इस PC का प्रमाणपत्र फ़िंगरप्रिंट</value>
+    <value>इस PC के प्रमाणपत्र का फ़िंगरप्रिंट</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>पेयरिंग के समय इसे फ़ोन पर दिखे फ़िंगरप्रिंट से समूह-दर-समूह मिलाएँ। फ़िंगरप्रिंट बदलने पर हर पेयर किया डिवाइस दोबारा पुष्टि माँगेगा।</value>
+    <value>पेयरिंग के समय फ़ोन पर दिखे फ़िंगरप्रिंट से समूह-दर-समूह मिलान करें। फ़िंगरप्रिंट बदलने पर हर युग्मित डिवाइस दोबारा पुष्टि माँगता है।</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
-    <value>सामने की सेवा चालू नहीं; इस सत्र में दिखाने को कोई फ़िंगरप्रिंट नहीं।</value>
+    <value>पीयर सेवा चालू नहीं है; इस सत्र में दिखाने को कोई फ़िंगरप्रिंट नहीं।</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>निरस्त</value>
@@ -253,7 +253,7 @@
     <value>हाथ से निर्धारित</value>
   </data>
   <data name="Device_AccentByOrder" xml:space="preserve">
-    <value>पेयरिंग क्रम के अनुसार</value>
+    <value>पेयरिंग क्रम का अनुसरण</value>
   </data>
   <data name="Device_Rename" xml:space="preserve">
     <value>नाम बदलें</value>
@@ -262,13 +262,13 @@
     <value>चयनित डिवाइस निरस्त करें</value>
   </data>
   <data name="Device_RevokeNote" xml:space="preserve">
-    <value>निरस्त करने से डिवाइस तुरंत कट जाता है और उसकी पेयरिंग कुंजी रद्द हो जाती है; उसे मिली सामग्री दूर से कभी नहीं मिटती। निरस्त करने के बाद दोबारा पेयर करना नया डिवाइस माना जाता है। वही फ़ोन नई पहचान से दोबारा पेयर करे, तो पुराना रिकॉर्ड अपने आप निरस्त होकर उसकी भेजने की कतार खाली हो जाती है।</value>
+    <value>निरस्त करने से डिवाइस तुरंत डिस्कनेक्ट होता है और उसकी पेयरिंग कुंजी अमान्य हो जाती है; उसे पहले से मिली सामग्री कभी दूर से नहीं मिटाई जाती। निरस्त करने के बाद दोबारा पेयर करना नया डिवाइस माना जाता है। वही फ़ोन नई पहचान से दोबारा पेयर करे तो पुराना रिकॉर्ड स्वतः निरस्त होकर उसकी प्रेषण कतार खाली कर दी जाती है।</value>
   </data>
   <data name="Device_UnknownRemote" xml:space="preserve">
     <value>दूरस्थ डिवाइस</value>
   </data>
   <data name="Device_PairedFallback" xml:space="preserve">
-    <value>पेयर किया डिवाइस</value>
+    <value>युग्मित डिवाइस</value>
   </data>
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>अज्ञात डिवाइस</value>
@@ -277,25 +277,25 @@
     <value>{0} · {1} भेजने हेतु लंबित</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>{0} डिवाइस मिले जो पुराने अवशेष लगते हैं; {1} लंबित मदें “भेजने हेतु” गिनती बढ़ा रही हैं। सफ़ाई उन्हें निरस्त कर उनकी भेजने की कतारें खाली कर देगी।</value>
+    <value>{0} डिवाइस मिले जो अवशेष लगते हैं; {1} लंबित मदें «भेजने हेतु» गिनती बढ़ा रही हैं। सफ़ाई उन्हें निरस्त कर उनकी प्रेषण कतारें खाली कर देगी।</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>{0} डिवाइस मिले जो पुराने अवशेष लगते हैं। सफ़ाई उन्हें निरस्त कर देगी; उन्हें मिली सामग्री अप्रभावित रहेगी।</value>
+    <value>{0} डिवाइस मिले जो अवशेष लगते हैं। सफ़ाई उन्हें निरस्त कर देगी; उन्हें पहले से मिली सामग्री अप्रभावित रहती है।</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
-    <value>संभवतः दोहरी पेयरिंग का अवशेष</value>
+    <value>संभवतः दोहरे पेयरिंग का अवशेष</value>
   </data>
   <data name="Stale_NeverConnected" xml:space="preserve">
-    <value>पेयरिंग के बाद कभी नहीं जुड़ा</value>
+    <value>पेयरिंग के बाद से कभी नहीं जुड़ा</value>
   </data>
   <data name="Stale_UnseenDaysFormat" xml:space="preserve">
-    <value>{0} दिनों से अधिक से नहीं जुड़ा</value>
+    <value>{0} दिनों से अधिक समय से नहीं जुड़ा</value>
   </data>
   <data name="Prefs_Title" xml:space="preserve">
     <value>प्राथमिकताएँ</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>बदलाव तुरंत लागू · क्लिपबोर्ड की सामग्री कभी लॉग में नहीं आती</value>
+    <value>बदलाव तुरंत लागू · क्लिपबोर्ड की सामग्री कभी लॉग में नहीं जाती</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>प्रदर्शन</value>
@@ -304,13 +304,13 @@
     <value>कैप्चर</value>
   </data>
   <data name="Prefs_Group_Sync" xml:space="preserve">
-    <value>सिंक</value>
+    <value>समन्वयन</value>
   </data>
   <data name="Prefs_Group_Retention" xml:space="preserve">
-    <value>प्रतिधारण</value>
+    <value>संधारण</value>
   </data>
   <data name="Prefs_Group_Startup" xml:space="preserve">
-    <value>आरंभ</value>
+    <value>संचालन</value>
   </data>
   <data name="Prefs_Group_Data" xml:space="preserve">
     <value>डेटा</value>
@@ -319,7 +319,7 @@
     <value>इतिहास का अक्षर आकार</value>
   </data>
   <data name="Prefs_FontScale_Desc" xml:space="preserve">
-    <value>सिर्फ़ क्लिप सामग्री का टेक्स्ट बदलता है (इतिहास पूर्वावलोकन, विवरण का मुख्य भाग, ट्रे फ़्लाईआउट); समूह शीर्षक, बैज और बटन जस के तस रहते हैं।</value>
+    <value>केवल क्लिप सामग्री का पाठ बड़ा-छोटा होता है (इतिहास पूर्वावलोकन, विवरण का मुख्य पाठ, ट्रे फ़्लाईआउट); समूह शीर्षक, बैज और बटन अपरिवर्तित रहते हैं।</value>
   </data>
   <data name="Prefs_FontScale_Small" xml:space="preserve">
     <value>छोटा</value>
@@ -334,7 +334,7 @@
     <value>पूर्वावलोकन पंक्तियाँ</value>
   </data>
   <data name="Prefs_PreviewLines_Desc" xml:space="preserve">
-    <value>इतिहास सूची में प्रति प्रविष्टि अधिकतम पंक्तियाँ; बाक़ी दीर्घवृत्त से कटता है — पूरा पाठ विवरण में देखें।</value>
+    <value>इतिहास सूची में प्रति प्रविष्टि अधिकतम पाठ पंक्तियाँ; अधिक होने पर दीर्घवृत्त से काटा जाता है — पूरी सामग्री विवरण में देखें।</value>
   </data>
   <data name="Prefs_PreviewLines_Two" xml:space="preserve">
     <value>2 पंक्तियाँ</value>
@@ -346,10 +346,10 @@
     <value>6 पंक्तियाँ</value>
   </data>
   <data name="Prefs_Theme_Title" xml:space="preserve">
-    <value>रूप-रंग</value>
+    <value>रूप</value>
   </data>
   <data name="Prefs_Theme_Desc" xml:space="preserve">
-    <value>विंडो का दिन/रात रंग-पटल; ट्रे आइकन टास्कबार में रहता है और हमेशा उसी की छाया मानता है।</value>
+    <value>विंडो का दिन/रात रंग-पटल; ट्रे आइकन टास्कबार में रहता है और हमेशा टास्कबार की आभा का अनुसरण करता है।</value>
   </data>
   <data name="Prefs_Theme_Day" xml:space="preserve">
     <value>दिन</value>
@@ -361,64 +361,64 @@
     <value>भाषा</value>
   </data>
   <data name="Prefs_Language_Desc" xml:space="preserve">
-    <value>इंटरफ़ेस की भाषा — सिस्टम के अनुसार या स्वयं चुनें; हर भाषा का नाम हमेशा उसकी अपनी भाषा में दिखता है।</value>
+    <value>इंटरफ़ेस की भाषा — सिस्टम का अनुसरण करें या हाथ से चुनें; हर भाषा हमेशा अपनी ही मातृभाषा में लिखे नाम से दिखती है।</value>
   </data>
   <data name="Prefs_Language_RestartNote" xml:space="preserve">
-    <value>ऐप पुनरारंभ करने पर लागू होगा।</value>
+    <value>ऐप पुनरारंभ के बाद लागू होगा।</value>
   </data>
   <data name="Prefs_Capture_Pause_Desc" xml:space="preserve">
-    <value>रोक के दौरान यह PC नई सामग्री रिकॉर्ड नहीं करता; मौजूदा इतिहास बना रहता है।</value>
+    <value>रोकने पर यह PC नई सामग्री रिकॉर्ड नहीं करता; मौजूदा इतिहास बना रहता है।</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>चालू रहने तक कैप्चर और सिंक पूरी तरह रुक जाते हैं, कोई निशान नहीं छूटता।</value>
+    <value>चालू रहते हुए कैप्चर और समन्वयन पूरी तरह रुक जाते हैं, कोई निशान नहीं रहता।</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
-    <value>अवरुद्ध प्रोसेस</value>
+    <value>अवरुद्ध प्रक्रियाएँ</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>इन प्रोसेस से की गई कॉपी न इतिहास में जाती है, न सिंक होती है। अल्पविराम या नई पंक्ति से अलग करें।</value>
+    <value>इन प्रक्रियाओं की कॉपियाँ न इतिहास में जाती हैं, न समन्वयित होती हैं। अल्पविराम या नई पंक्ति से अलग करें।</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>दूरस्थ सामग्री स्वतः लागू करें</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>फ़ोन से आया टेक्स्ट अपने आप इस PC के क्लिपबोर्ड में लिखा जाता है। बंद होने पर वह सिर्फ़ इतिहास में रहता है, हाथ से कॉपी करना होगा।</value>
+    <value>फ़ोन से आया पाठ इस PC के क्लिपबोर्ड में स्वतः लिखा जाता है। बंद रहने पर केवल इतिहास में रहता है और हाथ से कॉपी करना पड़ता है।</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
-    <value>क्लिपबोर्ड चित्र सिंक करें</value>
+    <value>क्लिपबोर्ड चित्रों का समन्वयन</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>डिफ़ॉल्ट रूप से बंद। सिर्फ़ PNG/JPEG; कच्चे बाइट में EXIF आदि मेटाडेटा हो सकता है, और दोनों सिरों पर v2 सत्र चाहिए।</value>
+    <value>डिफ़ॉल्ट रूप से बंद। केवल PNG/JPEG; कच्चे बाइट में EXIF आदि मेटाडेटा हो सकता है, और दोनों सिरों को v2 सत्र चाहिए।</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>दूरस्थ चित्र स्वतः लागू करें</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>फ़ोन से आए चित्र अपने आप इस PC के क्लिपबोर्ड में लिखे जाते हैं। बंद होने पर वे सिर्फ़ इतिहास में रहते हैं, हाथ से कॉपी करने होंगे।</value>
+    <value>फ़ोन से आए चित्र इस PC के क्लिपबोर्ड में स्वतः लिखे जाते हैं। बंद रहने पर केवल इतिहास में रहते हैं और हाथ से कॉपी करने पड़ते हैं।</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
-    <value>ब्लूटूथ बैकअप · अतिरिक्त श्रवण पते · प्रमाणपत्र फ़िंगरप्रिंट</value>
+    <value>ब्लूटूथ फ़ॉलबैक · अतिरिक्त श्रवण पते · प्रमाणपत्र फ़िंगरप्रिंट</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>“मार्ग · नेटवर्क खंड” में ले जाए गए — ये तय करते हैं कि सामग्री सामने तक पहुँचेगी या नहीं, इसलिए पेयरिंग और डिवाइस प्रबंधन के साथ रहते हैं।</value>
+    <value>«मार्ग · नेटवर्क खंड» में स्थानांतरित — ये तय करते हैं कि सामग्री दूसरे छोर तक पहुँच सकेगी या नहीं, इसलिए ये पेयरिंग और डिवाइस प्रबंधन के साथ रहते हैं।</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>मार्ग पर जाएँ</value>
   </data>
   <data name="Prefs_Retention_Days_Title" xml:space="preserve">
-    <value>प्रतिधारण अवधि</value>
+    <value>संधारण अवधि</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>समय-सीमा पार प्रविष्टियाँ अपने आप हटती हैं। सफ़ाई सिर्फ़ इस PC पर होती है और सामने वाले को मिली सामग्री दूर से कभी नहीं मिटाती।</value>
+    <value>अवधि पार कर चुकी प्रविष्टियाँ स्वतः हटती हैं। सफ़ाई केवल इसी PC पर होती है और दूसरे छोर को मिली सामग्री कभी नहीं मिटाती।</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>दिन</value>
   </data>
   <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
-    <value>प्रतिधारण संख्या</value>
+    <value>संधारण संख्या</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>सीमा पार होने पर सबसे पुरानी प्रविष्टियाँ पहले हटती हैं (100–2000, 100 के चरण)। सफ़ाई सिर्फ़ इस PC पर होती है।</value>
+    <value>सीमा पार होने पर सबसे पुरानी प्रविष्टियाँ पहले हटती हैं (100–2000, 100 के चरण)। सफ़ाई केवल इसी PC पर होती है।</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>प्रविष्टियाँ</value>
@@ -427,37 +427,37 @@
     <value>बूट पर आरंभ · चुपचाप ट्रे में</value>
   </data>
   <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
-    <value>Windows साइन-इन पर अपने आप शुरू होकर सीधे ट्रे में बैठ जाता है, मुख्य विंडो नहीं खुलती। सिर्फ़ वर्तमान उपयोगकर्ता की स्टार्टअप प्रविष्टि लिखता है; प्रशासक अधिकार नहीं चाहिए।</value>
+    <value>Windows साइन-इन के साथ स्वतः शुरू होकर मुख्य विंडो खोले बिना सीधे ट्रे में जाता है। केवल वर्तमान उपयोगकर्ता की स्टार्टअप प्रविष्टि लिखता है; प्रशासक अधिकार नहीं चाहिए।</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
-    <value>फ़्लाईआउट हॉटकी</value>
+    <value>फ़्लाईआउट शॉर्टकट</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>किसी भी ऐप में संयोजन दबाकर ट्रे फ़्लाईआउट बुलाएँ। बॉक्स क्लिक कर मनचाहा संयोजन दबाएँ (Ctrl, Alt या Win ज़रूरी); मिटाने को Backspace दबाएँ। डिफ़ॉल्ट रूप से बंद।</value>
+    <value>किसी भी ऐप में संयोजन दबाकर ट्रे फ़्लाईआउट बुलाएँ। बॉक्स पर क्लिक कर मनचाहा संयोजन दबाएँ (Ctrl, Alt या Win शामिल हो); Backspace से हटाएँ। डिफ़ॉल्ट रूप से बंद।</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>पूरा इतिहास (हटाने के चिह्न सहित) JSON Lines बैकअप फ़ाइल में लिखता है; कुंजियाँ, प्रमाणपत्र या पेयरिंग डेटा नहीं। निर्यात सादा पाठ है — सँभालकर रखें।</value>
+    <value>पूरा इतिहास (मिटाने के चिह्नों समेत) JSON Lines बैकअप फ़ाइल में लिखता है; कुंजियाँ, प्रमाणपत्र या पेयरिंग डेटा नहीं। निर्यात सादा पाठ है — सुरक्षित रखें।</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>बैकअप फ़ाइल से इतिहास मिलाता है: “स्रोत डिवाइस + क्रमांक” पर आधारित, दोबारा आयात से न प्रविष्टियाँ दोहराती हैं, न स्थानीय हटाव पलटते हैं। सत्यापन विफल हो तो कुछ नहीं बदलता।</value>
+    <value>बैकअप फ़ाइल से इतिहास मिलाता है: «स्रोत डिवाइस + क्रमांक» पर एकसमान, इसलिए दोबारा आयात से न प्रविष्टियाँ दोहराई जाती हैं, न स्थानीय विलोपन बदलते हैं। सत्यापन विफल होने पर कुछ नहीं बदलता।</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>इस PC की सभी प्रविष्टियाँ (चित्र सहित) एक बार में हटाता है; दो पुष्टियाँ चाहिए और वापस नहीं हो सकता। सफ़ाई सिर्फ़ इस PC पर होती है, सामने वाले को मिली सामग्री नहीं मिटती — पहले निर्यात कर लें।</value>
+    <value>इस PC की सभी प्रविष्टियाँ (चित्रों समेत) एक ही चरण में मिटाता है; दो पुष्टियाँ चाहिए और पूर्ववत नहीं हो सकता। मिटाना केवल इसी PC पर होता है और दूसरे छोर को मिली सामग्री कभी नहीं मिटाता — पहले निर्यात कर लेना अच्छा है।</value>
   </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
-    <value>ClipSync · हाल की क्लिप</value>
+    <value>ClipSync · हाल की क्लिपें</value>
   </data>
   <data name="Flyout_PauseSync" xml:space="preserve">
-    <value>सिंक रोकें</value>
+    <value>समन्वयन रोकें</value>
   </data>
   <data name="Flyout_ResumeSync" xml:space="preserve">
-    <value>सिंक फिर शुरू करें</value>
+    <value>समन्वयन फिर शुरू करें</value>
   </data>
   <data name="Flyout_Empty" xml:space="preserve">
-    <value>अभी कोई क्लिप नहीं · कुछ टेक्स्ट कॉपी करके देखें</value>
+    <value>अभी कोई क्लिप नहीं · कोई पाठ कॉपी करके देखें</value>
   </data>
   <data name="Flyout_PauseOrResume" xml:space="preserve">
-    <value>सिंक रोकें या फिर शुरू करें</value>
+    <value>समन्वयन रोकें या फिर शुरू करें</value>
   </data>
   <data name="Flyout_CopyFromFormat" xml:space="preserve">
     <value>{0} की क्लिप कॉपी करें</value>
@@ -481,7 +481,7 @@
     <value>आपकी कार्रवाई चाहिए</value>
   </data>
   <data name="Tray_Tooltip_Paused" xml:space="preserve">
-    <value>ClipSync · कैप्चर रुका हुआ</value>
+    <value>ClipSync · कैप्चर रुका है</value>
   </data>
   <data name="Tray_Tooltip_Private" xml:space="preserve">
     <value>ClipSync · निजी मोड, कोई निशान नहीं</value>
@@ -490,16 +490,16 @@
     <value>{0} से 1 नई क्लिप</value>
   </data>
   <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
-    <value>{0} से {1} नई क्लिप</value>
+    <value>{0} से {1} नई क्लिपें</value>
   </data>
   <data name="Tray_OversizeNotice" xml:space="preserve">
-    <value>अभी कॉपी किया टेक्स्ट 1 MiB से बड़ा है; वह सिर्फ़ इस PC के क्लिपबोर्ड में रहेगा, सिंक नहीं होगा (काटा नहीं गया)।</value>
+    <value>अभी कॉपी किया पाठ 1 MiB से बड़ा है; वह केवल इसी PC के क्लिपबोर्ड में रहेगा, समन्वयित नहीं होगा (काटा नहीं गया)।</value>
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
-    <value>“{0}” से बार-बार प्रमाणीकरण विफल; डिवाइस अस्थायी रूप से सीमित किया गया।</value>
+    <value>«{0}» से बार-बार प्रमाणीकरण विफलताएँ मिलीं; डिवाइस अस्थायी रूप से सीमित किया गया है।</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
-    <value>सुन रहा है · सिंक चालू नहीं</value>
+    <value>सुन रहा है · समन्वयन चालू नहीं</value>
   </data>
   <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
     <value>सुन रहा है · {0} जुड़े</value>
@@ -508,69 +508,69 @@
     <value>सुन रहा है · डिवाइसों की प्रतीक्षा</value>
   </data>
   <data name="Capture_OversizeNotice" xml:space="preserve">
-    <value>अभी कॉपी किया टेक्स्ट 1 MiB से बड़ा है: वह सिस्टम क्लिपबोर्ड में बिना कटे रहेगा, पर न इतिहास में दर्ज होगा, न सिंक।</value>
+    <value>अभी कॉपी किया पाठ 1 MiB से बड़ा है: वह बिना कटे सिस्टम क्लिपबोर्ड में रहता है, पर न इतिहास में दर्ज होता है, न समन्वयित होता है।</value>
   </data>
   <data name="Sync_NotStarted" xml:space="preserve">
-    <value>सामने की सेवा अभी शुरू नहीं हुई</value>
+    <value>पीयर सेवा अभी शुरू नहीं हुई</value>
   </data>
   <data name="Sync_StartFailed" xml:space="preserve">
-    <value>सामने की सेवा शुरू नहीं हो सकी; इस सत्र में सिंक बंद है।</value>
+    <value>पीयर सेवा शुरू नहीं हो सकी; इस सत्र में समन्वयन बंद है।</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>LAN पोर्ट {0} पर सुन रहा है · {1} डिवाइस जुड़े, सामग्री तुरंत आती-जाती है।</value>
+    <value>LAN पोर्ट {0} पर सुन रहा है · {1} डिवाइस जुड़े, सामग्री तत्काल बह रही है।</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
-    <value>LAN पोर्ट {0} पर सुन रहा है · पेयर किए डिवाइसों की प्रतीक्षा; घटनाएँ पहले भंडार में, फिर भेजने की कतार में जाती हैं — ऑफ़लाइन में कुछ नहीं खोता।</value>
+    <value>LAN पोर्ट {0} पर सुन रहा है · युग्मित डिवाइसों की प्रतीक्षा; घटनाएँ पहले भंडार में, फिर प्रेषण कतार में जाती हैं, ऑफ़लाइन में कुछ नहीं खोता।</value>
   </data>
   <data name="Bt_Disabled" xml:space="preserve">
-    <value>ब्लूटूथ बैकअप सक्षम नहीं</value>
+    <value>ब्लूटूथ फ़ॉलबैक सक्षम नहीं</value>
   </data>
   <data name="Bt_UnavailableFormat" xml:space="preserve">
-    <value>ब्लूटूथ बैकअप अनुपलब्ध: {0}</value>
+    <value>ब्लूटूथ फ़ॉलबैक अनुपलब्ध: {0}</value>
   </data>
   <data name="Bt_SyncingFormat" xml:space="preserve">
-    <value>ब्लूटूथ बैकअप · {0} से सिंक जारी (सिर्फ़ टेक्स्ट)</value>
+    <value>ब्लूटूथ फ़ॉलबैक · {0} से समन्वयन (केवल पाठ)</value>
   </data>
   <data name="Bt_Armed" xml:space="preserve">
-    <value>ब्लूटूथ बैकअप तैयार · LAN न मिलने पर फ़ोन अपने आप ब्लूटूथ पर चला जाता है</value>
+    <value>ब्लूटूथ फ़ॉलबैक तैयार · LAN न पहुँचे तो फ़ोन स्वतः ब्लूटूथ पर चला जाता है</value>
   </data>
   <data name="Bt_Starting" xml:space="preserve">
-    <value>ब्लूटूथ बैकअप शुरू हो रहा है…</value>
+    <value>ब्लूटूथ फ़ॉलबैक शुरू हो रहा है…</value>
   </data>
   <data name="Bt_AdapterUnavailable" xml:space="preserve">
-    <value>ब्लूटूथ एडैप्टर अनुपलब्ध या बंद है</value>
+    <value>ब्लूटूथ एडेप्टर अनुपलब्ध या बंद है</value>
   </data>
   <data name="Ack_None" xml:space="preserve">
-    <value>सामने से अभी कोई पुष्टि नहीं</value>
+    <value>अभी दूसरे छोर की कोई पुष्टि नहीं</value>
   </data>
   <data name="Ack_UpToFormat" xml:space="preserve">
-    <value>सामने वाले ने {0} तक पुष्टि की</value>
+    <value>दूसरे छोर ने {0} तक पुष्टि की</value>
   </data>
   <data name="Transfer_ClearedFormat" xml:space="preserve">
-    <value>{0} इतिहास प्रविष्टियाँ (चित्र सहित) साफ़ कीं। सफ़ाई सिर्फ़ इस PC पर होती है।</value>
+    <value>{0} इतिहास प्रविष्टियाँ मिटाई गईं (चित्रों समेत)। मिटाना केवल इसी PC पर होता है।</value>
   </data>
   <data name="Transfer_ClearConfirmBody" xml:space="preserve">
-    <value>पूरा इतिहास साफ़ करें?
+    <value>पूरा इतिहास मिटाएँ?
 
-इस PC की सभी प्रविष्टियाँ (चित्र सहित) एक बार में हट जाएँगी। सफ़ाई सिर्फ़ इस PC पर होती है, सामने वाले को मिली सामग्री दूर से नहीं मिटती। पहले “इतिहास निर्यात करें” कर लें।</value>
+यह इस PC की हर प्रविष्टि (चित्रों समेत) एक ही चरण में मिटा देगा। मिटाना केवल इसी PC पर होता है और दूसरे छोर को मिली सामग्री कभी नहीं मिटाता। पहले «इतिहास निर्यात करें» पर विचार करें।</value>
   </data>
   <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
-    <value>एक बार और पुष्टि करें: साफ़ करने के बाद वापसी नहीं। पक्का पूरा इतिहास साफ़ करें?</value>
+    <value>एक बार और पुष्टि करें: मिटाने के बाद वापस नहीं आ सकता। पूरा इतिहास मिटाएँ?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
     <value>{0} रिकॉर्ड निर्यात हुए (सादा पाठ) → {1}</value>
   </data>
   <data name="Transfer_ExportWriteFailed" xml:space="preserve">
-    <value>निर्यात विफल: चुनी फ़ाइल में लिखा नहीं जा सका।</value>
+    <value>निर्यात विफल: चुनी गई फ़ाइल नहीं लिखी जा सकी।</value>
   </data>
   <data name="Transfer_ImportedFormat" xml:space="preserve">
-    <value>आयात पूर्ण: नए {0} · पहले से {1} · टकराव {2}</value>
+    <value>आयात पूर्ण: {0} जोड़े गए · {1} पहले से थे · {2} टकराव</value>
   </data>
   <data name="Transfer_ImportFailedFormat" xml:space="preserve">
-    <value>आयात विफल: {0}। कुछ नहीं बदला।</value>
+    <value>आयात विफल: {0}। कुछ नहीं बदला गया।</value>
   </data>
   <data name="Transfer_ImportReadFailed" xml:space="preserve">
-    <value>आयात विफल: चुनी फ़ाइल पढ़ी नहीं जा सकी।</value>
+    <value>आयात विफल: चुनी गई फ़ाइल नहीं पढ़ी जा सकी।</value>
   </data>
   <data name="Transfer_FileFilter" xml:space="preserve">
     <value>ClipSync इतिहास निर्यात (*.jsonl)|*.jsonl|सभी फ़ाइलें (*.*)|*.*</value>
@@ -582,43 +582,43 @@
     <value>फ़ाइल का संस्करण इस ऐप के समर्थन से नया है</value>
   </data>
   <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
-    <value>फ़ाइल दूषित है (रिकॉर्ड का प्रारूप ग़लत)</value>
+    <value>फ़ाइल क्षतिग्रस्त है (रिकॉर्ड प्रारूप गलत)</value>
   </data>
   <data name="Transfer_Error_HashMismatch" xml:space="preserve">
-    <value>फ़ाइल दूषित है (हैश जाँच विफल)</value>
+    <value>फ़ाइल क्षतिग्रस्त है (हैश जाँच विफल)</value>
   </data>
   <data name="Transfer_Error_CountMismatch" xml:space="preserve">
     <value>फ़ाइल अधूरी है (संख्या शीर्षलेख से मेल नहीं खाती)</value>
   </data>
   <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
-    <value>फ़ाइल में आकार सीमा से बड़ी प्रविष्टि है (टेक्स्ट 1 MiB / चित्र 16 MiB)</value>
+    <value>फ़ाइल में आकार सीमा से बड़ी प्रविष्टि है (पाठ 1 MiB / चित्र 16 MiB)</value>
   </data>
   <data name="Transfer_Error_Unknown" xml:space="preserve">
     <value>अज्ञात त्रुटि</value>
   </data>
   <data name="Hotkey_Applied" xml:space="preserve">
-    <value>लागू · किसी भी ऐप में दबाकर फ़्लाईआउट बुलाएँ</value>
+    <value>सक्रिय · किसी भी ऐप में दबाते ही फ़्लाईआउट खुलेगा</value>
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
-    <value>यह संयोजन दूसरा प्रोग्राम ले चुका है; कोई और आज़माएँ</value>
+    <value>यह संयोजन किसी और प्रोग्राम ने ले रखा है; कोई और आज़माएँ</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
-    <value>इस सत्र में सिंक चालू नहीं (एंडपॉइंट शुरू नहीं हो सका)</value>
+    <value>इस सत्र में समन्वयन चालू नहीं (एंडपॉइंट शुरू नहीं हो सका)</value>
   </data>
   <data name="Attention_CaptureFaulted" xml:space="preserve">
-    <value>क्लिपबोर्ड कैप्चर अवनत (पिछली पहुँच विफल)</value>
+    <value>क्लिपबोर्ड कैप्चर सीमित (पिछली पहुँच विफल)</value>
   </data>
   <data name="Attention_NoDevice" xml:space="preserve">
-    <value>सिंक शुरू करने के लिए एक डिवाइस पेयर करें</value>
+    <value>समन्वयन शुरू करने के लिए एक डिवाइस पेयर करें</value>
   </data>
   <data name="Pairing_Title" xml:space="preserve">
     <value>नया डिवाइस पेयर करें</value>
   </data>
   <data name="Pairing_PeerDownBody" xml:space="preserve">
-    <value>सामने की सेवा चालू नहीं; इस सत्र में पेयरिंग संभव नहीं।</value>
+    <value>पीयर सेवा चालू नहीं है; इस सत्र में पेयरिंग संभव नहीं।</value>
   </data>
   <data name="Pairing_ScanInstruction" xml:space="preserve">
-    <value>फ़ोन पर ClipSync से यह कोड स्कैन करें। QR कोड में इस PC का पता, प्रमाणपत्र फ़िंगरप्रिंट और एक बार का टोकन है — पेयरिंग कुंजी कभी नहीं।</value>
+    <value>अपने फ़ोन पर ClipSync से यह कोड स्कैन करें। QR कोड में इस PC का पता, प्रमाणपत्र फ़िंगरप्रिंट और एक बार का टोकन होता है — पेयरिंग कुंजी कभी नहीं।</value>
   </data>
   <data name="Pairing_CountdownFormat" xml:space="preserve">
     <value>{0:m\:ss} में नया होगा</value>
@@ -630,7 +630,7 @@
     <value>स्वीकृति से पहले फ़ोन पर मिलान करें</value>
   </data>
   <data name="Pairing_PcName" xml:space="preserve">
-    <value>कंप्यूटर का नाम</value>
+    <value>PC का नाम</value>
   </data>
   <data name="Pairing_Fingerprint" xml:space="preserve">
     <value>प्रमाणपत्र फ़िंगरप्रिंट</value>
@@ -648,7 +648,7 @@
     <value>इस डिवाइस को पेयर करने दें?</value>
   </data>
   <data name="Approval_Body" xml:space="preserve">
-    <value>किसी डिवाइस ने इस PC के QR कोड से पेयरिंग माँगी है। नीचे का नाम आपके हाथ के फ़ोन से मेल खाए तभी स्वीकृति दें।</value>
+    <value>किसी डिवाइस ने इस PC के QR कोड से पेयरिंग का अनुरोध किया है। केवल तभी स्वीकृति दें जब नीचे का नाम आपके हाथ के फ़ोन से मेल खाए।</value>
   </data>
   <data name="Approval_PlatformAndroid" xml:space="preserve">
     <value>Android डिवाइस</value>
@@ -657,10 +657,10 @@
     <value>Windows डिवाइस</value>
   </data>
   <data name="Approval_RepairWarning" xml:space="preserve">
-    <value>यह डिवाइस पहले पेयर हो चुका है। स्वीकृति उसकी मौजूदा पेयरिंग कुंजी बदल देगी और पुराना इंस्टॉल तुरंत काम करना बंद कर देगा।</value>
+    <value>यह डिवाइस पहले युग्मित था। स्वीकृति उसकी मौजूदा पेयरिंग कुंजी बदल देगी और पुराना इंस्टॉल तुरंत काम करना बंद कर देगा।</value>
   </data>
   <data name="Approval_SupersedeNotice" xml:space="preserve">
-    <value>सूची में इसी नाम का डिवाइस पहले से है। स्वीकृति पर पुराना रिकॉर्ड अपने आप निरस्त होकर उसकी भेजने की कतार खाली होगी (वही फ़ोन दोबारा पेयर माना जाएगा)।</value>
+    <value>सूची में इसी नाम का एक डिवाइस पहले से है। स्वीकृति के बाद पुराना रिकॉर्ड स्वतः निरस्त होकर उसकी प्रेषण कतार खाली होगी (उसी फ़ोन की पुनः पेयरिंग माना जाएगा)।</value>
   </data>
   <data name="Approval_Reject" xml:space="preserve">
     <value>अस्वीकारें</value>
@@ -681,7 +681,7 @@
     <value>ClipSync · निदान लॉग</value>
   </data>
   <data name="Diag_Heading" xml:space="preserve">
-    <value>स्थानीय निदान · सिर्फ़ स्थिति कोड और समय, क्लिपबोर्ड सामग्री कभी नहीं</value>
+    <value>स्थानीय निदान · केवल स्थिति कोड और समय, क्लिपबोर्ड सामग्री कभी नहीं</value>
   </data>
   <data name="Diag_CopyAll" xml:space="preserve">
     <value>सब कॉपी करें</value>

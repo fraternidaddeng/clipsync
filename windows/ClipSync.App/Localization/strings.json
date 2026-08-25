@@ -99,7 +99,7 @@
       "ar": "تصغير",
       "it": "Riduci a icona",
       "vi": "Thu nhỏ",
-      "th": "ย่อหน้าต่าง",
+      "th": "ย่อเก็บ",
       "id": "Minimalkan",
       "hi": "छोटा करें",
       "tr": "Simge durumuna küçült",
@@ -123,7 +123,7 @@
       "th": "ขยายเต็มจอหรือคืนขนาด",
       "id": "Maksimalkan atau pulihkan",
       "hi": "बड़ा करें या पुनर्स्थापित करें",
-      "tr": "Büyüt veya geri getir",
+      "tr": "Ekranı kapla veya geri yükle",
       "pl": "Maksymalizuj lub przywróć",
       "nl": "Maximaliseren of herstellen"
     },
@@ -227,9 +227,9 @@
       "vi": "Theo hệ thống",
       "th": "ตามระบบ",
       "id": "Ikuti sistem",
-      "hi": "सिस्टम के अनुसार",
+      "hi": "सिस्टम का अनुसरण",
       "tr": "Sistemi izle",
-      "pl": "Za systemem",
+      "pl": "Zgodnie z systemem",
       "nl": "Systeem volgen"
     },
     "Common_ClearHistory": {
@@ -247,8 +247,8 @@
       "it": "Svuota cronologia",
       "vi": "Xóa lịch sử",
       "th": "ล้างประวัติ",
-      "id": "Kosongkan riwayat",
-      "hi": "इतिहास साफ़ करें",
+      "id": "Bersihkan riwayat",
+      "hi": "इतिहास मिटाएँ",
       "tr": "Geçmişi temizle",
       "pl": "Wyczyść historię",
       "nl": "Geschiedenis wissen"
@@ -309,7 +309,7 @@
       "ar": "إيقاف الالتقاط مؤقتًا",
       "it": "Sospendi acquisizione",
       "vi": "Tạm dừng ghi nhận",
-      "th": "หยุดจับข้อมูลชั่วคราว",
+      "th": "หยุดเก็บชั่วคราว",
       "id": "Jeda penangkapan",
       "hi": "कैप्चर रोकें",
       "tr": "Yakalamayı duraklat",
@@ -435,12 +435,12 @@
       "ar": "مقتطفات من هذا الحاسوب والأجهزة المقترنة · التنظيف يخص هذا الجهاز فقط",
       "it": "Clip da questo PC e dai dispositivi associati · la pulizia riguarda solo questo dispositivo",
       "vi": "Mẩu sao chép từ PC này và các thiết bị đã ghép nối · việc dọn dẹp chỉ ảnh hưởng thiết bị này",
-      "th": "รายการคัดลอกจากพีซีนี้และอุปกรณ์ที่จับคู่ · การล้างมีผลกับอุปกรณ์นี้เท่านั้น",
-      "id": "Salinan dari PC ini dan perangkat terpasang · pembersihan hanya memengaruhi perangkat ini",
-      "hi": "इस PC और पेयर किए डिवाइसों की क्लिप प्रविष्टियाँ · सफ़ाई सिर्फ़ इस डिवाइस पर होती है",
-      "tr": "Bu PC’den ve eşleştirilmiş cihazlardan gelen kayıtlar · temizlik yalnızca bu cihazı etkiler",
-      "pl": "Wpisy z tego PC i sparowanych urządzeń · czyszczenie dotyczy tylko tego urządzenia",
-      "nl": "Items van deze pc en gekoppelde apparaten · opschonen raakt alleen dit apparaat"
+      "th": "รายการจากพีซีนี้และอุปกรณ์ที่จับคู่ · การล้างเกิดขึ้นเฉพาะเครื่องนี้",
+      "id": "Klip dari PC ini dan perangkat yang dipasangkan · pembersihan hanya memengaruhi perangkat ini",
+      "hi": "इस PC और युग्मित डिवाइसों की क्लिप प्रविष्टियाँ · सफ़ाई केवल इसी डिवाइस पर होती है",
+      "tr": "Bu bilgisayardan ve eşleştirilmiş cihazlardan kayıtlar · temizlik yalnızca bu cihazı etkiler",
+      "pl": "Wpisy z tego komputera i sparowanych urządzeń · czyszczenie dotyczy tylko tego urządzenia",
+      "nl": "Clips van deze pc en gekoppelde apparaten · opschonen geldt alleen voor dit apparaat"
     },
     "History_Search": {
       "zh-Hans": "搜索",
@@ -502,7 +502,7 @@
       "id": "Tautan",
       "hi": "लिंक",
       "tr": "Bağlantı",
-      "pl": "Łącze",
+      "pl": "Link",
       "nl": "Link"
     },
     "Filter_Otp": {
@@ -584,7 +584,7 @@
       "vi": "Văn bản",
       "th": "ข้อความ",
       "id": "Teks",
-      "hi": "टेक्स्ट",
+      "hi": "पाठ",
       "tr": "Metin",
       "pl": "Tekst",
       "nl": "Tekst"
@@ -603,7 +603,7 @@
       "ar": "صورة",
       "it": "Immagine",
       "vi": "Hình ảnh",
-      "th": "รูปภาพ",
+      "th": "รูป",
       "id": "Gambar",
       "hi": "चित्र",
       "tr": "Görsel",
@@ -625,7 +625,7 @@
       "it": "Nessuna anteprima",
       "vi": "Không có xem trước",
       "th": "ไม่มีตัวอย่าง",
-      "id": "Tanpa pratinjau",
+      "id": "Tidak ada pratinjau",
       "hi": "कोई पूर्वावलोकन नहीं",
       "tr": "Önizleme yok",
       "pl": "Brak podglądu",
@@ -645,9 +645,9 @@
       "ar": "محفوظ على هذا الجهاز فقط",
       "it": "Solo su questo dispositivo",
       "vi": "Chỉ giữ trên thiết bị này",
-      "th": "เก็บบนอุปกรณ์นี้เท่านั้น",
-      "id": "Hanya disimpan di perangkat ini",
-      "hi": "सिर्फ़ इस डिवाइस पर",
+      "th": "เก็บไว้เฉพาะเครื่องนี้",
+      "id": "Hanya di perangkat ini",
+      "hi": "केवल इसी डिवाइस पर",
       "tr": "Yalnızca bu cihazda",
       "pl": "Tylko na tym urządzeniu",
       "nl": "Alleen op dit apparaat"
@@ -667,10 +667,10 @@
       "it": "Prima collega le due estremità",
       "vi": "Trước hết, hãy nối hai đầu",
       "th": "เชื่อมสองฝั่งเข้าด้วยกันก่อน",
-      "id": "Pertama, sambungkan kedua ujung",
+      "id": "Hubungkan dulu kedua ujung",
       "hi": "पहले दोनों सिरों को जोड़ें",
       "tr": "Önce iki ucu birbirine bağla",
-      "pl": "Najpierw połącz oba końce",
+      "pl": "Najpierw połącz obie strony",
       "nl": "Verbind eerst beide kanten"
     },
     "History_Empty_Paired_Title": {
@@ -688,11 +688,11 @@
       "it": "In attesa della prima clip",
       "vi": "Đang chờ mẩu đầu tiên",
       "th": "รอรายการแรก",
-      "id": "Menanti salinan pertama",
+      "id": "Menunggu klip pertama",
       "hi": "पहली क्लिप की प्रतीक्षा",
-      "tr": "İlk kaydı bekliyoruz",
-      "pl": "Czekamy na pierwszy wpis",
-      "nl": "Wachten op het eerste item"
+      "tr": "İlk kayıt bekleniyor",
+      "pl": "Oczekiwanie na pierwszy wpis",
+      "nl": "Wacht op de eerste clip"
     },
     "History_Empty_Unpaired_Body": {
       "zh-Hans": "尚未与手机配对。配对入口在「通路」页的网络段。",
@@ -708,12 +708,12 @@
       "ar": "لم يُقترن بعد بهاتف. مدخل الاقتران في قسم الشبكة بصفحة «القناة».",
       "it": "Non ancora associato a un telefono. L’ingresso per l’associazione è nel segmento rete della pagina «Condotto».",
       "vi": "Chưa ghép nối với điện thoại. Lối vào ghép nối nằm ở đoạn mạng của trang “Đường dẫn”.",
-      "th": "ยังไม่ได้จับคู่กับโทรศัพท์ ทางเข้าการจับคู่อยู่ที่ช่วงเครือข่ายในหน้า “เส้นทาง”",
-      "id": "Belum dipasangkan dengan ponsel. Pintu masuk pemasangan ada di segmen jaringan halaman “Saluran”.",
-      "hi": "अभी फ़ोन से पेयर नहीं हुआ। पेयरिंग का प्रवेश “मार्ग” पृष्ठ के नेटवर्क खंड में है।",
-      "tr": "Henüz bir telefonla eşleştirilmedi. Eşleştirme girişi “Kanal” sayfasının ağ bölümünde.",
-      "pl": "Nie sparowano jeszcze z telefonem. Wejście do parowania jest w segmencie sieci na stronie „Kanał”.",
-      "nl": "Nog niet gekoppeld met een telefoon. De ingang voor koppelen zit in het netwerksegment van de pagina “Kanaal”."
+      "th": "ยังไม่ได้จับคู่กับโทรศัพท์ ทางเข้าการจับคู่อยู่ที่ส่วนเครือข่ายของหน้า «เส้นทาง»",
+      "id": "Belum dipasangkan dengan ponsel. Pintu pemasangan ada di segmen jaringan pada halaman Saluran.",
+      "hi": "अभी किसी फ़ोन से युग्मित नहीं। पेयरिंग का प्रवेश «मार्ग» पृष्ठ के नेटवर्क खंड में है।",
+      "tr": "Henüz bir telefonla eşleştirilmedi. Eşleştirme girişi, Kanal sayfasının ağ bölümündedir.",
+      "pl": "Nie sparowano jeszcze z telefonem. Wejście do parowania znajduje się w segmencie sieci na stronie Kanał.",
+      "nl": "Nog niet gekoppeld met een telefoon. De koppelingsingang zit in het netwerksegment van de Kanaal-pagina."
     },
     "History_Empty_Paired_Body": {
       "zh-Hans": "在任意一端复制文本，它会出现在这里并流向对面。",
@@ -729,12 +729,12 @@
       "ar": "انسخ نصًا على أي من الجهازين — سيظهر هنا ويتدفق إلى الطرف الآخر.",
       "it": "Copia del testo su uno dei due dispositivi: apparirà qui e fluirà verso l’altro lato.",
       "vi": "Sao chép văn bản trên bất kỳ thiết bị nào — nó sẽ xuất hiện ở đây và chảy sang phía bên kia.",
-      "th": "คัดลอกข้อความบนอุปกรณ์ใดก็ได้ — มันจะปรากฏที่นี่และไหลไปอีกฝั่ง",
-      "id": "Salin teks di perangkat mana pun — ia muncul di sini dan mengalir ke sisi seberang.",
-      "hi": "किसी भी डिवाइस पर टेक्स्ट कॉपी करें — वह यहाँ दिखेगा और दूसरी ओर बह जाएगा।",
+      "th": "คัดลอกข้อความบนอุปกรณ์ฝั่งไหนก็ได้ — มันจะปรากฏที่นี่และไหลไปอีกฝั่ง",
+      "id": "Salin teks di perangkat mana pun — teks itu muncul di sini dan mengalir ke sisi seberang.",
+      "hi": "किसी भी डिवाइस पर पाठ कॉपी करें — वह यहाँ दिखेगा और दूसरी ओर बह जाएगा।",
       "tr": "Herhangi bir cihazda metin kopyala — burada görünür ve karşı tarafa akar.",
       "pl": "Skopiuj tekst na dowolnym urządzeniu — pojawi się tutaj i popłynie na drugą stronę.",
-      "nl": "Kopieer tekst op een van beide apparaten — het verschijnt hier en stroomt naar de andere kant."
+      "nl": "Kopieer tekst op een van beide apparaten — die verschijnt hier en stroomt naar de andere kant."
     },
     "History_Empty_GoPair": {
       "zh-Hans": "去配对 ›",
@@ -750,9 +750,9 @@
       "ar": "اقترن الآن ‹",
       "it": "Associa ora ›",
       "vi": "Ghép nối ngay ›",
-      "th": "ไปจับคู่ ›",
+      "th": "จับคู่เลย ›",
       "id": "Pasangkan sekarang ›",
-      "hi": "पेयर करें ›",
+      "hi": "अभी पेयर करें ›",
       "tr": "Şimdi eşleştir ›",
       "pl": "Sparuj teraz ›",
       "nl": "Nu koppelen ›"
@@ -776,7 +776,7 @@
       "hi": "“",
       "tr": "“",
       "pl": "Brak wpisów pasujących do „",
-      "nl": "Geen items die overeenkomen met “"
+      "nl": "Geen items komen overeen met “"
     },
     "History_NoMatch_Suffix": {
       "zh-Hans": "」的记录",
@@ -814,8 +814,8 @@
       "it": "Nessuna voce di questo tipo · prova un altro filtro",
       "vi": "Chưa có mục thuộc dạng này · thử bộ lọc khác",
       "th": "ยังไม่มีรายการประเภทนี้ · ลองตัวกรองอื่น",
-      "id": "Belum ada entri jenis ini · coba filter lain",
-      "hi": "इस प्रकार की कोई प्रविष्टि नहीं · दूसरा फ़िल्टर आज़माएँ",
+      "id": "Tidak ada entri jenis ini · coba filter lain",
+      "hi": "इस प्रकार की कोई प्रविष्टि नहीं · कोई और फ़िल्टर आज़माएँ",
       "tr": "Bu türde kayıt yok · başka bir filtre dene",
       "pl": "Brak wpisów tego typu · spróbuj innego filtra",
       "nl": "Geen items van dit type · probeer een ander filter"
@@ -897,8 +897,8 @@
       "ar": "مصدر مجهول",
       "it": "Origine sconosciuta",
       "vi": "Nguồn không rõ",
-      "th": "ไม่ทราบแหล่งที่มา",
-      "id": "Sumber tidak dikenal",
+      "th": "ไม่ทราบที่มา",
+      "id": "Sumber tak dikenal",
       "hi": "अज्ञात स्रोत",
       "tr": "Bilinmeyen kaynak",
       "pl": "Nieznane źródło",
@@ -921,8 +921,8 @@
       "th": "พีซีนี้",
       "id": "PC ini",
       "hi": "यह PC",
-      "tr": "Bu PC",
-      "pl": "Ten PC",
+      "tr": "Bu bilgisayar",
+      "pl": "Ten komputer",
       "nl": "Deze pc"
     },
     "Conduit_Title": {
@@ -960,12 +960,12 @@
       "ar": "يمر المحتوى عبر أربعة أقسام بالتسلسل · ترتيب القراءة هو ترتيب استكشاف الأخطاء",
       "it": "Il contenuto scorre da sinistra a destra attraverso quattro segmenti · l’ordine di lettura è l’ordine di diagnosi",
       "vi": "Nội dung chảy từ trái sang phải qua bốn đoạn · thứ tự đọc chính là thứ tự chẩn đoán",
-      "th": "เนื้อหาไหลจากซ้ายไปขวาผ่านสี่ช่วง · ลำดับการอ่านคือลำดับการไล่ปัญหา",
-      "id": "Konten mengalir dari kiri ke kanan melewati empat segmen · urutan membaca adalah urutan menelusuri masalah",
-      "hi": "सामग्री बाएँ से दाएँ चार खंडों से गुज़रती है · पढ़ने का क्रम ही समस्या-समाधान का क्रम है",
-      "tr": "İçerik soldan sağa dört bölümden geçer · okuma sırası, sorun giderme sırasıdır",
+      "th": "เนื้อหาไหลจากซ้ายไปขวาผ่านสี่ช่วง · ลำดับการอ่านคือลำดับการแก้ปัญหา",
+      "id": "Konten mengalir dari kiri ke kanan melewati empat segmen · urutan membaca adalah urutan pemecahan masalah",
+      "hi": "सामग्री बाएँ से दाएँ चार खंडों से बहती है · पढ़ने का क्रम ही समस्या-समाधान का क्रम है",
+      "tr": "İçerik soldan sağa dört bölümden akar · okuma sırası sorun giderme sırasıdır",
       "pl": "Treść płynie od lewej do prawej przez cztery segmenty · kolejność czytania to kolejność diagnozowania",
-      "nl": "Inhoud stroomt van links naar rechts door vier segmenten · de leesvolgorde is de probleemoplosvolgorde"
+      "nl": "Inhoud stroomt van links naar rechts door vier segmenten · leesvolgorde is probleemoplosvolgorde"
     },
     "Conduit_Capture_Name": {
       "zh-Hans": "本机捕获",
@@ -981,7 +981,7 @@
       "ar": "الالتقاط المحلي",
       "it": "Acquisizione locale",
       "vi": "Ghi nhận cục bộ",
-      "th": "การจับข้อมูลในเครื่อง",
+      "th": "การเก็บในเครื่อง",
       "id": "Penangkapan lokal",
       "hi": "स्थानीय कैप्चर",
       "tr": "Yerel yakalama",
@@ -1006,7 +1006,7 @@
       "id": "Siap · memantau Ctrl+C",
       "hi": "तैयार · Ctrl+C सुन रहा है",
       "tr": "Hazır · Ctrl+C dinleniyor",
-      "pl": "Gotowe · nasłuch Ctrl+C",
+      "pl": "Gotowe · nasłuchuje Ctrl+C",
       "nl": "Gereed · luistert naar Ctrl+C"
     },
     "Conduit_Status_Paused": {
@@ -1024,11 +1024,11 @@
       "it": "In pausa · nessuna registrazione",
       "vi": "Đã tạm dừng · không ghi nữa",
       "th": "หยุดชั่วคราว · ไม่บันทึกแล้ว",
-      "id": "Dijeda · tidak merekam",
-      "hi": "रुका हुआ · रिकॉर्ड नहीं हो रहा",
+      "id": "Dijeda · tidak lagi merekam",
+      "hi": "रोका गया · अब रिकॉर्ड नहीं हो रहा",
       "tr": "Duraklatıldı · kayıt yapılmıyor",
-      "pl": "Wstrzymano · brak nagrywania",
-      "nl": "Gepauzeerd · er wordt niets vastgelegd"
+      "pl": "Wstrzymano · nie rejestruje",
+      "nl": "Gepauzeerd · registreert niet meer"
     },
     "Conduit_Status_Private": {
       "zh-Hans": "私密模式 · 不留痕迹",
@@ -1046,9 +1046,9 @@
       "vi": "Chế độ riêng tư · không để lại dấu vết",
       "th": "โหมดส่วนตัว · ไม่ทิ้งร่องรอย",
       "id": "Mode privat · tanpa jejak",
-      "hi": "निजी मोड · कोई निशान नहीं",
+      "hi": "निजी मोड · कोई निशान नहीं छोड़ता",
       "tr": "Özel mod · iz bırakmaz",
-      "pl": "Tryb prywatny · bez śladów",
+      "pl": "Tryb prywatny · nie zostawia śladów",
       "nl": "Privémodus · laat geen sporen na"
     },
     "Conduit_Status_CaptureFaulted": {
@@ -1065,12 +1065,12 @@
       "ar": "الالتقاط متدهور · تعذّر الوصول إلى الحافظة",
       "it": "Acquisizione degradata · accesso agli appunti non riuscito",
       "vi": "Ghi nhận suy giảm · truy cập bảng nhớ tạm thất bại",
-      "th": "การจับข้อมูลถดถอย · เข้าถึงคลิปบอร์ดไม่ได้",
+      "th": "การเก็บถดถอย · เข้าถึงคลิปบอร์ดไม่สำเร็จ",
       "id": "Penangkapan menurun · akses papan klip gagal",
-      "hi": "कैप्चर अवनत · क्लिपबोर्ड तक पहुँच विफल",
-      "tr": "Yakalama bozuldu · panoya erişilemedi",
-      "pl": "Przechwytywanie osłabione · dostęp do schowka nie powiódł się",
-      "nl": "Vastleggen verzwakt · toegang tot klembord mislukt"
+      "hi": "कैप्चर सीमित · क्लिपबोर्ड तक पहुँच विफल",
+      "tr": "Yakalama kısıtlı · panoya erişim başarısız",
+      "pl": "Przechwytywanie ograniczone · dostęp do schowka nie powiódł się",
+      "nl": "Vastleggen verminderd · klembordtoegang mislukt"
     },
     "Conduit_Capture_Detail": {
       "zh-Hans": "私密模式与屏蔽进程在这一段拦下内容。",
@@ -1088,10 +1088,10 @@
       "vi": "Chế độ riêng tư và các tiến trình bị chặn giữ nội dung lại ở đoạn này.",
       "th": "โหมดส่วนตัวและโปรเซสที่ถูกบล็อกจะหยุดเนื้อหาไว้ที่ช่วงนี้",
       "id": "Mode privat dan proses yang diblokir menghentikan konten di segmen ini.",
-      "hi": "निजी मोड और अवरुद्ध प्रोसेस सामग्री को इसी खंड पर रोक देते हैं।",
-      "tr": "Özel mod ve engellenen işlemler içeriği bu bölümde durdurur.",
-      "pl": "Tryb prywatny i zablokowane procesy zatrzymują treść na tym segmencie.",
-      "nl": "Privémodus en geblokkeerde processen houden inhoud bij dit segment tegen."
+      "hi": "निजी मोड और अवरुद्ध प्रक्रियाएँ सामग्री को इसी खंड में रोक देती हैं।",
+      "tr": "Özel mod ve engellenen süreçler içeriği bu bölümde durdurur.",
+      "pl": "Tryb prywatny i zablokowane procesy zatrzymują treść w tym segmencie.",
+      "nl": "Privémodus en geblokkeerde processen houden inhoud in dit segment tegen."
     },
     "Conduit_Service_Name": {
       "zh-Hans": "本机服务",
@@ -1150,11 +1150,11 @@
       "it": " · in uscita ",
       "vi": " · chờ gửi ",
       "th": " · รอส่ง ",
-      "id": " · menunggu kirim ",
+      "id": " · antrean kirim ",
       "hi": " · भेजने हेतु ",
-      "tr": " · giden ",
+      "tr": " · giden kutusu ",
       "pl": " · do wysłania ",
-      "nl": " · te versturen "
+      "nl": " · wachtrij "
     },
     "Conduit_Service_DetailPrefix": {
       "zh-Hans": "事件先落库再入发件队列 · ",
@@ -1170,12 +1170,12 @@
       "ar": "تُحفظ الأحداث في المخزن قبل قائمة الإرسال · ",
       "it": "Gli eventi arrivano nell’archivio prima della coda di invio · ",
       "vi": "Sự kiện vào kho trước rồi mới vào hàng đợi gửi · ",
-      "th": "เหตุการณ์ลงคลังก่อนแล้วจึงเข้าคิวส่ง · ",
-      "id": "Peristiwa masuk penyimpanan dulu sebelum antrean kirim · ",
-      "hi": "घटनाएँ पहले भंडार में, फिर भेजने की कतार में जाती हैं · ",
-      "tr": "Olaylar önce depoya, sonra gönderim kuyruğuna girer · ",
-      "pl": "Zdarzenia trafiają najpierw do magazynu, potem do kolejki wysyłki · ",
-      "nl": "Gebeurtenissen belanden eerst in de opslag en dan in de verzendwachtrij · "
+      "th": "เหตุการณ์ลงฐานข้อมูลก่อนแล้วจึงเข้าคิวส่ง · ",
+      "id": "Peristiwa masuk ke penyimpanan dulu, lalu ke antrean kirim · ",
+      "hi": "घटनाएँ पहले भंडार में, फिर प्रेषण कतार में जाती हैं · ",
+      "tr": "Olaylar önce depoya, sonra giden kuyruğuna düşer · ",
+      "pl": "Zdarzenia trafiają najpierw do magazynu, potem do kolejki wysyłkowej · ",
+      "nl": "Gebeurtenissen landen eerst in de opslag en dan in de wachtrij · "
     },
     "Conduit_Network_Name": {
       "zh-Hans": "网络",
@@ -1213,7 +1213,7 @@
       "it": "Pronto · in ascolto su :",
       "vi": "Sẵn sàng · lắng nghe trên :",
       "th": "พร้อม · เฝ้าฟังที่ :",
-      "id": "Siap · memantau di :",
+      "id": "Siap · memantau :",
       "hi": "तैयार · सुन रहा है :",
       "tr": "Hazır · dinleniyor :",
       "pl": "Gotowe · nasłuch na :",
@@ -1258,8 +1258,8 @@
       "id": " perangkat",
       "hi": " डिवाइस",
       "tr": " cihaz",
-      "pl": " urządz.",
-      "nl": " apparaat/apparaten"
+      "pl": " urządzenie(a)",
+      "nl": " apparaat(en)"
     },
     "Conduit_Network_Down": {
       "zh-Hans": "未启动 · 同步关闭",
@@ -1275,9 +1275,9 @@
       "ar": "غير مشغّل · المزامنة متوقفة",
       "it": "Non attivo · sincronizzazione spenta",
       "vi": "Chưa chạy · đồng bộ tắt",
-      "th": "ยังไม่เริ่ม · ปิดการซิงค์",
+      "th": "ยังไม่ทำงาน · การซิงค์ปิดอยู่",
       "id": "Tidak berjalan · sinkronisasi mati",
-      "hi": "चालू नहीं · सिंक बंद",
+      "hi": "चालू नहीं · समन्वयन बंद",
       "tr": "Çalışmıyor · eşitleme kapalı",
       "pl": "Nie działa · synchronizacja wyłączona",
       "nl": "Niet actief · synchronisatie uit"
@@ -1296,12 +1296,12 @@
       "ar": "كتابة الطرف الآخر",
       "it": "Scrittura sul peer",
       "vi": "Ghi ở phía đối diện",
-      "th": "การเขียนฝั่งตรงข้าม",
-      "id": "Penulisan di seberang",
-      "hi": "सामने की ओर लेखन",
-      "tr": "Karşı tarafa yazma",
+      "th": "การเขียนฝั่งโน้น",
+      "id": "Tulis pihak seberang",
+      "hi": "दूसरे छोर का लेखन",
+      "tr": "Karşı taraf yazma",
       "pl": "Zapis po drugiej stronie",
-      "nl": "Schrijven aan de overkant"
+      "nl": "Schrijven op peer"
     },
     "Conduit_Peer_PairedPrefix": {
       "zh-Hans": "已配对 ",
@@ -1318,9 +1318,9 @@
       "it": "Associati ",
       "vi": "Đã ghép nối ",
       "th": "จับคู่แล้ว ",
-      "id": "Terpasang ",
-      "hi": "पेयर किए ",
-      "tr": "Eşleştirildi ",
+      "id": "Dipasangkan ",
+      "hi": "युग्मित ",
+      "tr": "Eşleştirilmiş ",
       "pl": "Sparowano ",
       "nl": "Gekoppeld "
     },
@@ -1342,8 +1342,8 @@
       "id": " perangkat",
       "hi": " डिवाइस",
       "tr": " cihaz",
-      "pl": " urządz.",
-      "nl": " apparaat/apparaten"
+      "pl": " urządzenie(a)",
+      "nl": " apparaat(en)"
     },
     "Conduit_Peer_AutoApplyOn": {
       "zh-Hans": "远端文本自动写入本机剪贴板。",
@@ -1360,10 +1360,10 @@
       "it": "Il testo remoto viene scritto automaticamente negli appunti di questo PC.",
       "vi": "Văn bản từ xa được tự động ghi vào bảng nhớ tạm của PC này.",
       "th": "ข้อความจากระยะไกลถูกเขียนลงคลิปบอร์ดของพีซีนี้โดยอัตโนมัติ",
-      "id": "Teks jarak jauh ditulis otomatis ke papan klip PC ini.",
-      "hi": "दूरस्थ टेक्स्ट अपने आप इस PC के क्लिपबोर्ड में लिखा जाता है।",
-      "tr": "Uzak metin bu PC’nin panosuna otomatik yazılır.",
-      "pl": "Zdalny tekst jest automatycznie zapisywany w schowku tego PC.",
+      "id": "Teks dari jauh otomatis ditulis ke papan klip PC ini.",
+      "hi": "दूरस्थ पाठ इस PC के क्लिपबोर्ड में स्वतः लिखा जाता है।",
+      "tr": "Uzak metin bu bilgisayarın panosuna otomatik yazılır.",
+      "pl": "Zdalny tekst jest automatycznie zapisywany do schowka tego komputera.",
       "nl": "Externe tekst wordt automatisch naar het klembord van deze pc geschreven."
     },
     "Conduit_Peer_AutoApplyOff": {
@@ -1380,12 +1380,12 @@
       "ar": "التطبيق التلقائي متوقف: يبقى المحتوى البعيد في السجل فقط ويحتاج نسخًا يدويًا.",
       "it": "L’applicazione automatica è disattivata: il contenuto remoto resta solo nella cronologia e va copiato a mano.",
       "vi": "Tự động áp dụng đã tắt: nội dung từ xa chỉ nằm trong lịch sử, cần sao chép thủ công.",
-      "th": "ปิดการนำไปใช้อัตโนมัติ: เนื้อหาระยะไกลอยู่ในประวัติเท่านั้น ต้องคัดลอกเอง",
-      "id": "Terapkan otomatis mati: konten jarak jauh hanya tinggal di riwayat dan perlu disalin manual.",
-      "hi": "स्वतः लागू बंद है: दूरस्थ सामग्री सिर्फ़ इतिहास में रहती है, हाथ से कॉपी करनी होगी।",
-      "tr": "Otomatik uygulama kapalı: uzak içerik yalnızca geçmişte kalır, elle kopyalamak gerekir.",
-      "pl": "Automatyczne stosowanie wyłączone: zdalna treść zostaje tylko w historii i wymaga ręcznego kopiowania.",
-      "nl": "Automatisch toepassen staat uit: externe inhoud blijft alleen in de geschiedenis en moet handmatig gekopieerd worden."
+      "th": "ปิดการใช้อัตโนมัติอยู่: เนื้อหาจากระยะไกลอยู่แค่ในประวัติ ต้องคัดลอกเอง",
+      "id": "Terapkan otomatis mati: konten dari jauh hanya tinggal di riwayat dan perlu disalin manual.",
+      "hi": "स्वतः लागू करना बंद है: दूरस्थ सामग्री केवल इतिहास में रहती है और उसे हाथ से कॉपी करना पड़ता है।",
+      "tr": "Otomatik uygulama kapalı: uzak içerik yalnızca geçmişte kalır ve elle kopyalanması gerekir.",
+      "pl": "Automatyczne stosowanie jest wyłączone: zdalna treść zostaje tylko w historii i wymaga ręcznego skopiowania.",
+      "nl": "Automatisch toepassen staat uit: externe inhoud blijft alleen in de geschiedenis en moet handmatig worden gekopieerd."
     },
     "Conduit_Devices_Header": {
       "zh-Hans": "网络段 · 已配对设备",
@@ -1401,9 +1401,9 @@
       "ar": "قسم الشبكة · الأجهزة المقترنة",
       "it": "Segmento rete · dispositivi associati",
       "vi": "Đoạn mạng · thiết bị đã ghép nối",
-      "th": "ช่วงเครือข่าย · อุปกรณ์ที่จับคู่",
-      "id": "Segmen jaringan · perangkat terpasang",
-      "hi": "नेटवर्क खंड · पेयर किए डिवाइस",
+      "th": "ส่วนเครือข่าย · อุปกรณ์ที่จับคู่",
+      "id": "Segmen jaringan · perangkat yang dipasangkan",
+      "hi": "नेटवर्क खंड · युग्मित डिवाइस",
       "tr": "Ağ bölümü · eşleştirilmiş cihazlar",
       "pl": "Segment sieci · sparowane urządzenia",
       "nl": "Netwerksegment · gekoppelde apparaten"
@@ -1422,7 +1422,7 @@
       "ar": "قسم الشبكة · الاتصال",
       "it": "Segmento rete · connessione",
       "vi": "Đoạn mạng · kết nối",
-      "th": "ช่วงเครือข่าย · การเชื่อมต่อ",
+      "th": "ส่วนเครือข่าย · การเชื่อมต่อ",
       "id": "Segmen jaringan · koneksi",
       "hi": "नेटवर्क खंड · कनेक्शन",
       "tr": "Ağ bölümü · bağlantı",
@@ -1443,11 +1443,11 @@
       "ar": "تنظيف",
       "it": "Pulisci",
       "vi": "Dọn dẹp",
-      "th": "ล้างทันที",
+      "th": "ล้างทิ้ง",
       "id": "Bersihkan",
-      "hi": "साफ़ करें",
+      "hi": "सफ़ाई करें",
       "tr": "Temizle",
-      "pl": "Wyczyść",
+      "pl": "Uporządkuj",
       "nl": "Opschonen"
     },
     "Conduit_Bluetooth_Title": {
@@ -1464,12 +1464,12 @@
       "ar": "احتياطي البلوتوث",
       "it": "Riserva Bluetooth",
       "vi": "Dự phòng Bluetooth",
-      "th": "บลูทูธสำรอง",
+      "th": "ช่องสำรองบลูทูธ",
       "id": "Cadangan Bluetooth",
-      "hi": "ब्लूटूथ बैकअप",
+      "hi": "ब्लूटूथ फ़ॉलबैक",
       "tr": "Bluetooth yedeği",
-      "pl": "Rezerwa Bluetooth",
-      "nl": "Bluetooth-reserve"
+      "pl": "Zapasowy Bluetooth",
+      "nl": "Bluetooth-terugval"
     },
     "Conduit_Bluetooth_Desc": {
       "zh-Hans": "默认关闭。LAN 被 VPN 或防火墙阻断时，已在系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。",
@@ -1485,12 +1485,12 @@
       "ar": "متوقف افتراضيًا. عندما تُحجب الشبكة المحلية بواسطة VPN أو جدار حماية، يواصل الهاتف المقترن مسبقًا عبر البلوتوث في إعدادات النظام مزامنة النص (بلا صور، وأبطأ).",
       "it": "Disattivata per impostazione predefinita. Quando la LAN è bloccata da VPN o firewall, un telefono già associato via Bluetooth nelle impostazioni di sistema continua a sincronizzare il testo (niente immagini, più lento).",
       "vi": "Mặc định tắt. Khi LAN bị VPN hoặc tường lửa chặn, điện thoại đã ghép nối Bluetooth trong cài đặt hệ thống vẫn tiếp tục đồng bộ văn bản (không có hình ảnh, chậm hơn).",
-      "th": "ปิดโดยค่าเริ่มต้น เมื่อ LAN ถูกบล็อกโดย VPN หรือไฟร์วอลล์ โทรศัพท์ที่จับคู่บลูทูธไว้แล้วในการตั้งค่าระบบจะยังซิงค์ข้อความต่อได้ (ไม่มีรูปภาพ และช้ากว่า)",
-      "id": "Mati secara bawaan. Saat LAN diblokir VPN atau firewall, ponsel yang sudah dipasangkan lewat Bluetooth di pengaturan sistem tetap menyinkronkan teks (tanpa gambar, lebih lambat).",
-      "hi": "डिफ़ॉल्ट रूप से बंद। जब VPN या फ़ायरवॉल LAN रोक दे, तो सिस्टम सेटिंग्स में पहले से ब्लूटूथ-पेयर किया फ़ोन टेक्स्ट सिंक जारी रखता है (चित्र नहीं, धीमा)।",
-      "tr": "Varsayılan olarak kapalı. LAN bir VPN veya güvenlik duvarınca engellendiğinde, sistem ayarlarında zaten Bluetooth ile eşleştirilmiş telefon metni eşitlemeye devam eder (görsel yok, daha yavaş).",
-      "pl": "Domyślnie wyłączona. Gdy VPN lub zapora blokuje LAN, telefon już sparowany przez Bluetooth w ustawieniach systemu nadal synchronizuje tekst (bez obrazów, wolniej).",
-      "nl": "Standaard uit. Als het LAN door een VPN of firewall wordt geblokkeerd, blijft een telefoon die in de systeeminstellingen al via Bluetooth is gekoppeld tekst synchroniseren (geen afbeeldingen, langzamer)."
+      "th": "ปิดเป็นค่าเริ่มต้น เมื่อ LAN ถูก VPN หรือไฟร์วอลล์ขวาง โทรศัพท์ที่จับคู่บลูทูธในการตั้งค่าระบบไว้แล้วจะซิงค์ข้อความต่อได้ (ไม่มีรูป ช้ากว่า)",
+      "id": "Mati secara bawaan. Saat LAN diblokir VPN atau firewall, ponsel yang sudah dipasangkan Bluetooth di pengaturan sistem tetap menyinkronkan teks (tanpa gambar, lebih lambat).",
+      "hi": "डिफ़ॉल्ट रूप से बंद। जब LAN को VPN या फ़ायरवॉल रोक दे, तो सिस्टम सेटिंग्स में पहले से ब्लूटूथ-युग्मित फ़ोन पाठ का समन्वयन जारी रखता है (चित्र नहीं, धीमा)।",
+      "tr": "Varsayılan olarak kapalı. LAN bir VPN veya güvenlik duvarı tarafından engellendiğinde, sistem ayarlarında zaten Bluetooth ile eşleştirilmiş bir telefon metni eşitlemeye devam eder (görsel yok, daha yavaş).",
+      "pl": "Domyślnie wyłączone. Gdy sieć LAN jest blokowana przez VPN lub zaporę, telefon sparowany już przez Bluetooth w ustawieniach systemu nadal synchronizuje tekst (bez obrazów, wolniej).",
+      "nl": "Standaard uit. Wanneer het LAN wordt geblokkeerd door een VPN of firewall, blijft een telefoon die al via Bluetooth in de systeeminstellingen is gekoppeld tekst synchroniseren (geen afbeeldingen, langzamer)."
     },
     "Conduit_ExtraBind_Title": {
       "zh-Hans": "额外监听地址",
@@ -1527,11 +1527,11 @@
       "ar": "لعناوين المحولات الافتراضية مثل Tailscale / WireGuard. لا يوجد ممر عام.",
       "it": "Per indirizzi di schede virtuali come Tailscale / WireGuard. Nessun relay pubblico.",
       "vi": "Dành cho địa chỉ bộ điều hợp ảo như Tailscale / WireGuard. Không cung cấp trung chuyển công cộng.",
-      "th": "สำหรับที่อยู่อะแดปเตอร์เสมือนอย่าง Tailscale / WireGuard ไม่มีรีเลย์สาธารณะให้",
+      "th": "สำหรับที่อยู่ของอะแดปเตอร์เสมือนอย่าง Tailscale / WireGuard ไม่มีรีเลย์สาธารณะให้",
       "id": "Untuk alamat adaptor virtual seperti Tailscale / WireGuard. Tidak ada relai publik.",
-      "hi": "Tailscale / WireGuard जैसे वर्चुअल एडैप्टर पतों के लिए। कोई सार्वजनिक रिले नहीं दिया जाता।",
-      "tr": "Tailscale / WireGuard gibi sanal bağdaştırıcı adresleri için. Genel aktarıcı sağlanmaz.",
-      "pl": "Dla adresów wirtualnych kart, np. Tailscale / WireGuard. Nie ma publicznego przekaźnika.",
+      "hi": "Tailscale / WireGuard जैसे वर्चुअल एडेप्टर पतों के लिए। कोई सार्वजनिक रिले नहीं दिया जाता।",
+      "tr": "Tailscale / WireGuard gibi sanal bağdaştırıcı adresleri için. Genel aktarma sunucusu sağlanmaz.",
+      "pl": "Dla adresów kart wirtualnych, np. Tailscale / WireGuard. Nie ma publicznego przekaźnika.",
       "nl": "Voor virtuele-adapteradressen zoals Tailscale / WireGuard. Er is geen publieke relay."
     },
     "Conduit_ExtraBind_RestartNote": {
@@ -1551,7 +1551,7 @@
       "th": "มีผลหลังรีสตาร์ต",
       "id": "Berlaku setelah mulai ulang",
       "hi": "पुनरारंभ के बाद लागू",
-      "tr": "Yeniden başlatınca geçerli",
+      "tr": "Yeniden başlatınca geçerli olur",
       "pl": "Działa po ponownym uruchomieniu",
       "nl": "Geldt na herstart"
     },
@@ -1571,10 +1571,10 @@
       "vi": " · nhiều địa chỉ cách nhau bằng dấu phẩy",
       "th": " · คั่นหลายที่อยู่ด้วยจุลภาค",
       "id": " · pisahkan beberapa alamat dengan koma",
-      "hi": " · कई पते अल्पविराम से अलग करें",
+      "hi": " · कई पतों को अल्पविराम से अलग करें",
       "tr": " · birden çok adresi virgülle ayır",
-      "pl": " · kilka adresów rozdziel przecinkami",
-      "nl": " · meerdere adressen scheiden met komma’s"
+      "pl": " · oddziel kolejne adresy przecinkami",
+      "nl": " · scheid meerdere adressen met komma’s"
     },
     "Conduit_Fingerprint_Title": {
       "zh-Hans": "本机证书指纹",
@@ -1592,9 +1592,9 @@
       "vi": "Dấu vân tay chứng chỉ của PC này",
       "th": "ลายนิ้วมือใบรับรองของพีซีนี้",
       "id": "Sidik jari sertifikat PC ini",
-      "hi": "इस PC का प्रमाणपत्र फ़िंगरप्रिंट",
-      "tr": "Bu PC’nin sertifika parmak izi",
-      "pl": "Odcisk certyfikatu tego PC",
+      "hi": "इस PC के प्रमाणपत्र का फ़िंगरप्रिंट",
+      "tr": "Bu bilgisayarın sertifika parmak izi",
+      "pl": "Odcisk certyfikatu tego komputera",
       "nl": "Certificaatvingerafdruk van deze pc"
     },
     "Conduit_Fingerprint_Desc": {
@@ -1611,12 +1611,12 @@
       "ar": "عند الاقتران، قارنها مجموعةً بمجموعة مع البصمة المعروضة على الهاتف. تغيّر البصمة يجعل كل الأجهزة المقترنة تطلب إعادة التأكيد.",
       "it": "Durante l’associazione confrontala gruppo per gruppo con l’impronta mostrata sul telefono. Se l’impronta cambia, ogni dispositivo associato chiederà una nuova conferma.",
       "vi": "Khi ghép nối, hãy đối chiếu từng cụm với dấu vân tay hiển thị trên điện thoại. Dấu vân tay thay đổi sẽ khiến mọi thiết bị đã ghép nối yêu cầu xác nhận lại.",
-      "th": "ระหว่างจับคู่ ให้เทียบทีละกลุ่มกับลายนิ้วมือที่แสดงบนโทรศัพท์ หากลายนิ้วมือเปลี่ยน อุปกรณ์ที่จับคู่ทุกเครื่องจะขอยืนยันใหม่",
-      "id": "Saat memasangkan, cocokkan kelompok demi kelompok dengan sidik jari yang tampil di ponsel. Perubahan sidik jari membuat semua perangkat terpasang minta konfirmasi ulang.",
-      "hi": "पेयरिंग के समय इसे फ़ोन पर दिखे फ़िंगरप्रिंट से समूह-दर-समूह मिलाएँ। फ़िंगरप्रिंट बदलने पर हर पेयर किया डिवाइस दोबारा पुष्टि माँगेगा।",
-      "tr": "Eşleştirme sırasında telefonda görünen parmak iziyle grup grup karşılaştır. Parmak izi değişirse tüm eşleştirilmiş cihazlar yeniden onay ister.",
-      "pl": "Podczas parowania porównuj go grupa po grupie z odciskiem widocznym na telefonie. Zmiana odcisku sprawia, że każde sparowane urządzenie prosi o ponowne potwierdzenie.",
-      "nl": "Vergelijk deze bij het koppelen groep voor groep met de vingerafdruk op de telefoon. Bij een gewijzigde vingerafdruk vraagt elk gekoppeld apparaat om herbevestiging."
+      "th": "ตอนจับคู่ ให้เทียบกับลายนิ้วมือที่แสดงบนโทรศัพท์ทีละกลุ่ม ถ้าลายนิ้วมือเปลี่ยน อุปกรณ์ที่จับคู่ทุกเครื่องจะขอยืนยันใหม่",
+      "id": "Saat memasangkan, cocokkan kelompok demi kelompok dengan sidik jari yang tampil di ponsel. Perubahan sidik jari membuat semua perangkat yang dipasangkan minta konfirmasi ulang.",
+      "hi": "पेयरिंग के समय फ़ोन पर दिखे फ़िंगरप्रिंट से समूह-दर-समूह मिलान करें। फ़िंगरप्रिंट बदलने पर हर युग्मित डिवाइस दोबारा पुष्टि माँगता है।",
+      "tr": "Eşleştirirken telefonda gösterilen parmak iziyle grup grup karşılaştır. Parmak izi değişirse tüm eşleştirilmiş cihazlar yeniden doğrulama ister.",
+      "pl": "Podczas parowania porównaj go grupa po grupie z odciskiem pokazanym na telefonie. Zmiana odcisku sprawia, że każde sparowane urządzenie prosi o ponowne potwierdzenie.",
+      "nl": "Vergelijk bij het koppelen groep voor groep met de vingerafdruk op de telefoon. Na een wijziging van de vingerafdruk vraagt elk gekoppeld apparaat om herbevestiging."
     },
     "Conduit_Fingerprint_Unavailable": {
       "zh-Hans": "对端服务未启动，本次会话无指纹可示。",
@@ -1632,12 +1632,12 @@
       "ar": "خدمة الطرف الآخر غير مشغّلة؛ لا بصمة لعرضها في هذه الجلسة.",
       "it": "Il servizio peer non è attivo; nessuna impronta da mostrare in questa sessione.",
       "vi": "Dịch vụ phía đối diện chưa chạy; phiên này không có dấu vân tay để hiển thị.",
-      "th": "บริการฝั่งตรงข้ามยังไม่ทำงาน เซสชันนี้ไม่มีลายนิ้วมือให้แสดง",
-      "id": "Layanan seberang tidak berjalan; sesi ini tidak ada sidik jari untuk ditampilkan.",
-      "hi": "सामने की सेवा चालू नहीं; इस सत्र में दिखाने को कोई फ़िंगरप्रिंट नहीं।",
+      "th": "บริการฝั่งโน้นยังไม่ทำงาน รอบนี้ไม่มีลายนิ้วมือให้แสดง",
+      "id": "Layanan peer tidak berjalan; tidak ada sidik jari untuk ditampilkan sesi ini.",
+      "hi": "पीयर सेवा चालू नहीं है; इस सत्र में दिखाने को कोई फ़िंगरप्रिंट नहीं।",
       "tr": "Karşı taraf hizmeti çalışmıyor; bu oturumda gösterilecek parmak izi yok.",
-      "pl": "Usługa drugiej strony nie działa; w tej sesji nie ma odcisku do pokazania.",
-      "nl": "De service aan de overkant draait niet; deze sessie is er geen vingerafdruk te tonen."
+      "pl": "Usługa dla drugiej strony nie działa; w tej sesji nie ma odcisku do pokazania.",
+      "nl": "De peer-service draait niet; er is deze sessie geen vingerafdruk te tonen."
     },
     "Device_RevokedBadge": {
       "zh-Hans": "已撤销",
@@ -1653,11 +1653,11 @@
       "ar": "أُبطل",
       "it": "Revocato",
       "vi": "Đã thu hồi",
-      "th": "ถูกเพิกถอนแล้ว",
+      "th": "เพิกถอนแล้ว",
       "id": "Dicabut",
       "hi": "निरस्त",
       "tr": "İptal edildi",
-      "pl": "Odwołano",
+      "pl": "Unieważniono",
       "nl": "Ingetrokken"
     },
     "Device_AccentLabel": {
@@ -1696,7 +1696,7 @@
       "it": "Impostato manualmente",
       "vi": "Chỉ định thủ công",
       "th": "กำหนดเอง",
-      "id": "Ditetapkan manual",
+      "id": "Ditentukan manual",
       "hi": "हाथ से निर्धारित",
       "tr": "Elle belirlendi",
       "pl": "Ustawiony ręcznie",
@@ -1717,11 +1717,11 @@
       "it": "Segue l’ordine di associazione",
       "vi": "Theo thứ tự ghép nối",
       "th": "ตามลำดับการจับคู่",
-      "id": "Mengikuti urutan pemasangan",
-      "hi": "पेयरिंग क्रम के अनुसार",
+      "id": "Ikuti urutan pemasangan",
+      "hi": "पेयरिंग क्रम का अनुसरण",
       "tr": "Eşleştirme sırasını izler",
-      "pl": "Według kolejności parowania",
-      "nl": "Volgt de koppelvolgorde"
+      "pl": "Zgodnie z kolejnością parowania",
+      "nl": "Volgt koppelvolgorde"
     },
     "Device_Rename": {
       "zh-Hans": "重命名",
@@ -1762,7 +1762,7 @@
       "id": "Cabut perangkat terpilih",
       "hi": "चयनित डिवाइस निरस्त करें",
       "tr": "Seçilen cihazı iptal et",
-      "pl": "Odwołaj wybrane urządzenie",
+      "pl": "Unieważnij wybrane urządzenie",
       "nl": "Geselecteerd apparaat intrekken"
     },
     "Device_RevokeNote": {
@@ -1779,12 +1779,12 @@
       "ar": "الإبطال يفصل الجهاز فورًا ويلغي مفتاح اقترانه؛ المحتوى الذي استلمه لا يُحذف عن بُعد أبدًا. الاقتران بعد الإبطال يُعد جهازًا جديدًا. عندما يعيد الهاتف نفسه الاقتران بهوية جديدة، يُبطل السجل القديم تلقائيًا وتُفرَّغ قائمة إرساله.",
       "it": "La revoca disconnette subito il dispositivo e annulla la sua chiave di associazione; il contenuto già ricevuto non viene mai eliminato da remoto. Riassociarsi dopo la revoca conta come nuovo dispositivo. Se lo stesso telefono si riassocia con una nuova identità, il vecchio record viene revocato automaticamente e la sua coda di invio svuotata.",
       "vi": "Thu hồi sẽ ngắt kết nối thiết bị ngay và vô hiệu hóa khóa ghép nối của nó; nội dung nó đã nhận không bao giờ bị xóa từ xa. Ghép nối lại sau khi thu hồi được xem là thiết bị mới. Khi cùng một điện thoại ghép nối lại với danh tính mới, bản ghi cũ sẽ tự động bị thu hồi và hàng đợi gửi của nó bị xóa.",
-      "th": "การเพิกถอนตัดการเชื่อมต่ออุปกรณ์ทันทีและทำให้กุญแจจับคู่ของมันใช้ไม่ได้ เนื้อหาที่อีกฝั่งได้รับแล้วจะไม่ถูกลบจากระยะไกล การจับคู่ใหม่หลังเพิกถอนถือเป็นอุปกรณ์ใหม่ เมื่อโทรศัพท์เครื่องเดิมจับคู่ใหม่ด้วยตัวตนใหม่ ระเบียนเก่าจะถูกเพิกถอนอัตโนมัติและคิวรอส่งของมันถูกล้าง",
-      "id": "Pencabutan langsung memutus perangkat dan membatalkan kunci pemasangannya; konten yang sudah diterimanya tidak pernah dihapus dari jauh. Memasangkan lagi setelah pencabutan dihitung sebagai perangkat baru. Saat ponsel yang sama memasangkan ulang dengan identitas baru, catatan lama dicabut otomatis dan antrean kirimnya dikosongkan.",
-      "hi": "निरस्त करने से डिवाइस तुरंत कट जाता है और उसकी पेयरिंग कुंजी रद्द हो जाती है; उसे मिली सामग्री दूर से कभी नहीं मिटती। निरस्त करने के बाद दोबारा पेयर करना नया डिवाइस माना जाता है। वही फ़ोन नई पहचान से दोबारा पेयर करे, तो पुराना रिकॉर्ड अपने आप निरस्त होकर उसकी भेजने की कतार खाली हो जाती है।",
-      "tr": "İptal, cihazın bağlantısını hemen keser ve eşleştirme anahtarını geçersiz kılar; zaten aldığı içerik uzaktan asla silinmez. İptalden sonra yeniden eşleştirme yeni cihaz sayılır. Aynı telefon yeni bir kimlikle yeniden eşleştiğinde eski kayıt otomatik iptal edilir ve gönderim kuyruğu boşaltılır.",
-      "pl": "Odwołanie natychmiast rozłącza urządzenie i unieważnia jego klucz parowania; treści, które już otrzymało, nigdy nie są usuwane zdalnie. Ponowne parowanie po odwołaniu liczy się jako nowe urządzenie. Gdy ten sam telefon paruje się ponownie z nową tożsamością, stary wpis jest odwoływany automatycznie, a jego kolejka wysyłki czyszczona.",
-      "nl": "Intrekken verbreekt de verbinding meteen en maakt de koppelsleutel ongeldig; al ontvangen inhoud wordt nooit op afstand verwijderd. Opnieuw koppelen na intrekking telt als een nieuw apparaat. Als dezelfde telefoon zich onder een nieuwe identiteit opnieuw koppelt, wordt het oude record automatisch ingetrokken en zijn verzendwachtrij geleegd."
+      "th": "การเพิกถอนตัดการเชื่อมต่ออุปกรณ์ทันทีและทำให้กุญแจจับคู่ของมันใช้ไม่ได้ เนื้อหาที่อีกฝั่งได้รับไปแล้วจะไม่ถูกลบจากระยะไกล จับคู่ใหม่หลังเพิกถอนถือเป็นอุปกรณ์ใหม่ ถ้าโทรศัพท์เครื่องเดิมจับคู่ใหม่ด้วยตัวตนใหม่ ระเบียนเก่าจะถูกเพิกถอนอัตโนมัติและคิวส่งของมันถูกล้าง",
+      "id": "Pencabutan langsung memutus perangkat dan membatalkan kunci pemasangannya; konten yang sudah diterimanya tidak pernah dihapus dari jauh. Memasangkan lagi setelah pencabutan dihitung sebagai perangkat baru. Bila ponsel yang sama memasangkan ulang dengan identitas baru, catatan lama otomatis dicabut dan antrean kirimnya dikosongkan.",
+      "hi": "निरस्त करने से डिवाइस तुरंत डिस्कनेक्ट होता है और उसकी पेयरिंग कुंजी अमान्य हो जाती है; उसे पहले से मिली सामग्री कभी दूर से नहीं मिटाई जाती। निरस्त करने के बाद दोबारा पेयर करना नया डिवाइस माना जाता है। वही फ़ोन नई पहचान से दोबारा पेयर करे तो पुराना रिकॉर्ड स्वतः निरस्त होकर उसकी प्रेषण कतार खाली कर दी जाती है।",
+      "tr": "İptal, cihazın bağlantısını hemen keser ve eşleştirme anahtarını geçersiz kılar; cihazın zaten aldığı içerik asla uzaktan silinmez. İptal sonrası yeniden eşleştirme yeni cihaz sayılır. Aynı telefon yeni bir kimlikle yeniden eşleştiğinde eski kayıt otomatik iptal edilir ve giden kuyruğu temizlenir.",
+      "pl": "Unieważnienie natychmiast rozłącza urządzenie i anuluje jego klucz parowania; treść, którą już odebrało, nigdy nie jest usuwana zdalnie. Ponowne sparowanie po unieważnieniu liczy się jako nowe urządzenie. Gdy ten sam telefon paruje się ponownie pod nową tożsamością, stary wpis jest unieważniany automatycznie, a jego kolejka wysyłkowa czyszczona.",
+      "nl": "Intrekken verbreekt de verbinding met het apparaat onmiddellijk en maakt zijn koppelsleutel ongeldig; al ontvangen inhoud wordt nooit op afstand verwijderd. Opnieuw koppelen na intrekking telt als een nieuw apparaat. Wanneer dezelfde telefoon zich onder een nieuwe identiteit opnieuw koppelt, wordt het oude record automatisch ingetrokken en zijn wachtrij geleegd."
     },
     "Device_UnknownRemote": {
       "zh-Hans": "远端设备",
@@ -1821,9 +1821,9 @@
       "ar": "جهاز مقترن",
       "it": "Dispositivo associato",
       "vi": "Thiết bị đã ghép nối",
-      "th": "อุปกรณ์ที่จับคู่แล้ว",
-      "id": "Perangkat terpasang",
-      "hi": "पेयर किया डिवाइस",
+      "th": "อุปกรณ์ที่จับคู่",
+      "id": "Perangkat yang dipasangkan",
+      "hi": "युग्मित डिवाइस",
       "tr": "Eşleştirilmiş cihaz",
       "pl": "Sparowane urządzenie",
       "nl": "Gekoppeld apparaat"
@@ -1864,11 +1864,11 @@
       "it": "{0} · {1} in attesa di invio",
       "vi": "{0} · {1} mục chờ gửi",
       "th": "{0} · ค้างส่ง {1} รายการ",
-      "id": "{0} · {1} menunggu kirim",
+      "id": "{0} · {1} menunggu di antrean kirim",
       "hi": "{0} · {1} भेजने हेतु लंबित",
-      "tr": "{0} · gönderim bekleyen {1}",
-      "pl": "{0} · {1} oczekuje na wysłanie",
-      "nl": "{0} · {1} in de verzendwachtrij"
+      "tr": "{0} · giden kutusunda {1} bekliyor",
+      "pl": "{0} · {1} do wysłania",
+      "nl": "{0} · {1} in de wachtrij"
     },
     "Stale_BannerBacklogFormat": {
       "zh-Hans": "检测到 {0} 台疑似残留设备，积压 {1} 条待发正在推高「待发」计数。清理会撤销它们并清空其发件队列。",
@@ -1884,12 +1884,12 @@
       "ar": "رُصد {0} من الأجهزة تبدو بقايا قديمة؛ {1} من العناصر المعلقة تضخّم عدّاد «بانتظار الإرسال». التنظيف يبطلها ويفرّغ قوائم إرسالها.",
       "it": "Rilevati {0} dispositivi che sembrano residui obsoleti; {1} elementi in attesa gonfiano il contatore «in uscita». La pulizia li revoca e svuota le loro code di invio.",
       "vi": "Phát hiện {0} thiết bị có vẻ là tàn dư; {1} mục đang chờ làm phồng bộ đếm “chờ gửi”. Dọn dẹp sẽ thu hồi chúng và xóa hàng đợi gửi của chúng.",
-      "th": "พบ {0} เครื่องที่น่าจะเป็นซากตกค้าง; {1} รายการค้างกำลังดันตัวเลข “รอส่ง” ให้สูงขึ้น การล้างจะเพิกถอนพวกมันและล้างคิวส่งของพวกมัน",
-      "id": "Terdeteksi {0} perangkat yang tampak seperti sisa usang; {1} item tertunda menggelembungkan hitungan “menunggu kirim”. Pembersihan mencabutnya dan mengosongkan antrean kirimnya.",
-      "hi": "{0} डिवाइस मिले जो पुराने अवशेष लगते हैं; {1} लंबित मदें “भेजने हेतु” गिनती बढ़ा रही हैं। सफ़ाई उन्हें निरस्त कर उनकी भेजने की कतारें खाली कर देगी।",
-      "tr": "Eski kalıntıya benzeyen {0} cihaz saptandı; bekleyen {1} öge “giden” sayacını şişiriyor. Temizlik bunları iptal eder ve gönderim kuyruklarını boşaltır.",
-      "pl": "Wykryto {0} urządzeń wyglądających na stare pozostałości; {1} oczekujących pozycji zawyża licznik „do wysłania”. Czyszczenie odwoła je i opróżni ich kolejki wysyłki.",
-      "nl": "{0} apparaat/apparaten gevonden die op oude resten lijken; {1} wachtende items blazen de teller “te versturen” op. Opschonen trekt ze in en leegt hun verzendwachtrijen."
+      "th": "พบ {0} เครื่องที่น่าจะเป็นซากค้าง มี {1} รายการค้างส่งดันตัวเลข «รอส่ง» ให้สูงขึ้น การล้างจะเพิกถอนพวกมันและล้างคิวส่ง",
+      "id": "Terdeteksi {0} perangkat yang tampak seperti sisa lama; {1} butir tertunda menggelembungkan hitungan antrean kirim. Pembersihan mencabutnya dan mengosongkan antrean mereka.",
+      "hi": "{0} डिवाइस मिले जो अवशेष लगते हैं; {1} लंबित मदें «भेजने हेतु» गिनती बढ़ा रही हैं। सफ़ाई उन्हें निरस्त कर उनकी प्रेषण कतारें खाली कर देगी।",
+      "tr": "Kalıntıya benzeyen {0} cihaz algılandı; bekleyen {1} öğe «giden» sayacını şişiriyor. Temizlik bunları iptal eder ve giden kuyruklarını boşaltır.",
+      "pl": "Wykryto {0} urządzenie(a) wyglądające na pozostałości; {1} oczekujących pozycji zawyża licznik „do wysłania”. Porządkowanie unieważni je i wyczyści ich kolejki.",
+      "nl": "Er zijn {0} apparaat(en) gedetecteerd die op achtergebleven resten lijken; {1} wachtende item(s) drijven de wachtrijteller op. Opschonen trekt ze in en leegt hun wachtrijen."
     },
     "Stale_BannerFormat": {
       "zh-Hans": "检测到 {0} 台疑似残留设备。清理会撤销它们；对方已收到的内容不受影响。",
@@ -1905,12 +1905,12 @@
       "ar": "رُصد {0} من الأجهزة تبدو بقايا قديمة. التنظيف يبطلها؛ المحتوى الذي استلمته لا يتأثر.",
       "it": "Rilevati {0} dispositivi che sembrano residui obsoleti. La pulizia li revoca; il contenuto già ricevuto non è toccato.",
       "vi": "Phát hiện {0} thiết bị có vẻ là tàn dư. Dọn dẹp sẽ thu hồi chúng; nội dung chúng đã nhận không bị ảnh hưởng.",
-      "th": "พบ {0} เครื่องที่น่าจะเป็นซากตกค้าง การล้างจะเพิกถอนพวกมัน เนื้อหาที่พวกมันได้รับแล้วไม่ได้รับผลกระทบ",
-      "id": "Terdeteksi {0} perangkat yang tampak seperti sisa usang. Pembersihan mencabutnya; konten yang sudah mereka terima tidak terpengaruh.",
-      "hi": "{0} डिवाइस मिले जो पुराने अवशेष लगते हैं। सफ़ाई उन्हें निरस्त कर देगी; उन्हें मिली सामग्री अप्रभावित रहेगी।",
-      "tr": "Eski kalıntıya benzeyen {0} cihaz saptandı. Temizlik bunları iptal eder; zaten aldıkları içerik etkilenmez.",
-      "pl": "Wykryto {0} urządzeń wyglądających na stare pozostałości. Czyszczenie je odwoła; treści, które już otrzymały, pozostają nietknięte.",
-      "nl": "{0} apparaat/apparaten gevonden die op oude resten lijken. Opschonen trekt ze in; al ontvangen inhoud blijft onaangetast."
+      "th": "พบ {0} เครื่องที่น่าจะเป็นซากค้าง การล้างจะเพิกถอนพวกมัน เนื้อหาที่พวกมันได้รับไปแล้วไม่ถูกกระทบ",
+      "id": "Terdeteksi {0} perangkat yang tampak seperti sisa lama. Pembersihan mencabutnya; konten yang sudah mereka terima tidak terpengaruh.",
+      "hi": "{0} डिवाइस मिले जो अवशेष लगते हैं। सफ़ाई उन्हें निरस्त कर देगी; उन्हें पहले से मिली सामग्री अप्रभावित रहती है।",
+      "tr": "Kalıntıya benzeyen {0} cihaz algılandı. Temizlik bunları iptal eder; zaten aldıkları içerik etkilenmez.",
+      "pl": "Wykryto {0} urządzenie(a) wyglądające na pozostałości. Porządkowanie je unieważni; treść, którą już odebrały, pozostaje nietknięta.",
+      "nl": "Er zijn {0} apparaat(en) gedetecteerd die op achtergebleven resten lijken. Opschonen trekt ze in; al ontvangen inhoud blijft onaangetast."
     },
     "Stale_DuplicateBadge": {
       "zh-Hans": "疑似重复配对残留",
@@ -1927,11 +1927,11 @@
       "it": "Probabile residuo di associazione duplicata",
       "vi": "Nghi là tàn dư ghép nối trùng lặp",
       "th": "น่าจะเป็นซากจากการจับคู่ซ้ำ",
-      "id": "Diduga sisa pemasangan ganda",
-      "hi": "संभवतः दोहरी पेयरिंग का अवशेष",
-      "tr": "Muhtemelen yinelenen eşleştirme kalıntısı",
+      "id": "Kemungkinan sisa pemasangan ganda",
+      "hi": "संभवतः दोहरे पेयरिंग का अवशेष",
+      "tr": "Muhtemel yinelenen eşleştirme kalıntısı",
       "pl": "Prawdopodobnie pozostałość po podwójnym parowaniu",
-      "nl": "Waarschijnlijk restant van dubbele koppeling"
+      "nl": "Waarschijnlijk rest van dubbele koppeling"
     },
     "Stale_NeverConnected": {
       "zh-Hans": "配对后从未连接",
@@ -1948,11 +1948,11 @@
       "it": "Mai connesso dall’associazione",
       "vi": "Chưa từng kết nối kể từ khi ghép nối",
       "th": "ไม่เคยเชื่อมต่อเลยตั้งแต่จับคู่",
-      "id": "Tidak pernah terhubung sejak dipasangkan",
-      "hi": "पेयरिंग के बाद कभी नहीं जुड़ा",
+      "id": "Tak pernah terhubung sejak dipasangkan",
+      "hi": "पेयरिंग के बाद से कभी नहीं जुड़ा",
       "tr": "Eşleştirmeden beri hiç bağlanmadı",
       "pl": "Nigdy nie połączono od sparowania",
-      "nl": "Nooit verbonden sinds de koppeling"
+      "nl": "Nooit verbonden sinds koppeling"
     },
     "Stale_UnseenDaysFormat": {
       "zh-Hans": "超过 {0} 天未连接",
@@ -1970,7 +1970,7 @@
       "vi": "Không kết nối hơn {0} ngày",
       "th": "ไม่ได้เชื่อมต่อมานานกว่า {0} วัน",
       "id": "Tidak terhubung lebih dari {0} hari",
-      "hi": "{0} दिनों से अधिक से नहीं जुड़ा",
+      "hi": "{0} दिनों से अधिक समय से नहीं जुड़ा",
       "tr": "{0} günden uzun süredir bağlanmadı",
       "pl": "Brak połączenia od ponad {0} dni",
       "nl": "Al meer dan {0} dagen niet verbonden"
@@ -2010,12 +2010,12 @@
       "ar": "التغييرات تسري فورًا · محتوى الحافظة لا يظهر في السجلات أبدًا",
       "it": "Le modifiche si applicano subito · il contenuto degli appunti non compare mai nei log",
       "vi": "Thay đổi có hiệu lực ngay · nội dung bảng nhớ tạm không bao giờ xuất hiện trong nhật ký",
-      "th": "การเปลี่ยนแปลงมีผลทันที · เนื้อหาคลิปบอร์ดไม่ปรากฏในบันทึกเด็ดขาด",
-      "id": "Perubahan berlaku seketika · isi papan klip tidak pernah muncul di log",
-      "hi": "बदलाव तुरंत लागू · क्लिपबोर्ड की सामग्री कभी लॉग में नहीं आती",
-      "tr": "Değişiklikler anında geçerli · pano içeriği günlüklere asla girmez",
-      "pl": "Zmiany działają od razu · zawartość schowka nigdy nie trafia do dzienników",
-      "nl": "Wijzigingen gelden direct · klembordinhoud komt nooit in logboeken"
+      "th": "การเปลี่ยนแปลงมีผลทันที · เนื้อหาคลิปบอร์ดไม่มีวันปรากฏในบันทึก",
+      "id": "Perubahan langsung berlaku · isi papan klip tak pernah masuk log",
+      "hi": "बदलाव तुरंत लागू · क्लिपबोर्ड की सामग्री कभी लॉग में नहीं जाती",
+      "tr": "Değişiklikler anında geçerli · pano içeriği asla günlüklere yazılmaz",
+      "pl": "Zmiany działają natychmiast · treść schowka nigdy nie trafia do dzienników",
+      "nl": "Wijzigingen gelden onmiddellijk · klembordinhoud verschijnt nooit in logboeken"
     },
     "Prefs_Group_Display": {
       "zh-Hans": "显 示 · DISPLAY",
@@ -2052,7 +2052,7 @@
       "ar": "الالتقاط",
       "it": "ACQUISIZIONE",
       "vi": "GHI NHẬN",
-      "th": "การจับข้อมูล",
+      "th": "การเก็บ",
       "id": "PENANGKAPAN",
       "hi": "कैप्चर",
       "tr": "YAKALAMA",
@@ -2075,7 +2075,7 @@
       "vi": "ĐỒNG BỘ",
       "th": "การซิงค์",
       "id": "SINKRONISASI",
-      "hi": "सिंक",
+      "hi": "समन्वयन",
       "tr": "EŞİTLEME",
       "pl": "SYNCHRONIZACJA",
       "nl": "SYNCHRONISATIE"
@@ -2096,7 +2096,7 @@
       "vi": "LƯU GIỮ",
       "th": "การเก็บรักษา",
       "id": "PENYIMPANAN",
-      "hi": "प्रतिधारण",
+      "hi": "संधारण",
       "tr": "SAKLAMA",
       "pl": "PRZECHOWYWANIE",
       "nl": "BEWAREN"
@@ -2115,11 +2115,11 @@
       "ar": "التشغيل",
       "it": "AVVIO",
       "vi": "KHỞI ĐỘNG",
-      "th": "การเริ่มทำงาน",
-      "id": "MULAI",
-      "hi": "आरंभ",
-      "tr": "BAŞLATMA",
-      "pl": "URUCHAMIANIE",
+      "th": "การทำงาน",
+      "id": "OPERASI",
+      "hi": "संचालन",
+      "tr": "ÇALIŞMA",
+      "pl": "DZIAŁANIE",
       "nl": "OPSTARTEN"
     },
     "Prefs_Group_Data": {
@@ -2178,12 +2178,12 @@
       "ar": "يغيّر حجم نص المقتطفات فقط (معاينات السجل، نص التفاصيل، نافذة الدرج المنبثقة)؛ عناوين المجموعات والشارات والأزرار لا تتغير.",
       "it": "Scala solo il testo delle clip (anteprime della cronologia, corpo dei dettagli, riquadro della tray); intestazioni di gruppo, badge e pulsanti restano invariati.",
       "vi": "Chỉ thay đổi cỡ chữ của nội dung (xem trước lịch sử, phần chi tiết, cửa sổ nổi ở khay); tiêu đề nhóm, huy hiệu và nút giữ nguyên.",
-      "th": "ปรับขนาดเฉพาะตัวอักษรของเนื้อหา (ตัวอย่างประวัติ เนื้อหารายละเอียด หน้าต่างลอยที่เทรย์) หัวข้อกลุ่ม ป้าย และปุ่มคงเดิม",
-      "id": "Hanya menskalakan teks konten (pratinjau riwayat, isi detail, jendela melayang di baki); judul grup, lencana, dan tombol tidak berubah.",
-      "hi": "सिर्फ़ क्लिप सामग्री का टेक्स्ट बदलता है (इतिहास पूर्वावलोकन, विवरण का मुख्य भाग, ट्रे फ़्लाईआउट); समूह शीर्षक, बैज और बटन जस के तस रहते हैं।",
-      "tr": "Yalnızca içerik metnini ölçekler (geçmiş önizlemeleri, ayrıntı gövdesi, tepsi açılır penceresi); grup başlıkları, rozetler ve düğmeler değişmez.",
-      "pl": "Skaluje tylko tekst treści (podglądy historii, treść szczegółów, okienko przy zasobniku); nagłówki grup, plakietki i przyciski pozostają bez zmian.",
-      "nl": "Schaalt alleen de tekst van items (voorbeelden in de geschiedenis, detailtekst, zwevend venster bij het systeemvak); groepskoppen, badges en knoppen blijven gelijk."
+      "th": "ปรับขนาดเฉพาะข้อความเนื้อหา (ตัวอย่างในประวัติ เนื้อหาหน้ารายละเอียด หน้าต่างลอยที่เทรย์) หัวกลุ่ม ป้าย และปุ่มไม่เปลี่ยน",
+      "id": "Hanya menskalakan teks isi klip (pratinjau riwayat, isi detail, jendela baki); kepala grup, lencana, dan tombol tidak berubah.",
+      "hi": "केवल क्लिप सामग्री का पाठ बड़ा-छोटा होता है (इतिहास पूर्वावलोकन, विवरण का मुख्य पाठ, ट्रे फ़्लाईआउट); समूह शीर्षक, बैज और बटन अपरिवर्तित रहते हैं।",
+      "tr": "Yalnızca pano içeriği metnini ölçekler (geçmiş önizlemeleri, ayrıntı gövdesi, tepsi penceresi); grup başlıkları, rozetler ve düğmeler değişmez.",
+      "pl": "Skaluje tylko tekst treści schowka (podglądy historii, treść szczegółów, okienko przy zasobniku); nagłówki grup, plakietki i przyciski pozostają bez zmian.",
+      "nl": "Schaalt alleen de tekst van klembordinhoud (geschiedenisvoorbeelden, detailtekst, systeemvakvenster); groepskoppen, badges en knoppen blijven onveranderd."
     },
     "Prefs_FontScale_Small": {
       "zh-Hans": "小",
@@ -2266,7 +2266,7 @@
       "id": "Baris pratinjau",
       "hi": "पूर्वावलोकन पंक्तियाँ",
       "tr": "Önizleme satırları",
-      "pl": "Wiersze podglądu",
+      "pl": "Liczba wierszy podglądu",
       "nl": "Voorbeeldregels"
     },
     "Prefs_PreviewLines_Desc": {
@@ -2283,12 +2283,12 @@
       "ar": "أقصى عدد أسطر يظهر لكل عنصر في قائمة السجل؛ الزائد يُقص بعلامة الحذف — افتح التفاصيل للنص الكامل.",
       "it": "Numero massimo di righe mostrate per voce nella lista della cronologia; l’eccedenza è troncata con puntini — apri i dettagli per il contenuto completo.",
       "vi": "Số dòng nội dung tối đa hiển thị cho mỗi mục trong danh sách lịch sử; phần thừa bị cắt bằng dấu ba chấm — mở chi tiết để xem đầy đủ.",
-      "th": "จำนวนบรรทัดเนื้อหาสูงสุดต่อรายการในรายการประวัติ ส่วนเกินถูกตัดด้วยจุดไข่ปลา — เปิดรายละเอียดเพื่อดูฉบับเต็ม",
+      "th": "จำนวนบรรทัดเนื้อหาสูงสุดต่อรายการในหน้าประวัติ ส่วนเกินถูกตัดด้วยจุดไข่ปลา — ดูเนื้อหาเต็มได้ในรายละเอียด",
       "id": "Jumlah baris isi maksimum per entri di daftar riwayat; kelebihan dipotong dengan elipsis — buka detail untuk isi lengkap.",
-      "hi": "इतिहास सूची में प्रति प्रविष्टि अधिकतम पंक्तियाँ; बाक़ी दीर्घवृत्त से कटता है — पूरा पाठ विवरण में देखें।",
-      "tr": "Geçmiş listesinde kayıt başına gösterilen en fazla satır sayısı; taşan kısım üç noktayla kesilir — tam içerik için ayrıntıları aç.",
-      "pl": "Maksymalna liczba wierszy treści na wpis w liście historii; nadmiar ucinany wielokropkiem — pełną treść zobacz w szczegółach.",
-      "nl": "Maximaal aantal tekstregels per item in de geschiedenislijst; wat overloopt wordt afgekapt met een beletselteken — open de details voor de volledige inhoud."
+      "hi": "इतिहास सूची में प्रति प्रविष्टि अधिकतम पाठ पंक्तियाँ; अधिक होने पर दीर्घवृत्त से काटा जाता है — पूरी सामग्री विवरण में देखें।",
+      "tr": "Geçmiş listesinde her kayıt için gösterilecek en fazla gövde satırı; taşan kısım üç noktayla kesilir — tam içerik için ayrıntıları aç.",
+      "pl": "Maksymalna liczba wierszy treści na wpis w liście historii; nadmiar jest ucinany wielokropkiem — pełna treść w szczegółach.",
+      "nl": "Maximaal aantal tekstregels per item in de geschiedenislijst; overloop wordt afgekapt met een beletselteken — open de details voor de volledige inhoud."
     },
     "Prefs_PreviewLines_Two": {
       "zh-Hans": "2 行",
@@ -2368,8 +2368,8 @@
       "it": "Aspetto",
       "vi": "Giao diện",
       "th": "ธีม",
-      "id": "Tampilan",
-      "hi": "रूप-रंग",
+      "id": "Tampilan tema",
+      "hi": "रूप",
       "tr": "Görünüm",
       "pl": "Wygląd",
       "nl": "Uiterlijk"
@@ -2388,12 +2388,12 @@
       "ar": "لوحة ألوان النافذة النهارية/الليلية؛ أيقونة الدرج تعيش في شريط المهام وتتبع دومًا درجته.",
       "it": "La palette giorno/notte della finestra; l’icona nella tray vive nella barra delle applicazioni e ne segue sempre la tonalità.",
       "vi": "Bảng màu ngày/đêm của cửa sổ; biểu tượng khay sống trong thanh tác vụ và luôn theo tông của thanh tác vụ.",
-      "th": "ชุดสีกลางวัน/กลางคืนของหน้าต่าง ไอคอนเทรย์อยู่ในแถบงานและตามโทนของแถบงานเสมอ",
-      "id": "Palet siang/malam jendela; ikon baki tinggal di bilah tugas dan selalu mengikuti coraknya.",
-      "hi": "विंडो का दिन/रात रंग-पटल; ट्रे आइकन टास्कबार में रहता है और हमेशा उसी की छाया मानता है।",
-      "tr": "Pencerenin gündüz/gece paleti; tepsi simgesi görev çubuğunda yaşar ve daima onun tonunu izler.",
+      "th": "โทนสีกลางวัน/กลางคืนของหน้าต่าง ไอคอนเทรย์อยู่ในแถบงานและตามเฉดของแถบงานเสมอ",
+      "id": "Palet siang/malam jendela; ikon baki hidup di bilah tugas dan selalu mengikuti rona bilah tugas.",
+      "hi": "विंडो का दिन/रात रंग-पटल; ट्रे आइकन टास्कबार में रहता है और हमेशा टास्कबार की आभा का अनुसरण करता है।",
+      "tr": "Pencerenin gündüz/gece paleti; tepsi simgesi görev çubuğunda yaşar ve her zaman görev çubuğunun tonunu izler.",
       "pl": "Dzienna/nocna paleta okna; ikona zasobnika żyje na pasku zadań i zawsze podąża za jego odcieniem.",
-      "nl": "Het dag/nacht-palet van het venster; het pictogram in het systeemvak leeft op de taakbalk en volgt altijd haar tint."
+      "nl": "Het dag-/nachtpalet van het venster; het systeemvakpictogram leeft in de taakbalk en volgt altijd de tint van de taakbalk."
     },
     "Prefs_Theme_Day": {
       "zh-Hans": "日间",
@@ -2472,12 +2472,12 @@
       "ar": "لغة الواجهة — اتباع النظام أو تحديد يدوي؛ تُعرض أسماء اللغات دائمًا بلغاتها الأصلية.",
       "it": "La lingua dell’interfaccia — segui il sistema o impostane una; ogni lingua mostra sempre il proprio nome nativo.",
       "vi": "Ngôn ngữ giao diện — theo hệ thống hoặc tự chọn; tên các ngôn ngữ luôn hiển thị bằng tiếng bản địa của chúng.",
-      "th": "ภาษาของหน้าจอ — ตามระบบหรือเลือกเอง ชื่อภาษาแสดงเป็นภาษาแม่ของแต่ละภาษาเสมอ",
-      "id": "Bahasa antarmuka — ikuti sistem atau tetapkan sendiri; nama tiap bahasa selalu tampil dalam bahasa aslinya.",
-      "hi": "इंटरफ़ेस की भाषा — सिस्टम के अनुसार या स्वयं चुनें; हर भाषा का नाम हमेशा उसकी अपनी भाषा में दिखता है।",
-      "tr": "Arayüz dili — sistemi izle ya da elle seç; her dilin adı her zaman kendi ana dilinde görünür.",
-      "pl": "Język interfejsu — za systemem lub wybrany ręcznie; nazwy języków zawsze wyświetlane w ich własnych językach.",
-      "nl": "De interfacetaal — volg het systeem of kies er zelf een; elke taal toont altijd haar eigen moedertaalnaam."
+      "th": "ภาษาของหน้าจอ — ตามระบบหรือกำหนดเอง ชื่อภาษาแสดงเป็นภาษาแม่ของตัวเองเสมอ",
+      "id": "Bahasa antarmuka — ikuti sistem atau tentukan manual; setiap bahasa selalu tampil dengan nama aslinya sendiri.",
+      "hi": "इंटरफ़ेस की भाषा — सिस्टम का अनुसरण करें या हाथ से चुनें; हर भाषा हमेशा अपनी ही मातृभाषा में लिखे नाम से दिखती है।",
+      "tr": "Arayüz dili — sistemi izle ya da elle belirle; her dil her zaman kendi ana dilindeki adıyla gösterilir.",
+      "pl": "Język interfejsu — zgodnie z systemem albo ustawiony ręcznie; każdy język zawsze pokazuje swoją rodzimą nazwę.",
+      "nl": "De interfacetaal — volg het systeem of stel er handmatig een in; elke taal toont altijd zijn eigen oorspronkelijke naam."
     },
     "Prefs_Language_RestartNote": {
       "zh-Hans": "更换后重启应用生效。",
@@ -2495,10 +2495,10 @@
       "vi": "Có hiệu lực sau khi khởi động lại ứng dụng.",
       "th": "มีผลหลังรีสตาร์ตแอป",
       "id": "Berlaku setelah aplikasi dimulai ulang.",
-      "hi": "ऐप पुनरारंभ करने पर लागू होगा।",
+      "hi": "ऐप पुनरारंभ के बाद लागू होगा।",
       "tr": "Uygulama yeniden başlatılınca geçerli olur.",
-      "pl": "Zadziała po ponownym uruchomieniu aplikacji.",
-      "nl": "Geldt na het herstarten van de app."
+      "pl": "Zacznie działać po ponownym uruchomieniu aplikacji.",
+      "nl": "Wordt van kracht na het herstarten van de app."
     },
     "Prefs_Capture_Pause_Desc": {
       "zh-Hans": "暂停后本机不再记录新内容，已有历史保留。",
@@ -2514,12 +2514,12 @@
       "ar": "أثناء الإيقاف المؤقت لا يسجل هذا الحاسوب محتوى جديدًا؛ السجل الحالي يبقى.",
       "it": "In pausa questo PC smette di registrare nuovi contenuti; la cronologia esistente resta.",
       "vi": "Khi tạm dừng, PC này ngừng ghi nội dung mới; lịch sử hiện có vẫn được giữ.",
-      "th": "ระหว่างหยุดชั่วคราว พีซีนี้ไม่บันทึกเนื้อหาใหม่ ประวัติเดิมยังอยู่",
+      "th": "ระหว่างหยุดชั่วคราว พีซีนี้ไม่บันทึกเนื้อหาใหม่ ประวัติที่มีอยู่ยังคงอยู่",
       "id": "Saat dijeda, PC ini berhenti merekam konten baru; riwayat yang ada tetap tersimpan.",
-      "hi": "रोक के दौरान यह PC नई सामग्री रिकॉर्ड नहीं करता; मौजूदा इतिहास बना रहता है।",
-      "tr": "Duraklatılınca bu PC yeni içerik kaydetmez; mevcut geçmiş korunur.",
-      "pl": "Podczas wstrzymania ten PC nie zapisuje nowych treści; dotychczasowa historia pozostaje.",
-      "nl": "Tijdens de pauze legt deze pc geen nieuwe inhoud vast; bestaande geschiedenis blijft bewaard."
+      "hi": "रोकने पर यह PC नई सामग्री रिकॉर्ड नहीं करता; मौजूदा इतिहास बना रहता है।",
+      "tr": "Duraklatılınca bu bilgisayar yeni içerik kaydetmez; mevcut geçmiş korunur.",
+      "pl": "Podczas wstrzymania ten komputer nie rejestruje nowej treści; istniejąca historia zostaje zachowana.",
+      "nl": "Tijdens de pauze registreert deze pc geen nieuwe inhoud; bestaande geschiedenis blijft bewaard."
     },
     "Prefs_Capture_Private_Desc": {
       "zh-Hans": "开启期间捕获与同步全部停止，不留任何痕迹。",
@@ -2535,12 +2535,12 @@
       "ar": "أثناء تفعيله يتوقف الالتقاط والمزامنة تمامًا بلا أي أثر.",
       "it": "Quando è attiva, acquisizione e sincronizzazione si fermano del tutto, senza lasciare tracce.",
       "vi": "Khi bật, ghi nhận và đồng bộ dừng hoàn toàn, không để lại dấu vết.",
-      "th": "ระหว่างเปิดใช้ การจับข้อมูลและการซิงค์หยุดทั้งหมด ไม่ทิ้งร่องรอย",
+      "th": "ระหว่างเปิด การเก็บและการซิงค์หยุดทั้งหมด ไม่ทิ้งร่องรอย",
       "id": "Selama aktif, penangkapan dan sinkronisasi berhenti total tanpa meninggalkan jejak.",
-      "hi": "चालू रहने तक कैप्चर और सिंक पूरी तरह रुक जाते हैं, कोई निशान नहीं छूटता।",
-      "tr": "Açıkken yakalama ve eşitleme tamamen durur, iz bırakmaz.",
-      "pl": "Gdy włączony, przechwytywanie i synchronizacja całkiem się zatrzymują, bez śladów.",
-      "nl": "Zolang ingeschakeld stoppen vastleggen en synchroniseren volledig, zonder sporen."
+      "hi": "चालू रहते हुए कैप्चर और समन्वयन पूरी तरह रुक जाते हैं, कोई निशान नहीं रहता।",
+      "tr": "Açıkken yakalama ve eşitleme tamamen durur, hiçbir iz kalmaz.",
+      "pl": "Gdy włączone, przechwytywanie i synchronizacja całkowicie się zatrzymują, nie zostawiając śladów.",
+      "nl": "Zolang dit aanstaat, stoppen vastleggen en synchroniseren volledig, zonder sporen na te laten."
     },
     "Prefs_Capture_Blocked_Title": {
       "zh-Hans": "屏蔽进程",
@@ -2558,8 +2558,8 @@
       "vi": "Tiến trình bị chặn",
       "th": "โปรเซสที่บล็อก",
       "id": "Proses yang diblokir",
-      "hi": "अवरुद्ध प्रोसेस",
-      "tr": "Engellenen işlemler",
+      "hi": "अवरुद्ध प्रक्रियाएँ",
+      "tr": "Engellenen süreçler",
       "pl": "Zablokowane procesy",
       "nl": "Geblokkeerde processen"
     },
@@ -2577,12 +2577,12 @@
       "ar": "ما يُنسخ من هذه العمليات لا يدخل السجل ولا يُزامن. افصل بفواصل أو أسطر جديدة.",
       "it": "Le copie da questi processi non entrano mai nella cronologia né nella sincronizzazione. Separa con virgole o a capo.",
       "vi": "Nội dung sao chép từ các tiến trình này không vào lịch sử và không đồng bộ. Cách nhau bằng dấu phẩy hoặc xuống dòng.",
-      "th": "สิ่งที่คัดลอกจากโปรเซสเหล่านี้ไม่เข้าประวัติและไม่ซิงค์ คั่นด้วยจุลภาคหรือขึ้นบรรทัดใหม่",
-      "id": "Salinan dari proses-proses ini tidak masuk riwayat dan tidak disinkronkan. Pisahkan dengan koma atau baris baru.",
-      "hi": "इन प्रोसेस से की गई कॉपी न इतिहास में जाती है, न सिंक होती है। अल्पविराम या नई पंक्ति से अलग करें।",
-      "tr": "Bu işlemlerden yapılan kopyalar geçmişe girmez ve eşitlenmez. Virgül veya yeni satırla ayır.",
-      "pl": "Kopie z tych procesów nie trafiają do historii ani do synchronizacji. Rozdziel przecinkami lub nowymi wierszami.",
-      "nl": "Kopieën uit deze processen komen nooit in de geschiedenis of synchronisatie. Scheiden met komma’s of nieuwe regels."
+      "th": "การคัดลอกจากโปรเซสเหล่านี้ไม่เข้าประวัติและไม่ซิงค์ คั่นด้วยจุลภาคหรือขึ้นบรรทัดใหม่",
+      "id": "Salinan dari proses ini tak pernah masuk riwayat atau disinkronkan. Pisahkan dengan koma atau baris baru.",
+      "hi": "इन प्रक्रियाओं की कॉपियाँ न इतिहास में जाती हैं, न समन्वयित होती हैं। अल्पविराम या नई पंक्ति से अलग करें।",
+      "tr": "Bu süreçlerden gelen kopyalar geçmişe girmez ve eşitlenmez. Virgülle veya satır sonuyla ayır.",
+      "pl": "Kopie z tych procesów nigdy nie trafiają do historii ani nie są synchronizowane. Oddziel przecinkami lub nowymi wierszami.",
+      "nl": "Kopieën uit deze processen komen nooit in de geschiedenis en synchroniseren niet. Scheid met komma’s of regeleinden."
     },
     "Prefs_Sync_AutoApply_Title": {
       "zh-Hans": "自动应用远端内容",
@@ -2598,8 +2598,8 @@
       "ar": "تطبيق المحتوى البعيد تلقائيًا",
       "it": "Applica automaticamente il contenuto remoto",
       "vi": "Tự động áp dụng nội dung từ xa",
-      "th": "นำเนื้อหาระยะไกลไปใช้อัตโนมัติ",
-      "id": "Terapkan otomatis konten jarak jauh",
+      "th": "ใช้เนื้อหาจากระยะไกลอัตโนมัติ",
+      "id": "Terapkan konten dari jauh otomatis",
       "hi": "दूरस्थ सामग्री स्वतः लागू करें",
       "tr": "Uzak içeriği otomatik uygula",
       "pl": "Automatycznie stosuj zdalną treść",
@@ -2619,12 +2619,12 @@
       "ar": "النص الوارد من الهاتف يُكتب تلقائيًا في حافظة هذا الحاسوب. عند الإيقاف يبقى في السجل فقط ويحتاج نسخًا يدويًا.",
       "it": "Il testo dal telefono viene scritto automaticamente negli appunti di questo PC. Se disattivato resta solo nella cronologia e va copiato a mano.",
       "vi": "Văn bản từ điện thoại được tự động ghi vào bảng nhớ tạm của PC này. Khi tắt, nó chỉ nằm trong lịch sử, cần sao chép thủ công.",
-      "th": "ข้อความจากโทรศัพท์ถูกเขียนลงคลิปบอร์ดของพีซีนี้โดยอัตโนมัติ เมื่อปิด จะอยู่ในประวัติเท่านั้น ต้องคัดลอกเอง",
-      "id": "Teks dari ponsel ditulis otomatis ke papan klip PC ini. Jika mati, ia hanya tinggal di riwayat dan perlu disalin manual.",
-      "hi": "फ़ोन से आया टेक्स्ट अपने आप इस PC के क्लिपबोर्ड में लिखा जाता है। बंद होने पर वह सिर्फ़ इतिहास में रहता है, हाथ से कॉपी करना होगा।",
-      "tr": "Telefondan gelen metin bu PC’nin panosuna otomatik yazılır. Kapalıyken yalnızca geçmişte kalır, elle kopyalamak gerekir.",
-      "pl": "Tekst z telefonu jest automatycznie zapisywany w schowku tego PC. Po wyłączeniu zostaje tylko w historii i wymaga ręcznego kopiowania.",
-      "nl": "Tekst van de telefoon wordt automatisch naar het klembord van deze pc geschreven. Uitgeschakeld blijft die alleen in de geschiedenis en moet handmatig gekopieerd worden."
+      "th": "ข้อความจากโทรศัพท์ถูกเขียนลงคลิปบอร์ดของพีซีนี้อัตโนมัติ ถ้าปิด จะอยู่แค่ในประวัติและต้องคัดลอกเอง",
+      "id": "Teks dari ponsel otomatis ditulis ke papan klip PC ini. Bila mati, hanya tinggal di riwayat dan perlu disalin manual.",
+      "hi": "फ़ोन से आया पाठ इस PC के क्लिपबोर्ड में स्वतः लिखा जाता है। बंद रहने पर केवल इतिहास में रहता है और हाथ से कॉपी करना पड़ता है।",
+      "tr": "Telefondan gelen metin bu bilgisayarın panosuna otomatik yazılır. Kapalıyken yalnızca geçmişte kalır ve elle kopyalanması gerekir.",
+      "pl": "Tekst z telefonu jest automatycznie zapisywany do schowka tego komputera. Po wyłączeniu zostaje tylko w historii i wymaga ręcznego skopiowania.",
+      "nl": "Tekst van de telefoon wordt automatisch naar het klembord van deze pc geschreven. Uitgeschakeld blijft die alleen in de geschiedenis en moet die handmatig worden gekopieerd."
     },
     "Prefs_Sync_ImageSync_Title": {
       "zh-Hans": "同步剪贴板图片",
@@ -2640,9 +2640,9 @@
       "ar": "مزامنة صور الحافظة",
       "it": "Sincronizza immagini degli appunti",
       "vi": "Đồng bộ hình ảnh bảng nhớ tạm",
-      "th": "ซิงค์รูปภาพคลิปบอร์ด",
+      "th": "ซิงค์รูปในคลิปบอร์ด",
       "id": "Sinkronkan gambar papan klip",
-      "hi": "क्लिपबोर्ड चित्र सिंक करें",
+      "hi": "क्लिपबोर्ड चित्रों का समन्वयन",
       "tr": "Pano görsellerini eşitle",
       "pl": "Synchronizuj obrazy ze schowka",
       "nl": "Klembordafbeeldingen synchroniseren"
@@ -2661,11 +2661,11 @@
       "ar": "متوقفة افتراضيًا. PNG/JPEG فقط؛ قد تحمل البايتات الأصلية EXIF وبيانات وصفية أخرى، ويحتاج الطرفان جلسة v2.",
       "it": "Disattivata per impostazione predefinita. Solo PNG/JPEG; i byte grezzi possono contenere EXIF e altri metadati, ed entrambe le estremità richiedono una sessione v2.",
       "vi": "Mặc định tắt. Chỉ PNG/JPEG; byte gốc có thể chứa EXIF và siêu dữ liệu khác, hai đầu cần phiên v2.",
-      "th": "ปิดโดยค่าเริ่มต้น เฉพาะ PNG/JPEG ไบต์ดิบอาจมี EXIF และเมทาดาทาอื่น และทั้งสองฝั่งต้องเป็นเซสชัน v2",
-      "id": "Mati secara bawaan. Hanya PNG/JPEG; byte mentah bisa memuat EXIF dan metadata lain, dan kedua ujung butuh sesi v2.",
-      "hi": "डिफ़ॉल्ट रूप से बंद। सिर्फ़ PNG/JPEG; कच्चे बाइट में EXIF आदि मेटाडेटा हो सकता है, और दोनों सिरों पर v2 सत्र चाहिए।",
-      "tr": "Varsayılan olarak kapalı. Yalnızca PNG/JPEG; ham baytlar EXIF vb. üstveri taşıyabilir ve iki ucun da v2 oturumu gerekir.",
-      "pl": "Domyślnie wyłączone. Tylko PNG/JPEG; surowe bajty mogą zawierać EXIF i inne metadane, a oba końce potrzebują sesji v2.",
+      "th": "ปิดเป็นค่าเริ่มต้น รองรับเฉพาะ PNG/JPEG ไบต์ดิบอาจมี EXIF และเมทาดาทาอื่น และทั้งสองฝั่งต้องใช้เซสชัน v2",
+      "id": "Mati secara bawaan. Hanya PNG/JPEG; byte mentah bisa membawa EXIF dan metadata lain, dan kedua ujung butuh sesi v2.",
+      "hi": "डिफ़ॉल्ट रूप से बंद। केवल PNG/JPEG; कच्चे बाइट में EXIF आदि मेटाडेटा हो सकता है, और दोनों सिरों को v2 सत्र चाहिए।",
+      "tr": "Varsayılan olarak kapalı. Yalnızca PNG/JPEG; ham baytlar EXIF ve başka üst veriler taşıyabilir, iki ucun da v2 oturumu gerekir.",
+      "pl": "Domyślnie wyłączone. Tylko PNG/JPEG; surowe bajty mogą zawierać EXIF i inne metadane, a obie strony potrzebują sesji v2.",
       "nl": "Standaard uit. Alleen PNG/JPEG; ruwe bytes kunnen EXIF en andere metadata bevatten, en beide kanten hebben een v2-sessie nodig."
     },
     "Prefs_Sync_AutoApplyImages_Title": {
@@ -2682,8 +2682,8 @@
       "ar": "تطبيق الصور البعيدة تلقائيًا",
       "it": "Applica automaticamente le immagini remote",
       "vi": "Tự động áp dụng hình ảnh từ xa",
-      "th": "นำรูปภาพระยะไกลไปใช้อัตโนมัติ",
-      "id": "Terapkan otomatis gambar jarak jauh",
+      "th": "ใช้รูปจากระยะไกลอัตโนมัติ",
+      "id": "Terapkan gambar dari jauh otomatis",
       "hi": "दूरस्थ चित्र स्वतः लागू करें",
       "tr": "Uzak görselleri otomatik uygula",
       "pl": "Automatycznie stosuj zdalne obrazy",
@@ -2703,12 +2703,12 @@
       "ar": "الصور الواردة من الهاتف تُكتب تلقائيًا في حافظة هذا الحاسوب. عند الإيقاف تبقى في السجل فقط وتحتاج نسخًا يدويًا.",
       "it": "Le immagini dal telefono vengono scritte automaticamente negli appunti di questo PC. Se disattivato restano solo nella cronologia e vanno copiate a mano.",
       "vi": "Hình ảnh từ điện thoại được tự động ghi vào bảng nhớ tạm của PC này. Khi tắt, chúng chỉ nằm trong lịch sử, cần sao chép thủ công.",
-      "th": "รูปภาพจากโทรศัพท์ถูกเขียนลงคลิปบอร์ดของพีซีนี้โดยอัตโนมัติ เมื่อปิด จะอยู่ในประวัติเท่านั้น ต้องคัดลอกเอง",
-      "id": "Gambar dari ponsel ditulis otomatis ke papan klip PC ini. Jika mati, ia hanya tinggal di riwayat dan perlu disalin manual.",
-      "hi": "फ़ोन से आए चित्र अपने आप इस PC के क्लिपबोर्ड में लिखे जाते हैं। बंद होने पर वे सिर्फ़ इतिहास में रहते हैं, हाथ से कॉपी करने होंगे।",
-      "tr": "Telefondan gelen görseller bu PC’nin panosuna otomatik yazılır. Kapalıyken yalnızca geçmişte kalır, elle kopyalamak gerekir.",
-      "pl": "Obrazy z telefonu są automatycznie zapisywane w schowku tego PC. Po wyłączeniu zostają tylko w historii i wymagają ręcznego kopiowania.",
-      "nl": "Afbeeldingen van de telefoon worden automatisch naar het klembord van deze pc geschreven. Uitgeschakeld blijven ze alleen in de geschiedenis en moeten handmatig gekopieerd worden."
+      "th": "รูปจากโทรศัพท์ถูกเขียนลงคลิปบอร์ดของพีซีนี้อัตโนมัติ ถ้าปิด จะอยู่แค่ในประวัติและต้องคัดลอกเอง",
+      "id": "Gambar dari ponsel otomatis ditulis ke papan klip PC ini. Bila mati, hanya tinggal di riwayat dan perlu disalin manual.",
+      "hi": "फ़ोन से आए चित्र इस PC के क्लिपबोर्ड में स्वतः लिखे जाते हैं। बंद रहने पर केवल इतिहास में रहते हैं और हाथ से कॉपी करने पड़ते हैं।",
+      "tr": "Telefondan gelen görseller bu bilgisayarın panosuna otomatik yazılır. Kapalıyken yalnızca geçmişte kalır ve elle kopyalanması gerekir.",
+      "pl": "Obrazy z telefonu są automatycznie zapisywane do schowka tego komputera. Po wyłączeniu zostają tylko w historii i wymagają ręcznego skopiowania.",
+      "nl": "Afbeeldingen van de telefoon worden automatisch naar het klembord van deze pc geschreven. Uitgeschakeld blijven ze alleen in de geschiedenis en moeten ze handmatig worden gekopieerd."
     },
     "Prefs_Moved_Title": {
       "zh-Hans": "蓝牙备援 · 额外监听地址 · 本机证书指纹",
@@ -2724,12 +2724,12 @@
       "ar": "احتياطي البلوتوث · عناوين استماع إضافية · بصمة الشهادة",
       "it": "Riserva Bluetooth · indirizzi di ascolto aggiuntivi · impronta del certificato",
       "vi": "Dự phòng Bluetooth · địa chỉ lắng nghe bổ sung · dấu vân tay chứng chỉ",
-      "th": "บลูทูธสำรอง · ที่อยู่เฝ้าฟังเพิ่มเติม · ลายนิ้วมือใบรับรอง",
+      "th": "ช่องสำรองบลูทูธ · ที่อยู่เฝ้าฟังเพิ่มเติม · ลายนิ้วมือใบรับรอง",
       "id": "Cadangan Bluetooth · alamat pantau tambahan · sidik jari sertifikat",
-      "hi": "ब्लूटूथ बैकअप · अतिरिक्त श्रवण पते · प्रमाणपत्र फ़िंगरप्रिंट",
+      "hi": "ब्लूटूथ फ़ॉलबैक · अतिरिक्त श्रवण पते · प्रमाणपत्र फ़िंगरप्रिंट",
       "tr": "Bluetooth yedeği · ek dinleme adresleri · sertifika parmak izi",
-      "pl": "Rezerwa Bluetooth · dodatkowe adresy nasłuchu · odcisk certyfikatu",
-      "nl": "Bluetooth-reserve · extra luisteradressen · certificaatvingerafdruk"
+      "pl": "Zapasowy Bluetooth · dodatkowe adresy nasłuchu · odcisk certyfikatu",
+      "nl": "Bluetooth-terugval · extra luisteradressen · certificaatvingerafdruk"
     },
     "Prefs_Moved_Desc": {
       "zh-Hans": "已移至「通路 · 网络段」——它们决定内容能否到达对端，与配对、设备管理同住。",
@@ -2745,12 +2745,12 @@
       "ar": "نُقلت إلى «القناة · قسم الشبكة» — فهي تقرر وصول المحتوى إلى الطرف الآخر، لذا تسكن مع الاقتران وإدارة الأجهزة.",
       "it": "Spostati in «Condotto · segmento rete» — decidono se il contenuto può raggiungere il peer, quindi convivono con associazione e gestione dei dispositivi.",
       "vi": "Đã chuyển sang “Đường dẫn · đoạn mạng” — chúng quyết định nội dung có đến được phía bên kia hay không, nên ở cùng ghép nối và quản lý thiết bị.",
-      "th": "ย้ายไปที่ “เส้นทาง · ช่วงเครือข่าย” แล้ว — พวกมันชี้ขาดว่าเนื้อหาไปถึงอีกฝั่งได้หรือไม่ จึงอยู่กับการจับคู่และการจัดการอุปกรณ์",
-      "id": "Dipindah ke “Saluran · segmen jaringan” — mereka menentukan apakah konten bisa sampai ke seberang, jadi tinggal bersama pemasangan dan pengelolaan perangkat.",
-      "hi": "“मार्ग · नेटवर्क खंड” में ले जाए गए — ये तय करते हैं कि सामग्री सामने तक पहुँचेगी या नहीं, इसलिए पेयरिंग और डिवाइस प्रबंधन के साथ रहते हैं।",
-      "tr": "“Kanal · ağ bölümü”ne taşındı — içeriğin karşıya ulaşıp ulaşamayacağını bunlar belirler; bu yüzden eşleştirme ve cihaz yönetimiyle birlikte yaşarlar.",
-      "pl": "Przeniesione do „Kanał · segment sieci” — decydują, czy treść dotrze na drugą stronę, więc mieszkają razem z parowaniem i zarządzaniem urządzeniami.",
-      "nl": "Verplaatst naar “Kanaal · netwerksegment” — zij bepalen of inhoud de overkant bereikt en wonen daarom bij koppeling en apparaatbeheer."
+      "th": "ย้ายไปที่ «เส้นทาง · ส่วนเครือข่าย» แล้ว — สิ่งเหล่านี้ชี้ขาดว่าเนื้อหาจะถึงอีกฝั่งได้ไหม จึงอยู่ร่วมกับการจับคู่และการจัดการอุปกรณ์",
+      "id": "Dipindah ke Saluran · segmen jaringan — semuanya menentukan apakah konten bisa mencapai pihak seberang, jadi tinggal bersama pemasangan dan pengelolaan perangkat.",
+      "hi": "«मार्ग · नेटवर्क खंड» में स्थानांतरित — ये तय करते हैं कि सामग्री दूसरे छोर तक पहुँच सकेगी या नहीं, इसलिए ये पेयरिंग और डिवाइस प्रबंधन के साथ रहते हैं।",
+      "tr": "Kanal · ağ bölümüne taşındı — içeriğin karşı tarafa ulaşıp ulaşamayacağını belirledikleri için eşleştirme ve cihaz yönetimiyle birlikte otururlar.",
+      "pl": "Przeniesione do Kanał · segment sieci — decydują, czy treść dotrze do drugiej strony, więc mieszkają obok parowania i zarządzania urządzeniami.",
+      "nl": "Verplaatst naar Kanaal · netwerksegment — ze bepalen of inhoud de peer kan bereiken, dus ze wonen bij koppeling en apparaatbeheer."
     },
     "Prefs_Moved_GoToConduit": {
       "zh-Hans": "前往通路",
@@ -2770,8 +2770,8 @@
       "id": "Buka Saluran",
       "hi": "मार्ग पर जाएँ",
       "tr": "Kanala git",
-      "pl": "Przejdź do kanału",
-      "nl": "Naar het kanaal"
+      "pl": "Przejdź do Kanału",
+      "nl": "Naar Kanaal"
     },
     "Prefs_Retention_Days_Title": {
       "zh-Hans": "保留期限",
@@ -2787,9 +2787,9 @@
       "ar": "مدة الاحتفاظ",
       "it": "Periodo di conservazione",
       "vi": "Thời hạn lưu giữ",
-      "th": "ระยะเวลาเก็บรักษา",
+      "th": "ระยะเวลาเก็บ",
       "id": "Masa penyimpanan",
-      "hi": "प्रतिधारण अवधि",
+      "hi": "संधारण अवधि",
       "tr": "Saklama süresi",
       "pl": "Okres przechowywania",
       "nl": "Bewaartermijn"
@@ -2808,12 +2808,12 @@
       "ar": "العناصر المتجاوزة للمهلة تُزال تلقائيًا. التنظيف يحدث على هذا الحاسوب فقط ولا يحذف عن بُعد ما استلمه الطرف الآخر.",
       "it": "Le voci scadute vengono rimosse automaticamente. La pulizia avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto.",
       "vi": "Mục quá hạn được tự động xóa. Dọn dẹp chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận.",
-      "th": "รายการที่เกินกำหนดถูกลบอัตโนมัติ การล้างเกิดบนพีซีนี้เท่านั้น ไม่ลบสิ่งที่อีกฝั่งได้รับแล้วจากระยะไกล",
-      "id": "Entri yang lewat tenggat dihapus otomatis. Pembersihan hanya terjadi di PC ini dan tidak pernah menghapus dari jauh apa yang sudah diterima seberang.",
-      "hi": "समय-सीमा पार प्रविष्टियाँ अपने आप हटती हैं। सफ़ाई सिर्फ़ इस PC पर होती है और सामने वाले को मिली सामग्री दूर से कभी नहीं मिटाती।",
-      "tr": "Süresi dolan kayıtlar otomatik silinir. Temizlik yalnızca bu PC’de olur; karşı tarafın aldıklarını uzaktan asla silmez.",
-      "pl": "Przeterminowane wpisy są usuwane automatycznie. Czyszczenie odbywa się tylko na tym PC i nigdy nie usuwa zdalnie tego, co druga strona już otrzymała.",
-      "nl": "Verlopen items worden automatisch verwijderd. Opschonen gebeurt alleen op deze pc en verwijdert nooit op afstand wat de overkant al ontving."
+      "th": "รายการที่เกินกำหนดถูกลบอัตโนมัติ การล้างเกิดเฉพาะบนพีซีนี้และไม่ลบสิ่งที่อีกฝั่งได้รับไปแล้ว",
+      "id": "Entri lewat batas dihapus otomatis. Pembersihan hanya terjadi di PC ini dan tak pernah menghapus yang sudah diterima pihak seberang.",
+      "hi": "अवधि पार कर चुकी प्रविष्टियाँ स्वतः हटती हैं। सफ़ाई केवल इसी PC पर होती है और दूसरे छोर को मिली सामग्री कभी नहीं मिटाती।",
+      "tr": "Süresi dolan kayıtlar otomatik silinir. Temizlik yalnızca bu bilgisayarda olur ve karşı tarafın zaten aldığını asla silmez.",
+      "pl": "Wpisy po terminie są usuwane automatycznie. Czyszczenie odbywa się tylko na tym komputerze i nigdy nie usuwa tego, co druga strona już odebrała.",
+      "nl": "Items over de termijn worden automatisch verwijderd. Opschonen gebeurt alleen op deze pc en verwijdert nooit wat de peer al heeft ontvangen."
     },
     "Prefs_Retention_DaysUnit": {
       "zh-Hans": "天",
@@ -2850,12 +2850,12 @@
       "ar": "عدد العناصر المحفوظة",
       "it": "Numero di voci conservate",
       "vi": "Số mục lưu giữ",
-      "th": "จำนวนรายการที่เก็บ",
-      "id": "Jumlah entri tersimpan",
-      "hi": "प्रतिधारण संख्या",
-      "tr": "Saklanan kayıt sayısı",
-      "pl": "Liczba przechowywanych wpisów",
-      "nl": "Aantal bewaarde items"
+      "th": "จำนวนที่เก็บ",
+      "id": "Jumlah simpanan",
+      "hi": "संधारण संख्या",
+      "tr": "Saklama adedi",
+      "pl": "Limit liczby wpisów",
+      "nl": "Bewaaraantal"
     },
     "Prefs_Retention_Entries_Desc": {
       "zh-Hans": "超出上限时最旧的条目先被清除（100–2000，每步 100）。清理只发生在本机。",
@@ -2871,12 +2871,12 @@
       "ar": "عند تجاوز الحد تُزال الأقدم أولًا (100–2000، بخطوة 100). التنظيف يحدث على هذا الحاسوب فقط.",
       "it": "Oltre il limite si rimuovono prima le voci più vecchie (100–2000, passi di 100). La pulizia avviene solo su questo PC.",
       "vi": "Vượt giới hạn thì mục cũ nhất bị xóa trước (100–2000, mỗi bước 100). Dọn dẹp chỉ diễn ra trên PC này.",
-      "th": "เมื่อเกินเพดาน รายการเก่าสุดถูกลบก่อน (100–2000 ขั้นละ 100) การล้างเกิดบนพีซีนี้เท่านั้น",
-      "id": "Saat melewati batas, entri tertua dihapus lebih dulu (100–2000, kelipatan 100). Pembersihan hanya terjadi di PC ini.",
-      "hi": "सीमा पार होने पर सबसे पुरानी प्रविष्टियाँ पहले हटती हैं (100–2000, 100 के चरण)। सफ़ाई सिर्फ़ इस PC पर होती है।",
-      "tr": "Sınır aşılınca en eski kayıtlar önce silinir (100–2000, 100’er adım). Temizlik yalnızca bu PC’de olur.",
-      "pl": "Po przekroczeniu limitu najstarsze wpisy usuwane są pierwsze (100–2000, krok 100). Czyszczenie odbywa się tylko na tym PC.",
-      "nl": "Boven de limiet gaan de oudste items eerst weg (100–2000, stappen van 100). Opschonen gebeurt alleen op deze pc."
+      "th": "เมื่อเกินเพดาน รายการเก่าสุดถูกลบก่อน (100–2000 ทีละ 100) การล้างเกิดเฉพาะบนพีซีนี้",
+      "id": "Saat melebihi batas, entri tertua dihapus lebih dulu (100–2000, kelipatan 100). Pembersihan hanya terjadi di PC ini.",
+      "hi": "सीमा पार होने पर सबसे पुरानी प्रविष्टियाँ पहले हटती हैं (100–2000, 100 के चरण)। सफ़ाई केवल इसी PC पर होती है।",
+      "tr": "Sınır aşılınca en eski kayıtlar önce silinir (100–2000, 100'er adım). Temizlik yalnızca bu bilgisayarda olur.",
+      "pl": "Po przekroczeniu limitu najstarsze wpisy są usuwane pierwsze (100–2000, co 100). Czyszczenie odbywa się tylko na tym komputerze.",
+      "nl": "Boven de limiet worden de oudste items eerst verwijderd (100–2000, stappen van 100). Opschonen gebeurt alleen op deze pc."
     },
     "Prefs_Retention_EntriesUnit": {
       "zh-Hans": "条",
@@ -2913,12 +2913,12 @@
       "ar": "التشغيل عند بدء النظام · إلى الدرج بصمت",
       "it": "Avvio automatico · direttamente nella tray",
       "vi": "Khởi động cùng máy · lặng lẽ vào khay",
-      "th": "เริ่มพร้อมเครื่อง · เข้าเทรย์เงียบ ๆ",
-      "id": "Mulai bersama sistem · senyap ke baki",
+      "th": "เริ่มพร้อมเครื่อง · เงียบ ๆ ลงเทรย์",
+      "id": "Mulai saat but · diam-diam ke baki",
       "hi": "बूट पर आरंभ · चुपचाप ट्रे में",
       "tr": "Açılışta başlat · sessizce tepsiye",
-      "pl": "Start z systemem · cicho do zasobnika",
-      "nl": "Starten bij aanmelden · stil naar het systeemvak"
+      "pl": "Uruchamiaj przy starcie · cicho do zasobnika",
+      "nl": "Starten bij aanmelden · stil naar systeemvak"
     },
     "Prefs_Startup_Launch_Desc": {
       "zh-Hans": "随 Windows 登录自动启动并直接落在托盘，不弹主窗口。只写当前用户的启动项，不需要管理员权限。",
@@ -2934,12 +2934,12 @@
       "ar": "يبدأ تلقائيًا عند تسجيل الدخول إلى Windows ويستقر مباشرة في الدرج دون فتح النافذة الرئيسية. يكتب إدخال بدء التشغيل للمستخدم الحالي فقط؛ لا حاجة لصلاحيات المسؤول.",
       "it": "Si avvia all’accesso a Windows e finisce dritto nella tray senza aprire la finestra principale. Scrive solo la voce di avvio dell’utente corrente; non servono diritti di amministratore.",
       "vi": "Tự khởi động khi đăng nhập Windows và vào thẳng khay, không mở cửa sổ chính. Chỉ ghi mục khởi động của người dùng hiện tại; không cần quyền quản trị.",
-      "th": "เริ่มอัตโนมัติเมื่อลงชื่อเข้า Windows และลงเทรย์ทันทีโดยไม่เปิดหน้าต่างหลัก เขียนเฉพาะรายการเริ่มทำงานของผู้ใช้ปัจจุบัน ไม่ต้องใช้สิทธิ์ผู้ดูแลระบบ",
-      "id": "Berjalan otomatis saat masuk Windows dan langsung menetap di baki tanpa membuka jendela utama. Hanya menulis entri mulai milik pengguna saat ini; tak perlu hak administrator.",
-      "hi": "Windows साइन-इन पर अपने आप शुरू होकर सीधे ट्रे में बैठ जाता है, मुख्य विंडो नहीं खुलती। सिर्फ़ वर्तमान उपयोगकर्ता की स्टार्टअप प्रविष्टि लिखता है; प्रशासक अधिकार नहीं चाहिए।",
-      "tr": "Windows oturumu açılınca otomatik başlar ve ana pencereyi açmadan doğrudan tepsiye yerleşir. Yalnızca geçerli kullanıcının başlangıç girdisini yazar; yönetici hakları gerekmez.",
-      "pl": "Uruchamia się automatycznie przy logowaniu do Windows i ląduje prosto w zasobniku, bez otwierania okna głównego. Zapisuje tylko wpis autostartu bieżącego użytkownika; uprawnienia administratora niepotrzebne.",
-      "nl": "Start automatisch bij het aanmelden bij Windows en belandt meteen in het systeemvak zonder het hoofdvenster te openen. Schrijft alleen de opstartvermelding van de huidige gebruiker; geen beheerdersrechten nodig."
+      "th": "เริ่มอัตโนมัติเมื่อลงชื่อเข้า Windows และลงเทรย์ทันทีโดยไม่เปิดหน้าต่างหลัก เขียนเฉพาะรายการเริ่มต้นของผู้ใช้ปัจจุบัน ไม่ต้องใช้สิทธิ์ผู้ดูแล",
+      "id": "Mulai otomatis saat masuk Windows dan langsung ke baki tanpa membuka jendela utama. Hanya menulis entri startup pengguna saat ini; tak perlu hak administrator.",
+      "hi": "Windows साइन-इन के साथ स्वतः शुरू होकर मुख्य विंडो खोले बिना सीधे ट्रे में जाता है। केवल वर्तमान उपयोगकर्ता की स्टार्टअप प्रविष्टि लिखता है; प्रशासक अधिकार नहीं चाहिए।",
+      "tr": "Windows oturumu açılınca otomatik başlar ve ana pencereyi açmadan doğrudan tepsiye iner. Yalnızca geçerli kullanıcının başlangıç girdisini yazar; yönetici hakkı gerekmez.",
+      "pl": "Uruchamia się automatycznie przy logowaniu do Windows i ląduje prosto w zasobniku, bez otwierania okna głównego. Zapisuje tylko wpis autostartu bieżącego użytkownika; nie wymaga uprawnień administratora.",
+      "nl": "Start automatisch bij het aanmelden bij Windows en landt direct in het systeemvak zonder het hoofdvenster te openen. Schrijft alleen de opstartvermelding van de huidige gebruiker; geen beheerdersrechten nodig."
     },
     "Prefs_Startup_Hotkey_Title": {
       "zh-Hans": "呼出浮窗快捷键",
@@ -2956,11 +2956,11 @@
       "it": "Scorciatoia del riquadro",
       "vi": "Phím tắt gọi cửa sổ nổi",
       "th": "คีย์ลัดเรียกหน้าต่างลอย",
-      "id": "Pintasan jendela melayang",
-      "hi": "फ़्लाईआउट हॉटकी",
-      "tr": "Açılır pencere kısayolu",
+      "id": "Pintasan jendela baki",
+      "hi": "फ़्लाईआउट शॉर्टकट",
+      "tr": "Tepsi penceresi kısayolu",
       "pl": "Skrót okienka podręcznego",
-      "nl": "Sneltoets zwevend venster"
+      "nl": "Sneltoets voor zwevend venster"
     },
     "Prefs_Startup_Hotkey_Desc": {
       "zh-Hans": "在任意应用按下组合键呼出托盘浮窗。点击输入框后按下想要的组合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。默认关闭。",
@@ -2976,12 +2976,12 @@
       "ar": "اضغط التركيبة في أي تطبيق لاستدعاء نافذة الدرج المنبثقة. انقر الحقل ثم اضغط التركيبة المطلوبة (يجب أن تتضمن Ctrl أو Alt أو Win)؛ اضغط Backspace للمسح. متوقف افتراضيًا.",
       "it": "Premi la combinazione in qualsiasi app per richiamare il riquadro della tray. Fai clic sul campo, poi premi la combinazione desiderata (deve includere Ctrl, Alt o Win); Backspace per cancellare. Disattivata per impostazione predefinita.",
       "vi": "Nhấn tổ hợp trong bất kỳ ứng dụng nào để gọi cửa sổ nổi ở khay. Bấm vào ô rồi nhấn tổ hợp mong muốn (phải gồm Ctrl, Alt hoặc Win); nhấn Backspace để xóa. Mặc định tắt.",
-      "th": "กดคีย์ผสมในแอปใดก็ได้เพื่อเรียกหน้าต่างลอยที่เทรย์ คลิกช่องแล้วกดคีย์ผสมที่ต้องการ (ต้องมี Ctrl, Alt หรือ Win) กด Backspace เพื่อล้าง ปิดโดยค่าเริ่มต้น",
-      "id": "Tekan kombinasi di aplikasi mana pun untuk memanggil jendela melayang baki. Klik kotaknya, lalu tekan kombinasi yang diinginkan (harus memuat Ctrl, Alt, atau Win); tekan Backspace untuk menghapus. Mati secara bawaan.",
-      "hi": "किसी भी ऐप में संयोजन दबाकर ट्रे फ़्लाईआउट बुलाएँ। बॉक्स क्लिक कर मनचाहा संयोजन दबाएँ (Ctrl, Alt या Win ज़रूरी); मिटाने को Backspace दबाएँ। डिफ़ॉल्ट रूप से बंद।",
-      "tr": "Herhangi bir uygulamada kombinasyona basarak tepsi açılır penceresini çağır. Kutuya tıkla, sonra istediğin kombinasyona bas (Ctrl, Alt veya Win içermeli); silmek için Backspace’e bas. Varsayılan olarak kapalı.",
-      "pl": "Naciśnij kombinację w dowolnej aplikacji, aby przywołać okienko przy zasobniku. Kliknij pole i naciśnij żądaną kombinację (musi zawierać Ctrl, Alt lub Win); Backspace czyści. Domyślnie wyłączone.",
-      "nl": "Druk in elke app op de combinatie om het zwevende venster bij het systeemvak op te roepen. Klik op het vak en druk de gewenste combinatie in (moet Ctrl, Alt of Win bevatten); Backspace wist. Standaard uit."
+      "th": "กดคีย์ผสมในแอปไหนก็ได้เพื่อเรียกหน้าต่างลอยที่เทรย์ คลิกช่องแล้วกดคีย์ผสมที่ต้องการ (ต้องมี Ctrl, Alt หรือ Win) กด Backspace เพื่อล้าง ปิดเป็นค่าเริ่มต้น",
+      "id": "Tekan kombinasi di aplikasi mana pun untuk memanggil jendela baki. Klik kotaknya lalu tekan kombinasi yang diinginkan (harus memuat Ctrl, Alt, atau Win); tekan Backspace untuk menghapus. Mati secara bawaan.",
+      "hi": "किसी भी ऐप में संयोजन दबाकर ट्रे फ़्लाईआउट बुलाएँ। बॉक्स पर क्लिक कर मनचाहा संयोजन दबाएँ (Ctrl, Alt या Win शामिल हो); Backspace से हटाएँ। डिफ़ॉल्ट रूप से बंद।",
+      "tr": "Herhangi bir uygulamada kombinasyona basarak tepsi penceresini çağır. Kutuya tıkla ve istediğin kombinasyona bas (Ctrl, Alt veya Win içermeli); Backspace temizler. Varsayılan olarak kapalı.",
+      "pl": "Naciśnij kombinację w dowolnej aplikacji, aby przywołać okienko przy zasobniku. Kliknij pole i naciśnij wybraną kombinację (musi zawierać Ctrl, Alt lub Win); Backspace czyści. Domyślnie wyłączone.",
+      "nl": "Druk in elke app op de combinatie om het zwevende venster op te roepen. Klik op het vak en druk dan op de gewenste combinatie (moet Ctrl, Alt of Win bevatten); druk op Backspace om te wissen. Standaard uit."
     },
     "Prefs_Data_Export_Desc": {
       "zh-Hans": "把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥、证书与配对信息。导出内容为明文，请妥善保管。",
@@ -2998,11 +2998,11 @@
       "it": "Scrive l’intera cronologia (inclusi i contrassegni di eliminazione) in un file di backup JSON Lines; senza chiavi, certificati o dati di associazione. L’export è in chiaro — custodiscilo con cura.",
       "vi": "Ghi toàn bộ lịch sử (gồm dấu xóa) thành tệp sao lưu JSON Lines; không chứa khóa, chứng chỉ hay dữ liệu ghép nối. Bản xuất là văn bản thuần — hãy cất giữ cẩn thận.",
       "th": "เขียนประวัติทั้งหมด (รวมเครื่องหมายการลบ) เป็นไฟล์สำรอง JSON Lines ไม่มีกุญแจ ใบรับรอง หรือข้อมูลจับคู่ ไฟล์ส่งออกเป็นข้อความล้วน — เก็บให้ปลอดภัย",
-      "id": "Menulis seluruh riwayat (termasuk penanda penghapusan) sebagai berkas cadangan JSON Lines; tanpa kunci, sertifikat, atau data pemasangan. Hasil ekspor berupa teks polos — simpan baik-baik.",
-      "hi": "पूरा इतिहास (हटाने के चिह्न सहित) JSON Lines बैकअप फ़ाइल में लिखता है; कुंजियाँ, प्रमाणपत्र या पेयरिंग डेटा नहीं। निर्यात सादा पाठ है — सँभालकर रखें।",
+      "id": "Menulis seluruh riwayat (termasuk penanda penghapusan) sebagai berkas cadangan JSON Lines; tanpa kunci, sertifikat, atau data pemasangan. Ekspor berupa teks polos — simpan baik-baik.",
+      "hi": "पूरा इतिहास (मिटाने के चिह्नों समेत) JSON Lines बैकअप फ़ाइल में लिखता है; कुंजियाँ, प्रमाणपत्र या पेयरिंग डेटा नहीं। निर्यात सादा पाठ है — सुरक्षित रखें।",
       "tr": "Tüm geçmişi (silme işaretleri dahil) JSON Lines yedek dosyası olarak yazar; anahtar, sertifika veya eşleştirme verisi içermez. Dışa aktarım düz metindir — güvenle sakla.",
       "pl": "Zapisuje całą historię (wraz ze znacznikami usunięć) jako plik kopii zapasowej JSON Lines; bez kluczy, certyfikatów i danych parowania. Eksport jest jawnym tekstem — przechowuj go bezpiecznie.",
-      "nl": "Schrijft de hele geschiedenis (inclusief verwijdermarkeringen) als JSON Lines-back-upbestand; zonder sleutels, certificaten of koppelgegevens. De export is platte tekst — bewaar hem veilig."
+      "nl": "Schrijft de hele geschiedenis (inclusief verwijdermarkeringen) als een JSON Lines-back-upbestand; geen sleutels, certificaten of koppelgegevens. De export is platte tekst — bewaar hem veilig."
     },
     "Prefs_Data_Import_Desc": {
       "zh-Hans": "从备份文件合并历史：按「来源设备 + 序号」幂等去重，重复导入不产生重复条目，也不会覆盖本机已删除的记录。校验失败时不做任何改动。",
@@ -3018,12 +3018,12 @@
       "ar": "يدمج السجل من ملف نسخ احتياطي: متكرر آمن وفق «جهاز المصدر + الرقم التسلسلي»، فإعادة الاستيراد لا تكرر العناصر ولا تلغي الحذف المحلي. فشل التحقق لا يغيّر شيئًا.",
       "it": "Unisce la cronologia da un file di backup: idempotente su «dispositivo di origine + numero», quindi reimportare non duplica voci né annulla le eliminazioni locali. Se la verifica fallisce, nulla cambia.",
       "vi": "Gộp lịch sử từ tệp sao lưu: khử trùng lặp theo “thiết bị nguồn + số thứ tự”, nhập lại không tạo mục trùng và không ghi đè các bản xóa cục bộ. Kiểm tra thất bại thì không thay đổi gì.",
-      "th": "รวมประวัติจากไฟล์สำรอง: ไม่ซ้ำซ้อนตาม “อุปกรณ์ต้นทาง + ลำดับ” การนำเข้าซ้ำไม่สร้างรายการซ้ำและไม่ทับการลบในเครื่อง หากตรวจสอบไม่ผ่านจะไม่เปลี่ยนอะไรเลย",
-      "id": "Menggabungkan riwayat dari berkas cadangan: idempoten pada “perangkat sumber + nomor urut”, jadi impor ulang tak menggandakan entri maupun menimpa penghapusan lokal. Jika validasi gagal, tidak ada yang berubah.",
-      "hi": "बैकअप फ़ाइल से इतिहास मिलाता है: “स्रोत डिवाइस + क्रमांक” पर आधारित, दोबारा आयात से न प्रविष्टियाँ दोहराती हैं, न स्थानीय हटाव पलटते हैं। सत्यापन विफल हो तो कुछ नहीं बदलता।",
-      "tr": "Geçmişi yedek dosyasından birleştirir: “kaynak cihaz + sıra numarası” üzerinde idempotenttir; yeniden içe aktarma kayıt çoğaltmaz, yerel silmeleri geri almaz. Doğrulama başarısız olursa hiçbir şey değişmez.",
-      "pl": "Scala historię z pliku kopii zapasowej: idempotentnie po „urządzeniu źródłowym + numerze”, więc ponowny import nie powiela wpisów ani nie cofa lokalnych usunięć. Nieudana walidacja niczego nie zmienia.",
-      "nl": "Voegt geschiedenis samen uit een back-upbestand: idempotent op “bronapparaat + volgnummer”, dus opnieuw importeren dupliceert geen items en overschrijft geen lokale verwijderingen. Bij een mislukte validatie verandert er niets."
+      "th": "รวมประวัติจากไฟล์สำรอง: idempotent ตาม «อุปกรณ์ต้นทาง + ลำดับ» นำเข้าซ้ำจึงไม่ทำให้รายการซ้ำ และไม่ทับการลบในเครื่อง ถ้าตรวจสอบไม่ผ่านจะไม่เปลี่ยนอะไรเลย",
+      "id": "Menggabungkan riwayat dari berkas cadangan: idempoten pada “perangkat sumber + nomor urut”, jadi impor ulang tak pernah menggandakan entri atau menimpa penghapusan lokal. Kegagalan validasi tak mengubah apa pun.",
+      "hi": "बैकअप फ़ाइल से इतिहास मिलाता है: «स्रोत डिवाइस + क्रमांक» पर एकसमान, इसलिए दोबारा आयात से न प्रविष्टियाँ दोहराई जाती हैं, न स्थानीय विलोपन बदलते हैं। सत्यापन विफल होने पर कुछ नहीं बदलता।",
+      "tr": "Yedek dosyasından geçmişi birleştirir: «kaynak cihaz + sıra numarası» üzerinde idempotenttir, yani yeniden içe aktarma asla kayıt çoğaltmaz ve yerel silmeleri ezmez. Doğrulama hataları hiçbir şeyi değiştirmez.",
+      "pl": "Scala historię z pliku kopii zapasowej: idempotentnie po „urządzeniu źródłowym + numerze”, więc ponowny import nigdy nie duplikuje wpisów ani nie nadpisuje lokalnych usunięć. Błędy walidacji niczego nie zmieniają.",
+      "nl": "Voegt geschiedenis uit een back-upbestand samen: idempotent op “bronapparaat + volgnummer”, dus opnieuw importeren dupliceert nooit items en overschrijft geen lokale verwijderingen. Bij validatiefouten verandert er niets."
     },
     "Prefs_Data_Clear_Desc": {
       "zh-Hans": "一次性删除本机全部条目（含图片），需两步确认且无法恢复。清空只发生在本机，不会远程删除对方已收到的内容；建议先导出历史留底。",
@@ -3039,12 +3039,12 @@
       "ar": "يحذف كل العناصر على هذا الحاسوب (مع الصور) دفعة واحدة؛ يتطلب تأكيدين ولا يمكن التراجع عنه. المسح يحدث على هذا الحاسوب فقط ولا يحذف ما استلمه الطرف الآخر — فكّر في التصدير أولًا.",
       "it": "Elimina in un colpo solo tutte le voci su questo PC (immagini incluse); richiede due conferme ed è irreversibile. Lo svuotamento avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto — valuta prima un export.",
       "vi": "Xóa một lần toàn bộ mục trên PC này (gồm hình ảnh); cần xác nhận hai bước và không thể khôi phục. Việc xóa chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận — nên xuất lịch sử trước.",
-      "th": "ลบทุกรายการบนพีซีนี้ (รวมรูปภาพ) ในครั้งเดียว ต้องยืนยันสองขั้นและกู้คืนไม่ได้ การล้างเกิดบนพีซีนี้เท่านั้น ไม่ลบสิ่งที่อีกฝั่งได้รับแล้ว — ควรส่งออกประวัติก่อน",
-      "id": "Menghapus semua entri di PC ini (termasuk gambar) sekali jalan; butuh dua konfirmasi dan tak bisa dibatalkan. Pengosongan hanya terjadi di PC ini dan tidak pernah menghapus apa yang sudah diterima seberang — pertimbangkan ekspor dulu.",
-      "hi": "इस PC की सभी प्रविष्टियाँ (चित्र सहित) एक बार में हटाता है; दो पुष्टियाँ चाहिए और वापस नहीं हो सकता। सफ़ाई सिर्फ़ इस PC पर होती है, सामने वाले को मिली सामग्री नहीं मिटती — पहले निर्यात कर लें।",
-      "tr": "Bu PC’deki tüm kayıtları (görseller dahil) tek seferde siler; iki onay ister ve geri alınamaz. Temizleme yalnızca bu PC’de olur; karşı tarafın aldıklarını asla silmez — önce dışa aktarmayı düşün.",
-      "pl": "Usuwa naraz wszystkie wpisy na tym PC (wraz z obrazami); wymaga dwóch potwierdzeń i jest nieodwracalne. Czyszczenie odbywa się tylko na tym PC i nigdy nie usuwa tego, co druga strona już otrzymała — rozważ najpierw eksport.",
-      "nl": "Verwijdert in één keer alle items op deze pc (inclusief afbeeldingen); vraagt twee bevestigingen en is onomkeerbaar. Wissen gebeurt alleen op deze pc en verwijdert nooit wat de overkant al ontving — overweeg eerst te exporteren."
+      "th": "ลบทุกรายการบนพีซีนี้ (รวมรูป) ในขั้นตอนเดียว ต้องยืนยันสองครั้งและย้อนกลับไม่ได้ การล้างเกิดเฉพาะบนพีซีนี้และไม่ลบสิ่งที่อีกฝั่งได้รับไปแล้ว — แนะนำให้ส่งออกก่อน",
+      "id": "Menghapus semua entri di PC ini (termasuk gambar) sekali jalan; perlu dua konfirmasi dan tak bisa dibatalkan. Pembersihan hanya terjadi di PC ini dan tak pernah menghapus yang sudah diterima pihak seberang — pertimbangkan ekspor dulu.",
+      "hi": "इस PC की सभी प्रविष्टियाँ (चित्रों समेत) एक ही चरण में मिटाता है; दो पुष्टियाँ चाहिए और पूर्ववत नहीं हो सकता। मिटाना केवल इसी PC पर होता है और दूसरे छोर को मिली सामग्री कभी नहीं मिटाता — पहले निर्यात कर लेना अच्छा है।",
+      "tr": "Bu bilgisayardaki tüm kayıtları (görseller dahil) tek adımda siler; iki onay ister ve geri alınamaz. Temizlik yalnızca bu bilgisayarda olur ve karşı tarafın zaten aldığını asla silmez — önce dışa aktarmayı düşün.",
+      "pl": "Usuwa wszystkie wpisy na tym komputerze (wraz z obrazami) za jednym razem; wymaga dwóch potwierdzeń i nie można tego cofnąć. Czyszczenie odbywa się tylko na tym komputerze i nigdy nie usuwa tego, co druga strona już odebrała — rozważ najpierw eksport.",
+      "nl": "Verwijdert in één stap alle items op deze pc (inclusief afbeeldingen); vereist twee bevestigingen en kan niet ongedaan worden gemaakt. Wissen gebeurt alleen op deze pc en verwijdert nooit wat de peer al heeft ontvangen — overweeg eerst te exporteren."
     },
     "Flyout_WindowTitle": {
       "zh-Hans": "剪剪相传 · 最近剪贴",
@@ -3061,11 +3061,11 @@
       "it": "ClipSync · clip recenti",
       "vi": "ClipSync · mẩu gần đây",
       "th": "ClipSync · รายการล่าสุด",
-      "id": "ClipSync · salinan terkini",
-      "hi": "ClipSync · हाल की क्लिप",
+      "id": "ClipSync · klip terkini",
+      "hi": "ClipSync · हाल की क्लिपें",
       "tr": "ClipSync · son kayıtlar",
       "pl": "ClipSync · ostatnie wpisy",
-      "nl": "ClipSync · recente items"
+      "nl": "ClipSync · recente clips"
     },
     "Flyout_PauseSync": {
       "zh-Hans": "暂停同步",
@@ -3083,7 +3083,7 @@
       "vi": "Tạm dừng đồng bộ",
       "th": "หยุดซิงค์ชั่วคราว",
       "id": "Jeda sinkronisasi",
-      "hi": "सिंक रोकें",
+      "hi": "समन्वयन रोकें",
       "tr": "Eşitlemeyi duraklat",
       "pl": "Wstrzymaj synchronizację",
       "nl": "Synchronisatie pauzeren"
@@ -3104,7 +3104,7 @@
       "vi": "Tiếp tục đồng bộ",
       "th": "ซิงค์ต่อ",
       "id": "Lanjutkan sinkronisasi",
-      "hi": "सिंक फिर शुरू करें",
+      "hi": "समन्वयन फिर शुरू करें",
       "tr": "Eşitlemeyi sürdür",
       "pl": "Wznów synchronizację",
       "nl": "Synchronisatie hervatten"
@@ -3123,12 +3123,12 @@
       "ar": "لا مقتطفات بعد · جرّب نسخ نص ما",
       "it": "Ancora nessuna clip · prova a copiare del testo",
       "vi": "Chưa có mẩu nào · thử sao chép một đoạn văn bản",
-      "th": "ยังไม่มีรายการ · ลองคัดลอกข้อความดู",
-      "id": "Belum ada salinan · coba salin sebuah teks",
-      "hi": "अभी कोई क्लिप नहीं · कुछ टेक्स्ट कॉपी करके देखें",
+      "th": "ยังไม่มีรายการ · ลองคัดลอกข้อความสักชิ้น",
+      "id": "Belum ada klip · coba salin sebuah teks",
+      "hi": "अभी कोई क्लिप नहीं · कोई पाठ कॉपी करके देखें",
       "tr": "Henüz kayıt yok · bir metin kopyalamayı dene",
-      "pl": "Nie ma jeszcze wpisów · spróbuj coś skopiować",
-      "nl": "Nog geen items · probeer wat tekst te kopiëren"
+      "pl": "Nie ma jeszcze wpisów · spróbuj skopiować jakiś tekst",
+      "nl": "Nog geen clips · probeer wat tekst te kopiëren"
     },
     "Flyout_PauseOrResume": {
       "zh-Hans": "暂停或恢复同步",
@@ -3146,7 +3146,7 @@
       "vi": "Tạm dừng hoặc tiếp tục đồng bộ",
       "th": "หยุดหรือซิงค์ต่อ",
       "id": "Jeda atau lanjutkan sinkronisasi",
-      "hi": "सिंक रोकें या फिर शुरू करें",
+      "hi": "समन्वयन रोकें या फिर शुरू करें",
       "tr": "Eşitlemeyi duraklat veya sürdür",
       "pl": "Wstrzymaj lub wznów synchronizację",
       "nl": "Synchronisatie pauzeren of hervatten"
@@ -3166,11 +3166,11 @@
       "it": "Copia la clip da {0}",
       "vi": "Sao chép mẩu từ {0}",
       "th": "คัดลอกรายการจาก {0}",
-      "id": "Salin item dari {0}",
+      "id": "Salin klip dari {0}",
       "hi": "{0} की क्लिप कॉपी करें",
       "tr": "{0} kaynağından gelen kaydı kopyala",
       "pl": "Kopiuj wpis od {0}",
-      "nl": "Item van {0} kopiëren"
+      "nl": "De clip van {0} kopiëren"
     },
     "Tray_Menu_Open": {
       "zh-Hans": "打开剪剪相传",
@@ -3189,7 +3189,7 @@
       "th": "เปิด ClipSync",
       "id": "Buka ClipSync",
       "hi": "ClipSync खोलें",
-      "tr": "ClipSync’i aç",
+      "tr": "ClipSync'i aç",
       "pl": "Otwórz ClipSync",
       "nl": "ClipSync openen"
     },
@@ -3231,7 +3231,7 @@
       "th": "ออก",
       "id": "Keluar",
       "hi": "बाहर निकलें",
-      "tr": "Çık",
+      "tr": "Çıkış",
       "pl": "Zakończ",
       "nl": "Afsluiten"
     },
@@ -3253,7 +3253,7 @@
       "id": "ClipSync · memantau",
       "hi": "ClipSync · सुन रहा है",
       "tr": "ClipSync · dinleniyor",
-      "pl": "ClipSync · nasłuch",
+      "pl": "ClipSync · nasłuchuje",
       "nl": "ClipSync · luistert"
     },
     "Tray_Tooltip_AttentionFormat": {
@@ -3292,11 +3292,11 @@
       "it": "Serve un tuo intervento",
       "vi": "Cần bạn thao tác",
       "th": "ต้องการการดำเนินการจากคุณ",
-      "id": "Perlu tindakan Anda",
+      "id": "Perlu tindakanmu",
       "hi": "आपकी कार्रवाई चाहिए",
-      "tr": "İşlem yapman gerekiyor",
-      "pl": "Wymaga Twojego działania",
-      "nl": "Actie van jou nodig"
+      "tr": "İşlem gerekli",
+      "pl": "Wymaga działania",
+      "nl": "Actie nodig"
     },
     "Tray_Tooltip_Paused": {
       "zh-Hans": "剪剪相传 · 捕获已暂停",
@@ -3312,9 +3312,9 @@
       "ar": "ClipSync · الالتقاط موقوف مؤقتًا",
       "it": "ClipSync · acquisizione in pausa",
       "vi": "ClipSync · đã tạm dừng ghi nhận",
-      "th": "ClipSync · หยุดจับข้อมูลชั่วคราว",
+      "th": "ClipSync · หยุดเก็บชั่วคราว",
       "id": "ClipSync · penangkapan dijeda",
-      "hi": "ClipSync · कैप्चर रुका हुआ",
+      "hi": "ClipSync · कैप्चर रुका है",
       "tr": "ClipSync · yakalama duraklatıldı",
       "pl": "ClipSync · przechwytywanie wstrzymane",
       "nl": "ClipSync · vastleggen gepauzeerd"
@@ -3337,8 +3337,8 @@
       "id": "ClipSync · mode privat, tanpa jejak",
       "hi": "ClipSync · निजी मोड, कोई निशान नहीं",
       "tr": "ClipSync · özel mod, iz bırakmaz",
-      "pl": "ClipSync · tryb prywatny, bez śladów",
-      "nl": "ClipSync · privémodus, geen sporen"
+      "pl": "ClipSync · tryb prywatny, nie zostawia śladów",
+      "nl": "ClipSync · privémodus, laat geen sporen na"
     },
     "Tray_RemoteClipOneFormat": {
       "zh-Hans": "收到 {0} 的 1 条新剪贴",
@@ -3355,11 +3355,11 @@
       "it": "1 nuova clip da {0}",
       "vi": "1 mẩu mới từ {0}",
       "th": "รายการใหม่ 1 รายการจาก {0}",
-      "id": "1 salinan baru dari {0}",
+      "id": "1 klip baru dari {0}",
       "hi": "{0} से 1 नई क्लिप",
       "tr": "{0} kaynağından 1 yeni kayıt",
       "pl": "1 nowy wpis od {0}",
-      "nl": "1 nieuw item van {0}"
+      "nl": "1 nieuwe clip van {0}"
     },
     "Tray_RemoteClipManyFormat": {
       "zh-Hans": "收到 {0} 的 {1} 条新剪贴",
@@ -3376,11 +3376,11 @@
       "it": "{1} nuove clip da {0}",
       "vi": "{1} mẩu mới từ {0}",
       "th": "รายการใหม่ {1} รายการจาก {0}",
-      "id": "{1} salinan baru dari {0}",
-      "hi": "{0} से {1} नई क्लिप",
+      "id": "{1} klip baru dari {0}",
+      "hi": "{0} से {1} नई क्लिपें",
       "tr": "{0} kaynağından {1} yeni kayıt",
-      "pl": "Nowe wpisy od {0}: {1}",
-      "nl": "{1} nieuwe items van {0}"
+      "pl": "{1} nowych wpisów od {0}",
+      "nl": "{1} nieuwe clips van {0}"
     },
     "Tray_OversizeNotice": {
       "zh-Hans": "刚复制的文本超过 1 MiB，仅保留在本机剪贴板，不同步（未截断）。",
@@ -3396,12 +3396,12 @@
       "ar": "النص المنسوخ للتو يتجاوز 1 ميبيبايت؛ يبقى في حافظة هذا الحاسوب فقط ولا يُزامن (دون قص).",
       "it": "Il testo appena copiato supera 1 MiB; resta solo negli appunti di questo PC e non viene sincronizzato (non troncato).",
       "vi": "Văn bản vừa sao chép vượt 1 MiB; chỉ nằm trong bảng nhớ tạm của PC này, không đồng bộ (không bị cắt).",
-      "th": "ข้อความที่เพิ่งคัดลอกเกิน 1 MiB จะอยู่ในคลิปบอร์ดของพีซีนี้เท่านั้น ไม่ซิงค์ (ไม่ถูกตัดทอน)",
-      "id": "Teks yang barusan disalin melebihi 1 MiB; hanya tinggal di papan klip PC ini dan tidak disinkronkan (tidak dipotong).",
-      "hi": "अभी कॉपी किया टेक्स्ट 1 MiB से बड़ा है; वह सिर्फ़ इस PC के क्लिपबोर्ड में रहेगा, सिंक नहीं होगा (काटा नहीं गया)।",
-      "tr": "Az önce kopyalanan metin 1 MiB’ı aşıyor; yalnızca bu PC’nin panosunda kalır, eşitlenmez (kesilmedi).",
-      "pl": "Właśnie skopiowany tekst przekracza 1 MiB; zostaje tylko w schowku tego PC i nie jest synchronizowany (nie ucięto go).",
-      "nl": "De zojuist gekopieerde tekst is groter dan 1 MiB; hij blijft alleen op het klembord van deze pc en wordt niet gesynchroniseerd (niet afgekapt)."
+      "th": "ข้อความที่เพิ่งคัดลอกเกิน 1 MiB จะอยู่แค่ในคลิปบอร์ดของพีซีนี้ ไม่ซิงค์ (ไม่ถูกตัดทอน)",
+      "id": "Teks yang baru disalin melebihi 1 MiB; hanya tinggal di papan klip PC ini dan tidak disinkronkan (tidak dipotong).",
+      "hi": "अभी कॉपी किया पाठ 1 MiB से बड़ा है; वह केवल इसी PC के क्लिपबोर्ड में रहेगा, समन्वयित नहीं होगा (काटा नहीं गया)।",
+      "tr": "Az önce kopyalanan metin 1 MiB'ı aşıyor; yalnızca bu bilgisayarın panosunda kalır ve eşitlenmez (kesilmedi).",
+      "pl": "Właśnie skopiowany tekst przekracza 1 MiB; zostaje tylko w schowku tego komputera i nie jest synchronizowany (nie został ucięty).",
+      "nl": "De zojuist gekopieerde tekst is groter dan 1 MiB; die blijft alleen op het klembord van deze pc en wordt niet gesynchroniseerd (niet afgekapt)."
     },
     "Tray_AuthThrottleFormat": {
       "zh-Hans": "检测到「{0}」反复认证失败，已临时限流该设备。",
@@ -3417,12 +3417,12 @@
       "ar": "إخفاقات مصادقة متكررة من «{0}»؛ قُيّد الجهاز مؤقتًا.",
       "it": "Ripetuti errori di autenticazione da «{0}»; il dispositivo è temporaneamente limitato.",
       "vi": "Phát hiện “{0}” liên tục xác thực thất bại; thiết bị bị hạn chế tạm thời.",
-      "th": "พบ “{0}” ยืนยันตัวตนล้มเหลวซ้ำ ๆ อุปกรณ์ถูกจำกัดชั่วคราว",
-      "id": "Kegagalan autentikasi berulang dari “{0}”; perangkat dibatasi sementara.",
-      "hi": "“{0}” से बार-बार प्रमाणीकरण विफल; डिवाइस अस्थायी रूप से सीमित किया गया।",
-      "tr": "“{0}” cihazından art arda kimlik doğrulama hatası; cihaz geçici olarak kısıtlandı.",
-      "pl": "Powtarzające się błędy uwierzytelniania od „{0}”; urządzenie tymczasowo ograniczono.",
-      "nl": "Herhaalde verificatiefouten van “{0}”; het apparaat is tijdelijk beperkt."
+      "th": "พบการยืนยันตัวตนล้มเหลวซ้ำ ๆ จาก «{0}» จึงจำกัดอุปกรณ์นั้นชั่วคราว",
+      "id": "Kegagalan autentikasi berulang dari “{0}”; perangkat itu dibatasi sementara.",
+      "hi": "«{0}» से बार-बार प्रमाणीकरण विफलताएँ मिलीं; डिवाइस अस्थायी रूप से सीमित किया गया है।",
+      "tr": "«{0}» cihazından art arda kimlik doğrulama hataları algılandı; cihaz geçici olarak kısıtlandı.",
+      "pl": "Wykryto powtarzające się błędy uwierzytelniania od „{0}”; urządzenie zostało tymczasowo ograniczone.",
+      "nl": "Herhaalde authenticatiefouten van “{0}”; het apparaat is tijdelijk afgeremd."
     },
     "Tray_Status_ListeningNoSync": {
       "zh-Hans": "监听中 · 同步未启动",
@@ -3438,11 +3438,11 @@
       "ar": "يستمع · المزامنة غير مشغّلة",
       "it": "In ascolto · sincronizzazione non attiva",
       "vi": "Đang lắng nghe · đồng bộ chưa chạy",
-      "th": "กำลังเฝ้าฟัง · การซิงค์ยังไม่เริ่ม",
-      "id": "Memantau · sinkronisasi belum berjalan",
-      "hi": "सुन रहा है · सिंक चालू नहीं",
+      "th": "กำลังเฝ้าฟัง · การซิงค์ยังไม่ทำงาน",
+      "id": "Memantau · sinkronisasi tidak berjalan",
+      "hi": "सुन रहा है · समन्वयन चालू नहीं",
       "tr": "Dinleniyor · eşitleme çalışmıyor",
-      "pl": "Nasłuch · synchronizacja nie działa",
+      "pl": "Nasłuchuje · synchronizacja nie działa",
       "nl": "Luistert · synchronisatie niet actief"
     },
     "Tray_Status_ConnectedFormat": {
@@ -3463,7 +3463,7 @@
       "id": "Memantau · {0} terhubung",
       "hi": "सुन रहा है · {0} जुड़े",
       "tr": "Dinleniyor · {0} bağlı",
-      "pl": "Nasłuch · połączono {0}",
+      "pl": "Nasłuchuje · połączono {0}",
       "nl": "Luistert · {0} verbonden"
     },
     "Tray_Status_Waiting": {
@@ -3480,11 +3480,11 @@
       "ar": "يستمع · بانتظار الأجهزة",
       "it": "In ascolto · in attesa di dispositivi",
       "vi": "Đang lắng nghe · chờ thiết bị kết nối",
-      "th": "กำลังเฝ้าฟัง · รออุปกรณ์เชื่อมต่อ",
+      "th": "กำลังเฝ้าฟัง · รออุปกรณ์เชื่อมเข้ามา",
       "id": "Memantau · menunggu perangkat",
       "hi": "सुन रहा है · डिवाइसों की प्रतीक्षा",
       "tr": "Dinleniyor · cihaz bekleniyor",
-      "pl": "Nasłuch · oczekiwanie na urządzenia",
+      "pl": "Nasłuchuje · czeka na urządzenia",
       "nl": "Luistert · wacht op apparaten"
     },
     "Capture_OversizeNotice": {
@@ -3501,12 +3501,12 @@
       "ar": "النص المنسوخ للتو يتجاوز 1 ميبيبايت: يبقى في حافظة النظام دون قص، لكنه لا يُسجل في السجل ولا يُزامن.",
       "it": "Il testo appena copiato supera 1 MiB: resta negli appunti di sistema, non troncato, ma non viene registrato nella cronologia né sincronizzato.",
       "vi": "Văn bản vừa sao chép vượt 1 MiB: vẫn nằm trong bảng nhớ tạm hệ thống, không bị cắt, nhưng không ghi vào lịch sử và không đồng bộ.",
-      "th": "ข้อความที่เพิ่งคัดลอกเกิน 1 MiB: ยังอยู่ในคลิปบอร์ดระบบโดยไม่ถูกตัดทอน แต่ไม่บันทึกลงประวัติและไม่ซิงค์",
-      "id": "Teks yang barusan disalin melebihi 1 MiB: tetap di papan klip sistem tanpa dipotong, tetapi tidak dicatat ke riwayat dan tidak disinkronkan.",
-      "hi": "अभी कॉपी किया टेक्स्ट 1 MiB से बड़ा है: वह सिस्टम क्लिपबोर्ड में बिना कटे रहेगा, पर न इतिहास में दर्ज होगा, न सिंक।",
-      "tr": "Az önce kopyalanan metin 1 MiB’ı aşıyor: sistem panosunda kesilmeden kalır ama geçmişe kaydedilmez ve eşitlenmez.",
-      "pl": "Właśnie skopiowany tekst przekracza 1 MiB: zostaje w schowku systemowym bez ucięcia, ale nie trafia do historii ani do synchronizacji.",
-      "nl": "De zojuist gekopieerde tekst is groter dan 1 MiB: hij blijft onafgekapt op het systeemklembord, maar wordt niet in de geschiedenis opgenomen en niet gesynchroniseerd."
+      "th": "ข้อความที่เพิ่งคัดลอกเกิน 1 MiB: ยังอยู่ในคลิปบอร์ดระบบโดยไม่ถูกตัด แต่ไม่บันทึกลงประวัติและไม่ซิงค์",
+      "id": "Teks yang baru disalin melebihi 1 MiB: tetap di papan klip sistem tanpa dipotong, tetapi tidak dicatat ke riwayat dan tidak disinkronkan.",
+      "hi": "अभी कॉपी किया पाठ 1 MiB से बड़ा है: वह बिना कटे सिस्टम क्लिपबोर्ड में रहता है, पर न इतिहास में दर्ज होता है, न समन्वयित होता है।",
+      "tr": "Az önce kopyalanan metin 1 MiB'ı aşıyor: sistem panosunda kesilmeden kalır ama geçmişe kaydedilmez ve eşitlenmez.",
+      "pl": "Właśnie skopiowany tekst przekracza 1 MiB: zostaje w schowku systemowym bez ucinania, ale nie trafia do historii i nie jest synchronizowany.",
+      "nl": "De zojuist gekopieerde tekst is groter dan 1 MiB: die blijft onafgekapt op het systeemklembord, maar wordt niet in de geschiedenis opgenomen en niet gesynchroniseerd."
     },
     "Sync_NotStarted": {
       "zh-Hans": "对端服务尚未启动",
@@ -3522,12 +3522,12 @@
       "ar": "خدمة الطرف الآخر لم تبدأ بعد",
       "it": "Servizio peer non ancora avviato",
       "vi": "Dịch vụ phía đối diện chưa khởi động",
-      "th": "บริการฝั่งตรงข้ามยังไม่เริ่ม",
-      "id": "Layanan seberang belum dimulai",
-      "hi": "सामने की सेवा अभी शुरू नहीं हुई",
+      "th": "บริการฝั่งโน้นยังไม่เริ่ม",
+      "id": "Layanan peer belum dimulai",
+      "hi": "पीयर सेवा अभी शुरू नहीं हुई",
       "tr": "Karşı taraf hizmeti henüz başlamadı",
-      "pl": "Usługa drugiej strony jeszcze nie wystartowała",
-      "nl": "Service aan de overkant nog niet gestart"
+      "pl": "Usługa dla drugiej strony jeszcze nie działa",
+      "nl": "Peer-service nog niet gestart"
     },
     "Sync_StartFailed": {
       "zh-Hans": "对端服务未能启动，本次会话同步关闭。",
@@ -3543,12 +3543,12 @@
       "ar": "تعذّر بدء خدمة الطرف الآخر؛ المزامنة متوقفة في هذه الجلسة.",
       "it": "Il servizio peer non è riuscito ad avviarsi; la sincronizzazione è spenta per questa sessione.",
       "vi": "Dịch vụ phía đối diện không khởi động được; phiên này đồng bộ tắt.",
-      "th": "บริการฝั่งตรงข้ามเริ่มไม่สำเร็จ เซสชันนี้ปิดการซิงค์",
-      "id": "Layanan seberang gagal dimulai; sesi ini sinkronisasi mati.",
-      "hi": "सामने की सेवा शुरू नहीं हो सकी; इस सत्र में सिंक बंद है।",
+      "th": "บริการฝั่งโน้นเริ่มไม่สำเร็จ รอบนี้การซิงค์ปิด",
+      "id": "Layanan peer gagal dimulai; sinkronisasi mati untuk sesi ini.",
+      "hi": "पीयर सेवा शुरू नहीं हो सकी; इस सत्र में समन्वयन बंद है।",
       "tr": "Karşı taraf hizmeti başlatılamadı; bu oturumda eşitleme kapalı.",
-      "pl": "Usługa drugiej strony nie zdołała wystartować; w tej sesji synchronizacja jest wyłączona.",
-      "nl": "De service aan de overkant kon niet starten; synchronisatie staat deze sessie uit."
+      "pl": "Usługa dla drugiej strony nie uruchomiła się; synchronizacja jest wyłączona w tej sesji.",
+      "nl": "De peer-service kon niet starten; synchronisatie is deze sessie uit."
     },
     "Sync_ConnectedFormat": {
       "zh-Hans": "LAN 监听端口 {0} · 已连接 {1} 台设备，内容实时互通。",
@@ -3564,12 +3564,12 @@
       "ar": "استماع LAN على المنفذ {0} · {1} جهاز متصل، والمحتوى يتدفق آنيًا.",
       "it": "LAN in ascolto sulla porta {0} · {1} dispositivi connessi, il contenuto scorre in tempo reale.",
       "vi": "LAN lắng nghe cổng {0} · đã kết nối {1} thiết bị, nội dung thông suốt theo thời gian thực.",
-      "th": "LAN เฝ้าฟังพอร์ต {0} · เชื่อมต่อแล้ว {1} เครื่อง เนื้อหาไหลถึงกันแบบเรียลไทม์",
-      "id": "LAN memantau porta {0} · {1} perangkat terhubung, konten mengalir waktu nyata.",
-      "hi": "LAN पोर्ट {0} पर सुन रहा है · {1} डिवाइस जुड़े, सामग्री तुरंत आती-जाती है।",
-      "tr": "LAN {0} bağlantı noktasını dinliyor · {1} cihaz bağlı, içerik gerçek zamanlı akıyor.",
-      "pl": "Nasłuch LAN na porcie {0} · połączono {1} urządzeń, treść płynie w czasie rzeczywistym.",
-      "nl": "LAN luistert op poort {0} · {1} apparaat/apparaten verbonden, inhoud stroomt realtime."
+      "th": "LAN เฝ้าฟังที่พอร์ต {0} · เชื่อมต่อแล้ว {1} เครื่อง เนื้อหาไหลถึงกันทันที",
+      "id": "LAN memantau porta {0} · {1} perangkat terhubung, konten mengalir seketika.",
+      "hi": "LAN पोर्ट {0} पर सुन रहा है · {1} डिवाइस जुड़े, सामग्री तत्काल बह रही है।",
+      "tr": "LAN {0} portunda dinleniyor · {1} cihaz bağlı, içerik gerçek zamanlı akıyor.",
+      "pl": "Nasłuch LAN na porcie {0} · połączono {1} urządzenie(a), treść płynie w czasie rzeczywistym.",
+      "nl": "LAN luistert op poort {0} · {1} apparaat(en) verbonden, inhoud stroomt realtime."
     },
     "Sync_WaitingFormat": {
       "zh-Hans": "LAN 监听端口 {0} · 等待已配对设备连入；事件先落库再入发件队列，断线不丢。",
@@ -3585,12 +3585,12 @@
       "ar": "استماع LAN على المنفذ {0} · بانتظار الأجهزة المقترنة؛ تُحفظ الأحداث في المخزن قبل قائمة الإرسال فلا يضيع شيء دون اتصال.",
       "it": "LAN in ascolto sulla porta {0} · in attesa dei dispositivi associati; gli eventi arrivano nell’archivio prima della coda di invio, offline non si perde nulla.",
       "vi": "LAN lắng nghe cổng {0} · chờ thiết bị đã ghép nối; sự kiện vào kho trước rồi mới vào hàng đợi gửi, mất mạng không mất dữ liệu.",
-      "th": "LAN เฝ้าฟังพอร์ต {0} · รออุปกรณ์ที่จับคู่ เหตุการณ์ลงคลังก่อนแล้วจึงเข้าคิวส่ง ขาดการเชื่อมต่อก็ไม่หาย",
-      "id": "LAN memantau porta {0} · menunggu perangkat terpasang; peristiwa masuk penyimpanan dulu sebelum antrean kirim, jadi tak ada yang hilang saat luring.",
-      "hi": "LAN पोर्ट {0} पर सुन रहा है · पेयर किए डिवाइसों की प्रतीक्षा; घटनाएँ पहले भंडार में, फिर भेजने की कतार में जाती हैं — ऑफ़लाइन में कुछ नहीं खोता।",
-      "tr": "LAN {0} bağlantı noktasını dinliyor · eşleştirilmiş cihazlar bekleniyor; olaylar önce depoya, sonra gönderim kuyruğuna girer — çevrimdışında hiçbir şey kaybolmaz.",
-      "pl": "Nasłuch LAN na porcie {0} · oczekiwanie na sparowane urządzenia; zdarzenia trafiają najpierw do magazynu, potem do kolejki wysyłki — offline nic nie ginie.",
-      "nl": "LAN luistert op poort {0} · wacht op gekoppelde apparaten; gebeurtenissen belanden eerst in de opslag en dan in de verzendwachtrij, offline gaat niets verloren."
+      "th": "LAN เฝ้าฟังที่พอร์ต {0} · รออุปกรณ์ที่จับคู่เชื่อมเข้ามา เหตุการณ์ลงฐานข้อมูลก่อนเข้าคิวส่ง หลุดสายก็ไม่หาย",
+      "id": "LAN memantau porta {0} · menunggu perangkat yang dipasangkan; peristiwa masuk penyimpanan dulu lalu antrean kirim, jadi tak ada yang hilang saat luring.",
+      "hi": "LAN पोर्ट {0} पर सुन रहा है · युग्मित डिवाइसों की प्रतीक्षा; घटनाएँ पहले भंडार में, फिर प्रेषण कतार में जाती हैं, ऑफ़लाइन में कुछ नहीं खोता।",
+      "tr": "LAN {0} portunda dinleniyor · eşleştirilmiş cihazlar bekleniyor; olaylar önce depoya, sonra giden kuyruğuna düşer, çevrimdışında hiçbir şey kaybolmaz.",
+      "pl": "Nasłuch LAN na porcie {0} · oczekiwanie na sparowane urządzenia; zdarzenia trafiają najpierw do magazynu, potem do kolejki wysyłkowej, więc offline nic nie ginie.",
+      "nl": "LAN luistert op poort {0} · wacht op gekoppelde apparaten; gebeurtenissen landen eerst in de opslag en dan in de wachtrij, dus offline gaat niets verloren."
     },
     "Bt_Disabled": {
       "zh-Hans": "蓝牙备援未启用",
@@ -3606,12 +3606,12 @@
       "ar": "احتياطي البلوتوث غير مفعّل",
       "it": "Riserva Bluetooth non abilitata",
       "vi": "Dự phòng Bluetooth chưa bật",
-      "th": "ยังไม่เปิดบลูทูธสำรอง",
-      "id": "Cadangan Bluetooth belum diaktifkan",
-      "hi": "ब्लूटूथ बैकअप सक्षम नहीं",
+      "th": "ยังไม่เปิดช่องสำรองบลูทูธ",
+      "id": "Cadangan Bluetooth tidak diaktifkan",
+      "hi": "ब्लूटूथ फ़ॉलबैक सक्षम नहीं",
       "tr": "Bluetooth yedeği etkin değil",
-      "pl": "Rezerwa Bluetooth nie jest włączona",
-      "nl": "Bluetooth-reserve niet ingeschakeld"
+      "pl": "Zapasowy Bluetooth nie jest włączony",
+      "nl": "Bluetooth-terugval niet ingeschakeld"
     },
     "Bt_UnavailableFormat": {
       "zh-Hans": "蓝牙备援不可用：{0}",
@@ -3627,12 +3627,12 @@
       "ar": "احتياطي البلوتوث غير متاح: {0}",
       "it": "Riserva Bluetooth non disponibile: {0}",
       "vi": "Dự phòng Bluetooth không khả dụng: {0}",
-      "th": "บลูทูธสำรองใช้ไม่ได้: {0}",
-      "id": "Cadangan Bluetooth tidak tersedia: {0}",
-      "hi": "ब्लूटूथ बैकअप अनुपलब्ध: {0}",
+      "th": "ช่องสำรองบลูทูธใช้ไม่ได้: {0}",
+      "id": "Cadangan Bluetooth tak tersedia: {0}",
+      "hi": "ब्लूटूथ फ़ॉलबैक अनुपलब्ध: {0}",
       "tr": "Bluetooth yedeği kullanılamıyor: {0}",
-      "pl": "Rezerwa Bluetooth niedostępna: {0}",
-      "nl": "Bluetooth-reserve niet beschikbaar: {0}"
+      "pl": "Zapasowy Bluetooth niedostępny: {0}",
+      "nl": "Bluetooth-terugval niet beschikbaar: {0}"
     },
     "Bt_SyncingFormat": {
       "zh-Hans": "蓝牙备援 · 正与 {0} 同步（仅文本）",
@@ -3648,12 +3648,12 @@
       "ar": "احتياطي البلوتوث · مزامنة مع {0} (نص فقط)",
       "it": "Riserva Bluetooth · sincronizzazione con {0} (solo testo)",
       "vi": "Dự phòng Bluetooth · đang đồng bộ với {0} (chỉ văn bản)",
-      "th": "บลูทูธสำรอง · กำลังซิงค์กับ {0} (ข้อความเท่านั้น)",
-      "id": "Cadangan Bluetooth · menyinkron dengan {0} (teks saja)",
-      "hi": "ब्लूटूथ बैकअप · {0} से सिंक जारी (सिर्फ़ टेक्स्ट)",
+      "th": "ช่องสำรองบลูทูธ · กำลังซิงค์กับ {0} (เฉพาะข้อความ)",
+      "id": "Cadangan Bluetooth · menyinkronkan dengan {0} (hanya teks)",
+      "hi": "ब्लूटूथ फ़ॉलबैक · {0} से समन्वयन (केवल पाठ)",
       "tr": "Bluetooth yedeği · {0} ile eşitleniyor (yalnızca metin)",
-      "pl": "Rezerwa Bluetooth · synchronizacja z {0} (tylko tekst)",
-      "nl": "Bluetooth-reserve · synchroniseert met {0} (alleen tekst)"
+      "pl": "Zapasowy Bluetooth · synchronizacja z {0} (tylko tekst)",
+      "nl": "Bluetooth-terugval · synchroniseert met {0} (alleen tekst)"
     },
     "Bt_Armed": {
       "zh-Hans": "蓝牙备援待命 · LAN 不可达时手机自动改走蓝牙",
@@ -3669,12 +3669,12 @@
       "ar": "احتياطي البلوتوث جاهز · يتحول الهاتف تلقائيًا إلى البلوتوث حين تتعذر الشبكة المحلية",
       "it": "Riserva Bluetooth in attesa · il telefono passa da solo al Bluetooth quando la LAN è irraggiungibile",
       "vi": "Dự phòng Bluetooth trực chờ · khi LAN không tới được, điện thoại tự chuyển sang Bluetooth",
-      "th": "บลูทูธสำรองพร้อมทำงาน · เมื่อ LAN เข้าถึงไม่ได้ โทรศัพท์จะสลับไปบลูทูธเอง",
+      "th": "ช่องสำรองบลูทูธพร้อมสแตนด์บาย · เมื่อ LAN เข้าไม่ถึง โทรศัพท์จะสลับไปบลูทูธอัตโนมัติ",
       "id": "Cadangan Bluetooth siaga · ponsel otomatis beralih ke Bluetooth saat LAN tak terjangkau",
-      "hi": "ब्लूटूथ बैकअप तैयार · LAN न मिलने पर फ़ोन अपने आप ब्लूटूथ पर चला जाता है",
-      "tr": "Bluetooth yedeği hazırda · LAN erişilemez olunca telefon otomatik olarak Bluetooth’a geçer",
-      "pl": "Rezerwa Bluetooth w gotowości · gdy LAN jest nieosiągalny, telefon sam przechodzi na Bluetooth",
-      "nl": "Bluetooth-reserve stand-by · de telefoon schakelt vanzelf over op Bluetooth als het LAN onbereikbaar is"
+      "hi": "ब्लूटूथ फ़ॉलबैक तैयार · LAN न पहुँचे तो फ़ोन स्वतः ब्लूटूथ पर चला जाता है",
+      "tr": "Bluetooth yedeği hazırda · LAN ulaşılamaz olunca telefon otomatik olarak Bluetooth'a geçer",
+      "pl": "Zapasowy Bluetooth w gotowości · telefon przełącza się na Bluetooth automatycznie, gdy LAN jest nieosiągalny",
+      "nl": "Bluetooth-terugval stand-by · de telefoon schakelt automatisch over op Bluetooth wanneer het LAN onbereikbaar is"
     },
     "Bt_Starting": {
       "zh-Hans": "蓝牙备援启动中…",
@@ -3690,12 +3690,12 @@
       "ar": "احتياطي البلوتوث يبدأ…",
       "it": "Riserva Bluetooth in avvio…",
       "vi": "Dự phòng Bluetooth đang khởi động…",
-      "th": "บลูทูธสำรองกำลังเริ่ม…",
-      "id": "Cadangan Bluetooth sedang dimulai…",
-      "hi": "ब्लूटूथ बैकअप शुरू हो रहा है…",
+      "th": "ช่องสำรองบลูทูธกำลังเริ่ม…",
+      "id": "Cadangan Bluetooth dimulai…",
+      "hi": "ब्लूटूथ फ़ॉलबैक शुरू हो रहा है…",
       "tr": "Bluetooth yedeği başlatılıyor…",
-      "pl": "Rezerwa Bluetooth startuje…",
-      "nl": "Bluetooth-reserve start…"
+      "pl": "Zapasowy Bluetooth uruchamia się…",
+      "nl": "Bluetooth-terugval start…"
     },
     "Bt_AdapterUnavailable": {
       "zh-Hans": "蓝牙适配器不可用或已关闭",
@@ -3711,11 +3711,11 @@
       "ar": "محول البلوتوث غير متاح أو مطفأ",
       "it": "Adattatore Bluetooth non disponibile o spento",
       "vi": "Bộ điều hợp Bluetooth không khả dụng hoặc đã tắt",
-      "th": "อะแดปเตอร์บลูทูธใช้ไม่ได้หรือปิดอยู่",
-      "id": "Adaptor Bluetooth tidak tersedia atau dimatikan",
-      "hi": "ब्लूटूथ एडैप्टर अनुपलब्ध या बंद है",
+      "th": "อะแดปเตอร์บลูทูธใช้ไม่ได้หรือถูกปิด",
+      "id": "Adaptor Bluetooth tak tersedia atau mati",
+      "hi": "ब्लूटूथ एडेप्टर अनुपलब्ध या बंद है",
       "tr": "Bluetooth bağdaştırıcısı kullanılamıyor veya kapalı",
-      "pl": "Karta Bluetooth niedostępna lub wyłączona",
+      "pl": "Adapter Bluetooth niedostępny lub wyłączony",
       "nl": "Bluetooth-adapter niet beschikbaar of uitgeschakeld"
     },
     "Ack_None": {
@@ -3732,12 +3732,12 @@
       "ar": "لا إقرار من الطرف الآخر بعد",
       "it": "Ancora nessuna conferma dal peer",
       "vi": "Chưa nhận được xác nhận từ phía đối diện",
-      "th": "ยังไม่ได้รับการยืนยันจากฝั่งตรงข้าม",
-      "id": "Belum ada konfirmasi dari seberang",
-      "hi": "सामने से अभी कोई पुष्टि नहीं",
-      "tr": "Karşı taraftan henüz onay yok",
-      "pl": "Brak jeszcze potwierdzenia z drugiej strony",
-      "nl": "Nog geen bevestiging van de overkant"
+      "th": "ยังไม่ได้รับการยืนยันจากฝั่งโน้น",
+      "id": "Belum ada konfirmasi dari pihak seberang",
+      "hi": "अभी दूसरे छोर की कोई पुष्टि नहीं",
+      "tr": "Henüz karşı taraf onayı yok",
+      "pl": "Brak potwierdzenia od drugiej strony",
+      "nl": "Nog geen bevestiging van de peer"
     },
     "Ack_UpToFormat": {
       "zh-Hans": "对端确认至 {0}",
@@ -3753,12 +3753,12 @@
       "ar": "أقرّ الطرف الآخر حتى {0}",
       "it": "Il peer ha confermato fino a {0}",
       "vi": "Phía đối diện đã xác nhận đến {0}",
-      "th": "ฝั่งตรงข้ามยืนยันถึง {0}",
-      "id": "Seberang mengonfirmasi sampai {0}",
-      "hi": "सामने वाले ने {0} तक पुष्टि की",
-      "tr": "Karşı taraf {0} noktasına kadar onayladı",
+      "th": "ฝั่งโน้นยืนยันถึง {0}",
+      "id": "Pihak seberang mengonfirmasi hingga {0}",
+      "hi": "दूसरे छोर ने {0} तक पुष्टि की",
+      "tr": "Karşı taraf {0} numarasına kadar onayladı",
       "pl": "Druga strona potwierdziła do {0}",
-      "nl": "De overkant bevestigde tot {0}"
+      "nl": "Peer bevestigde tot {0}"
     },
     "Transfer_ClearedFormat": {
       "zh-Hans": "已清空 {0} 条历史记录（含图片）。清空只发生在本机。",
@@ -3774,11 +3774,11 @@
       "ar": "مُسح {0} من عناصر السجل (مع الصور). المسح يحدث على هذا الحاسوب فقط.",
       "it": "Svuotate {0} voci della cronologia (immagini incluse). Lo svuotamento avviene solo su questo PC.",
       "vi": "Đã xóa {0} mục lịch sử (gồm hình ảnh). Việc xóa chỉ diễn ra trên PC này.",
-      "th": "ล้างประวัติแล้ว {0} รายการ (รวมรูปภาพ) การล้างเกิดบนพีซีนี้เท่านั้น",
-      "id": "Mengosongkan {0} entri riwayat (termasuk gambar). Pengosongan hanya terjadi di PC ini.",
-      "hi": "{0} इतिहास प्रविष्टियाँ (चित्र सहित) साफ़ कीं। सफ़ाई सिर्फ़ इस PC पर होती है।",
-      "tr": "{0} geçmiş kaydı temizlendi (görseller dahil). Temizleme yalnızca bu PC’de olur.",
-      "pl": "Wyczyszczono {0} wpisów historii (wraz z obrazami). Czyszczenie odbywa się tylko na tym PC.",
+      "th": "ล้างประวัติแล้ว {0} รายการ (รวมรูป) การล้างเกิดเฉพาะบนพีซีนี้",
+      "id": "{0} entri riwayat dibersihkan (termasuk gambar). Pembersihan hanya terjadi di PC ini.",
+      "hi": "{0} इतिहास प्रविष्टियाँ मिटाई गईं (चित्रों समेत)। मिटाना केवल इसी PC पर होता है।",
+      "tr": "{0} geçmiş kaydı temizlendi (görseller dahil). Temizlik yalnızca bu bilgisayarda olur.",
+      "pl": "Wyczyszczono {0} wpisów historii (wraz z obrazami). Czyszczenie odbywa się tylko na tym komputerze.",
       "nl": "{0} geschiedenisitems gewist (inclusief afbeeldingen). Wissen gebeurt alleen op deze pc."
     },
     "Transfer_ClearConfirmBody": {
@@ -3795,12 +3795,12 @@
       "ar": "مسح كل السجل؟\n\nسيحذف كل العناصر على هذا الحاسوب (مع الصور) دفعة واحدة. المسح يحدث على هذا الحاسوب فقط ولا يحذف ما استلمه الطرف الآخر. فكّر في «تصدير السجل» أولًا.",
       "it": "Svuotare tutta la cronologia?\n\nElimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuotamento avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto. Valuta prima «Esporta cronologia».",
       "vi": "Xóa toàn bộ lịch sử?\n\nSẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc xóa chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận. Nên “Xuất lịch sử” trước.",
-      "th": "ล้างประวัติทั้งหมด?\n\nจะลบทุกรายการบนพีซีนี้ (รวมรูปภาพ) ในครั้งเดียว การล้างเกิดบนพีซีนี้เท่านั้น ไม่ลบสิ่งที่อีกฝั่งได้รับแล้วจากระยะไกล ควร “ส่งออกประวัติ” ก่อน",
-      "id": "Kosongkan semua riwayat?\n\nAkan menghapus semua entri di PC ini (termasuk gambar) sekali jalan. Pengosongan hanya terjadi di PC ini dan tidak menghapus apa yang sudah diterima seberang. Pertimbangkan “Ekspor riwayat” dulu.",
-      "hi": "पूरा इतिहास साफ़ करें?\n\nइस PC की सभी प्रविष्टियाँ (चित्र सहित) एक बार में हट जाएँगी। सफ़ाई सिर्फ़ इस PC पर होती है, सामने वाले को मिली सामग्री दूर से नहीं मिटती। पहले “इतिहास निर्यात करें” कर लें।",
-      "tr": "Tüm geçmiş temizlensin mi?\n\nBu PC’deki tüm kayıtlar (görseller dahil) tek seferde silinecek. Temizleme yalnızca bu PC’de olur; karşı tarafın aldıklarını uzaktan silmez. Önce “Geçmişi dışa aktar”mayı düşün.",
-      "pl": "Wyczyścić całą historię?\n\nUsunie naraz wszystkie wpisy na tym PC (wraz z obrazami). Czyszczenie odbywa się tylko na tym PC i nie usuwa zdalnie tego, co druga strona już otrzymała. Rozważ najpierw „Eksportuj historię”.",
-      "nl": "Alle geschiedenis wissen?\n\nDit verwijdert in één keer alle items op deze pc (inclusief afbeeldingen). Wissen gebeurt alleen op deze pc en verwijdert nooit wat de overkant al ontving. Overweeg eerst “Geschiedenis exporteren”."
+      "th": "ล้างประวัติทั้งหมด?\n\nจะลบทุกรายการบนพีซีนี้ (รวมรูป) ในขั้นตอนเดียว การล้างเกิดเฉพาะบนพีซีนี้และไม่ลบสิ่งที่อีกฝั่งได้รับไปแล้ว แนะนำให้ใช้ «ส่งออกประวัติ» ก่อน",
+      "id": "Bersihkan seluruh riwayat?\n\nIni menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan hanya terjadi di PC ini dan tak pernah menghapus yang sudah diterima pihak seberang. Pertimbangkan “Ekspor riwayat” dulu.",
+      "hi": "पूरा इतिहास मिटाएँ?\n\nयह इस PC की हर प्रविष्टि (चित्रों समेत) एक ही चरण में मिटा देगा। मिटाना केवल इसी PC पर होता है और दूसरे छोर को मिली सामग्री कभी नहीं मिटाता। पहले «इतिहास निर्यात करें» पर विचार करें।",
+      "tr": "Tüm geçmiş temizlensin mi?\n\nBu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik yalnızca bu bilgisayarda olur ve karşı tarafın zaten aldığını asla silmez. Önce «Geçmişi dışa aktar» seçeneğini düşün.",
+      "pl": "Wyczyścić całą historię?\n\nSpowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za jednym razem. Czyszczenie odbywa się tylko na tym komputerze i nigdy nie usuwa tego, co druga strona już odebrała. Rozważ najpierw „Eksportuj historię”.",
+      "nl": "Alle geschiedenis wissen?\n\nDit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wissen gebeurt alleen op deze pc en verwijdert nooit wat de peer al heeft ontvangen. Overweeg eerst “Geschiedenis exporteren”."
     },
     "Transfer_ClearConfirmAgain": {
       "zh-Hans": "再确认一次：清空后无法恢复。确定清空全部历史？",
@@ -3816,12 +3816,12 @@
       "ar": "أكّد مرة أخرى: المسح لا يمكن التراجع عنه. أتريد مسح كل السجل؟",
       "it": "Conferma ancora una volta: lo svuotamento è irreversibile. Svuotare tutta la cronologia?",
       "vi": "Xác nhận lần nữa: xóa xong không thể khôi phục. Chắc chắn xóa toàn bộ lịch sử?",
-      "th": "ยืนยันอีกครั้ง: ล้างแล้วกู้คืนไม่ได้ แน่ใจว่าจะล้างประวัติทั้งหมด?",
-      "id": "Konfirmasi sekali lagi: pengosongan tak bisa dibatalkan. Yakin kosongkan semua riwayat?",
-      "hi": "एक बार और पुष्टि करें: साफ़ करने के बाद वापसी नहीं। पक्का पूरा इतिहास साफ़ करें?",
-      "tr": "Bir kez daha onayla: temizleme geri alınamaz. Tüm geçmiş temizlensin mi?",
-      "pl": "Potwierdź raz jeszcze: czyszczenia nie da się cofnąć. Na pewno wyczyścić całą historię?",
-      "nl": "Bevestig nog eens: wissen kan niet ongedaan worden gemaakt. Alle geschiedenis wissen?"
+      "th": "ยืนยันอีกครั้ง: ล้างแล้วย้อนกลับไม่ได้ ล้างประวัติทั้งหมดหรือไม่?",
+      "id": "Konfirmasi sekali lagi: pembersihan tak bisa dibatalkan. Bersihkan seluruh riwayat?",
+      "hi": "एक बार और पुष्टि करें: मिटाने के बाद वापस नहीं आ सकता। पूरा इतिहास मिटाएँ?",
+      "tr": "Bir kez daha onayla: temizlik geri alınamaz. Tüm geçmiş temizlensin mi?",
+      "pl": "Potwierdź jeszcze raz: czyszczenia nie można cofnąć. Wyczyścić całą historię?",
+      "nl": "Bevestig nog een keer: wissen kan niet ongedaan worden gemaakt. Alle geschiedenis wissen?"
     },
     "Transfer_ExportedFormat": {
       "zh-Hans": "已导出 {0} 条记录（明文）→ {1}",
@@ -3838,7 +3838,7 @@
       "it": "Esportati {0} record (in chiaro) → {1}",
       "vi": "Đã xuất {0} bản ghi (văn bản thuần) → {1}",
       "th": "ส่งออกแล้ว {0} ระเบียน (ข้อความล้วน) → {1}",
-      "id": "Terekspor {0} catatan (teks polos) → {1}",
+      "id": "{0} rekaman diekspor (teks polos) → {1}",
       "hi": "{0} रिकॉर्ड निर्यात हुए (सादा पाठ) → {1}",
       "tr": "{0} kayıt dışa aktarıldı (düz metin) → {1}",
       "pl": "Wyeksportowano {0} rekordów (jawny tekst) → {1}",
@@ -3858,10 +3858,10 @@
       "ar": "فشل التصدير: تعذّرت الكتابة في الملف المحدد.",
       "it": "Export non riuscito: impossibile scrivere il file scelto.",
       "vi": "Xuất thất bại: không ghi được tệp đã chọn.",
-      "th": "ส่งออกล้มเหลว: เขียนไฟล์ที่เลือกไม่ได้",
-      "id": "Ekspor gagal: tidak bisa menulis berkas yang dipilih.",
-      "hi": "निर्यात विफल: चुनी फ़ाइल में लिखा नहीं जा सका।",
-      "tr": "Dışa aktarma başarısız: seçilen dosyaya yazılamadı.",
+      "th": "ส่งออกไม่สำเร็จ: เขียนไฟล์ที่เลือกไม่ได้",
+      "id": "Ekspor gagal: berkas yang dipilih tak bisa ditulis.",
+      "hi": "निर्यात विफल: चुनी गई फ़ाइल नहीं लिखी जा सकी।",
+      "tr": "Dışa aktarma başarısız: seçilen dosya yazılamadı.",
       "pl": "Eksport nie powiódł się: nie można zapisać wybranego pliku.",
       "nl": "Exporteren mislukt: kon het gekozen bestand niet schrijven."
     },
@@ -3879,12 +3879,12 @@
       "ar": "اكتمل الاستيراد: أُضيف {0} · موجود {1} · تعارضات {2}",
       "it": "Import completato: aggiunti {0} · già presenti {1} · conflitti {2}",
       "vi": "Nhập xong: thêm mới {0} · đã có {1} · xung đột {2}",
-      "th": "นำเข้าเสร็จ: เพิ่มใหม่ {0} · มีอยู่แล้ว {1} · ขัดแย้ง {2}",
-      "id": "Impor selesai: baru {0} · sudah ada {1} · konflik {2}",
-      "hi": "आयात पूर्ण: नए {0} · पहले से {1} · टकराव {2}",
-      "tr": "İçe aktarma tamam: eklenen {0} · zaten var {1} · çakışan {2}",
-      "pl": "Import zakończony: dodano {0} · już było {1} · konflikty {2}",
-      "nl": "Import voltooid: toegevoegd {0} · bestond al {1} · conflicten {2}"
+      "th": "นำเข้าเสร็จ: เพิ่ม {0} · มีอยู่แล้ว {1} · ขัดแย้ง {2}",
+      "id": "Impor selesai: {0} ditambahkan · {1} sudah ada · {2} konflik",
+      "hi": "आयात पूर्ण: {0} जोड़े गए · {1} पहले से थे · {2} टकराव",
+      "tr": "İçe aktarma tamamlandı: eklenen {0} · zaten var {1} · çakışma {2}",
+      "pl": "Import zakończony: dodano {0} · istniało {1} · konflikty {2}",
+      "nl": "Import voltooid: {0} toegevoegd · {1} bestaand · {2} conflicten"
     },
     "Transfer_ImportFailedFormat": {
       "zh-Hans": "导入失败：{0}。未做任何改动。",
@@ -3900,10 +3900,10 @@
       "ar": "فشل الاستيراد: {0}. لم يتغير شيء.",
       "it": "Import non riuscito: {0}. Nulla è stato modificato.",
       "vi": "Nhập thất bại: {0}. Không thay đổi gì.",
-      "th": "นำเข้าล้มเหลว: {0} ไม่มีการเปลี่ยนแปลงใด ๆ",
-      "id": "Impor gagal: {0}. Tidak ada yang diubah.",
-      "hi": "आयात विफल: {0}। कुछ नहीं बदला।",
-      "tr": "İçe aktarma başarısız: {0}. Hiçbir şey değişmedi.",
+      "th": "นำเข้าไม่สำเร็จ: {0} ไม่มีอะไรถูกเปลี่ยน",
+      "id": "Impor gagal: {0}. Tak ada yang diubah.",
+      "hi": "आयात विफल: {0}। कुछ नहीं बदला गया।",
+      "tr": "İçe aktarma başarısız: {0}. Hiçbir şey değiştirilmedi.",
       "pl": "Import nie powiódł się: {0}. Niczego nie zmieniono.",
       "nl": "Importeren mislukt: {0}. Er is niets gewijzigd."
     },
@@ -3921,9 +3921,9 @@
       "ar": "فشل الاستيراد: تعذّرت قراءة الملف المحدد.",
       "it": "Import non riuscito: impossibile leggere il file scelto.",
       "vi": "Nhập thất bại: không đọc được tệp đã chọn.",
-      "th": "นำเข้าล้มเหลว: อ่านไฟล์ที่เลือกไม่ได้",
-      "id": "Impor gagal: tidak bisa membaca berkas yang dipilih.",
-      "hi": "आयात विफल: चुनी फ़ाइल पढ़ी नहीं जा सकी।",
+      "th": "นำเข้าไม่สำเร็จ: อ่านไฟล์ที่เลือกไม่ได้",
+      "id": "Impor gagal: berkas yang dipilih tak bisa dibaca.",
+      "hi": "आयात विफल: चुनी गई फ़ाइल नहीं पढ़ी जा सकी।",
       "tr": "İçe aktarma başarısız: seçilen dosya okunamadı.",
       "pl": "Import nie powiódł się: nie można odczytać wybranego pliku.",
       "nl": "Importeren mislukt: kon het gekozen bestand niet lezen."
@@ -3966,7 +3966,7 @@
       "th": "นี่ไม่ใช่ไฟล์ส่งออกประวัติของ ClipSync",
       "id": "ini bukan berkas ekspor riwayat ClipSync",
       "hi": "यह ClipSync इतिहास निर्यात फ़ाइल नहीं है",
-      "tr": "bu bir ClipSync geçmiş dışa aktarma dosyası değil",
+      "tr": "bu bir ClipSync geçmiş dışa aktarım dosyası değil",
       "pl": "to nie jest plik eksportu historii ClipSync",
       "nl": "dit is geen ClipSync-geschiedenisexportbestand"
     },
@@ -3987,7 +3987,7 @@
       "th": "เวอร์ชันไฟล์ใหม่กว่าที่แอปนี้รองรับ",
       "id": "versi berkas lebih baru dari yang didukung aplikasi ini",
       "hi": "फ़ाइल का संस्करण इस ऐप के समर्थन से नया है",
-      "tr": "dosya sürümü bu uygulamanın desteklediğinden yeni",
+      "tr": "dosya sürümü bu uygulamanın desteklediğinden daha yeni",
       "pl": "wersja pliku jest nowsza niż obsługiwana przez tę aplikację",
       "nl": "de bestandsversie is nieuwer dan deze app ondersteunt"
     },
@@ -4005,10 +4005,10 @@
       "ar": "الملف تالف (سجل مشوه)",
       "it": "il file è danneggiato (record malformato)",
       "vi": "tệp bị hỏng (bản ghi sai định dạng)",
-      "th": "ไฟล์เสียหาย (ระเบียนผิดรูปแบบ)",
-      "id": "berkas rusak (catatan salah format)",
-      "hi": "फ़ाइल दूषित है (रिकॉर्ड का प्रारूप ग़लत)",
-      "tr": "dosya bozuk (hatalı biçimli kayıt)",
+      "th": "ไฟล์เสียหาย (รูปแบบระเบียนผิด)",
+      "id": "berkas rusak (format rekaman salah)",
+      "hi": "फ़ाइल क्षतिग्रस्त है (रिकॉर्ड प्रारूप गलत)",
+      "tr": "dosya bozuk (hatalı kayıt biçimi)",
       "pl": "plik jest uszkodzony (błędny format rekordu)",
       "nl": "het bestand is beschadigd (misvormd record)"
     },
@@ -4026,11 +4026,11 @@
       "ar": "الملف تالف (فشل التحقق من التجزئة)",
       "it": "il file è danneggiato (verifica hash fallita)",
       "vi": "tệp bị hỏng (kiểm tra băm thất bại)",
-      "th": "ไฟล์เสียหาย (ตรวจสอบแฮชไม่ผ่าน)",
+      "th": "ไฟล์เสียหาย (ตรวจแฮชไม่ผ่าน)",
       "id": "berkas rusak (pemeriksaan hash gagal)",
-      "hi": "फ़ाइल दूषित है (हैश जाँच विफल)",
-      "tr": "dosya bozuk (karma denetimi başarısız)",
-      "pl": "plik jest uszkodzony (weryfikacja skrótu nie powiodła się)",
+      "hi": "फ़ाइल क्षतिग्रस्त है (हैश जाँच विफल)",
+      "tr": "dosya bozuk (sağlama doğrulaması başarısız)",
+      "pl": "plik jest uszkodzony (błąd sumy kontrolnej)",
       "nl": "het bestand is beschadigd (hashcontrole mislukt)"
     },
     "Transfer_Error_CountMismatch": {
@@ -4048,9 +4048,9 @@
       "it": "il file è incompleto (il conteggio non corrisponde all’intestazione)",
       "vi": "tệp không đầy đủ (số lượng không khớp phần đầu)",
       "th": "ไฟล์ไม่สมบูรณ์ (จำนวนไม่ตรงกับส่วนหัว)",
-      "id": "berkas tidak lengkap (jumlah tak cocok dengan kepala berkas)",
+      "id": "berkas tak lengkap (jumlah tak cocok dengan kepala berkas)",
       "hi": "फ़ाइल अधूरी है (संख्या शीर्षलेख से मेल नहीं खाती)",
-      "tr": "dosya eksik (sayı üst bilgiyle uyuşmuyor)",
+      "tr": "dosya eksik (adet üst bilgiyle uyuşmuyor)",
       "pl": "plik jest niekompletny (liczba nie zgadza się z nagłówkiem)",
       "nl": "het bestand is onvolledig (aantal komt niet overeen met de header)"
     },
@@ -4068,10 +4068,10 @@
       "ar": "الملف يحوي عنصرًا يتجاوز حدود الحجم (نص 1 ميبيبايت / صور 16 ميبيبايت)",
       "it": "il file contiene una voce oltre i limiti di dimensione (testo 1 MiB / immagini 16 MiB)",
       "vi": "tệp chứa mục vượt giới hạn kích thước (văn bản 1 MiB / hình ảnh 16 MiB)",
-      "th": "ไฟล์มีรายการเกินเพดานขนาด (ข้อความ 1 MiB / รูปภาพ 16 MiB)",
+      "th": "ไฟล์มีรายการที่เกินเพดานขนาด (ข้อความ 1 MiB / รูป 16 MiB)",
       "id": "berkas memuat entri melebihi batas ukuran (teks 1 MiB / gambar 16 MiB)",
-      "hi": "फ़ाइल में आकार सीमा से बड़ी प्रविष्टि है (टेक्स्ट 1 MiB / चित्र 16 MiB)",
-      "tr": "dosyada boyut sınırını aşan kayıt var (metin 1 MiB / görsel 16 MiB)",
+      "hi": "फ़ाइल में आकार सीमा से बड़ी प्रविष्टि है (पाठ 1 MiB / चित्र 16 MiB)",
+      "tr": "dosyada boyut sınırlarını aşan bir kayıt var (metin 1 MiB / görsel 16 MiB)",
       "pl": "plik zawiera wpis przekraczający limity rozmiaru (tekst 1 MiB / obrazy 16 MiB)",
       "nl": "het bestand bevat een item boven de groottelimieten (tekst 1 MiB / afbeeldingen 16 MiB)"
     },
@@ -4090,7 +4090,7 @@
       "it": "errore sconosciuto",
       "vi": "lỗi không xác định",
       "th": "ข้อผิดพลาดไม่ทราบสาเหตุ",
-      "id": "kesalahan tak dikenal",
+      "id": "galat tak dikenal",
       "hi": "अज्ञात त्रुटि",
       "tr": "bilinmeyen hata",
       "pl": "nieznany błąd",
@@ -4110,11 +4110,11 @@
       "ar": "مفعّل · اضغطه في أي تطبيق لاستدعاء النافذة المنبثقة",
       "it": "Attiva · premila in qualsiasi app per richiamare il riquadro",
       "vi": "Đã hiệu lực · nhấn trong bất kỳ ứng dụng nào để gọi cửa sổ nổi",
-      "th": "มีผลแล้ว · กดในแอปใดก็ได้เพื่อเรียกหน้าต่างลอย",
-      "id": "Aktif · tekan di aplikasi mana pun untuk memanggil jendela melayang",
-      "hi": "लागू · किसी भी ऐप में दबाकर फ़्लाईआउट बुलाएँ",
-      "tr": "Etkin · açılır pencereyi çağırmak için herhangi bir uygulamada bas",
-      "pl": "Działa · naciśnij w dowolnej aplikacji, aby przywołać okienko",
+      "th": "ใช้งานอยู่ · กดในแอปไหนก็ได้เพื่อเรียกหน้าต่างลอย",
+      "id": "Aktif · tekan di aplikasi mana pun untuk memanggil jendela baki",
+      "hi": "सक्रिय · किसी भी ऐप में दबाते ही फ़्लाईआउट खुलेगा",
+      "tr": "Etkin · herhangi bir uygulamada basınca tepsi penceresi açılır",
+      "pl": "Aktywny · naciśnij w dowolnej aplikacji, aby przywołać okienko",
       "nl": "Actief · druk erop in elke app om het zwevende venster op te roepen"
     },
     "Hotkey_Conflict": {
@@ -4131,11 +4131,11 @@
       "ar": "هذه التركيبة يشغلها برنامج آخر؛ جرّب تركيبة مختلفة",
       "it": "Combinazione già usata da un altro programma; provane un’altra",
       "vi": "Tổ hợp này đã bị chương trình khác chiếm; hãy chọn tổ hợp khác",
-      "th": "คีย์ผสมนี้ถูกโปรแกรมอื่นใช้แล้ว ลองคีย์ผสมอื่น",
-      "id": "Kombinasi itu sudah dipakai program lain; coba kombinasi berbeda",
-      "hi": "यह संयोजन दूसरा प्रोग्राम ले चुका है; कोई और आज़माएँ",
-      "tr": "Bu kombinasyonu başka bir program kullanıyor; farklısını dene",
-      "pl": "Ta kombinacja jest zajęta przez inny program; spróbuj innej",
+      "th": "คีย์ผสมนี้ถูกโปรแกรมอื่นใช้แล้ว ลองชุดอื่น",
+      "id": "Kombinasi itu sudah dipakai program lain; coba kombinasi lain",
+      "hi": "यह संयोजन किसी और प्रोग्राम ने ले रखा है; कोई और आज़माएँ",
+      "tr": "Bu kombinasyon başka bir program tarafından kullanılıyor; farklı bir kombinasyon dene",
+      "pl": "Ta kombinacja jest zajęta przez inny program; wybierz inną",
       "nl": "Die combinatie is al in gebruik door een ander programma; probeer een andere"
     },
     "Attention_PeerDown": {
@@ -4152,11 +4152,11 @@
       "ar": "المزامنة غير مشغّلة في هذه الجلسة (فشل بدء نقطة النهاية)",
       "it": "Sincronizzazione non attiva in questa sessione (avvio dell’endpoint fallito)",
       "vi": "Phiên này đồng bộ chưa chạy (điểm cuối khởi động thất bại)",
-      "th": "เซสชันนี้การซิงค์ไม่ได้เริ่ม (จุดปลายทางเริ่มไม่สำเร็จ)",
-      "id": "Sesi ini sinkronisasi tidak berjalan (titik akhir gagal dimulai)",
-      "hi": "इस सत्र में सिंक चालू नहीं (एंडपॉइंट शुरू नहीं हो सका)",
+      "th": "รอบนี้การซิงค์ไม่ทำงาน (ปลายทางเริ่มไม่สำเร็จ)",
+      "id": "Sinkronisasi tidak berjalan sesi ini (titik akhir gagal dimulai)",
+      "hi": "इस सत्र में समन्वयन चालू नहीं (एंडपॉइंट शुरू नहीं हो सका)",
       "tr": "Bu oturumda eşitleme çalışmıyor (uç nokta başlatılamadı)",
-      "pl": "W tej sesji synchronizacja nie działa (punkt końcowy nie wystartował)",
+      "pl": "Synchronizacja nie działa w tej sesji (punkt końcowy nie wystartował)",
       "nl": "Synchronisatie draait deze sessie niet (eindpunt kon niet starten)"
     },
     "Attention_CaptureFaulted": {
@@ -4173,12 +4173,12 @@
       "ar": "التقاط الحافظة متدهور (فشل آخر وصول)",
       "it": "Acquisizione degli appunti degradata (ultimo accesso fallito)",
       "vi": "Ghi nhận bảng nhớ tạm suy giảm (lần truy cập trước thất bại)",
-      "th": "การจับคลิปบอร์ดถดถอย (การเข้าถึงครั้งล่าสุดล้มเหลว)",
+      "th": "การเก็บคลิปบอร์ดถดถอย (การเข้าถึงครั้งล่าสุดล้มเหลว)",
       "id": "Penangkapan papan klip menurun (akses terakhir gagal)",
-      "hi": "क्लिपबोर्ड कैप्चर अवनत (पिछली पहुँच विफल)",
-      "tr": "Pano yakalama bozuldu (son erişim başarısız)",
-      "pl": "Przechwytywanie schowka osłabione (ostatni dostęp nie powiódł się)",
-      "nl": "Klembord vastleggen verzwakt (laatste toegang mislukt)"
+      "hi": "क्लिपबोर्ड कैप्चर सीमित (पिछली पहुँच विफल)",
+      "tr": "Pano yakalama kısıtlı (son erişim başarısız)",
+      "pl": "Przechwytywanie schowka ograniczone (ostatni dostęp nie powiódł się)",
+      "nl": "Klembord vastleggen verminderd (laatste toegang mislukt)"
     },
     "Attention_NoDevice": {
       "zh-Hans": "配对一台设备开始同步",
@@ -4194,11 +4194,11 @@
       "ar": "اقترن بجهاز لبدء المزامنة",
       "it": "Associa un dispositivo per iniziare a sincronizzare",
       "vi": "Ghép nối một thiết bị để bắt đầu đồng bộ",
-      "th": "จับคู่อุปกรณ์หนึ่งเครื่องเพื่อเริ่มซิงค์",
-      "id": "Pasangkan satu perangkat untuk mulai menyinkron",
-      "hi": "सिंक शुरू करने के लिए एक डिवाइस पेयर करें",
+      "th": "จับคู่อุปกรณ์สักเครื่องเพื่อเริ่มซิงค์",
+      "id": "Pasangkan sebuah perangkat untuk mulai menyinkronkan",
+      "hi": "समन्वयन शुरू करने के लिए एक डिवाइस पेयर करें",
       "tr": "Eşitlemeye başlamak için bir cihaz eşleştir",
-      "pl": "Sparuj urządzenie, aby zacząć synchronizować",
+      "pl": "Sparuj urządzenie, aby zacząć synchronizację",
       "nl": "Koppel een apparaat om te beginnen met synchroniseren"
     },
     "Pairing_Title": {
@@ -4236,12 +4236,12 @@
       "ar": "خدمة الطرف الآخر غير مشغّلة؛ الاقتران متعذر في هذه الجلسة.",
       "it": "Il servizio peer non è attivo; in questa sessione non è possibile associare.",
       "vi": "Dịch vụ phía đối diện chưa chạy; phiên này không thể ghép nối.",
-      "th": "บริการฝั่งตรงข้ามยังไม่ทำงาน เซสชันนี้จับคู่ไม่ได้",
-      "id": "Layanan seberang tidak berjalan; sesi ini tidak bisa memasangkan.",
-      "hi": "सामने की सेवा चालू नहीं; इस सत्र में पेयरिंग संभव नहीं।",
+      "th": "บริการฝั่งโน้นยังไม่ทำงาน รอบนี้จับคู่ไม่ได้",
+      "id": "Layanan peer tidak berjalan; pemasangan tak tersedia sesi ini.",
+      "hi": "पीयर सेवा चालू नहीं है; इस सत्र में पेयरिंग संभव नहीं।",
       "tr": "Karşı taraf hizmeti çalışmıyor; bu oturumda eşleştirme yapılamaz.",
-      "pl": "Usługa drugiej strony nie działa; w tej sesji parowanie jest niemożliwe.",
-      "nl": "De service aan de overkant draait niet; koppelen kan deze sessie niet."
+      "pl": "Usługa dla drugiej strony nie działa; parowanie jest niedostępne w tej sesji.",
+      "nl": "De peer-service draait niet; koppelen is deze sessie niet mogelijk."
     },
     "Pairing_ScanInstruction": {
       "zh-Hans": "用手机上的「剪剪相传」扫描此码。二维码包含本机地址、证书指纹与一次性令牌，绝不包含配对密钥。",
@@ -4257,11 +4257,11 @@
       "ar": "امسح هذا الرمز بتطبيق ClipSync على هاتفك. يحمل رمز QR عنوان هذا الحاسوب وبصمة الشهادة ورمزًا لمرة واحدة — ولا يحمل مفتاح الاقتران أبدًا.",
       "it": "Scansiona questo codice con ClipSync sul telefono. Il codice QR contiene l’indirizzo di questo PC, l’impronta del certificato e un token monouso — mai la chiave di associazione.",
       "vi": "Dùng ClipSync trên điện thoại quét mã này. Mã QR chứa địa chỉ của PC này, dấu vân tay chứng chỉ và mã thông báo dùng một lần — không bao giờ chứa khóa ghép nối.",
-      "th": "ใช้ ClipSync บนโทรศัพท์สแกนโค้ดนี้ QR โค้ดมีที่อยู่ของพีซีนี้ ลายนิ้วมือใบรับรอง และโทเคนใช้ครั้งเดียว — ไม่มีกุญแจจับคู่เด็ดขาด",
-      "id": "Pindai kode ini dengan ClipSync di ponsel Anda. Kode QR memuat alamat PC ini, sidik jari sertifikat, dan token sekali pakai — tidak pernah kunci pemasangan.",
-      "hi": "फ़ोन पर ClipSync से यह कोड स्कैन करें। QR कोड में इस PC का पता, प्रमाणपत्र फ़िंगरप्रिंट और एक बार का टोकन है — पेयरिंग कुंजी कभी नहीं।",
-      "tr": "Bu kodu telefonundaki ClipSync ile tara. QR kodu bu PC’nin adresini, sertifika parmak izini ve tek kullanımlık bir belirteci taşır — eşleştirme anahtarını asla taşımaz.",
-      "pl": "Zeskanuj ten kod aplikacją ClipSync na telefonie. Kod QR zawiera adres tego PC, odcisk certyfikatu i jednorazowy token — nigdy klucza parowania.",
+      "th": "สแกนรหัสนี้ด้วย ClipSync บนโทรศัพท์ของคุณ คิวอาร์โค้ดมีที่อยู่พีซีนี้ ลายนิ้วมือใบรับรอง และโทเคนใช้ครั้งเดียว — ไม่มีกุญแจจับคู่เด็ดขาด",
+      "id": "Pindai kode ini dengan ClipSync di ponselmu. Kode QR memuat alamat PC ini, sidik jari sertifikat, dan token sekali pakai — tak pernah memuat kunci pemasangan.",
+      "hi": "अपने फ़ोन पर ClipSync से यह कोड स्कैन करें। QR कोड में इस PC का पता, प्रमाणपत्र फ़िंगरप्रिंट और एक बार का टोकन होता है — पेयरिंग कुंजी कभी नहीं।",
+      "tr": "Bu kodu telefonundaki ClipSync ile tara. QR kodu bu bilgisayarın adresini, sertifika parmak izini ve tek kullanımlık bir belirteç taşır — eşleştirme anahtarını asla taşımaz.",
+      "pl": "Zeskanuj ten kod aplikacją ClipSync na telefonie. Kod QR zawiera adres tego komputera, odcisk certyfikatu i jednorazowy token — nigdy klucz parowania.",
       "nl": "Scan deze code met ClipSync op je telefoon. De QR-code bevat het adres van deze pc, de certificaatvingerafdruk en een eenmalig token — nooit de koppelsleutel."
     },
     "Pairing_CountdownFormat": {
@@ -4279,10 +4279,10 @@
       "it": "Si rinnova tra {0:m\\:ss}",
       "vi": "Tự đổi sau {0:m\\:ss}",
       "th": "เปลี่ยนใหม่ใน {0:m\\:ss}",
-      "id": "Berganti dalam {0:m\\:ss}",
+      "id": "Diperbarui dalam {0:m\\:ss}",
       "hi": "{0:m\\:ss} में नया होगा",
-      "tr": "{0:m\\:ss} içinde yenilenir",
-      "pl": "Odnowi się za {0:m\\:ss}",
+      "tr": "{0:m\\:ss} sonra yenilenir",
+      "pl": "Odświeży się za {0:m\\:ss}",
       "nl": "Vernieuwt over {0:m\\:ss}"
     },
     "Pairing_NoLanAddress": {
@@ -4299,12 +4299,12 @@
       "ar": "لم يُكتشف عنوان شبكة محلية. صِل هذا الحاسوب والهاتف بالشبكة نفسها (أو أضف عنوان Tailscale في التفضيلات)، ثم افتح هذه النافذة من جديد.",
       "it": "Nessun indirizzo LAN rilevato. Metti questo PC e il telefono sulla stessa rete (o aggiungi un indirizzo Tailscale nelle Preferenze), poi riapri questa finestra.",
       "vi": "Không phát hiện địa chỉ mạng LAN. Hãy đưa PC này và điện thoại vào cùng một mạng (hoặc thêm địa chỉ Tailscale trong Tùy chọn), rồi mở lại cửa sổ này.",
-      "th": "ไม่พบที่อยู่ LAN ให้พีซีนี้และโทรศัพท์อยู่เครือข่ายเดียวกัน (หรือเพิ่มที่อยู่ Tailscale ในการตั้งค่า) แล้วเปิดหน้าต่างนี้ใหม่",
-      "id": "Alamat LAN tidak terdeteksi. Tempatkan PC ini dan ponsel di jaringan yang sama (atau tambahkan alamat Tailscale di Preferensi), lalu buka lagi jendela ini.",
+      "th": "ไม่พบที่อยู่ LAN ให้พีซีนี้กับโทรศัพท์อยู่เครือข่ายเดียวกัน (หรือเพิ่มที่อยู่ Tailscale ในการตั้งค่า) แล้วเปิดหน้าต่างนี้อีกครั้ง",
+      "id": "Tak terdeteksi alamat LAN. Sambungkan PC ini dan ponsel ke jaringan yang sama (atau tambahkan alamat Tailscale di Preferensi), lalu buka lagi jendela ini.",
       "hi": "कोई LAN पता नहीं मिला। इस PC और फ़ोन को एक ही नेटवर्क पर लाएँ (या प्राथमिकताओं में Tailscale पता जोड़ें), फिर यह विंडो दोबारा खोलें।",
-      "tr": "LAN adresi bulunamadı. Bu PC ile telefonu aynı ağa bağla (veya Tercihler’e bir Tailscale adresi ekle), sonra bu pencereyi yeniden aç.",
-      "pl": "Nie wykryto adresu LAN. Umieść ten PC i telefon w tej samej sieci (lub dodaj adres Tailscale w Preferencjach), potem otwórz to okno ponownie.",
-      "nl": "Geen LAN-adres gevonden. Zet deze pc en de telefoon op hetzelfde netwerk (of voeg een Tailscale-adres toe in Voorkeuren) en open dit venster opnieuw."
+      "tr": "LAN adresi algılanmadı. Bu bilgisayarı ve telefonu aynı ağa bağla (veya Tercihler'e bir Tailscale adresi ekle), sonra bu pencereyi yeniden aç.",
+      "pl": "Nie wykryto adresu LAN. Podłącz ten komputer i telefon do tej samej sieci (albo dodaj adres Tailscale w Preferencjach), a potem otwórz to okno ponownie.",
+      "nl": "Geen LAN-adres gedetecteerd. Zet deze pc en de telefoon op hetzelfde netwerk (of voeg een Tailscale-adres toe in Voorkeuren) en open dit venster opnieuw."
     },
     "Pairing_VerifyHeading": {
       "zh-Hans": "确 认 前 请 在 手 机 上 核 对",
@@ -4321,11 +4321,11 @@
       "it": "Verifica sul telefono prima di approvare",
       "vi": "Đối chiếu trên điện thoại trước khi phê duyệt",
       "th": "ตรวจบนโทรศัพท์ก่อนอนุมัติ",
-      "id": "Periksa di ponsel sebelum menyetujui",
+      "id": "Cocokkan di ponsel sebelum menyetujui",
       "hi": "स्वीकृति से पहले फ़ोन पर मिलान करें",
       "tr": "Onaylamadan önce telefonda doğrula",
-      "pl": "Przed zatwierdzeniem porównaj na telefonie",
-      "nl": "Controleer op de telefoon vóór het goedkeuren"
+      "pl": "Sprawdź na telefonie przed zatwierdzeniem",
+      "nl": "Controleer op de telefoon vóór goedkeuring"
     },
     "Pairing_PcName": {
       "zh-Hans": "电脑名称",
@@ -4341,12 +4341,12 @@
       "ar": "اسم الحاسوب",
       "it": "Nome del PC",
       "vi": "Tên máy tính",
-      "th": "ชื่อคอมพิวเตอร์",
-      "id": "Nama komputer",
-      "hi": "कंप्यूटर का नाम",
+      "th": "ชื่อพีซี",
+      "id": "Nama PC",
+      "hi": "PC का नाम",
       "tr": "Bilgisayar adı",
       "pl": "Nazwa komputera",
-      "nl": "Naam van de pc"
+      "nl": "Pc-naam"
     },
     "Pairing_Fingerprint": {
       "zh-Hans": "证书指纹",
@@ -4383,7 +4383,7 @@
       "ar": "رمز جديد",
       "it": "Nuovo codice",
       "vi": "Đổi mã khác",
-      "th": "ขอโค้ดใหม่",
+      "th": "ขอรหัสใหม่",
       "id": "Kode baru",
       "hi": "नया कोड",
       "tr": "Yeni kod",
@@ -4450,7 +4450,7 @@
       "id": "Izinkan perangkat ini memasangkan diri?",
       "hi": "इस डिवाइस को पेयर करने दें?",
       "tr": "Bu cihazın eşleşmesine izin verilsin mi?",
-      "pl": "Pozwolić temu urządzeniu się sparować?",
+      "pl": "Zezwolić temu urządzeniu na sparowanie?",
       "nl": "Dit apparaat laten koppelen?"
     },
     "Approval_Body": {
@@ -4467,12 +4467,12 @@
       "ar": "استخدم جهازٌ رمز QR الخاص بهذا الحاسوب لطلب الاقتران. وافق فقط إذا طابق الاسم أدناه الهاتف الذي بيدك.",
       "it": "Un dispositivo ha usato il codice QR di questo PC per chiedere l’associazione. Approva solo se il nome qui sotto corrisponde al telefono che hai in mano.",
       "vi": "Một thiết bị đã dùng mã QR của PC này để yêu cầu ghép nối. Chỉ phê duyệt khi tên bên dưới trùng với chiếc điện thoại trong tay bạn.",
-      "th": "มีอุปกรณ์ใช้ QR โค้ดของพีซีนี้ขอจับคู่ อนุมัติเฉพาะเมื่อชื่อด้านล่างตรงกับโทรศัพท์ในมือคุณ",
-      "id": "Sebuah perangkat memakai kode QR PC ini untuk meminta pemasangan. Setujui hanya jika nama di bawah cocok dengan ponsel di tangan Anda.",
-      "hi": "किसी डिवाइस ने इस PC के QR कोड से पेयरिंग माँगी है। नीचे का नाम आपके हाथ के फ़ोन से मेल खाए तभी स्वीकृति दें।",
-      "tr": "Bir cihaz bu PC’nin QR koduyla eşleştirme istedi. Yalnızca aşağıdaki ad elindeki telefonla eşleşiyorsa onayla.",
-      "pl": "Urządzenie użyło kodu QR tego PC, aby poprosić o sparowanie. Zatwierdź tylko wtedy, gdy nazwa poniżej zgadza się z telefonem w Twojej ręce.",
-      "nl": "Een apparaat gebruikte de QR-code van deze pc om te vragen te koppelen. Keur alleen goed als de naam hieronder overeenkomt met de telefoon in je hand."
+      "th": "มีอุปกรณ์ใช้คิวอาร์โค้ดของพีซีนี้ขอจับคู่ อนุมัติเมื่อชื่อด้านล่างตรงกับโทรศัพท์ในมือคุณเท่านั้น",
+      "id": "Sebuah perangkat memakai kode QR PC ini untuk meminta pemasangan. Setujui hanya jika nama di bawah cocok dengan ponsel di tanganmu.",
+      "hi": "किसी डिवाइस ने इस PC के QR कोड से पेयरिंग का अनुरोध किया है। केवल तभी स्वीकृति दें जब नीचे का नाम आपके हाथ के फ़ोन से मेल खाए।",
+      "tr": "Bir cihaz bu bilgisayarın QR kodunu kullanarak eşleştirme istedi. Yalnızca aşağıdaki ad elindeki telefonla uyuşuyorsa onayla.",
+      "pl": "Urządzenie użyło kodu QR tego komputera, aby poprosić o sparowanie. Zatwierdź tylko wtedy, gdy poniższa nazwa zgadza się z telefonem w twojej ręce.",
+      "nl": "Een apparaat heeft met de QR-code van deze pc om koppeling gevraagd. Keur alleen goed als de naam hieronder overeenkomt met de telefoon in je hand."
     },
     "Approval_PlatformAndroid": {
       "zh-Hans": "Android 设备",
@@ -4491,7 +4491,7 @@
       "th": "อุปกรณ์ Android",
       "id": "Perangkat Android",
       "hi": "Android डिवाइस",
-      "tr": "Android cihazı",
+      "tr": "Android cihaz",
       "pl": "Urządzenie z Androidem",
       "nl": "Android-apparaat"
     },
@@ -4512,7 +4512,7 @@
       "th": "อุปกรณ์ Windows",
       "id": "Perangkat Windows",
       "hi": "Windows डिवाइस",
-      "tr": "Windows cihazı",
+      "tr": "Windows cihaz",
       "pl": "Urządzenie z Windows",
       "nl": "Windows-apparaat"
     },
@@ -4530,12 +4530,12 @@
       "ar": "سبق اقتران هذا الجهاز. الموافقة تستبدل مفتاح اقترانه الحالي، ويتوقف التثبيت القديم فورًا.",
       "it": "Questo dispositivo era già associato. Approvando sostituisci la sua chiave di associazione e la vecchia installazione smette subito di funzionare.",
       "vi": "Thiết bị này từng ghép nối. Phê duyệt sẽ thay khóa ghép nối cũ, bản cài đặt cũ mất hiệu lực ngay.",
-      "th": "อุปกรณ์นี้เคยจับคู่มาก่อน การอนุมัติจะแทนที่กุญแจจับคู่เดิม และการติดตั้งเก่าจะหยุดทำงานทันที",
-      "id": "Perangkat ini pernah dipasangkan. Menyetujui akan mengganti kunci pemasangannya, dan instalasi lama langsung berhenti bekerja.",
-      "hi": "यह डिवाइस पहले पेयर हो चुका है। स्वीकृति उसकी मौजूदा पेयरिंग कुंजी बदल देगी और पुराना इंस्टॉल तुरंत काम करना बंद कर देगा।",
+      "th": "อุปกรณ์นี้เคยจับคู่แล้ว การอนุมัติจะแทนที่กุญแจจับคู่เดิม และการติดตั้งเก่าจะใช้ไม่ได้ทันที",
+      "id": "Perangkat ini pernah dipasangkan. Menyetujui akan mengganti kunci pemasangannya, dan pemasangan lama langsung berhenti bekerja.",
+      "hi": "यह डिवाइस पहले युग्मित था। स्वीकृति उसकी मौजूदा पेयरिंग कुंजी बदल देगी और पुराना इंस्टॉल तुरंत काम करना बंद कर देगा।",
       "tr": "Bu cihaz daha önce eşleştirilmişti. Onaylamak mevcut eşleştirme anahtarını değiştirir ve eski kurulum hemen çalışmaz olur.",
       "pl": "To urządzenie było już sparowane. Zatwierdzenie zastąpi jego dotychczasowy klucz parowania, a stara instalacja natychmiast przestanie działać.",
-      "nl": "Dit apparaat was eerder gekoppeld. Goedkeuren vervangt zijn bestaande koppelsleutel en de oude installatie stopt meteen met werken."
+      "nl": "Dit apparaat was eerder gekoppeld. Goedkeuren vervangt zijn bestaande koppelsleutel en de oude installatie stopt onmiddellijk met werken."
     },
     "Approval_SupersedeNotice": {
       "zh-Hans": "列表中已有同名设备。批准后旧记录将被自动撤销并清空其待发队列（视为同一部手机重新配对）。",
@@ -4551,12 +4551,12 @@
       "ar": "يوجد في القائمة جهاز بالاسم نفسه. بعد الموافقة يُبطل السجل القديم تلقائيًا وتُفرَّغ قائمة إرساله (يُعد الهاتف نفسه يعيد الاقتران).",
       "it": "In elenco c’è già un dispositivo con lo stesso nome. Approvando, il vecchio record viene revocato automaticamente e la sua coda di invio svuotata (trattato come lo stesso telefono che si riassocia).",
       "vi": "Danh sách đã có thiết bị trùng tên. Sau khi phê duyệt, bản ghi cũ sẽ tự động bị thu hồi và hàng đợi gửi của nó bị xóa (xem như cùng một điện thoại ghép nối lại).",
-      "th": "ในรายการมีอุปกรณ์ชื่อเดียวกันอยู่แล้ว หลังอนุมัติ ระเบียนเก่าจะถูกเพิกถอนอัตโนมัติและคิวส่งของมันถูกล้าง (ถือว่าโทรศัพท์เครื่องเดิมจับคู่ใหม่)",
-      "id": "Sudah ada perangkat bernama sama di daftar. Setelah disetujui, catatan lama dicabut otomatis dan antrean kirimnya dikosongkan (dianggap ponsel yang sama memasangkan ulang).",
-      "hi": "सूची में इसी नाम का डिवाइस पहले से है। स्वीकृति पर पुराना रिकॉर्ड अपने आप निरस्त होकर उसकी भेजने की कतार खाली होगी (वही फ़ोन दोबारा पेयर माना जाएगा)।",
-      "tr": "Listede aynı adlı bir cihaz zaten var. Onaylayınca eski kayıt otomatik iptal edilir ve gönderim kuyruğu boşaltılır (aynı telefonun yeniden eşleşmesi sayılır).",
-      "pl": "Na liście jest już urządzenie o tej nazwie. Po zatwierdzeniu stary wpis zostanie automatycznie odwołany, a jego kolejka wysyłki wyczyszczona (traktowane jako ponowne parowanie tego samego telefonu).",
-      "nl": "Er staat al een apparaat met dezelfde naam in de lijst. Na goedkeuring wordt het oude record automatisch ingetrokken en zijn verzendwachtrij geleegd (beschouwd als dezelfde telefoon die opnieuw koppelt)."
+      "th": "ในรายการมีอุปกรณ์ชื่อเดียวกันอยู่แล้ว หลังอนุมัติ ระเบียนเก่าจะถูกเพิกถอนอัตโนมัติและคิวส่งของมันถูกล้าง (ถือเป็นโทรศัพท์เครื่องเดิมจับคู่ใหม่)",
+      "id": "Sudah ada perangkat bernama sama di daftar. Setelah disetujui, catatan lama otomatis dicabut dan antrean kirimnya dikosongkan (dianggap ponsel yang sama memasangkan ulang).",
+      "hi": "सूची में इसी नाम का एक डिवाइस पहले से है। स्वीकृति के बाद पुराना रिकॉर्ड स्वतः निरस्त होकर उसकी प्रेषण कतार खाली होगी (उसी फ़ोन की पुनः पेयरिंग माना जाएगा)।",
+      "tr": "Listede aynı adla bir cihaz zaten var. Onaydan sonra eski kayıt otomatik iptal edilir ve giden kuyruğu temizlenir (aynı telefonun yeniden eşleşmesi sayılır).",
+      "pl": "Na liście jest już urządzenie o tej samej nazwie. Po zatwierdzeniu stary wpis zostanie automatycznie unieważniony, a jego kolejka wysyłkowa wyczyszczona (traktowane jak ponowne parowanie tego samego telefonu).",
+      "nl": "Er staat al een apparaat met dezelfde naam in de lijst. Na goedkeuring wordt het oude record automatisch ingetrokken en zijn wachtrij geleegd (behandeld als dezelfde telefoon die opnieuw koppelt)."
     },
     "Approval_Reject": {
       "zh-Hans": "拒绝",
@@ -4615,11 +4615,11 @@
       "it": "Dettagli clip",
       "vi": "Chi tiết mẩu sao chép",
       "th": "รายละเอียดรายการ",
-      "id": "Detail salinan",
+      "id": "Detail klip",
       "hi": "क्लिप विवरण",
       "tr": "Kayıt ayrıntıları",
       "pl": "Szczegóły wpisu",
-      "nl": "Itemdetails"
+      "nl": "Clipdetails"
     },
     "Detail_SourceFormat": {
       "zh-Hans": "来源：{0}",
@@ -4635,7 +4635,7 @@
       "ar": "المصدر: {0}",
       "it": "Origine: {0}",
       "vi": "Nguồn: {0}",
-      "th": "แหล่งที่มา: {0}",
+      "th": "ที่มา: {0}",
       "id": "Sumber: {0}",
       "hi": "स्रोत: {0}",
       "tr": "Kaynak: {0}",
@@ -4698,12 +4698,12 @@
       "ar": "تشخيص محلي · رموز الحالة والأوقات فقط، ومحتوى الحافظة لا يظهر أبدًا",
       "it": "Diagnostica locale · solo codici di stato e orari, mai il contenuto degli appunti",
       "vi": "Chẩn đoán cục bộ · chỉ mã trạng thái và thời gian, không bao giờ có nội dung bảng nhớ tạm",
-      "th": "การวินิจฉัยในเครื่อง · เฉพาะรหัสสถานะและเวลา ไม่มีเนื้อหาคลิปบอร์ดเด็ดขาด",
-      "id": "Diagnostik lokal · hanya kode status dan waktu, tidak pernah isi papan klip",
-      "hi": "स्थानीय निदान · सिर्फ़ स्थिति कोड और समय, क्लिपबोर्ड सामग्री कभी नहीं",
-      "tr": "Yerel tanılama · yalnızca durum kodları ve zamanlar, pano içeriği asla",
-      "pl": "Diagnostyka lokalna · tylko kody stanu i czasy, nigdy zawartość schowka",
-      "nl": "Lokale diagnose · alleen statuscodes en tijden, nooit klembordinhoud"
+      "th": "วินิจฉัยในเครื่อง · เฉพาะรหัสสถานะกับเวลา ไม่มีเนื้อหาคลิปบอร์ดเด็ดขาด",
+      "id": "Diagnostik lokal · hanya kode status dan waktu, tak pernah isi papan klip",
+      "hi": "स्थानीय निदान · केवल स्थिति कोड और समय, क्लिपबोर्ड सामग्री कभी नहीं",
+      "tr": "Yerel tanılama · yalnızca durum kodları ve zamanlar, asla pano içeriği",
+      "pl": "Diagnostyka lokalna · tylko kody stanu i czasy, nigdy treść schowka",
+      "nl": "Lokale diagnostiek · alleen statuscodes en tijden, nooit klembordinhoud"
     },
     "Diag_CopyAll": {
       "zh-Hans": "复制全部",
@@ -4744,8 +4744,8 @@
       "id": "(belum ada entri diagnostik)",
       "hi": "(अभी कोई निदान प्रविष्टि नहीं)",
       "tr": "(henüz tanılama kaydı yok)",
-      "pl": "(brak jeszcze wpisów diagnostycznych)",
-      "nl": "(nog geen diagnose-items)"
+      "pl": "(brak wpisów diagnostycznych)",
+      "nl": "(nog geen diagnosevermeldingen)"
     }
   }
 }

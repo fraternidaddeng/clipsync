@@ -43,7 +43,7 @@
     <value>Ikuti sistem</value>
   </data>
   <data name="Common_ClearHistory" xml:space="preserve">
-    <value>Kosongkan riwayat</value>
+    <value>Bersihkan riwayat</value>
   </data>
   <data name="Common_ExportHistory" xml:space="preserve">
     <value>Ekspor riwayat</value>
@@ -70,7 +70,7 @@
     <value>Riwayat</value>
   </data>
   <data name="History_Subtitle" xml:space="preserve">
-    <value>Salinan dari PC ini dan perangkat terpasang · pembersihan hanya memengaruhi perangkat ini</value>
+    <value>Klip dari PC ini dan perangkat yang dipasangkan · pembersihan hanya memengaruhi perangkat ini</value>
   </data>
   <data name="History_Search" xml:space="preserve">
     <value>Cari</value>
@@ -97,22 +97,22 @@
     <value>Gambar</value>
   </data>
   <data name="History_NoPreview" xml:space="preserve">
-    <value>Tanpa pratinjau</value>
+    <value>Tidak ada pratinjau</value>
   </data>
   <data name="History_LocalOnlyBadge" xml:space="preserve">
-    <value>Hanya disimpan di perangkat ini</value>
+    <value>Hanya di perangkat ini</value>
   </data>
   <data name="History_Empty_Unpaired_Title" xml:space="preserve">
-    <value>Pertama, sambungkan kedua ujung</value>
+    <value>Hubungkan dulu kedua ujung</value>
   </data>
   <data name="History_Empty_Paired_Title" xml:space="preserve">
-    <value>Menanti salinan pertama</value>
+    <value>Menunggu klip pertama</value>
   </data>
   <data name="History_Empty_Unpaired_Body" xml:space="preserve">
-    <value>Belum dipasangkan dengan ponsel. Pintu masuk pemasangan ada di segmen jaringan halaman “Saluran”.</value>
+    <value>Belum dipasangkan dengan ponsel. Pintu pemasangan ada di segmen jaringan pada halaman Saluran.</value>
   </data>
   <data name="History_Empty_Paired_Body" xml:space="preserve">
-    <value>Salin teks di perangkat mana pun — ia muncul di sini dan mengalir ke sisi seberang.</value>
+    <value>Salin teks di perangkat mana pun — teks itu muncul di sini dan mengalir ke sisi seberang.</value>
   </data>
   <data name="History_Empty_GoPair" xml:space="preserve">
     <value>Pasangkan sekarang ›</value>
@@ -124,7 +124,7 @@
     <value>”</value>
   </data>
   <data name="History_Empty_Filtered" xml:space="preserve">
-    <value>Belum ada entri jenis ini · coba filter lain</value>
+    <value>Tidak ada entri jenis ini · coba filter lain</value>
   </data>
   <data name="History_CopySelected" xml:space="preserve">
     <value>Salin yang dipilih</value>
@@ -136,7 +136,7 @@
     <value>Hapus yang dipilih</value>
   </data>
   <data name="History_UnknownSource" xml:space="preserve">
-    <value>Sumber tidak dikenal</value>
+    <value>Sumber tak dikenal</value>
   </data>
   <data name="History_LocalSource" xml:space="preserve">
     <value>PC ini</value>
@@ -145,7 +145,7 @@
     <value>Saluran</value>
   </data>
   <data name="Conduit_Subtitle" xml:space="preserve">
-    <value>Konten mengalir dari kiri ke kanan melewati empat segmen · urutan membaca adalah urutan menelusuri masalah</value>
+    <value>Konten mengalir dari kiri ke kanan melewati empat segmen · urutan membaca adalah urutan pemecahan masalah</value>
   </data>
   <data name="Conduit_Capture_Name" xml:space="preserve">
     <value>Penangkapan lokal</value>
@@ -154,7 +154,7 @@
     <value>Siap · memantau Ctrl+C</value>
   </data>
   <data name="Conduit_Status_Paused" xml:space="preserve">
-    <value>Dijeda · tidak merekam</value>
+    <value>Dijeda · tidak lagi merekam</value>
   </data>
   <data name="Conduit_Status_Private" xml:space="preserve">
     <value>Mode privat · tanpa jejak</value>
@@ -172,16 +172,16 @@
     <value>Siap · riwayat </value>
   </data>
   <data name="Conduit_Service_ReadyInfix" xml:space="preserve">
-    <value> · menunggu kirim </value>
+    <value> · antrean kirim </value>
   </data>
   <data name="Conduit_Service_DetailPrefix" xml:space="preserve">
-    <value>Peristiwa masuk penyimpanan dulu sebelum antrean kirim · </value>
+    <value>Peristiwa masuk ke penyimpanan dulu, lalu ke antrean kirim · </value>
   </data>
   <data name="Conduit_Network_Name" xml:space="preserve">
     <value>Jaringan</value>
   </data>
   <data name="Conduit_Network_ReadyPrefix" xml:space="preserve">
-    <value>Siap · memantau di :</value>
+    <value>Siap · memantau :</value>
   </data>
   <data name="Conduit_Network_ReadyInfix" xml:space="preserve">
     <value> · terhubung </value>
@@ -193,22 +193,22 @@
     <value>Tidak berjalan · sinkronisasi mati</value>
   </data>
   <data name="Conduit_Peer_Name" xml:space="preserve">
-    <value>Penulisan di seberang</value>
+    <value>Tulis pihak seberang</value>
   </data>
   <data name="Conduit_Peer_PairedPrefix" xml:space="preserve">
-    <value>Terpasang </value>
+    <value>Dipasangkan </value>
   </data>
   <data name="Conduit_Peer_PairedSuffix" xml:space="preserve">
     <value> perangkat</value>
   </data>
   <data name="Conduit_Peer_AutoApplyOn" xml:space="preserve">
-    <value>Teks jarak jauh ditulis otomatis ke papan klip PC ini.</value>
+    <value>Teks dari jauh otomatis ditulis ke papan klip PC ini.</value>
   </data>
   <data name="Conduit_Peer_AutoApplyOff" xml:space="preserve">
-    <value>Terapkan otomatis mati: konten jarak jauh hanya tinggal di riwayat dan perlu disalin manual.</value>
+    <value>Terapkan otomatis mati: konten dari jauh hanya tinggal di riwayat dan perlu disalin manual.</value>
   </data>
   <data name="Conduit_Devices_Header" xml:space="preserve">
-    <value>Segmen jaringan · perangkat terpasang</value>
+    <value>Segmen jaringan · perangkat yang dipasangkan</value>
   </data>
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Segmen jaringan · koneksi</value>
@@ -220,7 +220,7 @@
     <value>Cadangan Bluetooth</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>Mati secara bawaan. Saat LAN diblokir VPN atau firewall, ponsel yang sudah dipasangkan lewat Bluetooth di pengaturan sistem tetap menyinkronkan teks (tanpa gambar, lebih lambat).</value>
+    <value>Mati secara bawaan. Saat LAN diblokir VPN atau firewall, ponsel yang sudah dipasangkan Bluetooth di pengaturan sistem tetap menyinkronkan teks (tanpa gambar, lebih lambat).</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>Alamat pantau tambahan</value>
@@ -238,10 +238,10 @@
     <value>Sidik jari sertifikat PC ini</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>Saat memasangkan, cocokkan kelompok demi kelompok dengan sidik jari yang tampil di ponsel. Perubahan sidik jari membuat semua perangkat terpasang minta konfirmasi ulang.</value>
+    <value>Saat memasangkan, cocokkan kelompok demi kelompok dengan sidik jari yang tampil di ponsel. Perubahan sidik jari membuat semua perangkat yang dipasangkan minta konfirmasi ulang.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
-    <value>Layanan seberang tidak berjalan; sesi ini tidak ada sidik jari untuk ditampilkan.</value>
+    <value>Layanan peer tidak berjalan; tidak ada sidik jari untuk ditampilkan sesi ini.</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Dicabut</value>
@@ -250,10 +250,10 @@
     <value>Warna perangkat</value>
   </data>
   <data name="Device_AccentManual" xml:space="preserve">
-    <value>Ditetapkan manual</value>
+    <value>Ditentukan manual</value>
   </data>
   <data name="Device_AccentByOrder" xml:space="preserve">
-    <value>Mengikuti urutan pemasangan</value>
+    <value>Ikuti urutan pemasangan</value>
   </data>
   <data name="Device_Rename" xml:space="preserve">
     <value>Ganti nama</value>
@@ -262,31 +262,31 @@
     <value>Cabut perangkat terpilih</value>
   </data>
   <data name="Device_RevokeNote" xml:space="preserve">
-    <value>Pencabutan langsung memutus perangkat dan membatalkan kunci pemasangannya; konten yang sudah diterimanya tidak pernah dihapus dari jauh. Memasangkan lagi setelah pencabutan dihitung sebagai perangkat baru. Saat ponsel yang sama memasangkan ulang dengan identitas baru, catatan lama dicabut otomatis dan antrean kirimnya dikosongkan.</value>
+    <value>Pencabutan langsung memutus perangkat dan membatalkan kunci pemasangannya; konten yang sudah diterimanya tidak pernah dihapus dari jauh. Memasangkan lagi setelah pencabutan dihitung sebagai perangkat baru. Bila ponsel yang sama memasangkan ulang dengan identitas baru, catatan lama otomatis dicabut dan antrean kirimnya dikosongkan.</value>
   </data>
   <data name="Device_UnknownRemote" xml:space="preserve">
     <value>Perangkat jarak jauh</value>
   </data>
   <data name="Device_PairedFallback" xml:space="preserve">
-    <value>Perangkat terpasang</value>
+    <value>Perangkat yang dipasangkan</value>
   </data>
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>Perangkat tak dikenal</value>
   </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
-    <value>{0} · {1} menunggu kirim</value>
+    <value>{0} · {1} menunggu di antrean kirim</value>
   </data>
   <data name="Stale_BannerBacklogFormat" xml:space="preserve">
-    <value>Terdeteksi {0} perangkat yang tampak seperti sisa usang; {1} item tertunda menggelembungkan hitungan “menunggu kirim”. Pembersihan mencabutnya dan mengosongkan antrean kirimnya.</value>
+    <value>Terdeteksi {0} perangkat yang tampak seperti sisa lama; {1} butir tertunda menggelembungkan hitungan antrean kirim. Pembersihan mencabutnya dan mengosongkan antrean mereka.</value>
   </data>
   <data name="Stale_BannerFormat" xml:space="preserve">
-    <value>Terdeteksi {0} perangkat yang tampak seperti sisa usang. Pembersihan mencabutnya; konten yang sudah mereka terima tidak terpengaruh.</value>
+    <value>Terdeteksi {0} perangkat yang tampak seperti sisa lama. Pembersihan mencabutnya; konten yang sudah mereka terima tidak terpengaruh.</value>
   </data>
   <data name="Stale_DuplicateBadge" xml:space="preserve">
-    <value>Diduga sisa pemasangan ganda</value>
+    <value>Kemungkinan sisa pemasangan ganda</value>
   </data>
   <data name="Stale_NeverConnected" xml:space="preserve">
-    <value>Tidak pernah terhubung sejak dipasangkan</value>
+    <value>Tak pernah terhubung sejak dipasangkan</value>
   </data>
   <data name="Stale_UnseenDaysFormat" xml:space="preserve">
     <value>Tidak terhubung lebih dari {0} hari</value>
@@ -295,7 +295,7 @@
     <value>Preferensi</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Perubahan berlaku seketika · isi papan klip tidak pernah muncul di log</value>
+    <value>Perubahan langsung berlaku · isi papan klip tak pernah masuk log</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>TAMPILAN</value>
@@ -310,7 +310,7 @@
     <value>PENYIMPANAN</value>
   </data>
   <data name="Prefs_Group_Startup" xml:space="preserve">
-    <value>MULAI</value>
+    <value>OPERASI</value>
   </data>
   <data name="Prefs_Group_Data" xml:space="preserve">
     <value>DATA</value>
@@ -319,7 +319,7 @@
     <value>Ukuran teks riwayat</value>
   </data>
   <data name="Prefs_FontScale_Desc" xml:space="preserve">
-    <value>Hanya menskalakan teks konten (pratinjau riwayat, isi detail, jendela melayang di baki); judul grup, lencana, dan tombol tidak berubah.</value>
+    <value>Hanya menskalakan teks isi klip (pratinjau riwayat, isi detail, jendela baki); kepala grup, lencana, dan tombol tidak berubah.</value>
   </data>
   <data name="Prefs_FontScale_Small" xml:space="preserve">
     <value>Kecil</value>
@@ -346,10 +346,10 @@
     <value>6 baris</value>
   </data>
   <data name="Prefs_Theme_Title" xml:space="preserve">
-    <value>Tampilan</value>
+    <value>Tampilan tema</value>
   </data>
   <data name="Prefs_Theme_Desc" xml:space="preserve">
-    <value>Palet siang/malam jendela; ikon baki tinggal di bilah tugas dan selalu mengikuti coraknya.</value>
+    <value>Palet siang/malam jendela; ikon baki hidup di bilah tugas dan selalu mengikuti rona bilah tugas.</value>
   </data>
   <data name="Prefs_Theme_Day" xml:space="preserve">
     <value>Siang</value>
@@ -361,7 +361,7 @@
     <value>Bahasa</value>
   </data>
   <data name="Prefs_Language_Desc" xml:space="preserve">
-    <value>Bahasa antarmuka — ikuti sistem atau tetapkan sendiri; nama tiap bahasa selalu tampil dalam bahasa aslinya.</value>
+    <value>Bahasa antarmuka — ikuti sistem atau tentukan manual; setiap bahasa selalu tampil dengan nama aslinya sendiri.</value>
   </data>
   <data name="Prefs_Language_RestartNote" xml:space="preserve">
     <value>Berlaku setelah aplikasi dimulai ulang.</value>
@@ -376,31 +376,31 @@
     <value>Proses yang diblokir</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>Salinan dari proses-proses ini tidak masuk riwayat dan tidak disinkronkan. Pisahkan dengan koma atau baris baru.</value>
+    <value>Salinan dari proses ini tak pernah masuk riwayat atau disinkronkan. Pisahkan dengan koma atau baris baru.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
-    <value>Terapkan otomatis konten jarak jauh</value>
+    <value>Terapkan konten dari jauh otomatis</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>Teks dari ponsel ditulis otomatis ke papan klip PC ini. Jika mati, ia hanya tinggal di riwayat dan perlu disalin manual.</value>
+    <value>Teks dari ponsel otomatis ditulis ke papan klip PC ini. Bila mati, hanya tinggal di riwayat dan perlu disalin manual.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>Sinkronkan gambar papan klip</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Mati secara bawaan. Hanya PNG/JPEG; byte mentah bisa memuat EXIF dan metadata lain, dan kedua ujung butuh sesi v2.</value>
+    <value>Mati secara bawaan. Hanya PNG/JPEG; byte mentah bisa membawa EXIF dan metadata lain, dan kedua ujung butuh sesi v2.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
-    <value>Terapkan otomatis gambar jarak jauh</value>
+    <value>Terapkan gambar dari jauh otomatis</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>Gambar dari ponsel ditulis otomatis ke papan klip PC ini. Jika mati, ia hanya tinggal di riwayat dan perlu disalin manual.</value>
+    <value>Gambar dari ponsel otomatis ditulis ke papan klip PC ini. Bila mati, hanya tinggal di riwayat dan perlu disalin manual.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>Cadangan Bluetooth · alamat pantau tambahan · sidik jari sertifikat</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>Dipindah ke “Saluran · segmen jaringan” — mereka menentukan apakah konten bisa sampai ke seberang, jadi tinggal bersama pemasangan dan pengelolaan perangkat.</value>
+    <value>Dipindah ke Saluran · segmen jaringan — semuanya menentukan apakah konten bisa mencapai pihak seberang, jadi tinggal bersama pemasangan dan pengelolaan perangkat.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>Buka Saluran</value>
@@ -409,43 +409,43 @@
     <value>Masa penyimpanan</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>Entri yang lewat tenggat dihapus otomatis. Pembersihan hanya terjadi di PC ini dan tidak pernah menghapus dari jauh apa yang sudah diterima seberang.</value>
+    <value>Entri lewat batas dihapus otomatis. Pembersihan hanya terjadi di PC ini dan tak pernah menghapus yang sudah diterima pihak seberang.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>hari</value>
   </data>
   <data name="Prefs_Retention_Entries_Title" xml:space="preserve">
-    <value>Jumlah entri tersimpan</value>
+    <value>Jumlah simpanan</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>Saat melewati batas, entri tertua dihapus lebih dulu (100–2000, kelipatan 100). Pembersihan hanya terjadi di PC ini.</value>
+    <value>Saat melebihi batas, entri tertua dihapus lebih dulu (100–2000, kelipatan 100). Pembersihan hanya terjadi di PC ini.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>entri</value>
   </data>
   <data name="Prefs_Startup_Launch_Title" xml:space="preserve">
-    <value>Mulai bersama sistem · senyap ke baki</value>
+    <value>Mulai saat but · diam-diam ke baki</value>
   </data>
   <data name="Prefs_Startup_Launch_Desc" xml:space="preserve">
-    <value>Berjalan otomatis saat masuk Windows dan langsung menetap di baki tanpa membuka jendela utama. Hanya menulis entri mulai milik pengguna saat ini; tak perlu hak administrator.</value>
+    <value>Mulai otomatis saat masuk Windows dan langsung ke baki tanpa membuka jendela utama. Hanya menulis entri startup pengguna saat ini; tak perlu hak administrator.</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Title" xml:space="preserve">
-    <value>Pintasan jendela melayang</value>
+    <value>Pintasan jendela baki</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>Tekan kombinasi di aplikasi mana pun untuk memanggil jendela melayang baki. Klik kotaknya, lalu tekan kombinasi yang diinginkan (harus memuat Ctrl, Alt, atau Win); tekan Backspace untuk menghapus. Mati secara bawaan.</value>
+    <value>Tekan kombinasi di aplikasi mana pun untuk memanggil jendela baki. Klik kotaknya lalu tekan kombinasi yang diinginkan (harus memuat Ctrl, Alt, atau Win); tekan Backspace untuk menghapus. Mati secara bawaan.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>Menulis seluruh riwayat (termasuk penanda penghapusan) sebagai berkas cadangan JSON Lines; tanpa kunci, sertifikat, atau data pemasangan. Hasil ekspor berupa teks polos — simpan baik-baik.</value>
+    <value>Menulis seluruh riwayat (termasuk penanda penghapusan) sebagai berkas cadangan JSON Lines; tanpa kunci, sertifikat, atau data pemasangan. Ekspor berupa teks polos — simpan baik-baik.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>Menggabungkan riwayat dari berkas cadangan: idempoten pada “perangkat sumber + nomor urut”, jadi impor ulang tak menggandakan entri maupun menimpa penghapusan lokal. Jika validasi gagal, tidak ada yang berubah.</value>
+    <value>Menggabungkan riwayat dari berkas cadangan: idempoten pada “perangkat sumber + nomor urut”, jadi impor ulang tak pernah menggandakan entri atau menimpa penghapusan lokal. Kegagalan validasi tak mengubah apa pun.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>Menghapus semua entri di PC ini (termasuk gambar) sekali jalan; butuh dua konfirmasi dan tak bisa dibatalkan. Pengosongan hanya terjadi di PC ini dan tidak pernah menghapus apa yang sudah diterima seberang — pertimbangkan ekspor dulu.</value>
+    <value>Menghapus semua entri di PC ini (termasuk gambar) sekali jalan; perlu dua konfirmasi dan tak bisa dibatalkan. Pembersihan hanya terjadi di PC ini dan tak pernah menghapus yang sudah diterima pihak seberang — pertimbangkan ekspor dulu.</value>
   </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
-    <value>ClipSync · salinan terkini</value>
+    <value>ClipSync · klip terkini</value>
   </data>
   <data name="Flyout_PauseSync" xml:space="preserve">
     <value>Jeda sinkronisasi</value>
@@ -454,13 +454,13 @@
     <value>Lanjutkan sinkronisasi</value>
   </data>
   <data name="Flyout_Empty" xml:space="preserve">
-    <value>Belum ada salinan · coba salin sebuah teks</value>
+    <value>Belum ada klip · coba salin sebuah teks</value>
   </data>
   <data name="Flyout_PauseOrResume" xml:space="preserve">
     <value>Jeda atau lanjutkan sinkronisasi</value>
   </data>
   <data name="Flyout_CopyFromFormat" xml:space="preserve">
-    <value>Salin item dari {0}</value>
+    <value>Salin klip dari {0}</value>
   </data>
   <data name="Tray_Menu_Open" xml:space="preserve">
     <value>Buka ClipSync</value>
@@ -478,7 +478,7 @@
     <value>ClipSync · {0}</value>
   </data>
   <data name="Tray_AttentionFallback" xml:space="preserve">
-    <value>Perlu tindakan Anda</value>
+    <value>Perlu tindakanmu</value>
   </data>
   <data name="Tray_Tooltip_Paused" xml:space="preserve">
     <value>ClipSync · penangkapan dijeda</value>
@@ -487,19 +487,19 @@
     <value>ClipSync · mode privat, tanpa jejak</value>
   </data>
   <data name="Tray_RemoteClipOneFormat" xml:space="preserve">
-    <value>1 salinan baru dari {0}</value>
+    <value>1 klip baru dari {0}</value>
   </data>
   <data name="Tray_RemoteClipManyFormat" xml:space="preserve">
-    <value>{1} salinan baru dari {0}</value>
+    <value>{1} klip baru dari {0}</value>
   </data>
   <data name="Tray_OversizeNotice" xml:space="preserve">
-    <value>Teks yang barusan disalin melebihi 1 MiB; hanya tinggal di papan klip PC ini dan tidak disinkronkan (tidak dipotong).</value>
+    <value>Teks yang baru disalin melebihi 1 MiB; hanya tinggal di papan klip PC ini dan tidak disinkronkan (tidak dipotong).</value>
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
-    <value>Kegagalan autentikasi berulang dari “{0}”; perangkat dibatasi sementara.</value>
+    <value>Kegagalan autentikasi berulang dari “{0}”; perangkat itu dibatasi sementara.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
-    <value>Memantau · sinkronisasi belum berjalan</value>
+    <value>Memantau · sinkronisasi tidak berjalan</value>
   </data>
   <data name="Tray_Status_ConnectedFormat" xml:space="preserve">
     <value>Memantau · {0} terhubung</value>
@@ -508,69 +508,69 @@
     <value>Memantau · menunggu perangkat</value>
   </data>
   <data name="Capture_OversizeNotice" xml:space="preserve">
-    <value>Teks yang barusan disalin melebihi 1 MiB: tetap di papan klip sistem tanpa dipotong, tetapi tidak dicatat ke riwayat dan tidak disinkronkan.</value>
+    <value>Teks yang baru disalin melebihi 1 MiB: tetap di papan klip sistem tanpa dipotong, tetapi tidak dicatat ke riwayat dan tidak disinkronkan.</value>
   </data>
   <data name="Sync_NotStarted" xml:space="preserve">
-    <value>Layanan seberang belum dimulai</value>
+    <value>Layanan peer belum dimulai</value>
   </data>
   <data name="Sync_StartFailed" xml:space="preserve">
-    <value>Layanan seberang gagal dimulai; sesi ini sinkronisasi mati.</value>
+    <value>Layanan peer gagal dimulai; sinkronisasi mati untuk sesi ini.</value>
   </data>
   <data name="Sync_ConnectedFormat" xml:space="preserve">
-    <value>LAN memantau porta {0} · {1} perangkat terhubung, konten mengalir waktu nyata.</value>
+    <value>LAN memantau porta {0} · {1} perangkat terhubung, konten mengalir seketika.</value>
   </data>
   <data name="Sync_WaitingFormat" xml:space="preserve">
-    <value>LAN memantau porta {0} · menunggu perangkat terpasang; peristiwa masuk penyimpanan dulu sebelum antrean kirim, jadi tak ada yang hilang saat luring.</value>
+    <value>LAN memantau porta {0} · menunggu perangkat yang dipasangkan; peristiwa masuk penyimpanan dulu lalu antrean kirim, jadi tak ada yang hilang saat luring.</value>
   </data>
   <data name="Bt_Disabled" xml:space="preserve">
-    <value>Cadangan Bluetooth belum diaktifkan</value>
+    <value>Cadangan Bluetooth tidak diaktifkan</value>
   </data>
   <data name="Bt_UnavailableFormat" xml:space="preserve">
-    <value>Cadangan Bluetooth tidak tersedia: {0}</value>
+    <value>Cadangan Bluetooth tak tersedia: {0}</value>
   </data>
   <data name="Bt_SyncingFormat" xml:space="preserve">
-    <value>Cadangan Bluetooth · menyinkron dengan {0} (teks saja)</value>
+    <value>Cadangan Bluetooth · menyinkronkan dengan {0} (hanya teks)</value>
   </data>
   <data name="Bt_Armed" xml:space="preserve">
     <value>Cadangan Bluetooth siaga · ponsel otomatis beralih ke Bluetooth saat LAN tak terjangkau</value>
   </data>
   <data name="Bt_Starting" xml:space="preserve">
-    <value>Cadangan Bluetooth sedang dimulai…</value>
+    <value>Cadangan Bluetooth dimulai…</value>
   </data>
   <data name="Bt_AdapterUnavailable" xml:space="preserve">
-    <value>Adaptor Bluetooth tidak tersedia atau dimatikan</value>
+    <value>Adaptor Bluetooth tak tersedia atau mati</value>
   </data>
   <data name="Ack_None" xml:space="preserve">
-    <value>Belum ada konfirmasi dari seberang</value>
+    <value>Belum ada konfirmasi dari pihak seberang</value>
   </data>
   <data name="Ack_UpToFormat" xml:space="preserve">
-    <value>Seberang mengonfirmasi sampai {0}</value>
+    <value>Pihak seberang mengonfirmasi hingga {0}</value>
   </data>
   <data name="Transfer_ClearedFormat" xml:space="preserve">
-    <value>Mengosongkan {0} entri riwayat (termasuk gambar). Pengosongan hanya terjadi di PC ini.</value>
+    <value>{0} entri riwayat dibersihkan (termasuk gambar). Pembersihan hanya terjadi di PC ini.</value>
   </data>
   <data name="Transfer_ClearConfirmBody" xml:space="preserve">
-    <value>Kosongkan semua riwayat?
+    <value>Bersihkan seluruh riwayat?
 
-Akan menghapus semua entri di PC ini (termasuk gambar) sekali jalan. Pengosongan hanya terjadi di PC ini dan tidak menghapus apa yang sudah diterima seberang. Pertimbangkan “Ekspor riwayat” dulu.</value>
+Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan hanya terjadi di PC ini dan tak pernah menghapus yang sudah diterima pihak seberang. Pertimbangkan “Ekspor riwayat” dulu.</value>
   </data>
   <data name="Transfer_ClearConfirmAgain" xml:space="preserve">
-    <value>Konfirmasi sekali lagi: pengosongan tak bisa dibatalkan. Yakin kosongkan semua riwayat?</value>
+    <value>Konfirmasi sekali lagi: pembersihan tak bisa dibatalkan. Bersihkan seluruh riwayat?</value>
   </data>
   <data name="Transfer_ExportedFormat" xml:space="preserve">
-    <value>Terekspor {0} catatan (teks polos) → {1}</value>
+    <value>{0} rekaman diekspor (teks polos) → {1}</value>
   </data>
   <data name="Transfer_ExportWriteFailed" xml:space="preserve">
-    <value>Ekspor gagal: tidak bisa menulis berkas yang dipilih.</value>
+    <value>Ekspor gagal: berkas yang dipilih tak bisa ditulis.</value>
   </data>
   <data name="Transfer_ImportedFormat" xml:space="preserve">
-    <value>Impor selesai: baru {0} · sudah ada {1} · konflik {2}</value>
+    <value>Impor selesai: {0} ditambahkan · {1} sudah ada · {2} konflik</value>
   </data>
   <data name="Transfer_ImportFailedFormat" xml:space="preserve">
-    <value>Impor gagal: {0}. Tidak ada yang diubah.</value>
+    <value>Impor gagal: {0}. Tak ada yang diubah.</value>
   </data>
   <data name="Transfer_ImportReadFailed" xml:space="preserve">
-    <value>Impor gagal: tidak bisa membaca berkas yang dipilih.</value>
+    <value>Impor gagal: berkas yang dipilih tak bisa dibaca.</value>
   </data>
   <data name="Transfer_FileFilter" xml:space="preserve">
     <value>Ekspor riwayat ClipSync (*.jsonl)|*.jsonl|Semua berkas (*.*)|*.*</value>
@@ -582,55 +582,55 @@ Akan menghapus semua entri di PC ini (termasuk gambar) sekali jalan. Pengosongan
     <value>versi berkas lebih baru dari yang didukung aplikasi ini</value>
   </data>
   <data name="Transfer_Error_MalformedRecord" xml:space="preserve">
-    <value>berkas rusak (catatan salah format)</value>
+    <value>berkas rusak (format rekaman salah)</value>
   </data>
   <data name="Transfer_Error_HashMismatch" xml:space="preserve">
     <value>berkas rusak (pemeriksaan hash gagal)</value>
   </data>
   <data name="Transfer_Error_CountMismatch" xml:space="preserve">
-    <value>berkas tidak lengkap (jumlah tak cocok dengan kepala berkas)</value>
+    <value>berkas tak lengkap (jumlah tak cocok dengan kepala berkas)</value>
   </data>
   <data name="Transfer_Error_ContentTooLarge" xml:space="preserve">
     <value>berkas memuat entri melebihi batas ukuran (teks 1 MiB / gambar 16 MiB)</value>
   </data>
   <data name="Transfer_Error_Unknown" xml:space="preserve">
-    <value>kesalahan tak dikenal</value>
+    <value>galat tak dikenal</value>
   </data>
   <data name="Hotkey_Applied" xml:space="preserve">
-    <value>Aktif · tekan di aplikasi mana pun untuk memanggil jendela melayang</value>
+    <value>Aktif · tekan di aplikasi mana pun untuk memanggil jendela baki</value>
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
-    <value>Kombinasi itu sudah dipakai program lain; coba kombinasi berbeda</value>
+    <value>Kombinasi itu sudah dipakai program lain; coba kombinasi lain</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
-    <value>Sesi ini sinkronisasi tidak berjalan (titik akhir gagal dimulai)</value>
+    <value>Sinkronisasi tidak berjalan sesi ini (titik akhir gagal dimulai)</value>
   </data>
   <data name="Attention_CaptureFaulted" xml:space="preserve">
     <value>Penangkapan papan klip menurun (akses terakhir gagal)</value>
   </data>
   <data name="Attention_NoDevice" xml:space="preserve">
-    <value>Pasangkan satu perangkat untuk mulai menyinkron</value>
+    <value>Pasangkan sebuah perangkat untuk mulai menyinkronkan</value>
   </data>
   <data name="Pairing_Title" xml:space="preserve">
     <value>Pasangkan perangkat baru</value>
   </data>
   <data name="Pairing_PeerDownBody" xml:space="preserve">
-    <value>Layanan seberang tidak berjalan; sesi ini tidak bisa memasangkan.</value>
+    <value>Layanan peer tidak berjalan; pemasangan tak tersedia sesi ini.</value>
   </data>
   <data name="Pairing_ScanInstruction" xml:space="preserve">
-    <value>Pindai kode ini dengan ClipSync di ponsel Anda. Kode QR memuat alamat PC ini, sidik jari sertifikat, dan token sekali pakai — tidak pernah kunci pemasangan.</value>
+    <value>Pindai kode ini dengan ClipSync di ponselmu. Kode QR memuat alamat PC ini, sidik jari sertifikat, dan token sekali pakai — tak pernah memuat kunci pemasangan.</value>
   </data>
   <data name="Pairing_CountdownFormat" xml:space="preserve">
-    <value>Berganti dalam {0:m\:ss}</value>
+    <value>Diperbarui dalam {0:m\:ss}</value>
   </data>
   <data name="Pairing_NoLanAddress" xml:space="preserve">
-    <value>Alamat LAN tidak terdeteksi. Tempatkan PC ini dan ponsel di jaringan yang sama (atau tambahkan alamat Tailscale di Preferensi), lalu buka lagi jendela ini.</value>
+    <value>Tak terdeteksi alamat LAN. Sambungkan PC ini dan ponsel ke jaringan yang sama (atau tambahkan alamat Tailscale di Preferensi), lalu buka lagi jendela ini.</value>
   </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
-    <value>Periksa di ponsel sebelum menyetujui</value>
+    <value>Cocokkan di ponsel sebelum menyetujui</value>
   </data>
   <data name="Pairing_PcName" xml:space="preserve">
-    <value>Nama komputer</value>
+    <value>Nama PC</value>
   </data>
   <data name="Pairing_Fingerprint" xml:space="preserve">
     <value>Sidik jari sertifikat</value>
@@ -648,7 +648,7 @@ Akan menghapus semua entri di PC ini (termasuk gambar) sekali jalan. Pengosongan
     <value>Izinkan perangkat ini memasangkan diri?</value>
   </data>
   <data name="Approval_Body" xml:space="preserve">
-    <value>Sebuah perangkat memakai kode QR PC ini untuk meminta pemasangan. Setujui hanya jika nama di bawah cocok dengan ponsel di tangan Anda.</value>
+    <value>Sebuah perangkat memakai kode QR PC ini untuk meminta pemasangan. Setujui hanya jika nama di bawah cocok dengan ponsel di tanganmu.</value>
   </data>
   <data name="Approval_PlatformAndroid" xml:space="preserve">
     <value>Perangkat Android</value>
@@ -657,10 +657,10 @@ Akan menghapus semua entri di PC ini (termasuk gambar) sekali jalan. Pengosongan
     <value>Perangkat Windows</value>
   </data>
   <data name="Approval_RepairWarning" xml:space="preserve">
-    <value>Perangkat ini pernah dipasangkan. Menyetujui akan mengganti kunci pemasangannya, dan instalasi lama langsung berhenti bekerja.</value>
+    <value>Perangkat ini pernah dipasangkan. Menyetujui akan mengganti kunci pemasangannya, dan pemasangan lama langsung berhenti bekerja.</value>
   </data>
   <data name="Approval_SupersedeNotice" xml:space="preserve">
-    <value>Sudah ada perangkat bernama sama di daftar. Setelah disetujui, catatan lama dicabut otomatis dan antrean kirimnya dikosongkan (dianggap ponsel yang sama memasangkan ulang).</value>
+    <value>Sudah ada perangkat bernama sama di daftar. Setelah disetujui, catatan lama otomatis dicabut dan antrean kirimnya dikosongkan (dianggap ponsel yang sama memasangkan ulang).</value>
   </data>
   <data name="Approval_Reject" xml:space="preserve">
     <value>Tolak</value>
@@ -669,7 +669,7 @@ Akan menghapus semua entri di PC ini (termasuk gambar) sekali jalan. Pengosongan
     <value>Setujui pemasangan</value>
   </data>
   <data name="Detail_Title" xml:space="preserve">
-    <value>Detail salinan</value>
+    <value>Detail klip</value>
   </data>
   <data name="Detail_SourceFormat" xml:space="preserve">
     <value>Sumber: {0}</value>
@@ -681,7 +681,7 @@ Akan menghapus semua entri di PC ini (termasuk gambar) sekali jalan. Pengosongan
     <value>ClipSync · log diagnostik</value>
   </data>
   <data name="Diag_Heading" xml:space="preserve">
-    <value>Diagnostik lokal · hanya kode status dan waktu, tidak pernah isi papan klip</value>
+    <value>Diagnostik lokal · hanya kode status dan waktu, tak pernah isi papan klip</value>
   </data>
   <data name="Diag_CopyAll" xml:space="preserve">
     <value>Salin semua</value>
