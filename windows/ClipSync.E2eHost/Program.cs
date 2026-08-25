@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ClipSync.Core.Clipboard;
+using ClipSync.Core.Media;
 using ClipSync.Core.Protocol;
 using ClipSync.Core.Security;
 using ClipSync.Core.Storage;
@@ -21,12 +22,21 @@ namespace ClipSync.E2eHost;
 /// Test-only Windows listener for the cross-client E2E run (scripts/run-e2e-stage4.ps1).
 /// Stdout is the command protocol only; logs go to stderr and never include clip text,
 /// secrets, nonces, or proofs. Commands: <c>capture &lt;base64url-utf8&gt;</c> stores a local
-/// clip, <c>list</c> prints the visible history as JSON, <c>quit</c> exits.
+/// text clip, <c>capture-image &lt;base64url-bytes&gt;</c> stores a local image clip (validated
+/// like the real capture ingress), <c>list</c> prints the visible history texts as JSON,
+/// <c>list-images</c> prints the visible image content hashes as JSON, <c>quit</c> exits.
 /// </summary>
 internal static class Program
 {
     internal const string WindowsDeviceId = "11111111-1111-4111-8111-111111111111";
     internal const string AndroidDeviceId = "22222222-2222-4222-8222-222222222222";
+
+    /// <summary>
+    /// The v2 image leg dials as its own paired device: each dialer test starts from a fresh
+    /// repository whose local sequences begin at 1, so sharing one identity would collide the
+    /// (origin, seq) keyspace between legs. Two devices = two independent origin keyspaces.
+    /// </summary>
+    internal const string AndroidImageDeviceId = "33333333-3333-4333-8333-333333333333";
 
     public static async Task<int> Main()
     {
@@ -48,6 +58,9 @@ internal static class Program
             var device = await store.UpsertDeviceAsync(
                 new NewPairedDevice(AndroidDeviceId, "Android", "android", "ab".PadLeft(64, 'a'), protectedSecret),
                 DateTimeOffset.UtcNow).ConfigureAwait(false);
+            var imageDevice = await store.UpsertDeviceAsync(
+                new NewPairedDevice(AndroidImageDeviceId, "Android-Image", "android", "cd".PadLeft(64, 'c'), protectedSecret),
+                DateTimeOffset.UtcNow).ConfigureAwait(false);
 
             certificate = PeerCertificate.CreateSelfSigned(WindowsDeviceId, DateTimeOffset.UtcNow, TimeSpan.FromDays(365));
             var fingerprint = PeerCertificate.Fingerprint(certificate);
@@ -62,7 +75,11 @@ internal static class Program
                     {
                         ClientVersion = "0.2.0",
                         OutboxDrainInterval = TimeSpan.FromMilliseconds(100),
-                        PingInterval = TimeSpan.FromSeconds(60)
+                        PingInterval = TimeSpan.FromSeconds(60),
+                        // The image leg dials /v2, which PeerServer only accepts with the
+                        // 图片同步 gate open. The production default is off (ADR 0004,
+                        // fail-closed); this E2E pair opts in explicitly to exercise it.
+                        ImageSyncEnabled = static () => true
                     },
                     BindAddresses = [IPAddress.Loopback],
                     Port = 0
@@ -76,7 +93,9 @@ internal static class Program
                 WindowsDeviceId,
                 AndroidDeviceId,
                 ProtocolValidation.EncodeBase64Url(pairSecret),
-                device.TrustEpoch);
+                device.TrustEpoch,
+                AndroidImageDeviceId,
+                imageDevice.TrustEpoch);
             await WriteStdoutAsync(JsonSerializer.Serialize(ready)).ConfigureAwait(false);
             Console.Error.WriteLine("e2e-host listening");
 
@@ -126,6 +145,24 @@ internal static class Program
                 continue;
             }
 
+            if (line.Equals("list-images", StringComparison.Ordinal))
+            {
+                var entries = await store.SearchAsync(new ClipboardHistoryQuery(Limit: 500)).ConfigureAwait(false);
+                var payload = new ImageListPayload(
+                    entries.Where(entry => entry.IsImage).Select(entry => entry.ContentHash).ToArray());
+                await WriteStdoutAsync(JsonSerializer.Serialize(payload)).ConfigureAwait(false);
+                Console.Error.WriteLine(
+                    "e2e-host listed images count=" + payload.ImageHashes.Count.ToString(CultureInfo.InvariantCulture));
+                continue;
+            }
+
+            const string captureImagePrefix = "capture-image ";
+            if (line.StartsWith(captureImagePrefix, StringComparison.Ordinal))
+            {
+                await HandleCaptureImageAsync(store, line[captureImagePrefix.Length..]).ConfigureAwait(false);
+                continue;
+            }
+
             const string capturePrefix = "capture ";
             if (line.StartsWith(capturePrefix, StringComparison.Ordinal))
             {
@@ -157,6 +194,32 @@ internal static class Program
             new AcceptedClipboardContent(text, hash, bytes.Length, "e2e", DateTimeOffset.UtcNow)).ConfigureAwait(false);
         await WriteStdoutAsync("ok").ConfigureAwait(false);
         Console.Error.WriteLine("e2e-host captured seq=" + stored.OriginSequence.ToString(CultureInfo.InvariantCulture));
+    }
+
+    private static async Task HandleCaptureImageAsync(SqliteClipboardEventStore store, string encoded)
+    {
+        // Inspect exactly like the real capture ingress: magic bytes decide the mime type,
+        // dimensions and hash are computed here — the seeded row is as honest as a capture.
+        if (!TryDecodeBase64Url(encoded.Trim(), out var bytes) ||
+            ImageCodec.TryInspect(bytes, out var inspected) != ImageCodecError.Ok ||
+            inspected is null)
+        {
+            Console.Error.WriteLine("e2e-host capture-image rejected");
+            return;
+        }
+
+        var stored = await store.StoreImageAsync(
+            new AcceptedImageContent(
+                bytes,
+                inspected.ContentHash,
+                inspected.MimeType,
+                inspected.PixelWidth,
+                inspected.PixelHeight,
+                "e2e",
+                DateTimeOffset.UtcNow)).ConfigureAwait(false);
+        await WriteStdoutAsync("ok").ConfigureAwait(false);
+        Console.Error.WriteLine(
+            "e2e-host captured image seq=" + stored.OriginSequence.ToString(CultureInfo.InvariantCulture));
     }
 
     private static async Task WriteStdoutAsync(string line)
@@ -264,7 +327,12 @@ internal sealed record ReadyPayload(
     [property: JsonPropertyName("windows_device_id")] string WindowsDeviceId,
     [property: JsonPropertyName("android_device_id")] string AndroidDeviceId,
     [property: JsonPropertyName("pair_secret_b64url")] string PairSecretB64url,
-    [property: JsonPropertyName("trust_epoch")] long TrustEpoch);
+    [property: JsonPropertyName("trust_epoch")] long TrustEpoch,
+    [property: JsonPropertyName("android_image_device_id")] string AndroidImageDeviceId,
+    [property: JsonPropertyName("image_trust_epoch")] long ImageTrustEpoch);
 
 internal sealed record ListPayload(
     [property: JsonPropertyName("texts")] IReadOnlyList<string> Texts);
+
+internal sealed record ImageListPayload(
+    [property: JsonPropertyName("image_hashes")] IReadOnlyList<string> ImageHashes);

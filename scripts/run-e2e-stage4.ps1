@@ -2,9 +2,11 @@
 <#
 Cross-client stage-4 E2E: builds the solution, starts the headless
 ClipSync.E2eHost listener (real Kestrel + TLS + protocol v1/v2 routes), seeds a
-Windows-side clip, then drives the Android JVM dialer suite
-(com.clipsync.android.e2e.*) against it over a real pinned WebSocket. Passes
-when both directions converge exactly once. Prints E2E-PASS on success.
+Windows-side text clip and a fixture image, then drives the Android JVM dialer
+suite (com.clipsync.android.e2e.*) against it over a real pinned WebSocket:
+the v1 leg converges text both ways, the v2 leg converges the shared media
+fixtures both ways (begin/chunk/end streaming, protocol v2). Passes only when
+every direction converges exactly once. Prints E2E-PASS on success.
 #>
 [CmdletBinding()]
 param()
@@ -126,7 +128,7 @@ try {
         Write-E2eResult -Status FAIL -Reason 'host ready line was not JSON'
         exit 1
     }
-    foreach ($field in @('port', 'cert_sha256', 'windows_device_id', 'android_device_id', 'pair_secret_b64url', 'trust_epoch')) {
+    foreach ($field in @('port', 'cert_sha256', 'windows_device_id', 'android_device_id', 'pair_secret_b64url', 'trust_epoch', 'android_image_device_id', 'image_trust_epoch')) {
         if ($ready.PSObject.Properties.Name -notcontains $field) {
             Write-E2eResult -Status FAIL -Reason "ready JSON missing $field"
             exit 1
@@ -144,6 +146,20 @@ try {
         exit 1
     }
 
+    # The v2 image leg: seed the shared png-8x8 media fixture as a Windows-side image clip.
+    # The Android image dialer pulls it over begin/chunk/end and pushes jpeg-1x1 back; the
+    # fixtures differ on purpose so hash dedup cannot mask a broken direction.
+    $mediaDir = [IO.Path]::Combine($repoRoot, 'protocol', 'v2', 'fixtures', 'media')
+    $mediaManifest = Get-Content -LiteralPath (Join-Path $mediaDir 'manifest.json') -Raw | ConvertFrom-Json
+    $pngB64 = ConvertTo-Base64Url -Bytes ([IO.File]::ReadAllBytes((Join-Path $mediaDir 'png-8x8.png')))
+    $proc.StandardInput.WriteLine("capture-image $pngB64")
+    $proc.StandardInput.Flush()
+    $captureImageReply = Read-HostLine -Reader $proc.StandardOutput -TimeoutMs 10000 -What 'capture-image ok'
+    if ($captureImageReply -ne 'ok') {
+        Write-E2eResult -Status FAIL -Reason "host capture-image did not reply ok"
+        exit 1
+    }
+
     $gradleArgs = @(
         'testDebugUnitTest',
         '--tests', 'com.clipsync.android.e2e.*',
@@ -154,6 +170,8 @@ try {
         "-Dclipsync.e2e.androidDeviceId=$($ready.android_device_id)",
         "-Dclipsync.e2e.pairSecretB64url=$($ready.pair_secret_b64url)",
         "-Dclipsync.e2e.trustEpoch=$($ready.trust_epoch)",
+        "-Dclipsync.e2e.androidImageDeviceId=$($ready.android_image_device_id)",
+        "-Dclipsync.e2e.imageTrustEpoch=$($ready.image_trust_epoch)",
         '--no-daemon',
         '--console=plain'
     )
@@ -219,6 +237,27 @@ try {
     $androidHits = @($list.texts | Where-Object { $_ -eq $androidText })
     if ($androidHits.Count -ne 1) {
         Write-E2eResult -Status FAIL -Reason "windows list expected $androidText exactly once, found $($androidHits.Count)"
+        exit 1
+    }
+
+    $proc.StandardInput.WriteLine('list-images')
+    $proc.StandardInput.Flush()
+    $imagesLine = Read-HostLine -Reader $proc.StandardOutput -TimeoutMs 10000 -What 'list-images JSON'
+    try {
+        $images = $imagesLine | ConvertFrom-Json
+    }
+    catch {
+        Write-E2eResult -Status FAIL -Reason 'host list-images line was not JSON'
+        exit 1
+    }
+    $androidImageHits = @($images.image_hashes | Where-Object { $_ -eq $mediaManifest.jpeg_1x1_sha256 })
+    if ($androidImageHits.Count -ne 1) {
+        Write-E2eResult -Status FAIL -Reason "windows list-images expected the android jpeg hash exactly once, found $($androidImageHits.Count)"
+        exit 1
+    }
+    $windowsImageHits = @($images.image_hashes | Where-Object { $_ -eq $mediaManifest.png_8x8_sha256 })
+    if ($windowsImageHits.Count -ne 1) {
+        Write-E2eResult -Status FAIL -Reason "windows list-images expected the seeded png hash exactly once, found $($windowsImageHits.Count)"
         exit 1
     }
 

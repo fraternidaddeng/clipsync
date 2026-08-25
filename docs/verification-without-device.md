@@ -46,12 +46,13 @@
 
 ### 图片同步（协议 v2，从 feature/stage-4 移植；双端 + 共享 fixture）
 
-图片同步的自动化覆盖分四层，全部无需实体设备：
+图片同步的自动化覆盖分五层，全部无需实体设备：
 
 1. **共享 wire fixture（`protocol/v2/fixtures`，三个消费方）**——`scripts/validate-protocol.py`、Windows `ProtocolReaderV2Tests`、Android `SyncWireV2FixtureTest` 消费同一批 15 valid + 15 invalid v2 fixture（含 `clip_payload_begin/chunk/end`、图片头、超限/GIF/padded-base64 拒绝路径）；Windows 侧逐条核对 `expected_errors.json` 错误码，Android 侧验证全部 invalid fixture 被严格校验器拒绝、全部 valid fixture 类型化解码后可等价重编码。v2 认证向量（transcript 绑定协议版本 2）由 Windows `PairAuthProofTests` 验证。
 2. **跨端图片往返（本次新增，双端镜像）**——`windows/ClipSync.Tests/Media/ImageClipRoundTripTests.cs` 与 `android/.../media/ImageClipRoundTripTest.kt` 用**同一批二进制小样本**（`protocol/v2/fixtures/media/` 下的 `png-1x1-transparent.png`、`png-2x2-quadrant.png`、`png-8x8.png`、`jpeg-1x1.jpg` + `manifest.json`）跑同样的断言：字节数/尺寸/MIME/SHA-256 逐项对上 manifest；`ImageChunks` 切块 → 严格 v2 编码/解码（每帧都过共享校验器）→ 重组 → hash 一致 → 内容寻址 blob store 落盘后逐字节读回。`clip_payload_*` fixture 与 `png-8x8.png` 的绑定（chunk 0 的 base64url、41+42 字节切分、begin/end hash）在两端都被逐字段验证，保证 C# 与 Kotlin 对同一份字节产生完全一致的线上表示。
 3. **v1/v2 共存边界（双端）**——v1 解析器必须拒绝全部 v2 图片帧（两端各有专测），文本 fixture 与 v1 校验保持冻结；Windows 存储层测试覆盖 `local_only` 终止标记（v2 发图给 v1 peer 时推进游标的通道）的落库、传播与幂等。
 4. **Windows 端到端集成（`Peer/PeerSyncIntegrationTests`）**——`ImageClipTravelsOverV2WithBytesIntact`：真实 Kestrel + TLS pin + WebSocket 的 v2 会话上，图片经 begin/chunk/end 分块传输、重组、内容寻址落库，字节精确一致；配套用例覆盖 ack 后删除的 tombstone 传播。存储层由 `MediaBlobStoreTests`（幂等提交、GIF 魔数拒绝、过期临时件回收）、schema-3 迁移测试与捕获策略测试补齐。
+5. **跨语言实跑 E2E 图片段（2026-08-25 补齐，随 `e2e-stage4` CI 作业常跑）**——`e2e/CrossClientImageSyncE2eTest`：真实 Kotlin `SyncEngine`（Room 真库 + 真内容寻址 blob 存储）经 pinned TLS WebSocket 拨真实 C# `ClipSync.E2eHost`（Kestrel）走 `/v2`——不再是脚本化假扮对端，两侧都是产品实现。脚本在 Windows 侧播种 `png-8x8`，测试推回 `jpeg-1x1`（故意用不同 fixture，防 hash 去重掩盖单向断链）：入站按 begin/chunk/end 重组后逐字节比对，出站等到对端 ack，脚本终检 Windows 库中两枚 hash 各恰一枚。该段以独立配对身份拨号（`android_image_device_id`），与 v1 文本段的 (origin, seq) 键空间互不干扰。
 
 Android 侧的引擎级图片链路（`SyncEngine` 的 chunk 状态机在真实会话事件下的行为）由 `sync/WindowsAndroidImageSyncChainTest` 直接覆盖（2026-08-25 补齐，此前为已知缺口；`SyncEngineTest` 另有 v1 会话图片降级 `local_only` 与 v2 会话图片公告两条引擎级直测）：脚本化传输层扮演 Windows v2 监听端，`SyncEngine` 跑在 Room 真库 + 真内容寻址 blob 存储（临时目录）上，图片用的就是上文第 2 层的共享二进制 fixture。已证明：（a）入站 announce → want_ranges → clip_fetch → `clip_payload_begin/chunk/end` → ack——按 manifest 公示的 41+42 分块重组、blob 落盘字节精确、Room 行/媒体元数据/接收向量同事务推进、ack 只在提交后发出、完成后无残留临时件、committed 回调携带服务层转交 `InboxDelivery.deliverImage` 所需的全部字段；（b）出站 announce（含完整 v2 blob 元数据）→ 对端 clip_fetch → begin/chunk/end 字节精确流出 → 对端 ack 后 outbox 义务彻底清除；（c）同 hash 二次公告不再发起第二次传输，直接从本地 blob 落库并 ack（协议 v2 hash 去重）；（d）v1 会话把本地图片降级为 `local_only` 终止标记推进对端游标，Room 持久化仅本机保留 badge 且本机字节仍在。
 
