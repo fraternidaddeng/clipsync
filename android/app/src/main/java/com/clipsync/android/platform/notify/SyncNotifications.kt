@@ -236,8 +236,13 @@ object SyncNotifications {
                 .setSmallIcon(R.drawable.ic_notify_clip)
                 .setColor(ContextCompat.getColor(context, R.color.cs_flow))
                 .setContentTitle(context.getString(R.string.notification_inbox_flood_title))
-                .setContentText(context.getString(R.string.notification_inbox_flood_text, suppressedInWindow))
-                .setNumber(suppressedInWindow)
+                .setContentText(
+                    context.resources.getQuantityString(
+                        R.plurals.notification_inbox_flood_text,
+                        suppressedInWindow,
+                        suppressedInWindow,
+                    ),
+                ).setNumber(suppressedInWindow)
                 .setContentIntent(openApp)
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true)

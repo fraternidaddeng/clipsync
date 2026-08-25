@@ -17,7 +17,10 @@
     <string name="notification_action_copy">Kopyala</string>
     <string name="notification_applied_text">Panoya otomatik yazıldı</string>
     <string name="notification_inbox_flood_title">Birden çok öğe alındı</string>
-    <string name="notification_inbox_flood_text">Ayrı bildirim olmadan %1$d öğe daha alındı; uygulamadan görüntüleyin</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="one">Ayrı bildirim olmadan %1$d öğe daha alındı; uygulamadan görüntüleyin</item>
+        <item quantity="other">Ayrı bildirim olmadan %1$d öğe daha alındı; uygulamadan görüntüleyin</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">Eşitleme durumu</string>
     <string name="notification_channel_sync_description">Eşleştirilmiş PC ile bağlantı durumu. Bildirimler pano içeriğini asla göstermez.</string>
@@ -255,7 +258,10 @@
     <string name="wizard_subtitle">Herhangi birini tamamlamak yeter; kalite yükseldikçe kopyalamadan eşitlemeye gecikme düşer. Yetki durumu bu sayfaya her dönüşünüzde yeniden yoklanır.</string>
     <string name="wizard_cost">Bedel: %1$s</string>
     <string name="wizard_preferred">Şu anki tercih</string>
-    <string name="wizard_steps_remaining">%1$d adım kaldı</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="one">%1$d adım kaldı</item>
+        <item quantity="other">%1$d adım kaldı</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Ön koşullar sağlandı, gerçek test bekleniyor</string>
     <string name="wizard_ready">Ön koşullar sağlandı</string>
 
@@ -310,7 +316,10 @@
     <string name="font_large">Büyük</string>
     <string name="prefs_preview_lines">Önizleme satırları</string>
     <string name="prefs_preview_lines_desc">Geçmiş listesinde kayıt başına gösterilen en fazla önizleme satırı.</string>
-    <string name="prefs_preview_lines_option">%1$d satır</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="one">%1$d satır</item>
+        <item quantity="other">%1$d satır</item>
+    </plurals>
     <string name="prefs_theme">Tema</string>
     <string name="prefs_theme_desc">Sistemi izleyin veya gündüz/geceyi elle sabitleyin; palet her zaman iki yerleşik kümeden biridir, asla özelleştirilemez.</string>
     <string name="theme_system">Sistemi izle</string>
@@ -339,10 +348,16 @@
     <string name="prefs_auto_expire">Süre dolunca otomatik temizlik</string>
     <string name="prefs_auto_expire_desc">Süresi dolan geçmiş kayıtları otomatik silinir; silme yalnızca bu cihazı etkiler.</string>
     <string name="prefs_retention_days">Saklama süresi</string>
-    <string name="prefs_retention_days_value">%1$d gün</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="one">%1$d gün</item>
+        <item quantity="other">%1$d gün</item>
+    </plurals>
     <string name="prefs_retention_forever">Sonsuza dek sakla</string>
     <string name="prefs_max_entries">Saklama sayısı</string>
-    <string name="prefs_max_entries_value">%1$d kayıt</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="one">%1$d kayıt</item>
+        <item quantity="other">%1$d kayıt</item>
+    </plurals>
     <string name="prefs_item_cap">Öğe başına sınır</string>
     <string name="prefs_item_cap_value">%1$s · düz metin</string>
     <string name="prefs_group_run">Çalışma</string>
@@ -367,12 +382,18 @@
     <string name="prefs_no_device">Henüz eşleştirilmiş cihaz yok</string>
     <string name="prefs_no_device_hint">Eşleştirme girişi Kanal sayfasının ağ bölümündedir; eşleştirilince karşı tarafın adı burada görünür.</string>
 
-    <string name="transfer_export_done">%1$d kayıt dışa aktarıldı (düz metin); yedek dosyasını güvenle saklayın.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="one">%1$d kayıt dışa aktarıldı (düz metin); yedek dosyasını güvenle saklayın.</item>
+        <item quantity="other">%1$d kayıt dışa aktarıldı (düz metin); yedek dosyasını güvenle saklayın.</item>
+    </plurals>
     <string name="transfer_export_failed">Dışa aktarma başarısız: seçilen dosyaya yazılamadı.</string>
     <string name="transfer_import_done">İçe aktarma tamam: eklenen %1$d · var olan %2$d · çakışma %3$d</string>
     <string name="transfer_import_failed">İçe aktarma başarısız: %1$s. Hiçbir şey değişmedi.</string>
     <string name="transfer_import_read_failed">İçe aktarma başarısız: seçilen dosya okunamadı.</string>
-    <string name="transfer_cleared">%1$d geçmiş kaydı temizlendi (yalnızca bu cihaz; karşı taraf etkilenmez).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="one">%1$d geçmiş kaydı temizlendi (yalnızca bu cihaz; karşı taraf etkilenmez).</item>
+        <item quantity="other">%1$d geçmiş kaydı temizlendi (yalnızca bu cihaz; karşı taraf etkilenmez).</item>
+    </plurals>
     <string name="transfer_err_bad_header">bu bir ClipSync geçmiş dışa aktarma dosyası değil</string>
     <string name="transfer_err_version">dosya sürümü bu uygulamanın desteklediğinden daha yeni</string>
     <string name="transfer_err_malformed">dosya bozuk (hatalı kayıt)</string>

@@ -17,7 +17,10 @@
     <string name="notification_action_copy">Kopieren</string>
     <string name="notification_applied_text">Automatisch in die Zwischenablage geschrieben</string>
     <string name="notification_inbox_flood_title">Mehrere Einträge empfangen</string>
-    <string name="notification_inbox_flood_text">%1$d weitere ohne Einzelhinweis empfangen – öffnen Sie die App, um sie anzusehen</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="one">%1$d weiterer Eintrag ohne Einzelhinweis empfangen – öffnen Sie die App, um ihn anzusehen</item>
+        <item quantity="other">%1$d weitere Einträge ohne Einzelhinweis empfangen – öffnen Sie die App, um sie anzusehen</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">Sync-Status</string>
     <string name="notification_channel_sync_description">Verbindungsstatus mit Ihrem gekoppelten PC. Benachrichtigungen zeigen niemals den Inhalt der Zwischenablage.</string>
@@ -255,7 +258,10 @@
     <string name="wizard_subtitle">Eine abzuschließen genügt; höhere Qualität bedeutet geringere Latenz vom Kopieren bis zum Sync. Der Freigabestatus wird bei jeder Rückkehr auf diese Seite neu geprüft.</string>
     <string name="wizard_cost">Kosten: %1$s</string>
     <string name="wizard_preferred">Aktuell bevorzugt</string>
-    <string name="wizard_steps_remaining">Noch %1$d Schritt(e)</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="one">Noch %1$d Schritt</item>
+        <item quantity="other">Noch %1$d Schritte</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Voraussetzungen erfüllt, Praxistest ausstehend</string>
     <string name="wizard_ready">Voraussetzungen erfüllt</string>
 
@@ -310,7 +316,10 @@
     <string name="font_large">Groß</string>
     <string name="prefs_preview_lines">Vorschauzeilen</string>
     <string name="prefs_preview_lines_desc">Maximale Vorschauzeilen pro Eintrag in der Verlaufsliste.</string>
-    <string name="prefs_preview_lines_option">%1$d Zeilen</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="one">%1$d Zeile</item>
+        <item quantity="other">%1$d Zeilen</item>
+    </plurals>
     <string name="prefs_theme">Erscheinungsbild</string>
     <string name="prefs_theme_desc">Dem System folgen oder Tag/Nacht manuell festlegen; die Palette ist immer eine der beiden integrierten, nie anpassbar.</string>
     <string name="theme_system">System folgen</string>
@@ -339,10 +348,16 @@
     <string name="prefs_auto_expire">Automatische Ablauf-Bereinigung</string>
     <string name="prefs_auto_expire_desc">Abgelaufene Verlaufseinträge werden automatisch gelöscht; das Löschen betrifft nur dieses Gerät.</string>
     <string name="prefs_retention_days">Aufbewahrungsdauer</string>
-    <string name="prefs_retention_days_value">%1$d Tag(e)</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="one">%1$d Tag</item>
+        <item quantity="other">%1$d Tage</item>
+    </plurals>
     <string name="prefs_retention_forever">Für immer behalten</string>
     <string name="prefs_max_entries">Aufbewahrungsanzahl</string>
-    <string name="prefs_max_entries_value">%1$d Einträge</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="one">%1$d Eintrag</item>
+        <item quantity="other">%1$d Einträge</item>
+    </plurals>
     <string name="prefs_item_cap">Grenze pro Eintrag</string>
     <string name="prefs_item_cap_value">%1$s · reiner Text</string>
     <string name="prefs_group_run">Betrieb</string>
@@ -367,12 +382,18 @@
     <string name="prefs_no_device">Noch keine gekoppelten Geräte</string>
     <string name="prefs_no_device_hint">Der Kopplungseinstieg liegt im Netzwerkabschnitt der Kanal-Seite; nach der Kopplung erscheint hier der Name der Gegenseite.</string>
 
-    <string name="transfer_export_done">%1$d Einträge exportiert (Klartext); bewahren Sie die Sicherungsdatei sicher auf.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="one">%1$d Eintrag exportiert (Klartext); bewahren Sie die Sicherungsdatei sicher auf.</item>
+        <item quantity="other">%1$d Einträge exportiert (Klartext); bewahren Sie die Sicherungsdatei sicher auf.</item>
+    </plurals>
     <string name="transfer_export_failed">Export fehlgeschlagen: Die gewählte Datei konnte nicht geschrieben werden.</string>
     <string name="transfer_import_done">Import abgeschlossen: hinzugefügt %1$d · vorhanden %2$d · Konflikte %3$d</string>
     <string name="transfer_import_failed">Import fehlgeschlagen: %1$s. Nichts wurde geändert.</string>
     <string name="transfer_import_read_failed">Import fehlgeschlagen: Die gewählte Datei konnte nicht gelesen werden.</string>
-    <string name="transfer_cleared">%1$d Verlaufseinträge gelöscht (nur dieses Gerät; die Gegenseite ist nicht betroffen).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="one">%1$d Verlaufseintrag gelöscht (nur dieses Gerät; die Gegenseite ist nicht betroffen).</item>
+        <item quantity="other">%1$d Verlaufseinträge gelöscht (nur dieses Gerät; die Gegenseite ist nicht betroffen).</item>
+    </plurals>
     <string name="transfer_err_bad_header">dies ist keine ClipSync-Verlaufsexportdatei</string>
     <string name="transfer_err_version">die Dateiversion ist neuer, als diese App unterstützt</string>
     <string name="transfer_err_malformed">die Datei ist beschädigt (fehlerhafter Datensatz)</string>

@@ -18,7 +18,10 @@
     <string name="notification_action_copy">Copy</string>
     <string name="notification_applied_text">Written to the clipboard automatically</string>
     <string name="notification_inbox_flood_title">Multiple items received</string>
-    <string name="notification_inbox_flood_text">%1$d more arrived without separate alerts — open the app to view them</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="one">%1$d more arrived without a separate alert — open the app to view it</item>
+        <item quantity="other">%1$d more arrived without separate alerts — open the app to view them</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">Sync status</string>
     <string name="notification_channel_sync_description">Connection status with your paired PC. Notifications never show clipboard content.</string>
@@ -256,7 +259,10 @@
     <string name="wizard_subtitle">Completing any one is enough; higher quality means lower copy-to-sync latency. Authorization state is re-probed every time you return to this page.</string>
     <string name="wizard_cost">Cost: %1$s</string>
     <string name="wizard_preferred">Current preferred</string>
-    <string name="wizard_steps_remaining">%1$d step(s) left</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="one">%1$d step left</item>
+        <item quantity="other">%1$d steps left</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Prerequisites met, awaiting a live test</string>
     <string name="wizard_ready">Prerequisites met</string>
 
@@ -311,7 +317,10 @@
     <string name="font_large">Large</string>
     <string name="prefs_preview_lines">Preview lines</string>
     <string name="prefs_preview_lines_desc">Maximum preview lines shown per entry in the history list.</string>
-    <string name="prefs_preview_lines_option">%1$d lines</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="one">%1$d line</item>
+        <item quantity="other">%1$d lines</item>
+    </plurals>
     <string name="prefs_theme">Appearance</string>
     <string name="prefs_theme_desc">Follow the system or fix day/night manually; the palette is always one of the two built-in sets, never customizable.</string>
     <string name="theme_system">Follow system</string>
@@ -340,10 +349,16 @@
     <string name="prefs_auto_expire">Auto-expire cleanup</string>
     <string name="prefs_auto_expire_desc">Expired history entries are deleted automatically; deletion affects this device only.</string>
     <string name="prefs_retention_days">Retention period</string>
-    <string name="prefs_retention_days_value">%1$d day(s)</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
     <string name="prefs_retention_forever">Keep forever</string>
     <string name="prefs_max_entries">Retention count</string>
-    <string name="prefs_max_entries_value">%1$d entries</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="one">%1$d entry</item>
+        <item quantity="other">%1$d entries</item>
+    </plurals>
     <string name="prefs_item_cap">Per-item cap</string>
     <string name="prefs_item_cap_value">%1$s · plain text</string>
     <string name="prefs_group_run">Runtime</string>
@@ -368,12 +383,18 @@
     <string name="prefs_no_device">No paired devices yet</string>
     <string name="prefs_no_device_hint">The pairing entrance is in the network segment of the Conduit page; once paired, the peer’s name shows here.</string>
 
-    <string name="transfer_export_done">Exported %1$d record(s) (plaintext); keep the backup file safe.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="one">Exported %1$d record (plaintext); keep the backup file safe.</item>
+        <item quantity="other">Exported %1$d records (plaintext); keep the backup file safe.</item>
+    </plurals>
     <string name="transfer_export_failed">Export failed: could not write the chosen file.</string>
     <string name="transfer_import_done">Import complete: added %1$d · existing %2$d · conflicts %3$d</string>
     <string name="transfer_import_failed">Import failed: %1$s. Nothing was changed.</string>
     <string name="transfer_import_read_failed">Import failed: could not read the chosen file.</string>
-    <string name="transfer_cleared">Cleared %1$d history entrie(s) (this device only; the peer is unaffected).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="one">Cleared %1$d history entry (this device only; the peer is unaffected).</item>
+        <item quantity="other">Cleared %1$d history entries (this device only; the peer is unaffected).</item>
+    </plurals>
     <string name="transfer_err_bad_header">this is not a ClipSync history export file</string>
     <string name="transfer_err_version">the file version is newer than this app supports</string>
     <string name="transfer_err_malformed">the file is corrupted (malformed record)</string>

@@ -17,7 +17,9 @@
     <string name="notification_action_copy">コピー</string>
     <string name="notification_applied_text">クリップボードに自動で書き込みました</string>
     <string name="notification_inbox_flood_title">複数のアイテムを受信しました</string>
-    <string name="notification_inbox_flood_text">ほかに %1$d 件を受信しました。アプリで確認できます</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="other">ほかに %1$d 件を受信しました。アプリで確認できます</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">同期状態</string>
     <string name="notification_channel_sync_description">ペアリング済みの PC との接続状態。通知にクリップボードの内容が表示されることはありません。</string>
@@ -255,7 +257,9 @@
     <string name="wizard_subtitle">いずれか 1 つを完了すれば十分です。品質が高いほどコピーから同期までの遅延が小さくなります。承認状態はこのページに戻るたびに再検出されます。</string>
     <string name="wizard_cost">コスト：%1$s</string>
     <string name="wizard_preferred">現在の優先</string>
-    <string name="wizard_steps_remaining">残り %1$d ステップ</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="other">残り %1$d ステップ</item>
+    </plurals>
     <string name="wizard_ready_pending_test">前提条件は満たされ、実地テスト待ちです</string>
     <string name="wizard_ready">前提条件を満たしています</string>
 
@@ -310,7 +314,9 @@
     <string name="font_large">大</string>
     <string name="prefs_preview_lines">プレビュー行数</string>
     <string name="prefs_preview_lines_desc">履歴リストで 1 項目あたりに表示するプレビューの最大行数。</string>
-    <string name="prefs_preview_lines_option">%1$d 行</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="other">%1$d 行</item>
+    </plurals>
     <string name="prefs_theme">外観</string>
     <string name="prefs_theme_desc">システムに従うか、昼 / 夜を手動で固定します。配色は常に組み込みの 2 セットのいずれかで、カスタマイズはできません。</string>
     <string name="theme_system">システムに従う</string>
@@ -339,10 +345,14 @@
     <string name="prefs_auto_expire">期限切れ自動クリーンアップ</string>
     <string name="prefs_auto_expire_desc">期限切れの履歴項目を自動で削除します。削除はこの端末にのみ影響します。</string>
     <string name="prefs_retention_days">保持期間</string>
-    <string name="prefs_retention_days_value">%1$d 日</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="other">%1$d 日</item>
+    </plurals>
     <string name="prefs_retention_forever">無期限に保持</string>
     <string name="prefs_max_entries">保持件数</string>
-    <string name="prefs_max_entries_value">%1$d 件</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="other">%1$d 件</item>
+    </plurals>
     <string name="prefs_item_cap">1 件あたりの上限</string>
     <string name="prefs_item_cap_value">%1$s · プレーンテキスト</string>
     <string name="prefs_group_run">実行</string>
@@ -367,12 +377,16 @@
     <string name="prefs_no_device">ペアリング済みの端末はまだありません</string>
     <string name="prefs_no_device_hint">ペアリングの入口は「経路」ページのネットワーク区間にあります。ペアリングすると相手側の名前がここに表示されます。</string>
 
-    <string name="transfer_export_done">%1$d 件をエクスポートしました（平文）。バックアップファイルは大切に保管してください。</string>
+    <plurals name="transfer_export_done">
+        <item quantity="other">%1$d 件をエクスポートしました（平文）。バックアップファイルは大切に保管してください。</item>
+    </plurals>
     <string name="transfer_export_failed">エクスポート失敗：選択したファイルに書き込めませんでした。</string>
     <string name="transfer_import_done">インポート完了：追加 %1$d · 既存 %2$d · 競合 %3$d</string>
     <string name="transfer_import_failed">インポート失敗：%1$s。何も変更されていません。</string>
     <string name="transfer_import_read_failed">インポート失敗：選択したファイルを読み取れませんでした。</string>
-    <string name="transfer_cleared">%1$d 件の履歴を消去しました（この端末のみ。相手側には影響しません）。</string>
+    <plurals name="transfer_cleared">
+        <item quantity="other">%1$d 件の履歴を消去しました（この端末のみ。相手側には影響しません）。</item>
+    </plurals>
     <string name="transfer_err_bad_header">ClipSync の履歴エクスポートファイルではありません</string>
     <string name="transfer_err_version">ファイルのバージョンがこのアプリの対応より新しいです</string>
     <string name="transfer_err_malformed">ファイルが破損しています（不正なレコード）</string>

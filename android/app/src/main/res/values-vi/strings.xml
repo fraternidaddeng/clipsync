@@ -17,7 +17,9 @@
     <string name="notification_action_copy">Sao chép</string>
     <string name="notification_applied_text">Đã tự động ghi vào bảng nhớ tạm</string>
     <string name="notification_inbox_flood_title">Đã nhận nhiều mục</string>
-    <string name="notification_inbox_flood_text">Đã nhận thêm %1$d mục mà không có thông báo riêng; xem trong ứng dụng</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="other">Đã nhận thêm %1$d mục mà không có thông báo riêng; xem trong ứng dụng</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">Trạng thái đồng bộ</string>
     <string name="notification_channel_sync_description">Trạng thái kết nối với PC đã ghép nối. Thông báo không bao giờ hiển thị nội dung bảng nhớ tạm.</string>
@@ -255,7 +257,9 @@
     <string name="wizard_subtitle">Hoàn thành bất kỳ một tuyến là đủ; chất lượng càng cao thì độ trễ từ sao chép đến đồng bộ càng thấp. Trạng thái cấp quyền được dò lại mỗi khi bạn quay lại trang này.</string>
     <string name="wizard_cost">Chi phí: %1$s</string>
     <string name="wizard_preferred">Ưu tiên hiện tại</string>
-    <string name="wizard_steps_remaining">Còn %1$d bước</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="other">Còn %1$d bước</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Đã đủ điều kiện, chờ kiểm tra thực tế</string>
     <string name="wizard_ready">Đã đủ điều kiện</string>
 
@@ -310,7 +314,9 @@
     <string name="font_large">Lớn</string>
     <string name="prefs_preview_lines">Số dòng xem trước</string>
     <string name="prefs_preview_lines_desc">Số dòng xem trước tối đa mỗi mục trong danh sách lịch sử.</string>
-    <string name="prefs_preview_lines_option">%1$d dòng</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="other">%1$d dòng</item>
+    </plurals>
     <string name="prefs_theme">Giao diện</string>
     <string name="prefs_theme_desc">Theo hệ thống hoặc cố định ngày/đêm thủ công; bảng màu luôn là một trong hai bộ tích hợp, không bao giờ tùy chỉnh được.</string>
     <string name="theme_system">Theo hệ thống</string>
@@ -339,10 +345,14 @@
     <string name="prefs_auto_expire">Tự động dọn khi hết hạn</string>
     <string name="prefs_auto_expire_desc">Các mục lịch sử hết hạn được xóa tự động; việc xóa chỉ ảnh hưởng thiết bị này.</string>
     <string name="prefs_retention_days">Thời gian lưu giữ</string>
-    <string name="prefs_retention_days_value">%1$d ngày</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="other">%1$d ngày</item>
+    </plurals>
     <string name="prefs_retention_forever">Giữ vĩnh viễn</string>
     <string name="prefs_max_entries">Số lượng lưu giữ</string>
-    <string name="prefs_max_entries_value">%1$d mục</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="other">%1$d mục</item>
+    </plurals>
     <string name="prefs_item_cap">Giới hạn mỗi mục</string>
     <string name="prefs_item_cap_value">%1$s · văn bản thuần</string>
     <string name="prefs_group_run">Vận hành</string>
@@ -367,12 +377,16 @@
     <string name="prefs_no_device">Chưa có thiết bị nào được ghép nối</string>
     <string name="prefs_no_device_hint">Lối vào ghép nối nằm ở đoạn mạng của trang Đường dẫn; sau khi ghép nối, tên của phía bên kia sẽ hiện ở đây.</string>
 
-    <string name="transfer_export_done">Đã xuất %1$d bản ghi (văn bản thường); hãy giữ tệp sao lưu cẩn thận.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="other">Đã xuất %1$d bản ghi (văn bản thường); hãy giữ tệp sao lưu cẩn thận.</item>
+    </plurals>
     <string name="transfer_export_failed">Xuất thất bại: không ghi được tệp đã chọn.</string>
     <string name="transfer_import_done">Nhập hoàn tất: thêm %1$d · đã có %2$d · xung đột %3$d</string>
     <string name="transfer_import_failed">Nhập thất bại: %1$s. Không có gì thay đổi.</string>
     <string name="transfer_import_read_failed">Nhập thất bại: không đọc được tệp đã chọn.</string>
-    <string name="transfer_cleared">Đã xóa %1$d mục lịch sử (chỉ thiết bị này; phía bên kia không bị ảnh hưởng).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="other">Đã xóa %1$d mục lịch sử (chỉ thiết bị này; phía bên kia không bị ảnh hưởng).</item>
+    </plurals>
     <string name="transfer_err_bad_header">đây không phải tệp xuất lịch sử ClipSync</string>
     <string name="transfer_err_version">phiên bản tệp mới hơn mức ứng dụng này hỗ trợ</string>
     <string name="transfer_err_malformed">tệp bị hỏng (bản ghi sai định dạng)</string>

@@ -17,7 +17,12 @@
     <string name="notification_action_copy">Копировать</string>
     <string name="notification_applied_text">Автоматически записано в буфер обмена</string>
     <string name="notification_inbox_flood_title">Получено несколько элементов</string>
-    <string name="notification_inbox_flood_text">Получено ещё %1$d без отдельных уведомлений — посмотрите их в приложении</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="one">Получен ещё %1$d элемент без отдельного уведомления — посмотрите его в приложении</item>
+        <item quantity="few">Получено ещё %1$d элемента без отдельных уведомлений — посмотрите их в приложении</item>
+        <item quantity="many">Получено ещё %1$d элементов без отдельных уведомлений — посмотрите их в приложении</item>
+        <item quantity="other">Получено ещё %1$d элемента без отдельных уведомлений — посмотрите их в приложении</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">Статус синхронизации</string>
     <string name="notification_channel_sync_description">Состояние соединения с сопряжённым ПК. Уведомления никогда не показывают содержимое буфера обмена.</string>
@@ -255,7 +260,12 @@
     <string name="wizard_subtitle">Достаточно завершить любой один; чем выше качество, тем меньше задержка от копирования до синхронизации. Статус разрешений проверяется заново при каждом возврате на эту страницу.</string>
     <string name="wizard_cost">Цена: %1$s</string>
     <string name="wizard_preferred">Текущий предпочитаемый</string>
-    <string name="wizard_steps_remaining">Осталось шагов: %1$d</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="one">Остался %1$d шаг</item>
+        <item quantity="few">Осталось %1$d шага</item>
+        <item quantity="many">Осталось %1$d шагов</item>
+        <item quantity="other">Осталось %1$d шага</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Предпосылки выполнены, ожидается реальная проверка</string>
     <string name="wizard_ready">Предпосылки выполнены</string>
 
@@ -310,7 +320,12 @@
     <string name="font_large">Крупный</string>
     <string name="prefs_preview_lines">Строк предпросмотра</string>
     <string name="prefs_preview_lines_desc">Максимум строк предпросмотра на запись в списке истории.</string>
-    <string name="prefs_preview_lines_option">%1$d стр.</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="one">%1$d строка</item>
+        <item quantity="few">%1$d строки</item>
+        <item quantity="many">%1$d строк</item>
+        <item quantity="other">%1$d строки</item>
+    </plurals>
     <string name="prefs_theme">Оформление</string>
     <string name="prefs_theme_desc">Следовать системе или зафиксировать день/ночь вручную; палитра всегда одна из двух встроенных, без настройки.</string>
     <string name="theme_system">Как в системе</string>
@@ -339,10 +354,20 @@
     <string name="prefs_auto_expire">Автоочистка по сроку</string>
     <string name="prefs_auto_expire_desc">Просроченные записи истории удаляются автоматически; удаление касается только этого устройства.</string>
     <string name="prefs_retention_days">Срок хранения</string>
-    <string name="prefs_retention_days_value">%1$d дн.</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="one">%1$d день</item>
+        <item quantity="few">%1$d дня</item>
+        <item quantity="many">%1$d дней</item>
+        <item quantity="other">%1$d дня</item>
+    </plurals>
     <string name="prefs_retention_forever">Хранить вечно</string>
     <string name="prefs_max_entries">Количество хранимых</string>
-    <string name="prefs_max_entries_value">%1$d записей</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="one">%1$d запись</item>
+        <item quantity="few">%1$d записи</item>
+        <item quantity="many">%1$d записей</item>
+        <item quantity="other">%1$d записи</item>
+    </plurals>
     <string name="prefs_item_cap">Лимит на запись</string>
     <string name="prefs_item_cap_value">%1$s · обычный текст</string>
     <string name="prefs_group_run">Работа</string>
@@ -367,12 +392,22 @@
     <string name="prefs_no_device">Сопряжённых устройств пока нет</string>
     <string name="prefs_no_device_hint">Вход в сопряжение — в сетевом сегменте страницы «Канал»; после сопряжения здесь появится имя другой стороны.</string>
 
-    <string name="transfer_export_done">Экспортировано записей: %1$d (открытый текст); храните файл резервной копии надёжно.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="one">Экспортирована %1$d запись (открытый текст); храните файл резервной копии надёжно.</item>
+        <item quantity="few">Экспортированы %1$d записи (открытый текст); храните файл резервной копии надёжно.</item>
+        <item quantity="many">Экспортировано %1$d записей (открытый текст); храните файл резервной копии надёжно.</item>
+        <item quantity="other">Экспортировано %1$d записи (открытый текст); храните файл резервной копии надёжно.</item>
+    </plurals>
     <string name="transfer_export_failed">Ошибка экспорта: не удалось записать выбранный файл.</string>
     <string name="transfer_import_done">Импорт завершён: добавлено %1$d · уже было %2$d · конфликтов %3$d</string>
     <string name="transfer_import_failed">Ошибка импорта: %1$s. Ничего не изменено.</string>
     <string name="transfer_import_read_failed">Ошибка импорта: не удалось прочитать выбранный файл.</string>
-    <string name="transfer_cleared">Очищено записей истории: %1$d (только это устройство; другая сторона не затронута).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="one">Очищена %1$d запись истории (только это устройство; другая сторона не затронута).</item>
+        <item quantity="few">Очищены %1$d записи истории (только это устройство; другая сторона не затронута).</item>
+        <item quantity="many">Очищено %1$d записей истории (только это устройство; другая сторона не затронута).</item>
+        <item quantity="other">Очищено %1$d записи истории (только это устройство; другая сторона не затронута).</item>
+    </plurals>
     <string name="transfer_err_bad_header">это не файл экспорта истории ClipSync</string>
     <string name="transfer_err_version">версия файла новее, чем поддерживает это приложение</string>
     <string name="transfer_err_malformed">файл повреждён (некорректная запись)</string>

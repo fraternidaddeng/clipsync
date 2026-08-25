@@ -18,7 +18,10 @@
     <string name="notification_action_copy">Kopiëren</string>
     <string name="notification_applied_text">Automatisch naar het klembord geschreven</string>
     <string name="notification_inbox_flood_title">Meerdere items ontvangen</string>
-    <string name="notification_inbox_flood_text">Nog %1$d items ontvangen zonder aparte melding; bekijk ze in de app</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="one">Nog %1$d item ontvangen zonder aparte melding; bekijk het in de app</item>
+        <item quantity="other">Nog %1$d items ontvangen zonder aparte melding; bekijk ze in de app</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">Synchronisatiestatus</string>
     <string name="notification_channel_sync_description">Verbindingsstatus met je gekoppelde pc. Meldingen tonen nooit klembordinhoud.</string>
@@ -256,7 +259,10 @@
     <string name="wizard_subtitle">Eén voltooien is genoeg; hogere kwaliteit betekent lagere latentie van kopiëren tot synchroniseren. De autorisatiestatus wordt opnieuw gepeild telkens wanneer je naar deze pagina terugkeert.</string>
     <string name="wizard_cost">Kosten: %1$s</string>
     <string name="wizard_preferred">Huidige voorkeur</string>
-    <string name="wizard_steps_remaining">Nog %1$d stap(pen)</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="one">Nog %1$d stap</item>
+        <item quantity="other">Nog %1$d stappen</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Voorwaarden vervuld, wacht op een livetest</string>
     <string name="wizard_ready">Voorwaarden vervuld</string>
 
@@ -311,7 +317,10 @@
     <string name="font_large">Groot</string>
     <string name="prefs_preview_lines">Voorbeeldregels</string>
     <string name="prefs_preview_lines_desc">Maximaal aantal voorbeeldregels per item in de geschiedenislijst.</string>
-    <string name="prefs_preview_lines_option">%1$d regels</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="one">%1$d regel</item>
+        <item quantity="other">%1$d regels</item>
+    </plurals>
     <string name="prefs_theme">Uiterlijk</string>
     <string name="prefs_theme_desc">Volg het systeem of zet dag/nacht handmatig vast; het palet is altijd een van de twee ingebouwde sets, nooit aanpasbaar.</string>
     <string name="theme_system">Systeem volgen</string>
@@ -340,10 +349,16 @@
     <string name="prefs_auto_expire">Automatisch opruimen bij verloop</string>
     <string name="prefs_auto_expire_desc">Verlopen geschiedenisitems worden automatisch verwijderd; verwijdering geldt alleen voor dit apparaat.</string>
     <string name="prefs_retention_days">Bewaartermijn</string>
-    <string name="prefs_retention_days_value">%1$d dag(en)</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="one">%1$d dag</item>
+        <item quantity="other">%1$d dagen</item>
+    </plurals>
     <string name="prefs_retention_forever">Voor altijd bewaren</string>
     <string name="prefs_max_entries">Bewaaraantal</string>
-    <string name="prefs_max_entries_value">%1$d items</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="one">%1$d item</item>
+        <item quantity="other">%1$d items</item>
+    </plurals>
     <string name="prefs_item_cap">Limiet per item</string>
     <string name="prefs_item_cap_value">%1$s · platte tekst</string>
     <string name="prefs_group_run">Runtime</string>
@@ -368,12 +383,18 @@
     <string name="prefs_no_device">Nog geen gekoppelde apparaten</string>
     <string name="prefs_no_device_hint">De koppelingsingang zit in het netwerksegment van de Kanaal-pagina; na het koppelen verschijnt hier de naam van de peer.</string>
 
-    <string name="transfer_export_done">%1$d record(s) geëxporteerd (platte tekst); bewaar het back-upbestand veilig.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="one">%1$d record geëxporteerd (platte tekst); bewaar het back-upbestand veilig.</item>
+        <item quantity="other">%1$d records geëxporteerd (platte tekst); bewaar het back-upbestand veilig.</item>
+    </plurals>
     <string name="transfer_export_failed">Exporteren mislukt: kon het gekozen bestand niet schrijven.</string>
     <string name="transfer_import_done">Import voltooid: %1$d toegevoegd · %2$d bestaand · %3$d conflicten</string>
     <string name="transfer_import_failed">Importeren mislukt: %1$s. Er is niets gewijzigd.</string>
     <string name="transfer_import_read_failed">Importeren mislukt: kon het gekozen bestand niet lezen.</string>
-    <string name="transfer_cleared">%1$d geschiedenisitem(s) gewist (alleen dit apparaat; de peer blijft onaangetast).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="one">%1$d geschiedenisitem gewist (alleen dit apparaat; de peer blijft onaangetast).</item>
+        <item quantity="other">%1$d geschiedenisitems gewist (alleen dit apparaat; de peer blijft onaangetast).</item>
+    </plurals>
     <string name="transfer_err_bad_header">dit is geen ClipSync-geschiedenisexportbestand</string>
     <string name="transfer_err_version">de bestandsversie is nieuwer dan deze app ondersteunt</string>
     <string name="transfer_err_malformed">het bestand is beschadigd (misvormd record)</string>

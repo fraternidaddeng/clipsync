@@ -278,7 +278,7 @@ class PreferencesViewModel(
                     val output = openOutput() ?: return@launch
                     output.use { stream ->
                         val count = repository.exportHistory(stream, nowMs())
-                        UiText.Res(R.string.transfer_export_done, count)
+                        UiText.Plural(R.plurals.transfer_export_done, count)
                     }
                 } catch (_: IOException) {
                     UiText.Res(R.string.transfer_export_failed)
@@ -332,7 +332,7 @@ class PreferencesViewModel(
             val cleared = repository.clearHistory(now)
             repository.collectMediaGarbage(now)
             mutableState.update {
-                it.copy(transferStatus = UiText.Res(R.string.transfer_cleared, cleared))
+                it.copy(transferStatus = UiText.Plural(R.plurals.transfer_cleared, cleared))
             }
         }
     }

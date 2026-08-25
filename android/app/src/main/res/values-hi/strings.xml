@@ -17,7 +17,10 @@
     <string name="notification_action_copy">कॉपी करें</string>
     <string name="notification_applied_text">क्लिपबोर्ड में अपने आप लिख दिया गया</string>
     <string name="notification_inbox_flood_title">कई आइटम मिले</string>
-    <string name="notification_inbox_flood_text">%1$d और आइटम बिना अलग सूचना के मिले; उन्हें ऐप में देखें</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="one">%1$d और आइटम बिना अलग सूचना के मिला; उसे ऐप में देखें</item>
+        <item quantity="other">%1$d और आइटम बिना अलग सूचना के मिले; उन्हें ऐप में देखें</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">सिंक स्थिति</string>
     <string name="notification_channel_sync_description">जोड़े गए PC से कनेक्शन की स्थिति। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>
@@ -255,7 +258,10 @@
     <string name="wizard_subtitle">कोई एक पूरा करना काफ़ी है; जितनी ऊँची गुणवत्ता, कॉपी से सिंक तक उतना कम विलंब। अनुमति की स्थिति इस पृष्ठ पर हर वापसी पर फिर जाँची जाती है।</string>
     <string name="wizard_cost">कीमत: %1$s</string>
     <string name="wizard_preferred">वर्तमान पसंदीदा</string>
-    <string name="wizard_steps_remaining">%1$d कदम बाकी</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="one">%1$d कदम बाकी</item>
+        <item quantity="other">%1$d कदम बाकी</item>
+    </plurals>
     <string name="wizard_ready_pending_test">पूर्व-शर्तें पूरी, असली जाँच की प्रतीक्षा</string>
     <string name="wizard_ready">पूर्व-शर्तें पूरी</string>
 
@@ -310,7 +316,10 @@
     <string name="font_large">बड़ा</string>
     <string name="prefs_preview_lines">पूर्वावलोकन पंक्तियाँ</string>
     <string name="prefs_preview_lines_desc">इतिहास सूची में प्रति प्रविष्टि दिखने वाली अधिकतम पूर्वावलोकन पंक्तियाँ।</string>
-    <string name="prefs_preview_lines_option">%1$d पंक्तियाँ</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="one">%1$d पंक्ति</item>
+        <item quantity="other">%1$d पंक्तियाँ</item>
+    </plurals>
     <string name="prefs_theme">रूप</string>
     <string name="prefs_theme_desc">सिस्टम के अनुसार या दिन/रात हाथ से तय करें; पैलेट हमेशा दो अंतर्निर्मित सेटों में से एक है, कभी अनुकूलन योग्य नहीं।</string>
     <string name="theme_system">सिस्टम के अनुसार</string>
@@ -339,10 +348,16 @@
     <string name="prefs_auto_expire">मियाद पर स्वतः सफ़ाई</string>
     <string name="prefs_auto_expire_desc">मियाद बीती इतिहास प्रविष्टियाँ अपने आप हटती हैं; हटाना केवल इस डिवाइस पर असर करता है।</string>
     <string name="prefs_retention_days">रखने की अवधि</string>
-    <string name="prefs_retention_days_value">%1$d दिन</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="one">%1$d दिन</item>
+        <item quantity="other">%1$d दिन</item>
+    </plurals>
     <string name="prefs_retention_forever">हमेशा रखें</string>
     <string name="prefs_max_entries">रखने की संख्या</string>
-    <string name="prefs_max_entries_value">%1$d प्रविष्टियाँ</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="one">%1$d प्रविष्टि</item>
+        <item quantity="other">%1$d प्रविष्टियाँ</item>
+    </plurals>
     <string name="prefs_item_cap">प्रति-आइटम सीमा</string>
     <string name="prefs_item_cap_value">%1$s · सादा टेक्स्ट</string>
     <string name="prefs_group_run">संचालन</string>
@@ -367,12 +382,18 @@
     <string name="prefs_no_device">अभी कोई डिवाइस नहीं जुड़ा</string>
     <string name="prefs_no_device_hint">जोड़ने का रास्ता मार्ग पृष्ठ के नेटवर्क खंड में है; जुड़ने पर दूसरे छोर का नाम यहाँ दिखेगा।</string>
 
-    <string name="transfer_export_done">%1$d रिकॉर्ड निर्यात हुए (सादा टेक्स्ट); बैकअप फ़ाइल सुरक्षित रखें।</string>
+    <plurals name="transfer_export_done">
+        <item quantity="one">%1$d रिकॉर्ड निर्यात हुआ (सादा टेक्स्ट); बैकअप फ़ाइल सुरक्षित रखें।</item>
+        <item quantity="other">%1$d रिकॉर्ड निर्यात हुए (सादा टेक्स्ट); बैकअप फ़ाइल सुरक्षित रखें।</item>
+    </plurals>
     <string name="transfer_export_failed">निर्यात विफल: चुनी फ़ाइल में लिखा नहीं जा सका।</string>
     <string name="transfer_import_done">आयात पूर्ण: जोड़े गए %1$d · पहले से %2$d · टकराव %3$d</string>
     <string name="transfer_import_failed">आयात विफल: %1$s। कुछ नहीं बदला।</string>
     <string name="transfer_import_read_failed">आयात विफल: चुनी फ़ाइल पढ़ी नहीं जा सकी।</string>
-    <string name="transfer_cleared">%1$d इतिहास प्रविष्टियाँ मिटाई गईं (केवल यह डिवाइस; दूसरा छोर अप्रभावित)।</string>
+    <plurals name="transfer_cleared">
+        <item quantity="one">%1$d इतिहास प्रविष्टि मिटाई गई (केवल यह डिवाइस; दूसरा छोर अप्रभावित)।</item>
+        <item quantity="other">%1$d इतिहास प्रविष्टियाँ मिटाई गईं (केवल यह डिवाइस; दूसरा छोर अप्रभावित)।</item>
+    </plurals>
     <string name="transfer_err_bad_header">यह ClipSync इतिहास निर्यात फ़ाइल नहीं है</string>
     <string name="transfer_err_version">फ़ाइल का संस्करण इस ऐप के समर्थन से नया है</string>
     <string name="transfer_err_malformed">फ़ाइल दूषित है (बिगड़ा रिकॉर्ड)</string>

@@ -17,7 +17,11 @@
     <string name="notification_action_copy">Copia</string>
     <string name="notification_applied_text">Scritto automaticamente negli appunti</string>
     <string name="notification_inbox_flood_title">Ricevuti più elementi</string>
-    <string name="notification_inbox_flood_text">Ricevuti altri %1$d elementi senza avviso singolo; aprili nell’app</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="one">Ricevuto %1$d altro elemento senza avviso singolo; aprilo nell’app</item>
+        <item quantity="many">Ricevuti altri %1$d di elementi senza avviso singolo; aprili nell’app</item>
+        <item quantity="other">Ricevuti altri %1$d elementi senza avviso singolo; aprili nell’app</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">Stato di sincronizzazione</string>
     <string name="notification_channel_sync_description">Stato della connessione con il PC associato. Le notifiche non mostrano mai il contenuto degli appunti.</string>
@@ -255,7 +259,11 @@
     <string name="wizard_subtitle">Completarne uno basta; maggiore qualità significa minore latenza tra copia e sincronizzazione. Lo stato delle autorizzazioni viene riesaminato ogni volta che torni su questa pagina.</string>
     <string name="wizard_cost">Costo: %1$s</string>
     <string name="wizard_preferred">Preferito attuale</string>
-    <string name="wizard_steps_remaining">%1$d passaggio/i rimanente/i</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="one">%1$d passaggio rimanente</item>
+        <item quantity="many">%1$d di passaggi rimanenti</item>
+        <item quantity="other">%1$d passaggi rimanenti</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Prerequisiti soddisfatti, in attesa di un test reale</string>
     <string name="wizard_ready">Prerequisiti soddisfatti</string>
 
@@ -310,7 +318,11 @@
     <string name="font_large">Grande</string>
     <string name="prefs_preview_lines">Righe di anteprima</string>
     <string name="prefs_preview_lines_desc">Numero massimo di righe di anteprima per voce nella lista cronologia.</string>
-    <string name="prefs_preview_lines_option">%1$d righe</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="one">%1$d riga</item>
+        <item quantity="many">%1$d di righe</item>
+        <item quantity="other">%1$d righe</item>
+    </plurals>
     <string name="prefs_theme">Aspetto</string>
     <string name="prefs_theme_desc">Segui il sistema o fissa giorno/notte manualmente; la palette è sempre uno dei due set integrati, mai personalizzabile.</string>
     <string name="theme_system">Segui il sistema</string>
@@ -339,10 +351,18 @@
     <string name="prefs_auto_expire">Pulizia automatica alla scadenza</string>
     <string name="prefs_auto_expire_desc">Le voci di cronologia scadute vengono eliminate automaticamente; l’eliminazione riguarda solo questo dispositivo.</string>
     <string name="prefs_retention_days">Periodo di conservazione</string>
-    <string name="prefs_retention_days_value">%1$d giorno/i</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="one">%1$d giorno</item>
+        <item quantity="many">%1$d di giorni</item>
+        <item quantity="other">%1$d giorni</item>
+    </plurals>
     <string name="prefs_retention_forever">Conserva per sempre</string>
     <string name="prefs_max_entries">Quantità conservata</string>
-    <string name="prefs_max_entries_value">%1$d voci</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="one">%1$d voce</item>
+        <item quantity="many">%1$d di voci</item>
+        <item quantity="other">%1$d voci</item>
+    </plurals>
     <string name="prefs_item_cap">Limite per elemento</string>
     <string name="prefs_item_cap_value">%1$s · testo semplice</string>
     <string name="prefs_group_run">Esecuzione</string>
@@ -367,12 +387,20 @@
     <string name="prefs_no_device">Nessun dispositivo associato per ora</string>
     <string name="prefs_no_device_hint">L’ingresso per l’associazione è nel segmento rete della pagina Condotto; una volta associato, il nome dell’altro lato compare qui.</string>
 
-    <string name="transfer_export_done">Esportati %1$d record (in chiaro); custodisci bene il file di backup.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="one">Esportato %1$d record (in chiaro); custodisci bene il file di backup.</item>
+        <item quantity="many">Esportati %1$d di record (in chiaro); custodisci bene il file di backup.</item>
+        <item quantity="other">Esportati %1$d record (in chiaro); custodisci bene il file di backup.</item>
+    </plurals>
     <string name="transfer_export_failed">Esportazione non riuscita: impossibile scrivere il file scelto.</string>
     <string name="transfer_import_done">Importazione completata: aggiunti %1$d · esistenti %2$d · conflitti %3$d</string>
     <string name="transfer_import_failed">Importazione non riuscita: %1$s. Nulla è stato modificato.</string>
     <string name="transfer_import_read_failed">Importazione non riuscita: impossibile leggere il file scelto.</string>
-    <string name="transfer_cleared">Svuotate %1$d voci di cronologia (solo questo dispositivo; l’altro lato non è toccato).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="one">Svuotata %1$d voce di cronologia (solo questo dispositivo; l’altro lato non è toccato).</item>
+        <item quantity="many">Svuotate %1$d di voci di cronologia (solo questo dispositivo; l’altro lato non è toccato).</item>
+        <item quantity="other">Svuotate %1$d voci di cronologia (solo questo dispositivo; l’altro lato non è toccato).</item>
+    </plurals>
     <string name="transfer_err_bad_header">questo non è un file di esportazione cronologia di ClipSync</string>
     <string name="transfer_err_version">la versione del file è più recente di quanto questa app supporti</string>
     <string name="transfer_err_malformed">il file è danneggiato (record malformato)</string>

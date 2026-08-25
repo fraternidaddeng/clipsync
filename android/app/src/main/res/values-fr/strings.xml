@@ -17,7 +17,11 @@
     <string name="notification_action_copy">Copier</string>
     <string name="notification_applied_text">Écrit automatiquement dans le presse-papiers</string>
     <string name="notification_inbox_flood_title">Plusieurs éléments reçus</string>
-    <string name="notification_inbox_flood_text">%1$d éléments de plus reçus sans alerte individuelle ; ouvrez l’application pour les voir</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="one">%1$d élément de plus reçu sans alerte individuelle ; ouvrez l’application pour le voir</item>
+        <item quantity="many">%1$d d’éléments de plus reçus sans alerte individuelle ; ouvrez l’application pour les voir</item>
+        <item quantity="other">%1$d éléments de plus reçus sans alerte individuelle ; ouvrez l’application pour les voir</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">État de synchronisation</string>
     <string name="notification_channel_sync_description">État de connexion avec votre PC appairé. Les notifications n’affichent jamais le contenu du presse-papiers.</string>
@@ -255,7 +259,11 @@
     <string name="wizard_subtitle">En terminer une seule suffit ; plus la qualité est élevée, plus la latence entre copie et synchronisation est faible. L’état d’autorisation est resondé à chaque retour sur cette page.</string>
     <string name="wizard_cost">Coût : %1$s</string>
     <string name="wizard_preferred">Préférée actuelle</string>
-    <string name="wizard_steps_remaining">%1$d étape(s) restante(s)</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="one">%1$d étape restante</item>
+        <item quantity="many">%1$d d’étapes restantes</item>
+        <item quantity="other">%1$d étapes restantes</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Prérequis remplis, en attente d’un test réel</string>
     <string name="wizard_ready">Prérequis remplis</string>
 
@@ -310,7 +318,11 @@
     <string name="font_large">Grand</string>
     <string name="prefs_preview_lines">Lignes d’aperçu</string>
     <string name="prefs_preview_lines_desc">Nombre maximal de lignes d’aperçu par entrée dans la liste de l’historique.</string>
-    <string name="prefs_preview_lines_option">%1$d lignes</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="one">%1$d ligne</item>
+        <item quantity="many">%1$d de lignes</item>
+        <item quantity="other">%1$d lignes</item>
+    </plurals>
     <string name="prefs_theme">Apparence</string>
     <string name="prefs_theme_desc">Suivre le système ou fixer jour/nuit manuellement ; la palette est toujours l’un des deux jeux intégrés, jamais personnalisable.</string>
     <string name="theme_system">Suivre le système</string>
@@ -339,10 +351,18 @@
     <string name="prefs_auto_expire">Nettoyage automatique à expiration</string>
     <string name="prefs_auto_expire_desc">Les entrées d’historique expirées sont supprimées automatiquement ; la suppression n’affecte que cet appareil.</string>
     <string name="prefs_retention_days">Durée de conservation</string>
-    <string name="prefs_retention_days_value">%1$d jour(s)</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="one">%1$d jour</item>
+        <item quantity="many">%1$d de jours</item>
+        <item quantity="other">%1$d jours</item>
+    </plurals>
     <string name="prefs_retention_forever">Conserver pour toujours</string>
     <string name="prefs_max_entries">Nombre conservé</string>
-    <string name="prefs_max_entries_value">%1$d entrées</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="one">%1$d entrée</item>
+        <item quantity="many">%1$d d’entrées</item>
+        <item quantity="other">%1$d entrées</item>
+    </plurals>
     <string name="prefs_item_cap">Limite par élément</string>
     <string name="prefs_item_cap_value">%1$s · texte brut</string>
     <string name="prefs_group_run">Exécution</string>
@@ -367,12 +387,20 @@
     <string name="prefs_no_device">Aucun appareil appairé pour l’instant</string>
     <string name="prefs_no_device_hint">L’entrée d’appairage se trouve dans le segment réseau de la page Conduit ; une fois appairé, le nom de l’autre appareil s’affiche ici.</string>
 
-    <string name="transfer_export_done">%1$d enregistrement(s) exporté(s) (en clair) ; gardez le fichier de sauvegarde en lieu sûr.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="one">%1$d enregistrement exporté (en clair) ; gardez le fichier de sauvegarde en lieu sûr.</item>
+        <item quantity="many">%1$d d’enregistrements exportés (en clair) ; gardez le fichier de sauvegarde en lieu sûr.</item>
+        <item quantity="other">%1$d enregistrements exportés (en clair) ; gardez le fichier de sauvegarde en lieu sûr.</item>
+    </plurals>
     <string name="transfer_export_failed">Échec de l’export : impossible d’écrire le fichier choisi.</string>
     <string name="transfer_import_done">Import terminé : ajoutés %1$d · existants %2$d · conflits %3$d</string>
     <string name="transfer_import_failed">Échec de l’import : %1$s. Rien n’a été modifié.</string>
     <string name="transfer_import_read_failed">Échec de l’import : impossible de lire le fichier choisi.</string>
-    <string name="transfer_cleared">%1$d entrée(s) d’historique effacée(s) (cet appareil uniquement ; l’autre appareil n’est pas affecté).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="one">%1$d entrée d’historique effacée (cet appareil uniquement ; l’autre appareil n’est pas affecté).</item>
+        <item quantity="many">%1$d d’entrées d’historique effacées (cet appareil uniquement ; l’autre appareil n’est pas affecté).</item>
+        <item quantity="other">%1$d entrées d’historique effacées (cet appareil uniquement ; l’autre appareil n’est pas affecté).</item>
+    </plurals>
     <string name="transfer_err_bad_header">ce n’est pas un fichier d’export d’historique ClipSync</string>
     <string name="transfer_err_version">la version du fichier est plus récente que ce que cette application prend en charge</string>
     <string name="transfer_err_malformed">le fichier est corrompu (enregistrement malformé)</string>

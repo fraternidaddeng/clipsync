@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -68,18 +69,20 @@ private fun RouteCard(
     onAction: (RouteActionId) -> Unit,
 ) {
     val c = clipSyncColors
-    val surface = if (route.preferred) {
-        Modifier
-            .charterCard(corner = 16.dp)
-            .border(1.5.dp, c.flowLn, CharterShapes.card)
-    } else {
-        Modifier.charterCard(corner = 16.dp)
-    }
+    val surface =
+        if (route.preferred) {
+            Modifier
+                .charterCard(corner = 16.dp)
+                .border(1.5.dp, c.flowLn, CharterShapes.card)
+        } else {
+            Modifier.charterCard(corner = 16.dp)
+        }
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(surface)
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .then(surface)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         Row(
@@ -158,21 +161,23 @@ private fun RouteActionButton(
 ) {
     val c = clipSyncColors
     val shape = CharterShapes.control
-    val surface = if (primary) {
-        Modifier
-            .background(c.flow)
-    } else {
-        Modifier
-            .background(c.flowBg)
-            .border(1.dp, c.flowLn, shape)
-    }
+    val surface =
+        if (primary) {
+            Modifier
+                .background(c.flow)
+        } else {
+            Modifier
+                .background(c.flowBg)
+                .border(1.dp, c.flowLn, shape)
+        }
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .then(surface)
-            .clickable(onClick = onClick)
-            .padding(vertical = 10.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .then(surface)
+                .clickable(onClick = onClick)
+                .padding(vertical = 10.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -191,12 +196,13 @@ private fun StepRow(step: RouteStep) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
-            modifier = Modifier
-                .size(8.dp)
-                .background(
-                    color = if (step.satisfied) c.flow else c.ln2,
-                    shape = CircleShape,
-                ),
+            modifier =
+                Modifier
+                    .size(8.dp)
+                    .background(
+                        color = if (step.satisfied) c.flow else c.ln2,
+                        shape = CircleShape,
+                    ),
         )
         Spacer(Modifier.width(8.dp))
         Text(
@@ -213,20 +219,23 @@ private fun QualityDots(filled: Int) {
     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         repeat(3) { index ->
             Box(
-                modifier = Modifier
-                    .size(7.dp)
-                    .background(
-                        color = if (index < filled) c.flow else c.ln2,
-                        shape = CircleShape,
-                    ),
+                modifier =
+                    Modifier
+                        .size(7.dp)
+                        .background(
+                            color = if (index < filled) c.flow else c.ln2,
+                            shape = CircleShape,
+                        ),
             )
         }
     }
 }
 
 @Composable
-private fun routeProgressLabel(route: ReadRouteUi): String = when {
-    route.stepsRemaining > 0 -> stringResource(R.string.wizard_steps_remaining, route.stepsRemaining)
-    route.readState == CapabilityState.DEGRADED -> stringResource(R.string.wizard_ready_pending_test)
-    else -> stringResource(R.string.wizard_ready)
-}
+private fun routeProgressLabel(route: ReadRouteUi): String =
+    when {
+        route.stepsRemaining > 0 ->
+            pluralStringResource(R.plurals.wizard_steps_remaining, route.stepsRemaining, route.stepsRemaining)
+        route.readState == CapabilityState.DEGRADED -> stringResource(R.string.wizard_ready_pending_test)
+        else -> stringResource(R.string.wizard_ready)
+    }

@@ -17,7 +17,9 @@
     <string name="notification_action_copy">복사</string>
     <string name="notification_applied_text">클립보드에 자동으로 기록했습니다</string>
     <string name="notification_inbox_flood_title">여러 항목을 수신했습니다</string>
-    <string name="notification_inbox_flood_text">%1$d개 항목을 추가로 수신했습니다. 앱에서 확인하세요</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="other">%1$d개 항목을 추가로 수신했습니다. 앱에서 확인하세요</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">동기화 상태</string>
     <string name="notification_channel_sync_description">페어링된 PC와의 연결 상태. 알림에 클립보드 내용이 표시되지 않습니다.</string>
@@ -255,7 +257,9 @@
     <string name="wizard_subtitle">하나만 완료하면 충분합니다. 품질이 높을수록 복사에서 동기화까지의 지연이 줄어듭니다. 승인 상태는 이 페이지로 돌아올 때마다 다시 탐지됩니다.</string>
     <string name="wizard_cost">비용: %1$s</string>
     <string name="wizard_preferred">현재 우선</string>
-    <string name="wizard_steps_remaining">%1$d단계 남음</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="other">%1$d단계 남음</item>
+    </plurals>
     <string name="wizard_ready_pending_test">전제 조건 충족, 실측 테스트 대기 중</string>
     <string name="wizard_ready">전제 조건 충족</string>
 
@@ -310,7 +314,9 @@
     <string name="font_large">크게</string>
     <string name="prefs_preview_lines">미리보기 줄 수</string>
     <string name="prefs_preview_lines_desc">기록 목록에서 항목당 표시할 미리보기 최대 줄 수.</string>
-    <string name="prefs_preview_lines_option">%1$d줄</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="other">%1$d줄</item>
+    </plurals>
     <string name="prefs_theme">모양</string>
     <string name="prefs_theme_desc">시스템을 따르거나 주간/야간을 수동으로 고정합니다. 색상은 항상 내장된 두 세트 중 하나이며 사용자 지정은 불가합니다.</string>
     <string name="theme_system">시스템 따름</string>
@@ -339,10 +345,14 @@
     <string name="prefs_auto_expire">만료 자동 정리</string>
     <string name="prefs_auto_expire_desc">만료된 기록 항목을 자동으로 삭제합니다. 삭제는 이 기기에만 적용됩니다.</string>
     <string name="prefs_retention_days">보관 기간</string>
-    <string name="prefs_retention_days_value">%1$d일</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="other">%1$d일</item>
+    </plurals>
     <string name="prefs_retention_forever">영구 보관</string>
     <string name="prefs_max_entries">보관 개수</string>
-    <string name="prefs_max_entries_value">%1$d개</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="other">%1$d개</item>
+    </plurals>
     <string name="prefs_item_cap">항목당 상한</string>
     <string name="prefs_item_cap_value">%1$s · 일반 텍스트</string>
     <string name="prefs_group_run">실행</string>
@@ -367,12 +377,16 @@
     <string name="prefs_no_device">아직 페어링된 기기가 없습니다</string>
     <string name="prefs_no_device_hint">페어링 입구는 통로 페이지의 네트워크 구간에 있습니다. 페어링하면 상대 기기의 이름이 여기에 표시됩니다.</string>
 
-    <string name="transfer_export_done">%1$d개 기록을 내보냈습니다(평문). 백업 파일을 안전하게 보관하세요.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="other">%1$d개 기록을 내보냈습니다(평문). 백업 파일을 안전하게 보관하세요.</item>
+    </plurals>
     <string name="transfer_export_failed">내보내기 실패: 선택한 파일에 쓸 수 없습니다.</string>
     <string name="transfer_import_done">가져오기 완료: 추가 %1$d · 기존 %2$d · 충돌 %3$d</string>
     <string name="transfer_import_failed">가져오기 실패: %1$s. 아무것도 변경되지 않았습니다.</string>
     <string name="transfer_import_read_failed">가져오기 실패: 선택한 파일을 읽을 수 없습니다.</string>
-    <string name="transfer_cleared">기록 %1$d개를 지웠습니다(이 기기만, 상대 기기에는 영향 없음).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="other">기록 %1$d개를 지웠습니다(이 기기만, 상대 기기에는 영향 없음).</item>
+    </plurals>
     <string name="transfer_err_bad_header">ClipSync 기록 내보내기 파일이 아닙니다</string>
     <string name="transfer_err_version">파일 버전이 이 앱이 지원하는 것보다 새롭습니다</string>
     <string name="transfer_err_malformed">파일이 손상되었습니다(잘못된 레코드)</string>

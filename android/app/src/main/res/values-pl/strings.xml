@@ -17,7 +17,12 @@
     <string name="notification_action_copy">Kopiuj</string>
     <string name="notification_applied_text">Automatycznie zapisano w schowku</string>
     <string name="notification_inbox_flood_title">Otrzymano wiele elementów</string>
-    <string name="notification_inbox_flood_text">Otrzymano jeszcze %1$d bez osobnych powiadomień; zobacz je w aplikacji</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="one">Otrzymano jeszcze %1$d element bez osobnego powiadomienia; zobacz go w aplikacji</item>
+        <item quantity="few">Otrzymano jeszcze %1$d elementy bez osobnych powiadomień; zobacz je w aplikacji</item>
+        <item quantity="many">Otrzymano jeszcze %1$d elementów bez osobnych powiadomień; zobacz je w aplikacji</item>
+        <item quantity="other">Otrzymano jeszcze %1$d elementu bez osobnych powiadomień; zobacz je w aplikacji</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">Stan synchronizacji</string>
     <string name="notification_channel_sync_description">Stan połączenia ze sparowanym PC. Powiadomienia nigdy nie pokazują zawartości schowka.</string>
@@ -255,7 +260,12 @@
     <string name="wizard_subtitle">Wystarczy ukończyć jedną; wyższa jakość to mniejsze opóźnienie od kopiowania do synchronizacji. Stan zgód jest sondowany ponownie przy każdym powrocie na tę stronę.</string>
     <string name="wizard_cost">Koszt: %1$s</string>
     <string name="wizard_preferred">Obecnie preferowana</string>
-    <string name="wizard_steps_remaining">Pozostało kroków: %1$d</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="one">Pozostał %1$d krok</item>
+        <item quantity="few">Pozostały %1$d kroki</item>
+        <item quantity="many">Pozostało %1$d kroków</item>
+        <item quantity="other">Pozostało %1$d kroku</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Warunki spełnione, oczekiwanie na rzeczywisty test</string>
     <string name="wizard_ready">Warunki spełnione</string>
 
@@ -310,7 +320,12 @@
     <string name="font_large">Duży</string>
     <string name="prefs_preview_lines">Wiersze podglądu</string>
     <string name="prefs_preview_lines_desc">Maksymalna liczba wierszy podglądu na wpis w liście historii.</string>
-    <string name="prefs_preview_lines_option">%1$d wierszy</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="one">%1$d wiersz</item>
+        <item quantity="few">%1$d wiersze</item>
+        <item quantity="many">%1$d wierszy</item>
+        <item quantity="other">%1$d wiersza</item>
+    </plurals>
     <string name="prefs_theme">Wygląd</string>
     <string name="prefs_theme_desc">Podążaj za systemem albo ustal dzień/noc ręcznie; paleta to zawsze jeden z dwóch wbudowanych zestawów, nigdy do personalizacji.</string>
     <string name="theme_system">Za systemem</string>
@@ -339,10 +354,20 @@
     <string name="prefs_auto_expire">Automatyczne czyszczenie po wygaśnięciu</string>
     <string name="prefs_auto_expire_desc">Wygasłe wpisy historii są usuwane automatycznie; usunięcie dotyczy tylko tego urządzenia.</string>
     <string name="prefs_retention_days">Okres przechowywania</string>
-    <string name="prefs_retention_days_value">%1$d dni</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="one">%1$d dzień</item>
+        <item quantity="few">%1$d dni</item>
+        <item quantity="many">%1$d dni</item>
+        <item quantity="other">%1$d dnia</item>
+    </plurals>
     <string name="prefs_retention_forever">Przechowuj bezterminowo</string>
     <string name="prefs_max_entries">Liczba przechowywanych</string>
-    <string name="prefs_max_entries_value">%1$d wpisów</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="one">%1$d wpis</item>
+        <item quantity="few">%1$d wpisy</item>
+        <item quantity="many">%1$d wpisów</item>
+        <item quantity="other">%1$d wpisu</item>
+    </plurals>
     <string name="prefs_item_cap">Limit na wpis</string>
     <string name="prefs_item_cap_value">%1$s · zwykły tekst</string>
     <string name="prefs_group_run">Działanie</string>
@@ -367,12 +392,22 @@
     <string name="prefs_no_device">Nie ma jeszcze sparowanych urządzeń</string>
     <string name="prefs_no_device_hint">Wejście do parowania jest w segmencie sieci na stronie Kanał; po sparowaniu nazwa drugiej strony pojawi się tutaj.</string>
 
-    <string name="transfer_export_done">Wyeksportowano %1$d rekordów (jawny tekst); przechowuj plik kopii bezpiecznie.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="one">Wyeksportowano %1$d rekord (jawny tekst); przechowuj plik kopii bezpiecznie.</item>
+        <item quantity="few">Wyeksportowano %1$d rekordy (jawny tekst); przechowuj plik kopii bezpiecznie.</item>
+        <item quantity="many">Wyeksportowano %1$d rekordów (jawny tekst); przechowuj plik kopii bezpiecznie.</item>
+        <item quantity="other">Wyeksportowano %1$d rekordu (jawny tekst); przechowuj plik kopii bezpiecznie.</item>
+    </plurals>
     <string name="transfer_export_failed">Eksport nie powiódł się: nie można zapisać wybranego pliku.</string>
     <string name="transfer_import_done">Import zakończony: dodano %1$d · istniejące %2$d · konflikty %3$d</string>
     <string name="transfer_import_failed">Import nie powiódł się: %1$s. Niczego nie zmieniono.</string>
     <string name="transfer_import_read_failed">Import nie powiódł się: nie można odczytać wybranego pliku.</string>
-    <string name="transfer_cleared">Wyczyszczono %1$d wpisów historii (tylko to urządzenie; druga strona nietknięta).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="one">Wyczyszczono %1$d wpis historii (tylko to urządzenie; druga strona nietknięta).</item>
+        <item quantity="few">Wyczyszczono %1$d wpisy historii (tylko to urządzenie; druga strona nietknięta).</item>
+        <item quantity="many">Wyczyszczono %1$d wpisów historii (tylko to urządzenie; druga strona nietknięta).</item>
+        <item quantity="other">Wyczyszczono %1$d wpisu historii (tylko to urządzenie; druga strona nietknięta).</item>
+    </plurals>
     <string name="transfer_err_bad_header">to nie jest plik eksportu historii ClipSync</string>
     <string name="transfer_err_version">wersja pliku jest nowsza, niż obsługuje ta aplikacja</string>
     <string name="transfer_err_malformed">plik jest uszkodzony (wadliwy rekord)</string>

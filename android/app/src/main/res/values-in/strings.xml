@@ -17,7 +17,9 @@
     <string name="notification_action_copy">Salin</string>
     <string name="notification_applied_text">Otomatis ditulis ke papan klip</string>
     <string name="notification_inbox_flood_title">Beberapa item diterima</string>
-    <string name="notification_inbox_flood_text">%1$d item lagi diterima tanpa pemberitahuan terpisah; lihat di aplikasi</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="other">%1$d item lagi diterima tanpa pemberitahuan terpisah; lihat di aplikasi</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">Status sinkronisasi</string>
     <string name="notification_channel_sync_description">Status koneksi dengan PC yang dipasangkan. Notifikasi tidak pernah menampilkan isi papan klip.</string>
@@ -255,7 +257,9 @@
     <string name="wizard_subtitle">Menyelesaikan satu saja cukup; makin tinggi kualitas makin rendah latensi dari salin ke sinkron. Status izin diperiksa ulang setiap kali Anda kembali ke halaman ini.</string>
     <string name="wizard_cost">Biaya: %1$s</string>
     <string name="wizard_preferred">Pilihan saat ini</string>
-    <string name="wizard_steps_remaining">%1$d langkah tersisa</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="other">%1$d langkah tersisa</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Prasyarat terpenuhi, menunggu uji nyata</string>
     <string name="wizard_ready">Prasyarat terpenuhi</string>
 
@@ -310,7 +314,9 @@
     <string name="font_large">Besar</string>
     <string name="prefs_preview_lines">Baris pratinjau</string>
     <string name="prefs_preview_lines_desc">Baris pratinjau maksimum per entri di daftar riwayat.</string>
-    <string name="prefs_preview_lines_option">%1$d baris</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="other">%1$d baris</item>
+    </plurals>
     <string name="prefs_theme">Tampilan tema</string>
     <string name="prefs_theme_desc">Ikuti sistem atau tetapkan siang/malam manual; paletnya selalu salah satu dari dua set bawaan, tidak pernah bisa dikustomisasi.</string>
     <string name="theme_system">Ikuti sistem</string>
@@ -339,10 +345,14 @@
     <string name="prefs_auto_expire">Pembersihan otomatis kedaluwarsa</string>
     <string name="prefs_auto_expire_desc">Entri riwayat kedaluwarsa dihapus otomatis; penghapusan hanya memengaruhi perangkat ini.</string>
     <string name="prefs_retention_days">Masa penyimpanan</string>
-    <string name="prefs_retention_days_value">%1$d hari</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="other">%1$d hari</item>
+    </plurals>
     <string name="prefs_retention_forever">Simpan selamanya</string>
     <string name="prefs_max_entries">Jumlah tersimpan</string>
-    <string name="prefs_max_entries_value">%1$d entri</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="other">%1$d entri</item>
+    </plurals>
     <string name="prefs_item_cap">Batas per item</string>
     <string name="prefs_item_cap_value">%1$s · teks biasa</string>
     <string name="prefs_group_run">Operasi</string>
@@ -367,12 +377,16 @@
     <string name="prefs_no_device">Belum ada perangkat terpasang</string>
     <string name="prefs_no_device_hint">Pintu masuk pemasangan ada di segmen jaringan halaman Saluran; setelah terpasang, nama pihak seberang tampil di sini.</string>
 
-    <string name="transfer_export_done">%1$d catatan diekspor (teks polos); simpan berkas cadangan baik-baik.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="other">%1$d catatan diekspor (teks polos); simpan berkas cadangan baik-baik.</item>
+    </plurals>
     <string name="transfer_export_failed">Ekspor gagal: tidak bisa menulis berkas yang dipilih.</string>
     <string name="transfer_import_done">Impor selesai: ditambah %1$d · sudah ada %2$d · konflik %3$d</string>
     <string name="transfer_import_failed">Impor gagal: %1$s. Tidak ada yang berubah.</string>
     <string name="transfer_import_read_failed">Impor gagal: tidak bisa membaca berkas yang dipilih.</string>
-    <string name="transfer_cleared">%1$d entri riwayat dibersihkan (hanya perangkat ini; pihak seberang tidak terpengaruh).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="other">%1$d entri riwayat dibersihkan (hanya perangkat ini; pihak seberang tidak terpengaruh).</item>
+    </plurals>
     <string name="transfer_err_bad_header">ini bukan berkas ekspor riwayat ClipSync</string>
     <string name="transfer_err_version">versi berkas lebih baru dari yang didukung aplikasi ini</string>
     <string name="transfer_err_malformed">berkas rusak (catatan cacat)</string>

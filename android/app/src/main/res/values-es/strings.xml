@@ -17,7 +17,11 @@
     <string name="notification_action_copy">Copiar</string>
     <string name="notification_applied_text">Escrito en el portapapeles automáticamente</string>
     <string name="notification_inbox_flood_title">Varios elementos recibidos</string>
-    <string name="notification_inbox_flood_text">Se recibieron %1$d elementos más sin aviso individual; míralos en la aplicación</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="one">Se recibió %1$d elemento más sin aviso individual; míralo en la aplicación</item>
+        <item quantity="many">Se recibieron %1$d de elementos más sin aviso individual; míralos en la aplicación</item>
+        <item quantity="other">Se recibieron %1$d elementos más sin aviso individual; míralos en la aplicación</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">Estado de sincronización</string>
     <string name="notification_channel_sync_description">Estado de conexión con tu PC emparejado. Las notificaciones nunca muestran el contenido del portapapeles.</string>
@@ -255,7 +259,11 @@
     <string name="wizard_subtitle">Basta con completar una; a mayor calidad, menor latencia entre copiar y sincronizar. El estado de autorización se vuelve a sondear cada vez que regresas a esta página.</string>
     <string name="wizard_cost">Coste: %1$s</string>
     <string name="wizard_preferred">Preferida actual</string>
-    <string name="wizard_steps_remaining">%1$d paso(s) restante(s)</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="one">%1$d paso restante</item>
+        <item quantity="many">%1$d de pasos restantes</item>
+        <item quantity="other">%1$d pasos restantes</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Requisitos cumplidos, a la espera de una prueba real</string>
     <string name="wizard_ready">Requisitos cumplidos</string>
 
@@ -310,7 +318,11 @@
     <string name="font_large">Grande</string>
     <string name="prefs_preview_lines">Líneas de vista previa</string>
     <string name="prefs_preview_lines_desc">Máximo de líneas de vista previa por entrada en la lista del historial.</string>
-    <string name="prefs_preview_lines_option">%1$d líneas</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="one">%1$d línea</item>
+        <item quantity="many">%1$d de líneas</item>
+        <item quantity="other">%1$d líneas</item>
+    </plurals>
     <string name="prefs_theme">Apariencia</string>
     <string name="prefs_theme_desc">Sigue al sistema o fija día/noche manualmente; la paleta siempre es uno de los dos juegos integrados, nunca personalizable.</string>
     <string name="theme_system">Seguir al sistema</string>
@@ -339,10 +351,18 @@
     <string name="prefs_auto_expire">Limpieza por caducidad</string>
     <string name="prefs_auto_expire_desc">Las entradas caducadas del historial se eliminan automáticamente; la eliminación afecta solo a este dispositivo.</string>
     <string name="prefs_retention_days">Periodo de retención</string>
-    <string name="prefs_retention_days_value">%1$d día(s)</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="one">%1$d día</item>
+        <item quantity="many">%1$d de días</item>
+        <item quantity="other">%1$d días</item>
+    </plurals>
     <string name="prefs_retention_forever">Conservar para siempre</string>
     <string name="prefs_max_entries">Cantidad retenida</string>
-    <string name="prefs_max_entries_value">%1$d entradas</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="one">%1$d entrada</item>
+        <item quantity="many">%1$d de entradas</item>
+        <item quantity="other">%1$d entradas</item>
+    </plurals>
     <string name="prefs_item_cap">Límite por elemento</string>
     <string name="prefs_item_cap_value">%1$s · texto sin formato</string>
     <string name="prefs_group_run">Ejecución</string>
@@ -367,12 +387,20 @@
     <string name="prefs_no_device">Aún no hay dispositivos emparejados</string>
     <string name="prefs_no_device_hint">La entrada de emparejamiento está en el segmento de red de la página Conducto; una vez emparejado, el nombre del otro extremo aparece aquí.</string>
 
-    <string name="transfer_export_done">Se exportaron %1$d registros (texto plano); guarda bien el archivo de respaldo.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="one">Se exportó %1$d registro (texto plano); guarda bien el archivo de respaldo.</item>
+        <item quantity="many">Se exportaron %1$d de registros (texto plano); guarda bien el archivo de respaldo.</item>
+        <item quantity="other">Se exportaron %1$d registros (texto plano); guarda bien el archivo de respaldo.</item>
+    </plurals>
     <string name="transfer_export_failed">Error al exportar: no se pudo escribir el archivo elegido.</string>
     <string name="transfer_import_done">Importación completa: añadidos %1$d · existentes %2$d · conflictos %3$d</string>
     <string name="transfer_import_failed">Error al importar: %1$s. No se cambió nada.</string>
     <string name="transfer_import_read_failed">Error al importar: no se pudo leer el archivo elegido.</string>
-    <string name="transfer_cleared">Se vaciaron %1$d entradas del historial (solo este dispositivo; el otro extremo no se ve afectado).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="one">Se vació %1$d entrada del historial (solo este dispositivo; el otro extremo no se ve afectado).</item>
+        <item quantity="many">Se vaciaron %1$d de entradas del historial (solo este dispositivo; el otro extremo no se ve afectado).</item>
+        <item quantity="other">Se vaciaron %1$d entradas del historial (solo este dispositivo; el otro extremo no se ve afectado).</item>
+    </plurals>
     <string name="transfer_err_bad_header">este no es un archivo de exportación de historial de ClipSync</string>
     <string name="transfer_err_version">la versión del archivo es más reciente de lo que admite esta app</string>
     <string name="transfer_err_malformed">el archivo está dañado (registro malformado)</string>

@@ -1,6 +1,7 @@
 package com.clipsync.android.i18n
 
 import android.content.Context
+import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
@@ -29,8 +30,20 @@ sealed interface UiText {
         @StringRes val id: Int,
         val args: List<Any>,
     ) : UiText {
-        constructor(@StringRes id: Int, vararg args: Any) : this(id, args.toList())
+        constructor(
+            @StringRes id: Int,
+            vararg args: Any,
+        ) : this(id, args.toList())
     }
+
+    /**
+     * A quantity string: the locale's plural rules pick the form for [count], and the
+     * count is also the sole positional argument (all current quantity strings embed it).
+     */
+    data class Plural(
+        @PluralsRes val id: Int,
+        val count: Int,
+    ) : UiText
 }
 
 /** Resolves against [context]'s locale; nested [UiText] arguments resolve first. */
@@ -49,6 +62,7 @@ fun UiText.resolve(context: Context): String =
                 context.getString(id, *resolved)
             }
         }
+        is UiText.Plural -> context.resources.getQuantityString(id, count, count)
     }
 
 /** Composable resolution on the locale in effect for the current context. */

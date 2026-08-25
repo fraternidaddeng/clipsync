@@ -24,7 +24,9 @@
     <string name="notification_action_copy">复制</string>
     <string name="notification_applied_text">已自动写入剪贴板</string>
     <string name="notification_inbox_flood_title">收到多条内容</string>
-    <string name="notification_inbox_flood_text">另有 %1$d 条未单独通知，打开应用即可查看</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="other">另有 %1$d 条未单独通知，打开应用即可查看</item>
+    </plurals>
 
     <!-- 同步前台服务通知：只描述连接状态 -->
     <string name="notification_channel_sync_name">同步状态</string>
@@ -281,7 +283,9 @@
     <string name="wizard_subtitle">任选一条完成即可；质量越高，复制到同步的延迟越小。授权状态每次回到本页都会重新探测。</string>
     <string name="wizard_cost">代价：%1$s</string>
     <string name="wizard_preferred">当前首选</string>
-    <string name="wizard_steps_remaining">还差 %1$d 步</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="other">还差 %1$d 步</item>
+    </plurals>
     <string name="wizard_ready_pending_test">前提已就绪，等待实测验证</string>
     <string name="wizard_ready">前提已就绪</string>
 
@@ -339,7 +343,9 @@
     <string name="font_large">大</string>
     <string name="prefs_preview_lines">预览行数</string>
     <string name="prefs_preview_lines_desc">历史列表每条内容最多显示的预览行数。</string>
-    <string name="prefs_preview_lines_option">%1$d 行</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="other">%1$d 行</item>
+    </plurals>
     <!-- 外观（P1#6）：只在两套既有配色之间选择 -->
     <string name="prefs_theme">外观</string>
     <string name="prefs_theme_desc">跟随系统或手动固定日间/夜间；配色始终是既有的两套，不可自定义。</string>
@@ -369,10 +375,14 @@
     <string name="prefs_auto_expire">自动过期清理</string>
     <string name="prefs_auto_expire_desc">到期的历史条目自动删除，删除只作用于本机。</string>
     <string name="prefs_retention_days">保留时长</string>
-    <string name="prefs_retention_days_value">%1$d 天</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="other">%1$d 天</item>
+    </plurals>
     <string name="prefs_retention_forever">永久保留</string>
     <string name="prefs_max_entries">保留条数</string>
-    <string name="prefs_max_entries_value">%1$d 条</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="other">%1$d 条</item>
+    </plurals>
     <string name="prefs_item_cap">单条上限</string>
     <string name="prefs_item_cap_value">%1$s · 纯文本</string>
     <string name="prefs_group_run">运行</string>
@@ -398,12 +408,16 @@
     <string name="prefs_no_device_hint">配对入口在「通路」页的网络段；配对后这里会显示对端名称。</string>
 
     <!-- 数据组操作结果（导出/导入/清空） -->
-    <string name="transfer_export_done">已导出 %1$d 条记录（明文），请妥善保管备份文件。</string>
+    <plurals name="transfer_export_done">
+        <item quantity="other">已导出 %1$d 条记录（明文），请妥善保管备份文件。</item>
+    </plurals>
     <string name="transfer_export_failed">导出失败：无法写入所选文件。</string>
     <string name="transfer_import_done">导入完成：新增 %1$d · 已存在 %2$d · 冲突 %3$d</string>
     <string name="transfer_import_failed">导入失败：%1$s。未做任何改动。</string>
     <string name="transfer_import_read_failed">导入失败：无法读取所选文件。</string>
-    <string name="transfer_cleared">已清空 %1$d 条历史（仅本机，不影响对端）。</string>
+    <plurals name="transfer_cleared">
+        <item quantity="other">已清空 %1$d 条历史（仅本机，不影响对端）。</item>
+    </plurals>
     <string name="transfer_err_bad_header">这不是 ClipSync 历史导出文件</string>
     <string name="transfer_err_version">文件版本高于本应用支持的版本</string>
     <string name="transfer_err_malformed">文件内容损坏（记录格式错误）</string>

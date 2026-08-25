@@ -17,7 +17,14 @@
     <string name="notification_action_copy">نسخ</string>
     <string name="notification_applied_text">كُتب في الحافظة تلقائيًا</string>
     <string name="notification_inbox_flood_title">تم استلام عدة عناصر</string>
-    <string name="notification_inbox_flood_text">تم استلام %1$d عناصر أخرى دون تنبيه منفصل؛ اعرضها في التطبيق</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="zero">وصلت %1$d عناصر إضافية دون تنبيه منفصل؛ اعرضها في التطبيق</item>
+        <item quantity="one">وصل %1$d عنصر إضافي دون تنبيه منفصل؛ اعرضه في التطبيق</item>
+        <item quantity="two">وصل %1$d عنصران إضافيان دون تنبيه منفصل؛ اعرضهما في التطبيق</item>
+        <item quantity="few">وصلت %1$d عناصر إضافية دون تنبيه منفصل؛ اعرضها في التطبيق</item>
+        <item quantity="many">وصل %1$d عنصرًا إضافيًا دون تنبيه منفصل؛ اعرضها في التطبيق</item>
+        <item quantity="other">وصل %1$d عنصر إضافي دون تنبيه منفصل؛ اعرضها في التطبيق</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">حالة المزامنة</string>
     <string name="notification_channel_sync_description">حالة الاتصال بالحاسوب المقترن. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>
@@ -255,7 +262,14 @@
     <string name="wizard_subtitle">إكمال أي واحد يكفي؛ كلما ارتفعت الجودة انخفض التأخير بين النسخ والمزامنة. تُعاد فحص حالة التصريح كلما عدت إلى هذه الصفحة.</string>
     <string name="wizard_cost">التكلفة: %1$s</string>
     <string name="wizard_preferred">المفضّل الحالي</string>
-    <string name="wizard_steps_remaining">بقي %1$d خطوة</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="zero">بقيت %1$d خطوات</item>
+        <item quantity="one">بقيت %1$d خطوة</item>
+        <item quantity="two">بقيت %1$d خطوتان</item>
+        <item quantity="few">بقيت %1$d خطوات</item>
+        <item quantity="many">بقيت %1$d خطوة</item>
+        <item quantity="other">بقيت %1$d خطوة</item>
+    </plurals>
     <string name="wizard_ready_pending_test">الشروط مستوفاة، بانتظار اختبار فعلي</string>
     <string name="wizard_ready">الشروط مستوفاة</string>
 
@@ -310,7 +324,14 @@
     <string name="font_large">كبير</string>
     <string name="prefs_preview_lines">أسطر المعاينة</string>
     <string name="prefs_preview_lines_desc">الحد الأقصى لأسطر المعاينة لكل عنصر في قائمة السجل.</string>
-    <string name="prefs_preview_lines_option">%1$d أسطر</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="zero">%1$d أسطر</item>
+        <item quantity="one">%1$d سطر</item>
+        <item quantity="two">%1$d سطران</item>
+        <item quantity="few">%1$d أسطر</item>
+        <item quantity="many">%1$d سطرًا</item>
+        <item quantity="other">%1$d سطر</item>
+    </plurals>
     <string name="prefs_theme">المظهر</string>
     <string name="prefs_theme_desc">اتبع النظام أو ثبّت النهار/الليل يدويًا؛ اللوحة دائمًا إحدى المجموعتين المدمجتين، وغير قابلة للتخصيص أبدًا.</string>
     <string name="theme_system">اتباع النظام</string>
@@ -339,10 +360,24 @@
     <string name="prefs_auto_expire">التنظيف التلقائي عند الانتهاء</string>
     <string name="prefs_auto_expire_desc">تُحذف عناصر السجل المنتهية تلقائيًا؛ الحذف يخص هذا الجهاز فقط.</string>
     <string name="prefs_retention_days">مدة الاحتفاظ</string>
-    <string name="prefs_retention_days_value">%1$d يوم</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="zero">%1$d أيام</item>
+        <item quantity="one">%1$d يوم</item>
+        <item quantity="two">%1$d يومان</item>
+        <item quantity="few">%1$d أيام</item>
+        <item quantity="many">%1$d يومًا</item>
+        <item quantity="other">%1$d يوم</item>
+    </plurals>
     <string name="prefs_retention_forever">الاحتفاظ للأبد</string>
     <string name="prefs_max_entries">عدد الاحتفاظ</string>
-    <string name="prefs_max_entries_value">%1$d عنصرًا</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="zero">%1$d عناصر</item>
+        <item quantity="one">%1$d عنصر</item>
+        <item quantity="two">%1$d عنصران</item>
+        <item quantity="few">%1$d عناصر</item>
+        <item quantity="many">%1$d عنصرًا</item>
+        <item quantity="other">%1$d عنصر</item>
+    </plurals>
     <string name="prefs_item_cap">الحد الأقصى للعنصر</string>
     <string name="prefs_item_cap_value">%1$s · نص عادي</string>
     <string name="prefs_group_run">التشغيل</string>
@@ -367,12 +402,26 @@
     <string name="prefs_no_device">لا توجد أجهزة مقترنة بعد</string>
     <string name="prefs_no_device_hint">مدخل الاقتران في مقطع الشبكة بصفحة القناة؛ بعد الاقتران يظهر اسم الطرف الآخر هنا.</string>
 
-    <string name="transfer_export_done">صُدّر %1$d سجلًا (نص مكشوف)؛ احفظ ملف النسخ الاحتياطي بأمان.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="zero">صُدّرت %1$d سجلات (نص مكشوف)؛ احفظ ملف النسخ الاحتياطي بأمان.</item>
+        <item quantity="one">صُدّر %1$d سجل (نص مكشوف)؛ احفظ ملف النسخ الاحتياطي بأمان.</item>
+        <item quantity="two">صُدّر %1$d سجلان (نص مكشوف)؛ احفظ ملف النسخ الاحتياطي بأمان.</item>
+        <item quantity="few">صُدّرت %1$d سجلات (نص مكشوف)؛ احفظ ملف النسخ الاحتياطي بأمان.</item>
+        <item quantity="many">صُدّر %1$d سجلًا (نص مكشوف)؛ احفظ ملف النسخ الاحتياطي بأمان.</item>
+        <item quantity="other">صُدّر %1$d سجل (نص مكشوف)؛ احفظ ملف النسخ الاحتياطي بأمان.</item>
+    </plurals>
     <string name="transfer_export_failed">فشل التصدير: تعذّرت كتابة الملف المختار.</string>
     <string name="transfer_import_done">اكتمل الاستيراد: أُضيف %1$d · موجود %2$d · تعارضات %3$d</string>
     <string name="transfer_import_failed">فشل الاستيراد: %1$s. لم يتغيّر شيء.</string>
     <string name="transfer_import_read_failed">فشل الاستيراد: تعذّرت قراءة الملف المختار.</string>
-    <string name="transfer_cleared">مُسح %1$d عنصرًا من السجل (هذا الجهاز فقط؛ الطرف الآخر غير متأثر).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="zero">مُسحت %1$d عناصر من السجل (هذا الجهاز فقط؛ الطرف الآخر غير متأثر).</item>
+        <item quantity="one">مُسح %1$d عنصر من السجل (هذا الجهاز فقط؛ الطرف الآخر غير متأثر).</item>
+        <item quantity="two">مُسح %1$d عنصران من السجل (هذا الجهاز فقط؛ الطرف الآخر غير متأثر).</item>
+        <item quantity="few">مُسحت %1$d عناصر من السجل (هذا الجهاز فقط؛ الطرف الآخر غير متأثر).</item>
+        <item quantity="many">مُسح %1$d عنصرًا من السجل (هذا الجهاز فقط؛ الطرف الآخر غير متأثر).</item>
+        <item quantity="other">مُسح %1$d عنصر من السجل (هذا الجهاز فقط؛ الطرف الآخر غير متأثر).</item>
+    </plurals>
     <string name="transfer_err_bad_header">هذا ليس ملف تصدير سجل ClipSync</string>
     <string name="transfer_err_version">إصدار الملف أحدث مما يدعمه هذا التطبيق</string>
     <string name="transfer_err_malformed">الملف تالف (سجل مشوّه)</string>

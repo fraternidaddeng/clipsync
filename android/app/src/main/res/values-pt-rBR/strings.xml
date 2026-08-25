@@ -17,7 +17,11 @@
     <string name="notification_action_copy">Copiar</string>
     <string name="notification_applied_text">Gravado na área de transferência automaticamente</string>
     <string name="notification_inbox_flood_title">Vários itens recebidos</string>
-    <string name="notification_inbox_flood_text">Mais %1$d itens recebidos sem aviso individual; veja-os no aplicativo</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="one">Mais %1$d item recebido sem aviso individual; veja-o no aplicativo</item>
+        <item quantity="many">Mais %1$d de itens recebidos sem aviso individual; veja-os no aplicativo</item>
+        <item quantity="other">Mais %1$d itens recebidos sem aviso individual; veja-os no aplicativo</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">Status de sincronização</string>
     <string name="notification_channel_sync_description">Status da conexão com o PC pareado. As notificações nunca mostram o conteúdo da área de transferência.</string>
@@ -255,7 +259,11 @@
     <string name="wizard_subtitle">Concluir qualquer uma basta; quanto maior a qualidade, menor a latência entre copiar e sincronizar. O estado de autorização é sondado de novo sempre que você volta a esta página.</string>
     <string name="wizard_cost">Custo: %1$s</string>
     <string name="wizard_preferred">Preferida atual</string>
-    <string name="wizard_steps_remaining">%1$d etapa(s) restante(s)</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="one">%1$d etapa restante</item>
+        <item quantity="many">%1$d de etapas restantes</item>
+        <item quantity="other">%1$d etapas restantes</item>
+    </plurals>
     <string name="wizard_ready_pending_test">Pré-requisitos atendidos, aguardando um teste real</string>
     <string name="wizard_ready">Pré-requisitos atendidos</string>
 
@@ -310,7 +318,11 @@
     <string name="font_large">Grande</string>
     <string name="prefs_preview_lines">Linhas de prévia</string>
     <string name="prefs_preview_lines_desc">Máximo de linhas de prévia por entrada na lista do histórico.</string>
-    <string name="prefs_preview_lines_option">%1$d linhas</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="one">%1$d linha</item>
+        <item quantity="many">%1$d de linhas</item>
+        <item quantity="other">%1$d linhas</item>
+    </plurals>
     <string name="prefs_theme">Aparência</string>
     <string name="prefs_theme_desc">Seguir o sistema ou fixar dia/noite manualmente; a paleta é sempre um dos dois conjuntos embutidos, nunca personalizável.</string>
     <string name="theme_system">Seguir o sistema</string>
@@ -339,10 +351,18 @@
     <string name="prefs_auto_expire">Limpeza automática por expiração</string>
     <string name="prefs_auto_expire_desc">Entradas expiradas do histórico são apagadas automaticamente; a exclusão afeta apenas este aparelho.</string>
     <string name="prefs_retention_days">Período de retenção</string>
-    <string name="prefs_retention_days_value">%1$d dia(s)</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="one">%1$d dia</item>
+        <item quantity="many">%1$d de dias</item>
+        <item quantity="other">%1$d dias</item>
+    </plurals>
     <string name="prefs_retention_forever">Manter para sempre</string>
     <string name="prefs_max_entries">Quantidade retida</string>
-    <string name="prefs_max_entries_value">%1$d entradas</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="one">%1$d entrada</item>
+        <item quantity="many">%1$d de entradas</item>
+        <item quantity="other">%1$d entradas</item>
+    </plurals>
     <string name="prefs_item_cap">Limite por item</string>
     <string name="prefs_item_cap_value">%1$s · texto simples</string>
     <string name="prefs_group_run">Execução</string>
@@ -367,12 +387,20 @@
     <string name="prefs_no_device">Ainda não há aparelhos pareados</string>
     <string name="prefs_no_device_hint">A entrada de pareamento fica no segmento de rede da página Conduíte; depois de parear, o nome do outro lado aparece aqui.</string>
 
-    <string name="transfer_export_done">%1$d registro(s) exportado(s) (texto puro); guarde o arquivo de backup com segurança.</string>
+    <plurals name="transfer_export_done">
+        <item quantity="one">%1$d registro exportado (texto puro); guarde o arquivo de backup com segurança.</item>
+        <item quantity="many">%1$d de registros exportados (texto puro); guarde o arquivo de backup com segurança.</item>
+        <item quantity="other">%1$d registros exportados (texto puro); guarde o arquivo de backup com segurança.</item>
+    </plurals>
     <string name="transfer_export_failed">Falha na exportação: não foi possível gravar o arquivo escolhido.</string>
     <string name="transfer_import_done">Importação concluída: adicionados %1$d · existentes %2$d · conflitos %3$d</string>
     <string name="transfer_import_failed">Falha na importação: %1$s. Nada foi alterado.</string>
     <string name="transfer_import_read_failed">Falha na importação: não foi possível ler o arquivo escolhido.</string>
-    <string name="transfer_cleared">%1$d entrada(s) do histórico limpa(s) (apenas este aparelho; o outro lado não é afetado).</string>
+    <plurals name="transfer_cleared">
+        <item quantity="one">%1$d entrada do histórico limpa (apenas este aparelho; o outro lado não é afetado).</item>
+        <item quantity="many">%1$d de entradas do histórico limpas (apenas este aparelho; o outro lado não é afetado).</item>
+        <item quantity="other">%1$d entradas do histórico limpas (apenas este aparelho; o outro lado não é afetado).</item>
+    </plurals>
     <string name="transfer_err_bad_header">este não é um arquivo de exportação de histórico do ClipSync</string>
     <string name="transfer_err_version">a versão do arquivo é mais nova do que este app suporta</string>
     <string name="transfer_err_malformed">o arquivo está corrompido (registro malformado)</string>

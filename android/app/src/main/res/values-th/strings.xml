@@ -17,7 +17,9 @@
     <string name="notification_action_copy">คัดลอก</string>
     <string name="notification_applied_text">เขียนลงคลิปบอร์ดโดยอัตโนมัติแล้ว</string>
     <string name="notification_inbox_flood_title">ได้รับหลายรายการ</string>
-    <string name="notification_inbox_flood_text">ได้รับอีก %1$d รายการโดยไม่มีการแจ้งเตือนแยก ดูได้ในแอป</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="other">ได้รับอีก %1$d รายการโดยไม่มีการแจ้งเตือนแยก ดูได้ในแอป</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">สถานะการซิงค์</string>
     <string name="notification_channel_sync_description">สถานะการเชื่อมต่อกับพีซีที่จับคู่ไว้ การแจ้งเตือนจะไม่แสดงเนื้อหาคลิปบอร์ดเด็ดขาด</string>
@@ -255,7 +257,9 @@
     <string name="wizard_subtitle">ทำเสร็จเส้นทางใดเส้นทางหนึ่งก็พอ ยิ่งคุณภาพสูงดีเลย์จากคัดลอกถึงซิงค์ยิ่งต่ำ สถานะการอนุญาตจะถูกตรวจใหม่ทุกครั้งที่กลับมาหน้านี้</string>
     <string name="wizard_cost">ราคา: %1$s</string>
     <string name="wizard_preferred">ที่เลือกใช้ปัจจุบัน</string>
-    <string name="wizard_steps_remaining">เหลืออีก %1$d ขั้น</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="other">เหลืออีก %1$d ขั้น</item>
+    </plurals>
     <string name="wizard_ready_pending_test">เงื่อนไขครบ รอการทดสอบจริง</string>
     <string name="wizard_ready">เงื่อนไขครบแล้ว</string>
 
@@ -310,7 +314,9 @@
     <string name="font_large">ใหญ่</string>
     <string name="prefs_preview_lines">จำนวนบรรทัดตัวอย่าง</string>
     <string name="prefs_preview_lines_desc">จำนวนบรรทัดตัวอย่างสูงสุดต่อรายการในหน้าประวัติ</string>
-    <string name="prefs_preview_lines_option">%1$d บรรทัด</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="other">%1$d บรรทัด</item>
+    </plurals>
     <string name="prefs_theme">ธีม</string>
     <string name="prefs_theme_desc">ตามระบบหรือกำหนดกลางวัน/กลางคืนเอง ชุดสีเป็นหนึ่งในสองชุดในตัวเสมอ ปรับแต่งไม่ได้</string>
     <string name="theme_system">ตามระบบ</string>
@@ -339,10 +345,14 @@
     <string name="prefs_auto_expire">ล้างอัตโนมัติเมื่อหมดอายุ</string>
     <string name="prefs_auto_expire_desc">รายการประวัติที่หมดอายุจะถูกลบอัตโนมัติ การลบมีผลเฉพาะเครื่องนี้</string>
     <string name="prefs_retention_days">ระยะเวลาเก็บ</string>
-    <string name="prefs_retention_days_value">%1$d วัน</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="other">%1$d วัน</item>
+    </plurals>
     <string name="prefs_retention_forever">เก็บตลอดไป</string>
     <string name="prefs_max_entries">จำนวนที่เก็บ</string>
-    <string name="prefs_max_entries_value">%1$d รายการ</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="other">%1$d รายการ</item>
+    </plurals>
     <string name="prefs_item_cap">ขีดจำกัดต่อรายการ</string>
     <string name="prefs_item_cap_value">%1$s · ข้อความล้วน</string>
     <string name="prefs_group_run">การทำงาน</string>
@@ -367,12 +377,16 @@
     <string name="prefs_no_device">ยังไม่มีอุปกรณ์ที่จับคู่</string>
     <string name="prefs_no_device_hint">ทางเข้าการจับคู่อยู่ที่ช่วงเครือข่ายของหน้าเส้นทาง เมื่อจับคู่แล้วชื่อของฝั่งโน้นจะแสดงที่นี่</string>
 
-    <string name="transfer_export_done">ส่งออก %1$d รายการแล้ว (ข้อความเปล่า) เก็บไฟล์สำรองให้ดี</string>
+    <plurals name="transfer_export_done">
+        <item quantity="other">ส่งออก %1$d รายการแล้ว (ข้อความเปล่า) เก็บไฟล์สำรองให้ดี</item>
+    </plurals>
     <string name="transfer_export_failed">ส่งออกล้มเหลว: เขียนไฟล์ที่เลือกไม่ได้</string>
     <string name="transfer_import_done">นำเข้าเสร็จ: เพิ่ม %1$d · มีอยู่แล้ว %2$d · ขัดแย้ง %3$d</string>
     <string name="transfer_import_failed">นำเข้าล้มเหลว: %1$s ไม่มีอะไรถูกเปลี่ยน</string>
     <string name="transfer_import_read_failed">นำเข้าล้มเหลว: อ่านไฟล์ที่เลือกไม่ได้</string>
-    <string name="transfer_cleared">ล้างประวัติ %1$d รายการแล้ว (เฉพาะเครื่องนี้ ฝั่งโน้นไม่กระทบ)</string>
+    <plurals name="transfer_cleared">
+        <item quantity="other">ล้างประวัติ %1$d รายการแล้ว (เฉพาะเครื่องนี้ ฝั่งโน้นไม่กระทบ)</item>
+    </plurals>
     <string name="transfer_err_bad_header">นี่ไม่ใช่ไฟล์ส่งออกประวัติของ ClipSync</string>
     <string name="transfer_err_version">เวอร์ชันไฟล์ใหม่กว่าที่แอปนี้รองรับ</string>
     <string name="transfer_err_malformed">ไฟล์เสียหาย (เรกคอร์ดผิดรูปแบบ)</string>

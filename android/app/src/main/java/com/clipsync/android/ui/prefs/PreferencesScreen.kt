@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -117,7 +118,7 @@ fun PreferencesScreen(
                 description = stringResource(R.string.prefs_preview_lines_desc),
                 options =
                     SyncSettingsStore.PREVIEW_LINE_CHOICES.map {
-                        stringResource(R.string.prefs_preview_lines_option, it) to it
+                        pluralStringResource(R.plurals.prefs_preview_lines_option, it, it) to it
                     },
                 selected = state.previewLines,
                 onSelect = onPreviewLinesChange,
@@ -232,7 +233,11 @@ fun PreferencesScreen(
                 title = stringResource(R.string.prefs_retention_days),
                 value =
                     if (state.autoExpire) {
-                        stringResource(R.string.prefs_retention_days_value, state.retentionDays)
+                        pluralStringResource(
+                            R.plurals.prefs_retention_days_value,
+                            state.retentionDays,
+                            state.retentionDays,
+                        )
                     } else {
                         stringResource(R.string.prefs_retention_forever)
                     },
@@ -245,7 +250,7 @@ fun PreferencesScreen(
             RowDivider()
             StepperRow(
                 title = stringResource(R.string.prefs_max_entries),
-                value = stringResource(R.string.prefs_max_entries_value, state.maxEntries),
+                value = pluralStringResource(R.plurals.prefs_max_entries_value, state.maxEntries, state.maxEntries),
                 enabled = true,
                 canDecrement = state.maxEntries > SyncSettingsStore.MIN_MAX_ENTRIES,
                 canIncrement = state.maxEntries < SyncSettingsStore.MAX_MAX_ENTRIES,

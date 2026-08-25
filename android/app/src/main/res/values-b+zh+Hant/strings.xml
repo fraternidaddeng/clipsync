@@ -17,7 +17,9 @@
     <string name="notification_action_copy">複製</string>
     <string name="notification_applied_text">已自動寫入剪貼簿</string>
     <string name="notification_inbox_flood_title">收到多則內容</string>
-    <string name="notification_inbox_flood_text">另有 %1$d 則未單獨通知，開啟應用程式即可查看</string>
+    <plurals name="notification_inbox_flood_text">
+        <item quantity="other">另有 %1$d 則未單獨通知，開啟應用程式即可查看</item>
+    </plurals>
 
     <string name="notification_channel_sync_name">同步狀態</string>
     <string name="notification_channel_sync_description">與已配對電腦的連線狀態。通知絕不顯示剪貼簿內容。</string>
@@ -255,7 +257,9 @@
     <string name="wizard_subtitle">任選一條完成即可；品質越高，複製到同步的延遲越小。授權狀態每次回到本頁都會重新探測。</string>
     <string name="wizard_cost">代價：%1$s</string>
     <string name="wizard_preferred">目前首選</string>
-    <string name="wizard_steps_remaining">還差 %1$d 步</string>
+    <plurals name="wizard_steps_remaining">
+        <item quantity="other">還差 %1$d 步</item>
+    </plurals>
     <string name="wizard_ready_pending_test">前提已就緒，等待實測驗證</string>
     <string name="wizard_ready">前提已就緒</string>
 
@@ -310,7 +314,9 @@
     <string name="font_large">大</string>
     <string name="prefs_preview_lines">預覽行數</string>
     <string name="prefs_preview_lines_desc">歷史清單每筆內容最多顯示的預覽行數。</string>
-    <string name="prefs_preview_lines_option">%1$d 行</string>
+    <plurals name="prefs_preview_lines_option">
+        <item quantity="other">%1$d 行</item>
+    </plurals>
     <string name="prefs_theme">外觀</string>
     <string name="prefs_theme_desc">跟隨系統或手動固定日間/夜間；配色始終是既有的兩套，不可自訂。</string>
     <string name="theme_system">跟隨系統</string>
@@ -339,10 +345,14 @@
     <string name="prefs_auto_expire">自動過期清理</string>
     <string name="prefs_auto_expire_desc">到期的歷史條目自動刪除，刪除只作用於本機。</string>
     <string name="prefs_retention_days">保留時長</string>
-    <string name="prefs_retention_days_value">%1$d 天</string>
+    <plurals name="prefs_retention_days_value">
+        <item quantity="other">%1$d 天</item>
+    </plurals>
     <string name="prefs_retention_forever">永久保留</string>
     <string name="prefs_max_entries">保留筆數</string>
-    <string name="prefs_max_entries_value">%1$d 筆</string>
+    <plurals name="prefs_max_entries_value">
+        <item quantity="other">%1$d 筆</item>
+    </plurals>
     <string name="prefs_item_cap">單筆上限</string>
     <string name="prefs_item_cap_value">%1$s · 純文字</string>
     <string name="prefs_group_run">執行</string>
@@ -367,12 +377,16 @@
     <string name="prefs_no_device">尚無已配對裝置</string>
     <string name="prefs_no_device_hint">配對入口在「通路」頁的網路段；配對後這裡會顯示對端名稱。</string>
 
-    <string name="transfer_export_done">已匯出 %1$d 筆記錄（明文），請妥善保管備份檔。</string>
+    <plurals name="transfer_export_done">
+        <item quantity="other">已匯出 %1$d 筆記錄（明文），請妥善保管備份檔。</item>
+    </plurals>
     <string name="transfer_export_failed">匯出失敗：無法寫入所選檔案。</string>
     <string name="transfer_import_done">匯入完成：新增 %1$d · 已存在 %2$d · 衝突 %3$d</string>
     <string name="transfer_import_failed">匯入失敗：%1$s。未做任何改動。</string>
     <string name="transfer_import_read_failed">匯入失敗：無法讀取所選檔案。</string>
-    <string name="transfer_cleared">已清空 %1$d 筆歷史（僅本機，不影響對端）。</string>
+    <plurals name="transfer_cleared">
+        <item quantity="other">已清空 %1$d 筆歷史（僅本機，不影響對端）。</item>
+    </plurals>
     <string name="transfer_err_bad_header">這不是 ClipSync 歷史匯出檔</string>
     <string name="transfer_err_version">檔案版本高於本應用程式支援的版本</string>
     <string name="transfer_err_malformed">檔案內容損壞（記錄格式錯誤）</string>

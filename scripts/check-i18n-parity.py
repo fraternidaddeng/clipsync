@@ -10,6 +10,9 @@
     2. 键齐全：每个卫星 strings.xml 与缺省逐键对齐（不缺键、不多键）。
        标记 translatable="false" 的缺省键豁免翻译，卫星不得定义它们。
     3. 占位符：每键的 printf 占位符多重集（%1$s、%2$d、%%…）与缺省一致。
+    3b. <plurals> 同样逐键对齐；每个数量分支（zero/one/two/few/many/other）的
+        占位符多重集都须与缺省键一致（各语言分支集合由 CLDR 决定、lint 的
+        MissingQuantity/UnusedQuantity 把守，本脚本不重复）。
 
   Windows（windows/ClipSync.App/Localization/strings.json）
     4. 语言表齐全：languages 与同一 19 语目录一致（BCP-47 标签）。
@@ -94,6 +97,26 @@ def load_android_strings(path: Path) -> tuple[dict[str, str], set[str]]:
     return translatable, fixed
 
 
+def load_android_plurals(path: Path) -> dict[str, dict[str, str]]:
+    """返回 键 → (quantity → 文本)。"""
+    root = ET.parse(path).getroot()
+    plurals: dict[str, dict[str, str]] = {}
+    for element in root.findall("plurals"):
+        name = element.get("name")
+        if not name:
+            fail(f"{path}: 存在缺 name 属性的 <plurals>")
+            continue
+        items: dict[str, str] = {}
+        for item in element.findall("item"):
+            quantity = item.get("quantity")
+            if not quantity:
+                fail(f"{path}: <plurals name={name}> 存在缺 quantity 的 <item>")
+                continue
+            items[quantity] = "".join(item.itertext())
+        plurals[name] = items
+    return plurals
+
+
 def check_android() -> str:
     default_path = ANDROID_RES / "values" / "strings.xml"
     default_strings, default_fixed = load_android_strings(default_path)
@@ -101,6 +124,14 @@ def check_android() -> str:
         key: Counter(ANDROID_PLACEHOLDER.findall(text))
         for key, text in default_strings.items()
     }
+    default_plurals = load_android_plurals(default_path)
+    # 缺省是 zh-Hans（无复数区分，只有 other 分支）；每键的占位符基准取 other。
+    default_plural_placeholders: dict[str, Counter[str]] = {}
+    for key, items in default_plurals.items():
+        if "other" not in items:
+            fail(f"android/values: <plurals name={key}> 缺 other 分支（getQuantityString 的兜底）")
+            continue
+        default_plural_placeholders[key] = Counter(ANDROID_PLACEHOLDER.findall(items["other"]))
 
     expected_dirs = {name for name in CATALOG.values() if name is not None}
     actual_dirs = {
@@ -143,9 +174,30 @@ def check_android() -> str:
                     f"实际 {sorted(found.elements())}"
                 )
 
+        plurals = load_android_plurals(path)
+        plural_keys = set(plurals)
+        default_plural_keys = set(default_plurals)
+        for key in sorted(default_plural_keys - plural_keys):
+            fail(f"android/{dirname} ({tag}): 缺复数键 {key}")
+        for key in sorted(plural_keys - default_plural_keys):
+            fail(f"android/{dirname} ({tag}): 多出缺省没有的复数键 {key}")
+        for key in sorted(plural_keys & default_plural_keys):
+            if key not in default_plural_placeholders:
+                continue
+            if "other" not in plurals[key]:
+                fail(f"android/{dirname} ({tag}): <plurals name={key}> 缺 other 分支")
+            for quantity, text in sorted(plurals[key].items()):
+                found = Counter(ANDROID_PLACEHOLDER.findall(text))
+                if found != default_plural_placeholders[key]:
+                    fail(
+                        f"android/{dirname} ({tag}): 复数键 {key} 的 {quantity} 分支占位符不一致——"
+                        f"缺省 {sorted(default_plural_placeholders[key].elements())}，"
+                        f"实际 {sorted(found.elements())}"
+                    )
+
     return (
-        f"Android：{len(default_strings)} 键 × {len(expected_dirs) + 1} 语"
-        f"（缺省 zh-Hans + {len(expected_dirs)} 卫星）"
+        f"Android：{len(default_strings)} 键 + {len(default_plurals)} 复数键 × "
+        f"{len(expected_dirs) + 1} 语（缺省 zh-Hans + {len(expected_dirs)} 卫星）"
     )
 
 
