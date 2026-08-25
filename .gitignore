@@ -37,3 +37,6 @@ output/
 Thumbs.db
 *.swp
 *-diagnostics.log
+
+# Phase 0 Bluetooth spike console logs (scripts/spike-bt1-windows.ps1)
+spike-bt1-windows-*.log

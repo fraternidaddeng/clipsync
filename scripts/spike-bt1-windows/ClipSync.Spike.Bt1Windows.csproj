@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- PHASE 0 SPIKE ONLY (docs/bluetooth-phase0-spike.md). Evidence collection for
+         ADR 0005: can an UNPACKAGED desktop app publish an RFCOMM SDP record via WinRT
+         and accept a connection? This project is intentionally NOT part of ClipSync.sln,
+         is never shipped, and must not grow into the phase 2 implementation. -->
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <RootNamespace>ClipSync.Spike.Bt1Windows</RootNamespace>
+    <AssemblyName>ClipSync.Spike.Bt1Windows</AssemblyName>
+    <!-- Lets non-Windows CI hosts compile this spike for lint purposes; the tool itself
+         only runs on Windows 10 22H2+ with a Bluetooth adapter. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Real bt1 handshake/frame types (phase 1) and the frozen service UUID: the spike
+         must exercise the exact bits phase 2 will ship, not a copy. -->
+    <ProjectReference Include="..\..\windows\ClipSync.Core\ClipSync.Core.csproj" />
+    <ProjectReference Include="..\..\windows\ClipSync.Peer.Bluetooth\ClipSync.Peer.Bluetooth.csproj" />
+  </ItemGroup>
+</Project>
