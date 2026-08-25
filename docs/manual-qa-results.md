@@ -145,4 +145,9 @@
 - `docs/device-validation-matrix.md`：补记本轮会话为「非矩阵执行」交叉引用（执行记录新增小节）；按「未测不得改绿」，D3 及所有槽位维持 `NOT_TESTED`。
 - `docs/settings-roadmap.md`：新增状态行——提案定稿、P0/P1 全部未动工（对照本轮 QA 时点的 main 核实存储键均不存在）。
 
-**代码侧**缺陷不在本次跟进范围，仍按「本轮已知限制」清单开放：Windows 缩略图单测失败（限制 1）、幽灵设备 outbox 积压（限制 2）、Android「对端写入」未探测（限制 3）、超限文本无用户提示（限制 4）、双端图同步开关不一致（限制 5）、CI 状态未核实（限制 6）。
+**代码侧**缺陷不在本次跟进范围，仍按「本轮已知限制」清单开放：幽灵设备 outbox 积压（限制 2）、Android「对端写入」未探测（限制 3）、超限文本无用户提示（限制 4）、双端图同步开关不一致（限制 5）。限制 1（缩略图单测）与限制 6（CI 状态）的最新进展见下方更新。
+
+### 更新（2026-08-25）：缩略图单测阻断已修复；CI 工作流存在但零运行
+
+- **限制 1 — Windows 缩略图单测失败：已在 main 提交 `9519716` 修复，待真 Windows 主机重跑 `scripts/build-windows.ps1` 确认后方可闭环。** 两条失败单测系两个独立成因，分别处理：`EnsureThumbnailKeepsOpaquePixels` 一类的逐通道像素全等断言改为共享的 `AssertCenterPixelIsSolid`（alpha ≥ 250、每通道相对编码色 ±3），容忍 WIC Fant 缩放器的定点误差；`LoadForListRegeneratesACorruptCachedThumbnail` 一类的损坏缓存自愈不再依赖静默 TryDelete，改为经唯一临时文件 + 覆盖式 `File.Move` 强制重写缓存，无法产出可解码缓存时 `LoadForList` 返回 null 路径而非坏路径。该提交已在 Linux 验证：解决方案编译干净（`EnableWindowsTargeting`，0 警告）、跨平台套件 471/471 通过；WPF 测试体仍需 Windows 执行，**在真 Windows 主机上 `scripts/build-windows.ps1` exit 0 之前不算验证通过**。
+- **限制 6 — CI 状态：工作流存在，但仓库从未有过任何 Actions 运行。** 仓库有且仅有一个工作流 `.github/workflows/ci.yml`（名称 CI，API 状态 active），含三作业：`validate-protocol`（ubuntu-latest）、`build-windows`（windows-latest，执行 `scripts/build-windows.ps1` 含 App.Tests）、`build-android`（ubuntu-latest）。截至本更新，Actions API 运行总数为 **0**——包括 `9519716` 在内的近期 main 推送均未触发任何运行；仓库级 Actions 权限查询对当前凭证返回 403，无法确认是否在仓库/组织设置中被禁用。因此第 0 节「CI 三作业全绿」仍不可核实，`9519716` 的修复也尚无 CI 验证，目前只能依靠 Windows 主机手动重跑兜底。
