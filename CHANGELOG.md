@@ -44,9 +44,13 @@
 - [双端] 多语言（`docs/settings-roadmap.md` P1#16，2026-08-25 用户裁决翻案后落地；底座 `ea97333`）：偏好 · 显示新增「语言」选择——跟随系统（默认）+ 19 种语言（唯一权威目录表见路线图 §五：简体中文、繁體中文、English、日本語、한국어、Español、Français、Deutsch、Português (Brasil)、Русский、العربية、Italiano、Tiếng Việt、ไทย、Bahasa Indonesia、हिन्दी、Türkçe、Polski、Nederlands），每种语言恒以母语名展示、永不翻译。**回落规则双端一致且文档化**：无法解读的 `ui.language`/`ui_language` 存值回落「跟随系统」；缺译键回落简体中文（Android 缺省资源 = zh-Hans，Windows 中立资源 = zh-Hans）——当前两端全部语言逐键齐全，回落面为空。Android：359 键 UI 文案全量抽入 string resources，ViewModel 与纯构建函数持 `UiText`（Res/Raw）延迟到 UI 层解析，`AppCompatDelegate.setApplicationLocales` 在 Application onCreate（任何 UI 前）重放存值，**改语言即时生效**（`4c89766`；18 语翻译 `b2398aa`/`af84683`/`85aed94`/`77c12c7`；Robolectric 资源限定符钉死 zh-rCN `d7c941c`）。Windows：225 键文案以 `strings.json` 为唯一事实源生成 resx（`scripts/generate-windows-strings.py`），XAML 经 `x:Static` 编译期校验取键，`LocalizationManager` 在任何窗口前把 `ui_language` 应用为进程 UI 文化，**更换后重启生效**（行内文案如实陈述；`8a4bc32`，卫星语言五批 `b6bd2d1`/`f76b5c7`/`8e1dc2e`/`22e6a63`/`4eb0fb0`），非中文界面品牌词显示拉丁「ClipSync」（与 Android 同约定）。阿拉伯语 RTL：Android Compose 布局随 per-app locale 整体自动镜像，仅通路管道流线与配对取景框两处装饰性 Canvas 保持 LTR（方向无语义、不载文字）；Windows 每窗按 `FlowDirection` 镜像，指纹/监听地址等机器文本钉回 LTR。回退范围已在路线图 P1#16 注记如实注明。
 - [双端] 历史「仅本机保留」标注（ADR 0005 §5 落地，收口 `docs/bluetooth-product-path-qa.md` 记录的缺口）：仅文本会话（蓝牙备援窗口，或对端图片开关关闭的 v1 路由）内被 `local_only` 终止的本机图片，从对端游标越过那一刻起在**本端**历史打上中性灰「仅本机保留」注记盒（Windows 历史列表徽章行 / Android 图片卡「图片」徽章旁）——事实陈述不是警报，不用错误红。标记随事件持久化（Windows clips 表 `local_only_at` 列，schema v5→v6；Android Room `local_only_at` 列，v2→v3，均纯增列迁移），重启不丢；首次降级时间为准，重连不刷新。若之后 v2 会话把同一事件以可用头重新公告或整体送达（如中断重播），过时标记自动清除。文本条目永不带此标注。Windows 主窗开着时标注即时可见：会话引擎在标记真正落库/清除时发 `LocalOnlyMarksChanged`（IP 监听与蓝牙备援两条宿主链都接到主窗历史刷新），不用等下一次捕获或远端提交；Android 由 Room 失效自动推给历史流，本就即时。
 
+- [Windows] 会话内帧级速率限流（stage-6 硬化 W5 收口）：`FrameRateBudget` 固定窗（默认 10 000 帧/分钟，16 MiB 图片分块流仍有宽裕）在 JSON 解析与重放哈希之前计数——已认证对端的紧循环帧洪泛不再能白烧本端 CPU；超限发可重试 `RATE_LIMITED` 后关会话，对端按既有退避重连并经 `want_ranges` 续传无丢失。
+- [Android] 收件箱通知洪泛上限：失控或恶意对端连推大量剪贴时，通知面每 30 秒窗口只放行前 5 条逐条通知，其余合并为一张就地更新的计数卡（「收到多条内容 · 另有 N 条」）——不再刷满通知栏，也不再任由 Android 系统限流静默丢弃；录入与自动写入永不受限，仅通知形态变化，计数卡沿用无正文契约。
+
 ### 变更
 
 - [Android] 能力路线去品牌化：Shizuku 在 UI 中呈现为「特权直读」。
+- [Android] 收件箱文本解析迁至 Room（硬化项收口）：通知「复制」动作按事件 ID 直查 Room 历史行，收到的文本不再在 SharedPreferences 里留第二份明文（旧 50 条残留一次性清除）；删除历史即令复制动作失效（诚实语义——数据真的没了就不该还能复制出来）。
 - [Windows] 三窗口全部令牌刷 `DynamicResource` 化以支持运行时换肤。
 - [双端] IA 迁移（`docs/settings-roadmap.md` P1 #10–12）：连通性配置从偏好迁回通路网络段——它们改变「内容能不能到达对端」，按判据属通路。**蓝牙备援**（双端；Android 为网络段下方的备援卡片，含目标设备选择与 bonded 设备清单）、**额外监听地址**（Windows，「重启后生效」赭色说明照搬）、**本机证书指纹**（Windows，偏好「信任」卡随之取消）现住在通路页「网络段 · 连接」卡。设置键与行为不变，纯搬家；偏好页各留一个发布版本的链接行（「已移至通路 · 网络」）指路，下个版本删除。`docs/install.md` 的 Tailscale 与蓝牙备援路径说明同步更新。
 
@@ -62,6 +66,10 @@
 - [Windows] 位图文件加载（`BitmapFile.TryLoad`）在真实 Windows 上从未成功过，现已修复（首次 Windows CI 运行 32827123288 暴露，6 条 `ClipSync.App.Tests` 失败中的 5 条同源）：`CreateOptions` 里的 `IgnoreImageCache` 与流式加载（无 `UriSource`）组合时，WPF `BitmapImage.FinalizeCreation` 会调用 `ImagingCache.RemoveFromImageCache(null)` 抛 `ArgumentNullException`，而 `TryLoad` 把它当解码失败吞掉——于是每次调用都静默返回 null：历史列表一直靠 `BitmapDecoder` 兜底解码原始 blob 才有图（缩略图缓存路径从不被绑定），详情窗大图则直接落空。WPF 的图片缓存本就只作用于 URI 加载的位图，该旗标对流式加载纯属无效负担，予以移除（`IgnoreColorProfile` 保留）。同一批 CI 失败中的第 6 条是独立小缺陷：`HistoryDisplayOptions.StoredScaleFor` 用 `double.ToString` 生成存值，「标准」档写成 `"1"` 而非路线图键契约的 `"1.0"`，现改为字面拼写（读取侧 `double.TryParse` 两种拼写都认，旧存值透明迁移）。诊断过程：Linux 无法执行 WPF 测试体，靠一条临时的不吞异常诊断测试在 windows-latest 上取到真实异常栈后定位（已随修复移除）。
 - [双端] 开启系统代理（Clash/Surge 等）时同步不再被劫持或断连：Android 端 OkHttp（同步、配对、健康探测）显式 `Proxy.NO_PROXY` 直连，Windows 端 `ClientWebSocket.Options.Proxy = null` 直连；TUN/VPN/全局模式的放行方法见 `docs/install.md` 第 5 节。
 - [Windows] 合并 tray-diagnostics 后的 `DiagnosticsWindow` 构建错误。
+- [Android] 快捷磁贴不再永远亮着（ui-gap-audit P2 诚实性收口）：磁贴现随会话状态实时变化——仅当到对端的会话真正在线（点按立即送达）时才是 ACTIVE，暂停、私密模式、连接中、等待重连、未配对一律 INACTIVE 但保持可点（点按仍入队或给出诚实 Toast）；纯映射逻辑抽出为 `SendClipboardTileState` 单测钉死。
+- [Windows] 托盘图标随系统主题热切换（ui-gap-audit P2）：任务栏深浅此前只在启动时采样一次，深色启动后切到浅色任务栏会留下低对比图标；现监听 `SystemEvents.UserPreferenceChanged` 重采样并整套换图标，四态语义不变。
+- [Windows] 配对 QR 高 DPI 整数缩放（ui-gap-audit P3）：`pixelsPerModule` 从固定 8 改为按显示器 DPI 与目标边长计算，模块严格对齐物理像素（DPI 变更事件即时重渲染，`NearestNeighbor` 兜底）——高分屏上二维码不再因分数像素缩放发糊。
+- [Android] 状态栏/导航栏背景色从 styles.xml 硬编码抽入 `@color/cs_bg`（日/夜两套，ui-gap-audit P3）：与 tokens.md 的 bg 令牌单一事实源对齐。
 - [Android] 自动写入通知配色与 Compose 弃用告警。
 - [Android] 远端图片自动写入改为独立开关「自动写入远端图片」（`auto_apply_images`，默认关）：文本「自动写入剪贴板」不再连带把图片写进本机剪贴板，与 Windows 端及 ADR 0004（图片写入门独立于文本自动应用）对齐；暂停同步仍同时关断两者，图片照常进入历史可手动复制。
 - [Windows] 同一部手机重新配对不再积累幽灵设备（2026-08-25 人工 QA 缺陷 2：设备表出现两台同名 `Xiaomi 22041216C`，未撤销的旧档 `80d29726-…` outbox 积压 42 条 pending，把通路「待发」带高）：配对确认时若列表已有同名同平台的活跃设备，视为同一部手机换了身份（如清除应用数据后）重新配对——确认窗以赭色提示「将替换旧记录」，批准后旧记录在同一事务内自动撤销（作废配对密钥、trust epoch +1）并清空其 outbox 积压，其在线会话被立即断开；设备撤销连带清空该设备发件队列为既有行为，本次补充测试锁定。
@@ -80,5 +88,5 @@
 ### 已知欠账（进行中）
 
 - 发布产物上传：发布 CI 已落地（`release.yml`，tag `v*` 触发，见「文档 / 测试」），但尚未打过任何 tag——Releases 页仍无产物，首个发布（含把 Unreleased 归入 `v0.1.0`）未启动；商店/F-Droid 上架未做。历史导出/导入已落地（Windows `5fd7461`、Android `3c51350`、图片感知 v2 格式 `87c0016`），自本清单移除。
-- ~~会话内 WebSocket 帧级速率限流~~ 已落地（`793c0b9`，`FrameRateBudget` 固定窗 + 洪泛集成测试）；~~收件箱 Room 化~~ 已落地（`f928537`，`RoomClipInbox` 直查 Room 历史行）。仍欠：入站通知洪泛策略。
+- ~~会话内 WebSocket 帧级速率限流仍未做（预认证 per-IP 滑窗限流已落地，`25d2788`）；收件箱 Room 化、入站通知洪泛策略未做。~~ 三项已全部收口（2026-08-25，见「新增/变更」）：帧级限流 `793c0b9`、收件箱 Room 化 `f928537`、通知洪泛上限 `17fda6e`。
 - 实体机验证：2026-08-25 首轮人工 QA（`docs/manual-qa-results.md`，判定不能出 RC）覆盖了前台双向文本同步等少数项；蓝牙备援阶段 0 spike 已有一对真机 GO 证据（见「文档 / 测试」）；剪贴板通路矩阵（S0–S4）与蓝牙阶段 5 产品路径验证仍为零。图片同步（protocol v2）双端代码已落地，真机图片互拷未验证。

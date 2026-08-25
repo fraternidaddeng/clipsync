@@ -104,7 +104,7 @@
 3. **打包分发（阶段 7）——最小分发链已解决（commit `eedf009`）。** `scripts/package-windows.ps1` 产出自包含 win-x64 便携 ZIP（内含运行时、许可与安装指南，附 SHA-256），`scripts/package-android.ps1` 产出环境变量签名的 Release APK（附 SHA-256，密钥库与密码不入库），`docs/install.md` 提供一页中文安装/配对/授权/排障文档；两个脚本已在 Linux 上实跑验证（Windows 端经 `EnableWindowsTargeting`，Android 端签名/Debug/未签名三路径 + apksigner 验签）。**仍未做**：GitHub Releases 产物上传与发布 CI、商店/F-Droid 上架。
 4. **图片同步——双端已落地，真机未验（原「Android 端未接线」已解决）。** 协议 v1 只有纯文本（`kind` 固定为 `const: "text"`，未预留 MIME 字段）；protocol v2 与 Windows 端完整链路自 `feature/stage-4` 移植合入，Android 端 v2 图片收发亦已接线（`8275ffa`：媒体层、Room v2、引擎分块、历史缩略图；`3fda692` 独立的「自动写入远端图片」闸）。默认双端关闭（`7466f52` fail-closed 钉死）。**剩余欠账是跨端「截图过去」的真机互拷验证与大图性能实测。**
 5. **阶段 6 硬化残项——已全部收口**：Windows 睡眠/唤醒会话快速恢复（`09a2d6b` + Modern Standby `25d2788`）；历史导出/导入（Windows `5fd7461`、Android `3c51350`、图片感知 v2 格式 `87c0016`）；会话内 WebSocket 帧级速率限流（`793c0b9`，预认证 per-IP 滑窗此前已做 `25d2788`）。
-6. **小项**：收件箱 Room 化已收口（`f928537`）；入站通知洪泛策略仍未做；Windows 衬线字体（`2db37d2` 已随包）与空状态（`8e53c5e`）已收口，其余 UI 残项见 `ui-gap-audit.md`。
+6. **小项**：收件箱 Room 化已收口（`f928537`）；入站通知洪泛上限已收口（`17fda6e`，`InboxNotificationGate` 固定窗合并计数卡）；Windows 衬线字体（`2db37d2` 已随包）与空状态（`8e53c5e`）已收口，其余 UI 残项见 `ui-gap-audit.md`。
 
 ### C. 故意不做（边界，不是欠账，但要认清代价）
 
@@ -152,7 +152,7 @@
 
 ### P2 —— 硬化与打磨
 
-8. ~~会话内 WebSocket 帧级速率限流~~（已做，`793c0b9`）、~~收件箱 Room 化~~（已做，`f928537`）；仍欠入站通知洪泛策略。
+8. ~~会话内 WebSocket 帧级速率限流~~（已做，`793c0b9`）、~~收件箱 Room 化~~（已做，`f928537`）、~~入站通知洪泛策略~~（已做，`17fda6e`）——本条三项全清。
 9. UI 残项收尾——多数已收口：Windows 衬线字体随包（`2db37d2`）、空状态与 GroupCard 深度（`8e53c5e`），WPF 超椭圆经论证不做（`0376e9e`）；残余见 `ui-gap-audit.md`。
 10. 多台 Android 并发配对实测；~~设备邻近色手动改色~~ 已解决（`4b8dd9f`，settings-roadmap P1#14）。
 11. 四族 ROM 矩阵补全（P0 只要求第一台；矩阵全绿是 1.0 的门，不是起步的门）。
