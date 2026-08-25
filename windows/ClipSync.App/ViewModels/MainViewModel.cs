@@ -30,7 +30,8 @@ public partial class MainViewModel(
     ClipboardCapturePolicy capturePolicy,
     ClipSync.App.Clipboard.Win32ClipboardAdapter clipboardAdapter,
     Func<string?>? exportPathPicker = null,
-    Func<string?>? importPathPicker = null) : ObservableObject
+    Func<string?>? importPathPicker = null,
+    Func<bool>? clearHistoryConfirmer = null) : ObservableObject
 {
     private bool initialized;
 
@@ -90,6 +91,39 @@ public partial class MainViewModel(
 
     [ObservableProperty]
     private int retentionDays = 30;
+
+    /// <summary>保留条数上限（P1-15）：超出的最旧条目在清理时过期。100–2000，与查询上限同顶。</summary>
+    [ObservableProperty]
+    private int retentionMaxEntries = 2000;
+
+    /// <summary>历史字号（P0-1）："small" / "standard" / "large"，存为系数 0.9 / 1.0 / 1.15。</summary>
+    [ObservableProperty]
+    private string historyFontScaleKey = ClipSync.App.Ui.HistoryDisplayOptions.StandardScaleKey;
+
+    /// <summary>预览行数（P1-7）："2" / "4" / "6"，默认 4。</summary>
+    [ObservableProperty]
+    private string previewLinesKey = ClipSync.App.Ui.HistoryDisplayOptions.DefaultLinesKey;
+
+    /// <summary>The effective content-text factor the app layer feeds into the resource dictionary.</summary>
+    public double HistoryFontScale => ClipSync.App.Ui.HistoryDisplayOptions.ScaleFor(HistoryFontScaleKey);
+
+    public int PreviewLines => ClipSync.App.Ui.HistoryDisplayOptions.LinesFor(PreviewLinesKey);
+
+    /// <summary>开机自启（P0-3）：intent mirror of the per-user Run entry the app layer maintains.</summary>
+    [ObservableProperty]
+    private bool launchAtStartup;
+
+    /// <summary>呼出浮窗快捷键（P1-9）：canonical chord such as "Ctrl+Alt+V"; empty = off (default).</summary>
+    [ObservableProperty]
+    private string flyoutHotkey = string.Empty;
+
+    /// <summary>Fact line under the hotkey row, set by the app layer after each registration attempt.</summary>
+    [ObservableProperty]
+    private string flyoutHotkeyStatus = string.Empty;
+
+    /// <summary>True when the chord is held by another program — the status line turns act-coloured.</summary>
+    [ObservableProperty]
+    private bool flyoutHotkeyConflict;
 
     [ObservableProperty]
     private string blockedProcesses = "1password, bitwarden, keepass, keepassxc";
@@ -207,6 +241,18 @@ public partial class MainViewModel(
             RetentionDays = days;
         }
 
+        if (int.TryParse(await store.GetSettingAsync("retention_max_entries"), out var maxEntries)
+            && maxEntries is >= 100 and <= 2000)
+        {
+            RetentionMaxEntries = maxEntries;
+        }
+
+        HistoryFontScaleKey = ClipSync.App.Ui.HistoryDisplayOptions.ScaleKeyForStored(
+            await store.GetSettingAsync("ui_history_font_scale"));
+        PreviewLinesKey = ClipSync.App.Ui.HistoryDisplayOptions.LinesKeyForStored(
+            await store.GetSettingAsync("ui_preview_lines"));
+        LaunchAtStartup = bool.TryParse(await store.GetSettingAsync("launch_at_startup"), out var launch) && launch;
+        FlyoutHotkey = await store.GetSettingAsync("hotkey_flyout") ?? string.Empty;
         BlockedProcesses = await store.GetSettingAsync("blocked_processes") ?? BlockedProcesses;
         AutoApplyRemote = !bool.TryParse(await store.GetSettingAsync("auto_apply_remote"), out var autoApply) || autoApply;
         ImageSyncEnabled = bool.TryParse(await store.GetSettingAsync("image_sync"), out var imageSync) && imageSync;
@@ -215,7 +261,9 @@ public partial class MainViewModel(
         BluetoothFallbackEnabled = bool.TryParse(await store.GetSettingAsync("bluetooth_fallback"), out var btFallback) && btFallback;
         ApplySettings();
         await store.CleanupAsync(
-            new ClipboardRetentionPolicy(maximumAge: TimeSpan.FromDays(RetentionDays)),
+            new ClipboardRetentionPolicy(
+                maximumEntries: RetentionMaxEntries,
+                maximumAge: TimeSpan.FromDays(RetentionDays)),
             DateTimeOffset.UtcNow);
         // Devices first: the history refresh labels remote clips with device display names.
         await RefreshDevicesAsync();
@@ -451,11 +499,42 @@ public partial class MainViewModel(
         await RefreshAsync();
     }
 
+    /// <summary>
+    /// 清空历史（P0-5）: one-shot local deletion of every entry, image blobs included.
+    /// Local-delete semantics — nothing is revoked on peers. Guarded by a two-step
+    /// confirmation (injectable for tests) that recommends exporting first.
+    /// </summary>
     [RelayCommand]
     private async Task ClearAsync()
     {
-        await store.ClearAsync(DateTimeOffset.UtcNow);
+        if (!(clearHistoryConfirmer ?? ConfirmClearHistory)())
+        {
+            return;
+        }
+
+        var removed = await store.ClearAsync(DateTimeOffset.UtcNow);
+        HistoryTransferStatus = $"已清空 {removed} 条历史记录（含图片）。清空只发生在本机。";
         await RefreshAsync();
+    }
+
+    private static bool ConfirmClearHistory()
+    {
+        var first = System.Windows.MessageBox.Show(
+            "清空全部历史？\n\n将一次性删除本机全部条目（含图片）。清空只发生在本机，"
+                + "不会远程删除对方已收到的内容。建议先「导出历史」留底。",
+            "剪剪相传",
+            System.Windows.MessageBoxButton.OKCancel,
+            System.Windows.MessageBoxImage.Warning);
+        if (first != System.Windows.MessageBoxResult.OK)
+        {
+            return false;
+        }
+
+        return System.Windows.MessageBox.Show(
+            "再确认一次：清空后无法恢复。确定清空全部历史？",
+            "剪剪相传",
+            System.Windows.MessageBoxButton.OKCancel,
+            System.Windows.MessageBoxImage.Warning) == System.Windows.MessageBoxResult.OK;
     }
 
     /// <summary>
@@ -561,9 +640,15 @@ public partial class MainViewModel(
     private async Task SaveSettingsAsync()
     {
         RetentionDays = Math.Clamp(RetentionDays, 1, 3650);
+        RetentionMaxEntries = Math.Clamp(RetentionMaxEntries, 100, 2000);
         await store.SetSettingAsync("is_paused", IsPaused.ToString());
         await store.SetSettingAsync("is_private_mode", IsPrivateMode.ToString());
         await store.SetSettingAsync("retention_days", RetentionDays.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        await store.SetSettingAsync("retention_max_entries", RetentionMaxEntries.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        await store.SetSettingAsync("ui_history_font_scale", ClipSync.App.Ui.HistoryDisplayOptions.StoredScaleFor(HistoryFontScaleKey));
+        await store.SetSettingAsync("ui_preview_lines", ClipSync.App.Ui.HistoryDisplayOptions.StoredLinesFor(PreviewLinesKey));
+        await store.SetSettingAsync("launch_at_startup", LaunchAtStartup.ToString());
+        await store.SetSettingAsync("hotkey_flyout", FlyoutHotkey);
         await store.SetSettingAsync("blocked_processes", BlockedProcesses);
         await store.SetSettingAsync("auto_apply_remote", AutoApplyRemote.ToString());
         await store.SetSettingAsync("image_sync", ImageSyncEnabled.ToString());
@@ -572,7 +657,9 @@ public partial class MainViewModel(
         await store.SetSettingAsync("bluetooth_fallback", BluetoothFallbackEnabled.ToString());
         ApplySettings();
         await store.CleanupAsync(
-            new ClipboardRetentionPolicy(maximumAge: TimeSpan.FromDays(RetentionDays)),
+            new ClipboardRetentionPolicy(
+                maximumEntries: RetentionMaxEntries,
+                maximumAge: TimeSpan.FromDays(RetentionDays)),
             DateTimeOffset.UtcNow);
         await RefreshAsync();
     }

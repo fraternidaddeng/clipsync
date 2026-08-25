@@ -221,9 +221,12 @@
                                                    Foreground="{StaticResource CsText4Brush}"
                                                    Text="{Binding CreatedAt}" />
                                     </Grid>
-                                    <TextBlock MaxHeight="36"
-                                               FontSize="12"
+                                    <!-- 正文随历史字号设置缩放（P0-1）；浮窗始终两行封顶（tokens §12.6） -->
+                                    <TextBlock MaxHeight="{DynamicResource CsFlyoutBodyMaxHeight}"
+                                               FontSize="{DynamicResource CsFlyoutBodyFontSize}"
                                                Foreground="{StaticResource CsText2Brush}"
+                                               LineHeight="{DynamicResource CsFlyoutBodyLineHeight}"
+                                               LineStackingStrategy="BlockLineHeight"
                                                Text="{Binding Preview, Mode=OneWay}"
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="Wrap" />

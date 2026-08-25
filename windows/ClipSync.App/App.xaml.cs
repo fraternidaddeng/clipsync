@@ -2,6 +2,7 @@ using ClipSync.App.Clipboard;
 using ClipSync.App.Diagnostics;
 using ClipSync.App.Pairing;
 using ClipSync.App.Security;
+using ClipSync.App.Startup;
 using ClipSync.App.Sync;
 using ClipSync.App.Theme;
 using ClipSync.App.Tray;
@@ -39,6 +40,7 @@ public partial class App : Application
     private readonly SemaphoreSlim bluetoothGate = new(1, 1);
     private PairingService? pairingService;
     private PairingQrWindow? pairingWindow;
+    private FlyoutHotkeyManager? flyoutHotkey;
     private System.Windows.Threading.DispatcherTimer? liveRefreshTimer;
     private bool peerEndpointUnavailable;
 
@@ -84,6 +86,8 @@ public partial class App : Application
         await store.InitializeAsync();
         var viewModel = services.GetRequiredService<MainViewModel>();
         await viewModel.InitializeAsync();
+        // 历史字号/预览行数 must be in the resource dictionary before any window measures.
+        HistoryTypeScaleManager.Apply(viewModel.HistoryFontScale, viewModel.PreviewLines);
         var mainWindow = services.GetRequiredService<MainWindow>();
         MainWindow = mainWindow;
         trayFlyout = new TrayFlyoutWindow(viewModel);
@@ -92,6 +96,23 @@ public partial class App : Application
         viewModel.PropertyChanged += OnViewModelPropertyChanged;
         viewModel.Devices.CollectionChanged += OnDevicesChanged;
         UpdateTrayState();
+
+        // 开机自启（P0-3）: re-assert the per-user Run entry so a moved executable heals
+        // itself; the global hotkey (P1-9) registers before any window shows so it works
+        // from a tray-only start too. A `--minimized` launch (the autostart path) stays
+        // in the tray; a manual launch opens the main window.
+        ReconcileLaunchAtStartup(viewModel.LaunchAtStartup);
+        flyoutHotkey = new FlyoutHotkeyManager();
+        flyoutHotkey.Pressed += OnFlyoutHotkeyPressed;
+        ApplyFlyoutHotkey();
+        if (!StartupRegistration.IsMinimizedLaunch(e.Args))
+        {
+            mainWindow.Show();
+        }
+        else
+        {
+            LocalDiagnostics.Write("started_minimized");
+        }
 
         clipboardAdapter = services.GetRequiredService<Win32ClipboardAdapter>();
         clipboardAdapter.TextChanged += OnClipboardTextChanged;
@@ -148,7 +169,68 @@ public partial class App : Application
         {
             _ = SyncBluetoothHostAsync();
         }
+
+        if (e.PropertyName is nameof(MainViewModel.HistoryFontScaleKey)
+            or nameof(MainViewModel.PreviewLinesKey))
+        {
+            if (mainViewModel is not null)
+            {
+                HistoryTypeScaleManager.Apply(mainViewModel.HistoryFontScale, mainViewModel.PreviewLines);
+            }
+        }
+
+        if (e.PropertyName is nameof(MainViewModel.LaunchAtStartup) && mainViewModel is not null)
+        {
+            ReconcileLaunchAtStartup(mainViewModel.LaunchAtStartup);
+        }
+
+        if (e.PropertyName is nameof(MainViewModel.FlyoutHotkey))
+        {
+            ApplyFlyoutHotkey();
+        }
     }
+
+    /// <summary>
+    /// Writes or removes the per-user Run entry to match the 开机自启 intent. A registry
+    /// failure is recorded and shown as a fact — the toggle keeps the user's intent.
+    /// </summary>
+    private static void ReconcileLaunchAtStartup(bool enabled)
+    {
+        try
+        {
+            StartupRegistration.SetEnabled(enabled);
+        }
+        catch (Exception exception) when (exception is System.Security.SecurityException
+            or UnauthorizedAccessException
+            or IOException
+            or InvalidOperationException)
+        {
+            LocalDiagnostics.Write($"startup_registration_failed_{exception.GetType().Name}");
+        }
+    }
+
+    /// <summary>Applies the 呼出浮窗快捷键 setting and states the outcome on the preferences row.</summary>
+    private void ApplyFlyoutHotkey()
+    {
+        if (mainViewModel is null || flyoutHotkey is null)
+        {
+            return;
+        }
+
+        var gesture = mainViewModel.FlyoutHotkey;
+        var applied = flyoutHotkey.TryApply(gesture);
+        mainViewModel.FlyoutHotkeyConflict = !applied;
+        mainViewModel.FlyoutHotkeyStatus =
+            gesture.Length == 0 ? string.Empty
+            : applied ? "已生效 · 在任意应用按下即呼出浮窗"
+            : "该组合已被其他程序占用，请换一个组合";
+        if (!applied)
+        {
+            LocalDiagnostics.Write("flyout_hotkey_unavailable");
+        }
+    }
+
+    private void OnFlyoutHotkeyPressed() => trayFlyout?.ShowFlyout();
 
     private void OnDevicesChanged(object? sender, NotifyCollectionChangedEventArgs e) => UpdateTrayState();
 
@@ -544,6 +626,12 @@ public partial class App : Application
         {
             mainViewModel.PropertyChanged -= OnViewModelPropertyChanged;
             mainViewModel.Devices.CollectionChanged -= OnDevicesChanged;
+        }
+        if (flyoutHotkey is not null)
+        {
+            flyoutHotkey.Pressed -= OnFlyoutHotkeyPressed;
+            flyoutHotkey.Dispose();
+            flyoutHotkey = null;
         }
         trayFlyout?.Close();
         trayIcon?.Dispose();

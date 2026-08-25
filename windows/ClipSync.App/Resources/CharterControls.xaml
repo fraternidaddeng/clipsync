@@ -4,7 +4,20 @@
     language as the main window instead of falling back to system defaults.
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- 历史字号/预览行数（settings-roadmap P0-1 / P1-7）：内容文字的字号阶收敛为
+         DynamicResource。这里只是「标准 · 4 行」的初始值；启动与改动时由
+         HistoryTypeScaleManager 按设置写入实际值。Chrome（组头/注记盒/元信息/按钮）
+         不在此列，保持纲领类型阶定死。 -->
+    <sys:Double x:Key="CsHistoryBodyFontSize">13</sys:Double>
+    <sys:Double x:Key="CsHistoryBodyLineHeight">18</sys:Double>
+    <sys:Double x:Key="CsHistoryPreviewMaxHeight">72</sys:Double>
+    <sys:Double x:Key="CsDetailBodyFontSize">13</sys:Double>
+    <sys:Double x:Key="CsFlyoutBodyFontSize">12</sys:Double>
+    <sys:Double x:Key="CsFlyoutBodyLineHeight">18</sys:Double>
+    <sys:Double x:Key="CsFlyoutBodyMaxHeight">36</sys:Double>
 
     <!-- Three voices (tokens.md §6), all shipped with the package (Resources/Fonts/,
          resolved relative to this dictionary): Plus Jakarta Sans carries Latin, Noto Sans SC

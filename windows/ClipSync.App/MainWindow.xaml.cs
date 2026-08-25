@@ -58,6 +58,55 @@ public partial class MainWindow : Window
         await viewModel.SaveSettingsFromUiAsync();
     }
 
+    // 保留条数（P1-15）：100–2000，每步 100——逐条步进对 2000 的量级没有意义。
+    private async void OnMaxEntriesMinusClicked(object sender, RoutedEventArgs e)
+    {
+        viewModel.RetentionMaxEntries = System.Math.Max(100, viewModel.RetentionMaxEntries - 100);
+        await viewModel.SaveSettingsFromUiAsync();
+    }
+
+    private async void OnMaxEntriesPlusClicked(object sender, RoutedEventArgs e)
+    {
+        viewModel.RetentionMaxEntries = System.Math.Min(2000, viewModel.RetentionMaxEntries + 100);
+        await viewModel.SaveSettingsFromUiAsync();
+    }
+
+    // 呼出浮窗快捷键（P1-9）：输入框内直接按组合键设置，Backspace/Delete/Esc 清除。
+    // Alt 组合以 Key.System 到达，真实按键在 SystemKey 里；不成组合的按键（如 Tab 导航）
+    // 不拦截，键盘用户仍能离开输入框。
+    private async void OnHotkeyBoxPreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        var key = e.Key == System.Windows.Input.Key.System ? e.SystemKey : e.Key;
+        if (key is System.Windows.Input.Key.Back
+            or System.Windows.Input.Key.Delete
+            or System.Windows.Input.Key.Escape)
+        {
+            e.Handled = true;
+            if (viewModel.FlyoutHotkey.Length > 0)
+            {
+                viewModel.FlyoutHotkey = string.Empty;
+                await viewModel.SaveSettingsFromUiAsync();
+            }
+
+            return;
+        }
+
+        var gesture = Tray.HotkeyGesture.FromKey(System.Windows.Input.Keyboard.Modifiers, key);
+        if (gesture is null)
+        {
+            return;
+        }
+
+        e.Handled = true;
+        if (gesture == viewModel.FlyoutHotkey)
+        {
+            return;
+        }
+
+        viewModel.FlyoutHotkey = gesture;
+        await viewModel.SaveSettingsFromUiAsync();
+    }
+
     private void OnPairNewDeviceClicked(object sender, RoutedEventArgs e) =>
         ((App)Application.Current).ShowPairingWindow(this);
 

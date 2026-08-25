@@ -38,7 +38,7 @@
                      Background="{DynamicResource CsSurfaceInBrush}"
                      BorderBrush="{DynamicResource CsLineBrush}"
                      BorderThickness="1"
-                     FontSize="13"
+                     FontSize="{DynamicResource CsDetailBodyFontSize}"
                      Foreground="{DynamicResource CsText2Brush}"
                      HorizontalScrollBarVisibility="Disabled"
                      IsReadOnly="True"
