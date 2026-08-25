@@ -70,6 +70,31 @@ jobs:
         working-directory: android
         run: ./gradlew testDebugUnitTest assembleDebug --stacktrace
 
+  e2e-stage4:
+    name: Cross-client E2E (stage-4 chain)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # Real Kestrel + TLS pin + WebSocket listener (ClipSync.E2eHost) driven by the
+      # Android JVM dialer suite (com.clipsync.android.e2e.*); prints E2E-PASS only
+      # when both directions converge exactly once.
+      - name: Run stage-4 E2E (scripts/run-e2e-stage4.ps1)
+        shell: pwsh
+        run: ./scripts/run-e2e-stage4.ps1
+
   static-analysis:
     name: Android static analysis (detekt + ktlint)
     runs-on: ubuntu-latest

@@ -43,5 +43,5 @@
 
 同日两项后续变更：
 
-1. **`ci.yml` 由三作业扩为五作业**：新增 `static-analysis`（Android `detekt` + `ktlintCheck`，基线在 `android/config/`，新违规即红）与 `i18n-parity`（`scripts/check-i18n-parity.py` 校验双端 19 语逐键齐全与占位符一致，另重跑 `scripts/generate-windows-strings.py` + `git diff --exit-code` 把守 resx 生成物与 `strings.json` 同步）。
+1. **`ci.yml` 由三作业扩为五作业**：新增 `static-analysis`（Android `detekt` + `ktlintCheck`，基线在 `android/config/`，新违规即红）与 `i18n-parity`（`scripts/check-i18n-parity.py` 校验双端 19 语逐键齐全与占位符一致，另重跑 `scripts/generate-windows-strings.py` + `git diff --exit-code` 把守 resx 生成物与 `strings.json` 同步）。同日再扩第六作业 `e2e-stage4`（ubuntu-latest）：`scripts/run-e2e-stage4.ps1` 起真 Kestrel + TLS pin 的 `ClipSync.E2eHost` 监听端、驱动 Android JVM 拨号套件双向恰一次收敛（`E2E-PASS`）；入 CI 前已在 ubuntu 本地实跑通过。
 2. **新增 `release.yml`**：推送 `v*` tag 触发——windows-latest 跑 `scripts/package-windows.ps1`（便携 ZIP + SHA-256，版本号取自 tag），ubuntu-latest 跑 `scripts/package-android.ps1`（配置了 `CLIPSYNC_ANDROID_KEYSTORE_BASE64` / `_KEYSTORE_PASSWORD` / `_KEY_ALIAS` / `_KEY_PASSWORD` secrets 时产出签名 APK；未配置时如实产出 unsigned APK 并在发布说明明示不可安装），随后创建/更新 GitHub Release 并附全部产物与 `.sha256`。发布说明自动注明诚实边界（发布 ≠ 真机验证通过）。截至本更新**尚未打过任何 tag**，Releases 页仍无产物；该工作流的首次实跑验证待第一个 tag。
