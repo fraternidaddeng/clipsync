@@ -37,14 +37,15 @@ object SyncNotifications {
     /** Idempotent; called from Application.onCreate so receivers can post right away. */
     fun ensureChannels(context: Context) {
         ensureGroup(context)
-        val channel = NotificationChannelCompat.Builder(
-            CHANNEL_INBOX,
-            NotificationManagerCompat.IMPORTANCE_DEFAULT,
-        )
-            .setName(context.getString(R.string.notification_channel_inbox_name))
-            .setDescription(context.getString(R.string.notification_channel_inbox_description))
-            .setGroup(GROUP_ID)
-            .build()
+        val channel =
+            NotificationChannelCompat
+                .Builder(
+                    CHANNEL_INBOX,
+                    NotificationManagerCompat.IMPORTANCE_DEFAULT,
+                ).setName(context.getString(R.string.notification_channel_inbox_name))
+                .setDescription(context.getString(R.string.notification_channel_inbox_description))
+                .setGroup(GROUP_ID)
+                .build()
         NotificationManagerCompat.from(context).createNotificationChannel(channel)
         ensureSyncChannel(context)
         ensureRecoveryChannel(context)
@@ -52,10 +53,12 @@ object SyncNotifications {
 
     /** One 剪贴同步 group holds every channel; must exist before any channel names it. */
     private fun ensureGroup(context: Context) {
-        val group = NotificationChannelGroupCompat.Builder(GROUP_ID)
-            .setName(context.getString(R.string.notification_group_name))
-            .setDescription(context.getString(R.string.notification_group_description))
-            .build()
+        val group =
+            NotificationChannelGroupCompat
+                .Builder(GROUP_ID)
+                .setName(context.getString(R.string.notification_group_name))
+                .setDescription(context.getString(R.string.notification_group_description))
+                .build()
         NotificationManagerCompat.from(context).createNotificationChannelGroup(group)
     }
 
@@ -66,51 +69,58 @@ object SyncNotifications {
      */
     fun ensureSyncChannel(context: Context) {
         ensureGroup(context)
-        val channel = NotificationChannelCompat.Builder(
-            CHANNEL_SYNC,
-            NotificationManagerCompat.IMPORTANCE_LOW,
-        )
-            .setName(context.getString(R.string.notification_channel_sync_name))
-            .setDescription(context.getString(R.string.notification_channel_sync_description))
-            .setGroup(GROUP_ID)
-            .setShowBadge(false)
-            .build()
+        val channel =
+            NotificationChannelCompat
+                .Builder(
+                    CHANNEL_SYNC,
+                    NotificationManagerCompat.IMPORTANCE_LOW,
+                ).setName(context.getString(R.string.notification_channel_sync_name))
+                .setDescription(context.getString(R.string.notification_channel_sync_description))
+                .setGroup(GROUP_ID)
+                .setShowBadge(false)
+                .build()
         NotificationManagerCompat.from(context).createNotificationChannel(channel)
     }
 
     private fun ensureRecoveryChannel(context: Context) {
         ensureGroup(context)
-        val channel = NotificationChannelCompat.Builder(
-            CHANNEL_RECOVERY,
-            NotificationManagerCompat.IMPORTANCE_DEFAULT,
-        )
-            .setName(context.getString(R.string.notification_channel_recovery_name))
-            .setDescription(context.getString(R.string.notification_channel_recovery_description))
-            .setGroup(GROUP_ID)
-            .build()
+        val channel =
+            NotificationChannelCompat
+                .Builder(
+                    CHANNEL_RECOVERY,
+                    NotificationManagerCompat.IMPORTANCE_DEFAULT,
+                ).setName(context.getString(R.string.notification_channel_recovery_name))
+                .setDescription(context.getString(R.string.notification_channel_recovery_description))
+                .setGroup(GROUP_ID)
+                .build()
         NotificationManagerCompat.from(context).createNotificationChannel(channel)
     }
 
     /** Stable per-event id so re-delivery updates instead of stacking. */
-    fun notificationIdFor(eventId: String): Int =
-        INBOX_NOTIFICATION_ID_BASE + (eventId.hashCode() and 0x7FFF)
+    fun notificationIdFor(eventId: String): Int = INBOX_NOTIFICATION_ID_BASE + (eventId.hashCode() and 0x7FFF)
 
-    fun buildInboxItemNotification(context: Context, eventId: String): Notification {
+    fun buildInboxItemNotification(
+        context: Context,
+        eventId: String,
+    ): Notification {
         val requestCode = notificationIdFor(eventId)
-        val copyAction = PendingIntent.getBroadcast(
-            context,
-            requestCode,
-            CopyInboxItemReceiver.intent(context, eventId),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-        val openApp = PendingIntent.getActivity(
-            context,
-            requestCode,
-            Intent(context, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-        return NotificationCompat.Builder(context, CHANNEL_INBOX)
+        val copyAction =
+            PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                CopyInboxItemReceiver.intent(context, eventId),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+        val openApp =
+            PendingIntent.getActivity(
+                context,
+                requestCode,
+                Intent(context, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+        return NotificationCompat
+            .Builder(context, CHANNEL_INBOX)
             .setSmallIcon(R.drawable.ic_notify_clip)
             // Charter flow blue tints the polyline small icon and the action text
             // on OEMs that honour it; the title/body stay content-free by design.
@@ -131,7 +141,10 @@ object SyncNotifications {
      * disabled notifications; the item still sits in the inbox, only this surface is missing,
      * which the in-app status card must show separately.
      */
-    fun notifyInboxItem(context: Context, eventId: String): Boolean {
+    fun notifyInboxItem(
+        context: Context,
+        eventId: String,
+    ): Boolean {
         val manager = NotificationManagerCompat.from(context)
         if (!manager.areNotificationsEnabled()) {
             return false
@@ -150,29 +163,35 @@ object SyncNotifications {
      * the system clipboard (plan 阶段 4: 成功后再发不含正文的状态通知). It shares the event's
      * notification id, so it replaces any earlier copy-action notification for the same event.
      */
-    fun notifyAutoApplied(context: Context, eventId: String): Boolean {
+    fun notifyAutoApplied(
+        context: Context,
+        eventId: String,
+    ): Boolean {
         val manager = NotificationManagerCompat.from(context)
         if (!manager.areNotificationsEnabled()) {
             return false
         }
         val requestCode = notificationIdFor(eventId)
-        val openApp = PendingIntent.getActivity(
-            context,
-            requestCode,
-            Intent(context, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-        val notification = NotificationCompat.Builder(context, CHANNEL_INBOX)
-            .setSmallIcon(R.drawable.ic_notify_clip)
-            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
-            .setContentTitle(context.getString(R.string.notification_inbox_title))
-            .setContentText(context.getString(R.string.notification_applied_text))
-            .setContentIntent(openApp)
-            .setAutoCancel(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setCategory(NotificationCompat.CATEGORY_STATUS)
-            .build()
+        val openApp =
+            PendingIntent.getActivity(
+                context,
+                requestCode,
+                Intent(context, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+        val notification =
+            NotificationCompat
+                .Builder(context, CHANNEL_INBOX)
+                .setSmallIcon(R.drawable.ic_notify_clip)
+                .setColor(ContextCompat.getColor(context, R.color.cs_flow))
+                .setContentTitle(context.getString(R.string.notification_inbox_title))
+                .setContentText(context.getString(R.string.notification_applied_text))
+                .setContentIntent(openApp)
+                .setAutoCancel(true)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setCategory(NotificationCompat.CATEGORY_STATUS)
+                .build()
         return try {
             manager.notify(requestCode, notification)
             true
@@ -181,7 +200,10 @@ object SyncNotifications {
         }
     }
 
-    fun cancelInboxItem(context: Context, eventId: String) {
+    fun cancelInboxItem(
+        context: Context,
+        eventId: String,
+    ) {
         NotificationManagerCompat.from(context).cancel(notificationIdFor(eventId))
     }
 
@@ -198,24 +220,27 @@ object SyncNotifications {
         if (!manager.areNotificationsEnabled()) {
             return false
         }
-        val openApp = PendingIntent.getActivity(
-            context,
-            RECOVERY_NOTIFICATION_ID,
-            Intent(context, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-        val notification = NotificationCompat.Builder(context, CHANNEL_RECOVERY)
-            .setSmallIcon(R.drawable.ic_notify_clip)
-            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
-            .setContentTitle(context.getString(R.string.notification_recovery_title))
-            .setContentText(context.getString(R.string.notification_recovery_text))
-            .setContentIntent(openApp)
-            .setAutoCancel(true)
-            // No clipboard text is present, so the lock screen may show it as-is.
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setCategory(NotificationCompat.CATEGORY_STATUS)
-            .build()
+        val openApp =
+            PendingIntent.getActivity(
+                context,
+                RECOVERY_NOTIFICATION_ID,
+                Intent(context, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+        val notification =
+            NotificationCompat
+                .Builder(context, CHANNEL_RECOVERY)
+                .setSmallIcon(R.drawable.ic_notify_clip)
+                .setColor(ContextCompat.getColor(context, R.color.cs_flow))
+                .setContentTitle(context.getString(R.string.notification_recovery_title))
+                .setContentText(context.getString(R.string.notification_recovery_text))
+                .setContentIntent(openApp)
+                .setAutoCancel(true)
+                // No clipboard text is present, so the lock screen may show it as-is.
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setCategory(NotificationCompat.CATEGORY_STATUS)
+                .build()
         return try {
             manager.notify(RECOVERY_NOTIFICATION_ID, notification)
             true
@@ -242,24 +267,27 @@ object SyncNotifications {
         if (!manager.areNotificationsEnabled()) {
             return false
         }
-        val openApp = PendingIntent.getActivity(
-            context,
-            AUTH_THROTTLE_NOTIFICATION_ID,
-            Intent(context, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-        val notification = NotificationCompat.Builder(context, CHANNEL_RECOVERY)
-            .setSmallIcon(R.drawable.ic_notify_clip)
-            .setColor(ContextCompat.getColor(context, R.color.cs_flow))
-            .setContentTitle(context.getString(R.string.notification_auth_throttled_title))
-            .setContentText(context.getString(R.string.notification_auth_throttled_text))
-            .setContentIntent(openApp)
-            .setAutoCancel(true)
-            // No clipboard text is present, so the lock screen may show it as-is.
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setCategory(NotificationCompat.CATEGORY_STATUS)
-            .build()
+        val openApp =
+            PendingIntent.getActivity(
+                context,
+                AUTH_THROTTLE_NOTIFICATION_ID,
+                Intent(context, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+        val notification =
+            NotificationCompat
+                .Builder(context, CHANNEL_RECOVERY)
+                .setSmallIcon(R.drawable.ic_notify_clip)
+                .setColor(ContextCompat.getColor(context, R.color.cs_flow))
+                .setContentTitle(context.getString(R.string.notification_auth_throttled_title))
+                .setContentText(context.getString(R.string.notification_auth_throttled_text))
+                .setContentIntent(openApp)
+                .setAutoCancel(true)
+                // No clipboard text is present, so the lock screen may show it as-is.
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setCategory(NotificationCompat.CATEGORY_STATUS)
+                .build()
         return try {
             manager.notify(AUTH_THROTTLE_NOTIFICATION_ID, notification)
             true

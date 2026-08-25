@@ -27,15 +27,16 @@ object InboxDelivery {
         object : ClipboardWriter {
             override fun probe(): CapabilityState = coordinator.publicWriteState
 
-            override fun writeText(text: String, originEventId: String): ClipboardWriteResult =
-                coordinator.writeText(text, originEventId).result
+            override fun writeText(
+                text: String,
+                originEventId: String,
+            ): ClipboardWriteResult = coordinator.writeText(text, originEventId).result
 
             override fun writeImage(
                 encoded: ByteArray,
                 mimeType: String,
                 originEventId: String,
-            ): ClipboardWriteResult =
-                coordinator.writeImage(encoded, mimeType, originEventId).result
+            ): ClipboardWriteResult = coordinator.writeImage(encoded, mimeType, originEventId).result
         }
     }
 
@@ -46,16 +47,14 @@ object InboxDelivery {
      * Plan 3.4 gate: inbound auto-apply obeys both the auto_apply_remote preference and the
      * pause switch. Receiving into the inbox is never gated — only the automatic write is.
      */
-    fun autoApplyAllowed(settings: SyncSettingsStore): Boolean =
-        settings.autoApplyRemote && !settings.syncPaused
+    fun autoApplyAllowed(settings: SyncSettingsStore): Boolean = settings.autoApplyRemote && !settings.syncPaused
 
     /**
      * Image counterpart of [autoApplyAllowed]: per ADR 0004 the image write gate is its own
      * opt-in (default off) — the text auto_apply_remote preference never writes pixel bytes
      * to the clipboard on its own. Pause still stops both, matching Windows.
      */
-    fun autoApplyImagesAllowed(settings: SyncSettingsStore): Boolean =
-        settings.autoApplyImages && !settings.syncPaused
+    fun autoApplyImagesAllowed(settings: SyncSettingsStore): Boolean = settings.autoApplyImages && !settings.syncPaused
 
     /**
      * 收到内容通知 (settings-roadmap P1-8): the in-app switch for the inbox notification
