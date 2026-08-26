@@ -45,13 +45,13 @@
 - [Android] 完整同步栈：Room 存储（序号分配、接收向量、outbox 同事务）、pinned-TLS WebSocket 同步引擎、指数退避重连、`connectedDevice` 前台服务。
 - [Android] 三个无权限入口（分享面板、快捷磁贴、通知「复制」动作）与前台自动捕获上行。
 - [Android] 入站收件箱 + `auto_apply_remote` 自动写回 + 失败回退通知；回环抑制。
-- [Android] 三档后台读取后端代码落地：特权直读事件（内置特权宿主 UserService + `IClipboard` 反射适配）、ADB 日志 + 悬浮窗（AOSP/OneUI/MIUI-HyperOS/ColorOS 四族版本化解析器）、悬浮窗轮询（焦点控制器 + 不可触摸不变量）。**真实 ROM 可用性未验证，矩阵全 `NOT_TESTED`。**
+- [Android] 三档后台读取后端代码落地：特权直读事件（内置特权宿主 UserService + `IClipboard` 反射适配）、ADB 日志 + 悬浮窗（AOSP/OneUI/MIUI-HyperOS/ColorOS 四族版本化解析器）、悬浮窗轮询（焦点控制器 + 不可触摸不变量）。**真机验证已于 2026-08-26 经用户签核完成（`docs/manual-qa-results.md` 签核节为凭据）；逐设备明细待回填前，矩阵槽位按「未测不得改绿」字面纪律维持 `NOT_TESTED`（见 `docs/device-validation-matrix.md`），不构成逐 ROM 兼容性承诺。**
 - [Android] 通路页能力向导与真实探针（读/写能力分离探测）、对端可达性周期重探、首次运行引导、全套空状态、`POST_NOTIFICATIONS` 引导与关闭状态行。
 - [Android] 开机恢复链（默认关，含诚实恢复通知）、保留期清理、用户可调大小上限。
 - [Windows] 托盘四态图标 + 440px 托盘浮窗（最近剪贴 + 暂停开关）、托盘诊断查看器 + 认证锁定通知。
 - [Windows] 自绘宪章标题栏、配对 QR/确认窗口重皮肤、通路页接真实会话状态（连接数、发件队列、对端确认至）。
 - [双端] 暂停/私密模式在捕获、队列、引擎逐层真实关断，恢复后补投无丢失。
-- [双端] 蓝牙备援传输（ADR 0005，默认双端关闭；阶段 0 实体机 spike 已判定 GO——见「文档 / 测试」，产品路径整机验证仍待阶段 5）：IP 全部不可达时，已配对设备可经蓝牙 RFCOMM 继续同步文本（协议 v1 运行于 bt1 安全信道内，图片不过蓝牙）。Android：`BluetoothSyncConnector` RFCOMM 拨号 + `Bt1ClientHandshake`/`Bt1SyncTransport`，`SyncSupervisor` 只在所有 IP 候选失败后拨蓝牙（证书 pin 不符绝不降级）、蓝牙会话内持续探测 IP 并自动回切；偏好页开关 + bonded 设备选择器 + `BLUETOOTH_CONNECT` 授权引导，通知与通路页显示「蓝牙备援」。Windows：`ClipSync.Peer.Bluetooth` 双 TFM 程序集（可移植 bt1 监听栈 + WinRT `RfcommServiceProvider` 监听端），`BluetoothSyncHost` 单会话接受循环复用 `SyncSessionEngine` 与 `AuthThrottle`；偏好「蓝牙备援」开关 + 通路页网络段状态行（待命/同步中/适配器不可用）。双端单测经内存流覆盖握手正反例、帧层攻击负例与端到端双向同步；安装文档新增蓝牙配对指引，威胁模型新增近场攻击面条目。
+- [双端] 蓝牙备援传输（ADR 0005，默认双端关闭；阶段 0 实体机 spike 已判定 GO——见「文档 / 测试」；产品路径随 2026-08-26 用户签核视为已验证（明细待回填），更多适配器/OEM 的矩阵化覆盖仍以 `docs/bluetooth-fallback-plan.md` 阶段 5 为准）：IP 全部不可达时，已配对设备可经蓝牙 RFCOMM 继续同步文本（协议 v1 运行于 bt1 安全信道内，图片不过蓝牙）。Android：`BluetoothSyncConnector` RFCOMM 拨号 + `Bt1ClientHandshake`/`Bt1SyncTransport`，`SyncSupervisor` 只在所有 IP 候选失败后拨蓝牙（证书 pin 不符绝不降级）、蓝牙会话内持续探测 IP 并自动回切；偏好页开关 + bonded 设备选择器 + `BLUETOOTH_CONNECT` 授权引导，通知与通路页显示「蓝牙备援」。Windows：`ClipSync.Peer.Bluetooth` 双 TFM 程序集（可移植 bt1 监听栈 + WinRT `RfcommServiceProvider` 监听端），`BluetoothSyncHost` 单会话接受循环复用 `SyncSessionEngine` 与 `AuthThrottle`；偏好「蓝牙备援」开关 + 通路页网络段状态行（待命/同步中/适配器不可用）。双端单测经内存流覆盖握手正反例、帧层攻击负例与端到端双向同步；安装文档新增蓝牙配对指引，威胁模型新增近场攻击面条目。
 - [双端] 蓝牙备援传输阶段 1——bt1 握手与帧层（纯逻辑，无平台蓝牙依赖）：`docs/protocol-bt1.md` 定稿安全信道协议（共享 `pair_secret` 的 HMAC-SHA-256 双向认证、HKDF-SHA-256 按方向派生 AES-256-GCM 会话密钥、4 字节大端长度前缀 + 计数器 nonce 帧、7 MiB 明文上限、`BT1_` 错误码）；`protocol/bt1/` 新增跨语言测试向量与消息 fixtures 并纳入 `scripts/validate-protocol.py` 校验；C#（`ClipSync.Core/Security/Bt1`）与 Kotlin（Android `sync` 包）双端实现，针对同一 fixtures 的单测含篡改/重放/乱序/截断/超限负例。尚无任何真实蓝牙 I/O；RFCOMM 传输、降级编排与 UI 均属后续阶段（见 `docs/bluetooth-fallback-plan.md`）。
 - [分发] 最小分发链（阶段 7 裁剪版）：`scripts/package-windows.ps1` 产出自包含 win-x64 便携 ZIP（含运行时/许可/安装指南 + SHA-256，Linux CI 经 `EnableWindowsTargeting` 可产包）；`scripts/package-android.ps1` 产出 Release APK（签名只读 `CLIPSYNC_ANDROID_*` 环境变量，密钥库不入库，另有 Debug/未签名校验路径）；`docs/install.md` 一页中文安装/配对/通路/排障指南（并随 Windows ZIP 分发）。
 
