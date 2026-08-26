@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/fraternidaddeng/clipsync/actions/workflows/ci.yml/badge.svg)](https://github.com/fraternidaddeng/clipsync/actions/workflows/ci.yml)
 
-ClipSync is a private, direct peer-to-peer clipboard synchronization project for Windows and Android. The repository has completed **Stage 1**: the Stage 0 protocol and client foundations plus a background Windows clipboard listener, transactional local history, privacy controls, and a tray-based WPF UI.
+ClipSync is a private, direct peer-to-peer clipboard synchronization tool for Windows and Android. Version **0.1.0** delivers the full product: QR pairing with TLS 1.3 + certificate-fingerprint pinning, LAN/Tailscale sync with exactly-once offline catch-up, history/search/export on both ends, image sync (protocol v2, off by default), a Bluetooth RFCOMM fallback (text only, off by default), the four-tier Android background-read capability ladder, and a charter-themed UI in 19 languages. See `CHANGELOG.md` and `docs/releases/v0.1.0.md` for the release record.
 
 No account service, cloud database, public relay, file transfer, telemetry, or clipboard-content logging is included.
 
@@ -15,7 +15,7 @@ No account service, cloud database, public relay, file transfer, telemetry, or c
 - Android Studio with Android SDK Platform 35 and Platform Tools
 - PowerShell 7 is recommended; Windows PowerShell 5.1 is also supported by the bootstrap scripts
 
-The development machine used for the recorded validation has a repository-local .NET 8 SDK, JDK 17, and a repository-local Android SDK. These tool directories are ignored and are not project dependencies. Android JVM tests, APK assembly, and an API 35 emulator launch were verified; physical Android ROM coverage remains explicitly `NOT_TESTED`.
+The development machine used for the recorded validation has a repository-local .NET 8 SDK, JDK 17, and a repository-local Android SDK. These tool directories are ignored and are not project dependencies. Android JVM tests, APK assembly, and an API 35 emulator launch were verified; physical-device verification was signed off by the user on 2026-08-26 (`docs/manual-qa-results.md`), while the per-device matrix slots in `docs/device-validation-matrix.md` stay `NOT_TESTED` until the structured details are backfilled.
 
 ## Build and test
 
@@ -37,7 +37,7 @@ Protocol fixtures:
 pwsh .\scripts\validate-protocol.ps1
 ```
 
-The Windows app starts in the notification area without opening its main window. It captures pure text locally, persists it in SQLite, and exposes history/search/delete/clear and pause/private/retention/source-block settings. Pairing and networking intentionally begin in Stage 2; the Android app remains the Stage 0 capability shell.
+A manual start opens the main window (first run shows a five-step onboarding); autostart with `--minimized` stays in the tray. The Windows app captures clipboard content locally, persists it in SQLite, and exposes history/search/delete/clear plus pause/private/retention/source-block settings. Pairing, networked sync, and the Android app are fully functional; end users should follow `docs/install.md`.
 
 Windows Stage 1 acceptance checks:
 
@@ -70,22 +70,19 @@ pwsh .\scripts\android-bootstrap.ps1 -PackageName com.clipsync.android
 ## Repository layout
 
 - `docs/`: frozen product, security, protocol, Android capability, ADR, and verification records.
-- `protocol/v1/`: JSON Schema and shared cross-language fixtures.
+- `protocol/`: JSON Schemas and shared cross-language fixtures (`v1/`, `v2/`, `bt1/`).
 - `windows/`: .NET 8 WPF shell and xUnit tests.
 - `android/`: Kotlin/Compose shell and JVM unit tests.
 - `scripts/`: repeatable build, validation, and explicit adb inspection commands.
 
 ## Branch policy
 
-- `main`: releasable, reviewed stages only.
-- `develop`: integration branch for the current stage.
-- `feature/<short-name>`: scoped work branches merged into `develop`.
-
-Stage completion requires its tests and acceptance checks to pass before merging `develop` into `main`. This repository was initialized on `main`; branches are created when the first commit exists so they point at an auditable baseline.
+- `main`: releasable; all current work lands here after its tests and acceptance checks pass.
+- Short-lived work branches (`feature/<short-name>` or agent branches) merge into `main` and are then retired. The early-stage `develop` integration branch is no longer used.
 
 ## Privacy and security baseline
 
-- Only pure text is in scope for v1.
+- Text is the core payload; image sync (protocol v2) ships off by default on both ends, and the Bluetooth fallback carries text only.
 - Clipboard text must never enter ordinary logs or telemetry.
 - Android special capabilities require visible, revocable user action.
 - Network reachability is required; there is no NAT traversal service or public relay.
