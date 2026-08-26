@@ -1,17 +1,17 @@
 # 无实体设备的自动化验证边界（verification without device）
 
-- 日期：2026-08-24（2026-08-25 更新套件规模与运行状态，核对至 main `d573080`）
+- 日期：2026-08-24（2026-08-25 更新套件规模与运行状态；2026-08-26 套件规模对齐 v0.1.0 代码基线 main `25219f7`——六作业 CI run [32940342113](https://github.com/fraternidaddeng/clipsync/actions/runs/32940342113) 全绿，其后至今仅文档提交）
 - 分支：`main`（原 `cursor/implement-charter-ui-1991`，已经 PR #5 全部并入）
 - 目的：明确「JVM/CI 自动化测试已经证明了什么」与「必须在实体设备上人工 QA 什么」，避免把绿色的测试结果误读为整机可用性声明。实体机验收标准见 `docs/device-validation-matrix.md`。
 
 ## 如何运行
 
-| 套件 | 命令 | 运行环境 | 当前规模（main `d573080`，全绿） |
+| 套件 | 命令 | 运行环境 | 当前规模（v0.1.0 代码基线 main `25219f7`，全绿） |
 |---|---|---|---|
-| Android JVM 单元/集成测试 | `cd android && ./gradlew testDebugUnitTest` | 任意装有 JDK 17+ 与 Android SDK 的机器（无需模拟器/设备；Robolectric 提供 Android 框架） | 656 个用例（其中 1 例条件性跳过；含本次新增的 4 例会话级图片集成测试） |
+| Android JVM 单元/集成测试 | `cd android && ./gradlew testDebugUnitTest` | 任意装有 JDK 17+ 与 Android SDK 的机器（无需模拟器/设备；Robolectric 提供 Android 框架） | 691 个用例（常规跑含 2 例跨端 E2E 拨号用例跳过，其实跑归 CI `e2e-stage4` 作业） |
 | Android 仪器化测试（androidTest） | `cd android && ./gradlew connectedDebugAndroidTest` | 已连接的 Android 设备或模拟器（API 29+；CI 上需要可用的 KVM）。Room 迁移（1→2、2→3）、DAO 真 SQLite、前台服务启停冒烟；执行记录与嵌套 KVM 失败的绕行见 `docs/android-instrumentation-test-report.md` | 7 个用例（迁移 3 + DAO 3 + FGS 1） |
-| Windows 核心/对端测试 | `cd windows && dotnet test ClipSync.Tests/ClipSync.Tests.csproj` | 任意 .NET 8 平台（Linux/macOS/Windows；真实 Kestrel + TLS + WebSocket 回环） | 484 个用例 |
-| Windows 应用层测试 | `cd windows && dotnet test ClipSync.App.Tests/ClipSync.App.Tests.csproj` | 仅 Windows（WPF/DPAPI/Win32 剪贴板；CI 的 `windows-latest` 作业执行——2026-08-25 Actions 启用后实跑，`d573080` 时点运行 32850466841 全绿） | 186 个用例 |
+| Windows 核心/对端测试 | `cd windows && dotnet test ClipSync.Tests/ClipSync.Tests.csproj` | 任意 .NET 8 平台（Linux/macOS/Windows；真实 Kestrel + TLS + WebSocket 回环） | 591 个用例 |
+| Windows 应用层测试 | `cd windows && dotnet test ClipSync.App.Tests/ClipSync.App.Tests.csproj` | 仅 Windows（WPF/DPAPI/Win32 剪贴板；CI 的 `windows-latest` 作业执行——2026-08-25 Actions 启用后实跑，`25219f7` 基线运行 32940342113 全绿） | 216 个用例 |
 | 协议 fixture 校验 | `python3 scripts/validate-protocol.py` 或 `scripts/validate-protocol.ps1` | 任意平台 | v1：12 valid + 37 invalid；v2：15 valid + 15 invalid；配对：5 valid + 7 invalid；bt1：6 valid + 13 invalid 握手 fixtures，另 3 组握手向量 + 7 组帧向量 |
 
 非 Windows 机器上可用 `dotnet build ClipSync.App.Tests/ClipSync.App.Tests.csproj -p:EnableWindowsTargeting=true` 做编译级检查，但 WPF 测试本体只能在 Windows 上执行。
