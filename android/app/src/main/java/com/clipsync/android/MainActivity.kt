@@ -689,13 +689,21 @@ private fun ClipSyncApp(
                 .filmGrain(),
     ) {
         if (onboardingOpen) {
-            // First-run introduction: once dismissed, the flag is persisted and
-            // the chosen entrance (通路 for pairing, or 一屏) takes over.
+            // First-run tutorial: once dismissed, the flag is persisted and
+            // the chosen entrance takes over — the pairing ritual, the conduit
+            // wizard, or 一屏. Replayable from 偏好 · 帮助 · 重新查看引导.
             OnboardingScreen(
                 onPair = {
                     onOnboardingSeen()
                     onboardingOpen = false
                     tab = 1
+                    pairingOpen = true
+                },
+                onOpenWizard = {
+                    onOnboardingSeen()
+                    onboardingOpen = false
+                    tab = 1
+                    pairingOpen = false
                 },
                 onSkip = {
                     onOnboardingSeen()
@@ -810,6 +818,7 @@ private fun ClipSyncApp(
                             onMaxEntriesChange = preferencesViewModel::setMaxEntries,
                             onClearHistory = preferencesViewModel::clearHistory,
                             onLanguageChange = preferencesViewModel::setLanguage,
+                            onReplayOnboarding = { onboardingOpen = true },
                             modifier = Modifier.padding(padding),
                         )
                 }

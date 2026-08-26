@@ -406,4 +406,29 @@
     <string name="onboarding_honesty_header">先說清楚</string>
     <string name="onboarding_honesty_body">Android 限制應用程式在背景讀取剪貼簿，剪剪相傳不會假裝做到：應用程式在前景時可自動上行；背景讀取需要在「通路」頁任選一條路線完成授權，每一段能力都以實測為準，做不到就直說。</string>
     <string name="onboarding_skip">先看看，稍後配對</string>
+    <string name="onboarding_next">繼續</string>
+    <string name="onboarding_back">上一步</string>
+    <string name="onboarding_skip_for_now">稍後設定</string>
+    <string name="onboarding_step_progress">第 %1$d 步，共 %2$d 步</string>
+    <string name="onboarding_pair_fact_entry">配對入口固定在「通路」頁的網路段，教學結束後隨時能找到。</string>
+    <string name="onboarding_pair_fact_verify">配對時兩端各自顯示憑證指紋，一致才確認——這一步防止連錯電腦。</string>
+    <string name="onboarding_pair_fact_service">配對完成即接通網路段，同步服務自動啟動。</string>
+    <string name="onboarding_read_body">應用程式在前景時始終能讀取剪貼簿；背景讀取需任選一條路線完成一次設定，推薦品質最高的「特權直讀」。</string>
+    <string name="onboarding_route_recommended">推薦</string>
+    <string name="onboarding_wireless_debug_hint">不方便接 USB 線？在系統「開發人員選項 → 無線偵錯」中開啟後，電腦透過 Wi-Fi 也能完成同樣的一鍵啟動。</string>
+    <string name="onboarding_perms_title">權限一覽</string>
+    <string name="onboarding_perms_body">權限只在用到的時刻詢問，這裡先說清楚各自的用途；拒絕任何一項，前景複製與歷史都照常。</string>
+    <string name="onboarding_perm_notifications">通知</string>
+    <string name="onboarding_perm_notifications_desc">顯示同步狀態與「收到內容」提醒，永不包含剪貼簿內容。</string>
+    <string name="onboarding_perm_overlay">懸浮窗</string>
+    <string name="onboarding_perm_overlay_desc">僅懸浮窗相關的背景讀取路線需要；不選這些路線就不會詢問。</string>
+    <string name="onboarding_perm_battery">電池最佳化</string>
+    <string name="onboarding_perm_battery_desc">放行後背景同步更穩定；不放行也能用，只是服務更容易被系統回收。</string>
+    <string name="onboarding_finish_title">就緒</string>
+    <string name="onboarding_finish_body">先與電腦配對；背景讀取的路線引導在「通路」頁，所有開關都在「偏好」頁，隨時可回來。</string>
+    <string name="onboarding_open_wizard">去通路頁看路線引導</string>
+
+    <string name="prefs_group_help">說明</string>
+    <string name="prefs_replay_onboarding">重新查看引導</string>
+    <string name="prefs_replay_onboarding_desc">從歡迎頁重新過一遍首次設定教學；不改動任何設定與配對。</string>
 </resources>

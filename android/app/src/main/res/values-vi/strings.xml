@@ -406,4 +406,29 @@
     <string name="onboarding_honesty_header">Nói rõ ngay từ đầu</string>
     <string name="onboarding_honesty_body">Android hạn chế đọc bảng nhớ tạm ở nền, và ClipSync không giả vờ khác đi: nó tự động tải lên khi đang mở; đọc nền cần hoàn thành một tuyến bạn chọn ở trang Đường dẫn. Mọi khả năng đều được đánh giá bằng kiểm tra thực tế — nếu điều gì không làm được, nó sẽ nói thẳng.</string>
     <string name="onboarding_skip">Xem quanh trước, ghép nối sau</string>
+    <string name="onboarding_next">Tiếp tục</string>
+    <string name="onboarding_back">Quay lại</string>
+    <string name="onboarding_skip_for_now">Thiết lập sau</string>
+    <string name="onboarding_step_progress">Bước %1$d trên %2$d</string>
+    <string name="onboarding_pair_fact_entry">Lối vào ghép nối luôn nằm ở đoạn mạng của trang “Đường dẫn” — kết thúc hướng dẫn này bạn vẫn tìm thấy bất cứ lúc nào.</string>
+    <string name="onboarding_pair_fact_verify">Khi ghép nối, hai đầu đều hiển thị vân tay chứng chỉ; chỉ xác nhận khi trùng khớp — bước này tránh kết nối nhầm PC.</string>
+    <string name="onboarding_pair_fact_service">Ghép nối xong là đoạn mạng được nối và dịch vụ đồng bộ tự khởi động.</string>
+    <string name="onboarding_read_body">Khi ứng dụng ở nền trước, khay nhớ tạm luôn đọc được; đọc nền cần thiết lập một lần trên tuyến bạn chọn. Khuyên dùng tuyến chất lượng cao nhất: “Đọc trực tiếp đặc quyền”.</string>
+    <string name="onboarding_route_recommended">Khuyên dùng</string>
+    <string name="onboarding_wireless_debug_hint">Không tiện cắm cáp USB? Bật “Tùy chọn nhà phát triển → Gỡ lỗi không dây”, PC có thể thực hiện cùng thao tác khởi động một chạm qua Wi-Fi.</string>
+    <string name="onboarding_perms_title">Tổng quan quyền</string>
+    <string name="onboarding_perms_body">Quyền chỉ được hỏi đúng lúc cần dùng; ở đây nói rõ trước công dụng của từng quyền. Từ chối quyền nào thì sao chép ở nền trước và lịch sử vẫn hoạt động bình thường.</string>
+    <string name="onboarding_perm_notifications">Thông báo</string>
+    <string name="onboarding_perm_notifications_desc">Hiển thị trạng thái đồng bộ và nhắc “đã nhận nội dung”; không bao giờ chứa nội dung khay nhớ tạm.</string>
+    <string name="onboarding_perm_overlay">Lớp phủ</string>
+    <string name="onboarding_perm_overlay_desc">Chỉ các tuyến đọc nền dựa trên lớp phủ mới cần; không chọn các tuyến đó thì không bao giờ bị hỏi.</string>
+    <string name="onboarding_perm_battery">Tối ưu hóa pin</string>
+    <string name="onboarding_perm_battery_desc">Miễn trừ giúp đồng bộ nền ổn định hơn; không miễn trừ vẫn dùng được, chỉ là dịch vụ dễ bị hệ thống thu hồi hơn.</string>
+    <string name="onboarding_finish_title">Sẵn sàng</string>
+    <string name="onboarding_finish_body">Hãy ghép nối với PC trước; hướng dẫn tuyến đọc nằm ở trang “Đường dẫn”, mọi công tắc ở trang “Tùy chọn” — có thể quay lại bất cứ lúc nào.</string>
+    <string name="onboarding_open_wizard">Xem hướng dẫn tuyến ở trang Đường dẫn</string>
+
+    <string name="prefs_group_help">Trợ giúp</string>
+    <string name="prefs_replay_onboarding">Xem lại hướng dẫn</string>
+    <string name="prefs_replay_onboarding_desc">Đi lại toàn bộ hướng dẫn lần đầu từ trang chào mừng; không thay đổi cài đặt hay ghép nối nào.</string>
 </resources>

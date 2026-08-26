@@ -406,4 +406,29 @@
     <string name="onboarding_honesty_header">미리 솔직하게 말씀드립니다</string>
     <string name="onboarding_honesty_body">Android는 백그라운드 클립보드 읽기를 제한하며 ClipSync는 이를 숨기지 않습니다. 포그라운드에서는 자동 업로드하고, 백그라운드 읽기는 통로 페이지에서 원하는 경로 하나를 완료해야 합니다. 모든 능력은 실측 테스트로 판정되며 안 되는 것은 안 된다고 말합니다.</string>
     <string name="onboarding_skip">먼저 둘러보고 나중에 페어링</string>
+    <string name="onboarding_next">계속</string>
+    <string name="onboarding_back">이전</string>
+    <string name="onboarding_skip_for_now">나중에 설정</string>
+    <string name="onboarding_step_progress">%2$d단계 중 %1$d단계</string>
+    <string name="onboarding_pair_fact_entry">페어링 입구는 ‘통로’ 페이지의 네트워크 구간에 고정되어 있어, 튜토리얼이 끝난 뒤에도 언제든 찾을 수 있습니다.</string>
+    <string name="onboarding_pair_fact_verify">페어링 시 양쪽에 인증서 지문이 표시됩니다. 일치할 때만 확인하세요 — 다른 PC에 잘못 연결되는 것을 막는 단계입니다.</string>
+    <string name="onboarding_pair_fact_service">페어링이 끝나면 네트워크 구간이 연결되고 동기화 서비스가 자동으로 시작됩니다.</string>
+    <string name="onboarding_read_body">앱이 포그라운드에 있는 동안은 언제나 클립보드를 읽을 수 있습니다. 백그라운드 읽기는 경로 하나를 골라 한 번만 설정하면 되며, 품질이 가장 높은 ‘특권 직접 읽기’를 추천합니다.</string>
+    <string name="onboarding_route_recommended">추천</string>
+    <string name="onboarding_wireless_debug_hint">USB 케이블이 없나요? 시스템 ‘개발자 옵션 → 무선 디버깅’을 켜면 PC에서 Wi-Fi로도 같은 원클릭 시작을 실행할 수 있습니다.</string>
+    <string name="onboarding_perms_title">권한 한눈에 보기</string>
+    <string name="onboarding_perms_body">권한은 필요한 순간에만 요청합니다. 여기서 각 권한의 용도를 먼저 밝혀 둡니다. 어느 것을 거부해도 포그라운드 복사와 히스토리는 그대로 동작합니다.</string>
+    <string name="onboarding_perm_notifications">알림</string>
+    <string name="onboarding_perm_notifications_desc">동기화 상태와 ‘수신됨’ 알림을 표시하며, 클립보드 내용은 절대 포함하지 않습니다.</string>
+    <string name="onboarding_perm_overlay">오버레이</string>
+    <string name="onboarding_perm_overlay_desc">오버레이 기반 백그라운드 읽기 경로에만 필요합니다. 해당 경로를 선택하지 않으면 요청하지 않습니다.</string>
+    <string name="onboarding_perm_battery">배터리 최적화</string>
+    <string name="onboarding_perm_battery_desc">제외하면 백그라운드 동기화가 더 안정적입니다. 제외하지 않아도 사용할 수 있지만 서비스가 시스템에 회수되기 쉽습니다.</string>
+    <string name="onboarding_finish_title">준비 완료</string>
+    <string name="onboarding_finish_body">먼저 PC와 페어링하세요. 백그라운드 읽기 경로 안내는 ‘통로’ 페이지에, 모든 스위치는 ‘환경설정’ 페이지에 있으며 언제든 돌아올 수 있습니다.</string>
+    <string name="onboarding_open_wizard">통로 페이지에서 경로 안내 보기</string>
+
+    <string name="prefs_group_help">도움말</string>
+    <string name="prefs_replay_onboarding">튜토리얼 다시 보기</string>
+    <string name="prefs_replay_onboarding_desc">환영 페이지부터 첫 실행 튜토리얼을 다시 진행합니다. 설정과 페어링은 바꾸지 않습니다.</string>
 </resources>

@@ -430,7 +430,7 @@
     <string name="transfer_err_too_large">文件包含超过 1 MiB 的条目</string>
     <string name="transfer_err_unknown">未知错误</string>
 
-    <!-- 首次运行 -->
+    <!-- 首次运行（多步教程：欢迎 → 配对 → 读取路线 → 权限 → 就绪） -->
     <string name="onboarding_subtitle">剪贴板在手机与电脑之间安静地流动。</string>
     <string name="onboarding_tab_history_desc">两端复制过的内容都汇在这里，轻触任意一条即可再次复制到本机。</string>
     <string name="onboarding_tab_conduit_desc">内容流动的每一段都如实显示。与电脑配对的入口就在这里——网络段的「去配对」。</string>
@@ -438,4 +438,30 @@
     <string name="onboarding_honesty_header">先说清楚</string>
     <string name="onboarding_honesty_body">Android 限制应用在后台读取剪贴板，剪剪相传不会假装做到：应用在前台时可自动上行；后台读取需要在「通路」页任选一条路线完成授权，每一段能力都以实测为准，做不到就直说。</string>
     <string name="onboarding_skip">先看看，稍后配对</string>
+    <string name="onboarding_next">继续</string>
+    <string name="onboarding_back">上一步</string>
+    <string name="onboarding_skip_for_now">稍后设置</string>
+    <string name="onboarding_step_progress">第 %1$d 步，共 %2$d 步</string>
+    <string name="onboarding_pair_fact_entry">配对入口固定在「通路」页的网络段，教程结束后随时能找到。</string>
+    <string name="onboarding_pair_fact_verify">配对时两端各自显示证书指纹，一致才确认——这一步防止连错电脑。</string>
+    <string name="onboarding_pair_fact_service">配对完成即接通网络段，同步服务自动启动。</string>
+    <string name="onboarding_read_body">应用在前台时始终能读取剪贴板；后台读取需任选一条路线完成一次设置，推荐质量最高的「特权直读」。</string>
+    <string name="onboarding_route_recommended">推荐</string>
+    <string name="onboarding_wireless_debug_hint">不方便连 USB 线？在系统「开发者选项 → 无线调试」中开启后，电脑通过 Wi-Fi 也能完成同样的一键启动。</string>
+    <string name="onboarding_perms_title">权限一览</string>
+    <string name="onboarding_perms_body">权限只在用到的时刻询问，这里先说清楚各自的用途；拒绝任何一项，前台复制与历史都照常。</string>
+    <string name="onboarding_perm_notifications">通知</string>
+    <string name="onboarding_perm_notifications_desc">显示同步状态与「收到内容」提醒，永不包含剪贴板内容。</string>
+    <string name="onboarding_perm_overlay">悬浮窗</string>
+    <string name="onboarding_perm_overlay_desc">仅悬浮窗相关的后台读取路线需要；不选这些路线就不会询问。</string>
+    <string name="onboarding_perm_battery">电池优化</string>
+    <string name="onboarding_perm_battery_desc">放行后后台同步更稳定；不放行也能用，只是服务更容易被系统回收。</string>
+    <string name="onboarding_finish_title">就绪</string>
+    <string name="onboarding_finish_body">先与电脑配对；后台读取的路线引导在「通路」页，所有开关都在「偏好」页，随时可回来。</string>
+    <string name="onboarding_open_wizard">去通路页看路线引导</string>
+
+    <!-- 偏好 · 帮助 -->
+    <string name="prefs_group_help">帮助</string>
+    <string name="prefs_replay_onboarding">重新查看引导</string>
+    <string name="prefs_replay_onboarding_desc">从欢迎页重新过一遍首次设置教程；不改动任何设置与配对。</string>
 </resources>

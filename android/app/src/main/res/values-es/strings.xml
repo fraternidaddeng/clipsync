@@ -420,4 +420,29 @@
     <string name="onboarding_honesty_header">Para ser claros desde el principio</string>
     <string name="onboarding_honesty_body">Android restringe la lectura del portapapeles en segundo plano, y ClipSync no finge lo contrario: sube automáticamente mientras está en primer plano; la lectura en segundo plano requiere completar una ruta de tu elección en la página Conducto. Cada capacidad se juzga con pruebas reales: si algo no se puede hacer, lo dice.</string>
     <string name="onboarding_skip">Mirar primero, emparejar después</string>
+    <string name="onboarding_next">Continuar</string>
+    <string name="onboarding_back">Atrás</string>
+    <string name="onboarding_skip_for_now">Configurar más tarde</string>
+    <string name="onboarding_step_progress">Paso %1$d de %2$d</string>
+    <string name="onboarding_pair_fact_entry">La entrada de emparejamiento está fija en el segmento de red de la página «Conducto»; podrás encontrarla siempre, también al acabar este tutorial.</string>
+    <string name="onboarding_pair_fact_verify">Al emparejar, ambos extremos muestran la huella del certificado; confirma solo si coinciden — este paso evita conectarse al PC equivocado.</string>
+    <string name="onboarding_pair_fact_service">Al completarse el emparejamiento se conecta el segmento de red y el servicio de sincronización arranca automáticamente.</string>
+    <string name="onboarding_read_body">Con la aplicación en primer plano el portapapeles siempre se puede leer; la lectura en segundo plano requiere configurar una vez la ruta que elijas. Se recomienda la de mayor calidad: «Lectura directa privilegiada».</string>
+    <string name="onboarding_route_recommended">Recomendada</string>
+    <string name="onboarding_wireless_debug_hint">¿Sin cable USB a mano? Activa «Opciones de desarrollador → Depuración inalámbrica» y el PC podrá hacer el mismo arranque con un clic por Wi-Fi.</string>
+    <string name="onboarding_perms_title">Permisos de un vistazo</string>
+    <string name="onboarding_perms_body">Cada permiso se pide solo en el momento de usarlo; aquí se explica de antemano para qué sirve cada uno. Si rechazas cualquiera, la copia en primer plano y el historial siguen funcionando.</string>
+    <string name="onboarding_perm_notifications">Notificaciones</string>
+    <string name="onboarding_perm_notifications_desc">Muestran el estado de sincronización y los avisos de «contenido recibido»; nunca incluyen el contenido del portapapeles.</string>
+    <string name="onboarding_perm_overlay">Superposición</string>
+    <string name="onboarding_perm_overlay_desc">Solo la necesitan las rutas de lectura en segundo plano basadas en superposición; si no las eliges, nunca se pide.</string>
+    <string name="onboarding_perm_battery">Optimización de batería</string>
+    <string name="onboarding_perm_battery_desc">Eximir la aplicación hace más estable la sincronización en segundo plano; sin la exención todo sigue funcionando, solo que el sistema recupera el servicio con más facilidad.</string>
+    <string name="onboarding_finish_title">Todo listo</string>
+    <string name="onboarding_finish_body">Empareja primero con tu PC; la guía de rutas de lectura está en la página «Conducto» y todos los interruptores en «Preferencias». Puedes volver cuando quieras.</string>
+    <string name="onboarding_open_wizard">Ver la guía de rutas en Conducto</string>
+
+    <string name="prefs_group_help">Ayuda</string>
+    <string name="prefs_replay_onboarding">Volver a ver el tutorial</string>
+    <string name="prefs_replay_onboarding_desc">Recorre de nuevo el tutorial de primer uso desde la página de bienvenida; no cambia ningún ajuste ni el emparejamiento.</string>
 </resources>

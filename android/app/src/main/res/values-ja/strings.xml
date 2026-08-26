@@ -406,4 +406,29 @@
     <string name="onboarding_honesty_header">最初に正直にお伝えします</string>
     <string name="onboarding_honesty_body">Android はバックグラウンドでのクリップボード読み取りを制限しており、ClipSync はそれを偽りません。フォアグラウンドでは自動アップロードします。バックグラウンド読み取りには「経路」ページでお好みのルートを 1 つ完了する必要があります。すべての能力は実地テストで判定され、できないことはできないと表示します。</string>
     <string name="onboarding_skip">先に見て回り、後でペアリング</string>
+    <string name="onboarding_next">続ける</string>
+    <string name="onboarding_back">戻る</string>
+    <string name="onboarding_skip_for_now">あとで設定</string>
+    <string name="onboarding_step_progress">ステップ %1$d / %2$d</string>
+    <string name="onboarding_pair_fact_entry">ペアリングの入口は「経路」ページのネットワーク区間にあります。チュートリアル終了後もいつでも見つかります。</string>
+    <string name="onboarding_pair_fact_verify">ペアリング時は両端に証明書のフィンガープリントが表示されます。一致した時だけ確認してください——別の PC につないでしまう事故を防ぐ手順です。</string>
+    <string name="onboarding_pair_fact_service">ペアリングが完了するとネットワーク区間がつながり、同期サービスが自動的に起動します。</string>
+    <string name="onboarding_read_body">アプリが前面にある間はいつでもクリップボードを読み取れます。バックグラウンド読み取りはいずれかのルートで一度だけ設定が必要です。品質が最も高い「特権直接読み取り」をおすすめします。</string>
+    <string name="onboarding_route_recommended">おすすめ</string>
+    <string name="onboarding_wireless_debug_hint">USB ケーブルが手元にない場合は、システムの「開発者向けオプション → ワイヤレスデバッグ」を有効にすれば、PC から Wi-Fi 経由で同じワンクリック起動ができます。</string>
+    <string name="onboarding_perms_title">権限のまとめ</string>
+    <string name="onboarding_perms_body">権限は必要になった時にだけ求めます。ここでは各権限の用途を先に説明します。どれを拒否しても、前面でのコピーと履歴はそのまま使えます。</string>
+    <string name="onboarding_perm_notifications">通知</string>
+    <string name="onboarding_perm_notifications_desc">同期状態と「受信」の通知を表示します。クリップボードの内容は決して含まれません。</string>
+    <string name="onboarding_perm_overlay">オーバーレイ</string>
+    <string name="onboarding_perm_overlay_desc">オーバーレイ系のバックグラウンド読み取りルートでのみ必要です。それらを選ばなければ求められません。</string>
+    <string name="onboarding_perm_battery">電池最適化</string>
+    <string name="onboarding_perm_battery_desc">対象外にするとバックグラウンド同期が安定します。しなくても使えますが、サービスがシステムに回収されやすくなります。</string>
+    <string name="onboarding_finish_title">準備完了</string>
+    <string name="onboarding_finish_body">まず PC とペアリングしましょう。バックグラウンド読み取りのルート案内は「経路」ページ、各スイッチは「設定」ページにあり、いつでも戻れます。</string>
+    <string name="onboarding_open_wizard">経路ページでルート案内を見る</string>
+
+    <string name="prefs_group_help">ヘルプ</string>
+    <string name="prefs_replay_onboarding">チュートリアルをもう一度見る</string>
+    <string name="prefs_replay_onboarding_desc">ようこそページから初回設定チュートリアルをもう一度たどります。設定やペアリングは変更しません。</string>
 </resources>

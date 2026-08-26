@@ -441,4 +441,29 @@
     <string name="onboarding_honesty_header">لنكن صريحين منذ البداية</string>
     <string name="onboarding_honesty_body">يقيّد Android قراءة الحافظة في الخلفية، وClipSync لا يدّعي غير ذلك: يرفع تلقائيًا أثناء وجوده في المقدمة؛ وتتطلب القراءة في الخلفية إكمال مسار من اختيارك في صفحة القناة. تُقيَّم كل قدرة باختبار فعلي — وإن تعذّر شيء فسيقول ذلك.</string>
     <string name="onboarding_skip">تفقّد أولًا، واقترن لاحقًا</string>
+    <string name="onboarding_next">متابعة</string>
+    <string name="onboarding_back">السابق</string>
+    <string name="onboarding_skip_for_now">الإعداد لاحقًا</string>
+    <string name="onboarding_step_progress">الخطوة %1$d من %2$d</string>
+    <string name="onboarding_pair_fact_entry">مدخل الاقتران ثابت في مقطع الشبكة بصفحة «القناة»، ويمكنك الوصول إليه في أي وقت بعد هذا الدليل.</string>
+    <string name="onboarding_pair_fact_verify">أثناء الاقتران يعرض الطرفان بصمة الشهادة؛ لا تؤكد إلا عند تطابقهما — هذه الخطوة تمنع الاتصال بحاسوب خاطئ.</string>
+    <string name="onboarding_pair_fact_service">بمجرد اكتمال الاقتران يتصل مقطع الشبكة وتبدأ خدمة المزامنة تلقائيًا.</string>
+    <string name="onboarding_read_body">يمكن قراءة الحافظة دائمًا ما دام التطبيق في المقدمة؛ أما القراءة في الخلفية فتحتاج إعدادًا لمرة واحدة على مسار تختاره. نوصي بالأعلى جودة: «قراءة مباشرة بامتيازات».</string>
+    <string name="onboarding_route_recommended">موصى به</string>
+    <string name="onboarding_wireless_debug_hint">لا يوجد كابل USB في متناولك؟ فعّل «خيارات المطور ← تصحيح الأخطاء اللاسلكي» ليتمكن الحاسوب من تنفيذ التشغيل نفسه بنقرة واحدة عبر Wi-Fi.</string>
+    <string name="onboarding_perms_title">الأذونات باختصار</string>
+    <string name="onboarding_perms_body">يُطلب كل إذن في لحظة استخدامه فقط؛ وهنا نوضح مسبقًا فائدة كل منها. رفض أي إذن لا يعطل النسخ في المقدمة ولا السجل.</string>
+    <string name="onboarding_perm_notifications">الإشعارات</string>
+    <string name="onboarding_perm_notifications_desc">تعرض حالة المزامنة وتنبيهات «المحتوى المستلَم»، ولا تتضمن محتوى الحافظة أبدًا.</string>
+    <string name="onboarding_perm_overlay">النافذة العائمة</string>
+    <string name="onboarding_perm_overlay_desc">لا تحتاجه إلا مسارات القراءة في الخلفية المعتمدة على النافذة العائمة؛ إن لم تخترها فلن يُطلب أبدًا.</string>
+    <string name="onboarding_perm_battery">تحسين البطارية</string>
+    <string name="onboarding_perm_battery_desc">استثناء التطبيق يجعل المزامنة في الخلفية أكثر استقرارًا؛ وبدونه يعمل كل شيء، غير أن النظام يسترد الخدمة بسهولة أكبر.</string>
+    <string name="onboarding_finish_title">جاهز</string>
+    <string name="onboarding_finish_body">اقترن بحاسوبك أولًا؛ دليل مسارات القراءة في صفحة «القناة» وكل المفاتيح في «التفضيلات»، ويمكنك العودة في أي وقت.</string>
+    <string name="onboarding_open_wizard">عرض دليل المسارات في صفحة القناة</string>
+
+    <string name="prefs_group_help">مساعدة</string>
+    <string name="prefs_replay_onboarding">إعادة عرض الدليل التمهيدي</string>
+    <string name="prefs_replay_onboarding_desc">أعد المرور على دليل التشغيل الأول من صفحة الترحيب؛ لا يغيّر أي إعدادات أو اقتران.</string>
 </resources>

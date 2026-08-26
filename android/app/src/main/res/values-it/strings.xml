@@ -420,4 +420,29 @@
     <string name="onboarding_honesty_header">Per essere chiari fin da subito</string>
     <string name="onboarding_honesty_body">Android limita la lettura degli appunti in background e ClipSync non finge il contrario: carica automaticamente quando è in primo piano; la lettura in background richiede di completare un percorso a tua scelta nella pagina Condotto. Ogni capacità è giudicata con test reali: se qualcosa non si può fare, lo dice.</string>
     <string name="onboarding_skip">Prima guarda in giro, associa dopo</string>
+    <string name="onboarding_next">Continua</string>
+    <string name="onboarding_back">Indietro</string>
+    <string name="onboarding_skip_for_now">Configura più tardi</string>
+    <string name="onboarding_step_progress">Passaggio %1$d di %2$d</string>
+    <string name="onboarding_pair_fact_entry">L’ingresso per l’associazione resta nel segmento rete della pagina «Condotto»: lo ritroverai in qualsiasi momento anche dopo questo tutorial.</string>
+    <string name="onboarding_pair_fact_verify">Durante l’associazione entrambe le estremità mostrano l’impronta del certificato; conferma solo se coincidono — questo passaggio evita di collegarsi al PC sbagliato.</string>
+    <string name="onboarding_pair_fact_service">Completata l’associazione, il segmento rete si collega e il servizio di sincronizzazione parte automaticamente.</string>
+    <string name="onboarding_read_body">Con l’app in primo piano gli appunti sono sempre leggibili; la lettura in background richiede una configurazione una tantum sul percorso che scegli. Consigliato il più alto in qualità: «Lettura diretta privilegiata».</string>
+    <string name="onboarding_route_recommended">Consigliata</string>
+    <string name="onboarding_wireless_debug_hint">Niente cavo USB a portata di mano? Attiva «Opzioni sviluppatore → Debug wireless»: il PC potrà eseguire lo stesso avvio con un clic via Wi-Fi.</string>
+    <string name="onboarding_perms_title">Permessi in breve</string>
+    <string name="onboarding_perms_body">Ogni permesso viene chiesto solo nel momento in cui serve; qui spieghiamo in anticipo a cosa serve ciascuno. Rifiutarne uno non tocca la copia in primo piano né la cronologia.</string>
+    <string name="onboarding_perm_notifications">Notifiche</string>
+    <string name="onboarding_perm_notifications_desc">Mostrano lo stato di sincronizzazione e gli avvisi «contenuto ricevuto»; non contengono mai il contenuto degli appunti.</string>
+    <string name="onboarding_perm_overlay">Overlay</string>
+    <string name="onboarding_perm_overlay_desc">Serve solo ai percorsi di lettura in background basati su overlay; se non li scegli, non viene mai chiesto.</string>
+    <string name="onboarding_perm_battery">Ottimizzazione batteria</string>
+    <string name="onboarding_perm_battery_desc">L’esenzione rende più stabile la sincronizzazione in background; senza, tutto funziona comunque, solo che il sistema recupera il servizio più facilmente.</string>
+    <string name="onboarding_finish_title">Pronto</string>
+    <string name="onboarding_finish_body">Associa prima il PC; la guida ai percorsi di lettura è nella pagina «Condotto» e ogni interruttore in «Preferenze». Puoi tornare quando vuoi.</string>
+    <string name="onboarding_open_wizard">Vedi la guida ai percorsi nel Condotto</string>
+
+    <string name="prefs_group_help">Aiuto</string>
+    <string name="prefs_replay_onboarding">Rivedi il tutorial</string>
+    <string name="prefs_replay_onboarding_desc">Ripercorri il tutorial del primo avvio dalla pagina di benvenuto; non modifica impostazioni né associazione.</string>
 </resources>

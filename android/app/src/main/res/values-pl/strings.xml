@@ -427,4 +427,29 @@
     <string name="onboarding_honesty_header">Żeby było jasne od początku</string>
     <string name="onboarding_honesty_body">Android ogranicza odczyt schowka w tle, a ClipSync nie udaje, że jest inaczej: na pierwszym planie wysyła automatycznie; odczyt w tle wymaga ukończenia jednej wybranej ścieżki na stronie Kanał. Każdą zdolność ocenia rzeczywisty test — jeśli czegoś nie da się zrobić, jest to powiedziane wprost.</string>
     <string name="onboarding_skip">Najpierw się rozejrzyj, sparuj później</string>
+    <string name="onboarding_next">Dalej</string>
+    <string name="onboarding_back">Wstecz</string>
+    <string name="onboarding_skip_for_now">Skonfiguruj później</string>
+    <string name="onboarding_step_progress">Krok %1$d z %2$d</string>
+    <string name="onboarding_pair_fact_entry">Wejście do parowania jest na stałe w segmencie sieci na stronie „Kanał” — znajdziesz je w każdej chwili także po tym samouczku.</string>
+    <string name="onboarding_pair_fact_verify">Podczas parowania obie strony pokazują odcisk certyfikatu; potwierdź tylko przy zgodności — ten krok chroni przed połączeniem z niewłaściwym PC.</string>
+    <string name="onboarding_pair_fact_service">Po sparowaniu segment sieci zostaje połączony, a usługa synchronizacji startuje automatycznie.</string>
+    <string name="onboarding_read_body">Gdy aplikacja jest na pierwszym planie, schowek zawsze można odczytać; odczyt w tle wymaga jednorazowej konfiguracji wybranej ścieżki. Polecamy najwyższą jakość: „Uprzywilejowany odczyt bezpośredni”.</string>
+    <string name="onboarding_route_recommended">Polecana</string>
+    <string name="onboarding_wireless_debug_hint">Brak kabla USB pod ręką? Włącz „Opcje programisty → Debugowanie bezprzewodowe”, a PC wykona ten sam start jednym kliknięciem przez Wi-Fi.</string>
+    <string name="onboarding_perms_title">Uprawnienia w skrócie</string>
+    <string name="onboarding_perms_body">O każde uprawnienie pytamy dopiero w chwili użycia; tu z góry wyjaśniamy, do czego służą. Odmowa któregokolwiek nie przeszkadza kopiowaniu na pierwszym planie ani historii.</string>
+    <string name="onboarding_perm_notifications">Powiadomienia</string>
+    <string name="onboarding_perm_notifications_desc">Pokazują stan synchronizacji i alerty „odebrano treść”; nigdy nie zawierają zawartości schowka.</string>
+    <string name="onboarding_perm_overlay">Nakładka</string>
+    <string name="onboarding_perm_overlay_desc">Potrzebne tylko ścieżkom odczytu w tle opartym na nakładce; bez wyboru tych ścieżek nigdy o nie nie pytamy.</string>
+    <string name="onboarding_perm_battery">Optymalizacja baterii</string>
+    <string name="onboarding_perm_battery_desc">Wyłączenie z niej stabilizuje synchronizację w tle; bez tego wszystko działa, tylko system łatwiej ubija usługę.</string>
+    <string name="onboarding_finish_title">Gotowe</string>
+    <string name="onboarding_finish_body">Najpierw sparuj z PC; przewodnik po ścieżkach odczytu jest na stronie „Kanał”, a wszystkie przełączniki w „Preferencjach” — możesz wrócić w każdej chwili.</string>
+    <string name="onboarding_open_wizard">Zobacz przewodnik po ścieżkach na stronie Kanał</string>
+
+    <string name="prefs_group_help">Pomoc</string>
+    <string name="prefs_replay_onboarding">Obejrzyj samouczek ponownie</string>
+    <string name="prefs_replay_onboarding_desc">Przejdź samouczek pierwszego uruchomienia od strony powitalnej; nie zmienia żadnych ustawień ani parowania.</string>
 </resources>

@@ -420,4 +420,29 @@
     <string name="onboarding_honesty_header">Pour être clair d’emblée</string>
     <string name="onboarding_honesty_body">Android restreint la lecture du presse-papiers en arrière-plan, et ClipSync ne prétend pas le contraire : il téléverse automatiquement au premier plan ; la lecture en arrière-plan exige de terminer une route de votre choix sur la page Conduit. Chaque capacité est jugée par un test réel — si quelque chose est impossible, c’est dit.</string>
     <string name="onboarding_skip">Regarder d’abord, appairer plus tard</string>
+    <string name="onboarding_next">Continuer</string>
+    <string name="onboarding_back">Retour</string>
+    <string name="onboarding_skip_for_now">Configurer plus tard</string>
+    <string name="onboarding_step_progress">Étape %1$d sur %2$d</string>
+    <string name="onboarding_pair_fact_entry">L’entrée d’appairage reste dans le segment réseau de la page « Conduit » ; vous la retrouverez à tout moment après ce tutoriel.</string>
+    <string name="onboarding_pair_fact_verify">Lors de l’appairage, les deux extrémités affichent l’empreinte du certificat ; ne confirmez que si elles concordent — cette étape évite de se connecter au mauvais PC.</string>
+    <string name="onboarding_pair_fact_service">Une fois l’appairage terminé, le segment réseau est relié et le service de synchronisation démarre automatiquement.</string>
+    <string name="onboarding_read_body">Quand l’application est au premier plan, le presse-papiers reste toujours lisible ; la lecture en arrière-plan demande une configuration unique sur la route de votre choix. La plus haute qualité, « Lecture directe privilégiée », est recommandée.</string>
+    <string name="onboarding_route_recommended">Recommandée</string>
+    <string name="onboarding_wireless_debug_hint">Pas de câble USB sous la main ? Activez « Options pour les développeurs → Débogage sans fil » : le PC pourra effectuer le même démarrage en un clic via le Wi-Fi.</string>
+    <string name="onboarding_perms_title">Les permissions en un coup d’œil</string>
+    <string name="onboarding_perms_body">Chaque permission n’est demandée qu’au moment où elle sert ; voici d’avance à quoi sert chacune. En refuser une n’empêche ni la copie au premier plan ni l’historique.</string>
+    <string name="onboarding_perm_notifications">Notifications</string>
+    <string name="onboarding_perm_notifications_desc">Affichent l’état de synchronisation et les alertes « contenu reçu » ; elles ne contiennent jamais le contenu du presse-papiers.</string>
+    <string name="onboarding_perm_overlay">Superposition</string>
+    <string name="onboarding_perm_overlay_desc">Nécessaire uniquement aux routes de lecture en arrière-plan basées sur la superposition ; sans ces routes, elle n’est jamais demandée.</string>
+    <string name="onboarding_perm_battery">Optimisation de batterie</string>
+    <string name="onboarding_perm_battery_desc">L’exemption rend la synchronisation en arrière-plan plus stable ; sans elle tout fonctionne, mais le système récupère le service plus facilement.</string>
+    <string name="onboarding_finish_title">Prêt</string>
+    <string name="onboarding_finish_body">Commencez par appairer votre PC ; le guide des routes de lecture se trouve sur la page « Conduit » et chaque réglage dans « Préférences ». Vous pouvez y revenir à tout moment.</string>
+    <string name="onboarding_open_wizard">Voir le guide des routes sur Conduit</string>
+
+    <string name="prefs_group_help">Aide</string>
+    <string name="prefs_replay_onboarding">Revoir le tutoriel</string>
+    <string name="prefs_replay_onboarding_desc">Reparcourez le tutoriel de premier lancement depuis la page d’accueil ; aucun réglage ni appairage n’est modifié.</string>
 </resources>

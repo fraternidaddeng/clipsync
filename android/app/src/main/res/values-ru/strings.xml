@@ -427,4 +427,29 @@
     <string name="onboarding_honesty_header">Скажем честно с самого начала</string>
     <string name="onboarding_honesty_body">Android ограничивает фоновое чтение буфера обмена, и ClipSync не делает вид, что это не так: на переднем плане он загружает автоматически; для фонового чтения нужно завершить один путь по вашему выбору на странице «Канал». Каждая возможность оценивается реальной проверкой — если что-то нельзя сделать, об этом сказано прямо.</string>
     <string name="onboarding_skip">Сначала осмотреться, сопрячься позже</string>
+    <string name="onboarding_next">Продолжить</string>
+    <string name="onboarding_back">Назад</string>
+    <string name="onboarding_skip_for_now">Настроить позже</string>
+    <string name="onboarding_step_progress">Шаг %1$d из %2$d</string>
+    <string name="onboarding_pair_fact_entry">Вход в сопряжение закреплён в сегменте «Сеть» на странице «Канал» — после обучения его всегда можно найти там же.</string>
+    <string name="onboarding_pair_fact_verify">При сопряжении обе стороны показывают отпечаток сертификата; подтверждайте только при совпадении — этот шаг защищает от подключения не к тому ПК.</string>
+    <string name="onboarding_pair_fact_service">После сопряжения сетевой сегмент подключается, и служба синхронизации запускается автоматически.</string>
+    <string name="onboarding_read_body">Пока приложение на переднем плане, буфер обмена читается всегда; для фонового чтения нужно один раз настроить любой из путей. Рекомендуем самый качественный — «Привилегированное прямое чтение».</string>
+    <string name="onboarding_route_recommended">Рекомендуется</string>
+    <string name="onboarding_wireless_debug_hint">Нет под рукой USB-кабеля? Включите «Параметры разработчика → Беспроводная отладка» — ПК выполнит тот же запуск в один клик по Wi-Fi.</string>
+    <string name="onboarding_perms_title">Разрешения вкратце</string>
+    <string name="onboarding_perms_body">Каждое разрешение запрашивается только в момент использования; здесь заранее сказано, зачем оно. Откажете в любом — копирование на переднем плане и история продолжат работать.</string>
+    <string name="onboarding_perm_notifications">Уведомления</string>
+    <string name="onboarding_perm_notifications_desc">Показывают состояние синхронизации и оповещения «получено содержимое»; содержимое буфера обмена в них не попадает никогда.</string>
+    <string name="onboarding_perm_overlay">Оверлей</string>
+    <string name="onboarding_perm_overlay_desc">Нужен только путям фонового чтения на основе оверлея; если их не выбирать, запрос не появится.</string>
+    <string name="onboarding_perm_battery">Оптимизация батареи</string>
+    <string name="onboarding_perm_battery_desc">Исключение делает фоновую синхронизацию стабильнее; без него всё тоже работает, просто система чаще выгружает службу.</string>
+    <string name="onboarding_finish_title">Готово</string>
+    <string name="onboarding_finish_body">Сначала выполните сопряжение с ПК; путеводитель по путям чтения — на странице «Канал», все переключатели — в «Настройках». Вернуться можно в любой момент.</string>
+    <string name="onboarding_open_wizard">Открыть путеводитель на странице «Канал»</string>
+
+    <string name="prefs_group_help">Справка</string>
+    <string name="prefs_replay_onboarding">Показать обучение снова</string>
+    <string name="prefs_replay_onboarding_desc">Пройти обучение первого запуска заново со страницы приветствия; настройки и сопряжение не меняются.</string>
 </resources>

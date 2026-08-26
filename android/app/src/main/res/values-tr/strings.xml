@@ -413,4 +413,29 @@
     <string name="onboarding_honesty_header">Baştan açık olalım</string>
     <string name="onboarding_honesty_body">Android arka planda pano okumayı kısıtlar ve ClipSync aksini iddia etmez: ön plandayken otomatik yükler; arka plan okuması Kanal sayfasında seçeceğiniz bir yolu tamamlamayı gerektirir. Her yetenek gerçek testle değerlendirilir — bir şey yapılamıyorsa açıkça söylenir.</string>
     <string name="onboarding_skip">Önce bakının, sonra eşleştirin</string>
+    <string name="onboarding_next">Devam</string>
+    <string name="onboarding_back">Geri</string>
+    <string name="onboarding_skip_for_now">Sonra kur</string>
+    <string name="onboarding_step_progress">Adım %1$d / %2$d</string>
+    <string name="onboarding_pair_fact_entry">Eşleştirme girişi her zaman “Kanal” sayfasının ağ bölümündedir — bu eğitimden sonra da istediğiniz an bulabilirsiniz.</string>
+    <string name="onboarding_pair_fact_verify">Eşleştirme sırasında iki taraf da sertifika parmak izini gösterir; yalnızca eşleşiyorsa onaylayın — bu adım yanlış PC’ye bağlanmayı önler.</string>
+    <string name="onboarding_pair_fact_service">Eşleştirme tamamlanınca ağ bölümü bağlanır ve eşitleme hizmeti otomatik başlar.</string>
+    <string name="onboarding_read_body">Uygulama ön plandayken pano her zaman okunabilir; arka plan okuması için seçtiğiniz bir yolda tek seferlik kurulum gerekir. En yüksek kaliteli “Ayrıcalıklı doğrudan okuma” önerilir.</string>
+    <string name="onboarding_route_recommended">Önerilen</string>
+    <string name="onboarding_wireless_debug_hint">Elinizde USB kablosu yok mu? “Geliştirici seçenekleri → Kablosuz hata ayıklama”yı açın; PC aynı tek tık başlatmayı Wi-Fi üzerinden de yapabilir.</string>
+    <string name="onboarding_perms_title">İzinlere genel bakış</string>
+    <string name="onboarding_perms_body">Her izin yalnızca kullanılacağı anda istenir; burada her birinin ne işe yaradığı önceden açıklanıyor. Herhangi birini reddetseniz de ön planda kopyalama ve geçmiş çalışmaya devam eder.</string>
+    <string name="onboarding_perm_notifications">Bildirimler</string>
+    <string name="onboarding_perm_notifications_desc">Eşitleme durumunu ve “içerik alındı” uyarılarını gösterir; asla pano içeriği taşımaz.</string>
+    <string name="onboarding_perm_overlay">Yer paylaşımı</string>
+    <string name="onboarding_perm_overlay_desc">Yalnızca yer paylaşımı tabanlı arka plan okuma yollarına gerekir; bu yolları seçmezseniz hiç istenmez.</string>
+    <string name="onboarding_perm_battery">Pil iyileştirmesi</string>
+    <string name="onboarding_perm_battery_desc">Muaf tutmak arka plan eşitlemeyi daha kararlı yapar; muafiyet olmadan da çalışır, yalnızca sistem hizmeti daha kolay sonlandırır.</string>
+    <string name="onboarding_finish_title">Hazır</string>
+    <string name="onboarding_finish_body">Önce PC’nizle eşleştirin; okuma yolları kılavuzu “Kanal” sayfasında, tüm anahtarlar “Tercihler”de — istediğiniz zaman dönebilirsiniz.</string>
+    <string name="onboarding_open_wizard">Kanal sayfasındaki yol kılavuzuna bak</string>
+
+    <string name="prefs_group_help">Yardım</string>
+    <string name="prefs_replay_onboarding">Tanıtımı yeniden izle</string>
+    <string name="prefs_replay_onboarding_desc">İlk kurulum eğitimini karşılama sayfasından yeniden gezin; hiçbir ayarı veya eşleştirmeyi değiştirmez.</string>
 </resources>

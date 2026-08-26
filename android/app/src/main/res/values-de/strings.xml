@@ -413,4 +413,29 @@
     <string name="onboarding_honesty_header">Um es vorweg klar zu sagen</string>
     <string name="onboarding_honesty_body">Android beschränkt das Lesen der Zwischenablage im Hintergrund, und ClipSync tut nicht so, als wäre es anders: Im Vordergrund lädt es automatisch hoch; Hintergrundlesen erfordert das Abschließen einer Route Ihrer Wahl auf der Kanal-Seite. Jede Fähigkeit wird per Praxistest beurteilt – wenn etwas nicht geht, steht es da.</string>
     <string name="onboarding_skip">Erst umsehen, später koppeln</string>
+    <string name="onboarding_next">Weiter</string>
+    <string name="onboarding_back">Zurück</string>
+    <string name="onboarding_skip_for_now">Später einrichten</string>
+    <string name="onboarding_step_progress">Schritt %1$d von %2$d</string>
+    <string name="onboarding_pair_fact_entry">Der Kopplungseinstieg liegt fest im Netzwerksegment der Seite „Kanal“ — Sie finden ihn auch nach diesem Tutorial jederzeit wieder.</string>
+    <string name="onboarding_pair_fact_verify">Beim Koppeln zeigen beide Seiten den Zertifikat-Fingerabdruck; bestätigen Sie nur bei Übereinstimmung — dieser Schritt verhindert die Verbindung mit dem falschen PC.</string>
+    <string name="onboarding_pair_fact_service">Mit Abschluss der Kopplung ist das Netzwerksegment verbunden und der Sync-Dienst startet automatisch.</string>
+    <string name="onboarding_read_body">Im Vordergrund kann die App die Zwischenablage jederzeit lesen; das Hintergrundlesen erfordert eine einmalige Einrichtung auf einer Route Ihrer Wahl. Empfohlen ist die höchste Qualität: „Privilegiertes Direktlesen“.</string>
+    <string name="onboarding_route_recommended">Empfohlen</string>
+    <string name="onboarding_wireless_debug_hint">Kein USB-Kabel zur Hand? Aktivieren Sie „Entwickleroptionen → Drahtlos-Debugging“ — der PC kann denselben Ein-Klick-Start dann über WLAN ausführen.</string>
+    <string name="onboarding_perms_title">Berechtigungen im Überblick</string>
+    <string name="onboarding_perms_body">Jede Berechtigung wird erst im Moment der Nutzung erfragt; hier steht vorab, wozu sie dient. Auch bei Ablehnung funktionieren Kopieren im Vordergrund und der Verlauf weiterhin.</string>
+    <string name="onboarding_perm_notifications">Benachrichtigungen</string>
+    <string name="onboarding_perm_notifications_desc">Zeigen den Sync-Status und „Inhalt empfangen“-Hinweise; sie enthalten nie den Inhalt der Zwischenablage.</string>
+    <string name="onboarding_perm_overlay">Overlay</string>
+    <string name="onboarding_perm_overlay_desc">Nur für die Overlay-basierten Hintergrundlese-Routen nötig; ohne diese Routen wird sie nie erfragt.</string>
+    <string name="onboarding_perm_battery">Akku-Optimierung</string>
+    <string name="onboarding_perm_battery_desc">Eine Ausnahme macht die Hintergrund-Synchronisierung stabiler; ohne sie funktioniert alles, der Dienst wird nur leichter vom System beendet.</string>
+    <string name="onboarding_finish_title">Bereit</string>
+    <string name="onboarding_finish_body">Koppeln Sie zuerst Ihren PC; der Routen-Leitfaden fürs Hintergrundlesen liegt auf der Seite „Kanal“, alle Schalter in den „Einstellungen“ — Sie können jederzeit zurückkehren.</string>
+    <string name="onboarding_open_wizard">Routen-Leitfaden auf der Kanal-Seite ansehen</string>
+
+    <string name="prefs_group_help">Hilfe</string>
+    <string name="prefs_replay_onboarding">Einführung erneut ansehen</string>
+    <string name="prefs_replay_onboarding_desc">Das Erststart-Tutorial ab der Willkommensseite erneut durchlaufen; ändert keine Einstellungen und keine Kopplung.</string>
 </resources>

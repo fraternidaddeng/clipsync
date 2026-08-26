@@ -420,4 +420,29 @@
     <string name="onboarding_honesty_header">Para deixar claro desde o início</string>
     <string name="onboarding_honesty_body">O Android restringe a leitura da área de transferência em segundo plano, e o ClipSync não finge o contrário: envia automaticamente em primeiro plano; a leitura em segundo plano exige concluir uma rota de sua escolha na página Conduíte. Cada capacidade é julgada por teste real — se algo não dá, ele diz.</string>
     <string name="onboarding_skip">Olhar primeiro, parear depois</string>
+    <string name="onboarding_next">Continuar</string>
+    <string name="onboarding_back">Voltar</string>
+    <string name="onboarding_skip_for_now">Configurar depois</string>
+    <string name="onboarding_step_progress">Etapa %1$d de %2$d</string>
+    <string name="onboarding_pair_fact_entry">A entrada de pareamento fica fixa no segmento de rede da página “Conduíte” — você a encontra a qualquer momento depois deste tutorial.</string>
+    <string name="onboarding_pair_fact_verify">Ao parear, os dois lados mostram a impressão digital do certificado; confirme só se forem iguais — esta etapa evita conectar ao PC errado.</string>
+    <string name="onboarding_pair_fact_service">Concluído o pareamento, o segmento de rede se conecta e o serviço de sincronização inicia automaticamente.</string>
+    <string name="onboarding_read_body">Com o aplicativo em primeiro plano, a área de transferência sempre pode ser lida; a leitura em segundo plano exige uma configuração única na rota que você escolher. Recomendamos a de maior qualidade: “Leitura direta privilegiada”.</string>
+    <string name="onboarding_route_recommended">Recomendada</string>
+    <string name="onboarding_wireless_debug_hint">Sem cabo USB por perto? Ative “Opções do desenvolvedor → Depuração por Wi-Fi” e o PC poderá fazer a mesma inicialização em um clique pela rede sem fio.</string>
+    <string name="onboarding_perms_title">Permissões em resumo</string>
+    <string name="onboarding_perms_body">Cada permissão é pedida apenas na hora do uso; aqui explicamos antes para que serve cada uma. Negar qualquer uma não afeta a cópia em primeiro plano nem o histórico.</string>
+    <string name="onboarding_perm_notifications">Notificações</string>
+    <string name="onboarding_perm_notifications_desc">Mostram o status da sincronização e os avisos de “conteúdo recebido”; nunca incluem o conteúdo da área de transferência.</string>
+    <string name="onboarding_perm_overlay">Sobreposição</string>
+    <string name="onboarding_perm_overlay_desc">Necessária apenas para as rotas de leitura em segundo plano baseadas em sobreposição; sem essas rotas, nunca é pedida.</string>
+    <string name="onboarding_perm_battery">Otimização de bateria</string>
+    <string name="onboarding_perm_battery_desc">Isentar o aplicativo deixa a sincronização em segundo plano mais estável; sem a isenção tudo continua funcionando, o sistema só recupera o serviço com mais facilidade.</string>
+    <string name="onboarding_finish_title">Tudo pronto</string>
+    <string name="onboarding_finish_body">Pareie primeiro com o PC; o guia de rotas de leitura está na página “Conduíte” e todos os interruptores em “Preferências”. Você pode voltar quando quiser.</string>
+    <string name="onboarding_open_wizard">Ver o guia de rotas no Conduíte</string>
+
+    <string name="prefs_group_help">Ajuda</string>
+    <string name="prefs_replay_onboarding">Rever o tutorial</string>
+    <string name="prefs_replay_onboarding_desc">Percorra novamente o tutorial de primeiro uso desde a página de boas-vindas; nenhum ajuste ou pareamento é alterado.</string>
 </resources>

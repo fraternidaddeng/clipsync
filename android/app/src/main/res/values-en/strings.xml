@@ -414,4 +414,29 @@
     <string name="onboarding_honesty_header">To be clear up front</string>
     <string name="onboarding_honesty_body">Android restricts background clipboard reading, and ClipSync does not pretend otherwise: it uploads automatically while in the foreground; background reading requires completing one route of your choice on the Conduit page. Every capability is judged by live testing — if something cannot be done, it says so.</string>
     <string name="onboarding_skip">Look around first, pair later</string>
+    <string name="onboarding_next">Continue</string>
+    <string name="onboarding_back">Back</string>
+    <string name="onboarding_skip_for_now">Set up later</string>
+    <string name="onboarding_step_progress">Step %1$d of %2$d</string>
+    <string name="onboarding_pair_fact_entry">The pairing entrance stays in the network segment of the Conduit page — you can always find it after this tutorial.</string>
+    <string name="onboarding_pair_fact_verify">While pairing, both ends show a certificate fingerprint; confirm only when they match — this step prevents pairing with the wrong PC.</string>
+    <string name="onboarding_pair_fact_service">Once paired, the network segment is connected and the sync service starts automatically.</string>
+    <string name="onboarding_read_body">The clipboard can always be read while the app is in the foreground; background reading takes a one-time setup on a route of your choice — the highest quality, “Privileged direct read”, is recommended.</string>
+    <string name="onboarding_route_recommended">Recommended</string>
+    <string name="onboarding_wireless_debug_hint">No USB cable at hand? Enable Developer options → Wireless debugging, and the PC can run the same one-click start over Wi-Fi.</string>
+    <string name="onboarding_perms_title">Permissions at a glance</string>
+    <string name="onboarding_perms_body">Each permission is requested only at the moment it is needed; here is what each one is for. Deny any of them and foreground copying and history still work.</string>
+    <string name="onboarding_perm_notifications">Notifications</string>
+    <string name="onboarding_perm_notifications_desc">Show sync status and “content received” alerts; they never contain clipboard content.</string>
+    <string name="onboarding_perm_overlay">Overlay</string>
+    <string name="onboarding_perm_overlay_desc">Needed only by the overlay-based background-read routes; skip those routes and it is never asked for.</string>
+    <string name="onboarding_perm_battery">Battery optimization</string>
+    <string name="onboarding_perm_battery_desc">Exempting the app keeps background sync steadier; without it everything still works, the service is just reclaimed more easily.</string>
+    <string name="onboarding_finish_title">Ready</string>
+    <string name="onboarding_finish_body">Pair with your PC first; the read-route guide lives on the Conduit page and every switch in Preferences — you can come back anytime.</string>
+    <string name="onboarding_open_wizard">See the route guide on Conduit</string>
+
+    <string name="prefs_group_help">Help</string>
+    <string name="prefs_replay_onboarding">Replay the introduction</string>
+    <string name="prefs_replay_onboarding_desc">Walk the first-run tutorial again from the welcome page; changes no settings or pairing.</string>
 </resources>

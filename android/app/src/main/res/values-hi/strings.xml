@@ -413,4 +413,29 @@
     <string name="onboarding_honesty_header">पहले ही साफ़ कर दें</string>
     <string name="onboarding_honesty_body">Android पृष्ठभूमि में क्लिपबोर्ड पढ़ने पर रोक लगाता है, और ClipSync इसका दिखावा नहीं करता: अग्रभूमि में यह अपने आप अपलोड करता है; पृष्ठभूमि पठन के लिए मार्ग पृष्ठ पर अपनी पसंद का एक मार्ग पूरा करना होता है। हर क्षमता असली जाँच से आँकी जाती है — जो नहीं हो सकता, वह साफ़ कहा जाता है।</string>
     <string name="onboarding_skip">पहले देख लें, बाद में जोड़ें</string>
+    <string name="onboarding_next">जारी रखें</string>
+    <string name="onboarding_back">पिछला</string>
+    <string name="onboarding_skip_for_now">बाद में सेट करें</string>
+    <string name="onboarding_step_progress">चरण %1$d, कुल %2$d</string>
+    <string name="onboarding_pair_fact_entry">जोड़ने का प्रवेश हमेशा “मार्ग” पेज के नेटवर्क खंड में रहता है — यह ट्यूटोरियल खत्म होने के बाद भी कभी भी मिल जाएगा।</string>
+    <string name="onboarding_pair_fact_verify">जोड़ते समय दोनों ओर प्रमाणपत्र का फ़िंगरप्रिंट दिखता है; मेल खाने पर ही पुष्टि करें — यह कदम गलत PC से जुड़ने से बचाता है।</string>
+    <string name="onboarding_pair_fact_service">जोड़ना पूरा होते ही नेटवर्क खंड जुड़ जाता है और सिंक सेवा अपने आप शुरू हो जाती है।</string>
+    <string name="onboarding_read_body">ऐप अग्रभूमि में हो तो क्लिपबोर्ड हमेशा पढ़ा जा सकता है; पृष्ठभूमि पठन के लिए अपनी पसंद के किसी मार्ग पर एक बार सेटअप करना होता है। सबसे उच्च गुणवत्ता वाला “विशेषाधिकार से सीधा पठन” अनुशंसित है।</string>
+    <string name="onboarding_route_recommended">अनुशंसित</string>
+    <string name="onboarding_wireless_debug_hint">USB केबल पास नहीं है? “डेवलपर विकल्प → वायरलेस डीबगिंग” चालू करें, फिर PC वही एक-क्लिक शुरुआत Wi-Fi से भी कर सकेगा।</string>
+    <string name="onboarding_perms_title">अनुमतियाँ एक नज़र में</string>
+    <string name="onboarding_perms_body">हर अनुमति उपयोग के समय ही माँगी जाती है; यहाँ पहले ही बता दिया गया है कि कौन-सी किस काम की है। किसी को भी मना करें, अग्रभूमि कॉपी और इतिहास फिर भी चलते रहेंगे।</string>
+    <string name="onboarding_perm_notifications">सूचनाएँ</string>
+    <string name="onboarding_perm_notifications_desc">सिंक स्थिति और “सामग्री मिली” की सूचना दिखाती हैं; इनमें क्लिपबोर्ड की सामग्री कभी नहीं होती।</string>
+    <string name="onboarding_perm_overlay">ओवरले</string>
+    <string name="onboarding_perm_overlay_desc">केवल ओवरले-आधारित पृष्ठभूमि पठन मार्गों को चाहिए; वे मार्ग न चुनें तो कभी नहीं माँगी जाती।</string>
+    <string name="onboarding_perm_battery">बैटरी अनुकूलन</string>
+    <string name="onboarding_perm_battery_desc">छूट देने से पृष्ठभूमि सिंक अधिक स्थिर रहता है; बिना छूट भी सब चलता है, बस सिस्टम सेवा को आसानी से बंद कर देता है।</string>
+    <string name="onboarding_finish_title">तैयार</string>
+    <string name="onboarding_finish_body">पहले PC से जोड़ें; पठन मार्गों की मार्गदर्शिका “मार्ग” पेज पर है और सारे स्विच “प्राथमिकताएँ” में — कभी भी लौट सकते हैं।</string>
+    <string name="onboarding_open_wizard">मार्ग पेज पर मार्गदर्शिका देखें</string>
+
+    <string name="prefs_group_help">सहायता</string>
+    <string name="prefs_replay_onboarding">परिचय फिर से देखें</string>
+    <string name="prefs_replay_onboarding_desc">स्वागत पेज से पहली बार वाला ट्यूटोरियल दोबारा देखें; कोई सेटिंग या जोड़ी नहीं बदलती।</string>
 </resources>

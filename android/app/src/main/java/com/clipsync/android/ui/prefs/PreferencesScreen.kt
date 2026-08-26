@@ -77,6 +77,8 @@ fun PreferencesScreen(
     onClearHistory: () -> Unit = {},
     /** 语言 (P1#16): receives a catalog tag or [LanguageCatalog.FOLLOW_SYSTEM]. */
     onLanguageChange: (String) -> Unit = {},
+    /** 重新查看引导: replays the first-run tutorial; changes no settings. */
+    onReplayOnboarding: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
@@ -338,6 +340,20 @@ fun PreferencesScreen(
             } else {
                 DeviceEmptyState(onOpenConduit = onOpenConduit)
             }
+        }
+
+        Spacer(Modifier.height(20.dp))
+        GroupHeader(stringResource(R.string.prefs_group_help))
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .charterCard(),
+        ) {
+            ActionRow(
+                title = stringResource(R.string.prefs_replay_onboarding),
+                description = stringResource(R.string.prefs_replay_onboarding_desc),
+                onClick = onReplayOnboarding,
+            )
         }
 
         Spacer(Modifier.height(28.dp))

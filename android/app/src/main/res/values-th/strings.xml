@@ -406,4 +406,29 @@
     <string name="onboarding_honesty_header">ขอพูดตรง ๆ ตั้งแต่ต้น</string>
     <string name="onboarding_honesty_body">Android จำกัดการอ่านคลิปบอร์ดเบื้องหลัง และ ClipSync ไม่แสร้งว่าเป็นอย่างอื่น: มันอัปโหลดอัตโนมัติเมื่อเปิดแอปอยู่ ส่วนการอ่านเบื้องหลังต้องทำหนึ่งเส้นทางที่คุณเลือกในหน้าเส้นทางให้เสร็จ ทุกความสามารถถูกตัดสินด้วยการทดสอบจริง — ถ้าทำไม่ได้ก็จะบอกตรง ๆ</string>
     <string name="onboarding_skip">ดูรอบ ๆ ก่อน ค่อยจับคู่ทีหลัง</string>
+    <string name="onboarding_next">ดำเนินการต่อ</string>
+    <string name="onboarding_back">ย้อนกลับ</string>
+    <string name="onboarding_skip_for_now">ตั้งค่าภายหลัง</string>
+    <string name="onboarding_step_progress">ขั้นตอนที่ %1$d จาก %2$d</string>
+    <string name="onboarding_pair_fact_entry">ทางเข้าการจับคู่อยู่ที่ส่วนเครือข่ายของหน้า “เส้นทาง” เสมอ จบบทแนะนำนี้แล้วก็หาเจอได้ทุกเมื่อ</string>
+    <string name="onboarding_pair_fact_verify">ระหว่างจับคู่ ทั้งสองฝั่งจะแสดงลายนิ้วมือใบรับรอง ยืนยันเมื่อตรงกันเท่านั้น — ขั้นตอนนี้ป้องกันการเชื่อมต่อผิดเครื่อง</string>
+    <string name="onboarding_pair_fact_service">จับคู่เสร็จ ส่วนเครือข่ายจะเชื่อมต่อและบริการซิงค์เริ่มทำงานอัตโนมัติ</string>
+    <string name="onboarding_read_body">เมื่อแอปอยู่เบื้องหน้าจะอ่านคลิปบอร์ดได้เสมอ ส่วนการอ่านเบื้องหลังต้องตั้งค่าครั้งเดียวบนเส้นทางที่คุณเลือก แนะนำเส้นทางคุณภาพสูงสุด “อ่านตรงด้วยสิทธิ์พิเศษ”</string>
+    <string name="onboarding_route_recommended">แนะนำ</string>
+    <string name="onboarding_wireless_debug_hint">ไม่มีสาย USB ใกล้ตัว? เปิด “ตัวเลือกนักพัฒนา → การแก้ไขข้อบกพร่องแบบไร้สาย” แล้วพีซีจะสั่งเริ่มแบบคลิกเดียวผ่าน Wi-Fi ได้เช่นกัน</string>
+    <string name="onboarding_perms_title">สิทธิ์โดยสรุป</string>
+    <string name="onboarding_perms_body">สิทธิ์แต่ละอย่างจะถูกขอเมื่อถึงเวลาใช้เท่านั้น ตรงนี้บอกไว้ก่อนว่าแต่ละอย่างใช้ทำอะไร ปฏิเสธข้อใดก็ตาม การคัดลอกเบื้องหน้าและประวัติยังใช้ได้ตามปกติ</string>
+    <string name="onboarding_perm_notifications">การแจ้งเตือน</string>
+    <string name="onboarding_perm_notifications_desc">แสดงสถานะซิงค์และการแจ้ง “ได้รับเนื้อหา” โดยไม่มีเนื้อหาคลิปบอร์ดปนอยู่เด็ดขาด</string>
+    <string name="onboarding_perm_overlay">หน้าต่างลอย</string>
+    <string name="onboarding_perm_overlay_desc">จำเป็นเฉพาะเส้นทางอ่านเบื้องหลังที่ใช้หน้าต่างลอย ไม่เลือกเส้นทางเหล่านั้นก็จะไม่ถูกขอ</string>
+    <string name="onboarding_perm_battery">การเพิ่มประสิทธิภาพแบตเตอรี่</string>
+    <string name="onboarding_perm_battery_desc">ยกเว้นแล้วซิงค์เบื้องหลังจะเสถียรขึ้น ไม่ยกเว้นก็ใช้ได้ เพียงแต่ระบบเรียกคืนบริการได้ง่ายกว่า</string>
+    <string name="onboarding_finish_title">พร้อมแล้ว</string>
+    <string name="onboarding_finish_body">จับคู่กับพีซีก่อน คำแนะนำเส้นทางการอ่านอยู่ที่หน้า “เส้นทาง” และสวิตช์ทั้งหมดอยู่ที่ “การตั้งค่า” กลับมาได้ทุกเมื่อ</string>
+    <string name="onboarding_open_wizard">ดูคำแนะนำเส้นทางที่หน้าเส้นทาง</string>
+
+    <string name="prefs_group_help">ช่วยเหลือ</string>
+    <string name="prefs_replay_onboarding">ดูบทแนะนำอีกครั้ง</string>
+    <string name="prefs_replay_onboarding_desc">เดินผ่านบทแนะนำการใช้งานครั้งแรกอีกรอบตั้งแต่หน้าต้อนรับ โดยไม่เปลี่ยนการตั้งค่าหรือการจับคู่ใด ๆ</string>
 </resources>
