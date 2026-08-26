@@ -14,8 +14,10 @@
 
 | 产物 | 文件 | SHA-256 |
 |---|---|---|
-| Windows 便携版 | `ClipSync-win-x64-v<X.Y.Z>.zip` | `<sha256>` |
-| Android APK | `ClipSync-android-v<X.Y.Z>.apk` | `<sha256>` |
+| Windows 便携版 | `ClipSync-windows-x64.zip` | `<sha256>` |
+| Android APK | `ClipSync-android.apk` | `<sha256>` |
+
+（文件名以打包脚本实产为准——`scripts/package-windows.ps1` / `scripts/package-android.ps1` 产出不带版本号后缀的固定文件名；未配置签名 secrets 时 Android 产物为 `ClipSync-android-unsigned.apk`，不可安装。SHA-256 与构建 SHA 由 `release.yml` 在 Release 正文自动注明，可直接对照回填。）
 
 APK 签名指纹：`<签名证书 SHA-256，跨版本必须一致>`
 
