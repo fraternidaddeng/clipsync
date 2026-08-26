@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Segmento de red · conexión</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Lectura privilegiada</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>El nivel de mayor calidad de la escalera de lectura en segundo plano de Android: el PC usa adb para ayudar a un teléfono emparejado a iniciar su host privilegiado integrado, tras lo cual las copias en segundo plano del teléfono se suben al instante. Cada paso requiere tu consentimiento explícito, nunca en silencio.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>Una vez permitido, este PC llamará a adb (el puente de depuración de Android) para enviar al teléfono un único comando de inicio. adb se ejecuta solo cuando haces clic cada vez — nunca residente, nunca en silencio. La primera vez también debes activar la depuración USB en el teléfono y aceptar a mano su aviso de autorización adb — Android no permite automatizar ese paso.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>Entiendo: permitir adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>Retirar el consentimiento de adb</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Detectar teléfono</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Iniciar lectura privilegiada</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>Primera conexión: en el teléfono, activa Opciones de desarrollador → Depuración USB (o depuración inalámbrica) y toca Permitir en el aviso "Permitir depuración USB". Este paso solo se puede hacer a mano en el teléfono.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Toca "Detectar teléfono" para ver el estado actual.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>No se encontró adb. Instala las platform-tools de Android o coloca una carpeta platform-tools junto a esta app.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>No se detectó ningún teléfono. Conéctalo por cable con la depuración USB activada, o configura la depuración inalámbrica.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Teléfono conectado, pero la depuración aún no está autorizada. Toca "Permitir depuración USB" en el teléfono.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Teléfono conectado, pero se informa sin conexión. Vuelve a conectarlo e inténtalo de nuevo.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: el canal de lectura privilegiada está funcionando.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} está listo; el canal privilegiado no está funcionando. Toca "Iniciar lectura privilegiada" para abrirlo.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Comando de inicio enviado. En la página de conducto del teléfono, toca "Volver a sondear" para confirmar que la lectura privilegiada está lista.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Error al iniciar: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>motivo desconocido</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb no encontrado</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>el comando adb agotó el tiempo</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Limpiar</value>
   </data>

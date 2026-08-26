@@ -2,6 +2,7 @@ using ClipSync.App.Clipboard;
 using ClipSync.App.Diagnostics;
 using ClipSync.App.Localization;
 using ClipSync.App.Pairing;
+using ClipSync.App.PrivilegedHost;
 using ClipSync.App.Security;
 using ClipSync.App.Startup;
 using ClipSync.App.Sync;
@@ -9,6 +10,7 @@ using ClipSync.App.Theme;
 using ClipSync.App.Tray;
 using ClipSync.App.ViewModels;
 using ClipSync.Core.Clipboard;
+using ClipSync.Core.Clipboard.PrivilegedHost;
 using ClipSync.Core.Security;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Bluetooth;
@@ -79,6 +81,10 @@ public partial class App : Application
         collection.AddSingleton<ClipboardCapturePolicy>();
         collection.AddSingleton<ClipboardCaptureService>();
         collection.AddSingleton<Win32ClipboardAdapter>();
+        // 特权直读 · PC 侧 adb 协助（任务 1）: locate adb once at startup (a file check, not a
+        // launch); the assistant issues real adb calls only from explicit, consented actions.
+        collection.AddSingleton<IAdbRunner>(_ => new ProcessAdbRunner());
+        collection.AddSingleton<PrivilegedHostAssistant>();
         collection.AddSingleton<MainViewModel>();
         collection.AddSingleton<MainWindow>();
         services = collection.BuildServiceProvider();
@@ -512,7 +518,15 @@ public partial class App : Application
         {
             if (services is not null)
             {
-                await services.GetRequiredService<MainViewModel>().RefreshDevicesCommand.ExecuteAsync(null);
+                var viewModel = services.GetRequiredService<MainViewModel>();
+                await viewModel.RefreshDevicesCommand.ExecuteAsync(null);
+                // 特权直读（任务 1）: right after pairing, if the user already allowed adb, refresh
+                // the card so a one-click 启动特权直读 is waiting when the phone is plugged in.
+                // No adb call runs unless consent was given — the command self-guards.
+                if (viewModel.PrivilegedAdbConsent)
+                {
+                    await viewModel.DetectPhoneCommand.ExecuteAsync(null);
+                }
             }
         });
     }

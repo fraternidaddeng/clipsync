@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Ağ bölümü · bağlantı</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Ayrıcalıklı okuma</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Android arka plan okuma merdiveninin en kaliteli basamağı: PC, eşleştirilmiş bir telefonun yerleşik ayrıcalıklı ana bilgisayarını başlatmasına adb ile yardım eder; ardından telefonun arka plan kopyaları anında yüklenir. Her adım açık onayınızı gerektirir; asla sessizce yapılmaz.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>İzin verildiğinde bu PC, telefona tek bir başlatma komutu göndermek için adb’yi (Android Debug Bridge) çağırır. adb yalnızca her tıklamanızda çalışır — asla kalıcı değildir, asla sessiz değildir. İlk kez telefonda USB hata ayıklamayı da etkinleştirmeli ve adb yetkilendirme istemini elle kabul etmelisiniz — Android bu adımın otomatikleştirilmesine izin vermez.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>Anladım — adb’ye izin ver</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>adb onayını geri çek</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Telefonu algıla</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Ayrıcalıklı okumayı başlat</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>İlk bağlantı: telefonda Geliştirici seçenekleri → USB hata ayıklama (veya kablosuz hata ayıklama) özelliğini açın, ardından "USB hata ayıklamaya izin ver" isteminde İzin Ver’e dokunun. Bu adım yalnızca telefonda elle yapılabilir.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Mevcut durumu görmek için "Telefonu algıla"ya dokunun.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb bulunamadı. Android platform-tools’u yükleyin veya bu uygulamanın yanına bir platform-tools klasörü koyun.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>Telefon algılanmadı. USB hata ayıklama açıkken kabloyla bağlayın veya kablosuz hata ayıklamayı kurun.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Telefon bağlı ama hata ayıklama henüz yetkilendirilmedi. Telefonda "USB hata ayıklamaya izin ver"e dokunun.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Telefon takılı ama çevrimdışı bildirildi. Yeniden bağlayıp tekrar deneyin.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: ayrıcalıklı okuma kanalı çalışıyor.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} hazır; ayrıcalıklı kanal çalışmıyor. Açmak için "Ayrıcalıklı okumayı başlat"a dokunun.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Başlatma komutu gönderildi. Telefonun kanal sayfasında ayrıcalıklı okumanın hazır olduğunu doğrulamak için "Yeniden yokla"ya dokunun.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Başlatma başarısız: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>bilinmeyen neden</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb bulunamadı</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>adb komutu zaman aşımına uğradı</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Temizle</value>
   </data>

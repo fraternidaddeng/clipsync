@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>网络段 · 连接</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>特权直读</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Android 后台读取阶梯里质量最高的一档：电脑通过 adb 帮已配对的手机启动内置特权宿主，之后手机在后台复制即时上行。全程需你明确同意，绝不静默。</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>启用后，本机会调用 adb（Android 调试桥）向手机发送一条启动命令。adb 只在你每次点击时运行，不会常驻或静默执行。首次还需在手机上打开「USB 调试」并手动确认 adb 授权弹窗——这一步 Android 不允许自动化。</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>了解并允许使用 adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>撤销 adb 授权</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>检测手机</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>启动特权直读</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>首次连接：请在手机上开启「开发者选项 → USB 调试」（或无线调试），并在弹出的「允许 USB 调试」窗口点允许。这一步只能在手机上手动完成。</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>点「检测手机」查看当前状态。</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>未找到 adb。请安装 Android 平台工具（platform-tools），或将其放到本程序目录下的 platform-tools 文件夹。</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>未检测到手机。请用数据线连接并开启「USB 调试」，或配置无线调试。</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>手机已连接，但尚未授权调试。请在手机上点「允许 USB 调试」。</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>手机已连接但处于离线状态。重新插拔或重连后再试。</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}：特权直读通道运行中。</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} 已就绪，特权通道未运行。点「启动特权直读」开启。</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>已发送启动命令。回到手机的通路页点「重新探测」确认特权直读已就绪。</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>启动失败：{0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>原因未知</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb：{0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>未找到 adb</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>adb 命令超时</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>一键清理</value>
   </data>

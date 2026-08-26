@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Segmento rete · connessione</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Lettura privilegiata</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Il gradino di qualità più alta della scala di lettura in background di Android: il PC usa adb per aiutare un telefono associato ad avviare il suo host privilegiato integrato, dopodiché le copie in background del telefono vengono caricate all’istante. Ogni passaggio richiede il tuo consenso esplicito, mai in silenzio.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>Una volta consentito, questo PC chiamerà adb (l’Android Debug Bridge) per inviare al telefono un solo comando di avvio. adb viene eseguito solo a ogni tuo clic — mai residente, mai in silenzio. La prima volta devi anche attivare il debug USB sul telefono e accettare a mano il suo avviso di autorizzazione adb — Android non consente di automatizzare questo passaggio.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>Ho capito — consenti adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>Revoca il consenso adb</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Rileva telefono</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Avvia lettura privilegiata</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>Prima connessione: sul telefono attiva Opzioni sviluppatore → Debug USB (o debug wireless) e tocca Consenti nell’avviso "Consentire il debug USB". Questo passaggio si può fare solo a mano sul telefono.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Tocca "Rileva telefono" per vedere lo stato attuale.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb non trovato. Installa i platform-tools di Android o metti una cartella platform-tools accanto a questa app.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>Nessun telefono rilevato. Collegalo via cavo con il debug USB attivo, oppure configura il debug wireless.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Telefono collegato, ma il debug non è ancora autorizzato. Tocca "Consenti il debug USB" sul telefono.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Telefono collegato ma segnalato offline. Ricollegalo e riprova.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: il canale di lettura privilegiata è in esecuzione.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} è pronto; il canale privilegiato non è in esecuzione. Tocca "Avvia lettura privilegiata" per aprirlo.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Comando di avvio inviato. Nella pagina condotto del telefono, tocca "Ri-sonda" per confermare che la lettura privilegiata è pronta.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Avvio non riuscito: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>motivo sconosciuto</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb non trovato</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>comando adb scaduto</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Pulisci</value>
   </data>

@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Netzwerkabschnitt · Verbindung</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Privilegierter Lesezugriff</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Die Stufe mit der höchsten Qualität auf der Android-Hintergrundlese-Leiter: Der PC hilft einem gekoppelten Telefon per adb, seinen integrierten privilegierten Host zu starten; danach werden Hintergrundkopien des Telefons sofort hochgeladen. Jeder Schritt erfordert deine ausdrückliche Zustimmung – niemals still.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>Nach der Erlaubnis ruft dieser PC adb (die Android Debug Bridge) auf, um dem Telefon einen einzigen Startbefehl zu senden. adb läuft nur bei jedem deiner Klicks – niemals resident, niemals still. Beim ersten Mal musst du außerdem am Telefon das USB-Debugging aktivieren und dessen adb-Autorisierungsdialog von Hand bestätigen – diesen Schritt lässt Android nicht automatisieren.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>Verstanden – adb erlauben</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>adb-Zustimmung widerrufen</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Telefon erkennen</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Privilegierten Lesezugriff starten</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>Erste Verbindung: Aktiviere am Telefon Entwickleroptionen → USB-Debugging (oder Drahtlos-Debugging) und tippe im Dialog „USB-Debugging zulassen“ auf Zulassen. Dieser Schritt lässt sich nur von Hand am Telefon erledigen.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Tippe auf „Telefon erkennen“, um den aktuellen Status zu sehen.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb wurde nicht gefunden. Installiere die Android platform-tools oder lege einen platform-tools-Ordner neben diese App.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>Kein Telefon erkannt. Verbinde es per Kabel mit aktiviertem USB-Debugging oder richte Drahtlos-Debugging ein.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Telefon verbunden, aber das Debugging ist noch nicht autorisiert. Tippe am Telefon auf „USB-Debugging zulassen“.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Telefon angeschlossen, aber als offline gemeldet. Verbinde es neu und versuche es erneut.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: Der privilegierte Lesekanal läuft.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} ist bereit; der privilegierte Kanal läuft nicht. Tippe auf „Privilegierten Lesezugriff starten“, um ihn zu öffnen.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Startbefehl gesendet. Tippe auf der Conduit-Seite des Telefons auf „Erneut prüfen“, um zu bestätigen, dass der privilegierte Lesezugriff bereit ist.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Start fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>unbekannter Grund</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb nicht gefunden</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>adb-Befehl hat das Zeitlimit überschritten</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Aufräumen</value>
   </data>

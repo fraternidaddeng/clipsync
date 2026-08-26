@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>ส่วนเครือข่าย · การเชื่อมต่อ</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>การอ่านสิทธิ์พิเศษ</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>ขั้นคุณภาพสูงสุดของบันไดการอ่านเบื้องหลังของ Android: พีซีใช้ adb ช่วยให้โทรศัพท์ที่จับคู่แล้วเริ่มโฮสต์สิทธิ์พิเศษในตัว จากนั้นการคัดลอกเบื้องหลังของโทรศัพท์จะอัปโหลดทันที ทุกขั้นตอนต้องได้รับความยินยอมอย่างชัดเจนจากคุณ ไม่ทำงานเงียบ ๆ เด็ดขาด</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>เมื่ออนุญาตแล้ว พีซีนี้จะเรียก adb (Android Debug Bridge) เพื่อส่งคำสั่งเริ่มต้นหนึ่งคำสั่งไปยังโทรศัพท์ adb จะทำงานเฉพาะตอนที่คุณคลิกแต่ละครั้งเท่านั้น ไม่ค้างอยู่และไม่ทำงานเงียบ ๆ ครั้งแรกคุณต้องเปิด «การแก้จุดบกพร่อง USB» บนโทรศัพท์และยอมรับหน้าต่างอนุญาต adb ด้วยตนเอง — Android ไม่อนุญาตให้ทำขั้นตอนนี้อัตโนมัติ</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>เข้าใจแล้ว — อนุญาต adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>เพิกถอนการยินยอม adb</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>ตรวจหาโทรศัพท์</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>เริ่มการอ่านสิทธิ์พิเศษ</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>การเชื่อมต่อครั้งแรก: บนโทรศัพท์ ให้เปิด «ตัวเลือกนักพัฒนา → การแก้จุดบกพร่อง USB» (หรือการแก้จุดบกพร่องแบบไร้สาย) แล้วแตะ อนุญาต ในหน้าต่าง «อนุญาตการแก้จุดบกพร่อง USB» ขั้นตอนนี้ทำได้เฉพาะด้วยตนเองบนโทรศัพท์เท่านั้น</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>แตะ «ตรวจหาโทรศัพท์» เพื่อดูสถานะปัจจุบัน</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>ไม่พบ adb ให้ติดตั้ง Android platform-tools หรือวางโฟลเดอร์ platform-tools ไว้ข้างแอปนี้</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>ไม่พบโทรศัพท์ ให้เชื่อมต่อด้วยสายพร้อมเปิดการแก้จุดบกพร่อง USB หรือตั้งค่าการแก้จุดบกพร่องแบบไร้สาย</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>โทรศัพท์เชื่อมต่อแล้วแต่ยังไม่ได้อนุญาตการแก้จุดบกพร่อง ให้แตะ «อนุญาตการแก้จุดบกพร่อง USB» บนโทรศัพท์</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>โทรศัพท์เชื่อมต่ออยู่แต่รายงานว่าออฟไลน์ ให้เชื่อมต่อใหม่แล้วลองอีกครั้ง</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: ช่องการอ่านสิทธิ์พิเศษกำลังทำงาน</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} พร้อมแล้ว แต่ช่องสิทธิ์พิเศษยังไม่ทำงาน แตะ «เริ่มการอ่านสิทธิ์พิเศษ» เพื่อเปิด</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>ส่งคำสั่งเริ่มต้นแล้ว ที่หน้าช่องทางของโทรศัพท์ ให้แตะ «ตรวจซ้ำ» เพื่อยืนยันว่าการอ่านสิทธิ์พิเศษพร้อมแล้ว</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>เริ่มไม่สำเร็จ: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>ไม่ทราบสาเหตุ</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>ไม่พบ adb</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>คำสั่ง adb หมดเวลา</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>ล้างทิ้ง</value>
   </data>

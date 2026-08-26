@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Đoạn mạng · kết nối</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Đọc đặc quyền</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Bậc chất lượng cao nhất trong thang đọc nền của Android: máy tính dùng adb để giúp điện thoại đã ghép nối khởi động host đặc quyền tích hợp, sau đó các bản sao chép nền của điện thoại được tải lên tức thì. Mỗi bước đều cần bạn đồng ý rõ ràng, không bao giờ âm thầm.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>Sau khi cho phép, máy tính này sẽ gọi adb (Android Debug Bridge) để gửi điện thoại một lệnh khởi động. adb chỉ chạy mỗi khi bạn nhấp — không thường trú, không âm thầm. Lần đầu bạn cũng phải bật Gỡ lỗi USB trên điện thoại và tự tay chấp nhận hộp thoại ủy quyền adb — Android không cho phép tự động hóa bước này.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>Đã hiểu — cho phép adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>Thu hồi đồng ý adb</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Dò tìm điện thoại</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Bắt đầu đọc đặc quyền</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>Kết nối lần đầu: trên điện thoại, bật Tùy chọn nhà phát triển → Gỡ lỗi USB (hoặc gỡ lỗi không dây), rồi nhấn Cho phép trong hộp thoại "Cho phép gỡ lỗi USB". Bước này chỉ có thể làm thủ công trên điện thoại.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Nhấn "Dò tìm điện thoại" để xem trạng thái hiện tại.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>Không tìm thấy adb. Hãy cài Android platform-tools, hoặc đặt thư mục platform-tools cạnh ứng dụng này.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>Không phát hiện điện thoại. Hãy kết nối bằng cáp với Gỡ lỗi USB đang bật, hoặc thiết lập gỡ lỗi không dây.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Điện thoại đã kết nối nhưng gỡ lỗi chưa được ủy quyền. Hãy nhấn "Cho phép gỡ lỗi USB" trên điện thoại.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Điện thoại đã gắn nhưng báo ngoại tuyến. Hãy kết nối lại và thử lần nữa.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: kênh đọc đặc quyền đang chạy.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} đã sẵn sàng; kênh đặc quyền chưa chạy. Nhấn "Bắt đầu đọc đặc quyền" để mở.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Đã gửi lệnh khởi động. Trên trang kênh của điện thoại, nhấn "Dò lại" để xác nhận đọc đặc quyền đã sẵn sàng.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Khởi động thất bại: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>lý do không rõ</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>Không tìm thấy adb</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>lệnh adb đã hết thời gian</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Dọn dẹp</value>
   </data>

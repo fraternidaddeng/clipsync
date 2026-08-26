@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Netwerksegment · verbinding</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Bevoorrecht lezen</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>De hoogste kwaliteitstrede van de Android-achtergrondleesladder: de pc gebruikt adb om een gekoppelde telefoon te helpen zijn ingebouwde bevoorrechte host te starten, waarna achtergrondkopieën van de telefoon direct worden geüpload. Elke stap vereist je uitdrukkelijke toestemming — nooit stil.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>Eenmaal toegestaan roept deze pc adb (de Android Debug Bridge) aan om de telefoon één startcommando te sturen. adb draait alleen bij elke klik van jou — nooit residentieel, nooit stil. De eerste keer moet je ook USB-foutopsporing op de telefoon inschakelen en het adb-autorisatievenster met de hand accepteren — Android staat het automatiseren van die stap niet toe.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>Ik begrijp het — adb toestaan</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>adb-toestemming intrekken</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Telefoon detecteren</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Bevoorrecht lezen starten</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>Eerste verbinding: schakel op de telefoon Ontwikkelaarsopties → USB-foutopsporing (of draadloze foutopsporing) in en tik op Toestaan in het venster "USB-foutopsporing toestaan". Deze stap kan alleen met de hand op de telefoon.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Tik op "Telefoon detecteren" om de huidige status te zien.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb is niet gevonden. Installeer de Android platform-tools of zet een platform-tools-map naast deze app.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>Geen telefoon gedetecteerd. Sluit hem via kabel aan met USB-foutopsporing aan, of stel draadloze foutopsporing in.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Telefoon verbonden maar foutopsporing is nog niet geautoriseerd. Tik op "USB-foutopsporing toestaan" op de telefoon.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Telefoon aangesloten maar gemeld als offline. Sluit hem opnieuw aan en probeer het nog eens.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: het bevoorrechte leeskanaal draait.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} is klaar; het bevoorrechte kanaal draait niet. Tik op "Bevoorrecht lezen starten" om het te openen.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Startcommando verzonden. Tik op de conduit-pagina van de telefoon op "Opnieuw peilen" om te bevestigen dat bevoorrecht lezen klaar is.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Starten mislukt: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>onbekende reden</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb niet gevonden</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>adb-opdracht is verlopen</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Opschonen</value>
   </data>

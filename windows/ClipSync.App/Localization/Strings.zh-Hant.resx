@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>網路段 · 連線</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>特權直讀</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Android 背景讀取階梯裡品質最高的一檔：電腦透過 adb 幫已配對的手機啟動內建特權宿主，之後手機在背景複製即時上行。全程需你明確同意，絕不靜默。</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>啟用後，本機會呼叫 adb（Android 偵錯橋）向手機傳送一條啟動命令。adb 只在你每次點擊時執行，不會常駐或靜默執行。首次還需在手機上開啟「USB 偵錯」並手動確認 adb 授權彈窗——這一步 Android 不允許自動化。</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>了解並允許使用 adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>撤銷 adb 授權</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>偵測手機</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>啟動特權直讀</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>首次連接：請在手機上開啟「開發者選項 → USB 偵錯」（或無線偵錯），並在彈出的「允許 USB 偵錯」視窗點允許。這一步只能在手機上手動完成。</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>點「偵測手機」查看目前狀態。</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>找不到 adb。請安裝 Android 平台工具（platform-tools），或將其放到本程式目錄下的 platform-tools 資料夾。</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>未偵測到手機。請用資料線連接並開啟「USB 偵錯」，或設定無線偵錯。</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>手機已連接，但尚未授權偵錯。請在手機上點「允許 USB 偵錯」。</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>手機已連接但處於離線狀態。重新插拔或重連後再試。</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}：特權直讀通道運行中。</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} 已就緒，特權通道未運行。點「啟動特權直讀」開啟。</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>已傳送啟動命令。回到手機的通路頁點「重新探測」確認特權直讀已就緒。</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>啟動失敗：{0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>原因未知</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb：{0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>找不到 adb</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>adb 命令逾時</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>一鍵清理</value>
   </data>

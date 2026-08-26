@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>قسم الشبكة · الاتصال</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>القراءة المميزة</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>أعلى درجات جودة سلّم القراءة في الخلفية على أندرويد: يستخدم الحاسوب adb لمساعدة هاتف مقترن على بدء المضيف المميز المدمج، وبعدها تُرفع النسخ في الخلفية من الهاتف فورًا. تتطلب كل خطوة موافقتك الصريحة، ولا تحدث بصمت أبدًا.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>بعد السماح، سيستدعي هذا الحاسوب adb (جسر تصحيح أندرويد) لإرسال أمر بدء واحد إلى الهاتف. لا يعمل adb إلا عند كل نقرة منك — لا يبقى مقيمًا ولا يعمل بصمت. في المرة الأولى عليك أيضًا تفعيل «تصحيح أخطاء USB» على الهاتف وقبول نافذة تفويض adb يدويًا — لا يسمح أندرويد بأتمتة هذه الخطوة.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>فهمت — اسمح بـ adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>سحب موافقة adb</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>اكتشاف الهاتف</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>بدء القراءة المميزة</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>أول اتصال: على الهاتف، فعّل «خيارات المطور ← تصحيح أخطاء USB» (أو التصحيح اللاسلكي)، ثم انقر «سماح» في نافذة «السماح بتصحيح أخطاء USB». لا يمكن إتمام هذه الخطوة إلا يدويًا على الهاتف.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>انقر «اكتشاف الهاتف» لرؤية الحالة الحالية.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>لم يُعثر على adb. ثبّت أدوات المنصة (platform-tools) الخاصة بأندرويد، أو ضع مجلد platform-tools بجوار هذا التطبيق.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>لم يُكتشف أي هاتف. وصّله بكابل مع تفعيل تصحيح أخطاء USB، أو أعدّ التصحيح اللاسلكي.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>الهاتف متصل لكن التصحيح غير مُصرّح به بعد. انقر «السماح بتصحيح أخطاء USB» على الهاتف.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>الهاتف متصل لكنه مُبلَّغ عنه بأنه غير متصل. أعد توصيله وحاول مرة أخرى.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: قناة القراءة المميزة قيد التشغيل.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} جاهز؛ القناة المميزة لا تعمل. انقر «بدء القراءة المميزة» لفتحها.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>تم إرسال أمر البدء. في صفحة القناة على الهاتف، انقر «إعادة الفحص» للتأكد من جاهزية القراءة المميزة.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>فشل البدء: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>سبب غير معروف</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>لم يُعثر على adb</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>انتهت مهلة أمر adb</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>تنظيف</value>
   </data>

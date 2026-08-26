@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>ネットワーク区間 · 接続</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>特権ダイレクト読み取り</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Android のバックグラウンド読み取り段階で最も品質の高い経路です。PC が adb でペア済みのスマートフォンの内蔵特権ホストを起動し、以後はバックグラウンドのコピーが即時アップロードされます。すべての手順であなたの明示的な同意が必要で、決して黙って実行しません。</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>許可すると、この PC は adb（Android Debug Bridge）を呼び出してスマートフォンに 1 つの起動コマンドを送ります。adb は毎回あなたがクリックしたときだけ実行され、常駐も黙って実行することもありません。初回はスマートフォンで「USB デバッグ」を有効にし、adb 認証のダイアログを手動で承認する必要があります。この手順は Android では自動化できません。</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>理解して adb を許可</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>adb の許可を取り消す</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>スマートフォンを検出</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>特権ダイレクト読み取りを開始</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>初回接続：スマートフォンで「開発者向けオプション → USB デバッグ」（またはワイヤレスデバッグ）を有効にし、表示される「USB デバッグを許可しますか」で許可をタップしてください。この手順はスマートフォンで手動で行うしかありません。</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>「スマートフォンを検出」をタップすると現在の状態を確認できます。</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb が見つかりません。Android の platform-tools をインストールするか、このアプリの隣に platform-tools フォルダーを置いてください。</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>スマートフォンが検出されません。USB デバッグを有効にしてケーブルで接続するか、ワイヤレスデバッグを設定してください。</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>スマートフォンは接続済みですが、デバッグがまだ許可されていません。スマートフォンで「USB デバッグを許可」をタップしてください。</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>スマートフォンは接続されていますが、オフラインと報告されました。接続し直してからもう一度お試しください。</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}：特権ダイレクト読み取りチャネルが動作中です。</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} は準備完了ですが、特権チャネルは動作していません。「特権ダイレクト読み取りを開始」をタップして開いてください。</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>起動コマンドを送信しました。スマートフォンの通路ページで「再探測」をタップし、特権ダイレクト読み取りの準備完了を確認してください。</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>起動に失敗しました：{0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>原因不明</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb：{0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb が見つかりません</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>adb コマンドがタイムアウトしました</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>一括クリーンアップ</value>
   </data>

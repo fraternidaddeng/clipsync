@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Segment sieci · połączenie</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Odczyt uprzywilejowany</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Najwyższej jakości szczebel drabiny odczytu w tle Androida: komputer używa adb, aby pomóc sparowanemu telefonowi uruchomić wbudowany uprzywilejowany host, po czym kopie w tle z telefonu są przesyłane natychmiast. Każdy krok wymaga Twojej wyraźnej zgody — nigdy po cichu.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>Po zezwoleniu ten komputer wywoła adb (Android Debug Bridge), aby wysłać do telefonu jedno polecenie startu. adb działa tylko przy każdym Twoim kliknięciu — nigdy nie rezyduje i nie działa po cichu. Za pierwszym razem musisz też włączyć debugowanie USB w telefonie i ręcznie zaakceptować jego monit autoryzacji adb — Android nie pozwala zautomatyzować tego kroku.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>Rozumiem — zezwól na adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>Wycofaj zgodę na adb</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Wykryj telefon</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Uruchom odczyt uprzywilejowany</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>Pierwsze połączenie: w telefonie włącz Opcje programisty → Debugowanie USB (lub debugowanie bezprzewodowe), a następnie w oknie „Zezwolić na debugowanie USB?” dotknij Zezwól. Ten krok można wykonać tylko ręcznie na telefonie.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Dotknij „Wykryj telefon”, aby zobaczyć bieżący stan.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>Nie znaleziono adb. Zainstaluj Android platform-tools lub umieść folder platform-tools obok tej aplikacji.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>Nie wykryto telefonu. Podłącz go kablem z włączonym debugowaniem USB lub skonfiguruj debugowanie bezprzewodowe.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Telefon podłączony, ale debugowanie nie jest jeszcze autoryzowane. Dotknij „Zezwól na debugowanie USB” w telefonie.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Telefon podłączony, ale zgłoszony jako offline. Podłącz go ponownie i spróbuj jeszcze raz.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: kanał odczytu uprzywilejowanego działa.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} jest gotowy; kanał uprzywilejowany nie działa. Dotknij „Uruchom odczyt uprzywilejowany”, aby go otworzyć.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Wysłano polecenie startu. Na stronie kanału w telefonie dotknij „Sprawdź ponownie”, aby potwierdzić gotowość odczytu uprzywilejowanego.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Uruchomienie nie powiodło się: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>nieznany powód</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>Nie znaleziono adb</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>upłynął limit czasu polecenia adb</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Uporządkuj</value>
   </data>

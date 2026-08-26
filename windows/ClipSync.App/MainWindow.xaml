@@ -2007,6 +2007,125 @@
                                 </Border>
                             </StackPanel>
                         </ContentControl>
+
+                        <!-- 特权直读 · PC 侧 adb 协助（任务 1）：帮已配对手机开启后台直读。绝不静默——
+                             先解释、经明确同意后才发第一条 adb 命令；首次 USB 调试的 RSA 授权仍需在手机上
+                             手动确认（威胁模型：no silent adb）。特权直读是 Android 后台读取阶梯里质量最高的一档。 -->
+                        <ContentControl Style="{StaticResource GroupCard}">
+                            <StackPanel>
+                                <Grid Margin="16,12,16,10">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Viewbox Width="17" Height="17">
+                                            <Canvas Width="24" Height="24">
+                                                <Path Data="{StaticResource IconDevices}"
+                                                      Stroke="{DynamicResource CsText3Brush}"
+                                                      StrokeThickness="1.7"
+                                                      StrokeStartLineCap="Round"
+                                                      StrokeEndLineCap="Round"
+                                                      StrokeLineJoin="Round" />
+                                            </Canvas>
+                                        </Viewbox>
+                                        <TextBlock Margin="8,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource CsText1Brush}"
+                                                   Text="{x:Static loc:Strings.Conduit_Privileged_Header}" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <Border Padding="16,0,16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <TextBlock Margin="0,12,0,0"
+                                               Style="{StaticResource RowDesc}"
+                                               Text="{x:Static loc:Strings.Conduit_Privileged_Desc}" />
+                                </Border>
+
+                                <!-- 同意门槛：未同意前只解释，一条 adb 都不发 -->
+                                <Border Padding="16,4,16,14"
+                                        Visibility="{Binding PrivilegedAdbConsent, Converter={StaticResource InverseBoolToVisibility}}">
+                                    <StackPanel>
+                                        <Border Padding="12,10"
+                                                Background="{DynamicResource CsActBgBrush}"
+                                                BorderBrush="{DynamicResource CsActLineBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="9">
+                                            <TextBlock FontSize="11"
+                                                       Foreground="{DynamicResource CsActBrush}"
+                                                       Text="{x:Static loc:Strings.Conduit_Privileged_ConsentBody}"
+                                                       TextWrapping="Wrap" />
+                                        </Border>
+                                        <Button Margin="0,12,0,0"
+                                                HorizontalAlignment="Left"
+                                                Command="{Binding GrantPrivilegedConsentCommand}"
+                                                Content="{x:Static loc:Strings.Conduit_Privileged_ConsentAllow}"
+                                                Style="{StaticResource GhostFlowButton}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- 已同意：检测手机 + 一键启动 + 撤销；状态与结果都如实陈述 -->
+                                <Border Padding="16,4,16,14"
+                                        Visibility="{Binding PrivilegedAdbConsent, Converter={StaticResource BoolToVisibility}}">
+                                    <StackPanel>
+                                        <TextBlock TextWrapping="Wrap">
+                                            <TextBlock.Style>
+                                                <Style BasedOn="{StaticResource RowName}" TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="{Binding PrivilegedStatus}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding PrivilegedStatus}" Value="">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <!-- adb 位置是机器文本：Mono，RTL 下钉回 LTR -->
+                                        <TextBlock Margin="0,4,0,0"
+                                                   FlowDirection="LeftToRight"
+                                                   FontFamily="{StaticResource CsMono}"
+                                                   FontSize="10.5"
+                                                   Foreground="{DynamicResource CsText4Brush}"
+                                                   Text="{Binding PrivilegedAdbLocation}"
+                                                   TextWrapping="Wrap" />
+                                        <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
+                                            <Button Command="{Binding DetectPhoneCommand}"
+                                                    Content="{x:Static loc:Strings.Conduit_Privileged_Detect}"
+                                                    Style="{StaticResource GhostQuietButton}" />
+                                            <Button Margin="8,0,0,0"
+                                                    Command="{Binding StartPrivilegedHostCommand}"
+                                                    Content="{x:Static loc:Strings.Conduit_Privileged_Start}"
+                                                    Style="{StaticResource GhostFlowButton}" />
+                                        </StackPanel>
+                                        <TextBlock Margin="0,10,0,0" TextWrapping="Wrap">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontSize" Value="11" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
+                                                    <Setter Property="Text" Value="{Binding PrivilegedActionResult}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding PrivilegedActionResult}" Value="">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <!-- 首次 USB 调试的 RSA「允许调试」授权始终要在手机上手动点，adb 代替不了 -->
+                                        <TextBlock Margin="0,12,0,0"
+                                                   FontSize="10.5"
+                                                   Foreground="{DynamicResource CsText4Brush}"
+                                                   Text="{x:Static loc:Strings.Conduit_Privileged_ManualNote}"
+                                                   TextWrapping="Wrap" />
+                                        <Button Margin="0,10,0,0"
+                                                HorizontalAlignment="Left"
+                                                Command="{Binding RevokePrivilegedConsentCommand}"
+                                                Content="{x:Static loc:Strings.Conduit_Privileged_ConsentRevoke}"
+                                                Style="{StaticResource GhostQuietButton}" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ContentControl>
                     </StackPanel>
                 </ScrollViewer>
 

@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Segment réseau · connexion</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Lecture privilégiée</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Le niveau de plus haute qualité de l’échelle de lecture en arrière-plan d’Android : le PC utilise adb pour aider un téléphone appairé à lancer son hôte privilégié intégré, après quoi les copies en arrière-plan du téléphone se téléversent instantanément. Chaque étape nécessite votre consentement explicite, jamais en silence.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>Une fois autorisé, ce PC appellera adb (l’Android Debug Bridge) pour envoyer au téléphone une seule commande de démarrage. adb ne s’exécute qu’à chacun de vos clics — jamais résident, jamais en silence. La première fois, vous devez aussi activer le débogage USB sur le téléphone et accepter manuellement son invite d’autorisation adb — Android n’autorise pas l’automatisation de cette étape.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>J’ai compris — autoriser adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>Retirer le consentement adb</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Détecter le téléphone</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Démarrer la lecture privilégiée</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>Première connexion : sur le téléphone, activez Options pour les développeurs → Débogage USB (ou débogage sans fil), puis appuyez sur Autoriser dans l’invite « Autoriser le débogage USB ». Cette étape ne peut se faire qu’à la main sur le téléphone.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Appuyez sur « Détecter le téléphone » pour voir l’état actuel.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb est introuvable. Installez les platform-tools d’Android ou placez un dossier platform-tools à côté de cette application.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>Aucun téléphone détecté. Connectez-le par câble avec le débogage USB activé, ou configurez le débogage sans fil.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Téléphone connecté, mais le débogage n’est pas encore autorisé. Appuyez sur « Autoriser le débogage USB » sur le téléphone.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Téléphone connecté mais signalé hors ligne. Reconnectez-le et réessayez.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0} : le canal de lecture privilégiée fonctionne.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} est prêt ; le canal privilégié ne fonctionne pas. Appuyez sur « Démarrer la lecture privilégiée » pour l’ouvrir.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Commande de démarrage envoyée. Sur la page conduit du téléphone, appuyez sur « Re-sonder » pour confirmer que la lecture privilégiée est prête.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Échec du démarrage : {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>raison inconnue</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb : {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb introuvable</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>délai dépassé pour la commande adb</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Nettoyer</value>
   </data>

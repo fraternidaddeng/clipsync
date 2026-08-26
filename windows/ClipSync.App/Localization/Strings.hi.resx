@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>नेटवर्क खंड · कनेक्शन</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>विशेषाधिकार पठन</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Android बैकग्राउंड-रीड सीढ़ी की सबसे उच्च-गुणवत्ता वाली पायदान: PC adb से युग्मित फ़ोन को उसका अंतर्निहित विशेषाधिकार होस्ट शुरू करने में मदद करता है, इसके बाद फ़ोन की बैकग्राउंड कॉपियाँ तुरंत अपलोड होती हैं। हर चरण के लिए आपकी स्पष्ट सहमति ज़रूरी है — कभी चुपचाप नहीं।</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>अनुमति देने पर यह PC फ़ोन को एक स्टार्ट कमांड भेजने के लिए adb (Android Debug Bridge) को कॉल करेगा। adb हर बार केवल आपके क्लिक पर चलता है — कभी स्थायी नहीं, कभी चुपचाप नहीं। पहली बार आपको फ़ोन पर USB डिबगिंग चालू करना होगा और उसके adb प्राधिकरण संकेत को हाथ से स्वीकार करना होगा — Android इस चरण को स्वचालित करने की अनुमति नहीं देता।</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>समझ गया — adb की अनुमति दें</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>adb सहमति वापस लें</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>फ़ोन का पता लगाएँ</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>विशेषाधिकार पठन शुरू करें</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>पहला कनेक्शन: फ़ोन पर डेवलपर विकल्प → USB डिबगिंग (या वायरलेस डिबगिंग) चालू करें, फिर "USB डिबगिंग की अनुमति दें" संकेत में अनुमति दें पर टैप करें। यह चरण केवल फ़ोन पर हाथ से ही किया जा सकता है।</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>मौजूदा स्थिति देखने के लिए "फ़ोन का पता लगाएँ" पर टैप करें।</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb नहीं मिला। Android platform-tools इंस्टॉल करें, या इस ऐप के बगल में एक platform-tools फ़ोल्डर रखें।</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>कोई फ़ोन नहीं मिला। USB डिबगिंग चालू रखकर केबल से कनेक्ट करें, या वायरलेस डिबगिंग सेट करें।</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>फ़ोन कनेक्ट है, पर डिबगिंग अभी अधिकृत नहीं है। फ़ोन पर "USB डिबगिंग की अनुमति दें" पर टैप करें।</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>फ़ोन जुड़ा है पर ऑफ़लाइन बताया गया। इसे दोबारा कनेक्ट करके फिर से प्रयास करें।</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: विशेषाधिकार पठन चैनल चल रहा है।</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} तैयार है; विशेषाधिकार चैनल नहीं चल रहा। इसे खोलने के लिए "विशेषाधिकार पठन शुरू करें" पर टैप करें।</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>स्टार्ट कमांड भेजा गया। फ़ोन के कंड्यूट पेज पर "फिर से जाँचें" पर टैप कर पुष्टि करें कि विशेषाधिकार पठन तैयार है।</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>शुरू करना विफल: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>अज्ञात कारण</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb नहीं मिला</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>adb कमांड का समय समाप्त</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>सफ़ाई करें</value>
   </data>

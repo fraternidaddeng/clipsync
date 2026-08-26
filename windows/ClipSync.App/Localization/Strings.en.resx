@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Network segment · connection</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Privileged read</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>The highest-quality rung of the Android background-read ladder: the PC uses adb to help a paired phone start its built-in privileged host, after which the phone's background copies upload instantly. Every step needs your explicit consent — never silent.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>Once allowed, this PC will call adb (the Android Debug Bridge) to send the phone one start command. adb runs only on your click each time — never resident, never silent. The first time you must also enable USB debugging on the phone and accept its adb authorization prompt by hand — Android does not allow automating that step.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>I understand — allow adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>Withdraw adb consent</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Detect phone</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Start privileged read</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>First connection: on the phone, enable Developer options → USB debugging (or wireless debugging), then tap Allow in the "Allow USB debugging" prompt. This step can only be done by hand on the phone.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Tap "Detect phone" to see the current state.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb was not found. Install the Android platform-tools, or drop a platform-tools folder next to this app.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>No phone detected. Connect it by cable with USB debugging on, or set up wireless debugging.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Phone connected but debugging is not authorized yet. Tap "Allow USB debugging" on the phone.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Phone attached but reported offline. Reconnect it and try again.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: the privileged read channel is running.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} is ready; the privileged channel is not running. Tap "Start privileged read" to open it.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Start command sent. On the phone's conduit page, tap "Re-probe" to confirm privileged read is ready.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Start failed: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>unknown reason</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb not found</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>adb command timed out</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Clean up</value>
   </data>

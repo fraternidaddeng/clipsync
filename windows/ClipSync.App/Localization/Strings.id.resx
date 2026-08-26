@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Segmen jaringan · koneksi</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Baca istimewa</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Anak tangga berkualitas tertinggi pada tangga baca latar Android: PC memakai adb untuk membantu ponsel yang sudah dipasangkan memulai host istimewa bawaannya, setelah itu salinan latar ponsel terunggah seketika. Setiap langkah memerlukan persetujuan eksplisit Anda — tidak pernah diam-diam.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>Setelah diizinkan, PC ini akan memanggil adb (Android Debug Bridge) untuk mengirim satu perintah start ke ponsel. adb berjalan hanya saat Anda mengeklik tiap kali — tidak menetap, tidak diam-diam. Pertama kali Anda juga harus mengaktifkan USB debugging di ponsel dan menyetujui dialog otorisasi adb secara manual — Android tidak mengizinkan otomatisasi langkah ini.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>Saya paham — izinkan adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>Cabut persetujuan adb</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Deteksi ponsel</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Mulai baca istimewa</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>Koneksi pertama: di ponsel, aktifkan Opsi pengembang → Debugging USB (atau debugging nirkabel), lalu ketuk Izinkan pada dialog "Izinkan debugging USB". Langkah ini hanya bisa dilakukan secara manual di ponsel.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Ketuk "Deteksi ponsel" untuk melihat status saat ini.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb tidak ditemukan. Pasang platform-tools Android, atau letakkan folder platform-tools di samping aplikasi ini.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>Tidak ada ponsel terdeteksi. Hubungkan dengan kabel saat USB debugging aktif, atau siapkan debugging nirkabel.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Ponsel terhubung tetapi debugging belum diotorisasi. Ketuk "Izinkan debugging USB" di ponsel.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Ponsel terpasang tetapi dilaporkan luring. Sambungkan ulang lalu coba lagi.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: kanal baca istimewa sedang berjalan.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} siap; kanal istimewa belum berjalan. Ketuk "Mulai baca istimewa" untuk membukanya.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Perintah start terkirim. Di halaman saluran ponsel, ketuk "Deteksi ulang" untuk memastikan baca istimewa siap.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Gagal memulai: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>alasan tak diketahui</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb tidak ditemukan</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>perintah adb kehabisan waktu</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Bersihkan</value>
   </data>

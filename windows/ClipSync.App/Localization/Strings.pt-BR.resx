@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Segmento de rede · conexão</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Leitura privilegiada</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>O degrau de maior qualidade da escada de leitura em segundo plano do Android: o PC usa o adb para ajudar um telefone pareado a iniciar seu host privilegiado integrado, após o que as cópias em segundo plano do telefone sobem instantaneamente. Cada etapa exige seu consentimento explícito, nunca em silêncio.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>Depois de permitido, este PC chamará o adb (a Android Debug Bridge) para enviar ao telefone um único comando de início. O adb roda apenas a cada clique seu — nunca residente, nunca em silêncio. Na primeira vez você também precisa ativar a depuração USB no telefone e aceitar manualmente o aviso de autorização do adb — o Android não permite automatizar essa etapa.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>Entendi — permitir o adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>Retirar o consentimento do adb</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Detectar telefone</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Iniciar leitura privilegiada</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>Primeira conexão: no telefone, ative Opções do desenvolvedor → Depuração USB (ou depuração sem fio) e toque em Permitir no aviso "Permitir depuração USB". Esta etapa só pode ser feita à mão no telefone.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Toque em "Detectar telefone" para ver o estado atual.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb não foi encontrado. Instale as platform-tools do Android ou coloque uma pasta platform-tools ao lado deste app.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>Nenhum telefone detectado. Conecte-o por cabo com a depuração USB ligada, ou configure a depuração sem fio.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Telefone conectado, mas a depuração ainda não foi autorizada. Toque em "Permitir depuração USB" no telefone.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Telefone conectado, mas relatado offline. Reconecte-o e tente de novo.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: o canal de leitura privilegiada está em execução.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} está pronto; o canal privilegiado não está em execução. Toque em "Iniciar leitura privilegiada" para abri-lo.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Comando de início enviado. Na página de conduíte do telefone, toque em "Re-sondar" para confirmar que a leitura privilegiada está pronta.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Falha ao iniciar: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>motivo desconhecido</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb não encontrado</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>o comando adb expirou</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Limpar</value>
   </data>

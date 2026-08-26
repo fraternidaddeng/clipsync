@@ -1,5 +1,6 @@
 using ClipSync.App.Localization;
 using ClipSync.Core.Clipboard;
+using ClipSync.Core.Clipboard.PrivilegedHost;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Server;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -39,7 +40,8 @@ public partial class MainViewModel(
     ClipSync.App.Clipboard.Win32ClipboardAdapter clipboardAdapter,
     Func<string?>? exportPathPicker = null,
     Func<string?>? importPathPicker = null,
-    Func<bool>? clearHistoryConfirmer = null) : ObservableObject
+    Func<bool>? clearHistoryConfirmer = null,
+    PrivilegedHostAssistant? privilegedHost = null) : ObservableObject
 {
     private bool initialized;
 
@@ -248,6 +250,52 @@ public partial class MainViewModel(
     [ObservableProperty]
     private string historyTransferStatus = string.Empty;
 
+    // ===== 特权直读（Android 后台直读）· PC 侧 adb 协助（任务 1）=====
+    // 门槛是明确同意，绝不静默：未 consent 前卡片只解释、一条 adb 命令都不发（威胁模型）。
+
+    /// <summary>An adb executable was located on this PC; false keeps the card explain-only.</summary>
+    [ObservableProperty]
+    private bool privilegedAdbAvailable;
+
+    /// <summary>Where adb was found (a path) or why not — a fact shown under the card's controls.</summary>
+    [ObservableProperty]
+    private string privilegedAdbLocation = string.Empty;
+
+    /// <summary>
+    /// Explicit, persisted consent to use adb. Until this is true the card issues no adb call
+    /// whatsoever — it only explains what the permission means and what stays manual on the phone.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DetectPhoneCommand))]
+    [NotifyCanExecuteChangedFor(nameof(StartPrivilegedHostCommand))]
+    private bool privilegedAdbConsent;
+
+    /// <summary>One human line describing the current adb/device situation for the card.</summary>
+    [ObservableProperty]
+    private string privilegedStatus = string.Empty;
+
+    /// <summary>Result of the last detect/start action; empty until one runs.</summary>
+    [ObservableProperty]
+    private string privilegedActionResult = string.Empty;
+
+    /// <summary>True while a detect or start adb call is in flight; disables the buttons.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DetectPhoneCommand))]
+    [NotifyCanExecuteChangedFor(nameof(StartPrivilegedHostCommand))]
+    private bool privilegedBusy;
+
+    /// <summary>True when an authorized phone is attached and consent is given: the start button is live.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(StartPrivilegedHostCommand))]
+    private bool privilegedDeviceReady;
+
+    /// <summary>True when the last probe found the host already running (channel up) on the ready device.</summary>
+    [ObservableProperty]
+    private bool privilegedHostRunning;
+
+    /// <summary>The authorized device's serial that the start action targets; null when none is ready.</summary>
+    private string? privilegedTargetSerial;
+
     public ObservableCollection<HistoryItemViewModel> History { get; } = new();
 
     /// <summary>Newest clips first, capped for the tray flyout; refreshed together with History.</summary>
@@ -301,6 +349,119 @@ public partial class MainViewModel(
     [RelayCommand]
     private void DismissCaptureNotice() => CaptureNotice = string.Empty;
 
+    /// <summary>
+    /// Records the user's explicit, informed consent to use adb, then runs a first detect so the
+    /// card shows real state. This is the only gate before any adb call and it is persisted, so
+    /// consent is asked once — never assumed, never silent.
+    /// </summary>
+    [RelayCommand]
+    private async Task GrantPrivilegedConsentAsync()
+    {
+        PrivilegedAdbConsent = true;
+        await store.SetSettingAsync("privileged_adb_consent", bool.TrueString);
+        await DetectPhoneAsync();
+    }
+
+    /// <summary>Withdraws adb consent: no further adb calls run, and the transient state is cleared.</summary>
+    [RelayCommand]
+    private async Task RevokePrivilegedConsentAsync()
+    {
+        PrivilegedAdbConsent = false;
+        await store.SetSettingAsync("privileged_adb_consent", bool.FalseString);
+        privilegedTargetSerial = null;
+        PrivilegedDeviceReady = false;
+        PrivilegedHostRunning = false;
+        PrivilegedActionResult = string.Empty;
+        PrivilegedStatus = string.Empty;
+    }
+
+    private bool CanUseAdb() => PrivilegedAdbConsent && !PrivilegedBusy;
+
+    /// <summary>
+    /// Detects attached phones over adb and summarizes the next step. Guarded by consent; a no-op
+    /// when the assistant is absent (no adb located). Also refreshes whether the privileged host
+    /// is already running so a channel dropped after a reboot shows as "需重启" rather than gone.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanUseAdb))]
+    private async Task DetectPhoneAsync()
+    {
+        if (!PrivilegedAdbConsent)
+        {
+            return;
+        }
+
+        if (privilegedHost is null)
+        {
+            PrivilegedAdbAvailable = false;
+            PrivilegedStatus = Strings.Conduit_Privileged_AdbMissing;
+            return;
+        }
+
+        PrivilegedBusy = true;
+        try
+        {
+            ApplyProbe(await privilegedHost.ProbeAsync());
+        }
+        finally
+        {
+            PrivilegedBusy = false;
+        }
+    }
+
+    private bool CanStartPrivilegedHost() => PrivilegedAdbConsent && !PrivilegedBusy && PrivilegedDeviceReady;
+
+    /// <summary>
+    /// One-click "启动特权直读": runs the on-device start script for the detected phone, states the
+    /// outcome as a fact, and re-probes so the card reflects the now-running (or still-not) channel.
+    /// Only ever reached from an explicit tap, and only after consent.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanStartPrivilegedHost))]
+    private async Task StartPrivilegedHostAsync()
+    {
+        if (!PrivilegedAdbConsent || privilegedHost is null || privilegedTargetSerial is null)
+        {
+            return;
+        }
+
+        PrivilegedBusy = true;
+        try
+        {
+            var outcome = await privilegedHost.StartAsync(privilegedTargetSerial);
+            PrivilegedActionResult = outcome.Status switch
+            {
+                PrivilegedHostStartStatus.Started => Strings.Conduit_Privileged_StartOk,
+                _ => Strings.Format(
+                    nameof(Strings.Conduit_Privileged_StartFailedFormat),
+                    outcome.Reason ?? Strings.Conduit_Privileged_ReasonUnknown),
+            };
+            ApplyProbe(await privilegedHost.ProbeAsync());
+        }
+        finally
+        {
+            PrivilegedBusy = false;
+        }
+    }
+
+    /// <summary>Maps a probe snapshot onto the card's observable state and the one-line status.</summary>
+    private void ApplyProbe(PrivilegedHostProbe probe)
+    {
+        PrivilegedAdbAvailable = probe.Availability != PrivilegedHostAvailability.AdbUnavailable;
+        privilegedTargetSerial = probe.Target?.Serial;
+        PrivilegedDeviceReady = probe.Availability == PrivilegedHostAvailability.DeviceReady;
+        PrivilegedHostRunning = probe.HostRunning == true;
+        PrivilegedStatus = probe.Availability switch
+        {
+            PrivilegedHostAvailability.AdbUnavailable => Strings.Conduit_Privileged_AdbMissing,
+            PrivilegedHostAvailability.NoDevice => Strings.Conduit_Privileged_NoDevice,
+            PrivilegedHostAvailability.DeviceUnauthorized => Strings.Conduit_Privileged_Unauthorized,
+            PrivilegedHostAvailability.DeviceOffline => Strings.Conduit_Privileged_Offline,
+            PrivilegedHostAvailability.DeviceReady => probe.HostRunning == true
+                ? Strings.Format(nameof(Strings.Conduit_Privileged_RunningFormat), probe.Target!.DisplayName)
+                : Strings.Format(nameof(Strings.Conduit_Privileged_StoppedFormat), probe.Target!.DisplayName),
+            _ => string.Empty,
+        };
+    }
+
     /// <summary>Raised after a device is revoked so the app layer can drop its live sessions.</summary>
     public event Action<string>? DeviceRevoked;
 
@@ -344,6 +505,18 @@ public partial class MainViewModel(
         AutoApplyImages = bool.TryParse(await store.GetSettingAsync("auto_apply_images"), out var autoApplyImage) && autoApplyImage;
         ExtraBindAddresses = await store.GetSettingAsync("extra_bind_addresses") ?? string.Empty;
         BluetoothFallbackEnabled = bool.TryParse(await store.GetSettingAsync("bluetooth_fallback"), out var btFallback) && btFallback;
+        PrivilegedAdbConsent = bool.TryParse(await store.GetSettingAsync("privileged_adb_consent"), out var adbConsent) && adbConsent;
+        if (privilegedHost is not null)
+        {
+            // Locating adb is a file-system check, not an adb launch — safe before consent.
+            PrivilegedAdbAvailable = privilegedHost.AdbAvailable;
+            PrivilegedAdbLocation = privilegedHost.AdbLocationDescription;
+        }
+        PrivilegedStatus = !PrivilegedAdbConsent
+            ? string.Empty
+            : PrivilegedAdbAvailable
+                ? Strings.Conduit_Privileged_TapDetect
+                : Strings.Conduit_Privileged_AdbMissing;
         ApplySettings();
         await store.CleanupAsync(
             new ClipboardRetentionPolicy(

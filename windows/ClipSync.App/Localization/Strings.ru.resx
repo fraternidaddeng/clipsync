@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>Сегмент «Сеть» · подключение</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>Привилегированное чтение</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Самая качественная ступень лестницы фонового чтения Android: ПК с помощью adb помогает сопряжённому телефону запустить встроенный привилегированный хост, после чего фоновые копии телефона выгружаются мгновенно. Каждый шаг требует вашего явного согласия — никогда не молча.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>После разрешения этот ПК вызовет adb (Android Debug Bridge), чтобы отправить телефону одну команду запуска. adb выполняется только при каждом вашем нажатии — никогда не остаётся в памяти и не работает молча. В первый раз нужно также включить отладку по USB на телефоне и вручную принять его запрос авторизации adb — Android не позволяет автоматизировать этот шаг.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>Понятно — разрешить adb</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>Отозвать согласие на adb</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>Найти телефон</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>Запустить привилегированное чтение</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>Первое подключение: на телефоне включите «Для разработчиков → Отладка по USB» (или беспроводную отладку) и нажмите «Разрешить» в окне «Разрешить отладку по USB». Этот шаг можно выполнить только вручную на телефоне.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>Нажмите «Найти телефон», чтобы увидеть текущее состояние.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb не найден. Установите Android platform-tools или положите папку platform-tools рядом с этим приложением.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>Телефон не обнаружен. Подключите его кабелем с включённой отладкой по USB или настройте беспроводную отладку.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>Телефон подключён, но отладка ещё не разрешена. Нажмите «Разрешить отладку по USB» на телефоне.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>Телефон подключён, но сообщает, что не в сети. Переподключите его и попробуйте снова.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: канал привилегированного чтения работает.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} готов; привилегированный канал не работает. Нажмите «Запустить привилегированное чтение», чтобы открыть его.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>Команда запуска отправлена. На странице канала телефона нажмите «Повторить проверку», чтобы подтвердить готовность привилегированного чтения.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>Не удалось запустить: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>причина неизвестна</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb не найден</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>истекло время команды adb</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>Очистить</value>
   </data>

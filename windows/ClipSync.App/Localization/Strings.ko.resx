@@ -213,6 +213,69 @@
   <data name="Conduit_Connection_Header" xml:space="preserve">
     <value>네트워크 구간 · 연결</value>
   </data>
+  <data name="Conduit_Privileged_Header" xml:space="preserve">
+    <value>특권 직접 읽기</value>
+  </data>
+  <data name="Conduit_Privileged_Desc" xml:space="preserve">
+    <value>Android 백그라운드 읽기 사다리에서 품질이 가장 높은 경로입니다. PC가 adb로 페어링된 휴대폰의 내장 특권 호스트를 시작하도록 돕고, 이후 휴대폰의 백그라운드 복사가 즉시 업로드됩니다. 모든 단계에 사용자의 명시적 동의가 필요하며 절대 조용히 실행하지 않습니다.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
+    <value>허용하면 이 PC가 adb(Android 디버그 브리지)를 호출해 휴대폰에 시작 명령 하나를 보냅니다. adb는 매번 클릭할 때만 실행되며 상주하거나 조용히 실행되지 않습니다. 처음에는 휴대폰에서 USB 디버깅을 켜고 adb 인증 창을 직접 수락해야 합니다 — Android는 이 단계의 자동화를 허용하지 않습니다.</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
+    <value>이해했고 adb 허용</value>
+  </data>
+  <data name="Conduit_Privileged_ConsentRevoke" xml:space="preserve">
+    <value>adb 동의 철회</value>
+  </data>
+  <data name="Conduit_Privileged_Detect" xml:space="preserve">
+    <value>휴대폰 감지</value>
+  </data>
+  <data name="Conduit_Privileged_Start" xml:space="preserve">
+    <value>특권 직접 읽기 시작</value>
+  </data>
+  <data name="Conduit_Privileged_ManualNote" xml:space="preserve">
+    <value>첫 연결: 휴대폰에서 개발자 옵션 → USB 디버깅(또는 무선 디버깅)을 켜고 "USB 디버깅 허용" 창에서 허용을 누르세요. 이 단계는 휴대폰에서 직접만 할 수 있습니다.</value>
+  </data>
+  <data name="Conduit_Privileged_TapDetect" xml:space="preserve">
+    <value>"휴대폰 감지"를 눌러 현재 상태를 확인하세요.</value>
+  </data>
+  <data name="Conduit_Privileged_AdbMissing" xml:space="preserve">
+    <value>adb를 찾지 못했습니다. Android platform-tools를 설치하거나 이 앱 옆에 platform-tools 폴더를 두세요.</value>
+  </data>
+  <data name="Conduit_Privileged_NoDevice" xml:space="preserve">
+    <value>휴대폰이 감지되지 않습니다. USB 디버깅을 켠 채 케이블로 연결하거나 무선 디버깅을 설정하세요.</value>
+  </data>
+  <data name="Conduit_Privileged_Unauthorized" xml:space="preserve">
+    <value>휴대폰이 연결되었지만 디버깅이 아직 승인되지 않았습니다. 휴대폰에서 "USB 디버깅 허용"을 누르세요.</value>
+  </data>
+  <data name="Conduit_Privileged_Offline" xml:space="preserve">
+    <value>휴대폰이 연결되었지만 오프라인으로 보고되었습니다. 다시 연결한 뒤 시도하세요.</value>
+  </data>
+  <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
+    <value>{0}: 특권 직접 읽기 채널이 실행 중입니다.</value>
+  </data>
+  <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
+    <value>{0} 준비됨. 특권 채널이 실행 중이 아닙니다. "특권 직접 읽기 시작"을 눌러 여세요.</value>
+  </data>
+  <data name="Conduit_Privileged_StartOk" xml:space="preserve">
+    <value>시작 명령을 보냈습니다. 휴대폰의 통로 페이지에서 "다시 탐지"를 눌러 특권 직접 읽기가 준비되었는지 확인하세요.</value>
+  </data>
+  <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
+    <value>시작 실패: {0}</value>
+  </data>
+  <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
+    <value>알 수 없는 원인</value>
+  </data>
+  <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
+    <value>adb: {0}</value>
+  </data>
+  <data name="Privileged_AdbNotFound" xml:space="preserve">
+    <value>adb를 찾을 수 없음</value>
+  </data>
+  <data name="Privileged_AdbTimedOut" xml:space="preserve">
+    <value>adb 명령 시간 초과</value>
+  </data>
   <data name="Conduit_CleanupStale" xml:space="preserve">
     <value>일괄 정리</value>
   </data>
