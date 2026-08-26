@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>Menghapus semua entri di PC ini (termasuk gambar) sekali jalan; perlu dua konfirmasi dan tak bisa dibatalkan. Pembersihan hanya terjadi di PC ini dan tak pernah menghapus yang sudah diterima pihak seberang — pertimbangkan ekspor dulu.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>Bantuan</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>Lihat lagi tutorialnya</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>Jalani lagi tutorial pertama kali dari halaman sambutan; tidak mengubah setelan atau pemasangan apa pun.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · klip terkini</value>
   </data>
@@ -838,5 +847,80 @@ Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(belum ada entri diagnostik)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>Selamat datang di ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>Papan klip Anda mengalir diam-diam antara ponsel dan PC.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>Langkah {0} dari {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>Lanjut</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Kembali</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>Siapkan nanti</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>Semua yang disalin di kedua ujung berkumpul di sini; pilih entri mana pun untuk menyalinnya lagi di PC ini.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>Setiap segmen aliran ditampilkan dengan jujur. Pemasangan ponsel dan baca istimewa sama-sama dimulai di sini.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>Jeda sinkronisasi, mode privat, masa simpan — setiap sakelar benar-benar berfungsi dan langsung tersimpan ke disk.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>Supaya jelas dari awal</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android membatasi pembacaan papan klip di latar belakang pada ponsel, dan ClipSync tidak berpura-pura sebaliknya: ponsel mengunggah otomatis saat di latar depan; pembacaan latar belakang butuh satu penyiapan ekstra — rute berkualitas tertinggi, baca istimewa, justru rute yang dibantu PC ini agar dimulai ponsel. Setiap kemampuan dinilai lewat uji nyata — jika sesuatu tidak bisa, ia akan bilang begitu.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>Di ponsel, buka halaman “Saluran” di ClipSync, ketuk “Pasangkan sekarang” di segmen jaringan, lalu pindai kode di bawah; sebelum menyetujui, cocokkan nama PC dan sidik jari sertifikat.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>Ponsel Anda sudah terpasang — saluran telah terbuka. Lanjutkan sisa tur ini.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>Anak tangga berkualitas tertinggi dari tangga baca latar belakang: PC ini memakai adb untuk membantu ponsel yang terpasang memulai host istimewa bawaannya; setelah itu salinan latar belakang ponsel terunggah seketika.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>Kabel USB</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>Aktifkan Opsi pengembang → Debugging USB di ponsel, hubungkan dengan kabel, lalu ketuk Izinkan pada dialog di ponsel.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>Debugging nirkabel (Android 11+)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>Tidak ada kabel: sambungkan ponsel dan PC ini ke Wi-Fi yang sama, aktifkan Opsi pengembang → Debugging nirkabel, lalu sandingkan sekali lewat kode QR — setelah itu bekerja persis seperti lewat USB.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb hanya berjalan saat Anda mengeklik — tidak pernah menetap, tidak pernah diam-diam — dan setiap langkah butuh persetujuan eksplisit Anda. Setelah tur ini, kartu baca istimewa di halaman Saluran adalah tempat memulainya, atau menariknya kembali, kapan saja.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>Saluran cadangan yang mati secara bawaan: saat LAN diblokir VPN atau firewall, ponsel yang sudah dipasangkan Bluetooth di pengaturan Windows tetap menyinkronkan teks (tanpa gambar, lebih lambat).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>Langkah ini opsional — tidak perlu diputuskan sekarang. Saat menginginkannya, nyalakan dari kartu Cadangan Bluetooth di halaman Saluran.</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>Siap</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>Pasangkan dulu dengan ponsel; baca istimewa dan cadangan Bluetooth ada di halaman “Saluran” dan semua sakelar di “Preferensi”. Anda bisa kembali kapan saja.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>Buka Saluran</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>Mulai gunakan</value>
   </data>
 </root>

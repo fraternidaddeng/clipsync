@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>Elimina in un colpo solo tutte le voci su questo PC (immagini incluse); richiede due conferme ed è irreversibile. Lo svuotamento avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto — valuta prima un export.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>Aiuto</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>Rivedi il tutorial</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>Ripercorri il tutorial del primo avvio dalla pagina di benvenuto; non modifica impostazioni né associazione.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · clip recenti</value>
   </data>
@@ -838,5 +847,80 @@ Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuot
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(ancora nessuna voce diagnostica)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>Benvenuto in ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>I tuoi appunti fluiscono in silenzio tra telefono e PC.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>Passaggio {0} di {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>Continua</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Indietro</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>Configura più tardi</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>Tutto ciò che viene copiato su una delle due estremità si raccoglie qui; seleziona una voce per copiarla di nuovo su questo PC.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>Ogni segmento del flusso è mostrato con onestà. L’associazione del telefono e la lettura privilegiata iniziano qui.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>Pausa sincronizzazione, modalità privata, conservazione: ogni interruttore funziona davvero e viene salvato subito su disco.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>Per essere chiari fin da subito</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android limita la lettura degli appunti in background sul telefono e ClipSync non finge il contrario: il telefono carica automaticamente quando è in primo piano; la lettura in background richiede una configurazione extra una tantum — il percorso di qualità più alta, la lettura privilegiata, è proprio quello che questo PC aiuta il telefono ad avviare. Ogni capacità è giudicata con test reali: se qualcosa non si può fare, lo dice.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>Sul telefono apri la pagina «Condotto» di ClipSync, tocca «Associa ora» nel segmento rete e scansiona il codice qui sotto; prima di approvare verifica il nome del PC e l’impronta del certificato.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>Il telefono è associato: il condotto è aperto. Prosegui con il resto del tour.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>Il gradino di qualità più alta della scala di lettura in background: questo PC usa adb per aiutare il telefono associato ad avviare il suo host privilegiato integrato; da quel momento le copie in background del telefono salgono all'istante.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>Cavo USB</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>Attiva sul telefono Opzioni sviluppatore → Debug USB, collegalo con un cavo e tocca Consenti nell’avviso del telefono.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>Debug wireless (Android 11+)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>Niente cavo a portata di mano: metti il telefono e questo PC sulla stessa Wi-Fi, attiva Opzioni sviluppatore → Debug wireless e associa una volta con il codice QR; dopo funziona esattamente come via USB.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb viene eseguito solo a ogni tuo clic — mai residente, mai in silenzio — e ogni passaggio richiede il tuo consenso esplicito. Dopo questo tour, la scheda di lettura privilegiata nella pagina Condotto è dove puoi avviarla, o revocarla, in qualsiasi momento.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>Un canale di riserva disattivato per impostazione predefinita: quando la LAN è bloccata da VPN o firewall, un telefono già associato via Bluetooth nelle impostazioni di Windows continua a sincronizzare il testo (niente immagini, più lento).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>Questo passaggio è facoltativo: niente da decidere ora. Quando vorrai, attivalo dalla scheda Riserva Bluetooth nella pagina Condotto.</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>Pronto</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>Associa prima il telefono; la lettura privilegiata e la riserva Bluetooth sono nella pagina «Condotto» e ogni interruttore in «Preferenze». Puoi tornare quando vuoi.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>Vai al Condotto</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>Inizia a usare</value>
   </data>
 </root>

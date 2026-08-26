@@ -1,6 +1,7 @@
 using ClipSync.App.Clipboard;
 using ClipSync.App.Diagnostics;
 using ClipSync.App.Localization;
+using ClipSync.App.Onboarding;
 using ClipSync.App.Pairing;
 using ClipSync.App.PrivilegedHost;
 using ClipSync.App.Security;
@@ -11,6 +12,7 @@ using ClipSync.App.Tray;
 using ClipSync.App.ViewModels;
 using ClipSync.Core.Clipboard;
 using ClipSync.Core.Clipboard.PrivilegedHost;
+using ClipSync.Core.Onboarding;
 using ClipSync.Core.Security;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Bluetooth;
@@ -43,6 +45,8 @@ public partial class App : Application
     private readonly SemaphoreSlim bluetoothGate = new(1, 1);
     private PairingService? pairingService;
     private PairingQrWindow? pairingWindow;
+    private FirstRunStore? firstRunStore;
+    private OnboardingWindow? onboardingWindow;
     private FlyoutHotkeyManager? flyoutHotkey;
     private System.Windows.Threading.DispatcherTimer? liveRefreshTimer;
     private bool peerEndpointUnavailable;
@@ -143,6 +147,60 @@ public partial class App : Application
         liveRefreshTimer = new System.Windows.Threading.DispatcherTimer { Interval = LiveRefreshInterval };
         liveRefreshTimer.Tick += OnLiveRefreshTick;
         liveRefreshTimer.Start();
+
+        // 首开引导（对齐 Android 五步教程）：只对尚未配对的新安装展示一次；已配对的
+        // 安装静默标记已读、不打扰。自启入托盘（--minimized）的安静路径不弹窗，也不
+        // 消费首开资格——下次手动打开再展示。放在启动尾声：对端服务已起，配对步能
+        // 出示真实二维码。ShowDialog 阻塞在 OnStartup 末尾是刻意的——一切都已就绪。
+        firstRunStore = new FirstRunStore(store);
+        if (!StartupRegistration.IsMinimizedLaunch(e.Args)
+            && await firstRunStore.ShouldShowOnboardingAsync(viewModel.HasPairedDevices))
+        {
+            LocalDiagnostics.Write("onboarding_shown");
+            ShowOnboardingWindow(mainWindow);
+        }
+    }
+
+    /// <summary>
+    /// Opens (or focuses) the first-open tutorial. Also the 偏好 · 帮助 · 重新查看引导 replay
+    /// entry — replaying never touches settings or pairings, it only walks the same five steps.
+    /// </summary>
+    public void ShowOnboardingWindow(Window owner)
+    {
+        if (onboardingWindow is not null)
+        {
+            onboardingWindow.Activate();
+            return;
+        }
+
+        onboardingWindow = new OnboardingWindow(
+            pairingService,
+            syncHost,
+            markSeen: () => _ = MarkOnboardingSeenAsync(),
+            openConduit: () => (MainWindow as MainWindow)?.FocusConduitPage())
+        {
+            Owner = owner
+        };
+        onboardingWindow.Closed += (_, _) => onboardingWindow = null;
+        onboardingWindow.ShowDialog();
+    }
+
+    /// <summary>Persists the seen flag; a storage failure only means the tutorial may show again.</summary>
+    private async Task MarkOnboardingSeenAsync()
+    {
+        if (firstRunStore is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await firstRunStore.MarkOnboardingSeenAsync();
+        }
+        catch (Exception exception)
+        {
+            LocalDiagnostics.Write($"onboarding_mark_seen_failed_{exception.GetType().Name}");
+        }
     }
 
     /// <summary>

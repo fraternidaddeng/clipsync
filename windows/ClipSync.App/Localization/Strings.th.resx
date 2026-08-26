@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>ลบทุกรายการบนพีซีนี้ (รวมรูป) ในขั้นตอนเดียว ต้องยืนยันสองครั้งและย้อนกลับไม่ได้ การล้างเกิดเฉพาะบนพีซีนี้และไม่ลบสิ่งที่อีกฝั่งได้รับไปแล้ว — แนะนำให้ส่งออกก่อน</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>ช่วยเหลือ</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>ดูบทแนะนำอีกครั้ง</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>เดินผ่านบทแนะนำการใช้งานครั้งแรกอีกรอบตั้งแต่หน้าต้อนรับ โดยไม่เปลี่ยนการตั้งค่าหรือการจับคู่ใด ๆ</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · รายการล่าสุด</value>
   </data>
@@ -838,5 +847,80 @@
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(ยังไม่มีบันทึกวินิจฉัย)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>ยินดีต้อนรับสู่ ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>คลิปบอร์ดของคุณไหลเงียบ ๆ ระหว่างโทรศัพท์กับพีซี</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>ขั้นตอนที่ {0} จาก {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>ดำเนินการต่อ</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>ย้อนกลับ</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>ตั้งค่าภายหลัง</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>ทุกอย่างที่คัดลอกจากทั้งสองฝั่งรวมกันที่นี่ เลือกรายการใดก็ได้เพื่อคัดลอกอีกครั้งบนพีซีนี้</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>ทุกช่วงของเส้นทางแสดงอย่างตรงไปตรงมา การจับคู่โทรศัพท์และการอ่านสิทธิ์พิเศษเริ่มต้นที่นี่</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>หยุดซิงค์ชั่วคราว โหมดส่วนตัว ระยะเวลาเก็บ — ทุกสวิตช์ทำงานจริงและบันทึกลงดิสก์ทันที</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>ขอพูดตรง ๆ ตั้งแต่ต้น</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android จำกัดการอ่านคลิปบอร์ดเบื้องหลังบนโทรศัพท์ และ ClipSync ไม่แสร้งว่าเป็นอย่างอื่น: โทรศัพท์อัปโหลดอัตโนมัติเมื่อเปิดแอปอยู่ ส่วนการอ่านเบื้องหลังต้องตั้งค่าเพิ่มอีกครั้งเดียว — เส้นทางคุณภาพสูงสุด «การอ่านสิทธิ์พิเศษ» คือสิ่งที่พีซีนี้ช่วยโทรศัพท์เริ่มให้ ทุกความสามารถถูกตัดสินด้วยการทดสอบจริง — ถ้าทำไม่ได้ก็จะบอกตรง ๆ</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>บนโทรศัพท์ เปิดหน้า “เส้นทาง” ของ ClipSync แตะ “จับคู่เลย” ในช่วงเครือข่าย แล้วสแกนโค้ดด้านล่าง ก่อนยืนยันโปรดตรวจชื่อพีซีและลายนิ้วมือใบรับรอง</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>จับคู่โทรศัพท์เสร็จแล้ว — เส้นทางเปิดแล้ว เดินต่อในส่วนที่เหลือได้เลย</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>ขั้นคุณภาพสูงสุดของบันไดการอ่านเบื้องหลัง: พีซีนี้ใช้ adb ช่วยโทรศัพท์ที่จับคู่แล้วเริ่มโฮสต์สิทธิ์พิเศษในตัว หลังจากนั้นสิ่งที่โทรศัพท์คัดลอกเบื้องหลังจะอัปโหลดทันที</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>สาย USB</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>เปิด «ตัวเลือกนักพัฒนา → การแก้จุดบกพร่อง USB» บนโทรศัพท์ ต่อสายเข้ากับพีซี แล้วแตะ อนุญาต ในหน้าต่างบนโทรศัพท์</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>การแก้ไขข้อบกพร่องแบบไร้สาย (Android 11 ขึ้นไป)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>ไม่มีสายใกล้ตัว: ให้โทรศัพท์และพีซีนี้อยู่บน Wi-Fi เดียวกัน เปิด «ตัวเลือกนักพัฒนา → การแก้ไขข้อบกพร่องแบบไร้สาย» แล้วจับคู่ครั้งเดียวด้วยคิวอาร์โค้ด — หลังจากนั้นทำงานเหมือน USB ทุกประการ</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb ทำงานเฉพาะเมื่อคุณคลิกแต่ละครั้ง — ไม่ฝังตัว ไม่ทำงานเงียบ ๆ — และทุกขั้นต้องได้รับความยินยอมชัดเจนจากคุณ หลังจบการแนะนำ การ์ดการอ่านสิทธิ์พิเศษในหน้า “เส้นทาง” คือที่ที่คุณเริ่มหรือถอนได้ทุกเมื่อ</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>ช่องสำรองที่ปิดเป็นค่าเริ่มต้น: เมื่อ LAN ถูก VPN หรือไฟร์วอลล์ขวาง โทรศัพท์ที่จับคู่บลูทูธในการตั้งค่า Windows ไว้แล้วจะซิงค์ข้อความต่อได้ (ไม่มีรูป ช้ากว่า)</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>ขั้นนี้เป็นตัวเลือก — ยังไม่ต้องตัดสินใจตอนนี้ เมื่อต้องการ ให้เปิดจากการ์ดช่องสำรองบลูทูธในหน้า “เส้นทาง”</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>พร้อมแล้ว</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>จับคู่กับโทรศัพท์ก่อน การอ่านสิทธิ์พิเศษและช่องสำรองบลูทูธอยู่ที่หน้า “เส้นทาง” และสวิตช์ทั้งหมดอยู่ที่ “การตั้งค่า” กลับมาได้ทุกเมื่อ</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>ไปหน้าเส้นทาง</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>เริ่มใช้งาน</value>
   </data>
 </root>

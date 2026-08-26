@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>この PC の全項目（画像を含む）を一括削除します。二段階の確認が必要で、元に戻せません。消去はこの PC 内でのみ行われ、相手側が受信済みの内容をリモートで削除することはありません。先に履歴をエクスポートしておくことをおすすめします。</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>ヘルプ</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>チュートリアルをもう一度見る</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>ようこそページから初回設定チュートリアルをもう一度たどります。設定やペアリングは変更しません。</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · 最近のクリップ</value>
   </data>
@@ -838,5 +847,80 @@
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>（診断記録はまだありません）</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>ClipSync へようこそ</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>クリップボードがスマートフォンと PC の間を静かに流れます。</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>ステップ {0} / {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>続ける</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>あとで設定</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>どちらの端末でコピーした内容もここに集まります。項目を選ぶとこの PC で再度コピーできます。</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>流れのすべての区間を正直に表示します。スマートフォンとのペアリングも特権ダイレクト読み取りも、入口はここです。</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>同期の一時停止、プライベートモード、保持期間 — すべてのスイッチは本当に機能し、即座にディスクへ保存されます。</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>最初に正直にお伝えします</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android はスマートフォンのバックグラウンドでのクリップボード読み取りを制限しており、ClipSync はそれを偽りません。スマホは前面にある間は自動アップロードします。バックグラウンド読み取りには一度だけ追加設定が必要で、品質最高の「特権ダイレクト読み取り」はまさにこの PC がスマホの起動を手伝う方式です。すべての能力は実地テストで判定され、できないことはできないと表示します。</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>スマートフォンで ClipSync の「経路」ページを開き、ネットワーク区間の「ペアリングする」をタップして、下のコードをスキャンしてください。承認する前に PC 名と証明書フィンガープリントを確認しましょう。</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>ペアリングが完了しました。経路はつながっています。残りの案内を続けましょう。</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>バックグラウンド読み取りの中で品質が最も高い方式です。この PC が adb を使い、ペアリング済みのスマホが内蔵の特権ホストを起動するのを手伝います。以後はスマホがバックグラウンドでコピーしても即時にアップロードされます。</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>USB ケーブル</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>スマホで「開発者向けオプション → USB デバッグ」を有効にし、ケーブルで PC につなぎ、スマホに表示される確認で許可をタップします。</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>ワイヤレスデバッグ（Android 11 以降）</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>ケーブルがないときは、スマホと PC を同じ Wi-Fi につなぎ、「開発者向けオプション → ワイヤレスデバッグ」を有効にして QR コードで一度ペアリングします。その後は USB と同じように動作します。</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb はあなたがクリックしたときだけ実行され、常駐も静かな実行も決してありません。どの手順にも明確な同意が必要です。案内のあとは、「経路」ページの特権ダイレクト読み取りカードからいつでも開始・取り消しできます。</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>既定でオフの予備チャネルです。LAN が VPN やファイアウォールで遮断されたとき、Windows の設定で Bluetooth ペアリング済みのスマホはテキストの同期を続けられます（画像なし、低速）。</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>この項目は任意で、いま決める必要はありません。使いたくなったら、「経路」ページの Bluetooth フォールバックカードでオンにしてください。</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>準備完了</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>まずスマートフォンとペアリングしましょう。特権ダイレクト読み取りと Bluetooth フォールバックは「経路」ページ、各スイッチは「設定」ページにあり、いつでも戻れます。</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>経路ページへ</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>使いはじめる</value>
   </data>
 </root>

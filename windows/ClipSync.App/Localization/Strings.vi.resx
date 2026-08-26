@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>Xóa một lần toàn bộ mục trên PC này (gồm hình ảnh); cần xác nhận hai bước và không thể khôi phục. Việc xóa chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận — nên xuất lịch sử trước.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>Trợ giúp</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>Xem lại hướng dẫn</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>Đi lại toàn bộ hướng dẫn lần đầu từ trang chào mừng; không thay đổi cài đặt hay ghép nối nào.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · mẩu gần đây</value>
   </data>
@@ -838,5 +847,80 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(chưa có mục chẩn đoán)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>Chào mừng đến với ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>Bảng nhớ tạm của bạn lặng lẽ chảy giữa điện thoại và PC.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>Bước {0} trên {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>Tiếp tục</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Quay lại</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>Thiết lập sau</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>Mọi thứ được sao chép ở hai đầu đều tụ về đây; chọn một mục để sao chép lại trên PC này.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>Mọi đoạn của dòng chảy được hiển thị trung thực. Ghép nối điện thoại và đọc đặc quyền đều bắt đầu từ đây.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>Tạm dừng đồng bộ, chế độ riêng tư, thời gian lưu giữ — mọi công tắc đều thật sự hoạt động và lưu xuống đĩa ngay.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>Nói rõ ngay từ đầu</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android hạn chế đọc bảng nhớ tạm ở nền trên điện thoại, và ClipSync không giả vờ khác đi: điện thoại tự động tải lên khi đang mở; đọc nền cần một lần thiết lập thêm — tuyến chất lượng cao nhất, đọc đặc quyền, chính là tuyến mà PC này giúp điện thoại khởi động. Mọi khả năng đều được đánh giá bằng kiểm tra thực tế — nếu điều gì không làm được, nó sẽ nói thẳng.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>Trên điện thoại, mở trang “Đường dẫn” của ClipSync, nhấn “Ghép nối ngay” ở đoạn mạng rồi quét mã bên dưới; trước khi chấp thuận, hãy đối chiếu tên PC và vân tay chứng chỉ.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>Điện thoại đã ghép nối — đường dẫn đã thông. Hãy tiếp tục phần còn lại của phần giới thiệu.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>Bậc chất lượng cao nhất của thang đọc nền: PC này dùng adb giúp điện thoại đã ghép nối khởi động máy chủ đặc quyền tích hợp; sau đó nội dung sao chép ở nền trên điện thoại được tải lên tức thì.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>Cáp USB</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>Bật Tùy chọn nhà phát triển → Gỡ lỗi USB trên điện thoại, nối cáp với PC, rồi nhấn Cho phép trong hộp thoại trên điện thoại.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>Gỡ lỗi không dây (Android 11 trở lên)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>Không tiện cắm cáp: cho điện thoại và PC này cùng một mạng Wi-Fi, bật Tùy chọn nhà phát triển → Gỡ lỗi không dây, rồi ghép nối một lần bằng mã QR — sau đó hoạt động giống hệt qua USB.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb chỉ chạy mỗi khi bạn bấm — không bao giờ thường trú hay chạy ngầm — và mỗi bước đều cần sự đồng ý rõ ràng của bạn. Sau phần giới thiệu, thẻ đọc đặc quyền trên trang “Đường dẫn” là nơi bạn có thể bắt đầu hoặc thu hồi bất cứ lúc nào.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>Kênh dự phòng mặc định tắt: khi LAN bị VPN hoặc tường lửa chặn, điện thoại đã ghép nối Bluetooth trong cài đặt Windows vẫn tiếp tục đồng bộ văn bản (không có hình ảnh, chậm hơn).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>Bước này là tùy chọn — không cần quyết định bây giờ. Khi muốn dùng, hãy bật trong thẻ Dự phòng Bluetooth trên trang “Đường dẫn”.</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>Sẵn sàng</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>Hãy ghép nối với điện thoại trước; đọc đặc quyền và dự phòng Bluetooth nằm ở trang “Đường dẫn”, mọi công tắc ở trang “Tùy chọn” — có thể quay lại bất cứ lúc nào.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>Đến trang Đường dẫn</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>Bắt đầu sử dụng</value>
   </data>
 </root>

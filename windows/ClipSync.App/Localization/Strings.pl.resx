@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>Usuwa wszystkie wpisy na tym komputerze (wraz z obrazami) za jednym razem; wymaga dwóch potwierdzeń i nie można tego cofnąć. Czyszczenie odbywa się tylko na tym komputerze i nigdy nie usuwa tego, co druga strona już odebrała — rozważ najpierw eksport.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>Pomoc</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>Obejrzyj samouczek ponownie</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>Przejdź samouczek pierwszego uruchomienia od strony powitalnej; nie zmienia żadnych ustawień ani parowania.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · ostatnie wpisy</value>
   </data>
@@ -838,5 +847,80 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(brak wpisów diagnostycznych)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>Witamy w ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>Twój schowek płynie cicho między telefonem a PC.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>Krok {0} z {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>Dalej</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Wstecz</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>Skonfiguruj później</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>Wszystko skopiowane po obu stronach zbiera się tutaj; wybierz wpis, aby skopiować go ponownie na tym komputerze.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>Każdy segment przepływu jest pokazywany uczciwie. Parowanie telefonu i odczyt uprzywilejowany zaczynają się tutaj.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>Wstrzymanie synchronizacji, tryb prywatny, przechowywanie — każdy przełącznik naprawdę działa i od razu ląduje na dysku.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>Żeby było jasne od początku</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android ogranicza odczyt schowka w tle na telefonie, a ClipSync nie udaje, że jest inaczej: na pierwszym planie telefon wysyła automatycznie; odczyt w tle wymaga jednej dodatkowej konfiguracji — ścieżka najwyższej jakości, odczyt uprzywilejowany, to właśnie ta, którą ten komputer pomaga telefonowi uruchomić. Każdą zdolność ocenia rzeczywisty test — jeśli czegoś nie da się zrobić, jest to powiedziane wprost.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>W telefonie otwórz stronę „Kanał” w ClipSync, dotknij „Sparuj teraz” w segmencie sieci i zeskanuj poniższy kod; przed zatwierdzeniem sprawdź nazwę komputera i odcisk certyfikatu.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>Telefon sparowany — kanał jest otwarty. Kontynuuj resztę przewodnika.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>Najwyższej jakości szczebel drabiny odczytu w tle: ten komputer używa adb, aby pomóc sparowanemu telefonowi uruchomić wbudowanego uprzywilejowanego hosta; od tej pory kopie z tła telefonu wysyłane są natychmiast.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>Kabel USB</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>Włącz w telefonie Opcje programisty → Debugowanie USB, podłącz go kablem i dotknij Zezwól w oknie na telefonie.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>Debugowanie bezprzewodowe (Android 11+)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>Brak kabla pod ręką: podłącz telefon i ten komputer do tej samej sieci Wi-Fi, włącz Opcje programisty → Debugowanie bezprzewodowe i sparuj raz kodem QR — potem działa dokładnie tak jak przez USB.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb działa tylko przy każdym Twoim kliknięciu — nigdy nie rezyduje, nigdy po cichu — a każdy krok wymaga Twojej wyraźnej zgody. Po tym przewodniku karta odczytu uprzywilejowanego na stronie Kanał pozwala w każdej chwili go uruchomić lub cofnąć zgodę.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>Zapasowy kanał domyślnie wyłączony: gdy sieć LAN jest blokowana przez VPN lub zaporę, telefon sparowany już przez Bluetooth w ustawieniach Windows nadal synchronizuje tekst (bez obrazów, wolniej).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>Ten krok jest opcjonalny — teraz nie trzeba nic decydować. Gdy zechcesz, włącz go na karcie Zapasowy Bluetooth na stronie Kanał.</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>Gotowe</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>Najpierw sparuj z telefonem; odczyt uprzywilejowany i zapasowy Bluetooth są na stronie „Kanał”, a wszystkie przełączniki w „Preferencjach” — możesz wrócić w każdej chwili.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>Przejdź do Kanału</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>Zacznij korzystać</value>
   </data>
 </root>

@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>इस PC की सभी प्रविष्टियाँ (चित्रों समेत) एक ही चरण में मिटाता है; दो पुष्टियाँ चाहिए और पूर्ववत नहीं हो सकता। मिटाना केवल इसी PC पर होता है और दूसरे छोर को मिली सामग्री कभी नहीं मिटाता — पहले निर्यात कर लेना अच्छा है।</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>सहायता</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>परिचय फिर से देखें</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>स्वागत पेज से पहली बार वाला ट्यूटोरियल दोबारा देखें; कोई सेटिंग या जोड़ी नहीं बदलती।</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · हाल की क्लिपें</value>
   </data>
@@ -838,5 +847,80 @@
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(अभी कोई निदान प्रविष्टि नहीं)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>ClipSync में आपका स्वागत है</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>आपका क्लिपबोर्ड फ़ोन और PC के बीच चुपचाप बहता है।</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>चरण {0}, कुल {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>जारी रखें</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>पिछला</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>बाद में सेट करें</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>दोनों छोरों पर कॉपी हुआ सब यहाँ जमा होता है; किसी प्रविष्टि को चुनकर इस PC पर फिर कॉपी करें।</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>बहाव का हर खंड ईमानदारी से दिखता है। फ़ोन पेयरिंग और विशेषाधिकार पठन दोनों यहीं से शुरू होते हैं।</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>सिंक रोकना, निजी मोड, रखने की अवधि — हर स्विच वाक़ई काम करता है और तुरंत डिस्क पर सहेजा जाता है।</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>पहले ही साफ़ कर दें</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android फ़ोन पर पृष्ठभूमि में क्लिपबोर्ड पढ़ने पर रोक लगाता है, और ClipSync इसका दिखावा नहीं करता: अग्रभूमि में फ़ोन अपने आप अपलोड करता है; पृष्ठभूमि पठन के लिए एक अतिरिक्त सेटअप चाहिए — सबसे उच्च गुणवत्ता वाला मार्ग, विशेषाधिकार पठन, वही है जिसे यह PC फ़ोन के लिए शुरू करने में मदद करता है। हर क्षमता असली जाँच से आँकी जाती है — जो नहीं हो सकता, वह साफ़ कहा जाता है।</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>फ़ोन पर ClipSync का “मार्ग” पेज खोलें, नेटवर्क खंड में “अभी जोड़ें” टैप करें और नीचे दिया कोड स्कैन करें; स्वीकृति से पहले PC का नाम और प्रमाणपत्र फ़िंगरप्रिंट मिला लें।</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>आपका फ़ोन जुड़ गया — मार्ग खुल गया है। बाक़ी परिचय जारी रखें।</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>पृष्ठभूमि पठन की सीढ़ी का सबसे उच्च गुणवत्ता वाला पायदान: यह PC adb से जुड़े फ़ोन को उसका अंतर्निर्मित विशेषाधिकार होस्ट शुरू करने में मदद करता है; इसके बाद फ़ोन की पृष्ठभूमि कॉपियाँ तुरन्त अपलोड होती हैं।</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>USB केबल</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>फ़ोन पर डेवलपर विकल्प → USB डिबगिंग चालू करें, केबल से PC से जोड़ें, और फ़ोन पर आए संकेत में अनुमति दें टैप करें।</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>वायरलेस डिबगिंग (Android 11+)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>केबल पास नहीं है: फ़ोन और इस PC को एक ही Wi-Fi से जोड़ें, डेवलपर विकल्प → वायरलेस डिबगिंग चालू करें और QR कोड से एक बार पेयर करें — इसके बाद यह USB जैसा ही काम करता है।</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb केवल आपके हर क्लिक पर चलता है — कभी स्थायी नहीं, कभी चुपचाप नहीं — और हर चरण के लिए आपकी स्पष्ट सहमति चाहिए। इस परिचय के बाद, “मार्ग” पेज का विशेषाधिकार पठन कार्ड ही वह जगह है जहाँ आप इसे कभी भी शुरू या वापस ले सकते हैं।</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>डिफ़ॉल्ट रूप से बंद एक बैकअप चैनल: जब LAN को VPN या फ़ायरवॉल रोक दे, तो Windows सेटिंग्स में पहले से ब्लूटूथ-युग्मित फ़ोन पाठ का समन्वयन जारी रखता है (चित्र नहीं, धीमा)।</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>यह चरण वैकल्पिक है — अभी कुछ तय नहीं करना। जब चाहें, “मार्ग” पेज के ब्लूटूथ फ़ॉलबैक कार्ड से इसे चालू करें।</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>तैयार</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>पहले फ़ोन से जोड़ें; विशेषाधिकार पठन और ब्लूटूथ फ़ॉलबैक “मार्ग” पेज पर हैं और सारे स्विच “प्राथमिकताएँ” में — कभी भी लौट सकते हैं।</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>मार्ग पेज पर जाएँ</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>उपयोग शुरू करें</value>
   </data>
 </root>

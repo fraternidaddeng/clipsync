@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>Löscht alle Einträge dieses PCs (einschließlich Bilder) in einem Schritt; erfordert zwei Bestätigungen und ist nicht rückgängig zu machen. Das Leeren geschieht nur auf diesem PC und löscht nie, was der Peer bereits erhalten hat — vorher exportieren empfohlen.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>Hilfe</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>Einführung erneut ansehen</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>Das Erststart-Tutorial ab der Willkommensseite erneut durchlaufen; ändert keine Einstellungen und keine Kopplung.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · aktuelle Clips</value>
   </data>
@@ -838,5 +847,80 @@ Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelö
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(noch keine Diagnoseeinträge)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>Willkommen bei ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>Ihre Zwischenablage fließt leise zwischen Telefon und PC.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>Schritt {0} von {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>Später einrichten</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>Alles, was auf einer Seite kopiert wird, sammelt sich hier; wählen Sie einen Eintrag, um ihn auf diesem PC erneut zu kopieren.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>Jeder Abschnitt des Flusses wird ehrlich angezeigt. Die Kopplung mit dem Telefon und der privilegierte Lesezugriff beginnen hier.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>Sync pausieren, privater Modus, Aufbewahrung – jeder Schalter funktioniert wirklich und landet sofort auf der Platte.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>Um es vorweg klar zu sagen</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android beschränkt das Lesen der Zwischenablage im Hintergrund auf dem Telefon, und ClipSync tut nicht so, als wäre es anders: Im Vordergrund lädt das Telefon automatisch hoch; Hintergrundlesen erfordert eine einmalige zusätzliche Einrichtung – die Route höchster Qualität, der privilegierte Lesezugriff, ist genau die, bei deren Start dieser PC dem Telefon hilft. Jede Fähigkeit wird per Praxistest beurteilt – wenn etwas nicht geht, steht es da.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>Öffnen Sie auf dem Telefon die Seite „Kanal“ von ClipSync, tippen Sie im Netzwerkabschnitt auf „Jetzt koppeln“ und scannen Sie den Code unten; prüfen Sie vor dem Bestätigen den PC-Namen und den Zertifikat-Fingerabdruck.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>Ihr Telefon ist gekoppelt – der Kanal steht. Machen Sie mit dem Rest der Tour weiter.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>Die Route höchster Qualität beim Hintergrundlesen: Dieser PC hilft dem gekoppelten Telefon per adb, seinen eingebauten privilegierten Host zu starten; danach werden Hintergrund-Kopien des Telefons sofort hochgeladen.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>USB-Kabel</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>Aktivieren Sie am Telefon Entwickleroptionen → USB-Debugging, verbinden Sie es per Kabel und tippen Sie im Dialog des Telefons auf Zulassen.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>Drahtlos-Debugging (Android 11+)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>Kein Kabel zur Hand: Telefon und dieser PC im selben WLAN, Entwickleroptionen → Drahtlos-Debugging einschalten und einmal per QR-Code koppeln – danach funktioniert es genau wie über USB.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb läuft nur bei Ihrem Klick – nie resident, nie still – und jeder Schritt braucht Ihre ausdrückliche Zustimmung. Nach dieser Tour können Sie es auf der Karte „Privilegierter Lesezugriff“ der Kanal-Seite jederzeit starten oder zurücknehmen.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>Ein standardmäßig ausgeschalteter Ausweichkanal: Wenn ein VPN oder eine Firewall das LAN blockiert, synchronisiert ein in den Windows-Einstellungen bereits per Bluetooth gekoppeltes Telefon weiterhin Text (keine Bilder, langsamer).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>Dieser Schritt ist optional – jetzt ist nichts zu entscheiden. Wenn Sie ihn möchten, schalten Sie ihn auf der Karte „Bluetooth-Ausweichweg“ der Kanal-Seite ein.</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>Bereit</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>Koppeln Sie zuerst Ihr Telefon; der privilegierte Lesezugriff und der Bluetooth-Ausweichweg liegen auf der Seite „Kanal“, alle Schalter in den „Einstellungen“ — Sie können jederzeit zurückkehren.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>Zur Kanal-Seite</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>Loslegen</value>
   </data>
 </root>

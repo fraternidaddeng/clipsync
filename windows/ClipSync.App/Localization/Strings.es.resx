@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>Elimina todas las entradas de este PC (imágenes incluidas) de una vez; pide dos confirmaciones y no se puede deshacer. El vaciado ocurre solo en este PC y nunca borra lo que el par ya recibió; considera exportar primero.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>Ayuda</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>Volver a ver el tutorial</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>Recorre de nuevo el tutorial de primer uso desde la página de bienvenida; no cambia ningún ajuste ni el emparejamiento.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · clips recientes</value>
   </data>
@@ -838,5 +847,80 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(sin registros de diagnóstico todavía)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>Bienvenido a ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>Tu portapapeles fluye en silencio entre el teléfono y el PC.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>Paso {0} de {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Atrás</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>Configurar más tarde</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>Todo lo copiado en cualquiera de los extremos se reúne aquí; selecciona una entrada para copiarla de nuevo en este PC.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>Cada segmento del flujo se muestra con honestidad. El emparejamiento con el teléfono y la lectura privilegiada empiezan aquí.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>Pausar sincronización, modo privado, retención: cada interruptor funciona de verdad y se guarda en disco al instante.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>Para ser claros desde el principio</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android restringe la lectura del portapapeles en segundo plano en el teléfono, y ClipSync no finge lo contrario: el teléfono sube automáticamente mientras está en primer plano; la lectura en segundo plano requiere una configuración adicional única — la ruta de mayor calidad, la lectura privilegiada, es justo la que este PC ayuda al teléfono a iniciar. Cada capacidad se juzga con pruebas reales: si algo no se puede hacer, lo dice.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>En el teléfono, abre la página «Conducto» de ClipSync, toca «Emparejar ahora» en el segmento de red y escanea el código de abajo; antes de aprobar, comprueba el nombre del PC y la huella del certificado.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>Tu teléfono ya está emparejado: el conducto está abierto. Sigue con el resto del recorrido.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>El peldaño de mayor calidad de la escalera de lectura en segundo plano: este PC usa adb para ayudar al teléfono emparejado a iniciar su anfitrión privilegiado integrado; después, lo copiado en segundo plano en el teléfono sube al instante.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>Cable USB</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>Activa Opciones de desarrollador → Depuración USB en el teléfono, conéctalo con un cable y toca Permitir en el aviso del teléfono.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>Depuración inalámbrica (Android 11+)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>Sin cable a mano: pon el teléfono y este PC en la misma Wi-Fi, activa Opciones de desarrollador → Depuración inalámbrica y empareja una vez con código QR; después funciona igual que por USB.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb se ejecuta solo cuando haces clic, nunca residente ni en silencio, y cada paso requiere tu consentimiento explícito. Tras este recorrido, la tarjeta de lectura privilegiada de la página Conducto es donde puedes iniciarla o revocarla en cualquier momento.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>Un canal de respaldo apagado por defecto: cuando una VPN o un cortafuegos bloquea la LAN, un teléfono ya emparejado por Bluetooth en los ajustes de Windows sigue sincronizando texto (sin imágenes, más lento).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>Este paso es opcional: no hay nada que decidir ahora. Cuando lo quieras, actívalo desde la tarjeta de respaldo Bluetooth en la página Conducto.</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>Todo listo</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>Empareja primero con tu teléfono; la lectura privilegiada y el respaldo Bluetooth están en la página «Conducto» y todos los interruptores en «Preferencias». Puedes volver cuando quieras.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>Ir a Conducto</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>Empezar a usar</value>
   </data>
 </root>

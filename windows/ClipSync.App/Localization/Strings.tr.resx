@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>Bu bilgisayardaki tüm kayıtları (görseller dahil) tek adımda siler; iki onay ister ve geri alınamaz. Temizlik yalnızca bu bilgisayarda olur ve karşı tarafın zaten aldığını asla silmez — önce dışa aktarmayı düşün.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>Yardım</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>Tanıtımı yeniden izle</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>İlk kurulum eğitimini karşılama sayfasından yeniden gezin; hiçbir ayarı veya eşleştirmeyi değiştirmez.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · son kayıtlar</value>
   </data>
@@ -838,5 +847,80 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(henüz tanılama kaydı yok)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>ClipSync'e hoş geldiniz</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>Panonuz telefon ile PC arasında sessizce akar.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>Adım {0} / {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>Devam</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Geri</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>Sonra kur</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>İki uçta kopyalanan her şey burada toplanır; bir kaydı seçerek bu PC'de yeniden kopyalayın.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>Akışın her bölümü dürüstçe gösterilir. Telefonla eşleştirme ve ayrıcalıklı okuma buradan başlar.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>Eşitlemeyi duraklatma, özel mod, saklama — her anahtar gerçekten çalışır ve anında diske yazılır.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>Baştan açık olalım</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android, telefonda arka planda pano okumayı kısıtlar ve ClipSync aksini iddia etmez: telefon ön plandayken otomatik yükler; arka plan okuması tek seferlik bir ek kurulum gerektirir — en yüksek kaliteli yol olan ayrıcalıklı okuma, tam da bu PC'nin telefonun başlatmasına yardım ettiği yoldur. Her yetenek gerçek testle değerlendirilir — bir şey yapılamıyorsa açıkça söylenir.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>Telefonda ClipSync'in “Kanal” sayfasını açın, ağ bölümündeki “Şimdi eşleştir”e dokunun ve aşağıdaki kodu tarayın; onaylamadan önce PC adını ve sertifika parmak izini karşılaştırın.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>Telefonunuz eşleşti — kanal açık. Turun kalanına devam edin.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>Arka plan okuma merdiveninin en yüksek kaliteli basamağı: bu PC, adb ile eşleştirilmiş telefonun yerleşik ayrıcalıklı ana bilgisayarını başlatmasına yardım eder; sonrasında telefonun arka plan kopyaları anında yüklenir.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>USB kablosu</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>Telefonda Geliştirici seçenekleri → USB hata ayıklamayı açın, kabloyla bağlayın ve telefondaki istemde İzin Ver'e dokunun.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>Kablosuz hata ayıklama (Android 11+)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>Elinizde kablo yoksa: telefonu ve bu PC'yi aynı Wi-Fi'ye bağlayın, Geliştirici seçenekleri → Kablosuz hata ayıklamayı açın ve QR koduyla bir kez eşleştirin — sonrası USB ile birebir aynıdır.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb yalnızca her tıklamanızda çalışır — asla yerleşik değil, asla sessiz değil — ve her adım açık onayınızı gerektirir. Bu turdan sonra, Kanal sayfasındaki ayrıcalıklı okuma kartından istediğiniz zaman başlatabilir veya geri alabilirsiniz.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>Varsayılan olarak kapalı bir yedek kanal: LAN bir VPN veya güvenlik duvarı tarafından engellendiğinde, Windows ayarlarında zaten Bluetooth ile eşleştirilmiş bir telefon metni eşitlemeye devam eder (görsel yok, daha yavaş).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>Bu adım isteğe bağlı — şimdi karar vermeniz gerekmez. İstediğinizde Kanal sayfasındaki Bluetooth yedeği kartından açın.</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>Hazır</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>Önce telefonunuzla eşleştirin; ayrıcalıklı okuma ve Bluetooth yedeği “Kanal” sayfasında, tüm anahtarlar “Tercihler”de — istediğiniz zaman dönebilirsiniz.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>Kanal sayfasına git</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>Kullanmaya başla</value>
   </data>
 </root>

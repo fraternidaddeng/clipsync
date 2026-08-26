@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>Разом удаляет все записи на этом ПК (включая изображения); требует двух подтверждений и необратимо. Очистка происходит только на этом ПК и не удаляет то, что другая сторона уже получила; сначала стоит экспортировать историю.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>Справка</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>Показать обучение снова</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>Пройти обучение первого запуска заново со страницы приветствия; настройки и сопряжение не меняются.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · недавние записи</value>
   </data>
@@ -838,5 +847,80 @@
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(диагностических записей пока нет)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>Добро пожаловать в ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>Ваш буфер обмена тихо перетекает между телефоном и ПК.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>Шаг {0} из {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>Продолжить</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>Настроить позже</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>Всё скопированное на любой из сторон собирается здесь; выберите запись, чтобы снова скопировать её на этом ПК.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>Каждый сегмент потока показан честно. Сопряжение с телефоном и привилегированное чтение начинаются здесь.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>Пауза синхронизации, приватный режим, срок хранения — каждый переключатель действительно работает и сразу сохраняется на диск.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>Скажем честно с самого начала</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android ограничивает фоновое чтение буфера обмена на телефоне, и ClipSync не делает вид, что это не так: на переднем плане телефон загружает автоматически; для фонового чтения нужна одна дополнительная настройка — самый качественный путь, привилегированное чтение, запускается как раз с помощью этого ПК. Каждая возможность оценивается реальной проверкой — если что-то нельзя сделать, об этом сказано прямо.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>На телефоне откройте страницу «Канал» в ClipSync, нажмите «Сопрячь сейчас» в сетевом сегменте и отсканируйте код ниже; перед подтверждением сверьте имя ПК и отпечаток сертификата.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>Телефон сопряжён — канал открыт. Продолжайте знакомство дальше.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>Самая качественная ступень фонового чтения: этот ПК с помощью adb помогает сопряжённому телефону запустить встроенный привилегированный хост, после чего фоновые копии с телефона загружаются мгновенно.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>USB-кабель</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>Включите на телефоне «Для разработчиков → Отладка по USB», подключите его кабелем и нажмите «Разрешить» в появившемся окне на телефоне.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>Беспроводная отладка (Android 11+)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>Нет кабеля под рукой: подключите телефон и этот ПК к одной сети Wi-Fi, включите «Параметры разработчика → Беспроводная отладка» и выполните сопряжение один раз по QR-коду — дальше всё работает так же, как по USB.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb запускается только по вашему клику — никогда не работает в фоне и не выполняется незаметно, и каждый шаг требует вашего явного согласия. После знакомства карточка привилегированного чтения на странице «Канал» позволит в любой момент запустить его или отозвать согласие.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>Резервный канал, по умолчанию выключенный: когда LAN блокируется VPN или брандмауэром, телефон, уже сопряжённый по Bluetooth в настройках Windows, продолжает синхронизировать текст (без изображений, медленнее).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>Этот шаг необязателен — сейчас решать ничего не нужно. Когда понадобится, включите его в карточке Bluetooth-резерва на странице «Канал».</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>Сначала выполните сопряжение с телефоном; привилегированное чтение и Bluetooth-резерв — на странице «Канал», все переключатели — в «Настройках». Вернуться можно в любой момент.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>Открыть «Канал»</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>Начать работу</value>
   </data>
 </root>

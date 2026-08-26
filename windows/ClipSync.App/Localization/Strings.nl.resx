@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>Verwijdert in één stap alle items op deze pc (inclusief afbeeldingen); vereist twee bevestigingen en kan niet ongedaan worden gemaakt. Wissen gebeurt alleen op deze pc en verwijdert nooit wat de peer al heeft ontvangen — overweeg eerst te exporteren.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>Hulp</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>Rondleiding opnieuw bekijken</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>Doorloop de rondleiding van de eerste start opnieuw vanaf de welkomstpagina; er verandert niets aan instellingen of koppeling.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · recente clips</value>
   </data>
@@ -838,5 +847,80 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(nog geen diagnosevermeldingen)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>Welkom bij ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>Je klembord stroomt stilletjes tussen telefoon en pc.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>Stap {0} van {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>Doorgaan</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Terug</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>Later instellen</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>Alles wat aan beide kanten wordt gekopieerd, verzamelt zich hier; selecteer een item om het op deze pc opnieuw te kopiëren.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>Elk segment van de stroom wordt eerlijk getoond. Koppelen met je telefoon en bevoorrecht lezen beginnen hier.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>Synchronisatie pauzeren, privémodus, bewaartermijn — elke schakelaar werkt echt en wordt direct op schijf opgeslagen.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>Om vooraf duidelijk te zijn</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android beperkt klembordlezen op de achtergrond op de telefoon, en ClipSync doet niet alsof dat anders is: de telefoon uploadt automatisch op de voorgrond; achtergrondlezen vraagt één extra set-up — de route van de hoogste kwaliteit, bevoorrecht lezen, is precies wat deze pc de telefoon helpt starten. Elk vermogen wordt beoordeeld met livetests — als iets niet kan, staat dat er.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>Open op de telefoon de pagina “Kanaal” van ClipSync, tik op “Nu koppelen” in het netwerksegment en scan de code hieronder; controleer vóór het goedkeuren de pc-naam en de certificaatvingerafdruk.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>Je telefoon is gekoppeld — het kanaal is open. Ga verder met de rest van de rondleiding.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>De sport van de hoogste kwaliteit op de ladder van achtergrondlezen: deze pc gebruikt adb om de gekoppelde telefoon zijn ingebouwde bevoorrechte host te laten starten; daarna worden achtergrondkopieën van de telefoon meteen geüpload.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>USB-kabel</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>Schakel op de telefoon Ontwikkelaarsopties → USB-foutopsporing in, sluit hem aan met een kabel en tik op Toestaan in het venster op de telefoon.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>Draadloze foutopsporing (Android 11+)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>Geen kabel bij de hand: zet de telefoon en deze pc op dezelfde wifi, schakel Ontwikkelaarsopties → Draadloze foutopsporing in en koppel één keer via QR-code — daarna werkt het precies zoals via USB.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb draait alleen bij elke klik van jou — nooit permanent, nooit stil — en elke stap vereist je uitdrukkelijke toestemming. Na deze rondleiding kun je het op de kaart voor bevoorrecht lezen op de Kanaal-pagina altijd starten of weer intrekken.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>Een reservekanaal dat standaard uitstaat: wanneer het LAN wordt geblokkeerd door een VPN of firewall, blijft een telefoon die al via Bluetooth in de Windows-instellingen is gekoppeld tekst synchroniseren (geen afbeeldingen, langzamer).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>Deze stap is optioneel — nu hoef je niets te beslissen. Wanneer je hem wilt, zet je hem aan via de kaart Bluetooth-terugval op de Kanaal-pagina.</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>Klaar</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>Koppel eerst met je telefoon; bevoorrecht lezen en de Bluetooth-terugval staan op de pagina “Kanaal” en elke schakelaar in “Voorkeuren” — je kunt altijd terugkomen.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>Naar Kanaal</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>Beginnen</value>
   </data>
 </root>

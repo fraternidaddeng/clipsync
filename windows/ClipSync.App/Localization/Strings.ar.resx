@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>يحذف كل العناصر على هذا الحاسوب (مع الصور) دفعة واحدة؛ يتطلب تأكيدين ولا يمكن التراجع عنه. المسح يحدث على هذا الحاسوب فقط ولا يحذف ما استلمه الطرف الآخر — فكّر في التصدير أولًا.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>مساعدة</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>إعادة عرض الدليل التمهيدي</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>أعد المرور على دليل التشغيل الأول من صفحة الترحيب؛ لا يغيّر أي إعدادات أو اقتران.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · أحدث المقتطفات</value>
   </data>
@@ -838,5 +847,80 @@
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(لا إدخالات تشخيصية بعد)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>مرحبًا بك في ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>تنساب حافظتك بهدوء بين الهاتف والحاسوب.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>الخطوة {0} من {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>متابعة</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>الإعداد لاحقًا</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>كل ما يُنسخ على أي من الطرفين يتجمع هنا؛ حدد أي عنصر لنسخه مجددًا على هذا الحاسوب.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>يُعرض كل مقطع من مقاطع التدفق بصدق. الاقتران بالهاتف والقراءة المميزة يبدآن من هنا.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>إيقاف المزامنة مؤقتًا، الوضع الخاص، مدة الاحتفاظ — كل مفتاح يعمل فعلًا ويُحفظ على القرص فورًا.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>لنكن صريحين منذ البداية</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>يقيّد Android قراءة الحافظة في الخلفية على الهاتف، وClipSync لا يدّعي غير ذلك: يرفع الهاتف تلقائيًا أثناء وجوده في المقدمة؛ وتحتاج القراءة في الخلفية إلى إعداد إضافي لمرة واحدة — والمسار الأعلى جودة، القراءة المميزة، هو بالضبط ما يساعد هذا الحاسوب الهاتف على بدئه. تُقيَّم كل قدرة باختبار فعلي — وإن تعذّر شيء فسيقول ذلك.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>على الهاتف، افتح صفحة «القناة» في ClipSync، وانقر «الاقتران الآن» في مقطع الشبكة، ثم امسح الرمز أدناه؛ قبل الموافقة تحقق من اسم الحاسوب وبصمة الشهادة.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>اقترن هاتفك — القناة مفتوحة الآن. تابع بقية الجولة.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>أعلى درجات سلّم القراءة في الخلفية جودةً: يستخدم هذا الحاسوب adb لمساعدة الهاتف المقترن على بدء مضيفه المميز المدمج، وبعدها تُرفع النسخ الخلفية من الهاتف فورًا.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>كابل USB</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>فعّل على الهاتف «خيارات المطور ← تصحيح أخطاء USB»، ووصّله بكابل، ثم انقر «سماح» في نافذة الهاتف.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>تصحيح الأخطاء اللاسلكي (Android 11 والأحدث)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>لا كابل في متناولك: صل الهاتف وهذا الحاسوب بشبكة Wi-Fi نفسها، وفعّل «خيارات المطور ← تصحيح الأخطاء اللاسلكي»، وأجرِ الاقتران مرة واحدة برمز QR — بعدها يعمل تمامًا كما عبر USB.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>لا يعمل adb إلا عند نقرك في كل مرة — لا يبقى مقيمًا ولا يعمل بصمت — وكل خطوة تحتاج موافقتك الصريحة. بعد هذه الجولة، بطاقة القراءة المميزة في صفحة «القناة» هي حيث تبدأه أو تسحبه في أي وقت.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>قناة احتياطية متوقفة افتراضيًا: عندما تُحجب الشبكة المحلية بواسطة VPN أو جدار حماية، يواصل الهاتف المقترن مسبقًا عبر البلوتوث في إعدادات Windows مزامنة النص (بلا صور، وأبطأ).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>هذه الخطوة اختيارية — لا شيء تقرره الآن. متى أردتها، شغّلها من بطاقة احتياطي البلوتوث في صفحة «القناة».</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>جاهز</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>اقترن بهاتفك أولًا؛ القراءة المميزة واحتياطي البلوتوث في صفحة «القناة» وكل المفاتيح في «التفضيلات»، ويمكنك العودة في أي وقت.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>الانتقال إلى القناة</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>بدء الاستخدام</value>
   </data>
 </root>

@@ -2857,6 +2857,28 @@
                             </StackPanel>
                         </ContentControl>
 
+                        <!-- 帮助：重新查看首开引导（对齐 Android 偏好 · 帮助）——重看不改任何设置与配对 -->
+                        <ContentControl Style="{StaticResource GroupCard}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource GroupHeader}" Text="{x:Static loc:Strings.Prefs_Group_Help}" />
+                                <Grid Margin="16,9,16,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,16,0">
+                                        <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_ReplayOnboarding}" />
+                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_ReplayOnboarding_Desc}" />
+                                    </StackPanel>
+                                    <Button Grid.Column="1"
+                                            VerticalAlignment="Top"
+                                            Click="OnReplayOnboardingClicked"
+                                            Content="{x:Static loc:Strings.Prefs_ReplayOnboarding}"
+                                            Style="{StaticResource GhostQuietButton}" />
+                                </Grid>
+                            </StackPanel>
+                        </ContentControl>
+
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>一次性删除本机全部条目（含图片），需两步确认且无法恢复。清空只发生在本机，不会远程删除对方已收到的内容；建议先导出历史留底。</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>帮助</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>重新查看引导</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>从欢迎页重新过一遍首次设置教程；不改动任何设置与配对。</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>剪剪相传 · 最近剪贴</value>
   </data>
@@ -838,5 +847,80 @@
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>（暂无诊断记录）</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>欢迎使用剪剪相传</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>剪贴板在手机与电脑之间安静地流动。</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>第 {0} 步，共 {1} 步</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>继续</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>上一步</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>稍后设置</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>两端复制过的内容都汇在这里，选中任意一条即可再次复制到本机。</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>内容流动的每一段都如实显示。与手机配对和特权直读的入口都在这里。</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>暂停同步、私密模式、保留期——每个开关都真实生效，改动立即落盘。</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>先说清楚</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android 限制手机应用在后台读取剪贴板，剪剪相传不会假装做到：手机在前台时自动上行；后台读取需要一次额外设置——质量最高的「特权直读」正是由这台电脑帮手机启动。每一段能力都以实测为准，做不到就直说。</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>在手机上打开剪剪相传的「通路」页，点按网络段的「去配对」，扫描下方二维码；确认前请核对电脑名称与证书指纹。</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>手机已完成配对——通路已经打通，继续看看剩下的部分吧。</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>后台读取阶梯里质量最高的一档：这台电脑通过 adb 帮已配对的手机启动内置特权宿主，此后手机在后台复制也即时上行。</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>USB 数据线</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>手机开启「开发者选项 → USB 调试」，用数据线连接电脑，并在手机弹窗中点允许。</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>无线调试（Android 11 及以上）</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>不方便连线时：手机与电脑接入同一 Wi-Fi，开启「开发者选项 → 无线调试」，扫码配对一次即可，之后与 USB 完全相同。</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb 只在你每次点击时运行，绝不常驻或静默执行，每一步都需要你的明确同意。引导结束后，「通路」页的特权直读卡随时可以开始或收回。</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>默认关闭的备用通道：局域网被 VPN 或防火墙阻断时，已在 Windows 系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>这一步是可选项，现在无需决定——想启用时，到「通路」页的蓝牙备援卡打开即可。</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>就绪</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>先与手机配对；特权直读与蓝牙备援都在「通路」页，所有开关都在「偏好」页，随时可回来。</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>前往通路页</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>开始使用</value>
   </data>
 </root>

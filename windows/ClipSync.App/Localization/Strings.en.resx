@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>Deletes all entries on this PC (including images) in one step; takes two confirmations and cannot be undone. Clearing happens on this PC only and never deletes what the peer already received — consider exporting first.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>Replay the introduction</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>Walk the first-run tutorial again from the welcome page; changes no settings or pairing.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · recent clips</value>
   </data>
@@ -838,5 +847,80 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(no diagnostic entries yet)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>Welcome to ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>Your clipboard flows quietly between phone and PC.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>Step {0} of {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>Set up later</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>Everything copied on either end gathers here; select any entry to copy it on this PC again.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>Every segment of the flow is shown honestly. Pairing with your phone and privileged read both start here.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>Pause sync, private mode, retention — every switch truly works and lands on disk immediately.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>To be clear up front</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android restricts background clipboard reading on the phone, and ClipSync does not pretend otherwise: the phone uploads automatically while in the foreground; background reading takes one extra setup — the highest-quality route, privileged read, is exactly what this PC helps the phone start. Every capability is judged by live testing — if something cannot be done, it says so.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>On your phone, open ClipSync's Conduit page, tap "Pair now" in the network segment, and scan the code below; before approving, check the PC name and certificate fingerprint.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>Your phone is paired — the conduit is open. Carry on with the rest of the tour.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>The highest-quality rung of the background-read ladder: this PC uses adb to help a paired phone start its built-in privileged host, after which the phone's background copies upload instantly.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>USB cable</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>Enable Developer options → USB debugging on the phone, connect it with a cable, and tap Allow in the phone's prompt.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>Wireless debugging (Android 11+)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>No cable at hand: put the phone and this PC on the same Wi-Fi, enable Developer options → Wireless debugging, and pair once by QR code — afterwards it works exactly as over USB.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb runs only on your click each time — never resident, never silent — and every step needs your explicit consent. After this tour, the privileged-read card on the Conduit page is where you start it, or take it back, anytime.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>A backup channel that is off by default: when the LAN is blocked by a VPN or firewall, a phone already Bluetooth-paired in Windows settings keeps syncing text (no images, slower).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>This one is optional — nothing to decide now. When you want it, switch it on from the Bluetooth fallback card on the Conduit page.</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>Pair with your phone first; privileged read and the Bluetooth fallback live on the Conduit page and every switch in Preferences — you can come back anytime.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>Go to Conduit</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>Start using</value>
   </data>
 </root>

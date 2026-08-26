@@ -594,6 +594,15 @@
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
     <value>Supprime toutes les entrées de ce PC (images comprises) en une fois ; demande deux confirmations et ne peut pas être annulé. Le vidage n’a lieu que sur ce PC et ne supprime jamais ce que le pair a déjà reçu ; pensez à exporter d’abord.</value>
   </data>
+  <data name="Prefs_Group_Help" xml:space="preserve">
+    <value>Aide</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding" xml:space="preserve">
+    <value>Revoir le tutoriel</value>
+  </data>
+  <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
+    <value>Reparcourez le tutoriel de premier lancement depuis la page d’accueil ; aucun réglage ni appairage n’est modifié.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · clips récents</value>
   </data>
@@ -838,5 +847,80 @@ Toutes les entrées de ce PC (images comprises) seront supprimées en une fois. 
   </data>
   <data name="Diag_Empty" xml:space="preserve">
     <value>(aucune entrée de diagnostic pour l’instant)</value>
+  </data>
+  <data name="Onboarding_WindowTitle" xml:space="preserve">
+    <value>Bienvenue dans ClipSync</value>
+  </data>
+  <data name="Onboarding_Subtitle" xml:space="preserve">
+    <value>Votre presse-papiers circule discrètement entre téléphone et PC.</value>
+  </data>
+  <data name="Onboarding_StepProgressFormat" xml:space="preserve">
+    <value>Étape {0} sur {1}</value>
+  </data>
+  <data name="Onboarding_Next" xml:space="preserve">
+    <value>Continuer</value>
+  </data>
+  <data name="Onboarding_Back" xml:space="preserve">
+    <value>Retour</value>
+  </data>
+  <data name="Onboarding_SkipForNow" xml:space="preserve">
+    <value>Configurer plus tard</value>
+  </data>
+  <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
+    <value>Tout ce qui est copié d’un côté ou de l’autre se rassemble ici ; sélectionnez une entrée pour la copier à nouveau sur ce PC.</value>
+  </data>
+  <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
+    <value>Chaque segment du flux est montré honnêtement. L’appairage du téléphone et la lecture privilégiée commencent ici.</value>
+  </data>
+  <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
+    <value>Pause de synchronisation, mode privé, conservation — chaque interrupteur fonctionne vraiment et s’enregistre immédiatement sur disque.</value>
+  </data>
+  <data name="Onboarding_Honesty_Header" xml:space="preserve">
+    <value>Pour être clair d’emblée</value>
+  </data>
+  <data name="Onboarding_Honesty_Body" xml:space="preserve">
+    <value>Android restreint la lecture du presse-papiers en arrière-plan sur le téléphone, et ClipSync ne prétend pas le contraire : le téléphone téléverse automatiquement au premier plan ; la lecture en arrière-plan demande une configuration supplémentaire unique — la route de plus haute qualité, la lecture privilégiée, est justement celle que ce PC aide le téléphone à démarrer. Chaque capacité est jugée par un test réel — si quelque chose est impossible, c’est dit.</value>
+  </data>
+  <data name="Onboarding_Pair_Body" xml:space="preserve">
+    <value>Sur le téléphone, ouvrez la page « Conduit » de ClipSync, touchez « Appairer maintenant » dans le segment réseau et scannez le code ci-dessous ; avant d’approuver, vérifiez le nom du PC et l’empreinte du certificat.</value>
+  </data>
+  <data name="Onboarding_Pair_Done" xml:space="preserve">
+    <value>Votre téléphone est appairé — le conduit est ouvert. Poursuivez le reste de la visite.</value>
+  </data>
+  <data name="Onboarding_Privileged_Body" xml:space="preserve">
+    <value>Le barreau de plus haute qualité de l’échelle de lecture en arrière-plan : ce PC utilise adb pour aider le téléphone appairé à démarrer son hôte privilégié intégré ; ensuite, les copies en arrière-plan du téléphone remontent instantanément.</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
+    <value>Câble USB</value>
+  </data>
+  <data name="Onboarding_Privileged_UsbDesc" xml:space="preserve">
+    <value>Activez Options pour les développeurs → Débogage USB sur le téléphone, branchez-le avec un câble et appuyez sur Autoriser dans l’invite du téléphone.</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessTitle" xml:space="preserve">
+    <value>Débogage sans fil (Android 11+)</value>
+  </data>
+  <data name="Onboarding_Privileged_WirelessDesc" xml:space="preserve">
+    <value>Pas de câble sous la main : mettez le téléphone et ce PC sur le même Wi-Fi, activez Options pour les développeurs → Débogage sans fil et appairez une fois par QR code ; ensuite, cela fonctionne exactement comme par USB.</value>
+  </data>
+  <data name="Onboarding_Privileged_Consent" xml:space="preserve">
+    <value>adb ne s’exécute qu’à chacun de vos clics — jamais résident, jamais silencieux — et chaque étape exige votre consentement explicite. Après cette visite, la carte de lecture privilégiée de la page Conduit permet de la démarrer, ou de la retirer, à tout moment.</value>
+  </data>
+  <data name="Onboarding_Bt_Body" xml:space="preserve">
+    <value>Un canal de secours désactivé par défaut : quand le LAN est bloqué par un VPN ou un pare-feu, un téléphone déjà appairé en Bluetooth dans les réglages Windows continue de synchroniser le texte (pas d’images, plus lent).</value>
+  </data>
+  <data name="Onboarding_Bt_Note" xml:space="preserve">
+    <value>Cette étape est facultative — rien à décider maintenant. Quand vous le voudrez, activez-le depuis la carte Secours Bluetooth de la page Conduit.</value>
+  </data>
+  <data name="Onboarding_Finish_Title" xml:space="preserve">
+    <value>Prêt</value>
+  </data>
+  <data name="Onboarding_Finish_Body" xml:space="preserve">
+    <value>Commencez par appairer votre téléphone ; la lecture privilégiée et le secours Bluetooth se trouvent sur la page « Conduit » et chaque réglage dans « Préférences ». Vous pouvez y revenir à tout moment.</value>
+  </data>
+  <data name="Onboarding_OpenConduit" xml:space="preserve">
+    <value>Aller au Conduit</value>
+  </data>
+  <data name="Onboarding_StartUsing" xml:space="preserve">
+    <value>Commencer à utiliser</value>
   </data>
 </root>

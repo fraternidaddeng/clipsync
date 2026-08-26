@@ -210,6 +210,13 @@ public partial class MainWindow : Window
     private void OnGoToConduitClicked(object sender, RoutedEventArgs e) =>
         NavConduit.IsChecked = true;
 
+    /// <summary>首开引导收尾的「前往通路页」：与空状态的去配对同一动线。</summary>
+    public void FocusConduitPage() => NavConduit.IsChecked = true;
+
+    // 帮助 · 重新查看引导（对齐 Android 偏好页再入口）：重看不改任何设置与配对。
+    private void OnReplayOnboardingClicked(object sender, RoutedEventArgs e) =>
+        ((App)Application.Current).ShowOnboardingWindow(this);
+
     // 自绘 chrome 的窗控三钮（WindowChrome 去掉了系统标题栏）。
     private void OnMinimizeClicked(object sender, RoutedEventArgs e) =>
         WindowState = WindowState.Minimized;
