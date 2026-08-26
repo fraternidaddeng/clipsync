@@ -70,10 +70,11 @@ fun OnboardingScreen(
     // System back walks the tutorial back before it can leave the screen.
     BackHandler(enabled = stepIndex > 0) { stepIndex = OnboardingContent.previous(stepIndex) }
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.systemBars)
-            .padding(horizontal = 24.dp, vertical = 12.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.systemBars)
+                .padding(horizontal = 24.dp, vertical = 12.dp),
     ) {
         StepChrome(
             stepIndex = stepIndex,
@@ -84,18 +85,20 @@ fun OnboardingScreen(
         )
         Crossfade(
             targetState = step,
-            animationSpec = if (LocalReducedMotion.current) {
-                snap()
-            } else {
-                CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)
-            },
+            animationSpec =
+                if (LocalReducedMotion.current) {
+                    snap()
+                } else {
+                    CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)
+                },
             label = "onboarding-step",
             modifier = Modifier.weight(1f),
         ) { current ->
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 when (current) {
@@ -146,17 +149,19 @@ private fun StepChrome(
 ) {
     val c = clipSyncColors
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(bottom = 10.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp),
     ) {
         if (stepIndex > 0) {
             Row(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .clip(CharterShapes.control)
-                    .clickable(onClick = onBack)
-                    .padding(horizontal = 6.dp, vertical = 6.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterStart)
+                        .clip(CharterShapes.control)
+                        .clickable(onClick = onBack)
+                        .padding(horizontal = 6.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(text = "‹", fontSize = 15.sp, color = c.t3)
@@ -177,11 +182,12 @@ private fun StepChrome(
                 text = stringResource(OnboardingContent.ACTION_SKIP_FOR_NOW),
                 fontSize = 12.sp,
                 color = c.t3,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .clip(CharterShapes.control)
-                    .clickable(onClick = onSkip)
-                    .padding(horizontal = 6.dp, vertical = 6.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterEnd)
+                        .clip(CharterShapes.control)
+                        .clickable(onClick = onSkip)
+                        .padding(horizontal = 6.dp, vertical = 6.dp),
             )
         }
     }
@@ -194,11 +200,12 @@ private fun StepDots(
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
-    val progress = stringResource(
-        OnboardingContent.STEP_PROGRESS,
-        stepIndex + 1,
-        OnboardingContent.steps.size,
-    )
+    val progress =
+        stringResource(
+            OnboardingContent.STEP_PROGRESS,
+            stepIndex + 1,
+            OnboardingContent.steps.size,
+        )
     Row(
         modifier = modifier.semantics { contentDescription = progress },
         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -206,12 +213,13 @@ private fun StepDots(
     ) {
         OnboardingContent.steps.indices.forEach { index ->
             Box(
-                modifier = Modifier
-                    .size(if (index == stepIndex) 7.dp else 6.dp)
-                    .background(
-                        color = if (index <= stepIndex) c.flow else c.ln2,
-                        shape = CircleShape,
-                    ),
+                modifier =
+                    Modifier
+                        .size(if (index == stepIndex) 7.dp else 6.dp)
+                        .background(
+                            color = if (index <= stepIndex) c.flow else c.ln2,
+                            shape = CircleShape,
+                        ),
             )
         }
     }
@@ -248,16 +256,18 @@ private fun WelcomeStep() {
     )
     Spacer(Modifier.height(22.dp))
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .charterCard(),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .charterCard(),
     ) {
         OnboardingContent.tabs.forEachIndexed { index, entry ->
             if (index > 0) CardDivider()
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
@@ -305,19 +315,21 @@ private fun PairStep() {
     )
     Spacer(Modifier.height(18.dp))
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .charterCard()
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .charterCard()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         OnboardingContent.pairFacts.forEach { fact ->
             Row(verticalAlignment = Alignment.Top) {
                 Box(
-                    modifier = Modifier
-                        .padding(top = 6.dp)
-                        .size(7.dp)
-                        .background(color = c.flow, shape = CircleShape),
+                    modifier =
+                        Modifier
+                            .padding(top = 6.dp)
+                            .size(7.dp)
+                            .background(color = c.flow, shape = CircleShape),
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
@@ -344,16 +356,18 @@ private fun ReadRoutesStep() {
     )
     Spacer(Modifier.height(18.dp))
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .charterCard(),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .charterCard(),
     ) {
         OnboardingContent.routes.forEachIndexed { index, route ->
             if (index > 0) CardDivider()
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(5.dp),
             ) {
                 Row(
@@ -395,13 +409,17 @@ private fun RecommendedChip(modifier: Modifier = Modifier) {
         fontSize = 10.sp,
         fontWeight = FontWeight.SemiBold,
         color = c.flow,
-        modifier = modifier
-            .clip(shape)
-            .background(c.flowBg)
-            .border(1.dp, c.flowLn, shape)
-            .padding(horizontal = 7.dp, vertical = 2.dp),
+        modifier =
+            modifier
+                .clip(shape)
+                .background(c.flowBg)
+                .border(1.dp, c.flowLn, shape)
+                .padding(horizontal = 7.dp, vertical = 2.dp),
     )
 }
+
+/** The conduit wizard's quality scale runs over three dots (●●●). */
+private const val QUALITY_DOT_COUNT = 3
 
 /** Route quality on the conduit wizard's own ●●● scale. */
 @Composable
@@ -411,14 +429,15 @@ private fun QualityDots(
 ) {
     val c = clipSyncColors
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        repeat(3) { index ->
+        repeat(QUALITY_DOT_COUNT) { index ->
             Box(
-                modifier = Modifier
-                    .size(7.dp)
-                    .background(
-                        color = if (index < filled) c.flow else c.ln2,
-                        shape = CircleShape,
-                    ),
+                modifier =
+                    Modifier
+                        .size(7.dp)
+                        .background(
+                            color = if (index < filled) c.flow else c.ln2,
+                            shape = CircleShape,
+                        ),
             )
         }
     }
@@ -438,16 +457,18 @@ private fun PermissionsStep() {
     )
     Spacer(Modifier.height(18.dp))
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .charterCard(),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .charterCard(),
     ) {
         OnboardingContent.permissions.forEachIndexed { index, permission ->
             if (index > 0) CardDivider()
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
             ) {
                 Text(
                     text = stringResource(permission.title),
@@ -554,12 +575,13 @@ private fun QuietNote(
     val c = clipSyncColors
     val shape = CharterShapes.control
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(c.sf3)
-            .border(1.dp, c.ln, shape)
-            .padding(horizontal = 14.dp, vertical = 11.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(c.sf3)
+                .border(1.dp, c.ln, shape)
+                .padding(horizontal = 14.dp, vertical = 11.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         if (header != null) {
@@ -587,12 +609,13 @@ private fun PrimaryAction(
     val c = clipSyncColors
     val shape = CharterShapes.control
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(c.flow)
-            .clickable(onClick = onClick)
-            .padding(vertical = 12.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(c.flow)
+                .clickable(onClick = onClick)
+                .padding(vertical = 12.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -614,13 +637,14 @@ private fun TintedAction(
     val c = clipSyncColors
     val shape = CharterShapes.control
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(c.flowBg)
-            .border(1.dp, c.flowLn, shape)
-            .clickable(onClick = onClick)
-            .padding(vertical = 11.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(c.flowBg)
+                .border(1.dp, c.flowLn, shape)
+                .clickable(onClick = onClick)
+                .padding(vertical = 11.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -642,12 +666,13 @@ private fun GhostAction(
     val c = clipSyncColors
     val shape = CharterShapes.control
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .border(1.dp, c.ln2, shape)
-            .clickable(onClick = onClick)
-            .padding(vertical = 11.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .border(1.dp, c.ln2, shape)
+                .clickable(onClick = onClick)
+                .padding(vertical = 11.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(

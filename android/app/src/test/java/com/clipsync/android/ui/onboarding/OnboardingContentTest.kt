@@ -33,9 +33,10 @@ class OnboardingContentTest {
 
     @Test
     fun `next walks forward and stops at the last step`() {
-        val walked = generateSequence(0) { index ->
-            OnboardingContent.next(index).takeIf { it != index }
-        }.toList()
+        val walked =
+            generateSequence(0) { index ->
+                OnboardingContent.next(index).takeIf { it != index }
+            }.toList()
         assertEquals(OnboardingContent.steps.indices.toList(), walked)
         // The last step has nowhere further to go — no wrap-around.
         assertEquals(

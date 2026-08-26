@@ -73,20 +73,21 @@ object OnboardingContent {
     @StringRes val SUBTITLE = R.string.onboarding_subtitle
 
     /** In dock order; the icons are matched positionally by the composable. */
-    val tabs = listOf(
-        OnboardingTabEntry(
-            title = R.string.tab_history,
-            description = R.string.onboarding_tab_history_desc,
-        ),
-        OnboardingTabEntry(
-            title = R.string.tab_conduit,
-            description = R.string.onboarding_tab_conduit_desc,
-        ),
-        OnboardingTabEntry(
-            title = R.string.tab_prefs,
-            description = R.string.onboarding_tab_prefs_desc,
-        ),
-    )
+    val tabs =
+        listOf(
+            OnboardingTabEntry(
+                title = R.string.tab_history,
+                description = R.string.onboarding_tab_history_desc,
+            ),
+            OnboardingTabEntry(
+                title = R.string.tab_conduit,
+                description = R.string.onboarding_tab_conduit_desc,
+            ),
+            OnboardingTabEntry(
+                title = R.string.tab_prefs,
+                description = R.string.onboarding_tab_prefs_desc,
+            ),
+        )
 
     @StringRes val HONESTY_HEADER = R.string.onboarding_honesty_header
 
@@ -99,11 +100,12 @@ object OnboardingContent {
 
     @StringRes val PAIR_BODY = R.string.pairing_intro
 
-    val pairFacts = listOf(
-        R.string.onboarding_pair_fact_entry,
-        R.string.onboarding_pair_fact_verify,
-        R.string.onboarding_pair_fact_service,
-    )
+    val pairFacts =
+        listOf(
+            R.string.onboarding_pair_fact_entry,
+            R.string.onboarding_pair_fact_verify,
+            R.string.onboarding_pair_fact_service,
+        )
 
     // -- 3 · the read path (特权直读 recommended) ---------------------------
 
@@ -113,24 +115,25 @@ object OnboardingContent {
     @StringRes val READ_BODY = R.string.onboarding_read_body
 
     /** Quality order, the recommended 特权直读 first — same keys as the wizard. */
-    val routes = listOf(
-        OnboardingRouteEntry(
-            title = R.string.route_privileged,
-            cost = R.string.route_privileged_cost,
-            quality = 3,
-            recommended = true,
-        ),
-        OnboardingRouteEntry(
-            title = R.string.route_log_overlay,
-            cost = R.string.route_log_overlay_cost,
-            quality = 2,
-        ),
-        OnboardingRouteEntry(
-            title = R.string.route_overlay_polling,
-            cost = R.string.route_overlay_polling_cost,
-            quality = 1,
-        ),
-    )
+    val routes =
+        listOf(
+            OnboardingRouteEntry(
+                title = R.string.route_privileged,
+                cost = R.string.route_privileged_cost,
+                quality = 3,
+                recommended = true,
+            ),
+            OnboardingRouteEntry(
+                title = R.string.route_log_overlay,
+                cost = R.string.route_log_overlay_cost,
+                quality = 2,
+            ),
+            OnboardingRouteEntry(
+                title = R.string.route_overlay_polling,
+                cost = R.string.route_overlay_polling_cost,
+                quality = 1,
+            ),
+        )
 
     @StringRes val ROUTE_RECOMMENDED = R.string.onboarding_route_recommended
 
@@ -143,20 +146,21 @@ object OnboardingContent {
 
     @StringRes val PERMS_BODY = R.string.onboarding_perms_body
 
-    val permissions = listOf(
-        OnboardingPermissionEntry(
-            title = R.string.onboarding_perm_notifications,
-            description = R.string.onboarding_perm_notifications_desc,
-        ),
-        OnboardingPermissionEntry(
-            title = R.string.onboarding_perm_overlay,
-            description = R.string.onboarding_perm_overlay_desc,
-        ),
-        OnboardingPermissionEntry(
-            title = R.string.onboarding_perm_battery,
-            description = R.string.onboarding_perm_battery_desc,
-        ),
-    )
+    val permissions =
+        listOf(
+            OnboardingPermissionEntry(
+                title = R.string.onboarding_perm_notifications,
+                description = R.string.onboarding_perm_notifications_desc,
+            ),
+            OnboardingPermissionEntry(
+                title = R.string.onboarding_perm_overlay,
+                description = R.string.onboarding_perm_overlay_desc,
+            ),
+            OnboardingPermissionEntry(
+                title = R.string.onboarding_perm_battery,
+                description = R.string.onboarding_perm_battery_desc,
+            ),
+        )
 
     // -- 5 · send-off ---------------------------------------------------------
 
