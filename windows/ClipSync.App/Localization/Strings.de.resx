@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>unbekannter Grund</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>Drahtloses Koppeln (ohne Kabel)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11+ unterstützt drahtloses Debugging: Telefon und dieser PC im selben WLAN, auf dem Telefon Entwickleroptionen → Drahtloses Debugging einschalten und einmal mit einer der Methoden unten koppeln; das Starten des privilegierten Lesezugriffs funktioniert danach genau wie über USB.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>Kopplungs-QR-Code anzeigen</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>Anzeige beenden</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>Auf dem Telefon: Drahtloses Debugging → „Gerät mit QR-Code koppeln“, dann diesen Code scannen.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>Warten auf den Scan… Solange der Code angezeigt wird, fragt dieser PC alle zwei Sekunden die mDNS-Erkennung von adb ab, höchstens zwei Minuten lang — jederzeit stoppbar.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>Dieses adb hat keine nutzbare mDNS-Erkennung (neuere platform-tools nötig), der QR-Weg kann daher nicht funktionieren. Nutzen Sie stattdessen die Kopplungscode-Methode unten.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>Zeitüberschreitung beim Warten auf den Scan; der QR-Code wird nicht mehr angezeigt (der alte ist ungültig). Neu anzeigen oder den Kopplungscode verwenden.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>Telefon gefunden ({0}); Kopplung läuft …</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>Kopplung mit {0} …</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>Kopplung fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>Ein Kopplungscode gilt nur, solange der Kopplungsdialog des Telefons offen ist. Ist er abgelaufen oder der Dialog geschlossen, öffnen Sie den Kopplungseintrag unter Drahtloses Debugging auf dem Telefon erneut und versuchen es mit dem frischen Code.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>Gekoppelt. Verbindungsport wird automatisch gesucht …</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>Gekoppelt, aber der Verbindungsport konnte nicht automatisch entdeckt werden. Tragen Sie unten die „IP-Adresse und Port“ vom oberen Rand der Seite Drahtloses Debugging des Telefons ein und tippen Sie auf „Verbinden“.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>Verbindung mit {0} …</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>Mit {0} verbunden; Telefon wird erkannt …</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>Verbindung fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>Kein gültiges IP:Port-Format (Beispiel 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>Der Kopplungscode sind die sechs Ziffern aus dem Kopplungsdialog des Telefons.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>Beendet; dieser QR-Code ist ungültig.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>Mit Kopplungscode koppeln</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>Wählen Sie auf dem Telefon „Gerät mit Kopplungscode koppeln“ und tragen Sie hier IP-Adresse und Port aus dem Dialog sowie den sechsstelligen Code ein.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>Kopplungs-IP:Port (Beispiel 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>Sechsstelliger Code</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>Koppeln</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>Mit dem Telefon verbinden</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>Nach dem Koppeln verbinden. Der Port stammt aus der Zeile „IP-Adresse und Port“ oben auf der Seite Drahtloses Debugging des Telefons (nicht der Kopplungsport); wird er automatisch entdeckt, wird er für Sie eingetragen.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>Verbindungs-IP:Port (Beispiel 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>Verbinden</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

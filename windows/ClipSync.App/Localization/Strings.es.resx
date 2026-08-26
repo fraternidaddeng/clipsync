@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>motivo desconocido</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>Emparejamiento inalámbrico (sin cable)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11+ admite la depuración inalámbrica: con el teléfono y este PC en la misma Wi-Fi, activa Opciones de desarrollador → Depuración inalámbrica en el teléfono y empareja una vez con cualquiera de los métodos de abajo; después, iniciar la lectura privilegiada funciona igual que por USB.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>Mostrar código QR de emparejamiento</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>Dejar de mostrar</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>En el teléfono: Depuración inalámbrica → "Vincular dispositivo con código QR" y escanea este código.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>Esperando a que el teléfono escanee… Mientras se muestra el código, este PC consulta el descubrimiento mDNS de adb cada dos segundos, durante un máximo de dos minutos; puedes parar en cualquier momento.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>Este adb no tiene descubrimiento mDNS utilizable (se necesitan platform-tools más recientes), así que la vía del QR no puede funcionar. Usa el método del código de emparejamiento de abajo.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>Se agotó el tiempo de espera del escaneo; el código QR ya no se muestra (el antiguo queda anulado). Muestra uno nuevo o usa el código de emparejamiento.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>Teléfono encontrado ({0}); emparejando…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>Emparejando con {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>Error de emparejamiento: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>El código de emparejamiento solo es válido mientras el diálogo de emparejamiento del teléfono siga abierto. Si caducó o se cerró, vuelve a abrir la entrada de emparejamiento en Depuración inalámbrica del teléfono y reintenta con el código nuevo.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>Emparejado. Buscando el puerto de conexión automáticamente…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>Emparejado, pero no se pudo descubrir automáticamente el puerto de conexión. Escribe abajo la "dirección IP y puerto" que aparece arriba en la página de Depuración inalámbrica del teléfono y pulsa "Conectar".</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>Conectando con {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>Conectado a {0}; detectando el teléfono…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>Error de conexión: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>No es un IP:puerto válido (ejemplo: 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>El código de emparejamiento son los seis dígitos que muestra el diálogo de emparejamiento del teléfono.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>Detenido; ese código QR queda anulado.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>Emparejar con código</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>En el teléfono elige "Vincular dispositivo con código", y escribe aquí la dirección IP y el puerto del diálogo junto con su código de seis dígitos.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>IP:puerto de emparejamiento (ejemplo 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>Código de seis dígitos</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>Emparejar</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>Conectar con el teléfono</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>Conecta después de emparejar. El puerto es la línea "dirección IP y puerto" de arriba de la página de Depuración inalámbrica del teléfono (difiere del puerto de emparejamiento); si se puede descubrir automáticamente, se rellena solo.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>IP:puerto de conexión (ejemplo 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>Conectar</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

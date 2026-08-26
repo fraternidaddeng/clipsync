@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>原因不明</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>ワイヤレスペアリング（ケーブル不要）</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11 以降はワイヤレスデバッグに対応しています。スマホと PC を同じ Wi-Fi につなぎ、スマホの「開発者向けオプション → ワイヤレスデバッグ」をオンにしてから、下のいずれかの方法で一度ペアリングしてください。その後の特権ダイレクト読み取りの起動は USB と同じです。</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>ペアリング QR コードを表示</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>表示をやめる</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>スマホ側：ワイヤレスデバッグ → 「QR コードによるデバイスのペア設定」でこのコードをスキャンしてください。</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>スマホのスキャン待ち……表示中はこの PC が 2 秒ごとに adb の mDNS 探索へ問い合わせます（最長 2 分、いつでも停止できます）。</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>この adb は mDNS 探索を使えません（新しめの platform-tools が必要）。QR コード方式は使えないため、下のペアリングコード方式をご利用ください。</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>スキャン待ちがタイムアウトし、QR コードの表示を終了しました（旧コードは無効）。再表示するか、ペアリングコード方式をご利用ください。</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>スマホを検出（{0}）。ペアリング中……</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>{0} とペアリング中……</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>ペアリング失敗:{0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>ペアリングコードはスマホのペアリングダイアログが開いている間だけ有効です。期限切れや閉じてしまった場合は、スマホの「ワイヤレスデバッグ」からペアリング画面を開き直し、新しいコードでやり直してください。</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>ペアリング完了。接続ポートを自動検索中……</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>ペアリングは完了しましたが、接続ポートを自動検出できませんでした。スマホの「ワイヤレスデバッグ」画面上部の「IP アドレスとポート」を下に入力し、「接続」を押してください。</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>{0} に接続中……</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>{0} に接続しました。スマホを検出中……</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>接続失敗:{0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>IP:ポート の形式が正しくありません（例 192.168.1.23:37123）。</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>ペアリングコードはスマホのペアリングダイアログに表示される 6 桁の数字です。</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>表示を停止しました。その QR コードは無効です。</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>ペアリングコードでペアリング</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>スマホで「ペア設定コードによるデバイスのペア設定」を選び、表示された IP アドレスとポート、6 桁のコードをここに入力してください。</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>ペアリング IP:ポート（例 192.168.1.23:37123）</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>6 桁のコード</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>ペアリング</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>スマホに接続</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>ペアリング後に接続します。ポートはスマホの「ワイヤレスデバッグ」画面上部の「IP アドレスとポート」です（ペアリング用ポートとは異なります）。自動検出できた場合は自動で入力されます。</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>接続 IP:ポート（例 192.168.1.23:40331）</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>接続</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb：{0}</value>
   </data>

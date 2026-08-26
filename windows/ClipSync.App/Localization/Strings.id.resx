@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>alasan tak diketahui</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>Penyandingan nirkabel (tanpa kabel)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11+ mendukung debugging nirkabel: dengan ponsel dan PC ini di Wi-Fi yang sama, aktifkan Opsi pengembang → Debugging nirkabel di ponsel, lalu sandingkan sekali dengan salah satu cara di bawah; setelah itu memulai baca istimewa bekerja persis seperti lewat USB.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>Tampilkan kode QR penyandingan</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>Berhenti menampilkan</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>Di ponsel: Debugging nirkabel → «Sandingkan perangkat dengan kode QR», lalu pindai kode ini.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>Menunggu ponsel memindai… Selama kode ditampilkan, PC ini menanyai penemuan mDNS adb tiap dua detik, paling lama dua menit — hentikan kapan saja.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>adb ini tidak punya penemuan mDNS yang bisa dipakai (perlu platform-tools lebih baru), jadi jalur QR tidak bisa bekerja. Gunakan metode kode penyandingan di bawah.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>Waktu tunggu pemindaian habis; kode QR tidak lagi ditampilkan (kode lama batal). Tampilkan yang baru, atau gunakan kode penyandingan.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>Ponsel ditemukan ({0}); menyandingkan…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>Menyandingkan dengan {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>Penyandingan gagal: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>Kode penyandingan hanya berlaku selama dialog penyandingan di ponsel tetap terbuka. Jika kedaluwarsa atau dialog tertutup, buka lagi entri penyandingan di Debugging nirkabel pada ponsel dan coba ulang dengan kode baru.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>Tersandingkan. Mencari port koneksi secara otomatis…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>Tersandingkan, tetapi port koneksi tidak dapat ditemukan otomatis. Ketikkan «Alamat IP &amp; port» yang tampil di bagian atas halaman Debugging nirkabel ponsel ke bawah ini, lalu ketuk «Hubungkan».</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>Menghubungkan ke {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>Terhubung ke {0}; mendeteksi ponsel…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>Koneksi gagal: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>Bukan IP:port yang valid (contoh 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>Kode penyandingan adalah enam digit yang tampil di dialog penyandingan ponsel.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>Dihentikan; kode QR itu batal.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>Sandingkan dengan kode</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>Di ponsel pilih «Sandingkan perangkat dengan kode penyandingan», lalu masukkan alamat IP &amp; port dari dialog beserta kode enam digitnya di sini.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>IP:port penyandingan (contoh 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>Kode enam digit</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>Sandingkan</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>Hubungkan ke ponsel</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>Hubungkan setelah menyandingkan. Port berasal dari baris «Alamat IP &amp; port» di bagian atas halaman Debugging nirkabel ponsel (berbeda dari port penyandingan); bila bisa ditemukan otomatis akan diisikan untuk Anda.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>IP:port koneksi (contoh 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>Hubungkan</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

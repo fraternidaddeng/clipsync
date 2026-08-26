@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>अज्ञात कारण</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>वायरलेस पेयरिंग (केबल की ज़रूरत नहीं)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11+ वायरलेस डिबगिंग समर्थित करता है: फ़ोन और इस PC को एक ही Wi-Fi से जोड़ें, फ़ोन पर «डेवलपर विकल्प → वायरलेस डिबगिंग» चालू करें, फिर नीचे दिए किसी भी तरीके से एक बार पेयर करें; इसके बाद विशेषाधिकार पठन शुरू करना USB जैसा ही है।</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>पेयरिंग QR कोड दिखाएँ</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>दिखाना बंद करें</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>फ़ोन पर: वायरलेस डिबगिंग → «QR कोड से डिवाइस पेयर करें», फिर यह कोड स्कैन करें।</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>फ़ोन के स्कैन का इंतज़ार… कोड दिखते समय यह PC हर दो सेकंड में adb की mDNS खोज से पूछता है, अधिकतम दो मिनट — कभी भी रोकें।</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>इस adb में उपयोगी mDNS खोज नहीं है (नए platform-tools चाहिए), इसलिए QR रास्ता काम नहीं कर सकता। नीचे पेयरिंग कोड तरीका अपनाएँ।</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>स्कैन का इंतज़ार समय-सीमा पार कर गया; QR कोड अब नहीं दिख रहा (पुराना कोड रद्द)। नया दिखाएँ, या पेयरिंग कोड इस्तेमाल करें।</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>फ़ोन मिला ({0}); पेयर हो रहा है…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>{0} से पेयर हो रहा है…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>पेयरिंग विफल: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>पेयरिंग कोड तभी तक मान्य है जब तक फ़ोन का पेयरिंग डायलॉग खुला है। समाप्त हो गया या बंद हो गया तो फ़ोन की वायरलेस डिबगिंग में पेयरिंग प्रविष्टि फिर खोलें और नए कोड से दोबारा कोशिश करें।</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>पेयर हो गया। कनेक्ट पोर्ट अपने आप खोजा जा रहा है…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>पेयर हो गया, पर कनेक्ट पोर्ट अपने आप नहीं मिला। फ़ोन के वायरलेस डिबगिंग पेज के ऊपर दिख रहा «IP पता और पोर्ट» नीचे भरें, फिर «कनेक्ट» दबाएँ।</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>{0} से कनेक्ट हो रहा है…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>{0} से कनेक्ट हुआ; फ़ोन की पहचान हो रही है…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>कनेक्शन विफल: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>यह मान्य IP:पोर्ट नहीं है (उदाहरण 192.168.1.23:37123)।</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>पेयरिंग कोड फ़ोन के पेयरिंग डायलॉग में दिख रहे छह अंक हैं।</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>रोक दिया; वह QR कोड अब रद्द है।</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>पेयरिंग कोड से पेयर करें</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>फ़ोन पर «पेयरिंग कोड से डिवाइस पेयर करें» चुनें, फिर डायलॉग का IP पता व पोर्ट और छह-अंकीय कोड यहाँ भरें।</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>पेयरिंग IP:पोर्ट (उदाहरण 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>छह-अंकीय कोड</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>पेयर करें</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>फ़ोन से कनेक्ट करें</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>पेयरिंग के बाद कनेक्ट करें। पोर्ट फ़ोन के वायरलेस डिबगिंग पेज के ऊपर की «IP पता और पोर्ट» पंक्ति से लें (यह पेयरिंग पोर्ट से अलग है); अपने आप मिल जाए तो भर दिया जाता है।</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>कनेक्ट IP:पोर्ट (उदाहरण 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>कनेक्ट करें</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

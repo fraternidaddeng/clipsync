@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>unknown reason</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>Wireless pairing (no cable needed)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11+ supports wireless debugging: with the phone and this PC on the same Wi-Fi, turn on Developer options → Wireless debugging on the phone, then pair once using either method below; starting privileged read afterwards works exactly as over USB.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>Show pairing QR code</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>Stop showing</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>On the phone: Wireless debugging → "Pair device with QR code", then scan this code.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>Waiting for the phone to scan… While the code is shown, this PC asks adb's mDNS discovery every two seconds, for at most two minutes — stop anytime.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>This adb has no usable mDNS discovery (newer platform-tools needed), so the QR path cannot work. Use the pairing-code method below instead.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>Timed out waiting for a scan; the QR code is no longer shown (the old secret is dead). Show a new one, or use the pairing code instead.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>Phone found ({0}); pairing…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>Pairing with {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>Pairing failed: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>A pairing code is only valid while the phone's pairing dialog stays open. If it expired or the dialog was closed, reopen the pairing entry under Wireless debugging on the phone and retry with the fresh code.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>Paired. Looking up the connect port automatically…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>Paired, but the connect port could not be discovered automatically. Type the "IP address &amp; port" shown at the top of the phone's Wireless debugging page below, then tap "Connect".</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>Connecting to {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>Connected to {0}; detecting the phone…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>Connection failed: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>That is not a valid IP:port (example: 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>The pairing code is the six digits shown in the phone's pairing dialog.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>Stopped; that QR code is now void.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>Pair with a pairing code</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>On the phone choose "Pair device with pairing code", then enter the dialog's IP address &amp; port and its six-digit code here.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>Pairing IP:port (example 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>Six-digit code</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>Pair</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>Connect to the phone</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>Connect after pairing. The port comes from the "IP address &amp; port" line at the top of the phone's Wireless debugging page (it differs from the pairing port); when it can be discovered automatically it is filled in for you.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>Connect IP:port (example 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>Connect</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

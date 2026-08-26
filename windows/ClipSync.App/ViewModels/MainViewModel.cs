@@ -268,6 +268,9 @@ public partial class MainViewModel(
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DetectPhoneCommand))]
     [NotifyCanExecuteChangedFor(nameof(StartPrivilegedHostCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ShowWirelessQrCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PairWirelessManuallyCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ConnectWirelessCommand))]
     private bool privilegedAdbConsent;
 
     /// <summary>One human line describing the current adb/device situation for the card.</summary>
@@ -295,6 +298,64 @@ public partial class MainViewModel(
 
     /// <summary>The authorized device's serial that the start action targets; null when none is ready.</summary>
     private string? privilegedTargetSerial;
+
+    // ===== 特权直读 · 无线配对（Android 11+ 无线调试，无需数据线）=====
+    // 同一张同意闸门（privileged_adb_consent）盖住这里的每一次 adb 调用。二维码出示期间的
+    // mDNS 轮询只在用户明确点「出示配对二维码」之后运行，限时两分钟、随时可停——绝不静默。
+
+    /// <summary>How long a shown QR stays armed before the wait is declared timed out.</summary>
+    private static readonly TimeSpan WirelessScanWindow = TimeSpan.FromMinutes(2);
+
+    /// <summary>How often the QR wait re-asks adb's mDNS whether the phone has scanned.</summary>
+    private static readonly TimeSpan WirelessScanPollInterval = TimeSpan.FromSeconds(2);
+
+    /// <summary>The wireless sub-section of the card is unfolded (USB stays the primary path).</summary>
+    [ObservableProperty]
+    private bool wirelessPanelOpen;
+
+    /// <summary>One human line describing where the wireless flow stands; empty = hidden.</summary>
+    [ObservableProperty]
+    private string wirelessStatus = string.Empty;
+
+    /// <summary>Follow-up hint after a failure (e.g. 配对码过期怎么办); empty = hidden.</summary>
+    [ObservableProperty]
+    private string wirelessHint = string.Empty;
+
+    /// <summary>True while a wireless pair/connect chain is in flight; freezes the section's buttons.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ShowWirelessQrCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PairWirelessManuallyCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ConnectWirelessCommand))]
+    private bool wirelessBusy;
+
+    /// <summary>
+    /// The QR payload text currently on show; empty = no QR. The view rasterizes it (DPI-exact
+    /// modules) — the text itself carries the pairing password, so it is never logged.
+    /// </summary>
+    [ObservableProperty]
+    private string wirelessQrText = string.Empty;
+
+    /// <summary>User-typed pairing target: the IP:端口 from the phone's 配对弹窗.</summary>
+    [ObservableProperty]
+    private string wirelessPairEndpointText = string.Empty;
+
+    /// <summary>User-typed six-digit pairing code from the same 配对弹窗.</summary>
+    [ObservableProperty]
+    private string wirelessPairCodeText = string.Empty;
+
+    /// <summary>Connect target: the 无线调试 page's own IP 地址和端口 (auto-filled when discoverable).</summary>
+    [ObservableProperty]
+    private string wirelessConnectEndpointText = string.Empty;
+
+    /// <summary>The pure stage machine; guards against stale async completions moving the UI.</summary>
+    private readonly WirelessPairingFlow wirelessFlow = new();
+
+    /// <summary>
+    /// Monotonic id of the current QR wait. Bumping it is the cancellation: the poll loop
+    /// re-checks it after every await and simply exits when superseded, so no CTS ownership
+    /// is needed and a stale loop can never touch a newer session's state.
+    /// </summary>
+    private int wirelessScanSession;
 
     public ObservableCollection<HistoryItemViewModel> History { get; } = new();
 
@@ -373,6 +434,8 @@ public partial class MainViewModel(
         PrivilegedHostRunning = false;
         PrivilegedActionResult = string.Empty;
         PrivilegedStatus = string.Empty;
+        // The wireless sub-flow lives under the same gate: withdrawing kills its QR wait too.
+        ResetWirelessFlow(clearInputs: true);
     }
 
     private bool CanUseAdb() => PrivilegedAdbConsent && !PrivilegedBusy;
@@ -460,6 +523,281 @@ public partial class MainViewModel(
                 : Strings.Format(nameof(Strings.Conduit_Privileged_StoppedFormat), probe.Target!.DisplayName),
             _ => string.Empty,
         };
+    }
+
+    // ===== 无线配对命令（Android 11+ 无线调试）=====
+
+    private bool CanStartWirelessAction() => PrivilegedAdbConsent && !WirelessBusy;
+
+    /// <summary>
+    /// Shows a fresh pairing QR (Android Studio style) and waits for the phone to scan it:
+    /// while the QR is up, adb's mDNS is polled every two seconds — bounded to two minutes,
+    /// cancellable at any moment, and stated on the card, never behind the user's back. The
+    /// moment the phone's pairing announcement appears, pairing and connecting run on their
+    /// own; the QR's password exists only in the QR pixels and the pair call.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanStartWirelessAction))]
+    private async Task ShowWirelessQrAsync()
+    {
+        if (!PrivilegedAdbConsent || privilegedHost is null)
+        {
+            return;
+        }
+
+        ResetWirelessFlow(clearInputs: false);
+        if (!wirelessFlow.TryApply(WirelessPairingEvent.QrShown))
+        {
+            return;
+        }
+
+        // One read-only capability check first: an adb without mDNS discovery would leave the
+        // QR waiting forever, so it is refused honestly and the code path is pointed at.
+        WirelessBusy = true;
+        bool mdnsUsable;
+        try
+        {
+            mdnsUsable = await privilegedHost.CheckMdnsSupportAsync();
+        }
+        finally
+        {
+            WirelessBusy = false;
+        }
+
+        if (!mdnsUsable)
+        {
+            wirelessFlow.TryApply(WirelessPairingEvent.Cancelled);
+            WirelessStatus = Strings.Conduit_Wireless_MdnsUnsupported;
+            return;
+        }
+
+        var payload = AdbPairingQrPayload.Create();
+        WirelessQrText = payload.ToQrText();
+        WirelessStatus = Strings.Conduit_Wireless_WaitingScan;
+        var session = ++wirelessScanSession;
+        await WatchForPairingScanAsync(payload, session);
+    }
+
+    /// <summary>Stops showing the QR and abandons the wait; a stopped QR's secret is dead.</summary>
+    [RelayCommand]
+    private void StopWirelessQr()
+    {
+        ResetWirelessFlow(clearInputs: false);
+        WirelessStatus = Strings.Conduit_Wireless_Stopped;
+    }
+
+    /// <summary>
+    /// Pairs with the endpoint + six-digit code the user copied from the phone's
+    /// 「使用配对码配对设备」dialog, then continues into connect on its own.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanStartWirelessAction))]
+    private async Task PairWirelessManuallyAsync()
+    {
+        if (!PrivilegedAdbConsent || privilegedHost is null)
+        {
+            return;
+        }
+
+        if (!WirelessAdbEndpoint.TryParse(WirelessPairEndpointText, out var endpoint))
+        {
+            WirelessStatus = Strings.Conduit_Wireless_EndpointInvalid;
+            return;
+        }
+
+        var code = WirelessPairCodeText.Trim();
+        if (code.Length != 6 || !code.All(char.IsAsciiDigit))
+        {
+            WirelessStatus = Strings.Conduit_Wireless_CodeInvalid;
+            return;
+        }
+
+        ResetWirelessFlow(clearInputs: false);
+        if (!wirelessFlow.TryApply(WirelessPairingEvent.ManualPairSubmitted))
+        {
+            return;
+        }
+
+        await PairThenAutoConnectAsync(endpoint!, code);
+    }
+
+    /// <summary>
+    /// Connects straight to an already-paired phone's wireless-debugging endpoint (the
+    /// 无线调试 page's own IP 地址和端口 line — not the pairing dialog's port).
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanStartWirelessAction))]
+    private async Task ConnectWirelessAsync()
+    {
+        if (!PrivilegedAdbConsent || privilegedHost is null)
+        {
+            return;
+        }
+
+        if (!WirelessAdbEndpoint.TryParse(WirelessConnectEndpointText, out var endpoint))
+        {
+            WirelessStatus = Strings.Conduit_Wireless_EndpointInvalid;
+            return;
+        }
+
+        ResetWirelessFlow(clearInputs: false);
+        if (!wirelessFlow.TryApply(WirelessPairingEvent.ConnectRequested))
+        {
+            return;
+        }
+
+        WirelessBusy = true;
+        try
+        {
+            await ConnectWirelessCoreAsync(endpoint!);
+        }
+        finally
+        {
+            WirelessBusy = false;
+        }
+    }
+
+    /// <summary>Folding the section away also abandons any QR wait — nothing runs unseen.</summary>
+    partial void OnWirelessPanelOpenChanged(bool value)
+    {
+        if (!value)
+        {
+            ResetWirelessFlow(clearInputs: false);
+            WirelessStatus = string.Empty;
+        }
+    }
+
+    /// <summary>
+    /// The QR wait loop. Every await is followed by a session check, so 停止出示 / 撤销同意 /
+    /// a newer QR simply strands this loop with no way to touch current state.
+    /// </summary>
+    private async Task WatchForPairingScanAsync(AdbPairingQrPayload payload, int session)
+    {
+        var deadline = DateTimeOffset.UtcNow + WirelessScanWindow;
+        while (DateTimeOffset.UtcNow < deadline)
+        {
+            await Task.Delay(WirelessScanPollInterval);
+            if (session != wirelessScanSession || privilegedHost is null)
+            {
+                return;
+            }
+
+            var endpoint = await privilegedHost.DiscoverPairingEndpointAsync(payload.ServiceName);
+            if (session != wirelessScanSession)
+            {
+                return;
+            }
+
+            if (endpoint is not null && wirelessFlow.TryApply(WirelessPairingEvent.PairingServiceDiscovered))
+            {
+                WirelessQrText = string.Empty;
+                WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_DiscoveredFormat), endpoint.ToString());
+                await PairThenAutoConnectAsync(endpoint, payload.Password);
+                return;
+            }
+        }
+
+        if (session != wirelessScanSession)
+        {
+            return;
+        }
+
+        wirelessFlow.TryApply(WirelessPairingEvent.Cancelled);
+        WirelessQrText = string.Empty;
+        WirelessStatus = Strings.Conduit_Wireless_ScanTimeout;
+    }
+
+    /// <summary>
+    /// The shared tail of both pairing entries: <c>adb pair</c>, then auto-discover the
+    /// connect endpoint and <c>adb connect</c>. Every failure lands as a stated fact plus,
+    /// where one exists, the honest next step (expired code → reopen the phone dialog;
+    /// undiscoverable connect port → type the phone's own IP 地址和端口 line).
+    /// </summary>
+    private async Task PairThenAutoConnectAsync(WirelessAdbEndpoint endpoint, string secret)
+    {
+        if (privilegedHost is null)
+        {
+            return;
+        }
+
+        WirelessBusy = true;
+        try
+        {
+            WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_PairingFormat), endpoint.ToString());
+            var pair = await privilegedHost.PairWirelessAsync(endpoint, secret);
+            if (!pair.Succeeded)
+            {
+                wirelessFlow.TryApply(WirelessPairingEvent.PairFailed);
+                WirelessStatus = Strings.Format(
+                    nameof(Strings.Conduit_Wireless_PairFailedFormat),
+                    pair.Detail ?? Strings.Conduit_Privileged_ReasonUnknown);
+                WirelessHint = Strings.Conduit_Wireless_PairFailedHint;
+                return;
+            }
+
+            wirelessFlow.TryApply(WirelessPairingEvent.PairSucceeded);
+            WirelessStatus = Strings.Conduit_Wireless_SearchingConnectPort;
+            var connectEndpoint = await privilegedHost.DiscoverConnectEndpointAsync(endpoint.Host);
+            if (connectEndpoint is null)
+            {
+                wirelessFlow.TryApply(WirelessPairingEvent.ConnectFailed);
+                WirelessStatus = Strings.Conduit_Wireless_ConnectPortNotFound;
+                // Prefill the paired host so the user only types the port from the phone screen.
+                WirelessConnectEndpointText = endpoint.Host + ":";
+                return;
+            }
+
+            await ConnectWirelessCoreAsync(connectEndpoint);
+        }
+        finally
+        {
+            WirelessBusy = false;
+        }
+    }
+
+    /// <summary>Runs <c>adb connect</c> (flow already at Connecting) and hands success to the normal probe.</summary>
+    private async Task ConnectWirelessCoreAsync(WirelessAdbEndpoint endpoint)
+    {
+        if (privilegedHost is null)
+        {
+            return;
+        }
+
+        WirelessConnectEndpointText = endpoint.ToString();
+        WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_ConnectingFormat), endpoint.ToString());
+        var outcome = await privilegedHost.ConnectWirelessAsync(endpoint);
+        if (!outcome.Succeeded)
+        {
+            wirelessFlow.TryApply(WirelessPairingEvent.ConnectFailed);
+            WirelessStatus = Strings.Format(
+                nameof(Strings.Conduit_Wireless_ConnectFailedFormat),
+                outcome.Detail ?? Strings.Conduit_Privileged_ReasonUnknown);
+            return;
+        }
+
+        wirelessFlow.TryApply(WirelessPairingEvent.ConnectSucceeded);
+        WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_ConnectOkFormat), endpoint.ToString());
+        // The wireless device now shows up in the ordinary probe (serial = ip:port), so the
+        // existing 检测手机 → 启动特权直读 pair of buttons takes over from here.
+        await DetectPhoneAsync();
+    }
+
+    /// <summary>
+    /// Abandons whatever the wireless flow was doing: strands the QR wait (session bump),
+    /// retires the QR, and returns the stage machine to Idle. Typed inputs survive unless a
+    /// consent withdrawal asks for a full wipe.
+    /// </summary>
+    private void ResetWirelessFlow(bool clearInputs)
+    {
+        wirelessScanSession++;
+        wirelessFlow.TryApply(WirelessPairingEvent.Cancelled);
+        WirelessQrText = string.Empty;
+        WirelessHint = string.Empty;
+        if (clearInputs)
+        {
+            WirelessStatus = string.Empty;
+            WirelessPairEndpointText = string.Empty;
+            WirelessPairCodeText = string.Empty;
+            WirelessConnectEndpointText = string.Empty;
+            WirelessPanelOpen = false;
+        }
     }
 
     /// <summary>Raised after a device is revoked so the app layer can drop its live sessions.</summary>

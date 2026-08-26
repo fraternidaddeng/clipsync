@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>motivo sconosciuto</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>Associazione wireless (senza cavo)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11+ supporta il debug wireless: con il telefono e questo PC sulla stessa Wi-Fi, attiva Opzioni sviluppatore → Debug wireless sul telefono e associa una volta con uno dei metodi qui sotto; dopo, avviare la lettura privilegiata funziona esattamente come via USB.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>Mostra codice QR di associazione</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>Smetti di mostrare</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>Sul telefono: Debug wireless → "Accoppia dispositivo con codice QR", poi scansiona questo codice.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>In attesa della scansione… Finché il codice è mostrato, questo PC interroga la scoperta mDNS di adb ogni due secondi, per al massimo due minuti — puoi fermarti in qualsiasi momento.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>Questo adb non ha una scoperta mDNS utilizzabile (servono platform-tools più recenti): la via del QR non può funzionare. Usa il metodo del codice di associazione qui sotto.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>Attesa della scansione scaduta; il codice QR non è più mostrato (il vecchio è annullato). Mostrane uno nuovo o usa il codice di associazione.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>Telefono trovato ({0}); associazione in corso…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>Associazione con {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>Associazione non riuscita: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>Il codice di associazione vale solo finché la finestra di associazione del telefono resta aperta. Se è scaduto o la finestra è stata chiusa, riapri la voce di associazione in Debug wireless sul telefono e riprova con il codice nuovo.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>Associato. Ricerca automatica della porta di connessione…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>Associato, ma la porta di connessione non è stata scoperta automaticamente. Scrivi qui sotto l'"indirizzo IP e porta" mostrato in cima alla pagina Debug wireless del telefono, poi premi "Connetti".</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>Connessione a {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>Connesso a {0}; rilevamento del telefono…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>Connessione non riuscita: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>Non è un IP:porta valido (esempio: 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>Il codice di associazione sono le sei cifre mostrate nella finestra di associazione del telefono.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>Interrotto; quel codice QR è annullato.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>Associa con un codice</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>Sul telefono scegli "Accoppia dispositivo con codice", poi inserisci qui l'indirizzo IP e la porta della finestra insieme al codice di sei cifre.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>IP:porta di associazione (esempio 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>Codice di sei cifre</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>Associa</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>Connetti al telefono</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>Connettiti dopo l'associazione. La porta è quella della riga "indirizzo IP e porta" in cima alla pagina Debug wireless del telefono (diversa dalla porta di associazione); quando può essere scoperta automaticamente viene compilata per te.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>IP:porta di connessione (esempio 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>Connetti</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

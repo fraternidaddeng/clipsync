@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>原因未知</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>無線配對（無需傳輸線）</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11 及以上支援無線偵錯：手機與電腦連同一 Wi-Fi，在手機「開發人員選項 → 無線偵錯」開啟後，用下面任一方式配對一次；之後啟動特權直讀與 USB 完全相同。</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>出示配對 QR 碼</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>停止出示</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>手機上：無線偵錯 → 「使用 QR 碼配對裝置」，掃描此碼。</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>等待手機掃碼……出示期間本機每兩秒問一次 adb 的 mDNS 探索，最多兩分鐘，可隨時停止。</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>此 adb 不支援 mDNS 探索（需要較新的 platform-tools），QR 碼方式走不通。請改用下方配對碼方式。</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>等待掃碼逾時，QR 碼已停止出示（舊碼作廢）。可重新出示，或改用配對碼。</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>發現手機（{0}），正在配對……</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>正在配對 {0}……</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>配對失敗：{0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>配對碼只在手機的配對視窗開啟期間有效。若已過期或視窗已關，請在手機上重新開啟「無線偵錯」的配對入口，取得新碼再試。</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>已配對，正在自動尋找連線連接埠……</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>已配對，但未能自動發現連線連接埠。請把手機「無線偵錯」頁頂部顯示的「IP 位址與連接埠」填到下面，點「連線」。</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>正在連線 {0}……</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>已連線 {0}，正在偵測手機……</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>連線失敗：{0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>IP:連接埠 格式不對（範例 192.168.1.23:37123）。</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>配對碼是手機配對視窗裡顯示的六位數字。</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>已停止出示，該 QR 碼作廢。</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>用配對碼配對</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>手機上選「使用配對碼配對裝置」，把視窗顯示的 IP 位址與連接埠、六位配對碼填到這裡。</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>配對 IP:連接埠（範例 192.168.1.23:37123）</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>六位配對碼</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>配對</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>連線手機</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>配對完成後連線。連接埠取手機「無線偵錯」頁頂部的「IP 位址與連接埠」（與配對連接埠不同）；能自動發現時會替你填好。</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>連線 IP:連接埠（範例 192.168.1.23:40331）</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>連線</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb：{0}</value>
   </data>

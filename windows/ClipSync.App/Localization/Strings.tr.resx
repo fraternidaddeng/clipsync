@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>bilinmeyen neden</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>Kablosuz eşleştirme (kablo gerekmez)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11+ kablosuz hata ayıklamayı destekler: telefon ve bu PC aynı Wi-Fi'deyken telefonda Geliştirici seçenekleri → Kablosuz hata ayıklama'yı açın, ardından aşağıdaki yöntemlerden biriyle bir kez eşleştirin; sonrasında ayrıcalıklı okumayı başlatmak USB ile birebir aynıdır.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>Eşleştirme QR kodunu göster</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>Göstermeyi durdur</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>Telefonda: Kablosuz hata ayıklama → «Cihazı QR koduyla eşleştir»i açıp bu kodu tarayın.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>Telefonun taraması bekleniyor… Kod gösterildiği sürece bu PC, adb'nin mDNS keşfine iki saniyede bir sorar; en fazla iki dakika — istediğiniz an durdurun.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>Bu adb'de kullanılabilir mDNS keşfi yok (daha yeni platform-tools gerekir); QR yolu çalışamaz. Bunun yerine aşağıdaki eşleştirme kodu yöntemini kullanın.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>Tarama beklemesi zaman aşımına uğradı; QR kodu artık gösterilmiyor (eskisi geçersiz). Yenisini gösterin veya eşleştirme kodunu kullanın.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>Telefon bulundu ({0}); eşleştiriliyor…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>{0} ile eşleştiriliyor…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>Eşleştirme başarısız: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>Eşleştirme kodu yalnızca telefonun eşleştirme penceresi açık kaldığı sürece geçerlidir. Süresi dolduysa veya pencere kapandıysa telefonda Kablosuz hata ayıklama altındaki eşleştirme girişini yeniden açın ve yeni kodla tekrar deneyin.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>Eşleştirildi. Bağlantı noktası otomatik aranıyor…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>Eşleştirildi ama bağlantı noktası otomatik bulunamadı. Telefonun Kablosuz hata ayıklama sayfasının üstündeki «IP adresi ve bağlantı noktası»nı aşağıya yazıp «Bağlan»a dokunun.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>{0} adresine bağlanılıyor…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>{0} adresine bağlanıldı; telefon algılanıyor…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>Bağlantı başarısız: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>Geçerli bir IP:bağlantı noktası değil (örnek 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>Eşleştirme kodu, telefonun eşleştirme penceresinde görünen altı basamaklı sayıdır.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>Durduruldu; o QR kodu artık geçersiz.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>Eşleştirme koduyla eşleştir</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>Telefonda «Cihazı eşleştirme koduyla eşleştir»i seçin; penceredeki IP adresi ile bağlantı noktasını ve altı basamaklı kodu buraya girin.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>Eşleştirme IP:bağlantı noktası (örnek 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>Altı basamaklı kod</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>Eşleştir</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>Telefona bağlan</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>Eşleştirmeden sonra bağlanın. Bağlantı noktası, telefonun Kablosuz hata ayıklama sayfasının üstündeki «IP adresi ve bağlantı noktası» satırından alınır (eşleştirme bağlantı noktasından farklıdır); otomatik bulunabilirse sizin yerinize doldurulur.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>Bağlantı IP:bağlantı noktası (örnek 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>Bağlan</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

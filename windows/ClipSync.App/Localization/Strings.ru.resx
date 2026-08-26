@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>причина неизвестна</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>Беспроводное сопряжение (без кабеля)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11+ поддерживает беспроводную отладку: подключите телефон и этот ПК к одной сети Wi-Fi, включите на телефоне «Параметры разработчика → Беспроводная отладка» и выполните сопряжение один раз любым способом ниже; после этого запуск привилегированного чтения работает так же, как по USB.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>Показать QR-код сопряжения</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>Скрыть код</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>На телефоне: Беспроводная отладка → «Подключить устройство с помощью QR-кода», затем отсканируйте этот код.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>Ожидание сканирования… Пока код показан, этот ПК каждые две секунды опрашивает mDNS-обнаружение adb, не дольше двух минут — можно остановить в любой момент.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>У этого adb нет рабочего mDNS-обнаружения (нужны более новые platform-tools), путь через QR-код невозможен. Используйте способ с кодом сопряжения ниже.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>Время ожидания сканирования истекло; QR-код больше не показывается (старый недействителен). Покажите новый или используйте код сопряжения.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>Телефон найден ({0}); выполняется сопряжение…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>Сопряжение с {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>Сбой сопряжения: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>Код сопряжения действует, только пока на телефоне открыт диалог сопряжения. Если он истёк или диалог закрыт, снова откройте пункт сопряжения в «Беспроводной отладке» на телефоне и повторите с новым кодом.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>Сопряжение выполнено. Автоматический поиск порта подключения…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>Сопряжение выполнено, но порт подключения не удалось обнаружить автоматически. Введите ниже «IP-адрес и порт» с верхней части страницы «Беспроводная отладка» телефона и нажмите «Подключить».</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>Подключение к {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>Подключено к {0}; идёт определение телефона…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>Сбой подключения: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>Неверный формат IP:порт (пример: 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>Код сопряжения — это шесть цифр из диалога сопряжения на телефоне.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>Остановлено; этот QR-код недействителен.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>Сопряжение по коду</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>На телефоне выберите «Подключить устройство с помощью кода», затем введите здесь IP-адрес и порт из диалога и шестизначный код.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>IP:порт сопряжения (пример 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>Шестизначный код</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>Сопряжение</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>Подключение к телефону</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>Подключайтесь после сопряжения. Порт берётся из строки «IP-адрес и порт» вверху страницы «Беспроводная отладка» телефона (он отличается от порта сопряжения); если его удаётся обнаружить автоматически, он подставится сам.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>IP:порт подключения (пример 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>Подключить</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

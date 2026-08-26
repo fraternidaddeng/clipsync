@@ -28,6 +28,7 @@
              此处仅保留本窗口私有的图标几何与样式。 -->
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <ui:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility" />
+        <ui:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibility" />
         <!-- 设备邻近色按配对顺位取 dev-1..dev-5（tokens §4）；顺位 0 = 灰（本机/已不在册的来源） -->
         <ui:DeviceAccentBrushConverter x:Key="DeviceAccentBrush" />
         <!-- 字符串键设置 ↔ 单选 chip 组（显示组的历史字号/预览行数） -->
@@ -122,6 +123,51 @@
                                 <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource CsFlowBrush}" />
                                 <Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right" />
                                 <Setter TargetName="Knob" Property="Margin" Value="0,0,2,0" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 折叠区把手（缺省即隐藏）：文字 + 旋转箭头，不是开关——展开一段可选内容，
+             不改任何设置。当前唯一使用者是特权直读卡的无线配对段 -->
+        <Style x:Key="FoldToggle" TargetType="ToggleButton">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Foreground" Value="{DynamicResource CsText2Brush}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Padding="2,4" Background="Transparent">
+                            <StackPanel Orientation="Horizontal">
+                                <Path x:Name="Chevron"
+                                      Margin="0,1,7,0"
+                                      VerticalAlignment="Center"
+                                      Data="M0,0 L4,4 L0,8"
+                                      RenderTransformOrigin="0.5,0.5"
+                                      Stroke="{DynamicResource CsText3Brush}"
+                                      StrokeThickness="1.4">
+                                    <Path.RenderTransform>
+                                        <RotateTransform Angle="0" />
+                                    </Path.RenderTransform>
+                                </Path>
+                                <ContentPresenter VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Chevron" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="90" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -2111,6 +2157,166 @@
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
+
+                                        <!-- ―― 无线配对（Android 11+ 无线调试）：USB 的替代通路，缺省折叠。
+                                             出示二维码期间每两秒查一次 adb mDNS——这句写在等待文案里，
+                                             轮询限时两分钟、随时可停，绝无背后动作 ―― -->
+                                        <Border Margin="0,14,0,0"
+                                                Padding="0,12,0,0"
+                                                BorderBrush="{DynamicResource CsLineBrush}"
+                                                BorderThickness="0,1,0,0">
+                                            <StackPanel>
+                                                <ToggleButton Content="{x:Static loc:Strings.Conduit_Wireless_SectionTitle}"
+                                                              IsChecked="{Binding WirelessPanelOpen}"
+                                                              Style="{StaticResource FoldToggle}" />
+                                                <StackPanel Visibility="{Binding WirelessPanelOpen, Converter={StaticResource BoolToVisibility}}">
+                                                    <TextBlock Margin="0,8,0,0"
+                                                               Style="{StaticResource RowDesc}"
+                                                               Text="{x:Static loc:Strings.Conduit_Wireless_SectionDesc}" />
+
+                                                    <!-- 路 A：二维码（Android Studio 同款） -->
+                                                    <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
+                                                        <Button Command="{Binding ShowWirelessQrCommand}"
+                                                                Content="{x:Static loc:Strings.Conduit_Wireless_ShowQr}"
+                                                                Style="{StaticResource GhostFlowButton}" />
+                                                        <Button Margin="8,0,0,0"
+                                                                Command="{Binding StopWirelessQrCommand}"
+                                                                Content="{x:Static loc:Strings.Conduit_Wireless_StopQr}"
+                                                                Style="{StaticResource GhostQuietButton}">
+                                                            <Button.Visibility>
+                                                                <Binding Converter="{StaticResource StringNotEmptyToVisibility}" Path="WirelessQrText" />
+                                                            </Button.Visibility>
+                                                        </Button>
+                                                    </StackPanel>
+
+                                                    <!-- 二维码本体：静区必须纯白（配对窗同规），模块按 DPI 取整（代码里栅格化） -->
+                                                    <StackPanel Visibility="{Binding WirelessQrText, Converter={StaticResource StringNotEmptyToVisibility}}">
+                                                        <Border Margin="0,12,0,0"
+                                                                Padding="10"
+                                                                HorizontalAlignment="Left"
+                                                                Background="{DynamicResource CsQrQuietBrush}"
+                                                                BorderBrush="{DynamicResource CsLineBrush}"
+                                                                BorderThickness="1"
+                                                                CornerRadius="6">
+                                                            <Image x:Name="WirelessQrImage"
+                                                                   Width="200"
+                                                                   Height="200"
+                                                                   AutomationProperties.Name="{x:Static loc:Strings.Conduit_Wireless_QrInstruction}"
+                                                                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                                                   SnapsToDevicePixels="True" />
+                                                        </Border>
+                                                        <TextBlock Margin="0,8,0,0"
+                                                                   Style="{StaticResource RowDesc}"
+                                                                   Text="{x:Static loc:Strings.Conduit_Wireless_QrInstruction}" />
+                                                    </StackPanel>
+
+                                                    <!-- 状态行：一句人话陈述无线流程停在哪 -->
+                                                    <TextBlock Margin="0,10,0,0" TextWrapping="Wrap">
+                                                        <TextBlock.Style>
+                                                            <Style BasedOn="{StaticResource RowName}" TargetType="TextBlock">
+                                                                <Setter Property="Text" Value="{Binding WirelessStatus}" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding WirelessStatus}" Value="">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+
+                                                    <!-- 失败后的下一步提示 = 需要你操作（赭色着色盒），不是错误 -->
+                                                    <Border Margin="0,10,0,0"
+                                                            Padding="12,10"
+                                                            Background="{DynamicResource CsActBgBrush}"
+                                                            BorderBrush="{DynamicResource CsActLineBrush}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="9"
+                                                            Visibility="{Binding WirelessHint, Converter={StaticResource StringNotEmptyToVisibility}}">
+                                                        <TextBlock FontSize="11"
+                                                                   Foreground="{DynamicResource CsActBrush}"
+                                                                   Text="{Binding WirelessHint}"
+                                                                   TextWrapping="Wrap" />
+                                                    </Border>
+
+                                                    <!-- 路 B：配对码（无线调试 → 使用配对码配对设备） -->
+                                                    <TextBlock Margin="0,16,0,0"
+                                                               Style="{StaticResource RowName}"
+                                                               Text="{x:Static loc:Strings.Conduit_Wireless_ManualTitle}" />
+                                                    <TextBlock Margin="0,2,0,0"
+                                                               Style="{StaticResource RowDesc}"
+                                                               Text="{x:Static loc:Strings.Conduit_Wireless_ManualDesc}" />
+                                                    <Grid Margin="0,8,0,0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <!-- IP:端口与配对码是机器文本：Mono，RTL 下钉回 LTR -->
+                                                        <TextBox Height="30"
+                                                                 AutomationProperties.Name="{x:Static loc:Strings.Conduit_Wireless_PairEndpointLabel}"
+                                                                 FlowDirection="LeftToRight"
+                                                                 FontFamily="{StaticResource CsMono}"
+                                                                 FontSize="11.5"
+                                                                 Style="{StaticResource InsetTextBox}"
+                                                                 Text="{Binding WirelessPairEndpointText, UpdateSourceTrigger=PropertyChanged}" />
+                                                        <TextBox Grid.Column="1"
+                                                                 Width="76"
+                                                                 Height="30"
+                                                                 Margin="8,0,0,0"
+                                                                 AutomationProperties.Name="{x:Static loc:Strings.Conduit_Wireless_PairCodeLabel}"
+                                                                 FlowDirection="LeftToRight"
+                                                                 FontFamily="{StaticResource CsMono}"
+                                                                 FontSize="11.5"
+                                                                 MaxLength="6"
+                                                                 Style="{StaticResource InsetTextBox}"
+                                                                 Text="{Binding WirelessPairCodeText, UpdateSourceTrigger=PropertyChanged}"
+                                                                 TextAlignment="Center" />
+                                                        <Button Grid.Column="2"
+                                                                Margin="8,0,0,0"
+                                                                Command="{Binding PairWirelessManuallyCommand}"
+                                                                Content="{x:Static loc:Strings.Conduit_Wireless_PairButton}"
+                                                                Style="{StaticResource GhostFlowButton}" />
+                                                    </Grid>
+                                                    <TextBlock Margin="0,4,0,0"
+                                                               FontSize="10.5"
+                                                               Foreground="{DynamicResource CsText4Brush}"
+                                                               Text="{x:Static loc:Strings.Conduit_Wireless_PairEndpointLabel}"
+                                                               TextWrapping="Wrap" />
+
+                                                    <!-- 连接：配对完成后（或此前已配对过）adb connect -->
+                                                    <TextBlock Margin="0,14,0,0"
+                                                               Style="{StaticResource RowName}"
+                                                               Text="{x:Static loc:Strings.Conduit_Wireless_ConnectTitle}" />
+                                                    <TextBlock Margin="0,2,0,0"
+                                                               Style="{StaticResource RowDesc}"
+                                                               Text="{x:Static loc:Strings.Conduit_Wireless_ConnectDesc}" />
+                                                    <Grid Margin="0,8,0,0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBox Height="30"
+                                                                 AutomationProperties.Name="{x:Static loc:Strings.Conduit_Wireless_ConnectEndpointLabel}"
+                                                                 FlowDirection="LeftToRight"
+                                                                 FontFamily="{StaticResource CsMono}"
+                                                                 FontSize="11.5"
+                                                                 Style="{StaticResource InsetTextBox}"
+                                                                 Text="{Binding WirelessConnectEndpointText, UpdateSourceTrigger=PropertyChanged}" />
+                                                        <Button Grid.Column="1"
+                                                                Margin="8,0,0,0"
+                                                                Command="{Binding ConnectWirelessCommand}"
+                                                                Content="{x:Static loc:Strings.Conduit_Wireless_ConnectButton}"
+                                                                Style="{StaticResource GhostFlowButton}" />
+                                                    </Grid>
+                                                    <TextBlock Margin="0,4,0,0"
+                                                               FontSize="10.5"
+                                                               Foreground="{DynamicResource CsText4Brush}"
+                                                               Text="{x:Static loc:Strings.Conduit_Wireless_ConnectEndpointLabel}"
+                                                               TextWrapping="Wrap" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+
                                         <!-- 首次 USB 调试的 RSA「允许调试」授权始终要在手机上手动点，adb 代替不了 -->
                                         <TextBlock Margin="0,12,0,0"
                                                    FontSize="10.5"

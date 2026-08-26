@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>nieznany powód</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>Parowanie bezprzewodowe (bez kabla)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11+ obsługuje debugowanie bezprzewodowe: telefon i ten komputer w tej samej sieci Wi-Fi, na telefonie włącz Opcje programisty → Debugowanie bezprzewodowe, a następnie sparuj raz jedną z metod poniżej; potem uruchamianie odczytu uprzywilejowanego działa dokładnie tak jak przez USB.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>Pokaż kod QR parowania</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>Przestań pokazywać</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>Na telefonie: Debugowanie bezprzewodowe → „Sparuj urządzenie kodem QR”, następnie zeskanuj ten kod.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>Oczekiwanie na zeskanowanie… Póki kod jest widoczny, ten komputer co dwie sekundy odpytuje odkrywanie mDNS adb, najwyżej przez dwie minuty — można przerwać w każdej chwili.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>To adb nie ma działającego odkrywania mDNS (potrzebne nowsze platform-tools), więc ścieżka QR nie zadziała. Użyj metody kodu parowania poniżej.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>Upłynął limit czasu oczekiwania na skan; kod QR nie jest już pokazywany (stary jest unieważniony). Pokaż nowy albo użyj kodu parowania.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>Znaleziono telefon ({0}); parowanie…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>Parowanie z {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>Parowanie nie powiodło się: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>Kod parowania jest ważny tylko, dopóki okno parowania na telefonie pozostaje otwarte. Jeśli wygasł lub okno zamknięto, otwórz ponownie wpis parowania w Debugowaniu bezprzewodowym na telefonie i spróbuj z nowym kodem.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>Sparowano. Automatyczne wyszukiwanie portu połączenia…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>Sparowano, ale nie udało się automatycznie wykryć portu połączenia. Wpisz poniżej „adres IP i port” widoczny u góry strony Debugowanie bezprzewodowe telefonu i naciśnij „Połącz”.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>Łączenie z {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>Połączono z {0}; wykrywanie telefonu…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>Połączenie nie powiodło się: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>To nie jest poprawny adres IP:port (przykład 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>Kod parowania to sześć cyfr widocznych w oknie parowania telefonu.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>Zatrzymano; ten kod QR jest unieważniony.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>Sparuj kodem parowania</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>Na telefonie wybierz „Sparuj urządzenie kodem parowania”, a następnie wpisz tutaj adres IP i port z okna oraz sześciocyfrowy kod.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>IP:port parowania (przykład 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>Sześciocyfrowy kod</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>Sparuj</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>Połącz z telefonem</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>Połącz po sparowaniu. Port pochodzi z wiersza „adres IP i port” u góry strony Debugowanie bezprzewodowe telefonu (różni się od portu parowania); jeśli da się go wykryć automatycznie, zostanie wpisany za Ciebie.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>IP:port połączenia (przykład 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>Połącz</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

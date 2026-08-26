@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>ไม่ทราบสาเหตุ</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>การจับคู่ไร้สาย (ไม่ต้องใช้สายเคเบิล)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11 ขึ้นไปรองรับการดีบักไร้สาย: ให้โทรศัพท์และพีซีนี้อยู่บน Wi-Fi เดียวกัน เปิด «ตัวเลือกนักพัฒนา → การแก้ไขข้อบกพร่องแบบไร้สาย» บนโทรศัพท์ แล้วจับคู่หนึ่งครั้งด้วยวิธีใดวิธีหนึ่งด้านล่าง หลังจากนั้นการเริ่มการอ่านสิทธิ์พิเศษทำงานเหมือน USB ทุกประการ</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>แสดงคิวอาร์โค้ดจับคู่</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>หยุดแสดง</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>บนโทรศัพท์: การแก้ไขข้อบกพร่องแบบไร้สาย → «จับคู่อุปกรณ์ด้วยคิวอาร์โค้ด» แล้วสแกนโค้ดนี้</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>กำลังรอโทรศัพท์สแกน… ระหว่างแสดงโค้ด พีซีนี้จะสอบถามการค้นหา mDNS ของ adb ทุกสองวินาที นานสุดสองนาที — หยุดได้ตลอดเวลา</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>adb นี้ไม่มีการค้นหา mDNS ที่ใช้ได้ (ต้องใช้ platform-tools ที่ใหม่กว่า) เส้นทางคิวอาร์โค้ดจึงใช้ไม่ได้ โปรดใช้วิธีรหัสจับคู่ด้านล่างแทน</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>หมดเวลารอสแกน คิวอาร์โค้ดหยุดแสดงแล้ว (โค้ดเก่าใช้ไม่ได้อีก) แสดงโค้ดใหม่หรือใช้รหัสจับคู่แทน</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>พบโทรศัพท์ ({0}) กำลังจับคู่…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>กำลังจับคู่กับ {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>จับคู่ไม่สำเร็จ: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>รหัสจับคู่ใช้ได้เฉพาะตอนที่กล่องจับคู่บนโทรศัพท์ยังเปิดอยู่ หากหมดอายุหรือปิดไปแล้ว ให้เปิดหน้าจับคู่ในการแก้ไขข้อบกพร่องแบบไร้สายบนโทรศัพท์อีกครั้ง แล้วลองใหม่ด้วยรหัสใหม่</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>จับคู่แล้ว กำลังค้นหาพอร์ตเชื่อมต่อโดยอัตโนมัติ…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>จับคู่แล้ว แต่ค้นหาพอร์ตเชื่อมต่อโดยอัตโนมัติไม่ได้ กรุณากรอก «ที่อยู่ IP และพอร์ต» ที่แสดงด้านบนของหน้าการแก้ไขข้อบกพร่องแบบไร้สายของโทรศัพท์ลงด้านล่าง แล้วแตะ «เชื่อมต่อ»</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>กำลังเชื่อมต่อ {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>เชื่อมต่อ {0} แล้ว กำลังตรวจหาโทรศัพท์…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>เชื่อมต่อไม่สำเร็จ: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>รูปแบบ IP:พอร์ต ไม่ถูกต้อง (ตัวอย่าง 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>รหัสจับคู่คือเลขหกหลักที่แสดงในกล่องจับคู่ของโทรศัพท์</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>หยุดแล้ว คิวอาร์โค้ดนั้นใช้ไม่ได้อีก</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>จับคู่ด้วยรหัสจับคู่</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>บนโทรศัพท์เลือก «จับคู่อุปกรณ์ด้วยรหัสจับคู่» แล้วกรอกที่อยู่ IP กับพอร์ต และรหัสหกหลักจากกล่องโต้ตอบลงที่นี่</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>IP:พอร์ตสำหรับจับคู่ (ตัวอย่าง 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>รหัสหกหลัก</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>จับคู่</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>เชื่อมต่อโทรศัพท์</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>เชื่อมต่อหลังจับคู่ พอร์ตมาจากบรรทัด «ที่อยู่ IP และพอร์ต» ด้านบนของหน้าการแก้ไขข้อบกพร่องแบบไร้สายของโทรศัพท์ (ต่างจากพอร์ตจับคู่) หากค้นพบอัตโนมัติได้จะกรอกให้เอง</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>IP:พอร์ตสำหรับเชื่อมต่อ (ตัวอย่าง 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>เชื่อมต่อ</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

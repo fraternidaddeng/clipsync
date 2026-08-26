@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>سبب غير معروف</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>الاقتران اللاسلكي (بدون كابل)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>يدعم Android 11 والأحدث تصحيح الأخطاء اللاسلكي: مع اتصال الهاتف وهذا الكمبيوتر بشبكة Wi-Fi نفسها، فعّل «خيارات المطوّر ← تصحيح الأخطاء اللاسلكي» على الهاتف ثم أجرِ الاقتران مرة واحدة بأي من الطريقتين أدناه؛ بعد ذلك يعمل بدء القراءة المميزة تمامًا كما عبر USB.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>عرض رمز QR للاقتران</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>إيقاف العرض</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>على الهاتف: تصحيح الأخطاء اللاسلكي ← «إقران الجهاز برمز QR»، ثم امسح هذا الرمز.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>في انتظار مسح الهاتف… أثناء عرض الرمز يسأل هذا الكمبيوتر اكتشاف mDNS في adb كل ثانيتين، لمدة دقيقتين كحد أقصى — يمكن الإيقاف في أي وقت.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>هذا الإصدار من adb بلا اكتشاف mDNS صالح (يلزم platform-tools أحدث)، لذا لا يمكن لمسار رمز QR أن يعمل. استخدم طريقة رمز الاقتران أدناه بدلًا منه.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>انتهت مهلة انتظار المسح؛ لم يعد رمز QR معروضًا (الرمز القديم لاغٍ). اعرض رمزًا جديدًا أو استخدم رمز الاقتران.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>تم العثور على الهاتف ({0})؛ جارٍ الاقتران…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>جارٍ الاقتران مع {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>فشل الاقتران: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>رمز الاقتران صالح فقط ما دامت نافذة الاقتران مفتوحة على الهاتف. إذا انتهت صلاحيته أو أُغلقت النافذة، فأعد فتح مدخل الاقتران ضمن تصحيح الأخطاء اللاسلكي على الهاتف وحاول مجددًا بالرمز الجديد.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>تم الاقتران. جارٍ البحث تلقائيًا عن منفذ الاتصال…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>تم الاقتران، لكن تعذّر اكتشاف منفذ الاتصال تلقائيًا. أدخل أدناه «عنوان IP والمنفذ» الظاهر أعلى صفحة تصحيح الأخطاء اللاسلكي في الهاتف ثم اضغط «اتصال».</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>جارٍ الاتصال بـ {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>تم الاتصال بـ {0}؛ جارٍ اكتشاف الهاتف…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>فشل الاتصال: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>ليست صيغة IP:منفذ صالحة (مثال: 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>رمز الاقتران هو الأرقام الستة الظاهرة في نافذة الاقتران على الهاتف.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>تم الإيقاف؛ رمز QR هذا أصبح لاغيًا.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>الاقتران برمز اقتران</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>على الهاتف اختر «إقران الجهاز برمز الاقتران»، ثم أدخل هنا عنوان IP والمنفذ الظاهرين في النافذة مع الرمز المكوّن من ستة أرقام.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>عنوان IP:منفذ الاقتران (مثال 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>رمز من ستة أرقام</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>إقران</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>الاتصال بالهاتف</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>اتصل بعد الاقتران. المنفذ من سطر «عنوان IP والمنفذ» أعلى صفحة تصحيح الأخطاء اللاسلكي في الهاتف (وهو غير منفذ الاقتران)؛ وعند اكتشافه تلقائيًا يُملأ عنك.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>عنوان IP:منفذ الاتصال (مثال 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>اتصال</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

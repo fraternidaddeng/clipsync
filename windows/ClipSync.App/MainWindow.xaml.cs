@@ -18,6 +18,53 @@ public partial class MainWindow : Window
         Loaded += OnLoaded;
         Closing += OnClosing;
         viewModel.DetailRequested += OpenSelectedDetail;
+        // 无线配对二维码：payload 是数据（VM），像素是视图的事——文本一变就按当前 DPI 重栅格。
+        viewModel.PropertyChanged += OnViewModelPropertyChanged;
+    }
+
+    /// <summary>The wireless pairing QR's intended edge in device-independent units (matches the XAML frame).</summary>
+    private const double WirelessQrEdgeDips = 200;
+
+    private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainViewModel.WirelessQrText))
+        {
+            RenderWirelessQr();
+        }
+    }
+
+    /// <summary>
+    /// Rasters the wireless-pairing QR with whole physical pixels per module and lays the
+    /// image out at the bitmap's exact physical size, so no DPI scale resamples the modules
+    /// (same recipe as PairingQrWindow / ui-gap-audit P3).
+    /// </summary>
+    private void RenderWirelessQr()
+    {
+        var payload = viewModel.WirelessQrText;
+        if (payload.Length == 0)
+        {
+            WirelessQrImage.Source = null;
+            return;
+        }
+
+        var pixelsPerDip = System.Windows.Media.VisualTreeHelper.GetDpi(this).PixelsPerDip;
+        var rendered = Pairing.PairingQrRenderer.RenderPngForDpi(payload, pixelsPerDip, WirelessQrEdgeDips);
+        var image = new System.Windows.Media.Imaging.BitmapImage();
+        image.BeginInit();
+        image.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+        image.StreamSource = new System.IO.MemoryStream(rendered.Png);
+        image.EndInit();
+        image.Freeze();
+        WirelessQrImage.Source = image;
+        WirelessQrImage.Width = rendered.PixelEdge / pixelsPerDip;
+        WirelessQrImage.Height = rendered.PixelEdge / pixelsPerDip;
+    }
+
+    /// <summary>Moving to a monitor with another scale re-rasters the same payload — never a new secret.</summary>
+    protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+    {
+        base.OnDpiChanged(oldDpi, newDpi);
+        RenderWirelessQr();
     }
 
     private async void OnLoaded(object sender, RoutedEventArgs e)

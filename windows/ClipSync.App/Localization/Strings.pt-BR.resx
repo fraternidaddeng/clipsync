@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>motivo desconhecido</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>Pareamento sem fio (sem cabo)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>O Android 11+ oferece depuração sem fio: com o telefone e este PC na mesma rede Wi-Fi, ative Opções do desenvolvedor → Depuração por Wi-Fi no telefone e pareie uma vez com qualquer método abaixo; depois disso, iniciar a leitura privilegiada funciona igual ao USB.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>Mostrar QR code de pareamento</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>Parar de mostrar</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>No telefone: Depuração por Wi-Fi → "Parear dispositivo com QR code" e escaneie este código.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>Aguardando o telefone escanear… Enquanto o código é exibido, este PC consulta a descoberta mDNS do adb a cada dois segundos, por no máximo dois minutos — pare quando quiser.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>Este adb não tem descoberta mDNS utilizável (são necessárias platform-tools mais novas); o caminho do QR não pode funcionar. Use o método do código de pareamento abaixo.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>Tempo de espera do escaneamento esgotado; o QR code não é mais exibido (o antigo foi anulado). Mostre um novo ou use o código de pareamento.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>Telefone encontrado ({0}); pareando…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>Pareando com {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>Falha no pareamento: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>O código de pareamento só vale enquanto a caixa de diálogo de pareamento do telefone estiver aberta. Se expirou ou foi fechada, reabra a entrada de pareamento em Depuração por Wi-Fi no telefone e tente de novo com o código novo.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>Pareado. Procurando a porta de conexão automaticamente…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>Pareado, mas a porta de conexão não pôde ser descoberta automaticamente. Digite abaixo o "endereço IP e porta" mostrado no topo da página Depuração por Wi-Fi do telefone e toque em "Conectar".</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>Conectando a {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>Conectado a {0}; detectando o telefone…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>Falha na conexão: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>Não é um IP:porta válido (exemplo: 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>O código de pareamento são os seis dígitos mostrados na caixa de diálogo de pareamento do telefone.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>Interrompido; esse QR code foi anulado.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>Parear com código</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>No telefone escolha "Parear dispositivo com código de pareamento" e digite aqui o endereço IP e a porta do diálogo com o código de seis dígitos.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>IP:porta de pareamento (exemplo 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>Código de seis dígitos</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>Parear</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>Conectar ao telefone</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>Conecte depois de parear. A porta vem da linha "endereço IP e porta" no topo da página Depuração por Wi-Fi do telefone (difere da porta de pareamento); quando puder ser descoberta automaticamente, será preenchida para você.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>IP:porta de conexão (exemplo 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>Conectar</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>原因未知</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>无线配对（无需数据线）</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11 及以上支持无线调试：手机与电脑连同一 Wi-Fi，在手机「开发者选项 → 无线调试」打开开关后，用下面任一方式配对一次；之后启动特权直读与 USB 完全相同。</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>出示配对二维码</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>停止出示</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>手机上：无线调试 → 「使用二维码配对设备」，扫描此码。</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>等待手机扫码……出示期间本机每两秒问一次 adb 的 mDNS 发现，最多两分钟，可随时停止。</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>此 adb 不支持 mDNS 发现（需要较新的 platform-tools），二维码方式走不通。请改用下方配对码方式。</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>等待扫码超时，二维码已停止出示（旧码作废）。可重新出示，或改用配对码。</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>发现手机（{0}），正在配对……</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>正在配对 {0}……</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>配对失败：{0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>配对码只在手机的配对窗口打开期间有效。若已过期或窗口已关，请在手机上重新打开「无线调试」的配对入口，拿新码再试。</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>已配对，正在自动查找连接端口……</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>已配对，但未能自动发现连接端口。请把手机「无线调试」页顶部显示的「IP 地址和端口」填到下面，点「连接」。</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>正在连接 {0}……</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>已连接 {0}，正在检测手机……</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>连接失败：{0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>IP:端口 格式不对（示例 192.168.1.23:37123）。</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>配对码是手机配对弹窗里显示的六位数字。</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>已停止出示，该二维码作废。</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>用配对码配对</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>手机上选「使用配对码配对设备」，把弹窗显示的 IP 地址与端口、六位配对码填到这里。</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>配对 IP:端口（示例 192.168.1.23:37123）</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>六位配对码</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>配对</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>连接手机</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>配对完成后连接。端口取手机「无线调试」页顶部的「IP 地址和端口」（与配对端口不同）；能自动发现时会替你填好。</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>连接 IP:端口（示例 192.168.1.23:40331）</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>连接</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb：{0}</value>
   </data>

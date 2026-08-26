@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>lý do không rõ</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>Ghép nối không dây (không cần cáp)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11 trở lên hỗ trợ gỡ lỗi không dây: điện thoại và PC này cùng một mạng Wi-Fi, bật «Tùy chọn nhà phát triển → Gỡ lỗi qua Wi-Fi» trên điện thoại rồi ghép nối một lần bằng một trong hai cách dưới đây; sau đó việc khởi động đọc đặc quyền giống hệt qua USB.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>Hiện mã QR ghép nối</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>Ngừng hiển thị</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>Trên điện thoại: Gỡ lỗi qua Wi-Fi → «Ghép nối thiết bị bằng mã QR», rồi quét mã này.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>Đang chờ điện thoại quét… Trong lúc hiển thị, PC này hỏi tính năng phát hiện mDNS của adb hai giây một lần, tối đa hai phút — dừng bất cứ lúc nào.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>adb này không có tính năng phát hiện mDNS dùng được (cần platform-tools mới hơn), nên đường mã QR không thể hoạt động. Hãy dùng cách mã ghép nối bên dưới.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>Hết thời gian chờ quét; mã QR không còn hiển thị (mã cũ đã vô hiệu). Hiện mã mới, hoặc dùng mã ghép nối.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>Đã phát hiện điện thoại ({0}); đang ghép nối…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>Đang ghép nối với {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>Ghép nối thất bại: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>Mã ghép nối chỉ có hiệu lực khi hộp thoại ghép nối trên điện thoại còn mở. Nếu đã hết hạn hoặc hộp thoại đã đóng, hãy mở lại mục ghép nối trong Gỡ lỗi qua Wi-Fi trên điện thoại và thử lại với mã mới.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>Đã ghép nối. Đang tự động tìm cổng kết nối…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>Đã ghép nối nhưng không tự phát hiện được cổng kết nối. Hãy nhập «Địa chỉ IP và cổng» hiển thị ở đầu trang Gỡ lỗi qua Wi-Fi của điện thoại vào bên dưới rồi bấm «Kết nối».</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>Đang kết nối {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>Đã kết nối {0}; đang dò điện thoại…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>Kết nối thất bại: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>Không phải IP:cổng hợp lệ (ví dụ 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>Mã ghép nối là sáu chữ số hiển thị trong hộp thoại ghép nối của điện thoại.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>Đã dừng; mã QR đó đã vô hiệu.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>Ghép nối bằng mã</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>Trên điện thoại chọn «Ghép nối thiết bị bằng mã ghép nối», rồi nhập vào đây địa chỉ IP và cổng cùng mã sáu chữ số hiển thị trong hộp thoại.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>IP:cổng ghép nối (ví dụ 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>Mã sáu chữ số</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>Ghép nối</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>Kết nối điện thoại</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>Kết nối sau khi ghép nối. Cổng lấy từ dòng «Địa chỉ IP và cổng» ở đầu trang Gỡ lỗi qua Wi-Fi của điện thoại (khác với cổng ghép nối); nếu tự phát hiện được sẽ được điền sẵn cho bạn.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>IP:cổng kết nối (ví dụ 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>Kết nối</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb: {0}</value>
   </data>

@@ -267,6 +267,93 @@
   <data name="Conduit_Privileged_ReasonUnknown" xml:space="preserve">
     <value>raison inconnue</value>
   </data>
+  <data name="Conduit_Wireless_SectionTitle" xml:space="preserve">
+    <value>Appairage sans fil (sans câble)</value>
+  </data>
+  <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
+    <value>Android 11+ prend en charge le débogage sans fil : avec le téléphone et ce PC sur le même Wi-Fi, activez Options pour les développeurs → Débogage sans fil sur le téléphone, puis appairez une fois avec l'une des méthodes ci-dessous ; le démarrage de la lecture privilégiée fonctionne ensuite exactement comme par USB.</value>
+  </data>
+  <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
+    <value>Afficher le QR code d'appairage</value>
+  </data>
+  <data name="Conduit_Wireless_StopQr" xml:space="preserve">
+    <value>Arrêter l'affichage</value>
+  </data>
+  <data name="Conduit_Wireless_QrInstruction" xml:space="preserve">
+    <value>Sur le téléphone : Débogage sans fil → « Associer l'appareil avec un QR code », puis scannez ce code.</value>
+  </data>
+  <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
+    <value>En attente du scan… Tant que le code est affiché, ce PC interroge la découverte mDNS d'adb toutes les deux secondes, pendant deux minutes au plus — arrêt possible à tout moment.</value>
+  </data>
+  <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
+    <value>Cet adb n'a pas de découverte mDNS utilisable (platform-tools plus récents requis) : la voie du QR code ne peut pas fonctionner. Utilisez la méthode du code d'appairage ci-dessous.</value>
+  </data>
+  <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
+    <value>Délai d'attente du scan dépassé ; le QR code n'est plus affiché (l'ancien est annulé). Affichez-en un nouveau ou utilisez le code d'appairage.</value>
+  </data>
+  <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
+    <value>Téléphone détecté ({0}) ; appairage…</value>
+  </data>
+  <data name="Conduit_Wireless_PairingFormat" xml:space="preserve">
+    <value>Appairage avec {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedFormat" xml:space="preserve">
+    <value>Échec de l'appairage : {0}</value>
+  </data>
+  <data name="Conduit_Wireless_PairFailedHint" xml:space="preserve">
+    <value>Un code d'appairage n'est valable que tant que la boîte de dialogue d'appairage du téléphone reste ouverte. S'il a expiré ou si elle a été fermée, rouvrez l'entrée d'appairage dans Débogage sans fil sur le téléphone et réessayez avec le nouveau code.</value>
+  </data>
+  <data name="Conduit_Wireless_SearchingConnectPort" xml:space="preserve">
+    <value>Appairé. Recherche automatique du port de connexion…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
+    <value>Appairé, mais le port de connexion n'a pas pu être découvert automatiquement. Saisissez ci-dessous l'« adresse IP et port » affichée en haut de la page Débogage sans fil du téléphone, puis appuyez sur « Connecter ».</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
+    <value>Connexion à {0}…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectOkFormat" xml:space="preserve">
+    <value>Connecté à {0} ; détection du téléphone…</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
+    <value>Échec de la connexion : {0}</value>
+  </data>
+  <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
+    <value>Ce n'est pas un IP:port valide (exemple : 192.168.1.23:37123).</value>
+  </data>
+  <data name="Conduit_Wireless_CodeInvalid" xml:space="preserve">
+    <value>Le code d'appairage correspond aux six chiffres affichés dans la boîte de dialogue d'appairage du téléphone.</value>
+  </data>
+  <data name="Conduit_Wireless_Stopped" xml:space="preserve">
+    <value>Arrêté ; ce QR code est annulé.</value>
+  </data>
+  <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
+    <value>Appairer avec un code</value>
+  </data>
+  <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
+    <value>Sur le téléphone, choisissez « Associer l'appareil avec un code », puis saisissez ici l'adresse IP et le port affichés ainsi que le code à six chiffres.</value>
+  </data>
+  <data name="Conduit_Wireless_PairEndpointLabel" xml:space="preserve">
+    <value>IP:port d'appairage (exemple 192.168.1.23:37123)</value>
+  </data>
+  <data name="Conduit_Wireless_PairCodeLabel" xml:space="preserve">
+    <value>Code à six chiffres</value>
+  </data>
+  <data name="Conduit_Wireless_PairButton" xml:space="preserve">
+    <value>Appairer</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectTitle" xml:space="preserve">
+    <value>Se connecter au téléphone</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectDesc" xml:space="preserve">
+    <value>Connectez-vous après l'appairage. Le port vient de la ligne « adresse IP et port » en haut de la page Débogage sans fil du téléphone (différent du port d'appairage) ; s'il peut être découvert automatiquement, il est rempli pour vous.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectEndpointLabel" xml:space="preserve">
+    <value>IP:port de connexion (exemple 192.168.1.23:40331)</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectButton" xml:space="preserve">
+    <value>Connecter</value>
+  </data>
   <data name="Privileged_AdbFoundAtFormat" xml:space="preserve">
     <value>adb : {0}</value>
   </data>
