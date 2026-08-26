@@ -44,7 +44,7 @@
 - Room 存储（序号分配、接收向量、outbox 扇出同事务）、pinned-TLS OkHttp WebSocket 同步引擎、指数退避重连。
 - `connectedDevice` 前台服务、分享面板 / 快捷磁贴 / 通知复制三个无权限入口、入站先落收件箱 + `auto_apply_remote` 公开写入 + 失败回退通知。
 - 前台自动捕获已接线（App 可见时复制即上行）、暂停/私密在捕获、队列、引擎每一层执行、开机恢复链（默认关）、保留清理、`POST_NOTIFICATIONS` 引导。
-- **三档后台读取后端代码已落地**：Shizuku 特权事件（UserService + `IClipboard` 反射适配 + 自带特权宿主）、ADB 日志 + 悬浮窗（logcat 读取器 + AOSP/OneUI/MIUI-HyperOS/ColorOS 四族解析器 + 匿名化 fixture）、悬浮窗轮询（焦点控制器 + 不可触摸不变量）。纯逻辑（状态机、解析、数据最小化）有 JVM 测试；**真实 ROM 上能否读到内容一律未验证**。
+- **三档后台读取后端代码已落地**：特权直读事件（UserService + `IClipboard` 反射适配 + 自带特权宿主）、ADB 日志 + 悬浮窗（logcat 读取器 + AOSP/OneUI/MIUI-HyperOS/ColorOS 四族解析器 + 匿名化 fixture）、悬浮窗轮询（焦点控制器 + 不可触摸不变量）。纯逻辑（状态机、解析、数据最小化）有 JVM 测试；**真实 ROM 上能否读到内容一律未验证**。
 - 设计宪章 UI：三 tab 壳、通路页能力向导 + 真实探针、随包三字族、超椭圆/动效令牌、首次运行引导、全套空状态。
 - 测试：652 个 JVM 用例（Robolectric，含 Windows↔Android 全链路脚本化集成测试；`d573080` 时点全绿）。
 
@@ -80,7 +80,7 @@
 
 ## 四、相对开源竞品的优势
 
-1. **Android 后台读取是「四档能力阶梯」，而不是单招赌博。** KDE Connect 和 ClipCascade 只有 READ_LOGS+悬浮窗一招（要电脑、要 adb，ROM 日志格式一变就哑），ClipShare 只有 Shizuku/Root 一招（用户必须先跑通 Shizuku）。我们是调研范围内唯一同时实现 Shizuku 事件、ADB 日志（含四族 ROM 版本化解析器）、悬浮窗轮询（无电脑兜底）、前台/手动四档并带自动降级状态机的项目；且「读」与「写回」拆成独立能力分别探测显示，不把网络在线谎报成剪贴板可用——这是所有竞品都没有的诚实度。
+1. **Android 后台读取是「四档能力阶梯」，而不是单招赌博。** KDE Connect 和 ClipCascade 只有 READ_LOGS+悬浮窗一招（要电脑、要 adb，ROM 日志格式一变就哑），ClipShare 只有 Shizuku/Root 一招（用户必须先跑通 Shizuku）。我们是调研范围内唯一同时实现特权直读事件、ADB 日志（含四族 ROM 版本化解析器）、悬浮窗轮询（无电脑兜底）、前台/手动四档并带自动降级状态机的项目；且「读」与「写回」拆成独立能力分别探测显示，不把网络在线谎报成剪贴板可用——这是所有竞品都没有的诚实度。
 
 2. **断线补齐有协议级保证，竞品基本是「在线才同步，错过即丢」。** 我们的对等序号 + `known_vector`/`want_ranges`/`ack_ranges` + outbox 事务给出 exactly-once 补投语义，且有真实 TLS/WebSocket 回环集成测试证明「离线复制 → 重连 → 补齐不重复」。KDE Connect 剪贴板插件是即时推送无历史；ClipCascade/SyncClipboard 是推送/轮询服务器模型；ClipShare 有历史但未见连续性游标这类补齐保证的文档。对「手机在地铁里复制了三条，回家开电脑要全都在」的场景，我们是设计上最强的。
 
@@ -119,7 +119,7 @@
 |---|---|---|---|---|---|---|
 | Windows ↔ Android 文本同步 | ✅（实现，真机未验） | ✅ | ✅ | ⚠️ 需服务器 | ⚠️ 需自托管 | ⚠️ 移动端 companion |
 | 无服务器 / 无账号直连 | ✅ 唯一模式 | ✅ LAN | ✅（也可选中转） | ❌ 必须服务器/网盘 | ⚠️ P2P 模式仍需信令 | ⚠️ 桌面 P2P，移动端非 P2P |
-| Android 后台自动捕获档位数 | **4 档**（Shizuku/ADB 日志/悬浮窗轮询/前台）⚠️ 真机未验 | 1 档（READ_LOGS+隐形窗） | 1 档（Shizuku/Root） | ❌（手动/磁贴为主） | 1 档（READ_LOGS+overlay） | 宣称 3 档 |
+| Android 后台自动捕获档位数 | **4 档**（特权直读/ADB 日志/悬浮窗轮询/前台）⚠️ 真机未验 | 1 档（READ_LOGS+隐形窗） | 1 档（Shizuku/Root） | ❌（手动/磁贴为主） | 1 档（READ_LOGS+overlay） | 宣称 3 档 |
 | 读 / 写能力分离探测与诚实状态 | ✅ 独有 | ❌ | ❌ | ❌ | ❌ | ❌ |
 | 断线补齐（exactly-once + 游标） | ✅ 集成测试证明 | ❌ 即时推送 | ⚠️ 有历史，补齐语义未见保证 | ⚠️ 服务器留档 | ⚠️ 推送式 | ⚠️ 未见保证 |
 | 剪贴板历史 + 搜索 | ✅ 双端 | ❌（靠桌面 Klipper） | ✅ 强（标签/统计/导出） | ✅ | ⚠️ 基础 | ✅ 加密历史 |

@@ -12,7 +12,7 @@
 ## 信任边界
 
 1. Windows/Android 本地进程与本地数据库。
-2. Windows DPAPI、Android Keystore 和 Shizuku UserService 等高权限边界。
+2. Windows DPAPI、Android Keystore 和特权直读 UserService（内置特权宿主）等高权限边界。
 3. 两个 peer 之间的不可信网络。
 4. Android 系统剪贴板、OEM 实现、logcat 和 overlay 窗口。
 5. 构建依赖、侧载安装包与更新介质。
@@ -32,8 +32,8 @@
 | 崩溃或断网导致数据丢失 | 未发送内容消失 | 先本地事务落库，再进入 per-peer outbox；内存队列不作为可靠状态 |
 | 恶意/异常输入耗尽资源 | 内存、磁盘或解析器 DoS | 1 MiB 文本上限；限制 JSON 深度、帧大小、连接速率和批量 |
 | 剪贴板正文进入日志/崩溃信息 | 持久化泄露 | 日志只含状态、计数和稳定错误码；禁止正文、原始 logcat 行和命令输出 |
-| 本地密钥明文保存 | 本机用户或恶意软件窃取 | Windows DPAPI、Android Keystore；密钥不进入配置、日志或 Shizuku 服务 |
-| Shizuku API 过宽 | shell 身份被滥用 | UserService 仅暴露文本读写、listener 注册/注销和 health；不接网络包、不执行任意 shell |
+| 本地密钥明文保存 | 本机用户或恶意软件窃取 | Windows DPAPI、Android Keystore；密钥不进入配置、日志或特权直读服务 |
+| 特权直读 API 过宽 | shell 身份被滥用 | UserService 仅暴露文本读写、listener 注册/注销和 health；不接网络包、不执行任意 shell |
 | `READ_LOGS` 过度采集 | 其他应用敏感信息泄露 | 只在内存识别复制信号，不保存/上传原始行；权限需显式授予与撤销 |
 | overlay 截获输入 | 触摸或键盘劫持 | 1x1、透明、始终 `FLAG_NOT_TOUCHABLE`；只短暂获取焦点，失败即标为不支持 |
 | 敏感应用内容被同步 | 密码或金融信息泄露 | 来源黑名单、用户自定义规则、私密模式、一键暂停；不猜测密码内容 |

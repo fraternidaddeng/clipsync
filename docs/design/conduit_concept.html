@@ -210,7 +210,7 @@ tr:last-child td{border-bottom:none}
       <div class="st-n">未探测</div><div class="st-d">虚线。缺信息≠坏消息</div></div>
   </div>
   <div class="law warn"><b>「不可用」绝不能长得像错误。</b> MIUI 上有几项能力是<b>永久不可用</b>的，这是常态而非故障。若把它画成红色，应用在你的主力机上会永远显示成坏的——用户会失去对所有告警的信任。<b>红色只留给 error，别的一律不用。</b></div>
-  <div class="law"><b>「降级」必须一眼看得出。</b> 审计里那个 Shizuku 卡死 bug 正是永久停在降级态——UI 若把降级画得和就绪差不多，这类故障就会静默几个月。半填充与满填充的差异必须在余光里成立。</div>
+  <div class="law"><b>「降级」必须一眼看得出。</b> 审计里那个特权直读通道卡死 bug 正是永久停在降级态——UI 若把降级画得和就绪差不多，这类故障就会静默几个月。半填充与满填充的差异必须在余光里成立。</div>
 </section>
 
 <section>
@@ -218,7 +218,7 @@ tr:last-child td{border-bottom:none}
   <div class="sub">按剪贴内容的实际旅程排序——这既是直觉顺序，也是排障顺序。</div>
   <div class="pipe">
     <div class="pseg ok"><div class="icoW"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg></div>
-      <div class="nm">本机读取</div><div class="stt">就绪 · Shizuku</div><div class="bar"><i></i></div></div>
+      <div class="nm">本机读取</div><div class="stt">就绪 · 特权直读</div><div class="bar"><i></i></div></div>
     <div class="pseg ok"><div class="icoW"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M4.2 4.2l2.1 2.1m11.4 11.4l2.1 2.1M2 12h3m14 0h3"/></svg></div>
       <div class="nm">本机服务</div><div class="stt">就绪 · 前台</div><div class="bar"><i></i></div></div>
     <div class="pseg dg"><div class="icoW"><svg viewBox="0 0 24 24"><path d="M5 12.5a7 7 0 0114 0"/><path d="M8.5 16a3.5 3.5 0 017 0"/><circle cx="12" cy="19.5" r="1"/></svg></div>
@@ -228,7 +228,7 @@ tr:last-child td{border-bottom:none}
   </div>
   <div class="flowline"><span class="fdot"></span><span class="fdot"></span><span class="fdot"></span>
     <span style="margin-left:5px">内容正从这里流过</span></div>
-  <div class="law"><b>顺序即隐喻。</b> 读取 → 服务 → 网络 → 写入，是一条剪贴内容从手机到电脑的实际路径。用户不需要理解「Shizuku binder」是什么，只需要看到<b>管子在第几段变细了</b>。这也顺带解决了健康屏那 23 种状况的归属——每一种都挂在某一段下面，不再是平铺的诊断列表。</div>
+  <div class="law"><b>顺序即隐喻。</b> 读取 → 服务 → 网络 → 写入，是一条剪贴内容从手机到电脑的实际路径。用户不需要理解「特权直读的 binder」是什么，只需要看到<b>管子在第几段变细了</b>。这也顺带解决了健康屏那 23 种状况的归属——每一种都挂在某一段下面，不再是平铺的诊断列表。</div>
   <div class="law"><b>这就是「通透」的字面兑现。</b> 你要的美学关键词是能穿过去、能看见。把应用的核心状态做成一条<b>看得见流动的管道</b>，美学词和功能词就是同一个词，不是比喻。</div>
 </section>
 
@@ -237,7 +237,7 @@ tr:last-child td{border-bottom:none}
   <div class="sub">7 个步骤不是 7 个任务，是<b>打通「读取」这一段的三条路线的前置条件之并集</b>。摊平成清单正是它反直觉的原因。</div>
   <div class="routes">
     <div class="route best"><div class="rq"><i></i><i></i><i></i></div>
-      <div class="rinfo"><div class="rnm">特权直读 · Shizuku</div>
+      <div class="rinfo"><div class="rnm">特权直读 · 内置特权宿主</div>
         <div class="rds">最省电、最可靠、息屏也能读。需要一次 adb 启动授权</div></div>
       <div class="rst">当前使用中</div></div>
     <div class="route act"><div class="rq"><i></i><i></i><i></i></div>
@@ -249,7 +249,7 @@ tr:last-child td{border-bottom:none}
         <div class="rds">耗电、有延迟。仅需悬浮窗权限，无需 adb</div></div>
       <div class="rst">可用</div></div>
   </div>
-  <div class="law"><b>把「做完 7 步」换成「选一条路」。</b> 用户关心的从来不是 <code>READ_LOGS</code> 或 binder，而是<b>「能不能用、代价是什么」</b>。三条路线各自标注质量（左侧三档格）、代价、以及还差几项——差的那几项点进去才展开具体授权步骤。<br><br>好处：默认情况下屏幕上是 <b>3 个选择</b>而不是 <b>7 个待办</b>；已经走通的路线用户永远不需要看到其余步骤；而且这个结构<b>诚实地反映了后端的降级链</b>——审计里那条「Shizuku 卡死后永不降级」的 bug，在这个 UI 下会立刻暴露成「明明有可用路线却没切」。</div>
+  <div class="law"><b>把「做完 7 步」换成「选一条路」。</b> 用户关心的从来不是 <code>READ_LOGS</code> 或 binder，而是<b>「能不能用、代价是什么」</b>。三条路线各自标注质量（左侧三档格）、代价、以及还差几项——差的那几项点进去才展开具体授权步骤。<br><br>好处：默认情况下屏幕上是 <b>3 个选择</b>而不是 <b>7 个待办</b>；已经走通的路线用户永远不需要看到其余步骤；而且这个结构<b>诚实地反映了后端的降级链</b>——审计里那条「特权直读通道卡死后永不降级」的 bug，在这个 UI 下会立刻暴露成「明明有可用路线却没切」。</div>
 </section>
 
 <section>

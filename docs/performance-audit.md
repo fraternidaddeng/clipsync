@@ -65,11 +65,11 @@ ORDER BY c.created_at DESC, c.origin_seq DESC, …
 | `init { refresh() }` | ViewModel 构造 | 必要 |
 | `onResume()` | 每次回到前台 | **必要，明确保留**——授权在应用外变化，恢复即重探是诚实性要求 |
 | 30s 可达性 ticker | 已配对时周期性 | 必要，有守卫 |
-| Shizuku 权限监听（Activity 级） | 授权对话框应答 | 必要 |
+| 特权直读权限监听（Activity 级） | 授权对话框应答 | 必要 |
 | `requestShizukuAuthorization` 回调 | 同一次授权应答 | 与上一条**同拍重复**（回调有早退路径，两者都得留） |
 | `LaunchedEffect(pairingState)` | **配对状态机每次流转** | **过宽**：扫码→确认→提交→成败，每步都触发全量探测 |
 
-另外 `refresh()` 自身每遍跑 `clipboard.probe()` **加** `clipboard.probeAll()`——探针梯子上每个后端（Shizuku binder ping、悬浮窗/电池豁免设置读取、logcat 权限检查……）被探测**两次**。冷启动叠加起来：init + LaunchedEffect 初始发射 + onResume = 3 遍刷新 × 2 倍探测。
+另外 `refresh()` 自身每遍跑 `clipboard.probe()` **加** `clipboard.probeAll()`——探针梯子上每个后端（特权直读 binder ping、悬浮窗/电池豁免设置读取、logcat 权限检查……）被探测**两次**。冷启动叠加起来：init + LaunchedEffect 初始发射 + onResume = 3 遍刷新 × 2 倍探测。
 
 ### 改动（探测语义一字未变，只去重）
 

@@ -3,7 +3,7 @@
 Stage 0 contains a minimal Compose health screen, strict protocol fixture parsing,
 and platform-independent clipboard capability coordinators with fake-backed unit tests.
 It deliberately does not implement real clipboard access, networking, persistence,
-Shizuku, ADB log reading, or overlay behavior yet.
+privileged read (特权直读), ADB log reading, or overlay behavior yet.
 
 Requirements:
 

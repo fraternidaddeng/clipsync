@@ -16,7 +16,7 @@
 
 ## 目标设备组合
 
-| 槽位 | 系统族 | 实体设备/型号 | Android/API | 锁屏策略 | 检查步骤 | Shizuku | `READ_LOGS` + overlay | Overlay polling | 当前状态 |
+| 槽位 | 系统族 | 实体设备/型号 | Android/API | 锁屏策略 | 检查步骤 | 特权直读 | `READ_LOGS` + overlay | Overlay polling | 当前状态 |
 |---|---|---|---|---|---|---|---|---|---|
 | D1 | AOSP/Pixel | 待提供 | 待记录 | 待记录 | S0 → S1/S2/S3/S4 + D1 判据 | NOT_TESTED | NOT_TESTED | NOT_TESTED | NOT_TESTED |
 | D2 | OneUI | 待提供 | 待记录 | 待记录 | S0 → S1/S2/S3/S4 + D2 判据 | NOT_TESTED | NOT_TESTED | NOT_TESTED | NOT_TESTED |
@@ -57,13 +57,13 @@
 3. 记录 ROM 名称/版本、补丁级别、锁屏策略（PIN/指纹/无）、电池优化与自启动初始状态。
 4. 首次启动应用，完成 `POST_NOTIFICATIONS` 引导，确认「通路」页能力向导可打开。
 
-### S1 · Shizuku 特权事件档
+### S1 · 特权直读事件档
 
-1. 安装并启动 Shizuku（Android 11+ 可用无线调试自启；否则 `adb shell sh /sdcard/Android/data/moe.shizuku.privileged.api/start.sh`，以 Shizuku 官方文档为准），在 Shizuku 中授权本应用。
+1. 启动内置特权宿主：在已连手机的电脑上执行一次启动命令 `adb shell sh /storage/emulated/0/Android/data/com.clipsync.android/start.sh`（通路页「复制启动命令」可一键复制，Windows 端可一键启动）。首次需在手机上完成 USB 调试授权（adb RSA 指纹弹窗）。宿主进程名为 `clipsync_priv_server`，不依赖任何外部 App。
 2. 「通路」页选择特权直读路线，观察探针从未授权 → 已授权的状态迁移。
 3. 息屏 + 锁屏状态下，在任意第三方应用复制文本 20 次（间隔 ≥ 5 s），记录到达 Windows 端的条数与每条耗时。
 4. 同 Wi-Fi 下执行 100 次双向循环互拷，确认无回传（自动写回的内容不得再次上行）。
-5. 杀掉 Shizuku 进程 / 重启 Binder / 重启设备，各场景下记录应用是否在 10 s 内如实转入非 READY 状态并给出下一步提示。
+5. 杀掉特权宿主进程（`clipsync_priv_server`）/ 重启 Binder / 重启设备，各场景下记录应用是否在 10 s 内如实转入非 READY 状态并给出下一步提示（重启后需重新执行启动命令）。
 
 **READY 判据**（对应「最低验收数据」表）：Wi-Fi P95 ≤ 1.5 s；公开 writer 优先；100 次循环零回传；三种中断场景全部如实降级。
 
@@ -88,7 +88,7 @@
 
 ### S3 · 悬浮窗轮询档
 
-1. 仅授予悬浮窗权限（确保 `READ_LOGS` 已撤销、Shizuku 未授权），选择轮询路线并记录轮询间隔设置。
+1. 仅授予悬浮窗权限（确保 `READ_LOGS` 已撤销、特权直读未授权），选择轮询路线并记录轮询间隔设置。
 2. 息屏/锁屏/前台切换三种场景各复制 20 次，记录到达率与延迟。
 3. 用 `adb -s $SERIAL shell dumpsys window windows | grep -i clipsync` 抽查：轮询窗口在读取后释放、无残留窗口、无持续焦点占用。
 4. 连续运行 2 小时，记录电池页显示的耗电与唤醒次数是否可解释。
@@ -110,7 +110,7 @@
 
 - S2 期望 logcat 信号：tag `ClipboardService`（解析器 `aosp-v1`）。
 - 电池优化路径：设置 → 应用 → 电池 → 不受限制；无独立自启动管理器。
-- Shizuku：Android 11+ 优先无线调试方式启动。
+- 特权直读：Android 11+ 优先用无线调试方式执行内置特权宿主的启动命令。
 - 已知风险：Pixel 上 Android 10+ 对后台读剪贴板限制最标准，本槽位结果是其余槽位的基线。
 - 结果：`NOT_TESTED`。
 
@@ -140,7 +140,7 @@
 - 制造商、型号、ROM 名称/版本、Android 版本、API、补丁级别。
 - 安装方式、目标 SDK、通知权限、电池优化、自启动/最近任务锁定状态。
 - 屏幕点亮、息屏、Keyguard 锁定与解锁策略。
-- Shizuku：未安装、未启动、未授权、已授权、Binder 重启及设备重启后的状态。
+- 特权直读：未就绪、未启动、未授权、已授权、Binder 重启及设备重启后的状态。
 - adb：`READ_LOGS` 授予/撤销命令、实际信号匹配、解析器版本；不得保存真实正文或整段 logcat。
 - overlay：授权/撤销、窗口创建与释放、始终不可触摸、焦点恢复、读取耗时。
 - 网络：同 Wi-Fi、切换网络、断网恢复、杀进程与重启。
@@ -151,7 +151,7 @@
 
 | 模式 | ROM 组合数 | 延迟要求 | 额外要求 |
 |---|---:|---|---|
-| Shizuku event | 至少 2 | Wi-Fi P95 ≤ 1.5 s | 公开 writer 优先；100 次循环不回传 |
+| 特权直读事件 | 至少 2 | Wi-Fi P95 ≤ 1.5 s | 公开 writer 优先；100 次循环不回传 |
 | ADB log + overlay | 至少 2 | P95 ≤ 2 s | 授权撤销/未知格式后 10 s 内转 `DEGRADED` |
 | Overlay polling | 至少 3 | P95 ≤ 轮询间隔 + 1 s | 无残留窗口、持续焦点或无界唤醒 |
 | Foreground/manual | 所有无特殊权限设备 | 功能性验收 | 分享、磁贴、通知复制及断线补同步不被阻塞 |

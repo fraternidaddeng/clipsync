@@ -312,7 +312,7 @@ body{font-family:'Noto Sans SC',-apple-system,sans-serif;background:var(--bg);co
     <svg class="sgi" viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg>
     <span class="sgn">本机读取</span><span class="sgs">就绪</span></div>
     <div class="fill"><i></i></div>
-    <div class="sgd">特权直读 · Shizuku。息屏也能读。</div></div>
+    <div class="sgd">特权直读 · 内置特权宿主。息屏也能读。</div></div>
   <div class="seg st-ok"><div class="sg1">
     <svg class="sgi" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M4.2 4.2l2.1 2.1m11.4 11.4l2.1 2.1M2 12h3m14 0h3"/></svg>
     <span class="sgn">本机服务</span><span class="sgs">就绪</span></div>
@@ -329,7 +329,7 @@ body{font-family:'Noto Sans SC',-apple-system,sans-serif;background:var(--bg);co
     <div class="fill"><i></i></div>
     <div class="sgd">公开写入不可用。选一条路线打通后台写入：</div>
     <div class="rt b"><div class="q"><i></i><i></i><i></i></div>
-      <div style="flex:1"><div class="rn">特权直读 · Shizuku</div>
+      <div style="flex:1"><div class="rn">特权直读 · 内置特权宿主</div>
         <div class="rd">最省电、最可靠。需一次 adb 启动授权</div></div><span class="rs">使用中</span></div>
     <div class="rt a"><div class="q"><i></i><i></i><i></i></div>
       <div style="flex:1"><div class="rn">日志感知 + 悬浮窗</div>
@@ -347,7 +347,7 @@ body{font-family:'Noto Sans SC',-apple-system,sans-serif;background:var(--bg);co
 <div class="nts">
   <div class="nn k"><b>七步向导变成三条路线</b><span>用户关心的从来不是 <code style="font-family:'JetBrains Mono',monospace;font-size:10px">READ_LOGS</code> 或 binder，而是「能不能用、代价是什么」。三条路线各标质量（左侧三档）、代价、还差几项——差的那几项点进去才展开具体授权步骤。</span></div>
   <div class="nn k"><b>顺序即排障顺序</b><span>读取→服务→网络→写入，是剪贴内容的实际旅程。用户只需看出<b>管子在第几段变细</b>，不需要理解每段的实现。</span></div>
-  <div class="nn w"><b>降级的半填充必须一眼可辨</b><span>审计里那个 Shizuku 卡死 bug 正是永久停在降级态。若 UI 把降级画得和就绪差不多，这类故障会静默几个月。<b>52% 与 100% 的差异要在余光里成立。</b></span></div>
+  <div class="nn w"><b>降级的半填充必须一眼可辨</b><span>审计里那个特权直读通道卡死 bug 正是永久停在降级态。若 UI 把降级画得和就绪差不多，这类故障会静默几个月。<b>52% 与 100% 的差异要在余光里成立。</b></span></div>
   <div class="nn"><b>健康屏的 23 种状况被吸收了</b><span>每一种都挂在某一段下面（如「证书 4f2a… 信任纪元 3」挂在网络段），不再是平铺的诊断列表。诊断不该是独立页面。</span></div>
   <div class="nn"><b>只有一段是赭黄</b><span>四段里最多一段能「伸手」。如果两段同时需要操作，按管道顺序只点亮上游那一段——先通读取，再谈写入。</span></div>
 </div>

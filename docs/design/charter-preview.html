@@ -455,7 +455,7 @@ h2 .ix{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t4);let
         <svg class="sgi" viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="17" rx="2"/><path d="M16 3V1H3v14h3"/></svg>
         <span class="sgn">本机读取</span><span class="sgs">就绪</span></div>
         <div class="fillbar"><i></i></div>
-        <div class="sgd">特权直读 · Shizuku。息屏也能读。</div></div>
+        <div class="sgd">特权直读 · 内置特权宿主。息屏也能读。</div></div>
       <div class="pgseg st-dg"><div class="sg1">
         <svg class="sgi" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M4.2 4.2l2.1 2.1m11.4 11.4l2.1 2.1M2 12h3m14 0h3"/></svg>
         <span class="sgn">本机服务</span><span class="sgs">降级 · 省电限制</span></div>
@@ -481,8 +481,8 @@ h2 .ix{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t4);let
     </div><div class="cap">四段 · 四种填充同屏可辨</div></div>
     <div class="nts">
       <div class="nn k"><b>只有一段在伸手</b><span>四段中最多一段能「伸手」。网络段未配对，所以即使对端写入也未打通，它只显示「未探测」——按管道顺序只点亮上游那段。</span></div>
-      <div class="nn k"><b>顺序即排障顺序</b><span>读取 → 服务 → 网络 → 写入，是剪贴内容从手机到电脑的实际路径。用户只需看到<b>管子在第几段变细</b>，不需要理解 Shizuku binder。</span></div>
-      <div class="nn"><b>降级必须一眼可辨</b><span>52% 半填充与满填充的差异在余光里成立。Shizuku 卡死 bug 正是永久停在降级态——画得和就绪差不多，故障就会静默几个月。</span></div>
+      <div class="nn k"><b>顺序即排障顺序</b><span>读取 → 服务 → 网络 → 写入，是剪贴内容从手机到电脑的实际路径。用户只需看到<b>管子在第几段变细</b>，不需要理解特权直读的 binder 细节。</span></div>
+      <div class="nn"><b>降级必须一眼可辨</b><span>52% 半填充与满填充的差异在余光里成立。特权直读通道卡死 bug 正是永久停在降级态——画得和就绪差不多，故障就会静默几个月。</span></div>
       <div class="nn"><b>配对挂在网络段下</b><span>配对的本质就是接通网络段。健康屏的 23 种状况各自挂到对应管道段，不再平铺。5 个页面收成 3 个位置：一屏 / 通路 / 偏好。</span></div>
       <div class="nn w"><b>这就是「通透」的字面兑现</b><span>把应用的核心状态做成一条看得见流动的管道，美学词和功能词是同一个词，不是比喻。</span></div>
     </div>

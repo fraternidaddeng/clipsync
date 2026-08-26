@@ -12,16 +12,16 @@ Android 10 起，后台应用通常不能读取剪贴板；当前有焦点的应
 
 | 优先级 | 模式 | 变化信号 | 正文读取 | 用户前提 | 失败处理 |
 |---:|---|---|---|---|---|
-| 1 | `SHIZUKU_EVENT` | Shizuku UserService 注册 `IOnPrimaryClipChangedListener` | 通过系统 `IClipboard` Binder | 安装/启动 Shizuku并明确授权 | Binder/UserService 死亡后重探测；按策略降级 |
+| 1 | `SHIZUKU_EVENT`（内部枚举名，用户面称「特权直读」） | 特权直读 UserService（内置特权宿主）注册 `IOnPrimaryClipChangedListener` | 通过系统 `IClipboard` Binder | 用电脑执行一次启动命令拉起内置特权宿主并明确授权 | Binder/UserService 死亡后重探测；按策略降级 |
 | 2 | `ADB_LOG_OVERLAY` | `READ_LOGS` 下识别 `ClipboardService` 信号 | 已授权的透明 overlay 短暂获取焦点 | 用户执行明确 adb 授权并开启 overlay | 未实际匹配信号不得标 `READY`；未知格式降级 |
 | 3 | `OVERLAY_POLLING` | 800–1,000 ms 轮询比较哈希 | 同一透明 overlay 短暂获取焦点 | 用户明确开启 overlay；通知和电池策略按引导设置 | 息屏/锁屏暂停；失败降频或转手动 |
 | 4 | `FOREGROUND_ONLY` | 分享、磁贴或打开 App | 公开 `ClipboardManager` | 无特殊权限 | 永久可用的手动出口 |
 
-默认首选 Shizuku。用户可选择允许自动降级或仅提醒；应用不得在未获用户许可时偷偷启用 overlay。
+默认首选特权直读。用户可选择允许自动降级或仅提醒；应用不得在未获用户许可时偷偷启用 overlay。
 
 ## 写回能力
 
-`ClipboardWriteCoordinator` 始终先尝试公开 `ClipboardManager.setPrimaryClip()`。只有公开写入被系统/OEM 拒绝、丢弃或因锁屏策略失败时，才可尝试已经授权的 Shizuku 或 overlay 回退。读取 backend 变化不得关闭仍可用的公开写入。
+`ClipboardWriteCoordinator` 始终先尝试公开 `ClipboardManager.setPrimaryClip()`。只有公开写入被系统/OEM 拒绝、丢弃或因锁屏策略失败时，才可尝试已经授权的特权直读或 overlay 回退。读取 backend 变化不得关闭仍可用的公开写入。
 
 远端内容必须先进入 Android 收件箱。自动写回不可用时，事件保持“未应用”状态并提供通知或历史条目，让用户在前台复制。
 
@@ -52,7 +52,7 @@ Android 10 起，后台应用通常不能读取剪贴板；当前有焦点的应
 
 - `READ_LOGS` 不能通过普通运行时权限对话框授予。bootstrap 脚本只显示状态并打印可复制的授权/撤销命令，默认不执行。
 - 授权存在不等于能力健康；ADB 模式必须实际匹配变更信号。
-- Shizuku、`READ_LOGS`、overlay、通知和电池优化分别显示用途、风险、状态与恢复动作。
+- 特权直读、`READ_LOGS`、overlay、通知和电池优化分别显示用途、风险、状态与恢复动作。
 - 安装、升级、重启、权限撤销和 ROM 策略变化后重新 probe。
 - 网络状态、进程/服务状态、后台读取状态和后台写回状态必须分别展示。
 
@@ -71,7 +71,7 @@ Android 10 起，后台应用通常不能读取剪贴板；当前有焦点的应
 - AOSP/Pixel 是公开 API 与 ClipboardService 行为的基线。
 - OneUI、MIUI/HyperOS、ColorOS/OriginOS 可能改变 logcat 标签、后台存活、锁屏写入和 overlay 焦点行为。
 - 部分 OriginOS 版本可能无法通过已知日志格式检测复制。
-- Shizuku 在设备重启后可能需要用户恢复运行或重新授权。
+- 特权直读在设备重启后可能需要用户重新执行启动命令或重新授权。
 
 所有组合当前均为 `NOT_TESTED`；只有记录 ROM/API、权限前提、错误码、复现步骤与 P95 数据后才能声明支持。
 
@@ -140,7 +140,7 @@ plan.md 8.2 的四份固定引用，按 pinned commit 做 `HEAD`，只记录 HTT
 |---|---|
 | FGS `connectedDevice` + `FOREGROUND_SERVICE_CONNECTED_DEVICE` + `CHANGE_NETWORK_STATE` | 否 |
 | `BOOT_COMPLETED` 恢复（设置项默认关、失败降级通知） | 否；`connectedDevice` 仍在 Android 15 允许名单，16/17 官方页未再收紧 |
-| Shizuku 事件读取 / 写回回退 | 否；平台仍禁止普通后台读剪贴板，Shizuku 仍是用户授权的特权路径，不是系统例外 |
+| 特权直读事件读取 / 写回回退 | 否；平台仍禁止普通后台读剪贴板，特权直读仍是用户授权的特权路径，不是系统例外 |
 | Overlay `TYPE_APPLICATION_OVERLAY` + 默认双 flag、读取时只撤 `FLAG_NOT_FOCUSABLE` | 否；与官方焦点/触摸语义及 Android 12+ 穿透规则一致（wave-2 实现） |
 
 本次核对**不**把任何 ROM 标为已验证。

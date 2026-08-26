@@ -42,7 +42,7 @@
 - 暂停/私密在**每一层**关闭出站：捕获管理器、settings 闸门包裹的队列、引擎 outboundAllowed；恢复后下一次排空 tick 补投，无丢失。
 - 自动写入的 Windows 剪贴不会回传（共享写协调器的一次性内容抑制），且相同文本的真实二次复制仍然上行。
 
-既有 Android 套件继续覆盖：`SyncEngine` 协议状态机全错误路径、`RoomSyncRepository`/`ClipSyncRepository` 事务不变量、重连退避、`SyncSupervisor` 生命周期、pinned-TLS 连接器（MockWebServer + 真 TLS）、配对存取、开机恢复链、通知策略、以及 Shizuku/ADB 日志/悬浮窗后端的**纯逻辑**部分（解析器、状态机、数据最小化不变量——注意这些后端的真实读取要靠实体 ROM 验证）。2026-08-25 后并入的套件还覆盖：bt1 蓝牙安全信道（握手正反例、帧层篡改/重放/乱序/截断负例、传输层——但**无真实蓝牙 I/O**，RFCOMM 实体行为见 spike 报告与阶段 5 计划）、设置闸门（敏感标记跳过、收件通知、图片同步 fail-closed 默认）、19 语语言目录与逐键齐全性钉死、E2E 压力套件。
+既有 Android 套件继续覆盖：`SyncEngine` 协议状态机全错误路径、`RoomSyncRepository`/`ClipSyncRepository` 事务不变量、重连退避、`SyncSupervisor` 生命周期、pinned-TLS 连接器（MockWebServer + 真 TLS）、配对存取、开机恢复链、通知策略、以及特权直读/ADB 日志/悬浮窗后端的**纯逻辑**部分（解析器、状态机、数据最小化不变量——注意这些后端的真实读取要靠实体 ROM 验证）。2026-08-25 后并入的套件还覆盖：bt1 蓝牙安全信道（握手正反例、帧层篡改/重放/乱序/截断负例、传输层——但**无真实蓝牙 I/O**，RFCOMM 实体行为见 spike 报告与阶段 5 计划）、设置闸门（敏感标记跳过、收件通知、图片同步 fail-closed 默认）、19 语语言目录与逐键齐全性钉死、E2E 压力套件。
 
 ### 图片同步（协议 v2，从 feature/stage-4 移植；双端 + 共享 fixture）
 
@@ -72,7 +72,7 @@ Android 侧的引擎级图片链路（`SyncEngine` 的 chunk 状态机在真实�
 
 - [ ] **前台服务实态**：`ClipboardSyncService` 在真机上的 FGS 授予/拒绝（`FGS_START_DENIED` 降级路径）、电池优化/后台限制下的存活、被杀后的表现。测试只验证了拒绝时的代码路径，拒绝本身由 OEM 决定。
 - [ ] **开机恢复**：真实 BOOT_COMPLETED 到达、Android 15/OEM 对 boot 阶段 FGS 的限制、「需要恢复」通知是否真实出现（审计项 A6 的遗留验证）。
-- [ ] **剪贴板真实读写**：Robolectric 的 ClipboardManager 是影子实现。真机上要验证：前台自动捕获的触达率、后台读取三后端（Shizuku / ADB 日志+悬浮窗 / 悬浮窗轮询）在各 ROM 的实际可用性与延迟档位、公开写入在锁屏/息屏下的行为。JVM 侧只证明了探针分类与解析逻辑。
+- [ ] **剪贴板真实读写**：Robolectric 的 ClipboardManager 是影子实现。真机上要验证：前台自动捕获的触达率、后台读取三后端（特权直读 / ADB 日志+悬浮窗 / 悬浮窗轮询）在各 ROM 的实际可用性与延迟档位、公开写入在锁屏/息屏下的行为。JVM 侧只证明了探针分类与解析逻辑。
 - [ ] **图片剪贴板实态**：真实 `ClipData` 图片项（各家键盘/截图/相册 app 给出的 `content://` URI 与 MIME）的读取与物化、`ContentResolver` 流式拷贝、FileProvider 图库分享入链、真实 Bitmap 缩略图渲染（JVM 侧的编解码/切块/blob 存储已被 fixture 往返测试证明，但 Robolectric 的图形栈是影子实现）、16 MiB/32 MP 超限图片在真机上的拒绝与提示。
 - [ ] **通知表面**：收件箱「复制」动作通知、自动写入状态通知、恢复通知在锁屏/横幅/免打扰下的实际展示；POST_NOTIFICATIONS 拒绝后的应用内状态行。
 - [ ] **配对全流程**：摄像头扫 QR、局域网可达性（真实路由器/AP 隔离）、UDP 发现广播被网络放行。

@@ -5,7 +5,7 @@
 
 ## 背景
 
-第一版只支持 Windows 和 Android。主要风险来自系统集成：Windows 剪贴板事件、托盘和 Win32 消息循环，以及 Android Foreground Service、通知、分享、快捷磁贴、Shizuku、logcat 和 overlay。
+第一版只支持 Windows 和 Android。主要风险来自系统集成：Windows 剪贴板事件、托盘和 Win32 消息循环，以及 Android Foreground Service、通知、分享、快捷磁贴、特权直读、logcat 和 overlay。
 
 ## 决策
 
