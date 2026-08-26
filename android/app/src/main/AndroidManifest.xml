@@ -72,7 +72,8 @@
             </intent-filter>
         </activity>
 
-        <!-- Lets Shizuku hand this app its binder when the Shizuku service (re)starts. -->
+        <!-- Lets the built-in 特权直读 (privileged) host hand this app its binder when the
+             host process (re)starts. Uses the rikka.shizuku provider class to receive it. -->
         <provider
             android:name="rikka.shizuku.ShizukuProvider"
             android:authorities="${applicationId}.shizuku"

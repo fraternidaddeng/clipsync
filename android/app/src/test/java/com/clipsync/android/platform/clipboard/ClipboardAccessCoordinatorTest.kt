@@ -197,7 +197,7 @@ class ClipboardAccessCoordinatorTest {
             backendHealth = BackendHealth(
                 state = BackendHealthState.FAILED,
                 checkedAtEpochMillis = 50L,
-                errorCode = "SHIZUKU_DISCONNECTED",
+                errorCode = "PRIV_HOST_DISCONNECTED",
             ),
         )
         val foreground = FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)
@@ -217,7 +217,7 @@ class ClipboardAccessCoordinatorTest {
             backendHealth = BackendHealth(
                 state = BackendHealthState.FAILED,
                 checkedAtEpochMillis = 50L,
-                errorCode = "SHIZUKU_DISCONNECTED",
+                errorCode = "PRIV_HOST_DISCONNECTED",
             ),
         )
         val foreground = FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)
@@ -230,7 +230,7 @@ class ClipboardAccessCoordinatorTest {
         val state = coordinator.checkHealth()
 
         assertEquals(ClipboardReadMode.SHIZUKU_EVENT, state.activeReadMode)
-        assertEquals("SHIZUKU_DISCONNECTED", state.lastErrorCode)
+        assertEquals("PRIV_HOST_DISCONNECTED", state.lastErrorCode)
         assertEquals(50L, state.lastHealthAtEpochMillis)
     }
 

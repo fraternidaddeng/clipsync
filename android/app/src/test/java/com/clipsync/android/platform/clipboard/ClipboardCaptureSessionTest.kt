@@ -140,7 +140,7 @@ class ClipboardCaptureSessionTest {
             BackendHealth(
                 state = BackendHealthState.FAILED,
                 checkedAtEpochMillis = 50L,
-                errorCode = "SHIZUKU_DISCONNECTED",
+                errorCode = "PRIV_HOST_DISCONNECTED",
             )
 
         session.checkHealth()

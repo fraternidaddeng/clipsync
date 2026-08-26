@@ -1,6 +1,12 @@
 package com.clipsync.android.platform.clipboard
 
 enum class ClipboardReadMode {
+    /**
+     * 特权直读 (privileged read) through the built-in privileged host. The enum name is a
+     * legacy internal identifier persisted in preference keys — renaming it would drop the
+     * user's verified-read state on update, so it stays; every user-visible surface says
+     * 特权直读 instead.
+     */
     SHIZUKU_EVENT,
     ADB_LOG_OVERLAY,
     OVERLAY_POLLING,
@@ -13,7 +19,7 @@ enum class CapabilityState {
     DEGRADED,
     UNAVAILABLE,
 
-    /** Blocked until the user grants or restores something (Shizuku, overlay, READ_LOGS). */
+    /** Blocked until the user grants or restores something (特权直读 host, overlay, READ_LOGS). */
     NEEDS_USER_ACTION,
 }
 

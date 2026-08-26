@@ -26,11 +26,11 @@ class RealBackgroundReaders private constructor(
     val adbLog: BackgroundClipboardBackend,
     val overlayPolling: BackgroundClipboardBackend,
 ) {
-    /** Privileged write fallback backed by the same Shizuku UserService as [shizuku], when available. */
+    /** Privileged write fallback backed by the same privileged-host UserService as [shizuku], when available. */
     fun shizukuWriter(): ClipboardWriter? =
         (shizuku as? RealShizukuClipboardBackend)?.fallbackWriter()
 
-    /** Ask Shizuku to authorize this app; the result arrives on the injected callback. */
+    /** Ask the privileged host to authorize this app; the result arrives on the injected callback. */
     fun requestShizukuAuthorization(onResult: (granted: Boolean) -> Unit) {
         (shizuku as? RealShizukuClipboardBackend)?.requestAuthorization(onResult) ?: onResult(false)
     }

@@ -1,10 +1,11 @@
 package com.clipsync.android.platform.clipboard
 
 /**
- * Route 1 (charter §4.1): privileged event reads through the Shizuku shell binder (「特权直读」).
+ * Route 1 (charter §4.1): privileged event reads through the built-in privileged host's
+ * shell binder (「特权直读」).
  *
  * The honest probe stays here: install/running/authorization state with stable error codes.
- * The real event channel — the Shizuku UserService that reflects into `IClipboard` — is
+ * The real event channel — the privileged-host UserService that reflects into `IClipboard` — is
  * supplied as [delegate] (see [com.clipsync.android.platform.clipboard.shizuku.ShizukuClipboardBackend]);
  * this adapter forwards start/stop/read/health to it once the route is chosen. Per plan §8.3 an
  * authorized-but-untested channel reports DEGRADED ("授权但待实测"), never READY: only a
@@ -34,9 +35,9 @@ class ShizukuClipboardBackend(
             writeState = CapabilityState.UNKNOWN,
             systemVersion = systemVersion,
             authorizations = listOf(
-                ClipboardAuthorization("shizuku_installed", p.shizukuInstalled),
-                ClipboardAuthorization("shizuku_running", p.shizukuRunning),
-                ClipboardAuthorization("shizuku_authorized", p.shizukuAuthorized),
+                ClipboardAuthorization("priv_host_installed", p.shizukuInstalled),
+                ClipboardAuthorization("priv_host_running", p.shizukuRunning),
+                ClipboardAuthorization("priv_host_authorized", p.shizukuAuthorized),
             ),
             errorCode = errorCode,
         )

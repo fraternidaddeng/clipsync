@@ -6,7 +6,7 @@ import com.clipsync.android.platform.clipboard.ClipboardWriteResult
 import com.clipsync.android.platform.clipboard.ClipboardWriter
 
 /**
- * Privileged Shizuku write fallback. Register only on
+ * 特权直读 privileged write fallback. Register only on
  * [com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator]'s fallback
  * slot — never as the default public writer.
  */

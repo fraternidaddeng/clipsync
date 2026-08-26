@@ -180,7 +180,7 @@ class ShizukuClipboardBackendTest {
         val before = backend.probe()
         assertEquals(CapabilityState.NEEDS_USER_ACTION, before.readState)
         assertEquals(ShizukuErrorCodes.NOT_AUTHORIZED, before.errorCode)
-        assertTrue(before.authorizations.any { it.name == "shizuku_authorized" && !it.granted })
+        assertTrue(before.authorizations.any { it.name == "priv_host_authorized" && !it.granted })
 
         backend.requestAuthorization { granted = it }
         assertEquals(1, runtime.authRequests)
@@ -196,7 +196,7 @@ class ShizukuClipboardBackendTest {
         val ready = backend.probe()
         assertEquals(CapabilityState.READY, ready.readState)
         assertNull(ready.errorCode)
-        assertTrue(ready.authorizations.any { it.name == "shizuku_authorized" && it.granted })
+        assertTrue(ready.authorizations.any { it.name == "priv_host_authorized" && it.granted })
     }
 
     @Test

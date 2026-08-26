@@ -73,7 +73,7 @@ object SharedClipboardCapture {
             )
         val routeProbes = AndroidRouteProbes(appContext)
         val systemVersion = "android-${Build.VERSION.SDK_INT}"
-        // The real device read backends (privileged Shizuku channel, logcat+overlay, overlay
+        // The real device read backends (特权直读 privileged channel, logcat+overlay, overlay
         // polling). The flat capability-ladder adapters wrap these and gate them on the
         // honest probe plus the persisted device-verified read.
         val realReaders = RealBackgroundReaders.build(appContext)

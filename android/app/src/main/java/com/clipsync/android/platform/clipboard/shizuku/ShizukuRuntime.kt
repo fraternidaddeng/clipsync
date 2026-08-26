@@ -1,8 +1,8 @@
 package com.clipsync.android.platform.clipboard.shizuku
 
 /**
- * Facade over Shizuku / Binder so JVM tests never construct Shizuku classes.
- * The real implementation lives in [AndroidShizukuRuntime].
+ * Facade over the privileged-host client library / Binder so JVM tests never
+ * construct library classes. The real implementation lives in [AndroidShizukuRuntime].
  */
 interface ShizukuRuntime {
     val systemVersion: String

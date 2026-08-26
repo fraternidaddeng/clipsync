@@ -11,8 +11,8 @@ import android.util.Log
 import rikka.shizuku.Shizuku
 
 /**
- * Device-only Shizuku facade. JVM unit tests must inject [ShizukuRuntime]
- * fakes and never construct this class.
+ * Device-only privileged-host client facade. JVM unit tests must inject
+ * [ShizukuRuntime] fakes and never construct this class.
  */
 class AndroidShizukuRuntime(
     private val context: Context,

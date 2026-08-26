@@ -186,7 +186,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    // Shizuku authorization completes outside the app; re-probe when it answers.
+    // 特权直读 authorization completes outside the app; re-probe when it answers.
     private val shizukuPermissionListener =
         Shizuku.OnRequestPermissionResultListener { _, _ -> healthViewModel.refresh() }
 
@@ -478,7 +478,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Grants change outside the app (Settings, adb, Shizuku); re-probe every return.
+        // Grants change outside the app (Settings, adb, privileged host); re-probe every return.
         healthViewModel.refresh()
     }
 

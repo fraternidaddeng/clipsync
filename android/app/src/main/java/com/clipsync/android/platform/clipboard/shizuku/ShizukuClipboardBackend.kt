@@ -15,7 +15,7 @@ import com.clipsync.android.platform.clipboard.ContentHasher
 import com.clipsync.android.platform.clipboard.Sha256ContentHasher
 
 /**
- * Shizuku event-driven clipboard backend. Listener callbacks only signal
+ * 特权直读 event-driven clipboard backend. Listener callbacks only signal
  * "changed"; this class then reads, hashes, and forwards. After death/rebind
  * the content-hash baseline is refreshed so the rebound clip is not treated
  * as a new user copy.
@@ -316,14 +316,14 @@ class ShizukuClipboardBackend internal constructor(
             systemVersion = runtime.systemVersion,
             authorizations = listOf(
                 ClipboardAuthorization(
-                    "shizuku_installed",
+                    "priv_host_installed",
                     presence != ShizukuPresence.NOT_INSTALLED,
                 ),
                 ClipboardAuthorization(
-                    "shizuku_running",
+                    "priv_host_running",
                     presence == ShizukuPresence.RUNNING,
                 ),
-                ClipboardAuthorization("shizuku_authorized", runtime.isAuthorized()),
+                ClipboardAuthorization("priv_host_authorized", runtime.isAuthorized()),
             ),
             lastReadSuccessAtEpochMillis = lastReadSuccessAtEpochMillis,
             errorCode = errorCode,

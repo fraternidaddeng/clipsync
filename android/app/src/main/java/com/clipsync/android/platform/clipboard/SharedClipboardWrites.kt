@@ -9,7 +9,7 @@ import android.content.Context
  * suppression table: a clip this app wrote itself must never be re-captured and echoed back
  * to the paired peer.
  *
- * The privileged write fallback shares the same Shizuku UserService as background reads
+ * The privileged write fallback shares the same privileged-host UserService as background reads
  * ([RealBackgroundReaders.shizukuWriter]); only exercised after a public write failure on
  * device — Robolectric cannot validate the Binder path.
  */

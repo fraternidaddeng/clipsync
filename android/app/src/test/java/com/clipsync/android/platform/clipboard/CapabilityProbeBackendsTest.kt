@@ -49,7 +49,7 @@ class CapabilityProbeBackendsTest {
     fun `shizuku probe reports the authorization trail`() {
         val report = shizuku(RoutePrerequisites(shizukuInstalled = true))
         assertEquals(
-            listOf("shizuku_installed" to true, "shizuku_running" to false, "shizuku_authorized" to false),
+            listOf("priv_host_installed" to true, "priv_host_running" to false, "priv_host_authorized" to false),
             report.authorizations.map { it.name to it.granted },
         )
     }

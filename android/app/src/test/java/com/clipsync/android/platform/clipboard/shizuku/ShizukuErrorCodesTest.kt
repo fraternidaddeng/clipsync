@@ -10,17 +10,24 @@ class ShizukuErrorCodesTest {
     fun `seven stable error codes are exactly the plan 5_3 set`() {
         assertEquals(
             setOf(
-                "SHIZUKU_NOT_INSTALLED",
-                "SHIZUKU_NOT_RUNNING",
-                "SHIZUKU_NOT_AUTHORIZED",
-                "SHIZUKU_BINDER_DEAD",
-                "SHIZUKU_USERSERVICE_DEAD",
+                "PRIV_HOST_NOT_INSTALLED",
+                "PRIV_HOST_NOT_RUNNING",
+                "PRIV_HOST_NOT_AUTHORIZED",
+                "PRIV_HOST_BINDER_DEAD",
+                "PRIV_HOST_USERSERVICE_DEAD",
                 "CLIPBOARD_BINDER_DEAD",
-                "SHIZUKU_API_MISMATCH",
+                "PRIV_HOST_API_MISMATCH",
             ),
             ShizukuErrorCodes.ALL,
         )
         assertEquals(7, ShizukuErrorCodes.ALL.size)
+    }
+
+    @Test
+    fun `codes carry the charter name, not the client library brand`() {
+        ShizukuErrorCodes.ALL.forEach { code ->
+            assertTrue("$code leaks the brand name", !code.contains("SHIZUKU", ignoreCase = true))
+        }
     }
 
     @Test

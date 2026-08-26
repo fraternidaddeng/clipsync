@@ -9,8 +9,8 @@ import android.util.Log
 import kotlin.system.exitProcess
 
 /**
- * Shizuku UserService running as shell. Binder surface is read/write/listener/health
- * only — no network, secrets, or arbitrary shell.
+ * 特权直读 UserService running as shell under the built-in privileged host. Binder
+ * surface is read/write/listener/health only — no network, secrets, or arbitrary shell.
  */
 class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
     @Suppress("unused")
@@ -120,7 +120,7 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
      * Swaps the app callback binder, tracking its death. When the app process
      * dies without unbinding (reinstall, force kill), this service must not
      * linger as an orphan shell process holding a system clipboard listener,
-     * so it unregisters and exits; Shizuku spawns a fresh one on next bind.
+     * so it unregisters and exits; the privileged host spawns a fresh one on next bind.
      *
      * [callbackLock] orders swaps against death dispatches: a stale death that
      * lost the race to a newer ADD_LISTENER must never kill the live service.
@@ -351,7 +351,7 @@ class ClipboardUserService() : Binder(), IBinder.DeathRecipient {
             data.writeInterfaceToken(ShizukuClipboardBinderContract.CALLBACK_DESCRIPTOR)
             callback.transact(code, data, null, IBinder.FLAG_ONEWAY)
         } catch (_: Exception) {
-            // App process gone; Shizuku will tear this service down.
+            // App process gone; the privileged host will tear this service down.
         } finally {
             data.recycle()
         }

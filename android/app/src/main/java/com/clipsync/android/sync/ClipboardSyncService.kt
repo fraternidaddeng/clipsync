@@ -48,7 +48,7 @@ import kotlinx.coroutines.launch
  *
  * The service also holds the clipboard read coordinator while promoted (plan 5.2: "服务持有
  * OkHttp WebSocket、网络回调、backend 协调器"): it acquires the process-wide
- * [ClipboardCaptureSession], so verified background read routes (Shizuku / adb-log / overlay)
+ * [ClipboardCaptureSession], so verified background read routes (特权直读 / adb-log / overlay)
  * keep capturing copies after the main UI leaves the foreground, and drives the periodic
  * backend health check that lets the coordinator fall down the capability ladder on failure.
  */
