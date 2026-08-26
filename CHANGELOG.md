@@ -14,6 +14,11 @@
   - **自动探测 adb + 手机**：`AdbLocator` 依次在随包 platform-tools、`ANDROID_HOME`/SDK 常见路径、`PATH` 中查找 `adb.exe`（不静默下载安装），卡片如实显示 adb 位置或「未找到」；`PrivilegedHostAssistant` 解析 `adb devices -l`，区分就绪/未授权/离线/无设备。
   - **一键「启动特权直读」**：手机已连且授权后，一键执行内置特权宿主 start.sh；配对完成时若已授予 adb 同意会自动探测手机。宿主未运行时提供再次启动入口（重启后特权通道需重来）。
   - **首次 USB 调试 + adb RSA 指纹弹窗仍需在手机上手动确认**——文档明确说明，不代劳。
+- [Windows] 特权直读无线配对（Android 11+ 无线调试，无需数据线；与 USB 同一 `privileged_adb_consent` 显式同意闸门，绝不静默）：特权直读卡新增「无线配对（无需数据线）」折叠区（FoldToggle 把手，缺省折叠——USB 仍是主路），两条路任选：
+  - **扫码配对（Android Studio 同款）**：出示 `WIFI:T:ADB` 配对二维码（随机服务名 + 一次性密码；密码只存在于二维码像素与 `adb pair` 参数，不落日志不上屏），手机在「无线调试 → 使用二维码配对设备」扫码后，电脑经 `adb mdns services` 发现手机的 `_adb-tls-pairing` 通告（按二维码的服务名精确匹配，绝不误抓 Android Studio 等并行会话）并自动 `adb pair` → 发现 `_adb-tls-connect` 端口 → `adb connect` 一条龙。出示期间每两秒查询一次 mDNS、限时两分钟、随时「停止出示」——轮询行为原样写在等待文案里，不背着用户跑。adb 无 mDNS（旧 platform-tools）时如实拒绝并指向配对码路。二维码复用配对窗的 DPI 整像素栅格配方（模块永不重采样），静区纯白。
+  - **配对码配对**：Android Studio 式 `adb pair host:port code`——填手机配对弹窗的 IP:端口与六位配对码；配对成功自动查找连接端口，发现不了时留手动「连接 IP:端口」入口（连接端口与配对端口不同这一事实写进文案与排障表）。
+  - 连接成功即汇回既有 USB 路径：自动「检测手机」，随后一键「启动特权直读」（无线设备 serial 即 `IP:端口`）。失败语汇诚实：配对被拒/过期给「重新打开手机配对入口」的赭色下一步提示；`adb connect` 文本裁决先于退出码（部分 adb 失败也退 0，绝不误报成功）；撤销 adb 同意/折叠面板/停止出示都会立刻掐掉二维码等待。
+  - Core 层新增 `WirelessAdbEndpoint`（host:port 解析，IPv6 加括号、裸 IPv6 拒绝不猜）、`AdbPairingQrPayload`（转义 + round-trip 解析、密码学随机）、`AdbMdnsServicesParser`、`AdbPairOutcome`/`AdbConnectOutcome`、`WirelessPairingFlow` 状态机（转移表纯函数，陈旧异步完成拽不动 UI）与 `PrivilegedHostAssistant` 无线方法；94 条新单测覆盖命令逐 token 构建、QR 载荷、mDNS 解析、输出判读与状态机全表。29 新键 × 19 语逐键齐全（parity 守门照过）。`docs/install.md` §8.1 增 8.1.1 无线小节与排障三行。
 - [Android] 特权直读路线卡接上「复制启动命令」（`CapabilityRoutes`）：特权通道未就绪时不再只显示状态，而是把内置特权宿主的确切 adb 启动命令一键复制到剪贴板（`PrivilegedHostStarter.adbCommand()`），并提示去哪执行（已连手机的电脑，或 Windows 端一键）。
 - [双端] 移除 Shizuku 品牌标识，统一为「特权直读 / 内置特权宿主」（不改功能，仅标识）：用户可见诊断错误码 `SHIZUKU_*` → `PRIV_HOST_*`；能力上报授权名 `shizuku_*` → `priv_host_*`；Android/Windows UI 文案、安装与验证文档、设计宪章与预览稿一律改称特权直读。内部枚举 `SHIZUKU_EVENT`（持久化于偏好键，改名会丢用户已验证状态）、真实第三方库符号（`dev.rikka.shizuku`）、`THIRD_PARTY_NOTICES` 法务署名与竞品事实性引用按原样保留并加注说明。
 - [Windows] 基础设置第一批（`docs/settings-roadmap.md` 的 Windows 半边，P0-1/P0-3/P0-5 + P1-7/P1-9/P1-15；外观手动覆盖当时暂缓，同日翻案后已落地——见下方外观条目）：
