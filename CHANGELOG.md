@@ -1,10 +1,14 @@
 # Changelog
 
-本文件记录 ClipSync 的用户可见变更，格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循语义化版本。尚无正式发布版本；首个发布时将 Unreleased 内容归入 `v0.1.0`。发布叙述与验收声明见 `docs/release-notes-template.md`。
+本文件记录 ClipSync 的用户可见变更，格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循语义化版本。首个版本 `v0.1.0` 已于 2026-08-26 归档（发布 tag 路径：先 `v0.1.0-rc.1` 验证 `release.yml` 首次实跑，再 `v0.1.0` 正式发布）。发布叙述与验收声明见 `docs/releases/v0.1.0.md`（模板：`docs/release-notes-template.md`）。
 
 ## [Unreleased]
 
-分支：`main`（自 Stage 0–3 基线 `768fd1c` 以来；早期变更曾在 `cursor/implement-charter-ui-1991` 上推进，该分支已全部并入 main，后续变更直接落在 main）。
+暂无。（v0.1.0 归档于 2026-08-26；此后落在 main 的变更在此累积。）
+
+## [0.1.0] - 2026-08-26
+
+首个版本。分支：`main`（自 Stage 0–3 基线 `768fd1c` 以来；早期变更曾在 `cursor/implement-charter-ui-1991` 上推进，该分支已全部并入 main，后续变更直接落在 main）。
 
 ### 新增
 
@@ -115,11 +119,11 @@
 - CI/发布工作流的 actions 依赖升到当前大版本（2026-08-25，清 Node 20 弃用与 setup-java v4 停更警告）：`checkout` v4→v7、`setup-java` v4→v6、`setup-dotnet` v4→v6、`setup-python` v5→v7、`gradle/actions/setup-gradle` v4→v6、`upload-artifact` v4→v7、`download-artifact` v4→v8——各家大版本跳变均为 Node 运行时/凭据文件类基础设施变化，本仓工作流用到的输入面不变；ci.yml 六作业随本次推送实跑验证，release.yml 首个 tag 实跑时验证。
 - 测试规模（截至 main `73b0afb`，六作业 CI 全绿；前一快照 `d573080` 时点为 652 + 484 + 186）：674 Android JVM（常规跑含 2 条跨端 E2E 拨号用例跳过——其实跑归 `e2e-stage4` 作业）+ 489 跨平台核心/对端 + 199 Windows 应用层用例；含 Windows↔Android 全链路脚本化集成测试（文本与图片链各一）与真实会话事件驱动的通路页验证。
 - 新增 `docs/verification-without-device.md`（绿测 ≠ 兼容的边界）、`docs/stage-gap-audit.md`、`docs/competitive-analysis.md`、`docs/design/ui-gap-audit.md`、`docs/manual-qa-checklist.md`、`docs/release-notes-template.md`；扩充 `docs/device-validation-matrix.md` 为脚本化检查清单。
-- 新增 `docs/releases/v0.1.0-draft.md`：首个发布的发布说明骨架（按模板预填亮点/变更明细/安全/已知限制的叙述；构建 SHA、产物校验和、CI 链接、人工 QA 计数保留占位符，发布时替换）。骨架不改变发布门槛：首轮人工 QA 判定「不能出 RC」仍然有效，发布前必须重跑清单并如实回填。
+- 新增 `docs/releases/v0.1.0-draft.md`：首个发布的发布说明骨架（按模板预填亮点/变更明细/安全/已知限制的叙述；构建 SHA、产物校验和、CI 链接、人工 QA 计数保留占位符，发布时替换）。骨架不改变发布门槛：首轮人工 QA 判定「不能出 RC」当时仍然有效（该门槛其后由 2026-08-26 用户签核解除，见「已知欠账」实体机验证条）。**2026-08-26 定稿为 `docs/releases/v0.1.0.md`**：占位符按实回填或如实注明待回填，产物文件名对齐打包脚本实跑（`ClipSync-windows-x64.zip` / `ClipSync-android.apk`）。
 - [Android] lintDebug 告警清理（2026-08-25，16 错误 + 46 告警 → 0 错误 + 22 告警）：错误全数清零（RestrictedApi/PrivateApi 系按 shizuku 包路径豁免——特权直读的存在意义就是反射隐藏 API；蓝牙拨号与磁贴旧分支定点 `@SuppressLint` 附因由）；告警侧收掉 ObsoleteSdkInt（minSdk 29 恒真检查与 `-v26` 目录限定）、AutoboxingStateCreation、德语「die die」Typos 误报、SetWorldReadable（脚本供 adb shell/root 异 uid 消费属设计）与 7 处 PluralsCandidate（见「变更」复数化条目）；detekt/ktlint 对 Composable 命名启用规则层豁免，告别基线行号漂移雷区。剩余 22 条均为记录在案的刻意选择（依赖版本通知 19 条 + ApplySharedPref/ModifierParameter/BatteryLife 各 1）。
 
 ### 已知欠账（进行中）
 
-- 发布产物上传：发布 CI 已落地（`release.yml`，tag `v*` 触发，见「文档 / 测试」），但尚未打过任何 tag——Releases 页仍无产物，首个发布（含把 Unreleased 归入 `v0.1.0`）未启动；商店/F-Droid 上架未做。历史导出/导入已落地（Windows `5fd7461`、Android `3c51350`、图片感知 v2 格式 `87c0016`），自本清单移除。
+- 发布产物上传：发布 CI 已落地（`release.yml`，tag `v*` 触发，见「文档 / 测试」），但本节归档（2026-08-26）时尚未打过任何 tag——Releases 页仍无产物。tag 路径已定：先 `v0.1.0-rc.1`（含连字符的 tag 由 `release.yml` 自动标记 prerelease，用于验证发布工作流首次实跑与产物完整性），确认无误后打 `v0.1.0` 正式发布。商店/F-Droid 上架未做。历史导出/导入已落地（Windows `5fd7461`、Android `3c51350`、图片感知 v2 格式 `87c0016`），自本清单移除。
 - ~~会话内 WebSocket 帧级速率限流仍未做（预认证 per-IP 滑窗限流已落地，`25d2788`）；收件箱 Room 化、入站通知洪泛策略未做。~~ 三项已全部收口（2026-08-25，见「新增/变更」）：帧级限流 `793c0b9`、收件箱 Room 化 `f928537`、通知洪泛上限 `17fda6e`。
-- 实体机验证：2026-08-25 首轮人工 QA（`docs/manual-qa-results.md`）判定「不能出 RC」；**2026-08-26 用户签核真机验证已全部完成，RC 门槛已过**（签核小节见同文件）。逐设备结构化明细（矩阵 S0–S4 计数、P95 样本）待用户提供后回填，`docs/device-validation-matrix.md` 槽位单元格在回填前按字面纪律维持 `NOT_TESTED`。剩余发布收尾：把本节 Unreleased 归入 `v0.1.0`、定稿 `docs/releases/v0.1.0-draft.md`、打 tag 触发 `release.yml`。
+- 实体机验证：2026-08-25 首轮人工 QA（`docs/manual-qa-results.md`）判定「不能出 RC」；**2026-08-26 用户签核真机验证已全部完成，RC 门槛已过**（签核小节见同文件）。逐设备结构化明细（矩阵 S0–S4 计数、P95 样本）待用户提供后回填，`docs/device-validation-matrix.md` 槽位单元格在回填前按字面纪律维持 `NOT_TESTED`。发布收尾进度：本节归入 `[0.1.0]` 与发布说明定稿（`docs/releases/v0.1.0.md`）已于 2026-08-26 完成，剩打 tag（先 `v0.1.0-rc.1` 后 `v0.1.0`）触发 `release.yml`。
