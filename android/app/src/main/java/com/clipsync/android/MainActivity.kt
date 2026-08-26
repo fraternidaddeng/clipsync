@@ -504,14 +504,14 @@ class MainActivity : AppCompatActivity() {
                 manager.setPrimaryClip(
                     ClipData.newPlainText("adb", PrivilegedHostStarter.adbCommand()),
                 )
-                healthViewModel.notePrivilegedStartCommandCopied()
+                healthViewModel.noteCommandCopied(R.string.privileged_start_command_copied)
             }
             RouteActionId.COPY_ADB_READ_LOGS_COMMAND -> {
                 val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 manager.setPrimaryClip(
                     ClipData.newPlainText("adb", "adb shell pm grant $packageName android.permission.READ_LOGS"),
                 )
-                healthViewModel.noteAdbCommandCopied()
+                healthViewModel.noteCommandCopied(R.string.adb_command_copied)
             }
             RouteActionId.OPEN_OVERLAY_SETTINGS ->
                 startActivitySafely(

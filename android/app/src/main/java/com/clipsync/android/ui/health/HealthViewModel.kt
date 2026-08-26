@@ -1,5 +1,6 @@
 package com.clipsync.android.ui.health
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -298,14 +299,14 @@ class HealthViewModel(
         }
     }
 
-    fun noteAdbCommandCopied() {
-        testResult = ConduitTestResult(UiText.Res(R.string.adb_command_copied), success = true)
-        publish(pairingStore.peer())
-    }
-
-    /** The 特权直读 start command was copied — tell the user where to run it. */
-    fun notePrivilegedStartCommandCopied() {
-        testResult = ConduitTestResult(UiText.Res(R.string.privileged_start_command_copied), success = true)
+    /**
+     * A copyable adb command (READ_LOGS grant, or the 特权直读 start command) was placed on the
+     * clipboard; surface where to run it. [messageRes] picks the route-specific guidance string.
+     */
+    fun noteCommandCopied(
+        @StringRes messageRes: Int,
+    ) {
+        testResult = ConduitTestResult(UiText.Res(messageRes), success = true)
         publish(pairingStore.peer())
     }
 
