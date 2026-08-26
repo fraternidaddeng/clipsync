@@ -174,8 +174,9 @@ class CapabilityRoutesTest {
         val routes = buildReadRoutes(baseFacts())
         val privileged = routes.first { it.id == ReadRouteId.PRIVILEGED }
         assertEquals(2, privileged.stepsRemaining)
-        // Channel availability is a probed fact, never a "go install an app" chore.
-        assertNull(privileged.nextAction)
+        // The channel can only be opened from a PC: the card hands over the exact
+        // start command instead of pretending an in-app toggle exists.
+        assertEquals(RouteActionId.COPY_PRIVILEGED_START_COMMAND, privileged.nextAction)
         assertEquals(3, privileged.quality)
 
         val logOverlay = routes.first { it.id == ReadRouteId.LOG_OVERLAY }
@@ -190,12 +191,15 @@ class CapabilityRoutesTest {
 
     @Test
     fun `privileged route only offers authorization once its channel is available`() {
-        // Installed but not running: the channel step is unsatisfied and has no
-        // in-app action — the card states probe facts instead of redirecting.
+        // Installed but not running: the channel step offers the copyable start
+        // command — the one thing that can actually bring the channel up (via a PC).
         val channelDown = baseFacts().copy(
             prerequisites = RoutePrerequisites(shizukuInstalled = true),
         )
-        assertNull(buildReadRoutes(channelDown).first { it.id == ReadRouteId.PRIVILEGED }.nextAction)
+        assertEquals(
+            RouteActionId.COPY_PRIVILEGED_START_COMMAND,
+            buildReadRoutes(channelDown).first { it.id == ReadRouteId.PRIVILEGED }.nextAction,
+        )
 
         val channelUp = baseFacts().copy(
             prerequisites = RoutePrerequisites(shizukuInstalled = true, shizukuRunning = true),

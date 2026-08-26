@@ -225,12 +225,13 @@
     <string name="test_read_failed">Prueba de lectura en segundo plano fallida: %1$s</string>
     <string name="test_reason_unknown">motivo desconocido</string>
     <string name="adb_command_copied">Comando adb copiado; ejecútalo en tu PC y vuelve a tocar «Volver a sondear»</string>
+    <string name="privileged_start_command_copied">Comando de inicio copiado; ejecútalo en el PC al que está conectado el teléfono (o usa el inicio con un clic en la app de Windows) y vuelve a tocar «Volver a sondear»</string>
 
     <string name="route_privileged">Lectura directa privilegiada</string>
     <string name="route_log_overlay">Detección por registros + superposición</string>
     <string name="route_overlay_polling">Sondeo con superposición</string>
     <string name="route_foreground">Primer plano/manual</string>
-    <string name="route_privileged_cost">Autoriza una vez; el canal privilegiado puede necesitar restablecerse tras un reinicio</string>
+    <string name="route_privileged_cost">Ejecuta una vez un comando de inicio desde un PC (un clic en el lado de Windows); tras reiniciar hay que volver a iniciarlo</string>
     <string name="route_log_overlay_cost">Requiere conceder READ_LOGS mediante adb en un PC, más el permiso de superposición</string>
     <string name="route_overlay_polling_cost">Solo necesita el permiso de superposición; sin PC — cuesta batería y latencia de sondeo</string>
     <string name="step_privileged_channel">Canal privilegiado disponible</string>
@@ -239,6 +240,7 @@
     <string name="step_overlay">Permiso de superposición activado</string>
     <string name="step_battery">Exento de optimización de batería</string>
     <string name="route_action_authorize">Autorizar lectura privilegiada</string>
+    <string name="route_action_copy_start_command">Copiar comando de inicio</string>
     <string name="route_action_copy_adb">Copiar comando adb</string>
     <string name="route_action_overlay_settings">Ajustes de superposición</string>
     <string name="route_action_battery_settings">Ajustes de batería</string>

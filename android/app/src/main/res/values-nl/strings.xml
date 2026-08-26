@@ -225,12 +225,13 @@
     <string name="test_read_failed">Achtergrondleestest mislukt: %1$s</string>
     <string name="test_reason_unknown">onbekende reden</string>
     <string name="adb_command_copied">adb-opdracht gekopieerd; voer die uit op je pc en tik daarna op “Opnieuw peilen”</string>
+    <string name="privileged_start_command_copied">Startopdracht gekopieerd; voer die uit op de pc waarmee je telefoon is verbonden (of gebruik de één-klik-start in de Windows-app) en tik daarna op “Opnieuw peilen”</string>
 
     <string name="route_privileged">Bevoorrecht direct lezen</string>
     <string name="route_log_overlay">Logdetectie + overlay</string>
     <string name="route_overlay_polling">Overlay-polling</string>
     <string name="route_foreground">Voorgrond/handmatig</string>
-    <string name="route_privileged_cost">Eenmalig autoriseren; het bevoorrechte kanaal moet mogelijk opnieuw opkomen na een herstart</string>
+    <string name="route_privileged_cost">Eén startopdracht vanaf een pc (één klik aan de Windows-kant); na een herstart opnieuw starten</string>
     <string name="route_log_overlay_cost">Vereist het verlenen van READ_LOGS via adb op een pc, plus de overlay-machtiging</string>
     <string name="route_overlay_polling_cost">Vereist alleen de overlay-machtiging; geen pc nodig — kost batterij en pollingvertraging</string>
     <string name="step_privileged_channel">Bevoorrecht kanaal beschikbaar</string>
@@ -239,6 +240,7 @@
     <string name="step_overlay">Overlay-machtiging ingeschakeld</string>
     <string name="step_battery">Batterijoptimalisatie uitgezonderd</string>
     <string name="route_action_authorize">Bevoorrecht lezen autoriseren</string>
+    <string name="route_action_copy_start_command">Startopdracht kopiëren</string>
     <string name="route_action_copy_adb">adb-opdracht kopiëren</string>
     <string name="route_action_overlay_settings">Overlay-instellingen</string>
     <string name="route_action_battery_settings">Batterij-instellingen</string>

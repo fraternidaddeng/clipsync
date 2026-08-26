@@ -224,12 +224,13 @@
     <string name="test_read_failed">Hintergrund-Lesetest fehlgeschlagen: %1$s</string>
     <string name="test_reason_unknown">Grund unbekannt</string>
     <string name="adb_command_copied">adb-Befehl kopiert; führen Sie ihn auf dem PC aus und tippen Sie dann auf „Neu prüfen“</string>
+    <string name="privileged_start_command_copied">Startbefehl kopiert; führen Sie ihn auf dem PC aus, mit dem das Telefon verbunden ist (oder nutzen Sie den Ein-Klick-Start in der Windows-App), und tippen Sie dann auf „Neu prüfen“</string>
 
     <string name="route_privileged">Privilegiertes Direktlesen</string>
     <string name="route_log_overlay">Log-Erkennung + Overlay</string>
     <string name="route_overlay_polling">Overlay-Abfrage</string>
     <string name="route_foreground">Vordergrund/manuell</string>
-    <string name="route_privileged_cost">Einmal freigeben; der privilegierte Kanal muss nach einem Neustart eventuell neu aufgebaut werden</string>
+    <string name="route_privileged_cost">Einmal einen Startbefehl vom PC ausführen (auf der Windows-Seite ein Klick); nach einem Neustart muss der Kanal neu gestartet werden</string>
     <string name="route_log_overlay_cost">Erfordert READ_LOGS per adb auf einem PC sowie die Overlay-Berechtigung</string>
     <string name="route_overlay_polling_cost">Braucht nur die Overlay-Berechtigung; kein PC nötig – kostet Akku und Abfrage-Latenz</string>
     <string name="step_privileged_channel">Privilegierter Kanal verfügbar</string>
@@ -238,6 +239,7 @@
     <string name="step_overlay">Overlay-Berechtigung aktiviert</string>
     <string name="step_battery">Von Akku-Optimierung ausgenommen</string>
     <string name="route_action_authorize">Privilegiertes Lesen freigeben</string>
+    <string name="route_action_copy_start_command">Startbefehl kopieren</string>
     <string name="route_action_copy_adb">adb-Befehl kopieren</string>
     <string name="route_action_overlay_settings">Overlay-Einstellungen</string>
     <string name="route_action_battery_settings">Akku-Einstellungen</string>

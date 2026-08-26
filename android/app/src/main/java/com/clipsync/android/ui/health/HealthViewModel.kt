@@ -303,6 +303,12 @@ class HealthViewModel(
         publish(pairingStore.peer())
     }
 
+    /** The 特权直读 start command was copied — tell the user where to run it. */
+    fun notePrivilegedStartCommandCopied() {
+        testResult = ConduitTestResult(UiText.Res(R.string.privileged_start_command_copied), success = true)
+        publish(pairingStore.peer())
+    }
+
     fun dismissTestResult() {
         testResult = null
         publish(pairingStore.peer())

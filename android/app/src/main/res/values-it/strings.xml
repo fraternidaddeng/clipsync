@@ -225,12 +225,13 @@
     <string name="test_read_failed">Test di lettura in background fallito: %1$s</string>
     <string name="test_reason_unknown">motivo sconosciuto</string>
     <string name="adb_command_copied">Comando adb copiato; eseguilo sul PC, poi torna e tocca «Riesamina»</string>
+    <string name="privileged_start_command_copied">Comando di avvio copiato; eseguilo sul PC a cui è collegato il telefono (o usa l’avvio con un clic nell’app Windows), poi torna e tocca «Riesamina»</string>
 
     <string name="route_privileged">Lettura diretta privilegiata</string>
     <string name="route_log_overlay">Rilevamento log + overlay</string>
     <string name="route_overlay_polling">Polling con overlay</string>
     <string name="route_foreground">Primo piano/manuale</string>
-    <string name="route_privileged_cost">Autorizza una volta; il canale privilegiato potrebbe dover ripartire dopo un riavvio</string>
+    <string name="route_privileged_cost">Un comando di avvio da eseguire una volta da un PC (un clic sul lato Windows); dopo un riavvio va riavviato</string>
     <string name="route_log_overlay_cost">Richiede la concessione di READ_LOGS via adb su un PC, più il permesso overlay</string>
     <string name="route_overlay_polling_cost">Serve solo il permesso overlay; nessun PC — costa batteria e latenza di polling</string>
     <string name="step_privileged_channel">Canale privilegiato disponibile</string>
@@ -239,6 +240,7 @@
     <string name="step_overlay">Permesso overlay attivo</string>
     <string name="step_battery">Esente dall’ottimizzazione batteria</string>
     <string name="route_action_authorize">Autorizza lettura privilegiata</string>
+    <string name="route_action_copy_start_command">Copia comando di avvio</string>
     <string name="route_action_copy_adb">Copia comando adb</string>
     <string name="route_action_overlay_settings">Impostazioni overlay</string>
     <string name="route_action_battery_settings">Impostazioni batteria</string>

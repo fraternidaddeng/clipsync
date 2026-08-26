@@ -223,12 +223,13 @@
     <string name="test_read_failed">バックグラウンド読み取りテスト失敗：%1$s</string>
     <string name="test_reason_unknown">原因不明</string>
     <string name="adb_command_copied">adb コマンドをコピーしました。PC で実行後、戻って「再検出」をタップしてください</string>
+    <string name="privileged_start_command_copied">起動コマンドをコピーしました。スマホを接続した PC で実行するか Windows アプリのワンクリック起動を使い、その後「再検出」をタップしてください</string>
 
     <string name="route_privileged">特権直接読み取り</string>
     <string name="route_log_overlay">ログ検知 + オーバーレイ</string>
     <string name="route_overlay_polling">オーバーレイポーリング</string>
     <string name="route_foreground">フォアグラウンド / 手動</string>
-    <string name="route_privileged_cost">一度承認すれば OK。再起動後に特権チャネルの復帰が必要な場合があります</string>
+    <string name="route_privileged_cost">PC から起動コマンドを一度実行（Windows 側ならワンクリック）。再起動後は再度起動が必要です</string>
     <string name="route_log_overlay_cost">PC の adb で READ_LOGS を付与し、さらにオーバーレイ権限が必要です</string>
     <string name="route_overlay_polling_cost">オーバーレイ権限のみで PC 不要 — 電池とポーリング遅延のコストがかかります</string>
     <string name="step_privileged_channel">特権チャネルが利用可能</string>
@@ -237,6 +238,7 @@
     <string name="step_overlay">オーバーレイ権限が有効</string>
     <string name="step_battery">電池最適化の対象外に設定済み</string>
     <string name="route_action_authorize">特権読み取りを承認</string>
+    <string name="route_action_copy_start_command">起動コマンドをコピー</string>
     <string name="route_action_copy_adb">adb コマンドをコピー</string>
     <string name="route_action_overlay_settings">オーバーレイ設定</string>
     <string name="route_action_battery_settings">電池設定</string>

@@ -223,12 +223,13 @@
     <string name="test_read_failed">Kiểm tra đọc nền thất bại: %1$s</string>
     <string name="test_reason_unknown">không rõ nguyên nhân</string>
     <string name="adb_command_copied">Đã sao chép lệnh adb; chạy trên PC rồi quay lại nhấn “Dò lại”</string>
+    <string name="privileged_start_command_copied">Đã sao chép lệnh khởi động; chạy trên PC đang kết nối điện thoại (hoặc dùng khởi động một chạm trong ứng dụng Windows), rồi quay lại nhấn “Dò lại”</string>
 
     <string name="route_privileged">Đọc trực tiếp đặc quyền</string>
     <string name="route_log_overlay">Cảm nhận log + lớp phủ</string>
     <string name="route_overlay_polling">Thăm dò bằng lớp phủ</string>
     <string name="route_foreground">Mở ứng dụng/thủ công</string>
-    <string name="route_privileged_cost">Cấp quyền một lần; kênh đặc quyền có thể cần dựng lại sau khi khởi động lại máy</string>
+    <string name="route_privileged_cost">Cần chạy lệnh khởi động một lần từ PC (một cú nhấp phía Windows); sau khi khởi động lại máy phải khởi động lại kênh</string>
     <string name="route_log_overlay_cost">Cần cấp READ_LOGS qua adb trên PC, cộng với quyền lớp phủ</string>
     <string name="route_overlay_polling_cost">Chỉ cần quyền lớp phủ; không cần PC — tốn pin và có độ trễ thăm dò</string>
     <string name="step_privileged_channel">Kênh đặc quyền khả dụng</string>
@@ -237,6 +238,7 @@
     <string name="step_overlay">Đã bật quyền lớp phủ</string>
     <string name="step_battery">Đã miễn tối ưu hóa pin</string>
     <string name="route_action_authorize">Cấp quyền đọc đặc quyền</string>
+    <string name="route_action_copy_start_command">Sao chép lệnh khởi động</string>
     <string name="route_action_copy_adb">Sao chép lệnh adb</string>
     <string name="route_action_overlay_settings">Cài đặt lớp phủ</string>
     <string name="route_action_battery_settings">Cài đặt pin</string>

@@ -225,12 +225,13 @@
     <string name="test_read_failed">Test de lecture en arrière-plan échoué : %1$s</string>
     <string name="test_reason_unknown">raison inconnue</string>
     <string name="adb_command_copied">Commande adb copiée ; exécutez-la sur votre PC, puis revenez toucher « Resonder »</string>
+    <string name="privileged_start_command_copied">Commande de démarrage copiée ; exécutez-la sur le PC auquel le téléphone est connecté (ou utilisez le démarrage en un clic dans l’app Windows), puis revenez toucher « Resonder »</string>
 
     <string name="route_privileged">Lecture directe privilégiée</string>
     <string name="route_log_overlay">Détection par journaux + superposition</string>
     <string name="route_overlay_polling">Sondage par superposition</string>
     <string name="route_foreground">Premier plan/manuel</string>
-    <string name="route_privileged_cost">Autorisez une fois ; le canal privilégié peut devoir être rétabli après un redémarrage</string>
+    <string name="route_privileged_cost">Une commande de démarrage à exécuter une fois depuis un PC (un clic côté Windows) ; à relancer après un redémarrage</string>
     <string name="route_log_overlay_cost">Nécessite d’accorder READ_LOGS via adb sur un PC, plus la permission de superposition</string>
     <string name="route_overlay_polling_cost">Ne nécessite que la permission de superposition ; sans PC — coûte de la batterie et une latence de sondage</string>
     <string name="step_privileged_channel">Canal privilégié disponible</string>
@@ -239,6 +240,7 @@
     <string name="step_overlay">Permission de superposition activée</string>
     <string name="step_battery">Exempté de l’optimisation de batterie</string>
     <string name="route_action_authorize">Autoriser la lecture privilégiée</string>
+    <string name="route_action_copy_start_command">Copier la commande de démarrage</string>
     <string name="route_action_copy_adb">Copier la commande adb</string>
     <string name="route_action_overlay_settings">Réglages de superposition</string>
     <string name="route_action_battery_settings">Réglages de batterie</string>

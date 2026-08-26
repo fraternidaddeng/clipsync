@@ -72,6 +72,7 @@ import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.ClipboardCaptureSession
 import com.clipsync.android.platform.clipboard.SharedClipboardWrites
+import com.clipsync.android.platform.clipboard.shizuku.host.PrivilegedHostStarter
 import com.clipsync.android.storage.SyncSettingsStore
 import com.clipsync.android.sync.BluetoothSyncConnector
 import com.clipsync.android.sync.BootCompletedReceiver
@@ -498,6 +499,13 @@ class MainActivity : AppCompatActivity() {
                         healthViewModel.refresh()
                     }
                 }
+            RouteActionId.COPY_PRIVILEGED_START_COMMAND -> {
+                val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                manager.setPrimaryClip(
+                    ClipData.newPlainText("adb", PrivilegedHostStarter.adbCommand()),
+                )
+                healthViewModel.notePrivilegedStartCommandCopied()
+            }
             RouteActionId.COPY_ADB_READ_LOGS_COMMAND -> {
                 val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 manager.setPrimaryClip(

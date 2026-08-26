@@ -226,12 +226,13 @@
     <string name="test_read_failed">Тест фонового чтения не пройден: %1$s</string>
     <string name="test_reason_unknown">причина неизвестна</string>
     <string name="adb_command_copied">Команда adb скопирована; выполните её на ПК, затем вернитесь и нажмите «Проверить заново»</string>
+    <string name="privileged_start_command_copied">Команда запуска скопирована; выполните её на ПК, к которому подключён телефон (или используйте запуск в один клик в приложении для Windows), затем вернитесь и нажмите «Проверить заново»</string>
 
     <string name="route_privileged">Привилегированное прямое чтение</string>
     <string name="route_log_overlay">Отслеживание логов + оверлей</string>
     <string name="route_overlay_polling">Опрос через оверлей</string>
     <string name="route_foreground">Передний план/вручную</string>
-    <string name="route_privileged_cost">Разрешите один раз; после перезагрузки привилегированный канал может потребовать восстановления</string>
+    <string name="route_privileged_cost">Один запуск команды с ПК (в Windows — один клик); после перезагрузки нужно запустить заново</string>
     <string name="route_log_overlay_cost">Требует выдачи READ_LOGS через adb на ПК, плюс разрешение на оверлей</string>
     <string name="route_overlay_polling_cost">Нужно только разрешение на оверлей; без ПК — расходует батарею и добавляет задержку опроса</string>
     <string name="step_privileged_channel">Привилегированный канал доступен</string>
@@ -240,6 +241,7 @@
     <string name="step_overlay">Разрешение на оверлей включено</string>
     <string name="step_battery">Исключено из оптимизации батареи</string>
     <string name="route_action_authorize">Разрешить привилегированное чтение</string>
+    <string name="route_action_copy_start_command">Скопировать команду запуска</string>
     <string name="route_action_copy_adb">Скопировать команду adb</string>
     <string name="route_action_overlay_settings">Настройки оверлея</string>
     <string name="route_action_battery_settings">Настройки батареи</string>

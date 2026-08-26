@@ -223,12 +223,13 @@
     <string name="test_read_failed">背景讀取測試失敗：%1$s</string>
     <string name="test_reason_unknown">未知原因</string>
     <string name="adb_command_copied">已複製 adb 指令；在電腦上執行後回來點「重新探測」</string>
+    <string name="privileged_start_command_copied">已複製啟動指令；在已連手機的電腦上執行（Windows 端可一鍵啟動），完成後回來點「重新探測」</string>
 
     <string name="route_privileged">特權直讀</string>
     <string name="route_log_overlay">日誌感知 + 懸浮窗</string>
     <string name="route_overlay_polling">懸浮窗輪詢</string>
     <string name="route_foreground">前景/手動</string>
-    <string name="route_privileged_cost">授權一次即可；裝置重啟後特權通道可能需要重新就緒</string>
+    <string name="route_privileged_cost">需用電腦執行一次啟動指令（Windows 端可一鍵完成）；裝置重啟後需重新啟動</string>
     <string name="route_log_overlay_cost">需在電腦上用 adb 授予 READ_LOGS，並開啟懸浮窗權限</string>
     <string name="route_overlay_polling_cost">僅需懸浮窗權限；不需要電腦，代價是耗電和輪詢延遲</string>
     <string name="step_privileged_channel">特權通道可用</string>
@@ -237,6 +238,7 @@
     <string name="step_overlay">懸浮窗權限已開啟</string>
     <string name="step_battery">電池最佳化已放行</string>
     <string name="route_action_authorize">授權特權直讀</string>
+    <string name="route_action_copy_start_command">複製啟動指令</string>
     <string name="route_action_copy_adb">複製 adb 指令</string>
     <string name="route_action_overlay_settings">去設定懸浮窗</string>
     <string name="route_action_battery_settings">去設定電池</string>

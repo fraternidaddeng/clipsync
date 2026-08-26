@@ -224,12 +224,13 @@
     <string name="test_read_failed">पृष्ठभूमि पठन जाँच विफल: %1$s</string>
     <string name="test_reason_unknown">कारण अज्ञात</string>
     <string name="adb_command_copied">adb कमांड कॉपी हुआ; इसे PC पर चलाएँ, फिर लौटकर “फिर जाँचें” टैप करें</string>
+    <string name="privileged_start_command_copied">स्टार्ट कमांड कॉपी हुआ; इसे उस PC पर चलाएँ जिससे फ़ोन जुड़ा है (या Windows ऐप का एक-क्लिक स्टार्ट इस्तेमाल करें), फिर लौटकर “फिर जाँचें” टैप करें</string>
 
     <string name="route_privileged">विशेषाधिकार से सीधा पठन</string>
     <string name="route_log_overlay">लॉग संवेदन + ओवरले</string>
     <string name="route_overlay_polling">ओवरले पोलिंग</string>
     <string name="route_foreground">अग्रभूमि/हाथ से</string>
-    <string name="route_privileged_cost">एक बार अनुमति दें; रीबूट के बाद विशेषाधिकार चैनल को फिर उठाना पड़ सकता है</string>
+    <string name="route_privileged_cost">PC से एक बार स्टार्ट कमांड चलाना होगा (Windows की ओर एक क्लिक); रीबूट के बाद फिर शुरू करना पड़ेगा</string>
     <string name="route_log_overlay_cost">PC पर adb से READ_LOGS देना होगा, साथ में ओवरले अनुमति भी</string>
     <string name="route_overlay_polling_cost">सिर्फ़ ओवरले अनुमति चाहिए; PC नहीं — बैटरी और पोलिंग विलंब की कीमत</string>
     <string name="step_privileged_channel">विशेषाधिकार चैनल उपलब्ध</string>
@@ -238,6 +239,7 @@
     <string name="step_overlay">ओवरले अनुमति चालू</string>
     <string name="step_battery">बैटरी अनुकूलन से छूट मिली</string>
     <string name="route_action_authorize">विशेषाधिकार पठन की अनुमति दें</string>
+    <string name="route_action_copy_start_command">स्टार्ट कमांड कॉपी करें</string>
     <string name="route_action_copy_adb">adb कमांड कॉपी करें</string>
     <string name="route_action_overlay_settings">ओवरले सेटिंग</string>
     <string name="route_action_battery_settings">बैटरी सेटिंग</string>

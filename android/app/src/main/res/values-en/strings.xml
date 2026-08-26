@@ -225,12 +225,13 @@
     <string name="test_read_failed">Background read test failed: %1$s</string>
     <string name="test_reason_unknown">unknown reason</string>
     <string name="adb_command_copied">adb command copied; run it on your PC, then come back and tap “Re-probe”</string>
+    <string name="privileged_start_command_copied">Start command copied; run it on the PC your phone is connected to (or use one-click start in the Windows app), then come back and tap “Re-probe”</string>
 
     <string name="route_privileged">Privileged direct read</string>
     <string name="route_log_overlay">Log sensing + overlay</string>
     <string name="route_overlay_polling">Overlay polling</string>
     <string name="route_foreground">Foreground/manual</string>
-    <string name="route_privileged_cost">Authorize once; the privileged channel may need to come back up after a reboot</string>
+    <string name="route_privileged_cost">One start command run from a PC (one click on the Windows side); needs restarting after a reboot</string>
     <string name="route_log_overlay_cost">Requires granting READ_LOGS via adb on a PC, plus the overlay permission</string>
     <string name="route_overlay_polling_cost">Only needs the overlay permission; no PC required — costs battery and polling latency</string>
     <string name="step_privileged_channel">Privileged channel available</string>
@@ -239,6 +240,7 @@
     <string name="step_overlay">Overlay permission enabled</string>
     <string name="step_battery">Battery optimization exempted</string>
     <string name="route_action_authorize">Authorize privileged read</string>
+    <string name="route_action_copy_start_command">Copy start command</string>
     <string name="route_action_copy_adb">Copy adb command</string>
     <string name="route_action_overlay_settings">Overlay settings</string>
     <string name="route_action_battery_settings">Battery settings</string>

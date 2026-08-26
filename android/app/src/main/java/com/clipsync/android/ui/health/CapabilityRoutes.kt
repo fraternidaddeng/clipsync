@@ -34,6 +34,13 @@ data class RouteStep(
 /** What tapping the route's main button should do next; resolved to intents by the activity. */
 enum class RouteActionId {
     REQUEST_PRIVILEGED_PERMISSION,
+
+    /**
+     * Copy the one-line adb command that starts the built-in privileged host. The channel
+     * can only be opened from a computer (Android security), so the in-app action hands
+     * the user the exact command; the Windows app offers the same start as one click.
+     */
+    COPY_PRIVILEGED_START_COMMAND,
     COPY_ADB_READ_LOGS_COMMAND,
     OPEN_OVERLAY_SETTINGS,
     OPEN_BATTERY_SETTINGS,
@@ -264,8 +271,8 @@ private fun readRoute(
     val report = facts.reports[mode]
     val remaining = steps.count { !it.satisfied }
     val preferred = facts.preferredReadMode == mode
-    // A step without an in-app action (e.g. privileged channel not available)
-    // shows probe status only; it never falls through to "set preferred".
+    // Each unsatisfied step maps to the one action that can move it forward; an
+    // unfinished route never falls through to "set preferred".
     val firstUnsatisfied = steps.firstOrNull { !it.satisfied }
     val nextAction = if (firstUnsatisfied != null) {
         stepAction(firstUnsatisfied.id)
@@ -293,9 +300,12 @@ private fun readRoute(
     )
 }
 
-/** Channel availability is a probed fact, not a chore — no in-app action can satisfy it. */
+/**
+ * The privileged channel can only be opened from a computer (Android security), so its
+ * step action copies the exact start command instead of pretending an in-app toggle exists.
+ */
 private fun stepAction(step: RouteStepId): RouteActionId? = when (step) {
-    RouteStepId.PRIVILEGED_CHANNEL_READY -> null
+    RouteStepId.PRIVILEGED_CHANNEL_READY -> RouteActionId.COPY_PRIVILEGED_START_COMMAND
     RouteStepId.PRIVILEGED_AUTHORIZED -> RouteActionId.REQUEST_PRIVILEGED_PERMISSION
     RouteStepId.READ_LOGS_GRANTED -> RouteActionId.COPY_ADB_READ_LOGS_COMMAND
     RouteStepId.OVERLAY_GRANTED -> RouteActionId.OPEN_OVERLAY_SETTINGS
@@ -311,6 +321,7 @@ fun readModeTitle(mode: ClipboardReadMode): UiText = when (mode) {
 
 fun routeActionLabel(action: RouteActionId): UiText = when (action) {
     RouteActionId.REQUEST_PRIVILEGED_PERMISSION -> UiText.Res(R.string.route_action_authorize)
+    RouteActionId.COPY_PRIVILEGED_START_COMMAND -> UiText.Res(R.string.route_action_copy_start_command)
     RouteActionId.COPY_ADB_READ_LOGS_COMMAND -> UiText.Res(R.string.route_action_copy_adb)
     RouteActionId.OPEN_OVERLAY_SETTINGS -> UiText.Res(R.string.route_action_overlay_settings)
     RouteActionId.OPEN_BATTERY_SETTINGS -> UiText.Res(R.string.route_action_battery_settings)

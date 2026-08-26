@@ -225,12 +225,13 @@
     <string name="test_read_failed">Teste de leitura em segundo plano falhou: %1$s</string>
     <string name="test_reason_unknown">motivo desconhecido</string>
     <string name="adb_command_copied">Comando adb copiado; execute no PC, depois volte e toque em “Sondar de novo”</string>
+    <string name="privileged_start_command_copied">Comando de início copiado; execute no PC ao qual o telefone está conectado (ou use o início com um clique no app do Windows), depois volte e toque em “Sondar de novo”</string>
 
     <string name="route_privileged">Leitura direta privilegiada</string>
     <string name="route_log_overlay">Detecção por logs + sobreposição</string>
     <string name="route_overlay_polling">Sondagem por sobreposição</string>
     <string name="route_foreground">Primeiro plano/manual</string>
-    <string name="route_privileged_cost">Autorize uma vez; o canal privilegiado pode precisar ser restabelecido após reiniciar</string>
+    <string name="route_privileged_cost">Um comando de início executado uma vez em um PC (um clique no lado do Windows); precisa ser iniciado de novo após reiniciar</string>
     <string name="route_log_overlay_cost">Exige conceder READ_LOGS via adb em um PC, além da permissão de sobreposição</string>
     <string name="route_overlay_polling_cost">Só precisa da permissão de sobreposição; sem PC — custa bateria e latência de sondagem</string>
     <string name="step_privileged_channel">Canal privilegiado disponível</string>
@@ -239,6 +240,7 @@
     <string name="step_overlay">Permissão de sobreposição ativada</string>
     <string name="step_battery">Isento da otimização de bateria</string>
     <string name="route_action_authorize">Autorizar leitura privilegiada</string>
+    <string name="route_action_copy_start_command">Copiar comando de início</string>
     <string name="route_action_copy_adb">Copiar comando adb</string>
     <string name="route_action_overlay_settings">Configurações de sobreposição</string>
     <string name="route_action_battery_settings">Configurações de bateria</string>

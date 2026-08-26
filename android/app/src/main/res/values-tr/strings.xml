@@ -224,12 +224,13 @@
     <string name="test_read_failed">Arka plan okuma testi başarısız: %1$s</string>
     <string name="test_reason_unknown">nedeni bilinmiyor</string>
     <string name="adb_command_copied">adb komutu kopyalandı; PC’nizde çalıştırın, sonra dönüp “Yeniden yokla”ya dokunun</string>
+    <string name="privileged_start_command_copied">Başlatma komutu kopyalandı; telefonun bağlı olduğu PC’de çalıştırın (veya Windows uygulamasındaki tek tıkla başlatmayı kullanın), sonra dönüp “Yeniden yokla”ya dokunun</string>
 
     <string name="route_privileged">Ayrıcalıklı doğrudan okuma</string>
     <string name="route_log_overlay">Günlük algılama + yer paylaşımı</string>
     <string name="route_overlay_polling">Yer paylaşımıyla yoklama</string>
     <string name="route_foreground">Ön plan/elle</string>
-    <string name="route_privileged_cost">Bir kez yetki verin; ayrıcalıklı kanalın yeniden başlatma sonrası tekrar kurulması gerekebilir</string>
+    <string name="route_privileged_cost">PC’den bir kez başlatma komutu çalıştırılmalı (Windows tarafında tek tık); yeniden başlatma sonrası tekrar başlatılmalıdır</string>
     <string name="route_log_overlay_cost">PC’de adb ile READ_LOGS vermeyi ve ayrıca yer paylaşımı iznini gerektirir</string>
     <string name="route_overlay_polling_cost">Yalnızca yer paylaşımı izni gerekir; PC gerekmez — pil ve yoklama gecikmesi bedeli vardır</string>
     <string name="step_privileged_channel">Ayrıcalıklı kanal mevcut</string>
@@ -238,6 +239,7 @@
     <string name="step_overlay">Yer paylaşımı izni açık</string>
     <string name="step_battery">Pil iyileştirmesinden muaf</string>
     <string name="route_action_authorize">Ayrıcalıklı okumayı yetkilendir</string>
+    <string name="route_action_copy_start_command">Başlatma komutunu kopyala</string>
     <string name="route_action_copy_adb">adb komutunu kopyala</string>
     <string name="route_action_overlay_settings">Yer paylaşımı ayarları</string>
     <string name="route_action_battery_settings">Pil ayarları</string>

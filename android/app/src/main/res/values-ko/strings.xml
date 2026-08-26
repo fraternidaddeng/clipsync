@@ -223,12 +223,13 @@
     <string name="test_read_failed">백그라운드 읽기 테스트 실패: %1$s</string>
     <string name="test_reason_unknown">원인 불명</string>
     <string name="adb_command_copied">adb 명령을 복사했습니다. PC에서 실행한 뒤 돌아와 ‘다시 탐지’를 누르세요</string>
+    <string name="privileged_start_command_copied">시작 명령을 복사했습니다. 휴대폰이 연결된 PC에서 실행하거나 Windows 앱의 원클릭 시작을 사용한 뒤 ‘다시 탐지’를 누르세요</string>
 
     <string name="route_privileged">특권 직접 읽기</string>
     <string name="route_log_overlay">로그 감지 + 오버레이</string>
     <string name="route_overlay_polling">오버레이 폴링</string>
     <string name="route_foreground">포그라운드/수동</string>
-    <string name="route_privileged_cost">한 번만 승인하면 됩니다. 재부팅 후 특권 채널을 다시 살려야 할 수 있습니다</string>
+    <string name="route_privileged_cost">PC에서 시작 명령을 한 번 실행(Windows 쪽은 원클릭); 재부팅 후에는 다시 시작해야 합니다</string>
     <string name="route_log_overlay_cost">PC에서 adb로 READ_LOGS를 부여하고 오버레이 권한도 필요합니다</string>
     <string name="route_overlay_polling_cost">오버레이 권한만 필요하고 PC는 불필요 — 배터리와 폴링 지연이 비용입니다</string>
     <string name="step_privileged_channel">특권 채널 사용 가능</string>
@@ -237,6 +238,7 @@
     <string name="step_overlay">오버레이 권한 켜짐</string>
     <string name="step_battery">배터리 최적화 제외됨</string>
     <string name="route_action_authorize">특권 읽기 승인</string>
+    <string name="route_action_copy_start_command">시작 명령 복사</string>
     <string name="route_action_copy_adb">adb 명령 복사</string>
     <string name="route_action_overlay_settings">오버레이 설정</string>
     <string name="route_action_battery_settings">배터리 설정</string>

@@ -228,12 +228,13 @@
     <string name="test_read_failed">فشل اختبار القراءة في الخلفية: %1$s</string>
     <string name="test_reason_unknown">سبب غير معروف</string>
     <string name="adb_command_copied">نُسخ أمر adb؛ نفّذه على حاسوبك ثم عُد وانقر على «إعادة الفحص»</string>
+    <string name="privileged_start_command_copied">نُسخ أمر التشغيل؛ نفّذه على الحاسوب المتصل بالهاتف (أو استخدم التشغيل بنقرة واحدة في تطبيق Windows) ثم عُد وانقر على «إعادة الفحص»</string>
 
     <string name="route_privileged">قراءة مباشرة بامتيازات</string>
     <string name="route_log_overlay">استشعار السجلات + النافذة العائمة</string>
     <string name="route_overlay_polling">استطلاع بالنافذة العائمة</string>
     <string name="route_foreground">المقدمة/يدوي</string>
-    <string name="route_privileged_cost">صرّح مرة واحدة؛ قد تحتاج قناة الامتيازات إلى إعادة تشغيل بعد إعادة تشغيل الجهاز</string>
+    <string name="route_privileged_cost">يلزم تنفيذ أمر تشغيل مرة واحدة من حاسوب (نقرة واحدة في جانب Windows)؛ وبعد إعادة تشغيل الجهاز يجب تشغيله من جديد</string>
     <string name="route_log_overlay_cost">يتطلب منح READ_LOGS عبر adb على حاسوب، إضافة إلى إذن النافذة العائمة</string>
     <string name="route_overlay_polling_cost">يحتاج فقط إذن النافذة العائمة؛ دون حاسوب — يكلّف بطارية وتأخيرًا في الاستطلاع</string>
     <string name="step_privileged_channel">قناة الامتيازات متاحة</string>
@@ -242,6 +243,7 @@
     <string name="step_overlay">إذن النافذة العائمة مفعَّل</string>
     <string name="step_battery">مستثنى من تحسين البطارية</string>
     <string name="route_action_authorize">التصريح بالقراءة بامتيازات</string>
+    <string name="route_action_copy_start_command">نسخ أمر التشغيل</string>
     <string name="route_action_copy_adb">نسخ أمر adb</string>
     <string name="route_action_overlay_settings">إعدادات النافذة العائمة</string>
     <string name="route_action_battery_settings">إعدادات البطارية</string>

@@ -223,12 +223,13 @@
     <string name="test_read_failed">ทดสอบการอ่านเบื้องหลังล้มเหลว: %1$s</string>
     <string name="test_reason_unknown">ไม่ทราบสาเหตุ</string>
     <string name="adb_command_copied">คัดลอกคำสั่ง adb แล้ว รันบนพีซีเสร็จแล้วกลับมาแตะ “ตรวจใหม่”</string>
+    <string name="privileged_start_command_copied">คัดลอกคำสั่งเริ่มทำงานแล้ว รันบนพีซีที่ต่อกับโทรศัพท์ (หรือใช้ปุ่มเริ่มคลิกเดียวในแอป Windows) แล้วกลับมาแตะ “ตรวจใหม่”</string>
 
     <string name="route_privileged">อ่านตรงด้วยสิทธิ์พิเศษ</string>
     <string name="route_log_overlay">ตรวจจับ log + หน้าต่างลอย</string>
     <string name="route_overlay_polling">สำรวจด้วยหน้าต่างลอย</string>
     <string name="route_foreground">เปิดแอป/ด้วยตนเอง</string>
-    <string name="route_privileged_cost">อนุญาตครั้งเดียว ช่องสิทธิ์พิเศษอาจต้องตั้งขึ้นใหม่หลังรีบูต</string>
+    <string name="route_privileged_cost">ต้องรันคำสั่งเริ่มทำงานจากพีซีหนึ่งครั้ง (ฝั่ง Windows คลิกเดียว) หลังรีบูตต้องเริ่มใหม่</string>
     <string name="route_log_overlay_cost">ต้องให้ READ_LOGS ผ่าน adb บนพีซี บวกกับสิทธิ์หน้าต่างลอย</string>
     <string name="route_overlay_polling_cost">ต้องการแค่สิทธิ์หน้าต่างลอย ไม่ต้องใช้พีซี — แลกด้วยแบตเตอรี่และดีเลย์การสำรวจ</string>
     <string name="step_privileged_channel">ช่องสิทธิ์พิเศษพร้อมใช้</string>
@@ -237,6 +238,7 @@
     <string name="step_overlay">เปิดสิทธิ์หน้าต่างลอยแล้ว</string>
     <string name="step_battery">ยกเว้นการเพิ่มประสิทธิภาพแบตเตอรี่แล้ว</string>
     <string name="route_action_authorize">อนุญาตการอ่านสิทธิ์พิเศษ</string>
+    <string name="route_action_copy_start_command">คัดลอกคำสั่งเริ่มทำงาน</string>
     <string name="route_action_copy_adb">คัดลอกคำสั่ง adb</string>
     <string name="route_action_overlay_settings">ตั้งค่าหน้าต่างลอย</string>
     <string name="route_action_battery_settings">ตั้งค่าแบตเตอรี่</string>

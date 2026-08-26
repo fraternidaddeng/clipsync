@@ -248,13 +248,14 @@
     <string name="test_read_failed">后台读取测试失败：%1$s</string>
     <string name="test_reason_unknown">未知原因</string>
     <string name="adb_command_copied">已复制 adb 命令；在电脑上执行后回来点「重新探测」</string>
+    <string name="privileged_start_command_copied">已复制启动命令；在已连手机的电脑上执行（Windows 端可一键启动），完成后回来点「重新探测」</string>
 
     <!-- 能力路线（读取方式与向导） -->
     <string name="route_privileged">特权直读</string>
     <string name="route_log_overlay">日志感知 + 悬浮窗</string>
     <string name="route_overlay_polling">悬浮窗轮询</string>
     <string name="route_foreground">前台/手动</string>
-    <string name="route_privileged_cost">授权一次即可；设备重启后特权通道可能需要重新就绪</string>
+    <string name="route_privileged_cost">需用电脑执行一次启动命令（Windows 端可一键完成）；设备重启后需重新启动</string>
     <string name="route_log_overlay_cost">需在电脑上用 adb 授予 READ_LOGS，并开启悬浮窗权限</string>
     <string name="route_overlay_polling_cost">仅需悬浮窗权限；不需要电脑，代价是耗电和轮询延迟</string>
     <string name="step_privileged_channel">特权通道可用</string>
@@ -263,6 +264,7 @@
     <string name="step_overlay">悬浮窗权限已开启</string>
     <string name="step_battery">电池优化已放行</string>
     <string name="route_action_authorize">授权特权直读</string>
+    <string name="route_action_copy_start_command">复制启动命令</string>
     <string name="route_action_copy_adb">复制 adb 命令</string>
     <string name="route_action_overlay_settings">去设置悬浮窗</string>
     <string name="route_action_battery_settings">去设置电池</string>

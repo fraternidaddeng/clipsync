@@ -223,12 +223,13 @@
     <string name="test_read_failed">Uji baca latar belakang gagal: %1$s</string>
     <string name="test_reason_unknown">alasan tidak diketahui</string>
     <string name="adb_command_copied">Perintah adb disalin; jalankan di PC, lalu kembali dan ketuk “Periksa ulang”</string>
+    <string name="privileged_start_command_copied">Perintah mulai disalin; jalankan di PC yang terhubung dengan ponsel (atau pakai mulai sekali klik di aplikasi Windows), lalu kembali dan ketuk “Periksa ulang”</string>
 
     <string name="route_privileged">Baca langsung berprivilese</string>
     <string name="route_log_overlay">Pendeteksian log + overlay</string>
     <string name="route_overlay_polling">Polling lewat overlay</string>
     <string name="route_foreground">Latar depan/manual</string>
-    <string name="route_privileged_cost">Beri izin sekali; kanal berprivilese mungkin perlu bangkit lagi setelah reboot</string>
+    <string name="route_privileged_cost">Perlu sekali menjalankan perintah mulai dari PC (sekali klik di sisi Windows); setelah reboot harus dimulai lagi</string>
     <string name="route_log_overlay_cost">Perlu memberi READ_LOGS lewat adb di PC, plus izin overlay</string>
     <string name="route_overlay_polling_cost">Hanya butuh izin overlay; tanpa PC — memakan baterai dan latensi polling</string>
     <string name="step_privileged_channel">Kanal berprivilese tersedia</string>
@@ -237,6 +238,7 @@
     <string name="step_overlay">Izin overlay aktif</string>
     <string name="step_battery">Dikecualikan dari optimalisasi baterai</string>
     <string name="route_action_authorize">Izinkan baca berprivilese</string>
+    <string name="route_action_copy_start_command">Salin perintah mulai</string>
     <string name="route_action_copy_adb">Salin perintah adb</string>
     <string name="route_action_overlay_settings">Setelan overlay</string>
     <string name="route_action_battery_settings">Setelan baterai</string>
