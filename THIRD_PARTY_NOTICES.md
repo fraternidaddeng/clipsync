@@ -1,6 +1,6 @@
 # Third-Party Dependency and License Inventory
 
-This inventory (Stage 0, updated through Stage 3) records direct build/runtime/test dependencies currently declared in the repository and major dependencies explicitly planned by `plan.md`. It is not a substitute for the release-time transitive dependency, notice, and source-offer review. Exact license texts and obligations must be collected from the resolved artifacts before distribution.
+This inventory (Stage 0, updated through 2026-08-26) records direct build/runtime/test dependencies currently declared in the repository. It is not a substitute for the release-time transitive dependency, notice, and source-offer review. Exact license texts and obligations must be collected from the resolved artifacts before distribution.
 
 ## Currently declared dependencies
 
@@ -18,33 +18,36 @@ This inventory (Stage 0, updated through Stage 3) records direct build/runtime/t
 | xUnit.net | 2.9.2 | .NET unit tests | Apache-2.0 |
 | xunit.runner.visualstudio | 2.8.2 | Visual Studio/.NET test adapter | Apache-2.0 |
 | Coverlet collector | 6.0.2 | .NET coverage | MIT |
-| JsonSchema.Net | 7.3.4 | Protocol JSON Schema validation | MIT |
 | Android Gradle Plugin | 8.7.3 | Android build tooling | Apache-2.0 |
 | Kotlin Gradle/Compose/serialization plugins | 2.0.21 | Kotlin build tooling | Apache-2.0 |
+| KSP Gradle plugin | 2.0.21-1.0.28 | Room annotation processing (build only) | Apache-2.0 |
+| detekt Gradle plugin | 1.23.8 | Kotlin static analysis (build only) | Apache-2.0 |
+| ktlint Gradle plugin (org.jlleitschuh) | 14.2.0 | Kotlin formatting checks (build only) | MIT |
 | AndroidX Core KTX | 1.15.0 | Android core APIs | Apache-2.0 |
+| AndroidX AppCompat | 1.7.0 | Per-app locale replay for the 19-language UI | Apache-2.0 |
 | AndroidX Activity Compose | 1.10.0 | Compose activity integration | Apache-2.0 |
 | Jetpack Compose BOM and libraries | BOM 2024.12.01 | Android UI | Apache-2.0 |
 | Material 3 for Compose | selected by BOM | Android UI components | Apache-2.0 |
-| AndroidX Lifecycle ViewModel Compose | 2.8.7 | Android ViewModel integration | Apache-2.0 |
+| AndroidX Lifecycle ViewModel/Runtime Compose | 2.8.7 | Android ViewModel/lifecycle integration | Apache-2.0 |
+| Room (runtime, ktx, compiler; room-testing in tests) | 2.6.1 | Android persistence (sync store, history, inbox) | Apache-2.0 |
+| AndroidX WorkManager | 2.10.0 | Bounded boot-recovery health check | Apache-2.0 |
 | kotlinx.serialization JSON | 1.7.3 | Kotlin JSON parsing | Apache-2.0 |
 | kotlinx-coroutines-android | 1.9.0 | Android concurrency | Apache-2.0 |
-| OkHttp | 4.12.0 | Android pinned-TLS pairing client (WebSocket sync in stage 4) | Apache-2.0 |
+| OkHttp | 4.12.0 | Android pinned-TLS pairing client and WebSocket sync | Apache-2.0 |
 | ML Kit Barcode Scanning | 17.3.0 | Android pairing QR scan | Closed-source Google library under Google APIs/Play Services terms, not an OSS license; camera-permission fallback (pasted payload) keeps pairing usable without it. Review distribution terms before release |
 | AndroidX CameraX (camera2, lifecycle, view) | 1.4.1 | Camera preview for QR scanning | Apache-2.0 |
+| Shizuku API (`dev.rikka.shizuku:api` + `:provider`) | 13.1.5 | Binder bridge for the privileged direct-read backend (user-facing name is 特权直读/内置特权宿主; this inventory keeps the library's upstream legal name) | MIT (verified from the pinned artifact POM and upstream `RikkaApps/Shizuku-API` LICENSE) |
 | JUnit 4 | 4.13.2 | Android/JVM unit tests | EPL-1.0 |
+| Robolectric | 4.14.1 | Android JVM tests (test only) | MIT |
+| AndroidX Test (core, core-ktx, ext-junit, runner, rules) | 1.6.1 / 1.2.1 / 1.6.2 | Unit and instrumentation test infrastructure (test only) | Apache-2.0 |
 | OkHttp MockWebServer | 4.12.0 | Android pairing client tests (test only) | Apache-2.0 |
 | okhttp-tls | 4.12.0 | Test TLS certificates (test only) | Apache-2.0 |
 | kotlinx-coroutines-test | 1.9.0 | Android coroutine tests (test only) | Apache-2.0 |
+| Python jsonschema + referencing + cryptography (pip, CI only) | latest at run time | Protocol schema/fixture validation (`scripts/validate-protocol.py`); never distributed | MIT / MIT / Apache-2.0 OR BSD-3-Clause |
 
 ## Planned direct dependencies
 
-These are architectural selections, not necessarily present in the current build. Versions and licenses must be rechecked when added.
-
-| Component | Planned purpose | Expected license/status |
-|---|---|---|
-| Room | Android persistence | Apache-2.0 |
-| AndroidX WorkManager | Bounded recovery | Apache-2.0 |
-| Shizuku API | User-authorized clipboard bridge | License and notice must be verified from the pinned artifact before addition |
+None currently. The dependencies previously listed here as planned (Room, AndroidX WorkManager, Shizuku API) have since been added and moved into the table above with their verified licenses. JsonSchema.Net was removed from the Windows projects when protocol validation moved to the Python tooling above.
 
 ## Reference projects are not dependencies
 
