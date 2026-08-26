@@ -51,6 +51,14 @@ data class HomeClipItem(
     /** Blob hash for image clips — keys the thumbnail lookup. Empty for text. */
     val contentHash: String = "",
     /**
+     * Machine-voice metadata pills for image rows (mirror of the Windows list, user
+     * verdict 2026-08-26): the thumbnail is the content hero, these quiet annotations
+     * carry the facts. Empty labels render no pill.
+     */
+    val imageFormatLabel: String = "",
+    val imageDimensionsLabel: String = "",
+    val imageByteSizeLabel: String = "",
+    /**
      * 仅本机保留 (ADR 0005 §5): this local image was terminated as a `local_only` marker
      * on a text-only path (Bluetooth fallback window), so the peer's cursor moved past
      * it and it will never sync — IP recovery does not retransmit.
@@ -265,6 +273,10 @@ internal fun ClipHistoryEntry.toHomeItem(
         format = if (isImage) ClipContentFormat.PLAIN else classifyClipContent(content),
         isImage = isImage,
         contentHash = if (isImage) contentHash else "",
+        imageFormatLabel = if (isImage) ImageMetadataLabels.format(media?.mimeType) else "",
+        imageDimensionsLabel =
+            if (isImage) ImageMetadataLabels.dimensions(media?.pixelWidth, media?.pixelHeight) else "",
+        imageByteSizeLabel = if (isImage) ImageMetadataLabels.byteSize(media?.encodedBytes) else "",
         isLocalOnly = isImage && isLocalOnly,
     )
 }

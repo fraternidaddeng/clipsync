@@ -45,6 +45,12 @@
         <Geometry x:Key="IconNoPreview">M6,4.5 H18 A1.5,1.5 0 0 1 19.5,6 V18 A1.5,1.5 0 0 1 18,19.5 H6 A1.5,1.5 0 0 1 4.5,18 V6 A1.5,1.5 0 0 1 6,4.5 Z M4.5,15.5 L9.5,10.5 L13,14 M14.5,12.5 L16,11 L19.5,14.5 M4,4 L20,20</Geometry>
         <!-- 三行文字线：文本条目在统一 56px 左槽里的安静占位字形 -->
         <Geometry x:Key="IconClipText">M5,7 H19 M5,12 H16 M5,17 H12</Geometry>
+        <!-- 形态类型字形（24 网格单色线性，icons.md §一）：文本条目左槽的类型提示，
+             与 ADR 0003 注记盒同一邻近色槽位——左槽自此携带信息，不再是空占位框 -->
+        <Geometry x:Key="IconFormatLink">M10,13 A5,5 0 0 0 17.54,13.54 L20.54,10.54 A5,5 0 0 0 13.47,3.47 L11.75,5.18 M14,11 A5,5 0 0 0 6.46,10.46 L3.46,13.46 A5,5 0 0 0 10.53,20.53 L12.24,18.82</Geometry>
+        <Geometry x:Key="IconFormatEmail">M5.5,5.5 H18.5 A1.5,1.5 0 0 1 20,7 V17 A1.5,1.5 0 0 1 18.5,18.5 H5.5 A1.5,1.5 0 0 1 4,17 V7 A1.5,1.5 0 0 1 5.5,5.5 Z M4.5,7.5 L12,13 L19.5,7.5</Geometry>
+        <Geometry x:Key="IconFormatOtp">M12,6.5 V17.5 M7.2,9.25 L16.8,14.75 M16.8,9.25 L7.2,14.75</Geometry>
+        <Geometry x:Key="IconFormatCredential">M10.5,12 H20 M16.5,12 V15 M20,12 V15.5 M4,12 A3.25,3.25 0 1 0 10.5,12 A3.25,3.25 0 1 0 4,12</Geometry>
 
         <!-- ============ 控件样式 ============ -->
         <!-- 页面切换过渡 PageFadeIn / PageFadeGrid / PageFadeScroll 已上移 App 级
@@ -876,30 +882,63 @@
                                         <!-- 统一 56px 左槽：所有条目共享同一纵向结构，标题/注记盒/元信息
                                              跨类型对齐（宪章间距 12）。图片=缩略图（FromEntry 一次解码并
                                              冻结，容器回收不再重解码；缓存损坏时自愈重建、blob 兜底），
-                                             图片确实无像素可出=诚实「无预览」，文本=安静字形占位。 -->
+                                             图片确实无像素可出=诚实「无预览」。文本条目撤掉凹陷框
+                                             （sf-in 是缩略图槽的语汇，空框读作「缺了一张图」——用户反馈
+                                             2026-08-26），改为无框的形态类型字形提示。 -->
                                         <Border Width="56"
                                                 Height="56"
                                                 Margin="0,0,12,0"
                                                 VerticalAlignment="Top"
-                                                Background="{DynamicResource CsSurfaceInBrush}"
-                                                BorderBrush="{DynamicResource CsLineBrush}"
                                                 BorderThickness="1"
                                                 ClipToBounds="True"
                                                 CornerRadius="8">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{DynamicResource CsSurfaceInBrush}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource CsLineBrush}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsImage}" Value="False">
+                                                            <Setter Property="Background" Value="Transparent" />
+                                                            <Setter Property="BorderBrush" Value="Transparent" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
                                             <Grid>
-                                                <!-- 文本条目占位字形：三行文字线，安静不喧宾 -->
-                                                <Viewbox Width="18"
-                                                         Height="18"
+                                                <!-- 文本条目类型提示：形态字形借该形态的邻近色（链接=水蓝、
+                                                     邮箱=青灰、验证码=蓝紫、密码=藕紫），普通文本=安静灰
+                                                     三行文字线——左槽支持内容类型而不与正文争抢 -->
+                                                <Viewbox Width="22"
+                                                         Height="22"
                                                          HorizontalAlignment="Center"
                                                          VerticalAlignment="Center"
                                                          Visibility="{Binding IsImage, Converter={StaticResource InverseBoolToVisibility}}">
                                                     <Canvas Width="24" Height="24">
-                                                        <Path Data="{StaticResource IconClipText}"
-                                                              Stroke="{DynamicResource CsText4Brush}"
+                                                        <Path Stroke="{Binding FormatAccentIndex, Converter={StaticResource DeviceAccentBrush}, ConverterParameter=Text}"
                                                               StrokeThickness="1.7"
                                                               StrokeStartLineCap="Round"
                                                               StrokeEndLineCap="Round"
-                                                              StrokeLineJoin="Round" />
+                                                              StrokeLineJoin="Round">
+                                                            <Path.Style>
+                                                                <Style TargetType="Path">
+                                                                    <Setter Property="Data" Value="{StaticResource IconClipText}" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Format}" Value="Link">
+                                                                            <Setter Property="Data" Value="{StaticResource IconFormatLink}" />
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Format}" Value="Email">
+                                                                            <Setter Property="Data" Value="{StaticResource IconFormatEmail}" />
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Format}" Value="Otp">
+                                                                            <Setter Property="Data" Value="{StaticResource IconFormatOtp}" />
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Format}" Value="Credential">
+                                                                            <Setter Property="Data" Value="{StaticResource IconFormatCredential}" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Path.Style>
+                                                        </Path>
                                                     </Canvas>
                                                 </Viewbox>
                                                 <!-- 仅当 blob 缺失或真不可解码：诚实「无预览」，用 text-3 保证可辨 -->
@@ -929,7 +968,9 @@
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                             <!-- 内容文字走历史字号/预览行数设置（P0-1/P1-7）：字号与行高按系数缩放，
-                                                 MaxHeight = 行高 × 行数，保证截断永远发生在整行边界 -->
+                                                 MaxHeight = 行高 × 行数，保证截断永远发生在整行边界。
+                                                 图片条目无正文行——缩略图就是内容主角（用户反馈 2026-08-26），
+                                                 格式/尺寸/字节数降级为下方的小注记盒，不再冒充标题 -->
                                             <TextBlock MaxHeight="{DynamicResource CsHistoryPreviewMaxHeight}"
                                                        FontSize="{DynamicResource CsHistoryBodyFontSize}"
                                                        Foreground="{DynamicResource CsText2Brush}"
@@ -937,7 +978,8 @@
                                                        LineStackingStrategy="BlockLineHeight"
                                                        Text="{Binding Preview, Mode=OneWay}"
                                                        TextTrimming="CharacterEllipsis"
-                                                       TextWrapping="Wrap" />
+                                                       TextWrapping="Wrap"
+                                                       Visibility="{Binding IsImage, Converter={StaticResource InverseBoolToVisibility}}" />
                                             <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
                                                 <!-- 远端来源用该设备的邻近色注记盒（按配对顺位）；本机条目不加盒，保持安静 -->
                                                 <Border Margin="0,0,7,0"
@@ -1000,6 +1042,51 @@
                                                            FontSize="10.5"
                                                            Foreground="{DynamicResource CsText4Brush}"
                                                            Text="{Binding MetaLine, Mode=OneWay}" />
+                                            </StackPanel>
+                                            <!-- 图片元数据注记盒（用户反馈 2026-08-26）：编码/尺寸/字节数是
+                                                 机器的声音（tokens §6 Mono），降级为安静灰小盒排在注记行之下，
+                                                 永不担任标题；不可知的项直接缺省，不摆问号 -->
+                                            <StackPanel Margin="0,6,0,0"
+                                                        Orientation="Horizontal"
+                                                        Visibility="{Binding IsImage, Converter={StaticResource BoolToVisibility}}">
+                                                <Border Margin="0,0,7,0"
+                                                        Padding="7,1"
+                                                        VerticalAlignment="Center"
+                                                        Background="{DynamicResource CsSurface3Brush}"
+                                                        BorderBrush="{DynamicResource CsLine2Brush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        Visibility="{Binding HasImageFormatLabel, Converter={StaticResource BoolToVisibility}}">
+                                                    <TextBlock FontFamily="{StaticResource CsMono}"
+                                                               FontSize="9"
+                                                               Foreground="{DynamicResource CsText3Brush}"
+                                                               Text="{Binding ImageFormatLabel, Mode=OneWay}" />
+                                                </Border>
+                                                <Border Margin="0,0,7,0"
+                                                        Padding="7,1"
+                                                        VerticalAlignment="Center"
+                                                        Background="{DynamicResource CsSurface3Brush}"
+                                                        BorderBrush="{DynamicResource CsLine2Brush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        Visibility="{Binding HasImageDimensionsLabel, Converter={StaticResource BoolToVisibility}}">
+                                                    <TextBlock FontFamily="{StaticResource CsMono}"
+                                                               FontSize="9"
+                                                               Foreground="{DynamicResource CsText3Brush}"
+                                                               Text="{Binding ImageDimensionsLabel, Mode=OneWay}" />
+                                                </Border>
+                                                <Border Padding="7,1"
+                                                        VerticalAlignment="Center"
+                                                        Background="{DynamicResource CsSurface3Brush}"
+                                                        BorderBrush="{DynamicResource CsLine2Brush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        Visibility="{Binding HasImageByteSizeLabel, Converter={StaticResource BoolToVisibility}}">
+                                                    <TextBlock FontFamily="{StaticResource CsMono}"
+                                                               FontSize="9"
+                                                               Foreground="{DynamicResource CsText3Brush}"
+                                                               Text="{Binding ImageByteSizeLabel, Mode=OneWay}" />
+                                                </Border>
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>

@@ -25,8 +25,30 @@ public partial class DetailWindow : Window
         this.copy = copy;
         SourceText.Text = Strings.Format(nameof(Strings.Detail_SourceFormat), detail.Source);
         CreatedAtText.Text = Strings.Format(nameof(Strings.Detail_TimeFormat), detail.CreatedAt);
+        ApplyImageMeta(detail);
         ApplyBody(detail);
         PreviewKeyDown += OnPreviewKeyDown;
+    }
+
+    /// <summary>
+    /// The image itself is the content hero; encoding / dimensions / byte size are the
+    /// machine voice and live in a quiet mono annotation line under the header —
+    /// they never stand in as the body (user verdict 2026-08-26).
+    /// </summary>
+    private void ApplyImageMeta(ClipDetailPayload detail)
+    {
+        if (!detail.IsImage)
+        {
+            return;
+        }
+
+        var summary = ClipSync.App.Ui.ImageMetadata.Summary(
+            detail.MimeType, detail.PixelWidth, detail.PixelHeight, detail.EncodedBytes);
+        if (summary.Length > 0)
+        {
+            ImageMetaText.Text = summary;
+            ImageMetaText.Visibility = Visibility.Visible;
+        }
     }
 
     private void ApplyBody(ClipDetailPayload detail)
@@ -43,24 +65,11 @@ public partial class DetailWindow : Window
             }
         }
 
+        // Undecodable image: state the fact — the metadata already sits in the
+        // annotation line above, so the body never repeats it as pseudo-content.
         BodyText.Text = detail.IsImage
-            ? FormatImagePreview(detail)
+            ? Strings.History_NoPreview
             : detail.Text;
-    }
-
-    private static string FormatImagePreview(ClipDetailPayload detail)
-    {
-        if (detail.PixelWidth is null || detail.PixelHeight is null)
-        {
-            return string.IsNullOrEmpty(detail.MimeType) ? Strings.Format_Image : detail.MimeType;
-        }
-
-        var size = detail.EncodedBytes is null
-            ? "?"
-            : detail.EncodedBytes.Value < 1024
-                ? $"{detail.EncodedBytes.Value} B"
-                : $"{detail.EncodedBytes.Value / 1024.0:0.#} KiB";
-        return $"{detail.MimeType ?? Strings.Format_Image} {detail.PixelWidth}×{detail.PixelHeight} · {size}";
     }
 
     private void OnCopyClicked(object sender, RoutedEventArgs e) => copy();

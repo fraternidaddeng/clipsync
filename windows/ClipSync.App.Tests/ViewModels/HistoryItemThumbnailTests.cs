@@ -117,8 +117,37 @@ public sealed class HistoryItemThumbnailTests : IDisposable
         Assert.True(item.ShowsNoPreview);
         Assert.Null(item.ThumbnailImage);
         Assert.Null(item.ThumbnailPath);
-        // The metadata line stays honest even without a preview.
-        Assert.StartsWith("image/png 320×200", item.Preview, StringComparison.Ordinal);
+        // Metadata never masquerades as the headline (user verdict 2026-08-26):
+        // the preview stays the human word, the facts live in the annotation pills.
+        Assert.Equal(ClipSync.App.Localization.Strings.Format_Image, item.Preview);
+        Assert.Equal("PNG", item.ImageFormatLabel);
+        Assert.Equal("320×200", item.ImageDimensionsLabel);
+        Assert.Equal("2 KiB", item.ImageByteSizeLabel);
+        Assert.True(item.HasImageFormatLabel);
+        Assert.True(item.HasImageDimensionsLabel);
+        Assert.True(item.HasImageByteSizeLabel);
+    }
+
+    [Fact]
+    public void TextRowsCarryNoImageMetadataPills()
+    {
+        var entry = new ClipboardHistoryEntry(
+            Guid.NewGuid(),
+            LocalDeviceId,
+            1,
+            "plain text",
+            new string('b', 64),
+            "notepad",
+            DateTimeOffset.UtcNow,
+            null,
+            null);
+
+        var item = HistoryItemViewModel.FromEntry(entry, LocalDeviceId, media: store);
+
+        Assert.False(item.HasImageFormatLabel);
+        Assert.False(item.HasImageDimensionsLabel);
+        Assert.False(item.HasImageByteSizeLabel);
+        Assert.Equal("plain text", item.Preview);
     }
 
     private static ClipboardHistoryEntry ImageEntry(ValidatedImage image) => new(

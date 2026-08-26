@@ -485,6 +485,17 @@ private fun ClipCard(
         Spacer(Modifier.height(5.dp))
         if (item.isImage) {
             ClipThumbnail(contentHash = item.contentHash, thumbnail = thumbnail)
+            // 图片元数据（用户反馈 2026-08-26 镜像语义）：编码/尺寸/字节数是机器的声音，
+            // 缩略图之下的安静灰小盒，永不担任标题；不可知的项直接缺省。
+            val pills =
+                listOf(item.imageFormatLabel, item.imageDimensionsLabel, item.imageByteSizeLabel)
+                    .filter { it.isNotEmpty() }
+            if (pills.isNotEmpty()) {
+                Spacer(Modifier.height(6.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    pills.forEach { label -> ImageMetaPill(label) }
+                }
+            }
         } else {
             // 历史字号 scales only this body (someone else's content), on top of sp so the
             // system font size still stacks; chrome above keeps the charter scale.
@@ -618,6 +629,32 @@ private fun FormatBadge(
                 .clip(shape)
                 .background(c.deviceBg(slot))
                 .border(1.dp, c.deviceLn(slot), shape)
+                .padding(horizontal = 7.dp, vertical = 2.dp),
+    )
+}
+
+/**
+ * Machine-voice metadata pill under an image thumbnail (mirror of the Windows
+ * history pills): mono type, quiet grey annotation box — the pixels above are
+ * the content hero, these state the facts without competing.
+ */
+@Composable
+private fun ImageMetaPill(
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+    val c = clipSyncColors
+    val shape = RoundedCornerShape(6.dp)
+    Text(
+        text = label,
+        style = ClipSyncType.meta,
+        fontSize = 10.sp,
+        color = c.t3,
+        modifier =
+            modifier
+                .clip(shape)
+                .background(c.sf3)
+                .border(1.dp, c.ln2, shape)
                 .padding(horizontal = 7.dp, vertical = 2.dp),
     )
 }

@@ -13,6 +13,8 @@ import com.clipsync.android.platform.clipboard.ClipboardWriteCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardWriteResult
 import com.clipsync.android.platform.clipboard.ClipboardWriter
 import com.clipsync.android.storage.ClipHistoryEntry
+import com.clipsync.android.storage.ClipKinds
+import com.clipsync.android.storage.ClipMediaRef
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -123,6 +125,25 @@ class HomeViewModelTest {
         expiresAtMs = null,
         deletedAtMs = null,
         appliedAtMs = null,
+    )
+
+    private fun imageClip(
+        eventId: String,
+        createdAtMs: Long,
+        media: ClipMediaRef?,
+    ) = ClipHistoryEntry(
+        eventId = eventId,
+        originDeviceId = "x",
+        originSeq = createdAtMs,
+        content = "",
+        contentHash = "hash-$eventId",
+        sourceApp = null,
+        createdAtMs = createdAtMs,
+        expiresAtMs = null,
+        deletedAtMs = null,
+        appliedAtMs = null,
+        kind = ClipKinds.IMAGE,
+        media = media,
     )
 
     private fun pairWithWindows() {
@@ -420,6 +441,40 @@ class HomeViewModelTest {
                     .map { it.eventId },
             )
             assertNull(model.state.value.formatFilter)
+        }
+
+    @Test
+    fun `image rows carry quiet metadata pill labels from the joined blob index`() =
+        runTest(dispatcher) {
+            repository.clips.value =
+                listOf(
+                    imageClip(
+                        "e-img",
+                        createdAtMs = 2_000,
+                        media =
+                            ClipMediaRef(
+                                contentHash = "hash-e-img",
+                                mimeType = "image/png",
+                                encodedBytes = 2_048,
+                                pixelWidth = 320,
+                                pixelHeight = 200,
+                            ),
+                    ),
+                    // Blob index gone: the pills hide, the row stays an honest image row.
+                    imageClip("e-img-bare", createdAtMs = 1_000, media = null),
+                )
+            val model = model()
+            testScheduler.advanceUntilIdle()
+
+            val items = model.state.value.items
+            assertEquals(listOf("e-img", "e-img-bare"), items.map { it.eventId })
+            assertTrue(items[0].isImage)
+            assertEquals("PNG", items[0].imageFormatLabel)
+            assertEquals("320×200", items[0].imageDimensionsLabel)
+            assertEquals("2 KiB", items[0].imageByteSizeLabel)
+            assertEquals("", items[1].imageFormatLabel)
+            assertEquals("", items[1].imageDimensionsLabel)
+            assertEquals("", items[1].imageByteSizeLabel)
         }
 
     @Test

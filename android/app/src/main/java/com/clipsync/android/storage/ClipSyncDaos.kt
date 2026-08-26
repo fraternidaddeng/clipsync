@@ -1,5 +1,6 @@
 package com.clipsync.android.storage
 
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Embedded
 import androidx.room.Insert
@@ -36,17 +37,28 @@ interface ClipEventDao {
     )
     suspend fun search(pattern: String?, limit: Int, offset: Int): List<ClipEventEntity>
 
-    /** Reactive [search] without paging, for the history screen. */
+    /**
+     * Reactive [search] without paging, for the history screen. Image rows carry their
+     * blob metadata (mime / bytes / dimensions) joined in, so the list can annotate the
+     * thumbnail with quiet metadata pills without per-row lookups; text rows join null.
+     */
     @Query(
         """
-        SELECT * FROM clips
-        WHERE deleted_at IS NULL
-          AND (:pattern IS NULL OR content LIKE :pattern ESCAPE '\')
-        ORDER BY created_at DESC, origin_seq DESC, origin_device_id ASC, event_id ASC
+        SELECT clips.*,
+               media_blobs.mime_type AS media_mime_type,
+               media_blobs.encoded_bytes AS media_encoded_bytes,
+               media_blobs.pixel_width AS media_pixel_width,
+               media_blobs.pixel_height AS media_pixel_height
+        FROM clips
+        LEFT JOIN clip_media ON clip_media.event_id = clips.event_id
+        LEFT JOIN media_blobs ON media_blobs.content_hash = clip_media.content_hash
+        WHERE clips.deleted_at IS NULL
+          AND (:pattern IS NULL OR clips.content LIKE :pattern ESCAPE '\')
+        ORDER BY clips.created_at DESC, clips.origin_seq DESC, clips.origin_device_id ASC, clips.event_id ASC
         LIMIT :limit
         """,
     )
-    fun observeSearch(pattern: String?, limit: Int): Flow<List<ClipEventEntity>>
+    fun observeSearch(pattern: String?, limit: Int): Flow<List<ClipEventWithMediaRow>>
 
     @Query(
         """
@@ -168,6 +180,18 @@ interface ClipEventDao {
     @Query("SELECT * FROM clips ORDER BY origin_device_id, origin_seq")
     suspend fun exportAll(): List<ClipEventEntity>
 }
+
+/**
+ * One history row joined with its blob metadata. The media columns are null for text
+ * rows and for image rows whose blob index is gone — the pills simply stay hidden.
+ */
+data class ClipEventWithMediaRow(
+    @Embedded val event: ClipEventEntity,
+    @ColumnInfo(name = "media_mime_type") val mimeType: String?,
+    @ColumnInfo(name = "media_encoded_bytes") val encodedBytes: Int?,
+    @ColumnInfo(name = "media_pixel_width") val pixelWidth: Int?,
+    @ColumnInfo(name = "media_pixel_height") val pixelHeight: Int?,
+)
 
 /** A pending outbox row joined with the clip it must announce; a terminal clip announces `unavailable`. */
 data class OutboxBatchRow(

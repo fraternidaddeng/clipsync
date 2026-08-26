@@ -222,15 +222,33 @@
                                                    Foreground="{StaticResource CsText4Brush}"
                                                    Text="{Binding CreatedAt}" />
                                     </Grid>
-                                    <!-- 正文随历史字号设置缩放（P0-1）；浮窗始终两行封顶（tokens §12.6） -->
-                                    <TextBlock MaxHeight="{DynamicResource CsFlyoutBodyMaxHeight}"
-                                               FontSize="{DynamicResource CsFlyoutBodyFontSize}"
-                                               Foreground="{StaticResource CsText2Brush}"
-                                               LineHeight="{DynamicResource CsFlyoutBodyLineHeight}"
-                                               LineStackingStrategy="BlockLineHeight"
-                                               Text="{Binding Preview, Mode=OneWay}"
-                                               TextTrimming="CharacterEllipsis"
-                                               TextWrapping="Wrap" />
+                                    <!-- 正文随历史字号设置缩放（P0-1）；浮窗始终两行封顶（tokens §12.6）。
+                                         图片条目：缩略图是内容主角（用户反馈 2026-08-26），正文位只留
+                                         人话「图片」，元数据不上浮窗——3 秒的一瞥面不摆机器参数 -->
+                                    <DockPanel>
+                                        <Border Width="36"
+                                                Height="36"
+                                                Margin="0,0,8,0"
+                                                VerticalAlignment="Center"
+                                                Background="{StaticResource CsSurfaceInBrush}"
+                                                BorderBrush="{StaticResource CsLineBrush}"
+                                                BorderThickness="1"
+                                                ClipToBounds="True"
+                                                CornerRadius="6"
+                                                DockPanel.Dock="Left"
+                                                Visibility="{Binding HasThumbnail, Converter={StaticResource BoolToVisibility}}">
+                                            <Image Source="{Binding ThumbnailImage}" Stretch="UniformToFill" />
+                                        </Border>
+                                        <TextBlock MaxHeight="{DynamicResource CsFlyoutBodyMaxHeight}"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="{DynamicResource CsFlyoutBodyFontSize}"
+                                                   Foreground="{StaticResource CsText2Brush}"
+                                                   LineHeight="{DynamicResource CsFlyoutBodyLineHeight}"
+                                                   LineStackingStrategy="BlockLineHeight"
+                                                   Text="{Binding Preview, Mode=OneWay}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   TextWrapping="Wrap" />
+                                    </DockPanel>
                                 </StackPanel>
                             </Button>
                         </DataTemplate>

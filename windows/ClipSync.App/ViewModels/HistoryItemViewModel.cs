@@ -51,10 +51,27 @@ public sealed record HistoryItemViewModel(
     public string MetaLine => IsSourceKnown ? $"{Source} · {CreatedAt}" : CreatedAt;
 
     /// <summary>
-    /// Card body line: the clip text, or for images a factual metadata line
-    /// ("image/png 128×64 · 2.3 KiB") — pixels never masquerade as prose.
+    /// Card body line: the clip text. Image rows have no prose — the thumbnail is
+    /// the content hero (user verdict 2026-08-26), so surfaces without pixels (the
+    /// tray flyout without a thumbnail) fall back to the human word 图片, never to
+    /// a technical metadata headline.
     /// </summary>
-    public string Preview => IsImage ? FormatImagePreview() : Text;
+    public string Preview => IsImage ? Strings.Format_Image : Text;
+
+    /// <summary>Encoding pill ("PNG"); empty when the mime type is unknown.</summary>
+    public string ImageFormatLabel => ImageMetadata.FormatLabel(MimeType);
+
+    /// <summary>Dimensions pill ("320×200"); empty when either dimension is unknown.</summary>
+    public string ImageDimensionsLabel => ImageMetadata.Dimensions(PixelWidth, PixelHeight) ?? string.Empty;
+
+    /// <summary>Byte-size pill ("96 B" / "2 KiB"); empty when the count is unknown.</summary>
+    public string ImageByteSizeLabel => ImageMetadata.ByteSize(EncodedBytes) ?? string.Empty;
+
+    public bool HasImageFormatLabel => IsImage && ImageFormatLabel.Length > 0;
+
+    public bool HasImageDimensionsLabel => IsImage && ImageDimensionsLabel.Length > 0;
+
+    public bool HasImageByteSizeLabel => IsImage && ImageByteSizeLabel.Length > 0;
 
     /// <summary>Badge text per format (ADR 0003 词汇); plain text carries no badge.</summary>
     public string FormatLabel => IsImage ? Strings.Format_Image : Format switch
@@ -139,20 +156,5 @@ public sealed record HistoryItemViewModel(
             thumbnailImage,
             isSourceKnown,
             entry.IsLocalOnly);
-    }
-
-    private string FormatImagePreview()
-    {
-        if (PixelWidth is null || PixelHeight is null)
-        {
-            return string.IsNullOrEmpty(MimeType) ? Strings.Format_Image : MimeType;
-        }
-
-        var size = EncodedBytes is null
-            ? "?"
-            : EncodedBytes.Value < 1024
-                ? $"{EncodedBytes.Value} B"
-                : $"{EncodedBytes.Value / 1024.0:0.#} KiB";
-        return $"{MimeType ?? Strings.Format_Image} {PixelWidth}×{PixelHeight} · {size}";
     }
 }

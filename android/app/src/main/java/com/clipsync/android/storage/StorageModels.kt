@@ -124,6 +124,12 @@ data class ClipHistoryEntry(
     val appliedAtMs: Long?,
     val kind: String = ClipKinds.TEXT,
     val localOnlyAtMs: Long? = null,
+    /**
+     * Blob metadata for image rows on the observed history stream (joined in by the DAO)
+     * so the list can annotate the thumbnail with quiet metadata pills; null for text
+     * rows, for one-shot lookups that skip the join, and when the blob index is gone.
+     */
+    val media: ClipMediaRef? = null,
 ) {
     val isDeleted: Boolean get() = deletedAtMs != null
     val isApplied: Boolean get() = appliedAtMs != null
@@ -200,6 +206,25 @@ internal fun ClipEventEntity.toHistoryEntry(): ClipHistoryEntry = ClipHistoryEnt
     kind = kind,
     localOnlyAtMs = localOnlyAtMs,
 )
+
+/** Joined history row: the media ref materialises only when the whole blob index row is present. */
+internal fun ClipEventWithMediaRow.toHistoryEntry(): ClipHistoryEntry {
+    val hasBlobIndex =
+        mimeType != null && encodedBytes != null && pixelWidth != null && pixelHeight != null
+    val media =
+        if (event.kind == ClipKinds.IMAGE && hasBlobIndex) {
+            ClipMediaRef(
+                contentHash = event.contentHash,
+                mimeType = checkNotNull(mimeType),
+                encodedBytes = checkNotNull(encodedBytes),
+                pixelWidth = checkNotNull(pixelWidth),
+                pixelHeight = checkNotNull(pixelHeight),
+            )
+        } else {
+            null
+        }
+    return event.toHistoryEntry().copy(media = media)
+}
 
 internal fun ClipEventEntity.toSyncable(media: ClipMediaRef? = null): SyncableClipEvent = SyncableClipEvent(
     eventId = eventId,

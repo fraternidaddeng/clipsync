@@ -6,6 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.clipsync.android.pairing.FakeKeyValueStore
 import com.clipsync.android.platform.clipboard.Sha256ContentHasher
 import com.clipsync.android.sync.SequenceRange
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -376,6 +377,23 @@ class ClipSyncRepositoryTest {
         repository.markImagesLocalOnly(listOf(deleted.eventId), NOW + 7)
         val row = database.clipEvents().getByEventId(deleted.eventId, includeDeleted = true)
         assertNull(row!!.localOnlyAtMs)
+    }
+
+    @Test
+    fun observedHistoryJoinsBlobMetadataForImageRows() = runBlocking {
+        val image = repository.storeLocalImageEvent(imageDraft("ab"), listOf(PEER))
+        val text = repository.storeLocalEvent(draft("plain text"), listOf(PEER))
+
+        val entries = repository.observeHistory().first().associateBy { it.eventId }
+        val media = entries.getValue(image.eventId).media
+        assertNotNull(media)
+        assertEquals("image/png", media!!.mimeType)
+        assertEquals(68, media.encodedBytes)
+        assertEquals(1, media.pixelWidth)
+        assertEquals(1, media.pixelHeight)
+        assertEquals("ab".repeat(32), media.contentHash)
+        // Text rows join nothing — the pills stay hidden.
+        assertNull(entries.getValue(text.eventId).media)
     }
 
     // ---- Sync projection ----

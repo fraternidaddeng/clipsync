@@ -31,6 +31,14 @@
                        FontFamily="{StaticResource CsMono}"
                        FontSize="11"
                        Foreground="{DynamicResource CsText4Brush}" />
+            <!-- 图片元数据是机器的声音（tokens §6）：安静的 Mono 注记行，
+                 图片本体才是内容主角（用户反馈 2026-08-26） -->
+            <TextBlock x:Name="ImageMetaText"
+                       Margin="0,2,0,0"
+                       FontFamily="{StaticResource CsMono}"
+                       FontSize="11"
+                       Foreground="{DynamicResource CsText4Brush}"
+                       Visibility="Collapsed" />
         </StackPanel>
         <Grid Grid.Row="2">
             <!-- 正文只读：剪贴板正文永不进标题栏/日志；图片显示缩略图，缺图时退回元数据行 -->
