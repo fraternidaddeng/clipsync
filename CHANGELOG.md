@@ -8,6 +8,13 @@
 
 ### 新增
 
+- [Windows] 特权直读 adb 协助（`docs/settings-roadmap.md` 通路页扩展；无静默 adb，全程显式同意）：配对成功后，通路页新增「特权直读」卡片，帮用户把内置特权宿主拉起来——Android 安全模型不允许应用自己开这条通道，只能从电脑侧执行一次启动命令。
+  - **显式同意闸门**：首次使用前必须先勾选授权（说明 adb 权限含义、`privileged_adb_consent` 持久化），未同意绝不调用 adb；随时可「撤销 adb 授权」。
+  - **自动探测 adb + 手机**：`AdbLocator` 依次在随包 platform-tools、`ANDROID_HOME`/SDK 常见路径、`PATH` 中查找 `adb.exe`（不静默下载安装），卡片如实显示 adb 位置或「未找到」；`PrivilegedHostAssistant` 解析 `adb devices -l`，区分就绪/未授权/离线/无设备。
+  - **一键「启动特权直读」**：手机已连且授权后，一键执行内置特权宿主 start.sh；配对完成时若已授予 adb 同意会自动探测手机。宿主未运行时提供再次启动入口（重启后特权通道需重来）。
+  - **首次 USB 调试 + adb RSA 指纹弹窗仍需在手机上手动确认**——文档明确说明，不代劳。
+- [Android] 特权直读路线卡接上「复制启动命令」（`CapabilityRoutes`）：特权通道未就绪时不再只显示状态，而是把内置特权宿主的确切 adb 启动命令一键复制到剪贴板（`PrivilegedHostStarter.adbCommand()`），并提示去哪执行（已连手机的电脑，或 Windows 端一键）。
+- [双端] 移除 Shizuku 品牌标识，统一为「特权直读 / 内置特权宿主」（不改功能，仅标识）：用户可见诊断错误码 `SHIZUKU_*` → `PRIV_HOST_*`；能力上报授权名 `shizuku_*` → `priv_host_*`；Android/Windows UI 文案、安装与验证文档、设计宪章与预览稿一律改称特权直读。内部枚举 `SHIZUKU_EVENT`（持久化于偏好键，改名会丢用户已验证状态）、真实第三方库符号（`dev.rikka.shizuku`）、`THIRD_PARTY_NOTICES` 法务署名与竞品事实性引用按原样保留并加注说明。
 - [Windows] 基础设置第一批（`docs/settings-roadmap.md` 的 Windows 半边，P0-1/P0-3/P0-5 + P1-7/P1-9/P1-15；外观手动覆盖当时暂缓，同日翻案后已落地——见下方外观条目）：
   - **历史字号**（偏好 · 显示，`ui_history_font_scale`，小/标准/大 = 0.9/1.0/1.15）：只缩放剪贴内容文字——历史预览正文、详情窗正文、托盘浮窗正文；组头、注记盒、元信息与按钮的纲领类型阶不动。历史区字号收敛为 `DynamicResource`，改动即全窗生效。
   - **预览行数**（偏好 · 显示，`ui_preview_lines`，2/4/6 行，默认 4）：历史列表每条的正文行数上限；行高显式化后截断永远落在整行边界，托盘浮窗保持两行封顶。
@@ -27,7 +34,7 @@
 - [Android] 完整同步栈：Room 存储（序号分配、接收向量、outbox 同事务）、pinned-TLS WebSocket 同步引擎、指数退避重连、`connectedDevice` 前台服务。
 - [Android] 三个无权限入口（分享面板、快捷磁贴、通知「复制」动作）与前台自动捕获上行。
 - [Android] 入站收件箱 + `auto_apply_remote` 自动写回 + 失败回退通知；回环抑制。
-- [Android] 三档后台读取后端代码落地：Shizuku 特权事件（UserService + `IClipboard` 反射适配）、ADB 日志 + 悬浮窗（AOSP/OneUI/MIUI-HyperOS/ColorOS 四族版本化解析器）、悬浮窗轮询（焦点控制器 + 不可触摸不变量）。**真实 ROM 可用性未验证，矩阵全 `NOT_TESTED`。**
+- [Android] 三档后台读取后端代码落地：特权直读事件（内置特权宿主 UserService + `IClipboard` 反射适配）、ADB 日志 + 悬浮窗（AOSP/OneUI/MIUI-HyperOS/ColorOS 四族版本化解析器）、悬浮窗轮询（焦点控制器 + 不可触摸不变量）。**真实 ROM 可用性未验证，矩阵全 `NOT_TESTED`。**
 - [Android] 通路页能力向导与真实探针（读/写能力分离探测）、对端可达性周期重探、首次运行引导、全套空状态、`POST_NOTIFICATIONS` 引导与关闭状态行。
 - [Android] 开机恢复链（默认关，含诚实恢复通知）、保留期清理、用户可调大小上限。
 - [Windows] 托盘四态图标 + 440px 托盘浮窗（最近剪贴 + 暂停开关）、托盘诊断查看器 + 认证锁定通知。
