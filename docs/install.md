@@ -182,5 +182,13 @@ keytool -genkeypair -v -keystore clipsync-release.jks -storetype PKCS12 `
 ```
 
   然后设置四个环境变量并打包：`CLIPSYNC_ANDROID_KEYSTORE`（密钥库路径）、`CLIPSYNC_ANDROID_KEYSTORE_PASSWORD`、`CLIPSYNC_ANDROID_KEY_ALIAS`、`CLIPSYNC_ANDROID_KEY_PASSWORD`，执行 `pwsh ./scripts/package-android.ps1` → `dist/ClipSync-android.apk`。
+- **CI 自动签名（GitHub Actions）**：`release.yml` 从仓库 Secrets 读取签名材料，密钥库以 base64 文本注入（CI 里解码回 `.jks`）。先把密钥库转成 base64（PowerShell）：
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes('clipsync-release.jks')) |
+    Set-Content clipsync-release.jks.b64 -NoNewline
+```
+
+  然后在 GitHub 仓库 **Settings → Secrets and variables → Actions → New repository secret** 依次添加四个 Secret（名称须逐字一致）：`CLIPSYNC_ANDROID_KEYSTORE_BASE64`（粘贴 `.b64` 文件的全部内容）、`CLIPSYNC_ANDROID_KEYSTORE_PASSWORD`（密钥库密码）、`CLIPSYNC_ANDROID_KEY_ALIAS`（按上述命令生成即为 `clipsync`）、`CLIPSYNC_ANDROID_KEY_PASSWORD`（PKCS12 密钥库下与库密码相同）。配置完成后重新打 tag，或在 Actions 页对既有 Release 运行点「Re-run all jobs」，即产出已签名 APK；未配置时工作流如实产出不可安装的 `ClipSync-android-unsigned.apk` 并在发布说明中明示。
 - **版本号与 tag 对齐（发布打包）**：打 tag 触发的 `release.yml` 会把 tag 版本（去掉 `v` 前缀）注入两端产物——Windows 经 `package-windows.ps1 -Version`，Android 经 `package-android.ps1 -Version`。Android 侧 `versionName` 与 tag 一致（如 `0.1.0-rc.1`），`versionCode` 按 `major×1000000 + minor×10000 + patch×100 + 尾数`（rc 取序号 N、正式版取 99）推导：`0.1.0-rc.1` → 10001、`0.1.0` → 10099——rc → 正式版 → 后续版本的升级顺序因此单调递增（Android 拒绝 versionCode 降级）。tag 不是 `vX.Y.Z` / `vX.Y.Z-rc.N` 形态时打包直接失败；本地打包不带 `-Version` 则沿用 `android/app/build.gradle.kts` 里的开发默认值。
 - **密钥库与密码绝不入库**：`.gitignore` 已拦截 `*.jks`/`*.keystore`；签名配置只从环境变量读取。丢失密钥库将无法对老用户发布升级包，请妥善备份。
