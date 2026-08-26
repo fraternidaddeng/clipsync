@@ -171,3 +171,9 @@
 - **出厂默认核实**：Android `SyncSettingsStore.imageSyncEnabled`（`sync.image_sync`）默认 `false`；Windows 偏好页 `image_sync` 设置读取为 fail-closed（未存值/坏值一律解析为关），`MainViewModel.imageSyncEnabled` 字段默认亦为关。**QA 机上 Windows 显示「开」是该机此前手动开启后的持久化状态**（该机历史里已有图片缩略图即为旁证），不是出厂默认——两端出厂默认本就一致为关。
 - **真正修复的缺口（Windows 库层 fail-open 默认）**：`SyncSessionOptions.ImageSyncEnabled` 与 `PeerSyncHost` 的未接线兜底闸原为 `() => true`——生产 App 有接线所以未暴露，但任何忘记接线的宿主（如新增的承载进程）会静默参与 image_clip_v2 收发图片，与「默认关」相悖。现双双改为 `() => false`（未接线宿主表现为纯 v1 文本对端）；测试套件在 `PeerPair.DefaultSessionOptions` 显式开启以继续覆盖 v2 图片路径。
 - **测试钉死**：Windows 新增 `ImageSyncGateTests.ImageSyncGateDefaultsOffMatchingTheAndroidDefault`（默认闸关、v2 路由下 `ImageClipEnabled` 仍为假）；Android 新增 `ImageSyncDefaultAlignmentTest`（`imageSyncEnabled` 默认关且可往返、`auto_apply_images` 独立于文本闸默认关、坏持久化值回落为关）。图片同步的**双向真机验收**仍未做（见第 3 节），本更新只闭「默认值不一致」一项。
+
+## 签核（2026-08-26）：用户确认真机验证已全部完成
+
+- 2026-08-26，仓库所有者确认：**真机验证已全部完成**（覆盖本记录「未做（若要出 RC 还需）」清单与 `docs/manual-qa-checklist.md` 的剩余项）。据此，2026-08-25 的「本轮不能出 RC」判定**不再构成发布阻断**，RC 门槛视为已过。
+- 诚实注记：本签核以用户确认为准；逐项的结构化结果（操作者/日期/构建 commit/原始计数/P95 样本）尚未回填到本文件。用户提供明细后，应按本记录既有表格样式新增带日期的一节补录；在此之前，本节即为唯一签核凭据，`docs/device-validation-matrix.md` 的槽位单元格按「未测不得改绿」字面纪律维持原状、待明细回填。
+- 首轮「本轮已知限制」1–6 此前已全部在 main 修复并闭环（见上方「修复附注」与三则更新）。发布收尾（把 CHANGELOG Unreleased 归入 v0.1.0、打 tag 触发 `release.yml`、定稿发布说明）为剩余步骤。

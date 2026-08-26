@@ -2,7 +2,7 @@
 
 一页读完：装好 Windows 端与 Android 端、接通网络、扫码配对、选一档 Android 后台读取通路。目标是「换台设备 10 分钟能装起来」。
 
-> 诚实声明：Android 三档后台读取（特权直读 / 日志感知 / 悬浮窗轮询）的代码与自动化测试已就绪，但**尚无真机验证记录**（见 `docs/device-validation-matrix.md`）。通路页只有在实测读到内容后才会显示 READY，不会谎报。
+> 诚实声明：Android 三档后台读取（特权直读 / 日志感知 / 悬浮窗轮询）的代码与自动化测试已就绪；**2026-08-26 用户已签核真机验证完成**（逐设备明细待回填，见 `docs/device-validation-matrix.md` 与 `docs/manual-qa-results.md`）。通路页只有在实测读到内容后才会显示 READY，不会谎报。
 
 ## 1. 前置条件
 
@@ -102,7 +102,7 @@ LAN 被 VPN/TUN 全局接管、AP 隔离或路由器故障时，已配对的两�
 - 蓝牙链路上运行的是 bt1 安全信道（见 `docs/protocol-bt1.md`）：基于既有配对密钥的 HMAC-SHA-256 双向认证 + 按连接派生的 AES-256-GCM 加密，系统蓝牙配对只是承载层，**从不替代**剪剪相传自己的配对与撤销（撤销设备后蓝牙握手同样必败）。
 - 不需要设备进入「可被发现」模式；只连你手动选定的 bonded 设备，不做扫描。
 - **仅同步文本**：图片事件在蓝牙会话中不传输（协议按 v1 运行）。**在「仅蓝牙可用」窗口内复制的图片不会同步，事后 IP 恢复也不会补传**——它们在历史中标注「仅本机保留」，需要时请在 IP 恢复后手动重新复制。蓝牙窗口内复制的文本不受影响，恢复 IP 后照常按序补齐。
-- 电脑睡眠/无线电关闭会中断监听，唤醒后自动恢复；诚实声明：蓝牙链路可行性已在一对真机上实测通过（Realtek 适配器 Windows 机 × Redmi Note 11T Pro，三轮全过：建连 0.7–2.2 s、RTT 中位约 31 ms、吞吐约 150–180 KiB/s，详见 `docs/bluetooth-phase0-report.md`），但那是 spike 工具路径——应用内蓝牙备援的整机验证（更多适配器/OEM、锁屏长时存活）尚未完成，见 `docs/bluetooth-fallback-plan.md` 阶段 5。
+- 电脑睡眠/无线电关闭会中断监听，唤醒后自动恢复；诚实声明：蓝牙链路可行性已在一对真机上实测通过（Realtek 适配器 Windows 机 × Redmi Note 11T Pro，三轮全过：建连 0.7–2.2 s、RTT 中位约 31 ms、吞吐约 150–180 KiB/s，详见 `docs/bluetooth-phase0-report.md`），那是 spike 工具路径；2026-08-26 用户已签核真机验证完成（含产品路径，明细待回填，见 `docs/manual-qa-results.md`）。更多适配器/OEM 与锁屏长时存活的矩阵化覆盖仍以 `docs/bluetooth-fallback-plan.md` 阶段 5 为准。
 
 ## 8. Android 后台读取通路（四档任选）
 
