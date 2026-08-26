@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ClipSync 历史列表 · 宪章预览（c513f78 信息架构归位）</title>
+<style>
+/* ============================================================
+   ClipSync history-list charter mockup — fully self-contained.
+   Every colour below is copied verbatim from
+   windows/ClipSync.App/Resources/CharterTokens.xaml (day) and
+   CharterTokensNight.xaml (night). No external fonts, images
+   or scripts; double-click the file and it renders offline.
+   Layout mirrors MainWindow.xaml after commit c513f78:
+   56px left slot (type glyph / thumbnail hero), body line,
+   annotation pills, mono metadata pills, charter scrollbar.
+   ============================================================ */
+
+:root {
+  --font-sans: "Plus Jakarta Sans", "Noto Sans SC", "Noto Sans CJK SC",
+               "Segoe UI", "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif;
+  --font-serif: "Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC",
+                SimSun, Georgia, serif;
+  --font-mono: "JetBrains Mono", "Cascadia Mono", Consolas, "Noto Sans Mono", monospace;
+}
+
+/* ---------- Day tokens (CharterTokens.xaml) ---------- */
+.theme-day {
+  --bg-grad: linear-gradient(178deg, #E9EFF6 0%, #E2E9F2 42%, #DAE3EE 100%); /* CsBgBrush */
+  --sf-in:  #DDE5EF;   /* CsSurfaceIn  z-1 sunken: thumbnail slots */
+  --sf-3:   #E7EDF5;   /* CsSurface3   chips / annotation boxes    */
+  --sf:     #F6F9FC;   /* CsSurface    z1 cards                    */
+  --sf-up:  #FDFEFF;   /* CsSurfaceUp  z2 hover / selected fill    */
+  --line:   #CFD9E6;   /* CsLine  1px container stroke             */
+  --line-2: #BCC9D9;   /* CsLine2 stronger; scrollbar thumb rest   */
+  --t1: #1C2733;       /* CsText1 titles                           */
+  --t2: #3D4A59;       /* CsText2 body                             */
+  --t3: #6B7A8B;       /* CsText3 captions                         */
+  --t4: #9AA7B6;       /* CsText4 timestamps / meta                */
+  --flow:      #215F8F;              /* CsFlow                     */
+  --flow-bg:   rgba(33,95,143,.10);  /* CsFlowBg  #1A215F8F        */
+  --flow-line: rgba(33,95,143,.24);  /* CsFlowLine #3D215F8F       */
+  --dev1: #4F8288; --dev1-bg: rgba(79,130,136,.11);  --dev1-line: rgba(79,130,136,.24);
+  --dev2: #4A7A96; --dev2-bg: rgba(74,122,150,.11);  --dev2-line: rgba(74,122,150,.24);
+  --dev3: #6A6F9E; --dev3-bg: rgba(106,111,158,.11); --dev3-line: rgba(106,111,158,.24);
+  --dev4: #8A6194; --dev4-bg: rgba(138,97,148,.11);  --dev4-line: rgba(138,97,148,.24);
+  --dev5: #93607A; --dev5-bg: rgba(147,96,122,.11);  --dev5-line: rgba(147,96,122,.24);
+  --sh-1: 0 2px 7px rgba(35,52,72,.13);   /* CsSh1Effect, CsShadow #233448 */
+  --sh-2: 0 5px 18px rgba(35,52,72,.20);  /* CsSh2Effect                   */
+  --edge: rgba(255,255,255,.90);          /* CsEdgeBrush top stop #E6FFFFFF */
+  --sf-grad: linear-gradient(180deg, rgba(255,255,255,.72) 0%, rgba(255,255,255,0) 62%); /* CsSurfaceGradBrush */
+}
+
+/* ---------- Night tokens (CharterTokensNight.xaml) ---------- */
+.theme-night {
+  --bg-grad: linear-gradient(178deg, #121922 0%, #0E141B 45%, #090D12 100%); /* CsBgBrush */
+  --sf-in:  #0F151C;
+  --sf-3:   #1F2833;
+  --sf:     #1B232E;
+  --sf-up:  #242E3B;   /* night depth = LIGHTER surface, never darker */
+  --line:   #2C3744;
+  --line-2: #3E4A59;
+  --t1: #E3E9F0;
+  --t2: #C0CAD6;
+  --t3: #8B98A8;
+  --t4: #5F6C7C;
+  --flow:      #6FA8D4;
+  --flow-bg:   rgba(111,168,212,.13);  /* #216FA8D4 */
+  --flow-line: rgba(111,168,212,.30);  /* #4D6FA8D4 */
+  --dev1: #81B5BC; --dev1-bg: rgba(129,181,188,.12); --dev1-line: rgba(129,181,188,.24);
+  --dev2: #81B2D0; --dev2-bg: rgba(129,178,208,.12); --dev2-line: rgba(129,178,208,.24);
+  --dev3: #A0A7D9; --dev3-bg: rgba(160,167,217,.12); --dev3-line: rgba(160,167,217,.24);
+  --dev4: #C499CF; --dev4-bg: rgba(196,153,207,.12); --dev4-line: rgba(196,153,207,.24);
+  --dev5: #CF98B3; --dev5-bg: rgba(207,152,179,.12); --dev5-line: rgba(207,152,179,.24);
+  --sh-1: 0 2px 9px rgba(0,0,0,.45);
+  --sh-2: 0 6px 24px rgba(0,0,0,.55);
+  --edge: rgba(255,255,255,.07);       /* night edge stop #12FFFFFF */
+  --sf-grad: linear-gradient(180deg, rgba(255,255,255,.055) 0%, rgba(255,255,255,0) 65%);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 28px 32px 40px;
+  font-family: var(--font-sans);
+  background: #EDF1F6;
+  color: #1C2733;
+}
+
+/* ---------- Page framing around the two panels ---------- */
+.page-head { max-width: 1520px; margin: 0 auto 20px; }
+.page-head h1 {
+  margin: 0 0 6px;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 600;
+  color: #1C2733;
+}
+.page-head p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #6B7A8B;
+}
+.page-head code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: #E2E9F2;
+  border: 1px solid #CFD9E6;
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
+.panels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: center;
+  align-items: flex-start;
+}
+.panel { width: 720px; max-width: 100%; }
+.panel-label {
+  margin: 0 0 8px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: #6B7A8B;
+}
+
+/* ---------- App-window frame (z0 background gradient) ---------- */
+.frame {
+  background: var(--bg-grad);
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  box-shadow: var(--sh-2);
+  padding: 22px 24px 24px;
+  overflow: hidden;
+}
+
+/* Page title: serif 17 semibold (MainWindow PageTitle / PageSub) */
+.page-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--t1);
+}
+.page-sub {
+  margin: 2px 0 16px;
+  font-size: 11px;
+  color: var(--t3);
+}
+
+/* ---------- History list + charter scrollbar ----------
+   CharterControls.xaml app-level ScrollBar: 10px gutter,
+   transparent track, no arrow buttons, thumb = CsLine2 with
+   2px margin + rounded ends; hover CsText4, drag CsText3. */
+.list {
+  height: 524px;
+  overflow-y: scroll;
+  padding-right: 6px;
+}
+/* Firefox-only fallback: on Blink the standard properties would
+   disable the ::-webkit-scrollbar styling below entirely */
+@supports (-moz-appearance: none) {
+  .list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-2) transparent;
+  }
+}
+.list::-webkit-scrollbar { width: 10px; background: transparent; }
+.list::-webkit-scrollbar-track,
+.list::-webkit-scrollbar-track-piece,
+.list::-webkit-scrollbar-corner { background: transparent; }
+/* no endpoint arrows — cover Chrome fluent single/double button variants too */
+.list::-webkit-scrollbar-button,
+.list::-webkit-scrollbar-button:single-button,
+.list::-webkit-scrollbar-button:double-button,
+.list::-webkit-scrollbar-button:vertical:increment,
+.list::-webkit-scrollbar-button:vertical:decrement {
+  display: none; width: 0; height: 0; background: none;
+}
+.list::-webkit-scrollbar-thumb {
+  background-color: var(--line-2);
+  border: 2px solid transparent;   /* thumb margin 2 inside the 10px rail */
+  background-clip: padding-box;
+  border-radius: 5px;
+}
+.list::-webkit-scrollbar-thumb:hover  { background-color: var(--t4); }
+.list::-webkit-scrollbar-thumb:active { background-color: var(--t3); }
+
+/* ---------- History card: tokens §8 three nested layers ----------
+   outer sh-1 shadow + sf fill · middle 1px border + sf-grad light ·
+   inner 2px top edge highlight. Selected = flow-blue outline + sf-up. */
+.card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  margin: 0 0 8px;
+  padding: 10px 14px;
+  background: var(--sf);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: var(--sh-1);
+}
+.card::before {                     /* sf-grad top light */
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 9px;
+  background: var(--sf-grad);
+  pointer-events: none;
+}
+.card::after {                      /* 2px edge highlight inside the border */
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  border-radius: 9px 9px 0 0;
+  background: linear-gradient(180deg, var(--edge), rgba(255,255,255,0));
+  pointer-events: none;
+}
+.card > * { position: relative; z-index: 1; }
+.card.selected {
+  background: var(--sf-up);
+  border-color: var(--flow);
+}
+
+/* ---------- Unified 56px left slot ---------- */
+.slot {
+  flex: none;
+  width: 56px; height: 56px;
+  margin-right: 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+/* image rows: sunken thumbnail slot (sf-in + 1px line) */
+.slot.thumb {
+  background: var(--sf-in);
+  border: 1px solid var(--line);
+}
+.slot.thumb svg { width: 100%; height: 100%; display: block; }
+/* text rows: no box — the empty sunken frame read as "a missing
+   picture", so the slot now carries a frameless type glyph (c513f78) */
+.slot.glyph { background: transparent; border: none; }
+.slot.glyph svg { width: 22px; height: 22px; }
+.slot.glyph path {
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.glyph-plain path      { stroke: var(--t3); }   /* accent 0 = quiet grey  */
+.glyph-link path       { stroke: var(--dev2); } /* 链接 = 水蓝 dev-2      */
+.glyph-email path      { stroke: var(--dev1); } /* 账号 = 青灰 dev-1      */
+.glyph-otp path        { stroke: var(--dev3); } /* 验证码 = 蓝紫 dev-3    */
+.glyph-credential path { stroke: var(--dev4); } /* 密码 = 藕紫 dev-4      */
+
+.main { flex: 1; min-width: 0; align-self: center; }
+
+/* body line: CsHistoryBodyFontSize 13 / line 18, CsText2.
+   Image rows have NO body line — the thumbnail is the hero. */
+.body {
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--t2);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+/* ---------- Annotation pill rows ---------- */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 6px;
+}
+.pill {
+  font-size: 9px;
+  line-height: 14px;
+  padding: 1px 7px;
+  margin-right: 7px;
+  border-radius: 6px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.pill.dev1 { color: var(--dev1); background: var(--dev1-bg); border-color: var(--dev1-line); }
+.pill.dev2 { color: var(--dev2); background: var(--dev2-bg); border-color: var(--dev2-line); }
+.pill.dev3 { color: var(--dev3); background: var(--dev3-bg); border-color: var(--dev3-line); }
+.pill.dev4 { color: var(--dev4); background: var(--dev4-bg); border-color: var(--dev4-line); }
+.pill.dev5 { color: var(--dev5); background: var(--dev5-bg); border-color: var(--dev5-line); }
+/* neutral grey annotation box: 仅本机保留 / unknown source — a fact, not an alarm */
+.pill.grey { color: var(--t3); background: var(--sf-3); border-color: var(--line-2); }
+/* machine-voice metadata pills (tokens §6): mono, quiet grey */
+.pill.mono { font-family: var(--font-mono); color: var(--t3); background: var(--sf-3); border-color: var(--line-2); }
+
+/* meta line: mono 10.5, CsText4 — "source · time" */
+.meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--t4);
+  white-space: nowrap;
+}
+
+/* capture mode: ?theme=day / ?theme=night renders one panel only
+   (used to regenerate the PNGs next to this file) */
+html[data-capture] .page-head, html[data-capture] .panel-label { display: none; }
+html[data-capture] body { padding: 24px; }
+html[data-capture] .panels { gap: 0; }
+html[data-capture="day"]   .panel.night { display: none; }
+html[data-capture="night"] .panel.day   { display: none; }
+html[data-capture="day"]   body { background: #DAE3EE; }
+html[data-capture="night"] body { background: #090D12; }
+</style>
+<script>
+  (function () {
+    var t = new URLSearchParams(location.search).get("theme");
+    if (t === "day" || t === "night") document.documentElement.dataset.capture = t;
+  })();
+</script>
+</head>
+<body>
+
+<header class="page-head">
+  <h1>ClipSync 历史列表 · 宪章预览</h1>
+  <p>
+    对应 <code>main</code> 提交 <code>c513f78</code>（历史列表信息架构归位 + 滚动条宪章化）。
+    图片行以缩略图为内容主角，编码 / 尺寸 / 字节数降为缩略图旁的安静 Mono 注记盒；
+    文本行左槽为无框类型字形（链接 / 账号 / 验证码 / 密码 / 普通文本），描边取该形态的邻近色。
+    所有色值逐一取自 <code>CharterTokens.xaml</code> 与 <code>CharterTokensNight.xaml</code>。
+    列表右侧为宪章滚动条（透明轨道、无端点箭头、圆角滑块）。
+    加 <code>?theme=day</code> 或 <code>?theme=night</code> 可单独渲染一个主题（用于重生成 PNG）。
+  </p>
+</header>
+
+<div class="panels">
+<!-- 面板正文由脚本按主题克隆生成，两份 DOM 完全一致，只换令牌 -->
+<template id="panel-content">
+  <h2 class="page-title">历史</h2>
+  <p class="page-sub">本机与已配对设备的剪贴记录 · 清理只发生在本机</p>
+
+  <div class="list">
+
+    <!-- ① 图片行（远端 · 选中态）：缩略图 = 内容主角；PNG / 1280×720 / 214.3 KiB
+         是机器的声音，降为 Mono 注记盒；选中描流动蓝 -->
+    <article class="card selected">
+      <div class="slot thumb">
+        <!-- 自绘示意缩略图（内联 SVG，禁用绿相 100–180）：灰蓝天空 + 赭石落日 + 蓝紫山脊 -->
+        <svg viewBox="0 0 128 128" preserveAspectRatio="xMidYMid slice" role="img" aria-label="缩略图">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#6C88AB"/><stop offset=".62" stop-color="#B9A6A0"/>
+              <stop offset="1" stop-color="#D9A15C"/>
+            </linearGradient>
+          </defs>
+          <rect width="128" height="128" fill="url(#sky)"/>
+          <circle cx="86" cy="70" r="16" fill="#E8C08A"/>
+          <path d="M0,128 L0,92 L34,58 L58,86 L78,68 L104,96 L128,80 L128,128 Z" fill="#3D4A66"/>
+          <path d="M0,128 L0,106 L26,84 L52,112 L80,92 L108,118 L128,104 L128,128 Z" fill="#28334A"/>
+        </svg>
+      </div>
+      <div class="main">
+        <div class="pills">
+          <span class="pill dev2">Pixel 8</span>
+          <span class="pill dev5">图片</span>
+          <span class="meta">微信 · 2026/8/26 10:24</span>
+        </div>
+        <div class="pills">
+          <span class="pill mono">PNG</span>
+          <span class="pill mono">1280×720</span>
+          <span class="pill mono">214.3 KiB</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- ② 图片行（本机 · 仅本机保留）：ADR 0005 §5 local_only 中性灰注记盒 -->
+    <article class="card">
+      <div class="slot thumb">
+        <svg viewBox="0 0 128 128" preserveAspectRatio="xMidYMid slice" role="img" aria-label="缩略图">
+          <rect width="128" height="128" fill="#37455C"/>
+          <rect x="26" y="26" width="76" height="76" rx="18" fill="#6FA8D4"/>
+          <path d="M52,42 h18 a6,6 0 0 1 6,6 v30 a6,6 0 0 1 -6,6 h-18 a6,6 0 0 1 -6,-6 v-30 a6,6 0 0 1 6,-6 z"
+                fill="none" stroke="#0C1116" stroke-width="5"/>
+          <path d="M64,42 v-6 h-22 v40 h8" fill="none" stroke="#0C1116" stroke-width="5"/>
+        </svg>
+      </div>
+      <div class="main">
+        <div class="pills">
+          <span class="pill dev5">图片</span>
+          <span class="pill grey">仅本机保留</span>
+          <span class="meta">截图工具 · 2026/8/26 09:58</span>
+        </div>
+        <div class="pills">
+          <span class="pill mono">PNG</span>
+          <span class="pill mono">32×32</span>
+          <span class="pill mono">96 B</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- ③ 链接行：左槽类型字形 = 链条（IconFormatLink），描边水蓝 dev-2 -->
+    <article class="card">
+      <div class="slot glyph glyph-link">
+        <svg viewBox="0 0 24 24" role="img" aria-label="链接">
+          <path d="M10,13 A5,5 0 0 0 17.54,13.54 L20.54,10.54 A5,5 0 0 0 13.47,3.47 L11.75,5.18 M14,11 A5,5 0 0 0 6.46,10.46 L3.46,13.46 A5,5 0 0 0 10.53,20.53 L12.24,18.82"/>
+        </svg>
+      </div>
+      <div class="main">
+        <p class="body">https://github.com/fraternidaddeng/clipsync/commit/c513f78 — 历史列表信息架构归位</p>
+        <div class="pills">
+          <span class="pill dev2">链接</span>
+          <span class="meta">Microsoft Edge · 2026/8/26 09:41</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- ④ 普通文本行（远端）：三行文字线（IconClipText），安静灰 text-3；
+         普通文本不加形态注记盒，来源设备用邻近色注记盒 -->
+    <article class="card">
+      <div class="slot glyph glyph-plain">
+        <svg viewBox="0 0 24 24" role="img" aria-label="文本">
+          <path d="M5,7 H19 M5,12 H16 M5,17 H12"/>
+        </svg>
+      </div>
+      <div class="main">
+        <p class="body">周三下午三点半在二号会议室对齐路线图，记得带上历史列表的用户反馈截图和 tokens 对照表。</p>
+        <div class="pills">
+          <span class="pill dev1">小米 14</span>
+          <span class="meta">微信 · 2026/8/26 09:12</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- ⑤ 验证码行：星号字形（IconFormatOtp），蓝紫 dev-3 -->
+    <article class="card">
+      <div class="slot glyph glyph-otp">
+        <svg viewBox="0 0 24 24" role="img" aria-label="验证码">
+          <path d="M12,6.5 V17.5 M7.2,9.25 L16.8,14.75 M16.8,9.25 L7.2,14.75"/>
+        </svg>
+      </div>
+      <div class="main">
+        <p class="body">【云上银行】验证码 834621，10 分钟内有效。请勿向任何人泄露。</p>
+        <div class="pills">
+          <span class="pill dev3">验证码</span>
+          <span class="meta">信息 · 2026/8/26 08:57</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- ⑥ 账号行：信封字形（IconFormatEmail），青灰 dev-1 -->
+    <article class="card">
+      <div class="slot glyph glyph-email">
+        <svg viewBox="0 0 24 24" role="img" aria-label="账号">
+          <path d="M5.5,5.5 H18.5 A1.5,1.5 0 0 1 20,7 V17 A1.5,1.5 0 0 1 18.5,18.5 H5.5 A1.5,1.5 0 0 1 4,17 V7 A1.5,1.5 0 0 1 5.5,5.5 Z M4.5,7.5 L12,13 L19.5,7.5"/>
+        </svg>
+      </div>
+      <div class="main">
+        <p class="body">dev-team@clipsync.example.com</p>
+        <div class="pills">
+          <span class="pill dev1">账号</span>
+          <span class="meta">Thunderbird · 2026/8/26 08:20</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- ⑦ 密码行：钥匙字形（IconFormatCredential），藕紫 dev-4 ——
+         它是待找回的事实，不是警报，全程无红 -->
+    <article class="card">
+      <div class="slot glyph glyph-credential">
+        <svg viewBox="0 0 24 24" role="img" aria-label="密码">
+          <path d="M10.5,12 H20 M16.5,12 V15 M20,12 V15.5 M4,12 A3.25,3.25 0 1 0 10.5,12 A3.25,3.25 0 1 0 4,12"/>
+        </svg>
+      </div>
+      <div class="main">
+        <p class="body">ghp_9wXe…R2vQ</p>
+        <div class="pills">
+          <span class="pill dev4">密码</span>
+          <span class="meta">1Password · 昨天 22:31</span>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</template>
+
+<section class="panel day theme-day">
+  <p class="panel-label">日间 · CharterTokens.xaml</p>
+  <div class="frame"></div>
+</section>
+
+<section class="panel night theme-night">
+  <p class="panel-label">夜间 · CharterTokensNight.xaml</p>
+  <div class="frame"></div>
+</section>
+</div>
+
+<script>
+  // Both panels share one DOM definition so day and night can never drift apart.
+  (function () {
+    var tpl = document.getElementById("panel-content");
+    document.querySelectorAll(".panel .frame").forEach(function (frame) {
+      frame.appendChild(tpl.content.cloneNode(true));
+    });
+  })();
+</script>
+
+</body>
+</html>
