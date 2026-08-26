@@ -182,4 +182,5 @@ keytool -genkeypair -v -keystore clipsync-release.jks -storetype PKCS12 `
 ```
 
   然后设置四个环境变量并打包：`CLIPSYNC_ANDROID_KEYSTORE`（密钥库路径）、`CLIPSYNC_ANDROID_KEYSTORE_PASSWORD`、`CLIPSYNC_ANDROID_KEY_ALIAS`、`CLIPSYNC_ANDROID_KEY_PASSWORD`，执行 `pwsh ./scripts/package-android.ps1` → `dist/ClipSync-android.apk`。
+- **版本号与 tag 对齐（发布打包）**：打 tag 触发的 `release.yml` 会把 tag 版本（去掉 `v` 前缀）注入两端产物——Windows 经 `package-windows.ps1 -Version`，Android 经 `package-android.ps1 -Version`。Android 侧 `versionName` 与 tag 一致（如 `0.1.0-rc.1`），`versionCode` 按 `major×1000000 + minor×10000 + patch×100 + 尾数`（rc 取序号 N、正式版取 99）推导：`0.1.0-rc.1` → 10001、`0.1.0` → 10099——rc → 正式版 → 后续版本的升级顺序因此单调递增（Android 拒绝 versionCode 降级）。tag 不是 `vX.Y.Z` / `vX.Y.Z-rc.N` 形态时打包直接失败；本地打包不带 `-Version` 则沿用 `android/app/build.gradle.kts` 里的开发默认值。
 - **密钥库与密码绝不入库**：`.gitignore` 已拦截 `*.jks`/`*.keystore`；签名配置只从环境变量读取。丢失密钥库将无法对老用户发布升级包，请妥善备份。

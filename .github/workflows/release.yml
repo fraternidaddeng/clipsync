@@ -58,6 +58,12 @@ jobs:
       # keystore never enters the repository (scripts/package-android.ps1).
       # Without the secrets the job still succeeds but honestly produces
       # ClipSync-android-unsigned.apk, which cannot be installed.
+      #
+      # versionName/versionCode come from the tag (leading "v" stripped), so
+      # the APK can never ship the stale defaults hardcoded in
+      # android/app/build.gradle.kts. package-android.ps1 documents the
+      # versionCode scheme (rc tags sort below their final release) and fails
+      # the job if the tag is not vX.Y.Z or vX.Y.Z-rc.N.
       - name: Assemble release APK + SHA-256
         shell: pwsh
         env:
@@ -66,15 +72,16 @@ jobs:
           CLIPSYNC_ANDROID_KEY_ALIAS: ${{ secrets.CLIPSYNC_ANDROID_KEY_ALIAS }}
           CLIPSYNC_ANDROID_KEY_PASSWORD: ${{ secrets.CLIPSYNC_ANDROID_KEY_PASSWORD }}
         run: |
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
           if ($env:CLIPSYNC_ANDROID_KEYSTORE_BASE64) {
             $keystore = Join-Path $env:RUNNER_TEMP 'clipsync-release.jks'
             [IO.File]::WriteAllBytes($keystore, [Convert]::FromBase64String($env:CLIPSYNC_ANDROID_KEYSTORE_BASE64))
             $env:CLIPSYNC_ANDROID_KEYSTORE = $keystore
-            ./scripts/package-android.ps1
+            ./scripts/package-android.ps1 -Version $version
           }
           else {
             Write-Warning 'CLIPSYNC_ANDROID_* secrets are not configured; producing an UNSIGNED build-verification APK.'
-            ./scripts/package-android.ps1 -AllowUnsignedRelease
+            ./scripts/package-android.ps1 -Version $version -AllowUnsignedRelease
           }
 
       - uses: actions/upload-artifact@v7

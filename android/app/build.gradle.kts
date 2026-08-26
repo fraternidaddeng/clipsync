@@ -12,12 +12,27 @@ android {
     namespace = "com.clipsync.android"
     compileSdk = 35
 
+    // Release packaging stamps the app version from the git tag via the Gradle
+    // properties -PversionName / -PversionCode (scripts/package-android.ps1
+    // -Version, which .github/workflows/release.yml derives from the tag), so a
+    // tagged APK can never ship the stale development defaults below.
+    val versionNameOverride: String? =
+        project.findProperty("versionName")?.toString()?.takeIf { it.isNotBlank() }
+    val versionCodeOverride: Int? =
+        project
+            .findProperty("versionCode")
+            ?.toString()
+            ?.takeIf { it.isNotBlank() }
+            ?.let {
+                requireNotNull(it.toIntOrNull()) { "-PversionCode must be an integer, got: $it" }
+            }
+
     defaultConfig {
         applicationId = "com.clipsync.android"
         minSdk = 29
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = versionCodeOverride ?: 1
+        versionName = versionNameOverride ?: "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
