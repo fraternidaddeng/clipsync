@@ -61,6 +61,9 @@
 - [双端] 开关读屏文案补全（ui-gap-audit P3 可访问性）：Windows 全部 9 个 CharterToggle 与配对 QR 图补 `AutomationProperties.Name`（引既有标题串，i18n 零负担）；Android 偏好开关行与蓝牙备援卡改整行 `toggleable(Role.Switch)`——TalkBack 一站读出标题+描述+状态、触达区扩到整行，裸 Switch 转纯显示。
 - [Android] 计数文案复数化（i18n 语法收口）：7 个含计数的键（通知洪泛正文、向导剩余步数、预览行数、保留天数、保留条数、导出完成、清空完成）从 `<string>` 转 `<plurals>`，19 语按各自 CLDR 复数域补齐分支（俄语/波兰语全变格、阿拉伯语六分支含双数、西法意葡补百万级 many 构式）——英语「1 step(s) left」这类括号硬凑从此消失；`check-i18n-parity.py` 同步扩展复数键逐键与占位符校验。
 - [Android] Android 12+ 备份/迁移姿态显式化：manifest 补 `dataExtractionRules` 与 `fullBackupContent="false"`（云备份与设备间迁移全域排除，与 `allowBackup=false` 同一裁决——剪贴历史是敏感明文、Keystore 密钥本就不可迁移，半截恢复只会伪装已配对）。
+- [双端] 历史列表信息架构归位（2026-08-26 用户反馈：图片本身才是内容主角，元数据不得担任标题）：图片行的 `image/png 32×32 · 96 B` 从最大号正文降为缩略图下方/侧方的安静灰单色注记盒三枚（编码 / 尺寸 / 字节数，tokens §6 机器的声音；不可知的项直接缺省不显示「?」），缩略图即内容。Windows 文本行左侧的空灰占位盒取消——改为按 ADR 0003 渲染期格式的类型提示线条图标（链接/邮箱/验证码/凭据各有形，普通文本用文字页图标），描边随格式邻近色；文本预览保持正文主导。Android 图片卡为缩略图补齐同一套元数据注记盒（Room 历史流 LEFT JOIN blob 索引带出 mime/尺寸/字节，索引缺失时注记盒整体隐藏）；文本卡本就无占位盒无需改动。「图片」「仅本机保留」徽章、设备邻近色、行高与字号档位全部不动。
+- [双端] 同类问题巡检（同一反模式：技术元数据置于人类内容之上）：Windows 详情窗——图片可解码时元数据挪到时间行下的单色注记行（`image/png · 320×200 · 2 KiB`），正文不再以元数据充当内容、不可解码时正文如实「无预览」；Windows 托盘浮窗——图片条目补 36px 缩略图 + 「图片」正文，不再以元数据串充当预览。配对、通知、通路/健康页两端巡检未见同类问题（Android 通知无正文是既有隐私契约）。历史字号默认档双端核实本就是标准 1.0，无需回调。
+- [Windows] ScrollViewer 滚动条宪章化：全应用隐式 `ScrollBar` 样式落 `CharterControls.xaml`——透明轨道、去箭头按钮、10px 圆角拇指用 `CsLine2Brush`（悬停 `CsText4Brush`、拖动 `CsText3Brush`，全部 DynamicResource 随日/夜主题即时换色），替换系统默认的通用灰。Android LazyColumn 本就不渲染系统滚动条，无需处理。
 
 ### 修复
 
