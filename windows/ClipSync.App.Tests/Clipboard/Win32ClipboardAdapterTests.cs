@@ -29,9 +29,12 @@ public sealed class Win32ClipboardAdapterTests
         var window = new FakeMessageWindow { BlockFirstStart = true };
         using var adapter = CreateAdapter(window, new FakeDataAccess());
 
-        var firstStart = Task.Run(adapter.Start);
-        Assert.True(window.StartEntered.Wait(TimeSpan.FromSeconds(5)));
-        var secondStart = Task.Run(adapter.Start);
+        // Dedicated threads: under xUnit parallelism the shared thread pool can be
+        // starved, so a queued Task.Run may not enter Start() before any small
+        // timeout elapses (observed as a CI-only failure on a docs-only commit).
+        var firstStart = StartOnDedicatedThread(adapter);
+        Assert.True(window.StartEntered.Wait(TimeSpan.FromSeconds(30)));
+        var secondStart = StartOnDedicatedThread(adapter);
         window.ContinueStart.Set();
         await Task.WhenAll(firstStart, secondStart);
 
@@ -206,6 +209,13 @@ public sealed class Win32ClipboardAdapterTests
         FakeDataAccess dataAccess) =>
         new(window, dataAccess, new FixedTimeProvider(CapturedAt));
 
+    private static Task StartOnDedicatedThread(Win32ClipboardAdapter adapter) =>
+        Task.Factory.StartNew(
+            adapter.Start,
+            CancellationToken.None,
+            TaskCreationOptions.LongRunning,
+            TaskScheduler.Default);
+
     private sealed class FakeMessageWindow : IClipboardMessageWindow
     {
         public event EventHandler? ClipboardUpdated;
@@ -230,7 +240,7 @@ public sealed class Win32ClipboardAdapterTests
             StartEntered.Set();
             if (BlockFirstStart && StartCount == 1)
             {
-                Assert.True(ContinueStart.Wait(TimeSpan.FromSeconds(5)));
+                Assert.True(ContinueStart.Wait(TimeSpan.FromSeconds(30)));
             }
         }
 
