@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.clipsync.android.R
 import com.clipsync.android.i18n.string
 import com.clipsync.android.platform.clipboard.CapabilityState
+import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncType
 import com.clipsync.android.ui.theme.charterCard
@@ -42,6 +43,8 @@ fun CapabilityWizard(
     routes: List<ReadRouteUi>,
     onRouteAction: (ReadRouteUi, RouteActionId) -> Unit,
     modifier: Modifier = Modifier,
+    /** The route whose device-verified read test is in flight; its card states busy. */
+    readTestMode: ClipboardReadMode? = null,
 ) {
     val c = clipSyncColors
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -58,7 +61,11 @@ fun CapabilityWizard(
             modifier = Modifier.padding(start = 2.dp, bottom = 2.dp),
         )
         routes.forEach { route ->
-            RouteCard(route = route, onAction = { action -> onRouteAction(route, action) })
+            RouteCard(
+                route = route,
+                readTestBusy = readTestMode == route.mode,
+                onAction = { action -> onRouteAction(route, action) },
+            )
         }
     }
 }
@@ -66,6 +73,7 @@ fun CapabilityWizard(
 @Composable
 private fun RouteCard(
     route: ReadRouteUi,
+    readTestBusy: Boolean,
     onAction: (RouteActionId) -> Unit,
 ) {
     val c = clipSyncColors
@@ -130,6 +138,15 @@ private fun RouteCard(
             }
         }
         route.errorCode?.let { code ->
+            // The closed 特权直读 code set gets a one-line human hint; the stable
+            // machine code stays visible below it as the anchor for reports.
+            PrivHostErrorHints.hintFor(code)?.let { hint ->
+                Text(
+                    text = hint.string(),
+                    style = ClipSyncType.caption,
+                    color = c.t3,
+                )
+            }
             Text(
                 text = code,
                 style = ClipSyncType.meta,
@@ -144,9 +161,17 @@ private fun RouteCard(
             )
         }
         route.readTestAction?.let { action ->
+            // While the round-trip runs the button states so on a quiet face and
+            // absorbs taps — the test is single-flight, a re-tap would not help.
             RouteActionButton(
-                label = routeActionLabel(action).string(),
+                label =
+                    if (readTestBusy) {
+                        stringResource(R.string.conduit_testing)
+                    } else {
+                        routeActionLabel(action).string()
+                    },
                 primary = true,
+                busy = readTestBusy,
                 onClick = { onAction(action) },
             )
         }
@@ -158,17 +183,21 @@ private fun RouteActionButton(
     label: String,
     primary: Boolean,
     onClick: () -> Unit,
+    busy: Boolean = false,
 ) {
     val c = clipSyncColors
     val shape = CharterShapes.control
     val surface =
-        if (primary) {
-            Modifier
-                .background(c.flow)
-        } else {
-            Modifier
-                .background(c.flowBg)
-                .border(1.dp, c.flowLn, shape)
+        when {
+            busy ->
+                Modifier
+                    .background(c.sf3)
+                    .border(1.dp, c.ln2, shape)
+            primary -> Modifier.background(c.flow)
+            else ->
+                Modifier
+                    .background(c.flowBg)
+                    .border(1.dp, c.flowLn, shape)
         }
     Box(
         modifier =
@@ -176,7 +205,7 @@ private fun RouteActionButton(
                 .fillMaxWidth()
                 .clip(shape)
                 .then(surface)
-                .clickable(onClick = onClick)
+                .clickable(enabled = !busy, onClick = onClick)
                 .padding(vertical = 10.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -184,7 +213,12 @@ private fun RouteActionButton(
             text = label,
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
-            color = if (primary) c.onFlow else c.flow,
+            color =
+                when {
+                    busy -> c.t3
+                    primary -> c.onFlow
+                    else -> c.flow
+                },
         )
     }
 }

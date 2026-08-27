@@ -105,6 +105,12 @@ class HealthViewModel(
     private var refreshJob: Job? = null
     private var refreshQueued = false
 
+    // Busy facts for the three probe/test actions: a tap must answer immediately
+    // (charter: feedback within 100ms), so each in-flight pass states itself.
+    private var probing = false
+    private var writeTestRunning = false
+    private var readTestMode: ClipboardReadMode? = null
+
     init {
         if (syncHealthSource != null) {
             viewModelScope.launch {
@@ -145,10 +151,19 @@ class HealthViewModel(
         }
         refreshJob =
             viewModelScope.launch {
-                do {
-                    refreshQueued = false
-                    refreshOnce()
-                } while (refreshQueued)
+                // 重新探测 states its own progress: busy from before the first
+                // probe until after the last coalesced pass, then back to fact.
+                probing = true
+                publish(pairingStore.peer())
+                try {
+                    do {
+                        refreshQueued = false
+                        refreshOnce()
+                    } while (refreshQueued)
+                } finally {
+                    probing = false
+                    publish(pairingStore.peer())
+                }
             }
     }
 
@@ -208,48 +223,63 @@ class HealthViewModel(
      */
     fun runWriteTest() {
         val wiring = capability ?: return
+        // Single-flight: while a test runs, the action shows busy and re-taps
+        // are absorbed instead of stacking clipboard round-trips.
+        if (writeTestRunning) {
+            return
+        }
         viewModelScope.launch {
-            val token = "clipsync-test-" + UUID.randomUUID().toString().take(8)
-            val (outcome, readBack) =
-                withContext(probeDispatcher) {
-                    val written =
-                        wiring.writeCoordinator.writeText(
-                            text = token,
-                            originEventId = "capability-write-test-${wiring.nowMs()}",
-                        )
-                    val back = wiring.foregroundBackend.readText()
-                    wiring.clearClipboard()
-                    written to back
-                }
-            val verified =
-                outcome.result is ClipboardWriteResult.Success &&
-                    (readBack as? ClipboardReadResult.Success)?.text == token
-            val errorCode =
-                (outcome.result as? ClipboardWriteResult.Failure)?.errorCode
-                    ?: ERROR_WRITE_UNVERIFIED.takeUnless { verified }
+            writeTestRunning = true
+            publish(pairingStore.peer())
+            try {
+                runWriteTestOnce(wiring)
+            } finally {
+                writeTestRunning = false
+                publish(pairingStore.peer())
+            }
+        }
+    }
+
+    private suspend fun runWriteTestOnce(wiring: CapabilityWiring) {
+        val token = "clipsync-test-" + UUID.randomUUID().toString().take(8)
+        val (outcome, readBack) =
             withContext(probeDispatcher) {
-                wiring.capabilityStore.recordWriteTest(
-                    state = if (verified) CapabilityState.READY else CapabilityState.UNAVAILABLE,
-                    errorCode = errorCode,
-                    atMs = wiring.nowMs(),
+                val written =
+                    wiring.writeCoordinator.writeText(
+                        text = token,
+                        originEventId = "capability-write-test-${wiring.nowMs()}",
+                    )
+                val back = wiring.foregroundBackend.readText()
+                wiring.clearClipboard()
+                written to back
+            }
+        val verified =
+            outcome.result is ClipboardWriteResult.Success &&
+                (readBack as? ClipboardReadResult.Success)?.text == token
+        val errorCode =
+            (outcome.result as? ClipboardWriteResult.Failure)?.errorCode
+                ?: ERROR_WRITE_UNVERIFIED.takeUnless { verified }
+        withContext(probeDispatcher) {
+            wiring.capabilityStore.recordWriteTest(
+                state = if (verified) CapabilityState.READY else CapabilityState.UNAVAILABLE,
+                errorCode = errorCode,
+                atMs = wiring.nowMs(),
+            )
+        }
+        lastFacts =
+            lastFacts?.copy(
+                publicWriteState = wiring.capabilityStore.publicWriteState(),
+                publicWriteErrorCode = wiring.capabilityStore.publicWriteErrorCode(),
+            )
+        testResult =
+            if (verified) {
+                ConduitTestResult(UiText.Res(R.string.test_write_passed), success = true)
+            } else {
+                ConduitTestResult(
+                    UiText.Res(R.string.test_write_failed, errorCode.orEmpty()),
+                    success = false,
                 )
             }
-            lastFacts =
-                lastFacts?.copy(
-                    publicWriteState = wiring.capabilityStore.publicWriteState(),
-                    publicWriteErrorCode = wiring.capabilityStore.publicWriteErrorCode(),
-                )
-            testResult =
-                if (verified) {
-                    ConduitTestResult(UiText.Res(R.string.test_write_passed), success = true)
-                } else {
-                    ConduitTestResult(
-                        UiText.Res(R.string.test_write_failed, errorCode.orEmpty()),
-                        success = false,
-                    )
-                }
-            publish(pairingStore.peer())
-        }
     }
 
     /**
@@ -261,42 +291,62 @@ class HealthViewModel(
      */
     fun runReadTest(mode: ClipboardReadMode) {
         val wiring = capability ?: return
+        // Single-flight: one route's round-trip at a time; its card shows busy.
+        if (readTestMode != null) {
+            return
+        }
         viewModelScope.launch {
-            val backend = clipboard.backend(mode)
-            val selfTest =
-                ClipboardSelfTest(
-                    writeCoordinator = wiring.writeCoordinator,
-                    readBackend = { backend },
-                    clearClipboard = {
-                        wiring.clearClipboard()
-                        true
-                    },
-                )
-            val result = withContext(probeDispatcher) { selfTest.runReadTest() }
-            val verified = result.passed
-            withContext(probeDispatcher) {
-                wiring.capabilityStore.recordReadTest(
-                    mode = mode,
-                    state = if (verified) CapabilityState.READY else CapabilityState.UNAVAILABLE,
-                    errorCode = result.errorCode,
-                    atMs = wiring.nowMs(),
-                )
+            readTestMode = mode
+            publish(pairingStore.peer())
+            try {
+                runReadTestOnce(wiring, mode)
+            } finally {
+                readTestMode = null
+                publish(pairingStore.peer())
             }
-            testResult =
-                if (verified) {
-                    ConduitTestResult(UiText.Res(R.string.test_read_passed), success = true)
-                } else {
-                    ConduitTestResult(
-                        UiText.Res(
-                            R.string.test_read_failed,
-                            result.errorCode ?: UiText.Res(R.string.test_reason_unknown),
-                        ),
-                        success = false,
-                    )
-                }
             // Re-probe so the just-verified route surfaces as READY (or the failure code shows).
             refresh()
         }
+    }
+
+    private suspend fun runReadTestOnce(
+        wiring: CapabilityWiring,
+        mode: ClipboardReadMode,
+    ) {
+        val backend = clipboard.backend(mode)
+        val selfTest =
+            ClipboardSelfTest(
+                writeCoordinator = wiring.writeCoordinator,
+                readBackend = { backend },
+                clearClipboard = {
+                    wiring.clearClipboard()
+                    true
+                },
+            )
+        val result = withContext(probeDispatcher) { selfTest.runReadTest() }
+        val verified = result.passed
+        withContext(probeDispatcher) {
+            wiring.capabilityStore.recordReadTest(
+                mode = mode,
+                state = if (verified) CapabilityState.READY else CapabilityState.UNAVAILABLE,
+                errorCode = result.errorCode,
+                atMs = wiring.nowMs(),
+            )
+        }
+        testResult =
+            if (verified) {
+                ConduitTestResult(UiText.Res(R.string.test_read_passed), success = true)
+            } else {
+                ConduitTestResult(
+                    UiText.Res(
+                        R.string.test_read_failed,
+                        result.errorCode ?: UiText.Res(R.string.test_reason_unknown),
+                    ),
+                    success = false,
+                    // The closed 特权直读 code set explains itself in one line.
+                    hint = PrivHostErrorHints.hintFor(result.errorCode),
+                )
+            }
     }
 
     /**
@@ -354,7 +404,12 @@ class HealthViewModel(
                 lastSyncHealth,
                 lastFacts,
                 deviceAccent = pairingStore::deviceAccent,
-            ).copy(testResult = testResult)
+            ).copy(
+                testResult = testResult,
+                probing = probing,
+                writeTestRunning = writeTestRunning,
+                readTestMode = readTestMode,
+            )
     }
 
     companion object {

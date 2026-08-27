@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import com.clipsync.android.R
 import com.clipsync.android.i18n.UiText
 import com.clipsync.android.i18n.string
+import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.ui.health.BluetoothFallbackCard
 import com.clipsync.android.ui.health.BluetoothFallbackUi
 import com.clipsync.android.ui.health.CapabilityWizard
@@ -117,6 +118,8 @@ data class ConduitSegmentState(
 data class ConduitTestResult(
     val label: UiText,
     val success: Boolean,
+    /** One-line human hint for a failure's machine code (特权直读 closed set). */
+    val hint: UiText? = null,
 )
 
 /**
@@ -157,6 +160,12 @@ data class HealthScreenState(
     val testResult: ConduitTestResult? = null,
     /** Null = notification probe not wired; false = the surface is off right now. */
     val notificationsEnabled: Boolean? = null,
+    /** True while a 重新探测 pass runs — the action states busy, re-taps coalesce. */
+    val probing: Boolean = false,
+    /** True while the write test's round-trip runs — its action states busy. */
+    val writeTestRunning: Boolean = false,
+    /** The route whose device-verified read test is in flight; null when none. */
+    val readTestMode: ClipboardReadMode? = null,
 ) {
     val statuses: List<ConduitStatus>
         get() = listOf(localRead.status, localService.status, network.status, peerWrite.status)
@@ -214,14 +223,19 @@ fun HealthScreen(
                 modifier = Modifier.weight(1f),
             )
             if (onRefresh != null) {
+                // While the probe pass runs, the action itself states so and
+                // stops inviting taps (they would only coalesce anyway).
                 Text(
-                    text = stringResource(R.string.conduit_reprobe),
+                    text =
+                        stringResource(
+                            if (state.probing) R.string.conduit_reprobing else R.string.conduit_reprobe,
+                        ),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = c.flow,
+                    color = if (state.probing) c.t3 else c.flow,
                     modifier = Modifier
                         .clip(CharterShapes.control)
-                        .clickable(onClick = onRefresh)
+                        .clickable(enabled = !state.probing, onClick = onRefresh)
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                 )
             }
@@ -275,6 +289,7 @@ fun HealthScreen(
                     CapabilityWizard(
                         routes = state.routes,
                         onRouteAction = onRouteAction,
+                        readTestMode = state.readTestMode,
                     )
                 }
             }
@@ -343,7 +358,20 @@ fun HealthScreen(
                 segment = localWrite,
                 actions = buildList {
                     if (onTestWrite != null) {
-                        add(SegmentActionUi(label = stringResource(R.string.conduit_test_write), onClick = onTestWrite))
+                        add(
+                            SegmentActionUi(
+                                label =
+                                    stringResource(
+                                        if (state.writeTestRunning) {
+                                            R.string.conduit_testing
+                                        } else {
+                                            R.string.conduit_test_write
+                                        },
+                                    ),
+                                busy = state.writeTestRunning,
+                                onClick = onTestWrite,
+                            ),
+                        )
                     }
                 },
             )
@@ -618,12 +646,24 @@ private fun TestResultRow(
             .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = result.label.string(),
-            style = ClipSyncType.caption,
-            color = tint,
-            modifier = Modifier.weight(1f),
-        )
+        Column(Modifier.weight(1f)) {
+            Text(
+                text = result.label.string(),
+                style = ClipSyncType.caption,
+                color = tint,
+            )
+            // A failure from the 特权直读 closed code set explains itself in one
+            // line; the machine code above stays as the anchor for reports.
+            result.hint?.let { hint ->
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = hint.string(),
+                    style = ClipSyncType.meta,
+                    color = tint,
+                )
+            }
+        }
+        Spacer(Modifier.width(8.dp))
         Text(text = "×", fontSize = 14.sp, color = c.t4)
     }
 }
@@ -739,6 +779,8 @@ fun ConduitRail(
 data class SegmentActionUi(
     val label: String,
     val emphasized: Boolean = false,
+    /** True while the action's work is in flight: quiet face, taps absorbed. */
+    val busy: Boolean = false,
     val onClick: () -> Unit,
 )
 
@@ -884,12 +926,27 @@ private fun ConduitStatus.quietened(): ConduitStatus =
 @Composable
 private fun SegmentActionChip(action: SegmentActionUi) {
     val c = clipSyncColors
-    val tint = if (action.emphasized) c.act else c.flow
-    val bg = if (action.emphasized) c.actBg else c.flowBg
-    val line = if (action.emphasized) c.actLn else c.flowLn
+    // A busy action states its progress on a quiet face: no invite chevron, no
+    // flow tint, no click — the work is already running (charter: feedback
+    // within 100ms, and a button must never pretend a second tap would help).
+    val tint = when {
+        action.busy -> c.t3
+        action.emphasized -> c.act
+        else -> c.flow
+    }
+    val bg = when {
+        action.busy -> c.sf3
+        action.emphasized -> c.actBg
+        else -> c.flowBg
+    }
+    val line = when {
+        action.busy -> c.ln2
+        action.emphasized -> c.actLn
+        else -> c.flowLn
+    }
     val shape = CharterShapes.control
     Text(
-        text = "${action.label} ›",
+        text = if (action.busy) action.label else "${action.label} ›",
         fontSize = 13.sp,
         fontWeight = FontWeight.SemiBold,
         color = tint,
@@ -897,7 +954,7 @@ private fun SegmentActionChip(action: SegmentActionUi) {
             .clip(shape)
             .background(bg)
             .border(1.dp, line, shape)
-            .clickable(onClick = action.onClick)
+            .clickable(enabled = !action.busy, onClick = action.onClick)
             .padding(horizontal = 12.dp, vertical = 7.dp),
     )
 }
