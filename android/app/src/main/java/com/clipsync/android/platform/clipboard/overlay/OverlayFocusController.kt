@@ -8,10 +8,13 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import android.view.Gravity
 import android.view.View
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import com.clipsync.android.platform.clipboard.ClipSensitivity
 import com.clipsync.android.platform.clipboard.ClipboardReadResult
@@ -21,6 +24,16 @@ import com.clipsync.android.platform.clipboard.ClipboardReadResult
  * [FLAG_NOT_TOUCHABLE] at all times; a read removes only [FLAG_NOT_FOCUSABLE]
  * for up to [MAX_READ_TRIES] attempts, then restores it immediately — including
  * when the platform seam throws.
+ *
+ * System-bar mirroring: on Android 11+ the *focused* window controls system-bar
+ * visibility, so the moment this window turns focusable it would re-show the
+ * navigation/status bars an immersive fullscreen app (e.g. landscape video) has
+ * hidden — a visible bar flash on every poll tick. Before each focus grab the
+ * controller samples the current bar state through the seam and makes the read
+ * window request exactly that state per bar (hidden stays hidden, visible stays
+ * visible), so taking focus never flips bar visibility in either direction.
+ * When the state is unknowable (pre-R, or window not attached yet) the requests
+ * are left untouched — identical to the historical behavior.
  *
  * WindowManager / Settings.canDrawOverlays / ClipboardManager are reached only
  * through [OverlayPlatformSeam] so JVM tests never build real views.
@@ -90,7 +103,10 @@ class OverlayFocusController internal constructor(
         }
         return try {
             applyWindow(idleSpec())
-            applyWindow(readSpec())
+            // Sample *before* the focus grab: the read spec must mirror the bar
+            // state the front app currently enforces, not the state our own
+            // focusable window may cause.
+            applyWindow(readSpec(platform.sampleSystemBars()))
             readWithRetries()
         } catch (_: RuntimeException) {
             lastError = ERROR_READ_FAILED
@@ -165,6 +181,9 @@ class OverlayFocusController internal constructor(
         thrown?.let { throw it }
     }
 
+    // hiddenBars stays null on purpose: while flipping back to not-focusable this
+    // window can still be the insets control target for a frame, and requesting
+    // "show" at that moment would itself flash the bars we just kept hidden.
     private fun idleSpec(): OverlayWindowSpec = OverlayWindowSpec(
         widthPx = WINDOW_WIDTH_PX,
         heightPx = WINDOW_HEIGHT_PX,
@@ -173,13 +192,28 @@ class OverlayFocusController internal constructor(
         type = TYPE_APPLICATION_OVERLAY,
     )
 
-    private fun readSpec(): OverlayWindowSpec = OverlayWindowSpec(
-        widthPx = WINDOW_WIDTH_PX,
-        heightPx = WINDOW_HEIGHT_PX,
-        alpha = WINDOW_ALPHA,
-        flags = FLAG_NOT_TOUCHABLE,
-        type = TYPE_APPLICATION_OVERLAY,
-    )
+    private fun readSpec(bars: OverlaySystemBarSample): OverlayWindowSpec =
+        OverlayWindowSpec(
+            widthPx = WINDOW_WIDTH_PX,
+            heightPx = WINDOW_HEIGHT_PX,
+            alpha = WINDOW_ALPHA,
+            flags = FLAG_NOT_TOUCHABLE,
+            type = TYPE_APPLICATION_OVERLAY,
+            hiddenBars = barRequestFor(bars),
+        )
+
+    private fun barRequestFor(sample: OverlaySystemBarSample): OverlayBarRequest? {
+        if (sample.statusBarHidden == null && sample.navigationBarHidden == null) {
+            // Unknown state (pre-R platform, or the window has never received
+            // insets): do not touch the window's bar requests — behaves exactly
+            // like before this policy existed instead of guessing.
+            return null
+        }
+        return OverlayBarRequest(
+            hideStatusBar = sample.statusBarHidden == true,
+            hideNavigationBar = sample.navigationBarHidden == true,
+        )
+    }
 
     companion object {
         const val ERROR_PERMISSION_MISSING = "OVERLAY_PERMISSION_MISSING"
@@ -221,6 +255,13 @@ interface OverlayPlatformSeam {
 
     fun currentWindow(): OverlayWindowSpec?
 
+    /**
+     * Current system-bar visibility as observed by the overlay window itself
+     * (its dispatched WindowInsets). Unknown fields are null — pre-R has no
+     * per-bar visibility API, and a never-attached window has seen no insets.
+     */
+    fun sampleSystemBars(): OverlaySystemBarSample
+
     fun readPrimaryText(): OverlayClipRead
 
     fun detachWindow()
@@ -234,6 +275,27 @@ data class OverlayWindowSpec(
     val alpha: Float,
     val flags: Int,
     val type: Int,
+    /**
+     * Per-bar visibility this window should request while it is (about to be)
+     * the focused window. Null = leave the window's current requests untouched.
+     */
+    val hiddenBars: OverlayBarRequest? = null,
+)
+
+/** Observed system-bar visibility; null = unknown. */
+data class OverlaySystemBarSample(
+    val statusBarHidden: Boolean?,
+    val navigationBarHidden: Boolean?,
+) {
+    companion object {
+        val UNKNOWN = OverlaySystemBarSample(statusBarHidden = null, navigationBarHidden = null)
+    }
+}
+
+/** Explicit per-bar request: hide keeps an immersive app's bars hidden, show matches the platform default. */
+data class OverlayBarRequest(
+    val hideStatusBar: Boolean,
+    val hideNavigationBar: Boolean,
 )
 
 sealed interface OverlayClipRead {
@@ -257,12 +319,19 @@ internal class AndroidOverlayPlatform(
     private val clipboardManager = context.getSystemService(ClipboardManager::class.java)
     private var view: View? = null
     private var params: WindowManager.LayoutParams? = null
+    private var lastBarRequest: OverlayBarRequest? = null
+
+    // Written on the main thread (insets dispatch / attach), read from the poll thread.
+    @Volatile
+    private var latestBarSample: OverlaySystemBarSample = OverlaySystemBarSample.UNKNOWN
 
     override val systemVersion: String = Build.VERSION.SDK_INT.toString()
 
     override fun canDrawOverlays(): Boolean = Settings.canDrawOverlays(context)
 
     override fun requiresTouchableWindowToRead(): Boolean = false
+
+    override fun sampleSystemBars(): OverlaySystemBarSample = latestBarSample
 
     override fun attachOrUpdateWindow(spec: OverlayWindowSpec) {
         val manager = windowManager ?: return
@@ -282,8 +351,21 @@ internal class AndroidOverlayPlatform(
             overlay.alpha = 0f
             manager.addView(overlay, layout)
             view = overlay
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                startBarSampling(overlay)
+                spec.hiddenBars?.let { request -> applyBarRequest(overlay, request) }
+            }
         } else {
+            // Report the desired bar state *before* the focusable flag change
+            // lands, so this window never becomes the insets control target
+            // while still carrying the platform default (bars visible).
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                spec.hiddenBars?.let { request -> applyBarRequest(existing, request) }
+            }
             manager.updateViewLayout(existing, layout)
+        }
+        if (spec.hiddenBars != null) {
+            lastBarRequest = spec.hiddenBars
         }
     }
 
@@ -298,7 +380,46 @@ internal class AndroidOverlayPlatform(
             alpha = layout.alpha,
             flags = layout.flags,
             type = layout.type,
+            hiddenBars = lastBarRequest,
         )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun startBarSampling(overlay: View) {
+        val record: (WindowInsets) -> Unit = { insets ->
+            latestBarSample =
+                OverlaySystemBarSample(
+                    statusBarHidden = !insets.isVisible(WindowInsets.Type.statusBars()),
+                    navigationBarHidden = !insets.isVisible(WindowInsets.Type.navigationBars()),
+                )
+        }
+        overlay.setOnApplyWindowInsetsListener { listenerView, insets ->
+            record(insets)
+            listenerView.onApplyWindowInsets(insets)
+        }
+        // First insets dispatch happens on the next traversal; seed the sample
+        // from what the freshly attached window already knows.
+        overlay.rootWindowInsets?.let(record)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun applyBarRequest(
+        overlay: View,
+        request: OverlayBarRequest,
+    ) {
+        val controller = overlay.windowInsetsController ?: return
+        controller.systemBarsBehavior =
+            WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        if (request.hideStatusBar) {
+            controller.hide(WindowInsets.Type.statusBars())
+        } else {
+            controller.show(WindowInsets.Type.statusBars())
+        }
+        if (request.hideNavigationBar) {
+            controller.hide(WindowInsets.Type.navigationBars())
+        } else {
+            controller.show(WindowInsets.Type.navigationBars())
+        }
     }
 
     override fun readPrimaryText(): OverlayClipRead {
@@ -339,6 +460,8 @@ internal class AndroidOverlayPlatform(
         }
         view = null
         params = null
+        lastBarRequest = null
+        latestBarSample = OverlaySystemBarSample.UNKNOWN
     }
 
     override fun delay(millis: Long) {

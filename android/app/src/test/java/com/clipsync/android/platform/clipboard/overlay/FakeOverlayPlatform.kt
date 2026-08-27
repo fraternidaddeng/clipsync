@@ -13,6 +13,7 @@ internal class FakeOverlayPlatform(
 ) : OverlayPlatformSeam {
     var overlaysAllowed: Boolean = true
     var touchableRequired: Boolean = false
+    var barSample: OverlaySystemBarSample = OverlaySystemBarSample.UNKNOWN
     var clip: OverlayClipRead = OverlayClipRead.Empty
     var throwOnRead: Boolean = false
     var throwOnAttach: Boolean = false
@@ -34,6 +35,11 @@ internal class FakeOverlayPlatform(
     override fun canDrawOverlays(): Boolean = overlaysAllowed
 
     override fun requiresTouchableWindowToRead(): Boolean = touchableRequired
+
+    override fun sampleSystemBars(): OverlaySystemBarSample {
+        synchronized(eventLog) { eventLog += EVENT_SAMPLE_BARS }
+        return barSample
+    }
 
     override fun attachOrUpdateWindow(spec: OverlayWindowSpec) {
         if (throwOnAttach) {
@@ -95,6 +101,7 @@ internal class FakeOverlayPlatform(
     companion object {
         const val EVENT_IDLE_FLAGS = "idle-flags"
         const val EVENT_READ_FLAGS = "read-flags"
+        const val EVENT_SAMPLE_BARS = "sample-bars"
         const val EVENT_READ = "read"
         const val EVENT_DETACH = "detach"
     }

@@ -374,16 +374,14 @@
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/overlay/OverlayFocusController.kt">
         <error line="3" column="1" source="standard:import-ordering" />
-        <error line="142" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="168" column="49" source="standard:multiline-expression-wrapping" />
-        <error line="168" column="49" source="standard:function-signature" />
-        <error line="176" column="49" source="standard:multiline-expression-wrapping" />
-        <error line="176" column="49" source="standard:function-signature" />
-        <error line="250" column="23" source="standard:class-signature" />
-        <error line="250" column="44" source="standard:class-signature" />
-        <error line="269" column="22" source="standard:multiline-expression-wrapping" />
-        <error line="305" column="25" source="standard:multiline-expression-wrapping" />
-        <error line="323" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="158" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="187" column="49" source="standard:multiline-expression-wrapping" />
+        <error line="187" column="49" source="standard:function-signature" />
+        <error line="312" column="23" source="standard:class-signature" />
+        <error line="312" column="44" source="standard:class-signature" />
+        <error line="338" column="22" source="standard:multiline-expression-wrapping" />
+        <error line="426" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="444" column="31" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/overlay/OverlayPollingBackend.kt">
         <error line="65" column="29" source="standard:multiline-expression-wrapping" />
