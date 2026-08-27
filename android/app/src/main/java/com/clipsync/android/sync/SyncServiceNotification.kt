@@ -66,6 +66,13 @@ object SyncServiceNotification {
         stateText: String,
         syncPaused: Boolean,
         autoCapturePaused: Boolean,
+        /**
+         * True while the coordinator's active read route is the polling overlay
+         * (plan 5.5): the resident line must state that polling is running, so
+         * the user can explain the focus flicker and the battery cost — and the
+         * pause action right beside it is the promised way out.
+         */
+        overlayPolling: Boolean = false,
     ): Notification {
         // The system template is deliberate: per DESIGN-CHARTER.md, notifications are drawn
         // by the system (MIUI rewrites them again), so the charter surface here is exactly
@@ -90,10 +97,13 @@ object SyncServiceNotification {
                 .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
                 .setContentIntent(openConduitIntent(context))
 
+        // Pause facts outrank the polling fact: while either gate is on, no
+        // backend polls at all, so claiming "轮询进行中" would be a lie.
         val statusLine =
             when {
                 syncPaused -> context.getString(R.string.notification_status_sync_paused)
                 autoCapturePaused -> context.getString(R.string.notification_status_capture_paused)
+                overlayPolling -> context.getString(R.string.notification_status_overlay_polling)
                 else -> null
             }
         if (statusLine != null) {

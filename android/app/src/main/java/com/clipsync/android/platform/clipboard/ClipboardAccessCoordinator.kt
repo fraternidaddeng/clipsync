@@ -21,6 +21,14 @@ class ClipboardAccessCoordinator(
     )
         private set
 
+    /**
+     * Invoked on the caller's thread whenever the active read mode actually changes —
+     * a start, an explicit mode request, a health-check fallback, or a stop. The
+     * resident sync notification states the overlay-polling route honestly (plan 5.5),
+     * so it must hear the switch when it happens, not on the next periodic tick.
+     */
+    var onActiveReadModeChanged: ((ClipboardReadMode?) -> Unit)? = null
+
     init {
         require(backendsByMode.size == backends.size) { "Clipboard backend modes must be unique." }
     }
@@ -97,7 +105,7 @@ class ClipboardAccessCoordinator(
         activeBackend = null
         listener = null
         baselineHash = null
-        state = state.copy(activeReadMode = null)
+        publishState(state.copy(activeReadMode = null))
     }
 
     private fun selectAndStart(fromMode: ClipboardReadMode?): ClipboardAccessState {
@@ -109,10 +117,12 @@ class ClipboardAccessCoordinator(
             val report = backend.probe()
             if (report.readState == CapabilityState.READY) {
                 switchTo(backend)
-                state = state.copy(
-                    activeReadMode = mode,
-                    lastErrorCode = null,
-                    lastHealthAtEpochMillis = nowEpochMillis(),
+                publishState(
+                    state.copy(
+                        activeReadMode = mode,
+                        lastErrorCode = null,
+                        lastHealthAtEpochMillis = nowEpochMillis(),
+                    ),
                 )
                 return state
             }
@@ -125,12 +135,23 @@ class ClipboardAccessCoordinator(
         activeBackend?.stop()
         activeBackend = null
         baselineHash = null
-        state = state.copy(
-            activeReadMode = null,
-            lastErrorCode = lastErrorCode ?: "CLIPBOARD_READ_BACKEND_MISSING",
-            lastHealthAtEpochMillis = nowEpochMillis(),
+        publishState(
+            state.copy(
+                activeReadMode = null,
+                lastErrorCode = lastErrorCode ?: "CLIPBOARD_READ_BACKEND_MISSING",
+                lastHealthAtEpochMillis = nowEpochMillis(),
+            ),
         )
         return state
+    }
+
+    /** Applies [next] and tells the mode listener when the active route changed. */
+    private fun publishState(next: ClipboardAccessState) {
+        val previousMode = state.activeReadMode
+        state = next
+        if (previousMode != next.activeReadMode) {
+            onActiveReadModeChanged?.invoke(next.activeReadMode)
+        }
     }
 
     private fun switchTo(nextBackend: BackgroundClipboardBackend) {

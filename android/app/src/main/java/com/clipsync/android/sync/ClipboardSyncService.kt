@@ -20,6 +20,7 @@ import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.ClipboardCaptureSession
+import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.notify.SyncNotifications
 import com.clipsync.android.storage.ClipSyncRepository
 import com.clipsync.android.storage.SyncSettingsStore
@@ -138,6 +139,9 @@ class ClipboardSyncService : Service() {
         // Hand the capture session back: if the activity is visible it keeps the coordinator
         // running; otherwise the backends stop with the service. A no-op on the FGS-denied
         // teardown path, where the session was never acquired.
+        if (captureSession != null) {
+            SharedClipboardCapture.stack(applicationContext).coordinator.onActiveReadModeChanged = null
+        }
         captureSession?.release(ClipboardCaptureSession.Owner.FOREGROUND_SERVICE)
         captureSession = null
         unregisterNetworkCallback()
@@ -234,6 +238,16 @@ class ClipboardSyncService : Service() {
         // activity's lifecycle used to drive the coordinator from.
         val captureSession = SharedClipboardCapture.session(appContext)
         this.captureSession = captureSession
+        // 悬浮窗轮询 must announce itself the moment it becomes (or stops being)
+        // the active route (plan 5.5): the resident notification re-renders on
+        // every ladder switch, not just on the next health tick.
+        SharedClipboardCapture.stack(appContext).coordinator.onActiveReadModeChanged = {
+            mainHandler.post {
+                if (started) {
+                    updateNotification(mutableConnectionStates.value)
+                }
+            }
+        }
         captureSession.acquire(ClipboardCaptureSession.Owner.FOREGROUND_SERVICE)
         scope.launch {
             // Periodic active-backend health check: a dead privileged binder or a revoked
@@ -374,7 +388,19 @@ class ClipboardSyncService : Service() {
             stateText = text,
             syncPaused = settings.syncPaused,
             autoCapturePaused = settings.autoCapturePaused,
+            overlayPolling = overlayPollingActive(),
         )
+
+    /**
+     * Whether the coordinator's active read route is the polling overlay right now
+     * (plan 5.5): the resident line states the polling honestly while it runs.
+     * activeReadMode is null whenever the coordinator is stopped, so a paused or
+     * released session can never claim polling.
+     */
+    private fun overlayPollingActive(): Boolean =
+        SharedClipboardCapture
+            .stack(applicationContext)
+            .coordinator.state.activeReadMode == ClipboardReadMode.OVERLAY_POLLING
 
     private fun createNotificationChannel() {
         // Shared with the other channels so all of them sit under the 剪贴同步 group.

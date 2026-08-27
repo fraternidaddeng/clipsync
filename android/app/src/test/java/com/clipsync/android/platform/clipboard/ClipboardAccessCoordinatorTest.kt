@@ -294,6 +294,44 @@ class ClipboardAccessCoordinatorTest {
     }
 
     @Test
+    fun `active read mode changes are announced - start, request, fallback, stop`() {
+        val shizuku = FakeBackgroundClipboardBackend(
+            mode = ClipboardReadMode.SHIZUKU_EVENT,
+            backendHealth = BackendHealth(
+                state = BackendHealthState.FAILED,
+                checkedAtEpochMillis = 50L,
+                errorCode = "PRIV_HOST_DISCONNECTED",
+            ),
+        )
+        val foreground = FakeBackgroundClipboardBackend(ClipboardReadMode.FOREGROUND_ONLY)
+        val coordinator = ClipboardAccessCoordinator(listOf(shizuku, foreground))
+        val announced = mutableListOf<ClipboardReadMode?>()
+        coordinator.onActiveReadModeChanged = { announced += it }
+
+        // Start selects the privileged backend and announces it once.
+        coordinator.start { }
+        assertEquals(listOf<ClipboardReadMode?>(ClipboardReadMode.SHIZUKU_EVENT), announced)
+
+        // Re-selecting the same mode is not a change: the notification must not flicker.
+        coordinator.requestMode(ClipboardReadMode.SHIZUKU_EVENT)
+        assertEquals(1, announced.size)
+
+        // The health-check fallback is a real switch — the resident notification
+        // hears it when it happens (plan 5.5), not on the next periodic tick.
+        coordinator.checkHealth()
+        assertEquals(
+            listOf(ClipboardReadMode.SHIZUKU_EVENT, ClipboardReadMode.FOREGROUND_ONLY),
+            announced,
+        )
+
+        coordinator.stop()
+        assertEquals(
+            listOf(ClipboardReadMode.SHIZUKU_EVENT, ClipboardReadMode.FOREGROUND_ONLY, null),
+            announced,
+        )
+    }
+
+    @Test
     fun `probe prefers degraded over unavailable when nothing is ready`() {
         val shizuku = FakeBackgroundClipboardBackend(
             mode = ClipboardReadMode.SHIZUKU_EVENT,

@@ -35,6 +35,7 @@ class SyncServiceNotificationTest {
     private fun build(
         syncPaused: Boolean = false,
         capturePaused: Boolean = false,
+        overlayPolling: Boolean = false,
     ): Notification =
         SyncServiceNotification.build(
             context,
@@ -42,6 +43,7 @@ class SyncServiceNotificationTest {
             stateText = context.getString(R.string.notification_sync_connected),
             syncPaused = syncPaused,
             autoCapturePaused = capturePaused,
+            overlayPolling = overlayPolling,
         )
 
     @Test
@@ -155,6 +157,35 @@ class SyncServiceNotificationTest {
         assertEquals(
             context.getString(R.string.notification_status_capture_paused),
             captureOnly.extras.getCharSequence(Notification.EXTRA_TEXT)?.toString(),
+        )
+    }
+
+    @Test
+    fun `overlay polling states itself on the resident line (plan 5-5)`() {
+        // The polling route costs battery and flickers focus; the resident line
+        // must say so for as long as the route is the active one.
+        val polling = build(overlayPolling = true)
+        assertEquals(
+            context.getString(R.string.notification_status_overlay_polling),
+            polling.extras.getCharSequence(Notification.EXTRA_TEXT)?.toString(),
+        )
+
+        // Route inactive again: the line clears rather than claiming stale polling.
+        assertNull(build().extras.getCharSequence(Notification.EXTRA_TEXT))
+    }
+
+    @Test
+    fun `pause facts outrank the polling fact - a paused app polls nothing`() {
+        val syncPausedToo = build(syncPaused = true, overlayPolling = true)
+        assertEquals(
+            context.getString(R.string.notification_status_sync_paused),
+            syncPausedToo.extras.getCharSequence(Notification.EXTRA_TEXT)?.toString(),
+        )
+
+        val captureOff = build(capturePaused = true, overlayPolling = true)
+        assertEquals(
+            context.getString(R.string.notification_status_capture_paused),
+            captureOff.extras.getCharSequence(Notification.EXTRA_TEXT)?.toString(),
         )
     }
 }
