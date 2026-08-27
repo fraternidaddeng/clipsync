@@ -82,10 +82,17 @@ class ClipboardSyncService : Service() {
                 SharedPrefsKeyValueStore(applicationContext, name = SyncSettingsStore.PREFERENCES_NAME),
             )
         val listener =
-            android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+            android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
                 // A pause/private gate may have flipped (notification action or preferences
                 // screen): the capture session re-checks whether backends may run at all.
                 captureSession?.refreshGates()
+                if (key == SyncSettingsStore.KEY_IMAGE_SYNC) {
+                    // The wire version (v2 image frames vs text-only v1) is fixed at dial
+                    // time, so the live session is bounced for the toggle to take effect
+                    // now instead of at the next incidental disconnect — which a stable
+                    // network may never produce.
+                    supervisor?.restartSession()
+                }
                 if (started) {
                     updateNotification(mutableConnectionStates.value)
                 }

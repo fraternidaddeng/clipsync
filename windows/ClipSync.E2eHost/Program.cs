@@ -23,7 +23,9 @@ namespace ClipSync.E2eHost;
 /// Stdout is the command protocol only; logs go to stderr and never include clip text,
 /// secrets, nonces, or proofs. Commands: <c>capture &lt;base64url-utf8&gt;</c> stores a local
 /// text clip, <c>capture-image &lt;base64url-bytes&gt;</c> stores a local image clip (validated
-/// like the real capture ingress), <c>list</c> prints the visible history texts as JSON,
+/// like the real capture ingress), <c>gen-large-png &lt;seed&gt; [capture]</c> writes a
+/// deterministic multi-chunk noise PNG to a temp file (optionally storing it as a local image
+/// clip) and prints its path/hash, <c>list</c> prints the visible history texts as JSON,
 /// <c>list-images</c> prints the visible image content hashes as JSON, <c>quit</c> exits.
 /// </summary>
 internal static class Program
@@ -37,6 +39,12 @@ internal static class Program
     /// (origin, seq) keyspace between legs. Two devices = two independent origin keyspaces.
     /// </summary>
     internal const string AndroidImageDeviceId = "33333333-3333-4333-8333-333333333333";
+
+    /// <summary>
+    /// The multi-chunk image leg (LargeImageCrossClientE2eTest) — same reasoning: its fresh
+    /// repository also pushes from sequence 1, so it needs its own origin keyspace too.
+    /// </summary>
+    internal const string AndroidLargeImageDeviceId = "44444444-4444-4444-8444-444444444444";
 
     public static async Task<int> Main()
     {
@@ -60,6 +68,9 @@ internal static class Program
                 DateTimeOffset.UtcNow).ConfigureAwait(false);
             var imageDevice = await store.UpsertDeviceAsync(
                 new NewPairedDevice(AndroidImageDeviceId, "Android-Image", "android", "cd".PadLeft(64, 'c'), protectedSecret),
+                DateTimeOffset.UtcNow).ConfigureAwait(false);
+            var largeImageDevice = await store.UpsertDeviceAsync(
+                new NewPairedDevice(AndroidLargeImageDeviceId, "Android-Large", "android", "ef".PadLeft(64, 'e'), protectedSecret),
                 DateTimeOffset.UtcNow).ConfigureAwait(false);
 
             certificate = PeerCertificate.CreateSelfSigned(WindowsDeviceId, DateTimeOffset.UtcNow, TimeSpan.FromDays(365));
@@ -95,11 +106,13 @@ internal static class Program
                 ProtocolValidation.EncodeBase64Url(pairSecret),
                 device.TrustEpoch,
                 AndroidImageDeviceId,
-                imageDevice.TrustEpoch);
+                imageDevice.TrustEpoch,
+                AndroidLargeImageDeviceId,
+                largeImageDevice.TrustEpoch);
             await WriteStdoutAsync(JsonSerializer.Serialize(ready)).ConfigureAwait(false);
             Console.Error.WriteLine("e2e-host listening");
 
-            await RunCommandLoopAsync(store).ConfigureAwait(false);
+            await RunCommandLoopAsync(store, dataDir).ConfigureAwait(false);
             return 0;
         }
         catch (Exception exception)
@@ -125,7 +138,7 @@ internal static class Program
         }
     }
 
-    private static async Task RunCommandLoopAsync(SqliteClipboardEventStore store)
+    private static async Task RunCommandLoopAsync(SqliteClipboardEventStore store, string dataDir)
     {
         while (true)
         {
@@ -160,6 +173,13 @@ internal static class Program
             if (line.StartsWith(captureImagePrefix, StringComparison.Ordinal))
             {
                 await HandleCaptureImageAsync(store, line[captureImagePrefix.Length..]).ConfigureAwait(false);
+                continue;
+            }
+
+            const string genLargePngPrefix = "gen-large-png ";
+            if (line.StartsWith(genLargePngPrefix, StringComparison.Ordinal))
+            {
+                await HandleGenLargePngAsync(store, dataDir, line[genLargePngPrefix.Length..]).ConfigureAwait(false);
                 continue;
             }
 
@@ -220,6 +240,54 @@ internal static class Program
         await WriteStdoutAsync("ok").ConfigureAwait(false);
         Console.Error.WriteLine(
             "e2e-host captured image seq=" + stored.OriginSequence.ToString(CultureInfo.InvariantCulture));
+    }
+
+    /// <summary>
+    /// Generates a deterministic incompressible noise PNG for the multi-chunk leg — big
+    /// enough that the transfer must stream several begin/chunk/end frames, unlike the tiny
+    /// shared media fixtures. Args: <c>&lt;seed&gt; [capture]</c>; the bytes land in a temp
+    /// file the driver hands to the Kotlin test, and <c>capture</c> additionally stores them
+    /// as a local Windows image clip (the seed the Android side must pull byte-exact).
+    /// Replies with one JSON line: <c>{"path": ..., "sha256": ..., "bytes": N}</c>.
+    /// </summary>
+    private static async Task HandleGenLargePngAsync(SqliteClipboardEventStore store, string dataDir, string args)
+    {
+        var parts = args.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var capture = parts.Length == 2 && parts[1].Equals("capture", StringComparison.Ordinal);
+        if (parts.Length is < 1 or > 2 || !int.TryParse(parts[0], NumberStyles.None, CultureInfo.InvariantCulture, out var seed)
+            || (parts.Length == 2 && !capture))
+        {
+            Console.Error.WriteLine("e2e-host gen-large-png rejected");
+            return;
+        }
+
+        // 700x700 noise is incompressible: the PNG lands near 2 MB, i.e. ~8 chunk frames.
+        const int side = 700;
+        var bgra = new byte[side * side * 4];
+        var state = (uint)seed;
+        for (var index = 0; index < bgra.Length; index++)
+        {
+            state = (state * 1664525u) + 1013904223u;
+            bgra[index] = (byte)(state >> 24);
+        }
+
+        var png = ImageCodec.EncodePngBgra(side, side, bgra);
+        var hash = ImageCodec.HashBytes(png);
+        var path = Path.Combine(dataDir, "large-" + seed.ToString(CultureInfo.InvariantCulture) + ".png");
+        await File.WriteAllBytesAsync(path, png).ConfigureAwait(false);
+
+        if (capture)
+        {
+            await store.StoreImageAsync(
+                new AcceptedImageContent(png, hash, MediaLimits.MimePng, side, side, "e2e", DateTimeOffset.UtcNow))
+                .ConfigureAwait(false);
+        }
+
+        await WriteStdoutAsync(JsonSerializer.Serialize(new LargePngPayload(path, hash, png.Length))).ConfigureAwait(false);
+        Console.Error.WriteLine(
+            "e2e-host gen-large-png seed=" + seed.ToString(CultureInfo.InvariantCulture)
+            + " bytes=" + png.Length.ToString(CultureInfo.InvariantCulture)
+            + " captured=" + capture);
     }
 
     private static async Task WriteStdoutAsync(string line)
@@ -329,10 +397,17 @@ internal sealed record ReadyPayload(
     [property: JsonPropertyName("pair_secret_b64url")] string PairSecretB64url,
     [property: JsonPropertyName("trust_epoch")] long TrustEpoch,
     [property: JsonPropertyName("android_image_device_id")] string AndroidImageDeviceId,
-    [property: JsonPropertyName("image_trust_epoch")] long ImageTrustEpoch);
+    [property: JsonPropertyName("image_trust_epoch")] long ImageTrustEpoch,
+    [property: JsonPropertyName("android_large_image_device_id")] string AndroidLargeImageDeviceId,
+    [property: JsonPropertyName("large_image_trust_epoch")] long LargeImageTrustEpoch);
 
 internal sealed record ListPayload(
     [property: JsonPropertyName("texts")] IReadOnlyList<string> Texts);
 
 internal sealed record ImageListPayload(
     [property: JsonPropertyName("image_hashes")] IReadOnlyList<string> ImageHashes);
+
+internal sealed record LargePngPayload(
+    [property: JsonPropertyName("path")] string Path,
+    [property: JsonPropertyName("sha256")] string Sha256,
+    [property: JsonPropertyName("bytes")] int Bytes);

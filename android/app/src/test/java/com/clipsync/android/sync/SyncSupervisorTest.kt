@@ -293,6 +293,8 @@ class SyncSupervisorTest {
         private val localDeviceId: String,
         /** When false the session stays open after authentication until disposed. */
         private val closeAfterAuth: Boolean = true,
+        /** The wire version this fake listener accepted the dial on. */
+        private val version: Int = 1,
     ) : SyncTransport {
         private val frames = Channel<TransportFrame>(Channel.UNLIMITED)
 
@@ -302,7 +304,7 @@ class SyncSupervisorTest {
         override suspend fun receive(): TransportFrame = frames.receive()
 
         override suspend fun send(text: String) {
-            when (SyncWire.decode(text).type) {
+            when (SyncWire.decode(text, version).type) {
                 SyncMessageTypes.HELLO ->
                     if (throttle) {
                         deliver(
@@ -338,7 +340,7 @@ class SyncSupervisorTest {
             type: String,
             body: Any,
         ) {
-            frames.trySend(TransportFrame.Text(SyncWire.encode(type, SyncWire.newRequestId(), body)))
+            frames.trySend(TransportFrame.Text(SyncWire.encode(type, SyncWire.newRequestId(), body, version)))
         }
 
         override suspend fun close(
@@ -597,6 +599,91 @@ class SyncSupervisorTest {
             )
             // One Bluetooth dial total: the switchback reused the probe's socket, no re-dial.
             assertEquals(1, dialer.dials)
+        }
+
+    @Test
+    fun `restartSession bounces a live session so the next dial honors the image toggle`() =
+        runTest {
+            val pairing = pairedStore()
+            var imageSync = false
+            lateinit var connector: ScriptedConnector
+            connector =
+                ScriptedConnector {
+                    ScriptedListenerTransport(
+                        throttle = false,
+                        localDeviceId = pairing.localDeviceId(),
+                        closeAfterAuth = false,
+                        // The connector records the requested version before dialing: the fake
+                        // listener answers on whichever version this dial asked for.
+                        version = connector.versions.last(),
+                    )
+                }
+            val supervisor =
+                SyncSupervisor(
+                    pairing = pairing,
+                    repository = InMemorySyncRepository(pairing.localDeviceId()),
+                    connector = connector,
+                    clientVersion = "0.1.0",
+                    backoff = backoffWithoutJitter(),
+                    imageSyncEnabled = { imageSync },
+                )
+            backgroundScope.launch { supervisor.run() }
+
+            runCurrent()
+            // Image sync was off at dial time, so the session runs on text-only v1.
+            assertEquals(listOf(1), connector.versions)
+            assertEquals(
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+                supervisor.state.value,
+            )
+
+            // Flipping the preference alone changes nothing: the wire version was fixed at
+            // dial time and a healthy session has no reason to drop on its own.
+            imageSync = true
+            advanceTimeBy(5_000)
+            runCurrent()
+            assertEquals(listOf(1), connector.versions)
+
+            // The restart closes the live session; that close counts as authenticated, so the
+            // backoff resets and the redial one initial-delay later dials v2 first.
+            supervisor.restartSession()
+            runCurrent()
+            advanceTimeBy(1_001)
+            runCurrent()
+            assertEquals(listOf(1, 2), connector.versions)
+            assertEquals(
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+                supervisor.state.value,
+            )
+        }
+
+    @Test
+    fun `restartSession during a backoff wait cuts it short like a nudge`() =
+        runTest {
+            val pairing = pairedStore()
+            var imageSync = false
+            val connector = ScriptedConnector { throw IOException("refused") }
+            val supervisor =
+                SyncSupervisor(
+                    pairing = pairing,
+                    repository = InMemorySyncRepository(pairing.localDeviceId()),
+                    connector = connector,
+                    clientVersion = "0.1.0",
+                    backoff = backoffWithoutJitter(),
+                    imageSyncEnabled = { imageSync },
+                )
+            backgroundScope.launch { supervisor.run() }
+
+            runCurrent()
+            assertEquals(listOf(1, 1), connector.versions)
+            assertEquals(SyncConnectionState.WaitingRetry(0, 1_000), supervisor.state.value)
+
+            // No session to close while waiting: the restart still applies the new preference
+            // immediately by cutting the wait short, and the fresh dials lead with v2.
+            imageSync = true
+            supervisor.restartSession()
+            runCurrent()
+            assertEquals(listOf(1, 1, 2, 1, 2, 1), connector.versions)
         }
 
     @Test

@@ -118,6 +118,10 @@ class SyncSupervisor(
     private val mutableState = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)
     private var throttleAnnounced = false
 
+    /** The engine of the currently running session, if any; closed by [restartSession]. */
+    @Volatile
+    private var activeEngine: SyncEngine? = null
+
     /** An IP socket the Bluetooth-session probe already connected; the next session uses it. */
     private var pendingIpTransport: ConnectedTransport? = null
 
@@ -134,6 +138,20 @@ class SyncSupervisor(
      * failed dials, and only a session that reached mutual authentication restarts the schedule.
      */
     fun nudgeReconnect() {
+        reconnectNudges.trySend(Unit)
+    }
+
+    /**
+     * Closes the current session (if any) so the next dial re-reads its connection-time
+     * inputs — most importantly [imageSyncEnabled], whose protocol-version choice (v2 with
+     * image frames vs text-only v1) is fixed at dial time. Without this, flipping the image
+     * sync preference changes nothing until the session happens to drop, which on a stable
+     * network can be arbitrarily far away. A close of an authenticated session resets the
+     * backoff, so the redial follows within about a second; when the loop is sitting out a
+     * backoff wait instead of running a session, the nudge cuts that wait short.
+     */
+    fun restartSession() {
+        activeEngine?.requestClose()
         reconnectNudges.trySend(Unit)
     }
 
@@ -194,10 +212,12 @@ class SyncSupervisor(
                     onRemoteClipsCommitted = onRemoteClipsCommitted,
                 )
             secret.fill(0)
+            activeEngine = engine
             val result =
                 try {
                     runSession(engine, connected, peer)
                 } finally {
+                    activeEngine = null
                     connected.transport.dispose()
                 }
 

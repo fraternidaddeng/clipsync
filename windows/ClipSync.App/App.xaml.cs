@@ -407,6 +407,9 @@ public partial class App : Application
             pairingService.PairingCompleted += OnPairingCompleted;
             pairingService.PeersSuperseded += OnPeersSuperseded;
             viewModel.DeviceRevoked += OnDeviceRevoked;
+            // 图片同步 flips must reach live sessions: the wire version is fixed at dial time,
+            // so bounce every session and let the phone redial (~1 s) on the right version.
+            viewModel.ImageSyncEnabledChanged += OnImageSyncEnabledChanged;
             // 一键暂停/私密模式 must stop outbound content immediately, not only capture:
             // the gate is re-read inside every session, so the tray toggle applies live.
             syncHost = new PeerSyncHost(
@@ -642,6 +645,14 @@ public partial class App : Application
     }
 
     private void OnDeviceRevoked(string deviceId) => syncHost?.DisconnectDevice(deviceId);
+
+    /// <summary>
+    /// 图片同步 changed: drop live sessions so the paired phone redials and the handshake
+    /// renegotiates the wire version under the new setting (v2 with image frames when both
+    /// sides allow it, text-only v1 otherwise). Without this a pre-toggle session would keep
+    /// its dial-time version until an incidental disconnect that may be hours away.
+    /// </summary>
+    private void OnImageSyncEnabledChanged() => syncHost?.DisconnectAllSessions();
 
     /// <summary>
     /// A confirmed pairing superseded stale same-name records (same phone, fresh device id):

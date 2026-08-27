@@ -815,6 +815,16 @@ public partial class MainViewModel(
     /// <summary>Raised after a device is revoked so the app layer can drop its live sessions.</summary>
     public event Action<string>? DeviceRevoked;
 
+    /// <summary>
+    /// Raised when 图片同步 actually changed value. The app layer bounces live peer sessions:
+    /// the wire version (v2 image frames vs text-only v1) is fixed when the phone dials, so
+    /// without the bounce a session that predates the toggle keeps running the old version
+    /// until some incidental disconnect — flipping the switch would look like it did nothing.
+    /// </summary>
+    public event Action? ImageSyncEnabledChanged;
+
+    partial void OnImageSyncEnabledChanged(bool value) => ImageSyncEnabledChanged?.Invoke();
+
     /// <summary>Raised when the user asks to see the full body of the selected clip.</summary>
     public event Action? DetailRequested;
 

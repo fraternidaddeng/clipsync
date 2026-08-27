@@ -188,6 +188,15 @@ public sealed class PeerSyncHost : IAsyncDisposable
     public void DisconnectDevice(string deviceId) => server?.DisconnectDevice(deviceId);
 
     /// <summary>
+    /// Closes every authenticated session so peers redial and renegotiate the wire version.
+    /// Used when the 图片同步 gate flips: the version (v2 image frames vs text-only v1) is
+    /// fixed at dial time, so without this bounce a live v1 session keeps the freshly enabled
+    /// toggle inert until the next incidental disconnect — which a stable network may never
+    /// produce. The phone's reconnect loop redials within about a second.
+    /// </summary>
+    public void DisconnectAllSessions() => server?.DisconnectAllSessions();
+
+    /// <summary>
     /// One recovery pass, serialized by <see cref="SyncResilienceController"/>. Re-resolves
     /// bind addresses, rebinds the server when its bindings went stale (always after resume,
     /// since suspend killed every session anyway), refreshes <see cref="ReachableHosts"/>,

@@ -2,11 +2,13 @@
 <#
 Cross-client stage-4 E2E: builds the solution, starts the headless
 ClipSync.E2eHost listener (real Kestrel + TLS + protocol v1/v2 routes), seeds a
-Windows-side text clip and a fixture image, then drives the Android JVM dialer
-suite (com.clipsync.android.e2e.*) against it over a real pinned WebSocket:
-the v1 leg converges text both ways, the v2 leg converges the shared media
-fixtures both ways (begin/chunk/end streaming, protocol v2). Passes only when
-every direction converges exactly once. Prints E2E-PASS on success.
+Windows-side text clip, a fixture image, and a generated multi-chunk PNG, then
+drives the Android JVM dialer suite (com.clipsync.android.e2e.*) against it
+over a real pinned WebSocket: the v1 leg converges text both ways, the v2 leg
+converges the shared media fixtures both ways (begin/chunk/end streaming,
+protocol v2), and the large-image leg converges ~2 MB PNGs both ways so the
+multi-chunk reassembly path is exercised at real screenshot sizes. Passes only
+when every direction converges exactly once. Prints E2E-PASS on success.
 #>
 [CmdletBinding()]
 param()
@@ -128,7 +130,7 @@ try {
         Write-E2eResult -Status FAIL -Reason 'host ready line was not JSON'
         exit 1
     }
-    foreach ($field in @('port', 'cert_sha256', 'windows_device_id', 'android_device_id', 'pair_secret_b64url', 'trust_epoch', 'android_image_device_id', 'image_trust_epoch')) {
+    foreach ($field in @('port', 'cert_sha256', 'windows_device_id', 'android_device_id', 'pair_secret_b64url', 'trust_epoch', 'android_image_device_id', 'image_trust_epoch', 'android_large_image_device_id', 'large_image_trust_epoch')) {
         if ($ready.PSObject.Properties.Name -notcontains $field) {
             Write-E2eResult -Status FAIL -Reason "ready JSON missing $field"
             exit 1
@@ -160,6 +162,30 @@ try {
         exit 1
     }
 
+    # The multi-chunk leg: the host generates two deterministic ~2 MB noise PNGs (they must
+    # differ so hash dedup cannot mask a broken direction). Seed 41 is captured Windows-side
+    # for the Android pull; seed 42 stays a file the Android side pushes back.
+    $proc.StandardInput.WriteLine('gen-large-png 41 capture')
+    $proc.StandardInput.Flush()
+    $largeSeedLine = Read-HostLine -Reader $proc.StandardOutput -TimeoutMs 30000 -What 'gen-large-png seed JSON'
+    try {
+        $largeSeed = $largeSeedLine | ConvertFrom-Json
+    }
+    catch {
+        Write-E2eResult -Status FAIL -Reason 'host gen-large-png seed line was not JSON'
+        exit 1
+    }
+    $proc.StandardInput.WriteLine('gen-large-png 42')
+    $proc.StandardInput.Flush()
+    $largePushLine = Read-HostLine -Reader $proc.StandardOutput -TimeoutMs 30000 -What 'gen-large-png push JSON'
+    try {
+        $largePush = $largePushLine | ConvertFrom-Json
+    }
+    catch {
+        Write-E2eResult -Status FAIL -Reason 'host gen-large-png push line was not JSON'
+        exit 1
+    }
+
     $gradleArgs = @(
         'testDebugUnitTest',
         '--tests', 'com.clipsync.android.e2e.*',
@@ -172,6 +198,10 @@ try {
         "-Dclipsync.e2e.trustEpoch=$($ready.trust_epoch)",
         "-Dclipsync.e2e.androidImageDeviceId=$($ready.android_image_device_id)",
         "-Dclipsync.e2e.imageTrustEpoch=$($ready.image_trust_epoch)",
+        "-Dclipsync.e2e.androidLargeImageDeviceId=$($ready.android_large_image_device_id)",
+        "-Dclipsync.e2e.largeImageTrustEpoch=$($ready.large_image_trust_epoch)",
+        "-Dclipsync.e2e.largeSeedPath=$($largeSeed.path)",
+        "-Dclipsync.e2e.largePushPath=$($largePush.path)",
         '--no-daemon',
         '--console=plain'
     )
@@ -258,6 +288,16 @@ try {
     $windowsImageHits = @($images.image_hashes | Where-Object { $_ -eq $mediaManifest.png_8x8_sha256 })
     if ($windowsImageHits.Count -ne 1) {
         Write-E2eResult -Status FAIL -Reason "windows list-images expected the seeded png hash exactly once, found $($windowsImageHits.Count)"
+        exit 1
+    }
+    $largePushHits = @($images.image_hashes | Where-Object { $_ -eq $largePush.sha256 })
+    if ($largePushHits.Count -ne 1) {
+        Write-E2eResult -Status FAIL -Reason "windows list-images expected the pushed large png hash exactly once, found $($largePushHits.Count)"
+        exit 1
+    }
+    $largeSeedHits = @($images.image_hashes | Where-Object { $_ -eq $largeSeed.sha256 })
+    if ($largeSeedHits.Count -ne 1) {
+        Write-E2eResult -Status FAIL -Reason "windows list-images expected the seeded large png hash exactly once, found $($largeSeedHits.Count)"
         exit 1
     }
 

@@ -132,6 +132,61 @@ public sealed class ImageSyncGateTests
     }
 
     [Fact]
+    public async Task BouncingSessionsAfterEnablingTheGateLetsTheRedialUpgradeToV2AndImagesFlow()
+    {
+        // The session-stickiness regression behind「图片传输死掉了」: the wire version is
+        // chosen when the phone dials, so a session established while 图片同步 was off runs
+        // text-only v1 forever — flipping the toggle later changes nothing until the session
+        // happens to drop, which a stable network may never do. The fix bounces every live
+        // session on the toggle (App: MainViewModel.ImageSyncEnabledChanged →
+        // PeerSyncHost.DisconnectAllSessions; Android: ClipboardSyncService →
+        // SyncSupervisor.restartSession), and the redial renegotiates v2.
+        var imageSyncEnabled = false;
+        await using var pair = await PeerPair.CreateAsync(
+            serverSessionOptions: PeerPair.DefaultSessionOptions() with
+            {
+                ImageSyncEnabled = () => Volatile.Read(ref imageSyncEnabled)
+            });
+
+        // With the gate off, the phone can only hold a text-only v1 session.
+        var v1 = await pair.DialAsync(PeerPair.DialerOptions() with { ProtocolVersion = 1 });
+        await PeerPair.CaptureAsync(pair.WindowsStore, "v1-warmup");
+        await pair.WaitUntilAsync(async () =>
+            (await PeerPair.VisibleTextsAsync(pair.AndroidStore)).Contains("v1-warmup"));
+
+        // The user turns 图片同步 on; the app layer bounces the live sessions in response.
+        Volatile.Write(ref imageSyncEnabled, true);
+        pair.Server.DisconnectAllSessions();
+        var v1Result = await v1.Run.WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.True(v1Result.Authenticated);
+
+        // The phone's reconnect loop redials within a second, now succeeding on /v2.
+        var v2 = await pair.DialAsync();
+
+        // Windows → Android: a fresh image commits on the dialer as a real image event.
+        var toPhone = ImageCodec.EncodePngBgra(2, 1, [255, 0, 0, 255, 0, 255, 0, 255]);
+        var toPhoneHash = ImageCodec.HashBytes(toPhone);
+        await PeerPair.CaptureImageAsync(pair.WindowsStore, toPhone, toPhoneHash, "image/png", width: 2, height: 1);
+        await pair.WaitUntilAsync(async () =>
+        {
+            var items = await pair.AndroidStore.SearchAsync(new ClipboardHistoryQuery(Limit: 50));
+            return items.Any(item => item.IsImage && item.ContentHash == toPhoneHash);
+        });
+
+        // Android → Windows on the same renegotiated session.
+        var toDesktop = ImageCodec.EncodePngBgra(1, 2, [0, 0, 255, 255, 255, 255, 0, 255]);
+        var toDesktopHash = ImageCodec.HashBytes(toDesktop);
+        await PeerPair.CaptureImageAsync(pair.AndroidStore, toDesktop, toDesktopHash, "image/png", width: 1, height: 2);
+        await pair.WaitUntilAsync(async () =>
+        {
+            var items = await pair.WindowsStore.SearchAsync(new ClipboardHistoryQuery(Limit: 50));
+            return items.Any(item => item.IsImage && item.ContentHash == toDesktopHash);
+        });
+
+        Assert.True((await v2.CloseAsync()).Authenticated);
+    }
+
+    [Fact]
     public async Task V1SessionMarksOriginImageLocalOnlyAndALaterV2SessionNeverBackfillsIt()
     {
         await using var pair = await PeerPair.CreateAsync();

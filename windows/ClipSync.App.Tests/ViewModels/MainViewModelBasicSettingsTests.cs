@@ -110,6 +110,29 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task FlippingImageSyncRaisesTheSessionBounceEventOnActualChangesOnly()
+    {
+        // The wire version is fixed at dial time, so App.xaml.cs listens to this event and
+        // calls PeerSyncHost.DisconnectAllSessions: without the bounce, a session opened
+        // while 图片同步 was off stays text-only v1 no matter what the toggle says.
+        var viewModel = CreateViewModel();
+        await viewModel.InitializeAsync();
+        var bounces = 0;
+        viewModel.ImageSyncEnabledChanged += () => bounces++;
+
+        viewModel.ImageSyncEnabled = true;
+        Assert.Equal(1, bounces);
+
+        // Re-assigning the same value must not disconnect anyone.
+        viewModel.ImageSyncEnabled = true;
+        Assert.Equal(1, bounces);
+
+        // Turning it off renegotiates too: live v2 sessions drop back to text-only v1.
+        viewModel.ImageSyncEnabled = false;
+        Assert.Equal(2, bounces);
+    }
+
+    [Fact]
     public async Task UnreadableStoredValuesFallBackToDefaultsWithoutErroring()
     {
         await store.InitializeAsync();
