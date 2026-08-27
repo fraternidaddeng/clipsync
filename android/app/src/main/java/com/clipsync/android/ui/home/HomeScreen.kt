@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
@@ -50,6 +51,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -200,6 +204,9 @@ fun HomeScreen(
     }
 }
 
+/** The clear button's square hit target: the Material minimum, not the glyph. */
+private val SEARCH_CLEAR_TOUCH_TARGET = 44.dp
+
 /** z−1 sunken search input, wired to the repository query (debounced upstream). */
 @Composable
 private fun SearchField(
@@ -213,7 +220,10 @@ private fun SearchField(
             modifier
                 .fillMaxWidth()
                 .charterSunken(corner = 12.dp)
-                .padding(horizontal = 12.dp, vertical = 10.dp),
+                // A stable minimum height with room for the clear target, so the
+                // field never jumps when the first typed character brings it in.
+                .heightIn(min = SEARCH_CLEAR_TOUCH_TARGET)
+                .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -237,13 +247,30 @@ private fun SearchField(
             )
         }
         if (query.isNotEmpty()) {
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = "×",
-                fontSize = 15.sp,
-                color = c.t3,
-                modifier = Modifier.clickable { onQueryChange("") },
-            )
+            Spacer(Modifier.width(2.dp))
+            val clearLabel = stringResource(R.string.home_search_clear)
+            // The glyph stays a quiet ×, but the target is a full 44dp square
+            // (a 15sp mark alone is far too small to hit) and TalkBack hears a
+            // named button — 清除搜索 — rather than an unlabeled letter.
+            Box(
+                modifier =
+                    Modifier
+                        .size(SEARCH_CLEAR_TOUCH_TARGET)
+                        .clip(CircleShape)
+                        .clickable(
+                            onClick = { onQueryChange("") },
+                            role = Role.Button,
+                            onClickLabel = clearLabel,
+                        )
+                        .semantics { contentDescription = clearLabel },
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "×",
+                    fontSize = 15.sp,
+                    color = c.t3,
+                )
+            }
         }
     }
 }
