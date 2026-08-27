@@ -255,7 +255,8 @@ class HealthViewModelTest {
         // Solid grey (UNAVAILABLE), not DEGRADED: the user chose this off state.
         assertEquals(ConduitStatus.UNAVAILABLE, state.localService.status)
         assertEquals("已关闭", state.localService.statusLabel.testString())
-        assertTrue(state.localService.detail.testString().contains("偏好"))
+        val detail = state.localService.detail.testString()
+        assertTrue(detail.contains("偏好"))
     }
 
     @Test
