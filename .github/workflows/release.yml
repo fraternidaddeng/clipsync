@@ -147,6 +147,18 @@ jobs:
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
             echo "Release $TAG exists; replacing assets and notes."
             gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file release-notes.md
+            # A signed re-run supersedes an earlier unsigned one, but `upload
+            # --clobber` only replaces same-named files: the stale
+            # ClipSync-android-unsigned.apk (+ .sha256) left by a run without
+            # the CLIPSYNC_ANDROID_* secrets must be deleted explicitly, or the
+            # release would offer both a signed and an uninstallable APK.
+            if [ ! -f dist/ClipSync-android-unsigned.apk ]; then
+              for stale in ClipSync-android-unsigned.apk ClipSync-android-unsigned.apk.sha256; do
+                if gh release delete-asset "$TAG" "$stale" --repo "$GITHUB_REPOSITORY" --yes > /dev/null 2>&1; then
+                  echo "Deleted stale unsigned asset: $stale"
+                fi
+              done
+            fi
             gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber dist/*
           else
             gh release create "$TAG" --repo "$GITHUB_REPOSITORY" \
