@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### 安全
+
+- 全库密钥泄露审计（2026-08-27，结论：**未发现任何真实密钥入库**）：全历史（375 提交、含全部远端分支，非浅克隆）逐 blob 扫描私钥块与 GitHub/AWS/Google/Slack/Stripe/OpenAI/npm/Azure 凭据形态、全历史文件名扫描（`.env`/`*.jks`/`*.keystore`/`*.pem`/`*.key`/`local.properties`/`google-services.json` 等）、工作树关键词与高熵串复核、workflows 全历史核查（secrets 一律经 `${{ secrets.* }}` 引用，keystore 只在 `RUNNER_TEMP` 解码）、脚本与文档核查（签名材料只走环境变量，文档均为占位符）——命中项全部为有意设计的合成测试向量（协议 fixtures 的 `pair_secret` 拒收样例、单测共享向量、蓝牙 spike 的公开固定值），无一真实。无需轮换任何凭据。
+- 预防性收紧：`.gitignore` 新增 `*.b64`（`docs/install.md` §10 生成的 keystore base64 中间产物此前不在拦截范围——`*.jks` 被拦但它的 base64 副本不被拦）、`.env`/`*.env`、`keystore.properties`、`google-services.json`；新增 `scripts/check-secrets.sh` 轻量守门（只扫已追踪文件：禁入库文件名形态 + 10 条高信号凭据形态，合成向量零误报）并接入 CI 常驻作业 `secret-scan`。
+
 ### 新增
 
 - [Windows] 暂停同步全局快捷键（`docs/settings-roadmap.md` P1#9 的另一半，`53f9a2e`）：偏好 · 运行新增第二条快捷键行（`hotkey_pause`，默认关）——在任意应用按下组合键（需含 Ctrl/Alt/Win）即暂停同步，再按一次恢复，与托盘浮窗的暂停按钮同一意图落 `is_paused`（托盘颜色、浮窗、通路页捕获段随属性联动）。复用既有快捷键基座：`FlyoutHotkeyManager` 泛化为 `GlobalHotkeyManager`（两条快捷键同住一个隐藏消息窗口）、录入框按组合即设 / Backspace 清除、被其他程序占用时如实报「已被占用」（赭色事实行）；与呼出浮窗快捷键撞同一组合时呼出浮窗优先，暂停行如实报「已用于本应用的另一条快捷键」而非诬赖其他程序。4 新键 × 19 语逐键齐全（`check-i18n-parity.py` 照绿）。

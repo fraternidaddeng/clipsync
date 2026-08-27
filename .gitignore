@@ -22,6 +22,12 @@ local.properties
 *.key
 *.pem
 secrets/
+# install.md §10 keystore base64 intermediate (never commit it either)
+*.b64
+.env
+*.env
+keystore.properties
+google-services.json
 
 # Runtime data and packages
 *.db

@@ -114,6 +114,20 @@ jobs:
         working-directory: android
         run: ./gradlew detekt ktlintCheck --stacktrace
 
+  secret-scan:
+    name: Committed-secret guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      # 轻量已提交密钥守门（2026-08-27 安全审计常驻化）：只扫已追踪文件的
+      # 文件名形态（密钥库/私钥/.env 等）与高信号凭据形态（私钥块、GitHub/
+      # AWS/Google/Slack/Stripe/OpenAI/npm/Azure 前缀）。协议 fixtures 与单测
+      # 的合成向量不在命中范围；本作业红线几乎必然是真泄露，先轮换再清理。
+      - name: check-secrets (tracked filenames + credential patterns)
+        run: bash scripts/check-secrets.sh
+
   i18n-parity:
     name: i18n parity and generated resources
     runs-on: ubuntu-latest
