@@ -56,7 +56,9 @@ import com.clipsync.android.ui.theme.clipSyncColors
  * send-off. Shown once ([FirstRunStore]), replayable from 偏好 · 帮助.
  * Charter styled throughout: serif greeting, flow-blue single primary per
  * screen, ghost secondaries, no green, day/night from the shared palette.
- * Never a trap: every step but the last carries 稍后设置.
+ * Never a trap: every step but the last carries 稍后设置. [progress] carries
+ * the locally detectable facts ([OnboardingProgress]) so already-done steps
+ * state their completion live, mirroring the Windows pair step.
  */
 @Composable
 fun OnboardingScreen(
@@ -64,6 +66,7 @@ fun OnboardingScreen(
     onOpenWizard: () -> Unit,
     onSkip: () -> Unit,
     modifier: Modifier = Modifier,
+    progress: OnboardingProgress = OnboardingProgress(),
 ) {
     var stepIndex by rememberSaveable { mutableIntStateOf(0) }
     val step = OnboardingContent.steps[stepIndex]
@@ -103,38 +106,58 @@ fun OnboardingScreen(
             ) {
                 when (current) {
                     OnboardingStep.WELCOME -> WelcomeStep()
-                    OnboardingStep.PAIR -> PairStep()
-                    OnboardingStep.READ_ROUTES -> ReadRoutesStep()
-                    OnboardingStep.PERMISSIONS -> PermissionsStep()
+                    OnboardingStep.PAIR -> PairStep(paired = progress.paired)
+                    OnboardingStep.READ_ROUTES ->
+                        ReadRoutesStep(privilegedReady = progress.privilegedChannelReady)
+                    OnboardingStep.PERMISSIONS ->
+                        PermissionsStep(notificationsEnabled = progress.notificationsEnabled)
                     OnboardingStep.FINISH -> FinishStep()
                 }
             }
         }
         Spacer(Modifier.height(14.dp))
-        if (step == OnboardingStep.FINISH) {
-            // The send-off ladder: solid pair (the step everything waits on),
-            // tinted wizard deep-dive, ghost "look around first".
-            PrimaryAction(
-                label = stringResource(OnboardingContent.ACTION_PAIR),
-                onClick = onPair,
-            )
-            Spacer(Modifier.height(10.dp))
-            TintedAction(
-                label = stringResource(OnboardingContent.ACTION_WIZARD),
-                onClick = onOpenWizard,
-            )
-            Spacer(Modifier.height(10.dp))
-            GhostAction(
-                label = stringResource(OnboardingContent.ACTION_SKIP),
-                onClick = onSkip,
-            )
-        } else {
-            PrimaryAction(
-                label = stringResource(OnboardingContent.ACTION_NEXT),
-                onClick = { stepIndex = OnboardingContent.next(stepIndex) },
-            )
-        }
+        ActionArea(
+            isFinish = step == OnboardingStep.FINISH,
+            onPair = onPair,
+            onOpenWizard = onOpenWizard,
+            onSkip = onSkip,
+            onNext = { stepIndex = OnboardingContent.next(stepIndex) },
+        )
         Spacer(Modifier.height(8.dp))
+    }
+}
+
+/** The bottom action ladder: 继续 while walking, the three-way send-off at the end. */
+@Composable
+private fun ActionArea(
+    isFinish: Boolean,
+    onPair: () -> Unit,
+    onOpenWizard: () -> Unit,
+    onSkip: () -> Unit,
+    onNext: () -> Unit,
+) {
+    if (isFinish) {
+        // The send-off ladder: solid pair (the step everything waits on),
+        // tinted wizard deep-dive, ghost "look around first".
+        PrimaryAction(
+            label = stringResource(OnboardingContent.ACTION_PAIR),
+            onClick = onPair,
+        )
+        Spacer(Modifier.height(10.dp))
+        TintedAction(
+            label = stringResource(OnboardingContent.ACTION_WIZARD),
+            onClick = onOpenWizard,
+        )
+        Spacer(Modifier.height(10.dp))
+        GhostAction(
+            label = stringResource(OnboardingContent.ACTION_SKIP),
+            onClick = onSkip,
+        )
+    } else {
+        PrimaryAction(
+            label = stringResource(OnboardingContent.ACTION_NEXT),
+            onClick = onNext,
+        )
     }
 }
 
@@ -306,13 +329,19 @@ private fun WelcomeStep() {
 // ---------------------------------------------------------------------------
 
 @Composable
-private fun PairStep() {
+private fun PairStep(paired: Boolean) {
     val c = clipSyncColors
     StepHeading(
         icon = ClipSyncIcons.Monitor,
         title = stringResource(OnboardingContent.PAIR_TITLE),
         body = stringResource(OnboardingContent.PAIR_BODY),
     )
+    if (paired) {
+        // Detected live from the pairing store (the Windows pair step states the
+        // same fact when its ritual completes mid-walk): flow blue, not green.
+        Spacer(Modifier.height(14.dp))
+        DoneNote(text = stringResource(OnboardingContent.PAIR_DONE))
+    }
     Spacer(Modifier.height(18.dp))
     Column(
         modifier =
@@ -347,7 +376,7 @@ private fun PairStep() {
 // ---------------------------------------------------------------------------
 
 @Composable
-private fun ReadRoutesStep() {
+private fun ReadRoutesStep(privilegedReady: Boolean) {
     val c = clipSyncColors
     StepHeading(
         icon = ClipSyncIcons.Conduit,
@@ -392,6 +421,10 @@ private fun ReadRoutesStep() {
                     style = ClipSyncType.caption,
                     color = c.t3,
                 )
+                if (route.privileged && privilegedReady) {
+                    // The wizard's own 前提已就绪, detected live — flow, not green.
+                    DoneMark(text = stringResource(OnboardingContent.ROUTE_READY))
+                }
             }
         }
     }
@@ -448,7 +481,7 @@ private fun QualityDots(
 // ---------------------------------------------------------------------------
 
 @Composable
-private fun PermissionsStep() {
+private fun PermissionsStep(notificationsEnabled: Boolean) {
     val c = clipSyncColors
     StepHeading(
         icon = ClipSyncIcons.Service,
@@ -464,18 +497,32 @@ private fun PermissionsStep() {
     ) {
         OnboardingContent.permissions.forEachIndexed { index, permission ->
             if (index > 0) CardDivider()
+            // Notifications is the one grant detectable without side effects;
+            // overlay/battery stay unmarked rather than guess (honesty first).
+            val granted =
+                permission.id == OnboardingPermissionId.NOTIFICATIONS &&
+                    notificationsEnabled
             Column(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 14.dp, vertical = 12.dp),
             ) {
-                Text(
-                    text = stringResource(permission.title),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = c.t1,
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(permission.title),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = c.t1,
+                        modifier = Modifier.weight(1f),
+                    )
+                    if (granted) {
+                        DoneMark(text = stringResource(OnboardingContent.PERM_GRANTED))
+                    }
+                }
                 Spacer(Modifier.height(2.dp))
                 Text(
                     text = stringResource(permission.description),
@@ -563,6 +610,70 @@ private fun CardDivider() {
             .height(1.dp)
             .background(clipSyncColors.ln),
     )
+}
+
+/**
+ * A completed step states its fact on a flow-tinted face — the same treatment
+ * as the Windows pair step's live done note (charter: flow blue, never green).
+ */
+@Composable
+private fun DoneNote(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    val c = clipSyncColors
+    val shape = CharterShapes.control
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(c.flowBg)
+                .border(1.dp, c.flowLn, shape)
+                .padding(horizontal = 14.dp, vertical = 11.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .size(8.dp)
+                    .background(color = c.flow, shape = CircleShape),
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = text,
+            style = ClipSyncType.caption,
+            fontWeight = FontWeight.SemiBold,
+            color = c.flow,
+        )
+    }
+}
+
+/**
+ * An inline detected fact: the conduit wizard's filled flow dot plus its own
+ * words, so a marked row reads exactly like the wizard would state it.
+ */
+@Composable
+private fun DoneMark(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    val c = clipSyncColors
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier =
+                Modifier
+                    .size(7.dp)
+                    .background(color = c.flow, shape = CircleShape),
+        )
+        Spacer(Modifier.width(6.dp))
+        Text(
+            text = text,
+            style = ClipSyncType.meta,
+            fontWeight = FontWeight.SemiBold,
+            color = c.flow,
+        )
+    }
 }
 
 /** A stated fact on a quiet face — honesty is not a warning, so no ochre here. */

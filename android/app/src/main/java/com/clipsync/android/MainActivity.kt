@@ -94,6 +94,7 @@ import com.clipsync.android.ui.home.HomeScreen
 import com.clipsync.android.ui.home.HomeViewModel
 import com.clipsync.android.ui.onboarding.FirstRunStore
 import com.clipsync.android.ui.onboarding.OnboardingScreen
+import com.clipsync.android.ui.onboarding.onboardingProgress
 import com.clipsync.android.ui.pairing.PairingScreen
 import com.clipsync.android.ui.pairing.PairingUiState
 import com.clipsync.android.ui.pairing.PairingViewModel
@@ -710,6 +711,9 @@ private fun ClipSyncApp(
                     onboardingOpen = false
                     tab = 0
                 },
+                // Live facts from the conduit's own probes: steps already done
+                // (pairing, notifications, 特权直读 prerequisites) state it.
+                progress = onboardingProgress(healthState),
             )
             return@Box
         }

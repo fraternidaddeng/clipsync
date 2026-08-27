@@ -19,10 +19,23 @@ data class OnboardingRouteEntry(
     /** Quality dots 1..3, mirroring the conduit wizard's ●●● scale. */
     val quality: Int,
     val recommended: Boolean = false,
+    /**
+     * 特权直读: the one route whose prerequisites the tutorial can safely detect
+     * locally, so its row may state 前提已就绪 live ([OnboardingProgress]).
+     */
+    val privileged: Boolean = false,
 )
+
+/** Which permission a row explains, so live grant detection can find its row. */
+enum class OnboardingPermissionId {
+    NOTIFICATIONS,
+    OVERLAY,
+    BATTERY,
+}
 
 /** A permission explained before the system ever asks for it. */
 data class OnboardingPermissionEntry(
+    val id: OnboardingPermissionId,
     @StringRes val title: Int,
     @StringRes val description: Int,
 )
@@ -107,6 +120,12 @@ object OnboardingContent {
             R.string.onboarding_pair_fact_service,
         )
 
+    /**
+     * Stated when the install is already paired (a replay, or pairing completed
+     * mid-walk) — the Windows pair step states the same fact the same way.
+     */
+    @StringRes val PAIR_DONE = R.string.onboarding_pair_done
+
     // -- 3 · the read path (特权直读 recommended) ---------------------------
 
     /** The conduit wizard's own title — the tutorial points at the same door. */
@@ -122,6 +141,7 @@ object OnboardingContent {
                 cost = R.string.route_privileged_cost,
                 quality = 3,
                 recommended = true,
+                privileged = true,
             ),
             OnboardingRouteEntry(
                 title = R.string.route_log_overlay,
@@ -137,6 +157,12 @@ object OnboardingContent {
 
     @StringRes val ROUTE_RECOMMENDED = R.string.onboarding_route_recommended
 
+    /**
+     * Live 前提已就绪 mark on the 特权直读 route — the wizard's own words, so the
+     * tutorial's claim can never drift from what the conduit page would say.
+     */
+    @StringRes val ROUTE_READY = R.string.wizard_ready
+
     /** USB-free 特权直读: Developer options → Wireless debugging. */
     @StringRes val WIRELESS_DEBUG_HINT = R.string.onboarding_wireless_debug_hint
 
@@ -146,17 +172,23 @@ object OnboardingContent {
 
     @StringRes val PERMS_BODY = R.string.onboarding_perms_body
 
+    /** Live "already granted" mark on a permission row (reuses the conduit's 已开启). */
+    @StringRes val PERM_GRANTED = R.string.status_enabled
+
     val permissions =
         listOf(
             OnboardingPermissionEntry(
+                id = OnboardingPermissionId.NOTIFICATIONS,
                 title = R.string.onboarding_perm_notifications,
                 description = R.string.onboarding_perm_notifications_desc,
             ),
             OnboardingPermissionEntry(
+                id = OnboardingPermissionId.OVERLAY,
                 title = R.string.onboarding_perm_overlay,
                 description = R.string.onboarding_perm_overlay_desc,
             ),
             OnboardingPermissionEntry(
+                id = OnboardingPermissionId.BATTERY,
                 title = R.string.onboarding_perm_battery,
                 description = R.string.onboarding_perm_battery_desc,
             ),

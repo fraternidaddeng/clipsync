@@ -158,6 +158,37 @@ class OnboardingContentTest {
         assertEquals(R.string.onboarding_perms_body, OnboardingContent.PERMS_BODY)
     }
 
+    // -- live completion marks --------------------------------------------------
+
+    @Test
+    fun `live completion marks reuse the destination screens' own words`() {
+        // Pair done, 前提已就绪 and 已开启 must never drift from what the pairing
+        // ritual, the wizard and the conduit page themselves would say.
+        assertEquals(R.string.onboarding_pair_done, OnboardingContent.PAIR_DONE)
+        assertEquals(R.string.wizard_ready, OnboardingContent.ROUTE_READY)
+        assertEquals(R.string.status_enabled, OnboardingContent.PERM_GRANTED)
+    }
+
+    @Test
+    fun `only 特权直读 is marked locally detectable among the routes`() {
+        assertEquals(
+            listOf(R.string.route_privileged),
+            OnboardingContent.routes.filter { it.privileged }.map { it.title },
+        )
+    }
+
+    @Test
+    fun `each permission row is identifiable so a live grant can find it`() {
+        assertEquals(
+            listOf(
+                OnboardingPermissionId.NOTIFICATIONS,
+                OnboardingPermissionId.OVERLAY,
+                OnboardingPermissionId.BATTERY,
+            ),
+            OnboardingContent.permissions.map { it.id },
+        )
+    }
+
     // -- 5 · send-off ---------------------------------------------------------
 
     @Test
