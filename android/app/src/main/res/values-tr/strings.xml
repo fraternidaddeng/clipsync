@@ -39,6 +39,7 @@
     <string name="notification_action_sync_now">Şimdi eşitle</string>
     <string name="notification_status_sync_paused">Eşitleme duraklatıldı · gelen içerik yalnızca gelen kutusuna gider</string>
     <string name="notification_status_capture_paused">Otomatik yakalama duraklatıldı · elle gönderme ve alma çalışmaya devam eder</string>
+    <string name="notification_status_overlay_polling">Yer paylaşımıyla yoklama okuması sürüyor</string>
 
     <string name="notification_channel_recovery_name">Kurtarma hatırlatıcıları</string>
     <string name="notification_channel_recovery_description">Eşitleme hizmeti kendi başına toparlanamadığında uygulamayı açıp elle devam etmenizi hatırlatır. Bildirimler pano içeriğini asla göstermez.</string>
@@ -76,6 +77,7 @@
     <string name="action_go_pair">Şimdi eşleştir</string>
 
     <string name="home_search_hint">Ara</string>
+    <string name="home_search_clear">Aramayı temizle</string>
     <string name="home_notice_copied">Sistem panosuna yazıldı</string>
     <string name="home_notice_copy_failed">Kopyalama başarısız · %1$s</string>
     <string name="home_notice_deleted">Bu cihazdan kaldırıldı · diğer cihazlar etkilenmez</string>
@@ -102,6 +104,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">Yeniden yokla</string>
+    <string name="conduit_reprobing">Yoklanıyor…</string>
+    <string name="conduit_testing">Test ediliyor…</string>
     <string name="conduit_segment_local_read">Yerel okuma</string>
     <string name="conduit_segment_local_service">Yerel hizmet</string>
     <string name="conduit_segment_network">Ağ</string>
@@ -245,6 +249,14 @@
     <string name="route_action_battery_settings">Pil ayarları</string>
     <string name="route_action_set_preferred">Tercih edilen yol yap</string>
     <string name="route_action_read_test">Arka plan okumayı test et</string>
+    <string name="priv_hint_not_installed">Bu telefonda ayrıcalıklı kanal uygulaması yüklü değil; yükleyip başlatın, sonra dönüp “Yeniden yokla”ya dokunun.</string>
+    <string name="priv_hint_not_running">Ayrıcalıklı kanal çalışmıyor; başlatma komutunu bir bilgisayardan bir kez çalıştırın (Windows tarafında tek tık).</string>
+    <string name="priv_hint_not_authorized">Ayrıcalıklı kanal bu uygulamaya henüz yetki vermedi; “Ayrıcalıklı okumayı yetkilendir”e dokunun.</string>
+    <string name="priv_hint_binder_dead">Ayrıcalıklı kanalla bağlantı koptu; kanalı yeniden başlatıp “Yeniden yokla”ya dokunun.</string>
+    <string name="priv_hint_userservice_dead">Ayrıcalıklı okuma hizmetinin bağlantısı kesildi; “Yeniden yokla” ile yeniden bağlanmayı deneyin, olmazsa kanalı yeniden başlatın.</string>
+    <string name="priv_hint_clipboard_binder_dead">Sistem panosu hizmetine şu anda erişilemiyor; daha sonra deneyin, sürerse cihazı yeniden başlatın.</string>
+    <string name="priv_hint_api_mismatch">Ayrıcalıklı kanal eski veya bu sistem sürümüyle uyumsuz; kanal uygulamasını güncelleyip yeniden deneyin.</string>
+    <string name="priv_hint_read_unverified">Ön koşullar hazır; bir gerçek test kaldı. Doğrulamak için “Arka plan okumayı test et”e dokunun.</string>
     <string name="read_state_unprobed">Yoklanmadı</string>
     <string name="read_state_ready">Hazır</string>
     <string name="read_state_pending_test">Test bekliyor (%1$s)</string>
@@ -420,6 +432,7 @@
     <string name="onboarding_pair_fact_entry">Eşleştirme girişi her zaman “Kanal” sayfasının ağ bölümündedir — bu eğitimden sonra da istediğiniz an bulabilirsiniz.</string>
     <string name="onboarding_pair_fact_verify">Eşleştirme sırasında iki taraf da sertifika parmak izini gösterir; yalnızca eşleşiyorsa onaylayın — bu adım yanlış PC’ye bağlanmayı önler.</string>
     <string name="onboarding_pair_fact_service">Eşleştirme tamamlanınca ağ bölümü bağlanır ve eşitleme hizmeti otomatik başlar.</string>
+    <string name="onboarding_pair_done">Bilgisayarınız eşleşti — kanal açık. Turun kalanına devam edin.</string>
     <string name="onboarding_read_body">Uygulama ön plandayken pano her zaman okunabilir; arka plan okuması için seçtiğiniz bir yolda tek seferlik kurulum gerekir. En yüksek kaliteli “Ayrıcalıklı doğrudan okuma” önerilir.</string>
     <string name="onboarding_route_recommended">Önerilen</string>
     <string name="onboarding_wireless_debug_hint">Elinizde USB kablosu yok mu? “Geliştirici seçenekleri → Kablosuz hata ayıklama”yı açın; PC aynı tek tık başlatmayı Wi-Fi üzerinden de yapabilir.</string>

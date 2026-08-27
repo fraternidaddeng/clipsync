@@ -41,6 +41,7 @@
     <string name="notification_action_sync_now">Синхронизировать сейчас</string>
     <string name="notification_status_sync_paused">Синхронизация приостановлена · входящее содержимое попадает только во входящие</string>
     <string name="notification_status_capture_paused">Автозахват приостановлен · ручная отправка и приём по-прежнему работают</string>
+    <string name="notification_status_overlay_polling">Идёт чтение опросом через оверлей</string>
 
     <string name="notification_channel_recovery_name">Напоминания о восстановлении</string>
     <string name="notification_channel_recovery_description">Напоминает открыть приложение и возобновить вручную, когда служба синхронизации не может восстановиться сама. Уведомления никогда не показывают содержимое буфера обмена.</string>
@@ -78,6 +79,7 @@
     <string name="action_go_pair">Сопрячь сейчас</string>
 
     <string name="home_search_hint">Поиск</string>
+    <string name="home_search_clear">Очистить поиск</string>
     <string name="home_notice_copied">Записано в системный буфер обмена</string>
     <string name="home_notice_copy_failed">Ошибка копирования · %1$s</string>
     <string name="home_notice_deleted">Удалено с этого устройства · другие устройства не затронуты</string>
@@ -104,6 +106,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">Проверить заново</string>
+    <string name="conduit_reprobing">Проверка…</string>
+    <string name="conduit_testing">Тестирование…</string>
     <string name="conduit_segment_local_read">Локальное чтение</string>
     <string name="conduit_segment_local_service">Локальная служба</string>
     <string name="conduit_segment_network">Сеть</string>
@@ -247,6 +251,14 @@
     <string name="route_action_battery_settings">Настройки батареи</string>
     <string name="route_action_set_preferred">Сделать предпочитаемым путём</string>
     <string name="route_action_read_test">Проверить фоновое чтение</string>
+    <string name="priv_hint_not_installed">Приложение привилегированного канала не установлено на этом телефоне; установите и запустите его, затем нажмите «Проверить заново».</string>
+    <string name="priv_hint_not_running">Привилегированный канал не запущен; выполните команду запуска с компьютера один раз (на стороне Windows — в один клик).</string>
+    <string name="priv_hint_not_authorized">Привилегированный канал ещё не выдал разрешение этому приложению; нажмите «Разрешить привилегированное чтение».</string>
+    <string name="priv_hint_binder_dead">Связь с привилегированным каналом потеряна; перезапустите канал и нажмите «Проверить заново».</string>
+    <string name="priv_hint_userservice_dead">Служба привилегированного чтения отключилась; нажмите «Проверить заново», а если не поможет — перезапустите канал.</string>
+    <string name="priv_hint_clipboard_binder_dead">Системная служба буфера обмена сейчас недоступна; попробуйте позже, при повторении перезагрузите устройство.</string>
+    <string name="priv_hint_api_mismatch">Привилегированный канал устарел или несовместим с этой версией системы; обновите приложение канала и повторите попытку.</string>
+    <string name="priv_hint_read_unverified">Все условия выполнены, остался один реальный тест; нажмите «Проверить фоновое чтение».</string>
     <string name="read_state_unprobed">Не проверено</string>
     <string name="read_state_ready">Готово</string>
     <string name="read_state_pending_test">Ожидает проверки (%1$s)</string>
@@ -434,6 +446,7 @@
     <string name="onboarding_pair_fact_entry">Вход в сопряжение закреплён в сегменте «Сеть» на странице «Канал» — после обучения его всегда можно найти там же.</string>
     <string name="onboarding_pair_fact_verify">При сопряжении обе стороны показывают отпечаток сертификата; подтверждайте только при совпадении — этот шаг защищает от подключения не к тому ПК.</string>
     <string name="onboarding_pair_fact_service">После сопряжения сетевой сегмент подключается, и служба синхронизации запускается автоматически.</string>
+    <string name="onboarding_pair_done">Компьютер сопряжён — канал открыт. Продолжайте знакомство дальше.</string>
     <string name="onboarding_read_body">Пока приложение на переднем плане, буфер обмена читается всегда; для фонового чтения нужно один раз настроить любой из путей. Рекомендуем самый качественный — «Привилегированное прямое чтение».</string>
     <string name="onboarding_route_recommended">Рекомендуется</string>
     <string name="onboarding_wireless_debug_hint">Нет под рукой USB-кабеля? Включите «Параметры разработчика → Беспроводная отладка» — ПК выполнит тот же запуск в один клик по Wi-Fi.</string>

@@ -40,6 +40,7 @@
     <string name="notification_action_sync_now">Sincronizza ora</string>
     <string name="notification_status_sync_paused">Sincronizzazione sospesa · i contenuti in arrivo vanno solo nella posta in arrivo</string>
     <string name="notification_status_capture_paused">Cattura automatica sospesa · invio e ricezione manuali funzionano ancora</string>
+    <string name="notification_status_overlay_polling">Lettura con polling overlay in corso</string>
 
     <string name="notification_channel_recovery_name">Promemoria di ripristino</string>
     <string name="notification_channel_recovery_description">Ti ricorda di aprire l’app e riprendere manualmente quando il servizio di sincronizzazione non riesce a ripristinarsi da solo. Le notifiche non mostrano mai il contenuto degli appunti.</string>
@@ -77,6 +78,7 @@
     <string name="action_go_pair">Associa ora</string>
 
     <string name="home_search_hint">Cerca</string>
+    <string name="home_search_clear">Cancella ricerca</string>
     <string name="home_notice_copied">Scritto negli appunti di sistema</string>
     <string name="home_notice_copy_failed">Copia non riuscita · %1$s</string>
     <string name="home_notice_deleted">Rimosso da questo dispositivo · gli altri dispositivi non sono toccati</string>
@@ -103,6 +105,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">Riesamina</string>
+    <string name="conduit_reprobing">Riesame in corso…</string>
+    <string name="conduit_testing">Prova in corso…</string>
     <string name="conduit_segment_local_read">Lettura locale</string>
     <string name="conduit_segment_local_service">Servizio locale</string>
     <string name="conduit_segment_network">Rete</string>
@@ -246,6 +250,14 @@
     <string name="route_action_battery_settings">Impostazioni batteria</string>
     <string name="route_action_set_preferred">Imposta come percorso preferito</string>
     <string name="route_action_read_test">Prova lettura in background</string>
+    <string name="priv_hint_not_installed">L’app del canale privilegiato non è installata su questo telefono; installala, avviala e poi tocca «Riesamina».</string>
+    <string name="priv_hint_not_running">Il canale privilegiato non è in esecuzione; esegui una volta il comando di avvio da un computer (un clic sul lato Windows).</string>
+    <string name="priv_hint_not_authorized">Il canale privilegiato non ha ancora autorizzato questa app; tocca «Autorizza lettura privilegiata» per concederla.</string>
+    <string name="priv_hint_binder_dead">La connessione al canale privilegiato si è interrotta; riavvia il canale e tocca «Riesamina».</string>
+    <string name="priv_hint_userservice_dead">Il servizio di lettura privilegiata si è disconnesso; tocca «Riesamina» per riconnetterti, altrimenti riavvia il canale.</string>
+    <string name="priv_hint_clipboard_binder_dead">Il servizio degli appunti di sistema al momento non è raggiungibile; riprova più tardi e, se persiste, riavvia il dispositivo.</string>
+    <string name="priv_hint_api_mismatch">Il canale privilegiato è obsoleto o incompatibile con questa versione del sistema; aggiorna l’app del canale e riprova.</string>
+    <string name="priv_hint_read_unverified">I prerequisiti sono pronti; manca un solo test reale. Tocca «Prova lettura in background» per verificare.</string>
     <string name="read_state_unprobed">Non esaminato</string>
     <string name="read_state_ready">Pronto</string>
     <string name="read_state_pending_test">In attesa di test (%1$s)</string>
@@ -427,6 +439,7 @@
     <string name="onboarding_pair_fact_entry">L’ingresso per l’associazione resta nel segmento rete della pagina «Condotto»: lo ritroverai in qualsiasi momento anche dopo questo tutorial.</string>
     <string name="onboarding_pair_fact_verify">Durante l’associazione entrambe le estremità mostrano l’impronta del certificato; conferma solo se coincidono — questo passaggio evita di collegarsi al PC sbagliato.</string>
     <string name="onboarding_pair_fact_service">Completata l’associazione, il segmento rete si collega e il servizio di sincronizzazione parte automaticamente.</string>
+    <string name="onboarding_pair_done">Il computer è associato: il condotto è aperto. Prosegui con il resto del tour.</string>
     <string name="onboarding_read_body">Con l’app in primo piano gli appunti sono sempre leggibili; la lettura in background richiede una configurazione una tantum sul percorso che scegli. Consigliato il più alto in qualità: «Lettura diretta privilegiata».</string>
     <string name="onboarding_route_recommended">Consigliata</string>
     <string name="onboarding_wireless_debug_hint">Niente cavo USB a portata di mano? Attiva «Opzioni sviluppatore → Debug wireless»: il PC potrà eseguire lo stesso avvio con un clic via Wi-Fi.</string>

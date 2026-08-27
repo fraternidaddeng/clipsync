@@ -40,6 +40,7 @@
     <string name="notification_action_sync_now">Synchroniser maintenant</string>
     <string name="notification_status_sync_paused">Synchronisation suspendue · le contenu entrant va uniquement dans la boîte de réception</string>
     <string name="notification_status_capture_paused">Capture automatique suspendue · l’envoi et la réception manuels fonctionnent toujours</string>
+    <string name="notification_status_overlay_polling">Lecture par sondage de superposition en cours</string>
 
     <string name="notification_channel_recovery_name">Rappels de reprise</string>
     <string name="notification_channel_recovery_description">Vous rappelle d’ouvrir l’application et de reprendre manuellement quand le service de synchronisation ne peut pas se rétablir seul. Les notifications n’affichent jamais le contenu du presse-papiers.</string>
@@ -77,6 +78,7 @@
     <string name="action_go_pair">Appairer maintenant</string>
 
     <string name="home_search_hint">Rechercher</string>
+    <string name="home_search_clear">Effacer la recherche</string>
     <string name="home_notice_copied">Écrit dans le presse-papiers système</string>
     <string name="home_notice_copy_failed">Échec de la copie · %1$s</string>
     <string name="home_notice_deleted">Supprimé de cet appareil · les autres appareils ne sont pas affectés</string>
@@ -103,6 +105,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">Resonder</string>
+    <string name="conduit_reprobing">Sondage…</string>
+    <string name="conduit_testing">Test en cours…</string>
     <string name="conduit_segment_local_read">Lecture locale</string>
     <string name="conduit_segment_local_service">Service local</string>
     <string name="conduit_segment_network">Réseau</string>
@@ -246,6 +250,14 @@
     <string name="route_action_battery_settings">Réglages de batterie</string>
     <string name="route_action_set_preferred">Définir comme route préférée</string>
     <string name="route_action_read_test">Tester la lecture en arrière-plan</string>
+    <string name="priv_hint_not_installed">L’application du canal privilégié n’est pas installée sur ce téléphone ; installez-la, démarrez-la puis revenez toucher « Resonder ».</string>
+    <string name="priv_hint_not_running">Le canal privilégié n’est pas en cours d’exécution ; exécutez une fois la commande de démarrage depuis un ordinateur (un clic côté Windows).</string>
+    <string name="priv_hint_not_authorized">Le canal privilégié n’a pas encore autorisé cette application ; touchez « Autoriser la lecture privilégiée » pour l’accorder.</string>
+    <string name="priv_hint_binder_dead">La connexion au canal privilégié a été perdue ; redémarrez le canal puis touchez « Resonder ».</string>
+    <string name="priv_hint_userservice_dead">Le service de lecture privilégiée s’est déconnecté ; touchez « Resonder » pour vous reconnecter, sinon redémarrez le canal.</string>
+    <string name="priv_hint_clipboard_binder_dead">Le service du presse-papiers système est momentanément inaccessible ; réessayez plus tard et, si cela persiste, redémarrez l’appareil.</string>
+    <string name="priv_hint_api_mismatch">Le canal privilégié est obsolète ou incompatible avec cette version du système ; mettez à jour l’application du canal puis réessayez.</string>
+    <string name="priv_hint_read_unverified">Les prérequis sont réunis ; il ne reste qu’un test réel. Touchez « Tester la lecture en arrière-plan » pour vérifier.</string>
     <string name="read_state_unprobed">Non sondé</string>
     <string name="read_state_ready">Prêt</string>
     <string name="read_state_pending_test">Test en attente (%1$s)</string>
@@ -427,6 +439,7 @@
     <string name="onboarding_pair_fact_entry">L’entrée d’appairage reste dans le segment réseau de la page « Conduit » ; vous la retrouverez à tout moment après ce tutoriel.</string>
     <string name="onboarding_pair_fact_verify">Lors de l’appairage, les deux extrémités affichent l’empreinte du certificat ; ne confirmez que si elles concordent — cette étape évite de se connecter au mauvais PC.</string>
     <string name="onboarding_pair_fact_service">Une fois l’appairage terminé, le segment réseau est relié et le service de synchronisation démarre automatiquement.</string>
+    <string name="onboarding_pair_done">Votre ordinateur est appairé — le conduit est ouvert. Poursuivez le reste de la visite.</string>
     <string name="onboarding_read_body">Quand l’application est au premier plan, le presse-papiers reste toujours lisible ; la lecture en arrière-plan demande une configuration unique sur la route de votre choix. La plus haute qualité, « Lecture directe privilégiée », est recommandée.</string>
     <string name="onboarding_route_recommended">Recommandée</string>
     <string name="onboarding_wireless_debug_hint">Pas de câble USB sous la main ? Activez « Options pour les développeurs → Débogage sans fil » : le PC pourra effectuer le même démarrage en un clic via le Wi-Fi.</string>

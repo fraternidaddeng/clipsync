@@ -40,6 +40,7 @@
     <string name="notification_action_sync_now">Sincronizar agora</string>
     <string name="notification_status_sync_paused">Sincronização pausada · o conteúdo recebido vai apenas para a caixa de entrada</string>
     <string name="notification_status_capture_paused">Captura automática pausada · envio e recebimento manuais continuam funcionando</string>
+    <string name="notification_status_overlay_polling">Leitura por sondagem de sobreposição em andamento</string>
 
     <string name="notification_channel_recovery_name">Lembretes de recuperação</string>
     <string name="notification_channel_recovery_description">Lembra você de abrir o app e retomar manualmente quando o serviço de sincronização não consegue se recuperar sozinho. As notificações nunca mostram o conteúdo da área de transferência.</string>
@@ -77,6 +78,7 @@
     <string name="action_go_pair">Parear agora</string>
 
     <string name="home_search_hint">Pesquisar</string>
+    <string name="home_search_clear">Limpar busca</string>
     <string name="home_notice_copied">Gravado na área de transferência do sistema</string>
     <string name="home_notice_copy_failed">Falha ao copiar · %1$s</string>
     <string name="home_notice_deleted">Removido deste aparelho · outros aparelhos não são afetados</string>
@@ -103,6 +105,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">Sondar de novo</string>
+    <string name="conduit_reprobing">Sondando…</string>
+    <string name="conduit_testing">Testando…</string>
     <string name="conduit_segment_local_read">Leitura local</string>
     <string name="conduit_segment_local_service">Serviço local</string>
     <string name="conduit_segment_network">Rede</string>
@@ -246,6 +250,14 @@
     <string name="route_action_battery_settings">Configurações de bateria</string>
     <string name="route_action_set_preferred">Definir como rota preferida</string>
     <string name="route_action_read_test">Testar leitura em segundo plano</string>
+    <string name="priv_hint_not_installed">O aplicativo do canal privilegiado não está instalado neste telefone; instale-o, inicie-o e volte para tocar em “Sondar de novo”.</string>
+    <string name="priv_hint_not_running">O canal privilegiado não está em execução; execute uma vez o comando de início a partir de um computador (um clique no lado do Windows).</string>
+    <string name="priv_hint_not_authorized">O canal privilegiado ainda não autorizou este aplicativo; toque em “Autorizar leitura privilegiada” para conceder.</string>
+    <string name="priv_hint_binder_dead">A conexão com o canal privilegiado caiu; reinicie o canal e toque em “Sondar de novo”.</string>
+    <string name="priv_hint_userservice_dead">O serviço de leitura privilegiada desconectou; toque em “Sondar de novo” para reconectar e, se não resolver, reinicie o canal.</string>
+    <string name="priv_hint_clipboard_binder_dead">O serviço da área de transferência do sistema está inacessível agora; tente mais tarde e, se persistir, reinicie o dispositivo.</string>
+    <string name="priv_hint_api_mismatch">O canal privilegiado está desatualizado ou é incompatível com esta versão do sistema; atualize o aplicativo do canal e tente de novo.</string>
+    <string name="priv_hint_read_unverified">Os pré-requisitos estão prontos; falta um teste real. Toque em “Testar leitura em segundo plano” para verificar.</string>
     <string name="read_state_unprobed">Não sondado</string>
     <string name="read_state_ready">Pronto</string>
     <string name="read_state_pending_test">Aguardando teste (%1$s)</string>
@@ -427,6 +439,7 @@
     <string name="onboarding_pair_fact_entry">A entrada de pareamento fica fixa no segmento de rede da página “Conduíte” — você a encontra a qualquer momento depois deste tutorial.</string>
     <string name="onboarding_pair_fact_verify">Ao parear, os dois lados mostram a impressão digital do certificado; confirme só se forem iguais — esta etapa evita conectar ao PC errado.</string>
     <string name="onboarding_pair_fact_service">Concluído o pareamento, o segmento de rede se conecta e o serviço de sincronização inicia automaticamente.</string>
+    <string name="onboarding_pair_done">Seu computador está pareado — o conduíte está aberto. Continue com o resto do tour.</string>
     <string name="onboarding_read_body">Com o aplicativo em primeiro plano, a área de transferência sempre pode ser lida; a leitura em segundo plano exige uma configuração única na rota que você escolher. Recomendamos a de maior qualidade: “Leitura direta privilegiada”.</string>
     <string name="onboarding_route_recommended">Recomendada</string>
     <string name="onboarding_wireless_debug_hint">Sem cabo USB por perto? Ative “Opções do desenvolvedor → Depuração por Wi-Fi” e o PC poderá fazer a mesma inicialização em um clique pela rede sem fio.</string>

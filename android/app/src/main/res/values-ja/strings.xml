@@ -38,6 +38,7 @@
     <string name="notification_action_sync_now">今すぐ同期</string>
     <string name="notification_status_sync_paused">同期一時停止中 · 受信内容は受信箱にのみ入ります</string>
     <string name="notification_status_capture_paused">自動キャプチャ一時停止中 · 手動の送受信は引き続き利用できます</string>
+    <string name="notification_status_overlay_polling">オーバーレイポーリング読み取りを実行中</string>
 
     <string name="notification_channel_recovery_name">同期復旧リマインダー</string>
     <string name="notification_channel_recovery_description">同期サービスが自動復旧できないとき、アプリを開いて手動で再開するようお知らせします。通知にクリップボードの内容が表示されることはありません。</string>
@@ -75,6 +76,7 @@
     <string name="action_go_pair">ペアリングする</string>
 
     <string name="home_search_hint">検索</string>
+    <string name="home_search_clear">検索をクリア</string>
     <string name="home_notice_copied">システムのクリップボードに書き込みました</string>
     <string name="home_notice_copy_failed">コピー失敗 · %1$s</string>
     <string name="home_notice_deleted">この端末から削除しました · 他の端末には影響しません</string>
@@ -101,6 +103,8 @@
     <string name="time_pattern_other_year">yyyy年M月d日</string>
 
     <string name="conduit_reprobe">再検出</string>
+    <string name="conduit_reprobing">検出中…</string>
+    <string name="conduit_testing">テスト中…</string>
     <string name="conduit_segment_local_read">ローカル読み取り</string>
     <string name="conduit_segment_local_service">ローカルサービス</string>
     <string name="conduit_segment_network">ネットワーク</string>
@@ -244,6 +248,14 @@
     <string name="route_action_battery_settings">電池設定</string>
     <string name="route_action_set_preferred">優先ルートに設定</string>
     <string name="route_action_read_test">バックグラウンド読み取りをテスト</string>
+    <string name="priv_hint_not_installed">この端末に特権チャネルアプリがインストールされていません。インストールして起動したら、「再検出」をタップしてください。</string>
+    <string name="priv_hint_not_running">特権チャネルが起動していません。PC から起動コマンドを一度実行してください（Windows 側ならワンクリックで起動できます）。</string>
+    <string name="priv_hint_not_authorized">特権チャネルはまだこのアプリを承認していません。「特権読み取りを承認」をタップして許可してください。</string>
+    <string name="priv_hint_binder_dead">特権チャネルとの接続が切れました。チャネルを再起動してから「再検出」をタップしてください。</string>
+    <string name="priv_hint_userservice_dead">特権読み取りサービスが切断されました。「再検出」で再接続を試し、直らなければチャネルを再起動してください。</string>
+    <string name="priv_hint_clipboard_binder_dead">システムのクリップボードサービスに一時的にアクセスできません。しばらくしてから再試行し、続くようなら端末を再起動してください。</string>
+    <string name="priv_hint_api_mismatch">特権チャネルが古いか、このシステムのインターフェースと互換性がありません。チャネルアプリを更新してから再試行してください。</string>
+    <string name="priv_hint_read_unverified">前提条件は整っています。あとは実測が 1 回だけ。「バックグラウンド読み取りをテスト」で確認してください。</string>
     <string name="read_state_unprobed">未検出</string>
     <string name="read_state_ready">利用可能</string>
     <string name="read_state_pending_test">テスト待ち（%1$s）</string>
@@ -413,6 +425,7 @@
     <string name="onboarding_pair_fact_entry">ペアリングの入口は「経路」ページのネットワーク区間にあります。チュートリアル終了後もいつでも見つかります。</string>
     <string name="onboarding_pair_fact_verify">ペアリング時は両端に証明書のフィンガープリントが表示されます。一致した時だけ確認してください——別の PC につないでしまう事故を防ぐ手順です。</string>
     <string name="onboarding_pair_fact_service">ペアリングが完了するとネットワーク区間がつながり、同期サービスが自動的に起動します。</string>
+    <string name="onboarding_pair_done">PC とのペアリングが完了しました。経路はつながっています。残りの案内を続けましょう。</string>
     <string name="onboarding_read_body">アプリが前面にある間はいつでもクリップボードを読み取れます。バックグラウンド読み取りはいずれかのルートで一度だけ設定が必要です。品質が最も高い「特権直接読み取り」をおすすめします。</string>
     <string name="onboarding_route_recommended">おすすめ</string>
     <string name="onboarding_wireless_debug_hint">USB ケーブルが手元にない場合は、システムの「開発者向けオプション → ワイヤレスデバッグ」を有効にすれば、PC から Wi-Fi 経由で同じワンクリック起動ができます。</string>

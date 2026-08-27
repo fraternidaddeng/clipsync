@@ -41,6 +41,7 @@
     <string name="notification_action_sync_now">Synchronizuj teraz</string>
     <string name="notification_status_sync_paused">Synchronizacja wstrzymana · przychodzące treści trafiają tylko do skrzynki</string>
     <string name="notification_status_capture_paused">Automatyczne przechwytywanie wstrzymane · ręczne wysyłanie i odbieranie nadal działa</string>
+    <string name="notification_status_overlay_polling">Trwa odczyt przez odpytywanie z nakładką</string>
 
     <string name="notification_channel_recovery_name">Przypomnienia o odzyskiwaniu</string>
     <string name="notification_channel_recovery_description">Przypomina o otwarciu aplikacji i ręcznym wznowieniu, gdy usługa synchronizacji nie może odzyskać się sama. Powiadomienia nigdy nie pokazują zawartości schowka.</string>
@@ -78,6 +79,7 @@
     <string name="action_go_pair">Sparuj teraz</string>
 
     <string name="home_search_hint">Szukaj</string>
+    <string name="home_search_clear">Wyczyść wyszukiwanie</string>
     <string name="home_notice_copied">Zapisano w schowku systemowym</string>
     <string name="home_notice_copy_failed">Kopiowanie nie powiodło się · %1$s</string>
     <string name="home_notice_deleted">Usunięto z tego urządzenia · inne urządzenia bez zmian</string>
@@ -104,6 +106,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">Sonduj ponownie</string>
+    <string name="conduit_reprobing">Sondowanie…</string>
+    <string name="conduit_testing">Testowanie…</string>
     <string name="conduit_segment_local_read">Odczyt lokalny</string>
     <string name="conduit_segment_local_service">Usługa lokalna</string>
     <string name="conduit_segment_network">Sieć</string>
@@ -247,6 +251,14 @@
     <string name="route_action_battery_settings">Ustawienia baterii</string>
     <string name="route_action_set_preferred">Ustaw jako preferowaną ścieżkę</string>
     <string name="route_action_read_test">Testuj odczyt w tle</string>
+    <string name="priv_hint_not_installed">Na tym telefonie nie ma aplikacji kanału uprzywilejowanego; zainstaluj ją i uruchom, a potem wróć i stuknij „Sonduj ponownie”.</string>
+    <string name="priv_hint_not_running">Kanał uprzywilejowany nie działa; wykonaj raz polecenie startowe z komputera (po stronie Windows jedno kliknięcie).</string>
+    <string name="priv_hint_not_authorized">Kanał uprzywilejowany nie autoryzował jeszcze tej aplikacji; stuknij „Zezwól na odczyt uprzywilejowany”.</string>
+    <string name="priv_hint_binder_dead">Połączenie z kanałem uprzywilejowanym zostało zerwane; uruchom kanał ponownie i stuknij „Sonduj ponownie”.</string>
+    <string name="priv_hint_userservice_dead">Usługa odczytu uprzywilejowanego rozłączyła się; stuknij „Sonduj ponownie”, aby połączyć się znów, a jeśli to nie pomoże, uruchom kanał ponownie.</string>
+    <string name="priv_hint_clipboard_binder_dead">Usługa schowka systemowego jest teraz niedostępna; spróbuj później, a jeśli problem się utrzymuje, uruchom urządzenie ponownie.</string>
+    <string name="priv_hint_api_mismatch">Kanał uprzywilejowany jest przestarzały lub niezgodny z tą wersją systemu; zaktualizuj aplikację kanału i spróbuj ponownie.</string>
+    <string name="priv_hint_read_unverified">Wymagania są spełnione; został jeden prawdziwy test. Stuknij „Testuj odczyt w tle”, aby zweryfikować.</string>
     <string name="read_state_unprobed">Niesondowane</string>
     <string name="read_state_ready">Gotowe</string>
     <string name="read_state_pending_test">Oczekuje na test (%1$s)</string>
@@ -434,6 +446,7 @@
     <string name="onboarding_pair_fact_entry">Wejście do parowania jest na stałe w segmencie sieci na stronie „Kanał” — znajdziesz je w każdej chwili także po tym samouczku.</string>
     <string name="onboarding_pair_fact_verify">Podczas parowania obie strony pokazują odcisk certyfikatu; potwierdź tylko przy zgodności — ten krok chroni przed połączeniem z niewłaściwym PC.</string>
     <string name="onboarding_pair_fact_service">Po sparowaniu segment sieci zostaje połączony, a usługa synchronizacji startuje automatycznie.</string>
+    <string name="onboarding_pair_done">Komputer sparowany — kanał jest otwarty. Kontynuuj resztę przewodnika.</string>
     <string name="onboarding_read_body">Gdy aplikacja jest na pierwszym planie, schowek zawsze można odczytać; odczyt w tle wymaga jednorazowej konfiguracji wybranej ścieżki. Polecamy najwyższą jakość: „Uprzywilejowany odczyt bezpośredni”.</string>
     <string name="onboarding_route_recommended">Polecana</string>
     <string name="onboarding_wireless_debug_hint">Brak kabla USB pod ręką? Włącz „Opcje programisty → Debugowanie bezprzewodowe”, a PC wykona ten sam start jednym kliknięciem przez Wi-Fi.</string>

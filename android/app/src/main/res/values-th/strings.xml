@@ -38,6 +38,7 @@
     <string name="notification_action_sync_now">ซิงค์ตอนนี้</string>
     <string name="notification_status_sync_paused">หยุดซิงค์ชั่วคราว · เนื้อหาขาเข้าจะเข้ากล่องขาเข้าเท่านั้น</string>
     <string name="notification_status_capture_paused">หยุดเก็บอัตโนมัติชั่วคราว · การส่งและรับด้วยตนเองยังใช้ได้</string>
+    <string name="notification_status_overlay_polling">กำลังอ่านแบบสำรวจด้วยหน้าต่างลอย</string>
 
     <string name="notification_channel_recovery_name">การเตือนกู้คืนการซิงค์</string>
     <string name="notification_channel_recovery_description">เตือนให้เปิดแอปและกลับมาทำงานต่อด้วยตนเองเมื่อบริการซิงค์กู้คืนเองไม่ได้ การแจ้งเตือนจะไม่แสดงเนื้อหาคลิปบอร์ดเด็ดขาด</string>
@@ -75,6 +76,7 @@
     <string name="action_go_pair">จับคู่เลย</string>
 
     <string name="home_search_hint">ค้นหา</string>
+    <string name="home_search_clear">ล้างการค้นหา</string>
     <string name="home_notice_copied">เขียนลงคลิปบอร์ดระบบแล้ว</string>
     <string name="home_notice_copy_failed">คัดลอกไม่สำเร็จ · %1$s</string>
     <string name="home_notice_deleted">ลบออกจากเครื่องนี้แล้ว · เครื่องอื่นไม่กระทบ</string>
@@ -101,6 +103,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">ตรวจใหม่</string>
+    <string name="conduit_reprobing">กำลังตรวจ…</string>
+    <string name="conduit_testing">กำลังทดสอบ…</string>
     <string name="conduit_segment_local_read">การอ่านในเครื่อง</string>
     <string name="conduit_segment_local_service">บริการในเครื่อง</string>
     <string name="conduit_segment_network">เครือข่าย</string>
@@ -244,6 +248,14 @@
     <string name="route_action_battery_settings">ตั้งค่าแบตเตอรี่</string>
     <string name="route_action_set_preferred">ตั้งเป็นเส้นทางที่เลือกใช้</string>
     <string name="route_action_read_test">ทดสอบการอ่านเบื้องหลัง</string>
+    <string name="priv_hint_not_installed">โทรศัพท์เครื่องนี้ยังไม่ได้ติดตั้งแอปช่องทางสิทธิ์พิเศษ ติดตั้งและเปิดใช้งานแล้วกลับมาแตะ “ตรวจใหม่”</string>
+    <string name="priv_hint_not_running">ช่องทางสิทธิ์พิเศษยังไม่ทำงาน ให้รันคำสั่งเริ่มต้นจากคอมพิวเตอร์หนึ่งครั้ง (ฝั่ง Windows คลิกเดียว)</string>
+    <string name="priv_hint_not_authorized">ช่องทางสิทธิ์พิเศษยังไม่อนุญาตแอปนี้ แตะ “อนุญาตการอ่านสิทธิ์พิเศษ” เพื่ออนุญาต</string>
+    <string name="priv_hint_binder_dead">การเชื่อมต่อกับช่องทางสิทธิ์พิเศษขาดหาย ให้เริ่มช่องทางใหม่แล้วแตะ “ตรวจใหม่”</string>
+    <string name="priv_hint_userservice_dead">บริการอ่านสิทธิ์พิเศษหลุดการเชื่อมต่อ แตะ “ตรวจใหม่” เพื่อเชื่อมต่อใหม่ หากไม่ได้ผลให้เริ่มช่องทางใหม่</string>
+    <string name="priv_hint_clipboard_binder_dead">ตอนนี้เข้าถึงบริการคลิปบอร์ดของระบบไม่ได้ ลองใหม่ภายหลัง หากยังเป็นอยู่ให้รีสตาร์ตเครื่อง</string>
+    <string name="priv_hint_api_mismatch">ช่องทางสิทธิ์พิเศษเวอร์ชันเก่าหรือเข้ากันไม่ได้กับระบบรุ่นนี้ อัปเดตแอปช่องทางแล้วลองใหม่</string>
+    <string name="priv_hint_read_unverified">เงื่อนไขพร้อมแล้ว เหลือการทดสอบจริงอีกหนึ่งครั้ง แตะ “ทดสอบการอ่านเบื้องหลัง” เพื่อยืนยัน</string>
     <string name="read_state_unprobed">ยังไม่ตรวจ</string>
     <string name="read_state_ready">พร้อม</string>
     <string name="read_state_pending_test">รอทดสอบ (%1$s)</string>
@@ -413,6 +425,7 @@
     <string name="onboarding_pair_fact_entry">ทางเข้าการจับคู่อยู่ที่ส่วนเครือข่ายของหน้า “เส้นทาง” เสมอ จบบทแนะนำนี้แล้วก็หาเจอได้ทุกเมื่อ</string>
     <string name="onboarding_pair_fact_verify">ระหว่างจับคู่ ทั้งสองฝั่งจะแสดงลายนิ้วมือใบรับรอง ยืนยันเมื่อตรงกันเท่านั้น — ขั้นตอนนี้ป้องกันการเชื่อมต่อผิดเครื่อง</string>
     <string name="onboarding_pair_fact_service">จับคู่เสร็จ ส่วนเครือข่ายจะเชื่อมต่อและบริการซิงค์เริ่มทำงานอัตโนมัติ</string>
+    <string name="onboarding_pair_done">จับคู่คอมพิวเตอร์เสร็จแล้ว — เส้นทางเปิดแล้ว เดินต่อในส่วนที่เหลือได้เลย</string>
     <string name="onboarding_read_body">เมื่อแอปอยู่เบื้องหน้าจะอ่านคลิปบอร์ดได้เสมอ ส่วนการอ่านเบื้องหลังต้องตั้งค่าครั้งเดียวบนเส้นทางที่คุณเลือก แนะนำเส้นทางคุณภาพสูงสุด “อ่านตรงด้วยสิทธิ์พิเศษ”</string>
     <string name="onboarding_route_recommended">แนะนำ</string>
     <string name="onboarding_wireless_debug_hint">ไม่มีสาย USB ใกล้ตัว? เปิด “ตัวเลือกนักพัฒนา → การแก้ไขข้อบกพร่องแบบไร้สาย” แล้วพีซีจะสั่งเริ่มแบบคลิกเดียวผ่าน Wi-Fi ได้เช่นกัน</string>

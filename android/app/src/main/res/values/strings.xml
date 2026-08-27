@@ -47,6 +47,7 @@
     <string name="notification_action_sync_now">立即同步</string>
     <string name="notification_status_sync_paused">同步已暂停 · 收到的内容仅入收件箱</string>
     <string name="notification_status_capture_paused">自动捕获已暂停 · 手动发送与接收不受影响</string>
+    <string name="notification_status_overlay_polling">悬浮窗轮询读取进行中</string>
 
     <!-- 需要恢复：同步服务未能自动启动（开机恢复失败或系统拒绝前台服务） -->
     <string name="notification_channel_recovery_name">同步恢复提醒</string>
@@ -91,6 +92,7 @@
 
     <!-- 一屏（历史） -->
     <string name="home_search_hint">搜索</string>
+    <string name="home_search_clear">清除搜索</string>
     <string name="home_notice_copied">已写入系统剪贴板</string>
     <string name="home_notice_copy_failed">复制失败 · %1$s</string>
     <string name="home_notice_deleted">已从本机移除 · 不影响其他设备</string>
@@ -119,6 +121,8 @@
 
     <!-- 通路（页面 chrome） -->
     <string name="conduit_reprobe">重新探测</string>
+    <string name="conduit_reprobing">探测中…</string>
+    <string name="conduit_testing">测试中…</string>
     <string name="conduit_segment_local_read">本机读取</string>
     <string name="conduit_segment_local_service">本机服务</string>
     <string name="conduit_segment_network">网络</string>
@@ -270,6 +274,14 @@
     <string name="route_action_battery_settings">去设置电池</string>
     <string name="route_action_set_preferred">设为首选路线</string>
     <string name="route_action_read_test">测试后台读取</string>
+    <string name="priv_hint_not_installed">手机上还没有特权通道应用；安装并启动后回来点「重新探测」。</string>
+    <string name="priv_hint_not_running">特权通道未在运行；用电脑执行一次启动命令即可（Windows 端可一键启动）。</string>
+    <string name="priv_hint_not_authorized">特权通道尚未授权本应用；点「授权特权直读」完成授权。</string>
+    <string name="priv_hint_binder_dead">与特权通道的连接已断开；重启通道后点「重新探测」。</string>
+    <string name="priv_hint_userservice_dead">特权读取服务已断开；点「重新探测」尝试重连，无效时重启通道。</string>
+    <string name="priv_hint_clipboard_binder_dead">系统剪贴板服务暂时无法访问；稍后再试，必要时重启设备。</string>
+    <string name="priv_hint_api_mismatch">特权通道版本过旧或系统接口不兼容；升级通道应用后再试。</string>
+    <string name="priv_hint_read_unverified">前提已就绪，还差一次实测；点「测试后台读取」完成验证。</string>
     <string name="read_state_unprobed">未探测</string>
     <string name="read_state_ready">就绪</string>
     <string name="read_state_pending_test">待实测（%1$s）</string>
@@ -445,6 +457,7 @@
     <string name="onboarding_pair_fact_entry">配对入口固定在「通路」页的网络段，教程结束后随时能找到。</string>
     <string name="onboarding_pair_fact_verify">配对时两端各自显示证书指纹，一致才确认——这一步防止连错电脑。</string>
     <string name="onboarding_pair_fact_service">配对完成即接通网络段，同步服务自动启动。</string>
+    <string name="onboarding_pair_done">电脑已完成配对——通路已经打通，继续看看剩下的部分吧。</string>
     <string name="onboarding_read_body">应用在前台时始终能读取剪贴板；后台读取需任选一条路线完成一次设置，推荐质量最高的「特权直读」。</string>
     <string name="onboarding_route_recommended">推荐</string>
     <string name="onboarding_wireless_debug_hint">不方便连 USB 线？在系统「开发者选项 → 无线调试」中开启后，电脑通过 Wi-Fi 也能完成同样的一键启动。</string>

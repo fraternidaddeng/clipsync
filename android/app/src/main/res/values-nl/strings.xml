@@ -40,6 +40,7 @@
     <string name="notification_action_sync_now">Nu synchroniseren</string>
     <string name="notification_status_sync_paused">Synchronisatie gepauzeerd · binnenkomende inhoud gaat alleen naar de inbox</string>
     <string name="notification_status_capture_paused">Automatisch vastleggen gepauzeerd · handmatig verzenden en ontvangen werken nog</string>
+    <string name="notification_status_overlay_polling">Overlay-polling-lezen is actief</string>
 
     <string name="notification_channel_recovery_name">Herstelherinneringen</string>
     <string name="notification_channel_recovery_description">Herinnert je eraan de app te openen en handmatig te hervatten wanneer de synchronisatieservice zichzelf niet kan herstellen. Meldingen tonen nooit klembordinhoud.</string>
@@ -77,6 +78,7 @@
     <string name="action_go_pair">Nu koppelen</string>
 
     <string name="home_search_hint">Zoeken</string>
+    <string name="home_search_clear">Zoekopdracht wissen</string>
     <string name="home_notice_copied">Naar het systeemklembord geschreven</string>
     <string name="home_notice_copy_failed">Kopiëren mislukt · %1$s</string>
     <string name="home_notice_deleted">Verwijderd van dit apparaat · andere apparaten onaangetast</string>
@@ -103,6 +105,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">Opnieuw peilen</string>
+    <string name="conduit_reprobing">Peilen…</string>
+    <string name="conduit_testing">Testen…</string>
     <string name="conduit_segment_local_read">Lokaal lezen</string>
     <string name="conduit_segment_local_service">Lokale service</string>
     <string name="conduit_segment_network">Netwerk</string>
@@ -246,6 +250,14 @@
     <string name="route_action_battery_settings">Batterij-instellingen</string>
     <string name="route_action_set_preferred">Als voorkeursroute instellen</string>
     <string name="route_action_read_test">Achtergrondlezen testen</string>
+    <string name="priv_hint_not_installed">De app van het bevoorrechte kanaal is niet op deze telefoon geïnstalleerd; installeer en start die, en tik daarna op “Opnieuw peilen”.</string>
+    <string name="priv_hint_not_running">Het bevoorrechte kanaal draait niet; voer eenmalig het startcommando uit vanaf een computer (aan de Windows-kant één klik).</string>
+    <string name="priv_hint_not_authorized">Het bevoorrechte kanaal heeft deze app nog niet geautoriseerd; tik op “Bevoorrecht lezen autoriseren”.</string>
+    <string name="priv_hint_binder_dead">De verbinding met het bevoorrechte kanaal is weggevallen; herstart het kanaal en tik op “Opnieuw peilen”.</string>
+    <string name="priv_hint_userservice_dead">De bevoorrechte leesservice is losgekoppeld; tik op “Opnieuw peilen” om opnieuw te verbinden, en herstart anders het kanaal.</string>
+    <string name="priv_hint_clipboard_binder_dead">De klembordservice van het systeem is nu niet bereikbaar; probeer het later opnieuw en herstart zo nodig het apparaat.</string>
+    <string name="priv_hint_api_mismatch">Het bevoorrechte kanaal is verouderd of incompatibel met deze systeemversie; werk de kanaal-app bij en probeer het opnieuw.</string>
+    <string name="priv_hint_read_unverified">De voorwaarden zijn vervuld; er rest één echte test. Tik op “Achtergrondlezen testen” om te verifiëren.</string>
     <string name="read_state_unprobed">Niet gepeild</string>
     <string name="read_state_ready">Gereed</string>
     <string name="read_state_pending_test">Wacht op test (%1$s)</string>
@@ -421,6 +433,7 @@
     <string name="onboarding_pair_fact_entry">De koppelingsingang zit vast in het netwerksegment van de pagina “Kanaal” — ook na deze rondleiding altijd terug te vinden.</string>
     <string name="onboarding_pair_fact_verify">Tijdens het koppelen tonen beide kanten de certificaatvingerafdruk; bevestig alleen bij overeenkomst — deze stap voorkomt verbinden met de verkeerde pc.</string>
     <string name="onboarding_pair_fact_service">Zodra het koppelen klaar is, is het netwerksegment verbonden en start de synchronisatieservice automatisch.</string>
+    <string name="onboarding_pair_done">Je computer is gekoppeld — het kanaal is open. Ga verder met de rest van de rondleiding.</string>
     <string name="onboarding_read_body">Met de app op de voorgrond is het klembord altijd leesbaar; achtergrondlezen vraagt een eenmalige set-up op een route naar keuze. Aanbevolen is de hoogste kwaliteit: “Bevoorrecht direct lezen”.</string>
     <string name="onboarding_route_recommended">Aanbevolen</string>
     <string name="onboarding_wireless_debug_hint">Geen USB-kabel bij de hand? Zet “Opties voor ontwikkelaars → Draadloze foutopsporing” aan; de pc kan dezelfde éénklikstart dan via wifi uitvoeren.</string>

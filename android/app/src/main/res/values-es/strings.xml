@@ -40,6 +40,7 @@
     <string name="notification_action_sync_now">Sincronizar ahora</string>
     <string name="notification_status_sync_paused">Sincronización en pausa · el contenido entrante solo va a la bandeja</string>
     <string name="notification_status_capture_paused">Captura automática en pausa · el envío y la recepción manuales siguen funcionando</string>
+    <string name="notification_status_overlay_polling">Lectura por sondeo con superposición en curso</string>
 
     <string name="notification_channel_recovery_name">Recordatorios de recuperación</string>
     <string name="notification_channel_recovery_description">Te recuerda abrir la app y reanudar manualmente cuando el servicio de sincronización no puede recuperarse solo. Las notificaciones nunca muestran el contenido del portapapeles.</string>
@@ -77,6 +78,7 @@
     <string name="action_go_pair">Emparejar ahora</string>
 
     <string name="home_search_hint">Buscar</string>
+    <string name="home_search_clear">Borrar búsqueda</string>
     <string name="home_notice_copied">Escrito en el portapapeles del sistema</string>
     <string name="home_notice_copy_failed">Error al copiar · %1$s</string>
     <string name="home_notice_deleted">Eliminado de este dispositivo · los demás no se ven afectados</string>
@@ -103,6 +105,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">Volver a sondear</string>
+    <string name="conduit_reprobing">Sondeando…</string>
+    <string name="conduit_testing">Probando…</string>
     <string name="conduit_segment_local_read">Lectura local</string>
     <string name="conduit_segment_local_service">Servicio local</string>
     <string name="conduit_segment_network">Red</string>
@@ -246,6 +250,14 @@
     <string name="route_action_battery_settings">Ajustes de batería</string>
     <string name="route_action_set_preferred">Establecer como ruta preferida</string>
     <string name="route_action_read_test">Probar lectura en segundo plano</string>
+    <string name="priv_hint_not_installed">La aplicación del canal privilegiado no está instalada en este teléfono; instálala, iníciala y vuelve a tocar «Volver a sondear».</string>
+    <string name="priv_hint_not_running">El canal privilegiado no está en ejecución; ejecuta una vez el comando de inicio desde una computadora (un clic en el lado de Windows).</string>
+    <string name="priv_hint_not_authorized">El canal privilegiado aún no autoriza esta aplicación; toca «Autorizar lectura privilegiada» para concederlo.</string>
+    <string name="priv_hint_binder_dead">Se perdió la conexión con el canal privilegiado; reinicia el canal y toca «Volver a sondear».</string>
+    <string name="priv_hint_userservice_dead">El servicio de lectura privilegiada se desconectó; toca «Volver a sondear» para reconectar y, si no funciona, reinicia el canal.</string>
+    <string name="priv_hint_clipboard_binder_dead">El servicio del portapapeles del sistema no está accesible ahora; inténtalo más tarde y, si persiste, reinicia el dispositivo.</string>
+    <string name="priv_hint_api_mismatch">El canal privilegiado está desactualizado o es incompatible con esta versión del sistema; actualiza la aplicación del canal e inténtalo de nuevo.</string>
+    <string name="priv_hint_read_unverified">Los requisitos están listos; falta una prueba real. Toca «Probar lectura en segundo plano» para verificarla.</string>
     <string name="read_state_unprobed">Sin sondear</string>
     <string name="read_state_ready">Listo</string>
     <string name="read_state_pending_test">Pendiente de prueba (%1$s)</string>
@@ -427,6 +439,7 @@
     <string name="onboarding_pair_fact_entry">La entrada de emparejamiento está fija en el segmento de red de la página «Conducto»; podrás encontrarla siempre, también al acabar este tutorial.</string>
     <string name="onboarding_pair_fact_verify">Al emparejar, ambos extremos muestran la huella del certificado; confirma solo si coinciden — este paso evita conectarse al PC equivocado.</string>
     <string name="onboarding_pair_fact_service">Al completarse el emparejamiento se conecta el segmento de red y el servicio de sincronización arranca automáticamente.</string>
+    <string name="onboarding_pair_done">Tu computadora ya está emparejada: el conducto está abierto. Sigue con el resto del recorrido.</string>
     <string name="onboarding_read_body">Con la aplicación en primer plano el portapapeles siempre se puede leer; la lectura en segundo plano requiere configurar una vez la ruta que elijas. Se recomienda la de mayor calidad: «Lectura directa privilegiada».</string>
     <string name="onboarding_route_recommended">Recomendada</string>
     <string name="onboarding_wireless_debug_hint">¿Sin cable USB a mano? Activa «Opciones de desarrollador → Depuración inalámbrica» y el PC podrá hacer el mismo arranque con un clic por Wi-Fi.</string>

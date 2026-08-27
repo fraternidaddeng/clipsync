@@ -38,6 +38,7 @@
     <string name="notification_action_sync_now">Sinkronkan sekarang</string>
     <string name="notification_status_sync_paused">Sinkronisasi dijeda · konten masuk hanya ke kotak masuk</string>
     <string name="notification_status_capture_paused">Penangkapan otomatis dijeda · kirim dan terima manual tetap berfungsi</string>
+    <string name="notification_status_overlay_polling">Pembacaan polling lewat overlay sedang berjalan</string>
 
     <string name="notification_channel_recovery_name">Pengingat pemulihan sinkronisasi</string>
     <string name="notification_channel_recovery_description">Mengingatkan Anda membuka aplikasi dan melanjutkan secara manual saat layanan sinkronisasi tidak bisa pulih sendiri. Notifikasi tidak pernah menampilkan isi papan klip.</string>
@@ -75,6 +76,7 @@
     <string name="action_go_pair">Pasangkan sekarang</string>
 
     <string name="home_search_hint">Cari</string>
+    <string name="home_search_clear">Hapus pencarian</string>
     <string name="home_notice_copied">Ditulis ke papan klip sistem</string>
     <string name="home_notice_copy_failed">Gagal menyalin · %1$s</string>
     <string name="home_notice_deleted">Dihapus dari perangkat ini · perangkat lain tidak terpengaruh</string>
@@ -101,6 +103,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">Periksa ulang</string>
+    <string name="conduit_reprobing">Memeriksa…</string>
+    <string name="conduit_testing">Menguji…</string>
     <string name="conduit_segment_local_read">Baca lokal</string>
     <string name="conduit_segment_local_service">Layanan lokal</string>
     <string name="conduit_segment_network">Jaringan</string>
@@ -244,6 +248,14 @@
     <string name="route_action_battery_settings">Setelan baterai</string>
     <string name="route_action_set_preferred">Jadikan rute pilihan</string>
     <string name="route_action_read_test">Uji baca latar belakang</string>
+    <string name="priv_hint_not_installed">Aplikasi kanal berprivilese belum terpasang di ponsel ini; pasang dan jalankan, lalu kembali dan ketuk “Periksa ulang”.</string>
+    <string name="priv_hint_not_running">Kanal berprivilese tidak berjalan; jalankan perintah mulai sekali dari komputer (satu klik di sisi Windows).</string>
+    <string name="priv_hint_not_authorized">Kanal berprivilese belum mengizinkan aplikasi ini; ketuk “Izinkan baca berprivilese” untuk memberi izin.</string>
+    <string name="priv_hint_binder_dead">Sambungan ke kanal berprivilese terputus; mulai ulang kanal lalu ketuk “Periksa ulang”.</string>
+    <string name="priv_hint_userservice_dead">Layanan baca berprivilese terputus; ketuk “Periksa ulang” untuk menyambung kembali, jika gagal mulai ulang kanal.</string>
+    <string name="priv_hint_clipboard_binder_dead">Layanan papan klip sistem sedang tidak dapat diakses; coba lagi nanti, dan jika berlanjut mulai ulang perangkat.</string>
+    <string name="priv_hint_api_mismatch">Kanal berprivilese sudah usang atau tidak kompatibel dengan versi sistem ini; perbarui aplikasi kanal lalu coba lagi.</string>
+    <string name="priv_hint_read_unverified">Prasyarat sudah siap; tinggal satu uji nyata. Ketuk “Uji baca latar belakang” untuk memverifikasi.</string>
     <string name="read_state_unprobed">Belum diperiksa</string>
     <string name="read_state_ready">Siap</string>
     <string name="read_state_pending_test">Menunggu uji (%1$s)</string>
@@ -413,6 +425,7 @@
     <string name="onboarding_pair_fact_entry">Pintu pemasangan selalu ada di segmen jaringan halaman “Saluran” — setelah tutorial ini pun selalu bisa ditemukan.</string>
     <string name="onboarding_pair_fact_verify">Saat memasangkan, kedua sisi menampilkan sidik jari sertifikat; konfirmasi hanya jika cocok — langkah ini mencegah tersambung ke PC yang salah.</string>
     <string name="onboarding_pair_fact_service">Begitu pemasangan selesai, segmen jaringan tersambung dan layanan sinkronisasi mulai otomatis.</string>
+    <string name="onboarding_pair_done">Komputer Anda sudah terpasang — saluran telah terbuka. Lanjutkan sisa tur ini.</string>
     <string name="onboarding_read_body">Selagi aplikasi di latar depan, papan klip selalu bisa dibaca; pembacaan latar belakang perlu penyiapan sekali pada rute pilihan Anda. Disarankan yang kualitasnya tertinggi: “Baca langsung berprivilese”.</string>
     <string name="onboarding_route_recommended">Disarankan</string>
     <string name="onboarding_wireless_debug_hint">Tidak ada kabel USB? Aktifkan “Opsi pengembang → Debugging nirkabel”, maka PC bisa menjalankan mulai sekali-klik yang sama lewat Wi-Fi.</string>

@@ -39,6 +39,7 @@
     <string name="notification_action_sync_now">Jetzt synchronisieren</string>
     <string name="notification_status_sync_paused">Sync pausiert · eingehende Inhalte landen nur im Posteingang</string>
     <string name="notification_status_capture_paused">Automatische Erfassung pausiert · manuelles Senden und Empfangen funktioniert weiterhin</string>
+    <string name="notification_status_overlay_polling">Overlay-Abfrage läuft</string>
 
     <string name="notification_channel_recovery_name">Wiederherstellungs-Erinnerungen</string>
     <string name="notification_channel_recovery_description">Erinnert Sie, die App zu öffnen und manuell fortzusetzen, wenn sich der Sync-Dienst nicht selbst erholen kann. Benachrichtigungen zeigen niemals den Inhalt der Zwischenablage.</string>
@@ -76,6 +77,7 @@
     <string name="action_go_pair">Jetzt koppeln</string>
 
     <string name="home_search_hint">Suchen</string>
+    <string name="home_search_clear">Suche löschen</string>
     <string name="home_notice_copied">In die System-Zwischenablage geschrieben</string>
     <string name="home_notice_copy_failed">Kopieren fehlgeschlagen · %1$s</string>
     <string name="home_notice_deleted">Von diesem Gerät entfernt · andere Geräte sind nicht betroffen</string>
@@ -102,6 +104,8 @@
     <string name="time_pattern_other_year">d. MMM yyyy</string>
 
     <string name="conduit_reprobe">Neu prüfen</string>
+    <string name="conduit_reprobing">Wird geprüft…</string>
+    <string name="conduit_testing">Wird getestet…</string>
     <string name="conduit_segment_local_read">Lokales Lesen</string>
     <string name="conduit_segment_local_service">Lokaler Dienst</string>
     <string name="conduit_segment_network">Netzwerk</string>
@@ -245,6 +249,14 @@
     <string name="route_action_battery_settings">Akku-Einstellungen</string>
     <string name="route_action_set_preferred">Als bevorzugte Route festlegen</string>
     <string name="route_action_read_test">Hintergrundlesen testen</string>
+    <string name="priv_hint_not_installed">Die App des privilegierten Kanals ist auf diesem Telefon nicht installiert; installieren und starten Sie sie, und tippen Sie danach auf „Neu prüfen“.</string>
+    <string name="priv_hint_not_running">Der privilegierte Kanal läuft nicht; führen Sie einmal den Startbefehl von einem Computer aus (auf der Windows-Seite ein Klick).</string>
+    <string name="priv_hint_not_authorized">Der privilegierte Kanal hat diese App noch nicht freigegeben; tippen Sie auf „Privilegiertes Lesen freigeben“.</string>
+    <string name="priv_hint_binder_dead">Die Verbindung zum privilegierten Kanal ist abgerissen; starten Sie den Kanal neu und tippen Sie auf „Neu prüfen“.</string>
+    <string name="priv_hint_userservice_dead">Der privilegierte Lesedienst wurde getrennt; tippen Sie auf „Neu prüfen“, um neu zu verbinden, andernfalls starten Sie den Kanal neu.</string>
+    <string name="priv_hint_clipboard_binder_dead">Der Zwischenablagedienst des Systems ist gerade nicht erreichbar; versuchen Sie es später erneut, bei Bedarf starten Sie das Gerät neu.</string>
+    <string name="priv_hint_api_mismatch">Der privilegierte Kanal ist veraltet oder mit dieser Systemversion inkompatibel; aktualisieren Sie die Kanal-App und versuchen Sie es erneut.</string>
+    <string name="priv_hint_read_unverified">Die Voraussetzungen sind erfüllt, es fehlt nur ein echter Test; tippen Sie auf „Hintergrundlesen testen“.</string>
     <string name="read_state_unprobed">Ungeprüft</string>
     <string name="read_state_ready">Bereit</string>
     <string name="read_state_pending_test">Test ausstehend (%1$s)</string>
@@ -420,6 +432,7 @@
     <string name="onboarding_pair_fact_entry">Der Kopplungseinstieg liegt fest im Netzwerksegment der Seite „Kanal“ — Sie finden ihn auch nach diesem Tutorial jederzeit wieder.</string>
     <string name="onboarding_pair_fact_verify">Beim Koppeln zeigen beide Seiten den Zertifikat-Fingerabdruck; bestätigen Sie nur bei Übereinstimmung — dieser Schritt verhindert die Verbindung mit dem falschen PC.</string>
     <string name="onboarding_pair_fact_service">Mit Abschluss der Kopplung ist das Netzwerksegment verbunden und der Sync-Dienst startet automatisch.</string>
+    <string name="onboarding_pair_done">Ihr Computer ist gekoppelt – der Kanal steht. Machen Sie mit dem Rest der Tour weiter.</string>
     <string name="onboarding_read_body">Im Vordergrund kann die App die Zwischenablage jederzeit lesen; das Hintergrundlesen erfordert eine einmalige Einrichtung auf einer Route Ihrer Wahl. Empfohlen ist die höchste Qualität: „Privilegiertes Direktlesen“.</string>
     <string name="onboarding_route_recommended">Empfohlen</string>
     <string name="onboarding_wireless_debug_hint">Kein USB-Kabel zur Hand? Aktivieren Sie „Entwickleroptionen → Drahtlos-Debugging“ — der PC kann denselben Ein-Klick-Start dann über WLAN ausführen.</string>

@@ -39,6 +39,7 @@
     <string name="notification_action_sync_now">अभी सिंक करें</string>
     <string name="notification_status_sync_paused">सिंक रुका है · आने वाली सामग्री केवल इनबॉक्स में जाती है</string>
     <string name="notification_status_capture_paused">स्वतः कैप्चर रुका है · हाथ से भेजना-पाना अभी भी चलता है</string>
+    <string name="notification_status_overlay_polling">ओवरले पोलिंग से पठन चल रहा है</string>
 
     <string name="notification_channel_recovery_name">सिंक रिकवरी अनुस्मारक</string>
     <string name="notification_channel_recovery_description">जब सिंक सेवा खुद नहीं उबर पाती, तो ऐप खोलकर हाथ से फिर शुरू करने की याद दिलाता है। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>
@@ -76,6 +77,7 @@
     <string name="action_go_pair">अभी जोड़ें</string>
 
     <string name="home_search_hint">खोजें</string>
+    <string name="home_search_clear">खोज साफ़ करें</string>
     <string name="home_notice_copied">सिस्टम क्लिपबोर्ड में लिख दिया गया</string>
     <string name="home_notice_copy_failed">कॉपी विफल · %1$s</string>
     <string name="home_notice_deleted">इस डिवाइस से हटाया गया · दूसरे डिवाइस अप्रभावित</string>
@@ -102,6 +104,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">फिर जाँचें</string>
+    <string name="conduit_reprobing">जाँच जारी…</string>
+    <string name="conduit_testing">परीक्षण जारी…</string>
     <string name="conduit_segment_local_read">स्थानीय पठन</string>
     <string name="conduit_segment_local_service">स्थानीय सेवा</string>
     <string name="conduit_segment_network">नेटवर्क</string>
@@ -245,6 +249,14 @@
     <string name="route_action_battery_settings">बैटरी सेटिंग</string>
     <string name="route_action_set_preferred">पसंदीदा मार्ग बनाएं</string>
     <string name="route_action_read_test">पृष्ठभूमि पठन जाँचें</string>
+    <string name="priv_hint_not_installed">इस फ़ोन पर विशेषाधिकार चैनल ऐप इंस्टॉल नहीं है; उसे इंस्टॉल करके चालू करें, फिर लौटकर “फिर जाँचें” दबाएँ।</string>
+    <string name="priv_hint_not_running">विशेषाधिकार चैनल चल नहीं रहा; कंप्यूटर से एक बार स्टार्ट कमांड चलाएँ (Windows की ओर से एक क्लिक)।</string>
+    <string name="priv_hint_not_authorized">विशेषाधिकार चैनल ने अभी इस ऐप को अनुमति नहीं दी; “विशेषाधिकार पठन की अनुमति दें” दबाएँ।</string>
+    <string name="priv_hint_binder_dead">विशेषाधिकार चैनल से संपर्क टूट गया; चैनल फिर से शुरू करें और “फिर जाँचें” दबाएँ।</string>
+    <string name="priv_hint_userservice_dead">विशेषाधिकार पठन सेवा कट गई; “फिर जाँचें” से दोबारा जोड़ें, न हो तो चैनल फिर से शुरू करें।</string>
+    <string name="priv_hint_clipboard_binder_dead">सिस्टम क्लिपबोर्ड सेवा अभी उपलब्ध नहीं; बाद में आज़माएँ, बना रहे तो डिवाइस रीस्टार्ट करें।</string>
+    <string name="priv_hint_api_mismatch">विशेषाधिकार चैनल पुराना है या इस सिस्टम संस्करण से मेल नहीं खाता; चैनल ऐप अपडेट करके फिर आज़माएँ।</string>
+    <string name="priv_hint_read_unverified">शर्तें पूरी हैं, बस एक वास्तविक जाँच बाक़ी है; “पृष्ठभूमि पठन जाँचें” दबाकर सत्यापित करें।</string>
     <string name="read_state_unprobed">जाँचा नहीं गया</string>
     <string name="read_state_ready">तैयार</string>
     <string name="read_state_pending_test">जाँच बाकी (%1$s)</string>
@@ -420,6 +432,7 @@
     <string name="onboarding_pair_fact_entry">जोड़ने का प्रवेश हमेशा “मार्ग” पेज के नेटवर्क खंड में रहता है — यह ट्यूटोरियल खत्म होने के बाद भी कभी भी मिल जाएगा।</string>
     <string name="onboarding_pair_fact_verify">जोड़ते समय दोनों ओर प्रमाणपत्र का फ़िंगरप्रिंट दिखता है; मेल खाने पर ही पुष्टि करें — यह कदम गलत PC से जुड़ने से बचाता है।</string>
     <string name="onboarding_pair_fact_service">जोड़ना पूरा होते ही नेटवर्क खंड जुड़ जाता है और सिंक सेवा अपने आप शुरू हो जाती है।</string>
+    <string name="onboarding_pair_done">आपका कंप्यूटर जुड़ गया — मार्ग खुल गया है। बाक़ी परिचय जारी रखें।</string>
     <string name="onboarding_read_body">ऐप अग्रभूमि में हो तो क्लिपबोर्ड हमेशा पढ़ा जा सकता है; पृष्ठभूमि पठन के लिए अपनी पसंद के किसी मार्ग पर एक बार सेटअप करना होता है। सबसे उच्च गुणवत्ता वाला “विशेषाधिकार से सीधा पठन” अनुशंसित है।</string>
     <string name="onboarding_route_recommended">अनुशंसित</string>
     <string name="onboarding_wireless_debug_hint">USB केबल पास नहीं है? “डेवलपर विकल्प → वायरलेस डीबगिंग” चालू करें, फिर PC वही एक-क्लिक शुरुआत Wi-Fi से भी कर सकेगा।</string>

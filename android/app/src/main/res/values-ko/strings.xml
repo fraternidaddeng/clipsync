@@ -38,6 +38,7 @@
     <string name="notification_action_sync_now">지금 동기화</string>
     <string name="notification_status_sync_paused">동기화 일시중지됨 · 수신 내용은 수신함에만 저장됩니다</string>
     <string name="notification_status_capture_paused">자동 캡처 일시중지됨 · 수동 보내기/받기는 계속 사용할 수 있습니다</string>
+    <string name="notification_status_overlay_polling">오버레이 폴링 읽기 진행 중</string>
 
     <string name="notification_channel_recovery_name">동기화 복구 알림</string>
     <string name="notification_channel_recovery_description">동기화 서비스가 스스로 복구하지 못할 때 앱을 열어 수동으로 재개하도록 알립니다. 알림에 클립보드 내용이 표시되지 않습니다.</string>
@@ -75,6 +76,7 @@
     <string name="action_go_pair">페어링하기</string>
 
     <string name="home_search_hint">검색</string>
+    <string name="home_search_clear">검색어 지우기</string>
     <string name="home_notice_copied">시스템 클립보드에 기록했습니다</string>
     <string name="home_notice_copy_failed">복사 실패 · %1$s</string>
     <string name="home_notice_deleted">이 기기에서 삭제됨 · 다른 기기에는 영향 없음</string>
@@ -101,6 +103,8 @@
     <string name="time_pattern_other_year">yyyy년 M월 d일</string>
 
     <string name="conduit_reprobe">다시 탐지</string>
+    <string name="conduit_reprobing">탐지 중…</string>
+    <string name="conduit_testing">테스트 중…</string>
     <string name="conduit_segment_local_read">로컬 읽기</string>
     <string name="conduit_segment_local_service">로컬 서비스</string>
     <string name="conduit_segment_network">네트워크</string>
@@ -244,6 +248,14 @@
     <string name="route_action_battery_settings">배터리 설정</string>
     <string name="route_action_set_preferred">우선 경로로 설정</string>
     <string name="route_action_read_test">백그라운드 읽기 테스트</string>
+    <string name="priv_hint_not_installed">휴대폰에 특권 채널 앱이 설치되어 있지 않습니다. 설치하고 실행한 뒤 ‘다시 탐지’를 누르세요.</string>
+    <string name="priv_hint_not_running">특권 채널이 실행 중이 아닙니다. 컴퓨터에서 시작 명령을 한 번 실행하면 됩니다(Windows 쪽에서는 클릭 한 번).</string>
+    <string name="priv_hint_not_authorized">특권 채널이 아직 이 앱을 승인하지 않았습니다. ‘특권 읽기 승인’을 눌러 승인하세요.</string>
+    <string name="priv_hint_binder_dead">특권 채널과의 연결이 끊어졌습니다. 채널을 다시 시작한 뒤 ‘다시 탐지’를 누르세요.</string>
+    <string name="priv_hint_userservice_dead">특권 읽기 서비스가 끊어졌습니다. ‘다시 탐지’로 재연결을 시도하고, 안 되면 채널을 다시 시작하세요.</string>
+    <string name="priv_hint_clipboard_binder_dead">시스템 클립보드 서비스에 지금은 접근할 수 없습니다. 잠시 후 다시 시도하고, 계속되면 기기를 재시작하세요.</string>
+    <string name="priv_hint_api_mismatch">특권 채널이 오래되었거나 이 시스템 버전과 호환되지 않습니다. 채널 앱을 업데이트한 뒤 다시 시도하세요.</string>
+    <string name="priv_hint_read_unverified">전제 조건은 갖춰졌고 실측 한 번만 남았습니다. ‘백그라운드 읽기 테스트’를 눌러 확인하세요.</string>
     <string name="read_state_unprobed">미탐지</string>
     <string name="read_state_ready">사용 가능</string>
     <string name="read_state_pending_test">테스트 대기(%1$s)</string>
@@ -413,6 +425,7 @@
     <string name="onboarding_pair_fact_entry">페어링 입구는 ‘통로’ 페이지의 네트워크 구간에 고정되어 있어, 튜토리얼이 끝난 뒤에도 언제든 찾을 수 있습니다.</string>
     <string name="onboarding_pair_fact_verify">페어링 시 양쪽에 인증서 지문이 표시됩니다. 일치할 때만 확인하세요 — 다른 PC에 잘못 연결되는 것을 막는 단계입니다.</string>
     <string name="onboarding_pair_fact_service">페어링이 끝나면 네트워크 구간이 연결되고 동기화 서비스가 자동으로 시작됩니다.</string>
+    <string name="onboarding_pair_done">컴퓨터 페어링이 끝났습니다 — 통로가 열렸습니다. 남은 안내를 계속 살펴보세요.</string>
     <string name="onboarding_read_body">앱이 포그라운드에 있는 동안은 언제나 클립보드를 읽을 수 있습니다. 백그라운드 읽기는 경로 하나를 골라 한 번만 설정하면 되며, 품질이 가장 높은 ‘특권 직접 읽기’를 추천합니다.</string>
     <string name="onboarding_route_recommended">추천</string>
     <string name="onboarding_wireless_debug_hint">USB 케이블이 없나요? 시스템 ‘개발자 옵션 → 무선 디버깅’을 켜면 PC에서 Wi-Fi로도 같은 원클릭 시작을 실행할 수 있습니다.</string>

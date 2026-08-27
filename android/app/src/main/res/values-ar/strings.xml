@@ -43,6 +43,7 @@
     <string name="notification_action_sync_now">المزامنة الآن</string>
     <string name="notification_status_sync_paused">المزامنة متوقفة مؤقتًا · المحتوى الوارد يذهب إلى صندوق الوارد فقط</string>
     <string name="notification_status_capture_paused">الالتقاط التلقائي متوقف مؤقتًا · الإرسال والاستلام اليدويان يعملان</string>
+    <string name="notification_status_overlay_polling">قراءة الاستطلاع بالنافذة العائمة جارية</string>
 
     <string name="notification_channel_recovery_name">تذكيرات استعادة المزامنة</string>
     <string name="notification_channel_recovery_description">يذكّرك بفتح التطبيق والاستئناف يدويًا عندما تعجز خدمة المزامنة عن التعافي وحدها. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>
@@ -80,6 +81,7 @@
     <string name="action_go_pair">الاقتران الآن</string>
 
     <string name="home_search_hint">بحث</string>
+    <string name="home_search_clear">مسح البحث</string>
     <string name="home_notice_copied">كُتب في حافظة النظام</string>
     <string name="home_notice_copy_failed">فشل النسخ · %1$s</string>
     <string name="home_notice_deleted">أُزيل من هذا الجهاز · الأجهزة الأخرى غير متأثرة</string>
@@ -106,6 +108,8 @@
     <string name="time_pattern_other_year">d MMM yyyy</string>
 
     <string name="conduit_reprobe">إعادة الفحص</string>
+    <string name="conduit_reprobing">جارٍ الفحص…</string>
+    <string name="conduit_testing">جارٍ الاختبار…</string>
     <string name="conduit_segment_local_read">القراءة المحلية</string>
     <string name="conduit_segment_local_service">الخدمة المحلية</string>
     <string name="conduit_segment_network">الشبكة</string>
@@ -249,6 +253,14 @@
     <string name="route_action_battery_settings">إعدادات البطارية</string>
     <string name="route_action_set_preferred">تعيينه المسار المفضّل</string>
     <string name="route_action_read_test">اختبار القراءة في الخلفية</string>
+    <string name="priv_hint_not_installed">تطبيق القناة ذات الامتيازات غير مثبّت على هذا الهاتف؛ ثبّته وشغّله ثم عد واضغط «إعادة الفحص».</string>
+    <string name="priv_hint_not_running">القناة ذات الامتيازات لا تعمل؛ نفّذ أمر التشغيل مرة واحدة من حاسوب (بنقرة واحدة من جانب Windows).</string>
+    <string name="priv_hint_not_authorized">القناة ذات الامتيازات لم تصرّح لهذا التطبيق بعد؛ اضغط «التصريح بالقراءة بامتيازات» لمنح التصريح.</string>
+    <string name="priv_hint_binder_dead">انقطع الاتصال بالقناة ذات الامتيازات؛ أعد تشغيل القناة ثم اضغط «إعادة الفحص».</string>
+    <string name="priv_hint_userservice_dead">انقطعت خدمة القراءة بامتيازات؛ اضغط «إعادة الفحص» لإعادة الاتصال، وإن لم يُجدِ فأعد تشغيل القناة.</string>
+    <string name="priv_hint_clipboard_binder_dead">تعذّر الوصول إلى خدمة حافظة النظام الآن؛ حاول لاحقًا، وإذا استمرت المشكلة فأعد تشغيل الجهاز.</string>
+    <string name="priv_hint_api_mismatch">القناة ذات الامتيازات قديمة أو غير متوافقة مع إصدار النظام هذا؛ حدّث تطبيق القناة ثم أعد المحاولة.</string>
+    <string name="priv_hint_read_unverified">المتطلبات جاهزة ولم يتبقَّ سوى اختبار فعلي واحد؛ اضغط «اختبار القراءة في الخلفية» للتحقق.</string>
     <string name="read_state_unprobed">غير مفحوص</string>
     <string name="read_state_ready">جاهز</string>
     <string name="read_state_pending_test">بانتظار الاختبار (%1$s)</string>
@@ -448,6 +460,7 @@
     <string name="onboarding_pair_fact_entry">مدخل الاقتران ثابت في مقطع الشبكة بصفحة «القناة»، ويمكنك الوصول إليه في أي وقت بعد هذا الدليل.</string>
     <string name="onboarding_pair_fact_verify">أثناء الاقتران يعرض الطرفان بصمة الشهادة؛ لا تؤكد إلا عند تطابقهما — هذه الخطوة تمنع الاتصال بحاسوب خاطئ.</string>
     <string name="onboarding_pair_fact_service">بمجرد اكتمال الاقتران يتصل مقطع الشبكة وتبدأ خدمة المزامنة تلقائيًا.</string>
+    <string name="onboarding_pair_done">اقترن الحاسوب — القناة مفتوحة الآن. تابع بقية الجولة.</string>
     <string name="onboarding_read_body">يمكن قراءة الحافظة دائمًا ما دام التطبيق في المقدمة؛ أما القراءة في الخلفية فتحتاج إعدادًا لمرة واحدة على مسار تختاره. نوصي بالأعلى جودة: «قراءة مباشرة بامتيازات».</string>
     <string name="onboarding_route_recommended">موصى به</string>
     <string name="onboarding_wireless_debug_hint">لا يوجد كابل USB في متناولك؟ فعّل «خيارات المطور ← تصحيح الأخطاء اللاسلكي» ليتمكن الحاسوب من تنفيذ التشغيل نفسه بنقرة واحدة عبر Wi-Fi.</string>

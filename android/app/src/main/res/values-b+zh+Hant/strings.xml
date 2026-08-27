@@ -38,6 +38,7 @@
     <string name="notification_action_sync_now">立即同步</string>
     <string name="notification_status_sync_paused">同步已暫停 · 收到的內容僅進收件匣</string>
     <string name="notification_status_capture_paused">自動擷取已暫停 · 手動傳送與接收不受影響</string>
+    <string name="notification_status_overlay_polling">懸浮窗輪詢讀取進行中</string>
 
     <string name="notification_channel_recovery_name">同步復原提醒</string>
     <string name="notification_channel_recovery_description">同步服務無法自動復原時提醒你開啟應用程式手動復原。通知絕不顯示剪貼簿內容。</string>
@@ -75,6 +76,7 @@
     <string name="action_go_pair">去配對</string>
 
     <string name="home_search_hint">搜尋</string>
+    <string name="home_search_clear">清除搜尋</string>
     <string name="home_notice_copied">已寫入系統剪貼簿</string>
     <string name="home_notice_copy_failed">複製失敗 · %1$s</string>
     <string name="home_notice_deleted">已從本機移除 · 不影響其他裝置</string>
@@ -101,6 +103,8 @@
     <string name="time_pattern_other_year">yyyy年M月d日</string>
 
     <string name="conduit_reprobe">重新探測</string>
+    <string name="conduit_reprobing">探測中…</string>
+    <string name="conduit_testing">測試中…</string>
     <string name="conduit_segment_local_read">本機讀取</string>
     <string name="conduit_segment_local_service">本機服務</string>
     <string name="conduit_segment_network">網路</string>
@@ -244,6 +248,14 @@
     <string name="route_action_battery_settings">去設定電池</string>
     <string name="route_action_set_preferred">設為首選路線</string>
     <string name="route_action_read_test">測試背景讀取</string>
+    <string name="priv_hint_not_installed">手機上還沒有特權通道應用程式；安裝並啟動後回來點「重新探測」。</string>
+    <string name="priv_hint_not_running">特權通道未在執行；用電腦執行一次啟動命令即可（Windows 端可一鍵啟動）。</string>
+    <string name="priv_hint_not_authorized">特權通道尚未授權本應用程式；點「授權特權直讀」完成授權。</string>
+    <string name="priv_hint_binder_dead">與特權通道的連線已中斷；重啟通道後點「重新探測」。</string>
+    <string name="priv_hint_userservice_dead">特權讀取服務已中斷；點「重新探測」嘗試重連，無效時重啟通道。</string>
+    <string name="priv_hint_clipboard_binder_dead">系統剪貼簿服務暫時無法存取；稍後再試，必要時重新啟動裝置。</string>
+    <string name="priv_hint_api_mismatch">特權通道版本過舊或系統介面不相容；升級通道應用程式後再試。</string>
+    <string name="priv_hint_read_unverified">前提已就緒，還差一次實測；點「測試背景讀取」完成驗證。</string>
     <string name="read_state_unprobed">未探測</string>
     <string name="read_state_ready">就緒</string>
     <string name="read_state_pending_test">待實測（%1$s）</string>
@@ -413,6 +425,7 @@
     <string name="onboarding_pair_fact_entry">配對入口固定在「通路」頁的網路段，教學結束後隨時能找到。</string>
     <string name="onboarding_pair_fact_verify">配對時兩端各自顯示憑證指紋，一致才確認——這一步防止連錯電腦。</string>
     <string name="onboarding_pair_fact_service">配對完成即接通網路段，同步服務自動啟動。</string>
+    <string name="onboarding_pair_done">電腦已完成配對——通路已經打通，繼續看看剩下的部分吧。</string>
     <string name="onboarding_read_body">應用程式在前景時始終能讀取剪貼簿；背景讀取需任選一條路線完成一次設定，推薦品質最高的「特權直讀」。</string>
     <string name="onboarding_route_recommended">推薦</string>
     <string name="onboarding_wireless_debug_hint">不方便接 USB 線？在系統「開發人員選項 → 無線偵錯」中開啟後，電腦透過 Wi-Fi 也能完成同樣的一鍵啟動。</string>

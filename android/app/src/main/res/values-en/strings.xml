@@ -40,6 +40,7 @@
     <string name="notification_action_sync_now">Sync now</string>
     <string name="notification_status_sync_paused">Sync paused · incoming content goes to the inbox only</string>
     <string name="notification_status_capture_paused">Auto capture paused · manual send and receive still work</string>
+    <string name="notification_status_overlay_polling">Overlay polling read is running</string>
 
     <string name="notification_channel_recovery_name">Sync recovery reminders</string>
     <string name="notification_channel_recovery_description">Reminds you to open the app and resume manually when the sync service cannot recover on its own. Notifications never show clipboard content.</string>
@@ -77,6 +78,7 @@
     <string name="action_go_pair">Pair now</string>
 
     <string name="home_search_hint">Search</string>
+    <string name="home_search_clear">Clear search</string>
     <string name="home_notice_copied">Written to the system clipboard</string>
     <string name="home_notice_copy_failed">Copy failed · %1$s</string>
     <string name="home_notice_deleted">Removed from this device · other devices unaffected</string>
@@ -103,6 +105,8 @@
     <string name="time_pattern_other_year">MMM d, yyyy</string>
 
     <string name="conduit_reprobe">Re-probe</string>
+    <string name="conduit_reprobing">Probing…</string>
+    <string name="conduit_testing">Testing…</string>
     <string name="conduit_segment_local_read">Local read</string>
     <string name="conduit_segment_local_service">Local service</string>
     <string name="conduit_segment_network">Network</string>
@@ -246,6 +250,14 @@
     <string name="route_action_battery_settings">Battery settings</string>
     <string name="route_action_set_preferred">Set as preferred route</string>
     <string name="route_action_read_test">Test background read</string>
+    <string name="priv_hint_not_installed">The privileged channel app is not installed on this phone; install and start it, then come back and tap “Re-probe”.</string>
+    <string name="priv_hint_not_running">The privileged channel is not running; run the one-line start command from a computer (one click on the Windows side).</string>
+    <string name="priv_hint_not_authorized">The privileged channel has not authorized this app yet; tap “Authorize privileged read” to grant it.</string>
+    <string name="priv_hint_binder_dead">The connection to the privileged channel dropped; restart the channel, then tap “Re-probe”.</string>
+    <string name="priv_hint_userservice_dead">The privileged read service disconnected; tap “Re-probe” to reconnect, or restart the channel if that fails.</string>
+    <string name="priv_hint_clipboard_binder_dead">The system clipboard service is unreachable right now; try again later, or restart the device if it persists.</string>
+    <string name="priv_hint_api_mismatch">The privileged channel is outdated or incompatible with this system version; update the channel app and try again.</string>
+    <string name="priv_hint_read_unverified">Prerequisites are met — one real test remains; tap “Test background read” to verify.</string>
     <string name="read_state_unprobed">Unprobed</string>
     <string name="read_state_ready">Ready</string>
     <string name="read_state_pending_test">Awaiting test (%1$s)</string>
@@ -421,6 +433,7 @@
     <string name="onboarding_pair_fact_entry">The pairing entrance stays in the network segment of the Conduit page — you can always find it after this tutorial.</string>
     <string name="onboarding_pair_fact_verify">While pairing, both ends show a certificate fingerprint; confirm only when they match — this step prevents pairing with the wrong PC.</string>
     <string name="onboarding_pair_fact_service">Once paired, the network segment is connected and the sync service starts automatically.</string>
+    <string name="onboarding_pair_done">Your computer is paired — the conduit is open. Carry on with the rest of the tour.</string>
     <string name="onboarding_read_body">The clipboard can always be read while the app is in the foreground; background reading takes a one-time setup on a route of your choice — the highest quality, “Privileged direct read”, is recommended.</string>
     <string name="onboarding_route_recommended">Recommended</string>
     <string name="onboarding_wireless_debug_hint">No USB cable at hand? Enable Developer options → Wireless debugging, and the PC can run the same one-click start over Wi-Fi.</string>
