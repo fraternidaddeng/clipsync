@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Нажмите сочетание в любом приложении, чтобы вызвать всплывающее окно у трея. Щёлкните поле и нажмите нужное сочетание (обязательно с Ctrl, Alt или Win); Backspace — очистить. По умолчанию выключено.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Горячая клавиша паузы синхронизации</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Нажмите сочетание в любом приложении, чтобы приостановить синхронизацию; повторное нажатие возобновит её. Щёлкните поле и нажмите нужное сочетание (обязательно с Ctrl, Alt или Win); Backspace — очистить. По умолчанию выключено.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Записывает всю историю (включая отметки об удалении) в файл резервной копии JSON Lines; без ключей, сертификатов и данных сопряжения. Экспорт в открытом виде — храните бережно.</value>
   </data>
@@ -760,6 +766,12 @@
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>Это сочетание занято другой программой; выберите другое</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Действует · нажмите в любом приложении, чтобы приостановить или возобновить синхронизацию</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>Это сочетание уже занято другой горячей клавишей этого приложения; выберите другое</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>В этом сеансе синхронизация не запущена (конечной точке не удалось стартовать)</value>

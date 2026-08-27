@@ -160,6 +160,18 @@ public partial class MainViewModel(
     [ObservableProperty]
     private bool flyoutHotkeyConflict;
 
+    /// <summary>暂停同步快捷键（P1-9 另一半）：canonical chord toggling <see cref="IsPaused"/>; empty = off (default).</summary>
+    [ObservableProperty]
+    private string pauseHotkey = string.Empty;
+
+    /// <summary>Fact line under the pause-hotkey row, set by the app layer after each registration attempt.</summary>
+    [ObservableProperty]
+    private string pauseHotkeyStatus = string.Empty;
+
+    /// <summary>True when the chord is held elsewhere (another program or the flyout hotkey).</summary>
+    [ObservableProperty]
+    private bool pauseHotkeyConflict;
+
     [ObservableProperty]
     private string blockedProcesses = "1password, bitwarden, keepass, keepassxc";
 
@@ -837,6 +849,7 @@ public partial class MainViewModel(
             await store.GetSettingAsync("ui_language"));
         LaunchAtStartup = bool.TryParse(await store.GetSettingAsync("launch_at_startup"), out var launch) && launch;
         FlyoutHotkey = await store.GetSettingAsync("hotkey_flyout") ?? string.Empty;
+        PauseHotkey = await store.GetSettingAsync("hotkey_pause") ?? string.Empty;
         BlockedProcesses = await store.GetSettingAsync("blocked_processes") ?? BlockedProcesses;
         AutoApplyRemote = !bool.TryParse(await store.GetSettingAsync("auto_apply_remote"), out var autoApply) || autoApply;
         ImageSyncEnabled = bool.TryParse(await store.GetSettingAsync("image_sync"), out var imageSync) && imageSync;
@@ -1249,6 +1262,7 @@ public partial class MainViewModel(
         await store.SetSettingAsync("ui_language", ClipSync.App.Ui.LanguageCatalog.StoredFor(LanguageKey));
         await store.SetSettingAsync("launch_at_startup", LaunchAtStartup.ToString());
         await store.SetSettingAsync("hotkey_flyout", FlyoutHotkey);
+        await store.SetSettingAsync("hotkey_pause", PauseHotkey);
         await store.SetSettingAsync("blocked_processes", BlockedProcesses);
         await store.SetSettingAsync("auto_apply_remote", AutoApplyRemote.ToString());
         await store.SetSettingAsync("image_sync", ImageSyncEnabled.ToString());

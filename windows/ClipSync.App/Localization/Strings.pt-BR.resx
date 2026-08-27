@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Pressione a combinação em qualquer aplicativo para chamar a janela da bandeja. Clique no campo e pressione a combinação desejada (precisa incluir Ctrl, Alt ou Win); Backspace apaga. Desligado por padrão.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Atalho para pausar a sincronização</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Pressione a combinação em qualquer aplicativo para pausar a sincronização; pressione de novo para retomá-la. Clique no campo e pressione a combinação desejada (precisa incluir Ctrl, Alt ou Win); Backspace apaga. Desligado por padrão.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Grava todo o histórico (incluindo marcadores de exclusão) como arquivo de backup JSON Lines; sem chaves, certificados nem dados de pareamento. A exportação é texto puro — guarde com cuidado.</value>
   </data>
@@ -760,6 +766,12 @@ Todas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A 
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>Essa combinação já é usada por outro programa; tente outra</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Ativo · pressione em qualquer aplicativo para pausar ou retomar a sincronização</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>Essa combinação já é usada pelo outro atalho deste aplicativo; tente outra</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>Sincronização não iniciada nesta sessão (falha ao iniciar o ponto de conexão)</value>

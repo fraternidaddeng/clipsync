@@ -131,10 +131,19 @@ public partial class MainWindow : Window
         await viewModel.SaveSettingsFromUiAsync();
     }
 
-    // 呼出浮窗快捷键（P1-9）：输入框内直接按组合键设置，Backspace/Delete/Esc 清除。
-    // Alt 组合以 Key.System 到达，真实按键在 SystemKey 里；不成组合的按键（如 Tab 导航）
-    // 不拦截，键盘用户仍能离开输入框。
-    private async void OnHotkeyBoxPreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    // 全局快捷键录入框（P1-9，呼出浮窗与暂停同步共用）：输入框内直接按组合键设置，
+    // Backspace/Delete/Esc 清除。Alt 组合以 Key.System 到达，真实按键在 SystemKey 里；
+    // 不成组合的按键（如 Tab 导航）不拦截，键盘用户仍能离开输入框。
+    private async void OnHotkeyBoxPreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e) =>
+        await CaptureHotkeyChordAsync(e, () => viewModel.FlyoutHotkey, value => viewModel.FlyoutHotkey = value);
+
+    private async void OnPauseHotkeyBoxPreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e) =>
+        await CaptureHotkeyChordAsync(e, () => viewModel.PauseHotkey, value => viewModel.PauseHotkey = value);
+
+    private async System.Threading.Tasks.Task CaptureHotkeyChordAsync(
+        System.Windows.Input.KeyEventArgs e,
+        System.Func<string> current,
+        System.Action<string> assign)
     {
         var key = e.Key == System.Windows.Input.Key.System ? e.SystemKey : e.Key;
         if (key is System.Windows.Input.Key.Back
@@ -142,9 +151,9 @@ public partial class MainWindow : Window
             or System.Windows.Input.Key.Escape)
         {
             e.Handled = true;
-            if (viewModel.FlyoutHotkey.Length > 0)
+            if (current().Length > 0)
             {
-                viewModel.FlyoutHotkey = string.Empty;
+                assign(string.Empty);
                 await viewModel.SaveSettingsFromUiAsync();
             }
 
@@ -158,12 +167,12 @@ public partial class MainWindow : Window
         }
 
         e.Handled = true;
-        if (gesture == viewModel.FlyoutHotkey)
+        if (gesture == current())
         {
             return;
         }
 
-        viewModel.FlyoutHotkey = gesture;
+        assign(gesture);
         await viewModel.SaveSettingsFromUiAsync();
     }
 

@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Druk in elke app op de combinatie om het zwevende venster op te roepen. Klik op het vak en druk dan op de gewenste combinatie (moet Ctrl, Alt of Win bevatten); druk op Backspace om te wissen. Standaard uit.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Sneltoets voor synchronisatiepauze</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Druk in elke app op de combinatie om de synchronisatie te pauzeren; druk nogmaals om te hervatten. Klik op het vak en druk dan op de gewenste combinatie (moet Ctrl, Alt of Win bevatten); druk op Backspace om te wissen. Standaard uit.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Schrijft de hele geschiedenis (inclusief verwijdermarkeringen) als een JSON Lines-back-upbestand; geen sleutels, certificaten of koppelgegevens. De export is platte tekst — bewaar hem veilig.</value>
   </data>
@@ -760,6 +766,12 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>Die combinatie is al in gebruik door een ander programma; probeer een andere</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Actief · druk erop in elke app om de synchronisatie te pauzeren of te hervatten</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>Die combinatie is al in gebruik door de andere sneltoets van deze app; probeer een andere</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>Synchronisatie draait deze sessie niet (eindpunt kon niet starten)</value>

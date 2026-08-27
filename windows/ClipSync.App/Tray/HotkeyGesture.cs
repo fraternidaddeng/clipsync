@@ -3,11 +3,11 @@ using System.Windows.Input;
 namespace ClipSync.App.Tray;
 
 /// <summary>
-/// 运行 · 呼出浮窗快捷键（settings-roadmap P1-9）的组合键语法。The stored form of
-/// <c>hotkey_flyout</c> is a canonical string such as <c>Ctrl+Alt+V</c>: modifiers in the
-/// fixed order Ctrl, Alt, Shift, Win, then one main key (A–Z, 0–9 or F1–F24). A gesture
-/// must carry Ctrl, Alt or Win — Shift alone would shadow ordinary typing. The empty
-/// string means the hotkey is off (the default).
+/// 运行 · 全局快捷键（settings-roadmap P1-9：呼出浮窗 / 暂停同步）的组合键语法。The
+/// stored form of <c>hotkey_flyout</c> and <c>hotkey_pause</c> is a canonical string such
+/// as <c>Ctrl+Alt+V</c>: modifiers in the fixed order Ctrl, Alt, Shift, Win, then one
+/// main key (A–Z, 0–9 or F1–F24). A gesture must carry Ctrl, Alt or Win — Shift alone
+/// would shadow ordinary typing. The empty string means the hotkey is off (the default).
 /// </summary>
 public static class HotkeyGesture
 {

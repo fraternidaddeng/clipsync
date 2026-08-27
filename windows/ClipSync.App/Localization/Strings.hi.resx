@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>किसी भी ऐप में संयोजन दबाकर ट्रे फ़्लाईआउट बुलाएँ। बॉक्स पर क्लिक कर मनचाहा संयोजन दबाएँ (Ctrl, Alt या Win शामिल हो); Backspace से हटाएँ। डिफ़ॉल्ट रूप से बंद।</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>समन्वयन रोकने का शॉर्टकट</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>किसी भी ऐप में संयोजन दबाकर समन्वयन रोकें; फिर दबाने पर फिर शुरू होगा। बॉक्स पर क्लिक कर मनचाहा संयोजन दबाएँ (Ctrl, Alt या Win शामिल हो); Backspace से हटाएँ। डिफ़ॉल्ट रूप से बंद।</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>पूरा इतिहास (मिटाने के चिह्नों समेत) JSON Lines बैकअप फ़ाइल में लिखता है; कुंजियाँ, प्रमाणपत्र या पेयरिंग डेटा नहीं। निर्यात सादा पाठ है — सुरक्षित रखें।</value>
   </data>
@@ -760,6 +766,12 @@
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>यह संयोजन किसी और प्रोग्राम ने ले रखा है; कोई और आज़माएँ</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>सक्रिय · किसी भी ऐप में दबाते ही समन्वयन रुकेगा या फिर शुरू होगा</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>यह संयोजन इस ऐप के दूसरे शॉर्टकट में पहले से है; कोई और आज़माएँ</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>इस सत्र में समन्वयन चालू नहीं (एंडपॉइंट शुरू नहीं हो सका)</value>

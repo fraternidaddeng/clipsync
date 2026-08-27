@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Nhấn tổ hợp trong bất kỳ ứng dụng nào để gọi cửa sổ nổi ở khay. Bấm vào ô rồi nhấn tổ hợp mong muốn (phải gồm Ctrl, Alt hoặc Win); nhấn Backspace để xóa. Mặc định tắt.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Phím tắt tạm dừng đồng bộ</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Nhấn tổ hợp trong bất kỳ ứng dụng nào để tạm dừng đồng bộ; nhấn lần nữa để tiếp tục. Bấm vào ô rồi nhấn tổ hợp mong muốn (phải gồm Ctrl, Alt hoặc Win); nhấn Backspace để xóa. Mặc định tắt.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Ghi toàn bộ lịch sử (gồm dấu xóa) thành tệp sao lưu JSON Lines; không chứa khóa, chứng chỉ hay dữ liệu ghép nối. Bản xuất là văn bản thuần — hãy cất giữ cẩn thận.</value>
   </data>
@@ -760,6 +766,12 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>Tổ hợp này đã bị chương trình khác chiếm; hãy chọn tổ hợp khác</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Đã hiệu lực · nhấn trong bất kỳ ứng dụng nào để tạm dừng hoặc tiếp tục đồng bộ</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>Tổ hợp này đã dùng cho phím tắt khác của ứng dụng; hãy chọn tổ hợp khác</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>Phiên này đồng bộ chưa chạy (điểm cuối khởi động thất bại)</value>

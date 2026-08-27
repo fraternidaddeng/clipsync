@@ -47,7 +47,7 @@ public partial class App : Application
     private PairingQrWindow? pairingWindow;
     private FirstRunStore? firstRunStore;
     private OnboardingWindow? onboardingWindow;
-    private FlyoutHotkeyManager? flyoutHotkey;
+    private GlobalHotkeyManager? hotkeyManager;
     private System.Windows.Threading.DispatcherTimer? liveRefreshTimer;
     private bool peerEndpointUnavailable;
 
@@ -118,13 +118,13 @@ public partial class App : Application
         UpdateTrayState();
 
         // 开机自启（P0-3）: re-assert the per-user Run entry so a moved executable heals
-        // itself; the global hotkey (P1-9) registers before any window shows so it works
+        // itself; the global hotkeys (P1-9) register before any window shows so they work
         // from a tray-only start too. A `--minimized` launch (the autostart path) stays
         // in the tray; a manual launch opens the main window.
         ReconcileLaunchAtStartup(viewModel.LaunchAtStartup);
-        flyoutHotkey = new FlyoutHotkeyManager();
-        flyoutHotkey.Pressed += OnFlyoutHotkeyPressed;
-        ApplyFlyoutHotkey();
+        hotkeyManager = new GlobalHotkeyManager();
+        hotkeyManager.Pressed += OnGlobalHotkeyPressed;
+        ApplyGlobalHotkeys();
         if (!StartupRegistration.IsMinimizedLaunch(e.Args))
         {
             mainWindow.Show();
@@ -264,9 +264,9 @@ public partial class App : Application
             ReconcileLaunchAtStartup(mainViewModel.LaunchAtStartup);
         }
 
-        if (e.PropertyName is nameof(MainViewModel.FlyoutHotkey))
+        if (e.PropertyName is nameof(MainViewModel.FlyoutHotkey) or nameof(MainViewModel.PauseHotkey))
         {
-            ApplyFlyoutHotkey();
+            ApplyGlobalHotkeys();
         }
     }
 
@@ -289,28 +289,80 @@ public partial class App : Application
         }
     }
 
-    /// <summary>Applies the 呼出浮窗快捷键 setting and states the outcome on the preferences row.</summary>
-    private void ApplyFlyoutHotkey()
+    /// <summary>
+    /// Reconciles both global hotkeys（呼出浮窗 / 暂停同步）with their settings and states
+    /// the outcome on each preferences row. Both are re-applied together so that editing
+    /// one chord frees or claims the OS registration deterministically: on an identical
+    /// chord the flyout hotkey wins and the pause row states the in-app collision honestly
+    /// instead of blaming "another program".
+    /// </summary>
+    private void ApplyGlobalHotkeys()
     {
-        if (mainViewModel is null || flyoutHotkey is null)
+        if (mainViewModel is null || hotkeyManager is null)
         {
             return;
         }
 
-        var gesture = mainViewModel.FlyoutHotkey;
-        var applied = flyoutHotkey.TryApply(gesture);
-        mainViewModel.FlyoutHotkeyConflict = !applied;
+        var pauseGesture = mainViewModel.PauseHotkey;
+        _ = hotkeyManager.TryApply(GlobalHotkey.PauseSync, null);
+
+        var flyoutGesture = mainViewModel.FlyoutHotkey;
+        var flyoutApplied = hotkeyManager.TryApply(GlobalHotkey.Flyout, flyoutGesture);
+        mainViewModel.FlyoutHotkeyConflict = !flyoutApplied;
         mainViewModel.FlyoutHotkeyStatus =
-            gesture.Length == 0 ? string.Empty
-            : applied ? Strings.Hotkey_Applied
+            flyoutGesture.Length == 0 ? string.Empty
+            : flyoutApplied ? Strings.Hotkey_Applied
             : Strings.Hotkey_Conflict;
-        if (!applied)
+        if (!flyoutApplied)
         {
             LocalDiagnostics.Write("flyout_hotkey_unavailable");
         }
+
+        if (pauseGesture.Length > 0 && pauseGesture == flyoutGesture)
+        {
+            mainViewModel.PauseHotkeyConflict = true;
+            mainViewModel.PauseHotkeyStatus = Strings.Hotkey_ConflictSelf;
+            LocalDiagnostics.Write("pause_hotkey_self_conflict");
+            return;
+        }
+
+        var pauseApplied = hotkeyManager.TryApply(GlobalHotkey.PauseSync, pauseGesture);
+        mainViewModel.PauseHotkeyConflict = !pauseApplied;
+        mainViewModel.PauseHotkeyStatus =
+            pauseGesture.Length == 0 ? string.Empty
+            : pauseApplied ? Strings.Hotkey_PauseApplied
+            : Strings.Hotkey_Conflict;
+        if (!pauseApplied)
+        {
+            LocalDiagnostics.Write("pause_hotkey_unavailable");
+        }
     }
 
-    private void OnFlyoutHotkeyPressed() => trayFlyout?.ShowFlyout();
+    private void OnGlobalHotkeyPressed(GlobalHotkey hotkey)
+    {
+        if (hotkey == GlobalHotkey.Flyout)
+        {
+            trayFlyout?.ShowFlyout();
+            return;
+        }
+
+        TogglePauseFromHotkey();
+    }
+
+    /// <summary>
+    /// 暂停同步快捷键: same act as the flyout's pause button — flip the intent and persist
+    /// it. Every surface (tray colour, flyout, conduit page) follows via property change.
+    /// </summary>
+    private async void TogglePauseFromHotkey()
+    {
+        if (mainViewModel is null)
+        {
+            return;
+        }
+
+        mainViewModel.IsPaused = !mainViewModel.IsPaused;
+        await mainViewModel.SaveSettingsFromUiAsync();
+    }
 
     private void OnDevicesChanged(object? sender, NotifyCollectionChangedEventArgs e) => UpdateTrayState();
 
@@ -759,11 +811,11 @@ public partial class App : Application
             mainViewModel.PropertyChanged -= OnViewModelPropertyChanged;
             mainViewModel.Devices.CollectionChanged -= OnDevicesChanged;
         }
-        if (flyoutHotkey is not null)
+        if (hotkeyManager is not null)
         {
-            flyoutHotkey.Pressed -= OnFlyoutHotkeyPressed;
-            flyoutHotkey.Dispose();
-            flyoutHotkey = null;
+            hotkeyManager.Pressed -= OnGlobalHotkeyPressed;
+            hotkeyManager.Dispose();
+            hotkeyManager = null;
         }
         trayFlyout?.Close();
         trayIcon?.Dispose();

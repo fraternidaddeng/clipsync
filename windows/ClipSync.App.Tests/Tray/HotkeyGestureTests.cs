@@ -4,9 +4,9 @@ using System.Windows.Input;
 namespace ClipSync.App.Tests.Tray;
 
 /// <summary>
-/// 运行 · 呼出浮窗快捷键（P1-9）: the canonical chord syntax stored in
-/// <c>hotkey_flyout</c> and its two mappings — parsing into RegisterHotKey arguments
-/// and building from live WPF keyboard state.
+/// 运行 · 全局快捷键（P1-9，呼出浮窗 / 暂停同步）: the canonical chord syntax stored in
+/// <c>hotkey_flyout</c> / <c>hotkey_pause</c> and its two mappings — parsing into
+/// RegisterHotKey arguments and building from live WPF keyboard state.
 /// </summary>
 public sealed class HotkeyGestureTests
 {

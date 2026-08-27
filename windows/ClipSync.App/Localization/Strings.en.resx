@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Press the combination in any app to summon the tray flyout. Click the box, then press the combination you want (must include Ctrl, Alt, or Win); press Backspace to clear. Off by default.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Pause-sync hotkey</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Press the combination in any app to pause sync; press it again to resume. Click the box, then press the combination you want (must include Ctrl, Alt, or Win); press Backspace to clear. Off by default.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Writes the whole history (including deletion markers) as a JSON Lines backup file; no keys, certificates, or pairing data. The export is plaintext — keep it safe.</value>
   </data>
@@ -760,6 +766,12 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>That combination is taken by another program; try a different one</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Active · press it in any app to pause or resume sync</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>That combination is already used by the other hotkey here; try a different one</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>Sync not running this session (endpoint failed to start)</value>

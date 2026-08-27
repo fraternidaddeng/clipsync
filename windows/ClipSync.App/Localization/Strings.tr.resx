@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Herhangi bir uygulamada kombinasyona basarak tepsi penceresini çağır. Kutuya tıkla ve istediğin kombinasyona bas (Ctrl, Alt veya Win içermeli); Backspace temizler. Varsayılan olarak kapalı.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Eşitlemeyi duraklatma kısayolu</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Herhangi bir uygulamada kombinasyona basarak eşitlemeyi duraklat; tekrar basınca sürer. Kutuya tıkla ve istediğin kombinasyona bas (Ctrl, Alt veya Win içermeli); Backspace temizler. Varsayılan olarak kapalı.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Tüm geçmişi (silme işaretleri dahil) JSON Lines yedek dosyası olarak yazar; anahtar, sertifika veya eşleştirme verisi içermez. Dışa aktarım düz metindir — güvenle sakla.</value>
   </data>
@@ -760,6 +766,12 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>Bu kombinasyon başka bir program tarafından kullanılıyor; farklı bir kombinasyon dene</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Etkin · herhangi bir uygulamada basınca eşitleme duraklar veya sürer</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>Bu kombinasyon bu uygulamadaki diğer kısayolda kullanılıyor; farklı bir kombinasyon dene</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>Bu oturumda eşitleme çalışmıyor (uç nokta başlatılamadı)</value>

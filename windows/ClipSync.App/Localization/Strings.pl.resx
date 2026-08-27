@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Naciśnij kombinację w dowolnej aplikacji, aby przywołać okienko przy zasobniku. Kliknij pole i naciśnij wybraną kombinację (musi zawierać Ctrl, Alt lub Win); Backspace czyści. Domyślnie wyłączone.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Skrót wstrzymania synchronizacji</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Naciśnij kombinację w dowolnej aplikacji, aby wstrzymać synchronizację; ponowne naciśnięcie ją wznowi. Kliknij pole i naciśnij wybraną kombinację (musi zawierać Ctrl, Alt lub Win); Backspace czyści. Domyślnie wyłączone.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Zapisuje całą historię (wraz ze znacznikami usunięć) jako plik kopii zapasowej JSON Lines; bez kluczy, certyfikatów i danych parowania. Eksport jest jawnym tekstem — przechowuj go bezpiecznie.</value>
   </data>
@@ -760,6 +766,12 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>Ta kombinacja jest zajęta przez inny program; wybierz inną</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Aktywny · naciśnij w dowolnej aplikacji, aby wstrzymać lub wznowić synchronizację</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>Ta kombinacja jest już używana przez drugi skrót w tej aplikacji; wybierz inną</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>Synchronizacja nie działa w tej sesji (punkt końcowy nie wystartował)</value>

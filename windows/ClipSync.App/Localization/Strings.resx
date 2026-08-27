@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>在任意应用按下组合键呼出托盘浮窗。点击输入框后按下想要的组合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。默认关闭。</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>暂停同步快捷键</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>在任意应用按下组合键暂停同步，再按一次恢复。点击输入框后按下想要的组合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。默认关闭。</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥、证书与配对信息。导出内容为明文，请妥善保管。</value>
   </data>
@@ -760,6 +766,12 @@
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>该组合已被其他程序占用，请换一个组合</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>已生效 · 在任意应用按下即暂停或恢复同步</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>该组合已用于本应用的另一条快捷键，请换一个组合</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>本次会话同步未启动（端点启动失败）</value>

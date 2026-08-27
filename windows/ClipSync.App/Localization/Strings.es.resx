@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Pulsa la combinación en cualquier aplicación para invocar la ventana de la bandeja. Haz clic en el cuadro y pulsa la combinación deseada (debe incluir Ctrl, Alt o Win); Retroceso la borra. Apagado por defecto.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Atajo para pausar la sincronización</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Pulsa la combinación en cualquier aplicación para pausar la sincronización; púlsala de nuevo para reanudarla. Haz clic en el cuadro y pulsa la combinación deseada (debe incluir Ctrl, Alt o Win); Retroceso la borra. Apagado por defecto.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Escribe todo el historial (incluidos los marcadores de borrado) como archivo de respaldo JSON Lines; sin claves, certificados ni datos de emparejamiento. La exportación es texto plano: guárdala bien.</value>
   </data>
@@ -760,6 +766,12 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>Esa combinación la usa otro programa; prueba con otra</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Activo · púlsalo en cualquier aplicación para pausar o reanudar la sincronización</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>Esa combinación ya la usa el otro atajo de esta aplicación; prueba con otra</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>Sincronización no iniciada en esta sesión (falló el arranque del punto de conexión)</value>

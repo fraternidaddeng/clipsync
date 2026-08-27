@@ -4,31 +4,42 @@ using System.Windows.Interop;
 namespace ClipSync.App.Tray;
 
 /// <summary>
-/// Owns the global 呼出浮窗 hotkey: a hidden zero-sized window on the UI thread receives
-/// WM_HOTKEY and raises <see cref="Pressed"/>. Registration failure (typically another
-/// program holding the chord) is reported through <see cref="TryApply"/>'s return value
-/// so the preferences row can state the fact honestly instead of pretending it worked.
+/// The two global hotkeys owned by the app (settings-roadmap P1-9): summon the tray
+/// flyout, and pause/resume sync. Values double as the Win32 RegisterHotKey ids.
 /// </summary>
-internal sealed class FlyoutHotkeyManager : IDisposable
+internal enum GlobalHotkey
 {
-    private const int HotkeyId = 0x0C51;
+    Flyout = 0x0C51,
+    PauseSync = 0x0C52,
+}
+
+/// <summary>
+/// Owns the global hotkeys（呼出浮窗 / 暂停同步）: a single hidden zero-sized window on
+/// the UI thread receives WM_HOTKEY for every registered id and raises
+/// <see cref="Pressed"/> with the matching <see cref="GlobalHotkey"/>. Registration
+/// failure (typically another program holding the chord) is reported through
+/// <see cref="TryApply"/>'s return value so each preferences row can state the fact
+/// honestly instead of pretending it worked.
+/// </summary>
+internal sealed class GlobalHotkeyManager : IDisposable
+{
     private const int HotkeyMessage = 0x0312;
 
+    private readonly HashSet<GlobalHotkey> registered = [];
     private HwndSource? source;
-    private bool registered;
     private bool disposed;
 
-    public event Action? Pressed;
+    public event Action<GlobalHotkey>? Pressed;
 
     /// <summary>
-    /// Reconciles the registration with a gesture string: empty turns the hotkey off
+    /// Reconciles one hotkey's registration with a gesture string: empty turns it off
     /// (returns true), a valid gesture registers it. Returns false when the gesture is
     /// unparsable or RegisterHotKey refuses it (already taken by another program).
     /// </summary>
-    public bool TryApply(string? gesture)
+    public bool TryApply(GlobalHotkey hotkey, string? gesture)
     {
         ObjectDisposedException.ThrowIf(disposed, this);
-        Unregister();
+        Unregister(hotkey);
         if (string.IsNullOrWhiteSpace(gesture))
         {
             return true;
@@ -40,12 +51,17 @@ internal sealed class FlyoutHotkeyManager : IDisposable
         }
 
         var window = EnsureWindow();
-        registered = NativeMethods.RegisterHotKey(
+        if (!NativeMethods.RegisterHotKey(
             window.Handle,
-            HotkeyId,
+            (int)hotkey,
             modifiers | HotkeyGesture.ModifierNoRepeat,
-            virtualKey);
-        return registered;
+            virtualKey))
+        {
+            return false;
+        }
+
+        registered.Add(hotkey);
+        return true;
     }
 
     public void Dispose()
@@ -56,7 +72,11 @@ internal sealed class FlyoutHotkeyManager : IDisposable
         }
 
         disposed = true;
-        Unregister();
+        foreach (var hotkey in registered.ToArray())
+        {
+            Unregister(hotkey);
+        }
+
         if (source is not null)
         {
             source.RemoveHook(WindowProcedure);
@@ -86,23 +106,24 @@ internal sealed class FlyoutHotkeyManager : IDisposable
         return source;
     }
 
-    private void Unregister()
+    private void Unregister(GlobalHotkey hotkey)
     {
-        if (!registered || source is null)
+        if (!registered.Remove(hotkey) || source is null)
         {
             return;
         }
 
-        _ = NativeMethods.UnregisterHotKey(source.Handle, HotkeyId);
-        registered = false;
+        _ = NativeMethods.UnregisterHotKey(source.Handle, (int)hotkey);
     }
 
     private nint WindowProcedure(nint window, int message, nint wordParameter, nint longParameter, ref bool handled)
     {
-        if (message == HotkeyMessage && wordParameter == HotkeyId)
+        var id = (int)wordParameter;
+        if (message == HotkeyMessage
+            && id is (int)GlobalHotkey.Flyout or (int)GlobalHotkey.PauseSync)
         {
             handled = true;
-            Pressed?.Invoke();
+            Pressed?.Invoke((GlobalHotkey)id);
         }
 
         return nint.Zero;

@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>在任意應用程式按下組合鍵呼出系統匣浮窗。點擊輸入框後按下想要的組合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。預設關閉。</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>暫停同步快速鍵</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>在任意應用程式按下組合鍵暫停同步，再按一次恢復。點擊輸入框後按下想要的組合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。預設關閉。</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>把全部歷史（含刪除標記）寫成 JSON Lines 備份檔；不含金鑰、憑證與配對資訊。匯出內容為明文，請妥善保管。</value>
   </data>
@@ -760,6 +766,12 @@
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>該組合已被其他程式佔用，請換一個組合</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>已生效 · 在任意應用程式按下即暫停或恢復同步</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>該組合已用於本應用程式的另一條快速鍵，請換一個組合</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>本次工作階段同步未啟動（端點啟動失敗）</value>

@@ -52,6 +52,8 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
         Assert.False(viewModel.LaunchAtStartup);
         Assert.Equal(string.Empty, viewModel.FlyoutHotkey);
         Assert.Equal(string.Empty, viewModel.FlyoutHotkeyStatus);
+        Assert.Equal(string.Empty, viewModel.PauseHotkey);
+        Assert.Equal(string.Empty, viewModel.PauseHotkeyStatus);
     }
 
     [Fact]
@@ -80,6 +82,7 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
         viewModel.RetentionMaxEntries = 500;
         viewModel.LaunchAtStartup = true;
         viewModel.FlyoutHotkey = "Ctrl+Alt+V";
+        viewModel.PauseHotkey = "Ctrl+Alt+P";
 
         await viewModel.SaveSettingsFromUiAsync();
 
@@ -91,6 +94,7 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
         Assert.Equal("500", await store.GetSettingAsync("retention_max_entries"));
         Assert.Equal("True", await store.GetSettingAsync("launch_at_startup"));
         Assert.Equal("Ctrl+Alt+V", await store.GetSettingAsync("hotkey_flyout"));
+        Assert.Equal("Ctrl+Alt+P", await store.GetSettingAsync("hotkey_pause"));
 
         var reloaded = CreateViewModel();
         await reloaded.InitializeAsync();
@@ -102,6 +106,7 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
         Assert.Equal(500, reloaded.RetentionMaxEntries);
         Assert.True(reloaded.LaunchAtStartup);
         Assert.Equal("Ctrl+Alt+V", reloaded.FlyoutHotkey);
+        Assert.Equal("Ctrl+Alt+P", reloaded.PauseHotkey);
     }
 
     [Fact]

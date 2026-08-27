@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Tekan kombinasi di aplikasi mana pun untuk memanggil jendela baki. Klik kotaknya lalu tekan kombinasi yang diinginkan (harus memuat Ctrl, Alt, atau Win); tekan Backspace untuk menghapus. Mati secara bawaan.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Pintasan jeda sinkronisasi</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Tekan kombinasi di aplikasi mana pun untuk menjeda sinkronisasi; tekan lagi untuk melanjutkan. Klik kotaknya lalu tekan kombinasi yang diinginkan (harus memuat Ctrl, Alt, atau Win); tekan Backspace untuk menghapus. Mati secara bawaan.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Menulis seluruh riwayat (termasuk penanda penghapusan) sebagai berkas cadangan JSON Lines; tanpa kunci, sertifikat, atau data pemasangan. Ekspor berupa teks polos — simpan baik-baik.</value>
   </data>
@@ -760,6 +766,12 @@ Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>Kombinasi itu sudah dipakai program lain; coba kombinasi lain</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Aktif · tekan di aplikasi mana pun untuk menjeda atau melanjutkan sinkronisasi</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>Kombinasi itu sudah dipakai pintasan lain di aplikasi ini; coba kombinasi lain</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>Sinkronisasi tidak berjalan sesi ini (titik akhir gagal dimulai)</value>

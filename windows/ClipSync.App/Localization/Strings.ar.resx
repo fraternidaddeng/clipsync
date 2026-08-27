@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>اضغط التركيبة في أي تطبيق لاستدعاء نافذة الدرج المنبثقة. انقر الحقل ثم اضغط التركيبة المطلوبة (يجب أن تتضمن Ctrl أو Alt أو Win)؛ اضغط Backspace للمسح. متوقف افتراضيًا.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>اختصار إيقاف المزامنة مؤقتًا</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>اضغط التركيبة في أي تطبيق لإيقاف المزامنة مؤقتًا؛ اضغطها مرة أخرى للاستئناف. انقر الحقل ثم اضغط التركيبة المطلوبة (يجب أن تتضمن Ctrl أو Alt أو Win)؛ اضغط Backspace للمسح. متوقف افتراضيًا.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>يكتب السجل كاملًا (مع علامات الحذف) في ملف نسخ احتياطي بصيغة JSON Lines؛ بلا مفاتيح أو شهادات أو بيانات اقتران. التصدير نص صريح — احفظه بأمان.</value>
   </data>
@@ -760,6 +766,12 @@
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>هذه التركيبة يشغلها برنامج آخر؛ جرّب تركيبة مختلفة</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>مفعّل · اضغطه في أي تطبيق لإيقاف المزامنة مؤقتًا أو استئنافها</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>هذه التركيبة يستخدمها الاختصار الآخر في هذا التطبيق؛ جرّب تركيبة مختلفة</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>المزامنة غير مشغّلة في هذه الجلسة (فشل بدء نقطة النهاية)</value>

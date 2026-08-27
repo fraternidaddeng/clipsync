@@ -2775,6 +2775,55 @@
                                                  TextAlignment="Center" />
                                     </Grid>
                                 </Border>
+                                <!-- 暂停同步快捷键（P1-9 另一半）：同一套录入与如实陈述 -->
+                                <Border Padding="16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Startup_PauseHotkey_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Startup_PauseHotkey_Desc}" />
+                                            <!-- 注册结果如实陈述：被占用 = 赭色「需要你操作」，生效 = 安静灰 -->
+                                            <TextBlock Margin="0,5,0,0"
+                                                       FontSize="10.5"
+                                                       Text="{Binding PauseHotkeyStatus}"
+                                                       TextWrapping="Wrap">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="{DynamicResource CsText4Brush}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding PauseHotkeyStatus}" Value="">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding PauseHotkeyConflict}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource CsActBrush}" />
+                                                                <Setter Property="FontWeight" Value="SemiBold" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <TextBox Grid.Column="1"
+                                                 Width="150"
+                                                 Height="30"
+                                                 VerticalAlignment="Top"
+                                                 AutomationProperties.Name="{x:Static loc:Strings.Prefs_Startup_PauseHotkey_Title}"
+                                                 FontFamily="{StaticResource CsMono}"
+                                                 FontSize="11.5"
+                                                 IsReadOnly="True"
+                                                 IsReadOnlyCaretVisible="False"
+                                                 IsUndoEnabled="False"
+                                                 PreviewKeyDown="OnPauseHotkeyBoxPreviewKeyDown"
+                                                 Style="{StaticResource InsetTextBox}"
+                                                 Text="{Binding PauseHotkey, Mode=OneWay}"
+                                                 TextAlignment="Center" />
+                                    </Grid>
+                                </Border>
                             </StackPanel>
                         </ContentControl>
 

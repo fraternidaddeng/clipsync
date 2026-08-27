@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>どのアプリでも組み合わせを押すとトレイのフライアウトを呼び出せます。入力欄をクリックして希望の組み合わせを押してください（Ctrl、Alt、Win のいずれかを含む必要があります）。Backspace で消去。既定ではオフ。</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>同期一時停止ホットキー</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>どのアプリでも組み合わせを押すと同期を一時停止し、もう一度押すと再開します。入力欄をクリックして希望の組み合わせを押してください（Ctrl、Alt、Win のいずれかを含む必要があります）。Backspace で消去。既定ではオフ。</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>全履歴（削除マーカーを含む）を JSON Lines のバックアップファイルとして書き出します。キー、証明書、ペアリング情報は含みません。エクスポートは平文です——大切に保管してください。</value>
   </data>
@@ -760,6 +766,12 @@
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>その組み合わせは他のプログラムが使用しています。別の組み合わせを試してください</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>有効 · どのアプリでも押せば同期を一時停止・再開できます</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>その組み合わせはこのアプリの別のホットキーで使用中です。別の組み合わせを試してください</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>このセッションでは同期が未起動です（エンドポイントの起動に失敗）</value>

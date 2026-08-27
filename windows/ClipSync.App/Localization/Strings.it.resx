@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Premi la combinazione in qualsiasi app per richiamare il riquadro della tray. Fai clic sul campo, poi premi la combinazione desiderata (deve includere Ctrl, Alt o Win); Backspace per cancellare. Disattivata per impostazione predefinita.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Scorciatoia per sospendere la sincronizzazione</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Premi la combinazione in qualsiasi app per sospendere la sincronizzazione; premila di nuovo per riprenderla. Fai clic sul campo, poi premi la combinazione desiderata (deve includere Ctrl, Alt o Win); Backspace per cancellare. Disattivata per impostazione predefinita.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Scrive l’intera cronologia (inclusi i contrassegni di eliminazione) in un file di backup JSON Lines; senza chiavi, certificati o dati di associazione. L’export è in chiaro — custodiscilo con cura.</value>
   </data>
@@ -760,6 +766,12 @@ Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuot
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>Combinazione già usata da un altro programma; provane un’altra</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Attiva · premila in qualsiasi app per sospendere o riprendere la sincronizzazione</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>Combinazione già usata dall’altra scorciatoia di questa app; provane un’altra</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>Sincronizzazione non attiva in questa sessione (avvio dell’endpoint fallito)</value>

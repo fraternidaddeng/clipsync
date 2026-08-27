@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Appuyez sur la combinaison dans n’importe quelle application pour invoquer la fenêtre de la barre d’état. Cliquez sur le champ puis appuyez sur la combinaison voulue (doit inclure Ctrl, Alt ou Win) ; Retour arrière pour effacer. Désactivé par défaut.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Raccourci de pause de la synchro</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Appuyez sur la combinaison dans n’importe quelle application pour suspendre la synchro ; appuyez de nouveau pour la reprendre. Cliquez sur le champ puis appuyez sur la combinaison voulue (doit inclure Ctrl, Alt ou Win) ; Retour arrière pour effacer. Désactivé par défaut.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Écrit tout l’historique (marqueurs de suppression compris) dans un fichier de sauvegarde JSON Lines ; sans clés, certificats ni données d’appairage. L’export est en clair — conservez-le en lieu sûr.</value>
   </data>
@@ -760,6 +766,12 @@ Toutes les entrées de ce PC (images comprises) seront supprimées en une fois. 
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>Cette combinaison est prise par un autre programme ; essayez-en une autre</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Actif · appuyez dessus dans n’importe quelle application pour suspendre ou reprendre la synchro</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>Cette combinaison est déjà utilisée par l’autre raccourci de cette application ; essayez-en une autre</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>Synchro non démarrée pour cette session (échec du démarrage du point de terminaison)</value>

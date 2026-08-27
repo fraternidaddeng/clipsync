@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>Drücken Sie die Kombination in jeder beliebigen Anwendung, um das Tray-Schnellfenster aufzurufen. Klicken Sie ins Feld und drücken Sie die gewünschte Kombination (muss Strg, Alt oder Win enthalten); Rücktaste löscht. Standardmäßig aus.</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>Tastenkürzel für Sync-Pause</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>Drücken Sie die Kombination in jeder beliebigen Anwendung, um die Synchronisierung zu pausieren; erneutes Drücken setzt sie fort. Klicken Sie ins Feld und drücken Sie die gewünschte Kombination (muss Strg, Alt oder Win enthalten); Rücktaste löscht. Standardmäßig aus.</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>Schreibt den gesamten Verlauf (einschließlich Löschmarkierungen) als JSON-Lines-Sicherungsdatei; ohne Schlüssel, Zertifikate oder Kopplungsdaten. Der Export ist Klartext — sicher aufbewahren.</value>
   </data>
@@ -760,6 +766,12 @@ Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelö
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>Diese Kombination wird von einem anderen Programm belegt; versuchen Sie eine andere</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>Aktiv · in jeder Anwendung drücken, um die Synchronisierung zu pausieren oder fortzusetzen</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>Diese Kombination wird bereits vom anderen Tastenkürzel dieser Anwendung belegt; versuchen Sie eine andere</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>Sync in dieser Sitzung nicht gestartet (Endpunktstart fehlgeschlagen)</value>

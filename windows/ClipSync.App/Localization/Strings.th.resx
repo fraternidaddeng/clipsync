@@ -585,6 +585,12 @@
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
     <value>กดคีย์ผสมในแอปไหนก็ได้เพื่อเรียกหน้าต่างลอยที่เทรย์ คลิกช่องแล้วกดคีย์ผสมที่ต้องการ (ต้องมี Ctrl, Alt หรือ Win) กด Backspace เพื่อล้าง ปิดเป็นค่าเริ่มต้น</value>
   </data>
+  <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
+    <value>คีย์ลัดหยุดซิงค์ชั่วคราว</value>
+  </data>
+  <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
+    <value>กดคีย์ผสมในแอปไหนก็ได้เพื่อหยุดซิงค์ชั่วคราว กดอีกครั้งเพื่อซิงค์ต่อ คลิกช่องแล้วกดคีย์ผสมที่ต้องการ (ต้องมี Ctrl, Alt หรือ Win) กด Backspace เพื่อล้าง ปิดเป็นค่าเริ่มต้น</value>
+  </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
     <value>เขียนประวัติทั้งหมด (รวมเครื่องหมายการลบ) เป็นไฟล์สำรอง JSON Lines ไม่มีกุญแจ ใบรับรอง หรือข้อมูลจับคู่ ไฟล์ส่งออกเป็นข้อความล้วน — เก็บให้ปลอดภัย</value>
   </data>
@@ -760,6 +766,12 @@
   </data>
   <data name="Hotkey_Conflict" xml:space="preserve">
     <value>คีย์ผสมนี้ถูกโปรแกรมอื่นใช้แล้ว ลองชุดอื่น</value>
+  </data>
+  <data name="Hotkey_PauseApplied" xml:space="preserve">
+    <value>ใช้งานอยู่ · กดในแอปไหนก็ได้เพื่อหยุดซิงค์ชั่วคราวหรือซิงค์ต่อ</value>
+  </data>
+  <data name="Hotkey_ConflictSelf" xml:space="preserve">
+    <value>คีย์ผสมนี้ถูกใช้กับคีย์ลัดอีกตัวของแอปนี้แล้ว ลองชุดอื่น</value>
   </data>
   <data name="Attention_PeerDown" xml:space="preserve">
     <value>รอบนี้การซิงค์ไม่ทำงาน (ปลายทางเริ่มไม่สำเร็จ)</value>

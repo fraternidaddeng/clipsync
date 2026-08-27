@@ -198,6 +198,8 @@ public static partial class Strings
     public static string Prefs_Startup_Launch_Desc => Get(nameof(Prefs_Startup_Launch_Desc));
     public static string Prefs_Startup_Hotkey_Title => Get(nameof(Prefs_Startup_Hotkey_Title));
     public static string Prefs_Startup_Hotkey_Desc => Get(nameof(Prefs_Startup_Hotkey_Desc));
+    public static string Prefs_Startup_PauseHotkey_Title => Get(nameof(Prefs_Startup_PauseHotkey_Title));
+    public static string Prefs_Startup_PauseHotkey_Desc => Get(nameof(Prefs_Startup_PauseHotkey_Desc));
     public static string Prefs_Data_Export_Desc => Get(nameof(Prefs_Data_Export_Desc));
     public static string Prefs_Data_Import_Desc => Get(nameof(Prefs_Data_Import_Desc));
     public static string Prefs_Data_Clear_Desc => Get(nameof(Prefs_Data_Clear_Desc));
@@ -256,6 +258,8 @@ public static partial class Strings
     public static string Transfer_Error_Unknown => Get(nameof(Transfer_Error_Unknown));
     public static string Hotkey_Applied => Get(nameof(Hotkey_Applied));
     public static string Hotkey_Conflict => Get(nameof(Hotkey_Conflict));
+    public static string Hotkey_PauseApplied => Get(nameof(Hotkey_PauseApplied));
+    public static string Hotkey_ConflictSelf => Get(nameof(Hotkey_ConflictSelf));
     public static string Attention_PeerDown => Get(nameof(Attention_PeerDown));
     public static string Attention_CaptureFaulted => Get(nameof(Attention_CaptureFaulted));
     public static string Attention_NoDevice => Get(nameof(Attention_NoDevice));
