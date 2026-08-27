@@ -19,6 +19,7 @@ import com.clipsync.android.R
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardCaptureSession
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.notify.SyncNotifications
@@ -61,6 +62,10 @@ class ClipboardSyncService : Service() {
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
     private lateinit var settings: SyncSettingsStore
     private var captureSession: ClipboardCaptureSession? = null
+
+    // The coordinator behind [captureSession], resolved once with it: the notification's
+    // 悬浮窗轮询 fact and the mode-change callback must speak about the same instance.
+    private var captureCoordinator: ClipboardAccessCoordinator? = null
 
     // Strong reference: SharedPreferences keeps listeners weakly. Fires when a settings
     // write actually changed a value — from the notification actions or the preferences
@@ -139,9 +144,8 @@ class ClipboardSyncService : Service() {
         // Hand the capture session back: if the activity is visible it keeps the coordinator
         // running; otherwise the backends stop with the service. A no-op on the FGS-denied
         // teardown path, where the session was never acquired.
-        if (captureSession != null) {
-            SharedClipboardCapture.stack(applicationContext).coordinator.onActiveReadModeChanged = null
-        }
+        captureCoordinator?.onActiveReadModeChanged = null
+        captureCoordinator = null
         captureSession?.release(ClipboardCaptureSession.Owner.FOREGROUND_SERVICE)
         captureSession = null
         unregisterNetworkCallback()
@@ -236,12 +240,14 @@ class ClipboardSyncService : Service() {
         // the persisted preferred mode + device-verified state, and gates on 暂停/私密 before
         // any backend reads. onStartCommand runs on the main thread — the same thread the
         // activity's lifecycle used to drive the coordinator from.
-        val captureSession = SharedClipboardCapture.session(appContext)
+        val captureStack = SharedClipboardCapture.stack(appContext)
+        val captureSession = captureStack.session
         this.captureSession = captureSession
+        this.captureCoordinator = captureStack.coordinator
         // 悬浮窗轮询 must announce itself the moment it becomes (or stops being)
         // the active route (plan 5.5): the resident notification re-renders on
         // every ladder switch, not just on the next health tick.
-        SharedClipboardCapture.stack(appContext).coordinator.onActiveReadModeChanged = {
+        captureStack.coordinator.onActiveReadModeChanged = {
             mainHandler.post {
                 if (started) {
                     updateNotification(mutableConnectionStates.value)
@@ -397,10 +403,10 @@ class ClipboardSyncService : Service() {
      * activeReadMode is null whenever the coordinator is stopped, so a paused or
      * released session can never claim polling.
      */
-    private fun overlayPollingActive(): Boolean =
-        SharedClipboardCapture
-            .stack(applicationContext)
-            .coordinator.state.activeReadMode == ClipboardReadMode.OVERLAY_POLLING
+    private fun overlayPollingActive(): Boolean {
+        val activeMode = captureCoordinator?.state?.activeReadMode
+        return activeMode == ClipboardReadMode.OVERLAY_POLLING
+    }
 
     private fun createNotificationChannel() {
         // Shared with the other channels so all of them sit under the 剪贴同步 group.
