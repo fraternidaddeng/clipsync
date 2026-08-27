@@ -55,6 +55,7 @@ pwsh .\scripts\package-windows.ps1   # dist\ClipSync-windows-x64.zip  (+ .sha256
 pwsh .\scripts\package-android.ps1   # dist\ClipSync-android.apk      (+ .sha256)
 ```
 
+- End users download the prebuilt packages from [GitHub Releases](https://github.com/fraternidaddeng/clipsync/releases) and verify each file's SHA-256 against its `.sha256` sidecar (also listed in the release notes) before installing — see `docs/install.md` §2.
 - The Windows package is a self-contained portable ZIP (app, dependencies, and the .NET runtime; no installer, no registry writes). On Linux/CI hosts the script adds `-p:EnableWindowsTargeting=true` automatically so the win-x64 payload can be produced and verified there.
 - The Android package is a release APK signed exclusively from the `CLIPSYNC_ANDROID_KEYSTORE`, `CLIPSYNC_ANDROID_KEYSTORE_PASSWORD`, `CLIPSYNC_ANDROID_KEY_ALIAS`, and `CLIPSYNC_ANDROID_KEY_PASSWORD` environment variables. The keystore and its passwords never enter the repository. `-Variant Debug` builds a debug-signed test APK instead.
 - End users start at the Chinese one-page guide: [docs/install.md](docs/install.md) — prerequisites, LAN/Tailscale setup, QR pairing, Android capability routes, and troubleshooting. A copy ships inside the Windows ZIP.
