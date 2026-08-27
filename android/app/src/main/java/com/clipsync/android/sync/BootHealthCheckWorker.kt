@@ -37,7 +37,7 @@ class BootHealthCheckWorker(
                 BootHealthCheck.decide(
                     runAttemptCount = runAttemptCount,
                     serviceRunning = ClipboardSyncService.serviceRunning.value,
-                    stillWanted = settings.bootRestoreEnabled && paired,
+                    stillWanted = settings.bootRestoreEnabled && settings.serviceEnabled && paired,
                 )
             ) {
                 BootHealthCheck.Decision.HEALTHY -> Result.success()

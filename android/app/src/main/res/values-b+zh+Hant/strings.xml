@@ -144,6 +144,7 @@
     <string name="status_needs_auth">待授權</string>
     <string name="status_start_failed">啟動失敗</string>
     <string name="status_not_running">未執行</string>
+    <string name="status_service_disabled">已關閉</string>
     <string name="status_connected">已連線</string>
     <string name="status_connected_bt">已連線 · 藍牙備援</string>
     <string name="status_throttled">已被對端限流</string>
@@ -181,6 +182,7 @@
     <string name="service_not_running_detail">同步服務未執行；應用程式在前景時仍可同步。</string>
     <string name="service_fact_start_notification">啟動後會顯示一則常駐通知。</string>
 
+    <string name="service_disabled_detail">背景同步服務已在偏好 · 同步中關閉：不再於背景監聽剪貼簿，也不與已配對裝置連線收發。點「啟動服務」或回偏好頁開關即可重新開啟。</string>
     <string name="network_unpaired_detail">尚未與 Windows 配對。在電腦上開啟「剪剪相傳」，選擇「配對新裝置」。</string>
     <string name="network_bt_detail">IP 路徑不可達，正在透過藍牙與「%1$s」同步（僅文字，速度較慢）。</string>
     <string name="network_bt_fact_switchback">IP 恢復後自動切回，無需操作。</string>
@@ -342,6 +344,8 @@
     <string name="prefs_language_desc">介面語言即時生效；每種語言以其母語名顯示，不隨介面語言翻譯。</string>
     <string name="prefs_language_follow_system">跟隨系統</string>
     <string name="prefs_group_sync">同步</string>
+    <string name="prefs_service_enabled">背景同步服務</string>
+    <string name="prefs_service_enabled_desc">關閉即徹底停止背景服務：不再於背景監聽剪貼簿、不再與已配對裝置連線收發，常駐通知隨之消失，重開應用程式或重新啟動手機都不會自行恢復。應用程式開啟期間的複製仍記入本機歷史，重新開啟後才繼續同步。與下方「暫停同步」不同——暫停時服務仍在執行。</string>
     <string name="prefs_pause_sync">暫停同步</string>
     <string name="prefs_pause_sync_desc">暫停後兩端不再交換內容，既有歷史保留。</string>
     <string name="prefs_private_mode">私密模式</string>

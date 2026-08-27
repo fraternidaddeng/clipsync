@@ -586,6 +586,14 @@ private fun localServiceSegment(sync: SyncHealth?): ConduitSegmentState =
                         UiText.Res(R.string.service_fact_notification),
                     ),
             )
+        // The user switched 后台同步服务 off: a chosen fact (solid grey), not a fault —
+        // and it outranks a stale start-failure code from before the switch flipped.
+        !sync.serviceEnabled ->
+            ConduitSegmentState(
+                statusLabel = UiText.Res(R.string.status_service_disabled),
+                detail = UiText.Res(R.string.service_disabled_detail),
+                status = ConduitStatus.UNAVAILABLE,
+            )
         sync.serviceErrorCode != null ->
             ConduitSegmentState(
                 statusLabel = UiText.Res(R.string.status_start_failed),

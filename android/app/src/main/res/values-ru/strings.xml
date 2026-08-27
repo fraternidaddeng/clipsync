@@ -147,6 +147,7 @@
     <string name="status_needs_auth">Ожидает разрешения</string>
     <string name="status_start_failed">Ошибка запуска</string>
     <string name="status_not_running">Не запущено</string>
+    <string name="status_service_disabled">Выключено</string>
     <string name="status_connected">Подключено</string>
     <string name="status_connected_bt">Подключено · резервный Bluetooth</string>
     <string name="status_throttled">Ограничено другой стороной</string>
@@ -184,6 +185,7 @@
     <string name="service_not_running_detail">Служба синхронизации не запущена; синхронизация продолжает работать, пока приложение на переднем плане.</string>
     <string name="service_fact_start_notification">При запуске показывается постоянное уведомление.</string>
 
+    <string name="service_disabled_detail">Фоновая служба синхронизации выключена в Настройках · Синхронизация: без прослушивания буфера обмена в фоне и без обмена с сопряжённым устройством. Нажмите «Запустить службу» или используйте переключатель в Настройках, чтобы включить её снова.</string>
     <string name="network_unpaired_detail">Сопряжение с Windows ещё не выполнено. Откройте ClipSync на ПК и выберите «Сопрячь новое устройство».</string>
     <string name="network_bt_detail">IP-путь недоступен; синхронизация с «%1$s» по Bluetooth (только текст, медленнее).</string>
     <string name="network_bt_fact_switchback">Автоматически переключится обратно, когда IP восстановится; делать ничего не нужно.</string>
@@ -351,6 +353,8 @@
     <string name="prefs_language_desc">Язык интерфейса применяется сразу; каждый язык показан своим родным названием и никогда не переводится.</string>
     <string name="prefs_language_follow_system">Как в системе</string>
     <string name="prefs_group_sync">Синхронизация</string>
+    <string name="prefs_service_enabled">Фоновая служба синхронизации</string>
+    <string name="prefs_service_enabled_desc">Выключение полностью останавливает фоновую службу: прослушивание буфера обмена в фоне прекращается, соединение и обмен с сопряжённым устройством останавливаются, постоянное уведомление исчезает; служба не возобновится сама ни при повторном открытии приложения, ни после перезагрузки телефона. Скопированное при открытом приложении по-прежнему попадает в локальную историю и синхронизируется после повторного включения. В отличие от «Приостановить синхронизацию» ниже — при паузе служба продолжает работать.</string>
     <string name="prefs_pause_sync">Приостановить синхронизацию</string>
     <string name="prefs_pause_sync_desc">Во время паузы обе стороны перестают обмениваться содержимым; существующая история сохраняется.</string>
     <string name="prefs_private_mode">Приватный режим</string>

@@ -144,6 +144,7 @@
     <string name="status_needs_auth">승인 대기</string>
     <string name="status_start_failed">시작 실패</string>
     <string name="status_not_running">실행 중 아님</string>
+    <string name="status_service_disabled">꺼짐</string>
     <string name="status_connected">연결됨</string>
     <string name="status_connected_bt">연결됨 · 블루투스 대체 경로</string>
     <string name="status_throttled">상대 기기가 제한 중</string>
@@ -181,6 +182,7 @@
     <string name="service_not_running_detail">동기화 서비스가 실행 중이 아닙니다. 앱이 포그라운드에 있는 동안 동기화는 계속 동작합니다.</string>
     <string name="service_fact_start_notification">시작하면 상시 알림이 표시됩니다.</string>
 
+    <string name="service_disabled_detail">백그라운드 동기화 서비스가 환경설정 · 동기화에서 꺼져 있습니다. 클립보드 백그라운드 감시도, 페어링된 기기와의 송수신도 하지 않습니다. 「서비스 시작」을 누르거나 환경설정의 스위치로 다시 켤 수 있습니다.</string>
     <string name="network_unpaired_detail">아직 Windows와 페어링하지 않았습니다. PC에서 ClipSync를 열고 ‘새 기기 페어링’을 선택하세요.</string>
     <string name="network_bt_detail">IP 경로에 도달할 수 없습니다. ‘%1$s’과(와) 블루투스로 동기화 중입니다(텍스트만, 느림).</string>
     <string name="network_bt_fact_switchback">IP가 복구되면 자동으로 되돌아갑니다. 할 일은 없습니다.</string>
@@ -342,6 +344,8 @@
     <string name="prefs_language_desc">UI 언어는 즉시 적용됩니다. 각 언어는 자신의 모국어 이름으로 표시되며 번역되지 않습니다.</string>
     <string name="prefs_language_follow_system">시스템 따름</string>
     <string name="prefs_group_sync">동기화</string>
+    <string name="prefs_service_enabled">백그라운드 동기화 서비스</string>
+    <string name="prefs_service_enabled_desc">끄면 백그라운드 서비스가 완전히 중지됩니다. 클립보드 백그라운드 감시와 페어링된 기기와의 연결·송수신이 멈추고 상주 알림도 사라지며, 앱을 다시 열거나 휴대폰을 재시작해도 저절로 재개되지 않습니다. 앱이 열려 있는 동안의 복사는 이 기기 기록에 계속 남고, 다시 켠 뒤에야 동기화됩니다. 아래의 「동기화 일시중지」와 달리 일시중지 중에는 서비스가 계속 실행됩니다.</string>
     <string name="prefs_pause_sync">동기화 일시중지</string>
     <string name="prefs_pause_sync_desc">일시중지 중에는 양쪽의 내용 교환이 멈춥니다. 기존 기록은 유지됩니다.</string>
     <string name="prefs_private_mode">비공개 모드</string>

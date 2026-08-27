@@ -144,6 +144,7 @@
     <string name="status_needs_auth">Menunggu izin</string>
     <string name="status_start_failed">Gagal mulai</string>
     <string name="status_not_running">Tidak berjalan</string>
+    <string name="status_service_disabled">Dimatikan</string>
     <string name="status_connected">Terhubung</string>
     <string name="status_connected_bt">Terhubung · cadangan Bluetooth</string>
     <string name="status_throttled">Dibatasi pihak seberang</string>
@@ -181,6 +182,7 @@
     <string name="service_not_running_detail">Layanan sinkronisasi tidak berjalan; sinkronisasi tetap berfungsi saat aplikasi di latar depan.</string>
     <string name="service_fact_start_notification">Memulai akan menampilkan notifikasi permanen.</string>
 
+    <string name="service_disabled_detail">Layanan sinkronisasi latar belakang dimatikan di Preferensi · Sinkronisasi: tanpa pemantauan papan klip di latar belakang, tanpa pertukaran dengan perangkat terpasang. Ketuk “Mulai layanan” atau gunakan sakelar di Preferensi untuk mengaktifkannya lagi.</string>
     <string name="network_unpaired_detail">Belum dipasangkan dengan Windows. Buka ClipSync di PC dan pilih “Pasangkan perangkat baru”.</string>
     <string name="network_bt_detail">Jalur IP tak terjangkau; menyinkron dengan “%1$s” lewat Bluetooth (hanya teks, lebih lambat).</string>
     <string name="network_bt_fact_switchback">Beralih kembali otomatis saat IP pulih; tidak perlu apa-apa.</string>
@@ -342,6 +344,8 @@
     <string name="prefs_language_desc">Bahasa UI berlaku seketika; setiap bahasa ditampilkan dengan nama aslinya dan tidak pernah diterjemahkan.</string>
     <string name="prefs_language_follow_system">Ikuti sistem</string>
     <string name="prefs_group_sync">Sinkronisasi</string>
+    <string name="prefs_service_enabled">Layanan sinkronisasi latar belakang</string>
+    <string name="prefs_service_enabled_desc">Mematikannya menghentikan layanan latar belakang sepenuhnya: tidak lagi memantau papan klip di latar belakang, tidak terhubung atau bertukar dengan perangkat terpasang, dan notifikasi permanen hilang; layanan tidak kembali sendiri saat aplikasi dibuka lagi maupun setelah ponsel dimulai ulang. Salinan saat aplikasi terbuka tetap masuk riwayat lokal dan baru disinkronkan setelah diaktifkan kembali. Berbeda dengan “Jeda sinkronisasi” di bawah — saat dijeda, layanan tetap berjalan.</string>
     <string name="prefs_pause_sync">Jeda sinkronisasi</string>
     <string name="prefs_pause_sync_desc">Selama dijeda, kedua ujung berhenti bertukar konten; riwayat yang ada tetap tersimpan.</string>
     <string name="prefs_private_mode">Mode privat</string>

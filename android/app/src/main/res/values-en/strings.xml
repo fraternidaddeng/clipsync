@@ -146,6 +146,7 @@
     <string name="status_needs_auth">Awaiting authorization</string>
     <string name="status_start_failed">Start failed</string>
     <string name="status_not_running">Not running</string>
+    <string name="status_service_disabled">Turned off</string>
     <string name="status_connected">Connected</string>
     <string name="status_connected_bt">Connected · Bluetooth fallback</string>
     <string name="status_throttled">Throttled by the peer</string>
@@ -183,6 +184,7 @@
     <string name="service_not_running_detail">The sync service is not running; sync still works while the app is in the foreground.</string>
     <string name="service_fact_start_notification">Starting shows a persistent notification.</string>
 
+    <string name="service_disabled_detail">The background sync service is turned off in Preferences · Sync: no background clipboard listening and no exchange with the paired device. Tap “Start service” or use the Preferences switch to turn it back on.</string>
     <string name="network_unpaired_detail">Not paired with Windows yet. Open ClipSync on your PC and choose “Pair new device”.</string>
     <string name="network_bt_detail">The IP path is unreachable; syncing with “%1$s” over Bluetooth (text only, slower).</string>
     <string name="network_bt_fact_switchback">Switches back automatically once IP recovers; nothing to do.</string>
@@ -346,6 +348,8 @@
     <string name="prefs_language_desc">The UI language applies immediately; each language shows its own native name and is never translated.</string>
     <string name="prefs_language_follow_system">Follow system</string>
     <string name="prefs_group_sync">Sync</string>
+    <string name="prefs_service_enabled">Background sync service</string>
+    <string name="prefs_service_enabled_desc">Turning this off stops the background service completely: no background clipboard listening, no connection to or exchange with the paired device, and the persistent notification disappears; it does not come back on its own when the app reopens or the phone restarts. Copies made while the app is open still land in local history and sync once you turn it back on. Unlike “Pause sync” below, which pauses a service that keeps running.</string>
     <string name="prefs_pause_sync">Pause sync</string>
     <string name="prefs_pause_sync_desc">While paused, the two ends stop exchanging content; existing history is kept.</string>
     <string name="prefs_private_mode">Private mode</string>

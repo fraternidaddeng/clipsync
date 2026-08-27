@@ -30,6 +30,7 @@ class BootCompletedReceiver : BroadcastReceiver() {
         val attempt = BootRestorePolicy.shouldAttemptStart(
             isBootAction = intent?.action == Intent.ACTION_BOOT_COMPLETED,
             bootRestoreEnabled = settings.bootRestoreEnabled,
+            serviceEnabled = settings.serviceEnabled,
             paired = paired,
         )
         if (!attempt) {

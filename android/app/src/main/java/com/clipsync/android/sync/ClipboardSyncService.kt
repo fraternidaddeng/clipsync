@@ -481,7 +481,23 @@ class ClipboardSyncService : Service() {
             )
         }
 
+        /**
+         * Starts the foreground service unless the user switched 后台同步服务 off. The guard
+         * lives here — not at the call sites — so *every* start path (app open, pairing
+         * resume, conduit 启动服务, boot restore, recovery taps) honors the master switch:
+         * off means truly off, never "off until the next entry point resurrects it".
+         */
         fun start(context: Context) {
+            val settings =
+                SyncSettingsStore(
+                    SharedPrefsKeyValueStore(
+                        context.applicationContext,
+                        name = SyncSettingsStore.PREFERENCES_NAME,
+                    ),
+                )
+            if (!settings.serviceEnabled) {
+                return
+            }
             ContextCompat.startForegroundService(context, Intent(context, ClipboardSyncService::class.java))
         }
 

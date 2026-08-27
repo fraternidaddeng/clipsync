@@ -145,6 +145,7 @@
     <string name="status_needs_auth">Yetki bekleniyor</string>
     <string name="status_start_failed">Başlatılamadı</string>
     <string name="status_not_running">Çalışmıyor</string>
+    <string name="status_service_disabled">Kapalı</string>
     <string name="status_connected">Bağlı</string>
     <string name="status_connected_bt">Bağlı · Bluetooth yedeği</string>
     <string name="status_throttled">Karşı taraf kısıtladı</string>
@@ -182,6 +183,7 @@
     <string name="service_not_running_detail">Eşitleme hizmeti çalışmıyor; uygulama ön plandayken eşitleme çalışmaya devam eder.</string>
     <string name="service_fact_start_notification">Başlatınca kalıcı bir bildirim gösterilir.</string>
 
+    <string name="service_disabled_detail">Arka plan eşitleme hizmeti Tercihler · Eşitleme bölümünde kapatıldı: panoyu arka planda dinleme yok, eşleştirilmiş cihazla alışveriş yok. Yeniden açmak için “Hizmeti başlat”a dokunun veya Tercihler’deki anahtarı kullanın.</string>
     <string name="network_unpaired_detail">Henüz Windows ile eşleştirilmedi. PC’nizde ClipSync’i açın ve “Yeni cihaz eşleştir”i seçin.</string>
     <string name="network_bt_detail">IP yolu erişilemez; “%1$s” ile Bluetooth üzerinden eşitleniyor (yalnızca metin, daha yavaş).</string>
     <string name="network_bt_fact_switchback">IP toparlanınca otomatik geri döner; yapılacak bir şey yok.</string>
@@ -345,6 +347,8 @@
     <string name="prefs_language_desc">Arayüz dili anında uygulanır; her dil kendi ana dilindeki adıyla gösterilir ve asla çevrilmez.</string>
     <string name="prefs_language_follow_system">Sistemi izle</string>
     <string name="prefs_group_sync">Eşitleme</string>
+    <string name="prefs_service_enabled">Arka plan eşitleme hizmeti</string>
+    <string name="prefs_service_enabled_desc">Kapatmak arka plan hizmetini tamamen durdurur: panoyu arka planda dinleme biter, eşleştirilmiş cihazla bağlantı ve alışveriş durur, kalıcı bildirim kaybolur; uygulama yeniden açılınca da telefon yeniden başlatılınca da kendiliğinden geri gelmez. Uygulama açıkken kopyalananlar yerel geçmişe kaydedilmeye devam eder ve ancak yeniden açtığınızda eşitlenir. Aşağıdaki “Eşitlemeyi duraklat”tan farklıdır — duraklatmada hizmet çalışmaya devam eder.</string>
     <string name="prefs_pause_sync">Eşitlemeyi duraklat</string>
     <string name="prefs_pause_sync_desc">Duraklatma sırasında iki uç içerik alışverişini durdurur; mevcut geçmiş korunur.</string>
     <string name="prefs_private_mode">Özel mod</string>

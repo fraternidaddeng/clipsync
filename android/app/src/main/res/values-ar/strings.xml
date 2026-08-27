@@ -149,6 +149,7 @@
     <string name="status_needs_auth">بانتظار التصريح</string>
     <string name="status_start_failed">فشل البدء</string>
     <string name="status_not_running">غير مشغَّل</string>
+    <string name="status_service_disabled">متوقفة</string>
     <string name="status_connected">متصل</string>
     <string name="status_connected_bt">متصل · مسار بلوتوث الاحتياطي</string>
     <string name="status_throttled">مقيَّد من الطرف الآخر</string>
@@ -186,6 +187,7 @@
     <string name="service_not_running_detail">خدمة المزامنة غير مشغَّلة؛ المزامنة تستمر أثناء وجود التطبيق في المقدمة.</string>
     <string name="service_fact_start_notification">يعرض البدء إشعارًا دائمًا.</string>
 
+    <string name="service_disabled_detail">خدمة المزامنة في الخلفية متوقفة من التفضيلات · المزامنة: لا استماع إلى الحافظة في الخلفية ولا تبادل مع الجهاز المقترن. اضغط «بدء الخدمة» أو استخدم مفتاح التفضيلات لإعادة تشغيلها.</string>
     <string name="network_unpaired_detail">لم يتم الاقتران بـWindows بعد. افتح ClipSync على حاسوبك واختر «اقتران جهاز جديد».</string>
     <string name="network_bt_detail">مسار IP غير قابل للوصول؛ تجري المزامنة مع «%1$s» عبر البلوتوث (نص فقط، أبطأ).</string>
     <string name="network_bt_fact_switchback">يعود تلقائيًا فور تعافي مسار IP؛ لا حاجة لأي إجراء.</string>
@@ -357,6 +359,8 @@
     <string name="prefs_language_desc">تُطبَّق لغة الواجهة فورًا؛ كل لغة تُعرض باسمها الأصلي ولا تُترجم أبدًا.</string>
     <string name="prefs_language_follow_system">اتباع النظام</string>
     <string name="prefs_group_sync">المزامنة</string>
+    <string name="prefs_service_enabled">خدمة المزامنة في الخلفية</string>
+    <string name="prefs_service_enabled_desc">الإيقاف يوقف خدمة الخلفية تمامًا: يتوقف الاستماع إلى الحافظة في الخلفية، ويتوقف الاتصال وتبادل المحتوى مع الجهاز المقترن، ويختفي الإشعار الدائم؛ ولا تعود الخدمة من تلقاء نفسها عند إعادة فتح التطبيق أو إعادة تشغيل الهاتف. ما يُنسخ أثناء فتح التطبيق يظل يُسجَّل في السجل المحلي ويُزامَن بعد إعادة التشغيل. بخلاف «إيقاف المزامنة مؤقتًا» أدناه — أثناء الإيقاف المؤقت تبقى الخدمة قيد التشغيل.</string>
     <string name="prefs_pause_sync">إيقاف المزامنة مؤقتًا</string>
     <string name="prefs_pause_sync_desc">أثناء الإيقاف يتوقف الطرفان عن تبادل المحتوى؛ يبقى السجل الحالي محفوظًا.</string>
     <string name="prefs_private_mode">الوضع الخاص</string>

@@ -20,6 +20,18 @@ class SyncSettingsStore(
         get() = readBoolean(KEY_SYNC_PAUSED, default = false)
         set(value) = write(KEY_SYNC_PAUSED, value.toString())
 
+    /**
+     * 后台同步服务总开关: whether the foreground sync service may run at all. Off is truly
+     * off — every start path (app open, pairing resume, conduit 启动服务, boot restore)
+     * honors this key, so the service stays down until the user turns it back on. Unlike
+     * [syncPaused]/[autoCapturePaused], which pause behaviour inside a running service,
+     * this stops the service itself: no background listening, no connection to the peer,
+     * no resident notification.
+     */
+    var serviceEnabled: Boolean
+        get() = readBoolean(KEY_SERVICE_ENABLED, default = true)
+        set(value) = write(KEY_SERVICE_ENABLED, value.toString())
+
     var privateMode: Boolean
         get() = readBoolean(KEY_PRIVATE_MODE, default = false)
         set(value) = write(KEY_PRIVATE_MODE, value.toString())
@@ -262,6 +274,7 @@ class SyncSettingsStore(
 
         private const val KEY_AUTO_APPLY_REMOTE = "sync.auto_apply_remote"
         private const val KEY_SYNC_PAUSED = "sync.paused"
+        private const val KEY_SERVICE_ENABLED = "sync.service_enabled"
         private const val KEY_PRIVATE_MODE = "sync.private_mode"
         private const val KEY_AUTO_CAPTURE_PAUSED = "sync.capture_paused"
         private const val KEY_RETENTION_MAX_ENTRIES = "sync.retention.max_entries"

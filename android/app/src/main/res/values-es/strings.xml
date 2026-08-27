@@ -146,6 +146,7 @@
     <string name="status_needs_auth">Esperando autorización</string>
     <string name="status_start_failed">Error al iniciar</string>
     <string name="status_not_running">No está en marcha</string>
+    <string name="status_service_disabled">Desactivado</string>
     <string name="status_connected">Conectado</string>
     <string name="status_connected_bt">Conectado · respaldo Bluetooth</string>
     <string name="status_throttled">Limitado por el otro extremo</string>
@@ -183,6 +184,7 @@
     <string name="service_not_running_detail">El servicio de sincronización no está en marcha; la sincronización sigue funcionando mientras la app está en primer plano.</string>
     <string name="service_fact_start_notification">Al iniciarlo se muestra una notificación persistente.</string>
 
+    <string name="service_disabled_detail">El servicio de sincronización en segundo plano está desactivado en Preferencias · Sincronización: sin escucha del portapapeles en segundo plano ni intercambio con el dispositivo emparejado. Toca «Iniciar servicio» o usa el interruptor de Preferencias para reactivarlo.</string>
     <string name="network_unpaired_detail">Aún sin emparejar con Windows. Abre ClipSync en tu PC y elige «Emparejar nuevo dispositivo».</string>
     <string name="network_bt_detail">La ruta IP es inaccesible; sincronizando con «%1$s» por Bluetooth (solo texto, más lento).</string>
     <string name="network_bt_fact_switchback">Vuelve automáticamente cuando la IP se recupera; no hay nada que hacer.</string>
@@ -348,6 +350,8 @@
     <string name="prefs_language_desc">El idioma de la interfaz se aplica al instante; cada idioma muestra su propio nombre nativo y nunca se traduce.</string>
     <string name="prefs_language_follow_system">Seguir al sistema</string>
     <string name="prefs_group_sync">Sincronización</string>
+    <string name="prefs_service_enabled">Servicio de sincronización en segundo plano</string>
+    <string name="prefs_service_enabled_desc">Al desactivarlo, el servicio en segundo plano se detiene por completo: deja de escuchar el portapapeles en segundo plano, deja de conectarse e intercambiar contenido con el dispositivo emparejado y la notificación permanente desaparece; no se reanuda solo al reabrir la app ni al reiniciar el teléfono. Lo copiado con la app abierta sigue guardándose en el historial local y se sincroniza cuando vuelvas a activarlo. A diferencia de «Pausar sincronización», que pausa un servicio que sigue en marcha.</string>
     <string name="prefs_pause_sync">Pausar sincronización</string>
     <string name="prefs_pause_sync_desc">Durante la pausa, los dos extremos dejan de intercambiar contenido; el historial existente se conserva.</string>
     <string name="prefs_private_mode">Modo privado</string>

@@ -55,6 +55,8 @@ import com.clipsync.android.ui.theme.clipSyncColors
 @Composable
 fun PreferencesScreen(
     state: PreferencesUiState,
+    /** 后台同步服务: the master on/off for the foreground service itself — off is truly off. */
+    onServiceEnabledChange: (Boolean) -> Unit = {},
     onPauseSyncChange: (Boolean) -> Unit,
     /** 暂停自动捕获: the settings face of the notification's 暂停捕获 action (same key). */
     onPauseCaptureChange: (Boolean) -> Unit = {},
@@ -152,6 +154,17 @@ fun PreferencesScreen(
                 .fillMaxWidth()
                 .charterCard(),
         ) {
+            // 后台同步服务: the master switch over the foreground service itself. First row
+            // of the group so the stop-vs-pause hierarchy reads at a glance: this one stops
+            // the service (真正关闭), the rows below pause behaviour inside a running one.
+            // Same sync.service_enabled key as the conduit's 启动服务/停止服务 buttons.
+            ToggleRow(
+                title = stringResource(R.string.prefs_service_enabled),
+                description = stringResource(R.string.prefs_service_enabled_desc),
+                checked = state.serviceEnabled,
+                onCheckedChange = onServiceEnabledChange,
+            )
+            RowDivider()
             ToggleRow(
                 title = stringResource(R.string.prefs_pause_sync),
                 description = stringResource(R.string.prefs_pause_sync_desc),

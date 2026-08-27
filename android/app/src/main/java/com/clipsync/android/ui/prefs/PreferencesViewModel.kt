@@ -23,6 +23,8 @@ import java.io.InputStream
 import java.io.OutputStream
 
 data class PreferencesUiState(
+    /** 后台同步服务总开关：关闭即彻底停止前台服务与后台监听，直到用户重新开启。 */
+    val serviceEnabled: Boolean = true,
     val pauseSync: Boolean = false,
     /** 暂停自动捕获（plan 5.2）：仅停自动捕获（含后台监听），手动发送与接收照常。 */
     val pauseCapture: Boolean = false,
@@ -96,11 +98,14 @@ class PreferencesViewModel(
         val onCaptureGatesChanged: () -> Unit = {},
         /** Enabling asks the host for the BLUETOOTH_CONNECT runtime permission (API 31+). */
         val onBluetoothFallbackChanged: (Boolean) -> Unit = {},
+        /** 后台同步服务 flipped: the host stops the foreground service, or starts it (if paired). */
+        val onServiceEnabledChanged: (Boolean) -> Unit = {},
     )
 
     private val mutableState =
         MutableStateFlow(
             PreferencesUiState(
+                serviceEnabled = settings.serviceEnabled,
                 pauseSync = settings.syncPaused,
                 pauseCapture = settings.autoCapturePaused,
                 privateMode = settings.privateMode,
@@ -124,6 +129,22 @@ class PreferencesViewModel(
         )
 
     val state: StateFlow<PreferencesUiState> = mutableState.asStateFlow()
+
+    /**
+     * 后台同步服务 master switch: the same `sync.service_enabled` key every service start
+     * path re-checks ([com.clipsync.android.sync.ClipboardSyncService.start] refuses while
+     * off), so the conduit's 启动服务/停止服务 buttons and this toggle can never disagree.
+     * Off stops the foreground service itself — background listening ends, the connection
+     * to the peer drops, the resident notification disappears — and nothing restarts it
+     * (app open, boot restore) until the user turns it back on. Distinct from [setPauseSync]
+     * and [setPauseCapture], which pause behaviour inside a still-running service. The
+     * setting is persisted first so the host's start/stop side effect reads the new value.
+     */
+    fun setServiceEnabled(enabled: Boolean) {
+        settings.serviceEnabled = enabled
+        mutableState.update { it.copy(serviceEnabled = enabled) }
+        sideEffects.onServiceEnabledChanged(enabled)
+    }
 
     /** The setting is persisted first so the session's gate re-check reads the new value. */
     fun setPauseSync(paused: Boolean) {

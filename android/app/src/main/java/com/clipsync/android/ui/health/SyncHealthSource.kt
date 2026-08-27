@@ -11,6 +11,12 @@ import kotlinx.coroutines.flow.Flow
 data class SyncHealth(
     /** The background sync service (or in-process runtime) is alive. */
     val serviceRunning: Boolean,
+    /**
+     * The 后台同步服务 master switch (`sync.service_enabled`). False means the user turned
+     * the service off on purpose — the conduit must state that as a chosen fact, never
+     * dress it up as a fault.
+     */
+    val serviceEnabled: Boolean = true,
     /** An authenticated session with the paired Windows peer is up. */
     val connected: Boolean,
     /** Peer-reported write capability; null until the peer has been probed. */

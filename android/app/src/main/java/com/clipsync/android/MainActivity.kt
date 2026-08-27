@@ -163,6 +163,10 @@ class MainActivity : AppCompatActivity() {
                             connected = connection is SyncConnectionState.Connected,
                             serviceErrorCode = startError,
                             peerThrottled = throttled,
+                            // Re-read per emission: flipping the master switch stops/starts
+                            // the service, so serviceRunning re-emits at exactly the right
+                            // moments for this read to stay fresh.
+                            serviceEnabled = syncSettings.serviceEnabled,
                             // The conduit must state the degraded bt1 path honestly (ADR 0005).
                             bluetoothFallback =
                                 connection is SyncConnectionState.Connected &&
@@ -241,6 +245,17 @@ class MainActivity : AppCompatActivity() {
                             requestBluetoothPermissionIfMissing(thenShowDevices = false)
                         }
                     },
+                    // 后台同步服务 master switch: off stops the foreground service right now
+                    // (background listening ends, resident notification disappears); on
+                    // starts it again — but only when a peer is paired, since an unpaired
+                    // service has nothing to sync and start paths gate on pairing anyway.
+                    onServiceEnabledChanged = { enabled ->
+                        if (!enabled) {
+                            ClipboardSyncService.stop(this)
+                        } else if (pairingStore.peer() != null) {
+                            startSyncService()
+                        }
+                    },
                 ),
             historyRepository = { SyncStore.repository(applicationContext) },
         )
@@ -299,6 +314,8 @@ class MainActivity : AppCompatActivity() {
         if (pairingStore.peer() != null) {
             // Already-enabled sync resumes quietly; the permission dialog only appears on the
             // explicit enable moments (pairing completion, 启动服务, 开机恢复), never per app open.
+            // start() itself honors the 后台同步服务 master switch: a user who turned the
+            // service off keeps it off across app opens until they turn it back on.
             ClipboardSyncService.start(this)
         }
         // The FGS notification's 打开故障状态 tap lands here with the 通路 tab requested.
@@ -314,7 +331,13 @@ class MainActivity : AppCompatActivity() {
             ClipSyncTheme(darkTheme = darkTheme) {
                 SyncServiceController(
                     pairingViewModel = pairingViewModel,
-                    onStartService = ::startSyncService,
+                    // Completing the pairing ritual is an explicit "enable sync" moment: it
+                    // turns the 后台同步服务 master switch back on (the side effect starts
+                    // the service), so a fresh pairing never lands on a dead switch.
+                    onStartService = { preferencesViewModel.setServiceEnabled(true) },
+                    // Forgetting the peer stops the service but leaves the master switch
+                    // alone — without a peer no start path runs, and the user's stated
+                    // intent about the service should survive a re-pair.
                     onStopService = { ClipboardSyncService.stop(this) },
                 )
                 ClipSyncApp(
@@ -325,8 +348,10 @@ class MainActivity : AppCompatActivity() {
                     showOnboarding = showOnboarding,
                     onOnboardingSeen = firstRunStore::markOnboardingSeen,
                     onRouteAction = ::handleRouteAction,
-                    onServiceStart = ::startSyncService,
-                    onServiceStop = { ClipboardSyncService.stop(this) },
+                    // The conduit's 启动服务/停止服务 buttons flip the same master switch as
+                    // the 偏好 · 同步 toggle, so stopping there is a real, persistent stop.
+                    onServiceStart = { preferencesViewModel.setServiceEnabled(true) },
+                    onServiceStop = { preferencesViewModel.setServiceEnabled(false) },
                     onOpenNotificationSettings = ::openNotificationSettings,
                     onExportHistory = {
                         val stamp =
@@ -799,6 +824,7 @@ private fun ClipSyncApp(
                     else ->
                         PreferencesScreen(
                             state = preferencesState,
+                            onServiceEnabledChange = preferencesViewModel::setServiceEnabled,
                             onPauseSyncChange = preferencesViewModel::setPauseSync,
                             onPauseCaptureChange = preferencesViewModel::setPauseCapture,
                             onPrivateModeChange = preferencesViewModel::setPrivateMode,

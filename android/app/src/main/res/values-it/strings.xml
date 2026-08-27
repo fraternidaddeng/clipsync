@@ -146,6 +146,7 @@
     <string name="status_needs_auth">In attesa di autorizzazione</string>
     <string name="status_start_failed">Avvio non riuscito</string>
     <string name="status_not_running">Non in esecuzione</string>
+    <string name="status_service_disabled">Disattivato</string>
     <string name="status_connected">Connesso</string>
     <string name="status_connected_bt">Connesso · ripiego Bluetooth</string>
     <string name="status_throttled">Limitato dall’altro lato</string>
@@ -183,6 +184,7 @@
     <string name="service_not_running_detail">Il servizio di sincronizzazione non è in esecuzione; la sincronizzazione continua a funzionare mentre l’app è in primo piano.</string>
     <string name="service_fact_start_notification">L’avvio mostra una notifica persistente.</string>
 
+    <string name="service_disabled_detail">Il servizio di sincronizzazione in background è disattivato in Preferenze · Sincronizzazione: nessun ascolto degli appunti in background né scambio con il dispositivo associato. Tocca «Avvia servizio» o usa l’interruttore nelle Preferenze per riattivarlo.</string>
     <string name="network_unpaired_detail">Non ancora associato a Windows. Apri ClipSync sul PC e scegli «Associa nuovo dispositivo».</string>
     <string name="network_bt_detail">Il percorso IP è irraggiungibile; sincronizzazione con «%1$s» via Bluetooth (solo testo, più lento).</string>
     <string name="network_bt_fact_switchback">Torna automaticamente quando l’IP si ripristina; niente da fare.</string>
@@ -348,6 +350,8 @@
     <string name="prefs_language_desc">La lingua dell’interfaccia si applica subito; ogni lingua mostra il proprio nome nativo e non viene mai tradotta.</string>
     <string name="prefs_language_follow_system">Segui il sistema</string>
     <string name="prefs_group_sync">Sincronizzazione</string>
+    <string name="prefs_service_enabled">Servizio di sincronizzazione in background</string>
+    <string name="prefs_service_enabled_desc">Disattivandolo il servizio in background si ferma del tutto: niente più ascolto degli appunti in background, nessuna connessione né scambio con il dispositivo associato, e la notifica persistente scompare; non riparte da solo riaprendo l’app né riavviando il telefono. Ciò che copi con l’app aperta finisce comunque nella cronologia locale e si sincronizza solo dopo la riattivazione. Diversamente da «Sospendi sincronizzazione» qui sotto, che sospende un servizio ancora in esecuzione.</string>
     <string name="prefs_pause_sync">Sospendi sincronizzazione</string>
     <string name="prefs_pause_sync_desc">Durante la pausa le due estremità smettono di scambiarsi contenuti; la cronologia esistente è conservata.</string>
     <string name="prefs_private_mode">Modalità privata</string>

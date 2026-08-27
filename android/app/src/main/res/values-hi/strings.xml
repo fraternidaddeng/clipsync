@@ -145,6 +145,7 @@
     <string name="status_needs_auth">अनुमति की प्रतीक्षा</string>
     <string name="status_start_failed">शुरू नहीं हो सका</string>
     <string name="status_not_running">चल नहीं रहा</string>
+    <string name="status_service_disabled">बंद है</string>
     <string name="status_connected">कनेक्टेड</string>
     <string name="status_connected_bt">कनेक्टेड · ब्लूटूथ फ़ॉलबैक</string>
     <string name="status_throttled">दूसरे छोर ने सीमित किया</string>
@@ -182,6 +183,7 @@
     <string name="service_not_running_detail">सिंक सेवा नहीं चल रही; ऐप के अग्रभूमि में रहते सिंक चलता रहेगा।</string>
     <string name="service_fact_start_notification">शुरू करने पर स्थायी सूचना दिखती है।</string>
 
+    <string name="service_disabled_detail">पृष्ठभूमि सिंक सेवा प्राथमिकताएँ · सिंक में बंद है: न क्लिपबोर्ड की पृष्ठभूमि निगरानी, न जुड़े डिवाइस से आदान-प्रदान। «सेवा शुरू करें» दबाएँ या प्राथमिकताओं का स्विच इस्तेमाल कर दोबारा चालू करें।</string>
     <string name="network_unpaired_detail">अभी Windows से जोड़ा नहीं गया। PC पर ClipSync खोलें और “नया डिवाइस जोड़ें” चुनें।</string>
     <string name="network_bt_detail">IP रास्ता पहुँच से बाहर है; “%1$s” से ब्लूटूथ पर सिंक हो रहा है (केवल टेक्स्ट, धीमा)।</string>
     <string name="network_bt_fact_switchback">IP लौटते ही अपने आप वापस बदल जाता है; कुछ नहीं करना।</string>
@@ -345,6 +347,8 @@
     <string name="prefs_language_desc">UI भाषा तुरंत लागू होती है; हर भाषा अपने मूल नाम में दिखती है और कभी अनुवादित नहीं होती।</string>
     <string name="prefs_language_follow_system">सिस्टम के अनुसार</string>
     <string name="prefs_group_sync">सिंक</string>
+    <string name="prefs_service_enabled">पृष्ठभूमि सिंक सेवा</string>
+    <string name="prefs_service_enabled_desc">बंद करने पर पृष्ठभूमि सेवा पूरी तरह रुक जाती है: क्लिपबोर्ड की पृष्ठभूमि निगरानी बंद, जुड़े डिवाइस से कनेक्शन और आदान-प्रदान बंद, और स्थायी सूचना भी हट जाती है; ऐप दोबारा खोलने या फ़ोन रीस्टार्ट करने पर यह अपने आप शुरू नहीं होती। ऐप खुले रहते की गई कॉपी स्थानीय इतिहास में दर्ज होती रहती है और दोबारा चालू करने पर ही सिंक होती है। नीचे दिए «सिंक रोकें» से अलग — रोक के दौरान सेवा चलती रहती है।</string>
     <string name="prefs_pause_sync">सिंक रोकें</string>
     <string name="prefs_pause_sync_desc">रोक के दौरान दोनों छोर सामग्री का आदान-प्रदान बंद कर देते हैं; मौजूदा इतिहास बना रहता है।</string>
     <string name="prefs_private_mode">निजी मोड</string>

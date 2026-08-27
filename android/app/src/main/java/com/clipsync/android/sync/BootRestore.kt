@@ -6,16 +6,19 @@ package com.clipsync.android.sync
  */
 object BootRestorePolicy {
     /**
-     * One start attempt happens only when all three facts hold: the broadcast really is
-     * BOOT_COMPLETED, the user explicitly enabled 开机恢复, and a paired peer exists. The
-     * preference is re-read at boot time — the manifest component being enabled is never
-     * trusted on its own (an app restore can carry a stale component state).
+     * One start attempt happens only when all four facts hold: the broadcast really is
+     * BOOT_COMPLETED, the user explicitly enabled 开机恢复, the 后台同步服务 master switch
+     * is on, and a paired peer exists. The preferences are re-read at boot time — the
+     * manifest component being enabled is never trusted on its own (an app restore can
+     * carry a stale component state). A disabled service is the user's decision, so no
+     * attempt is made and no "需要恢复" notification follows.
      */
     fun shouldAttemptStart(
         isBootAction: Boolean,
         bootRestoreEnabled: Boolean,
+        serviceEnabled: Boolean,
         paired: Boolean,
-    ): Boolean = isBootAction && bootRestoreEnabled && paired
+    ): Boolean = isBootAction && bootRestoreEnabled && serviceEnabled && paired
 }
 
 /**

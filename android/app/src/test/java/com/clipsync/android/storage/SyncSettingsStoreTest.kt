@@ -97,6 +97,19 @@ class SyncSettingsStoreTest {
     }
 
     @Test
+    fun serviceEnabledDefaultsOnAndRoundTrips() {
+        // 后台同步服务 master switch: on by default (existing installs keep their service),
+        // and a persisted off must survive round trips — off is truly off until turned on.
+        assertTrue(store.serviceEnabled)
+
+        store.serviceEnabled = false
+        assertFalse(store.serviceEnabled)
+
+        store.serviceEnabled = true
+        assertTrue(store.serviceEnabled)
+    }
+
+    @Test
     fun bootRestoreDefaultsOffAndRoundTrips() {
         // Plan 5.2: 开机恢复 is opt-in; nothing registers at boot until the user says so.
         assertFalse(store.bootRestoreEnabled)

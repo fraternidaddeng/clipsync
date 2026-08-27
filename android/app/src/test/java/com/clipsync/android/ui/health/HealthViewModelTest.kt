@@ -246,6 +246,37 @@ class HealthViewModelTest {
     }
 
     @Test
+    fun `a service the user switched off is a stated fact, never dressed up as a fault`() {
+        val sync =
+            FakeSyncHealthSource(
+                SyncHealth(serviceRunning = false, serviceEnabled = false, connected = false),
+            )
+        val state = viewModel(syncHealthSource = sync).state.value
+        // Solid grey (UNAVAILABLE), not DEGRADED: the user chose this off state.
+        assertEquals(ConduitStatus.UNAVAILABLE, state.localService.status)
+        assertEquals("已关闭", state.localService.statusLabel.testString())
+        assertTrue(state.localService.detail.testString().contains("偏好"))
+    }
+
+    @Test
+    fun `the chosen off state outranks a stale start-failure code`() {
+        // A failure recorded before the user flipped the switch off must not resurface
+        // as 启动失败 while the honest answer is "you turned it off".
+        val sync =
+            FakeSyncHealthSource(
+                SyncHealth(
+                    serviceRunning = false,
+                    serviceEnabled = false,
+                    connected = false,
+                    serviceErrorCode = "FGS_START_DENIED",
+                ),
+            )
+        val state = viewModel(syncHealthSource = sync).state.value
+        assertEquals(ConduitStatus.UNAVAILABLE, state.localService.status)
+        assertEquals("已关闭", state.localService.statusLabel.testString())
+    }
+
+    @Test
     fun `connected sync without a peer capability report stays unprobed`() {
         pair()
         val sync = FakeSyncHealthSource(SyncHealth(serviceRunning = true, connected = true))

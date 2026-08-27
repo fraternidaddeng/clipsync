@@ -146,6 +146,7 @@
     <string name="status_needs_auth">En attente d’autorisation</string>
     <string name="status_start_failed">Échec du démarrage</string>
     <string name="status_not_running">À l’arrêt</string>
+    <string name="status_service_disabled">Désactivé</string>
     <string name="status_connected">Connecté</string>
     <string name="status_connected_bt">Connecté · secours Bluetooth</string>
     <string name="status_throttled">Limité par l’autre appareil</string>
@@ -183,6 +184,7 @@
     <string name="service_not_running_detail">Le service de synchronisation est à l’arrêt ; la synchronisation fonctionne toujours quand l’application est au premier plan.</string>
     <string name="service_fact_start_notification">Le démarrage affiche une notification persistante.</string>
 
+    <string name="service_disabled_detail">Le service de synchronisation en arrière-plan est désactivé dans Préférences · Synchronisation : pas d’écoute du presse-papiers en arrière-plan ni d’échange avec l’appareil appairé. Touchez « Démarrer le service » ou utilisez l’interrupteur des Préférences pour le réactiver.</string>
     <string name="network_unpaired_detail">Pas encore appairé avec Windows. Ouvrez ClipSync sur votre PC et choisissez « Appairer un nouvel appareil ».</string>
     <string name="network_bt_detail">Le chemin IP est injoignable ; synchronisation avec « %1$s » via Bluetooth (texte uniquement, plus lent).</string>
     <string name="network_bt_fact_switchback">Rebascule automatiquement dès que l’IP se rétablit ; rien à faire.</string>
@@ -348,6 +350,8 @@
     <string name="prefs_language_desc">La langue de l’interface s’applique immédiatement ; chaque langue affiche son propre nom natif et n’est jamais traduite.</string>
     <string name="prefs_language_follow_system">Suivre le système</string>
     <string name="prefs_group_sync">Synchronisation</string>
+    <string name="prefs_service_enabled">Service de synchronisation en arrière-plan</string>
+    <string name="prefs_service_enabled_desc">Le désactiver arrête complètement le service en arrière-plan : plus d’écoute du presse-papiers en arrière-plan, plus de connexion ni d’échange avec l’appareil appairé, et la notification permanente disparaît ; rien ne redémarre tout seul à la réouverture de l’application ni au redémarrage du téléphone. Ce qui est copié pendant que l’application est ouverte reste enregistré dans l’historique local et se synchronise une fois le service réactivé. À la différence de « Suspendre la synchronisation » ci-dessous, qui suspend un service toujours en marche.</string>
     <string name="prefs_pause_sync">Suspendre la synchronisation</string>
     <string name="prefs_pause_sync_desc">Pendant la pause, les deux extrémités cessent d’échanger du contenu ; l’historique existant est conservé.</string>
     <string name="prefs_private_mode">Mode privé</string>

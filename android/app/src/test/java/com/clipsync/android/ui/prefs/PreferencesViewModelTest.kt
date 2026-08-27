@@ -225,6 +225,47 @@ class PreferencesViewModelTest {
     }
 
     @Test
+    fun `service master switch defaults on, persists, and notifies the host after persisting`() {
+        val hostCalls = mutableListOf<Boolean>()
+        val model =
+            PreferencesViewModel(
+                settings,
+                PreferencesViewModel.SideEffects(
+                    onServiceEnabledChanged = { enabled ->
+                        // Persisted first: the host's stop/start — and every service start
+                        // path re-checking sync.service_enabled — must read the new value.
+                        assertEquals(enabled, settings.serviceEnabled)
+                        hostCalls += enabled
+                    },
+                ),
+            )
+        assertTrue(model.state.value.serviceEnabled)
+
+        model.setServiceEnabled(false)
+        assertEquals("false", keyValues.map["sync.service_enabled"])
+        assertFalse(model.state.value.serviceEnabled)
+        assertEquals(listOf(false), hostCalls)
+
+        model.setServiceEnabled(true)
+        assertEquals("true", keyValues.map["sync.service_enabled"])
+        assertTrue(model.state.value.serviceEnabled)
+        assertEquals(listOf(false, true), hostCalls)
+    }
+
+    @Test
+    fun `turning the service off flips no pause gate — stop and pause stay distinct`() {
+        val model = viewModel()
+        model.setServiceEnabled(false)
+
+        // 彻底关闭 is the service's own switch; the pause semantics (and their keys)
+        // stay untouched, so turning the service back on restores the same behaviour.
+        assertFalse(model.state.value.pauseSync)
+        assertFalse(model.state.value.pauseCapture)
+        assertFalse(SyncSettingsStore(keyValues).syncPaused)
+        assertFalse(SyncSettingsStore(keyValues).autoCapturePaused)
+    }
+
+    @Test
     fun `pause capture persists under the notification action's key and re-checks the gates`() {
         var gateChecks = 0
         val model =

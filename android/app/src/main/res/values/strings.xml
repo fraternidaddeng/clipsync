@@ -163,6 +163,7 @@
     <string name="status_needs_auth">待授权</string>
     <string name="status_start_failed">启动失败</string>
     <string name="status_not_running">未运行</string>
+    <string name="status_service_disabled">已关闭</string>
     <string name="status_connected">已连接</string>
     <string name="status_connected_bt">已连接 · 蓝牙备援</string>
     <string name="status_throttled">已被对端限流</string>
@@ -201,6 +202,7 @@
     <string name="service_start_failed_detail">同步服务启动失败（%1$s）；应用在前台时仍可同步。</string>
     <string name="service_not_running_detail">同步服务未运行；应用在前台时仍可同步。</string>
     <string name="service_fact_start_notification">启动后会显示一条常驻通知。</string>
+    <string name="service_disabled_detail">后台同步服务已在偏好 · 同步中关闭：不再后台监听剪贴板，也不与已配对设备连接收发。点「启动服务」或回偏好页开关即可重新开启。</string>
 
     <!-- 通路：网络 -->
     <string name="network_unpaired_detail">尚未与 Windows 配对。在电脑上打开「剪剪相传」，选择「配对新设备」。</string>
@@ -372,6 +374,8 @@
     <string name="prefs_language_desc">界面语言即时生效；每种语言以其母语名显示，不随界面语言翻译。</string>
     <string name="prefs_language_follow_system">跟随系统</string>
     <string name="prefs_group_sync">同步</string>
+    <string name="prefs_service_enabled">后台同步服务</string>
+    <string name="prefs_service_enabled_desc">关闭即彻底停止后台服务：不再后台监听剪贴板、不再与已配对设备连接收发，常驻通知随之消失，重开应用或重启手机都不会自行恢复。应用打开期间的复制仍记入本机历史，重新开启后才继续同步。与下方「暂停同步」不同——暂停时服务仍在运行。</string>
     <string name="prefs_pause_sync">暂停同步</string>
     <string name="prefs_pause_sync_desc">暂停后两端不再交换内容，已有历史保留。</string>
     <string name="prefs_private_mode">私密模式</string>

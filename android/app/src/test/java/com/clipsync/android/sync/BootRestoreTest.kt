@@ -8,11 +8,12 @@ import org.junit.Test
 class BootRestorePolicyTest {
 
     @Test
-    fun `start is attempted only when action, preference and pairing all hold`() {
+    fun `start is attempted only when action, preferences and pairing all hold`() {
         assertTrue(
             BootRestorePolicy.shouldAttemptStart(
                 isBootAction = true,
                 bootRestoreEnabled = true,
+                serviceEnabled = true,
                 paired = true,
             ),
         )
@@ -24,6 +25,7 @@ class BootRestorePolicyTest {
             BootRestorePolicy.shouldAttemptStart(
                 isBootAction = false,
                 bootRestoreEnabled = true,
+                serviceEnabled = true,
                 paired = true,
             ),
         )
@@ -35,6 +37,21 @@ class BootRestorePolicyTest {
             BootRestorePolicy.shouldAttemptStart(
                 isBootAction = true,
                 bootRestoreEnabled = false,
+                serviceEnabled = true,
+                paired = true,
+            ),
+        )
+    }
+
+    @Test
+    fun `a service the user switched off is never restarted at boot`() {
+        // 后台同步服务 off is the user's decision: no attempt, and (because no attempt is
+        // made) no dishonest "需要恢复" notification either.
+        assertFalse(
+            BootRestorePolicy.shouldAttemptStart(
+                isBootAction = true,
+                bootRestoreEnabled = true,
+                serviceEnabled = false,
                 paired = true,
             ),
         )
@@ -46,6 +63,7 @@ class BootRestorePolicyTest {
             BootRestorePolicy.shouldAttemptStart(
                 isBootAction = true,
                 bootRestoreEnabled = true,
+                serviceEnabled = true,
                 paired = false,
             ),
         )

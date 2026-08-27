@@ -144,6 +144,7 @@
     <string name="status_needs_auth">Đang chờ cấp quyền</string>
     <string name="status_start_failed">Khởi động thất bại</string>
     <string name="status_not_running">Không chạy</string>
+    <string name="status_service_disabled">Đã tắt</string>
     <string name="status_connected">Đã kết nối</string>
     <string name="status_connected_bt">Đã kết nối · dự phòng Bluetooth</string>
     <string name="status_throttled">Bị phía bên kia hạn chế</string>
@@ -181,6 +182,7 @@
     <string name="service_not_running_detail">Dịch vụ đồng bộ không chạy; đồng bộ vẫn hoạt động khi ứng dụng đang mở.</string>
     <string name="service_fact_start_notification">Khởi động sẽ hiển thị một thông báo thường trực.</string>
 
+    <string name="service_disabled_detail">Dịch vụ đồng bộ nền đã bị tắt trong Tùy chọn · Đồng bộ: không theo dõi bảng nhớ tạm trong nền, không trao đổi với thiết bị đã ghép nối. Nhấn «Khởi động dịch vụ» hoặc dùng công tắc trong Tùy chọn để bật lại.</string>
     <string name="network_unpaired_detail">Chưa ghép nối với Windows. Mở ClipSync trên PC và chọn “Ghép nối thiết bị mới”.</string>
     <string name="network_bt_detail">Đường IP không truy cập được; đang đồng bộ với “%1$s” qua Bluetooth (chỉ văn bản, chậm hơn).</string>
     <string name="network_bt_fact_switchback">Tự động chuyển về khi IP khôi phục; không cần làm gì.</string>
@@ -342,6 +344,8 @@
     <string name="prefs_language_desc">Ngôn ngữ giao diện áp dụng ngay; mỗi ngôn ngữ hiển thị bằng tên bản địa của nó và không bao giờ bị dịch.</string>
     <string name="prefs_language_follow_system">Theo hệ thống</string>
     <string name="prefs_group_sync">Đồng bộ</string>
+    <string name="prefs_service_enabled">Dịch vụ đồng bộ nền</string>
+    <string name="prefs_service_enabled_desc">Tắt là dừng hẳn dịch vụ chạy nền: không còn theo dõi bảng nhớ tạm trong nền, không còn kết nối hay trao đổi với thiết bị đã ghép nối, thông báo thường trực biến mất; mở lại ứng dụng hay khởi động lại máy cũng không tự chạy lại. Nội dung sao chép khi ứng dụng đang mở vẫn được lưu vào lịch sử trên máy và chỉ đồng bộ sau khi bật lại. Khác với «Tạm dừng đồng bộ» bên dưới — khi tạm dừng, dịch vụ vẫn chạy.</string>
     <string name="prefs_pause_sync">Tạm dừng đồng bộ</string>
     <string name="prefs_pause_sync_desc">Khi tạm dừng, hai đầu ngừng trao đổi nội dung; lịch sử hiện có được giữ nguyên.</string>
     <string name="prefs_private_mode">Chế độ riêng tư</string>

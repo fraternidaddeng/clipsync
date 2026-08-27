@@ -145,6 +145,7 @@
     <string name="status_needs_auth">Wartet auf Freigabe</string>
     <string name="status_start_failed">Start fehlgeschlagen</string>
     <string name="status_not_running">Läuft nicht</string>
+    <string name="status_service_disabled">Ausgeschaltet</string>
     <string name="status_connected">Verbunden</string>
     <string name="status_connected_bt">Verbunden · Bluetooth-Ausweichweg</string>
     <string name="status_throttled">Von der Gegenseite gedrosselt</string>
@@ -182,6 +183,7 @@
     <string name="service_not_running_detail">Der Sync-Dienst läuft nicht; der Sync funktioniert weiterhin, solange die App im Vordergrund ist.</string>
     <string name="service_fact_start_notification">Beim Start wird eine dauerhafte Benachrichtigung angezeigt.</string>
 
+    <string name="service_disabled_detail">Der Hintergrund-Sync-Dienst ist unter Einstellungen · Sync ausgeschaltet: kein Mithören der Zwischenablage im Hintergrund, kein Austausch mit dem gekoppelten Gerät. „Dienst starten“ antippen oder den Schalter in den Einstellungen nutzen, um ihn wieder einzuschalten.</string>
     <string name="network_unpaired_detail">Noch nicht mit Windows gekoppelt. Öffnen Sie ClipSync auf dem PC und wählen Sie „Neues Gerät koppeln“.</string>
     <string name="network_bt_detail">Der IP-Pfad ist unerreichbar; Synchronisierung mit „%1$s“ über Bluetooth (nur Text, langsamer).</string>
     <string name="network_bt_fact_switchback">Wechselt automatisch zurück, sobald IP sich erholt; nichts zu tun.</string>
@@ -345,6 +347,8 @@
     <string name="prefs_language_desc">Die Oberflächensprache gilt sofort; jede Sprache zeigt ihren eigenen nativen Namen und wird nie übersetzt.</string>
     <string name="prefs_language_follow_system">System folgen</string>
     <string name="prefs_group_sync">Sync</string>
+    <string name="prefs_service_enabled">Hintergrund-Sync-Dienst</string>
+    <string name="prefs_service_enabled_desc">Ausschalten stoppt den Hintergrunddienst vollständig: kein Mithören der Zwischenablage im Hintergrund mehr, keine Verbindung und kein Austausch mit dem gekoppelten Gerät, die dauerhafte Benachrichtigung verschwindet; weder das erneute Öffnen der App noch ein Geräteneustart startet ihn von selbst wieder. Kopien bei geöffneter App landen weiterhin im lokalen Verlauf und werden erst nach dem Wiedereinschalten synchronisiert. Anders als „Sync pausieren“ darunter, das einen weiterlaufenden Dienst nur pausiert.</string>
     <string name="prefs_pause_sync">Sync pausieren</string>
     <string name="prefs_pause_sync_desc">Während der Pause tauschen beide Seiten keine Inhalte aus; der vorhandene Verlauf bleibt erhalten.</string>
     <string name="prefs_private_mode">Privater Modus</string>

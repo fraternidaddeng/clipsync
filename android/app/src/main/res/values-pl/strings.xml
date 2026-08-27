@@ -147,6 +147,7 @@
     <string name="status_needs_auth">Oczekuje na zgodę</string>
     <string name="status_start_failed">Nie udało się uruchomić</string>
     <string name="status_not_running">Nie działa</string>
+    <string name="status_service_disabled">Wyłączona</string>
     <string name="status_connected">Połączono</string>
     <string name="status_connected_bt">Połączono · zapasowy Bluetooth</string>
     <string name="status_throttled">Ograniczone przez drugą stronę</string>
@@ -184,6 +185,7 @@
     <string name="service_not_running_detail">Usługa synchronizacji nie działa; synchronizacja nadal działa, gdy aplikacja jest na pierwszym planie.</string>
     <string name="service_fact_start_notification">Uruchomienie wyświetla stałe powiadomienie.</string>
 
+    <string name="service_disabled_detail">Usługa synchronizacji w tle jest wyłączona w Preferencjach · Synchronizacja: bez nasłuchiwania schowka w tle i bez wymiany ze sparowanym urządzeniem. Dotknij „Uruchom usługę” albo użyj przełącznika w Preferencjach, aby włączyć ją ponownie.</string>
     <string name="network_unpaired_detail">Nie sparowano jeszcze z Windows. Otwórz ClipSync na PC i wybierz „Sparuj nowe urządzenie”.</string>
     <string name="network_bt_detail">Ścieżka IP jest nieosiągalna; synchronizacja z „%1$s” przez Bluetooth (tylko tekst, wolniej).</string>
     <string name="network_bt_fact_switchback">Przełącza się z powrotem automatycznie, gdy IP wróci; nic nie trzeba robić.</string>
@@ -351,6 +353,8 @@
     <string name="prefs_language_desc">Język interfejsu obowiązuje natychmiast; każdy język pokazuje swoją rodzimą nazwę i nigdy nie jest tłumaczony.</string>
     <string name="prefs_language_follow_system">Za systemem</string>
     <string name="prefs_group_sync">Synchronizacja</string>
+    <string name="prefs_service_enabled">Usługa synchronizacji w tle</string>
+    <string name="prefs_service_enabled_desc">Wyłączenie całkowicie zatrzymuje usługę w tle: koniec nasłuchiwania schowka w tle, koniec połączenia i wymiany ze sparowanym urządzeniem, a stałe powiadomienie znika; usługa nie wróci sama ani po ponownym otwarciu aplikacji, ani po restarcie telefonu. To, co skopiujesz przy otwartej aplikacji, nadal trafia do lokalnej historii i zsynchronizuje się dopiero po ponownym włączeniu. Inaczej niż „Wstrzymaj synchronizację” poniżej — podczas wstrzymania usługa nadal działa.</string>
     <string name="prefs_pause_sync">Wstrzymaj synchronizację</string>
     <string name="prefs_pause_sync_desc">Podczas wstrzymania oba końce przestają wymieniać treści; istniejąca historia zostaje zachowana.</string>
     <string name="prefs_private_mode">Tryb prywatny</string>

@@ -146,6 +146,7 @@
     <string name="status_needs_auth">Wacht op autorisatie</string>
     <string name="status_start_failed">Starten mislukt</string>
     <string name="status_not_running">Draait niet</string>
+    <string name="status_service_disabled">Uitgeschakeld</string>
     <string name="status_connected">Verbonden</string>
     <string name="status_connected_bt">Verbonden · Bluetooth-terugval</string>
     <string name="status_throttled">Afgeremd door de peer</string>
@@ -183,6 +184,7 @@
     <string name="service_not_running_detail">De synchronisatieservice draait niet; synchronisatie werkt nog terwijl de app op de voorgrond is.</string>
     <string name="service_fact_start_notification">Starten toont een permanente melding.</string>
 
+    <string name="service_disabled_detail">De achtergrondsynchronisatieservice is uitgeschakeld in Voorkeuren · Synchronisatie: geen klembordbewaking op de achtergrond en geen uitwisseling met het gekoppelde apparaat. Tik op “Service starten” of gebruik de schakelaar in Voorkeuren om hem weer in te schakelen.</string>
     <string name="network_unpaired_detail">Nog niet gekoppeld met Windows. Open ClipSync op je pc en kies “Nieuw apparaat koppelen”.</string>
     <string name="network_bt_detail">Het IP-pad is onbereikbaar; synchroniseert met “%1$s” via Bluetooth (alleen tekst, langzamer).</string>
     <string name="network_bt_fact_switchback">Schakelt automatisch terug zodra IP herstelt; je hoeft niets te doen.</string>
@@ -346,6 +348,8 @@
     <string name="prefs_language_desc">De interfacetaal geldt onmiddellijk; elke taal toont zijn eigen oorspronkelijke naam en wordt nooit vertaald.</string>
     <string name="prefs_language_follow_system">Systeem volgen</string>
     <string name="prefs_group_sync">Synchronisatie</string>
+    <string name="prefs_service_enabled">Achtergrondsynchronisatieservice</string>
+    <string name="prefs_service_enabled_desc">Uitschakelen stopt de achtergrondservice volledig: geen klembordbewaking op de achtergrond meer, geen verbinding of uitwisseling met het gekoppelde apparaat, en de permanente melding verdwijnt; de service komt niet vanzelf terug bij het heropenen van de app of het herstarten van de telefoon. Wat je kopieert terwijl de app open is, komt nog steeds in de lokale geschiedenis en synchroniseert pas na het weer inschakelen. Anders dan “Synchronisatie pauzeren” hieronder, dat een doorlopende service alleen pauzeert.</string>
     <string name="prefs_pause_sync">Synchronisatie pauzeren</string>
     <string name="prefs_pause_sync_desc">Tijdens de pauze wisselen de twee kanten geen inhoud uit; bestaande geschiedenis blijft bewaard.</string>
     <string name="prefs_private_mode">Privémodus</string>

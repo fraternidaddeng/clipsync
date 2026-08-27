@@ -144,6 +144,7 @@
     <string name="status_needs_auth">รอการอนุญาต</string>
     <string name="status_start_failed">เริ่มไม่สำเร็จ</string>
     <string name="status_not_running">ไม่ได้ทำงาน</string>
+    <string name="status_service_disabled">ปิดอยู่</string>
     <string name="status_connected">เชื่อมต่อแล้ว</string>
     <string name="status_connected_bt">เชื่อมต่อแล้ว · ช่องสำรองบลูทูธ</string>
     <string name="status_throttled">ถูกอีกฝั่งจำกัด</string>
@@ -181,6 +182,7 @@
     <string name="service_not_running_detail">บริการซิงค์ไม่ได้ทำงาน การซิงค์ยังทำงานขณะแอปเปิดอยู่</string>
     <string name="service_fact_start_notification">เมื่อเริ่มจะแสดงการแจ้งเตือนถาวร</string>
 
+    <string name="service_disabled_detail">บริการซิงค์เบื้องหลังถูกปิดไว้ในการตั้งค่า · การซิงค์: ไม่ฟังคลิปบอร์ดในเบื้องหลังและไม่รับส่งกับอุปกรณ์ที่จับคู่ แตะ “เริ่มบริการ” หรือใช้สวิตช์ในการตั้งค่าเพื่อเปิดอีกครั้ง</string>
     <string name="network_unpaired_detail">ยังไม่ได้จับคู่กับ Windows เปิด ClipSync บนพีซีแล้วเลือก “จับคู่อุปกรณ์ใหม่”</string>
     <string name="network_bt_detail">เส้นทาง IP เข้าถึงไม่ได้ กำลังซิงค์กับ “%1$s” ผ่านบลูทูธ (ข้อความเท่านั้น ช้ากว่า)</string>
     <string name="network_bt_fact_switchback">จะสลับกลับอัตโนมัติเมื่อ IP ฟื้น ไม่ต้องทำอะไร</string>
@@ -342,6 +344,8 @@
     <string name="prefs_language_desc">ภาษาของหน้าจอมีผลทันที แต่ละภาษาแสดงด้วยชื่อภาษาแม่ของตนและไม่ถูกแปล</string>
     <string name="prefs_language_follow_system">ตามระบบ</string>
     <string name="prefs_group_sync">การซิงค์</string>
+    <string name="prefs_service_enabled">บริการซิงค์เบื้องหลัง</string>
+    <string name="prefs_service_enabled_desc">ปิดคือหยุดบริการเบื้องหลังโดยสมบูรณ์: ไม่ฟังคลิปบอร์ดในเบื้องหลัง ไม่เชื่อมต่อหรือรับส่งกับอุปกรณ์ที่จับคู่ และการแจ้งเตือนถาวรหายไป เปิดแอปใหม่หรือรีสตาร์ตเครื่องก็ไม่กลับมาเอง สิ่งที่คัดลอกระหว่างแอปเปิดอยู่ยังบันทึกลงประวัติในเครื่อง และจะซิงค์เมื่อเปิดใช้อีกครั้ง ต่างจาก “หยุดซิงค์ชั่วคราว” ด้านล่าง ซึ่งระหว่างหยุดชั่วคราวบริการยังทำงานอยู่</string>
     <string name="prefs_pause_sync">หยุดซิงค์ชั่วคราว</string>
     <string name="prefs_pause_sync_desc">ระหว่างหยุด ทั้งสองฝั่งหยุดแลกเปลี่ยนเนื้อหา ประวัติที่มีอยู่ยังคงเก็บไว้</string>
     <string name="prefs_private_mode">โหมดส่วนตัว</string>
