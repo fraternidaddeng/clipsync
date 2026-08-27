@@ -181,7 +181,8 @@ class SyncSupervisor(
             }
 
             mutableState.value = SyncConnectionState.Connecting
-            val connected = takePendingIpTransport() ?: dialOnce(peer, secret)
+            // An IP socket the Bluetooth-session probe already won carries the next session.
+            val connected = pendingIpTransport?.also { pendingIpTransport = null } ?: dialOnce(peer, secret)
             if (connected == null) {
                 secret.fill(0)
                 attempt = waitBeforeRetry(attempt)
@@ -288,12 +289,6 @@ class SyncSupervisor(
                 IpDialOutcome.Unreachable -> {}
             }
         }
-    }
-
-    private fun takePendingIpTransport(): ConnectedTransport? {
-        val pending = pendingIpTransport
-        pendingIpTransport = null
-        return pending
     }
 
     /** IP candidates first; the bt1 fallback only after every host failed on connectivity. */

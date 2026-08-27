@@ -282,6 +282,7 @@ class SyncSettingsStore(
         private const val KEY_AUTO_EXPIRE_ENABLED = "sync.retention.auto_expire"
         private const val KEY_MAX_SYNC_TEXT_BYTES = "sync.max_text_bytes"
         private const val KEY_BOOT_RESTORE = "sync.boot_restore"
+
         /** Public: [com.clipsync.android.sync.ClipboardSyncService] watches this key to bounce the session. */
         const val KEY_IMAGE_SYNC = "sync.image_sync"
         private const val KEY_AUTO_APPLY_IMAGES = "sync.auto_apply_images"
