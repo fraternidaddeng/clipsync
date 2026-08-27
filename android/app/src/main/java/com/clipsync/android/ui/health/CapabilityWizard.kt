@@ -93,88 +93,117 @@ private fun RouteCard(
                 .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = route.title.string(),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = c.t1,
-            )
-            QualityDots(filled = route.quality)
-        }
+        RouteCardHeader(route)
+        route.steps.forEach { step -> StepRow(step) }
+        RouteProgressRow(route)
+        route.errorCode?.let { code -> RouteErrorCode(code) }
+        RouteActions(route = route, readTestBusy = readTestBusy, onAction = onAction)
+    }
+}
+
+/** Title with quality dots, the honest cost line, and the hairline divider. */
+@Composable
+private fun RouteCardHeader(route: ReadRouteUi) {
+    val c = clipSyncColors
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Text(
-            text = stringResource(R.string.wizard_cost, route.cost.string()),
+            text = route.title.string(),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = c.t1,
+        )
+        QualityDots(filled = route.quality)
+    }
+    Text(
+        text = stringResource(R.string.wizard_cost, route.cost.string()),
+        style = ClipSyncType.caption,
+        color = c.t3,
+    )
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(c.ln),
+    )
+}
+
+/** Steps remaining (or readiness) on the left, the 当前路线 mark on the right. */
+@Composable
+private fun RouteProgressRow(route: ReadRouteUi) {
+    val c = clipSyncColors
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = routeProgressLabel(route),
+            style = ClipSyncType.meta,
+            color = if (route.stepsRemaining == 0) c.flow else c.t3,
+        )
+        if (route.preferred) {
+            Text(
+                text = stringResource(R.string.wizard_preferred),
+                style = ClipSyncType.meta,
+                fontWeight = FontWeight.SemiBold,
+                color = c.flow,
+            )
+        }
+    }
+}
+
+/**
+ * The closed 特权直读 code set gets a one-line human hint; the stable machine
+ * code stays visible below it as the anchor for reports.
+ */
+@Composable
+private fun RouteErrorCode(code: String) {
+    val c = clipSyncColors
+    PrivHostErrorHints.hintFor(code)?.let { hint ->
+        Text(
+            text = hint.string(),
             style = ClipSyncType.caption,
             color = c.t3,
         )
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(c.ln),
+    }
+    Text(
+        text = code,
+        style = ClipSyncType.meta,
+        color = c.t4,
+    )
+}
+
+@Composable
+private fun RouteActions(
+    route: ReadRouteUi,
+    readTestBusy: Boolean,
+    onAction: (RouteActionId) -> Unit,
+) {
+    route.nextAction?.let { action ->
+        RouteActionButton(
+            label = routeActionLabel(action).string(),
+            primary = action != RouteActionId.SET_PREFERRED,
+            onClick = { onAction(action) },
         )
-        route.steps.forEach { step -> StepRow(step) }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = routeProgressLabel(route),
-                style = ClipSyncType.meta,
-                color = if (route.stepsRemaining == 0) c.flow else c.t3,
-            )
-            if (route.preferred) {
-                Text(
-                    text = stringResource(R.string.wizard_preferred),
-                    style = ClipSyncType.meta,
-                    fontWeight = FontWeight.SemiBold,
-                    color = c.flow,
-                )
-            }
-        }
-        route.errorCode?.let { code ->
-            // The closed 特权直读 code set gets a one-line human hint; the stable
-            // machine code stays visible below it as the anchor for reports.
-            PrivHostErrorHints.hintFor(code)?.let { hint ->
-                Text(
-                    text = hint.string(),
-                    style = ClipSyncType.caption,
-                    color = c.t3,
-                )
-            }
-            Text(
-                text = code,
-                style = ClipSyncType.meta,
-                color = c.t4,
-            )
-        }
-        route.nextAction?.let { action ->
-            RouteActionButton(
-                label = routeActionLabel(action).string(),
-                primary = action != RouteActionId.SET_PREFERRED,
-                onClick = { onAction(action) },
-            )
-        }
-        route.readTestAction?.let { action ->
-            // While the round-trip runs the button states so on a quiet face and
-            // absorbs taps — the test is single-flight, a re-tap would not help.
-            RouteActionButton(
-                label =
-                    if (readTestBusy) {
-                        stringResource(R.string.conduit_testing)
-                    } else {
-                        routeActionLabel(action).string()
-                    },
-                primary = true,
-                busy = readTestBusy,
-                onClick = { onAction(action) },
-            )
-        }
+    }
+    route.readTestAction?.let { action ->
+        // While the round-trip runs the button states so on a quiet face and
+        // absorbs taps — the test is single-flight, a re-tap would not help.
+        RouteActionButton(
+            label =
+                if (readTestBusy) {
+                    stringResource(R.string.conduit_testing)
+                } else {
+                    routeActionLabel(action).string()
+                },
+            primary = true,
+            busy = readTestBusy,
+            onClick = { onAction(action) },
+        )
     }
 }
 

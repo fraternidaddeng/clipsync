@@ -261,8 +261,7 @@ private fun SearchField(
                             onClick = { onQueryChange("") },
                             role = Role.Button,
                             onClickLabel = clearLabel,
-                        )
-                        .semantics { contentDescription = clearLabel },
+                        ).semantics { contentDescription = clearLabel },
                 contentAlignment = Alignment.Center,
             ) {
                 Text(

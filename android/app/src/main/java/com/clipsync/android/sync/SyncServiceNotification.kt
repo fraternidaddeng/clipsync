@@ -60,6 +60,9 @@ object SyncServiceNotification {
             else -> false
         }
 
+    // Six parameters, all facts of the one resident line; a holder type would
+    // only rename the same list.
+    @Suppress("LongParameterList")
     fun build(
         context: Context,
         channelId: String,
