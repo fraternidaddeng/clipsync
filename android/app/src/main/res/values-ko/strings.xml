@@ -355,6 +355,8 @@
     <string name="prefs_group_bt">블루투스 대체 경로</string>
     <string name="prefs_bt_moved">통로 · 네트워크로 이동했습니다</string>
     <string name="prefs_group_capture">캡처</string>
+    <string name="prefs_pause_capture">자동 캡처 일시중지</string>
+    <string name="prefs_pause_capture_desc">켜져 있는 동안 이 기기에서 복사한 내용을 자동으로 읽지 않으며 백그라운드 읽기도 멈춥니다. 수동 보내기/받기는 계속 사용할 수 있습니다. 상주 알림의 ‘캡처 일시중지’와 같은 스위치입니다.</string>
     <string name="prefs_skip_sensitive">민감한 내용 건너뛰기</string>
     <string name="prefs_skip_sensitive_desc">원본 앱(비밀번호 관리자 등)이 민감으로 표시한 복사 내용은 기록과 동기화를 건너뜁니다. 원본 앱의 표시에 의존합니다. 공유 시트로 의도적으로 보내는 것은 제한하지 않습니다.</string>
     <string name="prefs_group_history">기록</string>

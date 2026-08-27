@@ -2,6 +2,7 @@ package com.clipsync.android.ui.prefs
 
 import com.clipsync.android.pairing.FakeKeyValueStore
 import com.clipsync.android.storage.SyncSettingsStore
+import com.clipsync.android.sync.SyncServiceNotification
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -17,6 +18,7 @@ class PreferencesViewModelTest {
     fun `empty store yields the product-scope defaults`() {
         val state = viewModel().state.value
         assertFalse(state.pauseSync)
+        assertFalse(state.pauseCapture)
         assertFalse(state.privateMode)
         assertTrue(state.autoApplyRemote)
         assertTrue(state.autoExpire)
@@ -220,6 +222,40 @@ class PreferencesViewModelTest {
 
         model.setRetentionDays(9_999)
         assertEquals(SyncSettingsStore.MAX_RETENTION_DAYS, model.state.value.retentionDays)
+    }
+
+    @Test
+    fun `pause capture persists under the notification action's key and re-checks the gates`() {
+        var gateChecks = 0
+        val model =
+            PreferencesViewModel(
+                settings,
+                PreferencesViewModel.SideEffects(onCaptureGatesChanged = { gateChecks++ }),
+            )
+        assertFalse(model.state.value.pauseCapture)
+
+        model.setPauseCapture(true)
+
+        // Same key the resident notification's 暂停捕获 action flips (plan 5.2) — the
+        // setting is not a UI-private copy, so the two surfaces can never disagree.
+        assertEquals("true", keyValues.map["sync.capture_paused"])
+        assertTrue(model.state.value.pauseCapture)
+        // The background read backends gate on this key; persisting must re-check them.
+        assertEquals(1, gateChecks)
+        assertTrue(SyncSettingsStore(keyValues).autoCapturePaused)
+
+        model.setPauseCapture(false)
+        assertFalse(model.state.value.pauseCapture)
+        assertEquals(2, gateChecks)
+    }
+
+    @Test
+    fun `the notification's pause-capture action surfaces as the settings toggle state`() {
+        SyncServiceNotification.applyAction(SyncServiceNotification.ACTION_PAUSE_CAPTURE, settings)
+        assertTrue(viewModel().state.value.pauseCapture)
+
+        SyncServiceNotification.applyAction(SyncServiceNotification.ACTION_RESUME_CAPTURE, settings)
+        assertFalse(viewModel().state.value.pauseCapture)
     }
 
     @Test

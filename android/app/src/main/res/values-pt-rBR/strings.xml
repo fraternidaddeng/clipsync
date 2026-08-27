@@ -361,6 +361,8 @@
     <string name="prefs_group_bt">Alternativa Bluetooth</string>
     <string name="prefs_bt_moved">Movido para Conduíte · Rede</string>
     <string name="prefs_group_capture">Captura</string>
+    <string name="prefs_pause_capture">Pausar captura automática</string>
+    <string name="prefs_pause_capture_desc">Enquanto ligada, o que é copiado neste aparelho deixa de ser lido automaticamente e a escuta em segundo plano para; o envio e o recebimento manuais continuam funcionando. É o mesmo interruptor da ação “Pausar captura” da notificação.</string>
     <string name="prefs_skip_sensitive">Pular conteúdo sensível</string>
     <string name="prefs_skip_sensitive_desc">Cópias marcadas como sensíveis pelo app de origem (gerenciadores de senha etc.) pulam o histórico e a sincronização. Depende da marcação do app de origem; enviar deliberadamente pela folha de compartilhamento não é restringido.</string>
     <string name="prefs_group_history">Histórico</string>

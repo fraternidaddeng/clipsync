@@ -359,6 +359,8 @@
     <string name="prefs_group_bt">Bluetooth fallback</string>
     <string name="prefs_bt_moved">Moved to Conduit · Network</string>
     <string name="prefs_group_capture">Capture</string>
+    <string name="prefs_pause_capture">Pause auto capture</string>
+    <string name="prefs_pause_capture_desc">While on, copies on this device are no longer read automatically and background listening stops; manual send and receive still work. Same switch as the notification’s “Pause capture” action.</string>
     <string name="prefs_skip_sensitive">Skip sensitive content</string>
     <string name="prefs_skip_sensitive_desc">Copies flagged sensitive by the source app (password managers etc.) skip history and sync. Relies on the source app’s flag; sending deliberately via the share sheet is not restricted.</string>
     <string name="prefs_group_history">History</string>

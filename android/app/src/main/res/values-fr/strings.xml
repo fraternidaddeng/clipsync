@@ -361,6 +361,8 @@
     <string name="prefs_group_bt">Secours Bluetooth</string>
     <string name="prefs_bt_moved">Déplacé vers Conduit · Réseau</string>
     <string name="prefs_group_capture">Capture</string>
+    <string name="prefs_pause_capture">Suspendre la capture automatique</string>
+    <string name="prefs_pause_capture_desc">Tant que c’est activé, le contenu copié sur cet appareil n’est plus lu automatiquement et l’écoute en arrière-plan s’arrête ; l’envoi et la réception manuels fonctionnent toujours. Même interrupteur que l’action « Suspendre la capture » de la notification.</string>
     <string name="prefs_skip_sensitive">Ignorer le contenu sensible</string>
     <string name="prefs_skip_sensitive_desc">Les copies marquées sensibles par l’application source (gestionnaires de mots de passe, etc.) sont exclues de l’historique et de la synchronisation. Dépend du marquage de l’application source ; l’envoi délibéré via la feuille de partage n’est pas restreint.</string>
     <string name="prefs_group_history">Historique</string>

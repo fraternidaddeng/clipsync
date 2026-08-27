@@ -355,6 +355,8 @@
     <string name="prefs_group_bt">Bluetooth フォールバック</string>
     <string name="prefs_bt_moved">経路 · ネットワーク へ移動しました</string>
     <string name="prefs_group_capture">キャプチャ</string>
+    <string name="prefs_pause_capture">自動キャプチャを一時停止</string>
+    <string name="prefs_pause_capture_desc">オンの間はこの端末でコピーした内容を自動で読み取らず、バックグラウンドの監視も停止します。手動の送受信は引き続き利用できます。常駐通知の「キャプチャを一時停止」と同じスイッチです。</string>
     <string name="prefs_skip_sensitive">機密内容をスキップ</string>
     <string name="prefs_skip_sensitive_desc">コピー元アプリ（パスワードマネージャーなど）が機密とフラグ付けした内容は履歴と同期をスキップします。コピー元アプリのフラグに依存します。共有シートからの意図的な送信は制限されません。</string>
     <string name="prefs_group_history">履歴</string>

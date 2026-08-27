@@ -24,6 +24,8 @@ import java.io.OutputStream
 
 data class PreferencesUiState(
     val pauseSync: Boolean = false,
+    /** 暂停自动捕获（plan 5.2）：仅停自动捕获（含后台监听），手动发送与接收照常。 */
+    val pauseCapture: Boolean = false,
     val privateMode: Boolean = false,
     val autoApplyRemote: Boolean = true,
     val autoExpire: Boolean = true,
@@ -100,6 +102,7 @@ class PreferencesViewModel(
         MutableStateFlow(
             PreferencesUiState(
                 pauseSync = settings.syncPaused,
+                pauseCapture = settings.autoCapturePaused,
                 privateMode = settings.privateMode,
                 autoApplyRemote = settings.autoApplyRemote,
                 autoExpire = settings.autoExpireEnabled,
@@ -126,6 +129,19 @@ class PreferencesViewModel(
     fun setPauseSync(paused: Boolean) {
         settings.syncPaused = paused
         mutableState.update { it.copy(pauseSync = paused) }
+        sideEffects.onCaptureGatesChanged()
+    }
+
+    /**
+     * 暂停自动捕获: the same `sync.capture_paused` gate the resident notification's 暂停捕获
+     * action flips — local copies stop being auto-captured (the background read backends
+     * stop with it), while explicit share/tile sends, outbound sync of already-recorded
+     * clips, and inbound delivery keep working. Persisted first so the capture session's
+     * gate re-check reads the new value.
+     */
+    fun setPauseCapture(paused: Boolean) {
+        settings.autoCapturePaused = paused
+        mutableState.update { it.copy(pauseCapture = paused) }
         sideEffects.onCaptureGatesChanged()
     }
 

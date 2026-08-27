@@ -355,6 +355,8 @@
     <string name="prefs_group_bt">Dự phòng Bluetooth</string>
     <string name="prefs_bt_moved">Đã chuyển sang Đường dẫn · Mạng</string>
     <string name="prefs_group_capture">Thu thập</string>
+    <string name="prefs_pause_capture">Tạm dừng thu thập tự động</string>
+    <string name="prefs_pause_capture_desc">Khi bật, nội dung sao chép trên thiết bị này không còn được đọc tự động và việc theo dõi nền cũng dừng lại; gửi và nhận thủ công vẫn hoạt động. Cùng một công tắc với thao tác “Tạm dừng thu thập” trên thông báo thường trực.</string>
     <string name="prefs_skip_sensitive">Bỏ qua nội dung nhạy cảm</string>
     <string name="prefs_skip_sensitive_desc">Nội dung được ứng dụng nguồn (trình quản lý mật khẩu v.v.) đánh dấu nhạy cảm sẽ bỏ qua lịch sử và đồng bộ. Phụ thuộc vào cờ của ứng dụng nguồn; chủ động gửi qua bảng chia sẻ không bị hạn chế.</string>
     <string name="prefs_group_history">Lịch sử</string>

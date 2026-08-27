@@ -364,6 +364,8 @@
     <string name="prefs_group_bt">Резервный Bluetooth</string>
     <string name="prefs_bt_moved">Перенесено в Канал · Сеть</string>
     <string name="prefs_group_capture">Захват</string>
+    <string name="prefs_pause_capture">Приостановить автозахват</string>
+    <string name="prefs_pause_capture_desc">Пока включено, скопированное на этом устройстве больше не читается автоматически, фоновое прослушивание останавливается; ручная отправка и приём по-прежнему работают. Тот же переключатель, что и действие «Приостановить захват» в уведомлении.</string>
     <string name="prefs_skip_sensitive">Пропускать конфиденциальное</string>
     <string name="prefs_skip_sensitive_desc">Копии, помеченные исходным приложением как конфиденциальные (менеджеры паролей и т. п.), минуют историю и синхронизацию. Зависит от пометки исходного приложения; намеренная отправка через меню «Поделиться» не ограничивается.</string>
     <string name="prefs_group_history">История</string>

@@ -358,6 +358,8 @@
     <string name="prefs_group_bt">Bluetooth-Ausweichweg</string>
     <string name="prefs_bt_moved">Verschoben nach Kanal · Netzwerk</string>
     <string name="prefs_group_capture">Erfassung</string>
+    <string name="prefs_pause_capture">Automatische Erfassung pausieren</string>
+    <string name="prefs_pause_capture_desc">Solange aktiv, werden Kopien auf diesem Gerät nicht mehr automatisch gelesen und das Mitlesen im Hintergrund stoppt; manuelles Senden und Empfangen funktioniert weiterhin. Derselbe Schalter wie die Aktion „Erfassung pausieren“ der Benachrichtigung.</string>
     <string name="prefs_skip_sensitive">Sensible Inhalte überspringen</string>
     <string name="prefs_skip_sensitive_desc">Kopien, die die Quell-App (Passwort-Manager usw.) als sensibel markiert, überspringen Verlauf und Sync. Verlässt sich auf die Markierung der Quell-App; bewusstes Senden über das Teilen-Menü ist nicht eingeschränkt.</string>
     <string name="prefs_group_history">Verlauf</string>

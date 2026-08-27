@@ -385,6 +385,8 @@
     <string name="prefs_group_bt">蓝牙备援</string>
     <string name="prefs_bt_moved">已移至通路 · 网络</string>
     <string name="prefs_group_capture">捕获</string>
+    <string name="prefs_pause_capture">暂停自动捕获</string>
+    <string name="prefs_pause_capture_desc">开启时不再自动读取本机复制的内容，后台监听随之停止；手动发送与接收不受影响。与常驻通知的「暂停捕获」为同一开关。</string>
     <string name="prefs_skip_sensitive">跳过敏感内容</string>
     <string name="prefs_skip_sensitive_desc">来源应用标记为敏感的复制（密码管理器等）不进历史、不同步。依赖来源应用打标记；通过分享面板主动发送不受此限制。</string>
     <string name="prefs_group_history">历史</string>

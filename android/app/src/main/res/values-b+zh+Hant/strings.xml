@@ -355,6 +355,8 @@
     <string name="prefs_group_bt">藍牙備援</string>
     <string name="prefs_bt_moved">已移至通路 · 網路</string>
     <string name="prefs_group_capture">擷取</string>
+    <string name="prefs_pause_capture">暫停自動擷取</string>
+    <string name="prefs_pause_capture_desc">開啟時不再自動讀取本機複製的內容，背景監聽隨之停止；手動傳送與接收不受影響。與常駐通知的「暫停擷取」為同一開關。</string>
     <string name="prefs_skip_sensitive">跳過敏感內容</string>
     <string name="prefs_skip_sensitive_desc">來源應用程式標記為敏感的複製（密碼管理器等）不進歷史、不同步。依賴來源應用程式打標記；透過分享面板主動傳送不受此限制。</string>
     <string name="prefs_group_history">歷史</string>

@@ -370,6 +370,8 @@
     <string name="prefs_group_bt">مسار بلوتوث الاحتياطي</string>
     <string name="prefs_bt_moved">انتقل إلى القناة · الشبكة</string>
     <string name="prefs_group_capture">الالتقاط</string>
+    <string name="prefs_pause_capture">إيقاف الالتقاط التلقائي مؤقتًا</string>
+    <string name="prefs_pause_capture_desc">أثناء تفعيله لا يُقرأ ما يُنسخ على هذا الجهاز تلقائيًا ويتوقف الاستماع في الخلفية؛ الإرسال والاستلام اليدويان يعملان. وهو نفس مفتاح إجراء «إيقاف الالتقاط مؤقتًا» في الإشعار.</string>
     <string name="prefs_skip_sensitive">تخطي المحتوى الحساس</string>
     <string name="prefs_skip_sensitive_desc">النسخ الموسومة حساسة من التطبيق المصدر (مديرو كلمات المرور ونحوهم) تتخطى السجل والمزامنة. يعتمد على وسم التطبيق المصدر؛ الإرسال المتعمَّد عبر ورقة المشاركة غير مقيَّد.</string>
     <string name="prefs_group_history">السجل</string>

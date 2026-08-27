@@ -358,6 +358,8 @@
     <string name="prefs_group_bt">Bluetooth yedeği</string>
     <string name="prefs_bt_moved">Kanal · Ağ bölümüne taşındı</string>
     <string name="prefs_group_capture">Yakalama</string>
+    <string name="prefs_pause_capture">Otomatik yakalamayı duraklat</string>
+    <string name="prefs_pause_capture_desc">Açıkken bu cihazda kopyalananlar artık otomatik okunmaz ve arka plan dinlemesi durur; elle gönderme ve alma çalışmaya devam eder. Bildirimdeki “Yakalamayı duraklat” eylemiyle aynı anahtardır.</string>
     <string name="prefs_skip_sensitive">Hassas içeriği atla</string>
     <string name="prefs_skip_sensitive_desc">Kaynak uygulamanın (parola yöneticileri vb.) hassas işaretlediği kopyalar geçmişi ve eşitlemeyi atlar. Kaynak uygulamanın işaretine dayanır; paylaşım sayfasıyla bilerek göndermek kısıtlanmaz.</string>
     <string name="prefs_group_history">Geçmiş</string>

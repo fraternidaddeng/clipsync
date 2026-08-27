@@ -358,6 +358,8 @@
     <string name="prefs_group_bt">ब्लूटूथ फ़ॉलबैक</string>
     <string name="prefs_bt_moved">मार्ग · नेटवर्क में ले जाया गया</string>
     <string name="prefs_group_capture">कैप्चर</string>
+    <string name="prefs_pause_capture">स्वतः कैप्चर रोकें</string>
+    <string name="prefs_pause_capture_desc">चालू रहने पर इस डिवाइस पर कॉपी की गई सामग्री अपने आप नहीं पढ़ी जाती और पृष्ठभूमि में सुनना रुक जाता है; हाथ से भेजना-पाना चलता रहता है। यह अधिसूचना की “कैप्चर रोकें” कार्रवाई वाला ही स्विच है।</string>
     <string name="prefs_skip_sensitive">संवेदनशील सामग्री छोड़ें</string>
     <string name="prefs_skip_sensitive_desc">स्रोत ऐप (पासवर्ड मैनेजर आदि) द्वारा संवेदनशील चिह्नित कॉपियाँ इतिहास और सिंक से बाहर रहती हैं। स्रोत ऐप के चिह्न पर निर्भर; शेयर शीट से जान-बूझकर भेजने पर रोक नहीं।</string>
     <string name="prefs_group_history">इतिहास</string>

@@ -361,6 +361,8 @@
     <string name="prefs_group_bt">Ripiego Bluetooth</string>
     <string name="prefs_bt_moved">Spostato in Condotto · Rete</string>
     <string name="prefs_group_capture">Cattura</string>
+    <string name="prefs_pause_capture">Sospendi cattura automatica</string>
+    <string name="prefs_pause_capture_desc">Mentre è attiva, ciò che viene copiato su questo dispositivo non viene più letto automaticamente e l’ascolto in background si ferma; invio e ricezione manuali funzionano ancora. È lo stesso interruttore dell’azione «Sospendi cattura» della notifica.</string>
     <string name="prefs_skip_sensitive">Salta contenuti sensibili</string>
     <string name="prefs_skip_sensitive_desc">Le copie contrassegnate come sensibili dall’app di origine (gestori di password ecc.) saltano cronologia e sincronizzazione. Si affida al contrassegno dell’app di origine; l’invio deliberato tramite il foglio di condivisione non è limitato.</string>
     <string name="prefs_group_history">Cronologia</string>

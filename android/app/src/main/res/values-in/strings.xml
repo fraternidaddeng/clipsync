@@ -355,6 +355,8 @@
     <string name="prefs_group_bt">Cadangan Bluetooth</string>
     <string name="prefs_bt_moved">Dipindah ke Saluran · Jaringan</string>
     <string name="prefs_group_capture">Penangkapan</string>
+    <string name="prefs_pause_capture">Jeda penangkapan otomatis</string>
+    <string name="prefs_pause_capture_desc">Selama aktif, salinan di perangkat ini tidak lagi dibaca otomatis dan pemantauan latar belakang berhenti; kirim dan terima manual tetap berfungsi. Sakelar yang sama dengan tindakan “Jeda penangkapan” di notifikasi.</string>
     <string name="prefs_skip_sensitive">Lewati konten sensitif</string>
     <string name="prefs_skip_sensitive_desc">Salinan yang ditandai sensitif oleh aplikasi sumber (pengelola kata sandi dsb.) melewati riwayat dan sinkronisasi. Bergantung pada tanda aplikasi sumber; mengirim sengaja lewat lembar bagikan tidak dibatasi.</string>
     <string name="prefs_group_history">Riwayat</string>

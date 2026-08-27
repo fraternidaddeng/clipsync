@@ -56,6 +56,8 @@ import com.clipsync.android.ui.theme.clipSyncColors
 fun PreferencesScreen(
     state: PreferencesUiState,
     onPauseSyncChange: (Boolean) -> Unit,
+    /** 暂停自动捕获: the settings face of the notification's 暂停捕获 action (same key). */
+    onPauseCaptureChange: (Boolean) -> Unit = {},
     onPrivateModeChange: (Boolean) -> Unit,
     onAutoApplyRemoteChange: (Boolean) -> Unit,
     onAutoExpireChange: (Boolean) -> Unit,
@@ -209,6 +211,16 @@ fun PreferencesScreen(
                 .fillMaxWidth()
                 .charterCard(),
         ) {
+            // 暂停自动捕获: the user-facing off switch for the background listening — the
+            // same sync.capture_paused gate as the notification action, so either surface
+            // pauses (and honestly reports) the other.
+            ToggleRow(
+                title = stringResource(R.string.prefs_pause_capture),
+                description = stringResource(R.string.prefs_pause_capture_desc),
+                checked = state.pauseCapture,
+                onCheckedChange = onPauseCaptureChange,
+            )
+            RowDivider()
             ToggleRow(
                 title = stringResource(R.string.prefs_skip_sensitive),
                 description = stringResource(R.string.prefs_skip_sensitive_desc),

@@ -800,6 +800,7 @@ private fun ClipSyncApp(
                         PreferencesScreen(
                             state = preferencesState,
                             onPauseSyncChange = preferencesViewModel::setPauseSync,
+                            onPauseCaptureChange = preferencesViewModel::setPauseCapture,
                             onPrivateModeChange = preferencesViewModel::setPrivateMode,
                             onAutoApplyRemoteChange = preferencesViewModel::setAutoApplyRemote,
                             onAutoExpireChange = preferencesViewModel::setAutoExpire,

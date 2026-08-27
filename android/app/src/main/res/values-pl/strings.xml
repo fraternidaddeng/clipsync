@@ -364,6 +364,8 @@
     <string name="prefs_group_bt">Zapasowy Bluetooth</string>
     <string name="prefs_bt_moved">Przeniesiono do Kanał · Sieć</string>
     <string name="prefs_group_capture">Przechwytywanie</string>
+    <string name="prefs_pause_capture">Wstrzymaj automatyczne przechwytywanie</string>
+    <string name="prefs_pause_capture_desc">Gdy włączone, treści kopiowane na tym urządzeniu nie są już odczytywane automatycznie, a nasłuch w tle się zatrzymuje; ręczne wysyłanie i odbieranie nadal działa. Ten sam przełącznik co akcja „Wstrzymaj przechwytywanie” w powiadomieniu.</string>
     <string name="prefs_skip_sensitive">Pomijaj treści wrażliwe</string>
     <string name="prefs_skip_sensitive_desc">Kopie oznaczone jako wrażliwe przez aplikację źródłową (menedżery haseł itp.) omijają historię i synchronizację. Polega na oznaczeniu aplikacji źródłowej; celowe wysyłanie przez arkusz udostępniania nie jest ograniczane.</string>
     <string name="prefs_group_history">Historia</string>

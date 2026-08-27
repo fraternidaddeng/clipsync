@@ -359,6 +359,8 @@
     <string name="prefs_group_bt">Bluetooth-terugval</string>
     <string name="prefs_bt_moved">Verplaatst naar Kanaal · Netwerk</string>
     <string name="prefs_group_capture">Vastleggen</string>
+    <string name="prefs_pause_capture">Automatisch vastleggen pauzeren</string>
+    <string name="prefs_pause_capture_desc">Zolang dit aanstaat, wordt gekopieerde inhoud op dit apparaat niet meer automatisch gelezen en stopt het meeluisteren op de achtergrond; handmatig verzenden en ontvangen werken nog. Dezelfde schakelaar als de actie “Vastleggen pauzeren” in de melding.</string>
     <string name="prefs_skip_sensitive">Gevoelige inhoud overslaan</string>
     <string name="prefs_skip_sensitive_desc">Kopieën die door de bronapp als gevoelig zijn gemarkeerd (wachtwoordmanagers enz.) slaan geschiedenis en synchronisatie over. Vertrouwt op de markering van de bronapp; bewust versturen via het deelmenu wordt niet beperkt.</string>
     <string name="prefs_group_history">Geschiedenis</string>
