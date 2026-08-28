@@ -3,6 +3,13 @@ package com.clipsync.android.ui.prefs
 import com.clipsync.android.pairing.FakeKeyValueStore
 import com.clipsync.android.storage.SyncSettingsStore
 import com.clipsync.android.sync.SyncServiceNotification
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -297,6 +304,44 @@ class PreferencesViewModelTest {
 
         SyncServiceNotification.applyAction(SyncServiceNotification.ACTION_RESUME_CAPTURE, settings)
         assertFalse(viewModel().state.value.pauseCapture)
+    }
+
+    @Test
+    fun `refreshFromStore re-syncs the mirror after external store writes`() {
+        val model = viewModel()
+        // The resident notification's actions write the store directly while this
+        // ViewModel may be alive right behind the shade — no new ViewModel is built.
+        SyncServiceNotification.applyAction(SyncServiceNotification.ACTION_PAUSE_ALL, settings)
+        SyncServiceNotification.applyAction(SyncServiceNotification.ACTION_PAUSE_CAPTURE, settings)
+        settings.serviceEnabled = false
+        // The mirror is stale until a re-sync — exactly the contradiction being fixed.
+        assertFalse(model.state.value.pauseSync)
+        assertFalse(model.state.value.pauseCapture)
+        assertTrue(model.state.value.serviceEnabled)
+
+        model.refreshFromStore()
+
+        assertTrue(model.state.value.pauseSync)
+        assertTrue(model.state.value.pauseCapture)
+        assertFalse(model.state.value.serviceEnabled)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `settings-change ticks re-sync the mirror without any UI action`() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+        try {
+            val changes = MutableSharedFlow<Unit>()
+            val model = PreferencesViewModel(settings, settingsChanges = changes)
+            SyncServiceNotification.applyAction(SyncServiceNotification.ACTION_PAUSE_CAPTURE, settings)
+            assertFalse(model.state.value.pauseCapture)
+
+            runBlocking { changes.emit(Unit) }
+
+            assertTrue(model.state.value.pauseCapture)
+        } finally {
+            Dispatchers.resetMain()
+        }
     }
 
     @Test

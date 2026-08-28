@@ -1,7 +1,10 @@
 package com.clipsync.android.ui.health
 
 import com.clipsync.android.platform.clipboard.CapabilityState
+import com.clipsync.android.sync.SyncConnectionState
+import com.clipsync.android.sync.SyncTransportKind
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 
 /**
  * What the conduit needs to know about the sync engine, and nothing more.
@@ -41,3 +44,39 @@ data class SyncHealth(
 fun interface SyncHealthSource {
     fun snapshots(): Flow<SyncHealth>
 }
+
+/**
+ * Combines the foreground service's live flows and the 后台同步服务 master switch
+ * into conduit snapshots. The switch travels as its own flow — never a per-emission
+ * re-read of the store — because flipping it while the service is already stopped
+ * (an FGS-denied start left it down, or a stop raced the toggle) changes none of
+ * the service's flows: `stop()` is a no-op then, so without the switch's own
+ * emission the 本机服务 segment would keep showing the stale 启动失败 fact instead
+ * of the chosen 已停用 one.
+ */
+fun syncHealthFlow(
+    serviceRunning: Flow<Boolean>,
+    connectionStates: Flow<SyncConnectionState>,
+    startErrorCodes: Flow<String?>,
+    peerThrottled: Flow<Boolean>,
+    serviceEnabled: Flow<Boolean>,
+): Flow<SyncHealth> =
+    combine(
+        serviceRunning,
+        connectionStates,
+        startErrorCodes,
+        peerThrottled,
+        serviceEnabled,
+    ) { running, connection, startError, throttled, enabled ->
+        SyncHealth(
+            serviceRunning = running,
+            serviceEnabled = enabled,
+            connected = connection is SyncConnectionState.Connected,
+            serviceErrorCode = startError,
+            peerThrottled = throttled,
+            // The conduit must state the degraded bt1 path honestly (ADR 0005).
+            bluetoothFallback =
+                connection is SyncConnectionState.Connected &&
+                    connection.transport == SyncTransportKind.BLUETOOTH,
+        )
+    }

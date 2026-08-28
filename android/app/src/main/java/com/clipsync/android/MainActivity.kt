@@ -70,6 +70,7 @@ import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.pairing.PeerHealthClient
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
+import com.clipsync.android.platform.SyncSettingsChanges
 import com.clipsync.android.platform.clipboard.ClipboardCaptureSession
 import com.clipsync.android.platform.clipboard.SharedClipboardWrites
 import com.clipsync.android.platform.clipboard.shizuku.host.PrivilegedHostStarter
@@ -78,17 +79,15 @@ import com.clipsync.android.sync.BluetoothSyncConnector
 import com.clipsync.android.sync.BootCompletedReceiver
 import com.clipsync.android.sync.ClipboardSyncService
 import com.clipsync.android.sync.SharedClipboardCapture
-import com.clipsync.android.sync.SyncConnectionState
 import com.clipsync.android.sync.SyncStore
-import com.clipsync.android.sync.SyncTransportKind
 import com.clipsync.android.ui.HealthScreen
 import com.clipsync.android.ui.health.BluetoothFallbackUi
 import com.clipsync.android.ui.health.CapabilityWiring
 import com.clipsync.android.ui.health.HealthViewModel
 import com.clipsync.android.ui.health.ReadRouteUi
 import com.clipsync.android.ui.health.RouteActionId
-import com.clipsync.android.ui.health.SyncHealth
 import com.clipsync.android.ui.health.SyncHealthSource
+import com.clipsync.android.ui.health.syncHealthFlow
 import com.clipsync.android.ui.home.ClipSyncHistoryGateway
 import com.clipsync.android.ui.home.HomeScreen
 import com.clipsync.android.ui.home.HomeViewModel
@@ -109,12 +108,14 @@ import com.clipsync.android.ui.theme.LocalReducedMotion
 import com.clipsync.android.ui.theme.clipSyncColors
 import com.clipsync.android.ui.theme.filmGrain
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import rikka.shizuku.Shizuku
 
@@ -150,30 +151,20 @@ class MainActivity : AppCompatActivity() {
         HealthViewModel.factory(
             pairingStore = pairingStore,
             clipboard = captureStack.coordinator,
-            // Live facts from the sync foreground service: alive + authenticated session.
+            // Live facts from the sync foreground service (alive + authenticated session)
+            // plus the 后台同步服务 master switch as its own reactive fact: flipping the
+            // switch while the service is already stopped — an FGS-denied start left it
+            // down — changes none of the service's flows (stop() is a no-op then), so the
+            // switch must emit for the 本机服务 segment to trade 启动失败 for 已停用.
             syncHealthSource =
                 SyncHealthSource {
-                    combine(
-                        ClipboardSyncService.serviceRunning,
-                        ClipboardSyncService.connectionStates,
-                        ClipboardSyncService.startErrorCodes,
-                        ClipboardSyncService.peerThrottled,
-                    ) { running, connection, startError, throttled ->
-                        SyncHealth(
-                            serviceRunning = running,
-                            connected = connection is SyncConnectionState.Connected,
-                            serviceErrorCode = startError,
-                            peerThrottled = throttled,
-                            // Re-read per emission: flipping the master switch stops/starts
-                            // the service, so serviceRunning re-emits at exactly the right
-                            // moments for this read to stay fresh.
-                            serviceEnabled = syncSettings.serviceEnabled,
-                            // The conduit must state the degraded bt1 path honestly (ADR 0005).
-                            bluetoothFallback =
-                                connection is SyncConnectionState.Connected &&
-                                    connection.transport == SyncTransportKind.BLUETOOTH,
-                        )
-                    }
+                    syncHealthFlow(
+                        serviceRunning = ClipboardSyncService.serviceRunning,
+                        connectionStates = ClipboardSyncService.connectionStates,
+                        startErrorCodes = ClipboardSyncService.startErrorCodes,
+                        peerThrottled = ClipboardSyncService.peerThrottled,
+                        serviceEnabled = serviceEnabledStates(),
+                    )
                 },
             capability =
                 CapabilityWiring(
@@ -212,9 +203,21 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    /** `sync.service_enabled` as a flow: the stored value now, then a re-read per settings change. */
+    private fun serviceEnabledStates(): Flow<Boolean> =
+        SyncSettingsChanges
+            .changes(this)
+            .map { syncSettings.serviceEnabled }
+            .onStart { emit(syncSettings.serviceEnabled) }
+            .distinctUntilChanged()
+
     private val preferencesViewModel: PreferencesViewModel by viewModels {
         PreferencesViewModel.factory(
             syncSettings,
+            // The settings file is also written by surfaces outside the preferences
+            // screen (the resident notification's 暂停/恢复 actions); every change tick
+            // re-syncs the ViewModel's mirror so the toggles never contradict the store.
+            settingsChanges = SyncSettingsChanges.changes(this),
             sideEffects =
                 PreferencesViewModel.SideEffects(
                     onBootRestoreChanged = { enabled ->

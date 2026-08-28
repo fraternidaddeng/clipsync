@@ -13,6 +13,7 @@ import com.clipsync.android.storage.HistoryTransferException
 import com.clipsync.android.storage.SyncSettingsStore
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -87,6 +88,15 @@ data class BondedBluetoothDevice(
 class PreferencesViewModel(
     private val settings: SyncSettingsStore,
     private val sideEffects: SideEffects = SideEffects(),
+    /**
+     * One tick per external write to the settings file. The store is also written by
+     * surfaces outside this ViewModel — the resident notification's 暂停同步/暂停捕获
+     * actions land in [com.clipsync.android.sync.SyncServiceNotification.applyAction]
+     * while this ViewModel may be alive right behind the shade — so each tick re-syncs
+     * the mirror via [refreshFromStore] instead of leaving the toggles frozen at
+     * whatever the store said at construction time. Null (tests, previews) disables it.
+     */
+    settingsChanges: Flow<Unit>? = null,
     private val historyRepository: () -> ClipSyncRepository? = { null },
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val nowMs: () -> Long = System::currentTimeMillis,
@@ -102,33 +112,54 @@ class PreferencesViewModel(
         val onServiceEnabledChanged: (Boolean) -> Unit = {},
     )
 
-    private val mutableState =
-        MutableStateFlow(
-            PreferencesUiState(
-                serviceEnabled = settings.serviceEnabled,
-                pauseSync = settings.syncPaused,
-                pauseCapture = settings.autoCapturePaused,
-                privateMode = settings.privateMode,
-                autoApplyRemote = settings.autoApplyRemote,
-                autoExpire = settings.autoExpireEnabled,
-                retentionDays = settings.retentionMaxAgeDays,
-                maxEntries = settings.retentionMaxEntries,
-                bootRestore = settings.bootRestoreEnabled,
-                imageSync = settings.imageSyncEnabled,
-                autoApplyImages = settings.autoApplyImages,
-                maxSyncTextBytes = settings.effectiveMaxSyncTextBytes,
-                bluetoothFallback = settings.bluetoothFallbackEnabled,
-                bluetoothDeviceName = settings.bluetoothPeerName,
-                historyFontScale = settings.historyFontScale,
-                previewLines = settings.previewLines,
-                themeOverride = settings.themeOverride,
-                skipSensitive = settings.skipSensitiveEnabled,
-                inboxNotify = settings.inboxNotifyEnabled,
-                languageTag = settings.languageTag,
-            ),
-        )
+    private val mutableState = MutableStateFlow(stateFromStore(transferStatus = null))
 
     val state: StateFlow<PreferencesUiState> = mutableState.asStateFlow()
+
+    init {
+        if (settingsChanges != null) {
+            viewModelScope.launch {
+                settingsChanges.collect { refreshFromStore() }
+            }
+        }
+    }
+
+    /**
+     * Re-reads every store-backed field into the mirror. The setters below keep the
+     * mirror fresh for this ViewModel's own writes; this covers everyone else's —
+     * without it the toggles freeze at construction time and contradict the store
+     * the moment a notification action flips a pause gate.
+     * [PreferencesUiState.transferStatus] is ViewModel-owned, not store-backed,
+     * and survives the re-read.
+     */
+    fun refreshFromStore() {
+        mutableState.update { stateFromStore(transferStatus = it.transferStatus) }
+    }
+
+    private fun stateFromStore(transferStatus: UiText?): PreferencesUiState =
+        PreferencesUiState(
+            serviceEnabled = settings.serviceEnabled,
+            pauseSync = settings.syncPaused,
+            pauseCapture = settings.autoCapturePaused,
+            privateMode = settings.privateMode,
+            autoApplyRemote = settings.autoApplyRemote,
+            autoExpire = settings.autoExpireEnabled,
+            retentionDays = settings.retentionMaxAgeDays,
+            maxEntries = settings.retentionMaxEntries,
+            bootRestore = settings.bootRestoreEnabled,
+            imageSync = settings.imageSyncEnabled,
+            autoApplyImages = settings.autoApplyImages,
+            maxSyncTextBytes = settings.effectiveMaxSyncTextBytes,
+            bluetoothFallback = settings.bluetoothFallbackEnabled,
+            bluetoothDeviceName = settings.bluetoothPeerName,
+            historyFontScale = settings.historyFontScale,
+            previewLines = settings.previewLines,
+            themeOverride = settings.themeOverride,
+            skipSensitive = settings.skipSensitiveEnabled,
+            inboxNotify = settings.inboxNotifyEnabled,
+            languageTag = settings.languageTag,
+            transferStatus = transferStatus,
+        )
 
     /**
      * 后台同步服务 master switch: the same `sync.service_enabled` key every service start
@@ -391,6 +422,7 @@ class PreferencesViewModel(
         fun factory(
             settings: SyncSettingsStore,
             sideEffects: SideEffects = SideEffects(),
+            settingsChanges: Flow<Unit>? = null,
             historyRepository: () -> ClipSyncRepository? = { null },
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
@@ -399,6 +431,7 @@ class PreferencesViewModel(
                     PreferencesViewModel(
                         settings,
                         sideEffects,
+                        settingsChanges,
                         historyRepository,
                     ) as T
             }
