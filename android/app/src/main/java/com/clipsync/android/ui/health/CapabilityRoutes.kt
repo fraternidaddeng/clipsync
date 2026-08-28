@@ -277,9 +277,10 @@ private fun readRoute(
     // proved the privileged UserService dead — e.g. the wireless-debugging shell that
     // launched it dropped. The one move that can revive it is re-running the start command
     // from a PC, so surface that as the honest next step instead of a rosy "set preferred".
-    val channelDead = remaining == 0 &&
-        readState == CapabilityState.UNAVAILABLE &&
-        report?.errorCode in PRIVILEGED_CHANNEL_DEAD_CODES
+    val channelDead =
+        remaining == 0 &&
+            readState == CapabilityState.UNAVAILABLE &&
+            report?.errorCode in PRIVILEGED_CHANNEL_DEAD_CODES
     // Each unsatisfied step maps to the one action that can move it forward; an
     // unfinished route never falls through to "set preferred".
     val firstUnsatisfied = steps.firstOrNull { !it.satisfied }
@@ -316,11 +317,12 @@ private fun readRoute(
  * a wireless-debugging session drops). The route stays honest (UNAVAILABLE) and points at the
  * PC-side restart rather than pretending it only awaits a test.
  */
-private val PRIVILEGED_CHANNEL_DEAD_CODES = setOf(
-    ShizukuErrorCodes.USERSERVICE_DEAD,
-    ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD,
-    ShizukuErrorCodes.BINDER_DEAD,
-)
+private val PRIVILEGED_CHANNEL_DEAD_CODES =
+    setOf(
+        ShizukuErrorCodes.USERSERVICE_DEAD,
+        ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD,
+        ShizukuErrorCodes.BINDER_DEAD,
+    )
 
 /**
  * The privileged channel can only be opened from a computer (Android security), so its

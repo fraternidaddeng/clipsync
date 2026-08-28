@@ -58,8 +58,10 @@ class PrivilegedChannelHonestyTest {
                 )
         }
 
-    private fun privilegedRoute(model: HealthViewModel): ReadRouteUi =
-        model.state.value.routes.first { it.id == ReadRouteId.PRIVILEGED }
+    private fun privilegedRoute(model: HealthViewModel): ReadRouteUi {
+        val routes = model.state.value.routes
+        return routes.first { it.id == ReadRouteId.PRIVILEGED }
+    }
 
     private fun buildModel(): HealthViewModel {
         // The privileged host answers, but its UserService child is dead: every real read fails.

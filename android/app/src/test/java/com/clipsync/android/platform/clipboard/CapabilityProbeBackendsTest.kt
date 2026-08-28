@@ -17,8 +17,12 @@ class CapabilityProbeBackendsTest {
     private fun shizuku(p: RoutePrerequisites) =
         ShizukuClipboardBackend(FixedProbes(p), systemVersion = "test").probe()
 
-    private fun authorized() =
-        RoutePrerequisites(shizukuInstalled = true, shizukuRunning = true, shizukuAuthorized = true)
+    private val authorized =
+        RoutePrerequisites(
+            shizukuInstalled = true,
+            shizukuRunning = true,
+            shizukuAuthorized = true,
+        )
 
     private fun adbLog(p: RoutePrerequisites) =
         AdbLogOverlayBackend(FixedProbes(p), systemVersion = "test").probe()
@@ -57,7 +61,7 @@ class CapabilityProbeBackendsTest {
         // probe must keep saying so, never revert to the rosy "授权但待实测".
         val report =
             ShizukuClipboardBackend(
-                probes = FixedProbes(authorized()),
+                probes = FixedProbes(authorized),
                 systemVersion = "test",
                 lastReadFailureCode = { ShizukuErrorCodes.USERSERVICE_DEAD },
             ).probe()
@@ -69,7 +73,7 @@ class CapabilityProbeBackendsTest {
     fun `authorized shizuku still just awaits its first test when nothing failed`() {
         val report =
             ShizukuClipboardBackend(
-                probes = FixedProbes(authorized()),
+                probes = FixedProbes(authorized),
                 systemVersion = "test",
                 lastReadFailureCode = { null },
             ).probe()
@@ -81,7 +85,7 @@ class CapabilityProbeBackendsTest {
     fun `a verified read wins over a stale failure record`() {
         val report =
             ShizukuClipboardBackend(
-                probes = FixedProbes(authorized()),
+                probes = FixedProbes(authorized),
                 systemVersion = "test",
                 readVerified = { true },
                 lastReadFailureCode = { ShizukuErrorCodes.USERSERVICE_DEAD },

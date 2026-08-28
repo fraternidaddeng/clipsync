@@ -267,21 +267,25 @@ class CapabilityRoutesTest {
         // Prerequisites all met (steps green) but the last read test proved the UserService
         // dead: the route must read UNAVAILABLE with its code, guide the PC-side restart, and
         // still offer the read test so re-verifying after that restart is never a dead end.
-        val complete = RoutePrerequisites(
-            shizukuInstalled = true,
-            shizukuRunning = true,
-            shizukuAuthorized = true,
-        )
-        val facts = baseFacts().copy(
-            prerequisites = complete,
-            reports = mapOf(
-                ClipboardReadMode.SHIZUKU_EVENT to report(
-                    ClipboardReadMode.SHIZUKU_EVENT,
-                    CapabilityState.UNAVAILABLE,
-                    errorCode = ShizukuErrorCodes.USERSERVICE_DEAD,
-                ),
-            ),
-        )
+        val complete =
+            RoutePrerequisites(
+                shizukuInstalled = true,
+                shizukuRunning = true,
+                shizukuAuthorized = true,
+            )
+        val facts =
+            baseFacts().copy(
+                prerequisites = complete,
+                reports =
+                    mapOf(
+                        ClipboardReadMode.SHIZUKU_EVENT to
+                            report(
+                                ClipboardReadMode.SHIZUKU_EVENT,
+                                CapabilityState.UNAVAILABLE,
+                                errorCode = ShizukuErrorCodes.USERSERVICE_DEAD,
+                            ),
+                    ),
+            )
         val route = buildReadRoutes(facts).first { it.id == ReadRouteId.PRIVILEGED }
         assertEquals(0, route.stepsRemaining)
         assertEquals(CapabilityState.UNAVAILABLE, route.readState)
@@ -292,23 +296,27 @@ class CapabilityRoutesTest {
 
     @Test
     fun `an authorized-but-untested privileged channel still just awaits its test`() {
-        val complete = RoutePrerequisites(
-            shizukuInstalled = true,
-            shizukuRunning = true,
-            shizukuAuthorized = true,
-        )
-        val facts = baseFacts().copy(
-            prerequisites = complete,
-            // Not the preferred route, so nextAction is a real affordance rather than null.
-            preferredReadMode = ClipboardReadMode.OVERLAY_POLLING,
-            reports = mapOf(
-                ClipboardReadMode.SHIZUKU_EVENT to report(
-                    ClipboardReadMode.SHIZUKU_EVENT,
-                    CapabilityState.DEGRADED,
-                    errorCode = "PRIVILEGED_READ_UNVERIFIED",
-                ),
-            ),
-        )
+        val complete =
+            RoutePrerequisites(
+                shizukuInstalled = true,
+                shizukuRunning = true,
+                shizukuAuthorized = true,
+            )
+        val facts =
+            baseFacts().copy(
+                prerequisites = complete,
+                // Not the preferred route, so nextAction is a real affordance rather than null.
+                preferredReadMode = ClipboardReadMode.OVERLAY_POLLING,
+                reports =
+                    mapOf(
+                        ClipboardReadMode.SHIZUKU_EVENT to
+                            report(
+                                ClipboardReadMode.SHIZUKU_EVENT,
+                                CapabilityState.DEGRADED,
+                                errorCode = "PRIVILEGED_READ_UNVERIFIED",
+                            ),
+                    ),
+            )
         val route = buildReadRoutes(facts).first { it.id == ReadRouteId.PRIVILEGED }
         assertEquals(RouteActionId.RUN_READ_TEST, route.readTestAction)
         assertEquals(RouteActionId.SET_PREFERRED, route.nextAction)
