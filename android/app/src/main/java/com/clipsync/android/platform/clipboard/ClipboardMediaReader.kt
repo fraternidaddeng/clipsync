@@ -82,9 +82,12 @@ object ClipboardMediaReader {
 
     /**
      * True when any declared mime is image-like. Real apps rarely declare the exact
-     * `image/png`/`image/jpeg` this app stores: Chrome and gallery apps commonly write
-     * `image/*` or a concrete-but-nonstandard subtype (`image/jpg`), so the hint accepts any
-     * `image/...` and leaves the real PNG/JPEG check to [ImageCodec.tryInspect] on the bytes.
+     * `image/png`/`image/jpeg` this app stores: Chrome and gallery apps commonly write the
+     * `image/` wildcard mime or a concrete-but-nonstandard subtype (`image/jpg`), so the
+     * hint accepts anything `image/`-prefixed and leaves the real PNG/JPEG check to
+     * [ImageCodec.tryInspect] on the bytes. (The wildcard is not spelled literally here:
+     * Kotlin block comments nest, so a slash-star inside a KDoc opens a comment and broke
+     * the build once.)
      */
     fun descriptionLooksLikeImage(description: ClipDescription?): Boolean {
         if (description == null) {

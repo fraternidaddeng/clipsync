@@ -25,8 +25,8 @@ import org.robolectric.Shadows
 
 /**
  * The MIME shapes real apps actually put on the clipboard (2026-08-28 debug round): Chrome
- * and gallery apps declare `image/*` or nonstandard subtypes rather than the exact
- * `image/png`/`image/jpeg`, file managers declare only `text/uri-list`, and the
+ * and gallery apps declare the `image/` wildcard or nonstandard subtypes rather than the
+ * exact `image/png`/`image/jpeg`, file managers declare only `text/uri-list`, and the
  * ClipDescription mime list has no per-item correspondence at all — indexing it by item
  * position crashed on real clips. The reader's verdict must come from the bytes
  * (ImageCodec magic sniffing, fail-closed), with mimes only as a cheap read hint.
