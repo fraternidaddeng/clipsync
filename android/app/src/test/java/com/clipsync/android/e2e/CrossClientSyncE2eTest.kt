@@ -143,17 +143,19 @@ class CrossClientSyncE2eTest {
             peerDeviceId: String,
             ranges: List<OriginSequenceRanges>,
             nowMs: Long,
+            dropTerminalOutbox: Boolean,
         ) {
-            inner.applyPeerAckRanges(peerDeviceId, ranges, nowMs)
+            inner.applyPeerAckRanges(peerDeviceId, ranges, nowMs, dropTerminalOutbox)
             synchronized(lock) { acked.addAll(ranges) }
         }
 
-        fun ackedLocalSequences(originDeviceId: String): Set<Long> = synchronized(lock) {
-            acked
-                .filter { it.originDeviceId == originDeviceId }
-                .flatMap { origin -> origin.ranges.flatMap { range -> (range.startSeq..range.endSeq).toList() } }
-                .toSet()
-        }
+        fun ackedLocalSequences(originDeviceId: String): Set<Long> =
+            synchronized(lock) {
+                acked
+                    .filter { it.originDeviceId == originDeviceId }
+                    .flatMap { origin -> origin.ranges.flatMap { range -> (range.startSeq..range.endSeq).toList() } }
+                    .toSet()
+            }
     }
 
     private companion object {

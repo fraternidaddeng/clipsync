@@ -60,6 +60,76 @@ class InMemorySyncRepositoryTest {
     }
 
     @Test
+    fun `a deleted marker upgrades a stored live clip to a tombstone`() =
+        runTest {
+            val repository = InMemorySyncRepository(LOCAL)
+            val eventId = "33333333-3333-4333-8333-333333333333"
+            repository.storeRemoteEvent(remote(1, eventId, content = "soon deleted"), PEER)
+
+            // The origin deleted the clip after delivering it: the same identity re-announced
+            // as `deleted` erases the stored body (mirroring the Room and Windows stores).
+            val marker = RemoteTerminalMarker(eventId, PEER, 1, "deleted")
+            assertEquals(RemoteStoreResult.Stored, repository.storeRemoteTerminal(marker, PEER))
+            assertNull(repository.findLiveContentByHash("hash-1"))
+            val row = repository.getSyncableEventsByIds(listOf(eventId)).single()
+            assertTrue(row.isTerminal)
+            assertEquals("deleted", row.terminalReason)
+
+            // Retrying the applied deletion is an idempotent duplicate.
+            assertEquals(RemoteStoreResult.Duplicate, repository.storeRemoteTerminal(marker, PEER))
+        }
+
+    @Test
+    fun `non-deleted terminal reasons keep a stored live clip`() =
+        runTest {
+            val repository = InMemorySyncRepository(LOCAL)
+            val eventId = "33333333-3333-4333-8333-333333333333"
+            repository.storeRemoteEvent(remote(1, eventId, content = "kept"), PEER)
+
+            val marker = RemoteTerminalMarker(eventId, PEER, 1, "expired")
+            assertEquals(RemoteStoreResult.Duplicate, repository.storeRemoteTerminal(marker, PEER))
+            assertEquals("kept", repository.findLiveContentByHash("hash-1"))
+        }
+
+    @Test
+    fun `a stale live ack keeps a pending tombstone outbox row`() =
+        runTest {
+            val repository = InMemorySyncRepository(LOCAL)
+            val event = repository.recordLocalClip("later deleted", sourceApp = null, nowMs = 1_000)!!
+            // The user deletes before the row was ever announced; the outbox slot now
+            // projects a tombstone that this stale content ack cannot have confirmed.
+            repository.markEventDeletedForTest(event.eventId)
+
+            repository.applyPeerAckRanges(
+                PEER,
+                listOf(OriginSequenceRanges(LOCAL, listOf(SequenceRange(1, 1)))),
+                nowMs = 2_000,
+            )
+            assertEquals(1, repository.getOutboxBatch(PEER, 10).size)
+
+            // Coverage evidence keeps the tombstone even once announced …
+            repository.markOutboxAnnounced(repository.getOutboxBatch(PEER, 10).map { it.entryId })
+            repository.applyPeerAckRanges(
+                PEER,
+                listOf(OriginSequenceRanges(LOCAL, listOf(SequenceRange(1, 1)))),
+                nowMs = 3_000,
+                dropTerminalOutbox = false,
+            )
+            repository.resetOutboxToPending(PEER)
+            assertEquals(1, repository.getOutboxBatch(PEER, 10).size)
+
+            // … and only a live ack after the tombstone's own announce clears it.
+            repository.markOutboxAnnounced(repository.getOutboxBatch(PEER, 10).map { it.entryId })
+            repository.applyPeerAckRanges(
+                PEER,
+                listOf(OriginSequenceRanges(LOCAL, listOf(SequenceRange(1, 1)))),
+                nowMs = 4_000,
+            )
+            repository.resetOutboxToPending(PEER)
+            assertTrue(repository.getOutboxBatch(PEER, 10).isEmpty())
+        }
+
+    @Test
     fun `outbox lifecycle - record, announce, reset, ack`() = runTest {
         val repository = InMemorySyncRepository(LOCAL)
         val event = repository.recordLocalClip("phone clip", sourceApp = null, nowMs = 5_000)!!

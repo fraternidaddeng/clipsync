@@ -79,6 +79,60 @@ private fun sha256Hex(text: String): String = MessageDigest.getInstance("SHA-256
     .digest(text.toByteArray(StandardCharsets.UTF_8))
     .joinToString(separator = "") { byte -> "%02x".format(byte) }
 
+private fun announcedText(
+    eventId: String,
+    seq: Long,
+    content: String,
+) = ClipAnnounceBody(
+    listOf(
+        ClipHeaderDto(
+            eventId = eventId,
+            originDeviceId = PEER_ID,
+            originSeq = seq,
+            availability = ClipAvailability.AVAILABLE,
+            kind = "text",
+            contentHash = sha256Hex(content),
+            utf8Bytes = content.toByteArray(StandardCharsets.UTF_8).size.toLong(),
+            createdAtMs = 1_776_000_000_000,
+        ),
+    ),
+)
+
+private fun textPayload(
+    eventId: String,
+    seq: Long,
+    content: String,
+) = ClipPayloadBody(
+    listOf(
+        ClipPayloadItemDto(
+            eventId = eventId,
+            originDeviceId = PEER_ID,
+            originSeq = seq,
+            kind = "text",
+            content = content,
+            contentHash = sha256Hex(content),
+            utf8Bytes = content.toByteArray(StandardCharsets.UTF_8).size.toLong(),
+            createdAtMs = 1_776_000_000_000,
+        ),
+    ),
+)
+
+/** The origin re-announces an already-delivered sequence as an unavailable `deleted` marker. */
+private fun deletedReAnnounce(
+    eventId: String,
+    seq: Long,
+) = ClipAnnounceBody(
+    listOf(
+        ClipHeaderDto(
+            eventId = eventId,
+            originDeviceId = PEER_ID,
+            originSeq = seq,
+            availability = ClipAvailability.UNAVAILABLE,
+            reason = "deleted",
+        ),
+    ),
+)
+
 class SyncEngineTest {
     private fun config(nowMs: () -> Long = { 1_776_000_000_000 }) = SyncSessionConfig(
         localDeviceId = LOCAL_ID,
@@ -225,6 +279,45 @@ class SyncEngineTest {
         assertEquals("peer_closed", sessionResult.detail)
         assertNull(sessionResult.errorCode)
     }
+
+    @Test
+    fun `a deleted re-announce for a covered sequence still tombstones the stored clip`() =
+        runTest {
+            val repository = InMemorySyncRepository(LOCAL_ID)
+            val engine = SyncEngine(repository, config(), SECRET)
+            val transport = FakeTransport()
+            val result = CompletableDeferred<SyncSessionResult>()
+            backgroundScope.launchEngine(engine, transport, result)
+
+            transport.awaitSent(SyncMessageTypes.HELLO)
+            transport.deliver(SyncMessageTypes.CHALLENGE, challengeBody())
+            transport.awaitSent(SyncMessageTypes.AUTH)
+            transport.awaitSent(SyncMessageTypes.KNOWN_VECTOR)
+            transport.deliver(SyncMessageTypes.KNOWN_VECTOR, SyncStateBody(emptyList()))
+
+            // Seq 1 arrives and commits the usual way: announce -> fetch -> payload -> ack.
+            val eventId = "33333333-3333-4333-8333-333333333333"
+            val content = "soon deleted on windows"
+            transport.deliver(SyncMessageTypes.CLIP_ANNOUNCE, announcedText(eventId, seq = 1, content = content))
+            transport.awaitSent(SyncMessageTypes.CLIP_FETCH)
+            transport.deliver(SyncMessageTypes.CLIP_PAYLOAD, textPayload(eventId, seq = 1, content = content))
+            transport.awaitSent(SyncMessageTypes.ACK_RANGES)
+
+            // Windows deleted the clip afterwards and re-announces the covered sequence as
+            // unavailable. The old skip-if-covered path would ack the tombstone away without
+            // ever applying it; the store must instead erase the body.
+            transport.deliver(SyncMessageTypes.CLIP_ANNOUNCE, deletedReAnnounce(eventId, seq = 1))
+            val reAck = transport.awaitSent(SyncMessageTypes.ACK_RANGES).body as AckRangesBody
+            assertEquals(listOf(OriginRangesDto(PEER_ID, listOf(RangeDto(1, 1)))), reAck.acks)
+
+            assertNull(repository.findLiveContentByHash(sha256Hex(content)))
+            val row = repository.getSyncableEventsByIds(listOf(eventId)).single()
+            assertTrue(row.isTerminal)
+            assertEquals("deleted", row.terminalReason)
+
+            transport.peerCloses()
+            assertTrue(result.await().authenticated)
+        }
 
     @Test
     fun `challenge with a wrong trust epoch fails the session`() = runTest {

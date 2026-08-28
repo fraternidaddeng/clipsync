@@ -194,8 +194,9 @@ class LargeImageCrossClientE2eTest {
             peerDeviceId: String,
             ranges: List<OriginSequenceRanges>,
             nowMs: Long,
+            dropTerminalOutbox: Boolean,
         ) {
-            inner.applyPeerAckRanges(peerDeviceId, ranges, nowMs)
+            inner.applyPeerAckRanges(peerDeviceId, ranges, nowMs, dropTerminalOutbox)
             synchronized(lock) { acked.addAll(ranges) }
         }
 

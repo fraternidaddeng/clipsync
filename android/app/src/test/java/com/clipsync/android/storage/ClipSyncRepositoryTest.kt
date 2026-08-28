@@ -140,6 +140,40 @@ class ClipSyncRepositoryTest {
         assertTrue(retry is RemoteStoreResult.AlreadyPersisted)
     }
 
+    @Test
+    fun remoteDeletedMarkerUpgradesAStoredLiveRowToATombstone() =
+        runBlocking {
+            repository.storeRemoteEvent(remoteEvent(seq = 1), sourcePeerId = PEER)
+
+            // The origin deleted the clip after delivering it here; the re-announced marker
+            // must erase the stored body instead of bouncing off as already persisted.
+            val marker = RemoteTerminalMarker(eventId(1), REMOTE_ORIGIN, 1, TerminalReasons.DELETED)
+            val upgraded = repository.storeRemoteTerminal(marker, sourcePeerId = PEER, receivedAtMs = NOW + 5)
+            assertTrue(upgraded is RemoteStoreResult.Stored)
+
+            assertNull(repository.getById(eventId(1)))
+            val tombstone = repository.getById(eventId(1), includeDeleted = true)!!
+            assertTrue(tombstone.isDeleted)
+            assertEquals("", tombstone.content)
+
+            // Retrying the already-applied deletion stays an idempotent success.
+            val retry = repository.storeRemoteTerminal(marker, sourcePeerId = PEER, receivedAtMs = NOW + 6)
+            assertTrue(retry is RemoteStoreResult.AlreadyPersisted)
+        }
+
+    @Test
+    fun nonDeletedTerminalReasonsNeverEraseAStoredLiveRow() =
+        runBlocking {
+            repository.storeRemoteEvent(remoteEvent(seq = 1), sourcePeerId = PEER)
+
+            // `expired` (and every other non-deleted reason) means "the origin cannot serve the
+            // body anymore", not "destroy your copy": what this device already owns stays.
+            val expired = RemoteTerminalMarker(eventId(1), REMOTE_ORIGIN, 1, TerminalReasons.EXPIRED)
+            val kept = repository.storeRemoteTerminal(expired, sourcePeerId = PEER, receivedAtMs = NOW + 5)
+            assertTrue(kept is RemoteStoreResult.AlreadyPersisted)
+            assertEquals("remote 1", repository.getById(eventId(1))!!.content)
+        }
+
     // ---- History and search ----
 
     @Test
@@ -303,6 +337,49 @@ class ClipSyncRepositoryTest {
     }
 
     @Test
+    fun aStaleLiveAckNeverDropsAPendingTombstoneOutboxRow() =
+        runBlocking {
+            // Mirror of the Windows race (SqliteSyncStoreTests.PersistedAckCoverageDoesNotDrop-
+            // TombstoneOutbox): the peer acked the content announce, but the user deleted the
+            // clip before that ack landed, so the same outbox slot now projects a tombstone.
+            val stored = repository.storeLocalEvent(draft("later deleted"), listOf(PEER))
+            assertTrue(repository.deleteEvent(stored.eventId, NOW + 1))
+
+            // The stale content ack must not silently drop the never-announced deletion.
+            repository.applyPeerAckRanges(
+                PEER,
+                listOf(OriginAckRanges(LOCAL_DEVICE, listOf(SequenceRange(1, 1)))),
+                NOW + 2,
+            )
+            val pending = repository.outboxBatch(PEER, limit = 10)
+            assertEquals(1, pending.size)
+            assertTrue(pending[0].event.isTerminal)
+
+            // Known-vector coverage proves even less — the peer holds the long-gone content,
+            // never the deletion — so this prune keeps terminal rows in any state.
+            repository.markOutboxAnnounced(listOf(pending[0].outboxId))
+            repository.applyPeerAckRanges(
+                PEER,
+                listOf(OriginAckRanges(LOCAL_DEVICE, listOf(SequenceRange(1, 1)))),
+                NOW + 3,
+                dropTerminalOutbox = false,
+            )
+            repository.resetOutboxToPending(PEER)
+            assertEquals(1, repository.pendingOutboxCount(PEER))
+
+            // Only a live ack arriving after the tombstone's own announce confirms the deletion.
+            val announced = repository.outboxBatch(PEER, limit = 10)
+            repository.markOutboxAnnounced(listOf(announced[0].outboxId))
+            repository.applyPeerAckRanges(
+                PEER,
+                listOf(OriginAckRanges(LOCAL_DEVICE, listOf(SequenceRange(1, 1)))),
+                NOW + 4,
+            )
+            repository.resetOutboxToPending(PEER)
+            assertEquals(0, repository.pendingOutboxCount(PEER))
+        }
+
+    @Test
     fun peerCursorKeepsGapSemanticsForOutOfOrderAcks() = runBlocking {
         repository.applyPeerAckRanges(
             PEER,
@@ -380,6 +457,29 @@ class ClipSyncRepositoryTest {
     }
 
     @Test
+    fun dedupIngestNeverOverwritesValidatedBlobMetadataWithAnnounceClaims() =
+        runBlocking {
+            // The first event's metadata row was written together with the validated bytes.
+            val hash = "ab".repeat(32)
+            val first = remoteImageEvent(seq = 1, media = ClipMediaRef(hash, "image/png", 68, 8, 8))
+            assertTrue(repository.storeRemoteEvent(first, sourcePeerId = PEER) is RemoteStoreResult.Stored)
+
+            // A later announce replays the same bytes under new identity but lies about the
+            // MIME and dimensions; committing it must not rewrite the blob-metadata row.
+            val spoofed = remoteImageEvent(seq = 2, media = ClipMediaRef(hash, "image/jpeg", 1, 1, 1))
+            assertTrue(repository.storeRemoteEvent(spoofed, sourcePeerId = PEER) is RemoteStoreResult.Stored)
+
+            // First write wins: both events resolve to the metadata recorded with the bytes.
+            for (eventId in listOf(first.eventId, spoofed.eventId)) {
+                val ref = requireNotNull(repository.mediaRefFor(eventId))
+                assertEquals("image/png", ref.mimeType)
+                assertEquals(68, ref.encodedBytes)
+                assertEquals(8, ref.pixelWidth)
+                assertEquals(8, ref.pixelHeight)
+            }
+        }
+
+    @Test
     fun observedHistoryJoinsBlobMetadataForImageRows() = runBlocking {
         val image = repository.storeLocalImageEvent(imageDraft("ab"), listOf(PEER))
         val text = repository.storeLocalEvent(draft("plain text"), listOf(PEER))
@@ -453,6 +553,22 @@ class ClipSyncRepositoryTest {
         sourceApp = null,
         createdAtMs = NOW,
         expiresAtMs = null,
+    )
+
+    private fun remoteImageEvent(
+        seq: Long,
+        media: ClipMediaRef,
+    ) = RemoteClipEvent(
+        eventId = eventId(seq),
+        originDeviceId = REMOTE_ORIGIN,
+        originSeq = seq,
+        content = "",
+        contentHash = media.contentHash,
+        sourceApp = null,
+        createdAtMs = NOW,
+        expiresAtMs = null,
+        kind = ClipKinds.IMAGE,
+        media = media,
     )
 
     private fun eventId(seq: Long): String =

@@ -4,6 +4,7 @@ import com.clipsync.android.media.ImageChunks
 import com.clipsync.android.media.MediaLimits
 import com.clipsync.android.media.MediaStoreException
 import com.clipsync.android.media.PendingMediaWrite
+import com.clipsync.android.media.ValidatedImage
 import com.clipsync.android.protocol.ProtocolJson
 import java.io.IOException
 import java.nio.charset.StandardCharsets
@@ -346,12 +347,14 @@ class SyncEngine(
         peerVector = parsed
 
         // Their persisted coverage is acknowledgment evidence: prune what they already hold.
+        // Coverage proves the peer holds the sequence's long-gone content, not that it heard
+        // about a later deletion, so tombstone outbox rows survive this prune (like Windows).
         val covered = parsed
             .filterKeys { it != config.peerDeviceId }
             .map { (origin, held) -> OriginSequenceRanges(origin, held.toCoverage()) }
             .filter { it.ranges.isNotEmpty() }
         if (covered.isNotEmpty()) {
-            repository.applyPeerAckRanges(config.peerDeviceId, covered, config.nowMs())
+            repository.applyPeerAckRanges(config.peerDeviceId, covered, config.nowMs(), dropTerminalOutbox = false)
         }
 
         sendWants()
@@ -453,7 +456,11 @@ class SyncEngine(
             }
 
             val localState = mine[origin] ?: OriginReceiveState.EMPTY
-            if (localState.contains(header.originSeq)) {
+            // A covered sequence is normally just re-acked, but an unavailable header must
+            // still reach the store even then (mirroring Windows): the origin re-announces a
+            // sequence it already delivered exactly when it deleted the clip afterwards, and
+            // skipping here would ack the tombstone away without ever applying the deletion.
+            if (localState.contains(header.originSeq) && header.availability != ClipAvailability.UNAVAILABLE) {
                 acks.add(origin to header.originSeq)
                 continue
             }
@@ -477,11 +484,11 @@ class SyncEngine(
                     fail(SyncErrorCodes.UNSUPPORTED_MEDIA, "image_on_v1")
                     return false
                 }
-                val hash = header.contentHash
-                if (hash != null && repository.findLiveImageByHash(hash)) {
+                val knownBlob = header.contentHash?.let { repository.findLiveImageByHash(it) }
+                if (knownBlob != null) {
                     // The exact bytes are already on disk: commit the event row without a
                     // transfer (protocol v2 section 5, dedup by content hash).
-                    if (!ingestAvailableImage(header, committed)) {
+                    if (!ingestAvailableImage(header, knownBlob, committed)) {
                         return false
                     }
                     acks.add(origin to header.originSeq)
@@ -538,9 +545,15 @@ class SyncEngine(
         return true
     }
 
-    /** Commits an announced image whose blob is already stored locally (hash replay). */
+    /**
+     * Commits an announced image whose blob is already stored locally (hash replay). Blob
+     * metadata comes from [blob] — the record of the bytes' own validated commit — never from
+     * the header: Windows re-inspects the on-disk file for the same reason, and honoring the
+     * announce's claims here would let a peer overwrite validated MIME/dimensions metadata.
+     */
     private suspend fun ingestAvailableImage(
         header: ClipHeaderDto,
+        blob: ValidatedImage,
         committed: MutableList<RemoteClipApplied>,
     ): Boolean {
         val stored = repository.storeRemoteEvent(
@@ -549,15 +562,15 @@ class SyncEngine(
                 originDeviceId = header.originDeviceId,
                 originSeq = header.originSeq,
                 content = "",
-                contentHash = header.contentHash!!,
+                contentHash = blob.contentHash,
                 sourceApp = header.sourceApp,
                 createdAtMs = header.createdAtMs ?: config.nowMs(),
                 expiresAtMs = header.expiresAtMs,
                 kind = MediaLimits.KIND_IMAGE,
-                mimeType = header.mimeType,
-                encodedBytes = header.encodedBytes?.toInt(),
-                pixelWidth = header.pixelWidth?.toInt(),
-                pixelHeight = header.pixelHeight?.toInt(),
+                mimeType = blob.mimeType,
+                encodedBytes = blob.encodedBytes,
+                pixelWidth = blob.pixelWidth,
+                pixelHeight = blob.pixelHeight,
             ),
             config.peerDeviceId,
         )
@@ -574,8 +587,8 @@ class SyncEngine(
                     content = "",
                     createdAtMs = header.createdAtMs ?: config.nowMs(),
                     kind = MediaLimits.KIND_IMAGE,
-                    contentHash = header.contentHash,
-                    mimeType = header.mimeType,
+                    contentHash = blob.contentHash,
+                    mimeType = blob.mimeType,
                 ),
             )
         }

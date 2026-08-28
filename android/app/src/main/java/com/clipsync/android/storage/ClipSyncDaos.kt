@@ -225,14 +225,52 @@ interface OutboxDao {
     @Query("UPDATE outbox SET state = 'pending' WHERE peer_id = :peerId AND state = 'announced'")
     suspend fun resetToPending(peerId: String)
 
+    /**
+     * Live-ack prune (mirrors the Windows `dropTerminalOutbox: true` SQL): live-content rows
+     * leave in any state, terminal rows only once their own announce went out — a pending
+     * tombstone cannot have been confirmed by this ack, so it survives to be announced.
+     */
     @Query(
         """
         DELETE FROM outbox
         WHERE peer_id = :peerId AND origin_device_id = :originDeviceId
           AND origin_seq >= :startSeq AND origin_seq <= :endSeq
+          AND (state = 'announced'
+            OR event_id IN (
+              SELECT event_id FROM clips
+              WHERE deleted_at IS NULL AND terminal_reason IS NULL
+            ))
         """,
     )
-    suspend fun deleteAckedRange(peerId: String, originDeviceId: String, startSeq: Long, endSeq: Long)
+    suspend fun deleteAckedRangeDroppingAnnouncedTerminals(
+        peerId: String,
+        originDeviceId: String,
+        startSeq: Long,
+        endSeq: Long,
+    )
+
+    /**
+     * Coverage-evidence prune (mirrors the Windows `dropTerminalOutbox: false` SQL): the
+     * peer's known vector proves it holds the sequence's long-gone content, never that it
+     * heard about a later deletion, so terminal rows always survive this prune.
+     */
+    @Query(
+        """
+        DELETE FROM outbox
+        WHERE peer_id = :peerId AND origin_device_id = :originDeviceId
+          AND origin_seq >= :startSeq AND origin_seq <= :endSeq
+          AND event_id IN (
+            SELECT event_id FROM clips
+            WHERE deleted_at IS NULL AND terminal_reason IS NULL
+          )
+        """,
+    )
+    suspend fun deleteAckedRangeKeepingTerminals(
+        peerId: String,
+        originDeviceId: String,
+        startSeq: Long,
+        endSeq: Long,
+    )
 
     @Query("DELETE FROM outbox WHERE peer_id = :peerId")
     suspend fun deleteForPeer(peerId: String)

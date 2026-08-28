@@ -186,7 +186,28 @@ class ClipSyncRepository(
                 marker.originDeviceId,
                 marker.originSeq,
                 expectedContentHash = null,
-            )?.let { return@withTransaction it }
+            )?.let { conflict ->
+                // Mirror the Windows store: only the origin-authoritative `deleted` reason
+                // upgrades an already-stored live body to a tombstone — the origin deleted
+                // the clip after this device received it. Every other reason (expired,
+                // local_only, …) keeps what this device already owns, and a retry of an
+                // already-applied deletion stays an idempotent AlreadyPersisted.
+                if (conflict is RemoteStoreResult.AlreadyPersisted &&
+                    marker.reason == TerminalReasons.DELETED &&
+                    clips.softDelete(marker.eventId, receivedAtMs) == 1
+                ) {
+                    val state = advanceReceiveState(marker.originDeviceId, marker.originSeq)
+                    enqueueOutbox(
+                        marker.eventId,
+                        marker.originDeviceId,
+                        marker.originSeq,
+                        fanOutPeerIds,
+                        excludedPeerId = sourcePeerId,
+                    )
+                    return@withTransaction RemoteStoreResult.Stored(state)
+                }
+                return@withTransaction conflict
+            }
 
             clips.insert(
                 ClipEventEntity(
@@ -308,12 +329,16 @@ class ClipSyncRepository(
     suspend fun findLiveContentByHash(contentHash: String): String? =
         clips.findLiveContentByHash(contentHash)
 
-    /** True when a live image row with this blob hash exists and its bytes are still on disk. */
-    suspend fun findLiveImageByHash(contentHash: String): Boolean {
-        if (clips.countLiveImagesByHash(contentHash) == 0) {
-            return false
+    /**
+     * The validated blob metadata of a live image with this hash whose bytes are on disk,
+     * or null. The row was written from the bytes' own validated commit, so dedup ingest can
+     * trust it over whatever an announce header claims about the same hash.
+     */
+    suspend fun findLiveImageByHash(contentHash: String): ClipMediaRef? {
+        if (clips.countLiveImagesByHash(contentHash) == 0 || media?.exists(contentHash) != true) {
+            return null
         }
-        return media?.exists(contentHash) == true
+        return mediaBlobs.find(contentHash)?.toRef()
     }
 
     /** Blob metadata for one image clip; null for text rows or when the metadata is gone. */
@@ -375,6 +400,7 @@ class ClipSyncRepository(
         peerId: String,
         acks: List<OriginAckRanges>,
         nowMs: Long,
+        dropTerminalOutbox: Boolean = true,
     ) {
         if (acks.isEmpty()) {
             return
@@ -395,8 +421,27 @@ class ClipSyncRepository(
                         updatedAtMs = nowMs,
                     ),
                 )
+                // Live-content rows are moot once the peer holds the sequence, in any state.
+                // Terminal rows leave only after their own announce went out and only for a
+                // live ack ([dropTerminalOutbox]): a pending tombstone cannot have been
+                // confirmed by this ack, so it survives to be announced (the Windows race
+                // fix — a stale content ack must not silently drop a fresh deletion).
                 for (range in ack.ranges) {
-                    outbox.deleteAckedRange(peerId, ack.originDeviceId, range.startSeq, range.endSeq)
+                    if (dropTerminalOutbox) {
+                        outbox.deleteAckedRangeDroppingAnnouncedTerminals(
+                            peerId,
+                            ack.originDeviceId,
+                            range.startSeq,
+                            range.endSeq,
+                        )
+                    } else {
+                        outbox.deleteAckedRangeKeepingTerminals(
+                            peerId,
+                            ack.originDeviceId,
+                            range.startSeq,
+                            range.endSeq,
+                        )
+                    }
                 }
             }
         }
@@ -679,19 +724,24 @@ class ClipSyncRepository(
         }
     }
 
-    /** Writes/refreshes the blob-metadata row and the event-to-blob link for one image event. */
+    /** Writes the blob-metadata row (first write wins) and the event-to-blob link for one image event. */
     private suspend fun writeMediaRows(eventId: String, ref: ClipMediaRef, createdAtMs: Long) {
-        mediaBlobs.upsert(
-            MediaBlobEntity(
-                contentHash = ref.contentHash,
-                mimeType = ref.mimeType,
-                encodedBytes = ref.encodedBytes,
-                pixelWidth = ref.pixelWidth,
-                pixelHeight = ref.pixelHeight,
-                state = MediaLimits.BLOB_STATE_READY,
-                createdAtMs = createdAtMs,
-            ),
-        )
+        // First write wins: the existing row was recorded from the bytes' own validated
+        // commit, and a later event for the same hash (dedup ingest) must never replace it
+        // with whatever its announce header claimed about MIME or dimensions.
+        if (mediaBlobs.find(ref.contentHash) == null) {
+            mediaBlobs.upsert(
+                MediaBlobEntity(
+                    contentHash = ref.contentHash,
+                    mimeType = ref.mimeType,
+                    encodedBytes = ref.encodedBytes,
+                    pixelWidth = ref.pixelWidth,
+                    pixelHeight = ref.pixelHeight,
+                    state = MediaLimits.BLOB_STATE_READY,
+                    createdAtMs = createdAtMs,
+                ),
+            )
+        }
         clipMedia.upsert(
             ClipMediaEntity(
                 eventId = eventId,

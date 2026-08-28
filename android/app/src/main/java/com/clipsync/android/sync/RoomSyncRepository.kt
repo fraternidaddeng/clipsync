@@ -30,8 +30,16 @@ class RoomSyncRepository(
     override suspend fun findLiveContentByHash(contentHash: String): String? =
         store.findLiveContentByHash(contentHash)
 
-    override suspend fun findLiveImageByHash(contentHash: String): Boolean =
-        store.findLiveImageByHash(contentHash)
+    override suspend fun findLiveImageByHash(contentHash: String): ValidatedImage? =
+        store.findLiveImageByHash(contentHash)?.let { ref ->
+            ValidatedImage(
+                mimeType = ref.mimeType,
+                contentHash = ref.contentHash,
+                encodedBytes = ref.encodedBytes,
+                pixelWidth = ref.pixelWidth,
+                pixelHeight = ref.pixelHeight,
+            )
+        }
 
     override suspend fun storeRemoteEvent(event: RemoteClipEvent, viaDeviceId: String): RemoteStoreResult =
         store.storeRemoteEvent(
@@ -91,11 +99,13 @@ class RoomSyncRepository(
         peerDeviceId: String,
         ranges: List<OriginSequenceRanges>,
         nowMs: Long,
+        dropTerminalOutbox: Boolean,
     ) {
         store.applyPeerAckRanges(
             peerDeviceId,
             ranges.map { OriginAckRanges(it.originDeviceId, it.ranges) },
             nowMs,
+            dropTerminalOutbox,
         )
     }
 

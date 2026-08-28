@@ -85,10 +85,17 @@ class ClipSyncDaoSqliteTest {
                 outbox.resetToPending(PEER_ID)
                 assertEquals(3, outbox.pendingCount(PEER_ID))
 
-                // The peer acked seq 1..2: those obligations disappear, seq 3 survives.
-                outbox.deleteAckedRange(PEER_ID, ORIGIN_ID, startSeq = 1, endSeq = 2)
+                // The peer acked seq 1..2: those obligations disappear, seq 3 survives. The
+                // subselect keeping pending tombstones alive must also parse on framework SQLite.
+                outbox.deleteAckedRangeDroppingAnnouncedTerminals(PEER_ID, ORIGIN_ID, startSeq = 1, endSeq = 2)
                 val remaining = outbox.pendingBatch(PEER_ID, limit = 10)
                 assertEquals(listOf(3L), remaining.map { it.clip.originSeq })
+
+                // Coverage evidence spares a pending tombstone: soft-delete seq 3, then prune
+                // with the keeping-terminals query — the obligation must survive.
+                clips.softDelete("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb3", deletedAtMs = 99)
+                outbox.deleteAckedRangeKeepingTerminals(PEER_ID, ORIGIN_ID, startSeq = 3, endSeq = 3)
+                assertEquals(1, outbox.pendingCount(PEER_ID))
             } finally {
                 db.close()
             }

@@ -290,6 +290,116 @@ class WindowsAndroidImageSyncChainTest {
         }
 
     @Test
+    fun aDeletedReAnnounceTombstonesTheReceivedImageAndBlocksDedupFromIt() =
+        runBlocking {
+            val sample = png8x8()
+            val transport = startEngine()
+            transport.completeHandshake()
+
+            val eventId = "66666666-6666-4666-8666-666666666666"
+            transport.pushImageFromWindows(
+                eventId,
+                originSeq = 1,
+                sample = sample,
+                chunkSizes = listOf(sample.bytes.size),
+            )
+            transport.awaitSent(SyncMessageTypes.ACK_RANGES)
+
+            // Windows deleted the image afterwards and re-announces the covered sequence
+            // as unavailable: the store must erase the row instead of skipping the header.
+            transport.deliver(
+                SyncMessageTypes.CLIP_ANNOUNCE,
+                ClipAnnounceBody(
+                    listOf(
+                        ClipHeaderDto(
+                            eventId = eventId,
+                            originDeviceId = WINDOWS_ID,
+                            originSeq = 1,
+                            availability = ClipAvailability.UNAVAILABLE,
+                            reason = "deleted",
+                        ),
+                    ),
+                ),
+            )
+            val reAck = transport.awaitSent(SyncMessageTypes.ACK_RANGES).body as AckRangesBody
+            assertEquals(listOf(OriginRangesDto(WINDOWS_ID, listOf(RangeDto(1, 1)))), reAck.acks)
+            awaitUntil("tombstoned image row") { store.getById(eventId) == null }
+            assertTrue(requireNotNull(store.getById(eventId, includeDeleted = true)).isDeleted)
+
+            // The same bytes announced again must transfer for real: hash dedup cannot
+            // resurrect content from a tombstoned row (the fetch below proves no replay).
+            val second = "77777777-7777-4777-8777-777777777777"
+            transport.pushImageFromWindows(
+                second,
+                originSeq = 2,
+                sample = sample,
+                chunkSizes = listOf(sample.bytes.size),
+            )
+            val acks = transport.awaitSent(SyncMessageTypes.ACK_RANGES).body as AckRangesBody
+            assertEquals(listOf(OriginRangesDto(WINDOWS_ID, listOf(RangeDto(2, 2)))), acks.acks)
+            assertEquals(sample.contentHash, requireNotNull(store.mediaRefFor(second)).contentHash)
+
+            transport.peerCloses()
+        }
+
+    @Test
+    fun aDedupAnnounceWithSpoofedMetadataCommitsTheValidatedBlobMetadata() =
+        runBlocking {
+            val sample = png8x8()
+            val transport = startEngine()
+            transport.completeHandshake()
+
+            val first = "88888888-8888-4888-8888-888888888888"
+            transport.pushImageFromWindows(
+                first,
+                originSeq = 1,
+                sample = sample,
+                chunkSizes = listOf(sample.bytes.size),
+            )
+            transport.awaitSent(SyncMessageTypes.ACK_RANGES)
+
+            // A dedup announce replays the stored hash but lies about MIME, size, and
+            // dimensions. The commit must come from the blob's own validated metadata.
+            val second = "99999999-9999-4999-8999-999999999999"
+            transport.deliver(
+                SyncMessageTypes.CLIP_ANNOUNCE,
+                ClipAnnounceBody(
+                    listOf(
+                        ClipHeaderDto(
+                            eventId = second,
+                            originDeviceId = WINDOWS_ID,
+                            originSeq = 2,
+                            availability = ClipAvailability.AVAILABLE,
+                            kind = MediaLimits.KIND_IMAGE,
+                            contentHash = sample.contentHash,
+                            sourceApp = "spoof.exe",
+                            createdAtMs = System.currentTimeMillis(),
+                            mimeType = MediaLimits.MIME_JPEG,
+                            encodedBytes = 1L,
+                            pixelWidth = 1L,
+                            pixelHeight = 1L,
+                        ),
+                    ),
+                ),
+            )
+            val acks = transport.awaitSent(SyncMessageTypes.ACK_RANGES).body as AckRangesBody
+            assertEquals(listOf(OriginRangesDto(WINDOWS_ID, listOf(RangeDto(2, 2)))), acks.acks)
+
+            // Both the metadata row and the committed callback carry the validated truth.
+            val ref = requireNotNull(store.mediaRefFor(second))
+            assertEquals(sample.mimeType, ref.mimeType)
+            assertEquals(sample.bytes.size, ref.encodedBytes)
+            assertEquals(sample.pixelWidth, ref.pixelWidth)
+            assertEquals(sample.pixelHeight, ref.pixelHeight)
+            transport.fence()
+            val applied = committedSnapshot().single { it.eventId == second }
+            assertEquals(sample.mimeType, applied.mimeType)
+            assertEquals(sample.contentHash, applied.contentHash)
+
+            transport.peerCloses()
+        }
+
+    @Test
     fun aV1SessionDowngradesTheLocalImageToLocalOnlyAndRoomKeepsTheBadge() =
         runBlocking {
             val sample = png8x8()

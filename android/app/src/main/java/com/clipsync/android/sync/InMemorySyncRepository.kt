@@ -1,5 +1,6 @@
 package com.clipsync.android.sync
 
+import com.clipsync.android.storage.TerminalReasons
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.UUID
@@ -55,6 +56,27 @@ class InMemorySyncRepository(
 
     override suspend fun storeRemoteTerminal(marker: RemoteTerminalMarker, viaDeviceId: String): RemoteStoreResult =
         synchronized(lock) {
+            val key = marker.originDeviceId to marker.originSeq
+            val existing = eventsByKey[key]
+            if (existing != null && existing.eventId == marker.eventId) {
+                // Only the origin-authoritative "deleted" reason upgrades a stored live body
+                // to a tombstone (mirroring the Room and Windows stores); every other reason
+                // keeps what this device already owns and stays an idempotent success.
+                if (!existing.isTerminal && marker.reason == TerminalReasons.DELETED) {
+                    val tombstone =
+                        existing.copy(
+                            isTerminal = true,
+                            terminalReason = marker.reason,
+                            content = null,
+                            contentHash = null,
+                            sourceApp = null,
+                        )
+                    eventsByKey[key] = tombstone
+                    eventsById[marker.eventId] = tombstone
+                    return@synchronized RemoteStoreResult.Stored
+                }
+                return@synchronized RemoteStoreResult.Duplicate
+            }
             storeLocked(
                 SyncableClipEvent(
                     eventId = marker.eventId,
@@ -108,10 +130,21 @@ class InMemorySyncRepository(
         peerDeviceId: String,
         ranges: List<OriginSequenceRanges>,
         nowMs: Long,
+        dropTerminalOutbox: Boolean,
     ): Unit = synchronized(lock) {
         outbox.removeAll { entry ->
             val (origin, seq) = entry.key
-            ranges.any { acked -> acked.originDeviceId == origin && acked.ranges.any { it.contains(seq) } }
+            val covered =
+                ranges.any { acked ->
+                    acked.originDeviceId == origin && acked.ranges.any { it.contains(seq) }
+                }
+            if (!covered) {
+                return@removeAll false
+            }
+            // A tombstone row leaves only after its own announce went out (and only for a
+            // live ack): the ack may confirm the long-gone content, never a pending deletion.
+            val isTerminal = eventsByKey[entry.key]?.isTerminal == true
+            !isTerminal || (dropTerminalOutbox && entry.announced)
         }
     }
 
@@ -150,6 +183,25 @@ class InMemorySyncRepository(
 
     /** Test hook: event ids currently badged 仅本机保留. */
     fun imagesMarkedLocalOnly(): Set<String> = synchronized(lock) { localOnlyEventIds.toSet() }
+
+    /**
+     * Test hook: soft-deletes a stored event the way the Room store's local delete does, so
+     * a still-queued outbox row for it projects a tombstone announce.
+     */
+    fun markEventDeletedForTest(eventId: String): Unit =
+        synchronized(lock) {
+            val event = eventsById.getValue(eventId)
+            val tombstone =
+                event.copy(
+                    isTerminal = true,
+                    terminalReason = TerminalReasons.DELETED,
+                    content = null,
+                    contentHash = null,
+                    sourceApp = null,
+                )
+            eventsByKey[event.originDeviceId to event.originSeq] = tombstone
+            eventsById[eventId] = tombstone
+        }
 
     /**
      * Test hook: injects a local image event straight into the store and outbox, standing in

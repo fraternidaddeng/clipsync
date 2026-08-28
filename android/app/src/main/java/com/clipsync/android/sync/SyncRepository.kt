@@ -116,8 +116,20 @@ interface SyncRepository {
 
     suspend fun getSyncableEventsByIds(eventIds: List<String>): List<SyncableClipEvent>
 
-    /** Records what [peerDeviceId] provably holds; prunes those events from its outbox. */
-    suspend fun applyPeerAckRanges(peerDeviceId: String, ranges: List<OriginSequenceRanges>, nowMs: Long)
+    /**
+     * Records what [peerDeviceId] provably holds; prunes those events from its outbox.
+     * Live-content rows leave in any state, but a tombstone row leaves only after its own
+     * announce went out and [dropTerminalOutbox] is true (a live `ack_ranges` reply): the
+     * peer's known-vector coverage only proves it holds the long-gone content, so a pending
+     * tombstone survives to be announced — otherwise a stale content ack landing right after
+     * a local delete would silently drop the deletion forever (the Windows race fix).
+     */
+    suspend fun applyPeerAckRanges(
+        peerDeviceId: String,
+        ranges: List<OriginSequenceRanges>,
+        nowMs: Long,
+        dropTerminalOutbox: Boolean = true,
+    )
 
     /** Reverts announced-but-unacked outbox rows to pending at session start. */
     suspend fun resetOutboxToPending(peerDeviceId: String)
@@ -138,8 +150,13 @@ interface SyncRepository {
     /** Media blob store for protocol v2 image bodies; null when images are unsupported. */
     val media: MediaBlobStore? get() = null
 
-    /** True when a live image row with this blob hash exists and its bytes are on disk. */
-    suspend fun findLiveImageByHash(contentHash: String): Boolean = false
+    /**
+     * The validated metadata of a live image with this blob hash whose bytes are on disk, or
+     * null when no such image exists. The metadata comes from the bytes' own validated commit
+     * (magic bytes, dimensions, size), never from a peer's announce header, so dedup ingest
+     * cannot be talked into recording spoofed MIME/dimension claims for existing bytes.
+     */
+    suspend fun findLiveImageByHash(contentHash: String): ValidatedImage? = null
 
     /**
      * Captures one local clipboard image as a new origin event and queues it for the peer.
