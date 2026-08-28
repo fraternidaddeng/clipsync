@@ -202,10 +202,10 @@
         <error line="103" column="22" source="standard:multiline-expression-wrapping" />
         <error line="129" column="28" source="standard:multiline-expression-wrapping" />
         <error line="134" column="24" source="standard:multiline-expression-wrapping" />
-        <error line="148" column="28" source="standard:function-signature" />
-        <error line="148" column="48" source="standard:function-signature" />
-        <error line="148" column="65" source="standard:function-signature" />
-        <error line="151" column="22" source="standard:multiline-expression-wrapping" />
+        <error line="154" column="28" source="standard:function-signature" />
+        <error line="154" column="48" source="standard:function-signature" />
+        <error line="154" column="65" source="standard:function-signature" />
+        <error line="157" column="22" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/AndroidRouteProbes.kt">
         <error line="21" column="26" source="standard:class-signature" />
@@ -275,19 +275,19 @@
         <error line="100" column="47" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/ClipboardWriteCoordinator.kt">
-        <error line="20" column="19" source="standard:function-signature" />
-        <error line="20" column="33" source="standard:function-signature" />
-        <error line="20" column="54" source="standard:function-signature" />
-        <error line="22" column="27" source="standard:multiline-expression-wrapping" />
-        <error line="52" column="20" source="standard:function-signature" />
-        <error line="52" column="40" source="standard:function-signature" />
-        <error line="52" column="58" source="standard:function-signature" />
-        <error line="52" column="79" source="standard:function-signature" />
-        <error line="54" column="47" source="standard:multiline-expression-wrapping" />
-        <error line="65" column="24" source="standard:function-signature" />
-        <error line="65" column="48" source="standard:function-signature" />
-        <error line="65" column="60" source="standard:function-signature" />
-        <error line="93" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="25" column="19" source="standard:function-signature" />
+        <error line="25" column="33" source="standard:function-signature" />
+        <error line="25" column="54" source="standard:function-signature" />
+        <error line="27" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="59" column="20" source="standard:function-signature" />
+        <error line="59" column="40" source="standard:function-signature" />
+        <error line="59" column="58" source="standard:function-signature" />
+        <error line="59" column="79" source="standard:function-signature" />
+        <error line="62" column="51" source="standard:multiline-expression-wrapping" />
+        <error line="74" column="24" source="standard:function-signature" />
+        <error line="74" column="48" source="standard:function-signature" />
+        <error line="74" column="60" source="standard:function-signature" />
+        <error line="107" column="25" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/ClipboardWriter.kt">
         <error line="6" column="19" source="standard:function-signature" />
@@ -1601,7 +1601,7 @@
         <error line="83" column="24" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/AndroidPublicClipboardWriterTest.kt">
-        <error line="76" column="18" source="standard:multiline-expression-wrapping" />
+        <error line="78" column="18" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/CapabilityProbeBackendsTest.kt">
         <error line="11" column="31" source="standard:class-signature" />
@@ -1651,15 +1651,15 @@
         <error line="345" column="22" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/ClipboardWriteCoordinatorTest.kt">
-        <error line="25" column="28" source="standard:multiline-expression-wrapping" />
-        <error line="41" column="27" source="standard:multiline-expression-wrapping" />
-        <error line="55" column="27" source="standard:multiline-expression-wrapping" />
-        <error line="69" column="28" source="standard:multiline-expression-wrapping" />
-        <error line="72" column="27" source="standard:multiline-expression-wrapping" />
-        <error line="83" column="27" source="standard:multiline-expression-wrapping" />
-        <error line="98" column="27" source="standard:multiline-expression-wrapping" />
-        <error line="112" column="28" source="standard:multiline-expression-wrapping" />
-        <error line="115" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="28" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="44" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="58" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="72" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="75" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="86" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="101" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="115" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="118" column="27" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/FakeClipboardBackends.kt">
         <error line="7" column="40" source="standard:multiline-expression-wrapping" />

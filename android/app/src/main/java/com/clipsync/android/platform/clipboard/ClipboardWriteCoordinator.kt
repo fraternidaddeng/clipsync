@@ -9,6 +9,11 @@ class ClipboardWriteCoordinator(
     private val nowEpochMillis: () -> Long = System::currentTimeMillis,
     private val suppressionWindowMillis: Long = 5_000L,
 ) {
+    // Guards the suppression table: writes arm it from the main thread (auto-apply, history
+    // copy, notification copy action) while the capture backends consume it from their own
+    // threads (the overlay poller's HandlerThread, privileged binder callbacks). Only the
+    // short map operations run under the lock — never the blocking OS write itself.
+    private val suppressionLock = Any()
     private val suppressionsByOrigin = mutableMapOf<String, WriteSuppression>()
 
     val publicWriteState: CapabilityState
@@ -23,7 +28,9 @@ class ClipboardWriteCoordinator(
             contentHash = hasher.hash(text),
             expiresAtEpochMillis = nowEpochMillis() + suppressionWindowMillis,
         )
-        suppressionsByOrigin[originEventId] = suppression
+        synchronized(suppressionLock) {
+            suppressionsByOrigin[originEventId] = suppression
+        }
 
         val publicResult = publicWriter.writeText(text, originEventId)
         if (publicResult is ClipboardWriteResult.Success) {
@@ -51,10 +58,12 @@ class ClipboardWriteCoordinator(
      */
     fun writeImage(encoded: ByteArray, mimeType: String, originEventId: String): ClipboardWriteOutcome {
         require(originEventId.isNotBlank()) { "originEventId must not be blank." }
-        suppressionsByOrigin[originEventId] = WriteSuppression(
-            contentHash = ImageCodec.hashBytes(encoded),
-            expiresAtEpochMillis = nowEpochMillis() + suppressionWindowMillis,
-        )
+        synchronized(suppressionLock) {
+            suppressionsByOrigin[originEventId] = WriteSuppression(
+                contentHash = ImageCodec.hashBytes(encoded),
+                expiresAtEpochMillis = nowEpochMillis() + suppressionWindowMillis,
+            )
+        }
         val result = publicWriter.writeImage(encoded, mimeType, originEventId)
         if (result !is ClipboardWriteResult.Success) {
             clearSuppression(originEventId)
@@ -63,16 +72,20 @@ class ClipboardWriteCoordinator(
     }
 
     fun shouldSuppress(originEventId: String?, text: String): Boolean {
-        purgeExpiredSuppressions()
-        if (originEventId == null) {
-            return false
+        // Hash outside the lock; only the table lookup/removal is serialized.
+        val contentHash = if (originEventId != null) hasher.hash(text) else null
+        synchronized(suppressionLock) {
+            purgeExpiredSuppressions()
+            if (originEventId == null) {
+                return false
+            }
+            val suppression = suppressionsByOrigin[originEventId] ?: return false
+            val matches = suppression.contentHash == contentHash
+            if (matches) {
+                suppressionsByOrigin.remove(originEventId)
+            }
+            return matches
         }
-        val suppression = suppressionsByOrigin[originEventId] ?: return false
-        val matches = suppression.contentHash == hasher.hash(text)
-        if (matches) {
-            suppressionsByOrigin.remove(originEventId)
-        }
-        return matches
     }
 
     /**
@@ -89,17 +102,22 @@ class ClipboardWriteCoordinator(
      * bytes' SHA-256 itself, so the check must not re-hash an empty text stand-in.
      */
     fun shouldSuppressContentHash(contentHash: String): Boolean {
-        purgeExpiredSuppressions()
-        val match = suppressionsByOrigin.entries.firstOrNull { it.value.contentHash == contentHash }
-            ?: return false
-        suppressionsByOrigin.remove(match.key)
-        return true
+        synchronized(suppressionLock) {
+            purgeExpiredSuppressions()
+            val match = suppressionsByOrigin.entries.firstOrNull { it.value.contentHash == contentHash }
+                ?: return false
+            suppressionsByOrigin.remove(match.key)
+            return true
+        }
     }
 
     private fun clearSuppression(originEventId: String) {
-        suppressionsByOrigin.remove(originEventId)
+        synchronized(suppressionLock) {
+            suppressionsByOrigin.remove(originEventId)
+        }
     }
 
+    /** Callers must hold [suppressionLock]. */
     private fun purgeExpiredSuppressions() {
         val now = nowEpochMillis()
         suppressionsByOrigin.entries.removeAll { (_, suppression) ->

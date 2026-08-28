@@ -4,6 +4,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
+import kotlin.io.path.createTempDirectory
 
 class AndroidPublicClipboardWriterTest {
     @Test
@@ -97,6 +99,57 @@ class AndroidPublicClipboardWriterTest {
         )
         assertTrue(AndroidPublicClipboardWriter.ERROR_CODES.all { it.startsWith("PUBLIC_WRITE_") })
     }
+
+    @Test
+    fun `share dir prune deletes superseded files but honors the paste grace window`() {
+        withShareDir { shareDir ->
+            val now = 10L * ShareDirPruner.GRACE_MS
+            val stale = shareFile(shareDir, "stale-event.png", modifiedAt = now - ShareDirPruner.GRACE_MS - 1)
+            val inGrace = shareFile(shareDir, "recent-event.jpg", modifiedAt = now - 1_000)
+            val keep = shareFile(shareDir, "current-event.png", modifiedAt = now)
+
+            ShareDirPruner.pruneSuperseded(shareDir, keep = keep, nowMs = now)
+
+            // Superseded past the grace window: reclaimed. Within it: an app may still be
+            // pasting that URI. The clipboard's current target always survives.
+            assertFalse(stale.exists())
+            assertTrue(inGrace.exists())
+            assertTrue(keep.exists())
+        }
+    }
+
+    @Test
+    fun `share dir prune never deletes the kept file even with an ancient timestamp`() {
+        withShareDir { shareDir ->
+            // Re-apply of the same event id rewrites the same file; writeBytes can keep an
+            // old mtime granularity on some filesystems, so `keep` must win by identity.
+            val now = 10L * ShareDirPruner.GRACE_MS
+            val keep = shareFile(shareDir, "same-event.png", modifiedAt = 1_000)
+
+            ShareDirPruner.pruneSuperseded(shareDir, keep = keep, nowMs = now)
+
+            assertTrue(keep.exists())
+        }
+    }
+
+    private fun withShareDir(block: (File) -> Unit) {
+        val dir = createTempDirectory("clipsync-share-prune").toFile()
+        try {
+            block(dir)
+        } finally {
+            dir.deleteRecursively()
+        }
+    }
+
+    private fun shareFile(
+        dir: File,
+        name: String,
+        modifiedAt: Long,
+    ): File =
+        File(dir, name).apply {
+            writeBytes(byteArrayOf(1, 2, 3))
+            assertTrue(setLastModified(modifiedAt))
+        }
 
     private class FakeClipboardWriteOs(
         var usable: Boolean = true,

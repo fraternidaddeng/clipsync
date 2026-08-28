@@ -137,6 +137,12 @@ internal class AndroidClipboardWriteOs(
                 uri,
             )
             clipboardManager.setPrimaryClip(clip)
+            // Only after the clipboard actually points at the new file: a paste can no
+            // longer resolve the superseded share files, so they are garbage — without
+            // this, every applied image stayed in filesDir forever (and outlived the
+            // retention cleanup that deletes the same pixels from history and the
+            // media store). The grace window covers a paste already reading the old URI.
+            ShareDirPruner.pruneSuperseded(shareDir, keep = file, nowMs = System.currentTimeMillis())
         }
     }
 
@@ -180,6 +186,31 @@ internal class AndroidClipboardWriteOs(
             actual == expected
         } catch (_: RuntimeException) {
             true
+        }
+    }
+}
+
+/**
+ * Keeps the clipboard-share directory bounded: each image write creates a per-event file the
+ * FileProvider serves to pasting apps, and the clipboard only ever points at the newest one.
+ * Once a new write lands, the older files can never be resolved again — except by a paste
+ * already in flight, which the grace window covers.
+ */
+internal object ShareDirPruner {
+    /** How long a superseded share file survives for in-flight pastes of its URI. */
+    const val GRACE_MS = 5L * 60 * 1000
+
+    /** Deletes every file in [shareDir] other than [keep] not modified within [GRACE_MS]. */
+    fun pruneSuperseded(
+        shareDir: File,
+        keep: File,
+        nowMs: Long,
+    ) {
+        val cutoff = nowMs - GRACE_MS
+        shareDir.listFiles()?.forEach { candidate ->
+            if (candidate != keep && candidate.isFile && candidate.lastModified() <= cutoff) {
+                candidate.delete()
+            }
         }
     }
 }

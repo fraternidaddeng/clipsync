@@ -2,8 +2,11 @@ package com.clipsync.android.platform.clipboard
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicReference
 
 class ClipboardWriteCoordinatorTest {
     @Test
@@ -120,4 +123,56 @@ class ClipboardWriteCoordinatorTest {
 
         assertFalse(coordinator.shouldSuppressContent("never landed"))
     }
+
+    @Test
+    fun `suppression table survives writes racing capture checks on another thread`() {
+        // Production topology: writes arm the table from the main thread while the overlay
+        // poller consumes it from its own HandlerThread. Before the table was locked, this
+        // interleaving corrupted the map or crashed purge/lookup iteration mid-write.
+        val coordinator =
+            ClipboardWriteCoordinator(
+                publicWriter = FakeClipboardWriter(),
+                hasher = ContentHasher { "hash:$it" },
+            )
+        val rounds = 4_000
+        val startGate = CountDownLatch(1)
+        val firstFailure = AtomicReference<Throwable?>()
+        val writer =
+            raceThread(startGate, firstFailure) {
+                repeat(rounds) { coordinator.writeText("text-$it", "event-$it") }
+            }
+        val poller =
+            raceThread(startGate, firstFailure) {
+                repeat(rounds) {
+                    coordinator.shouldSuppressContent("text-$it")
+                    coordinator.shouldSuppress("event-$it", "text-$it")
+                }
+            }
+
+        startGate.countDown()
+        writer.join(30_000)
+        poller.join(30_000)
+        assertFalse(writer.isAlive)
+        assertFalse(poller.isAlive)
+        assertNull(firstFailure.get())
+
+        // The table still works after the storm: one fresh marker, consumed exactly once.
+        coordinator.writeText("after the storm", "event-final")
+        assertTrue(coordinator.shouldSuppressContent("after the storm"))
+        assertFalse(coordinator.shouldSuppressContent("after the storm"))
+    }
+
+    private fun raceThread(
+        startGate: CountDownLatch,
+        firstFailure: AtomicReference<Throwable?>,
+        body: () -> Unit,
+    ): Thread =
+        Thread {
+            startGate.await()
+            try {
+                body()
+            } catch (failure: Throwable) {
+                firstFailure.compareAndSet(null, failure)
+            }
+        }.apply { start() }
 }
