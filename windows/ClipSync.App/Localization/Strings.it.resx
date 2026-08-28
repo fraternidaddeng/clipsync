@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Telefono collegato ma segnalato offline. Ricollegalo e riprova.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>La sessione di debug wireless è scaduta ({0} risulta offline). La porta cambia spesso dopo spegnimento schermo, cambio rete o riavvio: verifica "indirizzo IP e porta" attuali nella pagina Debug wireless del telefono e ripremi "Connetti" nella sezione wireless qui sotto — non serve riassociare.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: il canale di lettura privilegiata è in esecuzione.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} è pronto; il canale privilegiato non è in esecuzione. Tocca "Avvia lettura privilegiata" per aprirlo.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} è pronto, ma al momento non è stato possibile confermare se il canale privilegiato è in esecuzione. Ripremi più tardi "Rileva telefono", oppure premi direttamente "Avvia lettura privilegiata" (riavviare è innocuo: lo script ripulisce prima eventuali processi vecchi).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Comando di avvio inviato. Nella pagina condotto del telefono, tocca "Ri-sonda" per confermare che la lettura privilegiata è pronta.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Connessione non riuscita: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>La connessione wireless è andata persa ({0} è offline o sparito dall'elenco dispositivi). Verifica "indirizzo IP e porta" attuali nella pagina Debug wireless del telefono, correggi il campo e premi "Connetti"; non serve riassociare.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>È stata rilevata una sessione wireless obsoleta rimasta in adb; è stata disconnessa e ricollegata automaticamente.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>L'IP:porta di connessione è quello della riga "indirizzo IP e porta" in cima alla pagina Debug wireless del telefono (non la porta della finestra di associazione). Cambia spesso dopo spegnimento schermo, cambio rete o riavvio: verifica il valore attuale e riprova. Di solito non serve riassociare.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Non è un IP:porta valido (esempio: 192.168.1.23:37123).</value>

@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Telefoon aangesloten maar gemeld als offline. Sluit hem opnieuw aan en probeer het nog eens.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>De draadloze debugsessie is verlopen ({0} staat als offline). De poort verandert vaak nadat het scherm uitgaat, het netwerk wisselt of de telefoon herstart: controleer het actuele "IP-adres en poort" op de pagina Draadloos debuggen van de telefoon en tik hieronder in het draadloze gedeelte opnieuw op "Verbinden" — opnieuw koppelen is niet nodig.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: het bevoorrechte leeskanaal draait.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} is klaar; het bevoorrechte kanaal draait niet. Tik op "Bevoorrecht lezen starten" om het te openen.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} is klaar, maar of het bevoorrechte kanaal draait kon nu niet worden bevestigd. Tik later opnieuw op "Telefoon detecteren", of tik direct op "Bevoorrecht lezen starten" (opnieuw starten is onschadelijk — het script ruimt eerst een oud proces op).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Startcommando verzonden. Tik op de conduit-pagina van de telefoon op "Opnieuw peilen" om te bevestigen dat bevoorrecht lezen klaar is.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Verbinding mislukt: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>De draadloze verbinding is verbroken ({0} is offline of uit de apparatenlijst verdwenen). Controleer het actuele "IP-adres en poort" op de pagina Draadloos debuggen van de telefoon, pas het veld aan en tik op "Verbinden" — opnieuw koppelen is niet nodig.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>Er is een verlopen draadloze sessie in adb aangetroffen; deze is automatisch verbroken en opnieuw verbonden.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>Het verbindings-IP:poort komt uit de regel "IP-adres en poort" boven aan de pagina Draadloos debuggen van de telefoon (niet de poort van het koppelvenster). Hij verandert vaak nadat het scherm uitgaat, het netwerk wisselt of de telefoon herstart — controleer de actuele waarde en probeer opnieuw. Koppelen hoeft meestal niet opnieuw.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Geen geldige IP:poort (voorbeeld 192.168.1.23:37123).</value>

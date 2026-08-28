@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Телефон подключён, но сообщает, что не в сети. Переподключите его и попробуйте снова.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>Сеанс беспроводной отладки устарел ({0} числится не в сети). Порт часто меняется после выключения экрана, смены сети или перезагрузки: сверьте текущие «IP-адрес и порт» на странице «Беспроводная отладка» телефона и снова нажмите «Подключить» в разделе беспроводного сопряжения ниже — заново сопрягать не нужно.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: канал привилегированного чтения работает.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} готов; привилегированный канал не работает. Нажмите «Запустить привилегированное чтение», чтобы открыть его.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} готов, но подтвердить, работает ли привилегированный канал, сейчас не удалось. Позже снова нажмите «Найти телефон» или сразу «Запустить привилегированное чтение» (перезапуск безвреден — скрипт сначала уберёт старый процесс).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Команда запуска отправлена. На странице канала телефона нажмите «Повторить проверку», чтобы подтвердить готовность привилегированного чтения.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Сбой подключения: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>Беспроводное подключение потеряно ({0} не в сети или исчез из списка устройств). Сверьте текущие «IP-адрес и порт» на странице «Беспроводная отладка» телефона, исправьте поле и нажмите «Подключить» — заново сопрягать не нужно.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>Обнаружен устаревший беспроводной сеанс, оставшийся в adb; он был автоматически отключён, подключение выполнено заново.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>IP:порт для подключения берётся из строки «IP-адрес и порт» вверху страницы «Беспроводная отладка» телефона (не порт из диалога сопряжения). Он часто меняется после выключения экрана, смены сети или перезагрузки — сверьте текущее значение и повторите. Заново сопрягать обычно не нужно.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Неверный формат IP:порт (пример: 192.168.1.23:37123).</value>

@@ -371,11 +371,20 @@ public partial class MainViewModel(
     private readonly WirelessPairingFlow wirelessFlow = new();
 
     /// <summary>
-    /// Monotonic id of the current QR wait. Bumping it is the cancellation: the poll loop
-    /// re-checks it after every await and simply exits when superseded, so no CTS ownership
-    /// is needed and a stale loop can never touch a newer session's state.
+    /// Monotonic id of the current wireless chain (QR wait, pair→connect, direct connect).
+    /// Bumping it is the cancellation: every step re-checks it after each await and simply
+    /// exits when superseded, so no CTS ownership is needed, a stale chain can never touch a
+    /// newer session's state, and — together with the consent check — no adb call ever starts
+    /// after 停止出示 / 撤销同意.
     /// </summary>
     private int wirelessScanSession;
+
+    /// <summary>
+    /// The endpoint of the most recent successful wireless <c>adb connect</c> this app run.
+    /// Later probes compare the device list against it so a dropped wireless session (port
+    /// drift after 息屏/切网/重启) is stated on the card instead of the stale "已连接" line.
+    /// </summary>
+    private WirelessAdbEndpoint? lastWirelessConnectEndpoint;
 
     public ObservableCollection<HistoryItemViewModel> History { get; } = new();
 
@@ -538,11 +547,54 @@ public partial class MainViewModel(
             PrivilegedHostAvailability.NoDevice => Strings.Conduit_Privileged_NoDevice,
             PrivilegedHostAvailability.DeviceUnauthorized => Strings.Conduit_Privileged_Unauthorized,
             PrivilegedHostAvailability.DeviceOffline => Strings.Conduit_Privileged_Offline,
-            PrivilegedHostAvailability.DeviceReady => probe.HostRunning == true
-                ? Strings.Format(nameof(Strings.Conduit_Privileged_RunningFormat), probe.Target!.DisplayName)
-                : Strings.Format(nameof(Strings.Conduit_Privileged_StoppedFormat), probe.Target!.DisplayName),
+            // HostRunning == null means the read-only pgrep probe itself could not run:
+            // stated as such — claiming "未运行" would invite a needless restart.
+            PrivilegedHostAvailability.DeviceReady => probe.HostRunning switch
+            {
+                true => Strings.Format(nameof(Strings.Conduit_Privileged_RunningFormat), probe.Target!.DisplayName),
+                false => Strings.Format(nameof(Strings.Conduit_Privileged_StoppedFormat), probe.Target!.DisplayName),
+                null => Strings.Format(nameof(Strings.Conduit_Privileged_HostUnknownFormat), probe.Target!.DisplayName),
+            },
             _ => string.Empty,
         };
+
+        // A non-ready ip:port entry is a stale wireless-debugging session, not a cable
+        // problem — the honest next step is re-checking the phone's current IP:端口, never
+        // "重新插拔". Overrides the generic offline/no-device line when one is present.
+        if (probe.Availability is PrivilegedHostAvailability.DeviceOffline or PrivilegedHostAvailability.NoDevice)
+        {
+            var staleWireless = WirelessSessionDiagnosis.StaleWirelessDevices(probe.Devices);
+            if (staleWireless.Count > 0)
+            {
+                PrivilegedStatus = Strings.Format(
+                    nameof(Strings.Conduit_Privileged_OfflineWirelessFormat), staleWireless[0].Serial);
+            }
+        }
+
+        UpdateWirelessSessionStatus(probe);
+    }
+
+    /// <summary>
+    /// Keeps the wireless section's status line honest after a successful connect: when a
+    /// later probe shows the connected endpoint offline or gone (wireless port drift), the
+    /// stale "已连接" is replaced by the loss plus the recovery step. A live endpoint leaves
+    /// whatever the flow last said untouched.
+    /// </summary>
+    private void UpdateWirelessSessionStatus(PrivilegedHostProbe probe)
+    {
+        // While a pair/connect chain is in flight the chain itself narrates; a probe fired
+        // from inside it (fresh connect → 检测手机) must not race the just-set outcome with
+        // a transiently-offline listing.
+        var endpoint = lastWirelessConnectEndpoint;
+        if (endpoint is null
+            || WirelessBusy
+            || WirelessSessionDiagnosis.Classify(probe.Devices, endpoint) == WirelessSessionState.Ready)
+        {
+            return;
+        }
+
+        WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_SessionLostFormat), endpoint.ToString());
+        WirelessHint = Strings.Conduit_Wireless_ConnectFailedHint;
     }
 
     // ===== 无线配对命令（Android 11+ 无线调试）=====
@@ -636,7 +688,7 @@ public partial class MainViewModel(
             return;
         }
 
-        await PairThenAutoConnectAsync(endpoint!, code);
+        await PairThenAutoConnectAsync(endpoint!, code, wirelessScanSession);
     }
 
     /// <summary>
@@ -666,7 +718,7 @@ public partial class MainViewModel(
         WirelessBusy = true;
         try
         {
-            await ConnectWirelessCoreAsync(endpoint!);
+            await ConnectWirelessCoreAsync(endpoint!, wirelessScanSession);
         }
         finally
         {
@@ -709,7 +761,7 @@ public partial class MainViewModel(
             {
                 WirelessQrText = string.Empty;
                 WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_DiscoveredFormat), endpoint.ToString());
-                await PairThenAutoConnectAsync(endpoint, payload.Password);
+                await PairThenAutoConnectAsync(endpoint, payload.Password, session);
                 return;
             }
         }
@@ -725,14 +777,22 @@ public partial class MainViewModel(
     }
 
     /// <summary>
+    /// Whether a wireless chain started under [session] may take its next step: it must not
+    /// have been superseded (停止出示, a newer entry action, panel folded) and adb consent must
+    /// still stand. Checked before every adb call and every state write, so revoking consent
+    /// mid-chain stops the chain at the next step — no adb command ever starts after 撤销.
+    /// </summary>
+    private bool WirelessChainAlive(int session) => session == wirelessScanSession && PrivilegedAdbConsent;
+
+    /// <summary>
     /// The shared tail of both pairing entries: <c>adb pair</c>, then auto-discover the
     /// connect endpoint and <c>adb connect</c>. Every failure lands as a stated fact plus,
     /// where one exists, the honest next step (expired code → reopen the phone dialog;
     /// undiscoverable connect port → type the phone's own IP 地址和端口 line).
     /// </summary>
-    private async Task PairThenAutoConnectAsync(WirelessAdbEndpoint endpoint, string secret)
+    private async Task PairThenAutoConnectAsync(WirelessAdbEndpoint endpoint, string secret, int session)
     {
-        if (privilegedHost is null)
+        if (privilegedHost is null || !WirelessChainAlive(session))
         {
             return;
         }
@@ -742,6 +802,11 @@ public partial class MainViewModel(
         {
             WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_PairingFormat), endpoint.ToString());
             var pair = await privilegedHost.PairWirelessAsync(endpoint, secret);
+            if (!WirelessChainAlive(session))
+            {
+                return;
+            }
+
             if (!pair.Succeeded)
             {
                 wirelessFlow.TryApply(WirelessPairingEvent.PairFailed);
@@ -755,6 +820,11 @@ public partial class MainViewModel(
             wirelessFlow.TryApply(WirelessPairingEvent.PairSucceeded);
             WirelessStatus = Strings.Conduit_Wireless_SearchingConnectPort;
             var connectEndpoint = await privilegedHost.DiscoverConnectEndpointAsync(endpoint.Host);
+            if (!WirelessChainAlive(session))
+            {
+                return;
+            }
+
             if (connectEndpoint is null)
             {
                 wirelessFlow.TryApply(WirelessPairingEvent.ConnectFailed);
@@ -764,7 +834,7 @@ public partial class MainViewModel(
                 return;
             }
 
-            await ConnectWirelessCoreAsync(connectEndpoint);
+            await ConnectWirelessCoreAsync(connectEndpoint, session);
         }
         finally
         {
@@ -772,28 +842,44 @@ public partial class MainViewModel(
         }
     }
 
-    /// <summary>Runs <c>adb connect</c> (flow already at Connecting) and hands success to the normal probe.</summary>
-    private async Task ConnectWirelessCoreAsync(WirelessAdbEndpoint endpoint)
+    /// <summary>
+    /// Runs the verified <c>adb connect</c> (flow already at Connecting) and hands success to
+    /// the normal probe. "Verified" because adb's session table answers "already connected"
+    /// even for a dead wireless transport; the assistant cross-checks the device list and
+    /// re-dials a stale session, and that recovery is stated on the card, never silent.
+    /// </summary>
+    private async Task ConnectWirelessCoreAsync(WirelessAdbEndpoint endpoint, int session)
     {
-        if (privilegedHost is null)
+        if (privilegedHost is null || !WirelessChainAlive(session))
         {
             return;
         }
 
         WirelessConnectEndpointText = endpoint.ToString();
         WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_ConnectingFormat), endpoint.ToString());
-        var outcome = await privilegedHost.ConnectWirelessAsync(endpoint);
-        if (!outcome.Succeeded)
+        var result = await privilegedHost.ConnectWirelessVerifiedAsync(endpoint);
+        if (!WirelessChainAlive(session))
+        {
+            return;
+        }
+
+        if (!result.Outcome.Succeeded)
         {
             wirelessFlow.TryApply(WirelessPairingEvent.ConnectFailed);
             WirelessStatus = Strings.Format(
                 nameof(Strings.Conduit_Wireless_ConnectFailedFormat),
-                outcome.Detail ?? Strings.Conduit_Privileged_ReasonUnknown);
+                result.Outcome.Detail ?? Strings.Conduit_Privileged_ReasonUnknown);
+            // The usual culprit is port drift: the phone's 无线调试 page shows the current value.
+            WirelessHint = Strings.Conduit_Wireless_ConnectFailedHint;
             return;
         }
 
         wirelessFlow.TryApply(WirelessPairingEvent.ConnectSucceeded);
+        lastWirelessConnectEndpoint = endpoint;
         WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_ConnectOkFormat), endpoint.ToString());
+        WirelessHint = result.RecoveredStaleSession
+            ? Strings.Conduit_Wireless_StaleSessionRedialed
+            : string.Empty;
         // The wireless device now shows up in the ordinary probe (serial = ip:port), so the
         // existing 检测手机 → 启动特权直读 pair of buttons takes over from here.
         await DetectPhoneAsync();
@@ -817,6 +903,9 @@ public partial class MainViewModel(
             WirelessPairCodeText = string.Empty;
             WirelessConnectEndpointText = string.Empty;
             WirelessPanelOpen = false;
+            // A consent withdrawal forgets the session memory too: no further probe may
+            // keep talking about a wireless connection the user just walked away from.
+            lastWirelessConnectEndpoint = null;
         }
     }
 

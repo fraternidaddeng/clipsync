@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Telefon podłączony, ale zgłoszony jako offline. Podłącz go ponownie i spróbuj jeszcze raz.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>Sesja debugowania bezprzewodowego wygasła ({0} widnieje jako offline). Port często się zmienia po wygaszeniu ekranu, zmianie sieci lub restarcie: sprawdź aktualny „adres IP i port” na stronie Debugowanie bezprzewodowe telefonu i ponownie naciśnij „Połącz” w sekcji bezprzewodowej poniżej — parowania nie trzeba powtarzać.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: kanał odczytu uprzywilejowanego działa.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} jest gotowy; kanał uprzywilejowany nie działa. Dotknij „Uruchom odczyt uprzywilejowany”, aby go otworzyć.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} jest gotowy, ale nie udało się teraz potwierdzić, czy kanał uprzywilejowany działa. Naciśnij później ponownie „Wykryj telefon” albo od razu „Uruchom odczyt uprzywilejowany” (ponowne uruchomienie jest nieszkodliwe — skrypt najpierw sprząta stary proces).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Wysłano polecenie startu. Na stronie kanału w telefonie dotknij „Sprawdź ponownie”, aby potwierdzić gotowość odczytu uprzywilejowanego.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Połączenie nie powiodło się: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>Połączenie bezprzewodowe zostało utracone ({0} jest offline lub zniknął z listy urządzeń). Sprawdź aktualny „adres IP i port” na stronie Debugowanie bezprzewodowe telefonu, popraw pole i naciśnij „Połącz” — parowania nie trzeba powtarzać.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>Wykryto przeterminowaną sesję bezprzewodową pozostałą w adb; została automatycznie rozłączona i połączona ponownie.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>IP:port do połączenia pochodzi z wiersza „adres IP i port” u góry strony Debugowanie bezprzewodowe telefonu (nie z portu okna parowania). Często zmienia się po wygaszeniu ekranu, zmianie sieci lub restarcie — sprawdź aktualną wartość i spróbuj ponownie. Zwykle nie trzeba parować od nowa.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>To nie jest poprawny adres IP:port (przykład 192.168.1.23:37123).</value>

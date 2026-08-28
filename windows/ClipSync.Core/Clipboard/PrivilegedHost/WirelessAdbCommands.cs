@@ -22,6 +22,17 @@ public static class WirelessAdbCommands
         return new[] { "connect", endpoint.ToString() };
     }
 
+    /// <summary>
+    /// <c>adb disconnect host:port</c> — drops one wireless session from adb's table. Used to
+    /// clear a stale entry (screen-off / network-switch port drift leaves adb claiming
+    /// "already connected" to a dead transport) before dialing again.
+    /// </summary>
+    public static IReadOnlyList<string> Disconnect(WirelessAdbEndpoint endpoint)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+        return new[] { "disconnect", endpoint.ToString() };
+    }
+
     /// <summary><c>adb mdns services</c> — read-only discovery listing, parsed by <see cref="AdbMdnsServicesParser"/>.</summary>
     public static IReadOnlyList<string> ListMdnsServices { get; } = new[] { "mdns", "services" };
 

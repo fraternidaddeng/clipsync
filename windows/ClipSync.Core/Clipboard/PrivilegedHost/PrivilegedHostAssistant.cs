@@ -147,6 +147,52 @@ public sealed class PrivilegedHostAssistant(IAdbRunner runner)
     }
 
     /// <summary>
+    /// Drops one wireless session from adb's table (<c>adb disconnect host:port</c>). Failure is
+    /// tolerated by callers — "no such device" simply means there was nothing stale to clear.
+    /// </summary>
+    public async Task DisconnectWirelessAsync(
+        WirelessAdbEndpoint endpoint,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+        if (!runner.IsAvailable)
+        {
+            return;
+        }
+
+        await runner.RunAsync(WirelessAdbCommands.Disconnect(endpoint), cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// <c>adb connect</c> with a stale-session check: adb answers "already connected" from its
+    /// session table even when the underlying transport died (wireless port drift after
+    /// screen-off, network switch, or reboot). When that answer is not backed by a ready device
+    /// in <c>adb devices</c>, the stale entry is disconnected and dialed once more for real, so
+    /// the card can never claim a connection the device list contradicts.
+    /// </summary>
+    public async Task<WirelessConnectResult> ConnectWirelessVerifiedAsync(
+        WirelessAdbEndpoint endpoint,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+        var outcome = await ConnectWirelessAsync(endpoint, cancellationToken).ConfigureAwait(false);
+        if (outcome.Status != AdbConnectStatus.AlreadyConnected)
+        {
+            return new WirelessConnectResult(outcome, RecoveredStaleSession: false);
+        }
+
+        var probe = await ProbeAsync(cancellationToken).ConfigureAwait(false);
+        if (WirelessSessionDiagnosis.Classify(probe.Devices, endpoint) == WirelessSessionState.Ready)
+        {
+            return new WirelessConnectResult(outcome, RecoveredStaleSession: false);
+        }
+
+        await DisconnectWirelessAsync(endpoint, cancellationToken).ConfigureAwait(false);
+        var redialed = await ConnectWirelessAsync(endpoint, cancellationToken).ConfigureAwait(false);
+        return new WirelessConnectResult(redialed, RecoveredStaleSession: true);
+    }
+
+    /// <summary>
     /// Read-only: whether this adb's mDNS discovery stack is usable (<c>adb mdns check</c>).
     /// False steers the card to the manual pairing-code path instead of showing a QR whose
     /// hands-free discovery could never fire.

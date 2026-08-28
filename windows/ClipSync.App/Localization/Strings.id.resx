@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Ponsel terpasang tetapi dilaporkan luring. Sambungkan ulang lalu coba lagi.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>Sesi debugging nirkabel sudah kedaluwarsa ({0} tampil luring). Port sering berubah setelah layar ponsel mati, ganti jaringan, atau mulai ulang: periksa «Alamat IP &amp; port» terkini di halaman Debugging nirkabel ponsel lalu ketuk «Hubungkan» lagi di bagian nirkabel di bawah — tidak perlu menyandingkan ulang.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: kanal baca istimewa sedang berjalan.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} siap; kanal istimewa belum berjalan. Ketuk "Mulai baca istimewa" untuk membukanya.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} siap, tetapi saat ini belum bisa dipastikan apakah saluran istimewa sedang berjalan. Ketuk «Deteksi ponsel» lagi nanti, atau langsung ketuk «Mulai baca istimewa» (memulai ulang tidak berbahaya — skrip membersihkan proses lama lebih dulu).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Perintah start terkirim. Di halaman saluran ponsel, ketuk "Deteksi ulang" untuk memastikan baca istimewa siap.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Koneksi gagal: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>Koneksi nirkabel terputus ({0} luring atau hilang dari daftar perangkat). Periksa «Alamat IP &amp; port» terkini di halaman Debugging nirkabel ponsel, perbarui kolomnya lalu ketuk «Hubungkan» — tidak perlu menyandingkan ulang.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>Terdeteksi sesi nirkabel usang yang tertinggal di adb; sudah diputus dan dihubungkan ulang secara otomatis.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>IP:port untuk terhubung berasal dari baris «Alamat IP &amp; port» di bagian atas halaman Debugging nirkabel ponsel (bukan port dialog penyandingan). Nilainya sering berubah setelah layar mati, ganti jaringan, atau mulai ulang — periksa nilai terkini lalu coba lagi. Biasanya tidak perlu menyandingkan ulang.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Bukan IP:port yang valid (contoh 192.168.1.23:37123).</value>

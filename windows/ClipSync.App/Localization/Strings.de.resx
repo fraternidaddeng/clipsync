@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Telefon angeschlossen, aber als offline gemeldet. Verbinde es neu und versuche es erneut.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>Die Drahtlos-Debugging-Sitzung ist veraltet ({0} wird als offline gelistet). Der Port ändert sich oft nach Bildschirm-Aus, Netzwerkwechsel oder Neustart: Prüfen Sie „IP-Adresse und Port“ auf der Seite Drahtloses Debugging des Telefons und tippen Sie unten im Drahtlos-Bereich erneut auf „Verbinden“ – neu koppeln ist nicht nötig.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: Der privilegierte Lesekanal läuft.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} ist bereit; der privilegierte Kanal läuft nicht. Tippe auf „Privilegierten Lesezugriff starten“, um ihn zu öffnen.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} ist bereit, aber ob der privilegierte Kanal läuft, ließ sich gerade nicht bestätigen. Tippen Sie später erneut auf „Telefon erkennen“ oder direkt auf „Privilegierten Lesezugriff starten“ (ein Neustart ist unschädlich – das Skript räumt zuerst alte Prozesse auf).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Startbefehl gesendet. Tippe auf der Conduit-Seite des Telefons auf „Erneut prüfen“, um zu bestätigen, dass der privilegierte Lesezugriff bereit ist.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Verbindung fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>Die drahtlose Verbindung ist verloren gegangen ({0} ist offline oder aus der Geräteliste verschwunden). Prüfen Sie „IP-Adresse und Port“ auf der Seite Drahtloses Debugging des Telefons, korrigieren Sie das Feld und tippen Sie auf „Verbinden“ – neu koppeln ist nicht nötig.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>Eine in adb verbliebene veraltete Drahtlos-Sitzung wurde erkannt; sie wurde automatisch getrennt und neu verbunden.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>Der Verbindungs-IP:Port stammt aus der Zeile „IP-Adresse und Port“ oben auf der Seite Drahtloses Debugging des Telefons (nicht der Port des Kopplungsdialogs). Er ändert sich oft nach Bildschirm-Aus, Netzwerkwechsel oder Neustart – prüfen Sie den aktuellen Wert und versuchen es erneut. Neu koppeln ist meist nicht nötig.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Kein gültiges IP:Port-Format (Beispiel 192.168.1.23:37123).</value>

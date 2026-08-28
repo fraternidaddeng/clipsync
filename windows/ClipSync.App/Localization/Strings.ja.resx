@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>スマートフォンは接続されていますが、オフラインと報告されました。接続し直してからもう一度お試しください。</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>ワイヤレスデバッグのセッションが失効しています（{0} がオフライン表示）。スマホの画面消灯・ネットワーク切替・再起動後はポートがよく変わります。スマホの「ワイヤレスデバッグ」画面で現在の「IP アドレスとポート」を確認し、下のワイヤレスペアリング欄でもう一度「接続」してください。ペアリングのやり直しは不要です。</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}：特権ダイレクト読み取りチャネルが動作中です。</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} は準備完了ですが、特権チャネルは動作していません。「特権ダイレクト読み取りを開始」をタップして開いてください。</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} は準備できていますが、特権チャネルが実行中かどうかを今は確認できませんでした。しばらくしてから「スマートフォンを検出」を再度押すか、そのまま「特権ダイレクト読み取りを開始」を押してください（再起動しても無害です。スクリプトが先に古いプロセスを片付けます）。</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>起動コマンドを送信しました。スマートフォンの通路ページで「再探測」をタップし、特権ダイレクト読み取りの準備完了を確認してください。</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>接続失敗:{0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>ワイヤレス接続が切断されました（{0} はオフラインか、デバイス一覧から消えています）。スマホの「ワイヤレスデバッグ」画面で現在の「IP アドレスとポート」を確認し、入力し直して「接続」を押してください。ペアリングのやり直しは不要です。</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>adb に残っていた失効済みのワイヤレスセッションを検出したため、自動的に切断して接続し直しました。</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>接続用の IP:ポート はスマホの「ワイヤレスデバッグ」画面上部の「IP アドレスとポート」です（ペアリングダイアログのポートではありません）。画面消灯・ネットワーク切替・再起動後はよく変わるので、現在の値を確認してからやり直してください。通常、ペアリングのやり直しは不要です。</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>IP:ポート の形式が正しくありません（例 192.168.1.23:37123）。</value>

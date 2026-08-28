@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Telefon takılı ama çevrimdışı bildirildi. Yeniden bağlayıp tekrar deneyin.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>Kablosuz hata ayıklama oturumu bayatladı ({0} çevrimdışı görünüyor). Ekran kapanınca, ağ değişince veya yeniden başlatınca bağlantı noktası sık değişir: telefonun Kablosuz hata ayıklama sayfasındaki güncel «IP adresi ve bağlantı noktası»nı doğrulayıp aşağıdaki kablosuz bölümünde yeniden «Bağlan»a basın — yeniden eşleştirmeye gerek yok.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: ayrıcalıklı okuma kanalı çalışıyor.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} hazır; ayrıcalıklı kanal çalışmıyor. Açmak için "Ayrıcalıklı okumayı başlat"a dokunun.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} hazır, ancak ayrıcalıklı kanalın çalışıp çalışmadığı şu anda doğrulanamadı. Daha sonra «Telefonu algıla»ya yeniden basın veya doğrudan «Ayrıcalıklı okumayı başlat»a basın (yeniden başlatma zararsızdır — betik önce eski süreci temizler).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Başlatma komutu gönderildi. Telefonun kanal sayfasında ayrıcalıklı okumanın hazır olduğunu doğrulamak için "Yeniden yokla"ya dokunun.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Bağlantı başarısız: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>Kablosuz bağlantı koptu ({0} çevrimdışı veya cihaz listesinden silinmiş). Telefonun Kablosuz hata ayıklama sayfasındaki güncel «IP adresi ve bağlantı noktası»nı doğrulayın, alanı düzeltin ve «Bağlan»a basın — yeniden eşleştirmeye gerek yok.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>adb'de kalmış bayat bir kablosuz oturum algılandı; otomatik olarak kesilip yeniden bağlanıldı.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>Bağlantı IP:bağlantı noktası, telefonun Kablosuz hata ayıklama sayfasının üstündeki «IP adresi ve bağlantı noktası» satırından alınır (eşleştirme penceresindeki bağlantı noktası değil). Ekran kapanınca, ağ değişince veya yeniden başlatınca sık değişir — güncel değeri doğrulayıp yeniden deneyin. Genellikle yeniden eşleştirme gerekmez.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Geçerli bir IP:bağlantı noktası değil (örnek 192.168.1.23:37123).</value>

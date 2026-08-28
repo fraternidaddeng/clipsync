@@ -77,6 +77,101 @@ public sealed class WirelessAdbAssistantTests
     }
 
     [Fact]
+    public void DisconnectCommandIsExactArgvTokens()
+    {
+        var args = WirelessAdbCommands.Disconnect(new WirelessAdbEndpoint("192.168.1.10", 40331));
+
+        Assert.Equal("disconnect 192.168.1.10:40331", string.Join(' ', args));
+    }
+
+    [Fact]
+    public async Task VerifiedConnectPassesAFreshConnectionThroughWithoutProbing()
+    {
+        var runner = new FakeAdbRunner();
+        runner.OnArgs(
+            ["connect", "192.168.1.10:40331"],
+            new AdbCommandResult(0, "connected to 192.168.1.10:40331\n", string.Empty));
+        var assistant = new PrivilegedHostAssistant(runner);
+
+        var result = await assistant.ConnectWirelessVerifiedAsync(new WirelessAdbEndpoint("192.168.1.10", 40331));
+
+        Assert.Equal(AdbConnectStatus.Connected, result.Outcome.Status);
+        Assert.False(result.RecoveredStaleSession);
+        Assert.Equal(["connect 192.168.1.10:40331"], runner.Invocations.Select(args => string.Join(' ', args)));
+    }
+
+    [Fact]
+    public async Task VerifiedConnectAcceptsAlreadyConnectedWhenTheDeviceListBacksItUp()
+    {
+        var runner = new FakeAdbRunner();
+        runner.OnArgs(
+            ["connect", "192.168.1.10:40331"],
+            new AdbCommandResult(0, "already connected to 192.168.1.10:40331\n", string.Empty));
+        runner.OnArgs(
+            ["devices", "-l"],
+            new AdbCommandResult(
+                0,
+                "List of devices attached\n192.168.1.10:40331     device product:p model:Pixel_8 device:d\n",
+                string.Empty));
+        var assistant = new PrivilegedHostAssistant(runner);
+
+        var result = await assistant.ConnectWirelessVerifiedAsync(new WirelessAdbEndpoint("192.168.1.10", 40331));
+
+        Assert.Equal(AdbConnectStatus.AlreadyConnected, result.Outcome.Status);
+        Assert.False(result.RecoveredStaleSession);
+        Assert.DoesNotContain(runner.Invocations, args => args[0] == "disconnect");
+    }
+
+    [Fact]
+    public async Task VerifiedConnectRedialsAStaleAlreadyConnectedSession()
+    {
+        // adb keeps answering "already connected" from its session table after wireless port
+        // drift, while `adb devices` shows the entry offline. The verified connect must not
+        // report that as success: it disconnects the stale entry and dials once more.
+        var runner = new FakeAdbRunner();
+        runner.OnArgs(
+            ["connect", "192.168.1.10:40331"],
+            new AdbCommandResult(0, "already connected to 192.168.1.10:40331\n", string.Empty),
+            new AdbCommandResult(0, "connected to 192.168.1.10:40331\n", string.Empty));
+        runner.OnArgs(
+            ["devices", "-l"],
+            new AdbCommandResult(0, "List of devices attached\n192.168.1.10:40331     offline\n", string.Empty));
+        runner.OnArgs(
+            ["disconnect", "192.168.1.10:40331"],
+            new AdbCommandResult(0, "disconnected 192.168.1.10:40331\n", string.Empty));
+        var assistant = new PrivilegedHostAssistant(runner);
+
+        var result = await assistant.ConnectWirelessVerifiedAsync(new WirelessAdbEndpoint("192.168.1.10", 40331));
+
+        Assert.Equal(AdbConnectStatus.Connected, result.Outcome.Status);
+        Assert.True(result.RecoveredStaleSession);
+        Assert.Equal(
+            ["connect 192.168.1.10:40331", "devices -l", "disconnect 192.168.1.10:40331", "connect 192.168.1.10:40331"],
+            runner.Invocations.Select(args => string.Join(' ', args)));
+    }
+
+    [Fact]
+    public async Task VerifiedConnectRedialsWhenTheClaimedSessionVanishedFromTheList()
+    {
+        var runner = new FakeAdbRunner();
+        runner.OnArgs(
+            ["connect", "192.168.1.10:40331"],
+            new AdbCommandResult(0, "already connected to 192.168.1.10:40331\n", string.Empty),
+            new AdbCommandResult(0, "failed to connect to '192.168.1.10:40331': Connection refused\n", string.Empty));
+        runner.OnArgs(
+            ["devices", "-l"],
+            new AdbCommandResult(0, "List of devices attached\n", string.Empty));
+        var assistant = new PrivilegedHostAssistant(runner);
+
+        var result = await assistant.ConnectWirelessVerifiedAsync(new WirelessAdbEndpoint("192.168.1.10", 40331));
+
+        // The honest final verdict is the redial's failure — never the stale "already connected".
+        Assert.Equal(AdbConnectStatus.Refused, result.Outcome.Status);
+        Assert.True(result.RecoveredStaleSession);
+        Assert.Contains(runner.Invocations, args => string.Join(' ', args) == "disconnect 192.168.1.10:40331");
+    }
+
+    [Fact]
     public async Task MdnsCheckMapsWorkingDaemonToTrue()
     {
         var runner = new FakeAdbRunner();
@@ -179,7 +274,7 @@ public sealed class WirelessAdbAssistantTests
 
     private sealed class FakeAdbRunner : IAdbRunner
     {
-        private readonly List<(string[] Args, AdbCommandResult Result)> responses = new();
+        private readonly List<(string[] Args, Queue<AdbCommandResult> Results, AdbCommandResult Last)> responses = new();
 
         public bool Available { get; set; } = true;
 
@@ -189,17 +284,19 @@ public sealed class WirelessAdbAssistantTests
 
         public string LocationDescription => Available ? "adb: /fake/adb" : "adb not found";
 
-        public void OnArgs(string[] args, AdbCommandResult result) => responses.Add((args, result));
+        /// <summary>One or more results for repeated identical invocations; the last one repeats.</summary>
+        public void OnArgs(string[] args, params AdbCommandResult[] results) =>
+            responses.Add((args, new Queue<AdbCommandResult>(results), results[^1]));
 
         public Task<AdbCommandResult> RunAsync(IReadOnlyList<string> arguments, CancellationToken cancellationToken = default)
         {
             var args = arguments.ToArray();
             Invocations.Add(args);
-            foreach (var (candidate, result) in responses)
+            foreach (var (candidate, queued, last) in responses)
             {
                 if (candidate.SequenceEqual(args))
                 {
-                    return Task.FromResult(result);
+                    return Task.FromResult(queued.Count > 0 ? queued.Dequeue() : last);
                 }
             }
 

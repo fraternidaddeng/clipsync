@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Phone attached but reported offline. Reconnect it and try again.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>The wireless debugging session went stale ({0} shows offline). The port often changes after the phone sleeps, switches networks or reboots: check the current "IP address &amp; port" on the phone's Wireless debugging page and hit "Connect" again in the wireless section below — no need to pair again.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: the privileged read channel is running.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} is ready; the privileged channel is not running. Tap "Start privileged read" to open it.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} is ready, but whether the privileged channel is running could not be confirmed right now. Tap "Detect phone" again later, or just tap "Start privileged read" (restarting is harmless — the script cleans up any old process first).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Start command sent. On the phone's conduit page, tap "Re-probe" to confirm privileged read is ready.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Connection failed: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>The wireless connection was lost ({0} is offline or gone from the device list). Check the current "IP address &amp; port" on the phone's Wireless debugging page, update the field and hit "Connect" — no need to pair again.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>A stale wireless session left in adb was detected; it was disconnected and redialed automatically.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>The connect IP:port comes from the "IP address &amp; port" line at the top of the phone's Wireless debugging page (not the pairing dialog's port). It often changes after the phone sleeps, switches networks or reboots — check the current value and retry. Pairing usually does not need to be redone.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>That is not a valid IP:port (example: 192.168.1.23:37123).</value>

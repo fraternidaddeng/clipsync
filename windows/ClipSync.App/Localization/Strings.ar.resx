@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>الهاتف متصل لكنه مُبلَّغ عنه بأنه غير متصل. أعد توصيله وحاول مرة أخرى.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>انتهت صلاحية جلسة تصحيح الأخطاء اللاسلكي ({0} يظهر غير متصل). كثيرًا ما يتغيّر المنفذ بعد انطفاء الشاشة أو تبديل الشبكة أو إعادة التشغيل: راجع «عنوان IP والمنفذ» الحالي في صفحة تصحيح الأخطاء اللاسلكي بالهاتف ثم اضغط «اتصال» مجددًا في قسم الاقتران اللاسلكي أدناه — لا حاجة لإعادة الاقتران.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: قناة القراءة المميزة قيد التشغيل.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} جاهز؛ القناة المميزة لا تعمل. انقر «بدء القراءة المميزة» لفتحها.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} جاهز، لكن تعذّر الآن تأكيد ما إذا كانت القناة المميزة قيد التشغيل. اضغط «اكتشاف الهاتف» لاحقًا مرة أخرى، أو اضغط مباشرة «بدء القراءة المميزة» (إعادة التشغيل غير ضارة — فالسكربت ينظّف أولًا أي عملية قديمة).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>تم إرسال أمر البدء. في صفحة القناة على الهاتف، انقر «إعادة الفحص» للتأكد من جاهزية القراءة المميزة.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>فشل الاتصال: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>فُقد الاتصال اللاسلكي ({0} غير متصل أو اختفى من قائمة الأجهزة). راجع «عنوان IP والمنفذ» الحالي في صفحة تصحيح الأخطاء اللاسلكي بالهاتف، وصحّح الحقل ثم اضغط «اتصال» — لا حاجة لإعادة الاقتران.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>اكتُشفت جلسة لاسلكية قديمة متبقية في adb؛ فقُطع اتصالها وأُعيد الاتصال تلقائيًا.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>عنوان IP:المنفذ للاتصال هو سطر «عنوان IP والمنفذ» أعلى صفحة تصحيح الأخطاء اللاسلكي في الهاتف (وليس منفذ نافذة الاقتران). كثيرًا ما يتغيّر بعد انطفاء الشاشة أو تبديل الشبكة أو إعادة التشغيل — راجع القيمة الحالية ثم أعد المحاولة. عادةً لا حاجة لإعادة الاقتران.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>ليست صيغة IP:منفذ صالحة (مثال: 192.168.1.23:37123).</value>

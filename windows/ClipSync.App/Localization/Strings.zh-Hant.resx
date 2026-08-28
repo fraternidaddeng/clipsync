@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>手機已連接但處於離線狀態。重新插拔或重連後再試。</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>無線偵錯工作階段已失效（{0} 顯示離線）。手機熄屏、切換網路或重啟後連接埠常會變：回手機「無線偵錯」頁核對目前「IP 位址與連接埠」，在下方無線配對區重新「連線」即可，配對不用重來。</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}：特權直讀通道運行中。</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} 已就緒，特權通道未運行。點「啟動特權直讀」開啟。</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} 已就緒，但暫時無法確認特權通道是否在執行。可稍後再點「偵測手機」，或直接點「啟動特權直讀」（重複啟動無害，指令碼會先清理舊行程）。</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>已傳送啟動命令。回到手機的通路頁點「重新探測」確認特權直讀已就緒。</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>連線失敗：{0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>無線連線已中斷（{0} 已離線或不在裝置清單）。回手機「無線偵錯」頁核對目前「IP 位址與連接埠」，改填後點「連線」；配對不用重來。</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>偵測到 adb 裡殘留的舊無線工作階段已失效，已自動斷開並重新連線。</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>「連線 IP:連接埠」取手機「無線偵錯」頁頂部的「IP 位址與連接埠」（與配對彈窗連接埠不同）；手機熄屏、切換網路或重啟後連接埠常會變，核對目前值後再試。配對通常不用重來。</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>IP:連接埠 格式不對（範例 192.168.1.23:37123）。</value>

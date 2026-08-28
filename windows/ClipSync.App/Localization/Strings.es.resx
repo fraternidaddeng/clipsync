@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Teléfono conectado, pero se informa sin conexión. Vuelve a conectarlo e inténtalo de nuevo.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>La sesión de depuración inalámbrica quedó obsoleta ({0} figura sin conexión). El puerto suele cambiar cuando el teléfono apaga la pantalla, cambia de red o se reinicia: comprueba la "dirección IP y puerto" actual en la página de Depuración inalámbrica del teléfono y vuelve a pulsar "Conectar" en la sección inalámbrica de abajo; no hace falta emparejar de nuevo.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: el canal de lectura privilegiada está funcionando.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} está listo; el canal privilegiado no está funcionando. Toca "Iniciar lectura privilegiada" para abrirlo.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} está listo, pero ahora mismo no se pudo confirmar si el canal privilegiado está en ejecución. Vuelve a pulsar "Detectar teléfono" más tarde, o pulsa directamente "Iniciar lectura privilegiada" (reiniciar es inocuo: el script limpia antes cualquier proceso antiguo).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Comando de inicio enviado. En la página de conducto del teléfono, toca "Volver a sondear" para confirmar que la lectura privilegiada está lista.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Error de conexión: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>Se perdió la conexión inalámbrica ({0} está sin conexión o desapareció de la lista de dispositivos). Comprueba la "dirección IP y puerto" actual en la página de Depuración inalámbrica del teléfono, corrige el campo y pulsa "Conectar"; no hace falta emparejar de nuevo.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>Se detectó una sesión inalámbrica obsoleta que quedó en adb; se desconectó y se volvió a conectar automáticamente.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>La IP:puerto de conexión es la línea "dirección IP y puerto" de arriba de la página de Depuración inalámbrica del teléfono (no el puerto del diálogo de emparejamiento). Suele cambiar cuando el teléfono apaga la pantalla, cambia de red o se reinicia: comprueba el valor actual y reintenta. Normalmente no hace falta emparejar de nuevo.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>No es un IP:puerto válido (ejemplo: 192.168.1.23:37123).</value>

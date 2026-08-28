@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Téléphone connecté mais signalé hors ligne. Reconnectez-le et réessayez.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>La session de débogage sans fil est périmée ({0} apparaît hors ligne). Le port change souvent après l'extinction de l'écran, un changement de réseau ou un redémarrage : vérifiez « adresse IP et port » actuels sur la page Débogage sans fil du téléphone, puis réappuyez sur « Connecter » dans la section sans fil ci-dessous — inutile de refaire l'appairage.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0} : le canal de lecture privilégiée fonctionne.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} est prêt ; le canal privilégié ne fonctionne pas. Appuyez sur « Démarrer la lecture privilégiée » pour l’ouvrir.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} est prêt, mais impossible de confirmer pour l'instant si le canal privilégié est en cours d'exécution. Réappuyez plus tard sur « Détecter le téléphone », ou appuyez directement sur « Démarrer la lecture privilégiée » (redémarrer est sans danger : le script nettoie d'abord tout ancien processus).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Commande de démarrage envoyée. Sur la page conduit du téléphone, appuyez sur « Re-sonder » pour confirmer que la lecture privilégiée est prête.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Échec de la connexion : {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>La connexion sans fil a été perdue ({0} est hors ligne ou a disparu de la liste des appareils). Vérifiez « adresse IP et port » actuels sur la page Débogage sans fil du téléphone, corrigez le champ puis appuyez sur « Connecter » — inutile de refaire l'appairage.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>Une session sans fil périmée restée dans adb a été détectée ; elle a été déconnectée puis reconnectée automatiquement.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>L'IP:port de connexion vient de la ligne « adresse IP et port » en haut de la page Débogage sans fil du téléphone (pas le port de la boîte d'appairage). Il change souvent après extinction de l'écran, changement de réseau ou redémarrage : vérifiez la valeur actuelle et réessayez. Il est rarement nécessaire de refaire l'appairage.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Ce n'est pas un IP:port valide (exemple : 192.168.1.23:37123).</value>

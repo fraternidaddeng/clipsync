@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>โทรศัพท์เชื่อมต่ออยู่แต่รายงานว่าออฟไลน์ ให้เชื่อมต่อใหม่แล้วลองอีกครั้ง</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>เซสชันการแก้ไขข้อบกพร่องแบบไร้สายใช้ไม่ได้แล้ว ({0} แสดงว่าออฟไลน์) พอร์ตมักเปลี่ยนหลังโทรศัพท์ดับหน้าจอ สลับเครือข่าย หรือรีสตาร์ต ให้ตรวจ «ที่อยู่ IP และพอร์ต» ปัจจุบันในหน้าการแก้ไขข้อบกพร่องแบบไร้สายของโทรศัพท์ แล้วกด «เชื่อมต่อ» อีกครั้งในส่วนไร้สายด้านล่าง — ไม่ต้องจับคู่ใหม่</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: ช่องการอ่านสิทธิ์พิเศษกำลังทำงาน</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} พร้อมแล้ว แต่ช่องสิทธิ์พิเศษยังไม่ทำงาน แตะ «เริ่มการอ่านสิทธิ์พิเศษ» เพื่อเปิด</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} พร้อมแล้ว แต่ตอนนี้ยังยืนยันไม่ได้ว่าช่องทางสิทธิ์พิเศษกำลังทำงานอยู่หรือไม่ ลองกด «ตรวจหาโทรศัพท์» อีกครั้งภายหลัง หรือกด «เริ่มการอ่านสิทธิ์พิเศษ» ได้เลย (เริ่มซ้ำไม่มีอันตราย สคริปต์จะเก็บกวาดโปรเซสเก่าก่อน)</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>ส่งคำสั่งเริ่มต้นแล้ว ที่หน้าช่องทางของโทรศัพท์ ให้แตะ «ตรวจซ้ำ» เพื่อยืนยันว่าการอ่านสิทธิ์พิเศษพร้อมแล้ว</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>เชื่อมต่อไม่สำเร็จ: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>การเชื่อมต่อไร้สายขาดหาย ({0} ออฟไลน์หรือหายไปจากรายการอุปกรณ์) ตรวจ «ที่อยู่ IP และพอร์ต» ปัจจุบันในหน้าการแก้ไขข้อบกพร่องแบบไร้สายของโทรศัพท์ แก้ค่าแล้วกด «เชื่อมต่อ» — ไม่ต้องจับคู่ใหม่</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>พบเซสชันไร้สายเก่าที่ค้างอยู่ใน adb จึงตัดการเชื่อมต่อและเชื่อมต่อใหม่ให้อัตโนมัติ</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>IP:พอร์ตสำหรับเชื่อมต่อมาจากบรรทัด «ที่อยู่ IP และพอร์ต» ด้านบนของหน้าการแก้ไขข้อบกพร่องแบบไร้สายของโทรศัพท์ (ไม่ใช่พอร์ตในกล่องจับคู่) ค่านี้มักเปลี่ยนหลังหน้าจอดับ สลับเครือข่าย หรือรีสตาร์ต — ตรวจค่าปัจจุบันแล้วลองใหม่ ปกติไม่ต้องจับคู่ใหม่</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>รูปแบบ IP:พอร์ต ไม่ถูกต้อง (ตัวอย่าง 192.168.1.23:37123)</value>

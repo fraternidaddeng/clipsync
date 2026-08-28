@@ -87,8 +87,10 @@ public static partial class Strings
     public static string Conduit_Privileged_NoDevice => Get(nameof(Conduit_Privileged_NoDevice));
     public static string Conduit_Privileged_Unauthorized => Get(nameof(Conduit_Privileged_Unauthorized));
     public static string Conduit_Privileged_Offline => Get(nameof(Conduit_Privileged_Offline));
+    public static string Conduit_Privileged_OfflineWirelessFormat => Get(nameof(Conduit_Privileged_OfflineWirelessFormat));
     public static string Conduit_Privileged_RunningFormat => Get(nameof(Conduit_Privileged_RunningFormat));
     public static string Conduit_Privileged_StoppedFormat => Get(nameof(Conduit_Privileged_StoppedFormat));
+    public static string Conduit_Privileged_HostUnknownFormat => Get(nameof(Conduit_Privileged_HostUnknownFormat));
     public static string Conduit_Privileged_StartOk => Get(nameof(Conduit_Privileged_StartOk));
     public static string Conduit_Privileged_StartFailedFormat => Get(nameof(Conduit_Privileged_StartFailedFormat));
     public static string Conduit_Privileged_ReasonUnknown => Get(nameof(Conduit_Privileged_ReasonUnknown));
@@ -109,6 +111,9 @@ public static partial class Strings
     public static string Conduit_Wireless_ConnectingFormat => Get(nameof(Conduit_Wireless_ConnectingFormat));
     public static string Conduit_Wireless_ConnectOkFormat => Get(nameof(Conduit_Wireless_ConnectOkFormat));
     public static string Conduit_Wireless_ConnectFailedFormat => Get(nameof(Conduit_Wireless_ConnectFailedFormat));
+    public static string Conduit_Wireless_SessionLostFormat => Get(nameof(Conduit_Wireless_SessionLostFormat));
+    public static string Conduit_Wireless_StaleSessionRedialed => Get(nameof(Conduit_Wireless_StaleSessionRedialed));
+    public static string Conduit_Wireless_ConnectFailedHint => Get(nameof(Conduit_Wireless_ConnectFailedHint));
     public static string Conduit_Wireless_EndpointInvalid => Get(nameof(Conduit_Wireless_EndpointInvalid));
     public static string Conduit_Wireless_CodeInvalid => Get(nameof(Conduit_Wireless_CodeInvalid));
     public static string Conduit_Wireless_Stopped => Get(nameof(Conduit_Wireless_Stopped));

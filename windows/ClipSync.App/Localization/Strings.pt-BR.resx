@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Telefone conectado, mas relatado offline. Reconecte-o e tente de novo.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>A sessão de depuração por Wi-Fi ficou obsoleta ({0} aparece offline). A porta costuma mudar quando o telefone apaga a tela, troca de rede ou reinicia: confira o "endereço IP e porta" atual na página Depuração por Wi-Fi do telefone e toque em "Conectar" de novo na seção sem fio abaixo — não precisa parear de novo.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: o canal de leitura privilegiada está em execução.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} está pronto; o canal privilegiado não está em execução. Toque em "Iniciar leitura privilegiada" para abri-lo.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} está pronto, mas não foi possível confirmar agora se o canal privilegiado está em execução. Toque em "Detectar telefone" de novo mais tarde, ou toque direto em "Iniciar leitura privilegiada" (reiniciar é inofensivo — o script limpa antes qualquer processo antigo).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Comando de início enviado. Na página de conduíte do telefone, toque em "Re-sondar" para confirmar que a leitura privilegiada está pronta.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Falha na conexão: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>A conexão sem fio foi perdida ({0} está offline ou sumiu da lista de dispositivos). Confira o "endereço IP e porta" atual na página Depuração por Wi-Fi do telefone, corrija o campo e toque em "Conectar" — não precisa parear de novo.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>Uma sessão sem fio obsoleta deixada no adb foi detectada; ela foi desconectada e reconectada automaticamente.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>O IP:porta de conexão vem da linha "endereço IP e porta" no topo da página Depuração por Wi-Fi do telefone (não a porta da caixa de pareamento). Ele costuma mudar quando o telefone apaga a tela, troca de rede ou reinicia — confira o valor atual e tente de novo. Normalmente não é preciso parear de novo.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Não é um IP:porta válido (exemplo: 192.168.1.23:37123).</value>

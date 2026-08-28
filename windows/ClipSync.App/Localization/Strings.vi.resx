@@ -252,11 +252,17 @@
   <data name="Conduit_Privileged_Offline" xml:space="preserve">
     <value>Điện thoại đã gắn nhưng báo ngoại tuyến. Hãy kết nối lại và thử lần nữa.</value>
   </data>
+  <data name="Conduit_Privileged_OfflineWirelessFormat" xml:space="preserve">
+    <value>Phiên gỡ lỗi qua Wi-Fi đã hết hiệu lực ({0} hiển thị ngoại tuyến). Cổng thường thay đổi sau khi điện thoại tắt màn hình, đổi mạng hoặc khởi động lại: kiểm tra «Địa chỉ IP và cổng» hiện tại trên trang Gỡ lỗi qua Wi-Fi của điện thoại rồi bấm «Kết nối» lại ở khu vực không dây bên dưới — không cần ghép nối lại.</value>
+  </data>
   <data name="Conduit_Privileged_RunningFormat" xml:space="preserve">
     <value>{0}: kênh đọc đặc quyền đang chạy.</value>
   </data>
   <data name="Conduit_Privileged_StoppedFormat" xml:space="preserve">
     <value>{0} đã sẵn sàng; kênh đặc quyền chưa chạy. Nhấn "Bắt đầu đọc đặc quyền" để mở.</value>
+  </data>
+  <data name="Conduit_Privileged_HostUnknownFormat" xml:space="preserve">
+    <value>{0} đã sẵn sàng, nhưng hiện chưa xác nhận được kênh đặc quyền có đang chạy hay không. Lát nữa hãy bấm lại «Dò tìm điện thoại», hoặc bấm ngay «Bắt đầu đọc đặc quyền» (khởi động lại vô hại — tập lệnh sẽ dọn tiến trình cũ trước).</value>
   </data>
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Đã gửi lệnh khởi động. Trên trang kênh của điện thoại, nhấn "Dò lại" để xác nhận đọc đặc quyền đã sẵn sàng.</value>
@@ -317,6 +323,15 @@
   </data>
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Kết nối thất bại: {0}</value>
+  </data>
+  <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
+    <value>Kết nối không dây đã mất ({0} ngoại tuyến hoặc biến mất khỏi danh sách thiết bị). Kiểm tra «Địa chỉ IP và cổng» hiện tại trên trang Gỡ lỗi qua Wi-Fi của điện thoại, sửa lại ô rồi bấm «Kết nối» — không cần ghép nối lại.</value>
+  </data>
+  <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
+    <value>Đã phát hiện phiên không dây cũ còn sót trong adb; đã tự động ngắt và kết nối lại.</value>
+  </data>
+  <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
+    <value>IP:cổng để kết nối lấy từ dòng «Địa chỉ IP và cổng» ở đầu trang Gỡ lỗi qua Wi-Fi của điện thoại (không phải cổng trong hộp thoại ghép nối). Nó thường thay đổi sau khi điện thoại tắt màn hình, đổi mạng hoặc khởi động lại — kiểm tra giá trị hiện tại rồi thử lại. Thường không cần ghép nối lại.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Không phải IP:cổng hợp lệ (ví dụ 192.168.1.23:37123).</value>
