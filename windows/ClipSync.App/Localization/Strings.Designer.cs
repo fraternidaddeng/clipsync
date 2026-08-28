@@ -92,6 +92,7 @@ public static partial class Strings
     public static string Conduit_Privileged_StoppedFormat => Get(nameof(Conduit_Privileged_StoppedFormat));
     public static string Conduit_Privileged_HostUnknownFormat => Get(nameof(Conduit_Privileged_HostUnknownFormat));
     public static string Conduit_Privileged_StartOk => Get(nameof(Conduit_Privileged_StartOk));
+    public static string Conduit_Privileged_SpawnedNotDetected => Get(nameof(Conduit_Privileged_SpawnedNotDetected));
     public static string Conduit_Privileged_StartFailedFormat => Get(nameof(Conduit_Privileged_StartFailedFormat));
     public static string Conduit_Privileged_ReasonUnknown => Get(nameof(Conduit_Privileged_ReasonUnknown));
     public static string Conduit_Wireless_SectionTitle => Get(nameof(Conduit_Wireless_SectionTitle));

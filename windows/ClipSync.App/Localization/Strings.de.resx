@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Startbefehl gesendet. Tippe auf der Conduit-Seite des Telefons auf „Erneut prüfen“, um zu bestätigen, dass der privilegierte Lesezugriff bereit ist.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>Das Startskript wurde ausgeführt, aber die anschließenden Prüfungen sahen den Host-Prozess nicht am Leben – er ist möglicherweise direkt nach dem Start beendet worden. Tippen Sie erneut auf „Privilegierten Lesezugriff starten“; wiederholt sich das, trennen Sie zuerst das drahtlose Debugging und verbinden Sie es neu, dann versuchen Sie es erneut.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Start fehlgeschlagen: {0}</value>
   </data>

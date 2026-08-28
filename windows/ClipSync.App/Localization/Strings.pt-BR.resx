@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Comando de início enviado. Na página de conduíte do telefone, toque em "Re-sondar" para confirmar que a leitura privilegiada está pronta.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>O script de início foi executado, mas as verificações seguintes não viram o processo hospedeiro vivo — ele pode ter saído logo após iniciar. Toque de novo em "Iniciar leitura privilegiada"; se isso se repetir, desconecte e reconecte primeiro a depuração sem fio e tente outra vez.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Falha ao iniciar: {0}</value>
   </data>

@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Start command sent. On the phone's conduit page, tap "Re-probe" to confirm privileged read is ready.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>The start script ran, but the host process was not seen alive in the checks that followed — it may have exited right after spawning. Tap "Start privileged read" once more; if this keeps happening, disconnect and reconnect wireless debugging first, then try again.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Start failed: {0}</value>
   </data>

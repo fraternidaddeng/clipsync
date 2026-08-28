@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>ส่งคำสั่งเริ่มต้นแล้ว ที่หน้าช่องทางของโทรศัพท์ ให้แตะ «ตรวจซ้ำ» เพื่อยืนยันว่าการอ่านสิทธิ์พิเศษพร้อมแล้ว</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>สคริปต์เริ่มต้นทำงานแล้ว แต่การตรวจสอบหลังจากนั้นไม่พบว่าโปรเซสโฮสต์ยังทำงานอยู่ — อาจปิดตัวทันทีหลังเริ่ม กด «เริ่มการอ่านสิทธิ์พิเศษ» อีกครั้ง หากเกิดซ้ำ ให้ตัดการเชื่อมต่อแล้วเชื่อมต่อการดีบักไร้สายใหม่ก่อน แล้วลองอีกครั้ง</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>เริ่มไม่สำเร็จ: {0}</value>
   </data>

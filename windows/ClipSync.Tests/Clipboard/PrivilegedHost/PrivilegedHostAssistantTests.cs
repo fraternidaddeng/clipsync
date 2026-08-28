@@ -77,11 +77,16 @@ public sealed class PrivilegedHostAssistantTests
         runner.OnArgs(
             ["-s", "SERIAL1", "shell", "sh", PrivilegedHostPaths.ScriptPath],
             new AdbCommandResult(0, "info: spawned\n", string.Empty));
-        var assistant = new PrivilegedHostAssistant(runner);
+        // Post-spawn verification: the host process is confirmed running.
+        runner.OnArgs(
+            ["-s", "SERIAL1", "shell", "pgrep", "-f", "clipsync_priv_server"],
+            new AdbCommandResult(0, "9182\n", string.Empty));
+        var assistant = new PrivilegedHostAssistant(runner, delay: (_, _) => Task.CompletedTask);
 
         var outcome = await assistant.StartAsync("SERIAL1");
 
         Assert.True(outcome.Succeeded);
+        Assert.Equal(PrivilegedHostStartStatus.Started, outcome.Status);
         Assert.Contains(runner.Invocations, args => args.SequenceEqual(new[] { "-s", "SERIAL1", "shell", "sh", PrivilegedHostPaths.ScriptPath }));
     }
 

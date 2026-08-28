@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Comando di avvio inviato. Nella pagina condotto del telefono, tocca "Ri-sonda" per confermare che la lettura privilegiata è pronta.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>Lo script di avvio è stato eseguito, ma i controlli successivi non hanno visto il processo host in vita — potrebbe essere uscito subito dopo l'avvio. Premi di nuovo "Avvia lettura privilegiata"; se si ripete, scollega e ricollega prima il debug wireless, poi riprova.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Avvio non riuscito: {0}</value>
   </data>

@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Wysłano polecenie startu. Na stronie kanału w telefonie dotknij „Sprawdź ponownie”, aby potwierdzić gotowość odczytu uprzywilejowanego.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>Skrypt startowy został wykonany, ale kolejne kontrole nie zobaczyły żywego procesu hosta — mógł zakończyć się zaraz po uruchomieniu. Naciśnij ponownie „Uruchom odczyt uprzywilejowany”; jeśli to się powtarza, najpierw rozłącz i połącz ponownie debugowanie bezprzewodowe, a potem spróbuj jeszcze raz.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Uruchomienie nie powiodło się: {0}</value>
   </data>

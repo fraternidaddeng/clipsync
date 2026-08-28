@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Başlatma komutu gönderildi. Telefonun kanal sayfasında ayrıcalıklı okumanın hazır olduğunu doğrulamak için "Yeniden yokla"ya dokunun.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>Başlatma betiği çalıştı, ancak sonraki kontrollerde ana bilgisayar süreci canlı görülmedi — başlatıldıktan hemen sonra çıkmış olabilir. «Ayrıcalıklı okumayı başlat»a bir kez daha basın; tekrarlanırsa önce kablosuz hata ayıklamayı kesip yeniden bağlanın, sonra tekrar deneyin.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Başlatma başarısız: {0}</value>
   </data>

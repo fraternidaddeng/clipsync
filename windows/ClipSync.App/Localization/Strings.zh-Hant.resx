@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>已傳送啟動命令。回到手機的通路頁點「重新探測」確認特權直讀已就緒。</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>啟動指令碼已執行，但隨後幾次檢查都沒有看到宿主行程存活——它可能剛啟動就退出了。請再點一次「啟動特權直讀」；若反覆如此，先中斷並重新連線無線偵錯再試。</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>啟動失敗：{0}</value>
   </data>

@@ -522,6 +522,10 @@ public partial class MainViewModel(
             PrivilegedActionResult = outcome.Status switch
             {
                 PrivilegedHostStartStatus.Started => Strings.Conduit_Privileged_StartOk,
+                // The script said "spawned" but post-start checks never saw the host alive:
+                // stated as such, with the wireless-reconnect recovery step, instead of the
+                // rosy "已发送启动命令" that used to hide this exact failure.
+                PrivilegedHostStartStatus.SpawnedButNotDetected => Strings.Conduit_Privileged_SpawnedNotDetected,
                 _ => Strings.Format(
                     nameof(Strings.Conduit_Privileged_StartFailedFormat),
                     outcome.Reason ?? Strings.Conduit_Privileged_ReasonUnknown),

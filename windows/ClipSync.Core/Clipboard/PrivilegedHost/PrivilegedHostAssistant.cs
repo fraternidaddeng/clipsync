@@ -7,9 +7,41 @@ namespace ClipSync.Core.Clipboard.PrivilegedHost;
 /// caller (the view-model) is what enforces the explicit-consent gate before ever invoking
 /// this. Nothing here is silent or automatic: every method maps one to one to a user action.
 /// </summary>
-public sealed class PrivilegedHostAssistant(IAdbRunner runner)
+public sealed class PrivilegedHostAssistant
 {
+    /// <summary>How many read-only pgrep checks confirm a spawned host actually stayed up.</summary>
+    public const int DefaultStartVerifyAttempts = 6;
+
+    /// <summary>Wait between the start-verification pgrep checks (the first check is immediate).</summary>
+    public static readonly TimeSpan DefaultStartVerifyInterval = TimeSpan.FromMilliseconds(750);
+
     private static readonly IReadOnlyList<string> ListDevicesArguments = new[] { "devices", "-l" };
+
+    private readonly IAdbRunner runner;
+    private readonly Func<TimeSpan, CancellationToken, Task> delay;
+    private readonly int startVerifyAttempts;
+    private readonly TimeSpan startVerifyInterval;
+
+    /// <summary>
+    /// </summary>
+    /// <param name="runner">The adb seam.</param>
+    /// <param name="delay">
+    /// Waits between start-verification checks; defaults to <see cref="Task.Delay(TimeSpan, CancellationToken)"/>.
+    /// Tests inject a no-op so the retry loop is deterministic and instant.
+    /// </param>
+    /// <param name="startVerifyAttempts">How many times to re-check that a spawned host is running.</param>
+    /// <param name="startVerifyInterval">Wait between those checks.</param>
+    public PrivilegedHostAssistant(
+        IAdbRunner runner,
+        Func<TimeSpan, CancellationToken, Task>? delay = null,
+        int startVerifyAttempts = DefaultStartVerifyAttempts,
+        TimeSpan? startVerifyInterval = null)
+    {
+        this.runner = runner;
+        this.delay = delay ?? ((duration, token) => Task.Delay(duration, token));
+        this.startVerifyAttempts = Math.Max(1, startVerifyAttempts);
+        this.startVerifyInterval = startVerifyInterval ?? DefaultStartVerifyInterval;
+    }
 
     /// <summary>Whether an adb executable was located; the card stays in its explain-only state when false.</summary>
     public bool AdbAvailable => runner.IsAvailable;
@@ -74,7 +106,54 @@ public sealed class PrivilegedHostAssistant(IAdbRunner runner)
         var result = await runner.RunAsync(
             WithSerial(serial, PrivilegedHostPaths.StartScriptShellArguments),
             cancellationToken).ConfigureAwait(false);
-        return PrivilegedHostStartOutcome.FromAdbRun(result.ExitCode, result.StandardOutput, result.StandardError);
+        var outcome = PrivilegedHostStartOutcome.FromAdbRun(result.ExitCode, result.StandardOutput, result.StandardError);
+        if (!outcome.Succeeded)
+        {
+            return outcome;
+        }
+
+        // "info: spawned" is printed unconditionally once the script backgrounds app_process and
+        // exits 0 — before the host could crash on a wrong uid/apk, or the wireless transport
+        // could drop mid-launch. So a spawn marker alone is not proof of a live channel. Confirm
+        // the host process actually stayed up with a retried, read-only pgrep before claiming
+        // success; a definite, repeated "not running" means it launched and died, reported
+        // honestly. A pgrep that cannot run (null) is never treated as proof of death.
+        return await VerifyHostStartedAsync(serial, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Polls <see cref="CheckHostRunningAsync"/> a few times (the first immediately, then spaced by
+    /// the configured interval) so a host that needs a beat to appear is not prematurely judged
+    /// dead. Returns <see cref="PrivilegedHostStartStatus.Started"/> as soon as the host is seen
+    /// running; only a run where every check found it definitely absent downgrades to
+    /// <see cref="PrivilegedHostStartStatus.SpawnedButNotDetected"/>. If the probe never could run
+    /// (all null), the spawn success stands rather than inventing a failure.
+    /// </summary>
+    private async Task<PrivilegedHostStartOutcome> VerifyHostStartedAsync(string serial, CancellationToken cancellationToken)
+    {
+        var sawDefiniteStopped = false;
+        for (var attempt = 0; attempt < startVerifyAttempts; attempt++)
+        {
+            if (attempt > 0)
+            {
+                await delay(startVerifyInterval, cancellationToken).ConfigureAwait(false);
+            }
+
+            var running = await CheckHostRunningAsync(serial, cancellationToken).ConfigureAwait(false);
+            if (running == true)
+            {
+                return new PrivilegedHostStartOutcome(PrivilegedHostStartStatus.Started);
+            }
+
+            if (running == false)
+            {
+                sawDefiniteStopped = true;
+            }
+        }
+
+        return sawDefiniteStopped
+            ? new PrivilegedHostStartOutcome(PrivilegedHostStartStatus.SpawnedButNotDetected)
+            : new PrivilegedHostStartOutcome(PrivilegedHostStartStatus.Started);
     }
 
     /// <summary>

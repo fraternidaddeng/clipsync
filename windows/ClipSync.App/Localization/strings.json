@@ -1807,6 +1807,27 @@
       "pl": "Wysłano polecenie startu. Na stronie kanału w telefonie dotknij „Sprawdź ponownie”, aby potwierdzić gotowość odczytu uprzywilejowanego.",
       "nl": "Startcommando verzonden. Tik op de conduit-pagina van de telefoon op \"Opnieuw peilen\" om te bevestigen dat bevoorrecht lezen klaar is."
     },
+    "Conduit_Privileged_SpawnedNotDetected": {
+      "zh-Hans": "启动脚本已执行，但随后几次检查都没有看到宿主进程存活——它可能刚拉起就退出了。请再点一次「启动特权直读」；若反复如此，先断开并重新连接无线调试再试。",
+      "zh-Hant": "啟動指令碼已執行，但隨後幾次檢查都沒有看到宿主行程存活——它可能剛啟動就退出了。請再點一次「啟動特權直讀」；若反覆如此，先中斷並重新連線無線偵錯再試。",
+      "en": "The start script ran, but the host process was not seen alive in the checks that followed — it may have exited right after spawning. Tap \"Start privileged read\" once more; if this keeps happening, disconnect and reconnect wireless debugging first, then try again.",
+      "ja": "起動スクリプトは実行されましたが、その後の確認でホストプロセスの生存を確認できませんでした。起動直後に終了した可能性があります。もう一度「特権ダイレクト読み取りを開始」を押してください。繰り返す場合は、ワイヤレスデバッグを一度切断して再接続してから試してください。",
+      "ko": "시작 스크립트는 실행되었지만 이후 확인에서 호스트 프로세스의 생존을 확인하지 못했습니다. 시작 직후 종료되었을 수 있습니다. 「특권 직접 읽기 시작」을 한 번 더 누르세요. 반복되면 먼저 무선 디버깅을 끊었다가 다시 연결한 뒤 시도하세요.",
+      "es": "El script de inicio se ejecutó, pero en las comprobaciones posteriores no se vio vivo el proceso anfitrión: puede haber salido justo tras arrancar. Pulsa de nuevo \"Iniciar lectura privilegiada\"; si se repite, desconecta y vuelve a conectar primero la depuración inalámbrica y prueba otra vez.",
+      "fr": "Le script de démarrage s'est exécuté, mais les vérifications suivantes n'ont pas vu le processus hôte en vie — il a peut-être quitté juste après son lancement. Réappuyez sur « Démarrer la lecture privilégiée » ; si cela se répète, déconnectez puis reconnectez d'abord le débogage sans fil et réessayez.",
+      "de": "Das Startskript wurde ausgeführt, aber die anschließenden Prüfungen sahen den Host-Prozess nicht am Leben – er ist möglicherweise direkt nach dem Start beendet worden. Tippen Sie erneut auf „Privilegierten Lesezugriff starten“; wiederholt sich das, trennen Sie zuerst das drahtlose Debugging und verbinden Sie es neu, dann versuchen Sie es erneut.",
+      "pt-BR": "O script de início foi executado, mas as verificações seguintes não viram o processo hospedeiro vivo — ele pode ter saído logo após iniciar. Toque de novo em \"Iniciar leitura privilegiada\"; se isso se repetir, desconecte e reconecte primeiro a depuração sem fio e tente outra vez.",
+      "ru": "Стартовый скрипт выполнен, но последующие проверки не увидели живой хост-процесс — возможно, он завершился сразу после запуска. Нажмите «Запустить привилегированное чтение» ещё раз; если это повторяется, сначала отключите и заново подключите беспроводную отладку, затем попробуйте снова.",
+      "ar": "تم تنفيذ سكربت البدء، لكن الفحوصات اللاحقة لم ترَ عملية المضيف حية — ربما خرجت فور تشغيلها. اضغط «بدء القراءة المميزة» مرة أخرى؛ إذا تكرر ذلك، افصل تصحيح الأخطاء اللاسلكي وأعد الاتصال أولًا ثم حاول مجددًا.",
+      "it": "Lo script di avvio è stato eseguito, ma i controlli successivi non hanno visto il processo host in vita — potrebbe essere uscito subito dopo l'avvio. Premi di nuovo \"Avvia lettura privilegiata\"; se si ripete, scollega e ricollega prima il debug wireless, poi riprova.",
+      "vi": "Tập lệnh khởi động đã chạy, nhưng các lần kiểm tra sau đó không thấy tiến trình chủ còn sống — nó có thể đã thoát ngay sau khi khởi chạy. Bấm lại «Bắt đầu đọc đặc quyền»; nếu lặp lại, hãy ngắt rồi kết nối lại gỡ lỗi không dây trước, sau đó thử lại.",
+      "th": "สคริปต์เริ่มต้นทำงานแล้ว แต่การตรวจสอบหลังจากนั้นไม่พบว่าโปรเซสโฮสต์ยังทำงานอยู่ — อาจปิดตัวทันทีหลังเริ่ม กด «เริ่มการอ่านสิทธิ์พิเศษ» อีกครั้ง หากเกิดซ้ำ ให้ตัดการเชื่อมต่อแล้วเชื่อมต่อการดีบักไร้สายใหม่ก่อน แล้วลองอีกครั้ง",
+      "id": "Skrip start sudah dijalankan, tetapi pemeriksaan berikutnya tidak melihat proses host hidup — mungkin ia keluar tepat setelah dimulai. Ketuk lagi «Mulai baca istimewa»; jika terus terjadi, putuskan lalu sambungkan ulang debugging nirkabel dulu, kemudian coba lagi.",
+      "hi": "स्टार्ट स्क्रिप्ट चली, पर उसके बाद की जाँचों में होस्ट प्रक्रिया जीवित नहीं दिखी — हो सकता है वह शुरू होते ही बंद हो गई हो। «विशेषाधिकार पठन शुरू करें» फिर दबाएँ; बार-बार ऐसा हो तो पहले वायरलेस डीबगिंग को डिस्कनेक्ट कर दोबारा कनेक्ट करें, फिर पुनः प्रयास करें।",
+      "tr": "Başlatma betiği çalıştı, ancak sonraki kontrollerde ana bilgisayar süreci canlı görülmedi — başlatıldıktan hemen sonra çıkmış olabilir. «Ayrıcalıklı okumayı başlat»a bir kez daha basın; tekrarlanırsa önce kablosuz hata ayıklamayı kesip yeniden bağlanın, sonra tekrar deneyin.",
+      "pl": "Skrypt startowy został wykonany, ale kolejne kontrole nie zobaczyły żywego procesu hosta — mógł zakończyć się zaraz po uruchomieniu. Naciśnij ponownie „Uruchom odczyt uprzywilejowany”; jeśli to się powtarza, najpierw rozłącz i połącz ponownie debugowanie bezprzewodowe, a potem spróbuj jeszcze raz.",
+      "nl": "Het startscript is uitgevoerd, maar bij de controles daarna werd het hostproces niet levend gezien — mogelijk is het direct na het starten afgesloten. Tik nogmaals op \"Bevoorrecht lezen starten\"; blijft dit gebeuren, verbreek dan eerst draadloos debuggen en maak opnieuw verbinding, en probeer het daarna opnieuw."
+    },
     "Conduit_Privileged_StartFailedFormat": {
       "zh-Hans": "启动失败：{0}",
       "zh-Hant": "啟動失敗：{0}",

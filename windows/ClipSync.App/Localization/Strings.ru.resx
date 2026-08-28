@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Команда запуска отправлена. На странице канала телефона нажмите «Повторить проверку», чтобы подтвердить готовность привилегированного чтения.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>Стартовый скрипт выполнен, но последующие проверки не увидели живой хост-процесс — возможно, он завершился сразу после запуска. Нажмите «Запустить привилегированное чтение» ещё раз; если это повторяется, сначала отключите и заново подключите беспроводную отладку, затем попробуйте снова.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Не удалось запустить: {0}</value>
   </data>

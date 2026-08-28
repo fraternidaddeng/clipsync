@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>起動コマンドを送信しました。スマートフォンの通路ページで「再探測」をタップし、特権ダイレクト読み取りの準備完了を確認してください。</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>起動スクリプトは実行されましたが、その後の確認でホストプロセスの生存を確認できませんでした。起動直後に終了した可能性があります。もう一度「特権ダイレクト読み取りを開始」を押してください。繰り返す場合は、ワイヤレスデバッグを一度切断して再接続してから試してください。</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>起動に失敗しました：{0}</value>
   </data>

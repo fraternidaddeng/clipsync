@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>تم إرسال أمر البدء. في صفحة القناة على الهاتف، انقر «إعادة الفحص» للتأكد من جاهزية القراءة المميزة.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>تم تنفيذ سكربت البدء، لكن الفحوصات اللاحقة لم ترَ عملية المضيف حية — ربما خرجت فور تشغيلها. اضغط «بدء القراءة المميزة» مرة أخرى؛ إذا تكرر ذلك، افصل تصحيح الأخطاء اللاسلكي وأعد الاتصال أولًا ثم حاول مجددًا.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>فشل البدء: {0}</value>
   </data>

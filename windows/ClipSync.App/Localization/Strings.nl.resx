@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Startcommando verzonden. Tik op de conduit-pagina van de telefoon op "Opnieuw peilen" om te bevestigen dat bevoorrecht lezen klaar is.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>Het startscript is uitgevoerd, maar bij de controles daarna werd het hostproces niet levend gezien — mogelijk is het direct na het starten afgesloten. Tik nogmaals op "Bevoorrecht lezen starten"; blijft dit gebeuren, verbreek dan eerst draadloos debuggen en maak opnieuw verbinding, en probeer het daarna opnieuw.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Starten mislukt: {0}</value>
   </data>

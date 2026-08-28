@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Comando de inicio enviado. En la página de conducto del teléfono, toca "Volver a sondear" para confirmar que la lectura privilegiada está lista.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>El script de inicio se ejecutó, pero en las comprobaciones posteriores no se vio vivo el proceso anfitrión: puede haber salido justo tras arrancar. Pulsa de nuevo "Iniciar lectura privilegiada"; si se repite, desconecta y vuelve a conectar primero la depuración inalámbrica y prueba otra vez.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Error al iniciar: {0}</value>
   </data>

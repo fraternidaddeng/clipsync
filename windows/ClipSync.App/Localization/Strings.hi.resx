@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>स्टार्ट कमांड भेजा गया। फ़ोन के कंड्यूट पेज पर "फिर से जाँचें" पर टैप कर पुष्टि करें कि विशेषाधिकार पठन तैयार है।</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>स्टार्ट स्क्रिप्ट चली, पर उसके बाद की जाँचों में होस्ट प्रक्रिया जीवित नहीं दिखी — हो सकता है वह शुरू होते ही बंद हो गई हो। «विशेषाधिकार पठन शुरू करें» फिर दबाएँ; बार-बार ऐसा हो तो पहले वायरलेस डीबगिंग को डिस्कनेक्ट कर दोबारा कनेक्ट करें, फिर पुनः प्रयास करें।</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>शुरू करना विफल: {0}</value>
   </data>

@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Đã gửi lệnh khởi động. Trên trang kênh của điện thoại, nhấn "Dò lại" để xác nhận đọc đặc quyền đã sẵn sàng.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>Tập lệnh khởi động đã chạy, nhưng các lần kiểm tra sau đó không thấy tiến trình chủ còn sống — nó có thể đã thoát ngay sau khi khởi chạy. Bấm lại «Bắt đầu đọc đặc quyền»; nếu lặp lại, hãy ngắt rồi kết nối lại gỡ lỗi không dây trước, sau đó thử lại.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Khởi động thất bại: {0}</value>
   </data>

@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Perintah start terkirim. Di halaman saluran ponsel, ketuk "Deteksi ulang" untuk memastikan baca istimewa siap.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>Skrip start sudah dijalankan, tetapi pemeriksaan berikutnya tidak melihat proses host hidup — mungkin ia keluar tepat setelah dimulai. Ketuk lagi «Mulai baca istimewa»; jika terus terjadi, putuskan lalu sambungkan ulang debugging nirkabel dulu, kemudian coba lagi.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Gagal memulai: {0}</value>
   </data>

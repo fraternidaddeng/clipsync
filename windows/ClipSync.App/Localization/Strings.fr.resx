@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>Commande de démarrage envoyée. Sur la page conduit du téléphone, appuyez sur « Re-sonder » pour confirmer que la lecture privilégiée est prête.</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>Le script de démarrage s'est exécuté, mais les vérifications suivantes n'ont pas vu le processus hôte en vie — il a peut-être quitté juste après son lancement. Réappuyez sur « Démarrer la lecture privilégiée » ; si cela se répète, déconnectez puis reconnectez d'abord le débogage sans fil et réessayez.</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>Échec du démarrage : {0}</value>
   </data>

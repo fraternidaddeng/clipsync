@@ -3,7 +3,7 @@ namespace ClipSync.Core.Clipboard.PrivilegedHost;
 /// <summary>How the on-phone start script resolved, as read back from its own stdout/stderr.</summary>
 public enum PrivilegedHostStartStatus
 {
-    /// <summary>The script printed "info: spawned" — the privileged host process was launched.</summary>
+    /// <summary>The script printed "info: spawned" and a follow-up check saw the host process running.</summary>
     Started,
 
     /// <summary>The script ran but exited with a "fatal:" line (wrong uid, apk not found, …).</summary>
@@ -11,6 +11,14 @@ public enum PrivilegedHostStartStatus
 
     /// <summary>adb itself failed before or while running the script (no device, transport error).</summary>
     AdbFailed,
+
+    /// <summary>
+    /// The script reported it spawned the host, but a retried read-only check never saw the host
+    /// process running and did see it definitely absent — it launched and died right away (a
+    /// wrong-uid/apk edge that "info: spawned" is printed before, or the wireless transport
+    /// dropping mid-launch). Reported honestly rather than as the rosy "已发送启动命令".
+    /// </summary>
+    SpawnedButNotDetected,
 }
 
 /// <summary>

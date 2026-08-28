@@ -267,6 +267,9 @@
   <data name="Conduit_Privileged_StartOk" xml:space="preserve">
     <value>已发送启动命令。回到手机的通路页点「重新探测」确认特权直读已就绪。</value>
   </data>
+  <data name="Conduit_Privileged_SpawnedNotDetected" xml:space="preserve">
+    <value>启动脚本已执行，但随后几次检查都没有看到宿主进程存活——它可能刚拉起就退出了。请再点一次「启动特权直读」；若反复如此，先断开并重新连接无线调试再试。</value>
+  </data>
   <data name="Conduit_Privileged_StartFailedFormat" xml:space="preserve">
     <value>启动失败：{0}</value>
   </data>
