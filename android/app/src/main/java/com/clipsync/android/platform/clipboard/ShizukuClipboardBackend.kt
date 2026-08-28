@@ -34,13 +34,14 @@ class ShizukuClipboardBackend(
 
     override fun probe(): CapabilityReport {
         val p = probes.probe()
-        val (state, errorCode) = when {
-            !p.shizukuInstalled -> CapabilityState.UNAVAILABLE to ERROR_CHANNEL_MISSING
-            !p.shizukuRunning -> CapabilityState.UNAVAILABLE to ERROR_CHANNEL_OFFLINE
-            !p.shizukuAuthorized -> CapabilityState.UNAVAILABLE to ERROR_PERMISSION_DENIED
-            readVerified() -> liveFailure() ?: (CapabilityState.READY to null)
-            else -> unverifiedOrProvenDead()
-        }
+        val (state, errorCode) =
+            when {
+                !p.shizukuInstalled -> CapabilityState.UNAVAILABLE to ERROR_CHANNEL_MISSING
+                !p.shizukuRunning -> CapabilityState.UNAVAILABLE to ERROR_CHANNEL_OFFLINE
+                !p.shizukuAuthorized -> CapabilityState.UNAVAILABLE to ERROR_PERMISSION_DENIED
+                readVerified() -> liveFailure() ?: (CapabilityState.READY to null)
+                else -> unverifiedOrProvenDead()
+            }
         return CapabilityReport(
             readMode = mode,
             readState = state,

@@ -26,8 +26,7 @@ class CapabilityProbeBackendsTest {
             shizukuAuthorized = true,
         )
 
-    private fun adbLog(p: RoutePrerequisites) =
-        AdbLogOverlayBackend(FixedProbes(p), systemVersion = "test").probe()
+    private fun adbLog(p: RoutePrerequisites) = AdbLogOverlayBackend(FixedProbes(p), systemVersion = "test").probe()
 
     private fun polling(p: RoutePrerequisites) = OverlayPollingBackend(FixedProbes(p), systemVersion = "test").probe()
 
