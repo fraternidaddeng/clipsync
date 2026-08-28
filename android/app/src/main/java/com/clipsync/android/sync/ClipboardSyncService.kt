@@ -108,18 +108,31 @@ class ClipboardSyncService : Service() {
         intent: Intent?,
         flags: Int,
         startId: Int,
-    ): Int {
-        // 后台同步服务 off means truly off: every static start path already refuses
-        // ([start]), but a start intent can still slip past that guard — a stale
-        // notification action's PendingIntent racing the stop, or an OEM re-delivering
-        // the intent. Promote first (the startForegroundService contract requires a
-        // startForeground call), then stop for real; never sticky.
-        if (!settings.serviceEnabled) {
-            runCatching { startAsForeground(notification(getString(R.string.notification_sync_connecting))) }
-            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
-            stopSelf(startId)
-            return START_NOT_STICKY
+    ): Int =
+        if (settings.serviceEnabled) {
+            promoteAndLaunch(intent, startId)
+        } else {
+            refuseDisabledStart(startId)
         }
+
+    /**
+     * 后台同步服务 off means truly off: every static start path already refuses ([start]),
+     * but a start intent can still slip past that guard — a stale notification action's
+     * PendingIntent racing the stop, or an OEM re-delivering the intent. Promote first
+     * (the startForegroundService contract requires a startForeground call), then stop
+     * for real; never sticky.
+     */
+    private fun refuseDisabledStart(startId: Int): Int {
+        runCatching { startAsForeground(notification(getString(R.string.notification_sync_connecting))) }
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        stopSelf(startId)
+        return START_NOT_STICKY
+    }
+
+    private fun promoteAndLaunch(
+        intent: Intent?,
+        startId: Int,
+    ): Int {
         // Apply a notification action first so the notification promoted below is honest.
         if (SyncServiceNotification.applyAction(intent?.action, settings)) {
             requestSyncNow()
