@@ -11,6 +11,8 @@ import com.clipsync.android.platform.clipboard.overlay.OverlayPollingBackend as 
 import com.clipsync.android.platform.clipboard.shizuku.FakeShizukuRuntime
 import com.clipsync.android.platform.clipboard.shizuku.SessionRead
 import com.clipsync.android.platform.clipboard.shizuku.ShizukuClipboardBackend as RealShizukuClipboardBackend
+import com.clipsync.android.platform.clipboard.shizuku.ShizukuErrorCodes
+import com.clipsync.android.platform.clipboard.shizuku.VerifyBindBudget
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -75,6 +77,35 @@ class PrivilegedReadWiringTest {
         runtime.session!!.clip = SessionRead.Text("copied on device")
         runtime.session!!.emitChanged()
         assertEquals(listOf("copied on device"), emitted)
+    }
+
+    @Test
+    fun `flat privileged adapter's verification read waits out a cold bind via the delegate`() {
+        // The exact stuck loop: a plain read races the cold UserService bind (USERSERVICE_DEAD),
+        // but the verification read forwarded to the delegate waits for it and succeeds — the only
+        // way the route ever verifies.
+        val runtime = FakeShizukuRuntime()
+        runtime.binding = true
+        runtime.session!!.clip = SessionRead.Text("verified-after-wait")
+        val real =
+            RealShizukuClipboardBackend(
+                runtime,
+                verifyBind = VerifyBindBudget(polls = 10, stepMillis = 0L),
+                sleeper = { runtime.binding = false },
+            )
+        val adapter =
+            ShizukuClipboardBackend(
+                probes = authorizedProbes(),
+                systemVersion = "test",
+                delegate = real,
+                readVerified = { false },
+            )
+
+        assertEquals(
+            ClipboardReadResult.Failure(ShizukuErrorCodes.USERSERVICE_DEAD),
+            adapter.readText(),
+        )
+        assertEquals(ClipboardReadResult.Success("verified-after-wait"), adapter.readTextForVerification())
     }
 
     @Test

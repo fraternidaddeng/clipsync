@@ -86,6 +86,16 @@ class ShizukuClipboardBackend(
     }
 
     /**
+     * The wizard's read test forwards through here so the privileged delegate can wait for its
+     * asynchronous UserService bind (see the delegate's own override); without the wait a cold
+     * channel can never verify and the card is trapped on PRIV_HOST_USERSERVICE_DEAD.
+     */
+    override fun readTextForVerification(): ClipboardReadResult {
+        val live = delegate ?: return ClipboardReadResult.Failure(ERROR_READ_UNVERIFIED)
+        return live.readTextForVerification()
+    }
+
+    /**
      * The persisted "read once verified on this device" must not outshout the live channel.
      * The host process can be up (its shell binder answers, so the prerequisites all pass)
      * while the UserService or a binder handle underneath is dead — after a phone reboot, a

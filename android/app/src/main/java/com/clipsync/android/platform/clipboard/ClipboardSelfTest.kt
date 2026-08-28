@@ -71,7 +71,10 @@ class ClipboardSelfTest(
                 readMode = backend.mode,
             )
         }
-        val read = backend.readText()
+        // Verification read: gives an asynchronous channel (特权直读's on-demand UserService
+        // bind) time to come up before declaring failure. A plain readText would race a cold
+        // bind and report the channel dead, so the route could never pass its own test.
+        val read = backend.readTextForVerification()
         val cleared = clearClipboard()
         return when (read) {
             is ClipboardReadResult.Success ->
@@ -91,18 +94,20 @@ class ClipboardSelfTest(
                         readMode = backend.mode,
                     )
                 }
-            ClipboardReadResult.Empty -> SelfTestResult(
-                kind = SelfTestKind.BACKGROUND_READ,
-                passed = false,
-                errorCode = ERROR_READ_EMPTY,
-                readMode = backend.mode,
-            )
-            is ClipboardReadResult.Failure -> SelfTestResult(
-                kind = SelfTestKind.BACKGROUND_READ,
-                passed = false,
-                errorCode = read.errorCode,
-                readMode = backend.mode,
-            )
+            ClipboardReadResult.Empty ->
+                SelfTestResult(
+                    kind = SelfTestKind.BACKGROUND_READ,
+                    passed = false,
+                    errorCode = ERROR_READ_EMPTY,
+                    readMode = backend.mode,
+                )
+            is ClipboardReadResult.Failure ->
+                SelfTestResult(
+                    kind = SelfTestKind.BACKGROUND_READ,
+                    passed = false,
+                    errorCode = read.errorCode,
+                    readMode = backend.mode,
+                )
         }
     }
 

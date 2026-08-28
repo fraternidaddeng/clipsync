@@ -324,6 +324,93 @@ class ShizukuClipboardBackendTest {
         )
     }
 
+    // ===== verification read: wait out an asynchronous (re)bind before crying dead =====
+
+    @Test
+    fun `verification read waits for an in-flight bind then reads the reborn session`() {
+        // Cold channel: the UserService bind is still in flight (the host is spawning the child).
+        // A plain readText would race that and report USERSERVICE_DEAD; the verification read must
+        // hold on until the connection lands, which is what finally lets the route verify.
+        val runtime = FakeShizukuRuntime()
+        runtime.binding = true
+        runtime.session!!.clip = SessionRead.Text("verify-token")
+        var slept = 0
+        val backend =
+            ShizukuClipboardBackend(
+                runtime,
+                verifyBind = VerifyBindBudget(polls = 10, stepMillis = 0L),
+                sleeper = {
+                    slept += 1
+                    if (slept >= 2) {
+                        runtime.binding = false
+                    }
+                },
+            )
+
+        val result = backend.readTextForVerification()
+
+        assertEquals(ClipboardReadResult.Success("verify-token"), result)
+        assertTrue("must have waited for the bind to land", slept >= 2)
+    }
+
+    @Test
+    fun `verification read reports userservice dead only after waiting out the full budget`() {
+        val runtime = FakeShizukuRuntime()
+        runtime.binding = true // never completes
+        var slept = 0
+        val backend =
+            ShizukuClipboardBackend(
+                runtime,
+                verifyBind = VerifyBindBudget(polls = 4, stepMillis = 0L),
+                sleeper = { slept += 1 },
+            )
+
+        val result = backend.readTextForVerification()
+
+        assertEquals(ClipboardReadResult.Failure(ShizukuErrorCodes.USERSERVICE_DEAD), result)
+        assertEquals("waits the whole budget, never an instant lie", 4, slept)
+    }
+
+    @Test
+    fun `verification read fails fast on a missing prerequisite without waiting`() {
+        val runtime = FakeShizukuRuntime()
+        runtime.authorized = false
+        var slept = 0
+        val backend = ShizukuClipboardBackend(runtime, sleeper = { slept += 1 })
+
+        val result = backend.readTextForVerification()
+
+        assertEquals(ClipboardReadResult.Failure(ShizukuErrorCodes.NOT_AUTHORIZED), result)
+        assertEquals(0, slept)
+    }
+
+    @Test
+    fun `verification read surfaces a hard bind failure without waiting`() {
+        val runtime = FakeShizukuRuntime()
+        runtime.bindError = ShizukuErrorCodes.BINDER_DEAD
+        var slept = 0
+        val backend = ShizukuClipboardBackend(runtime, sleeper = { slept += 1 })
+
+        val result = backend.readTextForVerification()
+
+        assertEquals(ClipboardReadResult.Failure(ShizukuErrorCodes.BINDER_DEAD), result)
+        assertEquals(0, slept)
+    }
+
+    @Test
+    fun `verification read of a live session reads directly`() {
+        val runtime = FakeShizukuRuntime()
+        runtime.session!!.clip = SessionRead.Text("already-live")
+        var slept = 0
+        val backend = ShizukuClipboardBackend(runtime, sleeper = { slept += 1 })
+        backend.start { }
+
+        val result = backend.readTextForVerification()
+
+        assertEquals(ClipboardReadResult.Success("already-live"), result)
+        assertEquals(0, slept)
+    }
+
     @Test
     fun `stop unregisters and suppresses later signals`() {
         val runtime = FakeShizukuRuntime()

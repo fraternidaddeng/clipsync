@@ -4,6 +4,12 @@ class FakeBackgroundClipboardBackend(
     override val mode: ClipboardReadMode,
     var report: CapabilityReport = capabilityReport(mode, CapabilityState.READY),
     var readResult: ClipboardReadResult = ClipboardReadResult.Empty,
+    /**
+     * What the bind-aware verification read returns; null mirrors [readText] (the default, as
+     * for a synchronous route). Set it apart from [readResult] to model 特权直读's channel that
+     * a plain read races cold (fails) but the verification read waits out and succeeds.
+     */
+    var verificationReadResult: ClipboardReadResult? = null,
     var backendHealth: BackendHealth = BackendHealth(
         state = BackendHealthState.HEALTHY,
         checkedAtEpochMillis = 1L,
@@ -30,6 +36,11 @@ class FakeBackgroundClipboardBackend(
     override fun readText(): ClipboardReadResult {
         callLog += "$mode.read"
         return readResult
+    }
+
+    override fun readTextForVerification(): ClipboardReadResult {
+        callLog += "$mode.verifyRead"
+        return verificationReadResult ?: readText()
     }
 
     override fun health(): BackendHealth {

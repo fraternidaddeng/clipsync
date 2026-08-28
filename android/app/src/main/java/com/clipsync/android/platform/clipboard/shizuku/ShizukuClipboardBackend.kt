@@ -25,6 +25,8 @@ class ShizukuClipboardBackend internal constructor(
     private val hasher: ContentHasher = Sha256ContentHasher,
     private val nowEpochMillis: () -> Long = System::currentTimeMillis,
     private val rebindDelaysMillis: LongArray = DEFAULT_REBIND_DELAYS_MILLIS,
+    private val verifyBind: VerifyBindBudget = VerifyBindBudget.DEFAULT,
+    private val sleeper: (Long) -> Unit = { Thread.sleep(it) },
 ) : BackgroundClipboardBackend {
     constructor(context: Context) : this(AndroidShizukuRuntime(context))
 
@@ -145,7 +147,66 @@ class ShizukuClipboardBackend internal constructor(
                 return ClipboardReadResult.Failure(bind.errorCode)
             }
         }
-        return when (val read = active.readText()) {
+        return readFromSession(active)
+    }
+
+    /**
+     * Read for the wizard's device-verified test, waiting (bounded) for a cold or freshly
+     * (re)spawned UserService bind to land before giving a verdict. The bind is asynchronous —
+     * the privileged host spawns the UserService child process, which then attaches its binder
+     * back — so a plain [readText] on a not-yet-active route races that spawn and returns
+     * PRIV_HOST_USERSERVICE_DEAD before the channel ever had a chance. That is the loop the user
+     * is stuck in: the route only becomes READY (and thus started/warm) after a verified read,
+     * but the verified read can never pass while it refuses to wait for the bind. Waiting also
+     * makes this the app-side auto-recovery when the host is alive but the UserService died: a
+     * fresh bind respawns it, and we hold on for it here instead of declaring the channel dead.
+     *
+     * This wait lives only on this verification path (run off the main thread from the read
+     * test); the hot event/read paths stay non-blocking.
+     */
+    override fun readTextForVerification(): ClipboardReadResult {
+        val blocked = diagnoseUserActionOrMismatch()
+        if (blocked != null) {
+            lastErrorCode = blocked
+            return ClipboardReadResult.Failure(blocked)
+        }
+        return session?.let(::readFromSession) ?: readAfterAwaitingBind()
+    }
+
+    /** The bounded bind-wait loop behind [readTextForVerification]; null outcome = keep waiting. */
+    private fun readAfterAwaitingBind(): ClipboardReadResult {
+        var outcome: ClipboardReadResult? = null
+        var poll = 0
+        while (outcome == null) {
+            outcome =
+                when (val bind = runtime.bindUserService()) {
+                    is BindResult.Bound -> {
+                        if (started && session !== bind.session) {
+                            attachSession(bind.session, refreshBaseline = true)
+                        }
+                        readFromSession(session ?: bind.session)
+                    }
+                    is BindResult.Failed -> {
+                        lastErrorCode = bind.errorCode
+                        ClipboardReadResult.Failure(bind.errorCode)
+                    }
+                    BindResult.Binding ->
+                        // The bind is in progress, not dead: hold for the UserService to attach.
+                        if (poll >= verifyBind.polls) {
+                            lastErrorCode = ShizukuErrorCodes.USERSERVICE_DEAD
+                            ClipboardReadResult.Failure(ShizukuErrorCodes.USERSERVICE_DEAD)
+                        } else {
+                            poll += 1
+                            sleeper(verifyBind.stepMillis)
+                            null
+                        }
+                }
+        }
+        return outcome
+    }
+
+    private fun readFromSession(active: ShizukuClipboardSession): ClipboardReadResult =
+        when (val read = active.readText()) {
             is SessionRead.Text -> {
                 lastReadSuccessAtEpochMillis = nowEpochMillis()
                 lastErrorCode = null
@@ -157,7 +218,6 @@ class ShizukuClipboardBackend internal constructor(
                 ClipboardReadResult.Failure(read.errorCode)
             }
         }
-    }
 
     override fun health(): BackendHealth {
         val checkedAt = nowEpochMillis()
@@ -344,5 +404,19 @@ class ShizukuClipboardBackend internal constructor(
 
     companion object {
         val DEFAULT_REBIND_DELAYS_MILLIS = longArrayOf(1_000L, 2_000L, 4_000L, 8_000L, 16_000L, 30_000L)
+    }
+}
+
+/** How long [ShizukuClipboardBackend.readTextForVerification] holds for an in-flight bind. */
+data class VerifyBindBudget(
+    val polls: Int,
+    val stepMillis: Long,
+) {
+    companion object {
+        // The verification read waits up to polls x step for a cold/respawned bind to land.
+        // 48 x 250ms = 12s: comfortably covers an app_process cold spawn (slowest over wireless
+        // adb) while staying under the runtime's own 35s bind timeout, and well inside the
+        // deliberate "测试后台读取" busy window.
+        val DEFAULT = VerifyBindBudget(polls = 48, stepMillis = 250L)
     }
 }
