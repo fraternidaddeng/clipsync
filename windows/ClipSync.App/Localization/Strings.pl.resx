@@ -538,7 +538,7 @@
     <value>Synchronizuj obrazy ze schowka</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Domyślnie wyłączone. Tylko PNG/JPEG; surowe bajty mogą zawierać EXIF i inne metadane, a obie strony potrzebują sesji v2.</value>
+    <value>Domyślnie włączone. Tylko PNG/JPEG; surowe bajty mogą zawierać EXIF i inne metadane, a obie strony potrzebują sesji v2.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Automatycznie stosuj zdalne obrazy</value>

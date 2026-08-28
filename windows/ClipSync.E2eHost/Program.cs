@@ -88,8 +88,9 @@ internal static class Program
                         OutboxDrainInterval = TimeSpan.FromMilliseconds(100),
                         PingInterval = TimeSpan.FromSeconds(60),
                         // The image leg dials /v2, which PeerServer only accepts with the
-                        // 图片同步 gate open. The production default is off (ADR 0004,
-                        // fail-closed); this E2E pair opts in explicitly to exercise it.
+                        // 图片同步 gate open. The unwired library gate fails closed (the
+                        // product setting defaults on per ADR 0004 as revised 2026-08-28);
+                        // this E2E pair wires it on explicitly to exercise it.
                         ImageSyncEnabled = static () => true
                     },
                     BindAddresses = [IPAddress.Loopback],

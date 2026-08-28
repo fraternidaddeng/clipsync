@@ -83,12 +83,14 @@ class SyncSettingsStore(
         set(value) = write(KEY_BOOT_RESTORE, value.toString())
 
     /**
-     * Image clipboard sync (protocol v2 / ADR 0004). Off by default per the charter: when off,
-     * the device dials protocol v1, captures no images, and answers image announces with
-     * `unsupported_media`. Turning it on advertises the `image_clip_v2` capability.
+     * Image clipboard sync (protocol v2 / ADR 0004, 修订 2026-08-28). On by default: image
+     * sync is part of the complete product experience (产品裁决「图片同步这种功能应该默认打开」),
+     * unlike the opt-in Bluetooth fallback. When turned off, the device dials protocol v1,
+     * captures no images, and answers image announces with `unsupported_media`. Safety checks
+     * (MIME magic sniffing, size caps, hash verification) are unaffected by this default.
      */
     var imageSyncEnabled: Boolean
-        get() = readBoolean(KEY_IMAGE_SYNC, default = false)
+        get() = readBoolean(KEY_IMAGE_SYNC, default = true)
         set(value) = write(KEY_IMAGE_SYNC, value.toString())
 
     /**

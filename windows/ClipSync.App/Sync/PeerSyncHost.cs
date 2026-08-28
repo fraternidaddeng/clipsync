@@ -69,8 +69,9 @@ public sealed class PeerSyncHost : IAsyncDisposable
         // 图片同步 gate: while off, the listener refuses /v2 upgrades (dialers fall back to
         // v1) and live sessions accept/serve no image bodies; re-read so the toggle applies
         // immediately (strict audit §3: the setting must govern inbound, not only capture).
-        // Fail-closed when unwired: image sync is opt-in on both platforms (ADR 0004), so a
-        // caller that forgets the gate gets the same off-by-default as Android, not silent on.
+        // Fail-closed when unwired: the image_sync setting defaults on (ADR 0004, revised
+        // 2026-08-28), but a caller that forgets the gate never consulted that setting, so
+        // it stays a v1 text-only host instead of silently trading image bodies.
         this.imageSyncEnabled = imageSyncEnabled ?? (static () => false);
         // Health-endpoint self-report of the local clipboard apply posture, so the paired
         // phone's 对端写入 segment can state facts. Null keeps the field off the wire.

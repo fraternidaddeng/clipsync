@@ -538,7 +538,7 @@
     <value>Pano görsellerini eşitle</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Varsayılan olarak kapalı. Yalnızca PNG/JPEG; ham baytlar EXIF ve başka üst veriler taşıyabilir, iki ucun da v2 oturumu gerekir.</value>
+    <value>Varsayılan olarak açık. Yalnızca PNG/JPEG; ham baytlar EXIF ve başka üst veriler taşıyabilir, iki ucun da v2 oturumu gerekir.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Uzak görselleri otomatik uygula</value>

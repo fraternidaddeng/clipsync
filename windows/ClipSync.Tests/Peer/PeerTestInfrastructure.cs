@@ -201,9 +201,10 @@ public sealed class PeerPair : IAsyncDisposable
         OutboxDrainInterval = TimeSpan.FromMilliseconds(100),
         PingInterval = TimeSpan.FromSeconds(60),
         ProtocolVersion = ProtocolLimits.ProtocolVersionV2,
-        // Production defaults the gate to off (opt-in per ADR 0004, same as Android); the
-        // integration suite opts in explicitly so the v2 image paths stay exercised. Tests
-        // that cover the off/flip behaviour override this (ImageSyncGateTests).
+        // The unwired library gate fails closed (only the wired product setting defaults
+        // on — ADR 0004, revised 2026-08-28); the integration suite wires it on explicitly
+        // so the v2 image paths stay exercised regardless of product defaults. Tests that
+        // cover the off/flip behaviour override this (ImageSyncGateTests).
         ImageSyncEnabled = static () => true
     };
 

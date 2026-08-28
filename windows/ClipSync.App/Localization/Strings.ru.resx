@@ -538,7 +538,7 @@
     <value>Синхронизировать изображения буфера</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>По умолчанию выключено. Только PNG/JPEG; исходные байты могут содержать EXIF и другие метаданные, обеим сторонам нужен сеанс v2.</value>
+    <value>По умолчанию включено. Только PNG/JPEG; исходные байты могут содержать EXIF и другие метаданные, обеим сторонам нужен сеанс v2.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Автоприменение удалённых изображений</value>

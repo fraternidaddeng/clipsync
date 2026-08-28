@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### 变更
+
+- [双端] **图片同步默认开启**（2026-08-28 产品裁决「图片同步这种功能应该默认打开，这是产品的完整体验，而不是蓝牙那种备选方案」；ADR 0004 增补修订记录）：Android `SyncSettingsStore.imageSyncEnabled`（`sync.image_sync`）与 Windows 偏好页 `image_sync` 设置的产品默认由关改开——新安装或从未持久化该键的安装开箱即同步图片；缺失/不可解析的持久化值按「开」解析（与 `auto_apply_remote` 同规则），用户显式关闭过的持久化「False」仍被尊重（升级不推翻已选的关）。**只改产品默认的选择倾向，不改任何安全语义**：`auto_apply_images`（远端图片自动写入本机剪贴板）维持默认关——收到的图片默认只入历史，自动改写本机剪贴板仍是隐私敏感的显式选择；MIME 魔数/尺寸/哈希校验、v1 会话拒图、以及 2026-08-25 修复的未接线宿主库层 fail-closed 闸（`SyncSessionOptions.ImageSyncEnabled`、`PeerSyncHost` 兜底闸、Android `SyncSupervisor` 构造缺省）一律保留——忘记接线的宿主仍表现为纯 v1 文本对端。测试随裁决对齐：Android `ImageSyncDefaultAlignmentTest` 改钉「默认开、坏值回落为开、显式 False 仍关、`auto_apply_images` 独立默认关」，Windows `MainViewModelBasicSettingsTests` 新增「默认开 + 显式退出跨重启存活」两例、`ImageSyncGateTests` 闸测试改名明示「产品默认开、未接线闸仍 fail-closed」；文案对齐：Windows 偏好页 `Prefs_Sync_ImageSync_Desc` 19 语由「默认关闭」改「默认开启」（`check-i18n-parity.py` 照绿；Android 偏好文案本就未声称默认值，不动），设计宪章 §5.9 hint、`ui_preview.html`、README、竞品对比、`manual-qa-results.md`（限制 5 对齐方向反转注记）与 ADR 0004 同步修订。
+
 ### 安全
 
 - 全库密钥泄露审计（2026-08-27，结论：**未发现任何真实密钥入库**）：全历史（375 提交、含全部远端分支，非浅克隆）逐 blob 扫描私钥块与 GitHub/AWS/Google/Slack/Stripe/OpenAI/npm/Azure 凭据形态、全历史文件名扫描（`.env`/`*.jks`/`*.keystore`/`*.pem`/`*.key`/`local.properties`/`google-services.json` 等）、工作树关键词与高熵串复核、workflows 全历史核查（secrets 一律经 `${{ secrets.* }}` 引用，keystore 只在 `RUNNER_TEMP` 解码）、脚本与文档核查（签名材料只走环境变量，文档均为占位符）——命中项全部为有意设计的合成测试向量（协议 fixtures 的 `pair_secret` 拒收样例、单测共享向量、蓝牙 spike 的公开固定值），无一真实。无需轮换任何凭据。

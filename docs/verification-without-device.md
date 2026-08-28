@@ -42,7 +42,7 @@
 - 暂停/私密在**每一层**关闭出站：捕获管理器、settings 闸门包裹的队列、引擎 outboundAllowed；恢复后下一次排空 tick 补投，无丢失。
 - 自动写入的 Windows 剪贴不会回传（共享写协调器的一次性内容抑制），且相同文本的真实二次复制仍然上行。
 
-既有 Android 套件继续覆盖：`SyncEngine` 协议状态机全错误路径、`RoomSyncRepository`/`ClipSyncRepository` 事务不变量、重连退避、`SyncSupervisor` 生命周期、pinned-TLS 连接器（MockWebServer + 真 TLS）、配对存取、开机恢复链、通知策略、以及特权直读/ADB 日志/悬浮窗后端的**纯逻辑**部分（解析器、状态机、数据最小化不变量——注意这些后端的真实读取要靠实体 ROM 验证）。2026-08-25 后并入的套件还覆盖：bt1 蓝牙安全信道（握手正反例、帧层篡改/重放/乱序/截断负例、传输层——但**无真实蓝牙 I/O**，RFCOMM 实体行为见 spike 报告与阶段 5 计划）、设置闸门（敏感标记跳过、收件通知、图片同步 fail-closed 默认）、19 语语言目录与逐键齐全性钉死、E2E 压力套件。
+既有 Android 套件继续覆盖：`SyncEngine` 协议状态机全错误路径、`RoomSyncRepository`/`ClipSyncRepository` 事务不变量、重连退避、`SyncSupervisor` 生命周期、pinned-TLS 连接器（MockWebServer + 真 TLS）、配对存取、开机恢复链、通知策略、以及特权直读/ADB 日志/悬浮窗后端的**纯逻辑**部分（解析器、状态机、数据最小化不变量——注意这些后端的真实读取要靠实体 ROM 验证）。2026-08-25 后并入的套件还覆盖：bt1 蓝牙安全信道（握手正反例、帧层篡改/重放/乱序/截断负例、传输层——但**无真实蓝牙 I/O**，RFCOMM 实体行为见 spike 报告与阶段 5 计划）、设置闸门（敏感标记跳过、收件通知、图片同步默认值——2026-08-28 起默认开、未接线闸仍 fail-closed）、19 语语言目录与逐键齐全性钉死、E2E 压力套件。
 
 ### 图片同步（协议 v2，从 feature/stage-4 移植；双端 + 共享 fixture）
 

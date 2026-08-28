@@ -538,7 +538,7 @@
     <value>同步剪貼簿圖片</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>預設關閉。僅 PNG/JPEG；原始位元組可能含 EXIF 等中繼資料，雙端需為 v2 工作階段。</value>
+    <value>預設開啟。僅 PNG/JPEG；原始位元組可能含 EXIF 等中繼資料，雙端需為 v2 工作階段。</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>自動套用遠端圖片</value>

@@ -538,7 +538,7 @@
     <value>Sinkronkan gambar papan klip</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Mati secara bawaan. Hanya PNG/JPEG; byte mentah bisa membawa EXIF dan metadata lain, dan kedua ujung butuh sesi v2.</value>
+    <value>Aktif secara bawaan. Hanya PNG/JPEG; byte mentah bisa membawa EXIF dan metadata lain, dan kedua ujung butuh sesi v2.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Terapkan gambar dari jauh otomatis</value>

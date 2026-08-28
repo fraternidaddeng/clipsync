@@ -538,7 +538,7 @@
     <value>Synchroniser les images du presse-papiers</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Désactivé par défaut. PNG/JPEG uniquement ; les octets d’origine peuvent contenir des métadonnées EXIF, et les deux extrémités doivent être en session v2.</value>
+    <value>Activé par défaut. PNG/JPEG uniquement ; les octets d’origine peuvent contenir des métadonnées EXIF, et les deux extrémités doivent être en session v2.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Appliquer les images distantes automatiquement</value>

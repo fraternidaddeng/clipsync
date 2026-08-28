@@ -27,7 +27,7 @@ enum class CaptureOutcome {
     /** The change is a clip this app just wrote itself (auto-apply, history copy). */
     SKIPPED_OWN_WRITE,
 
-    /** The change is an image but the image-sync preference (default off) is not enabled. */
+    /** The change is an image but the image-sync preference has been turned off. */
     SKIPPED_IMAGE_SYNC_OFF,
 
     /** The outbox rejected the text (empty or a recent duplicate). */

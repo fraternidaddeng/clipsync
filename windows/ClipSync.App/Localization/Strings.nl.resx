@@ -538,7 +538,7 @@
     <value>Klembordafbeeldingen synchroniseren</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Standaard uit. Alleen PNG/JPEG; ruwe bytes kunnen EXIF en andere metadata bevatten, en beide kanten hebben een v2-sessie nodig.</value>
+    <value>Standaard aan. Alleen PNG/JPEG; ruwe bytes kunnen EXIF en andere metadata bevatten, en beide kanten hebben een v2-sessie nodig.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Externe afbeeldingen automatisch toepassen</value>

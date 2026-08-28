@@ -17,12 +17,13 @@ namespace ClipSync.Tests.Peer;
 public sealed class ImageSyncGateTests
 {
     [Fact]
-    public void ImageSyncGateDefaultsOffMatchingTheAndroidDefault()
+    public void UnwiredImageSyncGateStillFailsClosedEvenThoughTheProductDefaultIsOn()
     {
-        // Manual-QA limitation #5 (2026-08-25): the two platforms must default the same.
-        // Image sync is opt-in everywhere (ADR 0004 / DESIGN-CHARTER §5.9): Android's
-        // SyncSettingsStore.imageSyncEnabled defaults to false, so an unwired Windows
-        // session-options gate must fail closed too — even on a /v2 route.
+        // The image_sync *setting* defaults on since ADR 0004's 2026-08-28 revision (the
+        // product default lives in MainViewModel's setting parse and Android's
+        // SyncSettingsStore). The library-level gate is a safety check, not the product
+        // default: a host that never wires it has not consulted the user's setting, so it
+        // must fail closed and stay a v1 text-only peer — even on a /v2 route.
         var options = new SyncSessionOptions { ClientVersion = "0.2.0" };
         Assert.False(options.ImageSyncEnabled());
         Assert.False(options.ImageClipEnabled);

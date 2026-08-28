@@ -538,7 +538,7 @@
     <value>Sincronizza immagini degli appunti</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Disattivata per impostazione predefinita. Solo PNG/JPEG; i byte grezzi possono contenere EXIF e altri metadati, ed entrambe le estremità richiedono una sessione v2.</value>
+    <value>Attivata per impostazione predefinita. Solo PNG/JPEG; i byte grezzi possono contenere EXIF e altri metadati, ed entrambe le estremità richiedono una sessione v2.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Applica automaticamente le immagini remote</value>

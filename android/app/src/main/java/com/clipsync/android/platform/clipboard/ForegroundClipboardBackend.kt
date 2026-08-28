@@ -15,8 +15,8 @@ class ForegroundClipboardBackend(
     private val nowEpochMillis: () -> Long = System::currentTimeMillis,
     /**
      * Gate for materializing PNG/JPEG clipboard items into bytes. Re-read per change so the
-     * image-sync preference applies immediately; off by default per the charter, in which
-     * case image clips are ignored exactly as before.
+     * image-sync preference (default on since ADR 0004's 2026-08-28 revision) applies
+     * immediately; an unwired host fails closed and ignores image clips entirely.
      */
     private val imageCaptureEnabled: () -> Boolean = { false },
 ) : BackgroundClipboardBackend {

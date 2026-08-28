@@ -172,6 +172,12 @@
 - **真正修复的缺口（Windows 库层 fail-open 默认）**：`SyncSessionOptions.ImageSyncEnabled` 与 `PeerSyncHost` 的未接线兜底闸原为 `() => true`——生产 App 有接线所以未暴露，但任何忘记接线的宿主（如新增的承载进程）会静默参与 image_clip_v2 收发图片，与「默认关」相悖。现双双改为 `() => false`（未接线宿主表现为纯 v1 文本对端）；测试套件在 `PeerPair.DefaultSessionOptions` 显式开启以继续覆盖 v2 图片路径。
 - **测试钉死**：Windows 新增 `ImageSyncGateTests.ImageSyncGateDefaultsOffMatchingTheAndroidDefault`（默认闸关、v2 路由下 `ImageClipEnabled` 仍为假）；Android 新增 `ImageSyncDefaultAlignmentTest`（`imageSyncEnabled` 默认关且可往返、`auto_apply_images` 独立于文本闸默认关、坏持久化值回落为关）。图片同步的**双向真机验收**仍未做（见第 3 节），本更新只闭「默认值不一致」一项。
 
+### 更新（2026-08-28）：图片同步产品默认值经产品裁决改为「双端默认开」（限制 5 的对齐方向反转，对齐本身仍钉死）
+
+- **产品裁决**：「图片同步这种功能应该默认打开，这是产品的完整体验，而不是蓝牙那种备选方案」。ADR 0004 据此修订（见其「修订记录」）：Android `sync.image_sync` 与 Windows `image_sync` 的产品默认由关改开；缺失/坏持久化值按「开」解析（与 `auto_apply_remote` 同规则），用户显式关闭的持久化「False」仍被尊重。上一节钉死的「双端默认一致」不变，只是方向从「双端关」变为「双端开」。
+- **安全语义不动**：上一节修掉的 Windows 库层 fail-open 缺口**不回退**——`SyncSessionOptions.ImageSyncEnabled`、`PeerSyncHost` 兜底闸与 Android `SyncSupervisor` 构造缺省仍为 `false`（未接线宿主没有征询过用户设置，必须继续表现为纯 v1 文本对端）；MIME 魔数/尺寸/哈希校验、v1 会话拒图照旧。`auto_apply_images`（远端图片自动写入剪贴板）维持默认关（隐私）。
+- **测试随裁决更新**：Android `ImageSyncDefaultAlignmentTest` 改钉「默认开、坏值回落为开、显式 False 仍关、`auto_apply_images` 独立默认关」；Windows 上一节的闸测试改名 `UnwiredImageSyncGateStillFailsClosedEvenThoughTheProductDefaultIsOn`（库层闸继续 fail-closed），`MainViewModelBasicSettingsTests` 新增「默认开 + 显式退出跨重启存活」两例；Windows 偏好页 19 语 `Prefs_Sync_ImageSync_Desc` 由「默认关闭」改「默认开启」。
+
 ## 签核（2026-08-26）：用户确认真机验证已全部完成
 
 - 2026-08-26，仓库所有者确认：**真机验证已全部完成**（覆盖本记录「未做（若要出 RC 还需）」清单与 `docs/manual-qa-checklist.md` 的剩余项）。据此，2026-08-25 的「本轮不能出 RC」判定**不再构成发布阻断**，RC 门槛视为已过。

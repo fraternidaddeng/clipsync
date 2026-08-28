@@ -538,7 +538,7 @@
     <value>ซิงค์รูปในคลิปบอร์ด</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>ปิดเป็นค่าเริ่มต้น รองรับเฉพาะ PNG/JPEG ไบต์ดิบอาจมี EXIF และเมทาดาทาอื่น และทั้งสองฝั่งต้องใช้เซสชัน v2</value>
+    <value>เปิดเป็นค่าเริ่มต้น รองรับเฉพาะ PNG/JPEG ไบต์ดิบอาจมี EXIF และเมทาดาทาอื่น และทั้งสองฝั่งต้องใช้เซสชัน v2</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>ใช้รูปจากระยะไกลอัตโนมัติ</value>

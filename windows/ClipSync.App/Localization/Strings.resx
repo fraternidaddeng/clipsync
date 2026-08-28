@@ -538,7 +538,7 @@
     <value>同步剪贴板图片</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>默认关闭。仅 PNG/JPEG；原始字节可能含 EXIF 等元数据，双端需为 v2 会话。</value>
+    <value>默认开启。仅 PNG/JPEG；原始字节可能含 EXIF 等元数据，双端需为 v2 会话。</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>自动应用远端图片</value>

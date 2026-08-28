@@ -114,22 +114,45 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
     {
         // The wire version is fixed at dial time, so App.xaml.cs listens to this event and
         // calls PeerSyncHost.DisconnectAllSessions: without the bounce, a session opened
-        // while 图片同步 was off stays text-only v1 no matter what the toggle says.
+        // under the old setting keeps its old version no matter what the toggle says.
         var viewModel = CreateViewModel();
         await viewModel.InitializeAsync();
+
+        // Image sync defaults on (ADR 0004, revised 2026-08-28), same as Android's
+        // SyncSettingsStore.imageSyncEnabled — a fresh install syncs images out of the box.
+        Assert.True(viewModel.ImageSyncEnabled);
+
         var bounces = 0;
         viewModel.ImageSyncEnabledChanged += () => bounces++;
 
-        viewModel.ImageSyncEnabled = true;
+        // Turning it off renegotiates: live v2 sessions drop back to text-only v1.
+        viewModel.ImageSyncEnabled = false;
         Assert.Equal(1, bounces);
 
         // Re-assigning the same value must not disconnect anyone.
-        viewModel.ImageSyncEnabled = true;
+        viewModel.ImageSyncEnabled = false;
         Assert.Equal(1, bounces);
 
-        // Turning it off renegotiates too: live v2 sessions drop back to text-only v1.
-        viewModel.ImageSyncEnabled = false;
+        viewModel.ImageSyncEnabled = true;
         Assert.Equal(2, bounces);
+    }
+
+    [Fact]
+    public async Task PersistedImageSyncOptOutSurvivesTheOnDefault()
+    {
+        // The on-default applies to absent or unparseable values only; a user who
+        // explicitly opted out stays opted out across restarts.
+        await store.InitializeAsync();
+        await store.SetSettingAsync("image_sync", "False");
+
+        var optedOut = CreateViewModel();
+        await optedOut.InitializeAsync();
+        Assert.False(optedOut.ImageSyncEnabled);
+
+        await store.SetSettingAsync("image_sync", "maybe");
+        var corrupt = CreateViewModel();
+        await corrupt.InitializeAsync();
+        Assert.True(corrupt.ImageSyncEnabled);
     }
 
     [Fact]

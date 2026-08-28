@@ -538,7 +538,7 @@
     <value>Sync clipboard images</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Off by default. PNG/JPEG only; raw bytes may carry EXIF and other metadata, and both ends need a v2 session.</value>
+    <value>On by default. PNG/JPEG only; raw bytes may carry EXIF and other metadata, and both ends need a v2 session.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Auto-apply remote images</value>

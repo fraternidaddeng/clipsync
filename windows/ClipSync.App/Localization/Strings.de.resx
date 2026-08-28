@@ -538,7 +538,7 @@
     <value>Zwischenablagebilder synchronisieren</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Standardmäßig aus. Nur PNG/JPEG; die Rohbytes können EXIF- und andere Metadaten enthalten, und beide Seiten brauchen eine v2-Sitzung.</value>
+    <value>Standardmäßig ein. Nur PNG/JPEG; die Rohbytes können EXIF- und andere Metadaten enthalten, und beide Seiten brauchen eine v2-Sitzung.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Ferne Bilder automatisch anwenden</value>

@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/fraternidaddeng/clipsync/actions/workflows/ci.yml/badge.svg)](https://github.com/fraternidaddeng/clipsync/actions/workflows/ci.yml)
 
-ClipSync is a private, direct peer-to-peer clipboard synchronization tool for Windows and Android. Version **0.1.0** delivers the full product: QR pairing with TLS 1.3 + certificate-fingerprint pinning, LAN/Tailscale sync with exactly-once offline catch-up, history/search/export on both ends, image sync (protocol v2, off by default), a Bluetooth RFCOMM fallback (text only, off by default), the four-tier Android background-read capability ladder, and a charter-themed UI in 19 languages. See `CHANGELOG.md` and `docs/releases/v0.1.0.md` for the release record.
+ClipSync is a private, direct peer-to-peer clipboard synchronization tool for Windows and Android. Version **0.1.0** delivers the full product: QR pairing with TLS 1.3 + certificate-fingerprint pinning, LAN/Tailscale sync with exactly-once offline catch-up, history/search/export on both ends, image sync (protocol v2, on by default since 2026-08-28), a Bluetooth RFCOMM fallback (text only, off by default), the four-tier Android background-read capability ladder, and a charter-themed UI in 19 languages. See `CHANGELOG.md` and `docs/releases/v0.1.0.md` for the release record.
 
 No account service, cloud database, public relay, file transfer, telemetry, or clipboard-content logging is included.
 
@@ -83,7 +83,7 @@ pwsh .\scripts\android-bootstrap.ps1 -PackageName com.clipsync.android
 
 ## Privacy and security baseline
 
-- Text is the core payload; image sync (protocol v2) ships off by default on both ends, and the Bluetooth fallback carries text only.
+- Text is the core payload; image sync (protocol v2) is on by default on both ends (ADR 0004 as revised 2026-08-28 — turning it off drops the device to a text-only v1 peer), and the Bluetooth fallback carries text only.
 - Clipboard text must never enter ordinary logs or telemetry.
 - Android special capabilities require visible, revocable user action.
 - Network reachability is required; there is no NAT traversal service or public relay.

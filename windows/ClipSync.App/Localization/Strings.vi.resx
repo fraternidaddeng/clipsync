@@ -538,7 +538,7 @@
     <value>Đồng bộ hình ảnh bảng nhớ tạm</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Mặc định tắt. Chỉ PNG/JPEG; byte gốc có thể chứa EXIF và siêu dữ liệu khác, hai đầu cần phiên v2.</value>
+    <value>Mặc định bật. Chỉ PNG/JPEG; byte gốc có thể chứa EXIF và siêu dữ liệu khác, hai đầu cần phiên v2.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Tự động áp dụng hình ảnh từ xa</value>

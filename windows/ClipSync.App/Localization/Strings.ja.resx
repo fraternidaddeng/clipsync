@@ -538,7 +538,7 @@
     <value>クリップボード画像の同期</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>既定ではオフ。PNG/JPEG のみ。元のバイト列には EXIF などのメタデータが含まれる場合があり、両端が v2 セッションである必要があります。</value>
+    <value>既定ではオン。PNG/JPEG のみ。元のバイト列には EXIF などのメタデータが含まれる場合があり、両端が v2 セッションである必要があります。</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>リモート画像の自動適用</value>

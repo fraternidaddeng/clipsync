@@ -538,7 +538,7 @@
     <value>Sincronizar imágenes del portapapeles</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Apagado por defecto. Solo PNG/JPEG; los bytes originales pueden llevar EXIF y otros metadatos, y ambos extremos necesitan una sesión v2.</value>
+    <value>Activado por defecto. Solo PNG/JPEG; los bytes originales pueden llevar EXIF y otros metadatos, y ambos extremos necesitan una sesión v2.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Aplicar imágenes remotas automáticamente</value>

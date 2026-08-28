@@ -538,7 +538,7 @@
     <value>क्लिपबोर्ड चित्रों का समन्वयन</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>डिफ़ॉल्ट रूप से बंद। केवल PNG/JPEG; कच्चे बाइट में EXIF आदि मेटाडेटा हो सकता है, और दोनों सिरों को v2 सत्र चाहिए।</value>
+    <value>डिफ़ॉल्ट रूप से चालू। केवल PNG/JPEG; कच्चे बाइट में EXIF आदि मेटाडेटा हो सकता है, और दोनों सिरों को v2 सत्र चाहिए।</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>दूरस्थ चित्र स्वतः लागू करें</value>

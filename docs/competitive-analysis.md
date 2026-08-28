@@ -125,7 +125,7 @@
 | 剪贴板历史 + 搜索 | ✅ 双端 | ❌（靠桌面 Klipper） | ✅ 强（标签/统计/导出） | ✅ | ⚠️ 基础 | ✅ 加密历史 |
 | 策略引擎（暂停/私密/黑名单/大小/方向） | ✅ 逐层真实执行 | ❌ 开关级 | ⚠️ 部分 | ⚠️ 部分 | ⚠️ 部分 | ⚠️ 部分 |
 | 传输安全 | TLS1.3+证书 pin+每对 secret | TLS+配对 | ⚠️ 可配密钥 | 依服务器 HTTPS | E2EE AES-256-GCM（手工对 salt） | E2EE |
-| 图片同步 | ⚠️（v2 双端已实现，默认关；真机互拷未验证） | ❌ 明确不支持 | ✅ | ✅ | ✅ | ✅ |
+| 图片同步 | ⚠️（v2 双端已实现，默认开——2026-08-28 起，ADR 0004 修订；真机互拷未验证） | ❌ 明确不支持 | ✅ | ✅ | ✅ | ✅ |
 | 文件传输 | ➖ 用 LocalSend | ✅ | ✅ | ✅ | ✅ | ⚠️ |
 | iOS / macOS / Linux | ➖ | ✅（深浅不一） | ✅（iOS 未充分测试） | ✅ 桌面 | ✅ | ✅ |
 | 跨公网（NAT 穿透/中转） | ➖ 需 VPN/端口转发 | ❌ LAN | ✅ 中转可选 | ✅ 服务器天然跨网 | ✅ | ✅ 卖点 |
@@ -148,7 +148,7 @@
 4. ~~Windows 睡眠/唤醒会话快速恢复~~ **已解决**（`09a2d6b` 系统睡眠/唤醒与网络变化恢复 + `25d2788` Modern Standby；真机挂起恢复时延未实测）。
 5. 真实弱网/Wi-Fi 切换重连时延测量与调参（退避逻辑已有测试，真实时延未知）。
 6. ~~历史导出/导入~~ **已解决**（Windows `5fd7461`、Android `3c51350`，图片感知 v2 格式 `87c0016`；真机导出往返未人工验证）。
-7. **图片同步（protocol v2）——双端实现均已落地**：线上契约（`protocol/v2/` schema 与 fixtures、`docs/protocol-v2.md`、ADR 0004，验证脚本已覆盖 v2）、Windows 端完整实现（媒体栈、SQLite schema 3 媒体存储、会话引擎 v2 分块图片传输、CF_DIB 捕获、历史/详情缩略图、开关默认关）与 Android 端 v2 收发（`8275ffa`：媒体层、Room v2、引擎分块、UI）均已在 main 落地并有测试覆盖（含跨端二进制 fixture 往返）。**剩余欠账是真机图片互拷验证**（Windows 截图 → 手机、手机相册 → Windows，见 `docs/verification-without-device.md` 双端联调清单）。
+7. **图片同步（protocol v2）——双端实现均已落地**：线上契约（`protocol/v2/` schema 与 fixtures、`docs/protocol-v2.md`、ADR 0004，验证脚本已覆盖 v2）、Windows 端完整实现（媒体栈、SQLite schema 3 媒体存储、会话引擎 v2 分块图片传输、CF_DIB 捕获、历史/详情缩略图、开关默认开——2026-08-28 起）与 Android 端 v2 收发（`8275ffa`：媒体层、Room v2、引擎分块、UI）均已在 main 落地并有测试覆盖（含跨端二进制 fixture 往返）。**剩余欠账是真机图片互拷验证**（Windows 截图 → 手机、手机相册 → Windows，见 `docs/verification-without-device.md` 双端联调清单）。
 
 ### P2 —— 硬化与打磨
 

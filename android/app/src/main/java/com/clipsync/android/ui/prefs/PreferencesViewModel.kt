@@ -36,8 +36,8 @@ data class PreferencesUiState(
     /** 保留条数上限（settings-roadmap P1-15）；条数上限始终生效，与过期开关无关。 */
     val maxEntries: Int = SyncSettingsStore.DEFAULT_MAX_ENTRIES,
     val bootRestore: Boolean = false,
-    /** 图像剪贴板同步（协议 v2）；按章程默认关闭。 */
-    val imageSync: Boolean = false,
+    /** 图像剪贴板同步（协议 v2）；默认开启（ADR 0004 修订 2026-08-28）。 */
+    val imageSync: Boolean = true,
     /** 远端图片自动写入剪贴板；独立于文本自动写入（ADR 0004），默认关闭。 */
     val autoApplyImages: Boolean = false,
     val maxSyncTextBytes: Int = SyncSettingsStore.DEFAULT_MAX_TEXT_BYTES,
