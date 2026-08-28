@@ -1,6 +1,7 @@
 package com.clipsync.android.platform.clipboard.shizuku
 
 import android.content.Context
+import android.util.Log
 import com.clipsync.android.platform.clipboard.BackendHealth
 import com.clipsync.android.platform.clipboard.BackendHealthState
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackend
@@ -27,6 +28,7 @@ class ShizukuClipboardBackend internal constructor(
     private val rebindDelaysMillis: LongArray = DEFAULT_REBIND_DELAYS_MILLIS,
     private val verifyBind: VerifyBindBudget = VerifyBindBudget.DEFAULT,
     private val sleeper: (Long) -> Unit = { Thread.sleep(it) },
+    private val logger: (String) -> Unit = DEFAULT_LOGGER,
 ) : BackgroundClipboardBackend {
     constructor(context: Context) : this(AndroidShizukuRuntime(context))
 
@@ -163,6 +165,15 @@ class ShizukuClipboardBackend internal constructor(
      *
      * This wait lives only on this verification path (run off the main thread from the read
      * test); the hot event/read paths stay non-blocking.
+     *
+     * Self-heal for a stale-but-not-yet-reaped session: we may still hold a [session] whose
+     * UserService child has already died (the death callback lags a frozen/cached app, or the
+     * OS reaped the child without delivering linkToDeath yet). A plain read of it returns dead,
+     * which used to send the user to a PC that is not needed. Instead, when the prerequisites
+     * pass (host pings and we are authorized) but the held session reads back a death code, we
+     * drop the stale binder and ask the still-alive host to respawn the child on a fresh bind,
+     * then fall through to the same bounded wait — no new adb shell, no weakened consent gate.
+     * If the host is truly gone, the rebind below fails honestly with its own code.
      */
     override fun readTextForVerification(): ClipboardReadResult {
         val blocked = diagnoseUserActionOrMismatch()
@@ -170,7 +181,31 @@ class ShizukuClipboardBackend internal constructor(
             lastErrorCode = blocked
             return ClipboardReadResult.Failure(blocked)
         }
-        return session?.let(::readFromSession) ?: readAfterAwaitingBind()
+        val active = session
+        if (active != null) {
+            val read = readFromSession(active)
+            if (read !is ClipboardReadResult.Failure || !isCurrentDeath(read.errorCode)) {
+                return read
+            }
+            requestHostRespawn(read.errorCode)
+        }
+        return readAfterAwaitingBind()
+    }
+
+    /**
+     * App-side self-heal when the host is alive+authorized but the UserService child is dead.
+     * Drops the stale session and unbinds so the next [ShizukuRuntime.bindUserService] reaches
+     * the host and makes it respawn the child (the host does this itself, no new adb shell); the
+     * caller then waits out that fresh bind via [readAfterAwaitingBind].
+     */
+    private fun requestHostRespawn(deadCode: String) {
+        logger(
+            "特权直读自愈：宿主在线且已授权，但持有的 UserService 读回 $deadCode；" +
+                "释放陈旧绑定并请宿主重启子进程，等待新绑定落地",
+        )
+        session?.removeChangedListener()
+        session = null
+        runtime.unbindUserService()
     }
 
     /** The bounded bind-wait loop behind [readTextForVerification]; null outcome = keep waiting. */
@@ -404,6 +439,8 @@ class ShizukuClipboardBackend internal constructor(
 
     companion object {
         val DEFAULT_REBIND_DELAYS_MILLIS = longArrayOf(1_000L, 2_000L, 4_000L, 8_000L, 16_000L, 30_000L)
+        private const val TAG = "ClipSyncShizuku"
+        private val DEFAULT_LOGGER: (String) -> Unit = { Log.i(TAG, it) }
     }
 }
 

@@ -12,6 +12,14 @@ internal class FakeShizukuRuntime(
     var binding: Boolean = false
     var bindCount: Int = 0
     var unbindCount: Int = 0
+
+    /**
+     * Models the privileged host respawning the UserService child when the app drops a
+     * stale binder and rebinds: [unbindUserService] clears the current session and enters
+     * an in-flight ("binding") state so the next [bindUserService] answers [BindResult.Binding],
+     * exactly as a real cold/respawned bind does before the child attaches back.
+     */
+    var respawnAfterUnbind: Boolean = false
     var authRequests: Int = 0
     var pendingAuth: ((Boolean) -> Unit)? = null
     var pendingRebind: (() -> Unit)? = null
@@ -68,6 +76,10 @@ internal class FakeShizukuRuntime(
 
     override fun unbindUserService() {
         unbindCount += 1
+        if (respawnAfterUnbind) {
+            session = null
+            binding = true
+        }
     }
 
     override fun currentSession(): ShizukuClipboardSession? = session

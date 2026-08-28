@@ -9,6 +9,7 @@ import com.clipsync.android.platform.clipboard.ContentHasher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Test
 
 class ShizukuClipboardBackendTest {
@@ -409,6 +410,113 @@ class ShizukuClipboardBackendTest {
 
         assertEquals(ClipboardReadResult.Success("already-live"), result)
         assertEquals(0, slept)
+    }
+
+    // ===== self-heal: host alive + UserService dead → respawn without a PC =====
+
+    @Test
+    fun `verification read self-heals a stale dead session by respawning through the host`() {
+        // Host pings and we are authorized, but the session we still hold reads back dead: the
+        // UserService child died while the death callback lagged (frozen/cached app). The read
+        // test must not send the user to a PC — it drops the stale binder and lets the still-alive
+        // host respawn the child on a fresh bind, then reads the reborn session.
+        val runtime = FakeShizukuRuntime()
+        runtime.respawnAfterUnbind = true
+        runtime.session!!.clip = SessionRead.Failed(ShizukuErrorCodes.USERSERVICE_DEAD)
+        val reborn = FakeShizukuClipboardSession().apply { clip = SessionRead.Text("verify-token") }
+        val logs = mutableListOf<String>()
+        val backend =
+            ShizukuClipboardBackend(
+                runtime,
+                verifyBind = VerifyBindBudget(polls = 10, stepMillis = 0L),
+                sleeper = {
+                    // The host has respawned the child; its fresh binder attaches back.
+                    runtime.session = reborn
+                    runtime.binding = false
+                },
+                logger = { logs += it },
+            )
+        backend.start { }
+
+        val result = backend.readTextForVerification()
+
+        assertEquals(ClipboardReadResult.Success("verify-token"), result)
+        assertEquals("self-heal must ask the host to respawn exactly once", 1, runtime.unbindCount)
+        assertTrue("reborn session must have the change listener re-registered", reborn.addListenerCount >= 1)
+        assertEquals("self-heal must log why it respawned", 1, logs.size)
+        assertTrue(logs.single().contains(ShizukuErrorCodes.USERSERVICE_DEAD))
+    }
+
+    @Test
+    fun `verification read stays honestly dead when the host cannot respawn the child`() {
+        // Prerequisites pass (host alive + authorized) and we try the self-heal respawn, but the
+        // fresh bind never lands: after the whole budget the verdict is the honest death code, not
+        // a false success — and we still tried exactly once.
+        val runtime = FakeShizukuRuntime()
+        runtime.respawnAfterUnbind = true
+        runtime.session!!.clip = SessionRead.Failed(ShizukuErrorCodes.USERSERVICE_DEAD)
+        var slept = 0
+        val backend =
+            ShizukuClipboardBackend(
+                runtime,
+                verifyBind = VerifyBindBudget(polls = 4, stepMillis = 0L),
+                sleeper = { slept += 1 }, // never revives: the bind stays in flight
+                logger = { },
+            )
+        backend.start { }
+
+        val result = backend.readTextForVerification()
+
+        assertEquals(ClipboardReadResult.Failure(ShizukuErrorCodes.USERSERVICE_DEAD), result)
+        assertEquals("waits the whole budget before crying dead", 4, slept)
+        assertEquals("attempted the respawn once", 1, runtime.unbindCount)
+    }
+
+    @Test
+    fun `verification read reports a dead host process without a silent respawn`() {
+        // The host process itself is gone (not just the child). That is not something the phone
+        // can fix — report its honest code and never touch the bind, so we make no silent attempt
+        // to revive a host that is not there.
+        val runtime = FakeShizukuRuntime()
+        runtime.respawnAfterUnbind = true
+        val backend =
+            ShizukuClipboardBackend(
+                runtime,
+                sleeper = { fail("must not wait on a dead host") },
+                logger = { fail("must not self-heal a dead host") },
+            )
+        backend.start { }
+        val bindsAfterStart = runtime.bindCount
+        runtime.session!!.clip = SessionRead.Failed(ShizukuErrorCodes.USERSERVICE_DEAD)
+        runtime.presenceState = ShizukuPresence.NOT_RUNNING
+
+        val result = backend.readTextForVerification()
+
+        assertEquals(ClipboardReadResult.Failure(ShizukuErrorCodes.NOT_RUNNING), result)
+        assertEquals("never asked a dead host to respawn", 0, runtime.unbindCount)
+        assertEquals("no rebind attempt against a dead host", bindsAfterStart, runtime.bindCount)
+    }
+
+    @Test
+    fun `verification read never spawns when authorization is missing`() {
+        // Consent was revoked after the route was live. Even with a dead session in hand, the
+        // self-heal must not silently rebind/respawn — the authorization gate wins, honestly.
+        val runtime = FakeShizukuRuntime()
+        runtime.respawnAfterUnbind = true
+        val backend =
+            ShizukuClipboardBackend(
+                runtime,
+                sleeper = { fail("must not wait without authorization") },
+                logger = { fail("must not self-heal without authorization") },
+            )
+        backend.start { }
+        runtime.session!!.clip = SessionRead.Failed(ShizukuErrorCodes.USERSERVICE_DEAD)
+        runtime.authorized = false
+
+        val result = backend.readTextForVerification()
+
+        assertEquals(ClipboardReadResult.Failure(ShizukuErrorCodes.NOT_AUTHORIZED), result)
+        assertEquals("no silent spawn without consent", 0, runtime.unbindCount)
     }
 
     @Test

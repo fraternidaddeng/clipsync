@@ -8,6 +8,7 @@ import com.clipsync.android.platform.clipboard.overlay.FakeOverlayPlatform
 import com.clipsync.android.platform.clipboard.overlay.OverlayClipRead
 import com.clipsync.android.platform.clipboard.overlay.OverlayFocusController
 import com.clipsync.android.platform.clipboard.overlay.OverlayPollingBackend as RealOverlayPollingBackend
+import com.clipsync.android.platform.clipboard.shizuku.FakeShizukuClipboardSession
 import com.clipsync.android.platform.clipboard.shizuku.FakeShizukuRuntime
 import com.clipsync.android.platform.clipboard.shizuku.SessionRead
 import com.clipsync.android.platform.clipboard.shizuku.ShizukuClipboardBackend as RealShizukuClipboardBackend
@@ -106,6 +107,41 @@ class PrivilegedReadWiringTest {
             adapter.readText(),
         )
         assertEquals(ClipboardReadResult.Success("verified-after-wait"), adapter.readTextForVerification())
+    }
+
+    @Test
+    fun `flat privileged adapter's verification read self-heals a stale-dead session via the delegate`() {
+        // Host alive + authorized but the held UserService session is dead: the verification read
+        // forwarded to the delegate drops the stale binder, has the host respawn the child, and
+        // reads the reborn session — the phone recovers without a PC.
+        val runtime = FakeShizukuRuntime()
+        runtime.respawnAfterUnbind = true
+        runtime.session!!.clip = SessionRead.Failed(ShizukuErrorCodes.USERSERVICE_DEAD)
+        val reborn = FakeShizukuClipboardSession().apply { clip = SessionRead.Text("healed-via-delegate") }
+        val real =
+            RealShizukuClipboardBackend(
+                runtime,
+                verifyBind = VerifyBindBudget(polls = 10, stepMillis = 0L),
+                sleeper = {
+                    runtime.session = reborn
+                    runtime.binding = false
+                },
+            )
+        real.start { }
+        val adapter =
+            ShizukuClipboardBackend(
+                probes = authorizedProbes(),
+                systemVersion = "test",
+                delegate = real,
+                readVerified = { false },
+            )
+
+        assertEquals(
+            ClipboardReadResult.Failure(ShizukuErrorCodes.USERSERVICE_DEAD),
+            adapter.readText(),
+        )
+        assertEquals(ClipboardReadResult.Success("healed-via-delegate"), adapter.readTextForVerification())
+        assertEquals(1, runtime.unbindCount)
     }
 
     @Test
