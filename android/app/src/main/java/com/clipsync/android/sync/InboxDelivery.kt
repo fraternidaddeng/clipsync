@@ -58,8 +58,10 @@ object InboxDelivery {
 
     /**
      * Image counterpart of [autoApplyAllowed]: per ADR 0004 the image write gate is its own
-     * opt-in (default off) — the text auto_apply_remote preference never writes pixel bytes
-     * to the clipboard on its own. Pause still stops both, matching Windows.
+     * switch (default on since the 2026-08-28 revision), independent of the text gate — the
+     * text auto_apply_remote preference never writes pixel bytes to the clipboard on its
+     * own, and turning either off never affects the other. Pause still stops both, matching
+     * Windows.
      */
     fun autoApplyImagesAllowed(settings: SyncSettingsStore): Boolean = settings.autoApplyImages && !settings.syncPaused
 

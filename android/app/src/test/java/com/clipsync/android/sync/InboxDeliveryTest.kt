@@ -123,20 +123,24 @@ class InboxDeliveryTest {
     }
 
     @Test
-    fun imageAutoApplyGateIsItsOwnOptInAndDefaultOff() {
+    fun imageAutoApplyGateIsItsOwnSwitchDefaultOnSinceTheProductDecision() {
         val settings =
             SyncSettingsStore(
                 com.clipsync.android.platform
                     .SharedPrefsKeyValueStore(context, name = "inbox-delivery-image-settings"),
             )
-        // ADR 0004: the text auto_apply_remote default (on) must never write pixel bytes.
+        // ADR 0004 (2026-08-28 修订): both gates default on, but they stay independent —
+        // the image gate has its own key; the text gate never decides for pixel bytes.
         assertTrue(InboxDelivery.autoApplyAllowed(settings))
-        assertFalse(InboxDelivery.autoApplyImagesAllowed(settings))
-
-        settings.autoApplyImages = true
         assertTrue(InboxDelivery.autoApplyImagesAllowed(settings))
 
+        // An explicit opt-out closes only the image gate.
+        settings.autoApplyImages = false
+        assertFalse(InboxDelivery.autoApplyImagesAllowed(settings))
+        assertTrue(InboxDelivery.autoApplyAllowed(settings))
+
         // Pause stops the image write too, matching Windows.
+        settings.autoApplyImages = true
         settings.syncPaused = true
         assertFalse(InboxDelivery.autoApplyImagesAllowed(settings))
 

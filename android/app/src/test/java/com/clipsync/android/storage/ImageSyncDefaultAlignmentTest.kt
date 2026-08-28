@@ -7,12 +7,14 @@ import org.junit.Test
 
 /**
  * The image-sync default must be the same on both platforms (manual-QA limitation #5,
- * 2026-08-25). Since the 2026-08-28 product decision (ADR 0004 修订:「图片同步这种功能应该
- * 默认打开，这是产品的完整体验」), image sync defaults ON everywhere: this pins the Android
- * default to on, mirroring the Windows side where an absent/corrupt persisted `image_sync`
- * setting now also resolves to on. Auto-applying remote images to the local clipboard stays
- * a separate, opt-in gate (`auto_apply_images`), and the unwired session/library gates keep
- * failing closed — only the product default flipped, not the safety checks.
+ * 2026-08-25). Since the 2026-08-28 product decisions (ADR 0004 修订:「图片同步这种功能应该
+ * 默认打开，这是产品的完整体验」and, same day,「本来截图就是我自己截的，默认开开」for
+ * `auto_apply_images`), both image sync and auto-applying remote images to the local
+ * clipboard default ON everywhere: this pins the Android defaults to on, mirroring the
+ * Windows side where absent/corrupt persisted `image_sync` / `auto_apply_images` settings
+ * now also resolve to on. The two gates stay independent of each other and of the text
+ * gate, explicit persisted opt-outs are still honored, and the unwired session/library
+ * gates keep failing closed — only the product defaults flipped, not the safety checks.
  */
 class ImageSyncDefaultAlignmentTest {
     private class FakeKeyValueStore : KeyValueStore {
@@ -41,12 +43,30 @@ class ImageSyncDefaultAlignmentTest {
     }
 
     @Test
-    fun autoApplyImagesDefaultsOffIndependentlyOfTheTextGate() {
-        // ADR 0004: the image auto-apply gate is independent of text auto-apply. Even with
-        // image sync itself defaulting on, automatically writing remote images into the
-        // local clipboard remains opt-in for privacy — received images land in history only.
+    fun autoApplyImagesDefaultsOnIndependentlyOfTheTextGate() {
+        // ADR 0004: the image auto-apply gate stays independent of text auto-apply even
+        // though both now default on (2026-08-28 修订) — turning one off never drags the
+        // other along.
         assertTrue(store.autoApplyRemote)
+        assertTrue(store.autoApplyImages)
+
+        store.autoApplyImages = false
         assertFalse(store.autoApplyImages)
+        assertTrue(store.autoApplyRemote)
+    }
+
+    @Test
+    fun corruptPersistedAutoApplyImagesValueFallsBackToTheOnDefault() {
+        // Same rule as image_sync and auto_apply_remote: unparseable resolves to the
+        // product default (on); an explicit persisted "false" opt-out is still honored.
+        val backing = FakeKeyValueStore()
+        backing.values["sync.auto_apply_images"] = "maybe"
+
+        val corrupted = SyncSettingsStore(backing)
+        assertTrue(corrupted.autoApplyImages)
+
+        backing.values["sync.auto_apply_images"] = "false"
+        assertFalse(corrupted.autoApplyImages)
     }
 
     @Test

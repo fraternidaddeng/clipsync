@@ -96,11 +96,14 @@ class SyncSettingsStore(
     /**
      * Auto-write remote images into the system clipboard. Independent of the text
      * [autoApplyRemote] gate per ADR 0004 (「`auto_apply_images` 与文本自动应用独立」) and
-     * off by default, matching the Windows `auto_apply_images` setting: received images
-     * always land in history; only the automatic clipboard write is opt-in.
+     * on by default (2026-08-28 修订, 产品裁决「本来截图就是我自己截的，默认开开」— same
+     * complete-experience rationale as image sync), matching the Windows
+     * `auto_apply_images` setting. Received images always land in history regardless;
+     * an explicit user opt-out (persisted "false") is honored, and pause still stops
+     * the automatic write.
      */
     var autoApplyImages: Boolean
-        get() = readBoolean(KEY_AUTO_APPLY_IMAGES, default = false)
+        get() = readBoolean(KEY_AUTO_APPLY_IMAGES, default = true)
         set(value) = write(KEY_AUTO_APPLY_IMAGES, value.toString())
 
     /**

@@ -221,7 +221,7 @@ class ClipboardSyncService : Service() {
                         // Paused sync still receives into the inbox but never auto-applies.
                         // Like Windows, only the newest body of a batch reaches the system
                         // clipboard; every event still lands in the inbox first. Images have
-                        // their own opt-in write gate (ADR 0004), independent of the text one.
+                        // their own write gate (ADR 0004), independent of the text one.
                         val autoApply = InboxDelivery.autoApplyAllowed(settings)
                         val autoApplyImage = InboxDelivery.autoApplyImagesAllowed(settings)
                         // 收到内容通知 (settings-roadmap P1-8): re-read per batch like the

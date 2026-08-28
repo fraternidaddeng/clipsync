@@ -38,8 +38,8 @@ data class PreferencesUiState(
     val bootRestore: Boolean = false,
     /** 图像剪贴板同步（协议 v2）；默认开启（ADR 0004 修订 2026-08-28）。 */
     val imageSync: Boolean = true,
-    /** 远端图片自动写入剪贴板；独立于文本自动写入（ADR 0004），默认关闭。 */
-    val autoApplyImages: Boolean = false,
+    /** 远端图片自动写入剪贴板；独立于文本自动写入（ADR 0004），默认开启（2026-08-28 修订）。 */
+    val autoApplyImages: Boolean = true,
     val maxSyncTextBytes: Int = SyncSettingsStore.DEFAULT_MAX_TEXT_BYTES,
     /** bt1 蓝牙备援（ADR 0005）；默认关闭，仅当 IP 路径全部不可达时才拨号。 */
     val bluetoothFallback: Boolean = false,
@@ -306,8 +306,8 @@ class PreferencesViewModel(
     }
 
     /**
-     * 自动写入远端图片 (ADR 0004, 默认关): the service re-reads the gate per inbound batch,
-     * so toggling applies to the very next received image without a reconnect.
+     * 自动写入远端图片 (ADR 0004, 默认开——2026-08-28 修订): the service re-reads the gate per
+     * inbound batch, so toggling applies to the very next received image without a reconnect.
      */
     fun setAutoApplyImages(enabled: Boolean) {
         settings.autoApplyImages = enabled

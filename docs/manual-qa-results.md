@@ -178,6 +178,12 @@
 - **安全语义不动**：上一节修掉的 Windows 库层 fail-open 缺口**不回退**——`SyncSessionOptions.ImageSyncEnabled`、`PeerSyncHost` 兜底闸与 Android `SyncSupervisor` 构造缺省仍为 `false`（未接线宿主没有征询过用户设置，必须继续表现为纯 v1 文本对端）；MIME 魔数/尺寸/哈希校验、v1 会话拒图照旧。`auto_apply_images`（远端图片自动写入剪贴板）维持默认关（隐私）。
 - **测试随裁决更新**：Android `ImageSyncDefaultAlignmentTest` 改钉「默认开、坏值回落为开、显式 False 仍关、`auto_apply_images` 独立默认关」；Windows 上一节的闸测试改名 `UnwiredImageSyncGateStillFailsClosedEvenThoughTheProductDefaultIsOn`（库层闸继续 fail-closed），`MainViewModelBasicSettingsTests` 新增「默认开 + 显式退出跨重启存活」两例；Windows 偏好页 19 语 `Prefs_Sync_ImageSync_Desc` 由「默认关闭」改「默认开启」。
 
+### 更新（2026-08-28，同日随后）：`auto_apply_images`（远端图片自动写入剪贴板）经产品裁决也改为「双端默认开」
+
+- **产品裁决**：「无所谓啊，本来截图就是我自己截的，默认开开」——与图片同步同一「产品完整体验」理由。ADR 0004 再增补修订记录：Android `sync.auto_apply_images` 与 Windows `auto_apply_images` 的产品默认由关改开；缺失/坏持久化值按「开」解析（与 `image_sync` / `auto_apply_remote` 同规则），用户显式关闭的持久化「False」仍被尊重。上两节「双端默认一致」的钉死不变。
+- **拦截与安全语义不动**：暂停同步仍同时关断文本与图片的自动写入（Android `InboxDelivery.autoApplyImagesAllowed`、Windows `RemoteApplyDecision`），Windows 私密模式照旧一并停下自动写入；图片写入门与文本自动应用继续互相独立；回声抑制与 MIME 魔数/尺寸/哈希校验、未接线宿主库层 fail-closed 闸全部原样。
+- **测试随裁决更新**：Android `ImageSyncDefaultAlignmentTest` 改钉「`auto_apply_images` 默认开、坏值回落为开、显式 False 仍关、与文本闸互不连坐」，`InboxDeliveryTest` 闸例改钉「默认即放行、显式退出关闸、暂停仍双杀」；Windows `MainViewModelBasicSettingsTests` 新增「默认开（与 Android 对齐）+ 显式退出跨重启存活」两例。偏好页文案（Windows `Prefs_Sync_AutoApplyImages_Desc` / Android `prefs_auto_apply_images_desc`，19 语）本就只描述行为、未声称默认值，无需改动。
+
 ## 签核（2026-08-26）：用户确认真机验证已全部完成
 
 - 2026-08-26，仓库所有者确认：**真机验证已全部完成**（覆盖本记录「未做（若要出 RC 还需）」清单与 `docs/manual-qa-checklist.md` 的剩余项）。据此，2026-08-25 的「本轮不能出 RC」判定**不再构成发布阻断**，RC 门槛视为已过。

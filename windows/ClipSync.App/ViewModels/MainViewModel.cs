@@ -186,9 +186,13 @@ public partial class MainViewModel(
     [ObservableProperty]
     private bool imageSyncEnabled = true;
 
-    /// <summary>Opt-in (default off): write remote images straight into the local clipboard.</summary>
+    /// <summary>
+    /// Default on (ADR 0004, revised 2026-08-28): write remote images straight into the
+    /// local clipboard. Independent of the text gate; pause and 私密模式 still stop the
+    /// write (RemoteApplyDecision), and an explicit persisted opt-out is honored.
+    /// </summary>
     [ObservableProperty]
-    private bool autoApplyImages;
+    private bool autoApplyImages = true;
 
     [ObservableProperty]
     private string extraBindAddresses = string.Empty;
@@ -866,10 +870,11 @@ public partial class MainViewModel(
         PauseHotkey = await store.GetSettingAsync("hotkey_pause") ?? string.Empty;
         BlockedProcesses = await store.GetSettingAsync("blocked_processes") ?? BlockedProcesses;
         AutoApplyRemote = !bool.TryParse(await store.GetSettingAsync("auto_apply_remote"), out var autoApply) || autoApply;
-        // Absent or unparseable resolves to the on-default (same rule as auto_apply_remote);
-        // an explicit persisted "False" from a user who opted out is honored.
+        // For image_sync and auto_apply_images alike, absent or unparseable resolves to the
+        // on-default (same rule as auto_apply_remote); an explicit persisted "False" from a
+        // user who opted out is honored.
         ImageSyncEnabled = !bool.TryParse(await store.GetSettingAsync("image_sync"), out var imageSync) || imageSync;
-        AutoApplyImages = bool.TryParse(await store.GetSettingAsync("auto_apply_images"), out var autoApplyImage) && autoApplyImage;
+        AutoApplyImages = !bool.TryParse(await store.GetSettingAsync("auto_apply_images"), out var autoApplyImage) || autoApplyImage;
         ExtraBindAddresses = await store.GetSettingAsync("extra_bind_addresses") ?? string.Empty;
         BluetoothFallbackEnabled = bool.TryParse(await store.GetSettingAsync("bluetooth_fallback"), out var btFallback) && btFallback;
         PrivilegedAdbConsent = bool.TryParse(await store.GetSettingAsync("privileged_adb_consent"), out var adbConsent) && adbConsent;

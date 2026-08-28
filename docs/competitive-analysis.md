@@ -102,7 +102,7 @@
 ### B. 还没做（计划内欠账）
 
 3. **打包分发（阶段 7）——最小分发链已解决（commit `eedf009`）。** `scripts/package-windows.ps1` 产出自包含 win-x64 便携 ZIP（内含运行时、许可与安装指南，附 SHA-256），`scripts/package-android.ps1` 产出环境变量签名的 Release APK（附 SHA-256，密钥库与密码不入库），`docs/install.md` 提供一页中文安装/配对/授权/排障文档；两个脚本已在 Linux 上实跑验证（Windows 端经 `EnableWindowsTargeting`，Android 端签名/Debug/未签名三路径 + apksigner 验签）。**发布 CI 随后落地（`release.yml`：tag `v*` 触发打包并附产物与 `.sha256` 到 GitHub Release，发布说明自动注明「发布 ≠ 真机验证通过」）；尚未打过任何 tag，Releases 页仍无产物。仍未做**：商店/F-Droid 上架。
-4. **图片同步——双端已落地，真机未验（原「Android 端未接线」已解决）。** 协议 v1 只有纯文本（`kind` 固定为 `const: "text"`，未预留 MIME 字段）；protocol v2 与 Windows 端完整链路自 `feature/stage-4` 移植合入，Android 端 v2 图片收发亦已接线（`8275ffa`：媒体层、Room v2、引擎分块、历史缩略图；`3fda692` 独立的「自动写入远端图片」闸）。默认双端关闭（`7466f52` fail-closed 钉死）。**剩余欠账是跨端「截图过去」的真机互拷验证与大图性能实测。**
+4. **图片同步——双端已落地，真机未验（原「Android 端未接线」已解决）。** 协议 v1 只有纯文本（`kind` 固定为 `const: "text"`，未预留 MIME 字段）；protocol v2 与 Windows 端完整链路自 `feature/stage-4` 移植合入，Android 端 v2 图片收发亦已接线（`8275ffa`：媒体层、Room v2、引擎分块、历史缩略图；`3fda692` 独立的「自动写入远端图片」闸）。图片同步与「自动写入远端图片」现均为双端默认开（2026-08-28 两次产品裁决，ADR 0004 修订；未接线宿主的库层闸仍 fail-closed，`7466f52` 钉死）。**剩余欠账是跨端「截图过去」的真机互拷验证与大图性能实测。**
 5. **阶段 6 硬化残项——已全部收口**：Windows 睡眠/唤醒会话快速恢复（`09a2d6b` + Modern Standby `25d2788`）；历史导出/导入（Windows `5fd7461`、Android `3c51350`、图片感知 v2 格式 `87c0016`）；会话内 WebSocket 帧级速率限流（`793c0b9`，预认证 per-IP 滑窗此前已做 `25d2788`）。
 6. **小项**：收件箱 Room 化已收口（`f928537`）；入站通知洪泛上限已收口（`17fda6e`，`InboxNotificationGate` 固定窗合并计数卡）；Windows 衬线字体（`2db37d2` 已随包）与空状态（`8e53c5e`）已收口，其余 UI 残项见 `ui-gap-audit.md`。
 

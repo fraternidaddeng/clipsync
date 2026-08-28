@@ -156,6 +156,37 @@ public sealed class MainViewModelBasicSettingsTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task AutoApplyImagesDefaultsOnMatchingTheAndroidDefault()
+    {
+        // ADR 0004 (revised 2026-08-28 twice): auto-applying remote images defaults on,
+        // like image sync itself — same on Android (SyncSettingsStore.autoApplyImages).
+        // The gate stays independent of the text one; pause/私密模式 blocking lives in
+        // RemoteApplyDecision and is covered by RemoteApplyDecisionTests.
+        var viewModel = CreateViewModel();
+        await viewModel.InitializeAsync();
+
+        Assert.True(viewModel.AutoApplyImages);
+    }
+
+    [Fact]
+    public async Task PersistedAutoApplyImagesOptOutSurvivesTheOnDefault()
+    {
+        // Same contract as image_sync: only absent or unparseable values take the
+        // on-default; an explicit opt-out stays opted out across restarts.
+        await store.InitializeAsync();
+        await store.SetSettingAsync("auto_apply_images", "False");
+
+        var optedOut = CreateViewModel();
+        await optedOut.InitializeAsync();
+        Assert.False(optedOut.AutoApplyImages);
+
+        await store.SetSettingAsync("auto_apply_images", "maybe");
+        var corrupt = CreateViewModel();
+        await corrupt.InitializeAsync();
+        Assert.True(corrupt.AutoApplyImages);
+    }
+
+    [Fact]
     public async Task UnreadableStoredValuesFallBackToDefaultsWithoutErroring()
     {
         await store.InitializeAsync();
