@@ -27,7 +27,6 @@ class ShizukuClipboardBackend internal constructor(
     private val nowEpochMillis: () -> Long = System::currentTimeMillis,
     private val rebindDelaysMillis: LongArray = DEFAULT_REBIND_DELAYS_MILLIS,
     private val verifyBind: VerifyBindBudget = VerifyBindBudget.DEFAULT,
-    private val sleeper: (Long) -> Unit = { Thread.sleep(it) },
     private val logger: (String) -> Unit = DEFAULT_LOGGER,
 ) : BackgroundClipboardBackend {
     constructor(context: Context) : this(AndroidShizukuRuntime(context))
@@ -181,15 +180,26 @@ class ShizukuClipboardBackend internal constructor(
             lastErrorCode = blocked
             return ClipboardReadResult.Failure(blocked)
         }
-        val active = session
-        if (active != null) {
-            val read = readFromSession(active)
-            if (read !is ClipboardReadResult.Failure || !isCurrentDeath(read.errorCode)) {
-                return read
-            }
+        // A held session that reads healthy is the verdict; a null result (no session, or a
+        // stale-dead one we just asked the host to respawn) falls through to the bounded wait.
+        return readHeldSessionForVerification() ?: readAfterAwaitingBind()
+    }
+
+    /**
+     * Reads the currently held session for the verification path, or null to fall through to a
+     * fresh bind. A held session that reads back a death code means the host is alive+authorized
+     * (the caller's guard passed) but the UserService child is gone: self-heal by asking the host
+     * to respawn, then return null so the caller waits out that fresh bind.
+     */
+    private fun readHeldSessionForVerification(): ClipboardReadResult? {
+        val active = session ?: return null
+        val read = readFromSession(active)
+        return if (read is ClipboardReadResult.Failure && isCurrentDeath(read.errorCode)) {
             requestHostRespawn(read.errorCode)
+            null
+        } else {
+            read
         }
-        return readAfterAwaitingBind()
     }
 
     /**
@@ -232,7 +242,7 @@ class ShizukuClipboardBackend internal constructor(
                             ClipboardReadResult.Failure(ShizukuErrorCodes.USERSERVICE_DEAD)
                         } else {
                             poll += 1
-                            sleeper(verifyBind.stepMillis)
+                            verifyBind.sleep(verifyBind.stepMillis)
                             null
                         }
                 }
@@ -444,10 +454,14 @@ class ShizukuClipboardBackend internal constructor(
     }
 }
 
-/** How long [ShizukuClipboardBackend.readTextForVerification] holds for an in-flight bind. */
+/**
+ * How long [ShizukuClipboardBackend.readTextForVerification] holds for an in-flight bind, and how
+ * it waits between polls. [sleep] is a seam so JVM tests drive the loop without real delays.
+ */
 data class VerifyBindBudget(
     val polls: Int,
     val stepMillis: Long,
+    val sleep: (Long) -> Unit = { Thread.sleep(it) },
 ) {
     companion object {
         // The verification read waits up to polls x step for a cold/respawned bind to land.

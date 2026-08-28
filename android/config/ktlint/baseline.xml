@@ -484,17 +484,17 @@
         <error line="271" column="61" source="standard:chain-method-continuation" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/shizuku/ShizukuClipboardBackend.kt">
-        <error line="76" column="32" source="standard:multiline-expression-wrapping" />
-        <error line="135" column="22" source="standard:multiline-expression-wrapping" />
-        <error line="258" column="31" source="standard:function-signature" />
-        <error line="258" column="63" source="standard:function-signature" />
-        <error line="258" column="87" source="standard:function-signature" />
-        <error line="302" column="28" source="standard:multiline-expression-wrapping" />
-        <error line="312" column="25" source="standard:multiline-expression-wrapping" />
-        <error line="370" column="24" source="standard:function-signature" />
-        <error line="370" column="52" source="standard:function-signature" />
-        <error line="370" column="70" source="standard:function-signature" />
-        <error line="377" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="77" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="136" column="22" source="standard:multiline-expression-wrapping" />
+        <error line="303" column="31" source="standard:function-signature" />
+        <error line="303" column="63" source="standard:function-signature" />
+        <error line="303" column="87" source="standard:function-signature" />
+        <error line="347" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="357" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="415" column="24" source="standard:function-signature" />
+        <error line="415" column="52" source="standard:function-signature" />
+        <error line="415" column="70" source="standard:function-signature" />
+        <error line="422" column="30" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/shizuku/ShizukuClipboardBinder.kt">
         <error line="63" column="25" source="standard:multiline-expression-wrapping" />
@@ -1649,20 +1649,20 @@
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/PrivilegedReadWiringTest.kt">
         <error line="3" column="1" source="standard:import-ordering" />
-        <error line="26" column="31" source="standard:class-signature" />
-        <error line="26" column="76" source="standard:class-signature" />
-        <error line="30" column="38" source="standard:multiline-expression-wrapping" />
-        <error line="30" column="38" source="standard:function-signature" />
-        <error line="43" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="60" column="26" source="standard:multiline-expression-wrapping" />
-        <error line="69" column="21" source="standard:multiline-expression-wrapping" />
-        <error line="114" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="117" column="22" source="standard:multiline-expression-wrapping" />
-        <error line="124" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="125" column="22" source="standard:multiline-expression-wrapping" />
-        <error line="142" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="146" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="147" column="22" source="standard:multiline-expression-wrapping" />
+        <error line="27" column="31" source="standard:class-signature" />
+        <error line="27" column="76" source="standard:class-signature" />
+        <error line="31" column="38" source="standard:multiline-expression-wrapping" />
+        <error line="31" column="38" source="standard:function-signature" />
+        <error line="44" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="61" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="70" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="154" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="157" column="22" source="standard:multiline-expression-wrapping" />
+        <error line="164" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="165" column="22" source="standard:multiline-expression-wrapping" />
+        <error line="182" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="186" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="187" column="22" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/adblog/AdbLogMinimizationInvariantTest.kt">
         <error line="3" column="1" source="standard:import-ordering" />
@@ -1735,9 +1735,9 @@
         <error line="261" column="32" source="standard:function-signature" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/shizuku/FakeShizukuRuntime.kt">
-        <error line="83" column="33" source="standard:function-signature" />
-        <error line="83" column="52" source="standard:function-signature" />
-        <error line="83" column="70" source="standard:function-signature" />
+        <error line="95" column="33" source="standard:function-signature" />
+        <error line="95" column="52" source="standard:function-signature" />
+        <error line="95" column="70" source="standard:function-signature" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/shizuku/IClipboardReflectionAdapterTest.kt">
         <error line="33" column="23" source="standard:multiline-expression-wrapping" />
@@ -1793,11 +1793,11 @@
         <error line="404" column="104" source="standard:function-expression-body" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/shizuku/ShizukuClipboardBackendTest.kt">
-        <error line="50" column="21" source="standard:multiline-expression-wrapping" />
-        <error line="132" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="207" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="234" column="23" source="standard:multiline-expression-wrapping" />
-        <error line="267" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="51" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="133" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="208" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="235" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="268" column="23" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/shizuku/ShizukuClipboardWriterTest.kt">
         <error line="30" column="21" source="standard:multiline-expression-wrapping" />

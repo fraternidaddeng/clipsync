@@ -91,8 +91,7 @@ class PrivilegedReadWiringTest {
         val real =
             RealShizukuClipboardBackend(
                 runtime,
-                verifyBind = VerifyBindBudget(polls = 10, stepMillis = 0L),
-                sleeper = { runtime.binding = false },
+                verifyBind = VerifyBindBudget(polls = 10, stepMillis = 0L, sleep = { runtime.binding = false }),
             )
         val adapter =
             ShizukuClipboardBackend(
@@ -121,11 +120,16 @@ class PrivilegedReadWiringTest {
         val real =
             RealShizukuClipboardBackend(
                 runtime,
-                verifyBind = VerifyBindBudget(polls = 10, stepMillis = 0L),
-                sleeper = {
-                    runtime.session = reborn
-                    runtime.binding = false
-                },
+                verifyBind =
+                    VerifyBindBudget(
+                        polls = 10,
+                        stepMillis = 0L,
+                        sleep = {
+                            runtime.session = reborn
+                            runtime.binding = false
+                        },
+                    ),
+                logger = { },
             )
         real.start { }
         val adapter =

@@ -339,13 +339,17 @@ class ShizukuClipboardBackendTest {
         val backend =
             ShizukuClipboardBackend(
                 runtime,
-                verifyBind = VerifyBindBudget(polls = 10, stepMillis = 0L),
-                sleeper = {
-                    slept += 1
-                    if (slept >= 2) {
-                        runtime.binding = false
-                    }
-                },
+                verifyBind =
+                    VerifyBindBudget(
+                        polls = 10,
+                        stepMillis = 0L,
+                        sleep = {
+                            slept += 1
+                            if (slept >= 2) {
+                                runtime.binding = false
+                            }
+                        },
+                    ),
             )
 
         val result = backend.readTextForVerification()
@@ -362,8 +366,7 @@ class ShizukuClipboardBackendTest {
         val backend =
             ShizukuClipboardBackend(
                 runtime,
-                verifyBind = VerifyBindBudget(polls = 4, stepMillis = 0L),
-                sleeper = { slept += 1 },
+                verifyBind = VerifyBindBudget(polls = 4, stepMillis = 0L, sleep = { slept += 1 }),
             )
 
         val result = backend.readTextForVerification()
@@ -377,7 +380,8 @@ class ShizukuClipboardBackendTest {
         val runtime = FakeShizukuRuntime()
         runtime.authorized = false
         var slept = 0
-        val backend = ShizukuClipboardBackend(runtime, sleeper = { slept += 1 })
+        val backend =
+            ShizukuClipboardBackend(runtime, verifyBind = VerifyBindBudget.DEFAULT.copy(sleep = { slept += 1 }))
 
         val result = backend.readTextForVerification()
 
@@ -390,7 +394,8 @@ class ShizukuClipboardBackendTest {
         val runtime = FakeShizukuRuntime()
         runtime.bindError = ShizukuErrorCodes.BINDER_DEAD
         var slept = 0
-        val backend = ShizukuClipboardBackend(runtime, sleeper = { slept += 1 })
+        val backend =
+            ShizukuClipboardBackend(runtime, verifyBind = VerifyBindBudget.DEFAULT.copy(sleep = { slept += 1 }))
 
         val result = backend.readTextForVerification()
 
@@ -403,7 +408,8 @@ class ShizukuClipboardBackendTest {
         val runtime = FakeShizukuRuntime()
         runtime.session!!.clip = SessionRead.Text("already-live")
         var slept = 0
-        val backend = ShizukuClipboardBackend(runtime, sleeper = { slept += 1 })
+        val backend =
+            ShizukuClipboardBackend(runtime, verifyBind = VerifyBindBudget.DEFAULT.copy(sleep = { slept += 1 }))
         backend.start { }
 
         val result = backend.readTextForVerification()
@@ -428,12 +434,16 @@ class ShizukuClipboardBackendTest {
         val backend =
             ShizukuClipboardBackend(
                 runtime,
-                verifyBind = VerifyBindBudget(polls = 10, stepMillis = 0L),
-                sleeper = {
-                    // The host has respawned the child; its fresh binder attaches back.
-                    runtime.session = reborn
-                    runtime.binding = false
-                },
+                verifyBind =
+                    VerifyBindBudget(
+                        polls = 10,
+                        stepMillis = 0L,
+                        sleep = {
+                            // The host has respawned the child; its fresh binder attaches back.
+                            runtime.session = reborn
+                            runtime.binding = false
+                        },
+                    ),
                 logger = { logs += it },
             )
         backend.start { }
@@ -459,8 +469,8 @@ class ShizukuClipboardBackendTest {
         val backend =
             ShizukuClipboardBackend(
                 runtime,
-                verifyBind = VerifyBindBudget(polls = 4, stepMillis = 0L),
-                sleeper = { slept += 1 }, // never revives: the bind stays in flight
+                // never revives: the bind stays in flight
+                verifyBind = VerifyBindBudget(polls = 4, stepMillis = 0L, sleep = { slept += 1 }),
                 logger = { },
             )
         backend.start { }
@@ -482,7 +492,7 @@ class ShizukuClipboardBackendTest {
         val backend =
             ShizukuClipboardBackend(
                 runtime,
-                sleeper = { fail("must not wait on a dead host") },
+                verifyBind = VerifyBindBudget.DEFAULT.copy(sleep = { fail("must not wait on a dead host") }),
                 logger = { fail("must not self-heal a dead host") },
             )
         backend.start { }
@@ -506,7 +516,7 @@ class ShizukuClipboardBackendTest {
         val backend =
             ShizukuClipboardBackend(
                 runtime,
-                sleeper = { fail("must not wait without authorization") },
+                verifyBind = VerifyBindBudget.DEFAULT.copy(sleep = { fail("must not wait without authorization") }),
                 logger = { fail("must not self-heal without authorization") },
             )
         backend.start { }
