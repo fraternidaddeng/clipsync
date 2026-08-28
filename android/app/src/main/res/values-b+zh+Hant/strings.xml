@@ -253,8 +253,8 @@
     <string name="priv_hint_not_installed">手機上還沒有特權通道應用程式；安裝並啟動後回來點「重新探測」。</string>
     <string name="priv_hint_not_running">特權通道未在執行；用電腦執行一次啟動命令即可（Windows 端可一鍵啟動）。</string>
     <string name="priv_hint_not_authorized">特權通道尚未授權本應用程式；點「授權特權直讀」完成授權。</string>
-    <string name="priv_hint_binder_dead">與特權通道的連線已中斷；重啟通道後點「重新探測」。</string>
-    <string name="priv_hint_userservice_dead">特權讀取服務已中斷；點「重新探測」嘗試重連，無效時重啟通道。</string>
+    <string name="priv_hint_binder_dead">與特權通道的連線已中斷（手機重啟或通道被系統回收後不會自動恢復）；用電腦重新執行一次啟動命令（Windows 端可一鍵啟動），再點「測試背景讀取」驗證。</string>
+    <string name="priv_hint_userservice_dead">特權讀取服務已中斷（無線調試斷開、手機重啟或被系統回收後常見，通道不會自癒）；用電腦重新執行一次啟動命令即可恢復（USB 或無線調試均可，Windows 端可一鍵啟動），再點「測試背景讀取」驗證。</string>
     <string name="priv_hint_clipboard_binder_dead">系統剪貼簿服務暫時無法存取；稍後再試，必要時重新啟動裝置。</string>
     <string name="priv_hint_api_mismatch">特權通道版本過舊或系統介面不相容；升級通道應用程式後再試。</string>
     <string name="priv_hint_read_unverified">前提已就緒，還差一次實測；點「測試背景讀取」完成驗證。</string>

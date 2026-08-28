@@ -253,8 +253,8 @@
     <string name="priv_hint_not_installed">この端末に特権チャネルアプリがインストールされていません。インストールして起動したら、「再検出」をタップしてください。</string>
     <string name="priv_hint_not_running">特権チャネルが起動していません。PC から起動コマンドを一度実行してください（Windows 側ならワンクリックで起動できます）。</string>
     <string name="priv_hint_not_authorized">特権チャネルはまだこのアプリを承認していません。「特権読み取りを承認」をタップして許可してください。</string>
-    <string name="priv_hint_binder_dead">特権チャネルとの接続が切れました。チャネルを再起動してから「再検出」をタップしてください。</string>
-    <string name="priv_hint_userservice_dead">特権読み取りサービスが切断されました。「再検出」で再接続を試し、直らなければチャネルを再起動してください。</string>
+    <string name="priv_hint_binder_dead">特権チャネルとの接続が切れました（端末の再起動やシステムによる強制終了後は自動では復帰しません）。PC から起動コマンドをもう一度実行し（Windows 側ならワンクリック）、その後「バックグラウンド読み取りをテスト」で確認してください。</string>
+    <string name="priv_hint_userservice_dead">特権読み取りサービスが切断されました（ワイヤレスデバッグの切断・端末の再起動・システムによる強制終了後によく起きます。チャネルは自動では復帰しません）。PC から起動コマンドをもう一度実行して復旧させ（USB でもワイヤレスデバッグでも可、Windows 側ならワンクリック）、その後「バックグラウンド読み取りをテスト」で確認してください。</string>
     <string name="priv_hint_clipboard_binder_dead">システムのクリップボードサービスに一時的にアクセスできません。しばらくしてから再試行し、続くようなら端末を再起動してください。</string>
     <string name="priv_hint_api_mismatch">特権チャネルが古いか、このシステムのインターフェースと互換性がありません。チャネルアプリを更新してから再試行してください。</string>
     <string name="priv_hint_read_unverified">前提条件は整っています。あとは実測が 1 回だけ。「バックグラウンド読み取りをテスト」で確認してください。</string>

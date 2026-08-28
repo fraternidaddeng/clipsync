@@ -255,8 +255,8 @@
     <string name="priv_hint_not_installed">L’app del canale privilegiato non è installata su questo telefono; installala, avviala e poi tocca «Riesamina».</string>
     <string name="priv_hint_not_running">Il canale privilegiato non è in esecuzione; esegui una volta il comando di avvio da un computer (un clic sul lato Windows).</string>
     <string name="priv_hint_not_authorized">Il canale privilegiato non ha ancora autorizzato questa app; tocca «Autorizza lettura privilegiata» per concederla.</string>
-    <string name="priv_hint_binder_dead">La connessione al canale privilegiato si è interrotta; riavvia il canale e tocca «Riesamina».</string>
-    <string name="priv_hint_userservice_dead">Il servizio di lettura privilegiata si è disconnesso; tocca «Riesamina» per riconnetterti, altrimenti riavvia il canale.</string>
+    <string name="priv_hint_binder_dead">La connessione al canale privilegiato si è interrotta (non torna da sola dopo un riavvio del telefono o una chiusura da parte del sistema); esegui di nuovo il comando di avvio da un computer (un clic sul lato Windows), poi tocca «Prova lettura in background» per verificare.</string>
+    <string name="priv_hint_userservice_dead">Il servizio di lettura privilegiata si è disconnesso (frequente dopo la caduta del debug wireless, un riavvio del telefono o una chiusura da parte del sistema — il canale non torna da solo); esegui di nuovo una volta il comando di avvio da un computer per ripristinarlo (USB o debug wireless; un clic sul lato Windows), poi tocca «Prova lettura in background» per verificare.</string>
     <string name="priv_hint_clipboard_binder_dead">Il servizio degli appunti di sistema al momento non è raggiungibile; riprova più tardi e, se persiste, riavvia il dispositivo.</string>
     <string name="priv_hint_api_mismatch">Il canale privilegiato è obsoleto o incompatibile con questa versione del sistema; aggiorna l’app del canale e riprova.</string>
     <string name="priv_hint_read_unverified">I prerequisiti sono pronti; manca un solo test reale. Tocca «Prova lettura in background» per verificare.</string>

@@ -253,8 +253,8 @@
     <string name="priv_hint_not_installed">Điện thoại này chưa cài ứng dụng kênh đặc quyền; hãy cài và khởi động nó rồi quay lại nhấn “Dò lại”.</string>
     <string name="priv_hint_not_running">Kênh đặc quyền chưa chạy; chỉ cần chạy lệnh khởi động một lần từ máy tính (phía Windows chỉ một cú nhấp).</string>
     <string name="priv_hint_not_authorized">Kênh đặc quyền chưa cấp quyền cho ứng dụng này; nhấn “Cấp quyền đọc đặc quyền” để cấp.</string>
-    <string name="priv_hint_binder_dead">Kết nối với kênh đặc quyền đã đứt; khởi động lại kênh rồi nhấn “Dò lại”.</string>
-    <string name="priv_hint_userservice_dead">Dịch vụ đọc đặc quyền đã ngắt kết nối; nhấn “Dò lại” để kết nối lại, nếu không được hãy khởi động lại kênh.</string>
+    <string name="priv_hint_binder_dead">Kết nối với kênh đặc quyền đã đứt (kênh không tự phục hồi sau khi điện thoại khởi động lại hoặc bị hệ thống dừng); chạy lại lệnh khởi động từ máy tính (phía Windows chỉ một cú nhấp), rồi nhấn “Kiểm tra đọc nền” để xác nhận.</string>
+    <string name="priv_hint_userservice_dead">Dịch vụ đọc đặc quyền đã ngắt kết nối (thường gặp sau khi gỡ lỗi không dây bị đứt, điện thoại khởi động lại hoặc bị hệ thống dừng — kênh không tự phục hồi); chạy lại lệnh khởi động một lần từ máy tính để khôi phục (USB hoặc gỡ lỗi không dây đều được; phía Windows chỉ một cú nhấp), rồi nhấn “Kiểm tra đọc nền” để xác nhận.</string>
     <string name="priv_hint_clipboard_binder_dead">Hiện không truy cập được dịch vụ khay nhớ tạm của hệ thống; thử lại sau, nếu vẫn lỗi hãy khởi động lại thiết bị.</string>
     <string name="priv_hint_api_mismatch">Kênh đặc quyền đã cũ hoặc không tương thích với phiên bản hệ thống này; hãy cập nhật ứng dụng kênh rồi thử lại.</string>
     <string name="priv_hint_read_unverified">Điều kiện đã đủ, chỉ còn một lần kiểm tra thực tế; nhấn “Kiểm tra đọc nền” để xác minh.</string>

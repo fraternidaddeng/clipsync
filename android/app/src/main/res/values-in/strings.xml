@@ -253,8 +253,8 @@
     <string name="priv_hint_not_installed">Aplikasi kanal berprivilese belum terpasang di ponsel ini; pasang dan jalankan, lalu kembali dan ketuk “Periksa ulang”.</string>
     <string name="priv_hint_not_running">Kanal berprivilese tidak berjalan; jalankan perintah mulai sekali dari komputer (satu klik di sisi Windows).</string>
     <string name="priv_hint_not_authorized">Kanal berprivilese belum mengizinkan aplikasi ini; ketuk “Izinkan baca berprivilese” untuk memberi izin.</string>
-    <string name="priv_hint_binder_dead">Sambungan ke kanal berprivilese terputus; mulai ulang kanal lalu ketuk “Periksa ulang”.</string>
-    <string name="priv_hint_userservice_dead">Layanan baca berprivilese terputus; ketuk “Periksa ulang” untuk menyambung kembali, jika gagal mulai ulang kanal.</string>
+    <string name="priv_hint_binder_dead">Sambungan ke kanal berprivilese terputus (tidak pulih sendiri setelah ponsel dimulai ulang atau dihentikan sistem); jalankan lagi perintah mulai dari komputer (satu klik di sisi Windows), lalu ketuk “Uji baca latar belakang” untuk memastikan.</string>
+    <string name="priv_hint_userservice_dead">Layanan baca berprivilese terputus (umum terjadi setelah debugging nirkabel terputus, ponsel dimulai ulang, atau dihentikan sistem — kanal tidak pulih sendiri); jalankan sekali lagi perintah mulai dari komputer untuk memulihkannya (USB atau debugging nirkabel sama-sama bisa; satu klik di sisi Windows), lalu ketuk “Uji baca latar belakang” untuk memastikan.</string>
     <string name="priv_hint_clipboard_binder_dead">Layanan papan klip sistem sedang tidak dapat diakses; coba lagi nanti, dan jika berlanjut mulai ulang perangkat.</string>
     <string name="priv_hint_api_mismatch">Kanal berprivilese sudah usang atau tidak kompatibel dengan versi sistem ini; perbarui aplikasi kanal lalu coba lagi.</string>
     <string name="priv_hint_read_unverified">Prasyarat sudah siap; tinggal satu uji nyata. Ketuk “Uji baca latar belakang” untuk memverifikasi.</string>

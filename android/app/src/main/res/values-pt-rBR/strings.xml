@@ -255,8 +255,8 @@
     <string name="priv_hint_not_installed">O aplicativo do canal privilegiado não está instalado neste telefone; instale-o, inicie-o e volte para tocar em “Sondar de novo”.</string>
     <string name="priv_hint_not_running">O canal privilegiado não está em execução; execute uma vez o comando de início a partir de um computador (um clique no lado do Windows).</string>
     <string name="priv_hint_not_authorized">O canal privilegiado ainda não autorizou este aplicativo; toque em “Autorizar leitura privilegiada” para conceder.</string>
-    <string name="priv_hint_binder_dead">A conexão com o canal privilegiado caiu; reinicie o canal e toque em “Sondar de novo”.</string>
-    <string name="priv_hint_userservice_dead">O serviço de leitura privilegiada desconectou; toque em “Sondar de novo” para reconectar e, se não resolver, reinicie o canal.</string>
+    <string name="priv_hint_binder_dead">A conexão com o canal privilegiado caiu (ele não volta sozinho após reiniciar o telefone ou ser encerrado pelo sistema); execute novamente o comando de início a partir de um computador (um clique no lado do Windows) e depois toque em “Testar leitura em segundo plano” para verificar.</string>
+    <string name="priv_hint_userservice_dead">O serviço de leitura privilegiada desconectou (comum após queda da depuração sem fio, reinício do telefone ou encerramento pelo sistema — o canal não volta sozinho); execute mais uma vez o comando de início a partir de um computador para restaurá-lo (USB ou depuração sem fio; um clique no lado do Windows) e depois toque em “Testar leitura em segundo plano” para verificar.</string>
     <string name="priv_hint_clipboard_binder_dead">O serviço da área de transferência do sistema está inacessível agora; tente mais tarde e, se persistir, reinicie o dispositivo.</string>
     <string name="priv_hint_api_mismatch">O canal privilegiado está desatualizado ou é incompatível com esta versão do sistema; atualize o aplicativo do canal e tente de novo.</string>
     <string name="priv_hint_read_unverified">Os pré-requisitos estão prontos; falta um teste real. Toque em “Testar leitura em segundo plano” para verificar.</string>

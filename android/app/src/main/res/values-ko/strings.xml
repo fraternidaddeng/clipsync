@@ -253,8 +253,8 @@
     <string name="priv_hint_not_installed">휴대폰에 특권 채널 앱이 설치되어 있지 않습니다. 설치하고 실행한 뒤 ‘다시 탐지’를 누르세요.</string>
     <string name="priv_hint_not_running">특권 채널이 실행 중이 아닙니다. 컴퓨터에서 시작 명령을 한 번 실행하면 됩니다(Windows 쪽에서는 클릭 한 번).</string>
     <string name="priv_hint_not_authorized">특권 채널이 아직 이 앱을 승인하지 않았습니다. ‘특권 읽기 승인’을 눌러 승인하세요.</string>
-    <string name="priv_hint_binder_dead">특권 채널과의 연결이 끊어졌습니다. 채널을 다시 시작한 뒤 ‘다시 탐지’를 누르세요.</string>
-    <string name="priv_hint_userservice_dead">특권 읽기 서비스가 끊어졌습니다. ‘다시 탐지’로 재연결을 시도하고, 안 되면 채널을 다시 시작하세요.</string>
+    <string name="priv_hint_binder_dead">특권 채널과의 연결이 끊어졌습니다(휴대폰 재부팅이나 시스템 종료 후에는 저절로 복구되지 않습니다). 컴퓨터에서 시작 명령을 다시 실행한 뒤(Windows 쪽에서는 클릭 한 번) ‘백그라운드 읽기 테스트’로 확인하세요.</string>
+    <string name="priv_hint_userservice_dead">특권 읽기 서비스가 끊어졌습니다(무선 디버깅 끊김, 휴대폰 재부팅, 시스템 종료 후 흔히 발생하며 채널은 저절로 복구되지 않습니다). 컴퓨터에서 시작 명령을 한 번 다시 실행해 복구한 뒤(USB나 무선 디버깅 모두 가능, Windows 쪽에서는 클릭 한 번) ‘백그라운드 읽기 테스트’로 확인하세요.</string>
     <string name="priv_hint_clipboard_binder_dead">시스템 클립보드 서비스에 지금은 접근할 수 없습니다. 잠시 후 다시 시도하고, 계속되면 기기를 재시작하세요.</string>
     <string name="priv_hint_api_mismatch">특권 채널이 오래되었거나 이 시스템 버전과 호환되지 않습니다. 채널 앱을 업데이트한 뒤 다시 시도하세요.</string>
     <string name="priv_hint_read_unverified">전제 조건은 갖춰졌고 실측 한 번만 남았습니다. ‘백그라운드 읽기 테스트’를 눌러 확인하세요.</string>

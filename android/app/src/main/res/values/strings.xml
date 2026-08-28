@@ -279,8 +279,8 @@
     <string name="priv_hint_not_installed">手机上还没有特权通道应用；安装并启动后回来点「重新探测」。</string>
     <string name="priv_hint_not_running">特权通道未在运行；用电脑执行一次启动命令即可（Windows 端可一键启动）。</string>
     <string name="priv_hint_not_authorized">特权通道尚未授权本应用；点「授权特权直读」完成授权。</string>
-    <string name="priv_hint_binder_dead">与特权通道的连接已断开；重启通道后点「重新探测」。</string>
-    <string name="priv_hint_userservice_dead">特权读取服务已断开（无线调试断开后常见）；用电脑重新执行一次启动命令即可恢复（USB 或无线调试均可，Windows 端可一键启动），再点「测试后台读取」验证。</string>
+    <string name="priv_hint_binder_dead">与特权通道的连接已断开（手机重启或通道被系统回收后不会自动恢复）；用电脑重新执行一次启动命令（Windows 端可一键启动），再点「测试后台读取」验证。</string>
+    <string name="priv_hint_userservice_dead">特权读取服务已断开（无线调试断开、手机重启或被系统回收后常见，通道不会自愈）；用电脑重新执行一次启动命令即可恢复（USB 或无线调试均可，Windows 端可一键启动），再点「测试后台读取」验证。</string>
     <string name="priv_hint_clipboard_binder_dead">系统剪贴板服务暂时无法访问；稍后再试，必要时重启设备。</string>
     <string name="priv_hint_api_mismatch">特权通道版本过旧或系统接口不兼容；升级通道应用后再试。</string>
     <string name="priv_hint_read_unverified">前提已就绪，还差一次实测；点「测试后台读取」完成验证。</string>

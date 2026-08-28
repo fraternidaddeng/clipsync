@@ -255,8 +255,8 @@
     <string name="priv_hint_not_installed">The privileged channel app is not installed on this phone; install and start it, then come back and tap “Re-probe”.</string>
     <string name="priv_hint_not_running">The privileged channel is not running; run the one-line start command from a computer (one click on the Windows side).</string>
     <string name="priv_hint_not_authorized">The privileged channel has not authorized this app yet; tap “Authorize privileged read” to grant it.</string>
-    <string name="priv_hint_binder_dead">The connection to the privileged channel dropped; restart the channel, then tap “Re-probe”.</string>
-    <string name="priv_hint_userservice_dead">The privileged read service disconnected (common after a wireless-debugging drop); re-run the start command once from a computer to restore it (USB or wireless debugging both work; the Windows app can start it in one click), then tap “Test background read” to verify.</string>
+    <string name="priv_hint_binder_dead">The connection to the privileged channel dropped (it does not come back on its own after a phone reboot or a system kill); re-run the start command from a computer (one click on the Windows side), then tap “Test background read” to verify.</string>
+    <string name="priv_hint_userservice_dead">The privileged read service disconnected (common after a wireless-debugging drop, a phone reboot, or a system kill — the channel does not come back on its own); re-run the start command once from a computer to restore it (USB or wireless debugging both work; the Windows app can start it in one click), then tap “Test background read” to verify.</string>
     <string name="priv_hint_clipboard_binder_dead">The system clipboard service is unreachable right now; try again later, or restart the device if it persists.</string>
     <string name="priv_hint_api_mismatch">The privileged channel is outdated or incompatible with this system version; update the channel app and try again.</string>
     <string name="priv_hint_read_unverified">Prerequisites are met — one real test remains; tap “Test background read” to verify.</string>

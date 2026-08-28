@@ -1,5 +1,7 @@
 package com.clipsync.android.platform.clipboard
 
+import com.clipsync.android.platform.clipboard.shizuku.ShizukuErrorCodes
+
 /**
  * Route 1 (charter §4.1): privileged event reads through the built-in privileged host's
  * shell binder (「特权直读」).
@@ -14,9 +16,11 @@ package com.clipsync.android.platform.clipboard
  * A host binder that pings and an authorized app do not prove the read channel is up: the
  * privileged read runs through the UserService child process, which can die on its own (the
  * wireless-debugging / adb shell that launched it drops, the ROM kills it) while the host still
- * answers pings. [lastReadFailureCode] carries the last device read test's failure so a
- * proven-dead channel reports its real state (UNAVAILABLE + `PRIV_HOST_USERSERVICE_DEAD`)
- * instead of the rosy "授权但待实测"; the next passing read test clears it.
+ * answers pings. Two independent honesty guards cover that gap: [lastReadFailureCode] carries
+ * the last device read test's failure so a proven-dead channel reports its real state
+ * (UNAVAILABLE + `PRIV_HOST_USERSERVICE_DEAD`) instead of the rosy "授权但待实测" (the next
+ * passing read test clears it), and a live failure from the running delegate demotes even a
+ * verified READY (see [liveFailure]) without waiting for a manual read test.
  */
 class ShizukuClipboardBackend(
     private val probes: RouteProbes,
@@ -34,7 +38,7 @@ class ShizukuClipboardBackend(
             !p.shizukuInstalled -> CapabilityState.UNAVAILABLE to ERROR_CHANNEL_MISSING
             !p.shizukuRunning -> CapabilityState.UNAVAILABLE to ERROR_CHANNEL_OFFLINE
             !p.shizukuAuthorized -> CapabilityState.UNAVAILABLE to ERROR_PERMISSION_DENIED
-            readVerified() -> CapabilityState.READY to null
+            readVerified() -> liveFailure() ?: (CapabilityState.READY to null)
             else -> unverifiedOrProvenDead()
         }
         return CapabilityReport(
@@ -42,11 +46,12 @@ class ShizukuClipboardBackend(
             readState = state,
             writeState = CapabilityState.UNKNOWN,
             systemVersion = systemVersion,
-            authorizations = listOf(
-                ClipboardAuthorization("priv_host_installed", p.shizukuInstalled),
-                ClipboardAuthorization("priv_host_running", p.shizukuRunning),
-                ClipboardAuthorization("priv_host_authorized", p.shizukuAuthorized),
-            ),
+            authorizations =
+                listOf(
+                    ClipboardAuthorization("priv_host_installed", p.shizukuInstalled),
+                    ClipboardAuthorization("priv_host_running", p.shizukuRunning),
+                    ClipboardAuthorization("priv_host_authorized", p.shizukuAuthorized),
+                ),
             errorCode = errorCode,
         )
     }
@@ -74,8 +79,31 @@ class ShizukuClipboardBackend(
         delegate?.stop()
     }
 
-    override fun readText(): ClipboardReadResult =
-        delegate?.readText() ?: ClipboardReadResult.Failure(ERROR_READ_UNVERIFIED)
+    override fun readText(): ClipboardReadResult {
+        val live = delegate ?: return ClipboardReadResult.Failure(ERROR_READ_UNVERIFIED)
+        return live.readText()
+    }
+
+    /**
+     * The persisted "read once verified on this device" must not outshout the live channel.
+     * The host process can be up (its shell binder answers, so the prerequisites all pass)
+     * while the UserService or a binder handle underneath is dead — after a phone reboot, a
+     * host OOM-kill, or the wireless-debugging session that launched it going away. When the
+     * running delegate reports such a failure, its stable code wins over the stale READY, so
+     * the route card names the death and its fix (restart the host from the computer) instead
+     * of claiming a channel that cannot deliver a single event. A stopped delegate (route not
+     * active) or a healthy one leaves the verified READY standing.
+     */
+    private fun liveFailure(): Pair<CapabilityState, String>? {
+        val live = delegate?.health() ?: return null
+        val code = live.errorCode
+        return when {
+            code == null -> null
+            live.state == BackendHealthState.FAILED || live.state == BackendHealthState.DEGRADED ->
+                ShizukuErrorCodes.probeReadState(code) to code
+            else -> null
+        }
+    }
 
     override fun health(): BackendHealth =
         delegate?.health() ?: BackendHealth(

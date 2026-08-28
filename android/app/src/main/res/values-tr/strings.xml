@@ -254,8 +254,8 @@
     <string name="priv_hint_not_installed">Bu telefonda ayrıcalıklı kanal uygulaması yüklü değil; yükleyip başlatın, sonra dönüp “Yeniden yokla”ya dokunun.</string>
     <string name="priv_hint_not_running">Ayrıcalıklı kanal çalışmıyor; başlatma komutunu bir bilgisayardan bir kez çalıştırın (Windows tarafında tek tık).</string>
     <string name="priv_hint_not_authorized">Ayrıcalıklı kanal bu uygulamaya henüz yetki vermedi; “Ayrıcalıklı okumayı yetkilendir”e dokunun.</string>
-    <string name="priv_hint_binder_dead">Ayrıcalıklı kanalla bağlantı koptu; kanalı yeniden başlatıp “Yeniden yokla”ya dokunun.</string>
-    <string name="priv_hint_userservice_dead">Ayrıcalıklı okuma hizmetinin bağlantısı kesildi; “Yeniden yokla” ile yeniden bağlanmayı deneyin, olmazsa kanalı yeniden başlatın.</string>
+    <string name="priv_hint_binder_dead">Ayrıcalıklı kanalla bağlantı koptu (telefon yeniden başlatıldığında veya sistem kanalı kapattığında kendiliğinden geri gelmez); başlatma komutunu bir bilgisayardan yeniden çalıştırın (Windows tarafında tek tık), ardından doğrulamak için “Arka plan okumayı test et”e dokunun.</string>
+    <string name="priv_hint_userservice_dead">Ayrıcalıklı okuma hizmetinin bağlantısı kesildi (kablosuz hata ayıklama koptuğunda, telefon yeniden başlatıldığında veya sistem kapattığında sık görülür — kanal kendiliğinden geri gelmez); geri getirmek için başlatma komutunu bir bilgisayardan bir kez yeniden çalıştırın (USB veya kablosuz hata ayıklama; Windows tarafında tek tık), ardından doğrulamak için “Arka plan okumayı test et”e dokunun.</string>
     <string name="priv_hint_clipboard_binder_dead">Sistem panosu hizmetine şu anda erişilemiyor; daha sonra deneyin, sürerse cihazı yeniden başlatın.</string>
     <string name="priv_hint_api_mismatch">Ayrıcalıklı kanal eski veya bu sistem sürümüyle uyumsuz; kanal uygulamasını güncelleyip yeniden deneyin.</string>
     <string name="priv_hint_read_unverified">Ön koşullar hazır; bir gerçek test kaldı. Doğrulamak için “Arka plan okumayı test et”e dokunun.</string>

@@ -256,8 +256,8 @@
     <string name="priv_hint_not_installed">Na tym telefonie nie ma aplikacji kanału uprzywilejowanego; zainstaluj ją i uruchom, a potem wróć i stuknij „Sonduj ponownie”.</string>
     <string name="priv_hint_not_running">Kanał uprzywilejowany nie działa; wykonaj raz polecenie startowe z komputera (po stronie Windows jedno kliknięcie).</string>
     <string name="priv_hint_not_authorized">Kanał uprzywilejowany nie autoryzował jeszcze tej aplikacji; stuknij „Zezwól na odczyt uprzywilejowany”.</string>
-    <string name="priv_hint_binder_dead">Połączenie z kanałem uprzywilejowanym zostało zerwane; uruchom kanał ponownie i stuknij „Sonduj ponownie”.</string>
-    <string name="priv_hint_userservice_dead">Usługa odczytu uprzywilejowanego rozłączyła się; stuknij „Sonduj ponownie”, aby połączyć się znów, a jeśli to nie pomoże, uruchom kanał ponownie.</string>
+    <string name="priv_hint_binder_dead">Połączenie z kanałem uprzywilejowanym zostało zerwane (po ponownym uruchomieniu telefonu lub zamknięciu przez system nie wraca samo); wykonaj ponownie polecenie startowe z komputera (po stronie Windows jedno kliknięcie), a następnie stuknij „Testuj odczyt w tle”, aby zweryfikować.</string>
+    <string name="priv_hint_userservice_dead">Usługa odczytu uprzywilejowanego rozłączyła się (częste po zerwaniu debugowania bezprzewodowego, ponownym uruchomieniu telefonu lub zamknięciu przez system — kanał nie wraca sam); wykonaj raz jeszcze polecenie startowe z komputera, aby go przywrócić (USB lub debugowanie bezprzewodowe; po stronie Windows jedno kliknięcie), a następnie stuknij „Testuj odczyt w tle”, aby zweryfikować.</string>
     <string name="priv_hint_clipboard_binder_dead">Usługa schowka systemowego jest teraz niedostępna; spróbuj później, a jeśli problem się utrzymuje, uruchom urządzenie ponownie.</string>
     <string name="priv_hint_api_mismatch">Kanał uprzywilejowany jest przestarzały lub niezgodny z tą wersją systemu; zaktualizuj aplikację kanału i spróbuj ponownie.</string>
     <string name="priv_hint_read_unverified">Wymagania są spełnione; został jeden prawdziwy test. Stuknij „Testuj odczyt w tle”, aby zweryfikować.</string>
