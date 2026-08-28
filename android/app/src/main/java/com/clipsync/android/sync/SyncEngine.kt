@@ -938,6 +938,13 @@ class SyncEngine(
             fail(SyncErrorCodes.MESSAGE_OUT_OF_ORDER, "payload_without_fetch")
             return false
         }
+        if (incomingImages.containsKey(begin.eventId)) {
+            // A second begin while the first transfer is still open would silently overwrite
+            // the map entry and orphan its half-written temp (open stream, never aborted).
+            // Failing instead lets the session-end cleanup abort the live transfer properly.
+            fail(SyncErrorCodes.MEDIA_OUT_OF_ORDER, "begin_duplicate")
+            return false
+        }
         if (incomingImages.size >= MediaLimits.MAX_CONCURRENT_DOWNLOADS) {
             fail(SyncErrorCodes.RATE_LIMITED, "too_many_image_downloads")
             return false
@@ -1002,12 +1009,18 @@ class SyncEngine(
             transfer.contentHash != end.contentHash ||
             transfer.nextIndex != transfer.chunkCount
         ) {
+            // Already removed from the map, so the session-end sweep cannot see it: abort
+            // here or the mismatched transfer's temp file outlives the failing session.
+            if (transfer != null) {
+                runCatching { repository.media?.abort(transfer.pending) }
+            }
             fail(SyncErrorCodes.MEDIA_OUT_OF_ORDER, "end_unbound")
             return false
         }
         outstandingFetches.remove(end.eventId)
         val store = repository.media
         if (store == null) {
+            runCatching { transfer.pending.close() }
             fail(SyncErrorCodes.MEDIA_STORAGE_FAILED, "media_store_unavailable")
             return false
         }

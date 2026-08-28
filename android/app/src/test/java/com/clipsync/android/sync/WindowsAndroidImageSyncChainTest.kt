@@ -219,6 +219,77 @@ class WindowsAndroidImageSyncChainTest {
         }
 
     @Test
+    fun aDuplicatePayloadBeginFailsTheSessionAndAbortsTheHalfOpenTransfer() =
+        runBlocking {
+            val sample = png8x8()
+            val transport = startEngine()
+            transport.completeHandshake(
+                SyncStateBody(listOf(OriginStateDto(WINDOWS_ID, contiguousSeq = 1))),
+            )
+            transport.awaitSent(SyncMessageTypes.WANT_RANGES)
+
+            // Announce → fetch → first begin declares two chunks; only chunk 0 arrives, so
+            // the transfer stays open with a half-written temp file on disk.
+            val eventId = "66666666-6666-4666-8666-666666666666"
+            transport.deliver(
+                SyncMessageTypes.CLIP_ANNOUNCE,
+                ClipAnnounceBody(listOf(imageHeader(eventId, originSeq = 1, sample = sample))),
+            )
+            transport.awaitSent(SyncMessageTypes.CLIP_FETCH)
+            val chunk0Bytes = manifestInt("png_8x8_chunk0_bytes")
+            val firstTransferId = UUID.randomUUID().toString()
+            transport.deliver(
+                SyncMessageTypes.CLIP_PAYLOAD_BEGIN,
+                ClipPayloadBeginBody(
+                    transferId = firstTransferId,
+                    eventId = eventId,
+                    chunkCount = 2,
+                    encodedBytes = sample.bytes.size.toLong(),
+                    contentHash = sample.contentHash,
+                    mimeType = sample.mimeType,
+                ),
+            )
+            transport.deliver(
+                SyncMessageTypes.CLIP_PAYLOAD_CHUNK,
+                ClipPayloadChunkBody(
+                    transferId = firstTransferId,
+                    eventId = eventId,
+                    chunkIndex = 0,
+                    chunkCount = 2,
+                    chunkBytes = chunk0Bytes,
+                    data = ImageChunks.encodeBase64Url(sample.bytes.copyOfRange(0, chunk0Bytes)),
+                ),
+            )
+            transport.fence()
+            assertEquals(1, File(mediaRoot, MediaBlobStore.TEMP_DIRECTORY).listFiles().orEmpty().size)
+
+            // A second begin for the same event must be refused as a protocol violation —
+            // before this guard it silently replaced the open transfer, orphaning its temp
+            // file and leaking the open stream until process death.
+            transport.deliver(
+                SyncMessageTypes.CLIP_PAYLOAD_BEGIN,
+                ClipPayloadBeginBody(
+                    transferId = UUID.randomUUID().toString(),
+                    eventId = eventId,
+                    chunkCount = 2,
+                    encodedBytes = sample.bytes.size.toLong(),
+                    contentHash = sample.contentHash,
+                    mimeType = sample.mimeType,
+                ),
+            )
+            val error = transport.awaitSent(SyncMessageTypes.ERROR).body as ErrorBody
+            assertEquals(SyncErrorCodes.MEDIA_OUT_OF_ORDER, error.code)
+            assertFalse(error.retryable)
+
+            // Session-end cleanup aborted the live transfer: no temp file survives, and the
+            // event was never committed.
+            awaitUntil("aborted temp cleanup") {
+                File(mediaRoot, MediaBlobStore.TEMP_DIRECTORY).listFiles().orEmpty().isEmpty()
+            }
+            assertNull(store.getById(eventId))
+        }
+
+    @Test
     fun aV1SessionDowngradesTheLocalImageToLocalOnlyAndRoomKeepsTheBadge() =
         runBlocking {
             val sample = png8x8()

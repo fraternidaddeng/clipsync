@@ -93,6 +93,18 @@ public sealed class MediaBlobStore
         pending.BytesWritten = next;
     }
 
+    /// <summary>
+    /// Drops an unfinished download for good: closes the stream (releasing the exclusive
+    /// lock that would otherwise shield the file from <see cref="RecoverTemps"/>) and
+    /// deletes the temp file. Counterpart of the Android store's abort.
+    /// </summary>
+    public static void Abort(PendingMediaWrite pending)
+    {
+        ArgumentNullException.ThrowIfNull(pending);
+        pending.Dispose();
+        TryDelete(pending.TempPath);
+    }
+
     public ValidatedImage Commit(PendingMediaWrite pending, string? expectedHash = null, string? expectedMime = null)
     {
         ArgumentNullException.ThrowIfNull(pending);

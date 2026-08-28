@@ -224,6 +224,7 @@ public sealed class SyncSessionEngine : IDisposable
             cts.Cancel();
             await AwaitQuietlyAsync(pingLoop).ConfigureAwait(false);
             await AwaitQuietlyAsync(drainLoop).ConfigureAwait(false);
+            AbortIncompleteImageTransfers();
             await transport.CloseAsync(WebSocketCloseStatus.NormalClosure, "session_end", CancellationToken.None).ConfigureAwait(false);
             await DrainUntilPeerClosesAsync().ConfigureAwait(false);
             if (pairSecret is not null)
@@ -1403,6 +1404,16 @@ public sealed class SyncSessionEngine : IDisposable
             return false;
         }
 
+        if (incomingImages.ContainsKey(eventId))
+        {
+            // A second begin while the first transfer is still open would silently overwrite
+            // the dictionary entry, orphaning its half-written temp (an open FileStream that
+            // keeps the .part locked past RecoverTemps) and leaking one download slot.
+            // Failing instead lets the session-end cleanup abort the live transfer properly.
+            await FailAsync(ProtocolErrorCodes.MediaOutOfOrder, "begin_duplicate", token).ConfigureAwait(false);
+            return false;
+        }
+
         if (incomingImages.Count >= MediaLimits.MaxConcurrentDownloads)
         {
             await FailAsync(ProtocolErrorCodes.RateLimited, "too_many_image_downloads", token).ConfigureAwait(false);
@@ -1488,6 +1499,19 @@ public sealed class SyncSessionEngine : IDisposable
             || transfer.ContentHash != end.ContentHash
             || transfer.NextIndex != transfer.ChunkCount)
         {
+            // Already removed from the dictionary, so the session-end sweep cannot see it:
+            // abort here or the mismatched transfer's temp file outlives the failing session.
+            if (transfer is not null)
+            {
+                try
+                {
+                    MediaBlobStore.Abort(transfer.Pending);
+                }
+                catch (IOException)
+                {
+                }
+            }
+
             await FailAsync(ProtocolErrorCodes.MediaOutOfOrder, "end_unbound", token).ConfigureAwait(false);
             return false;
         }
@@ -1709,9 +1733,25 @@ public sealed class SyncSessionEngine : IDisposable
     {
         sendLock.Dispose();
         imageDownloadSlots.Dispose();
+        AbortIncompleteImageTransfers();
+    }
+
+    /// <summary>
+    /// Drops half-received image temp files; the peer re-announces on the next session.
+    /// Without this, a session dying mid-transfer left the temp on disk with its stream
+    /// open — invisible even to the next startup's RecoverTemps until 24 hours passed.
+    /// </summary>
+    private void AbortIncompleteImageTransfers()
+    {
         foreach (var transfer in incomingImages.Values)
         {
-            transfer.Pending.Dispose();
+            try
+            {
+                MediaBlobStore.Abort(transfer.Pending);
+            }
+            catch (IOException)
+            {
+            }
         }
 
         incomingImages.Clear();
