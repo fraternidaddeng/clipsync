@@ -2,7 +2,10 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using ClipSync.App.Clipboard;
+using ClipSync.Core.Media;
 
 namespace ClipSync.App.Tests.Clipboard;
 
@@ -158,6 +161,59 @@ public sealed class ClipboardDataAccessorTests
     }
 
     [Fact]
+    public void AppliedJpegEchoesBackAsDibPngWithThePixelDigestOfTheSourceBytes()
+    {
+        // The suppression contract behind remote image auto-apply and history copy: a JPEG
+        // write sets no PNG clipboard format, so the listener reads the echo back through
+        // the DIB path as a re-encoded PNG whose content hash no longer matches the stored
+        // JPEG. The apply sites arm ClipboardCapturePolicy.SuppressNextImage with
+        // TryPixelDigest(stored bytes) — this proves that digest equals the one the echo
+        // snapshot carries, closing the loop the hash alone cannot.
+        var jpeg = EncodeJpeg(width: 6, height: 4);
+        Assert.Equal(ImageCodecError.Ok, ImageCodec.TryInspect(jpeg, out var validatedJpeg));
+        Assert.Equal(MediaLimits.MimeJpeg, validatedJpeg!.MimeType);
+
+        using var nativeApi = new FakeClipboardNativeApi();
+        nativeApi.AvailableFormats.Remove(ClipboardDataAccessor.UnicodeTextFormat);
+        var accessor = CreateAccessor(nativeApi);
+
+        accessor.WriteImage(new nint(7), jpeg);
+        Assert.DoesNotContain(nativeApi.SetCalls, call => call.Format == nativeApi.RegisteredFormats["PNG"]);
+
+        var snapshot = accessor.ReadText(new nint(7));
+
+        Assert.NotNull(snapshot);
+        Assert.NotNull(snapshot!.ImageBytes);
+        Assert.Equal(MediaLimits.MimePng, snapshot.ImageMimeType);
+        // The echo's content hash differs from the stored JPEG's (hash-only suppression
+        // would record the echo as a new local clip and sync it back to the phone) ...
+        Assert.NotEqual(validatedJpeg.ContentHash, ImageCodec.HashBytes(snapshot.ImageBytes!));
+        // ... but the pixel digests agree, which is what the apply sites suppress on.
+        Assert.NotNull(snapshot.PixelDigest);
+        Assert.Equal(ClipboardDataAccessor.TryPixelDigest(jpeg), snapshot.PixelDigest);
+    }
+
+    private static byte[] EncodeJpeg(int width, int height)
+    {
+        var stride = width * 4;
+        var pixels = new byte[stride * height];
+        for (var index = 0; index < pixels.Length; index += 4)
+        {
+            pixels[index] = (byte)(index % 251);
+            pixels[index + 1] = (byte)((index / 4) % 233);
+            pixels[index + 2] = 200;
+            pixels[index + 3] = 255;
+        }
+
+        var source = BitmapSource.Create(width, height, 96, 96, PixelFormats.Bgra32, null, pixels, stride);
+        var encoder = new JpegBitmapEncoder { QualityLevel = 90 };
+        encoder.Frames.Add(BitmapFrame.Create(source));
+        using var stream = new MemoryStream();
+        encoder.Save(stream);
+        return stream.ToArray();
+    }
+
+    [Fact]
     public void OwnerResolverReturnsCurrentProcessName()
     {
         var nativeApi = new FakeClipboardNativeApi
@@ -196,6 +252,7 @@ public sealed class ClipboardDataAccessorTests
     private sealed class FakeClipboardNativeApi : IClipboardNativeApi, IDisposable
     {
         private readonly HashSet<nint> allocations = [];
+        private readonly Dictionary<nint, nuint> allocationSizes = [];
         private nint clipboardData;
         private string clipboardText = "text";
 
@@ -307,7 +364,16 @@ public sealed class ClipboardDataAccessorTests
                 SetText = Marshal.PtrToStringUni(memory);
             }
 
-            return FailSetClipboardData ? nint.Zero : memory;
+            if (FailSetClipboardData)
+            {
+                return nint.Zero;
+            }
+
+            // Mirror the real clipboard: written data becomes readable for the write→echo
+            // round-trip tests (the listener re-reading this process's own image write).
+            FormatData[format] = memory;
+            AvailableFormats.Add(format);
+            return memory;
         }
 
         public uint RegisterClipboardFormat(string format)
@@ -340,6 +406,7 @@ public sealed class ClipboardDataAccessorTests
         {
             var memory = Marshal.AllocHGlobal(checked((int)bytes));
             allocations.Add(memory);
+            allocationSizes[memory] = bytes;
             return memory;
         }
 
@@ -351,8 +418,15 @@ public sealed class ClipboardDataAccessorTests
 
         public bool GlobalUnlock(nint memory) => true;
 
-        public nuint GlobalSize(nint memory) =>
-            memory == clipboardData ? ClipboardDataSizeOverride ?? ClipboardDataSize : 0;
+        public nuint GlobalSize(nint memory)
+        {
+            if (memory == clipboardData)
+            {
+                return ClipboardDataSizeOverride ?? ClipboardDataSize;
+            }
+
+            return allocationSizes.TryGetValue(memory, out var size) ? size : 0;
+        }
 
         public nint GlobalFree(nint memory)
         {

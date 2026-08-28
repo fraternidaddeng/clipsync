@@ -735,7 +735,14 @@ public partial class App : Application
                     {
                         var store = services.GetRequiredService<SqliteClipboardEventStore>();
                         var bytes = store.Media.ReadAllBytes(image.Clip.ContentHash!);
-                        policy.SuppressNextImage(image.Clip.ContentHash!, DateTimeOffset.UtcNow);
+                        // The pixel digest must ride along: a JPEG apply comes back through
+                        // the listener as a DIB→PNG re-encode whose content hash no longer
+                        // matches, and without the digest the echo would be captured as a
+                        // brand-new local clip and synced straight back to the phone.
+                        policy.SuppressNextImage(
+                            image.Clip.ContentHash!,
+                            DateTimeOffset.UtcNow,
+                            ClipboardDataAccessor.TryPixelDigest(bytes));
                         adapter.WriteImage(bytes);
                         LocalDiagnostics.Write("remote_image_applied");
                     }

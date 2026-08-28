@@ -1028,7 +1028,13 @@ public partial class MainViewModel(
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(contentHash);
         var bytes = store.Media.ReadAllBytes(contentHash);
-        capturePolicy.SuppressNextImage(contentHash, DateTimeOffset.UtcNow);
+        // Suppress by pixel digest too: copying a stored JPEG echoes back from the listener
+        // as a DIB→PNG re-encode whose content hash differs, and hash-only suppression would
+        // record that echo as a duplicate history entry and sync it to the peer.
+        capturePolicy.SuppressNextImage(
+            contentHash,
+            DateTimeOffset.UtcNow,
+            ClipSync.App.Clipboard.ClipboardDataAccessor.TryPixelDigest(bytes));
         clipboardAdapter.WriteImage(bytes);
     }
 

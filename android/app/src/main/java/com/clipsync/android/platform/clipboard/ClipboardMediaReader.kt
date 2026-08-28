@@ -50,16 +50,20 @@ object ClipboardMediaReader {
         if (count <= 0) {
             return null
         }
+        // ClipDescription mime types are a clip-level list with no per-item correspondence
+        // (indexing it by item position crashes when the counts differ), so the image hint is
+        // evaluated once for the whole clip and per item only via the resolver's URI type.
+        val descriptionSaysImage = descriptionLooksLikeImage(clip.description)
         for (index in 0 until count) {
             val item = clip.getItemAt(index)
             val uri = item.uri ?: continue
-            val mime = clip.description.getMimeType(index)
-                ?: context.contentResolver.getType(uri)
-                ?: continue
-            if (!MediaLimits.isSupportedMime(normalizeMime(mime))) {
+            if (!descriptionSaysImage && !looksLikeImageMime(resolveType(context, uri))) {
                 continue
             }
             val bytes = readBounded(context, uri) ?: continue
+            // The magic bytes are the verdict (fail-closed): declared mimes as loose as
+            // image/* or as wrong as image/jpg still materialize, while a non-PNG/JPEG body
+            // behind an image-looking mime (webp, gif) is skipped no matter the declaration.
             val inspect = ImageCodec.tryInspect(bytes)
             if (inspect.first != ImageCodecError.OK || inspect.second == null) {
                 continue
@@ -76,17 +80,52 @@ object ClipboardMediaReader {
         return null
     }
 
+    /**
+     * True when any declared mime is image-like. Real apps rarely declare the exact
+     * `image/png`/`image/jpeg` this app stores: Chrome and gallery apps commonly write
+     * `image/*` or a concrete-but-nonstandard subtype (`image/jpg`), so the hint accepts any
+     * `image/...` and leaves the real PNG/JPEG check to [ImageCodec.tryInspect] on the bytes.
+     */
     fun descriptionLooksLikeImage(description: ClipDescription?): Boolean {
         if (description == null) {
             return false
         }
         for (index in 0 until description.mimeTypeCount) {
-            if (MediaLimits.isSupportedMime(normalizeMime(description.getMimeType(index)))) {
+            if (looksLikeImageMime(description.getMimeType(index))) {
                 return true
             }
         }
         return false
     }
+
+    /**
+     * True when the clip is worth a [readFirstImage] pass: an image-like description, or any
+     * URI item at all — a copied image whose description only says `text/uri-list` is still
+     * found through the resolver's per-URI type (getType is one cheap IPC, no data read).
+     */
+    fun clipLooksLikeImage(clip: ClipData): Boolean {
+        if (descriptionLooksLikeImage(clip.description)) {
+            return true
+        }
+        for (index in 0 until clip.itemCount) {
+            if (clip.getItemAt(index).coerce { it.uri } != null) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun looksLikeImageMime(mime: String?): Boolean =
+        mime != null && normalizeMime(mime).startsWith("image/")
+
+    private fun resolveType(context: Context, uri: Uri): String? =
+        try {
+            context.contentResolver.getType(uri)
+        } catch (_: SecurityException) {
+            null
+        } catch (_: RuntimeException) {
+            null
+        }
 
     fun readBounded(context: Context, uri: Uri): ByteArray? {
         return try {

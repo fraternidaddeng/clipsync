@@ -69,7 +69,7 @@ class ForegroundClipboardBackend(
         } catch (_: RuntimeException) {
             null
         } ?: return null
-        if (!ClipboardMediaReader.descriptionLooksLikeImage(clip.description)) {
+        if (!ClipboardMediaReader.clipLooksLikeImage(clip)) {
             return null
         }
         return ClipboardMediaReader
