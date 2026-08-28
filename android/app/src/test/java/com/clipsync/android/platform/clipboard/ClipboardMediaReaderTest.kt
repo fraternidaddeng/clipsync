@@ -8,8 +8,6 @@ import android.content.Context
 import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import com.clipsync.android.media.MediaLimits
-import java.io.ByteArrayInputStream
-import java.io.File
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -22,6 +20,8 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
+import java.io.ByteArrayInputStream
+import java.io.File
 
 /**
  * The MIME shapes real apps actually put on the clipboard (2026-08-28 debug round): Chrome
@@ -44,7 +44,11 @@ class ClipboardMediaReaderTest {
         Robolectric.setupContentProvider(StaticTypeProvider::class.java, AUTHORITY)
     }
 
-    private fun serveBytes(uri: Uri, bytes: ByteArray, resolverType: String? = null) {
+    private fun serveBytes(
+        uri: Uri,
+        bytes: ByteArray,
+        resolverType: String? = null,
+    ) {
         Shadows.shadowOf(context.contentResolver).registerInputStream(uri, ByteArrayInputStream(bytes))
         if (resolverType != null) {
             StaticTypeProvider.types[uri.toString()] = resolverType
@@ -124,10 +128,12 @@ class ClipboardMediaReaderTest {
 
     @Test
     fun `description hint accepts any image subtype and normalizes parameters`() {
-        assertTrue(ClipboardMediaReader.descriptionLooksLikeImage(ClipDescription("x", arrayOf("image/*"))))
-        assertTrue(ClipboardMediaReader.descriptionLooksLikeImage(ClipDescription("x", arrayOf("IMAGE/PNG; charset=binary"))))
-        assertTrue(ClipboardMediaReader.descriptionLooksLikeImage(ClipDescription("x", arrayOf("text/plain", "image/jpeg"))))
-        assertFalse(ClipboardMediaReader.descriptionLooksLikeImage(ClipDescription("x", arrayOf("text/plain"))))
+        fun hint(vararg mimes: String) = ClipboardMediaReader.descriptionLooksLikeImage(ClipDescription("x", mimes))
+
+        assertTrue(hint("image/*"))
+        assertTrue(hint("IMAGE/PNG; charset=binary"))
+        assertTrue(hint("text/plain", "image/jpeg"))
+        assertFalse(hint("text/plain"))
         assertFalse(ClipboardMediaReader.descriptionLooksLikeImage(null))
     }
 
@@ -155,9 +161,16 @@ class ClipboardMediaReaderTest {
             sortOrder: String?,
         ): android.database.Cursor? = null
 
-        override fun insert(uri: Uri, values: ContentValues?): Uri? = null
+        override fun insert(
+            uri: Uri,
+            values: ContentValues?,
+        ): Uri? = null
 
-        override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int = 0
+        override fun delete(
+            uri: Uri,
+            selection: String?,
+            selectionArgs: Array<out String>?,
+        ): Int = 0
 
         override fun update(
             uri: Uri,

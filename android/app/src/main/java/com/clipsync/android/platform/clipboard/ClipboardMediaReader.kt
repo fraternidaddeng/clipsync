@@ -106,22 +106,17 @@ object ClipboardMediaReader {
      * URI item at all — a copied image whose description only says `text/uri-list` is still
      * found through the resolver's per-URI type (getType is one cheap IPC, no data read).
      */
-    fun clipLooksLikeImage(clip: ClipData): Boolean {
-        if (descriptionLooksLikeImage(clip.description)) {
-            return true
-        }
-        for (index in 0 until clip.itemCount) {
-            if (clip.getItemAt(index).coerce { it.uri } != null) {
-                return true
-            }
-        }
-        return false
-    }
+    fun clipLooksLikeImage(clip: ClipData): Boolean =
+        descriptionLooksLikeImage(clip.description) ||
+            (0 until clip.itemCount).any { index -> clip.getItemAt(index).coerce { it.uri } != null }
 
     private fun looksLikeImageMime(mime: String?): Boolean =
-        mime != null && normalizeMime(mime).startsWith("image/")
+        mime != null && mime.substringBefore(';').trim().startsWith("image/", ignoreCase = true)
 
-    private fun resolveType(context: Context, uri: Uri): String? =
+    private fun resolveType(
+        context: Context,
+        uri: Uri,
+    ): String? =
         try {
             context.contentResolver.getType(uri)
         } catch (_: SecurityException) {
@@ -157,8 +152,6 @@ object ClipboardMediaReader {
         }
         return buffer.copyOf(offset)
     }
-
-    private fun normalizeMime(mime: String): String = mime.lowercase().substringBefore(';').trim()
 
     private inline fun <T> ClipData.Item.coerce(block: (ClipData.Item) -> T?): T? =
         try {
