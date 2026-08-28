@@ -282,6 +282,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">Ön koşullar sağlandı, gerçek test bekleniyor</string>
     <string name="wizard_ready">Ön koşullar sağlandı</string>
+    <string name="wizard_route_unavailable">Kanal şu an kullanılamıyor; ayrıntılar aşağıda</string>
 
     <string name="bt_fallback_title">Bluetooth yedeği</string>
     <string name="bt_fallback_desc">Hiçbir IP yolu erişilebilir olmadığında (ör. bir proxy/VPN devraldığında), sistemde eşleştirilmiş bir Bluetooth cihazı üzerinden metin eşitlemeye devam eder. Yalnızca metin, daha yavaş; IP toparlanınca otomatik geri döner.</string>

@@ -160,6 +160,9 @@ object SharedClipboardCapture {
                         systemVersion = systemVersion,
                         delegate = realReaders.shizuku,
                         readVerified = { capabilityStore.isReadVerified(ClipboardReadMode.SHIZUKU_EVENT) },
+                        lastReadFailureCode = {
+                            capabilityStore.lastReadFailureCode(ClipboardReadMode.SHIZUKU_EVENT)
+                        },
                     ),
                     AdbLogOverlayBackend(
                         probes = routeProbes,

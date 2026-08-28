@@ -286,6 +286,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">Warunki spełnione, oczekiwanie na rzeczywisty test</string>
     <string name="wizard_ready">Warunki spełnione</string>
+    <string name="wizard_route_unavailable">Kanał chwilowo niedostępny; szczegóły poniżej</string>
 
     <string name="bt_fallback_title">Zapasowy Bluetooth</string>
     <string name="bt_fallback_desc">Gdy żadna ścieżka IP nie jest osiągalna (np. przejmuje ją proxy/VPN), synchronizacja tekstu trwa przez urządzenie Bluetooth sparowane w systemie. Tylko tekst, wolniej; wraca automatycznie, gdy IP się odzyska.</string>

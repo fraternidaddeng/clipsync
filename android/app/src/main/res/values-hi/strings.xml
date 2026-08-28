@@ -282,6 +282,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">पूर्व-शर्तें पूरी, असली जाँच की प्रतीक्षा</string>
     <string name="wizard_ready">पूर्व-शर्तें पूरी</string>
+    <string name="wizard_route_unavailable">चैनल फ़िलहाल अनुपलब्ध; नीचे विवरण देखें</string>
 
     <string name="bt_fallback_title">ब्लूटूथ फ़ॉलबैक</string>
     <string name="bt_fallback_desc">जब हर IP रास्ता पहुँच से बाहर हो (जैसे कोई प्रॉक्सी/VPN क़ब्ज़ा कर ले), तो सिस्टम से जुड़े ब्लूटूथ डिवाइस से टेक्स्ट सिंक जारी रहता है। केवल टेक्स्ट, धीमा; IP लौटते ही अपने आप वापस।</string>

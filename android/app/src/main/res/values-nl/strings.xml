@@ -283,6 +283,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">Voorwaarden vervuld, wacht op een livetest</string>
     <string name="wizard_ready">Voorwaarden vervuld</string>
+    <string name="wizard_route_unavailable">Kanaal momenteel niet beschikbaar; zie uitleg hieronder</string>
 
     <string name="bt_fallback_title">Bluetooth-terugval</string>
     <string name="bt_fallback_desc">Wanneer elk IP-pad onbereikbaar is (bijv. een proxy/VPN neemt het over), blijft tekst synchroniseren via een in het systeem gekoppeld Bluetooth-apparaat. Alleen tekst, langzamer; schakelt automatisch terug wanneer IP herstelt.</string>

@@ -64,6 +64,19 @@ class ClipboardCapabilityStore(private val keyValues: KeyValueStore) {
     fun readVerifiedErrorCode(mode: ClipboardReadMode): String? =
         keyValues.read(readErrorKey(mode))
 
+    /**
+     * The stable error code of the last device read test for [mode], but only when that test
+     * genuinely failed (recorded UNAVAILABLE); null when the mode was never tested or last
+     * passed. A route's honest probe uses this so a proven-dead read channel keeps showing its
+     * failure (e.g. `PRIV_HOST_USERSERVICE_DEAD`) instead of silently reverting to 授权但待实测.
+     */
+    fun lastReadFailureCode(mode: ClipboardReadMode): String? =
+        if (readVerifiedState(mode) == CapabilityState.UNAVAILABLE) {
+            readVerifiedErrorCode(mode)
+        } else {
+            null
+        }
+
     fun lastReadTestAtMs(mode: ClipboardReadMode): Long? =
         keyValues.read(readTestAtKey(mode))?.toLongOrNull()
 

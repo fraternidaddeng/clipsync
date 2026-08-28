@@ -280,6 +280,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">前提已就緒，等待實測驗證</string>
     <string name="wizard_ready">前提已就緒</string>
+    <string name="wizard_route_unavailable">通道暫不可用，見下方說明</string>
 
     <string name="bt_fallback_title">藍牙備援</string>
     <string name="bt_fallback_desc">IP 路徑全部不可達時（例如代理/VPN 全域接管），透過系統已配對的藍牙裝置繼續同步文字。僅文字、速度較慢；IP 恢復後自動切回。</string>

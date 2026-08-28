@@ -256,7 +256,7 @@
     <string name="priv_hint_not_running">The privileged channel is not running; run the one-line start command from a computer (one click on the Windows side).</string>
     <string name="priv_hint_not_authorized">The privileged channel has not authorized this app yet; tap “Authorize privileged read” to grant it.</string>
     <string name="priv_hint_binder_dead">The connection to the privileged channel dropped; restart the channel, then tap “Re-probe”.</string>
-    <string name="priv_hint_userservice_dead">The privileged read service disconnected; tap “Re-probe” to reconnect, or restart the channel if that fails.</string>
+    <string name="priv_hint_userservice_dead">The privileged read service disconnected (common after a wireless-debugging drop); re-run the start command once from a computer to restore it (USB or wireless debugging both work; the Windows app can start it in one click), then tap “Test background read” to verify.</string>
     <string name="priv_hint_clipboard_binder_dead">The system clipboard service is unreachable right now; try again later, or restart the device if it persists.</string>
     <string name="priv_hint_api_mismatch">The privileged channel is outdated or incompatible with this system version; update the channel app and try again.</string>
     <string name="priv_hint_read_unverified">Prerequisites are met — one real test remains; tap “Test background read” to verify.</string>
@@ -283,6 +283,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">Prerequisites met, awaiting a live test</string>
     <string name="wizard_ready">Prerequisites met</string>
+    <string name="wizard_route_unavailable">Channel unavailable — see details below</string>
 
     <string name="bt_fallback_title">Bluetooth fallback</string>
     <string name="bt_fallback_desc">When every IP path is unreachable (e.g. a proxy/VPN takes over), keep syncing text through a system-paired Bluetooth device. Text only, slower; switches back automatically when IP recovers.</string>

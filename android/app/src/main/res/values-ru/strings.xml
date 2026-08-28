@@ -286,6 +286,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">Предпосылки выполнены, ожидается реальная проверка</string>
     <string name="wizard_ready">Предпосылки выполнены</string>
+    <string name="wizard_route_unavailable">Канал сейчас недоступен — см. пояснение ниже</string>
 
     <string name="bt_fallback_title">Резервный Bluetooth</string>
     <string name="bt_fallback_desc">Когда все IP-пути недоступны (например, их перехватывает прокси/VPN), синхронизация текста продолжается через сопряжённое в системе Bluetooth-устройство. Только текст, медленнее; автоматически переключается обратно при восстановлении IP.</string>

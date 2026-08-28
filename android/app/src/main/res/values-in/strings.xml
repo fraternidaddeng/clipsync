@@ -280,6 +280,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">Prasyarat terpenuhi, menunggu uji nyata</string>
     <string name="wizard_ready">Prasyarat terpenuhi</string>
+    <string name="wizard_route_unavailable">Saluran tidak tersedia untuk saat ini; lihat detail di bawah</string>
 
     <string name="bt_fallback_title">Cadangan Bluetooth</string>
     <string name="bt_fallback_desc">Saat semua jalur IP tak terjangkau (mis. proxy/VPN mengambil alih), sinkronisasi teks berlanjut lewat perangkat Bluetooth yang dipasangkan sistem. Hanya teks, lebih lambat; beralih kembali otomatis saat IP pulih.</string>

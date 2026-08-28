@@ -1,6 +1,8 @@
 package com.clipsync.android.platform.clipboard
 
+import com.clipsync.android.platform.clipboard.shizuku.ShizukuErrorCodes
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 /**
@@ -14,6 +16,9 @@ class CapabilityProbeBackendsTest {
 
     private fun shizuku(p: RoutePrerequisites) =
         ShizukuClipboardBackend(FixedProbes(p), systemVersion = "test").probe()
+
+    private fun authorized() =
+        RoutePrerequisites(shizukuInstalled = true, shizukuRunning = true, shizukuAuthorized = true)
 
     private fun adbLog(p: RoutePrerequisites) =
         AdbLogOverlayBackend(FixedProbes(p), systemVersion = "test").probe()
@@ -43,6 +48,46 @@ class CapabilityProbeBackendsTest {
         )
         assertEquals(CapabilityState.DEGRADED, authorized.readState)
         assertEquals(ShizukuClipboardBackend.ERROR_READ_UNVERIFIED, authorized.errorCode)
+    }
+
+    @Test
+    fun `authorized shizuku surfaces a proven-dead read channel instead of pending-test`() {
+        // Host pings and the app is authorized, but the last device read test proved the
+        // UserService dead (e.g. the wireless-debugging shell that launched it dropped): the
+        // probe must keep saying so, never revert to the rosy "授权但待实测".
+        val report =
+            ShizukuClipboardBackend(
+                probes = FixedProbes(authorized()),
+                systemVersion = "test",
+                lastReadFailureCode = { ShizukuErrorCodes.USERSERVICE_DEAD },
+            ).probe()
+        assertEquals(CapabilityState.UNAVAILABLE, report.readState)
+        assertEquals(ShizukuErrorCodes.USERSERVICE_DEAD, report.errorCode)
+    }
+
+    @Test
+    fun `authorized shizuku still just awaits its first test when nothing failed`() {
+        val report =
+            ShizukuClipboardBackend(
+                probes = FixedProbes(authorized()),
+                systemVersion = "test",
+                lastReadFailureCode = { null },
+            ).probe()
+        assertEquals(CapabilityState.DEGRADED, report.readState)
+        assertEquals(ShizukuClipboardBackend.ERROR_READ_UNVERIFIED, report.errorCode)
+    }
+
+    @Test
+    fun `a verified read wins over a stale failure record`() {
+        val report =
+            ShizukuClipboardBackend(
+                probes = FixedProbes(authorized()),
+                systemVersion = "test",
+                readVerified = { true },
+                lastReadFailureCode = { ShizukuErrorCodes.USERSERVICE_DEAD },
+            ).probe()
+        assertEquals(CapabilityState.READY, report.readState)
+        assertNull(report.errorCode)
     }
 
     @Test

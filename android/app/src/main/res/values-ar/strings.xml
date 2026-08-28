@@ -290,6 +290,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">الشروط مستوفاة، بانتظار اختبار فعلي</string>
     <string name="wizard_ready">الشروط مستوفاة</string>
+    <string name="wizard_route_unavailable">القناة غير متاحة حاليًا؛ راجع التفاصيل أدناه</string>
 
     <string name="bt_fallback_title">مسار بلوتوث الاحتياطي</string>
     <string name="bt_fallback_desc">عندما تتعذّر كل مسارات IP (مثلًا حين يستولي وكيل/‏VPN على المسار)، تستمر مزامنة النص عبر جهاز بلوتوث مقترن بالنظام. نص فقط وأبطأ؛ يعود تلقائيًا فور تعافي IP.</string>

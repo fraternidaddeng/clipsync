@@ -280,6 +280,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">前提条件は満たされ、実地テスト待ちです</string>
     <string name="wizard_ready">前提条件を満たしています</string>
+    <string name="wizard_route_unavailable">チャネルは一時的に利用できません（下記の説明を参照）</string>
 
     <string name="bt_fallback_title">Bluetooth フォールバック</string>
     <string name="bt_fallback_desc">すべての IP 経路に到達できないとき（プロキシ / VPN が経路を奪う場合など）、システムでペアリング済みの Bluetooth 端末を通じてテキスト同期を続けます。テキストのみで低速です。IP が回復すると自動で切り戻します。</string>

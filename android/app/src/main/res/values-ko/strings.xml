@@ -280,6 +280,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">전제 조건 충족, 실측 테스트 대기 중</string>
     <string name="wizard_ready">전제 조건 충족</string>
+    <string name="wizard_route_unavailable">채널을 일시적으로 사용할 수 없음(아래 설명 참조)</string>
 
     <string name="bt_fallback_title">블루투스 대체 경로</string>
     <string name="bt_fallback_desc">모든 IP 경로에 도달할 수 없을 때(프록시/VPN이 경로를 가로채는 경우 등) 시스템에 페어링된 블루투스 기기를 통해 텍스트 동기화를 이어갑니다. 텍스트만, 느립니다. IP가 복구되면 자동으로 되돌아갑니다.</string>

@@ -284,6 +284,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">Requisitos cumplidos, a la espera de una prueba real</string>
     <string name="wizard_ready">Requisitos cumplidos</string>
+    <string name="wizard_route_unavailable">Canal no disponible por ahora; consulta los detalles abajo</string>
 
     <string name="bt_fallback_title">Respaldo Bluetooth</string>
     <string name="bt_fallback_desc">Cuando ninguna ruta IP es accesible (p. ej., un proxy/VPN toma el control), sigue sincronizando texto mediante un dispositivo Bluetooth emparejado en el sistema. Solo texto, más lento; vuelve automáticamente cuando la IP se recupera.</string>

@@ -7,6 +7,7 @@ import com.clipsync.android.platform.clipboard.CapabilityReport
 import com.clipsync.android.platform.clipboard.CapabilityState
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.clipboard.RoutePrerequisites
+import com.clipsync.android.platform.clipboard.shizuku.ShizukuErrorCodes
 import com.clipsync.android.ui.ConduitSegmentState
 import com.clipsync.android.ui.ConduitStatus
 
@@ -271,19 +272,28 @@ private fun readRoute(
     val report = facts.reports[mode]
     val remaining = steps.count { !it.satisfied }
     val preferred = facts.preferredReadMode == mode
+    val readState = report?.readState ?: CapabilityState.UNKNOWN
+    // Prerequisites are met (the wizard steps are all green) yet the last real read test
+    // proved the privileged UserService dead — e.g. the wireless-debugging shell that
+    // launched it dropped. The one move that can revive it is re-running the start command
+    // from a PC, so surface that as the honest next step instead of a rosy "set preferred".
+    val channelDead = remaining == 0 &&
+        readState == CapabilityState.UNAVAILABLE &&
+        report?.errorCode in PRIVILEGED_CHANNEL_DEAD_CODES
     // Each unsatisfied step maps to the one action that can move it forward; an
     // unfinished route never falls through to "set preferred".
     val firstUnsatisfied = steps.firstOrNull { !it.satisfied }
-    val nextAction = if (firstUnsatisfied != null) {
-        stepAction(firstUnsatisfied.id)
-    } else {
-        RouteActionId.SET_PREFERRED.takeUnless { preferred }
+    val nextAction = when {
+        firstUnsatisfied != null -> stepAction(firstUnsatisfied.id)
+        channelDead -> RouteActionId.COPY_PRIVILEGED_START_COMMAND
+        else -> RouteActionId.SET_PREFERRED.takeUnless { preferred }
     }
-    // Prerequisites are met but the read path has not yet been device-verified: offer the
-    // one-tap read test that promotes DEGRADED -> READY (plan §8.3). Kept separate from
-    // nextAction so choosing the preferred route and verifying it stay independent.
+    // Prerequisites are met but the read path is not device-verified: offer the one-tap read
+    // test that promotes DEGRADED -> READY (plan §8.3). Also offered on a proven-dead channel
+    // so re-verifying after a PC restart is never a dead end. Kept separate from nextAction so
+    // choosing the preferred route and verifying it stay independent.
     val readTestAction = RouteActionId.RUN_READ_TEST
-        .takeIf { remaining == 0 && report?.readState == CapabilityState.DEGRADED }
+        .takeIf { remaining == 0 && (readState == CapabilityState.DEGRADED || channelDead) }
     return ReadRouteUi(
         id = id,
         mode = mode,
@@ -292,13 +302,25 @@ private fun readRoute(
         cost = cost,
         steps = steps,
         stepsRemaining = remaining,
-        readState = report?.readState ?: CapabilityState.UNKNOWN,
+        readState = readState,
         errorCode = report?.errorCode,
         nextAction = nextAction,
         readTestAction = readTestAction,
         preferred = preferred,
     )
 }
+
+/**
+ * The 特权直读 codes that mean "prerequisites met but the read channel itself is dead": the
+ * privileged host still answers, but its UserService / clipboard binder is gone (commonly after
+ * a wireless-debugging session drops). The route stays honest (UNAVAILABLE) and points at the
+ * PC-side restart rather than pretending it only awaits a test.
+ */
+private val PRIVILEGED_CHANNEL_DEAD_CODES = setOf(
+    ShizukuErrorCodes.USERSERVICE_DEAD,
+    ShizukuErrorCodes.CLIPBOARD_BINDER_DEAD,
+    ShizukuErrorCodes.BINDER_DEAD,
+)
 
 /**
  * The privileged channel can only be opened from a computer (Android security), so its

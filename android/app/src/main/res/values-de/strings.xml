@@ -282,6 +282,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">Voraussetzungen erfüllt, Praxistest ausstehend</string>
     <string name="wizard_ready">Voraussetzungen erfüllt</string>
+    <string name="wizard_route_unavailable">Kanal derzeit nicht verfügbar – siehe Hinweis unten</string>
 
     <string name="bt_fallback_title">Bluetooth-Ausweichweg</string>
     <string name="bt_fallback_desc">Wenn kein IP-Pfad erreichbar ist (z. B. weil ein Proxy/VPN übernimmt), läuft die Textsynchronisierung über ein im System gekoppeltes Bluetooth-Gerät weiter. Nur Text, langsamer; wechselt automatisch zurück, sobald IP sich erholt.</string>

@@ -280,6 +280,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">เงื่อนไขครบ รอการทดสอบจริง</string>
     <string name="wizard_ready">เงื่อนไขครบแล้ว</string>
+    <string name="wizard_route_unavailable">ช่องทางใช้งานไม่ได้ชั่วคราว ดูรายละเอียดด้านล่าง</string>
 
     <string name="bt_fallback_title">ช่องสำรองบลูทูธ</string>
     <string name="bt_fallback_desc">เมื่อทุกเส้นทาง IP เข้าถึงไม่ได้ (เช่น พร็อกซี/VPN เข้าควบคุม) ยังซิงค์ข้อความต่อได้ผ่านอุปกรณ์บลูทูธที่จับคู่กับระบบ ข้อความเท่านั้น ช้ากว่า และสลับกลับอัตโนมัติเมื่อ IP ฟื้น</string>

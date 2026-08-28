@@ -280,6 +280,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">Đã đủ điều kiện, chờ kiểm tra thực tế</string>
     <string name="wizard_ready">Đã đủ điều kiện</string>
+    <string name="wizard_route_unavailable">Kênh tạm thời không khả dụng; xem chi tiết bên dưới</string>
 
     <string name="bt_fallback_title">Dự phòng Bluetooth</string>
     <string name="bt_fallback_desc">Khi mọi đường IP đều không truy cập được (ví dụ proxy/VPN chiếm đường), tiếp tục đồng bộ văn bản qua thiết bị Bluetooth đã ghép nối hệ thống. Chỉ văn bản, chậm hơn; tự chuyển về khi IP khôi phục.</string>

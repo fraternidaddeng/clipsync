@@ -280,7 +280,7 @@
     <string name="priv_hint_not_running">特权通道未在运行；用电脑执行一次启动命令即可（Windows 端可一键启动）。</string>
     <string name="priv_hint_not_authorized">特权通道尚未授权本应用；点「授权特权直读」完成授权。</string>
     <string name="priv_hint_binder_dead">与特权通道的连接已断开；重启通道后点「重新探测」。</string>
-    <string name="priv_hint_userservice_dead">特权读取服务已断开；点「重新探测」尝试重连，无效时重启通道。</string>
+    <string name="priv_hint_userservice_dead">特权读取服务已断开（无线调试断开后常见）；用电脑重新执行一次启动命令即可恢复（USB 或无线调试均可，Windows 端可一键启动），再点「测试后台读取」验证。</string>
     <string name="priv_hint_clipboard_binder_dead">系统剪贴板服务暂时无法访问；稍后再试，必要时重启设备。</string>
     <string name="priv_hint_api_mismatch">特权通道版本过旧或系统接口不兼容；升级通道应用后再试。</string>
     <string name="priv_hint_read_unverified">前提已就绪，还差一次实测；点「测试后台读取」完成验证。</string>
@@ -306,6 +306,7 @@
     </plurals>
     <string name="wizard_ready_pending_test">前提已就绪，等待实测验证</string>
     <string name="wizard_ready">前提已就绪</string>
+    <string name="wizard_route_unavailable">通道暂不可用，见下方说明</string>
 
     <!-- 蓝牙备援卡（通路 · 网络段） -->
     <string name="bt_fallback_title">蓝牙备援</string>

@@ -143,7 +143,13 @@ private fun RouteProgressRow(route: ReadRouteUi) {
         Text(
             text = routeProgressLabel(route),
             style = ClipSyncType.meta,
-            color = if (route.stepsRemaining == 0) c.flow else c.t3,
+            // A dead/unavailable channel is a fact, not good news: it must not read in flow blue.
+            color =
+                if (route.stepsRemaining == 0 && route.readState != CapabilityState.UNAVAILABLE) {
+                    c.flow
+                } else {
+                    c.t3
+                },
         )
         if (route.preferred) {
             Text(
@@ -299,6 +305,10 @@ private fun routeProgressLabel(route: ReadRouteUi): String =
     when {
         route.stepsRemaining > 0 ->
             pluralStringResource(R.plurals.wizard_steps_remaining, route.stepsRemaining, route.stepsRemaining)
+        // Prerequisites met but the read channel is down (e.g. the privileged service died after
+        // a wireless-debugging drop): say so honestly instead of "前提已就绪". The code + hint
+        // below the steps carry the specifics and the recovery move.
+        route.readState == CapabilityState.UNAVAILABLE -> stringResource(R.string.wizard_route_unavailable)
         route.readState == CapabilityState.DEGRADED -> stringResource(R.string.wizard_ready_pending_test)
         else -> stringResource(R.string.wizard_ready)
     }
