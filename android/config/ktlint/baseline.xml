@@ -2020,7 +2020,7 @@
         <error line="21" column="27" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/test/java/com/clipsync/android/sync/ClipboardSyncServiceCaptureOwnershipTest.kt">
-        <error line="233" column="55" source="standard:function-signature" />
+        <error line="255" column="55" source="standard:function-signature" />
     </file>
     <file name="src/test/java/com/clipsync/android/sync/InMemorySyncRepositoryTest.kt">
         <error line="13" column="24" source="standard:function-signature" />

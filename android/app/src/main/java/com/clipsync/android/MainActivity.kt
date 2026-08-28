@@ -96,6 +96,7 @@ import com.clipsync.android.ui.onboarding.FirstRunStore
 import com.clipsync.android.ui.onboarding.OnboardingScreen
 import com.clipsync.android.ui.onboarding.onboardingProgress
 import com.clipsync.android.ui.pairing.PairingScreen
+import com.clipsync.android.ui.pairing.PairingServiceStartPolicy
 import com.clipsync.android.ui.pairing.PairingUiState
 import com.clipsync.android.ui.pairing.PairingViewModel
 import com.clipsync.android.ui.prefs.BondedBluetoothDevice
@@ -621,15 +622,20 @@ private fun SyncServiceController(
     onStopService: () -> Unit,
 ) {
     val pairingState by pairingViewModel.state.collectAsState()
+    // Saved across recreation on purpose: the Paired state is retained by the ViewModel
+    // until the user taps 完成, so a rotation/language change would otherwise replay the
+    // enable side effect and resurrect a service the user switched off in the meantime
+    // (PairingServiceStartPolicy holds the exactly-once rule).
+    var pairedHandled by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(pairingState) {
-        when (val state = pairingState) {
-            is PairingUiState.Paired -> onStartService()
-            is PairingUiState.Idle ->
-                if (state.pairedPeer == null) {
-                    onStopService()
-                }
-            else -> Unit
+        val state = pairingState
+        if (PairingServiceStartPolicy.shouldEnableService(state, alreadyHandled = pairedHandled)) {
+            onStartService()
         }
+        if (PairingServiceStartPolicy.shouldStopService(state)) {
+            onStopService()
+        }
+        pairedHandled = PairingServiceStartPolicy.handledAfter(state, alreadyHandled = pairedHandled)
     }
 }
 

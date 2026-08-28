@@ -30,6 +30,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ServiceController
 
 private const val LOCAL_DEVICE_ID = "22222222-2222-4222-8222-222222222222"
@@ -137,7 +138,10 @@ class ClipboardSyncServiceCaptureOwnershipTest {
         SharedClipboardCapture.stackProvider = originalStackProvider
         SharedClipboardCapture.reset()
         ClipboardSyncService.repositoryProvider = originalRepositoryProvider
-        database.close()
+        // The master-switch refusal path never builds the repository (nor the stack).
+        if (::database.isInitialized) {
+            database.close()
+        }
     }
 
     private fun startService() {
@@ -208,6 +212,24 @@ class ClipboardSyncServiceCaptureOwnershipTest {
 
         assertFalse(session.isRunning)
         assertEquals("SHIZUKU_EVENT.stop", backendCalls.last())
+        controller.destroy()
+    }
+
+    @Test
+    fun `a stale notification action cannot resurrect the service while the master switch is off`() {
+        settings.serviceEnabled = false
+
+        // A lingering 暂停捕获 tap delivered after the user switched 后台同步服务 off: the
+        // action PendingIntents use getForegroundService, which bypasses start()'s guard
+        // and lands straight in onStartCommand.
+        val service = controller.create().get()
+        service.onStartCommand(actionIntent(SyncServiceNotification.ACTION_PAUSE_CAPTURE), 0, 1)
+
+        // The refusal launches no sync stack (the shared capture stack is never even
+        // resolved), applies no stale action, and stops the resurrected instance.
+        assertTrue(backendCalls.isEmpty())
+        assertFalse(settings.autoCapturePaused)
+        assertTrue(shadowOf(service).isStoppedBySelf)
         controller.destroy()
     }
 
