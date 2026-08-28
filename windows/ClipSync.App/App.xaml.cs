@@ -725,6 +725,7 @@ public partial class App : Application
                 var decision = RemoteApplyDecision.Decide(
                     batch,
                     viewModel.IsPaused,
+                    viewModel.IsPrivateMode,
                     viewModel.AutoApplyRemote,
                     viewModel.AutoApplyImages);
                 if (decision is not RemoteApplyDecision.None)

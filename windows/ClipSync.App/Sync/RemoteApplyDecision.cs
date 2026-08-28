@@ -4,11 +4,15 @@ namespace ClipSync.App.Sync;
 
 /// <summary>
 /// The pure policy behind App.OnRemoteClipsCommitted: which clip of one committed batch — if
-/// any — reaches the system clipboard. Mirrors the Android side exactly (InboxDelivery's
+/// any — reaches the system clipboard. Mirrors the Android side (InboxDelivery's
 /// autoApplyAllowed gate plus the newest-only rule proven by WindowsAndroidSyncChainTest):
 /// paused sync still receives into history but never applies; only the newest body of a batch
 /// is considered (never an older fallback); text obeys 自动写入剪贴板 while images have their
 /// own opt-in 自动写入远端图片 gate (ADR 0004) and require a content hash to load bytes from.
+/// One deliberate divergence: Windows 私密模式 promises 捕获与同步全部停止 (stronger than
+/// Android's outbound-only 本机复制的内容不离开这台设备), so it also stops the automatic
+/// clipboard write — a remote clip must never overwrite what the user is holding mid-私密.
+/// Receiving into history is unaffected, exactly like pause.
 /// </summary>
 public abstract record RemoteApplyDecision
 {
@@ -31,10 +35,11 @@ public abstract record RemoteApplyDecision
     public static RemoteApplyDecision Decide(
         IReadOnlyList<RemoteClipApplied> batch,
         bool isPaused,
+        bool isPrivateMode,
         bool autoApplyRemote,
         bool autoApplyImages)
     {
-        if (batch.Count == 0 || isPaused)
+        if (batch.Count == 0 || isPaused || isPrivateMode)
         {
             return None.Instance;
         }
