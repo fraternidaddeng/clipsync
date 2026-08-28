@@ -93,8 +93,14 @@ class SyncEngine(
      */
     private val isAuthenticated: Boolean get() = state == State.READY && peerConfirmed
 
+    // Sticky so a close that arrives before [run] has assigned sessionJob still lands:
+    // the session then cancels itself on start instead of running to the next disconnect.
+    @Volatile
+    private var closeRequested = false
+
     /** Asks the session to stop; used on revocation and shutdown. */
     fun requestClose() {
+        closeRequested = true
         sessionJob?.cancel()
     }
 
@@ -103,6 +109,9 @@ class SyncEngine(
         try {
             coroutineScope {
                 sessionJob = coroutineContext[Job]
+                if (closeRequested) {
+                    sessionJob?.cancel()
+                }
                 val watchdog = launch {
                     delay(config.handshakeTimeoutMs)
                     if (state != State.READY) {

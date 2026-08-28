@@ -1,13 +1,16 @@
 package com.clipsync.android.sync
 
 import android.app.Application
+import android.app.Service
 import androidx.test.core.app.ApplicationProvider
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.storage.SyncSettingsStore
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 
@@ -53,5 +56,22 @@ class ClipboardSyncServiceMasterSwitchTest {
             ClipboardSyncService::class.java.name,
             shadowOf(context).nextStartedService?.component?.className,
         )
+    }
+
+    @Test
+    fun `a start intent that slips past the static guard stops the service while the switch is off`() {
+        // The static guard covers every code path, but a start intent can still arrive
+        // directly: a stale notification action's PendingIntent racing the stop, or an
+        // OEM re-delivering the start intent. The service itself must refuse — off means
+        // truly off — and never come back sticky.
+        settings.serviceEnabled = false
+        val controller = Robolectric.buildService(ClipboardSyncService::class.java)
+        val service = controller.create().get()
+
+        val result = service.onStartCommand(null, 0, 1)
+
+        assertEquals(Service.START_NOT_STICKY, result)
+        assertTrue(shadowOf(service).isStoppedBySelf)
+        controller.destroy()
     }
 }

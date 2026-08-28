@@ -122,6 +122,13 @@ class SyncSupervisor(
     @Volatile
     private var activeEngine: SyncEngine? = null
 
+    // A restart request that raced a dial ([activeEngine] still null, so requestClose had
+    // nothing to close): the dial in flight fixed its wire version before the settings
+    // change, so the fresh session is bounced right after it starts instead of the request
+    // being lost until the next incidental disconnect.
+    @Volatile
+    private var restartRequested = false
+
     /** An IP socket the Bluetooth-session probe already connected; the next session uses it. */
     private var pendingIpTransport: ConnectedTransport? = null
 
@@ -151,6 +158,7 @@ class SyncSupervisor(
      * backoff wait instead of running a session, the nudge cuts that wait short.
      */
     fun restartSession() {
+        restartRequested = true
         activeEngine?.requestClose()
         reconnectNudges.trySend(Unit)
     }
@@ -214,6 +222,12 @@ class SyncSupervisor(
                 )
             secret.fill(0)
             activeEngine = engine
+            if (restartRequested) {
+                // The request landed mid-dial: this session's version choice predates the
+                // settings change, so it is closed at once and the redial re-reads everything.
+                restartRequested = false
+                engine.requestClose()
+            }
             val result =
                 try {
                     runSession(engine, connected, peer)
@@ -346,6 +360,10 @@ class SyncSupervisor(
      * because trust, not connectivity, failed.
      */
     private suspend fun connectAnyHost(peer: PairedPeer): IpDialOutcome {
+        // Cleared exactly where the dial-time inputs are read: a restart requested before
+        // this line is satisfied by this dial; one requested after it is caught either by
+        // the live activeEngine or by the post-dial restartRequested check.
+        restartRequested = false
         val versions = if (imageSyncEnabled()) listOf(2, 1) else listOf(1)
         for (host in peer.hosts) {
             for (version in versions) {

@@ -658,6 +658,66 @@ class SyncSupervisorTest {
         }
 
     @Test
+    fun `restartSession that lands mid-dial still bounces the fresh session`() =
+        runTest {
+            val pairing = pairedStore()
+            var imageSync = false
+            // Each dial suspends until the test releases it, so the toggle can land while
+            // the dial is in flight — the window where activeEngine is still null.
+            val dialGate = Channel<Unit>()
+            val versions = mutableListOf<Int>()
+            val connector =
+                object : SyncConnector {
+                    override suspend fun connect(
+                        host: String,
+                        port: Int,
+                        certSha256: String,
+                        protocolVersion: Int,
+                    ): SyncTransport {
+                        versions.add(protocolVersion)
+                        dialGate.receive()
+                        return ScriptedListenerTransport(
+                            throttle = false,
+                            localDeviceId = pairing.localDeviceId(),
+                            closeAfterAuth = false,
+                            version = protocolVersion,
+                        )
+                    }
+                }
+            val supervisor =
+                SyncSupervisor(
+                    pairing = pairing,
+                    repository = InMemorySyncRepository(pairing.localDeviceId()),
+                    connector = connector,
+                    clientVersion = "0.1.0",
+                    backoff = backoffWithoutJitter(),
+                    imageSyncEnabled = { imageSync },
+                )
+            backgroundScope.launch { supervisor.run() }
+
+            runCurrent()
+            // The dial is in flight on v1 when the user flips 图片同步: there is no live
+            // session to close yet, so the request must survive until the session starts.
+            assertEquals(listOf(1), versions)
+            imageSync = true
+            supervisor.restartSession()
+            dialGate.send(Unit)
+            runCurrent()
+
+            // The stale-version session was bounced immediately; the redial one backoff
+            // step later re-reads the preference and dials v2.
+            advanceTimeBy(1_001)
+            runCurrent()
+            assertEquals(listOf(1, 2), versions)
+            dialGate.send(Unit)
+            runCurrent()
+            assertEquals(
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+                supervisor.state.value,
+            )
+        }
+
+    @Test
     fun `restartSession during a backoff wait cuts it short like a nudge`() =
         runTest {
             val pairing = pairedStore()
