@@ -73,9 +73,14 @@
         </activity>
 
         <!-- Lets the built-in 特权直读 (privileged) host hand this app its binder when the
-             host process (re)starts. Uses the rikka.shizuku provider class to receive it. -->
+             host process (re)starts. MUST be ClipSyncShizukuProvider, not the stock
+             rikka.shizuku.ShizukuProvider: only the subclass overrides call() to handle the
+             `sendUserService` method the UserService child process uses to hand its clipboard
+             binder back (PrivilegedUserServiceStarter.sendBinder → UserServiceAttachGate). With
+             the stock class that method is ignored, the child's attach fails, and every read
+             ends in PRIV_HOST_USERSERVICE_DEAD even though the host process pings alive. -->
         <provider
-            android:name="rikka.shizuku.ShizukuProvider"
+            android:name="com.clipsync.android.platform.clipboard.shizuku.ClipSyncShizukuProvider"
             android:authorities="${applicationId}.shizuku"
             android:enabled="true"
             android:exported="true"
