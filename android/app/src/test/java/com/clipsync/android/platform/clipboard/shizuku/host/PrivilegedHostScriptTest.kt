@@ -26,15 +26,30 @@ class PrivilegedHostScriptTest {
     }
 
     @Test
+    fun `stale hosts are found by one pgrep pass with the proc walk only as fallback`() {
+        val script = PrivilegedHostScript.render()
+        // The per-pid /proc walk forked ~2 processes per pid and took 25s+ on a busy
+        // phone, tripping the PC's adb timeout (wireless debugging first). pgrep must be
+        // the primary path and the walk must stay behind the availability check.
+        assertTrue(script.contains("command -v pgrep"))
+        assertTrue(script.contains("pgrep -f \"\$PROCESS_NAME\""))
+        assertTrue(script.contains("pgrep -f \"\$US_NAME\""))
+        val pgrepIndex = script.indexOf("command -v pgrep")
+        val walkIndex = script.indexOf("for c in /proc/[0-9]*/cmdline")
+        assertTrue(pgrepIndex in 1 until walkIndex)
+    }
+
+    @Test
     fun `user service command loads ClipSync classes from this apk`() {
-        val cmd = PrivilegedHostScript.userServiceCommand(
-            apkPath = "/data/app/com.clipsync.android/base.apk",
-            token = "token-1",
-            packageName = "com.clipsync.android",
-            className = "com.clipsync.android.platform.clipboard.shizuku.ClipboardUserService",
-            processNameSuffix = "clipsync-clipboard",
-            callingUid = 10123,
-        )
+        val cmd =
+            PrivilegedHostScript.userServiceCommand(
+                apkPath = "/data/app/com.clipsync.android/base.apk",
+                token = "token-1",
+                packageName = "com.clipsync.android",
+                className = "com.clipsync.android.platform.clipboard.shizuku.ClipboardUserService",
+                processNameSuffix = "clipsync-clipboard",
+                callingUid = 10123,
+            )
         assertTrue(cmd.contains("export CLASSPATH='/data/app/com.clipsync.android/base.apk'"))
         assertTrue(cmd.contains("-Djava.class.path='/data/app/com.clipsync.android/base.apk'"))
         assertTrue(cmd.contains(PrivilegedHostConstants.USER_SERVICE_STARTER_CLASS))
@@ -42,6 +57,7 @@ class PrivilegedHostScriptTest {
         assertTrue(cmd.contains("--nice-name='com.clipsync.android:clipsync-clipboard'"))
         assertTrue(cmd.contains("setsid /system/bin/app_process"))
         assertFalse(cmd.contains("setsid CLASSPATH="))
+        assertTrue(cmd.contains("pgrep -f 'com.clipsync.android:clipsync-clipboard'"))
         assertTrue(cmd.contains("*--nice-name=com.clipsync.android:clipsync-clipboard*"))
         assertFalse(cmd.contains("moe.shizuku.privileged.api"))
     }
@@ -50,8 +66,8 @@ class PrivilegedHostScriptTest {
     fun `host script also kills leftover clipboard user services`() {
         val script = PrivilegedHostScript.render()
         assertTrue(script.contains("US_NAME=\"\$PACKAGE:clipsync-clipboard\""))
+        assertTrue(script.contains("pgrep -f \"\$US_NAME\""))
         assertTrue(script.contains("*--nice-name=\$US_NAME*"))
-        assertTrue(script.contains("clipsync_priv_se*"))
     }
 
     @Test

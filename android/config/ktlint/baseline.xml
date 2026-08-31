@@ -588,9 +588,8 @@
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/shizuku/host/PrivilegedHostScript.kt">
         <error line="12" column="15" source="standard:function-expression-body" />
-        <error line="71" column="1" source="standard:indent" />
-        <error line="71" column="9" source="standard:string-template-indent" />
-        <error line="103" column="60" source="standard:function-expression-body" />
+        <error line="77" column="1" source="standard:indent" />
+        <error line="77" column="9" source="standard:string-template-indent" />
     </file>
     <file name="src/main/java/com/clipsync/android/platform/clipboard/shizuku/host/PrivilegedHostService.kt">
         <error line="3" column="1" source="standard:import-ordering" />
@@ -1817,9 +1816,6 @@
     </file>
     <file name="src/test/java/com/clipsync/android/platform/clipboard/shizuku/host/PrivilegedHostAccessTest.kt">
         <error line="158" column="23" source="standard:multiline-expression-wrapping" />
-    </file>
-    <file name="src/test/java/com/clipsync/android/platform/clipboard/shizuku/host/PrivilegedHostScriptTest.kt">
-        <error line="30" column="19" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/test/java/com/clipsync/android/platform/entry/ShareTextIntentHandlerTest.kt">
         <error line="8" column="1" source="standard:no-empty-first-line-in-class-body" />

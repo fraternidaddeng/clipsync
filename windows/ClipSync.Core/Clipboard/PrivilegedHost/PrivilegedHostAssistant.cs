@@ -15,6 +15,15 @@ public sealed class PrivilegedHostAssistant
     /// <summary>Wait between the start-verification pgrep checks (the first check is immediate).</summary>
     public static readonly TimeSpan DefaultStartVerifyInterval = TimeSpan.FromMilliseconds(750);
 
+    /// <summary>
+    /// Explicit timeout for running the on-device start script — the one adb call that is
+    /// legitimately slow. Older phones still carry a start script whose stale-host cleanup
+    /// walked all of /proc (25 s+ on a busy phone), and wireless debugging adds transport
+    /// latency on top; under the default 30 s per-command timeout exactly those runs were
+    /// killed mid-script, which made "启动特权直读" fail over wireless while USB squeaked by.
+    /// </summary>
+    public static readonly TimeSpan StartScriptTimeout = TimeSpan.FromSeconds(120);
+
     private static readonly IReadOnlyList<string> ListDevicesArguments = new[] { "devices", "-l" };
 
     private readonly IAdbRunner runner;
@@ -65,7 +74,7 @@ public sealed class PrivilegedHostAssistant
                 Detail: runner.LocationDescription);
         }
 
-        var list = await runner.RunAsync(ListDevicesArguments, cancellationToken).ConfigureAwait(false);
+        var list = await runner.RunAsync(ListDevicesArguments, cancellationToken: cancellationToken).ConfigureAwait(false);
         if (list.ExitCode != 0)
         {
             return new PrivilegedHostProbe(
@@ -105,6 +114,7 @@ public sealed class PrivilegedHostAssistant
 
         var result = await runner.RunAsync(
             WithSerial(serial, PrivilegedHostPaths.StartScriptShellArguments),
+            StartScriptTimeout,
             cancellationToken).ConfigureAwait(false);
         var outcome = PrivilegedHostStartOutcome.FromAdbRun(result.ExitCode, result.StandardOutput, result.StandardError);
         if (!outcome.Succeeded)
@@ -171,7 +181,7 @@ public sealed class PrivilegedHostAssistant
 
         var result = await runner.RunAsync(
             WithSerial(serial, PrivilegedHostPaths.HostRunningProbeShellArguments),
-            cancellationToken).ConfigureAwait(false);
+            cancellationToken: cancellationToken).ConfigureAwait(false);
         if (result.ExitCode != 0 && string.IsNullOrWhiteSpace(result.StandardOutput))
         {
             // pgrep exits non-zero with no output when there is simply no match: that is a
@@ -206,7 +216,7 @@ public sealed class PrivilegedHostAssistant
 
         var result = await runner.RunAsync(
             WirelessAdbCommands.Pair(endpoint, pairingCode),
-            cancellationToken).ConfigureAwait(false);
+            cancellationToken: cancellationToken).ConfigureAwait(false);
         return AdbPairOutcome.FromAdbRun(result.ExitCode, result.StandardOutput, result.StandardError);
     }
 
@@ -221,7 +231,7 @@ public sealed class PrivilegedHostAssistant
             return new AdbConnectOutcome(AdbConnectStatus.AdbFailed, runner.LocationDescription);
         }
 
-        var result = await runner.RunAsync(WirelessAdbCommands.Connect(endpoint), cancellationToken).ConfigureAwait(false);
+        var result = await runner.RunAsync(WirelessAdbCommands.Connect(endpoint), cancellationToken: cancellationToken).ConfigureAwait(false);
         return AdbConnectOutcome.FromAdbRun(result.ExitCode, result.StandardOutput, result.StandardError);
     }
 
@@ -239,7 +249,7 @@ public sealed class PrivilegedHostAssistant
             return;
         }
 
-        await runner.RunAsync(WirelessAdbCommands.Disconnect(endpoint), cancellationToken).ConfigureAwait(false);
+        await runner.RunAsync(WirelessAdbCommands.Disconnect(endpoint), cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -283,7 +293,7 @@ public sealed class PrivilegedHostAssistant
             return false;
         }
 
-        var result = await runner.RunAsync(WirelessAdbCommands.CheckMdns, cancellationToken).ConfigureAwait(false);
+        var result = await runner.RunAsync(WirelessAdbCommands.CheckMdns, cancellationToken: cancellationToken).ConfigureAwait(false);
         var combined = $"{result.StandardOutput}\n{result.StandardError}";
         return result.ExitCode == 0
             && !combined.Contains("error", StringComparison.OrdinalIgnoreCase)
@@ -298,7 +308,7 @@ public sealed class PrivilegedHostAssistant
             return Array.Empty<AdbMdnsServiceRow>();
         }
 
-        var result = await runner.RunAsync(WirelessAdbCommands.ListMdnsServices, cancellationToken).ConfigureAwait(false);
+        var result = await runner.RunAsync(WirelessAdbCommands.ListMdnsServices, cancellationToken: cancellationToken).ConfigureAwait(false);
         return result.ExitCode != 0
             ? Array.Empty<AdbMdnsServiceRow>()
             : AdbMdnsServicesParser.Parse(result.StandardOutput);

@@ -220,7 +220,10 @@ public sealed class MainViewModelWirelessTests : IAsyncDisposable
         public void OnArgsPending(string[] args, Task<AdbCommandResult> pending) =>
             responses.Add((args, new Queue<Task<AdbCommandResult>>(new[] { pending }), pending));
 
-        public Task<AdbCommandResult> RunAsync(IReadOnlyList<string> arguments, CancellationToken cancellationToken = default)
+        public Task<AdbCommandResult> RunAsync(
+            IReadOnlyList<string> arguments,
+            TimeSpan? timeout = null,
+            CancellationToken cancellationToken = default)
         {
             var args = arguments.ToArray();
             Invocations.Add(args);

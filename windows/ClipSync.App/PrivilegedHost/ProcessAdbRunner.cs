@@ -12,8 +12,12 @@ namespace ClipSync.App.PrivilegedHost;
 /// </summary>
 public sealed class ProcessAdbRunner : IAdbRunner
 {
-    /// <summary>adb calls are quick, but a wedged transport must not hang the UI thread's awaiter.</summary>
-    private static readonly TimeSpan CommandTimeout = TimeSpan.FromSeconds(30);
+    /// <summary>
+    /// Default per-command timeout: adb calls are quick, but a wedged transport must not hang
+    /// the UI thread's awaiter. Callers pass a longer explicit timeout for the few commands
+    /// that are legitimately slow (the on-device start script).
+    /// </summary>
+    private static readonly TimeSpan DefaultCommandTimeout = TimeSpan.FromSeconds(30);
 
     private readonly string? adbPath;
 
@@ -32,6 +36,7 @@ public sealed class ProcessAdbRunner : IAdbRunner
 
     public async Task<AdbCommandResult> RunAsync(
         IReadOnlyList<string> arguments,
+        TimeSpan? timeout = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(arguments);
@@ -69,16 +74,26 @@ public sealed class ProcessAdbRunner : IAdbRunner
         var stdoutTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
         var stderrTask = process.StandardError.ReadToEndAsync(cancellationToken);
 
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeout.CancelAfter(CommandTimeout);
+        using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeoutSource.CancelAfter(timeout ?? DefaultCommandTimeout);
         try
         {
-            await process.WaitForExitAsync(timeout.Token).ConfigureAwait(false);
+            await process.WaitForExitAsync(timeoutSource.Token).ConfigureAwait(false);
         }
-        catch (OperationCanceledException) when (timeout.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+        catch (OperationCanceledException) when (timeoutSource.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
         {
             TryKill(process);
-            return new AdbCommandResult(-1, string.Empty, Strings.Privileged_AdbTimedOut);
+            // The kill closes the pipes, so the reads complete with whatever adb printed
+            // before the deadline. Keeping that output matters: a start script may have
+            // already reported "info: spawned" when only the transport wedged afterwards,
+            // and discarding it would turn a verifiable start into a bare failure.
+            var partialStdout = await stdoutTask.ConfigureAwait(false);
+            var partialStderr = await stderrTask.ConfigureAwait(false);
+            var timeoutNote = Strings.Privileged_AdbTimedOut;
+            return new AdbCommandResult(
+                -1,
+                partialStdout,
+                string.IsNullOrWhiteSpace(partialStderr) ? timeoutNote : $"{timeoutNote}\n{partialStderr}");
         }
 
         var stdout = await stdoutTask.ConfigureAwait(false);

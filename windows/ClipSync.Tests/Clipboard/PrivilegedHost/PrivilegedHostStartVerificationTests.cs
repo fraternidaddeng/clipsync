@@ -88,6 +88,26 @@ public sealed class PrivilegedHostStartVerificationTests
     }
 
     [Fact]
+    public async Task StartScriptRunsUnderTheExtendedTimeoutWhileProbesKeepTheDefault()
+    {
+        // The on-device script is the one legitimately slow adb call (old scripts walk /proc
+        // for 25s+ on busy phones, wireless transports add latency on top). Under the default
+        // 30s timeout exactly those runs were killed mid-script — wireless starts failed while
+        // USB squeaked by — so the start must ask for the extended budget, and only the start.
+        var runner = new SequencedAdbRunner();
+        runner.OnArgs(StartArgs, Spawned);
+        runner.OnArgs(PgrepArgs, HostRunning);
+
+        var assistant = NoWaitAssistant(runner, attempts: 6);
+        await assistant.StartAsync("SERIAL1");
+
+        var startCall = Assert.Single(runner.Invocations, i => i.Args.SequenceEqual(StartArgs));
+        Assert.Equal(PrivilegedHostAssistant.StartScriptTimeout, startCall.Timeout);
+        var pgrepCall = Assert.Single(runner.Invocations, i => i.Args.SequenceEqual(PgrepArgs));
+        Assert.Null(pgrepCall.Timeout);
+    }
+
+    [Fact]
     public async Task AScriptFailureSkipsVerificationEntirely()
     {
         var runner = new SequencedAdbRunner();
@@ -113,7 +133,7 @@ public sealed class PrivilegedHostStartVerificationTests
 
         public string LocationDescription => "adb: /fake/adb";
 
-        public List<string[]> Invocations { get; } = new();
+        public List<(string[] Args, TimeSpan? Timeout)> Invocations { get; } = new();
 
         public void OnArgs(string[] args, AdbCommandResult result) => OnArgsSequence(args, result);
 
@@ -123,12 +143,15 @@ public sealed class PrivilegedHostStartVerificationTests
             responses.Add((args, queue, results[^1]));
         }
 
-        public int CountFor(string[] args) => Invocations.Count(i => i.SequenceEqual(args));
+        public int CountFor(string[] args) => Invocations.Count(i => i.Args.SequenceEqual(args));
 
-        public Task<AdbCommandResult> RunAsync(IReadOnlyList<string> arguments, CancellationToken cancellationToken = default)
+        public Task<AdbCommandResult> RunAsync(
+            IReadOnlyList<string> arguments,
+            TimeSpan? timeout = null,
+            CancellationToken cancellationToken = default)
         {
             var args = arguments.ToArray();
-            Invocations.Add(args);
+            Invocations.Add((args, timeout));
             foreach (var (candidate, results, last) in responses)
             {
                 if (candidate.SequenceEqual(args))

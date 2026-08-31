@@ -25,7 +25,12 @@ public interface IAdbRunner
     /// <summary>
     /// Runs <c>adb</c> with the given arguments (already tokenized; no shell involved) and
     /// returns its captured result. Implementations must not throw for a non-zero adb exit —
-    /// that is a normal result the caller interprets.
+    /// that is a normal result the caller interprets. <paramref name="timeout"/> overrides the
+    /// implementation's default per-command timeout; callers set it only for commands that are
+    /// legitimately slow (the on-device start script), never to hide a wedged transport.
     /// </summary>
-    Task<AdbCommandResult> RunAsync(IReadOnlyList<string> arguments, CancellationToken cancellationToken = default);
+    Task<AdbCommandResult> RunAsync(
+        IReadOnlyList<string> arguments,
+        TimeSpan? timeout = null,
+        CancellationToken cancellationToken = default);
 }

@@ -288,7 +288,10 @@ public sealed class WirelessAdbAssistantTests
         public void OnArgs(string[] args, params AdbCommandResult[] results) =>
             responses.Add((args, new Queue<AdbCommandResult>(results), results[^1]));
 
-        public Task<AdbCommandResult> RunAsync(IReadOnlyList<string> arguments, CancellationToken cancellationToken = default)
+        public Task<AdbCommandResult> RunAsync(
+            IReadOnlyList<string> arguments,
+            TimeSpan? timeout = null,
+            CancellationToken cancellationToken = default)
         {
             var args = arguments.ToArray();
             Invocations.Add(args);

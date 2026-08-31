@@ -116,7 +116,10 @@ public sealed class PrivilegedHostAssistantTests
 
         public void OnArgs(string[] args, AdbCommandResult result) => responses.Add((args, result));
 
-        public Task<AdbCommandResult> RunAsync(IReadOnlyList<string> arguments, CancellationToken cancellationToken = default)
+        public Task<AdbCommandResult> RunAsync(
+            IReadOnlyList<string> arguments,
+            TimeSpan? timeout = null,
+            CancellationToken cancellationToken = default)
         {
             var args = arguments.ToArray();
             Invocations.Add(args);

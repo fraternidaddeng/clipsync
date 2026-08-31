@@ -38,27 +38,33 @@ internal object PrivilegedHostScript {
             echo "info: apk ${'$'}APK"
             self=${'$'}${'$'}
             US_NAME="${'$'}PACKAGE:clipsync-clipboard"
-            for c in /proc/[0-9]*/cmdline; do
-              [ -r "${'$'}c" ] || continue
-              pid=${'$'}{c#/proc/}
-              pid=${'$'}{pid%/cmdline}
-              [ "${'$'}pid" = "${'$'}self" ] && continue
-              name=${'$'}(tr '\0' ' ' < "${'$'}c" 2>/dev/null)
-              comm=${'$'}(tr -d '\r\n' < "/proc/${'$'}pid/comm" 2>/dev/null)
-              case "${'$'}name" in
-                "${'$'}PROCESS_NAME"|*" ${'$'}PROCESS_NAME "*|"${'$'}PROCESS_NAME "*|*--nice-name=${'$'}PROCESS_NAME*|*--nice-name=${'$'}US_NAME*|*" ${'$'}US_NAME "*|"${'$'}US_NAME "*)
-                  kill -9 "${'$'}pid" 2>/dev/null
-                  echo "info: killed ${'$'}pid"
-                  continue
-                  ;;
-              esac
-              case "${'$'}comm" in
-                clipsync_priv_se*|clipsync_priv_server)
-                  kill -9 "${'$'}pid" 2>/dev/null
-                  echo "info: killed ${'$'}pid"
-                  ;;
-              esac
-            done
+            # One pgrep pass finds stale hosts. The per-pid /proc walk below stays only as a
+            # fallback: it forks tr twice per process and took 25 s+ on a busy phone (800+
+            # pids), which pushed the whole script past the PC side's adb timeout — the
+            # extra latency of wireless debugging was enough to make every wireless start
+            # fail while USB squeaked by. pgrep -f matches the full cmdline, so it covers
+            # both the renamed argv0 ("clipsync_priv_server") and a still-starting
+            # app_process ("--nice-name=clipsync_priv_server"), same as the walk did.
+            if command -v pgrep >/dev/null 2>&1; then
+              for pid in ${'$'}(pgrep -f "${'$'}PROCESS_NAME"; pgrep -f "${'$'}US_NAME"); do
+                [ "${'$'}pid" = "${'$'}self" ] && continue
+                kill -9 "${'$'}pid" 2>/dev/null && echo "info: killed ${'$'}pid"
+              done
+            else
+              for c in /proc/[0-9]*/cmdline; do
+                [ -r "${'$'}c" ] || continue
+                pid=${'$'}{c#/proc/}
+                pid=${'$'}{pid%/cmdline}
+                [ "${'$'}pid" = "${'$'}self" ] && continue
+                name=${'$'}(tr '\0' ' ' < "${'$'}c" 2>/dev/null)
+                case "${'$'}name" in
+                  "${'$'}PROCESS_NAME"|*" ${'$'}PROCESS_NAME "*|"${'$'}PROCESS_NAME "*|*--nice-name=${'$'}PROCESS_NAME*|*--nice-name=${'$'}US_NAME*|*" ${'$'}US_NAME "*|"${'$'}US_NAME "*)
+                    kill -9 "${'$'}pid" 2>/dev/null
+                    echo "info: killed ${'$'}pid"
+                    ;;
+                esac
+              done
+            fi
             echo "info: starting ${'$'}PROCESS_NAME"
             export CLASSPATH="${'$'}APK"
             if command -v setsid >/dev/null 2>&1; then
@@ -101,7 +107,17 @@ internal object PrivilegedHostScript {
     }
 
     fun killByNiceNameCommand(processName: String): String {
+        // One pgrep pass instead of a per-pid /proc walk: the walk forked tr once per
+        // process and took 25 s+ on a busy phone, stalling every UserService (re)start
+        // against its 30 s timeout. The self-pid guard matters here: this command runs
+        // via `sh -c`, so the wrapping shell's own cmdline contains the pattern.
         return "self=\$\$; " +
+            "if command -v pgrep >/dev/null 2>&1; then " +
+            "for pid in \$(pgrep -f '$processName'); do " +
+            "[ \"\$pid\" = \"\$self\" ] && continue; " +
+            "kill -9 \"\$pid\" 2>/dev/null; " +
+            "done; " +
+            "else " +
             "for c in /proc/[0-9]*/cmdline; do " +
             "[ -r \"\$c\" ] || continue; " +
             "pid=\${c#/proc/}; pid=\${pid%/cmdline}; " +
@@ -109,6 +125,7 @@ internal object PrivilegedHostScript {
             "name=\$(tr '\\0' ' ' < \"\$c\" 2>/dev/null); " +
             "case \"\$name\" in *--nice-name=$processName*|*$processName*) " +
             "kill -9 \"\$pid\" 2>/dev/null ;; esac; " +
-            "done; "
+            "done; " +
+            "fi; "
     }
 }
