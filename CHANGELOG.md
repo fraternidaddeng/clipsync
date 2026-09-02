@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-02
+
+### 新增
+
+- [双端] **内置更新**：偏好新增「关于」组，显示本机版本号，并对照 GitHub 仓库 `fraternidaddeng/clipsync` 的 `/releases/latest`（正式发布，不含预发布）决定是否需要更新。检查不自动下载；发现新版本后由用户点「下载并安装」。下载后先核 SHA-256（优先用 Release 资产的 `digest`，否则拉 `.sha256` 侧车），对不上即丢弃、不安装。Android 把已校验 APK 交给系统安装器（需允许本应用安装未知来源）；Windows 便携目录在退出后由助手脚本 `robocopy` 覆盖再重启（用户数据在 LocalAppData，不动）。版本比较沿用发布脚本的 `versionCode` 方案（`0.1.0-rc.2` < `0.1.0` < `0.2.0`）。开发默认版本戳为 `0.3.0`（Android `versionName`/`versionCode` 30099，Windows `Directory.Build.props` 的 `Version`）；打 tag 时仍由 `release.yml` 注入。19 语文案逐键齐全。测试钉死版本比较、GitHub JSON/sidecar 解析、资产挑选（不把 unsigned APK 当安装包）、ZIP 解包与助手脚本、两端检查更新的 UI 状态。**`v0.2.0` 及更早的安装没有这套检查器，升到本版必须从 GitHub Release 手动下载一次**；此后的正式发布即可在应用内完成。
+
 ## [0.2.0] - 2026-08-31
 
 ### 变更
