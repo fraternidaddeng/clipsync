@@ -48,10 +48,11 @@ import com.clipsync.android.ui.theme.clipSyncColors
 
 /**
  * 偏好: the key product commitments (product-scope.md) grouped per
- * settings-roadmap §4.1 — 显示 · 同步 · 捕获 · 历史 · 运行 · 数据 · 设备.
+ * settings-roadmap §4.1 — 显示 · 同步 · 捕获 · 历史 · 运行 · 数据 · 设备 · 帮助 · 关于.
  * State lives in [PreferencesViewModel] and every change is persisted
  * immediately; this screen only renders and reports.
  */
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 fun PreferencesScreen(
     state: PreferencesUiState,
@@ -83,6 +84,8 @@ fun PreferencesScreen(
     onLanguageChange: (String) -> Unit = {},
     /** 重新查看引导: replays the first-run tutorial; changes no settings. */
     onReplayOnboarding: () -> Unit = {},
+    onCheckUpdate: () -> Unit = {},
+    onDownloadUpdate: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
@@ -381,9 +384,50 @@ fun PreferencesScreen(
             )
         }
 
+        Spacer(Modifier.height(20.dp))
+        GroupHeader(stringResource(R.string.prefs_group_about))
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .charterCard(),
+        ) {
+            ValueRow(
+                title = stringResource(R.string.prefs_current_version),
+                value = state.appVersion,
+            )
+            RowDivider()
+            ActionRow(
+                title = stringResource(R.string.prefs_check_update),
+                description = stringResource(R.string.prefs_check_update_desc),
+                enabled = !state.updateBusy,
+                onClick = onCheckUpdate,
+            )
+            if (state.updateAvailable) {
+                RowDivider()
+                ActionRow(
+                    title = stringResource(R.string.prefs_update_download),
+                    description = stringResource(R.string.prefs_update_download_desc),
+                    enabled = !state.updateBusy,
+                    onClick = onDownloadUpdate,
+                )
+            }
+            if (state.updateStatus != null) {
+                RowDivider()
+                Text(
+                    text = state.updateStatus.string(),
+                    style = ClipSyncType.caption,
+                    color = c.t3,
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 12.dp),
+                )
+            }
+        }
+
         Spacer(Modifier.height(28.dp))
         Text(
-            text = "CLIPSYNC 0.1.0",
+            text = stringResource(R.string.prefs_footer_version, state.appVersion),
             style = ClipSyncType.groupHeader,
             color = c.t4,
             textAlign = TextAlign.Center,
@@ -726,23 +770,24 @@ private fun ActionRow(
     title: String,
     description: String,
     onClick: () -> Unit,
+    enabled: Boolean = true,
 ) {
     val c = clipSyncColors
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .clickable(enabled = enabled, onClick = onClick)
                 .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
-            Text(text = title, fontSize = 14.sp, color = c.t1)
+            Text(text = title, fontSize = 14.sp, color = if (enabled) c.t1 else c.t4)
             Spacer(Modifier.height(2.dp))
-            Text(text = description, style = ClipSyncType.caption, color = c.t3)
+            Text(text = description, style = ClipSyncType.caption, color = if (enabled) c.t3 else c.t4)
         }
         Spacer(Modifier.width(12.dp))
-        Text(text = "›", fontSize = 16.sp, color = c.flow)
+        Text(text = "›", fontSize = 16.sp, color = if (enabled) c.flow else c.t4)
     }
 }
 

@@ -953,4 +953,52 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>Start using</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>Current version</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>The version this copy is running, used to compare with the latest GitHub Release.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>Compare with the latest stable GitHub Release. Downloads are SHA-256 checked, then this portable folder is replaced and the app restarts.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>Download and install</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>Checking the latest release…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>Already the latest version {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>New version {0} found (current {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>Downloading… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>The app will quit, replace its files, and restart.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>Could not reach GitHub. Check the network and try again.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>The latest release information could not be parsed.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>The latest release has no package for this platform.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>The download’s SHA-256 did not match the release. The file was discarded.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>Could not apply the update.</value>
+  </data>
 </root>

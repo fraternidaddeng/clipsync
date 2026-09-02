@@ -953,4 +953,52 @@
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>بدء الاستخدام</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>حول</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>الإصدار الحالي</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>الإصدار الذي تشغّله هذه النسخة، للمقارنة بأحدث إصدار على GitHub.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>التحقق من التحديثات</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>يقارن بأحدث إصدار رسمي على GitHub. يُتحقق من التنزيل بـ SHA-256 ثم يُستبدل هذا المجلد المحمول ويُعاد التشغيل.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>تنزيل وتثبيت</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>جارٍ الاستعلام عن أحدث إصدار…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>هذا أحدث إصدار {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>يتوفر إصدار جديد {0} (الحالي {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>جارٍ التنزيل… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>سيُغلق التطبيق ويستبدل ملفاته ثم يُعاد تشغيله.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>تعذّر الوصول إلى GitHub. تحقق من الشبكة ثم أعد المحاولة.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>تعذّر تفسير معلومات أحدث إصدار.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>أحدث إصدار لا يحتوي على حزمة لهذه المنصة.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>لا يطابق SHA-256 للتنزيل صفحة الإصدار. تم التخلص من الملف.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>تعذّر تطبيق التحديث.</value>
+  </data>
 </root>

@@ -1,6 +1,9 @@
 <Project>
   <Import Project="..\Directory.Build.props" />
   <PropertyGroup>
+    <!-- Default product version for local/dev builds. Tag-triggered
+         package-windows.ps1 -Version overrides this at publish time. -->
+    <Version>0.3.0</Version>
     <!-- Built-in .NET analyzers: Recommended for style/quality so TreatWarningsAsErrors
          does not turn existing nits into a wall of errors. Security category is All. -->
     <EnableNETAnalyzers>true</EnableNETAnalyzers>

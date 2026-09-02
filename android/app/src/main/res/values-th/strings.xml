@@ -451,4 +451,23 @@
     <string name="prefs_group_help">ช่วยเหลือ</string>
     <string name="prefs_replay_onboarding">ดูบทแนะนำอีกครั้ง</string>
     <string name="prefs_replay_onboarding_desc">เดินผ่านบทแนะนำการใช้งานครั้งแรกอีกรอบตั้งแต่หน้าต้อนรับ โดยไม่เปลี่ยนการตั้งค่าหรือการจับคู่ใด ๆ</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">เกี่ยวกับ</string>
+    <string name="prefs_current_version">เวอร์ชันปัจจุบัน</string>
+    <string name="prefs_check_update">ตรวจสอบการอัปเดต</string>
+    <string name="prefs_check_update_desc">เทียบกับรุ่นทางการล่าสุดบน GitHub หลังดาวน์โหลดจะตรวจ SHA-256 แล้วส่งให้ตัวติดตั้งของระบบ</string>
+    <string name="prefs_update_download">ดาวน์โหลดแล้วติดตั้ง</string>
+    <string name="prefs_update_download_desc">ดาวน์โหลดและตรวจก่อน แล้วค่อยเปิดตัวติดตั้งของระบบ ต้องอนุญาตให้แอปนี้ติดตั้งจากแหล่งที่ไม่รู้จัก</string>
+    <string name="prefs_update_checking">กำลังสอบรุ่นล่าสุด…</string>
+    <string name="prefs_update_up_to_date">เป็นเวอร์ชันล่าสุด %1$s แล้ว</string>
+    <string name="prefs_update_available">พบเวอร์ชันใหม่ %1$s (ปัจจุบัน %2$s)</string>
+    <string name="prefs_update_downloading">กำลังดาวน์โหลด… %1$d%%</string>
+    <string name="prefs_update_installing">พร้อมติดตั้ง</string>
+    <string name="prefs_update_error_network">ติดต่อ GitHub ไม่ได้ ตรวจเครือข่ายแล้วลองใหม่</string>
+    <string name="prefs_update_error_parse">อ่านข้อมูลรุ่นล่าสุดไม่ได้</string>
+    <string name="prefs_update_error_no_asset">รุ่นล่าสุดไม่มีชุดติดตั้งสำหรับแพลตฟอร์มนี้</string>
+    <string name="prefs_update_error_hash">SHA-256 ของไฟล์ที่ดาวน์โหลดไม่ตรงกับหน้าเผยแพร่ จึงทิ้งไฟล์แล้ว</string>
+    <string name="prefs_update_error_apply">เริ่มการติดตั้งไม่ได้</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

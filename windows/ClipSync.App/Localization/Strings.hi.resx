@@ -953,4 +953,52 @@
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>उपयोग शुरू करें</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>परिचय</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>वर्तमान संस्करण</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>इस प्रति पर चल रहा संस्करण; GitHub की नवीनतम रिलीज़ से मिलाने के लिए।</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>अपडेट जाँचें</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>GitHub की नवीनतम स्थिर रिलीज़ से मिलाएँ। SHA-256 जाँचने के बाद यह पोर्टेबल फ़ोल्डर बदला जाता है और ऐप फिर चलता है।</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>डाउनलोड कर इंस्टॉल करें</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>नवीनतम रिलीज़ जाँच रहे हैं…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>पहले से नवीनतम संस्करण {0} है</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>नया संस्करण {0} मिला (वर्तमान {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>डाउनलोड हो रहा है… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>ऐप बंद होगा, अपनी फ़ाइलें बदलेगा, फिर खुद चलेगा।</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>GitHub से संपर्क नहीं हो सका। नेटवर्क जाँचकर फिर कोशिश करें।</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>नवीनतम रिलीज़ जानकारी समझ नहीं आई।</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>नवीनतम रिलीज़ में इस प्लेटफ़ॉर्म का पैकेज नहीं है।</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>डाउनलोड का SHA-256 रिलीज़ से नहीं मिला। फ़ाइल हटा दी गई।</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>अपडेट लागू नहीं हो सका।</value>
+  </data>
 </root>

@@ -451,4 +451,23 @@
     <string name="prefs_group_help">ヘルプ</string>
     <string name="prefs_replay_onboarding">チュートリアルをもう一度見る</string>
     <string name="prefs_replay_onboarding_desc">ようこそページから初回設定チュートリアルをもう一度たどります。設定やペアリングは変更しません。</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">情報</string>
+    <string name="prefs_current_version">現在のバージョン</string>
+    <string name="prefs_check_update">更新を確認</string>
+    <string name="prefs_check_update_desc">GitHub の最新正式リリースと照合します。ダウンロード後に SHA-256 を検証し、システムインストーラーに渡します。</string>
+    <string name="prefs_update_download">ダウンロードしてインストール</string>
+    <string name="prefs_update_download_desc">先にダウンロードして検証し、システムのインストール画面を開きます。このアプリに提供元不明のインストールを許可する必要があります。</string>
+    <string name="prefs_update_checking">最新リリースを確認しています…</string>
+    <string name="prefs_update_up_to_date">すでに最新バージョン %1$s です</string>
+    <string name="prefs_update_available">新しいバージョン %1$s があります（現在 %2$s）</string>
+    <string name="prefs_update_downloading">ダウンロード中… %1$d%%</string>
+    <string name="prefs_update_installing">インストールを開始します</string>
+    <string name="prefs_update_error_network">GitHub に接続できません。ネットワークを確認して再試行してください。</string>
+    <string name="prefs_update_error_parse">最新リリース情報を解析できませんでした。</string>
+    <string name="prefs_update_error_no_asset">最新リリースにこのプラットフォーム用のパッケージがありません。</string>
+    <string name="prefs_update_error_hash">ダウンロードの SHA-256 がリリースと一致しないため、ファイルを破棄しました。</string>
+    <string name="prefs_update_error_apply">インストールを開始できませんでした。</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

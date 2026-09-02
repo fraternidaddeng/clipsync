@@ -31,8 +31,8 @@ android {
         applicationId = "com.clipsync.android"
         minSdk = 29
         targetSdk = 35
-        versionCode = versionCodeOverride ?: 1
-        versionName = versionNameOverride ?: "0.1.0"
+        versionCode = versionCodeOverride ?: 30099
+        versionName = versionNameOverride ?: "0.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

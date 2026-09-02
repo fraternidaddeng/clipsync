@@ -953,4 +953,52 @@
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>เริ่มใช้งาน</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>เกี่ยวกับ</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>เวอร์ชันปัจจุบัน</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>เวอร์ชันที่สำเนานี้กำลังรัน ใช้เทียบกับรุ่นทางการล่าสุดบน GitHub</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>ตรวจสอบการอัปเดต</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>เทียบกับรุ่นทางการล่าสุดบน GitHub หลังตรวจ SHA-256 จะแทนที่โฟลเดอร์พกพานี้แล้วเปิดใหม่</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>ดาวน์โหลดแล้วติดตั้ง</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>กำลังสอบรุ่นล่าสุด…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>เป็นเวอร์ชันล่าสุด {0} แล้ว</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>พบเวอร์ชันใหม่ {0} (ปัจจุบัน {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>กำลังดาวน์โหลด… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>แอปจะปิด แทนที่ไฟล์ แล้วเปิดใหม่เอง</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>ติดต่อ GitHub ไม่ได้ ตรวจเครือข่ายแล้วลองใหม่</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>อ่านข้อมูลรุ่นล่าสุดไม่ได้</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>รุ่นล่าสุดไม่มีชุดติดตั้งสำหรับแพลตฟอร์มนี้</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>SHA-256 ของไฟล์ที่ดาวน์โหลดไม่ตรงกับหน้าเผยแพร่ จึงทิ้งไฟล์แล้ว</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>ใช้การอัปเดตไม่ได้</value>
+  </data>
 </root>

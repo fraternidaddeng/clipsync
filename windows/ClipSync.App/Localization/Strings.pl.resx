@@ -953,4 +953,52 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>Zacznij korzystać</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>Informacje</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>Bieżąca wersja</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>Wersja tej kopii, służąca do porównania z najnowszym wydaniem na GitHubie.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>Sprawdź aktualizacje</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>Porównuje z najnowszym stabilnym wydaniem na GitHubie. Pobranie jest sprawdzane SHA-256, potem ten folder przenośny jest zastępowany i aplikacja startuje ponownie.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>Pobierz i zainstaluj</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>Sprawdzanie najnowszego wydania…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>To już najnowsza wersja {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>Jest nowa wersja {0} (obecna {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>Pobieranie… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>Aplikacja zakończy działanie, podmieni pliki i uruchomi się ponownie.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>Nie udało się połączyć z GitHubem. Sprawdź sieć i spróbuj ponownie.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>Nie udało się odczytać informacji o najnowszym wydaniu.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>Najnowsze wydanie nie ma pakietu dla tej platformy.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>SHA-256 pobrania nie zgadza się z wydaniem. Plik odrzucono.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>Nie udało się zastosować aktualizacji.</value>
+  </data>
 </root>

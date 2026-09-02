@@ -458,4 +458,23 @@
     <string name="prefs_group_help">Hilfe</string>
     <string name="prefs_replay_onboarding">Einführung erneut ansehen</string>
     <string name="prefs_replay_onboarding_desc">Das Erststart-Tutorial ab der Willkommensseite erneut durchlaufen; ändert keine Einstellungen und keine Kopplung.</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">Info</string>
+    <string name="prefs_current_version">Aktuelle Version</string>
+    <string name="prefs_check_update">Nach Updates suchen</string>
+    <string name="prefs_check_update_desc">Vergleicht mit der neuesten stabilen GitHub-Veröffentlichung. Downloads werden per SHA-256 geprüft und dann dem Systeminstaller übergeben.</string>
+    <string name="prefs_update_download">Herunterladen und installieren</string>
+    <string name="prefs_update_download_desc">Zuerst herunterladen und prüfen, dann den Systeminstaller öffnen. Diese App muss unbekannte Quellen installieren dürfen.</string>
+    <string name="prefs_update_checking">Neueste Veröffentlichung wird abgefragt…</string>
+    <string name="prefs_update_up_to_date">Bereits die neueste Version %1$s</string>
+    <string name="prefs_update_available">Neue Version %1$s gefunden (aktuell %2$s)</string>
+    <string name="prefs_update_downloading">Wird heruntergeladen… %1$d%%</string>
+    <string name="prefs_update_installing">Bereit zur Installation</string>
+    <string name="prefs_update_error_network">GitHub ist nicht erreichbar. Netzwerk prüfen und erneut versuchen.</string>
+    <string name="prefs_update_error_parse">Die Angaben zur neuesten Veröffentlichung konnten nicht gelesen werden.</string>
+    <string name="prefs_update_error_no_asset">Die neueste Veröffentlichung enthält kein Paket für diese Plattform.</string>
+    <string name="prefs_update_error_hash">Die SHA-256 der Datei stimmt nicht mit der Veröffentlichung überein. Die Datei wurde verworfen.</string>
+    <string name="prefs_update_error_apply">Installation konnte nicht gestartet werden.</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

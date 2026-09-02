@@ -451,4 +451,23 @@
     <string name="prefs_group_help">Bantuan</string>
     <string name="prefs_replay_onboarding">Lihat lagi tutorialnya</string>
     <string name="prefs_replay_onboarding_desc">Jalani lagi tutorial pertama kali dari halaman sambutan; tidak mengubah setelan atau pemasangan apa pun.</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">Tentang</string>
+    <string name="prefs_current_version">Versi saat ini</string>
+    <string name="prefs_check_update">Periksa pembaruan</string>
+    <string name="prefs_check_update_desc">Membandingkan dengan rilis resmi terbaru di GitHub. Unduhan diverifikasi SHA-256, lalu diserahkan ke pemasang sistem.</string>
+    <string name="prefs_update_download">Unduh dan pasang</string>
+    <string name="prefs_update_download_desc">Unduh dan verifikasi dulu, lalu buka pemasang sistem. Aplikasi ini harus diizinkan memasang sumber tidak dikenal.</string>
+    <string name="prefs_update_checking">Memeriksa rilis terbaru…</string>
+    <string name="prefs_update_up_to_date">Sudah versi terbaru %1$s</string>
+    <string name="prefs_update_available">Ada versi baru %1$s (saat ini %2$s)</string>
+    <string name="prefs_update_downloading">Mengunduh… %1$d%%</string>
+    <string name="prefs_update_installing">Siap dipasang</string>
+    <string name="prefs_update_error_network">Tidak dapat menghubungi GitHub. Periksa jaringan lalu coba lagi.</string>
+    <string name="prefs_update_error_parse">Informasi rilis terbaru tidak dapat diurai.</string>
+    <string name="prefs_update_error_no_asset">Rilis terbaru tidak punya paket untuk platform ini.</string>
+    <string name="prefs_update_error_hash">SHA-256 unduhan tidak cocok dengan rilis. Berkas dibuang.</string>
+    <string name="prefs_update_error_apply">Tidak dapat memulai pemasangan.</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

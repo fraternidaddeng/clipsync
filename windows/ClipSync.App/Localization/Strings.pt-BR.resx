@@ -953,4 +953,52 @@ Todas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A 
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>Começar a usar</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>Sobre</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>Versão atual</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>A versão que esta cópia está executando, usada para comparar com a publicação mais recente no GitHub.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>Verificar atualizações</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>Compara com a publicação estável mais recente no GitHub. O download é verificado por SHA-256; esta pasta portátil é substituída e o app reinicia.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>Baixar e instalar</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>Consultando a publicação mais recente…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>Já é a versão mais recente {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>Nova versão {0} encontrada (atual {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>Baixando… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>O app vai sair, substituir os arquivos e reiniciar.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>Não foi possível contatar o GitHub. Verifique a rede e tente de novo.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>Não foi possível interpretar as informações da publicação mais recente.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>A publicação mais recente não tem pacote para esta plataforma.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>O SHA-256 do download não bate com a publicação. O arquivo foi descartado.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>Não foi possível aplicar a atualização.</value>
+  </data>
 </root>

@@ -484,4 +484,23 @@
     <string name="prefs_group_help">帮助</string>
     <string name="prefs_replay_onboarding">重新查看引导</string>
     <string name="prefs_replay_onboarding_desc">从欢迎页重新过一遍首次设置教程；不改动任何设置与配对。</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">关于</string>
+    <string name="prefs_current_version">当前版本</string>
+    <string name="prefs_check_update">检查更新</string>
+    <string name="prefs_check_update_desc">对照 GitHub 仓库的最新正式发布。下载后会校验 SHA-256，再交给系统安装。</string>
+    <string name="prefs_update_download">下载并安装</string>
+    <string name="prefs_update_download_desc">先下载并校验，再打开系统安装界面。需要允许本应用安装未知来源的应用。</string>
+    <string name="prefs_update_checking">正在查询最新发布…</string>
+    <string name="prefs_update_up_to_date">已是最新版本 %1$s</string>
+    <string name="prefs_update_available">发现新版本 %1$s（当前 %2$s）</string>
+    <string name="prefs_update_downloading">正在下载… %1$d%%</string>
+    <string name="prefs_update_installing">即将安装</string>
+    <string name="prefs_update_error_network">无法联系 GitHub。请检查网络后重试。</string>
+    <string name="prefs_update_error_parse">最新发布信息无法解析。</string>
+    <string name="prefs_update_error_no_asset">最新发布里没有本平台的安装包。</string>
+    <string name="prefs_update_error_hash">下载文件的 SHA-256 与发布页不一致，已丢弃。</string>
+    <string name="prefs_update_error_apply">无法启动安装。</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

@@ -451,4 +451,23 @@
     <string name="prefs_group_help">도움말</string>
     <string name="prefs_replay_onboarding">튜토리얼 다시 보기</string>
     <string name="prefs_replay_onboarding_desc">환영 페이지부터 첫 실행 튜토리얼을 다시 진행합니다. 설정과 페어링은 바꾸지 않습니다.</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">정보</string>
+    <string name="prefs_current_version">현재 버전</string>
+    <string name="prefs_check_update">업데이트 확인</string>
+    <string name="prefs_check_update_desc">GitHub의 최신 정식 릴리스와 대조합니다. 다운로드 후 SHA-256을 확인한 뒤 시스템 설치 프로그램에 넘깁니다.</string>
+    <string name="prefs_update_download">다운로드 후 설치</string>
+    <string name="prefs_update_download_desc">먼저 내려받아 확인한 뒤 시스템 설치 화면을 엽니다. 이 앱이 알 수 없는 출처를 설치하도록 허용해야 합니다.</string>
+    <string name="prefs_update_checking">최신 릴리스를 확인하는 중…</string>
+    <string name="prefs_update_up_to_date">이미 최신 버전 %1$s입니다</string>
+    <string name="prefs_update_available">새 버전 %1$s을(를) 찾았습니다(현재 %2$s)</string>
+    <string name="prefs_update_downloading">다운로드 중… %1$d%%</string>
+    <string name="prefs_update_installing">설치를 시작합니다</string>
+    <string name="prefs_update_error_network">GitHub에 연결할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.</string>
+    <string name="prefs_update_error_parse">최신 릴리스 정보를 해석할 수 없습니다.</string>
+    <string name="prefs_update_error_no_asset">최신 릴리스에 이 플랫폼용 패키지가 없습니다.</string>
+    <string name="prefs_update_error_hash">다운로드의 SHA-256이 릴리스와 달라 파일을 버렸습니다.</string>
+    <string name="prefs_update_error_apply">설치를 시작할 수 없습니다.</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

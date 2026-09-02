@@ -953,4 +953,52 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>Bắt đầu sử dụng</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>Giới thiệu</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>Phiên bản hiện tại</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>Phiên bản bản sao này đang chạy, dùng để đối chiếu bản phát hành mới nhất trên GitHub.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>Kiểm tra cập nhật</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>Đối chiếu với bản phát hành chính thức mới nhất trên GitHub. Tệp tải về được kiểm SHA-256, rồi thư mục xách tay này được thay và ứng dụng khởi động lại.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>Tải và cài đặt</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>Đang hỏi bản phát hành mới nhất…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>Đã là phiên bản mới nhất {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>Có phiên bản mới {0} (hiện tại {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>Đang tải… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>Ứng dụng sẽ thoát, thay tệp rồi tự khởi động lại.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>Không liên hệ được GitHub. Kiểm tra mạng rồi thử lại.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>Không đọc được thông tin bản phát hành mới nhất.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>Bản phát hành mới nhất không có gói cho nền tảng này.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>SHA-256 của tệp tải về không khớp bản phát hành. Đã bỏ tệp.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>Không áp dụng được bản cập nhật.</value>
+  </data>
 </root>

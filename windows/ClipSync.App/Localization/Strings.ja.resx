@@ -953,4 +953,52 @@
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>使いはじめる</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>情報</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>現在のバージョン</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>このコピーが実行しているバージョン。GitHub の最新正式リリースとの照合に使います。</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>更新を確認</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>GitHub の最新正式リリースと照合します。ダウンロード後に SHA-256 を検証し、このポータブルフォルダーを置き換えて再起動します。</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>ダウンロードしてインストール</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>最新リリースを確認しています…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>すでに最新バージョン {0} です</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>新しいバージョン {0} があります（現在 {1}）</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>ダウンロード中… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>終了してファイルを置き換えたあと、自動的に再起動します。</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>GitHub に接続できません。ネットワークを確認して再試行してください。</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>最新リリース情報を解析できませんでした。</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>最新リリースにこのプラットフォーム用のパッケージがありません。</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>ダウンロードの SHA-256 がリリースと一致しないため、ファイルを破棄しました。</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>更新を適用できませんでした。</value>
+  </data>
 </root>

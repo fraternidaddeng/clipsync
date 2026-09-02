@@ -107,6 +107,9 @@ import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.LocalReducedMotion
 import com.clipsync.android.ui.theme.clipSyncColors
 import com.clipsync.android.ui.theme.filmGrain
+import com.clipsync.android.update.AppUpdateInstaller
+import com.clipsync.android.update.GitHubReleaseClient
+import com.clipsync.android.update.readAppVersionName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -211,6 +214,11 @@ class MainActivity : AppCompatActivity() {
             .onStart { emit(syncSettings.serviceEnabled) }
             .distinctUntilChanged()
 
+    private val appUpdater by lazy {
+        val version = readAppVersionName(this)
+        AppUpdateInstaller(applicationContext, GitHubReleaseClient(currentVersion = version))
+    }
+
     private val preferencesViewModel: PreferencesViewModel by viewModels {
         PreferencesViewModel.factory(
             syncSettings,
@@ -218,6 +226,8 @@ class MainActivity : AppCompatActivity() {
             // screen (the resident notification's 暂停/恢复 actions); every change tick
             // re-syncs the ViewModel's mirror so the toggles never contradict the store.
             settingsChanges = SyncSettingsChanges.changes(this),
+            appVersion = readAppVersionName(this),
+            updater = appUpdater,
             sideEffects =
                 PreferencesViewModel.SideEffects(
                     onBootRestoreChanged = { enabled ->
@@ -259,6 +269,12 @@ class MainActivity : AppCompatActivity() {
                         } else if (pairingStore.peer() != null) {
                             startSyncService()
                         }
+                    },
+                    onInstallApk = { apk ->
+                        startActivity(appUpdater.installIntent(apk))
+                    },
+                    onNeedInstallPermission = {
+                        runCatching { startActivity(appUpdater.manageUnknownSourcesIntent()) }
                     },
                 ),
             historyRepository = { SyncStore.repository(applicationContext) },
@@ -859,6 +875,8 @@ private fun ClipSyncApp(
                             onClearHistory = preferencesViewModel::clearHistory,
                             onLanguageChange = preferencesViewModel::setLanguage,
                             onReplayOnboarding = { onboardingOpen = true },
+                            onCheckUpdate = preferencesViewModel::checkForUpdates,
+                            onDownloadUpdate = preferencesViewModel::downloadUpdate,
                             modifier = Modifier.padding(padding),
                         )
                 }

@@ -465,4 +465,23 @@
     <string name="prefs_group_help">Ayuda</string>
     <string name="prefs_replay_onboarding">Volver a ver el tutorial</string>
     <string name="prefs_replay_onboarding_desc">Recorre de nuevo el tutorial de primer uso desde la página de bienvenida; no cambia ningún ajuste ni el emparejamiento.</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">Acerca de</string>
+    <string name="prefs_current_version">Versión actual</string>
+    <string name="prefs_check_update">Buscar actualizaciones</string>
+    <string name="prefs_check_update_desc">Compara con la última publicación estable de GitHub. La descarga se verifica con SHA-256 y luego pasa al instalador del sistema.</string>
+    <string name="prefs_update_download">Descargar e instalar</string>
+    <string name="prefs_update_download_desc">Primero descarga y verifica, luego abre el instalador del sistema. Hay que permitir que esta app instale orígenes desconocidos.</string>
+    <string name="prefs_update_checking">Consultando la última publicación…</string>
+    <string name="prefs_update_up_to_date">Ya es la última versión %1$s</string>
+    <string name="prefs_update_available">Hay una versión nueva %1$s (actual %2$s)</string>
+    <string name="prefs_update_downloading">Descargando… %1$d%%</string>
+    <string name="prefs_update_installing">Listo para instalar</string>
+    <string name="prefs_update_error_network">No se pudo contactar con GitHub. Comprueba la red e inténtalo de nuevo.</string>
+    <string name="prefs_update_error_parse">No se pudo interpretar la información de la última publicación.</string>
+    <string name="prefs_update_error_no_asset">La última publicación no incluye un paquete para esta plataforma.</string>
+    <string name="prefs_update_error_hash">El SHA-256 de la descarga no coincide con la publicación. Se descartó el archivo.</string>
+    <string name="prefs_update_error_apply">No se pudo iniciar la instalación.</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

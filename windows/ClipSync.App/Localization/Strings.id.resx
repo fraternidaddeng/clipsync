@@ -953,4 +953,52 @@ Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>Mulai gunakan</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>Tentang</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>Versi saat ini</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>Versi yang dijalankan salinan ini, dipakai untuk membandingkan dengan rilis GitHub terbaru.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>Periksa pembaruan</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>Membandingkan dengan rilis resmi terbaru di GitHub. Unduhan diverifikasi SHA-256, lalu folder portabel ini diganti dan aplikasi dimulai ulang.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>Unduh dan pasang</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>Memeriksa rilis terbaru…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>Sudah versi terbaru {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>Ada versi baru {0} (saat ini {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>Mengunduh… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>Aplikasi akan keluar, mengganti berkasnya, lalu mulai ulang.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>Tidak dapat menghubungi GitHub. Periksa jaringan lalu coba lagi.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>Informasi rilis terbaru tidak dapat diurai.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>Rilis terbaru tidak punya paket untuk platform ini.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>SHA-256 unduhan tidak cocok dengan rilis. Berkas dibuang.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>Tidak dapat menerapkan pembaruan.</value>
+  </data>
 </root>

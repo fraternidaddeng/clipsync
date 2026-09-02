@@ -459,4 +459,23 @@
     <string name="prefs_group_help">Hulp</string>
     <string name="prefs_replay_onboarding">Rondleiding opnieuw bekijken</string>
     <string name="prefs_replay_onboarding_desc">Doorloop de rondleiding van de eerste start opnieuw vanaf de welkomstpagina; er verandert niets aan instellingen of koppeling.</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">Over</string>
+    <string name="prefs_current_version">Huidige versie</string>
+    <string name="prefs_check_update">Controleren op updates</string>
+    <string name="prefs_check_update_desc">Vergelijkt met de nieuwste stabiele GitHub-release. Downloads worden met SHA-256 gecontroleerd en daarna aan de systeeminstaller gegeven.</string>
+    <string name="prefs_update_download">Downloaden en installeren</string>
+    <string name="prefs_update_download_desc">Eerst downloaden en controleren, daarna de systeeminstaller openen. Deze app moet onbekende bronnen mogen installeren.</string>
+    <string name="prefs_update_checking">Nieuwste release opzoeken…</string>
+    <string name="prefs_update_up_to_date">Al de nieuwste versie %1$s</string>
+    <string name="prefs_update_available">Nieuwe versie %1$s gevonden (huidig %2$s)</string>
+    <string name="prefs_update_downloading">Downloaden… %1$d%%</string>
+    <string name="prefs_update_installing">Klaar om te installeren</string>
+    <string name="prefs_update_error_network">GitHub is niet bereikbaar. Controleer het netwerk en probeer opnieuw.</string>
+    <string name="prefs_update_error_parse">De gegevens van de nieuwste release konden niet worden gelezen.</string>
+    <string name="prefs_update_error_no_asset">De nieuwste release heeft geen pakket voor dit platform.</string>
+    <string name="prefs_update_error_hash">De SHA-256 van de download kwam niet overeen met de release. Het bestand is weggegooid.</string>
+    <string name="prefs_update_error_apply">Installatie kon niet worden gestart.</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

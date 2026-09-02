@@ -1,8 +1,15 @@
 package com.clipsync.android.ui.prefs
 
+import com.clipsync.android.R
+import com.clipsync.android.i18n.UiText
 import com.clipsync.android.pairing.FakeKeyValueStore
 import com.clipsync.android.storage.SyncSettingsStore
 import com.clipsync.android.sync.SyncServiceNotification
+import com.clipsync.android.update.AppUpdater
+import com.clipsync.android.update.GitHubLatestRelease
+import com.clipsync.android.update.ReleaseAsset
+import com.clipsync.android.update.UpdateCheckResult
+import com.clipsync.android.update.UpdatePlatform
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,6 +21,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 
 class PreferencesViewModelTest {
     private val keyValues = FakeKeyValueStore()
@@ -366,5 +374,108 @@ class PreferencesViewModelTest {
         model.setAutoApplyRemote(false)
         model.setImageSync(true)
         assertEquals(3, gateChecks.size)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `check for updates reports available when GitHub latest ranks higher`() {
+        val dispatcher = UnconfinedTestDispatcher()
+        Dispatchers.setMain(dispatcher)
+        try {
+            val latest =
+                GitHubLatestRelease(
+                    tagName = "v0.4.0",
+                    htmlUrl = "https://example.test",
+                    assets =
+                        listOf(
+                            ReleaseAsset(
+                                name = "ClipSync-android.apk",
+                                browserDownloadUrl = "https://example.test/app.apk",
+                                sizeBytes = 10,
+                                sha256Hex = "a".repeat(64),
+                            ),
+                        ),
+                )
+            val updater =
+                object : AppUpdater {
+                    override suspend fun check(currentVersion: String) =
+                        UpdateCheckResult.from(currentVersion, latest, UpdatePlatform.ANDROID)
+
+                    override suspend fun download(
+                        check: UpdateCheckResult,
+                        onProgress: (Long, Long) -> Unit,
+                    ): File = error("not used")
+
+                    override fun canRequestInstall(): Boolean = true
+                }
+            val model =
+                PreferencesViewModel(
+                    settings,
+                    appVersion = "0.3.0",
+                    updater = updater,
+                    ioDispatcher = dispatcher,
+                )
+            assertEquals("0.3.0", model.state.value.appVersion)
+
+            model.checkForUpdates()
+
+            assertTrue(model.state.value.updateAvailable)
+            assertEquals(
+                UiText.Res(R.string.prefs_update_available, "0.4.0", "0.3.0"),
+                model.state.value.updateStatus,
+            )
+        } finally {
+            Dispatchers.resetMain()
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `check for updates reports up to date when local already matches latest`() {
+        val dispatcher = UnconfinedTestDispatcher()
+        Dispatchers.setMain(dispatcher)
+        try {
+            val latest =
+                GitHubLatestRelease(
+                    tagName = "v0.3.0",
+                    htmlUrl = "https://example.test",
+                    assets =
+                        listOf(
+                            ReleaseAsset(
+                                name = "ClipSync-android.apk",
+                                browserDownloadUrl = "https://example.test/app.apk",
+                                sizeBytes = 10,
+                                sha256Hex = "a".repeat(64),
+                            ),
+                        ),
+                )
+            val updater =
+                object : AppUpdater {
+                    override suspend fun check(currentVersion: String) =
+                        UpdateCheckResult.from(currentVersion, latest, UpdatePlatform.ANDROID)
+
+                    override suspend fun download(
+                        check: UpdateCheckResult,
+                        onProgress: (Long, Long) -> Unit,
+                    ): File = error("not used")
+
+                    override fun canRequestInstall(): Boolean = true
+                }
+            val model =
+                PreferencesViewModel(
+                    settings,
+                    appVersion = "0.3.0",
+                    updater = updater,
+                    ioDispatcher = dispatcher,
+                )
+            model.checkForUpdates()
+            assertFalse(model.state.value.updateAvailable)
+            assertEquals(
+                UiText.Res(R.string.prefs_update_up_to_date, "0.3.0"),
+                model.state.value.updateStatus,
+            )
+        } finally {
+            Dispatchers.resetMain()
+        }
     }
 }

@@ -953,4 +953,52 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>Kullanmaya başla</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>Hakkında</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>Geçerli sürüm</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>Bu kopyanın çalıştırdığı sürüm; GitHub’daki en son sürümle karşılaştırmak için.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>Güncellemeleri denetle</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>GitHub’daki en son kararlı sürümle karşılaştırır. İndirme SHA-256 ile doğrulanır, bu taşınabilir klasör değiştirilir ve uygulama yeniden başlar.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>İndir ve yükle</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>En son sürüm sorgulanıyor…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>Zaten en son sürüm {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>Yeni sürüm {0} bulundu (geçerli {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>İndiriliyor… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>Uygulama kapanacak, dosyalarını değiştirecek ve yeniden başlayacak.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>GitHub’a ulaşılamadı. Ağı kontrol edip yeniden deneyin.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>En son sürüm bilgisi çözümlenemedi.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>En son sürümde bu platform için paket yok.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>İndirmenin SHA-256 değeri sürümle uyuşmadı. Dosya atıldı.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>Güncelleme uygulanamadı.</value>
+  </data>
 </root>

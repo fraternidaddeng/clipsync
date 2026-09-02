@@ -458,4 +458,23 @@
     <string name="prefs_group_help">Yardım</string>
     <string name="prefs_replay_onboarding">Tanıtımı yeniden izle</string>
     <string name="prefs_replay_onboarding_desc">İlk kurulum eğitimini karşılama sayfasından yeniden gezin; hiçbir ayarı veya eşleştirmeyi değiştirmez.</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">Hakkında</string>
+    <string name="prefs_current_version">Geçerli sürüm</string>
+    <string name="prefs_check_update">Güncellemeleri denetle</string>
+    <string name="prefs_check_update_desc">GitHub’daki en son kararlı sürümle karşılaştırır. İndirme SHA-256 ile doğrulanır ve sistem yükleyicisine verilir.</string>
+    <string name="prefs_update_download">İndir ve yükle</string>
+    <string name="prefs_update_download_desc">Önce indirip doğrular, sonra sistem yükleyicisini açar. Bu uygulamanın bilinmeyen kaynakları yüklemesine izin verilmelidir.</string>
+    <string name="prefs_update_checking">En son sürüm sorgulanıyor…</string>
+    <string name="prefs_update_up_to_date">Zaten en son sürüm %1$s</string>
+    <string name="prefs_update_available">Yeni sürüm %1$s bulundu (geçerli %2$s)</string>
+    <string name="prefs_update_downloading">İndiriliyor… %1$d%%</string>
+    <string name="prefs_update_installing">Yüklemeye hazır</string>
+    <string name="prefs_update_error_network">GitHub’a ulaşılamadı. Ağı kontrol edip yeniden deneyin.</string>
+    <string name="prefs_update_error_parse">En son sürüm bilgisi çözümlenemedi.</string>
+    <string name="prefs_update_error_no_asset">En son sürümde bu platform için paket yok.</string>
+    <string name="prefs_update_error_hash">İndirmenin SHA-256 değeri sürümle uyuşmadı. Dosya atıldı.</string>
+    <string name="prefs_update_error_apply">Yükleme başlatılamadı.</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

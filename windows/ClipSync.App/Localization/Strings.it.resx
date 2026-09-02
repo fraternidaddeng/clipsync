@@ -953,4 +953,52 @@ Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuot
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>Inizia a usare</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>Informazioni</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>Versione attuale</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>La versione in esecuzione su questa copia, usata per confrontarla con l’ultima pubblicazione GitHub.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>Controlla aggiornamenti</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>Confronta con l’ultima pubblicazione stabile su GitHub. Il download viene verificato con SHA-256, poi questa cartella portatile viene sostituita e l’app si riavvia.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>Scarica e installa</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>Controllo dell’ultima pubblicazione…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>È già l’ultima versione {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>Trovata la nuova versione {0} (attuale {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>Download… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>L’app si chiuderà, sostituirà i file e si riavvierà.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>Impossibile raggiungere GitHub. Controlla la rete e riprova.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>Impossibile interpretare le informazioni sull’ultima pubblicazione.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>L’ultima pubblicazione non ha un pacchetto per questa piattaforma.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>Lo SHA-256 del download non corrisponde alla pubblicazione. Il file è stato scartato.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>Impossibile applicare l’aggiornamento.</value>
+  </data>
 </root>

@@ -451,4 +451,23 @@
     <string name="prefs_group_help">Trợ giúp</string>
     <string name="prefs_replay_onboarding">Xem lại hướng dẫn</string>
     <string name="prefs_replay_onboarding_desc">Đi lại toàn bộ hướng dẫn lần đầu từ trang chào mừng; không thay đổi cài đặt hay ghép nối nào.</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">Giới thiệu</string>
+    <string name="prefs_current_version">Phiên bản hiện tại</string>
+    <string name="prefs_check_update">Kiểm tra cập nhật</string>
+    <string name="prefs_check_update_desc">Đối chiếu với bản phát hành chính thức mới nhất trên GitHub. Tệp tải về được kiểm SHA-256 rồi giao cho trình cài hệ thống.</string>
+    <string name="prefs_update_download">Tải và cài đặt</string>
+    <string name="prefs_update_download_desc">Tải và kiểm trước, rồi mở trình cài hệ thống. Ứng dụng này cần được phép cài nguồn không xác định.</string>
+    <string name="prefs_update_checking">Đang hỏi bản phát hành mới nhất…</string>
+    <string name="prefs_update_up_to_date">Đã là phiên bản mới nhất %1$s</string>
+    <string name="prefs_update_available">Có phiên bản mới %1$s (hiện tại %2$s)</string>
+    <string name="prefs_update_downloading">Đang tải… %1$d%%</string>
+    <string name="prefs_update_installing">Sắp cài đặt</string>
+    <string name="prefs_update_error_network">Không liên hệ được GitHub. Kiểm tra mạng rồi thử lại.</string>
+    <string name="prefs_update_error_parse">Không đọc được thông tin bản phát hành mới nhất.</string>
+    <string name="prefs_update_error_no_asset">Bản phát hành mới nhất không có gói cho nền tảng này.</string>
+    <string name="prefs_update_error_hash">SHA-256 của tệp tải về không khớp bản phát hành. Đã bỏ tệp.</string>
+    <string name="prefs_update_error_apply">Không khởi chạy được cài đặt.</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

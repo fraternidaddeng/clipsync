@@ -953,4 +953,52 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>Beginnen</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>Over</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>Huidige versie</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>De versie die deze kopie draait, om te vergelijken met de nieuwste GitHub-release.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>Controleren op updates</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>Vergelijkt met de nieuwste stabiele GitHub-release. Downloads worden met SHA-256 gecontroleerd, daarna wordt deze draagbare map vervangen en de app herstart.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>Downloaden en installeren</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>Nieuwste release opzoeken…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>Al de nieuwste versie {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>Nieuwe versie {0} gevonden (huidig {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>Downloaden… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>De app sluit, vervangt zijn bestanden en start opnieuw.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>GitHub is niet bereikbaar. Controleer het netwerk en probeer opnieuw.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>De gegevens van de nieuwste release konden niet worden gelezen.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>De nieuwste release heeft geen pakket voor dit platform.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>De SHA-256 van de download kwam niet overeen met de release. Het bestand is weggegooid.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>De update kon niet worden toegepast.</value>
+  </data>
 </root>

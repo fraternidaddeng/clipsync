@@ -458,4 +458,23 @@
     <string name="prefs_group_help">सहायता</string>
     <string name="prefs_replay_onboarding">परिचय फिर से देखें</string>
     <string name="prefs_replay_onboarding_desc">स्वागत पेज से पहली बार वाला ट्यूटोरियल दोबारा देखें; कोई सेटिंग या जोड़ी नहीं बदलती।</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">परिचय</string>
+    <string name="prefs_current_version">वर्तमान संस्करण</string>
+    <string name="prefs_check_update">अपडेट जाँचें</string>
+    <string name="prefs_check_update_desc">GitHub पर नवीनतम स्थिर रिलीज़ से मिलाएँ। डाउनलोड का SHA-256 जाँचने के बाद सिस्टम इंस्टॉलर को दिया जाता है।</string>
+    <string name="prefs_update_download">डाउनलोड कर इंस्टॉल करें</string>
+    <string name="prefs_update_download_desc">पहले डाउनलोड कर जाँचें, फिर सिस्टम इंस्टॉलर खोलें। इस ऐप को अज्ञात स्रोत इंस्टॉल करने की अनुमति चाहिए।</string>
+    <string name="prefs_update_checking">नवीनतम रिलीज़ जाँच रहे हैं…</string>
+    <string name="prefs_update_up_to_date">पहले से नवीनतम संस्करण %1$s है</string>
+    <string name="prefs_update_available">नया संस्करण %1$s मिला (वर्तमान %2$s)</string>
+    <string name="prefs_update_downloading">डाउनलोड हो रहा है… %1$d%%</string>
+    <string name="prefs_update_installing">इंस्टॉल के लिए तैयार</string>
+    <string name="prefs_update_error_network">GitHub से संपर्क नहीं हो सका। नेटवर्क जाँचकर फिर कोशिश करें।</string>
+    <string name="prefs_update_error_parse">नवीनतम रिलीज़ जानकारी समझ नहीं आई।</string>
+    <string name="prefs_update_error_no_asset">नवीनतम रिलीज़ में इस प्लेटफ़ॉर्म का पैकेज नहीं है।</string>
+    <string name="prefs_update_error_hash">डाउनलोड का SHA-256 रिलीज़ से नहीं मिला। फ़ाइल हटा दी गई।</string>
+    <string name="prefs_update_error_apply">इंस्टॉल शुरू नहीं हो सका।</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

@@ -459,4 +459,23 @@
     <string name="prefs_group_help">Help</string>
     <string name="prefs_replay_onboarding">Replay the introduction</string>
     <string name="prefs_replay_onboarding_desc">Walk the first-run tutorial again from the welcome page; changes no settings or pairing.</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">About</string>
+    <string name="prefs_current_version">Current version</string>
+    <string name="prefs_check_update">Check for updates</string>
+    <string name="prefs_check_update_desc">Compare with the latest stable GitHub Release. Downloads are SHA-256 checked, then handed to the system installer.</string>
+    <string name="prefs_update_download">Download and install</string>
+    <string name="prefs_update_download_desc">Download and verify first, then open the system installer. This app must be allowed to install unknown sources.</string>
+    <string name="prefs_update_checking">Checking the latest release…</string>
+    <string name="prefs_update_up_to_date">Already the latest version %1$s</string>
+    <string name="prefs_update_available">New version %1$s found (current %2$s)</string>
+    <string name="prefs_update_downloading">Downloading… %1$d%%</string>
+    <string name="prefs_update_installing">Ready to install</string>
+    <string name="prefs_update_error_network">Could not reach GitHub. Check the network and try again.</string>
+    <string name="prefs_update_error_parse">The latest release information could not be parsed.</string>
+    <string name="prefs_update_error_no_asset">The latest release has no package for this platform.</string>
+    <string name="prefs_update_error_hash">The download’s SHA-256 did not match the release. The file was discarded.</string>
+    <string name="prefs_update_error_apply">Could not start the installer.</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

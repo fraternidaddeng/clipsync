@@ -11,6 +11,8 @@ import com.clipsync.android.storage.ClipSyncRepository
 import com.clipsync.android.storage.HistoryTransferErrorCodes
 import com.clipsync.android.storage.HistoryTransferException
 import com.clipsync.android.storage.SyncSettingsStore
+import com.clipsync.android.update.AppUpdater
+import com.clipsync.android.update.UpdateCheckResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +21,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -59,6 +63,12 @@ data class PreferencesUiState(
     val languageTag: String = LanguageCatalog.FOLLOW_SYSTEM,
     /** Result line of the last 导出历史/导入历史/清空历史 run; null until one has run. */
     val transferStatus: UiText? = null,
+    /** Stamped versionName shown in 偏好 · 关于. */
+    val appVersion: String = "0.0.0",
+    /** Idle / checking / up-to-date / available / progress / error for the GitHub updater. */
+    val updateStatus: UiText? = null,
+    val updateBusy: Boolean = false,
+    val updateAvailable: Boolean = false,
 )
 
 /** One system-bonded Bluetooth device the fallback may dial; display data only. */
@@ -85,6 +95,7 @@ data class BondedBluetoothDevice(
  * and this ViewModel reports the honest outcome in
  * [PreferencesUiState.transferStatus].
  */
+@Suppress("LongParameterList")
 class PreferencesViewModel(
     private val settings: SyncSettingsStore,
     private val sideEffects: SideEffects = SideEffects(),
@@ -100,6 +111,8 @@ class PreferencesViewModel(
     private val historyRepository: () -> ClipSyncRepository? = { null },
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val nowMs: () -> Long = System::currentTimeMillis,
+    private val appVersion: String = "0.0.0",
+    private val updater: AppUpdater? = null,
 ) : ViewModel() {
     /** The host-owned reactions to toggles; each defaults to a no-op for tests. */
     data class SideEffects(
@@ -110,7 +123,15 @@ class PreferencesViewModel(
         val onBluetoothFallbackChanged: (Boolean) -> Unit = {},
         /** 后台同步服务 flipped: the host stops the foreground service, or starts it (if paired). */
         val onServiceEnabledChanged: (Boolean) -> Unit = {},
+        /** Verified APK is ready; the host launches the system installer. */
+        val onInstallApk: (File) -> Unit = {},
+        /** Android 8+ unknown-sources grant is missing; the host opens the settings page. */
+        val onNeedInstallPermission: () -> Unit = {},
     )
+
+    private var pendingUpdate: UpdateCheckResult? = null
+    private var updateStatus: UiText? = null
+    private var updateBusy: Boolean = false
 
     private val mutableState = MutableStateFlow(stateFromStore(transferStatus = null))
 
@@ -159,6 +180,10 @@ class PreferencesViewModel(
             inboxNotify = settings.inboxNotifyEnabled,
             languageTag = settings.languageTag,
             transferStatus = transferStatus,
+            appVersion = appVersion,
+            updateStatus = updateStatus,
+            updateBusy = updateBusy,
+            updateAvailable = pendingUpdate?.updateAvailable == true && pendingUpdate?.payload != null,
         )
 
     /**
@@ -388,6 +413,92 @@ class PreferencesViewModel(
     }
 
     /**
+     * 偏好 · 关于: compare [appVersion] to GitHub `/releases/latest`. Checking
+     * never downloads; a newer APK is offered as a separate action.
+     */
+    fun checkForUpdates() {
+        val installer = updater ?: return
+        viewModelScope.launch(ioDispatcher) {
+            pendingUpdate = null
+            updateBusy = true
+            updateStatus = UiText.Res(R.string.prefs_update_checking)
+            mutableState.update { stateFromStore(transferStatus = it.transferStatus) }
+            updateStatus =
+                try {
+                    val result = installer.check(appVersion)
+                    pendingUpdate = result
+                    when {
+                        result.payload == null -> UiText.Res(R.string.prefs_update_error_no_asset)
+                        result.updateAvailable ->
+                            UiText.Res(
+                                R.string.prefs_update_available,
+                                result.latest.versionLabel,
+                                result.currentVersion,
+                            )
+                        else -> UiText.Res(R.string.prefs_update_up_to_date, result.currentVersion)
+                    }
+                } catch (_: IOException) {
+                    UiText.Res(R.string.prefs_update_error_network)
+                } catch (_: IllegalArgumentException) {
+                    UiText.Res(R.string.prefs_update_error_parse)
+                } catch (_: Exception) {
+                    UiText.Res(R.string.prefs_update_error_network)
+                }
+            updateBusy = false
+            mutableState.update { stateFromStore(transferStatus = it.transferStatus) }
+        }
+    }
+
+    fun downloadUpdate() {
+        val installer = updater
+        val check = pendingUpdate
+        when {
+            installer == null || check == null || !check.updateAvailable || check.payload == null ->
+                Unit
+            !installer.canRequestInstall() -> {
+                updateStatus = UiText.Res(R.string.prefs_update_download_desc)
+                mutableState.update { stateFromStore(transferStatus = it.transferStatus) }
+                sideEffects.onNeedInstallPermission()
+            }
+            else ->
+                viewModelScope.launch(ioDispatcher) {
+                    updateBusy = true
+                    updateStatus = UiText.Res(R.string.prefs_update_downloading, 0)
+                    mutableState.update { stateFromStore(transferStatus = it.transferStatus) }
+                    try {
+                        val apk =
+                            installer.download(check) { received, total ->
+                                val percent =
+                                    if (total > 0) {
+                                        ((received * PERCENT_MAX) / total).toInt().coerceIn(0, PERCENT_MAX)
+                                    } else {
+                                        0
+                                    }
+                                updateStatus = UiText.Res(R.string.prefs_update_downloading, percent)
+                                mutableState.update { stateFromStore(transferStatus = it.transferStatus) }
+                            }
+                        updateStatus = UiText.Res(R.string.prefs_update_installing)
+                        mutableState.update { stateFromStore(transferStatus = it.transferStatus) }
+                        withContext(Dispatchers.Main.immediate) {
+                            sideEffects.onInstallApk(apk)
+                        }
+                    } catch (exception: IOException) {
+                        updateStatus =
+                            if (exception.message?.contains("SHA-256") == true) {
+                                UiText.Res(R.string.prefs_update_error_hash)
+                            } else {
+                                UiText.Res(R.string.prefs_update_error_network)
+                            }
+                    } catch (_: Exception) {
+                        updateStatus = UiText.Res(R.string.prefs_update_error_apply)
+                    }
+                    updateBusy = false
+                    mutableState.update { stateFromStore(transferStatus = it.transferStatus) }
+                }
+        }
+    }
+
+    /**
      * 清空历史 (settings-roadmap P0-5): one local batch delete of every visible entry,
      * with the same local-delete semantics as the per-row swipe — soft-deleted terminal
      * markers, never a remote recall — plus image-blob garbage collection. The two-step
@@ -406,6 +517,8 @@ class PreferencesViewModel(
     }
 
     companion object {
+        private const val PERCENT_MAX = 100
+
         fun describeTransferError(errorCode: String): UiText =
             UiText.Res(
                 when (errorCode) {
@@ -419,11 +532,14 @@ class PreferencesViewModel(
                 },
             )
 
+        @Suppress("LongParameterList")
         fun factory(
             settings: SyncSettingsStore,
             sideEffects: SideEffects = SideEffects(),
             settingsChanges: Flow<Unit>? = null,
             historyRepository: () -> ClipSyncRepository? = { null },
+            appVersion: String = "0.0.0",
+            updater: AppUpdater? = null,
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
@@ -433,6 +549,8 @@ class PreferencesViewModel(
                         sideEffects,
                         settingsChanges,
                         historyRepository,
+                        appVersion = appVersion,
+                        updater = updater,
                     ) as T
             }
     }

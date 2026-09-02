@@ -472,4 +472,23 @@
     <string name="prefs_group_help">Pomoc</string>
     <string name="prefs_replay_onboarding">Obejrzyj samouczek ponownie</string>
     <string name="prefs_replay_onboarding_desc">Przejdź samouczek pierwszego uruchomienia od strony powitalnej; nie zmienia żadnych ustawień ani parowania.</string>
+
+    <!-- 偏好 · 关于 / 内置更新 -->
+    <string name="prefs_group_about">Informacje</string>
+    <string name="prefs_current_version">Bieżąca wersja</string>
+    <string name="prefs_check_update">Sprawdź aktualizacje</string>
+    <string name="prefs_check_update_desc">Porównuje z najnowszym stabilnym wydaniem na GitHubie. Pobranie jest sprawdzane SHA-256 i przekazywane instalatorowi systemowemu.</string>
+    <string name="prefs_update_download">Pobierz i zainstaluj</string>
+    <string name="prefs_update_download_desc">Najpierw pobiera i weryfikuje, potem otwiera instalator systemowy. Aplikacja musi móc instalować nieznane źródła.</string>
+    <string name="prefs_update_checking">Sprawdzanie najnowszego wydania…</string>
+    <string name="prefs_update_up_to_date">To już najnowsza wersja %1$s</string>
+    <string name="prefs_update_available">Jest nowa wersja %1$s (obecna %2$s)</string>
+    <string name="prefs_update_downloading">Pobieranie… %1$d%%</string>
+    <string name="prefs_update_installing">Gotowe do instalacji</string>
+    <string name="prefs_update_error_network">Nie udało się połączyć z GitHubem. Sprawdź sieć i spróbuj ponownie.</string>
+    <string name="prefs_update_error_parse">Nie udało się odczytać informacji o najnowszym wydaniu.</string>
+    <string name="prefs_update_error_no_asset">Najnowsze wydanie nie ma pakietu dla tej platformy.</string>
+    <string name="prefs_update_error_hash">SHA-256 pobrania nie zgadza się z wydaniem. Plik odrzucono.</string>
+    <string name="prefs_update_error_apply">Nie udało się uruchomić instalacji.</string>
+    <string name="prefs_footer_version">CLIPSYNC %1$s</string>
 </resources>

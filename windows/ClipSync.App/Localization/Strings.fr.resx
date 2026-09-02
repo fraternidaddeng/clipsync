@@ -953,4 +953,52 @@ Toutes les entrées de ce PC (images comprises) seront supprimées en une fois. 
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>Commencer à utiliser</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>Version actuelle</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>La version exécutée par cette copie, pour la comparer à la dernière publication GitHub.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>Rechercher des mises à jour</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>Compare avec la dernière publication stable sur GitHub. Le téléchargement est vérifié par SHA-256, puis ce dossier portable est remplacé et l’appli redémarre.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>Télécharger et installer</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>Interrogation de la dernière publication…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>Déjà la dernière version {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>Nouvelle version {0} trouvée (actuelle {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>Téléchargement… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>L’appli va quitter, remplacer ses fichiers, puis redémarrer.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>Impossible de joindre GitHub. Vérifiez le réseau et réessayez.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>Les informations de la dernière publication n’ont pas pu être lues.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>La dernière publication n’a pas de paquet pour cette plateforme.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>Le SHA-256 du téléchargement ne correspond pas à la publication. Le fichier a été jeté.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>Impossible d’appliquer la mise à jour.</value>
+  </data>
 </root>

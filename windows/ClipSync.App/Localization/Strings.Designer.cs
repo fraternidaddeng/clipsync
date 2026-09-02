@@ -320,4 +320,20 @@ public static partial class Strings
     public static string Onboarding_Finish_Body => Get(nameof(Onboarding_Finish_Body));
     public static string Onboarding_OpenConduit => Get(nameof(Onboarding_OpenConduit));
     public static string Onboarding_StartUsing => Get(nameof(Onboarding_StartUsing));
+    public static string Prefs_Group_About => Get(nameof(Prefs_Group_About));
+    public static string Prefs_CurrentVersion => Get(nameof(Prefs_CurrentVersion));
+    public static string Prefs_CurrentVersion_Desc => Get(nameof(Prefs_CurrentVersion_Desc));
+    public static string Prefs_CheckUpdate => Get(nameof(Prefs_CheckUpdate));
+    public static string Prefs_CheckUpdate_Desc => Get(nameof(Prefs_CheckUpdate_Desc));
+    public static string Prefs_Update_Download => Get(nameof(Prefs_Update_Download));
+    public static string Prefs_Update_Checking => Get(nameof(Prefs_Update_Checking));
+    public static string Prefs_Update_UpToDateFormat => Get(nameof(Prefs_Update_UpToDateFormat));
+    public static string Prefs_Update_AvailableFormat => Get(nameof(Prefs_Update_AvailableFormat));
+    public static string Prefs_Update_DownloadingFormat => Get(nameof(Prefs_Update_DownloadingFormat));
+    public static string Prefs_Update_Restarting => Get(nameof(Prefs_Update_Restarting));
+    public static string Prefs_Update_Error_Network => Get(nameof(Prefs_Update_Error_Network));
+    public static string Prefs_Update_Error_Parse => Get(nameof(Prefs_Update_Error_Parse));
+    public static string Prefs_Update_Error_NoAsset => Get(nameof(Prefs_Update_Error_NoAsset));
+    public static string Prefs_Update_Error_Hash => Get(nameof(Prefs_Update_Error_Hash));
+    public static string Prefs_Update_Error_Apply => Get(nameof(Prefs_Update_Error_Apply));
 }

@@ -1,12 +1,15 @@
 using ClipSync.App.Localization;
+using ClipSync.App.Update;
 using ClipSync.Core.Clipboard;
 using ClipSync.Core.Clipboard.PrivilegedHost;
 using ClipSync.Core.Storage;
+using ClipSync.Core.Update;
 using ClipSync.Peer.Server;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net.Http;
 using System.Text;
 
 namespace ClipSync.App.ViewModels;
@@ -41,7 +44,8 @@ public partial class MainViewModel(
     Func<string?>? exportPathPicker = null,
     Func<string?>? importPathPicker = null,
     Func<bool>? clearHistoryConfirmer = null,
-    PrivilegedHostAssistant? privilegedHost = null) : ObservableObject
+    PrivilegedHostAssistant? privilegedHost = null,
+    WindowsAppUpdater? appUpdater = null) : ObservableObject
 {
     private bool initialized;
 
@@ -269,6 +273,32 @@ public partial class MainViewModel(
     /// <summary>Result line of the last 导出历史/导入历史 run; empty until either has run.</summary>
     [ObservableProperty]
     private string historyTransferStatus = string.Empty;
+
+    /// <summary>Stamped assembly version shown in 偏好 · 关于.</summary>
+    [ObservableProperty]
+    private string appVersion = LocalAppVersion.Read();
+
+    /// <summary>Idle / checking / up-to-date / available / progress / error for the GitHub updater.</summary>
+    [ObservableProperty]
+    private string updateStatus = string.Empty;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CheckForUpdatesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DownloadUpdateCommand))]
+    private bool updateBusy;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DownloadUpdateCommand))]
+    private bool updateAvailable;
+
+    private UpdateCheckResult? pendingUpdate;
+    private readonly WindowsAppUpdater updates = appUpdater ?? new WindowsAppUpdater();
+
+    /// <summary>
+    /// Raised after the ZIP has been verified and extracted. The app layer launches
+    /// the helper script and exits so files can be replaced.
+    /// </summary>
+    public event Action<string>? UpdateReadyToApply;
 
     // ===== 特权直读（Android 后台直读）· PC 侧 adb 协助（任务 1）=====
     // 门槛是明确同意，绝不静默：未 consent 前卡片只解释、一条 adb 命令都不发（威胁模型）。
@@ -1544,6 +1574,102 @@ public partial class MainViewModel(
         DeviceRevoked?.Invoke(target.DeviceId);
         await RefreshDevicesAsync();
     }
+
+    /// <summary>
+    /// 偏好 · 关于: compare this portable copy to GitHub <c>/releases/latest</c>.
+    /// Checking never downloads; a newer ZIP is offered as a separate action.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanCheckForUpdates))]
+    private async Task CheckForUpdatesAsync()
+    {
+        UpdateBusy = true;
+        UpdateAvailable = false;
+        pendingUpdate = null;
+        UpdateStatus = Strings.Prefs_Update_Checking;
+        try
+        {
+            var result = await updates.CheckAsync();
+            pendingUpdate = result;
+            if (result.Payload is null)
+            {
+                UpdateStatus = Strings.Prefs_Update_Error_NoAsset;
+                return;
+            }
+
+            if (result.UpdateAvailable)
+            {
+                UpdateAvailable = true;
+                UpdateStatus = Strings.Format(
+                    nameof(Strings.Prefs_Update_AvailableFormat),
+                    result.Latest.VersionLabel,
+                    result.CurrentVersion);
+            }
+            else
+            {
+                UpdateStatus = Strings.Format(
+                    nameof(Strings.Prefs_Update_UpToDateFormat),
+                    result.CurrentVersion);
+            }
+        }
+        catch (HttpRequestException)
+        {
+            UpdateStatus = Strings.Prefs_Update_Error_Network;
+        }
+        catch (FormatException)
+        {
+            UpdateStatus = Strings.Prefs_Update_Error_Parse;
+        }
+        catch (Exception)
+        {
+            UpdateStatus = Strings.Prefs_Update_Error_Network;
+        }
+        finally
+        {
+            UpdateBusy = false;
+        }
+    }
+
+    private bool CanCheckForUpdates() => !UpdateBusy;
+
+    [RelayCommand(CanExecute = nameof(CanDownloadUpdate))]
+    private async Task DownloadUpdateAsync()
+    {
+        var check = pendingUpdate;
+        if (check is null || !check.UpdateAvailable || check.Payload is null)
+        {
+            return;
+        }
+
+        UpdateBusy = true;
+        var progress = new Progress<UpdateDownloadProgress>(p =>
+            UpdateStatus = Strings.Format(nameof(Strings.Prefs_Update_DownloadingFormat), p.Percent));
+        try
+        {
+            UpdateStatus = Strings.Format(nameof(Strings.Prefs_Update_DownloadingFormat), 0);
+            var script = await updates.PrepareApplyAsync(check, progress);
+            UpdateStatus = Strings.Prefs_Update_Restarting;
+            UpdateReadyToApply?.Invoke(script);
+        }
+        catch (HttpRequestException)
+        {
+            UpdateStatus = Strings.Prefs_Update_Error_Network;
+        }
+        catch (InvalidOperationException exception) when (
+            exception.Message.Contains("SHA-256", StringComparison.Ordinal))
+        {
+            UpdateStatus = Strings.Prefs_Update_Error_Hash;
+        }
+        catch (Exception)
+        {
+            UpdateStatus = Strings.Prefs_Update_Error_Apply;
+        }
+        finally
+        {
+            UpdateBusy = false;
+        }
+    }
+
+    private bool CanDownloadUpdate() => UpdateAvailable && !UpdateBusy && pendingUpdate?.Payload is not null;
 
     /// <summary>
     /// 设备色手动改（P1#14）: a swatch tap on a conduit device row. Choosing the

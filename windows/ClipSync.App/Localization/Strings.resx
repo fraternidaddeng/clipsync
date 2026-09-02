@@ -953,4 +953,52 @@
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>开始使用</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>当前版本</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>本机正在运行的版本，用来对照 GitHub 最新正式发布。</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>检查更新</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>对照 GitHub 仓库的最新正式发布。下载后会校验 SHA-256，再替换本机便携目录并重启。</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>下载并安装</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>正在查询最新发布…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>已是最新版本 {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>发现新版本 {0}（当前 {1}）</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>正在下载… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>即将退出并替换程序文件，随后自动重启。</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>无法联系 GitHub。请检查网络后重试。</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>最新发布信息无法解析。</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>最新发布里没有本平台的安装包。</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>下载文件的 SHA-256 与发布页不一致，已丢弃。</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>无法安装更新。</value>
+  </data>
 </root>

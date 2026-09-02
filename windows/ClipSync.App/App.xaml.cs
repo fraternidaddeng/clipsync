@@ -9,7 +9,9 @@ using ClipSync.App.Startup;
 using ClipSync.App.Sync;
 using ClipSync.App.Theme;
 using ClipSync.App.Tray;
+using ClipSync.App.Update;
 using ClipSync.App.ViewModels;
+using System.Diagnostics;
 using ClipSync.Core.Clipboard;
 using ClipSync.Core.Clipboard.PrivilegedHost;
 using ClipSync.Core.Onboarding;
@@ -89,6 +91,7 @@ public partial class App : Application
         // launch); the assistant issues real adb calls only from explicit, consented actions.
         collection.AddSingleton<IAdbRunner>(_ => new ProcessAdbRunner());
         collection.AddSingleton<PrivilegedHostAssistant>();
+        collection.AddSingleton<WindowsAppUpdater>();
         collection.AddSingleton<MainViewModel>();
         collection.AddSingleton<MainWindow>();
         services = collection.BuildServiceProvider();
@@ -115,6 +118,7 @@ public partial class App : Application
         mainViewModel = viewModel;
         viewModel.PropertyChanged += OnViewModelPropertyChanged;
         viewModel.Devices.CollectionChanged += OnDevicesChanged;
+        viewModel.UpdateReadyToApply += OnUpdateReadyToApply;
         UpdateTrayState();
 
         // 开机自启（P0-3）: re-assert the per-user Run entry so a moved executable heals
@@ -655,6 +659,35 @@ public partial class App : Application
     private void OnImageSyncEnabledChanged() => syncHost?.DisconnectAllSessions();
 
     /// <summary>
+    /// The ZIP is already on disk and hashed. Launch the helper, then exit so
+    /// it can replace this portable folder and restart us.
+    /// </summary>
+    private void OnUpdateReadyToApply(string scriptPath)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = scriptPath,
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                WorkingDirectory = Path.GetDirectoryName(scriptPath) ?? string.Empty,
+            });
+        }
+        catch (Exception)
+        {
+            if (mainViewModel is not null)
+            {
+                mainViewModel.UpdateStatus = Strings.Prefs_Update_Error_Apply;
+            }
+
+            return;
+        }
+
+        Shutdown();
+    }
+
+    /// <summary>
     /// A confirmed pairing superseded stale same-name records (same phone, fresh device id):
     /// their secrets are already void, so drop any session they might still hold.
     /// </summary>
@@ -829,6 +862,7 @@ public partial class App : Application
         {
             mainViewModel.PropertyChanged -= OnViewModelPropertyChanged;
             mainViewModel.Devices.CollectionChanged -= OnDevicesChanged;
+            mainViewModel.UpdateReadyToApply -= OnUpdateReadyToApply;
         }
         if (hotkeyManager is not null)
         {

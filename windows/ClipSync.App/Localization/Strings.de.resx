@@ -953,4 +953,52 @@ Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelö
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>Loslegen</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>Aktuelle Version</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>Die Version, die diese Kopie ausführt — zum Vergleich mit der neuesten GitHub-Veröffentlichung.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>Nach Updates suchen</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>Vergleicht mit der neuesten stabilen GitHub-Veröffentlichung. Downloads werden per SHA-256 geprüft, dann wird dieser portable Ordner ersetzt und neu gestartet.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>Herunterladen und installieren</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>Neueste Veröffentlichung wird abgefragt…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>Bereits die neueste Version {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>Neue Version {0} gefunden (aktuell {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>Wird heruntergeladen… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>Die App beendet sich, ersetzt ihre Dateien und startet neu.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>GitHub ist nicht erreichbar. Netzwerk prüfen und erneut versuchen.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>Die Angaben zur neuesten Veröffentlichung konnten nicht gelesen werden.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>Die neueste Veröffentlichung enthält kein Paket für diese Plattform.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>Die SHA-256 der Datei stimmt nicht mit der Veröffentlichung überein. Die Datei wurde verworfen.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>Update konnte nicht angewendet werden.</value>
+  </data>
 </root>

@@ -953,4 +953,52 @@
   <data name="Onboarding_StartUsing" xml:space="preserve">
     <value>Начать работу</value>
   </data>
+  <data name="Prefs_Group_About" xml:space="preserve">
+    <value>О приложении</value>
+  </data>
+  <data name="Prefs_CurrentVersion" xml:space="preserve">
+    <value>Текущая версия</value>
+  </data>
+  <data name="Prefs_CurrentVersion_Desc" xml:space="preserve">
+    <value>Версия этой копии; ею сверяют последний выпуск на GitHub.</value>
+  </data>
+  <data name="Prefs_CheckUpdate" xml:space="preserve">
+    <value>Проверить обновления</value>
+  </data>
+  <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
+    <value>Сверяет с последним стабильным выпуском на GitHub. Загрузка проверяется SHA-256, затем эта переносная папка заменяется и приложение перезапускается.</value>
+  </data>
+  <data name="Prefs_Update_Download" xml:space="preserve">
+    <value>Скачать и установить</value>
+  </data>
+  <data name="Prefs_Update_Checking" xml:space="preserve">
+    <value>Запрос последнего выпуска…</value>
+  </data>
+  <data name="Prefs_Update_UpToDateFormat" xml:space="preserve">
+    <value>Уже последняя версия {0}</value>
+  </data>
+  <data name="Prefs_Update_AvailableFormat" xml:space="preserve">
+    <value>Найдена новая версия {0} (сейчас {1})</value>
+  </data>
+  <data name="Prefs_Update_DownloadingFormat" xml:space="preserve">
+    <value>Скачивание… {0}%</value>
+  </data>
+  <data name="Prefs_Update_Restarting" xml:space="preserve">
+    <value>Приложение закроется, заменит свои файлы и перезапустится.</value>
+  </data>
+  <data name="Prefs_Update_Error_Network" xml:space="preserve">
+    <value>Не удалось связаться с GitHub. Проверьте сеть и повторите.</value>
+  </data>
+  <data name="Prefs_Update_Error_Parse" xml:space="preserve">
+    <value>Не удалось разобрать сведения о последнем выпуске.</value>
+  </data>
+  <data name="Prefs_Update_Error_NoAsset" xml:space="preserve">
+    <value>В последнем выпуске нет пакета для этой платформы.</value>
+  </data>
+  <data name="Prefs_Update_Error_Hash" xml:space="preserve">
+    <value>SHA-256 загрузки не совпал с выпуском. Файл удалён.</value>
+  </data>
+  <data name="Prefs_Update_Error_Apply" xml:space="preserve">
+    <value>Не удалось применить обновление.</value>
+  </data>
 </root>
