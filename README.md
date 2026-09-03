@@ -37,7 +37,7 @@ Android 10+ forbids ordinary apps from reading the clipboard in the background, 
 | **Overlay polling** | Overlay permission only | No PC needed; costs battery and second-level latency |
 | **Foreground / manual** | Nothing | Share sheet, quick tile, notification copy — always available |
 
-Every permission is granted through a visible, explained, revocable flow; revoke one and ClipSync downgrades automatically to the tiers that still work. The app never runs adb silently.
+Every permission is granted through a visible, explained, revocable flow; revoke one and ClipSync downgrades automatically to the tiers that still work. When you click "Start privileged direct read", the PC runs adb once to send the phone a single start command; at all other times it does not invoke adb.
 
 ### Bluetooth fallback (opt-in)
 
@@ -60,7 +60,7 @@ Grab prebuilt packages from [GitHub Releases](https://github.com/fraternidaddeng
 | `*.sha256` | SHA-256 checksum for each file |
 
 1. **Verify the checksums** against the `.sha256` sidecars (they are also listed in the release notes): `Get-FileHash` on Windows, `sha256sum -c` on Linux/macOS.
-2. **Windows** (Windows 10 22H2 or 11, x64): unzip anywhere and run `ClipSync.App.exe`. The binaries are **not code-signed**, so SmartScreen may warn on first launch — verify the SHA-256, then choose "More info → Run anyway". Allow the firewall prompt for private networks (TCP `47654`, UDP `47653` discovery). Uninstall = delete the folder plus the data directory; no registry residue.
+2. **Windows** (Windows 10 22H2 or 11, x64): unzip anywhere and run `ClipSync.App.exe`. The binaries are **not code-signed**, so SmartScreen may warn on first launch — verify the SHA-256, then choose "More info → Run anyway". Windows usually shows a firewall alert on first launch; tick "Private networks" and allow — the only thing that needs to be open is inbound TCP `47654`. If no prompt appears, your account is not an administrator, or you clicked "Cancel" earlier, follow [docs/install.md](docs/install.md) §3 to add the rule by hand and check the network type. Uninstall = delete the folder plus the data directory; if you enabled launch-at-startup or the firewall allow, switch them off / remove them in the app first (they are a per-user startup entry and one system firewall rule).
 3. **Android** (Android 10 / API 29 or later, no root): install the APK from Releases and allow "install unknown apps" when prompted. Debug builds are signed differently and cannot be installed over the release build.
 
 The full step-by-step guide — network setup, Tailscale, proxy (Clash/Surge) caveats, every Android tier, and troubleshooting — is [docs/install.md](docs/install.md) (Chinese; a copy ships inside the Windows ZIP).
@@ -75,6 +75,7 @@ The full step-by-step guide — network setup, Tailscale, proxy (Clash/Surge) ca
 
 ## Privacy and security
 
+- **Read before use**: [Privacy and risks](docs/privacy-and-risks.md) — where your content goes, who can see it, and what to watch for yourself.
 - Content moves only between devices you explicitly paired and fingerprint-verified, over TLS 1.3 with pinned certificates (Bluetooth fallback runs its own authenticated, encrypted channel).
 - No account, no cloud storage, no relay servers, no telemetry, no crash uploads.
 - Clipboard text never enters logs or notifications — enforced by dedicated tests; diagnostics exports are safe to share.

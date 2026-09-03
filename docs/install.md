@@ -26,8 +26,31 @@
 
 1. 解压 ZIP 到任意目录（如 `D:\Apps\`），得到 `ClipSync\` 文件夹；运行其中的 `ClipSync.App.exe`。
 2. 首次运行 SmartScreen 可能拦截（发布包未做代码签名）：点「更多信息」→「仍要运行」。
-3. Windows 防火墙弹窗时勾选**专用网络**并允许。程序监听 TCP `47654`（被占用时自动换端口）并在 UDP `47653` 做局域网发现广播（只含设备 ID/端口/指纹，不含剪贴板内容）。
-4. 应用常驻托盘（托盘右键：打开剪剪相传 / 诊断日志 / 退出）。数据在 `%LOCALAPPDATA%\ClipSync`（可用环境变量 `CLIPSYNC_DATA_DIR` 改）。卸载 = 删程序目录 + 删数据目录，无注册表残留。
+3. **放行防火墙——手机连不上电脑的第一原因。** 手机是主动连电脑的一方，电脑需要放行 **TCP `47654` 入站**（被占用时程序自动换端口，通路页显示当前端口）。UDP `47653` 只用于局域网发现广播：只发不收，只含设备 ID/端口/指纹，不含剪贴板内容，**不需要放行**。
+   - 通常首次监听时会弹「Windows 安全中心警报」，勾选**专用网络**并点「允许访问」即可。
+   - **若没有弹窗、或当前账户不是管理员、或之前点过「取消」**，弹窗不会再出现，需要手动加规则。以管理员身份打开 PowerShell 执行：
+
+     ```powershell
+     New-NetFirewallRule -DisplayName "ClipSync TCP 47654" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 47654 -Profile Private
+     ```
+
+     验证规则已存在且启用：
+
+     ```powershell
+     Get-NetFirewallRule -Direction Inbound -Enabled True | Get-NetFirewallPortFilter | Where-Object LocalPort -eq 47654
+     ```
+
+   - **检查网络类型。** 只放行「专用网络」的规则在「公用网络」上不生效，而 Windows 11 把新连接的 Wi-Fi 默认归为**公用**。查看当前类型：`Get-NetConnectionProfile`（看 `NetworkCategory`）。若为 `Public`，两种改法：设置 → 网络和 Internet → Wi-Fi → 该网络的属性 → 选「专用网络」；或把规则改为 `-Profile Private,Public`——代价是酒店/咖啡馆 Wi-Fi 上同网段设备也能连到该端口（读内容仍需配对；暴露面见 `docs/privacy-and-risks.zh-CN.md` §7）。
+   - **之前在弹窗点过「取消」**：Windows 会为 `ClipSync.App.exe` 建一条阻止规则并不再弹窗。查找并删除它：
+
+     ```powershell
+     Get-NetFirewallApplicationFilter | Where-Object Program -like '*ClipSync.App.exe' | Get-NetFirewallRule
+     Get-NetFirewallApplicationFilter | Where-Object Program -like '*ClipSync.App.exe' | Get-NetFirewallRule | Where-Object Action -eq Block | Remove-NetFirewallRule
+     ```
+
+   - `Test-NetConnection` 在本机连本机走回环、绕过入站规则，**不能证明手机能连上**；要用手机或另一台设备测。
+   - **应用内放行（Windows 通路页）**：网络段的「防火墙」状态行三态显示「已放行 / 未发现放行规则 / 无法判断（第三方防火墙或组策略接管）」，旁有「重新检测」；连接卡的「放行 TCP 47654 入站」一行原样展示将执行的 `netsh` 命令，提供「复制命令 / 放行 / 移除」——默认仅专用网络、可勾选公用；点「放行」先弹确认窗看完整命令，再请求管理员权限（UAC）。二维码窗口与首次引导的配对页在检测到未放行时也会提示。它创建的是一条系统防火墙规则，卸载时需在应用内「移除」或手动执行 `Remove-NetFirewallRule -DisplayName "ClipSync TCP 47654"`。设计记录见 `docs/adr/0006-firewall-rule-management.md`。
+4. 应用常驻托盘（托盘右键：打开剪剪相传 / 诊断日志 / 退出）。数据在 `%LOCALAPPDATA%\ClipSync`（可用环境变量 `CLIPSYNC_DATA_DIR` 改）。卸载 = 删程序目录 + 删数据目录；另有两处按需清理：开过「开机自启」的，先在偏好里关掉（它写的是当前用户的 `Run` 启动项）；用应用内放行或手动加过防火墙规则的，先在应用内「移除」或手动删除规则。除此之外不写任何系统级配置。
 
 ## 4. 安装 Android 端
 
@@ -44,9 +67,9 @@
   3. 打开剪剪相传 → **通路** → 网络段的「连接」卡片 → 「额外监听地址」填入该地址（默认只监听局域网私有网段，Tailscale 的虚拟网卡地址需手动加入），**重启应用**生效。
   4. 之后配对二维码会带上 Tailscale 地址，Android 端正常扫码即可；已配对设备也会通过该地址重连。
 
-### 开着 Clash / Surge 等代理时（全局模式必读）
+### 开着 Clash / Surge / v2rayN 等代理时（TUN / 全局模式必读）
 
-同步走的是两台设备之间的**直连**（电脑端 TCP `47654`，Tailscale 场景为 `100.x` 地址），任何时候都不该经过代理。两端代码已显式绕过系统 HTTP(S) 代理（Android OkHttp 用 `Proxy.NO_PROXY`，Windows 用 `ClientWebSocket.Options.Proxy = null`），所以只开「系统代理」通常不影响同步；但 **TUN / VPN / 增强模式和全局（Global）模式在 IP 层接管全部流量，应用自己绕不开**，需要在代理软件里放行局域网：
+同步走的是两台设备之间的**直连**（电脑端 TCP `47654`，Tailscale 场景为 `100.x` 地址），任何时候都不该经过代理。两端代码已显式绕过系统 HTTP(S) 代理（Android OkHttp 用 `Proxy.NO_PROXY`，Windows 用 `ClientWebSocket.Options.Proxy = null`），所以只开「系统代理」通常不影响同步；但 **TUN / VPN / 增强模式和全局（Global）模式在 IP 层接管全部流量，应用自己绕不开**——症状与防火墙拦截几乎一样（扫码后连不上 / 配对失败 / 批准窗口不弹），需要在代理软件里放行局域网，**电脑和手机两端都要配**：
 
 - **Clash（Clash Verge / mihomo / Clash for Android）**
   - 首选开启「**绕过局域网 / Bypass LAN**」（TUN 场景对应 `route-exclude-address`）。注意**全局模式下规则表不生效**，这个开关依然有效，务必打开。
@@ -75,7 +98,11 @@ IP-CIDR,192.168.1.23/32,DIRECT,no-resolve
 IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
 ```
 
-- 手机上跑 Clash for Android（VPN 模式）时同样要开「绕过局域网」，或把上面的直连规则加进手机端配置。
+- **v2rayN / xray（Windows）与 v2rayNG（Android）**
+  - 首选开启「**绕过局域网 / Bypass LAN**」：v2rayN 在 设置 → 路由设置 里选带「绕过局域网」的预定义规则集；v2rayNG 在 设置 → 路由 → 勾选「绕过局域网」。TUN 模式下这个开关同样有效。
+  - 自定义路由时给电脑所在网段加直连（按实际网段改，电脑上 `ipconfig` 查）：`ip,192.168.124.0/24,direct`；只想放一个端口就加端口级规则 `tcp:47654→direct`。写进 xray 配置即 `routing.rules` 里一条 `"ip": ["192.168.124.0/24"]`（或 `"port": "47654"`、`"network": "tcp"`）指向 `"outboundTag": "direct"`，并放在代理规则**之前**。
+  - v2rayN 的 TUN 模式与 v2rayNG 的 VPN 模式都在 IP 层接管，应用自己绕不开；上面的直连规则在两端都要加。
+- 手机上跑 Clash for Android / v2rayNG（VPN 模式）时同样要开「绕过局域网」，或把上面的直连规则加进手机端配置。
 - 电脑端口被占用时程序会自动换端口（见第 3 节），改规则前先在剪剪相传里确认当前监听端口。改完代理配置后无需重新配对，重连即可。
 
 ## 6. 配对（约两分钟）
@@ -119,7 +146,7 @@ Android 10 起系统禁止普通应用后台读剪贴板，剪剪相传把它拆
 
 ### 8.1 开启「特权直读」（内置特权宿主）
 
-特权直读体验最好——息屏也能即时上行，且不占悬浮窗、不耗电轮询。它由剪剪相传**内置**的特权宿主（进程名 `clipsync_priv_server`）提供，**不需要安装任何第三方 App**。因为 Android 安全模型不允许应用自行开启这条通道，只能由电脑执行一次启动命令来拉起。全程显式同意，应用**绝不**静默调用 adb。
+特权直读体验最好——息屏也能即时上行，且不占悬浮窗、不耗电轮询。它由剪剪相传**内置**的特权宿主（进程名 `clipsync_priv_server`）提供，**不需要安装任何第三方 App**。因为 Android 安全模型不允许应用自行开启这条通道，只能由电脑执行一次启动命令来拉起。你点击「启动特权直读」时，电脑通过 adb 向手机发送一条启动命令；其他时候不调用 adb。
 
 首次准备（**手机上的手动步骤，无法代劳**）：
 
@@ -159,8 +186,8 @@ Android 11 起系统支持**无线调试**：手机与电脑连同一 Wi-Fi 即�
 | 现象 | 排查顺序 |
 |---|---|
 | 扫码报「码已过期」 | 一次性令牌超时，Windows 端重新出示二维码即可 |
-| 扫码后连不上 | ① 两台设备是否同一网段（AP 隔离/访客网络会挡）② Windows 防火墙是否放行专用网络 TCP 47654 / UDP 47653 ③ Tailscale 场景是否已填「额外监听地址」并重启 ④ 任一台开着 Clash/Surge 等代理时见第 5 节代理小节 |
-| 开着 Clash/Surge 等代理时连不上或不同步 | 见第 5 节「开着 Clash / Surge 等代理时」：开启「绕过局域网」，或给电脑 IP 与 47654 端口加 DIRECT 直连规则；TUN/VPN/全局模式必须放行局域网 |
+| 扫码后连不上；手机等约 90 秒后报「配对失败」，电脑没弹批准窗口 | ① 两台设备是否同一网段（AP 隔离/访客网络会挡；`ping` 电脑 IP 通只说明网络层没问题）② Windows 防火墙是否放行 TCP 47654 **入站**：`Get-NetFirewallRule -Direction Inbound -Enabled True \| Get-NetFirewallPortFilter \| Where-Object LocalPort -eq 47654` 无输出即未放行，按第 3 节手动加规则 ③ 当前网络类型是否为「专用」：`Get-NetConnectionProfile` 显示 `Public` 时仅专用的规则不生效 ④ 是否存在针对 `ClipSync.App.exe` 的 Block 规则（之前在弹窗点过「取消」），按第 3 节查删 ⑤ Tailscale 场景是否已填「额外监听地址」并重启 ⑥ 任一台开着 Clash/Surge/v2rayN 等代理的 TUN/VPN/全局模式时见第 5 节 ⑦ 托盘「诊断日志」里没有配对请求到达的记录，说明请求根本没到电脑（网络或防火墙）；有记录但没看到批准窗口，检查它是否被别的窗口遮住（批准超时 90 秒，超时后手机端才报失败） |
+| 开着 Clash/Surge/v2rayN 等代理时连不上或不同步 | 见第 5 节代理小节：开启「绕过局域网」，或给电脑 IP 与 47654 端口加直连规则；TUN/VPN/全局模式必须放行局域网，且两端都要配 |
 | 配对成功但不同步 | ① 两端「暂停」「私密模式」开关 ② Android 通路页当前档位状态 ③ 超过 1 MiB 的文本按协议「仅本地保留」，不属于丢失 |
 | 特权直读启动失败 / 一直不就绪 | ① 手机是否已开 USB 调试、且已在 RSA 指纹框点「一律允许」 ② 电脑 `adb devices` 是否显示 `device`（显示 `unauthorized` 就是没过 RSA 确认；`offline` 有线场景重插线或重启 adb，无线场景是会话失效——回手机无线调试页核对当前 IP:端口 重新连接）③ Windows 卡片是否已勾选 adb 授权同意、adb 位置是否显示已找到（未找到需装 Google platform-tools）④ **设备重启后需重新执行启动命令** ⑤ 实在不便用电脑就改用「悬浮窗轮询」档，无需电脑 |
 | 无线配对：扫码后电脑没反应 | ① 卡片是否还在「等待手机扫码」——超过两分钟会自动停止，重新出示即可 ② 手机与电脑是否同一网段（AP 隔离/访客网络会挡 mDNS 发现）③ 卡片提示「此 adb 不支持 mDNS 发现」时升级 Google platform-tools，或改用配对码方式 |
