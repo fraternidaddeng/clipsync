@@ -550,7 +550,7 @@
     <value>Preferences</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Changes apply immediately · clipboard content never appears in logs</value>
+    <value>Changes apply immediately · items that need a restart say so on their row</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>DISPLAY</value>

@@ -550,7 +550,7 @@
     <value>Preferências</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>As mudanças valem na hora · o conteúdo da área de transferência nunca aparece nos logs</value>
+    <value>As mudanças valem na hora · itens que exigem reiniciar avisam na própria linha</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>EXIBIÇÃO</value>

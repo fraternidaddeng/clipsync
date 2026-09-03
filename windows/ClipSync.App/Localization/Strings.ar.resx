@@ -550,7 +550,7 @@
     <value>التفضيلات</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>التغييرات تسري فورًا · محتوى الحافظة لا يظهر في السجلات أبدًا</value>
+    <value>التغييرات تسري فورًا · العناصر التي تحتاج إعادة تشغيل تشير إلى ذلك في صفّها</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>العرض</value>

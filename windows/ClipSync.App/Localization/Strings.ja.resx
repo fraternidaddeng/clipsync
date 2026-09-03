@@ -550,7 +550,7 @@
     <value>設定</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>変更は即時反映 · クリップボードの本文がログに載ることはありません</value>
+    <value>変更は即時反映 · 再起動が必要な項目はその行に表示されます</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>表 示 · DISPLAY</value>

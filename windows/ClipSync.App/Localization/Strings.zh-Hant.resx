@@ -550,7 +550,7 @@
     <value>偏好</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>改動即生效 · 剪貼簿內文永不出現在日誌裡</value>
+    <value>改動即生效 · 需要重新啟動才生效的項目會在列內標出</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>顯 示 · DISPLAY</value>

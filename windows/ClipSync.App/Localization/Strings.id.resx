@@ -550,7 +550,7 @@
     <value>Preferensi</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Perubahan langsung berlaku · isi papan klip tak pernah masuk log</value>
+    <value>Perubahan langsung berlaku · item yang perlu mulai ulang menyebutkannya di barisnya</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>TAMPILAN</value>

@@ -550,7 +550,7 @@
     <value>Tercihler</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Değişiklikler anında geçerli · pano içeriği asla günlüklere yazılmaz</value>
+    <value>Değişiklikler anında geçerli · yeniden başlatma gereken öğeler bunu kendi satırında belirtir</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>GÖRÜNÜM</value>

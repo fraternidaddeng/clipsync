@@ -550,7 +550,7 @@
     <value>Voorkeuren</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Wijzigingen gelden onmiddellijk · klembordinhoud verschijnt nooit in logboeken</value>
+    <value>Wijzigingen gelden onmiddellijk · items die een herstart nodig hebben, melden dat op hun rij</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>WEERGAVE</value>

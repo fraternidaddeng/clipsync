@@ -550,7 +550,7 @@
     <value>Tùy chọn</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Thay đổi có hiệu lực ngay · nội dung bảng nhớ tạm không bao giờ xuất hiện trong nhật ký</value>
+    <value>Thay đổi có hiệu lực ngay · mục nào cần khởi động lại sẽ ghi rõ ngay trên dòng đó</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>HIỂN THỊ</value>

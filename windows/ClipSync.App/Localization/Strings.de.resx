@@ -550,7 +550,7 @@
     <value>Einstellungen</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Änderungen wirken sofort · Zwischenablageinhalte erscheinen nie in Protokollen</value>
+    <value>Änderungen wirken sofort · Einträge, die einen Neustart brauchen, sagen es in ihrer Zeile</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>ANZEIGE</value>

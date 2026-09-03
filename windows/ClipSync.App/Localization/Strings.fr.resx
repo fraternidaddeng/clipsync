@@ -550,7 +550,7 @@
     <value>Préférences</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Les changements s’appliquent immédiatement · le contenu du presse-papiers n’apparaît jamais dans les journaux</value>
+    <value>Les changements s’appliquent immédiatement · les éléments nécessitant un redémarrage l’indiquent sur leur ligne</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>AFFICHAGE</value>

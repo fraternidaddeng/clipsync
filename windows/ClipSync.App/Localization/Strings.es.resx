@@ -550,7 +550,7 @@
     <value>Preferencias</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Los cambios se aplican al instante · el contenido del portapapeles nunca aparece en los registros</value>
+    <value>Los cambios se aplican al instante · los elementos que requieren reiniciar lo indican en su fila</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>PANTALLA</value>

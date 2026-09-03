@@ -550,7 +550,7 @@
     <value>환경설정</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>변경은 즉시 적용 · 클립보드 본문은 로그에 절대 남지 않습니다</value>
+    <value>변경은 즉시 적용 · 재시작이 필요한 항목은 해당 행에 표시됩니다</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>표 시 · DISPLAY</value>

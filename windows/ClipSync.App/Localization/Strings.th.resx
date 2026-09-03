@@ -550,7 +550,7 @@
     <value>การตั้งค่า</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>การเปลี่ยนแปลงมีผลทันที · เนื้อหาคลิปบอร์ดไม่มีวันปรากฏในบันทึก</value>
+    <value>การเปลี่ยนแปลงมีผลทันที · รายการที่ต้องรีสตาร์ตจะระบุไว้ในแถวของตัวเอง</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>การแสดงผล</value>

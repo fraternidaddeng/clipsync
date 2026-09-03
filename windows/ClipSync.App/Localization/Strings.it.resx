@@ -550,7 +550,7 @@
     <value>Preferenze</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Le modifiche si applicano subito · il contenuto degli appunti non compare mai nei log</value>
+    <value>Le modifiche si applicano subito · le voci che richiedono un riavvio lo indicano nella propria riga</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>VISUALIZZAZIONE</value>

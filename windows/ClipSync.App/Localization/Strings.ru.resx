@@ -550,7 +550,7 @@
     <value>Настройки</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Изменения применяются сразу · содержимое буфера обмена никогда не попадает в журналы</value>
+    <value>Изменения применяются сразу · пункты, требующие перезапуска, сообщают об этом в своей строке</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>ЭКРАН</value>

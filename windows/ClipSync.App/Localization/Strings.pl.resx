@@ -550,7 +550,7 @@
     <value>Preferencje</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Zmiany działają natychmiast · treść schowka nigdy nie trafia do dzienników</value>
+    <value>Zmiany działają natychmiast · pozycje wymagające ponownego uruchomienia zaznaczają to w swoim wierszu</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>WYŚWIETLANIE</value>

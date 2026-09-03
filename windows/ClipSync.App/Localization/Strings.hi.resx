@@ -550,7 +550,7 @@
     <value>प्राथमिकताएँ</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>बदलाव तुरंत लागू · क्लिपबोर्ड की सामग्री कभी लॉग में नहीं जाती</value>
+    <value>बदलाव तुरंत लागू · जिन्हें पुनरारंभ चाहिए, वे अपनी पंक्ति में बता देते हैं</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>प्रदर्शन</value>
