@@ -173,6 +173,14 @@
     <string name="read_fact_preferred">Rute pilihan: %1$s</string>
     <string name="localread_degraded_pending_detail">Prasyarat terpenuhi; kanal baca menunggu uji nyata. Sementara itu pembacaan latar depan tetap berfungsi.</string>
     <string name="localread_needs_action_detail">Pembacaan latar belakang belum terbuka. Selesaikan salah satu dari tiga rute; salin di latar depan tidak terpengaruh.</string>
+    <string name="read_live_stopped_by_gate">Pembacaan latar belakang berhenti: “%1$s” menyala, jadi papan klip tidak dibaca selama itu.</string>
+    <string name="read_live_none">Saat ini tidak ada rute baca yang berjalan (%1$s); kirim manual tetap bisa saat aplikasi di latar depan.</string>
+    <string name="read_live_active_preferred">Rute baca saat ini: %1$s (utama).</string>
+    <string name="read_live_degraded_fallback">Rute baca saat ini: %1$s. Rute utama %2$s turun tingkat pada %3$s karena kanal gagal (%4$s).</string>
+    <string name="read_live_degraded_not_ready">Rute baca saat ini: %1$s. Rute utama %2$s belum siap sejak %3$s (%4$s).</string>
+    <string name="read_fact_recovery_policy">Rute utama dicoba lagi saat Anda kembali ke aplikasi, setiap 5 menit, dan saat menekan “Periksa ulang rute utama”; begitu siap, langsung beralih kembali otomatis.</string>
+    <string name="read_fact_recovered_at">Terakhir beralih kembali ke rute lebih tinggi: %1$s</string>
+    <string name="status_read_paused">Dijeda</string>
 
     <string name="service_ready_no_sync_detail">Aplikasi berjalan normal; layanan sinkronisasi latar belakang datang di tahap berikutnya.</string>
     <string name="service_running_detail">Layanan sinkronisasi sedang berjalan.</string>
@@ -250,6 +258,14 @@
     <string name="route_action_battery_settings">Setelan baterai</string>
     <string name="route_action_set_preferred">Jadikan rute pilihan</string>
     <string name="route_action_read_test">Uji baca latar belakang</string>
+    <string name="route_action_recover_preferred">Periksa ulang rute utama</string>
+    <string name="route_live_active">Rute ini sedang dipakai</string>
+    <string name="route_live_preferred_inactive">Rute utama tidak berjalan; akan beralih kembali otomatis begitu siap, atau periksa ulang di bawah sekarang</string>
+    <string name="test_recover_switched">Kembali ke rute utama: %1$s</string>
+    <string name="test_recover_not_ready">Rute utama %1$s masih belum siap (%2$s); rute saat ini tetap berjalan</string>
+    <string name="service_fact_battery_unrestricted">Pengoptimalan baterai: dikecualikan, sistem lebih jarang menghentikan layanan.</string>
+    <string name="service_fact_battery_restricted">Pengoptimalan baterai: belum dikecualikan, saat layar mati sistem lebih mudah menghentikan layanan; “Buka pengaturan baterai” di panduan rute memberikan pengecualian.</string>
+    <string name="service_fact_enabled_not_running">Sakelar menyala tetapi layanan tidak berjalan (mungkin dihentikan sistem); ketuk “Mulai layanan” untuk menjalankannya lagi.</string>
     <string name="priv_hint_not_installed">Aplikasi kanal berprivilese belum terpasang di ponsel ini; pasang dan jalankan, lalu kembali dan ketuk “Periksa ulang”.</string>
     <string name="priv_hint_not_running">Kanal berprivilese tidak berjalan; jalankan perintah mulai sekali dari komputer (satu klik di sisi Windows).</string>
     <string name="priv_hint_not_authorized">Kanal berprivilese belum mengizinkan aplikasi ini; ketuk “Izinkan baca berprivilese” untuk memberi izin.</string>
@@ -412,6 +428,24 @@
     <string name="prefs_conduit_network">Saluran · Jaringan</string>
     <string name="prefs_no_device">Belum ada perangkat terpasang</string>
     <string name="prefs_no_device_hint">Pintu masuk pemasangan ada di segmen jaringan halaman Saluran; setelah terpasang, nama pihak seberang tampil di sini.</string>
+    <string name="prefs_live_service_off">Berhenti: tidak mendengarkan papan klip di latar belakang dan tidak terhubung ke PC.</string>
+    <string name="prefs_live_service_connected">Berjalan · terhubung ke PC</string>
+    <string name="prefs_live_service_waiting">Berjalan · belum terhubung ke PC, menunggu sambung ulang</string>
+    <string name="prefs_live_service_start_failed">Tidak berjalan: sistem menolak memulai (%1$s); ketuk “Mulai layanan” di halaman Saluran untuk mencoba lagi</string>
+    <string name="prefs_live_service_not_running">Sakelar menyala tetapi layanan tidak berjalan (mungkin dihentikan sistem); ketuk “Mulai layanan” di halaman Saluran untuk menjalankannya lagi</string>
+    <string name="prefs_live_gate_sync_paused">Berlaku: pembacaan latar belakang berhenti dan yang diterima hanya masuk riwayat</string>
+    <string name="prefs_live_gate_private">Berlaku: pembacaan latar belakang berhenti dan yang Anda salin di sini tetap di perangkat ini</string>
+    <string name="prefs_live_gate_capture_paused">Berlaku: pendengaran latar belakang berhenti; selama jeda papan klip tidak dibaca</string>
+    <string name="prefs_live_capture_running">Pembacaan latar belakang berjalan · rute saat ini %1$s · %2$d ditangkap dalam sesi ini</string>
+    <string name="prefs_live_capture_stopped">Pembacaan latar belakang tidak berjalan; lihat Saluran · Baca lokal</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="other">%1$d item bertanda sensitif dilewati dalam sesi ini</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">Belum ada item bertanda sensitif dalam sesi ini</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="other">%1$d gambar tidak disinkronkan dalam sesi ini karena ini mati</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">Sistem mematikan notifikasi aplikasi ini, jadi sakelar ini belum berpengaruh; halaman Saluran menautkan ke pengaturan sistem</string>
 
     <plurals name="transfer_export_done">
         <item quantity="other">%1$d catatan diekspor (teks polos); simpan berkas cadangan baik-baik.</item>

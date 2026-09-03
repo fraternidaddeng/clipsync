@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -91,6 +92,8 @@ fun PreferencesScreen(
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
+    // Live facts under the switches whose position alone does not tell the truth.
+    val facts = preferencesStatusLines(state)
     Column(
         modifier =
             modifier
@@ -168,6 +171,7 @@ fun PreferencesScreen(
                 description = stringResource(R.string.prefs_service_enabled_desc),
                 checked = state.serviceEnabled,
                 onCheckedChange = onServiceEnabledChange,
+                fact = facts.service,
             )
             RowDivider()
             ToggleRow(
@@ -175,6 +179,7 @@ fun PreferencesScreen(
                 description = stringResource(R.string.prefs_pause_sync_desc),
                 checked = state.pauseSync,
                 onCheckedChange = onPauseSyncChange,
+                fact = facts.pauseSync,
             )
             RowDivider()
             ToggleRow(
@@ -182,6 +187,7 @@ fun PreferencesScreen(
                 description = stringResource(R.string.prefs_private_mode_desc),
                 checked = state.privateMode,
                 onCheckedChange = onPrivateModeChange,
+                fact = facts.privateMode,
             )
             RowDivider()
             ToggleRow(
@@ -196,6 +202,7 @@ fun PreferencesScreen(
                 description = stringResource(R.string.prefs_image_sync_desc),
                 checked = state.imageSync,
                 onCheckedChange = onImageSyncChange,
+                fact = facts.imageSync,
             )
             RowDivider()
             ToggleRow(
@@ -237,6 +244,7 @@ fun PreferencesScreen(
                 description = stringResource(R.string.prefs_pause_capture_desc),
                 checked = state.pauseCapture,
                 onCheckedChange = onPauseCaptureChange,
+                fact = facts.pauseCapture,
             )
             RowDivider()
             ToggleRow(
@@ -244,6 +252,7 @@ fun PreferencesScreen(
                 description = stringResource(R.string.prefs_skip_sensitive_desc),
                 checked = state.skipSensitive,
                 onCheckedChange = onSkipSensitiveChange,
+                fact = facts.skipSensitive,
             )
         }
 
@@ -315,6 +324,7 @@ fun PreferencesScreen(
                 description = stringResource(R.string.prefs_inbox_notify_desc),
                 checked = state.inboxNotify,
                 onCheckedChange = onInboxNotifyChange,
+                fact = facts.inboxNotify,
             )
         }
 
@@ -485,6 +495,8 @@ private fun ToggleRow(
     description: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    /** The live fact under the description: what the system is actually doing right now. */
+    fact: FactLine? = null,
 ) {
     val c = clipSyncColors
     Row(
@@ -505,6 +517,10 @@ private fun ToggleRow(
             Text(text = title, fontSize = 14.sp, color = c.t1)
             Spacer(Modifier.height(2.dp))
             Text(text = description, style = ClipSyncType.caption, color = c.t3)
+            if (fact != null) {
+                Spacer(Modifier.height(5.dp))
+                FactRow(fact)
+            }
         }
         Spacer(Modifier.width(12.dp))
         Switch(
@@ -518,6 +534,38 @@ private fun ToggleRow(
                     uncheckedTrackColor = c.sfIn,
                     uncheckedBorderColor = c.ln2,
                 ),
+        )
+    }
+}
+
+/**
+ * The conduit's fact-line vocabulary (4dp dot + caption) under a switch: flow blue when the
+ * switch is in effect, ochre when the user must do something for it to take effect, grey for a
+ * stated fact or the user's own choice. Never red — none of these are errors.
+ */
+@Composable
+private fun FactRow(fact: FactLine) {
+    val c = clipSyncColors
+    val tint =
+        when (fact.tone) {
+            FactTone.FLOW -> c.flow
+            FactTone.ACT -> c.act
+            FactTone.QUIET -> c.t3
+        }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Spacer(
+            Modifier
+                .width(4.dp)
+                .height(4.dp)
+                .clip(CircleShape)
+                .background(if (fact.tone == FactTone.QUIET) c.ln2 else tint),
+        )
+        Spacer(Modifier.width(7.dp))
+        Text(
+            text = fact.text.string(),
+            style = ClipSyncType.caption,
+            fontWeight = if (fact.tone == FactTone.QUIET) FontWeight.Normal else FontWeight.SemiBold,
+            color = tint,
         )
     }
 }

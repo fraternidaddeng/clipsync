@@ -173,6 +173,14 @@
     <string name="read_fact_preferred">เส้นทางที่เลือกใช้: %1$s</string>
     <string name="localread_degraded_pending_detail">เงื่อนไขครบแล้ว ช่องอ่านรอการทดสอบจริง ระหว่างนี้การอ่านตอนเปิดแอปยังใช้ได้</string>
     <string name="localread_needs_action_detail">การอ่านเบื้องหลังยังไม่เปิด ทำให้เสร็จหนึ่งในสามเส้นทางก็พอ การคัดลอกตอนเปิดแอปไม่กระทบ</string>
+    <string name="read_live_stopped_by_gate">การอ่านเบื้องหลังหยุดอยู่: “%1$s” เปิดอยู่ ระหว่างนี้จึงไม่อ่านคลิปบอร์ด</string>
+    <string name="read_live_none">ตอนนี้ไม่มีเส้นทางอ่านใดทำงาน (%1$s) การส่งด้วยตนเองยังใช้ได้เมื่อแอปอยู่เบื้องหน้า</string>
+    <string name="read_live_active_preferred">เส้นทางอ่านปัจจุบัน: %1$s (ที่ต้องการ)</string>
+    <string name="read_live_degraded_fallback">เส้นทางอ่านปัจจุบัน: %1$s เส้นทางที่ต้องการ %2$s ถูกลดระดับเมื่อ %3$s เพราะช่องทางขัดข้อง (%4$s)</string>
+    <string name="read_live_degraded_not_ready">เส้นทางอ่านปัจจุบัน: %1$s เส้นทางที่ต้องการ %2$s ยังไม่พร้อมตั้งแต่ %3$s (%4$s)</string>
+    <string name="read_fact_recovery_policy">จะลองเส้นทางที่ต้องการอีกครั้งเมื่อกลับมาที่แอป ทุก 5 นาที และเมื่อแตะ “ตรวจเส้นทางที่ต้องการอีกครั้ง” พร้อมเมื่อไรจะสลับกลับอัตโนมัติ</string>
+    <string name="read_fact_recovered_at">สลับกลับไปเส้นทางที่สูงกว่าครั้งล่าสุด: %1$s</string>
+    <string name="status_read_paused">หยุดชั่วคราว</string>
 
     <string name="service_ready_no_sync_detail">แอปทำงานปกติ บริการซิงค์เบื้องหลังจะมาในขั้นถัดไป</string>
     <string name="service_running_detail">บริการซิงค์กำลังทำงาน</string>
@@ -250,6 +258,14 @@
     <string name="route_action_battery_settings">ตั้งค่าแบตเตอรี่</string>
     <string name="route_action_set_preferred">ตั้งเป็นเส้นทางที่เลือกใช้</string>
     <string name="route_action_read_test">ทดสอบการอ่านเบื้องหลัง</string>
+    <string name="route_action_recover_preferred">ตรวจเส้นทางที่ต้องการอีกครั้ง</string>
+    <string name="route_live_active">เส้นทางนี้กำลังใช้งานอยู่</string>
+    <string name="route_live_preferred_inactive">เส้นทางที่ต้องการไม่ได้ทำงาน พร้อมเมื่อไรจะสลับกลับอัตโนมัติ หรือตรวจอีกครั้งด้านล่างได้เลย</string>
+    <string name="test_recover_switched">สลับกลับไปเส้นทางที่ต้องการแล้ว: %1$s</string>
+    <string name="test_recover_not_ready">เส้นทางที่ต้องการ %1$s ยังไม่พร้อม (%2$s) เส้นทางปัจจุบันทำงานต่อ</string>
+    <string name="service_fact_battery_unrestricted">การเพิ่มประสิทธิภาพแบตเตอรี่: ยกเว้นแล้ว ระบบจึงเรียกคืนบริการยากขึ้น</string>
+    <string name="service_fact_battery_restricted">การเพิ่มประสิทธิภาพแบตเตอรี่: ยังไม่ยกเว้น เมื่อดับหน้าจอระบบจะเรียกคืนบริการง่ายขึ้น กด “ไปตั้งค่าแบตเตอรี่” ในคู่มือเส้นทางเพื่อยกเว้น</string>
+    <string name="service_fact_enabled_not_running">สวิตช์เปิดอยู่แต่บริการไม่ได้ทำงาน (ระบบอาจเรียกคืน) แตะ “เริ่มบริการ” เพื่อเรียกขึ้นใหม่</string>
     <string name="priv_hint_not_installed">โทรศัพท์เครื่องนี้ยังไม่ได้ติดตั้งแอปช่องทางสิทธิ์พิเศษ ติดตั้งและเปิดใช้งานแล้วกลับมาแตะ “ตรวจใหม่”</string>
     <string name="priv_hint_not_running">ช่องทางสิทธิ์พิเศษยังไม่ทำงาน ให้รันคำสั่งเริ่มต้นจากคอมพิวเตอร์หนึ่งครั้ง (ฝั่ง Windows คลิกเดียว)</string>
     <string name="priv_hint_not_authorized">ช่องทางสิทธิ์พิเศษยังไม่อนุญาตแอปนี้ แตะ “อนุญาตการอ่านสิทธิ์พิเศษ” เพื่ออนุญาต</string>
@@ -412,6 +428,24 @@
     <string name="prefs_conduit_network">เส้นทาง · เครือข่าย</string>
     <string name="prefs_no_device">ยังไม่มีอุปกรณ์ที่จับคู่</string>
     <string name="prefs_no_device_hint">ทางเข้าการจับคู่อยู่ที่ช่วงเครือข่ายของหน้าเส้นทาง เมื่อจับคู่แล้วชื่อของฝั่งโน้นจะแสดงที่นี่</string>
+    <string name="prefs_live_service_off">หยุดแล้ว: ไม่ฟังคลิปบอร์ดในเบื้องหลังและไม่เชื่อมต่อกับพีซี</string>
+    <string name="prefs_live_service_connected">ทำงานอยู่ · เชื่อมต่อกับพีซีแล้ว</string>
+    <string name="prefs_live_service_waiting">ทำงานอยู่ · ยังไม่เชื่อมต่อพีซี รอเชื่อมต่อใหม่</string>
+    <string name="prefs_live_service_start_failed">ไม่ได้ทำงาน: ระบบปฏิเสธการเริ่ม (%1$s) แตะ “เริ่มบริการ” ในหน้าเส้นทางเพื่อลองใหม่</string>
+    <string name="prefs_live_service_not_running">สวิตช์เปิดอยู่แต่บริการไม่ได้ทำงาน (ระบบอาจเรียกคืน) แตะ “เริ่มบริการ” ในหน้าเส้นทางเพื่อเรียกขึ้นใหม่</string>
+    <string name="prefs_live_gate_sync_paused">มีผลอยู่: การอ่านเบื้องหลังหยุด เนื้อหาที่รับมาเข้าประวัติเท่านั้น</string>
+    <string name="prefs_live_gate_private">มีผลอยู่: การอ่านเบื้องหลังหยุด สิ่งที่คัดลอกที่นี่อยู่ในอุปกรณ์นี้เท่านั้น</string>
+    <string name="prefs_live_gate_capture_paused">มีผลอยู่: การฟังเบื้องหลังหยุดแล้ว ระหว่างหยุดชั่วคราวไม่อ่านคลิปบอร์ด</string>
+    <string name="prefs_live_capture_running">การอ่านเบื้องหลังทำงานอยู่ · เส้นทางปัจจุบัน %1$s · จับได้ %2$d รายการในรอบนี้</string>
+    <string name="prefs_live_capture_stopped">การอ่านเบื้องหลังไม่ได้ทำงาน ดูที่ เส้นทาง · การอ่านในเครื่อง</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="other">ข้ามรายการที่ทำเครื่องหมายว่าละเอียดอ่อน %1$d รายการในรอบนี้</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">รอบนี้ยังไม่พบรายการที่ทำเครื่องหมายว่าละเอียดอ่อน</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="other">รอบนี้มีรูป %1$d รูปที่ไม่ได้ซิงค์เพราะปิดไว้</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">ระบบปิดการแจ้งเตือนของแอปนี้ สวิตช์นี้จึงยังไม่มีผล หน้าเส้นทางมีทางไปยังการตั้งค่าระบบ</string>
 
     <plurals name="transfer_export_done">
         <item quantity="other">ส่งออก %1$d รายการแล้ว (ข้อความเปล่า) เก็บไฟล์สำรองให้ดี</item>

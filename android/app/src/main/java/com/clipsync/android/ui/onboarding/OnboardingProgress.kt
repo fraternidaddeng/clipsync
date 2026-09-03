@@ -2,13 +2,15 @@ package com.clipsync.android.ui.onboarding
 
 import com.clipsync.android.ui.HealthScreenState
 import com.clipsync.android.ui.health.ReadRouteId
+import com.clipsync.android.ui.health.RouteStepId
 
 /**
  * Facts the tutorial can safely detect on-device, so already-done steps state
  * their completion live instead of asking again — the same pattern as the
  * Windows onboarding pair step, which retires its QR and states the fact when
  * pairing completes mid-walk. Everything here is a local probe (pairing store,
- * notification surface, 特权直读 prerequisites); nothing claims remote state.
+ * notification surface, 特权直读 prerequisites, the wizard's overlay/battery
+ * steps); nothing claims remote state.
  */
 data class OnboardingProgress(
     /** A Windows peer is saved in the pairing store. */
@@ -17,20 +19,27 @@ data class OnboardingProgress(
     val notificationsEnabled: Boolean = false,
     /** 特权直读 prerequisites all met: channel running and this app authorized. */
     val privilegedChannelReady: Boolean = false,
+    /** The overlay grant, as the wizard's route step probed it. */
+    val overlayGranted: Boolean = false,
+    /** Battery optimisation exemption, as the wizard's route step probed it. */
+    val batteryUnrestricted: Boolean = false,
 )
 
 /**
  * Derives the tutorial's live facts from the conduit's own probe results, so
  * the marks can never disagree with what the 通路 page states: pairing from the
  * saved peer, notifications from the same surface probe, and the privileged
- * channel from the wizard's route steps (an unknown fact stays unmarked —
- * missing information is not completion).
+ * channel plus the overlay/battery grants from the wizard's route steps (an
+ * unknown fact stays unmarked — missing information is not completion).
  */
 fun onboardingProgress(state: HealthScreenState): OnboardingProgress {
     val privileged = state.routes.firstOrNull { it.id == ReadRouteId.PRIVILEGED }
+    val steps = state.routes.flatMap { it.steps }
     return OnboardingProgress(
         paired = state.pairedDeviceCount > 0,
         notificationsEnabled = state.notificationsEnabled == true,
         privilegedChannelReady = privileged != null && privileged.stepsRemaining == 0,
+        overlayGranted = steps.any { it.id == RouteStepId.OVERLAY_GRANTED && it.satisfied },
+        batteryUnrestricted = steps.any { it.id == RouteStepId.BATTERY_UNRESTRICTED && it.satisfied },
     )
 }

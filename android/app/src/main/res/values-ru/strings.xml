@@ -176,6 +176,14 @@
     <string name="read_fact_preferred">Предпочитаемый путь: %1$s</string>
     <string name="localread_degraded_pending_detail">Предпосылки выполнены; канал чтения ждёт реальной проверки. Чтение на переднем плане тем временем продолжает работать.</string>
     <string name="localread_needs_action_detail">Фоновое чтение ещё не открыто. Завершите любой из трёх путей; копирование на переднем плане не затрагивается.</string>
+    <string name="read_live_stopped_by_gate">Фоновое чтение остановлено: включено «%1$s», поэтому буфер обмена в это время не читается.</string>
+    <string name="read_live_none">Сейчас не работает ни один путь чтения (%1$s); ручная отправка по-прежнему доступна, пока приложение на переднем плане.</string>
+    <string name="read_live_active_preferred">Текущий путь чтения: %1$s (предпочтительный).</string>
+    <string name="read_live_degraded_fallback">Текущий путь чтения: %1$s. Предпочтительный путь %2$s понижен в %3$s из-за сбоя канала (%4$s).</string>
+    <string name="read_live_degraded_not_ready">Текущий путь чтения: %1$s. Предпочтительный путь %2$s не готов с %3$s (%4$s).</string>
+    <string name="read_fact_recovery_policy">Предпочтительный путь проверяется повторно при возвращении в приложение, каждые 5 минут и по нажатию «Перепроверить предпочтительный путь»; как только он готов, переключение обратно происходит автоматически.</string>
+    <string name="read_fact_recovered_at">Последнее возвращение на более высокий путь: %1$s</string>
+    <string name="status_read_paused">Приостановлено</string>
 
     <string name="service_ready_no_sync_detail">Приложение работает нормально; фоновая служба синхронизации появится на более позднем этапе.</string>
     <string name="service_running_detail">Служба синхронизации работает.</string>
@@ -253,6 +261,14 @@
     <string name="route_action_battery_settings">Настройки батареи</string>
     <string name="route_action_set_preferred">Сделать предпочитаемым путём</string>
     <string name="route_action_read_test">Проверить фоновое чтение</string>
+    <string name="route_action_recover_preferred">Перепроверить предпочтительный путь</string>
+    <string name="route_live_active">Этот путь используется сейчас</string>
+    <string name="route_live_preferred_inactive">Предпочтительный путь не работает; когда он будет готов, переключение обратно произойдёт автоматически — или перепроверьте его ниже прямо сейчас</string>
+    <string name="test_recover_switched">Возврат на предпочтительный путь: %1$s</string>
+    <string name="test_recover_not_ready">Предпочтительный путь %1$s всё ещё не готов (%2$s); текущий путь продолжает работать</string>
+    <string name="service_fact_battery_unrestricted">Оптимизация батареи: исключение выдано, система реже завершает службу.</string>
+    <string name="service_fact_battery_restricted">Оптимизация батареи: исключения нет, при выключенном экране система легче завершает службу; «Открыть настройки батареи» в руководстве по путям выдаёт исключение.</string>
+    <string name="service_fact_enabled_not_running">Переключатель включён, но служба не работает (возможно, её завершила система); нажмите «Запустить службу», чтобы поднять её снова.</string>
     <string name="priv_hint_not_installed">Приложение привилегированного канала не установлено на этом телефоне; установите и запустите его, затем нажмите «Проверить заново».</string>
     <string name="priv_hint_not_running">Привилегированный канал не запущен; выполните команду запуска с компьютера один раз (на стороне Windows — в один клик).</string>
     <string name="priv_hint_not_authorized">Привилегированный канал ещё не выдал разрешение этому приложению; нажмите «Разрешить привилегированное чтение».</string>
@@ -433,6 +449,30 @@
     <string name="prefs_conduit_network">Канал · Сеть</string>
     <string name="prefs_no_device">Сопряжённых устройств пока нет</string>
     <string name="prefs_no_device_hint">Вход в сопряжение — в сетевом сегменте страницы «Канал»; после сопряжения здесь появится имя другой стороны.</string>
+    <string name="prefs_live_service_off">Остановлена: без фонового чтения буфера обмена и без соединения с ПК.</string>
+    <string name="prefs_live_service_connected">Работает · соединение с ПК установлено</string>
+    <string name="prefs_live_service_waiting">Работает · соединения с ПК нет, ожидание переподключения</string>
+    <string name="prefs_live_service_start_failed">Не работает: система отказала в запуске (%1$s); нажмите «Запустить службу» на странице «Канал», чтобы повторить</string>
+    <string name="prefs_live_service_not_running">Переключатель включён, но служба не работает (возможно, её завершила система); нажмите «Запустить службу» на странице «Канал»</string>
+    <string name="prefs_live_gate_sync_paused">Действует: фоновое чтение остановлено, полученное попадает только в историю</string>
+    <string name="prefs_live_gate_private">Действует: фоновое чтение остановлено, скопированное здесь остаётся на этом устройстве</string>
+    <string name="prefs_live_gate_capture_paused">Действует: фоновое прослушивание остановлено; во время паузы буфер обмена не читается</string>
+    <string name="prefs_live_capture_running">Фоновое чтение работает · текущий путь %1$s · захвачено за этот запуск: %2$d</string>
+    <string name="prefs_live_capture_stopped">Фоновое чтение не работает; см. «Канал · Локальное чтение»</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="one">За этот запуск пропущена %1$d запись, помеченная как конфиденциальная</item>
+        <item quantity="few">За этот запуск пропущено %1$d записи, помеченные как конфиденциальные</item>
+        <item quantity="many">За этот запуск пропущено %1$d записей, помеченных как конфиденциальные</item>
+        <item quantity="other">За этот запуск пропущено %1$d записи, помеченные как конфиденциальные</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">За этот запуск записей, помеченных как конфиденциальные, пока не было</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="one">За этот запуск %1$d изображение не синхронизировано, потому что это выключено</item>
+        <item quantity="few">За этот запуск %1$d изображения не синхронизированы, потому что это выключено</item>
+        <item quantity="many">За этот запуск %1$d изображений не синхронизировано, потому что это выключено</item>
+        <item quantity="other">За этот запуск %1$d изображения не синхронизированы, потому что это выключено</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">Система отключила уведомления этого приложения, поэтому переключатель пока не действует; со страницы «Канал» можно перейти к системной настройке</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">Экспортирована %1$d запись (открытый текст); храните файл резервной копии надёжно.</item>

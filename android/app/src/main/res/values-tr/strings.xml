@@ -174,6 +174,14 @@
     <string name="read_fact_preferred">Tercih edilen yol: %1$s</string>
     <string name="localread_degraded_pending_detail">Ön koşullar sağlandı; okuma kanalı gerçek bir test bekliyor. Bu sırada ön plan okuması çalışmaya devam eder.</string>
     <string name="localread_needs_action_detail">Arka plan okuması henüz açık değil. Üç yoldan herhangi birini tamamlayın; ön planda kopyalama etkilenmez.</string>
+    <string name="read_live_stopped_by_gate">Arka plan okuması durdu: “%1$s” açık, bu sırada pano okunmuyor.</string>
+    <string name="read_live_none">Şu anda çalışan bir okuma yolu yok (%1$s); uygulama ön plandayken elle gönderme çalışmaya devam eder.</string>
+    <string name="read_live_active_preferred">Geçerli okuma yolu: %1$s (tercih edilen).</string>
+    <string name="read_live_degraded_fallback">Geçerli okuma yolu: %1$s. Tercih edilen %2$s, kanal arızası (%4$s) nedeniyle %3$s’te alt kademeye düştü.</string>
+    <string name="read_live_degraded_not_ready">Geçerli okuma yolu: %1$s. Tercih edilen %2$s, %3$s’ten beri hazır değil (%4$s).</string>
+    <string name="read_fact_recovery_policy">Tercih edilen yol uygulamaya dönüşte, her 5 dakikada ve “Tercih edilen yolu yeniden yokla”ya dokununca yeniden denenir; hazır olur olmaz otomatik geri geçilir.</string>
+    <string name="read_fact_recovered_at">Daha üst bir yola son geri dönüş: %1$s</string>
+    <string name="status_read_paused">Duraklatıldı</string>
 
     <string name="service_ready_no_sync_detail">Uygulama normal çalışıyor; arka plan eşitleme hizmeti sonraki aşamada gelecek.</string>
     <string name="service_running_detail">Eşitleme hizmeti çalışıyor.</string>
@@ -251,6 +259,14 @@
     <string name="route_action_battery_settings">Pil ayarları</string>
     <string name="route_action_set_preferred">Tercih edilen yol yap</string>
     <string name="route_action_read_test">Arka plan okumayı test et</string>
+    <string name="route_action_recover_preferred">Tercih edilen yolu yeniden yokla</string>
+    <string name="route_live_active">Bu yol şu anda kullanımda</string>
+    <string name="route_live_preferred_inactive">Tercih edilen yol çalışmıyor; hazır olunca otomatik geri geçilir, ya da aşağıdan şimdi yeniden yoklayın</string>
+    <string name="test_recover_switched">Tercih edilen yola geri dönüldü: %1$s</string>
+    <string name="test_recover_not_ready">Tercih edilen yol %1$s hâlâ hazır değil (%2$s); geçerli yol çalışmaya devam ediyor</string>
+    <string name="service_fact_battery_unrestricted">Pil iyileştirmesi: muaf, sistem hizmeti daha seyrek sonlandırır.</string>
+    <string name="service_fact_battery_restricted">Pil iyileştirmesi: muaf değil, ekran kapanınca sistem hizmeti daha kolay sonlandırır; yol kılavuzundaki “Pil ayarlarına git” muafiyeti verir.</string>
+    <string name="service_fact_enabled_not_running">Anahtar açık ama hizmet çalışmıyor (sistem sonlandırmış olabilir); yeniden kaldırmak için “Hizmeti başlat”a dokunun.</string>
     <string name="priv_hint_not_installed">Bu telefonda ayrıcalıklı kanal uygulaması yüklü değil; yükleyip başlatın, sonra dönüp “Yeniden yokla”ya dokunun.</string>
     <string name="priv_hint_not_running">Ayrıcalıklı kanal çalışmıyor; başlatma komutunu bir bilgisayardan bir kez çalıştırın (Windows tarafında tek tık).</string>
     <string name="priv_hint_not_authorized">Ayrıcalıklı kanal bu uygulamaya henüz yetki vermedi; “Ayrıcalıklı okumayı yetkilendir”e dokunun.</string>
@@ -419,6 +435,26 @@
     <string name="prefs_conduit_network">Kanal · Ağ</string>
     <string name="prefs_no_device">Henüz eşleştirilmiş cihaz yok</string>
     <string name="prefs_no_device_hint">Eşleştirme girişi Kanal sayfasının ağ bölümündedir; eşleştirilince karşı tarafın adı burada görünür.</string>
+    <string name="prefs_live_service_off">Durduruldu: arka planda pano dinlenmiyor ve PC’ye bağlanılmıyor.</string>
+    <string name="prefs_live_service_connected">Çalışıyor · PC’ye bağlı</string>
+    <string name="prefs_live_service_waiting">Çalışıyor · PC’ye bağlı değil, yeniden bağlanma bekleniyor</string>
+    <string name="prefs_live_service_start_failed">Çalışmıyor: sistem başlatmayı reddetti (%1$s); yeniden denemek için Kanal sayfasında “Hizmeti başlat”a dokunun</string>
+    <string name="prefs_live_service_not_running">Anahtar açık ama hizmet çalışmıyor (sistem sonlandırmış olabilir); yeniden kaldırmak için Kanal sayfasında “Hizmeti başlat”a dokunun</string>
+    <string name="prefs_live_gate_sync_paused">Etkin: arka plan okuması durdu ve gelen içerik yalnızca geçmişe gider</string>
+    <string name="prefs_live_gate_private">Etkin: arka plan okuması durdu ve burada kopyaladıklarınız bu cihazda kalır</string>
+    <string name="prefs_live_gate_capture_paused">Etkin: arka plan dinlemesi durdu; duraklatma sırasında pano okunmaz</string>
+    <string name="prefs_live_capture_running">Arka plan okuması çalışıyor · geçerli yol %1$s · bu oturumda %2$d yakalandı</string>
+    <string name="prefs_live_capture_stopped">Arka plan okuması çalışmıyor; bkz. Kanal · Yerel okuma</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="one">Bu oturumda hassas işaretli %1$d öğe atlandı</item>
+        <item quantity="other">Bu oturumda hassas işaretli %1$d öğe atlandı</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">Bu oturumda henüz hassas işaretli öğe gelmedi</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="one">Bu oturumda %1$d görsel, bu kapalı olduğu için eşitlenmedi</item>
+        <item quantity="other">Bu oturumda %1$d görsel, bu kapalı olduğu için eşitlenmedi</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">Sistem bu uygulamanın bildirimlerini kapattı, bu yüzden bu anahtar henüz etkili değil; Kanal sayfası sistem ayarına götürür</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">%1$d kayıt dışa aktarıldı (düz metin); yedek dosyasını güvenle saklayın.</item>

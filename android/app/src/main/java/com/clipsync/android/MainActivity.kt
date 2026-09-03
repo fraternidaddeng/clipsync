@@ -102,6 +102,7 @@ import com.clipsync.android.ui.pairing.PairingViewModel
 import com.clipsync.android.ui.prefs.BondedBluetoothDevice
 import com.clipsync.android.ui.prefs.PreferencesScreen
 import com.clipsync.android.ui.prefs.PreferencesViewModel
+import com.clipsync.android.ui.prefs.preferencesRuntimeFacts
 import com.clipsync.android.ui.rememberPrivacyDocOpener
 import com.clipsync.android.ui.theme.CharterMotion
 import com.clipsync.android.ui.theme.ClipSyncIcons
@@ -187,6 +188,7 @@ class MainActivity : AppCompatActivity() {
                     notificationsEnabled = {
                         NotificationManagerCompat.from(this).areNotificationsEnabled()
                     },
+                    captureSession = captureStack.session,
                 ),
         )
     }
@@ -233,6 +235,10 @@ class MainActivity : AppCompatActivity() {
             settingsChanges = SyncSettingsChanges.changes(this),
             appVersion = readAppVersionName(this),
             updater = appUpdater,
+            runtimeFacts =
+                preferencesRuntimeFacts(captureStack) {
+                    NotificationManagerCompat.from(this).areNotificationsEnabled()
+                },
             sideEffects =
                 PreferencesViewModel.SideEffects(
                     onBootRestoreChanged = { enabled ->
@@ -577,6 +583,7 @@ class MainActivity : AppCompatActivity() {
                 )
             RouteActionId.SET_PREFERRED -> healthViewModel.setPreferredReadMode(route.mode)
             RouteActionId.RUN_READ_TEST -> healthViewModel.runReadTest(route.mode)
+            RouteActionId.RECOVER_PREFERRED -> healthViewModel.recoverPreferredRoute()
         }
     }
 

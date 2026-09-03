@@ -175,6 +175,14 @@
     <string name="read_fact_preferred">Voorkeursroute: %1$s</string>
     <string name="localread_degraded_pending_detail">Aan de voorwaarden is voldaan; het leeskanaal wacht op een livetest. Lezen op de voorgrond blijft ondertussen werken.</string>
     <string name="localread_needs_action_detail">Achtergrondlezen is nog niet geopend. Voltooi een van de drie routes; kopiëren op de voorgrond blijft werken.</string>
+    <string name="read_live_stopped_by_gate">Achtergrondlezen gestopt: „%1$s” staat aan, dus het klembord wordt intussen niet gelezen.</string>
+    <string name="read_live_none">Er draait nu geen leesroute (%1$s); handmatig verzenden werkt nog zolang de app op de voorgrond staat.</string>
+    <string name="read_live_active_preferred">Huidige leesroute: %1$s (voorkeur).</string>
+    <string name="read_live_degraded_fallback">Huidige leesroute: %1$s. De voorkeursroute %2$s is om %3$s teruggevallen na een kanaalstoring (%4$s).</string>
+    <string name="read_live_degraded_not_ready">Huidige leesroute: %1$s. De voorkeursroute %2$s is sinds %3$s niet gereed (%4$s).</string>
+    <string name="read_fact_recovery_policy">De voorkeursroute wordt opnieuw geprobeerd bij terugkeer naar de app, elke 5 minuten en bij een tik op „Voorkeursroute opnieuw peilen”; zodra ze gereed is, wordt automatisch teruggeschakeld.</string>
+    <string name="read_fact_recovered_at">Laatste terugkeer naar een hogere route: %1$s</string>
+    <string name="status_read_paused">Gepauzeerd</string>
 
     <string name="service_ready_no_sync_detail">De app draait normaal; de achtergrondsynchronisatieservice komt in een latere fase.</string>
     <string name="service_running_detail">Synchronisatieservice draait.</string>
@@ -252,6 +260,14 @@
     <string name="route_action_battery_settings">Batterij-instellingen</string>
     <string name="route_action_set_preferred">Als voorkeursroute instellen</string>
     <string name="route_action_read_test">Achtergrondlezen testen</string>
+    <string name="route_action_recover_preferred">Voorkeursroute opnieuw peilen</string>
+    <string name="route_live_active">Deze route is nu in gebruik</string>
+    <string name="route_live_preferred_inactive">De voorkeursroute draait niet; zodra ze gereed is, wordt automatisch teruggeschakeld — of peil ze hieronder nu opnieuw</string>
+    <string name="test_recover_switched">Terug op de voorkeursroute: %1$s</string>
+    <string name="test_recover_not_ready">Voorkeursroute %1$s is nog niet gereed (%2$s); de huidige route blijft draaien</string>
+    <string name="service_fact_battery_unrestricted">Batterijoptimalisatie: vrijgesteld, dus het systeem beëindigt de service minder snel.</string>
+    <string name="service_fact_battery_restricted">Batterijoptimalisatie: niet vrijgesteld, dus met het scherm uit beëindigt het systeem de service makkelijker; „Batterij-instellingen openen” in de routegids geeft de vrijstelling.</string>
+    <string name="service_fact_enabled_not_running">De schakelaar staat aan, maar de service draait niet (mogelijk door het systeem beëindigd); tik op „Service starten” om ze weer op te brengen.</string>
     <string name="priv_hint_not_installed">De app van het bevoorrechte kanaal is niet op deze telefoon geïnstalleerd; installeer en start die, en tik daarna op “Opnieuw peilen”.</string>
     <string name="priv_hint_not_running">Het bevoorrechte kanaal draait niet; voer eenmalig het startcommando uit vanaf een computer (aan de Windows-kant één klik).</string>
     <string name="priv_hint_not_authorized">Het bevoorrechte kanaal heeft deze app nog niet geautoriseerd; tik op “Bevoorrecht lezen autoriseren”.</string>
@@ -420,6 +436,26 @@
     <string name="prefs_conduit_network">Kanaal · Netwerk</string>
     <string name="prefs_no_device">Nog geen gekoppelde apparaten</string>
     <string name="prefs_no_device_hint">De koppelingsingang zit in het netwerksegment van de Kanaal-pagina; na het koppelen verschijnt hier de naam van de peer.</string>
+    <string name="prefs_live_service_off">Gestopt: geen klembord meeluisteren op de achtergrond en geen verbinding met de pc.</string>
+    <string name="prefs_live_service_connected">Draait · verbonden met de pc</string>
+    <string name="prefs_live_service_waiting">Draait · niet verbonden met de pc, wacht op opnieuw verbinden</string>
+    <string name="prefs_live_service_start_failed">Draait niet: het systeem weigerde de start (%1$s); tik op „Service starten” op de Kanaal-pagina om het opnieuw te proberen</string>
+    <string name="prefs_live_service_not_running">De schakelaar staat aan, maar de service draait niet (mogelijk door het systeem beëindigd); tik op „Service starten” op de Kanaal-pagina</string>
+    <string name="prefs_live_gate_sync_paused">Van kracht: achtergrondlezen is gestopt en wat binnenkomt gaat alleen naar de geschiedenis</string>
+    <string name="prefs_live_gate_private">Van kracht: achtergrondlezen is gestopt en wat je hier kopieert blijft op dit apparaat</string>
+    <string name="prefs_live_gate_capture_paused">Van kracht: meeluisteren op de achtergrond is gestopt; tijdens de pauze wordt het klembord niet gelezen</string>
+    <string name="prefs_live_capture_running">Achtergrondlezen draait · huidige route %1$s · %2$d vastgelegd in deze sessie</string>
+    <string name="prefs_live_capture_stopped">Achtergrondlezen draait niet; zie Kanaal · Lokaal lezen</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="one">%1$d als gevoelig gemarkeerd item overgeslagen in deze sessie</item>
+        <item quantity="other">%1$d als gevoelig gemarkeerde items overgeslagen in deze sessie</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">In deze sessie is nog geen als gevoelig gemarkeerd item voorgekomen</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="one">%1$d afbeelding niet gesynchroniseerd in deze sessie omdat dit uit staat</item>
+        <item quantity="other">%1$d afbeeldingen niet gesynchroniseerd in deze sessie omdat dit uit staat</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">Het systeem heeft meldingen van deze app uitgeschakeld, dus deze schakelaar heeft nog geen effect; de Kanaal-pagina leidt naar de systeeminstelling</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">%1$d record geëxporteerd (platte tekst); bewaar het back-upbestand veilig.</item>

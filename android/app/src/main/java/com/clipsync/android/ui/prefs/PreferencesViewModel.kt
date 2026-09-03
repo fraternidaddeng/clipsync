@@ -69,6 +69,8 @@ data class PreferencesUiState(
     val updateStatus: UiText? = null,
     val updateBusy: Boolean = false,
     val updateAvailable: Boolean = false,
+    /** Live facts the switches are checked against (service alive, active route…); null until wired. */
+    val runtime: PreferencesRuntimeFacts? = null,
 )
 
 /** One system-bonded Bluetooth device the fallback may dial; display data only. */
@@ -113,6 +115,11 @@ class PreferencesViewModel(
     private val nowMs: () -> Long = System::currentTimeMillis,
     private val appVersion: String = "0.0.0",
     private val updater: AppUpdater? = null,
+    /**
+     * Live service / capture facts rendered under the switches (see [PreferencesRuntimeFacts]);
+     * each emission re-derives the fact lines. Null (tests, previews) shows the switches alone.
+     */
+    runtimeFacts: Flow<PreferencesRuntimeFacts>? = null,
 ) : ViewModel() {
     /** The host-owned reactions to toggles; each defaults to a no-op for tests. */
     data class SideEffects(
@@ -132,6 +139,7 @@ class PreferencesViewModel(
     private var pendingUpdate: UpdateCheckResult? = null
     private var updateStatus: UiText? = null
     private var updateBusy: Boolean = false
+    private var runtime: PreferencesRuntimeFacts? = null
 
     private val mutableState = MutableStateFlow(stateFromStore(transferStatus = null))
 
@@ -141,6 +149,14 @@ class PreferencesViewModel(
         if (settingsChanges != null) {
             viewModelScope.launch {
                 settingsChanges.collect { refreshFromStore() }
+            }
+        }
+        if (runtimeFacts != null) {
+            viewModelScope.launch {
+                runtimeFacts.collect { facts ->
+                    runtime = facts
+                    mutableState.update { it.copy(runtime = facts) }
+                }
             }
         }
     }
@@ -184,6 +200,7 @@ class PreferencesViewModel(
             updateStatus = updateStatus,
             updateBusy = updateBusy,
             updateAvailable = pendingUpdate?.updateAvailable == true && pendingUpdate?.payload != null,
+            runtime = runtime,
         )
 
     /**
@@ -540,6 +557,7 @@ class PreferencesViewModel(
             historyRepository: () -> ClipSyncRepository? = { null },
             appVersion: String = "0.0.0",
             updater: AppUpdater? = null,
+            runtimeFacts: Flow<PreferencesRuntimeFacts>? = null,
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
@@ -551,6 +569,7 @@ class PreferencesViewModel(
                         historyRepository,
                         appVersion = appVersion,
                         updater = updater,
+                        runtimeFacts = runtimeFacts,
                     ) as T
             }
     }

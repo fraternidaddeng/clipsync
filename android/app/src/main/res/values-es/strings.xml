@@ -175,6 +175,14 @@
     <string name="read_fact_preferred">Ruta preferida: %1$s</string>
     <string name="localread_degraded_pending_detail">Los requisitos se cumplen; el canal de lectura espera una prueba real. Mientras tanto, la lectura en primer plano sigue funcionando.</string>
     <string name="localread_needs_action_detail">La lectura en segundo plano aún no está abierta. Completa cualquiera de las tres rutas; la copia en primer plano no se ve afectada.</string>
+    <string name="read_live_stopped_by_gate">Lectura en segundo plano detenida: «%1$s» está activado, así que mientras tanto no se lee el portapapeles.</string>
+    <string name="read_live_none">Ahora no hay ninguna ruta de lectura en marcha (%1$s); el envío manual sigue funcionando con la app en primer plano.</string>
+    <string name="read_live_active_preferred">Ruta de lectura actual: %1$s (preferida).</string>
+    <string name="read_live_degraded_fallback">Ruta de lectura actual: %1$s. La preferida, %2$s, se degradó a las %3$s por un fallo del canal (%4$s).</string>
+    <string name="read_live_degraded_not_ready">Ruta de lectura actual: %1$s. La preferida, %2$s, no está lista desde las %3$s (%4$s).</string>
+    <string name="read_fact_recovery_policy">La ruta preferida se reintenta al volver a la app, cada 5 minutos y al tocar «Volver a sondear la ruta preferida»; en cuanto está lista se vuelve a ella automáticamente.</string>
+    <string name="read_fact_recovered_at">Último regreso a una ruta superior: %1$s</string>
+    <string name="status_read_paused">En pausa</string>
 
     <string name="service_ready_no_sync_detail">La app funciona con normalidad; el servicio de sincronización en segundo plano llegará en una etapa posterior.</string>
     <string name="service_running_detail">El servicio de sincronización está en marcha.</string>
@@ -252,6 +260,14 @@
     <string name="route_action_battery_settings">Ajustes de batería</string>
     <string name="route_action_set_preferred">Establecer como ruta preferida</string>
     <string name="route_action_read_test">Probar lectura en segundo plano</string>
+    <string name="route_action_recover_preferred">Volver a sondear la ruta preferida</string>
+    <string name="route_live_active">Esta ruta está en uso ahora</string>
+    <string name="route_live_preferred_inactive">La ruta preferida no está en marcha; volverá automáticamente cuando esté lista, o vuelve a sondearla abajo ahora</string>
+    <string name="test_recover_switched">De vuelta en la ruta preferida: %1$s</string>
+    <string name="test_recover_not_ready">La ruta preferida %1$s aún no está lista (%2$s); la ruta actual sigue en marcha</string>
+    <string name="service_fact_battery_unrestricted">Optimización de batería: exenta, así que el sistema tiene menos motivos para cerrar el servicio.</string>
+    <string name="service_fact_battery_restricted">Optimización de batería: no exenta, así que con la pantalla apagada el sistema cierra el servicio con más facilidad; «Ir a ajustes de batería» en la guía de rutas concede la exención.</string>
+    <string name="service_fact_enabled_not_running">El interruptor está activado pero el servicio no está en marcha (puede que el sistema lo haya cerrado); toca «Iniciar servicio» para recuperarlo.</string>
     <string name="priv_hint_not_installed">La aplicación del canal privilegiado no está instalada en este teléfono; instálala, iníciala y vuelve a tocar «Volver a sondear».</string>
     <string name="priv_hint_not_running">El canal privilegiado no está en ejecución; ejecuta una vez el comando de inicio desde una computadora (un clic en el lado de Windows).</string>
     <string name="priv_hint_not_authorized">El canal privilegiado aún no autoriza esta aplicación; toca «Autorizar lectura privilegiada» para concederlo.</string>
@@ -426,6 +442,28 @@
     <string name="prefs_conduit_network">Conducto · Red</string>
     <string name="prefs_no_device">Aún no hay dispositivos emparejados</string>
     <string name="prefs_no_device_hint">La entrada de emparejamiento está en el segmento de red de la página Conducto; una vez emparejado, el nombre del otro extremo aparece aquí.</string>
+    <string name="prefs_live_service_off">Detenido: sin escucha del portapapeles en segundo plano y sin conexión con el PC.</string>
+    <string name="prefs_live_service_connected">En marcha · conectado al PC</string>
+    <string name="prefs_live_service_waiting">En marcha · sin conexión con el PC, esperando reconectar</string>
+    <string name="prefs_live_service_start_failed">No está en marcha: el sistema rechazó el inicio (%1$s); toca «Iniciar servicio» en la página Conducto para reintentar</string>
+    <string name="prefs_live_service_not_running">El interruptor está activado pero el servicio no está en marcha (puede que el sistema lo haya cerrado); toca «Iniciar servicio» en la página Conducto para recuperarlo</string>
+    <string name="prefs_live_gate_sync_paused">En vigor: la lectura en segundo plano está detenida y lo recibido solo va al historial</string>
+    <string name="prefs_live_gate_private">En vigor: la lectura en segundo plano está detenida y lo que copias aquí se queda en este dispositivo</string>
+    <string name="prefs_live_gate_capture_paused">En vigor: la escucha en segundo plano está detenida; durante la pausa no se lee el portapapeles</string>
+    <string name="prefs_live_capture_running">Lectura en segundo plano en marcha · ruta actual %1$s · %2$d capturados en esta ejecución</string>
+    <string name="prefs_live_capture_stopped">La lectura en segundo plano no está en marcha; ver Conducto · Lectura local</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="one">%1$d elemento marcado como sensible omitido en esta ejecución</item>
+        <item quantity="many">%1$d elementos marcados como sensibles omitidos en esta ejecución</item>
+        <item quantity="other">%1$d elementos marcados como sensibles omitidos en esta ejecución</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">En esta ejecución aún no ha aparecido ningún elemento marcado como sensible</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="one">%1$d imagen sin sincronizar en esta ejecución porque esto está desactivado</item>
+        <item quantity="many">%1$d imágenes sin sincronizar en esta ejecución porque esto está desactivado</item>
+        <item quantity="other">%1$d imágenes sin sincronizar en esta ejecución porque esto está desactivado</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">El sistema tiene desactivadas las notificaciones de esta app, así que este interruptor aún no tiene efecto; la página Conducto enlaza al ajuste del sistema</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">Se exportó %1$d registro (texto plano); guarda bien el archivo de respaldo.</item>

@@ -8,6 +8,8 @@ import com.clipsync.android.ui.ConduitStatus
 import com.clipsync.android.ui.HealthScreenState
 import com.clipsync.android.ui.health.ReadRouteId
 import com.clipsync.android.ui.health.ReadRouteUi
+import com.clipsync.android.ui.health.RouteStep
+import com.clipsync.android.ui.health.RouteStepId
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -97,5 +99,31 @@ class OnboardingProgressTest {
         )
         // No capability wiring on this build: the route is absent, nothing is claimed.
         assertEquals(OnboardingProgress(), onboardingProgress(state(routes = emptyList())))
+    }
+
+    @Test
+    fun `overlay and battery marks follow the wizard's own route steps`() {
+        val pollingRoute =
+            ReadRouteUi(
+                id = ReadRouteId.OVERLAY_POLLING,
+                mode = ClipboardReadMode.OVERLAY_POLLING,
+                title = UiText.Raw("悬浮窗轮询"),
+                quality = 1,
+                cost = UiText.Raw("成本"),
+                steps =
+                    listOf(
+                        RouteStep(RouteStepId.OVERLAY_GRANTED, UiText.Raw("悬浮窗"), satisfied = true),
+                        RouteStep(RouteStepId.BATTERY_UNRESTRICTED, UiText.Raw("电池"), satisfied = false),
+                    ),
+                stepsRemaining = 1,
+                readState = CapabilityState.UNAVAILABLE,
+                errorCode = null,
+                nextAction = null,
+                preferred = false,
+            )
+        assertEquals(
+            OnboardingProgress(overlayGranted = true, batteryUnrestricted = false),
+            onboardingProgress(state(routes = listOf(pollingRoute))),
+        )
     }
 }
