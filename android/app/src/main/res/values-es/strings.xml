@@ -343,6 +343,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">La conexión expiró. Si ambos dispositivos están realmente en la misma red Wi-Fi, comprueba que el Firewall de Windows del PC permita la entrada por TCP %1$d.</string>
     <string name="pairing_fail_unreachable_hint_refused">Nada en el PC está escuchando en ese puerto. Asegúrate de que ClipSync se está ejecutando en el PC y vuelve a mostrar el código QR.</string>
     <string name="pairing_fail_unreachable_hint_no_route">No se encontró ningún equipo en esa dirección. Puede que el PC esté en suspensión, que su IP haya cambiado o que el código QR liste primero la dirección de un adaptador virtual. Vuelve a mostrar el código QR y reintenta.</string>
+    <string name="pairing_beacon_seen">Se recibió la señal de «%1$s» en esta red</string>
+    <string name="pairing_beacon_listening">Escuchando la señal del PC en la red local…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">El teléfono recibió la señal de este PC en la red actual, pero la conexión expiró: casi con seguridad el Firewall de Windows del PC no permite la entrada por TCP %1$d. Cómo permitirlo se explica en la página «Conducto» de la app de Windows o en la guía de instalación.</string>
+    <string name="pairing_cancel">Cancelar</string>
+    <string name="pairing_cancelled_notice">Cancelado. Este código QR ya se ha usado; vuelve a mostrarlo en el PC antes de escanear de nuevo.</string>
+    <string name="pairing_fail_no_response">Se conectó al PC, pero este no respondió a tiempo. Comprueba que ClipSync se está ejecutando en el PC y no se ha quedado bloqueado, y vuelve a mostrar el código QR.</string>
+    <string name="pairing_fail_tls">No se pudo establecer la conexión cifrada con el PC (no es un problema de huella del certificado). Reintenta; si se repite, revisa la hora en ambos equipos y si algún dispositivo de red interfiere con TLS.</string>
     <string name="pairing_restart">Empezar de nuevo</string>
 
     <string name="prefs_title">Preferencias</string>

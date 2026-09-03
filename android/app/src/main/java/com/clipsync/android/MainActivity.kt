@@ -72,6 +72,7 @@ import com.clipsync.android.platform.ConnectivityLocalNetwork
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.SyncSettingsChanges
+import com.clipsync.android.platform.UdpDiscoveryListener
 import com.clipsync.android.platform.clipboard.ClipboardCaptureSession
 import com.clipsync.android.platform.clipboard.SharedClipboardWrites
 import com.clipsync.android.platform.clipboard.shizuku.host.PrivilegedHostStarter
@@ -143,6 +144,8 @@ class MainActivity : AppCompatActivity() {
             // Only consulted after an unreachable pairing attempt, to say whether the phone
             // and the QR addresses even share a network; never used to pick or probe hosts.
             localNetwork = ConnectivityLocalNetwork(applicationContext),
+            // Hears the PC's UDP discovery beacon only while the pairing page holds a QR code.
+            beacon = UdpDiscoveryListener(applicationContext),
         )
     }
 

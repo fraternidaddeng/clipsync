@@ -339,6 +339,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">कनेक्शन का समय समाप्त हो गया। यदि दोनों डिवाइस सच में एक ही Wi-Fi पर हैं, तो जाँचें कि PC का Windows फ़ायरवॉल TCP %1$d पर आने वाले कनेक्शन की अनुमति देता है।</string>
     <string name="pairing_fail_unreachable_hint_refused">PC पर कोई प्रोग्राम उस पोर्ट पर सुन नहीं रहा। पक्का करें कि PC पर ClipSync चल रहा है, फिर QR कोड दोबारा दिखाएँ।</string>
     <string name="pairing_fail_unreachable_hint_no_route">उस पते पर कोई होस्ट नहीं मिला। हो सकता है PC स्लीप में हो, उसका IP बदल गया हो, या QR कोड में पहला पता किसी वर्चुअल अडैप्टर का हो। QR कोड दोबारा दिखाकर फिर कोशिश करें।</string>
+    <string name="pairing_beacon_seen">इस नेटवर्क पर “%1$s” का सिग्नल मिला</string>
+    <string name="pairing_beacon_listening">लोकल नेटवर्क पर PC के सिग्नल की प्रतीक्षा…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">फ़ोन को मौजूदा नेटवर्क पर इस PC का सिग्नल मिला, फिर भी कनेक्शन का समय समाप्त हो गया — लगभग तय है कि PC का Windows फ़ायरवॉल TCP %1$d पर आने वाले कनेक्शन की अनुमति नहीं दे रहा। अनुमति देने का तरीका Windows ऐप के “मार्ग” पेज या इंस्टॉल गाइड में देखें।</string>
+    <string name="pairing_cancel">रद्द करें</string>
+    <string name="pairing_cancelled_notice">रद्द किया गया। यह QR कोड इस्तेमाल हो चुका है; दोबारा स्कैन करने से पहले PC पर नया कोड दिखाएँ।</string>
+    <string name="pairing_fail_no_response">PC से कनेक्ट हो गया, लेकिन PC ने समय सीमा में जवाब नहीं दिया। पक्का करें कि PC पर ClipSync चल रहा है और अटका नहीं है, फिर QR कोड दोबारा दिखाएँ।</string>
+    <string name="pairing_fail_tls">PC के साथ एन्क्रिप्टेड कनेक्शन नहीं बन सका (यह प्रमाणपत्र फ़िंगरप्रिंट की समस्या नहीं है)। फिर कोशिश करें; बार-बार होने पर दोनों डिवाइस का समय जाँचें और देखें कि कोई नेटवर्क उपकरण TLS में बाधा तो नहीं डाल रहा।</string>
     <string name="pairing_restart">फिर से शुरू करें</string>
 
     <string name="prefs_title">प्राथमिकताएँ</string>

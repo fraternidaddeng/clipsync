@@ -343,6 +343,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">La connexion a expiré. Si les deux appareils sont bien sur le même Wi-Fi, vérifiez que le Pare-feu Windows du PC autorise les connexions entrantes sur le port TCP %1$d.</string>
     <string name="pairing_fail_unreachable_hint_refused">Rien n’écoute sur ce port côté PC. Vérifiez que ClipSync est lancé sur le PC, puis affichez de nouveau le code QR.</string>
     <string name="pairing_fail_unreachable_hint_no_route">Aucun hôte trouvé à cette adresse. Le PC est peut-être en veille, son IP a peut-être changé, ou le code QR liste d’abord l’adresse d’une carte virtuelle. Affichez de nouveau le code QR et réessayez.</string>
+    <string name="pairing_beacon_seen">Signal de « %1$s » reçu sur ce réseau</string>
+    <string name="pairing_beacon_listening">À l’écoute du signal du PC sur le réseau local…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">Le téléphone a reçu le signal de ce PC sur le réseau actuel, mais la connexion a expiré : c’est presque certainement le Pare-feu Windows du PC qui n’autorise pas les connexions entrantes sur le port TCP %1$d. La page « Conduit » de l’application Windows et le guide d’installation expliquent comment l’autoriser.</string>
+    <string name="pairing_cancel">Annuler</string>
+    <string name="pairing_cancelled_notice">Annulé. Ce code QR a déjà été utilisé ; affichez-en un nouveau sur le PC avant de scanner à nouveau.</string>
+    <string name="pairing_fail_no_response">Connexion au PC établie, mais il n’a pas répondu dans le délai. Vérifiez que ClipSync est lancé sur le PC et n’est pas bloqué, puis affichez de nouveau le code QR.</string>
+    <string name="pairing_fail_tls">La connexion chiffrée avec le PC n’a pas pu être établie (ce n’est pas un problème d’empreinte de certificat). Réessayez ; si cela se répète, vérifiez l’heure des deux appareils et si un équipement réseau perturbe TLS.</string>
     <string name="pairing_restart">Recommencer</string>
 
     <string name="prefs_title">Préférences</string>

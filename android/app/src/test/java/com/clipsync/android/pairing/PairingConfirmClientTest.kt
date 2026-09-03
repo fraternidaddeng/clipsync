@@ -1,7 +1,9 @@
 package com.clipsync.android.pairing
 
-import java.net.InetAddress
-import java.security.MessageDigest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -13,6 +15,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.net.InetAddress
+import java.security.MessageDigest
 
 /**
  * Exercises the confirm client against a real TLS server. The pin from the QR payload is the
@@ -25,18 +29,24 @@ class PairingConfirmClientTest {
 
     @Before
     fun startServer() {
-        certificate = HeldCertificate.Builder()
-            .addSubjectAlternativeName("127.0.0.1")
-            .build()
-        val handshake = HandshakeCertificates.Builder()
-            .heldCertificate(certificate)
-            .build()
+        certificate =
+            HeldCertificate
+                .Builder()
+                .addSubjectAlternativeName("127.0.0.1")
+                .build()
+        val handshake =
+            HandshakeCertificates
+                .Builder()
+                .heldCertificate(certificate)
+                .build()
         server = MockWebServer()
         server.useHttps(handshake.sslSocketFactory(), false)
         server.start(InetAddress.getByName("127.0.0.1"), 0)
-        fingerprint = MessageDigest.getInstance("SHA-256")
-            .digest(certificate.certificate.encoded)
-            .joinToString(separator = "") { byte -> "%02x".format(byte) }
+        fingerprint =
+            MessageDigest
+                .getInstance("SHA-256")
+                .digest(certificate.certificate.encoded)
+                .joinToString(separator = "") { byte -> "%02x".format(byte) }
     }
 
     @After
@@ -59,26 +69,28 @@ class PairingConfirmClientTest {
         expiresAtMs = 1_755_064_500_000,
     )
 
-    private fun request() = PairingConfirmRequest(
-        kind = PairingDocumentKinds.CONFIRM_REQUEST,
-        version = 1,
-        token = TOKEN,
-        deviceId = ANDROID_ID,
-        displayName = "Pixel 8",
-        platform = "android",
-    )
-
-    private fun approvedBody(): String = PairingJson.serialize(
-        PairingConfirmResponse(
-            kind = PairingDocumentKinds.CONFIRM_RESPONSE,
+    private fun request() =
+        PairingConfirmRequest(
+            kind = PairingDocumentKinds.CONFIRM_REQUEST,
             version = 1,
-            deviceId = WINDOWS_ID,
-            displayName = "DESKTOP-WIN",
-            platform = "windows",
-            pairSecret = SECRET,
-            trustEpoch = 2,
-        ),
-    )
+            token = TOKEN,
+            deviceId = ANDROID_ID,
+            displayName = "Pixel 8",
+            platform = "android",
+        )
+
+    private fun approvedBody(): String =
+        PairingJson.serialize(
+            PairingConfirmResponse(
+                kind = PairingDocumentKinds.CONFIRM_RESPONSE,
+                version = 1,
+                deviceId = WINDOWS_ID,
+                displayName = "DESKTOP-WIN",
+                platform = "windows",
+                pairSecret = SECRET,
+                trustEpoch = 2,
+            ),
+        )
 
     private fun confirm(
         qr: PairingQrPayload,
@@ -228,8 +240,38 @@ class PairingConfirmClientTest {
         val phases = mutableListOf<PairingPhase>()
         val outcome = confirm(qr(), client = PairingConfirmClient(readTimeoutMs = 400), onPhase = phases::add)
 
-        assertTrue(outcome is PairingConfirmOutcome.ProtocolViolation)
+        assertEquals(PairingConfirmOutcome.NoResponse("127.0.0.1", NoResponseKind.READ_TIMEOUT), outcome)
         assertEquals(1, phases.count { it == PairingPhase.AWAITING_APPROVAL })
+    }
+
+    @Test
+    fun `a tls failure that is not the pin is a no response, not a protocol violation`() {
+        // The server breaks the handshake before presenting any certificate, so the pin is never consulted.
+        server.enqueue(MockResponse().setSocketPolicy(SocketPolicy.FAIL_HANDSHAKE))
+
+        val phases = mutableListOf<PairingPhase>()
+        val outcome = confirm(qr(), onPhase = phases::add)
+
+        assertEquals(PairingConfirmOutcome.NoResponse("127.0.0.1", NoResponseKind.TLS_FAILURE), outcome)
+        assertEquals(listOf(PairingPhase.CONNECTING), phases)
+    }
+
+    @Test
+    fun `cancelling the submission cancels the socket instead of waiting out the read timeout`() {
+        server.enqueue(MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE))
+        val client = PairingConfirmClient(readTimeoutMs = 30_000)
+
+        val elapsedMs =
+            runBlocking {
+                val job = launch(Dispatchers.IO) { client.confirm(qr(), request()) }
+                // Let the request reach the server, then abandon it like the 取消 button does.
+                delay(500)
+                val started = System.nanoTime()
+                job.cancelAndJoin()
+                (System.nanoTime() - started) / 1_000_000
+            }
+        assertTrue("cancel took ${elapsedMs}ms", elapsedMs < 5_000)
+        assertEquals(1, server.requestCount)
     }
 
     @Test
@@ -264,7 +306,7 @@ class PairingConfirmClientTest {
                 qr(hosts = listOf("127.0.0.1", "127.0.0.1")),
                 client = PairingConfirmClient(readTimeoutMs = 400),
             )
-        assertTrue(outcome is PairingConfirmOutcome.ProtocolViolation)
+        assertEquals(PairingConfirmOutcome.NoResponse("127.0.0.1", NoResponseKind.READ_TIMEOUT), outcome)
         assertEquals(1, server.requestCount)
     }
 

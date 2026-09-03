@@ -1,9 +1,11 @@
 package com.clipsync.android.pairing
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.EventListener
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Protocol
@@ -12,9 +14,12 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Proxy
+import java.net.SocketTimeoutException
 import java.nio.charset.CodingErrorAction
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.net.ssl.SSLException
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resumeWithException
 
 /** One QR host that refused a TCP/TLS connection, and why. */
 data class HostAttempt(
@@ -50,10 +55,28 @@ sealed interface PairingConfirmOutcome {
         val attemptedHosts: List<String> get() = attempts.map { it.host }
     }
 
+    /**
+     * TCP reached [host] but no confirm answer came back: the read timed out with the request
+     * on the wire, or TLS broke for a reason other than the pin. The token may be spent, so
+     * this is terminal — and it is a stalled network, not a version mismatch.
+     */
+    data class NoResponse(
+        val host: String,
+        val kind: NoResponseKind,
+    ) : PairingConfirmOutcome
+
     /** The listener answered outside the frozen contract. */
     data class ProtocolViolation(
         val detail: String,
     ) : PairingConfirmOutcome
+}
+
+enum class NoResponseKind {
+    /** Connected and sent, then silence for the whole read timeout. */
+    READ_TIMEOUT,
+
+    /** The TLS handshake or record layer failed without the pin being the cause. */
+    TLS_FAILURE,
 }
 
 /** The confirm exchange as the ViewModel sees it; faked in unit tests. */
@@ -111,7 +134,7 @@ class PairingConfirmClient(
         ) : HostOutcome
     }
 
-    private fun confirmViaHost(
+    private suspend fun confirmViaHost(
         host: String,
         port: Int,
         pin: String,
@@ -127,22 +150,65 @@ class PairingConfirmClient(
                 .post(body.toRequestBody("application/json; charset=utf-8".toMediaType()))
                 .build()
         return try {
-            client.newCall(request).execute().use { response ->
+            client.newCall(request).await().use { response ->
                 HostOutcome.Answered(mapResponse(host, response.code, readBounded(response)))
             }
         } catch (exception: IOException) {
-            when {
-                PinnedTls.isPinRejection(exception) -> HostOutcome.PinRejected
-                PinnedTls.isConnectivityFailure(exception) -> HostOutcome.NotReachable(classifyUnreachable(exception))
-                else ->
-                    HostOutcome.Answered(
-                        PairingConfirmOutcome.ProtocolViolation("transport failed: ${exception.javaClass.simpleName}"),
-                    )
-            }
+            classifyTransport(host, exception)
         } finally {
             PinnedTls.shutdown(client)
         }
     }
+
+    /**
+     * Connect-phase failures roll over to the next host; everything after the socket is up is
+     * terminal, because the request may already have spent the one-time token. A read timeout
+     * or a non-pin TLS failure is a stalled transport, not a peer speaking another protocol.
+     */
+    private fun classifyTransport(
+        host: String,
+        exception: IOException,
+    ): HostOutcome =
+        when {
+            PinnedTls.isPinRejection(exception) -> HostOutcome.PinRejected
+            PinnedTls.isConnectivityFailure(exception) -> HostOutcome.NotReachable(classifyUnreachable(exception))
+            exception is SocketTimeoutException ->
+                HostOutcome.Answered(PairingConfirmOutcome.NoResponse(host, NoResponseKind.READ_TIMEOUT))
+            exception is SSLException ->
+                HostOutcome.Answered(PairingConfirmOutcome.NoResponse(host, NoResponseKind.TLS_FAILURE))
+            else ->
+                HostOutcome.Answered(
+                    PairingConfirmOutcome.ProtocolViolation("transport failed: ${exception.javaClass.simpleName}"),
+                )
+        }
+
+    /**
+     * Runs the call on OkHttp's dispatcher and ties it to the coroutine: cancelling the
+     * submission cancels the socket too, instead of leaving a thread parked in a 100 s read.
+     */
+    private suspend fun Call.await(): okhttp3.Response =
+        suspendCancellableCoroutine { continuation ->
+            enqueue(
+                object : Callback {
+                    override fun onResponse(
+                        call: Call,
+                        response: okhttp3.Response,
+                    ) {
+                        continuation.resume(response) { _, _, _ -> response.close() }
+                    }
+
+                    override fun onFailure(
+                        call: Call,
+                        e: IOException,
+                    ) {
+                        if (!continuation.isCancelled) {
+                            continuation.resumeWithException(e)
+                        }
+                    }
+                },
+            )
+            continuation.invokeOnCancellation { cancel() }
+        }
 
     /**
      * Reports [PairingPhase.AWAITING_APPROVAL] once the socket (TLS included, so the pin has

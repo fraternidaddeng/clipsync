@@ -339,6 +339,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">Die Verbindung ist abgelaufen. Wenn beide Geräte tatsächlich im selben WLAN sind, prüfen Sie, ob die Windows-Firewall des PCs eingehende Verbindungen auf TCP %1$d zulässt.</string>
     <string name="pairing_fail_unreachable_hint_refused">Auf dem PC lauscht kein Programm an diesem Port. Stellen Sie sicher, dass ClipSync auf dem PC läuft, und zeigen Sie den QR-Code erneut an.</string>
     <string name="pairing_fail_unreachable_hint_no_route">Unter dieser Adresse wurde kein Host gefunden. Der PC schläft vielleicht, seine IP hat sich geändert, oder der QR-Code führt zuerst die Adresse eines virtuellen Adapters auf. Zeigen Sie den QR-Code erneut an und versuchen Sie es noch einmal.</string>
+    <string name="pairing_beacon_seen">Signal von „%1$s“ in diesem Netzwerk empfangen</string>
+    <string name="pairing_beacon_listening">Warte auf das Signal des PCs im lokalen Netzwerk …</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">Das Telefon hat das Signal dieses PCs im aktuellen Netzwerk empfangen, doch die Verbindung ist abgelaufen – fast sicher lässt die Windows-Firewall des PCs eingehende Verbindungen auf TCP %1$d nicht zu. Wie Sie das freigeben, zeigen die Seite „Kanal“ in der Windows-App und die Installationsanleitung.</string>
+    <string name="pairing_cancel">Abbrechen</string>
+    <string name="pairing_cancelled_notice">Abgebrochen. Dieser QR-Code wurde bereits verwendet; zeigen Sie auf dem PC einen neuen an, bevor Sie erneut scannen.</string>
+    <string name="pairing_fail_no_response">Mit dem PC verbunden, aber er hat nicht rechtzeitig geantwortet. Prüfen Sie, ob ClipSync auf dem PC läuft und nicht hängt, und zeigen Sie den QR-Code erneut an.</string>
+    <string name="pairing_fail_tls">Die verschlüsselte Verbindung zum PC konnte nicht aufgebaut werden (kein Problem mit dem Zertifikat-Fingerabdruck). Versuchen Sie es erneut; tritt es wiederholt auf, prüfen Sie die Uhrzeit beider Geräte und ob ein Netzwerkgerät TLS stört.</string>
     <string name="pairing_restart">Von vorn beginnen</string>
 
     <string name="prefs_title">Einstellungen</string>

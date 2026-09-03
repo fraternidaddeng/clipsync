@@ -3,7 +3,11 @@ package com.clipsync.android.ui.pairing
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.clipsync.android.pairing.BeaconExpectation
+import com.clipsync.android.pairing.BeaconListener
+import com.clipsync.android.pairing.BeaconStatus
 import com.clipsync.android.pairing.LocalNetworkSource
+import com.clipsync.android.pairing.NoResponseKind
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingConfirmApi
 import com.clipsync.android.pairing.PairingConfirmOutcome
@@ -17,6 +21,7 @@ import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.pairing.UnreachableReason
 import com.clipsync.android.pairing.UnreachableReasons
 import com.clipsync.android.pairing.anyHostOnSameSubnet
+import com.clipsync.android.pairing.hostsPreferringBeacon
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,24 +42,37 @@ enum class PairingFailure {
     TOKEN_INVALID,
     TOKEN_EXPIRED,
     RATE_LIMITED,
+
+    /** Connected, request sent, no answer within the read timeout. */
+    NO_RESPONSE,
+
+    /** TLS failed for a reason other than the certificate pin. */
+    TLS_FAILURE,
     PROTOCOL,
 }
 
 /**
  * What the failure screen can add to [PairingFailure.UNREACHABLE]: the dominant reason across
  * the QR hosts, whether any of them shares the phone's IPv4 network (null when the phone's own
- * address could not be read — stated as unknown, never guessed), and the port that was dialed.
+ * address could not be read — stated as unknown, never guessed), the port that was dialed, and
+ * whether this PC's LAN beacon was heard — the one fact that turns "maybe a firewall" into
+ * "the PC is right here and still not answering on TCP".
  */
 data class UnreachableDetail(
     val reason: UnreachableReason,
     val sameSubnet: Boolean?,
     val port: Int,
+    val beaconSeen: Boolean = false,
 )
 
 sealed interface PairingUiState {
-    /** No pairing in progress; shows the saved peer when one exists. */
+    /**
+     * No pairing in progress; shows the saved peer when one exists. [cancelledNotice] is the
+     * one-shot line after a cancelled submission: the confirm may already have spent the token.
+     */
     data class Idle(
         val pairedPeer: PairedPeer?,
+        val cancelledNotice: Boolean = false,
     ) : PairingUiState
 
     /**
@@ -65,6 +83,7 @@ sealed interface PairingUiState {
     data class Review(
         val qr: PairingQrPayload,
         val certificateChanged: Boolean,
+        val beacon: BeaconStatus = BeaconStatus.Off,
     ) : PairingUiState
 
     /** The confirm call is in flight; [elapsedSeconds] ticks once a second while it lasts. */
@@ -73,6 +92,7 @@ sealed interface PairingUiState {
         val hostCount: Int,
         val phase: PairingPhase = PairingPhase.CONNECTING,
         val elapsedSeconds: Int = 0,
+        val beacon: BeaconStatus = BeaconStatus.Off,
     ) : PairingUiState
 
     data class Paired(
@@ -82,6 +102,7 @@ sealed interface PairingUiState {
     data class Failed(
         val reason: PairingFailure,
         val unreachable: UnreachableDetail? = null,
+        val beacon: BeaconStatus = BeaconStatus.Off,
     ) : PairingUiState
 }
 
@@ -91,12 +112,20 @@ class PairingViewModel(
     private val localNameFallback: String,
     private val nowMs: () -> Long = System::currentTimeMillis,
     private val localNetwork: LocalNetworkSource = LocalNetworkSource { null },
+    private val beacon: BeaconListener = NoBeaconListener,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<PairingUiState>(PairingUiState.Idle(store.peer()))
 
     val state: StateFlow<PairingUiState> = mutableState.asStateFlow()
 
     private var submission: Job? = null
+
+    /** The QR in hand from Review until the ritual ends; the beacon listens only while it is set. */
+    private var scannedQr: PairingQrPayload? = null
+
+    private var pageVisible = false
+
+    private var listening = false
 
     /** Feeds one scanned or pasted QR payload; only the first hit in a scan session lands. */
     fun onPayload(text: String) {
@@ -119,21 +148,26 @@ class PairingViewModel(
             existing != null &&
                 existing.deviceId == qr.deviceId &&
                 !existing.certSha256.equals(qr.certSha256, ignoreCase = true)
+        scannedQr = qr
         mutableState.value = PairingUiState.Review(qr, certificateChanged)
+        syncBeacon()
     }
 
     fun confirm() {
         val review = mutableState.value as? PairingUiState.Review ?: return
+        // The address the PC actually broadcast from is the one most likely to answer.
+        val qr = review.qr.copy(hosts = hostsPreferringBeacon(review.qr.hosts, review.beacon))
         val request =
             PairingConfirmRequest(
                 kind = PairingDocumentKinds.CONFIRM_REQUEST,
                 version = 1,
-                token = review.qr.token,
+                token = qr.token,
                 deviceId = store.localDeviceId(),
                 displayName = store.localDisplayName(localNameFallback),
                 platform = "android",
             )
-        mutableState.value = PairingUiState.Submitting(review.qr.displayName, hostCount = review.qr.hosts.size)
+        mutableState.value =
+            PairingUiState.Submitting(qr.displayName, hostCount = qr.hosts.size, beacon = review.beacon)
         submission =
             viewModelScope.launch {
                 // The ticker is a child of this job: whatever ends the submission ends it too.
@@ -148,59 +182,102 @@ class PairingViewModel(
                     }
                 try {
                     val outcome =
-                        client.confirm(review.qr, request) { phase ->
+                        client.confirm(qr, request) { phase ->
                             updateSubmitting { it.copy(phase = phase) }
                         }
+                    val beaconNow = (mutableState.value as? PairingUiState.Submitting)?.beacon ?: BeaconStatus.Off
                     mutableState.value =
                         when (outcome) {
-                            is PairingConfirmOutcome.Approved -> saveApproved(review.qr, outcome)
+                            is PairingConfirmOutcome.Approved -> saveApproved(qr, outcome)
                             is PairingConfirmOutcome.CertificateMismatch ->
-                                PairingUiState.Failed(PairingFailure.CERTIFICATE_MISMATCH)
+                                PairingUiState.Failed(PairingFailure.CERTIFICATE_MISMATCH, beacon = beaconNow)
                             is PairingConfirmOutcome.Unreachable ->
-                                PairingUiState.Failed(PairingFailure.UNREACHABLE, unreachableDetail(review.qr, outcome))
-                            is PairingConfirmOutcome.Denied -> PairingUiState.Failed(mapDenied(outcome.errorCode))
+                                PairingUiState.Failed(
+                                    PairingFailure.UNREACHABLE,
+                                    unreachableDetail(qr, outcome, localNetwork, beaconNow),
+                                    beacon = beaconNow,
+                                )
+                            is PairingConfirmOutcome.Denied ->
+                                PairingUiState.Failed(mapDenied(outcome.errorCode), beacon = beaconNow)
+                            is PairingConfirmOutcome.NoResponse ->
+                                PairingUiState.Failed(mapNoResponse(outcome.kind), beacon = beaconNow)
                             is PairingConfirmOutcome.ProtocolViolation ->
-                                PairingUiState.Failed(PairingFailure.PROTOCOL)
+                                PairingUiState.Failed(PairingFailure.PROTOCOL, beacon = beaconNow)
                         }
+                    syncBeacon()
                 } finally {
                     ticker.cancel()
                 }
             }
     }
 
-    fun cancelReview() {
-        if (mutableState.value is PairingUiState.Review) {
-            mutableState.value = PairingUiState.Idle(store.peer())
+    /**
+     * Abandons an in-flight confirm. The request may already have reached the PC and spent the
+     * one-time token, so the idle page says to show a fresh QR code rather than rescan this one.
+     */
+    fun cancelSubmission() {
+        if (mutableState.value !is PairingUiState.Submitting) {
+            return
         }
+        submission?.cancel()
+        submission = null
+        scannedQr = null
+        mutableState.value = PairingUiState.Idle(store.peer(), cancelledNotice = true)
+        syncBeacon()
     }
 
+    /** Back to idle from any step: review declined, failure acknowledged, or the paired card closed. */
     fun reset() {
         submission?.cancel()
         submission = null
+        scannedQr = null
         mutableState.value = PairingUiState.Idle(store.peer())
+        syncBeacon()
     }
 
     fun forgetPeer() {
         store.forgetPeer()
+        scannedQr = null
         mutableState.value = PairingUiState.Idle(pairedPeer = null)
+        syncBeacon()
+    }
+
+    /** The pairing page reports when it is on screen; the beacon listener only runs while it is. */
+    fun setPageVisible(visible: Boolean) {
+        pageVisible = visible
+        syncBeacon()
+    }
+
+    override fun onCleared() {
+        pageVisible = false
+        syncBeacon()
+    }
+
+    /**
+     * Listen exactly while a QR code is in hand (Review / Submitting / Failed) and the page is
+     * on screen; anything else — idle, paired, page left, ViewModel gone — releases socket and lock.
+     */
+    private fun syncBeacon() {
+        val qr = scannedQr
+        val wanted = pageVisible && qr != null && mutableState.value.holdsQr()
+        if (wanted == listening) {
+            return
+        }
+        listening = wanted
+        if (wanted && qr != null) {
+            beacon.start(BeaconExpectation(qr.deviceId, qr.certSha256)) { status ->
+                mutableState.update { it.withBeacon(status) }
+            }
+        } else {
+            beacon.stop()
+            mutableState.update { it.withBeacon(BeaconStatus.Off) }
+        }
     }
 
     private fun updateSubmitting(transform: (PairingUiState.Submitting) -> PairingUiState.Submitting) {
         mutableState.update { current ->
             if (current is PairingUiState.Submitting) transform(current) else current
         }
-    }
-
-    private fun unreachableDetail(
-        qr: PairingQrPayload,
-        outcome: PairingConfirmOutcome.Unreachable,
-    ): UnreachableDetail {
-        val local = runCatching { localNetwork.currentIpv4() }.getOrNull()
-        return UnreachableDetail(
-            reason = UnreachableReasons.primary(outcome.attempts.map { it.reason }),
-            sameSubnet = local?.let { anyHostOnSameSubnet(qr.hosts, it.address, it.prefixLength) },
-            port = qr.port,
-        )
     }
 
     private fun saveApproved(
@@ -218,15 +295,15 @@ class PairingViewModel(
         return if (saved == null) PairingUiState.Failed(PairingFailure.PROTOCOL) else PairingUiState.Paired(saved)
     }
 
-    private fun mapDenied(code: String): PairingFailure =
-        when (code) {
-            PairingErrorCodes.REJECTED -> PairingFailure.REJECTED
-            PairingErrorCodes.TIMEOUT -> PairingFailure.TIMEOUT
-            PairingErrorCodes.TOKEN_INVALID -> PairingFailure.TOKEN_INVALID
-            PairingErrorCodes.TOKEN_EXPIRED -> PairingFailure.TOKEN_EXPIRED
-            PairingErrorCodes.RATE_LIMITED -> PairingFailure.RATE_LIMITED
-            else -> PairingFailure.PROTOCOL
-        }
+    /** A stand-in for hosts (tests, previews) that never hears anything; the status stays Off. */
+    private object NoBeaconListener : BeaconListener {
+        override fun start(
+            expectation: BeaconExpectation,
+            onStatus: (BeaconStatus) -> Unit,
+        ) = Unit
+
+        override fun stop() = Unit
+    }
 
     companion object {
         private const val TICK_MS = 1_000L
@@ -236,11 +313,66 @@ class PairingViewModel(
             client: PairingConfirmApi,
             localNameFallback: String,
             localNetwork: LocalNetworkSource = LocalNetworkSource { null },
+            beacon: BeaconListener = NoBeaconListener,
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                    PairingViewModel(store, client, localNameFallback, localNetwork = localNetwork) as T
+                    PairingViewModel(
+                        store,
+                        client,
+                        localNameFallback,
+                        localNetwork = localNetwork,
+                        beacon = beacon,
+                    ) as T
             }
     }
 }
+
+/** Review, Submitting and Failed all follow a parsed QR code; only they can carry a beacon verdict. */
+private fun PairingUiState.holdsQr(): Boolean =
+    this is PairingUiState.Review || this is PairingUiState.Submitting || this is PairingUiState.Failed
+
+private fun PairingUiState.withBeacon(status: BeaconStatus): PairingUiState =
+    when (this) {
+        is PairingUiState.Review -> copy(beacon = status)
+        is PairingUiState.Submitting -> copy(beacon = status)
+        is PairingUiState.Failed ->
+            copy(
+                beacon = status,
+                // A sighting after the failure still proves the PC is here; it never un-proves it.
+                unreachable = unreachable?.let { it.copy(beaconSeen = it.beaconSeen || status is BeaconStatus.Seen) },
+            )
+        is PairingUiState.Idle, is PairingUiState.Paired -> this
+    }
+
+private fun unreachableDetail(
+    qr: PairingQrPayload,
+    outcome: PairingConfirmOutcome.Unreachable,
+    localNetwork: LocalNetworkSource,
+    beacon: BeaconStatus,
+): UnreachableDetail {
+    val local = runCatching { localNetwork.currentIpv4() }.getOrNull()
+    return UnreachableDetail(
+        reason = UnreachableReasons.primary(outcome.attempts.map { it.reason }),
+        sameSubnet = local?.let { anyHostOnSameSubnet(qr.hosts, it.address, it.prefixLength) },
+        port = qr.port,
+        beaconSeen = beacon is BeaconStatus.Seen,
+    )
+}
+
+private fun mapDenied(code: String): PairingFailure =
+    when (code) {
+        PairingErrorCodes.REJECTED -> PairingFailure.REJECTED
+        PairingErrorCodes.TIMEOUT -> PairingFailure.TIMEOUT
+        PairingErrorCodes.TOKEN_INVALID -> PairingFailure.TOKEN_INVALID
+        PairingErrorCodes.TOKEN_EXPIRED -> PairingFailure.TOKEN_EXPIRED
+        PairingErrorCodes.RATE_LIMITED -> PairingFailure.RATE_LIMITED
+        else -> PairingFailure.PROTOCOL
+    }
+
+private fun mapNoResponse(kind: NoResponseKind): PairingFailure =
+    when (kind) {
+        NoResponseKind.READ_TIMEOUT -> PairingFailure.NO_RESPONSE
+        NoResponseKind.TLS_FAILURE -> PairingFailure.TLS_FAILURE
+    }

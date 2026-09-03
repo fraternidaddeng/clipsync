@@ -347,6 +347,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">Время ожидания соединения истекло. Если оба устройства действительно в одной сети Wi-Fi, проверьте, разрешает ли брандмауэр Windows на ПК входящие подключения по TCP %1$d.</string>
     <string name="pairing_fail_unreachable_hint_refused">На ПК ни одна программа не слушает этот порт. Убедитесь, что ClipSync запущен на ПК, и покажите QR-код ещё раз.</string>
     <string name="pairing_fail_unreachable_hint_no_route">По этому адресу не найден хост. Возможно, ПК спит, его IP изменился или первым в QR-коде стоит адрес виртуального адаптера. Покажите QR-код ещё раз и повторите попытку.</string>
+    <string name="pairing_beacon_seen">В этой сети получен сигнал от «%1$s»</string>
+    <string name="pairing_beacon_listening">Ожидание сигнала ПК в локальной сети…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">Телефон получил сигнал этого ПК в текущей сети, но время ожидания соединения истекло — почти наверняка брандмауэр Windows на ПК не разрешает входящие подключения по TCP %1$d. Как разрешить — см. страницу «Канал» в приложении для Windows или руководство по установке.</string>
+    <string name="pairing_cancel">Отмена</string>
+    <string name="pairing_cancelled_notice">Отменено. Этот QR-код уже использован; покажите на ПК новый, прежде чем сканировать снова.</string>
+    <string name="pairing_fail_no_response">Соединение с ПК установлено, но он не ответил за отведённое время. Убедитесь, что ClipSync на ПК запущен и не завис, затем покажите QR-код ещё раз.</string>
+    <string name="pairing_fail_tls">Не удалось установить зашифрованное соединение с ПК (дело не в отпечатке сертификата). Повторите попытку; если это повторяется, проверьте время на обоих устройствах и не мешает ли TLS сетевое оборудование.</string>
     <string name="pairing_restart">Начать заново</string>
 
     <string name="prefs_title">Настройки</string>

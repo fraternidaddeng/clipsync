@@ -365,6 +365,14 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">连接超时。若两台设备确在同一 Wi-Fi，请检查电脑的 Windows 防火墙是否放行了 TCP %1$d 入站。</string>
     <string name="pairing_fail_unreachable_hint_refused">电脑上没有程序在监听该端口。请确认剪剪相传正在电脑上运行，然后重新出示二维码。</string>
     <string name="pairing_fail_unreachable_hint_no_route">找不到该地址的主机。电脑可能已休眠、IP 已变化，或二维码里排在前面的是虚拟网卡地址。请重新出示二维码后再试。</string>
+    <!-- 配对期间监听电脑的 UDP 局域网信号：收到即证明同一广播域且电脑在线；%1$s 为电脑显示名，%1$d 为二维码里的端口 -->
+    <string name="pairing_beacon_seen">已在当前网络上收到「%1$s」的信号</string>
+    <string name="pairing_beacon_listening">正在监听电脑的局域网信号…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">手机已收到这台电脑在当前网络上的信号，但连接超时——几乎可以确定是电脑的 Windows 防火墙没有放行 TCP %1$d 入站。放行方法见电脑端「通路」页或安装指南。</string>
+    <string name="pairing_cancel">取消</string>
+    <string name="pairing_cancelled_notice">已取消。这枚二维码已被使用，请在电脑上重新出示后再扫。</string>
+    <string name="pairing_fail_no_response">已连上电脑，但电脑在限时内没有应答。请确认电脑上的剪剪相传正在运行且没有卡住，然后重新出示二维码。</string>
+    <string name="pairing_fail_tls">与电脑的加密连接未能建立（不是证书指纹问题）。请重试；若反复出现，检查两端时间与网络设备是否干扰 TLS。</string>
     <string name="pairing_restart">重新开始</string>
 
     <!-- 偏好 -->
