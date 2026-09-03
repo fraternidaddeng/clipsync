@@ -335,6 +335,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">Koneksi habis waktu. Jika kedua perangkat memang di Wi-Fi yang sama, periksa apakah Windows Firewall di PC sudah mengizinkan koneksi masuk TCP %1$d.</string>
     <string name="pairing_fail_unreachable_hint_refused">Tidak ada program di PC yang memantau port itu. Pastikan ClipSync sedang berjalan di PC, lalu tampilkan kode QR lagi.</string>
     <string name="pairing_fail_unreachable_hint_no_route">Tidak ada host di alamat itu. PC mungkin sedang tidur, IP-nya berubah, atau alamat pertama di kode QR milik adaptor jaringan virtual. Tampilkan kode QR lagi lalu coba ulang.</string>
+    <string name="pairing_beacon_seen">Sinyal dari “%1$s” diterima di jaringan ini</string>
+    <string name="pairing_beacon_listening">Mendengarkan sinyal PC di jaringan lokal…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">Ponsel menerima sinyal PC ini di jaringan saat ini, tetapi koneksi habis waktu — hampir pasti Windows Firewall di PC belum mengizinkan koneksi masuk TCP %1$d. Cara mengizinkannya ada di halaman “Saluran” aplikasi Windows atau panduan pemasangan.</string>
+    <string name="pairing_cancel">Batal</string>
+    <string name="pairing_cancelled_notice">Dibatalkan. Kode QR ini sudah terpakai; tampilkan yang baru di PC sebelum memindai lagi.</string>
+    <string name="pairing_fail_no_response">Terhubung ke PC, tetapi PC tidak menjawab dalam batas waktu. Pastikan ClipSync sedang berjalan di PC dan tidak macet, lalu tampilkan kode QR lagi.</string>
+    <string name="pairing_fail_tls">Koneksi terenkripsi ke PC tidak dapat dibuat (bukan masalah sidik jari sertifikat). Coba lagi; jika terus terjadi, periksa waktu di kedua perangkat dan apakah ada perangkat jaringan yang mengganggu TLS.</string>
     <string name="pairing_restart">Mulai dari awal</string>
 
     <string name="prefs_title">Preferensi</string>

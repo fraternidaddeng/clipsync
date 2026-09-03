@@ -335,6 +335,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">การเชื่อมต่อหมดเวลา หากอุปกรณ์ทั้งสองอยู่ใน Wi-Fi เดียวกันจริง ให้ตรวจสอบว่าไฟร์วอลล์ Windows บนพีซีอนุญาตการเชื่อมต่อขาเข้าทาง TCP %1$d แล้ว</string>
     <string name="pairing_fail_unreachable_hint_refused">ไม่มีโปรแกรมใดบนพีซีเฝ้าฟังพอร์ตนั้น ตรวจสอบว่า ClipSync กำลังทำงานอยู่บนพีซี แล้วแสดงคิวอาร์โค้ดอีกครั้ง</string>
     <string name="pairing_fail_unreachable_hint_no_route">ไม่พบเครื่องที่ที่อยู่นั้น พีซีอาจอยู่ในโหมดสลีป IP อาจเปลี่ยนไป หรือที่อยู่แรกในคิวอาร์โค้ดอาจเป็นของอะแดปเตอร์เครือข่ายเสมือน แสดงคิวอาร์โค้ดใหม่แล้วลองอีกครั้ง</string>
+    <string name="pairing_beacon_seen">ได้รับสัญญาณจาก “%1$s” บนเครือข่ายนี้แล้ว</string>
+    <string name="pairing_beacon_listening">กำลังรอสัญญาณของพีซีบนเครือข่ายท้องถิ่น…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">โทรศัพท์ได้รับสัญญาณของพีซีเครื่องนี้บนเครือข่ายปัจจุบันแล้ว แต่การเชื่อมต่อหมดเวลา แทบแน่ใจได้ว่าไฟร์วอลล์ Windows บนพีซีไม่ได้อนุญาตการเชื่อมต่อขาเข้าทาง TCP %1$d ดูวิธีอนุญาตได้ที่หน้า “เส้นทาง” ของแอป Windows หรือคู่มือการติดตั้ง</string>
+    <string name="pairing_cancel">ยกเลิก</string>
+    <string name="pairing_cancelled_notice">ยกเลิกแล้ว คิวอาร์โค้ดนี้ถูกใช้ไปแล้ว โปรดแสดงโค้ดใหม่บนพีซีก่อนสแกนอีกครั้ง</string>
+    <string name="pairing_fail_no_response">เชื่อมต่อกับพีซีได้แล้ว แต่พีซีไม่ตอบกลับภายในเวลาที่กำหนด ตรวจสอบว่า ClipSync กำลังทำงานอยู่บนพีซีและไม่ค้าง แล้วแสดงคิวอาร์โค้ดอีกครั้ง</string>
+    <string name="pairing_fail_tls">ไม่สามารถสร้างการเชื่อมต่อที่เข้ารหัสกับพีซีได้ (ไม่ใช่ปัญหาลายนิ้วมือใบรับรอง) โปรดลองอีกครั้ง หากเกิดซ้ำ ให้ตรวจสอบเวลาของทั้งสองเครื่องและอุปกรณ์เครือข่ายที่อาจแทรกแซง TLS</string>
     <string name="pairing_restart">เริ่มใหม่</string>
 
     <string name="prefs_title">การตั้งค่า</string>

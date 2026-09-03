@@ -335,6 +335,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">Kết nối hết thời gian chờ. Nếu hai thiết bị thực sự cùng một Wi-Fi, hãy kiểm tra xem Tường lửa Windows trên PC đã cho phép kết nối vào qua TCP %1$d chưa.</string>
     <string name="pairing_fail_unreachable_hint_refused">Không có chương trình nào trên PC đang lắng nghe cổng đó. Hãy chắc chắn ClipSync đang chạy trên PC, rồi hiển thị lại mã QR.</string>
     <string name="pairing_fail_unreachable_hint_no_route">Không tìm thấy máy nào ở địa chỉ đó. PC có thể đang ngủ, IP đã thay đổi, hoặc địa chỉ đứng đầu trong mã QR là của một bộ điều hợp mạng ảo. Hãy hiển thị lại mã QR rồi thử lại.</string>
+    <string name="pairing_beacon_seen">Đã nhận được tín hiệu của “%1$s” trên mạng này</string>
+    <string name="pairing_beacon_listening">Đang lắng nghe tín hiệu của PC trên mạng nội bộ…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">Điện thoại đã nhận được tín hiệu của PC này trên mạng hiện tại, nhưng kết nối lại hết thời gian chờ — gần như chắc chắn Tường lửa Windows trên PC chưa cho phép kết nối vào qua TCP %1$d. Cách cho phép có trong trang “Đường dẫn” của ứng dụng Windows hoặc hướng dẫn cài đặt.</string>
+    <string name="pairing_cancel">Hủy</string>
+    <string name="pairing_cancelled_notice">Đã hủy. Mã QR này đã được sử dụng; hãy hiển thị mã mới trên PC trước khi quét lại.</string>
+    <string name="pairing_fail_no_response">Đã kết nối với PC nhưng PC không trả lời trong thời gian cho phép. Hãy chắc chắn ClipSync đang chạy trên PC và không bị treo, rồi hiển thị lại mã QR.</string>
+    <string name="pairing_fail_tls">Không thiết lập được kết nối mã hóa với PC (không phải vấn đề dấu vân tay chứng chỉ). Hãy thử lại; nếu lặp lại, kiểm tra thời gian trên hai thiết bị và xem thiết bị mạng có can thiệp vào TLS không.</string>
     <string name="pairing_restart">Bắt đầu lại</string>
 
     <string name="prefs_title">Tùy chọn</string>

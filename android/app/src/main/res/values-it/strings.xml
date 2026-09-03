@@ -343,6 +343,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">La connessione è andata in timeout. Se i due dispositivi sono davvero sulla stessa rete Wi-Fi, controlla che il Windows Firewall del PC consenta le connessioni in ingresso sulla porta TCP %1$d.</string>
     <string name="pairing_fail_unreachable_hint_refused">Sul PC nessun programma è in ascolto su quella porta. Verifica che ClipSync sia in esecuzione sul PC, poi mostra di nuovo il codice QR.</string>
     <string name="pairing_fail_unreachable_hint_no_route">Nessun host trovato a quell’indirizzo. Il PC potrebbe essere in sospensione, il suo IP potrebbe essere cambiato, oppure il codice QR elenca per primo l’indirizzo di una scheda virtuale. Mostra di nuovo il codice QR e riprova.</string>
+    <string name="pairing_beacon_seen">Ricevuto il segnale di «%1$s» su questa rete</string>
+    <string name="pairing_beacon_listening">In ascolto del segnale del PC sulla rete locale…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">Il telefono ha ricevuto il segnale di questo PC sulla rete attuale, ma la connessione è andata in timeout: quasi certamente il Windows Firewall del PC non consente le connessioni in ingresso sulla porta TCP %1$d. Come consentirlo è spiegato nella pagina «Condotto» dell’app Windows o nella guida all’installazione.</string>
+    <string name="pairing_cancel">Annulla</string>
+    <string name="pairing_cancelled_notice">Annullato. Questo codice QR è già stato usato; mostrane uno nuovo sul PC prima di scansionare di nuovo.</string>
+    <string name="pairing_fail_no_response">Connesso al PC, ma non ha risposto in tempo. Verifica che ClipSync sia in esecuzione sul PC e non sia bloccato, poi mostra di nuovo il codice QR.</string>
+    <string name="pairing_fail_tls">Impossibile stabilire la connessione cifrata con il PC (non è un problema di impronta del certificato). Riprova; se si ripete, controlla l’ora su entrambi i dispositivi e se un apparato di rete interferisce con TLS.</string>
     <string name="pairing_restart">Ricomincia</string>
 
     <string name="prefs_title">Preferenze</string>

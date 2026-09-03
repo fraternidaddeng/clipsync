@@ -343,6 +343,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">A conexão expirou. Se os dois aparelhos estão de fato no mesmo Wi-Fi, verifique se o Firewall do Windows no PC permite a entrada em TCP %1$d.</string>
     <string name="pairing_fail_unreachable_hint_refused">Nada no PC está escutando nessa porta. Confira se o ClipSync está em execução no PC e mostre o código QR de novo.</string>
     <string name="pairing_fail_unreachable_hint_no_route">Nenhum host foi encontrado nesse endereço. O PC pode estar em suspensão, o IP pode ter mudado, ou o código QR pode listar primeiro o endereço de um adaptador virtual. Mostre o código QR de novo e tente novamente.</string>
+    <string name="pairing_beacon_seen">Sinal de “%1$s” recebido nesta rede</string>
+    <string name="pairing_beacon_listening">Ouvindo o sinal do PC na rede local…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">O telefone recebeu o sinal deste PC na rede atual, mas a conexão expirou — quase com certeza o Firewall do Windows no PC não está permitindo a entrada em TCP %1$d. A página “Conduíte” do app do Windows e o guia de instalação mostram como liberar.</string>
+    <string name="pairing_cancel">Cancelar</string>
+    <string name="pairing_cancelled_notice">Cancelado. Este código QR já foi usado; mostre um novo no PC antes de escanear de novo.</string>
+    <string name="pairing_fail_no_response">Conectado ao PC, mas ele não respondeu a tempo. Confira se o ClipSync está em execução no PC e não travou, depois mostre o código QR de novo.</string>
+    <string name="pairing_fail_tls">Não foi possível estabelecer a conexão criptografada com o PC (não é um problema de impressão digital do certificado). Tente de novo; se continuar, verifique o relógio dos dois lados e se algum dispositivo de rede interfere no TLS.</string>
     <string name="pairing_restart">Começar de novo</string>
 
     <string name="prefs_title">Preferências</string>

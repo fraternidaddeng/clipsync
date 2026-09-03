@@ -335,6 +335,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">연결 시간이 초과되었습니다. 두 기기가 정말 같은 Wi-Fi에 있다면 PC의 Windows 방화벽이 TCP %1$d 인바운드를 허용하는지 확인하세요.</string>
     <string name="pairing_fail_unreachable_hint_refused">PC에서 해당 포트를 수신 대기하는 프로그램이 없습니다. PC에서 ClipSync가 실행 중인지 확인한 뒤 QR 코드를 다시 표시하세요.</string>
     <string name="pairing_fail_unreachable_hint_no_route">해당 주소에서 호스트를 찾을 수 없습니다. PC가 절전 상태이거나 IP가 바뀌었거나, QR 코드 앞쪽에 가상 어댑터 주소가 있을 수 있습니다. QR 코드를 다시 표시한 뒤 재시도하세요.</string>
+    <string name="pairing_beacon_seen">현재 네트워크에서 ‘%1$s’의 신호를 수신했습니다</string>
+    <string name="pairing_beacon_listening">PC의 LAN 신호를 수신 대기 중…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">휴대전화가 현재 네트워크에서 이 PC의 신호를 수신했지만 연결 시간이 초과되었습니다. PC의 Windows 방화벽이 TCP %1$d 인바운드를 허용하지 않는 것이 거의 확실합니다. 허용 방법은 Windows 앱의 ‘통로’ 페이지나 설치 안내를 참고하세요.</string>
+    <string name="pairing_cancel">취소</string>
+    <string name="pairing_cancelled_notice">취소되었습니다. 이 QR 코드는 이미 사용되었으니 PC에서 다시 표시한 뒤 스캔하세요.</string>
+    <string name="pairing_fail_no_response">PC에 연결되었지만 PC가 제한 시간 내에 응답하지 않았습니다. PC에서 ClipSync가 실행 중이고 멈추지 않았는지 확인한 뒤 QR 코드를 다시 표시하세요.</string>
+    <string name="pairing_fail_tls">PC와의 암호화 연결을 설정할 수 없습니다(인증서 지문 문제는 아닙니다). 다시 시도하세요. 반복되면 양쪽의 시간과 네트워크 장비가 TLS를 방해하는지 확인하세요.</string>
     <string name="pairing_restart">처음부터 다시</string>
 
     <string name="prefs_title">환경설정</string>

@@ -355,6 +355,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">انتهت مهلة الاتصال. إن كان الجهازان فعلًا على شبكة Wi-Fi واحدة، فتحقّق من أن جدار حماية Windows على الحاسوب يسمح بالاتصالات الواردة على TCP %1$d.</string>
     <string name="pairing_fail_unreachable_hint_refused">لا يوجد برنامج على الحاسوب يستمع على هذا المنفذ. تأكد أن ClipSync يعمل على الحاسوب، ثم اعرض رمز QR من جديد.</string>
     <string name="pairing_fail_unreachable_hint_no_route">لم يُعثر على مضيف بهذا العنوان. قد يكون الحاسوب في وضع السكون، أو تغيّر عنوان IP الخاص به، أو أن أول عنوان في رمز QR يعود إلى محوّل شبكة افتراضي. اعرض رمز QR من جديد وأعد المحاولة.</string>
+    <string name="pairing_beacon_seen">تم استقبال إشارة «%1$s» على هذه الشبكة</string>
+    <string name="pairing_beacon_listening">جارٍ الاستماع إلى إشارة الحاسوب على الشبكة المحلية…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">استقبل الهاتف إشارة هذا الحاسوب على الشبكة الحالية، لكن انتهت مهلة الاتصال — من شبه المؤكد أن جدار حماية Windows على الحاسوب لا يسمح بالاتصالات الواردة على TCP %1$d. طريقة السماح موضّحة في صفحة «القناة» في تطبيق Windows أو في دليل التثبيت.</string>
+    <string name="pairing_cancel">إلغاء</string>
+    <string name="pairing_cancelled_notice">تم الإلغاء. استُخدم رمز QR هذا بالفعل؛ اعرض رمزًا جديدًا على الحاسوب قبل المسح مرة أخرى.</string>
+    <string name="pairing_fail_no_response">تم الاتصال بالحاسوب، لكنه لم يرد خلال المهلة. تأكد أن ClipSync يعمل على الحاسوب وغير متجمّد، ثم اعرض رمز QR من جديد.</string>
+    <string name="pairing_fail_tls">تعذّر إنشاء الاتصال المشفّر بالحاسوب (ليست مشكلة في بصمة الشهادة). أعد المحاولة؛ وإذا تكرر ذلك فتحقّق من الوقت على الجهازين ومن أن أي جهاز شبكة لا يعطّل TLS.</string>
     <string name="pairing_restart">البدء من جديد</string>
 
     <string name="prefs_title">التفضيلات</string>

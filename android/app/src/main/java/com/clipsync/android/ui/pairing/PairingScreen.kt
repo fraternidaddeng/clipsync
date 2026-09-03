@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
@@ -65,8 +66,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.clipsync.android.R
 import com.clipsync.android.i18n.string
+import com.clipsync.android.pairing.BeaconStatus
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingPhase
 import com.clipsync.android.pairing.PairingQrPayload
@@ -95,6 +99,7 @@ fun PairingScreen(
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.state.collectAsState()
+    PageVisibilityReporter(viewModel)
     Column(
         modifier =
             modifier
@@ -104,13 +109,75 @@ fun PairingScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         when (val current = state) {
-            is PairingUiState.Idle -> IdleContent(current.pairedPeer, viewModel)
+            is PairingUiState.Idle -> {
+                if (current.cancelledNotice) {
+                    FactCard(stringResource(R.string.pairing_cancelled_notice))
+                }
+                IdleContent(current.pairedPeer, viewModel)
+            }
             is PairingUiState.Review -> ReviewContent(current, viewModel)
-            is PairingUiState.Submitting -> SubmittingContent(current)
+            is PairingUiState.Submitting -> SubmittingContent(current, onCancel = viewModel::cancelSubmission)
             is PairingUiState.Paired -> PairedContent(current.peer, viewModel)
             is PairingUiState.Failed -> FailedContent(current, viewModel)
         }
     }
+}
+
+/**
+ * Tells the ViewModel when this page is actually on screen — composed and the activity
+ * started — so the LAN beacon listener (socket + multicast lock) runs in exactly that window.
+ */
+@Composable
+private fun PageVisibilityReporter(viewModel: PairingViewModel) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner, viewModel) {
+        val observer =
+            LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_START -> viewModel.setPageVisible(true)
+                    Lifecycle.Event.ON_STOP -> viewModel.setPageVisible(false)
+                    else -> Unit
+                }
+            }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            viewModel.setPageVisible(false)
+        }
+    }
+}
+
+/** A stated fact on a plain card: the style every non-error notice on this page shares. */
+@Composable
+private fun FactCard(text: String) {
+    val c = clipSyncColors
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .charterCard()
+            .padding(16.dp),
+    ) {
+        Text(text, style = MaterialTheme.typography.bodySmall, color = c.t2)
+    }
+}
+
+/**
+ * One quiet line under the facts: heard the PC's beacon on this network, or still listening.
+ * Unavailable and Off say nothing — a listener that could not start is not news about the PC.
+ */
+@Composable
+private fun BeaconLine(
+    status: BeaconStatus,
+    peerName: String,
+) {
+    val c = clipSyncColors
+    val text =
+        when (status) {
+            is BeaconStatus.Seen -> stringResource(R.string.pairing_beacon_seen, peerName)
+            BeaconStatus.Listening -> stringResource(R.string.pairing_beacon_listening)
+            BeaconStatus.Unavailable, BeaconStatus.Off -> return
+        }
+    Text(text, style = MaterialTheme.typography.bodySmall, color = c.t3)
 }
 
 @Composable
@@ -273,6 +340,7 @@ private fun ReviewContent(
         color = c.t2,
     )
     PeerFacts(review.qr)
+    BeaconLine(review.beacon, review.qr.displayName)
     if (review.certificateChanged) {
         // 全应用最高风险的决策点：唯一允许赭黄整块背景的地方（ui_preview 注记）。
         val shape = CharterShapes.card
@@ -318,7 +386,7 @@ private fun ReviewContent(
             },
         )
     }
-    GhostButton(text = stringResource(R.string.common_cancel), onClick = viewModel::cancelReview)
+    GhostButton(text = stringResource(R.string.common_cancel), onClick = viewModel::reset)
 }
 
 @Composable
@@ -355,7 +423,10 @@ private fun PeerFacts(qr: PairingQrPayload) {
 }
 
 @Composable
-private fun SubmittingContent(state: PairingUiState.Submitting) {
+private fun SubmittingContent(
+    state: PairingUiState.Submitting,
+    onCancel: () -> Unit,
+) {
     val c = clipSyncColors
     Row(
         modifier =
@@ -389,8 +460,11 @@ private fun SubmittingContent(state: PairingUiState.Submitting) {
                 style = MaterialTheme.typography.bodySmall,
                 color = c.t3,
             )
+            BeaconLine(state.beacon, state.peerName)
         }
     }
+    // The wait used to be a locked room (up to 90 s); leaving it is the user's call, not the timeout's.
+    GhostButton(text = stringResource(R.string.pairing_cancel), onClick = onCancel)
 }
 
 @Composable
@@ -428,21 +502,7 @@ private fun FailedContent(
     val c = clipSyncColors
     val reason = state.reason
     Text(stringResource(R.string.pairing_failed_title), style = RitualTitle, color = c.t1)
-    val message =
-        stringResource(
-            when (reason) {
-                PairingFailure.INVALID_PAYLOAD -> R.string.pairing_fail_invalid
-                PairingFailure.OWN_DEVICE -> R.string.pairing_fail_own_device
-                PairingFailure.CERTIFICATE_MISMATCH -> R.string.pairing_fail_cert_mismatch
-                PairingFailure.UNREACHABLE -> R.string.pairing_fail_unreachable
-                PairingFailure.REJECTED -> R.string.pairing_fail_rejected
-                PairingFailure.TIMEOUT -> R.string.pairing_fail_timeout
-                PairingFailure.TOKEN_INVALID -> R.string.pairing_fail_token_invalid
-                PairingFailure.TOKEN_EXPIRED -> R.string.pairing_fail_token_expired
-                PairingFailure.RATE_LIMITED -> R.string.pairing_fail_rate_limited
-                PairingFailure.PROTOCOL -> R.string.pairing_fail_protocol
-            },
-        )
+    val message = stringResource(failureMessage(reason))
     // 不可达时追加第二段：按主原因说最可能的病灶（防火墙 / 不同网段 / 没人监听 / 找不到主机）。
     val hint = state.unreachable?.let(::unreachableHint)?.string()
     if (reason == PairingFailure.CERTIFICATE_MISMATCH) {
@@ -477,6 +537,23 @@ private fun FailedContent(
         Text(stringResource(R.string.pairing_restart))
     }
 }
+
+@StringRes
+private fun failureMessage(reason: PairingFailure): Int =
+    when (reason) {
+        PairingFailure.INVALID_PAYLOAD -> R.string.pairing_fail_invalid
+        PairingFailure.OWN_DEVICE -> R.string.pairing_fail_own_device
+        PairingFailure.CERTIFICATE_MISMATCH -> R.string.pairing_fail_cert_mismatch
+        PairingFailure.UNREACHABLE -> R.string.pairing_fail_unreachable
+        PairingFailure.REJECTED -> R.string.pairing_fail_rejected
+        PairingFailure.TIMEOUT -> R.string.pairing_fail_timeout
+        PairingFailure.TOKEN_INVALID -> R.string.pairing_fail_token_invalid
+        PairingFailure.TOKEN_EXPIRED -> R.string.pairing_fail_token_expired
+        PairingFailure.RATE_LIMITED -> R.string.pairing_fail_rate_limited
+        PairingFailure.NO_RESPONSE -> R.string.pairing_fail_no_response
+        PairingFailure.TLS_FAILURE -> R.string.pairing_fail_tls
+        PairingFailure.PROTOCOL -> R.string.pairing_fail_protocol
+    }
 
 /** The sheen band is 36% of the container's width (technique_lab §05). */
 private const val SHEEN_BAND_WIDTH_FRACTION = 0.36f

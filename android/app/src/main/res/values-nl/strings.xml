@@ -340,6 +340,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">De verbinding is verlopen. Zitten beide apparaten echt op hetzelfde wifinetwerk, controleer dan of Windows Firewall op de pc inkomende verbindingen op TCP %1$d doorlaat.</string>
     <string name="pairing_fail_unreachable_hint_refused">Op de pc luistert geen programma op die poort. Controleer of ClipSync op de pc draait en toon de QR-code opnieuw.</string>
     <string name="pairing_fail_unreachable_hint_no_route">Op dat adres is geen host gevonden. Misschien slaapt de pc, is het IP-adres veranderd, of staat in de QR-code het adres van een virtuele adapter vooraan. Toon de QR-code opnieuw en probeer het nog eens.</string>
+    <string name="pairing_beacon_seen">Signaal van “%1$s” ontvangen op dit netwerk</string>
+    <string name="pairing_beacon_listening">Wacht op het signaal van de pc in het lokale netwerk…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">De telefoon heeft het signaal van deze pc op het huidige netwerk ontvangen, maar de verbinding is verlopen — vrijwel zeker laat Windows Firewall op de pc inkomende verbindingen op TCP %1$d niet door. Hoe je dit toestaat staat op de pagina “Kanaal” in de Windows-app of in de installatiehandleiding.</string>
+    <string name="pairing_cancel">Annuleren</string>
+    <string name="pairing_cancelled_notice">Geannuleerd. Deze QR-code is al gebruikt; toon een nieuwe op de pc voordat je opnieuw scant.</string>
+    <string name="pairing_fail_no_response">Verbonden met de pc, maar die heeft niet op tijd geantwoord. Controleer of ClipSync op de pc draait en niet vastzit, en toon de QR-code opnieuw.</string>
+    <string name="pairing_fail_tls">De versleutelde verbinding met de pc kon niet worden opgezet (geen probleem met de certificaatvingerafdruk). Probeer het opnieuw; blijft het gebeuren, controleer dan de tijd op beide apparaten en of een netwerkapparaat TLS verstoort.</string>
     <string name="pairing_restart">Opnieuw beginnen</string>
 
     <string name="prefs_title">Voorkeuren</string>

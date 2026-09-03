@@ -339,6 +339,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">Bağlantı zaman aşımına uğradı. İki cihaz gerçekten aynı Wi-Fi’deyse PC’deki Windows Güvenlik Duvarı’nın TCP %1$d gelen bağlantılarına izin verdiğini denetleyin.</string>
     <string name="pairing_fail_unreachable_hint_refused">PC’de bu bağlantı noktasını dinleyen bir program yok. ClipSync’in PC’de çalıştığından emin olun, sonra QR kodu yeniden gösterin.</string>
     <string name="pairing_fail_unreachable_hint_no_route">Bu adreste bir ana makine bulunamadı. PC uyku modunda olabilir, IP adresi değişmiş olabilir ya da QR kodda ilk sırada bir sanal bağdaştırıcının adresi yer alıyor olabilir. QR kodu yeniden gösterip tekrar deneyin.</string>
+    <string name="pairing_beacon_seen">Bu ağda “%1$s” sinyali alındı</string>
+    <string name="pairing_beacon_listening">Yerel ağda PC’nin sinyali bekleniyor…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">Telefon bu PC’nin sinyalini mevcut ağda aldı, ancak bağlantı zaman aşımına uğradı — neredeyse kesin olarak PC’deki Windows Güvenlik Duvarı TCP %1$d gelen bağlantılarına izin vermiyor. İzin verme adımları Windows uygulamasının “Kanal” sayfasında veya kurulum kılavuzunda anlatılır.</string>
+    <string name="pairing_cancel">İptal</string>
+    <string name="pairing_cancelled_notice">İptal edildi. Bu QR kod kullanılmış durumda; yeniden taramadan önce PC’de yeni bir kod gösterin.</string>
+    <string name="pairing_fail_no_response">PC’ye bağlanıldı, ancak PC süre içinde yanıt vermedi. ClipSync’in PC’de çalıştığından ve takılmadığından emin olun, sonra QR kodu yeniden gösterin.</string>
+    <string name="pairing_fail_tls">PC ile şifreli bağlantı kurulamadı (sertifika parmak izi sorunu değil). Yeniden deneyin; tekrarlarsa iki taraftaki saati ve bir ağ cihazının TLS’ye müdahale edip etmediğini kontrol edin.</string>
     <string name="pairing_restart">Baştan başla</string>
 
     <string name="prefs_title">Tercihler</string>

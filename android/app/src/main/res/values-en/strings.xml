@@ -340,6 +340,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">The connection timed out. If both devices really are on the same Wi-Fi, check that the Windows Firewall on the PC allows inbound TCP %1$d.</string>
     <string name="pairing_fail_unreachable_hint_refused">Nothing on the PC is listening on that port. Make sure ClipSync is running on the PC, then show the QR code again.</string>
     <string name="pairing_fail_unreachable_hint_no_route">No host was found at that address. The PC may be asleep, its IP may have changed, or the QR code may list a virtual adapter’s address first. Show the QR code again and retry.</string>
+    <string name="pairing_beacon_seen">Heard “%1$s” announce itself on this network</string>
+    <string name="pairing_beacon_listening">Listening for the PC’s signal on the local network…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">This phone heard the PC announce itself on the current network, yet the connection timed out — almost certainly the PC’s Windows Firewall is not allowing inbound TCP %1$d. See the Conduit page on the PC or the install guide for how to allow it.</string>
+    <string name="pairing_cancel">Cancel</string>
+    <string name="pairing_cancelled_notice">Cancelled. This QR code has been used; show a new one on the PC before scanning again.</string>
+    <string name="pairing_fail_no_response">Connected to the PC, but it did not answer in time. Check that ClipSync is running on the PC and not stuck, then show the QR code again.</string>
+    <string name="pairing_fail_tls">The encrypted connection to the PC could not be established (not a certificate fingerprint problem). Try again; if it keeps happening, check both clocks and whether a network device interferes with TLS.</string>
     <string name="pairing_restart">Start over</string>
 
     <string name="prefs_title">Preferences</string>

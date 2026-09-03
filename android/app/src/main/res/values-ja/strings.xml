@@ -335,6 +335,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">接続がタイムアウトしました。両方の端末が確かに同じ Wi-Fi にあるなら、PC の Windows ファイアウォールが TCP %1$d の受信を許可しているか確認してください。</string>
     <string name="pairing_fail_unreachable_hint_refused">PC 側でそのポートを待ち受けているプログラムがありません。PC で ClipSync が起動していることを確認し、QR コードをもう一度表示してください。</string>
     <string name="pairing_fail_unreachable_hint_no_route">そのアドレスにホストが見つかりません。PC がスリープ中か、IP が変わったか、QR コードの先頭に仮想アダプターのアドレスが載っている可能性があります。QR コードをもう一度表示して再試行してください。</string>
+    <string name="pairing_beacon_seen">このネットワークで「%1$s」からの信号を受信しました</string>
+    <string name="pairing_beacon_listening">PC の LAN 信号を待ち受けています…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">スマートフォンはこの PC からの信号を現在のネットワークで受信していますが、接続はタイムアウトしました。PC の Windows ファイアウォールが TCP %1$d の受信を許可していないことがほぼ確実です。許可の手順は Windows アプリの「経路」ページかインストールガイドをご覧ください。</string>
+    <string name="pairing_cancel">キャンセル</string>
+    <string name="pairing_cancelled_notice">キャンセルしました。この QR コードはすでに使用済みです。PC でもう一度表示してから読み取ってください。</string>
+    <string name="pairing_fail_no_response">PC には接続できましたが、制限時間内に応答がありませんでした。PC で ClipSync が起動していて固まっていないことを確認し、QR コードをもう一度表示してください。</string>
+    <string name="pairing_fail_tls">PC との暗号化接続を確立できませんでした（証明書フィンガープリントの問題ではありません）。再試行してください。繰り返す場合は、両端の時刻と、ネットワーク機器が TLS を妨げていないかを確認してください。</string>
     <string name="pairing_restart">最初からやり直す</string>
 
     <string name="prefs_title">設定</string>

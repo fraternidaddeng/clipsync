@@ -335,6 +335,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">連線逾時。若兩台裝置確實在同一 Wi-Fi，請檢查電腦的 Windows 防火牆是否放行了 TCP %1$d 傳入。</string>
     <string name="pairing_fail_unreachable_hint_refused">電腦上沒有程式在監聽該連接埠。請確認剪剪相傳正在電腦上執行，然後重新出示 QR 碼。</string>
     <string name="pairing_fail_unreachable_hint_no_route">找不到該位址的主機。電腦可能已休眠、IP 已變更，或 QR 碼裡排在前面的是虛擬網路卡位址。請重新出示 QR 碼後再試。</string>
+    <string name="pairing_beacon_seen">已在目前網路上收到「%1$s」的訊號</string>
+    <string name="pairing_beacon_listening">正在監聽電腦的區域網路訊號…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">手機已收到這台電腦在目前網路上的訊號，但連線逾時——幾乎可以確定是電腦的 Windows 防火牆沒有放行 TCP %1$d 傳入。放行方法見電腦端「通路」頁或安裝指南。</string>
+    <string name="pairing_cancel">取消</string>
+    <string name="pairing_cancelled_notice">已取消。這枚 QR 碼已被使用，請在電腦上重新出示後再掃。</string>
+    <string name="pairing_fail_no_response">已連上電腦，但電腦在限時內沒有回應。請確認電腦上的剪剪相傳正在執行且沒有卡住，然後重新出示 QR 碼。</string>
+    <string name="pairing_fail_tls">與電腦的加密連線未能建立（不是憑證指紋問題）。請重試；若反覆出現，請檢查兩端時間與網路設備是否干擾 TLS。</string>
     <string name="pairing_restart">重新開始</string>
 
     <string name="prefs_title">偏好</string>

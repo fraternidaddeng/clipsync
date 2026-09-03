@@ -347,6 +347,13 @@
     <string name="pairing_fail_unreachable_hint_timeout_unknown">Upłynął limit czasu połączenia. Jeśli oba urządzenia naprawdę są w tej samej sieci Wi-Fi, sprawdź, czy Zapora Windows na PC przepuszcza połączenia przychodzące na TCP %1$d.</string>
     <string name="pairing_fail_unreachable_hint_refused">Na PC żaden program nie nasłuchuje na tym porcie. Upewnij się, że ClipSync działa na PC, a potem wyświetl kod QR ponownie.</string>
     <string name="pairing_fail_unreachable_hint_no_route">Pod tym adresem nie znaleziono hosta. PC może być uśpiony, jego IP mogło się zmienić albo pierwszy adres w kodzie QR należy do wirtualnej karty sieciowej. Wyświetl kod QR ponownie i spróbuj jeszcze raz.</string>
+    <string name="pairing_beacon_seen">Odebrano sygnał „%1$s” w tej sieci</string>
+    <string name="pairing_beacon_listening">Nasłuchiwanie sygnału PC w sieci lokalnej…</string>
+    <string name="pairing_fail_unreachable_hint_timeout_beacon">Telefon odebrał sygnał tego PC w bieżącej sieci, a mimo to upłynął limit czasu połączenia — niemal na pewno Zapora Windows na PC nie przepuszcza połączeń przychodzących na TCP %1$d. Jak to odblokować, opisują strona „Kanał” w aplikacji Windows i instrukcja instalacji.</string>
+    <string name="pairing_cancel">Anuluj</string>
+    <string name="pairing_cancelled_notice">Anulowano. Ten kod QR został już użyty; przed ponownym skanowaniem wyświetl nowy na PC.</string>
+    <string name="pairing_fail_no_response">Połączono z PC, ale nie odpowiedział w wyznaczonym czasie. Upewnij się, że ClipSync działa na PC i się nie zawiesił, a potem wyświetl kod QR ponownie.</string>
+    <string name="pairing_fail_tls">Nie udało się nawiązać szyfrowanego połączenia z PC (to nie problem odcisku certyfikatu). Spróbuj ponownie; jeśli się powtarza, sprawdź czas na obu urządzeniach i czy jakieś urządzenie sieciowe nie zakłóca TLS.</string>
     <string name="pairing_restart">Zacznij od nowa</string>
 
     <string name="prefs_title">Preferencje</string>
