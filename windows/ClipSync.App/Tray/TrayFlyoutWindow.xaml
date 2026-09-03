@@ -273,44 +273,67 @@
                     </TextBlock.Style>
                 </TextBlock>
 
-                <!-- 页脚状态条：一句话 + 暂停开关 -->
+                <!-- 页脚状态条：一句话 + 暂停开关；其下最多再一行赭色事实（防火墙未放行 /
+                     蓝牙备援开了但适配器不可用）——与主窗通路页说的是同一件事，不塞满 -->
                 <Border Padding="16,9"
                         Background="{StaticResource CsSurface3Brush}"
                         BorderBrush="{StaticResource CsLineBrush}"
                         BorderThickness="0,1,0,0"
                         CornerRadius="0,0,13,13">
                     <Grid>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Viewbox Width="12" Height="12">
-                                <Canvas Width="24" Height="24">
-                                    <Path Data="M5,13 L9,17 L19,7"
-                                          StrokeThickness="2"
-                                          StrokeStartLineCap="Round"
-                                          StrokeEndLineCap="Round"
-                                          StrokeLineJoin="Round">
-                                        <Path.Style>
-                                            <Style TargetType="Path">
-                                                <Setter Property="Stroke" Value="{StaticResource CsFlowBrush}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsPaused}" Value="True">
-                                                        <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
-                                                        <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Path.Style>
-                                    </Path>
-                                </Canvas>
-                            </Viewbox>
-                            <TextBlock Margin="7,0,0,0"
-                                       VerticalAlignment="Center"
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <Viewbox Width="12" Height="12">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Data="M5,13 L9,17 L19,7"
+                                              StrokeThickness="2"
+                                              StrokeStartLineCap="Round"
+                                              StrokeEndLineCap="Round"
+                                              StrokeLineJoin="Round">
+                                            <Path.Style>
+                                                <Style TargetType="Path">
+                                                    <Setter Property="Stroke" Value="{StaticResource CsFlowBrush}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                                            <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsPrivateMode}" Value="True">
+                                                            <Setter Property="Stroke" Value="{StaticResource CsText4Brush}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Path.Style>
+                                        </Path>
+                                    </Canvas>
+                                </Viewbox>
+                                <TextBlock Margin="7,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="10.5"
+                                           Foreground="{StaticResource CsText3Brush}"
+                                           Text="{Binding TrayStatusText}" />
+                            </StackPanel>
+                            <TextBlock Margin="19,3,8,0"
                                        FontSize="10.5"
-                                       Foreground="{StaticResource CsText3Brush}"
-                                       Text="{Binding TrayStatusText}" />
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource CsActBrush}"
+                                       Text="{Binding TrayDetailStatus.Text}"
+                                       TextWrapping="Wrap">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding TrayDetailStatus.IsEmpty}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </StackPanel>
-                        <Button HorizontalAlignment="Right"
+                        <Button Grid.Column="1"
                                 VerticalAlignment="Center"
                                 AutomationProperties.Name="{x:Static loc:Strings.Flyout_PauseOrResume}"
                                 Click="OnPauseClicked"

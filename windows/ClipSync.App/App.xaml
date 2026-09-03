@@ -8,6 +8,7 @@
                 <ResourceDictionary Source="Resources/CharterTokens.xaml" />
                 <ResourceDictionary Source="Resources/CharterChrome.xaml" />
                 <ResourceDictionary Source="Resources/CharterControls.xaml" />
+                <ResourceDictionary Source="Resources/CharterInputs.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

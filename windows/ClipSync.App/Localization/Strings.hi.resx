@@ -550,7 +550,7 @@
     <value>प्राथमिकताएँ</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>बदलाव तुरंत लागू · क्लिपबोर्ड की सामग्री कभी लॉग में नहीं जाती</value>
+    <value>बदलाव तुरंत लागू · जिन्हें पुनरारंभ चाहिए, वे अपनी पंक्ति में बता देते हैं</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>प्रदर्शन</value>
@@ -1126,5 +1126,65 @@
   </data>
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>अपडेट लागू नहीं हो सका।</value>
+  </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>पंजीकृत · अगले साइन-इन पर Windows के साथ शुरू होगा</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>पंजीकृत · लेकिन टास्क मैनेजर › स्टार्टअप ऐप्स में अक्षम है, इसलिए साइन-इन पर शुरू नहीं होगा</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>स्टार्टअप प्रविष्टि नहीं लिखी जा सकी · अगले साइन-इन पर स्वतः शुरू नहीं होगा</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>स्टार्टअप प्रविष्टि अभी भी मौजूद है · हटाना लागू नहीं हुआ, अगले साइन-इन पर फिर भी शुरू होगा</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>स्टार्टअप प्रविष्टि की स्थिति पढ़ी नहीं जा सकी</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>सहेजा गया · पुनरारंभ के बाद लागू</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>रुका हुआ · अब तक {0} प्रविष्टियाँ छोड़ी गईं</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>निजी मोड · अब तक {0} प्रविष्टियाँ छोड़ी गईं</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>चालू · रुके रहने पर क्लिपबोर्ड में कुछ नहीं लिखा जाता; मिली सामग्री केवल इतिहास में रहती है</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>चालू · निजी मोड में क्लिपबोर्ड में कुछ नहीं लिखा जाता; मिली सामग्री केवल इतिहास में रहती है</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>चालू · इस बार फ़ोन से अभी कोई टेक्स्ट नहीं आया</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>चालू · हाल में मिला टेक्स्ट इस PC के क्लिपबोर्ड में लिख दिया गया</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>चालू · क्लिपबोर्ड में पिछली बार लिखना सफल नहीं हुआ; सामग्री इतिहास में है</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>बंद · यह PC केवल टेक्स्ट भेजता-पाता है; चित्र अपने ही डिवाइस पर रहते हैं</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>चालू · फ़ोन के कनेक्ट होने की प्रतीक्षा; चित्र तभी जाते हैं जब फ़ोन पर भी चालू हो</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>चालू · {0} डिवाइस कनेक्टेड; चित्र तभी जाते हैं जब फ़ोन पर भी चालू हो</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>प्रभावी · {0} प्रोसेस नामों से कॉपी दर्ज नहीं होती</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>प्रभावी · कोई प्रोसेस अवरुद्ध नहीं; हर कॉपी दर्ज होती है</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>संपादन जारी · बॉक्स से बाहर निकलने पर लागू</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>फ़ायरवॉल में TCP 47654 की अनुमति नहीं · फ़ोन शायद कनेक्ट न हो; मार्ग पेज पर अनुमति दें</value>
   </data>
 </root>

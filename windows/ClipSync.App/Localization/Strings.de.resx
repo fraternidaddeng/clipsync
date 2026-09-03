@@ -550,7 +550,7 @@
     <value>Einstellungen</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Änderungen wirken sofort · Zwischenablageinhalte erscheinen nie in Protokollen</value>
+    <value>Änderungen wirken sofort · Einträge, die einen Neustart brauchen, sagen es in ihrer Zeile</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>ANZEIGE</value>
@@ -1126,5 +1126,65 @@ Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelö
   </data>
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>Update konnte nicht angewendet werden.</value>
+  </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Eingetragen · startet bei der nächsten Anmeldung mit Windows</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Eingetragen · aber im Task-Manager › Autostart-Apps deaktiviert, startet daher nicht bei der Anmeldung</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>Autostart-Eintrag konnte nicht geschrieben werden · startet bei der nächsten Anmeldung nicht automatisch</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>Autostart-Eintrag ist noch vorhanden · das Entfernen wirkte nicht, startet bei der nächsten Anmeldung weiterhin</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>Zustand des Autostart-Eintrags konnte nicht gelesen werden</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Gespeichert · wirkt nach Neustart</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>Pausiert · bisher {0} Einträge übersprungen</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Privater Modus · bisher {0} Einträge übersprungen</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>An · während der Pause wird nichts in die Zwischenablage geschrieben; Empfangenes bleibt nur im Verlauf</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>An · im privaten Modus wird nichts in die Zwischenablage geschrieben; Empfangenes bleibt nur im Verlauf</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>An · in diesem Lauf ist noch kein Text vom Telefon angekommen</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>An · der zuletzt empfangene Text wurde in die Zwischenablage dieses PCs geschrieben</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>An · das letzte Schreiben in die Zwischenablage gelang nicht; der Inhalt steht im Verlauf</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Aus · dieser PC sendet und empfängt nur Text; Bilder bleiben auf dem jeweiligen Gerät</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>An · wartet auf die Verbindung des Telefons; Bilder gehen nur hin und her, wenn es auch am Telefon an ist</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>An · {0} Gerät(e) verbunden; Bilder gehen nur hin und her, wenn es auch am Telefon an ist</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>Wirksam · Kopien aus {0} Prozessname(n) werden nicht aufgezeichnet</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>Wirksam · kein Prozess blockiert; jede Kopie wird aufgezeichnet</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>Wird bearbeitet · wirkt, sobald Sie das Feld verlassen</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>Firewall hat keine Erlaubnisregel für TCP 47654 · das Telefon kann sich womöglich nicht verbinden; auf der Seite „Kanal“ freigeben</value>
   </data>
 </root>

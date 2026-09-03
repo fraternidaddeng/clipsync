@@ -550,7 +550,7 @@
     <value>偏好</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>改動即生效 · 剪貼簿內文永不出現在日誌裡</value>
+    <value>改動即生效 · 需要重新啟動才生效的項目會在列內標出</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>顯 示 · DISPLAY</value>
@@ -1126,5 +1126,65 @@
   </data>
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>無法安裝更新。</value>
+  </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>已登記 · 下次登入隨 Windows 啟動</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>已登記 · 但在工作管理員的「啟動應用程式」裡被停用，登入時不會啟動</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>未能登記啟動項 · 下次登入不會自動啟動</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>啟動項仍在 · 移除未成功，下次登入仍會啟動</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>無法讀取啟動項狀態</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>已儲存 · 重新啟動後生效</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>已暫停 · 本次已跳過 {0} 條</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>私密模式 · 本次已跳過 {0} 條</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>已開 · 暫停期間不寫入剪貼簿，收到的內容只留在歷史</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>已開 · 私密模式期間不寫入剪貼簿，收到的內容只留在歷史</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>已開 · 本次執行尚未收到手機發來的文字</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>已開 · 最近一次收到的文字已寫入本機剪貼簿</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>已開 · 最近一次寫入剪貼簿未成功，內容留在歷史裡</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>已關 · 本機只收發文字，圖片留在各自裝置上</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>已開 · 等待手機連線；手機端也開啟時才互傳圖片</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>已開 · {0} 台裝置已連線；手機端也開啟時才互傳圖片</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>已生效 · 來自 {0} 個處理程序的複製不記錄</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>已生效 · 未封鎖任何處理程序，所有複製都記錄</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>編輯中 · 離開輸入框後生效</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>防火牆未放行 TCP 47654 · 手機可能連不上，去通路頁放行</value>
   </data>
 </root>

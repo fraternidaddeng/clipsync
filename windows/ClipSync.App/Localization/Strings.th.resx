@@ -550,7 +550,7 @@
     <value>การตั้งค่า</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>การเปลี่ยนแปลงมีผลทันที · เนื้อหาคลิปบอร์ดไม่มีวันปรากฏในบันทึก</value>
+    <value>การเปลี่ยนแปลงมีผลทันที · รายการที่ต้องรีสตาร์ตจะระบุไว้ในแถวของตัวเอง</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>การแสดงผล</value>
@@ -1126,5 +1126,65 @@
   </data>
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>ใช้การอัปเดตไม่ได้</value>
+  </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>ลงทะเบียนแล้ว · จะเริ่มพร้อม Windows ในการลงชื่อเข้าใช้ครั้งถัดไป</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>ลงทะเบียนแล้ว · แต่ถูกปิดใช้งานในตัวจัดการงาน › แอปเริ่มต้น จึงจะไม่เริ่มตอนลงชื่อเข้าใช้</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>เขียนรายการเริ่มต้นไม่สำเร็จ · จะไม่เริ่มอัตโนมัติในการลงชื่อเข้าใช้ครั้งถัดไป</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>รายการเริ่มต้นยังอยู่ · การลบไม่มีผล จะยังเริ่มในการลงชื่อเข้าใช้ครั้งถัดไป</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>อ่านสถานะรายการเริ่มต้นไม่ได้</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>บันทึกแล้ว · มีผลหลังรีสตาร์ต</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>หยุดชั่วคราว · ข้ามไปแล้ว {0} รายการในครั้งนี้</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>โหมดส่วนตัว · ข้ามไปแล้ว {0} รายการในครั้งนี้</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>เปิดอยู่ · ระหว่างหยุดชั่วคราวจะไม่เขียนลงคลิปบอร์ด เนื้อหาที่ได้รับจะอยู่ในประวัติเท่านั้น</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>เปิดอยู่ · ในโหมดส่วนตัวจะไม่เขียนลงคลิปบอร์ด เนื้อหาที่ได้รับจะอยู่ในประวัติเท่านั้น</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>เปิดอยู่ · การทำงานครั้งนี้ยังไม่มีข้อความจากโทรศัพท์เข้ามา</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>เปิดอยู่ · ข้อความล่าสุดที่ได้รับถูกเขียนลงคลิปบอร์ดของพีซีนี้แล้ว</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>เปิดอยู่ · การเขียนคลิปบอร์ดครั้งล่าสุดไม่สำเร็จ เนื้อหาอยู่ในประวัติ</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>ปิดอยู่ · พีซีนี้รับส่งเฉพาะข้อความ รูปภาพจะอยู่บนอุปกรณ์ของตัวเอง</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>เปิดอยู่ · รอโทรศัพท์เชื่อมต่อ จะส่งรูปภาพก็ต่อเมื่อฝั่งโทรศัพท์เปิดด้วย</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>เปิดอยู่ · เชื่อมต่อแล้ว {0} เครื่อง จะส่งรูปภาพก็ต่อเมื่อฝั่งโทรศัพท์เปิดด้วย</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>มีผลแล้ว · การคัดลอกจาก {0} ชื่อโปรเซสจะไม่ถูกบันทึก</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>มีผลแล้ว · ไม่มีโปรเซสที่ถูกบล็อก ทุกการคัดลอกจะถูกบันทึก</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>กำลังแก้ไข · จะมีผลเมื่อออกจากช่องกรอก</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>ไฟร์วอลล์ยังไม่อนุญาต TCP 47654 · โทรศัพท์อาจเชื่อมต่อไม่ได้ ไปอนุญาตที่หน้าเส้นทาง</value>
   </data>
 </root>

@@ -550,7 +550,7 @@
     <value>偏好</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>改动即生效 · 剪贴板正文永不出现在日志里</value>
+    <value>改动即生效 · 需要重启才生效的项会在行内标出</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>显 示 · DISPLAY</value>
@@ -1126,5 +1126,65 @@
   </data>
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>无法安装更新。</value>
+  </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>已登记 · 下次登录随 Windows 启动</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>已登记 · 但在任务管理器的「启动应用」里被停用，登录时不会启动</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>未能登记启动项 · 下次登录不会自动启动</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>启动项仍在 · 移除未成功，下次登录仍会启动</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>无法读取启动项状态</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>已保存 · 重启后生效</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>已暂停 · 本次已跳过 {0} 条</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>私密模式 · 本次已跳过 {0} 条</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>已开 · 暂停期间不写入剪贴板，收到的内容只留在历史</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>已开 · 私密模式期间不写入剪贴板，收到的内容只留在历史</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>已开 · 本次运行尚未收到手机发来的文本</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>已开 · 最近一次收到的文本已写入本机剪贴板</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>已开 · 最近一次写入剪贴板未成功，内容留在历史里</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>已关 · 本机只收发文本，图片留在各自设备上</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>已开 · 等待手机连接；手机端也开启时才互传图片</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>已开 · {0} 台设备已连接；手机端也开启时才互传图片</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>已生效 · 来自 {0} 个进程的复制不记录</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>已生效 · 未屏蔽任何进程，所有复制都记录</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>编辑中 · 离开输入框后生效</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>防火墙未放行 TCP 47654 · 手机可能连不上，去通路页放行</value>
   </data>
 </root>

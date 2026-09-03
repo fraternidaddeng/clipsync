@@ -550,7 +550,7 @@
     <value>Настройки</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Изменения применяются сразу · содержимое буфера обмена никогда не попадает в журналы</value>
+    <value>Изменения применяются сразу · пункты, требующие перезапуска, сообщают об этом в своей строке</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>ЭКРАН</value>
@@ -1126,5 +1126,65 @@
   </data>
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>Не удалось применить обновление.</value>
+  </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Зарегистрировано · запустится вместе с Windows при следующем входе</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Зарегистрировано · но отключено в Диспетчере задач › Автозагрузка, поэтому при входе не запустится</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>Не удалось записать запись автозагрузки · при следующем входе автоматически не запустится</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>Запись автозагрузки ещё на месте · удаление не сработало, при следующем входе всё равно запустится</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>Не удалось прочитать состояние записи автозагрузки</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Сохранено · применяется после перезапуска</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>Пауза · пропущено {0} записей</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Приватный режим · пропущено {0} записей</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>Включено · во время паузы в буфер обмена ничего не записывается, полученное остаётся только в истории</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>Включено · в приватном режиме в буфер обмена ничего не записывается, полученное остаётся только в истории</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>Включено · за этот запуск текст с телефона ещё не приходил</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>Включено · последний полученный текст записан в буфер обмена этого ПК</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>Включено · последняя запись в буфер обмена не удалась, содержимое осталось в истории</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Выключено · этот ПК передаёт только текст, изображения остаются на своём устройстве</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>Включено · ожидание подключения телефона; изображения передаются, только если включено и на телефоне</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>Включено · подключено устройств: {0}; изображения передаются, только если включено и на телефоне</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>Действует · копирование из процессов ({0}) не записывается</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>Действует · процессы не заблокированы, записывается каждое копирование</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>Редактируется · применится, когда вы покинете поле</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>Брандмауэр не пропускает TCP 47654 · телефон может не подключиться; разрешите на странице «Канал»</value>
   </data>
 </root>

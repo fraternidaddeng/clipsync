@@ -93,290 +93,9 @@
             </Setter>
         </Style>
 
-        <!-- 开关：凹槽轨道 + 抬起的钮；开 = 轨道充上流动蓝 -->
-        <Style x:Key="CharterToggle" TargetType="ToggleButton">
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ToggleButton">
-                        <Border x:Name="Track"
-                                Width="40"
-                                Height="22"
-                                Background="{DynamicResource CsSurfaceInBrush}"
-                                BorderBrush="{DynamicResource CsLine2Brush}"
-                                BorderThickness="1"
-                                CornerRadius="11">
-                            <Border x:Name="Knob"
-                                    Width="16"
-                                    Height="16"
-                                    Margin="2,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Background="{DynamicResource CsSurfaceUpBrush}"
-                                    BorderBrush="{DynamicResource CsLineBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Track" Property="Background" Value="{DynamicResource CsFlowBrush}" />
-                                <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource CsFlowBrush}" />
-                                <Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right" />
-                                <Setter TargetName="Knob" Property="Margin" Value="0,0,2,0" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- 折叠区把手（缺省即隐藏）：文字 + 旋转箭头，不是开关——展开一段可选内容，
-             不改任何设置。当前唯一使用者是特权直读卡的无线配对段 -->
-        <Style x:Key="FoldToggle" TargetType="ToggleButton">
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Foreground" Value="{DynamicResource CsText2Brush}" />
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ToggleButton">
-                        <Border Padding="2,4" Background="Transparent">
-                            <StackPanel Orientation="Horizontal">
-                                <Path x:Name="Chevron"
-                                      Margin="0,1,7,0"
-                                      VerticalAlignment="Center"
-                                      Data="M0,0 L4,4 L0,8"
-                                      RenderTransformOrigin="0.5,0.5"
-                                      Stroke="{DynamicResource CsText3Brush}"
-                                      StrokeThickness="1.4">
-                                    <Path.RenderTransform>
-                                        <RotateTransform Angle="0" />
-                                    </Path.RenderTransform>
-                                </Path>
-                                <ContentPresenter VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Chevron" Property="RenderTransform">
-                                    <Setter.Value>
-                                        <RotateTransform Angle="90" />
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- 形态筛选 chip（ADR 0003）：选中 = 流动蓝着色盒（与导航同一词汇），
-             未选中留在安静的灰族 -->
-        <Style x:Key="FilterChip" TargetType="RadioButton">
-            <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Margin" Value="0,0,6,0" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RadioButton">
-                        <Border x:Name="Bd"
-                                Padding="10,4"
-                                Background="{DynamicResource CsSurface3Brush}"
-                                BorderBrush="{DynamicResource CsLineBrush}"
-                                BorderThickness="1"
-                                CornerRadius="9">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
-                                <Setter Property="FontWeight" Value="SemiBold" />
-                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsFlowBgBrush}" />
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CsFlowLineBrush}" />
-                            </Trigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsMouseOver" Value="True" />
-                                    <Condition Property="IsChecked" Value="False" />
-                                </MultiTrigger.Conditions>
-                                <Setter Property="Foreground" Value="{DynamicResource CsText2Brush}" />
-                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsSurfaceBrush}" />
-                            </MultiTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- 步进器 −/＋ 钮 -->
-        <Style x:Key="StepButton" TargetType="Button">
-            <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="Width" Value="26" />
-            <Setter Property="Height" Value="26" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd" Background="Transparent">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsSurface3Brush}" />
-                                <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- 凹陷输入框（z−1：比底更暗） -->
-        <Style x:Key="InsetTextBox" TargetType="TextBox">
-            <Setter Property="Background" Value="{DynamicResource CsSurfaceInBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource CsLineBrush}" />
-            <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
-            <Setter Property="CaretBrush" Value="{DynamicResource CsText1Brush}" />
-            <Setter Property="FontSize" Value="12.5" />
-            <Setter Property="Padding" Value="10,6" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
-                        <Border x:Name="Bd"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8">
-                            <ScrollViewer x:Name="PART_ContentHost"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CsFlowLineBrush}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- 凹陷下拉框（语言选择器，P1#16）：闭合态与凹陷输入框同一 z−1 语汇，
-             弹出面用 z1 卡片底 + 1px 线；19 种语言 chip 放不下，这是偏好页唯一的下拉 -->
-        <Style x:Key="InsetComboBox" TargetType="ComboBox">
-            <Setter Property="Background" Value="{DynamicResource CsSurfaceInBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource CsLineBrush}" />
-            <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
-            <Setter Property="FontSize" Value="12.5" />
-            <Setter Property="Padding" Value="10,6" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="MaxDropDownHeight" Value="320" />
-            <Setter Property="ItemContainerStyle">
-                <Setter.Value>
-                    <Style TargetType="ComboBoxItem">
-                        <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
-                        <Setter Property="Padding" Value="10,6" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ComboBoxItem">
-                                    <Border x:Name="Bd"
-                                            Padding="{TemplateBinding Padding}"
-                                            Background="Transparent"
-                                            CornerRadius="6">
-                                        <ContentPresenter />
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsHighlighted" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsSurface3Brush}" />
-                                        </Trigger>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsFlowBgBrush}" />
-                                            <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
-                                            <Setter Property="FontWeight" Value="SemiBold" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ComboBox">
-                        <Grid>
-                            <Border x:Name="Bd"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <ContentPresenter Margin="{TemplateBinding Padding}"
-                                                      VerticalAlignment="Center"
-                                                      Content="{TemplateBinding SelectionBoxItem}"
-                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                                      ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
-                                                      IsHitTestVisible="False" />
-                                    <Path Grid.Column="1"
-                                          Margin="0,1,10,0"
-                                          VerticalAlignment="Center"
-                                          Data="M0,0 L4,4 L8,0"
-                                          Stroke="{DynamicResource CsText3Brush}"
-                                          StrokeThickness="1.4" />
-                                </Grid>
-                            </Border>
-                            <ToggleButton ClickMode="Press"
-                                          Focusable="False"
-                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="ToggleButton">
-                                        <Border Background="Transparent" />
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                            </ToggleButton>
-                            <Popup AllowsTransparency="True"
-                                   IsOpen="{TemplateBinding IsDropDownOpen}"
-                                   Placement="Bottom"
-                                   PopupAnimation="Fade"
-                                   StaysOpen="False">
-                                <Border MinWidth="{TemplateBinding ActualWidth}"
-                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                        Margin="0,4,0,0"
-                                        Padding="4"
-                                        Background="{DynamicResource CsSurfaceBrush}"
-                                        BorderBrush="{DynamicResource CsLineBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="10">
-                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
-                                    </ScrollViewer>
-                                </Border>
-                            </Popup>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CsFlowLineBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsDropDownOpen" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource CsFlowLineBrush}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <!-- 开关 CharterToggle / 折叠把手 FoldToggle / 形态 chip FilterChip / 步进钮 StepButton /
+             凹陷输入框 InsetTextBox / 凹陷下拉框 InsetComboBox 已上移 App 级
+             Resources/CharterInputs.xaml（键名不变，布局测试直接加载该字典）。 -->
 
         <!-- z1 卡片组：与历史卡/通路段同一套 tokens §8 三层嵌套——
              最外层 sh-1 阴影（文字在中层渲染，不进 Effect 子树，保住 ClearType）、
@@ -429,6 +148,47 @@
             <Setter Property="FontSize" Value="11" />
             <Setter Property="Foreground" Value="{DynamicResource CsText3Brush}" />
             <Setter Property="Margin" Value="0,2,0,16" />
+        </Style>
+
+        <!-- 开关旁的事实行：陈述系统此刻真正处于什么状态（不是开关自身的开/关外观）。
+             与快捷键行既有的注册结果行同一语汇——t4 灰 = 事实，通行色 = 内容正在流动，
+             赭 + 半粗 = 设置已开但系统未按它执行（需要你操作）。空文本 = 缺省即隐藏。 -->
+        <Style x:Key="FactLine" TargetType="ContentControl">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Margin" Value="0,5,0,0" />
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock FontSize="10.5"
+                                   Text="{Binding Text}"
+                                   TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource CsText4Brush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Tone}" Value="Flow">
+                                            <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Tone}" Value="Attention">
+                                            <Setter Property="Foreground" Value="{DynamicResource CsActBrush}" />
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Content" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Trigger>
+                <DataTrigger Binding="{Binding Content.IsEmpty, RelativeSource={RelativeSource Self}}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
 
         <!-- 偏好行：名 + 说明 -->
@@ -1587,17 +1347,17 @@
                                                                Foreground="{DynamicResource CsText2Brush}"
                                                                Style="{StaticResource SegDetail}"
                                                                Text="{x:Static loc:Strings.Conduit_Firewall_Label}" />
-                                                    <TextBlock Margin="0,2,0,0" Text="{Binding FirewallStatus}">
+                                                    <TextBlock Margin="0,2,0,0" Text="{Binding Firewall.Status}">
                                                         <TextBlock.Style>
                                                             <Style BasedOn="{StaticResource SegDetail}" TargetType="TextBlock">
                                                                 <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding FirewallRuleMissing}" Value="True">
+                                                                    <DataTrigger Binding="{Binding Firewall.RuleMissing}" Value="True">
                                                                         <Setter Property="Foreground" Value="{DynamicResource CsActBrush}" />
                                                                     </DataTrigger>
-                                                                    <DataTrigger Binding="{Binding FirewallAllowed}" Value="True">
+                                                                    <DataTrigger Binding="{Binding Firewall.Allowed}" Value="True">
                                                                         <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
                                                                     </DataTrigger>
-                                                                    <DataTrigger Binding="{Binding FirewallStatus}" Value="">
+                                                                    <DataTrigger Binding="{Binding Firewall.Status}" Value="">
                                                                         <Setter Property="Visibility" Value="Collapsed" />
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
@@ -1606,25 +1366,29 @@
                                                     </TextBlock>
                                                     <TextBlock Margin="0,2,0,0"
                                                                Style="{StaticResource SegDetail}"
-                                                               Text="{Binding FirewallDetail}"
-                                                               Visibility="{Binding FirewallDetail, Converter={StaticResource StringNotEmptyToVisibility}}" />
+                                                               Text="{Binding Firewall.Detail}"
+                                                               Visibility="{Binding Firewall.Detail, Converter={StaticResource StringNotEmptyToVisibility}}" />
                                                 </StackPanel>
                                                 <Button Grid.Column="1"
                                                         Margin="6,0,0,0"
                                                         Padding="8,2"
                                                         VerticalAlignment="Top"
-                                                        Command="{Binding RefreshFirewallStatusCommand}"
+                                                        Command="{Binding Firewall.RefreshStatusCommand}"
                                                         Content="{x:Static loc:Strings.Conduit_Firewall_Recheck}"
                                                         FontSize="10"
                                                         Style="{StaticResource GhostQuietButton}" />
                                             </Grid>
-                                            <!-- 蓝牙备援一行：正在承载会话时用通行色，其余状态保持 detail 灰 -->
+                                            <!-- 蓝牙备援一行：正在承载会话时用通行色，开了却起不来（适配器不可用）用赭，
+                                                 其余状态保持 detail 灰 -->
                                             <TextBlock Margin="0,4,0,0" Text="{Binding BluetoothStatus}">
                                                 <TextBlock.Style>
                                                     <Style BasedOn="{StaticResource SegDetail}" TargetType="TextBlock">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding BluetoothSessionActive}" Value="True">
                                                                 <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding BluetoothToggleStatus.Tone}" Value="Attention">
+                                                                <Setter Property="Foreground" Value="{DynamicResource CsActBrush}" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -2017,6 +1781,8 @@
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Conduit_Bluetooth_Title}" />
                                             <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Conduit_Bluetooth_Desc}" />
+                                            <!-- 开关开了不等于监听起来了：适配器不可用时这里变赭，承载会话时用通行色 -->
+                                            <ContentControl Content="{Binding BluetoothToggleStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -2037,10 +1803,9 @@
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Conduit_ExtraBind_Title}" />
                                             <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Conduit_ExtraBind_Desc}" />
-                                            <!-- 「重启后生效」用赭色说明，不用弹窗 -->
-                                            <TextBlock Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource CsText4Brush}">
-                                                <Run FontWeight="SemiBold" Foreground="{DynamicResource CsActBrush}" Text="{x:Static loc:Strings.Conduit_ExtraBind_RestartNote}" /><Run Text="{x:Static loc:Strings.Conduit_ExtraBind_CommaNote}" />
-                                            </TextBlock>
+                                            <!-- 「重启后生效」随实际状态变化：与本次启动所用地址一致时是灰色说明，
+                                                 保存了尚未生效的改动时才变赭（需要你重启） -->
+                                            <ContentControl Content="{Binding ExtraBindStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <TextBox Grid.Column="1"
                                                  Width="220"
@@ -2071,14 +1836,14 @@
                                                  IsReadOnly="True"
                                                  IsReadOnlyCaretVisible="False"
                                                  Style="{StaticResource InsetTextBox}"
-                                                 Text="{Binding FirewallAllowCommandText, Mode=OneWay}"
+                                                 Text="{Binding Firewall.AllowCommandText, Mode=OneWay}"
                                                  TextWrapping="Wrap" />
                                         <TextBlock Margin="0,4,0,0"
                                                    FlowDirection="LeftToRight"
                                                    FontFamily="{StaticResource CsMono}"
                                                    FontSize="10"
                                                    Foreground="{DynamicResource CsText4Brush}"
-                                                   Text="{Binding FirewallAllowPowerShellText, Mode=OneWay}"
+                                                   Text="{Binding Firewall.AllowPowerShellText, Mode=OneWay}"
                                                    TextWrapping="Wrap" />
                                         <!-- 当前网络被归为「公用」= 需要你操作（赭色着色盒），不是错误 -->
                                         <Border Margin="0,10,0,0"
@@ -2087,32 +1852,32 @@
                                                 BorderBrush="{DynamicResource CsActLineBrush}"
                                                 BorderThickness="1"
                                                 CornerRadius="9"
-                                                Visibility="{Binding FirewallPublicHintNeeded, Converter={StaticResource BoolToVisibility}}">
+                                                Visibility="{Binding Firewall.PublicHintNeeded, Converter={StaticResource BoolToVisibility}}">
                                             <TextBlock FontSize="11"
                                                        Foreground="{DynamicResource CsActBrush}"
                                                        Text="{x:Static loc:Strings.Conduit_Firewall_PublicHint}"
                                                        TextWrapping="Wrap" />
                                         </Border>
                                         <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
-                                            <Button Command="{Binding CopyFirewallRuleCommandTextCommand}"
+                                            <Button Command="{Binding Firewall.CopyRuleCommandTextCommand}"
                                                     Content="{x:Static loc:Strings.Conduit_FirewallRule_Copy}"
                                                     Style="{StaticResource GhostQuietButton}" />
                                             <Button Margin="8,0,0,0"
-                                                    Command="{Binding AllowFirewallPortCommand}"
+                                                    Command="{Binding Firewall.AllowPortCommand}"
                                                     Content="{x:Static loc:Strings.Conduit_FirewallRule_Allow}"
                                                     Style="{StaticResource GhostFlowButton}" />
                                             <Button Margin="8,0,0,0"
-                                                    Command="{Binding RemoveFirewallRuleCommand}"
+                                                    Command="{Binding Firewall.RemoveRuleCommand}"
                                                     Content="{x:Static loc:Strings.Conduit_FirewallRule_Remove}"
                                                     Style="{StaticResource GhostQuietButton}"
-                                                    Visibility="{Binding FirewallManagedRuleExists, Converter={StaticResource BoolToVisibility}}" />
+                                                    Visibility="{Binding Firewall.ManagedRuleExists, Converter={StaticResource BoolToVisibility}}" />
                                         </StackPanel>
                                         <TextBlock Margin="0,8,0,0"
                                                    FontSize="11"
                                                    Foreground="{DynamicResource CsText3Brush}"
-                                                   Text="{Binding FirewallActionResult}"
+                                                   Text="{Binding Firewall.ActionResult}"
                                                    TextWrapping="Wrap"
-                                                   Visibility="{Binding FirewallActionResult, Converter={StaticResource StringNotEmptyToVisibility}}" />
+                                                   Visibility="{Binding Firewall.ActionResult, Converter={StaticResource StringNotEmptyToVisibility}}" />
                                     </StackPanel>
                                 </Border>
                                 <!-- 指纹只在配对仪式中被核对，住在配对所在的网络段旁 -->
@@ -2560,9 +2325,10 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Language_Title}" />
-                                            <TextBlock Style="{StaticResource RowDesc}"><Run Text="{x:Static loc:Strings.Prefs_Language_Desc}" /><Run FontWeight="SemiBold"
-     Foreground="{DynamicResource CsActBrush}"
-     Text="{x:Static loc:Strings.Prefs_Language_RestartNote}" /></TextBlock>
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Language_Desc}" />
+                                            <!-- 「重启后生效」随实际状态变化：与本次启动所用语言一致时是灰色说明，
+                                                 改选并保存后才变赭（需要你重启） -->
+                                            <ContentControl Content="{Binding LanguageStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <ComboBox Grid.Column="1"
                                                   MinWidth="176"
@@ -2591,6 +2357,7 @@
                                     <StackPanel Margin="0,0,16,0">
                                         <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Common_PauseCapture}" />
                                         <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Capture_Pause_Desc}" />
+                                        <ContentControl Content="{Binding PauseStatus}" Style="{StaticResource FactLine}" />
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"
@@ -2610,6 +2377,7 @@
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Common_PrivateMode}" />
                                             <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Capture_Private_Desc}" />
+                                            <ContentControl Content="{Binding PrivateModeStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -2636,6 +2404,8 @@
                                                  TextWrapping="Wrap"
                                                  VerticalContentAlignment="Top"
                                                  VerticalScrollBarVisibility="Auto" />
+                                        <!-- 失焦才保存：编辑中与已生效两态说清楚，生效后报出屏蔽了几个进程名 -->
+                                        <ContentControl Content="{Binding BlockedProcessesStatus}" Style="{StaticResource FactLine}" />
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
@@ -2653,6 +2423,8 @@
                                     <StackPanel Margin="0,0,16,0">
                                         <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApply_Title}" />
                                         <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApply_Desc}" />
+                                        <!-- 开着≠在写：暂停/私密期间的闸门用赭说明；否则报本次运行最近一次写入的实际结果 -->
+                                        <ContentControl Content="{Binding AutoApplyStatus}" Style="{StaticResource FactLine}" />
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"
@@ -2672,6 +2444,7 @@
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Sync_ImageSync_Title}" />
                                             <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Sync_ImageSync_Desc}" />
+                                            <ContentControl Content="{Binding ImageSyncStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -2692,6 +2465,7 @@
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApplyImages_Title}" />
                                             <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApplyImages_Desc}" />
+                                            <ContentControl Content="{Binding AutoApplyImagesStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -2823,6 +2597,8 @@
                                     <StackPanel Margin="0,0,16,0">
                                         <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Startup_Launch_Title}" />
                                         <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Startup_Launch_Desc}" />
+                                        <!-- 开关只是意图；这里读回注册表说事实：已登记 / 写入失败 / 被任务管理器停用 -->
+                                        <ContentControl Content="{Binding StartupStatus}" Style="{StaticResource FactLine}" />
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"
@@ -3077,7 +2853,7 @@
                                                FontFamily="{StaticResource CsMono}"
                                                FontSize="13"
                                                Foreground="{DynamicResource CsText2Brush}"
-                                               Text="{Binding AppVersion}" />
+                                               Text="{Binding Update.AppVersion}" />
                                 </Grid>
                                 <Border Padding="16,12"
                                         BorderBrush="{DynamicResource CsLineBrush}"
@@ -3093,7 +2869,7 @@
                                         </StackPanel>
                                         <Button Grid.Column="1"
                                                 VerticalAlignment="Top"
-                                                Command="{Binding CheckForUpdatesCommand}"
+                                                Command="{Binding Update.CheckCommand}"
                                                 Content="{x:Static loc:Strings.Prefs_CheckUpdate}"
                                                 Style="{StaticResource GhostQuietButton}" />
                                     </Grid>
@@ -3102,14 +2878,14 @@
                                         BorderBrush="{DynamicResource CsLineBrush}"
                                         BorderThickness="0,1,0,0">
                                     <Button HorizontalAlignment="Left"
-                                            Command="{Binding DownloadUpdateCommand}"
+                                            Command="{Binding Update.DownloadCommand}"
                                             Content="{x:Static loc:Strings.Prefs_Update_Download}"
                                             Style="{StaticResource GhostQuietButton}" />
                                     <Border.Style>
                                         <Style TargetType="Border">
                                             <Setter Property="Visibility" Value="Visible" />
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding UpdateAvailable}" Value="False">
+                                                <DataTrigger Binding="{Binding Update.Available}" Value="False">
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -3122,12 +2898,12 @@
                                     <TextBlock FontFamily="{StaticResource CsMono}"
                                                FontSize="11"
                                                Foreground="{DynamicResource CsText3Brush}"
-                                               Text="{Binding UpdateStatus}"
+                                               Text="{Binding Update.Status}"
                                                TextWrapping="Wrap" />
                                     <Border.Style>
                                         <Style TargetType="Border">
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding UpdateStatus}" Value="">
+                                                <DataTrigger Binding="{Binding Update.Status}" Value="">
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                 </DataTrigger>
                                             </Style.Triggers>

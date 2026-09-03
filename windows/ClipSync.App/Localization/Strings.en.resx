@@ -550,7 +550,7 @@
     <value>Preferences</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Changes apply immediately · clipboard content never appears in logs</value>
+    <value>Changes apply immediately · items that need a restart say so on their row</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>DISPLAY</value>
@@ -1126,5 +1126,65 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
   </data>
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>Could not apply the update.</value>
+  </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Registered · starts with Windows at the next sign-in</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Registered · but disabled under Task Manager › Startup apps, so it will not start at sign-in</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>Startup entry could not be written · will not start automatically at the next sign-in</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>Startup entry is still present · removal did not take effect, it will still start at the next sign-in</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>Startup entry state could not be read</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Saved · applies after restart</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>Paused · {0} clips skipped so far</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Private mode · {0} clips skipped so far</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>On · nothing is written to the clipboard while paused; received content stays in history only</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>On · nothing is written to the clipboard in private mode; received content stays in history only</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>On · no text has arrived from the phone yet this run</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>On · the most recent text from the phone was written to this PC’s clipboard</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>On · the most recent clipboard write did not succeed; the content is in history</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Off · this PC sends and receives text only; images stay on their own device</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>On · waiting for the phone to connect; images travel only when the phone side is on too</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>On · {0} device(s) connected; images travel only when the phone side is on too</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>In effect · copies from {0} process name(s) are not recorded</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>In effect · no process is blocked; every copy is recorded</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>Editing · applies when you leave the box</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>Firewall has no allow rule for TCP 47654 · the phone may not connect; allow it on the Conduit page</value>
   </data>
 </root>

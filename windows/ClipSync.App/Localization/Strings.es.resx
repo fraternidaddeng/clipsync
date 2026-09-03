@@ -550,7 +550,7 @@
     <value>Preferencias</value>
   </data>
   <data name="Prefs_Subtitle" xml:space="preserve">
-    <value>Los cambios se aplican al instante · el contenido del portapapeles nunca aparece en los registros</value>
+    <value>Los cambios se aplican al instante · los elementos que requieren reiniciar lo indican en su fila</value>
   </data>
   <data name="Prefs_Group_Display" xml:space="preserve">
     <value>PANTALLA</value>
@@ -1126,5 +1126,65 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
   </data>
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>No se pudo aplicar la actualización.</value>
+  </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Registrado · se inicia con Windows en el próximo inicio de sesión</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Registrado · pero deshabilitado en Administrador de tareas › Aplicaciones de inicio, así que no se iniciará al iniciar sesión</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>No se pudo escribir la entrada de inicio · no se iniciará automáticamente en el próximo inicio de sesión</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>La entrada de inicio sigue presente · la eliminación no surtió efecto, seguirá iniciándose en el próximo inicio de sesión</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>No se pudo leer el estado de la entrada de inicio</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Guardado · se aplica tras reiniciar</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>En pausa · {0} recortes omitidos hasta ahora</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Modo privado · {0} recortes omitidos hasta ahora</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>Activado · en pausa no se escribe nada en el portapapeles; lo recibido solo queda en el historial</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>Activado · en modo privado no se escribe nada en el portapapeles; lo recibido solo queda en el historial</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>Activado · en esta sesión aún no ha llegado texto del teléfono</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>Activado · el último texto recibido se escribió en el portapapeles de este PC</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>Activado · la última escritura en el portapapeles no tuvo éxito; el contenido está en el historial</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Desactivado · este PC solo envía y recibe texto; las imágenes se quedan en su dispositivo</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>Activado · esperando a que el teléfono se conecte; las imágenes solo viajan si el teléfono también lo tiene activado</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>Activado · {0} dispositivo(s) conectado(s); las imágenes solo viajan si el teléfono también lo tiene activado</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>En vigor · las copias desde {0} nombre(s) de proceso no se registran</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>En vigor · ningún proceso bloqueado; se registra cada copia</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>Editando · se aplica al salir del cuadro</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>El firewall no permite TCP 47654 · el teléfono puede no conectarse; permítelo en la página Conducto</value>
   </data>
 </root>

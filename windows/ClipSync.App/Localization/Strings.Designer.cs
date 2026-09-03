@@ -378,4 +378,24 @@ public static partial class Strings
     public static string Prefs_Update_Error_NoAsset => Get(nameof(Prefs_Update_Error_NoAsset));
     public static string Prefs_Update_Error_Hash => Get(nameof(Prefs_Update_Error_Hash));
     public static string Prefs_Update_Error_Apply => Get(nameof(Prefs_Update_Error_Apply));
+    public static string Status_Startup_Registered => Get(nameof(Status_Startup_Registered));
+    public static string Status_Startup_DisabledByTaskManager => Get(nameof(Status_Startup_DisabledByTaskManager));
+    public static string Status_Startup_WriteFailed => Get(nameof(Status_Startup_WriteFailed));
+    public static string Status_Startup_RemoveFailed => Get(nameof(Status_Startup_RemoveFailed));
+    public static string Status_Startup_Unreadable => Get(nameof(Status_Startup_Unreadable));
+    public static string Status_RestartPending => Get(nameof(Status_RestartPending));
+    public static string Status_Paused_SkippedFormat => Get(nameof(Status_Paused_SkippedFormat));
+    public static string Status_Private_SkippedFormat => Get(nameof(Status_Private_SkippedFormat));
+    public static string Status_AutoApply_PausedGate => Get(nameof(Status_AutoApply_PausedGate));
+    public static string Status_AutoApply_PrivateGate => Get(nameof(Status_AutoApply_PrivateGate));
+    public static string Status_AutoApply_Unverified => Get(nameof(Status_AutoApply_Unverified));
+    public static string Status_AutoApply_Applied => Get(nameof(Status_AutoApply_Applied));
+    public static string Status_AutoApply_Failed => Get(nameof(Status_AutoApply_Failed));
+    public static string Status_ImageSync_Off => Get(nameof(Status_ImageSync_Off));
+    public static string Status_ImageSync_OnWaiting => Get(nameof(Status_ImageSync_OnWaiting));
+    public static string Status_ImageSync_OnConnectedFormat => Get(nameof(Status_ImageSync_OnConnectedFormat));
+    public static string Status_BlockedProcesses_AppliedFormat => Get(nameof(Status_BlockedProcesses_AppliedFormat));
+    public static string Status_BlockedProcesses_None => Get(nameof(Status_BlockedProcesses_None));
+    public static string Status_BlockedProcesses_Editing => Get(nameof(Status_BlockedProcesses_Editing));
+    public static string Flyout_Detail_FirewallMissing => Get(nameof(Flyout_Detail_FirewallMissing));
 }

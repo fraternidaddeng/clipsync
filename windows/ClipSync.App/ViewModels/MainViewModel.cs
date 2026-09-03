@@ -1,16 +1,15 @@
 using ClipSync.App.Firewall;
 using ClipSync.App.Localization;
+using ClipSync.App.Startup;
 using ClipSync.App.Update;
 using ClipSync.Core.Clipboard;
 using ClipSync.Core.Clipboard.PrivilegedHost;
 using ClipSync.Core.Storage;
-using ClipSync.Core.Update;
 using ClipSync.Peer.Server;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Net.Http;
 using System.Text;
 
 namespace ClipSync.App.ViewModels;
@@ -49,7 +48,8 @@ public partial class MainViewModel(
     WindowsAppUpdater? appUpdater = null,
     IFirewallInspector? firewallInspector = null,
     IFirewallRuleElevator? firewallElevator = null,
-    Func<FirewallRulePromptRequest, FirewallRuleCommand?>? firewallRulePrompt = null) : ObservableObject
+    Func<FirewallRulePromptRequest, FirewallRuleCommand?>? firewallRulePrompt = null,
+    Func<StartupRegistrationState>? startupRegistrationProbe = null) : ObservableObject
 {
     private bool initialized;
 
@@ -278,31 +278,24 @@ public partial class MainViewModel(
     [ObservableProperty]
     private string historyTransferStatus = string.Empty;
 
-    /// <summary>Stamped assembly version shown in 偏好 · 关于.</summary>
-    [ObservableProperty]
-    private string appVersion = LocalAppVersion.Read();
+    // ===== 更新（偏好 · 关于）：拆到 UpdateViewModel，这里只挂子 ViewModel 与两处对外转发 =====
 
-    /// <summary>Idle / checking / up-to-date / available / progress / error for the GitHub updater.</summary>
-    [ObservableProperty]
-    private string updateStatus = string.Empty;
+    /// <summary>The 偏好 · 关于 block; XAML binds <c>Update.*</c>.</summary>
+    public UpdateViewModel Update { get; } = new(appUpdater ?? new WindowsAppUpdater());
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(CheckForUpdatesCommand))]
-    [NotifyCanExecuteChangedFor(nameof(DownloadUpdateCommand))]
-    private bool updateBusy;
+    /// <summary>Forwarded for the app layer, which subscribes on the main view model to launch the helper and exit.</summary>
+    public event Action<string>? UpdateReadyToApply
+    {
+        add => Update.ReadyToApply += value;
+        remove => Update.ReadyToApply -= value;
+    }
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(DownloadUpdateCommand))]
-    private bool updateAvailable;
-
-    private UpdateCheckResult? pendingUpdate;
-    private readonly WindowsAppUpdater updates = appUpdater ?? new WindowsAppUpdater();
-
-    /// <summary>
-    /// Raised after the ZIP has been verified and extracted. The app layer launches
-    /// the helper script and exits so files can be replaced.
-    /// </summary>
-    public event Action<string>? UpdateReadyToApply;
+    /// <summary>Forwarded for the app layer, which restates a failed helper launch here.</summary>
+    public string UpdateStatus
+    {
+        get => Update.Status;
+        set => Update.Status = value;
+    }
 
     // ===== 特权直读（Android 后台直读）· PC 侧 adb 协助（任务 1）=====
     // 门槛是明确同意，绝不静默：未 consent 前卡片只解释、一条 adb 命令都不发（威胁模型）。
@@ -420,69 +413,44 @@ public partial class MainViewModel(
     /// </summary>
     private WirelessAdbEndpoint? lastWirelessConnectEndpoint;
 
-    // ===== 防火墙（ADR 0006）：只读检测 · 展示命令 · 经 UAC 放行/移除 =====
-    // 检测用普通用户权限读 Windows 防火墙；写规则只在用户点击、看过完整命令并确认后，
-    // 以管理员身份运行 Windows 自带的 netsh.exe。检测三态如实陈述，不把「规则存在」说成「一定可达」。
+    // ===== 防火墙（ADR 0006）：拆到 FirewallViewModel，这里只挂子 ViewModel 与两处对外转发 =====
 
-    private readonly IFirewallInspector firewall = firewallInspector ?? new FirewallInspector();
-    private readonly IFirewallRuleElevator firewallElevation = firewallElevator ?? new FirewallRuleElevator();
-
-    /// <summary>The exact netsh line the default 放行 (private profile only) runs; shown read-only and offered for copying.</summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Performance",
-        "CA1822:Mark members as static",
-        Justification = "WPF {Binding} 只解析实例属性；命令展示框绑在 DataContext 上。")]
-    public string FirewallAllowCommandText => FirewallRuleCommand.Allow(FirewallProfiles.Private).ToDisplayString();
-
-    /// <summary>The same rule as a NetSecurity cmdlet (what docs/install.md quotes), for people who prefer PowerShell.</summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Performance",
-        "CA1822:Mark members as static",
-        Justification = "WPF {Binding} 只解析实例属性；命令展示框绑在 DataContext 上。")]
-    public string FirewallAllowPowerShellText => FirewallRuleCommand.Allow(FirewallProfiles.Private).ToPowerShellString();
-
-    /// <summary>One line for the conduit network segment: 正在检测… / 已放行 / 未发现规则 / 无法判断.</summary>
-    [ObservableProperty]
-    private string firewallStatus = string.Empty;
-
-    /// <summary>Facts under the status line (port mismatch, block rules aimed at this exe, the reachability caveat); empty = hidden.</summary>
-    [ObservableProperty]
-    private string firewallDetail = string.Empty;
-
-    /// <summary>True when the last check found no covering rule: act-coloured status, hint in the QR window.</summary>
-    [ObservableProperty]
-    private bool firewallRuleMissing;
-
-    /// <summary>True when the last check found the port allowed on every active profile.</summary>
-    [ObservableProperty]
-    private bool firewallAllowed;
+    private FirewallViewModel? firewall;
 
     /// <summary>
-    /// True when a rule named ClipSync TCP 47654 exists (whatever its state): the 移除 button shows
-    /// and 放行 is disabled — netsh would otherwise add a second rule under the same name.
+    /// The conduit network segment's 防火墙 block; XAML binds <c>Firewall.*</c>. Built on first
+    /// use because it needs this instance's live port and copy path (a primary-constructor
+    /// initializer cannot capture <c>this</c>).
     /// </summary>
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(AllowFirewallPortCommand))]
-    [NotifyCanExecuteChangedFor(nameof(RemoveFirewallRuleCommand))]
-    private bool firewallManagedRuleExists;
+    public FirewallViewModel Firewall => firewall ??= CreateFirewallViewModel();
 
-    /// <summary>True when Windows classes the current network as Public and the port is not allowed there: the profile hint shows.</summary>
-    [ObservableProperty]
-    private bool firewallPublicHintNeeded;
+    private FirewallViewModel CreateFirewallViewModel()
+    {
+        var child = new FirewallViewModel(
+            firewallInspector ?? new FirewallInspector(),
+            firewallElevator ?? new FirewallRuleElevator(),
+            firewallRulePrompt,
+            listeningPort: () => PeerOnline ? PeerPort : 0,
+            copyText: CopyText);
+        child.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(FirewallViewModel.RuleMissing))
+            {
+                OnPropertyChanged(nameof(FirewallRuleMissing));
+                RefreshTrayDetailStatus();
+            }
+        };
+        return child;
+    }
 
-    /// <summary>Result line of the last 放行/移除/复制; empty until one runs.</summary>
-    [ObservableProperty]
-    private string firewallActionResult = string.Empty;
+    /// <summary>
+    /// Forwarded for the pairing QR window, which binds this name on the main view model for
+    /// its 未放行 hint (ADR 0006); raised whenever the child's <see cref="FirewallViewModel.RuleMissing"/> moves.
+    /// </summary>
+    public bool FirewallRuleMissing => Firewall.RuleMissing;
 
-    /// <summary>True while a check or an elevated run is in flight; freezes the firewall buttons.</summary>
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(RefreshFirewallStatusCommand))]
-    [NotifyCanExecuteChangedFor(nameof(AllowFirewallPortCommand))]
-    [NotifyCanExecuteChangedFor(nameof(RemoveFirewallRuleCommand))]
-    private bool firewallBusy;
-
-    /// <summary>Active profiles from the last check, handed to the confirmation window for its Public-network hint.</summary>
-    private FirewallProfiles firewallActiveProfiles = FirewallProfiles.Private;
+    /// <summary>Forwarded for the app layer's post-start and network-change re-checks.</summary>
+    public IAsyncRelayCommand RefreshFirewallStatusCommand => Firewall.RefreshStatusCommand;
 
     public ObservableCollection<HistoryItemViewModel> History { get; } = new();
 
@@ -515,13 +483,17 @@ public partial class MainViewModel(
         : remoteApplyEvidence;
 
     /// <summary>Records whether a real remote text apply reached the system clipboard.</summary>
-    public void RecordRemoteApplyOutcome(bool ok) =>
+    public void RecordRemoteApplyOutcome(bool ok)
+    {
         remoteApplyEvidence = ok ? ClipboardApplyStates.Applied : ClipboardApplyStates.Failed;
+        RefreshAutoApplyStatuses();
+    }
 
     /// <summary>
-    /// Surfaces a capture rejection the user must hear about. Only the oversize case speaks:
-    /// paused/private/duplicate/suppressed rejections are expected behaviour, but a silently
-    /// dropped 1 MiB+ copy would break the 明确提示 promise (manual-qa-checklist §3).
+    /// Surfaces a capture rejection. Only the oversize case gets the banner: paused/private/
+    /// duplicate/suppressed rejections are expected behaviour, but a silently dropped 1 MiB+
+    /// copy would break the 明确提示 promise (manual-qa-checklist §3). Paused/private
+    /// rejections are counted for the "本次已跳过 N 条" fact under those switches.
     /// </summary>
     public void NoteCaptureRejected(CaptureRejectionReason reason)
     {
@@ -529,6 +501,8 @@ public partial class MainViewModel(
         {
             CaptureNotice = Strings.Capture_OversizeNotice;
         }
+
+        NoteSuppressedCapture(reason);
     }
 
     /// <summary>An accepted capture supersedes the local-only fact; the strip retires.</summary>
@@ -1011,172 +985,6 @@ public partial class MainViewModel(
         }
     }
 
-    // ===== 防火墙命令（ADR 0006）=====
-
-    private bool CanRefreshFirewall() => !FirewallBusy;
-
-    /// <summary>
-    /// Re-reads the Windows Firewall (read-only, standard user rights) and restates the network
-    /// segment's 防火墙 line. The app layer runs it after the listener starts and after every
-    /// network-change recovery pass; 重新检测 and each 放行/移除 run it again.
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(CanRefreshFirewall))]
-    private async Task RefreshFirewallStatusAsync()
-    {
-        FirewallBusy = true;
-        try
-        {
-            await InspectFirewallAsync();
-        }
-        finally
-        {
-            FirewallBusy = false;
-        }
-    }
-
-    private async Task InspectFirewallAsync()
-    {
-        FirewallStatus = Strings.Conduit_Firewall_Checking;
-        var report = await firewall.InspectAsync(
-            FirewallRuleCommand.Port,
-            PeerOnline ? PeerPort : 0,
-            Environment.ProcessPath ?? string.Empty,
-            CancellationToken.None);
-        ApplyFirewallReport(report);
-    }
-
-    /// <summary>Maps a report onto the segment's observable state; every sentence is a fact the check established.</summary>
-    private void ApplyFirewallReport(FirewallReport report)
-    {
-        FirewallAllowed = report.Verdict == FirewallVerdict.Allowed;
-        FirewallRuleMissing = report.Verdict == FirewallVerdict.NoRuleFound;
-        FirewallManagedRuleExists = report.NamedRuleExists;
-        firewallActiveProfiles = report.ActiveProfiles;
-        FirewallPublicHintNeeded = report.Verdict != FirewallVerdict.Allowed
-            && (report.ActiveProfiles & FirewallProfiles.Public) != 0;
-        FirewallStatus = report.Verdict switch
-        {
-            FirewallVerdict.Allowed => Strings.Format(
-                nameof(Strings.Conduit_Firewall_AllowedFormat), DescribeAllowSource(report)),
-            FirewallVerdict.NoRuleFound => Strings.Conduit_Firewall_NoRule,
-            _ => Strings.Conduit_Firewall_Undetermined,
-        };
-
-        var details = new List<string>(3);
-        if (report.PortMismatch && report.Verdict != FirewallVerdict.Allowed)
-        {
-            details.Add(Strings.Format(nameof(Strings.Conduit_Firewall_PortMismatchFormat), report.ActualPort));
-        }
-
-        if (report.BlockingRuleNames.Count > 0)
-        {
-            details.Add(Strings.Format(
-                nameof(Strings.Conduit_Firewall_BlockRuleFormat), string.Join(", ", report.BlockingRuleNames)));
-        }
-
-        if (report.Verdict == FirewallVerdict.Allowed)
-        {
-            details.Add(Strings.Conduit_Firewall_Caveat);
-        }
-
-        FirewallDetail = string.Join('\n', details);
-    }
-
-    /// <summary>What let the port through: the covering rule names, else the active profiles (firewall off or default-allow there).</summary>
-    private static string DescribeAllowSource(FirewallReport report) =>
-        report.MatchingAllowRuleNames.Count > 0
-            ? string.Join(", ", report.MatchingAllowRuleNames)
-            : string.Join(" / ", ProfileNames(report.ActiveProfiles));
-
-    private static IEnumerable<string> ProfileNames(FirewallProfiles profiles)
-    {
-        if ((profiles & FirewallProfiles.Domain) != 0)
-        {
-            yield return Strings.Firewall_Profile_Domain;
-        }
-
-        if ((profiles & FirewallProfiles.Private) != 0)
-        {
-            yield return Strings.Firewall_Profile_Private;
-        }
-
-        if ((profiles & FirewallProfiles.Public) != 0)
-        {
-            yield return Strings.Firewall_Profile_Public;
-        }
-    }
-
-    /// <summary>Copies the netsh line through the same suppression path as history copies, so the capture loop ignores the write.</summary>
-    [RelayCommand]
-    private void CopyFirewallRuleCommandText()
-    {
-        CopyText(FirewallAllowCommandText);
-        FirewallActionResult = Strings.Conduit_FirewallRule_Copied;
-    }
-
-    private bool CanAllowFirewallPort() => !FirewallBusy && !FirewallManagedRuleExists;
-
-    /// <summary>
-    /// 放行: the confirmation window shows the exact command and the profile choice first
-    /// (ADR 0006 §2), then Windows' own netsh runs through the system UAC prompt. A declined
-    /// prompt is stated as such — never as success — and every outcome is followed by a fresh
-    /// read-only check so the status line states what the firewall now holds.
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(CanAllowFirewallPort))]
-    private Task AllowFirewallPortAsync() =>
-        RunFirewallRuleAsync(new FirewallRulePromptRequest(IsRemoval: false, firewallActiveProfiles));
-
-    private bool CanRemoveFirewallRule() => !FirewallBusy && FirewallManagedRuleExists;
-
-    /// <summary>移除: same confirmation and UAC path; deletes only the rule this app named (ADR 0006 §3).</summary>
-    [RelayCommand(CanExecute = nameof(CanRemoveFirewallRule))]
-    private Task RemoveFirewallRuleAsync() =>
-        RunFirewallRuleAsync(new FirewallRulePromptRequest(IsRemoval: true, firewallActiveProfiles));
-
-    private async Task RunFirewallRuleAsync(FirewallRulePromptRequest request)
-    {
-        var command = (firewallRulePrompt ?? PromptFirewallRule)(request);
-        if (command is null)
-        {
-            return;
-        }
-
-        FirewallBusy = true;
-        try
-        {
-            var outcome = await firewallElevation.RunAsync(command, CancellationToken.None);
-            await InspectFirewallAsync();
-            FirewallActionResult = outcome.Status switch
-            {
-                ElevationStatus.Applied => command.IsRemoval
-                    ? Strings.FirewallRule_Result_Removed
-                    : Strings.FirewallRule_Result_Applied,
-                ElevationStatus.Cancelled => Strings.FirewallRule_Result_Cancelled,
-                _ => Strings.Format(
-                    nameof(Strings.FirewallRule_Result_FailedFormat),
-                    outcome.ExitCode?.ToString(System.Globalization.CultureInfo.InvariantCulture)
-                        ?? outcome.FailureType
-                        ?? "?"),
-            };
-        }
-        finally
-        {
-            FirewallBusy = false;
-        }
-    }
-
-    /// <summary>The default prompt: the modal confirmation window; null when the user cancelled it.</summary>
-    private static FirewallRuleCommand? PromptFirewallRule(FirewallRulePromptRequest request)
-    {
-        var owner = System.Windows.Application.Current?.MainWindow;
-        var window = new FirewallRuleWindow(request)
-        {
-            Owner = owner is { IsVisible: true } ? owner : null,
-        };
-        window.ShowDialog();
-        return window.ConfirmedCommand;
-    }
-
     /// <summary>Raised after a device is revoked so the app layer can drop its live sessions.</summary>
     public event Action<string>? DeviceRevoked;
 
@@ -1188,7 +996,11 @@ public partial class MainViewModel(
     /// </summary>
     public event Action? ImageSyncEnabledChanged;
 
-    partial void OnImageSyncEnabledChanged(bool value) => ImageSyncEnabledChanged?.Invoke();
+    partial void OnImageSyncEnabledChanged(bool value)
+    {
+        RefreshImageSyncStatus();
+        ImageSyncEnabledChanged?.Invoke();
+    }
 
     /// <summary>Raised when the user asks to see the full body of the selected clip.</summary>
     public event Action? DetailRequested;
@@ -1246,6 +1058,12 @@ public partial class MainViewModel(
             : PrivilegedAdbAvailable
                 ? Strings.Conduit_Privileged_TapDetect
                 : Strings.Conduit_Privileged_AdbMissing;
+        // The listener and the UI culture start from the values just loaded: from here on,
+        // a saved change to either is "重启后生效" until the process restarts.
+        CaptureActiveRestartBoundValues();
+        RefreshStartupStatus();
+        RefreshImageSyncStatus();
+        RefreshCaptureGateStatuses();
         ApplySettings();
         await store.CleanupAsync(
             new ClipboardRetentionPolicy(
@@ -1286,6 +1104,7 @@ public partial class MainViewModel(
     public void UpdateBluetoothStatus(bool enabled, bool listening, string? connectedDeviceName, string? failureReason)
     {
         BluetoothSessionActive = enabled && connectedDeviceName is not null;
+        bluetoothUnavailable = enabled && failureReason is not null;
         BluetoothStatus = !enabled
             ? Strings.Bt_Disabled
             : failureReason is not null
@@ -1295,6 +1114,7 @@ public partial class MainViewModel(
                     : listening
                         ? Strings.Bt_Armed
                         : Strings.Bt_Starting;
+        RefreshBluetoothToggleStatus();
     }
 
     /// <summary>Re-reads the outbox depth and last peer ack for the conduit local-service segment.</summary>
@@ -1654,6 +1474,8 @@ public partial class MainViewModel(
         await store.SetSettingAsync("extra_bind_addresses", ExtraBindAddresses);
         await store.SetSettingAsync("bluetooth_fallback", BluetoothFallbackEnabled.ToString());
         ApplySettings();
+        // The app layer wrote the Run entry on the property change that preceded this save.
+        RefreshStartupStatus();
         await store.CleanupAsync(
             new ClipboardRetentionPolicy(
                 maximumEntries: RetentionMaxEntries,
@@ -1810,102 +1632,6 @@ public partial class MainViewModel(
     }
 
     /// <summary>
-    /// 偏好 · 关于: compare this portable copy to GitHub <c>/releases/latest</c>.
-    /// Checking never downloads; a newer ZIP is offered as a separate action.
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(CanCheckForUpdates))]
-    private async Task CheckForUpdatesAsync()
-    {
-        UpdateBusy = true;
-        UpdateAvailable = false;
-        pendingUpdate = null;
-        UpdateStatus = Strings.Prefs_Update_Checking;
-        try
-        {
-            var result = await updates.CheckAsync();
-            pendingUpdate = result;
-            if (result.Payload is null)
-            {
-                UpdateStatus = Strings.Prefs_Update_Error_NoAsset;
-                return;
-            }
-
-            if (result.UpdateAvailable)
-            {
-                UpdateAvailable = true;
-                UpdateStatus = Strings.Format(
-                    nameof(Strings.Prefs_Update_AvailableFormat),
-                    result.Latest.VersionLabel,
-                    result.CurrentVersion);
-            }
-            else
-            {
-                UpdateStatus = Strings.Format(
-                    nameof(Strings.Prefs_Update_UpToDateFormat),
-                    result.CurrentVersion);
-            }
-        }
-        catch (HttpRequestException)
-        {
-            UpdateStatus = Strings.Prefs_Update_Error_Network;
-        }
-        catch (FormatException)
-        {
-            UpdateStatus = Strings.Prefs_Update_Error_Parse;
-        }
-        catch (Exception)
-        {
-            UpdateStatus = Strings.Prefs_Update_Error_Network;
-        }
-        finally
-        {
-            UpdateBusy = false;
-        }
-    }
-
-    private bool CanCheckForUpdates() => !UpdateBusy;
-
-    [RelayCommand(CanExecute = nameof(CanDownloadUpdate))]
-    private async Task DownloadUpdateAsync()
-    {
-        var check = pendingUpdate;
-        if (check is null || !check.UpdateAvailable || check.Payload is null)
-        {
-            return;
-        }
-
-        UpdateBusy = true;
-        var progress = new Progress<UpdateDownloadProgress>(p =>
-            UpdateStatus = Strings.Format(nameof(Strings.Prefs_Update_DownloadingFormat), p.Percent));
-        try
-        {
-            UpdateStatus = Strings.Format(nameof(Strings.Prefs_Update_DownloadingFormat), 0);
-            var script = await updates.PrepareApplyAsync(check, progress);
-            UpdateStatus = Strings.Prefs_Update_Restarting;
-            UpdateReadyToApply?.Invoke(script);
-        }
-        catch (HttpRequestException)
-        {
-            UpdateStatus = Strings.Prefs_Update_Error_Network;
-        }
-        catch (InvalidOperationException exception) when (
-            exception.Message.Contains("SHA-256", StringComparison.Ordinal))
-        {
-            UpdateStatus = Strings.Prefs_Update_Error_Hash;
-        }
-        catch (Exception)
-        {
-            UpdateStatus = Strings.Prefs_Update_Error_Apply;
-        }
-        finally
-        {
-            UpdateBusy = false;
-        }
-    }
-
-    private bool CanDownloadUpdate() => UpdateAvailable && !UpdateBusy && pendingUpdate?.Payload is not null;
-
-    /// <summary>
     /// 设备色手动改（P1#14）: a swatch tap on a conduit device row. Choosing the
     /// pairing-order default stores null (back to 跟随配对顺位). History reloads too,
     /// because source-tag tinting reads the device's effective accent.
@@ -1948,13 +1674,14 @@ public partial class MainViewModel(
 
     private void ApplySettings()
     {
-        var blocked = BlockedProcesses
-            .Split([',', ';', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var blocked = SettingStatusMapper.SplitProcessNames(BlockedProcesses);
         capturePolicy.UpdateSettings(new CaptureSettings(
             IsPaused,
             IsPrivateMode,
             blocked,
             TimeSpan.FromDays(RetentionDays),
             ImageSyncEnabled));
+        appliedBlockedProcesses = blocked;
+        RefreshBlockedProcessesStatus();
     }
 }
