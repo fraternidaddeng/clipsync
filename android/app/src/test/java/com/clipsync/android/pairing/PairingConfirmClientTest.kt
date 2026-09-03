@@ -80,8 +80,11 @@ class PairingConfirmClientTest {
         ),
     )
 
-    private fun confirm(qr: PairingQrPayload, client: PairingConfirmClient = PairingConfirmClient()) =
-        runBlocking { client.confirm(qr, request()) }
+    private fun confirm(
+        qr: PairingQrPayload,
+        client: PairingConfirmClient = PairingConfirmClient(),
+        onPhase: (PairingPhase) -> Unit = {},
+    ) = runBlocking { client.confirm(qr, request(), onPhase) }
 
     @Test
     fun `matching pin completes the exchange and carries the protocol header`() {
@@ -154,19 +157,98 @@ class PairingConfirmClientTest {
         val port = server.port
         server.shutdown()
         // Rebind guard: the QR still points at the now-dead port on two addresses.
-        val dead = PairingQrPayload(
-            kind = PairingDocumentKinds.QR,
-            version = 1,
-            hosts = listOf("127.0.0.99", "127.0.0.98"),
-            port = port,
-            deviceId = WINDOWS_ID,
-            displayName = "DESKTOP-WIN",
-            certSha256 = fingerprint,
-            token = TOKEN,
-            expiresAtMs = 1_755_064_500_000,
-        )
+        val dead =
+            PairingQrPayload(
+                kind = PairingDocumentKinds.QR,
+                version = 1,
+                hosts = listOf("127.0.0.99", "127.0.0.98"),
+                port = port,
+                deviceId = WINDOWS_ID,
+                displayName = "DESKTOP-WIN",
+                certSha256 = fingerprint,
+                token = TOKEN,
+                expiresAtMs = 1_755_064_500_000,
+            )
         val outcome = confirm(dead) as PairingConfirmOutcome.Unreachable
         assertEquals(listOf("127.0.0.99", "127.0.0.98"), outcome.attemptedHosts)
+        // Loopback with nobody listening is refused, never a timeout — and each host says so.
+        assertEquals(listOf(UnreachableReason.REFUSED, UnreachableReason.REFUSED), outcome.attempts.map { it.reason })
+    }
+
+    @Test
+    fun `unreachable attempts carry the injected classifier's verdict per host`() {
+        val port = server.port
+        server.shutdown()
+        val dead =
+            PairingQrPayload(
+                kind = PairingDocumentKinds.QR,
+                version = 1,
+                hosts = listOf("127.0.0.99"),
+                port = port,
+                deviceId = WINDOWS_ID,
+                displayName = "DESKTOP-WIN",
+                certSha256 = fingerprint,
+                token = TOKEN,
+                expiresAtMs = 1_755_064_500_000,
+            )
+        val client = PairingConfirmClient(classifyUnreachable = { UnreachableReason.TIMEOUT })
+        val outcome = confirm(dead, client) as PairingConfirmOutcome.Unreachable
+        assertEquals(listOf(HostAttempt("127.0.0.99", UnreachableReason.TIMEOUT)), outcome.attempts)
+    }
+
+    @Test
+    fun `the phase callback reports awaiting approval exactly once, after the connection is up`() {
+        server.enqueue(MockResponse().setResponseCode(200).setBody(approvedBody()))
+
+        val phases = mutableListOf<PairingPhase>()
+        val outcome = confirm(qr(hosts = listOf("127.0.0.99", "127.0.0.1")), onPhase = phases::add)
+
+        assertTrue(outcome is PairingConfirmOutcome.Approved)
+        // Dialing is announced per host; the refused host never gets past connecting.
+        assertEquals(
+            listOf(PairingPhase.CONNECTING, PairingPhase.CONNECTING, PairingPhase.AWAITING_APPROVAL),
+            phases,
+        )
+    }
+
+    @Test
+    fun `a wrong pin never reports awaiting approval`() {
+        server.enqueue(MockResponse().setResponseCode(200).setBody(approvedBody()))
+
+        val phases = mutableListOf<PairingPhase>()
+        confirm(qr(pin = "ab".repeat(32)), onPhase = phases::add)
+
+        assertEquals(listOf(PairingPhase.CONNECTING), phases)
+    }
+
+    @Test
+    fun `a stalled approval wait still counts as awaiting approval`() {
+        server.enqueue(MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE))
+
+        val phases = mutableListOf<PairingPhase>()
+        val outcome = confirm(qr(), client = PairingConfirmClient(readTimeoutMs = 400), onPhase = phases::add)
+
+        assertTrue(outcome is PairingConfirmOutcome.ProtocolViolation)
+        assertEquals(1, phases.count { it == PairingPhase.AWAITING_APPROVAL })
+    }
+
+    @Test
+    fun `429 maps to a denied rate limit even without a readable error body`() {
+        server.enqueue(
+            MockResponse().setResponseCode(429).setBody(
+                PairingJson.serialize(
+                    PairingErrorBody(
+                        kind = PairingDocumentKinds.ERROR,
+                        version = 1,
+                        error = PairingErrorCodes.RATE_LIMITED,
+                    ),
+                ),
+            ),
+        )
+        assertEquals(PairingConfirmOutcome.Denied(PairingErrorCodes.RATE_LIMITED), confirm(qr()))
+
+        server.enqueue(MockResponse().setResponseCode(429).setBody("slow down"))
+        assertEquals(PairingConfirmOutcome.Denied(PairingErrorCodes.RATE_LIMITED), confirm(qr()))
     }
 
     @Test
@@ -177,10 +259,11 @@ class PairingConfirmClientTest {
         server.enqueue(MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE))
         server.enqueue(MockResponse().setResponseCode(200).setBody(approvedBody()))
 
-        val outcome = confirm(
-            qr(hosts = listOf("127.0.0.1", "127.0.0.1")),
-            client = PairingConfirmClient(readTimeoutMs = 400),
-        )
+        val outcome =
+            confirm(
+                qr(hosts = listOf("127.0.0.1", "127.0.0.1")),
+                client = PairingConfirmClient(readTimeoutMs = 400),
+            )
         assertTrue(outcome is PairingConfirmOutcome.ProtocolViolation)
         assertEquals(1, server.requestCount)
     }

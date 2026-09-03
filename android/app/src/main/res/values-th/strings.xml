@@ -195,7 +195,7 @@
     <string name="network_cert_mismatch_detail">จับคู่กับ “%1$s” แล้ว แต่ฝั่งโน้นแสดงใบรับรองอื่น</string>
     <string name="network_cert_mismatch_error">ใบรับรองของฝั่งโน้นไม่ตรงกับลายนิ้วมือที่ปักหมุดไว้ การเชื่อมต่อจึงถูกบล็อก หากคุณไม่ได้ติดตั้งแอป Windows ใหม่ ให้ตรวจสอบเครือข่าย จับคู่ใหม่จะอัปเดตลายนิ้วมือ</string>
     <string name="network_unreachable_detail">จับคู่กับ “%1$s” แล้ว ตอนนี้ตรวจไม่ถึง</string>
-    <string name="network_unreachable_fact">ยืนยันว่าอุปกรณ์ทั้งสองอยู่ใน LAN / VPN เดียวกันและแอป Windows กำลังทำงาน</string>
+    <string name="network_unreachable_fact">ยืนยันว่าอุปกรณ์ทั้งสองอยู่ใน LAN / VPN เดียวกัน แอป Windows กำลังทำงาน และไฟร์วอลล์ของพีซีอนุญาตการเชื่อมต่อขาเข้าทาง TCP 47654 แล้ว</string>
     <string name="network_not_connected_detail">จับคู่กับ “%1$s” แล้ว ช่องซิงค์ยังไม่ได้ตั้งค่า</string>
     <string name="network_waiting_detail">จับคู่กับ “%1$s” แล้ว กำลังรอการเชื่อมต่อ</string>
 
@@ -308,6 +308,13 @@
     <string name="pairing_confirm_match">ลายนิ้วมือตรงกัน — จับคู่</string>
     <string name="pairing_fingerprint_header">ลายนิ้วมือใบรับรอง</string>
     <string name="pairing_address_header">ที่อยู่</string>
+    <string name="pairing_connecting_title">กำลังเชื่อมต่อกับพีซี…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="other">กำลังลองที่อยู่ %1$d รายการในคิวอาร์โค้ดทีละรายการ แต่ละรายการรอสูงสุด 6 วินาที</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="other">รอมาแล้ว %1$d วินาที</item>
+    </plurals>
     <string name="pairing_waiting_title">กำลังรอการอนุมัติ…</string>
     <string name="pairing_waiting_body">อนุมัติโทรศัพท์เครื่องนี้ในหน้าต่าง ClipSync บน “%1$s”</string>
     <string name="pairing_done_title">จับคู่แล้ว</string>
@@ -316,12 +323,18 @@
     <string name="pairing_fail_invalid">นี่ไม่ใช่โค้ดจับคู่ ClipSync ที่ถูกต้อง</string>
     <string name="pairing_fail_own_device">โค้ดนี้ชี้ถึงอุปกรณ์เครื่องนี้เอง</string>
     <string name="pairing_fail_cert_mismatch">พีซีแสดงใบรับรองต่างจากที่คิวอาร์โค้ดสัญญาไว้ การจับคู่ถูกบล็อก ตรวจสอบเครือข่ายแล้วเปิดหน้าต่างคิวอาร์บน Windows ใหม่</string>
-    <string name="pairing_fail_unreachable">ติดต่อพีซีไม่ได้ ยืนยันว่าอุปกรณ์ทั้งสองอยู่เครือข่ายเดียวกัน</string>
+    <string name="pairing_fail_unreachable">ติดต่อพีซีไม่ได้ ยืนยันว่าอุปกรณ์ทั้งสองใช้ Wi-Fi เดียวกัน</string>
     <string name="pairing_fail_rejected">คำขอถูกปฏิเสธบนพีซี</string>
     <string name="pairing_fail_timeout">พีซีไม่อนุมัติทันเวลา แสดงคิวอาร์โค้ดใหม่แล้วลองอีกครั้ง</string>
     <string name="pairing_fail_token_invalid">โค้ดนี้ถูกใช้หรือยกเลิกไปแล้ว แสดงคิวอาร์โค้ดใหม่</string>
     <string name="pairing_fail_token_expired">โค้ดนี้หมดอายุแล้ว สแกนทันทีหลังแสดงคิวอาร์โค้ดใหม่</string>
     <string name="pairing_fail_protocol">การตอบกลับของพีซีอยู่นอกโปรโตคอลจับคู่ อัปเดตทั้งสองฝั่งให้เป็นเวอร์ชันที่เข้ากัน</string>
+    <string name="pairing_fail_rate_limited">พีซีปฏิเสธคำขอจับคู่ชั่วคราวเพราะได้รับคำขอมากเกินไป รอสักหนึ่งนาที แล้วแสดงคิวอาร์โค้ดใหม่และลองอีกครั้ง</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">การเชื่อมต่อหมดเวลา แม้โทรศัพท์และพีซีอยู่ในซับเน็ตเดียวกัน สาเหตุที่พบบ่อยที่สุดคือไฟร์วอลล์ Windows บนพีซีไม่ได้อนุญาตการเชื่อมต่อขาเข้าทาง TCP %1$d หรือเราเตอร์เปิดการแยก AP อยู่ ดูวิธีอนุญาตได้ที่หน้า “เส้นทาง” ของแอป Windows หรือคู่มือการติดตั้ง</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">เครือข่ายปัจจุบันของโทรศัพท์ไม่ได้อยู่ในซับเน็ตเดียวกับที่อยู่ของพีซีในคิวอาร์โค้ด ตรวจสอบว่าอุปกรณ์ทั้งสองเชื่อมต่อ Wi-Fi เดียวกัน หรือเพิ่มที่อยู่ที่โทรศัพท์เข้าถึงได้ใน “ที่อยู่เฝ้าฟังเพิ่มเติม” ของแอป Windows</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">การเชื่อมต่อหมดเวลา หากอุปกรณ์ทั้งสองอยู่ใน Wi-Fi เดียวกันจริง ให้ตรวจสอบว่าไฟร์วอลล์ Windows บนพีซีอนุญาตการเชื่อมต่อขาเข้าทาง TCP %1$d แล้ว</string>
+    <string name="pairing_fail_unreachable_hint_refused">ไม่มีโปรแกรมใดบนพีซีเฝ้าฟังพอร์ตนั้น ตรวจสอบว่า ClipSync กำลังทำงานอยู่บนพีซี แล้วแสดงคิวอาร์โค้ดอีกครั้ง</string>
+    <string name="pairing_fail_unreachable_hint_no_route">ไม่พบเครื่องที่ที่อยู่นั้น พีซีอาจอยู่ในโหมดสลีป IP อาจเปลี่ยนไป หรือที่อยู่แรกในคิวอาร์โค้ดอาจเป็นของอะแดปเตอร์เครือข่ายเสมือน แสดงคิวอาร์โค้ดใหม่แล้วลองอีกครั้ง</string>
     <string name="pairing_restart">เริ่มใหม่</string>
 
     <string name="prefs_title">การตั้งค่า</string>
@@ -424,6 +437,7 @@
     <string name="onboarding_tab_prefs_desc">หยุดซิงค์ชั่วคราว โหมดส่วนตัว ระยะเวลาเก็บ — ทุกสวิตช์ทำงานจริงและบันทึกลงดิสก์ทันที</string>
     <string name="onboarding_honesty_header">ขอพูดตรง ๆ ตั้งแต่ต้น</string>
     <string name="onboarding_honesty_body">Android จำกัดการอ่านคลิปบอร์ดเบื้องหลัง และ ClipSync ไม่แสร้งว่าเป็นอย่างอื่น: มันอัปโหลดอัตโนมัติเมื่อเปิดแอปอยู่ ส่วนการอ่านเบื้องหลังต้องทำหนึ่งเส้นทางที่คุณเลือกในหน้าเส้นทางให้เสร็จ ทุกความสามารถถูกตัดสินด้วยการทดสอบจริง — ถ้าทำไม่ได้ก็จะบอกตรง ๆ</string>
+    <string name="onboarding_privacy_doc_link">โปรดอ่านก่อนใช้งาน: ความเป็นส่วนตัวและความเสี่ยง</string>
     <string name="onboarding_skip">ดูรอบ ๆ ก่อน ค่อยจับคู่ทีหลัง</string>
     <string name="onboarding_next">ดำเนินการต่อ</string>
     <string name="onboarding_back">ย้อนกลับ</string>
@@ -451,6 +465,9 @@
     <string name="prefs_group_help">ช่วยเหลือ</string>
     <string name="prefs_replay_onboarding">ดูบทแนะนำอีกครั้ง</string>
     <string name="prefs_replay_onboarding_desc">เดินผ่านบทแนะนำการใช้งานครั้งแรกอีกรอบตั้งแต่หน้าต้อนรับ โดยไม่เปลี่ยนการตั้งค่าหรือการจับคู่ใด ๆ</string>
+    <string name="prefs_privacy_doc_title">ความเป็นส่วนตัวและความเสี่ยง</string>
+    <string name="prefs_privacy_doc_desc">เปิดเอกสารที่ควรอ่านก่อนใช้งานในเบราว์เซอร์ (GitHub)</string>
+    <string name="open_url_failed">ไม่มีเบราว์เซอร์ที่ใช้ได้</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">เกี่ยวกับ</string>

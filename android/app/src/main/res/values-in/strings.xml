@@ -195,7 +195,7 @@
     <string name="network_cert_mismatch_detail">Terpasang dengan “%1$s”, tetapi pihak seberang menunjukkan sertifikat berbeda.</string>
     <string name="network_cert_mismatch_error">Sertifikat pihak seberang tidak cocok dengan sidik jari yang dipaku, jadi koneksi diblokir. Jika Anda tidak menginstal ulang aplikasi Windows, periksa jaringan; memasangkan ulang memperbarui sidik jari.</string>
     <string name="network_unreachable_detail">Terpasang dengan “%1$s”; saat ini tak terjangkau lewat pemeriksaan.</string>
-    <string name="network_unreachable_fact">Pastikan kedua perangkat berada di LAN / VPN yang sama dan aplikasi Windows sedang berjalan.</string>
+    <string name="network_unreachable_fact">Pastikan kedua perangkat berada di LAN / VPN yang sama, aplikasi Windows sedang berjalan, dan firewall PC mengizinkan koneksi masuk TCP 47654.</string>
     <string name="network_not_connected_detail">Terpasang dengan “%1$s”; kanal sinkronisasi belum disiapkan.</string>
     <string name="network_waiting_detail">Terpasang dengan “%1$s”; menunggu koneksi.</string>
 
@@ -308,6 +308,13 @@
     <string name="pairing_confirm_match">Sidik jari cocok — pasangkan</string>
     <string name="pairing_fingerprint_header">Sidik jari sertifikat</string>
     <string name="pairing_address_header">Alamat</string>
+    <string name="pairing_connecting_title">Menghubungkan ke PC…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="other">Mencoba %1$d alamat dari kode QR satu per satu, masing-masing menunggu paling lama 6 detik.</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="other">Sudah menunggu %1$d detik</item>
+    </plurals>
     <string name="pairing_waiting_title">Menunggu persetujuan…</string>
     <string name="pairing_waiting_body">Setujui ponsel ini di jendela ClipSync pada “%1$s”.</string>
     <string name="pairing_done_title">Terpasang</string>
@@ -316,12 +323,18 @@
     <string name="pairing_fail_invalid">Ini bukan kode pemasangan ClipSync yang valid.</string>
     <string name="pairing_fail_own_device">Kode ini merujuk perangkat ini sendiri.</string>
     <string name="pairing_fail_cert_mismatch">PC menunjukkan sertifikat berbeda dari yang dijanjikan kode QR; pemasangan diblokir. Periksa jaringan dan buka ulang jendela QR di Windows.</string>
-    <string name="pairing_fail_unreachable">Tidak bisa menjangkau PC. Pastikan kedua perangkat di jaringan yang sama.</string>
+    <string name="pairing_fail_unreachable">Tidak bisa menjangkau PC. Pastikan kedua perangkat memakai Wi-Fi yang sama.</string>
     <string name="pairing_fail_rejected">Permintaan ditolak di PC.</string>
     <string name="pairing_fail_timeout">PC tidak menyetujui tepat waktu. Tampilkan kode QR baru dan coba lagi.</string>
     <string name="pairing_fail_token_invalid">Kode ini sudah dipakai atau dibatalkan. Tampilkan kode QR baru.</string>
     <string name="pairing_fail_token_expired">Kode ini kedaluwarsa. Pindai segera setelah kode QR baru ditampilkan.</string>
     <string name="pairing_fail_protocol">Respons PC di luar protokol pemasangan. Perbarui kedua ujung ke versi yang cocok.</string>
+    <string name="pairing_fail_rate_limited">PC untuk sementara menolak karena permintaan pemasangan terlalu banyak. Tunggu sekitar satu menit, tampilkan kode QR baru, lalu coba lagi.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">Koneksi habis waktu meski ponsel dan PC berada di subnet yang sama. Penyebab paling umum: Windows Firewall di PC belum mengizinkan koneksi masuk TCP %1$d, atau router mengaktifkan isolasi AP. Cara mengizinkannya ada di halaman “Saluran” aplikasi Windows atau panduan pemasangan.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">Jaringan ponsel saat ini tidak berada di subnet yang sama dengan alamat PC di kode QR. Pastikan kedua perangkat terhubung ke Wi-Fi yang sama, atau tambahkan alamat yang bisa dijangkau ponsel di “Alamat pantau tambahan” pada aplikasi Windows.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">Koneksi habis waktu. Jika kedua perangkat memang di Wi-Fi yang sama, periksa apakah Windows Firewall di PC sudah mengizinkan koneksi masuk TCP %1$d.</string>
+    <string name="pairing_fail_unreachable_hint_refused">Tidak ada program di PC yang memantau port itu. Pastikan ClipSync sedang berjalan di PC, lalu tampilkan kode QR lagi.</string>
+    <string name="pairing_fail_unreachable_hint_no_route">Tidak ada host di alamat itu. PC mungkin sedang tidur, IP-nya berubah, atau alamat pertama di kode QR milik adaptor jaringan virtual. Tampilkan kode QR lagi lalu coba ulang.</string>
     <string name="pairing_restart">Mulai dari awal</string>
 
     <string name="prefs_title">Preferensi</string>
@@ -424,6 +437,7 @@
     <string name="onboarding_tab_prefs_desc">Jeda sinkronisasi, mode privat, masa simpan — setiap sakelar benar-benar berfungsi dan langsung tersimpan ke disk.</string>
     <string name="onboarding_honesty_header">Supaya jelas dari awal</string>
     <string name="onboarding_honesty_body">Android membatasi pembacaan papan klip di latar belakang, dan ClipSync tidak berpura-pura sebaliknya: ia mengunggah otomatis saat di latar depan; pembacaan latar belakang mengharuskan menyelesaikan satu rute pilihan Anda di halaman Saluran. Setiap kemampuan dinilai lewat uji nyata — jika sesuatu tidak bisa, ia akan bilang begitu.</string>
+    <string name="onboarding_privacy_doc_link">Baca sebelum memakai: privasi dan risiko</string>
     <string name="onboarding_skip">Lihat-lihat dulu, pasangkan nanti</string>
     <string name="onboarding_next">Lanjut</string>
     <string name="onboarding_back">Kembali</string>
@@ -451,6 +465,9 @@
     <string name="prefs_group_help">Bantuan</string>
     <string name="prefs_replay_onboarding">Lihat lagi tutorialnya</string>
     <string name="prefs_replay_onboarding_desc">Jalani lagi tutorial pertama kali dari halaman sambutan; tidak mengubah setelan atau pemasangan apa pun.</string>
+    <string name="prefs_privacy_doc_title">Privasi dan risiko</string>
+    <string name="prefs_privacy_doc_desc">Membuka dokumen yang perlu dibaca sebelum memakai di peramban (GitHub).</string>
+    <string name="open_url_failed">Tidak ada peramban yang tersedia.</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">Tentang</string>

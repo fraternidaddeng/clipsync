@@ -195,7 +195,7 @@
     <string name="network_cert_mismatch_detail">「%1$s」とペアリング済みですが、相手側が別の証明書を提示しました。</string>
     <string name="network_cert_mismatch_error">相手側の証明書がピン留めされたフィンガープリントと一致しないため、接続をブロックしました。Windows アプリを再インストールしていないなら、ネットワークを確認してください。再ペアリングでフィンガープリントを更新できます。</string>
     <string name="network_unreachable_detail">「%1$s」とペアリング済みです。現在プローブで到達できません。</string>
-    <string name="network_unreachable_fact">両方の端末が同じ LAN / VPN 上にあり、Windows アプリが実行中であることを確認してください。</string>
+    <string name="network_unreachable_fact">両方の端末が同じ LAN / VPN 上にあり、Windows アプリが実行中で、PC のファイアウォールが TCP 47654 の受信を許可していることを確認してください。</string>
     <string name="network_not_connected_detail">「%1$s」とペアリング済みです。同期チャネルはまだ設定されていません。</string>
     <string name="network_waiting_detail">「%1$s」とペアリング済みです。接続を待っています。</string>
 
@@ -308,6 +308,13 @@
     <string name="pairing_confirm_match">フィンガープリント一致 — ペアリング</string>
     <string name="pairing_fingerprint_header">証明書フィンガープリント</string>
     <string name="pairing_address_header">アドレス</string>
+    <string name="pairing_connecting_title">PC に接続しています…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="other">QR コード内の %1$d 件のアドレスを順に試しています。それぞれ最大 6 秒待ちます。</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="other">%1$d 秒経過</item>
+    </plurals>
     <string name="pairing_waiting_title">承認を待っています…</string>
     <string name="pairing_waiting_body">「%1$s」の ClipSync ウィンドウでこのスマートフォンを承認してください。</string>
     <string name="pairing_done_title">ペアリング完了</string>
@@ -316,12 +323,18 @@
     <string name="pairing_fail_invalid">有効な ClipSync ペアリングコードではありません。</string>
     <string name="pairing_fail_own_device">このコードはこの端末自身を指しています。</string>
     <string name="pairing_fail_cert_mismatch">PC が QR コードの約束と異なる証明書を提示したため、ペアリングをブロックしました。ネットワークを確認し、Windows で QR ウィンドウを開き直してください。</string>
-    <string name="pairing_fail_unreachable">PC に到達できませんでした。両方の端末が同じネットワーク上にあることを確認してください。</string>
+    <string name="pairing_fail_unreachable">PC に到達できませんでした。両方の端末が同じ Wi-Fi に接続していることを確認してください。</string>
     <string name="pairing_fail_rejected">PC 側でリクエストが拒否されました。</string>
     <string name="pairing_fail_timeout">PC が時間内に承認しませんでした。新しい QR コードを表示して再試行してください。</string>
     <string name="pairing_fail_token_invalid">このコードは既に使用済みかキャンセルされています。新しい QR コードを表示してください。</string>
     <string name="pairing_fail_token_expired">このコードは期限切れです。新しい QR コードを表示したらすぐにスキャンしてください。</string>
     <string name="pairing_fail_protocol">PC の応答がペアリングプロトコルの範囲外です。両端を同じバージョンに更新してください。</string>
+    <string name="pairing_fail_rate_limited">ペアリング要求が多すぎたため、PC が一時的に受け付けを拒否しています。1 分ほど待ってから、新しい QR コードを表示して再試行してください。</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">接続がタイムアウトしましたが、スマートフォンと PC のアドレスは同じサブネットにあります。最も多い原因は、PC の Windows ファイアウォールが TCP %1$d の受信を許可していないか、ルーターの AP 分離が有効になっていることです。許可の手順は Windows アプリの「経路」ページかインストールガイドをご覧ください。</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">スマートフォンの現在のネットワークは、QR コード内の PC アドレスと同じサブネットにありません。両方の端末が同じ Wi-Fi に接続しているか確認するか、Windows アプリの「追加の待ち受けアドレス」にスマートフォンから到達できるアドレスを追加してください。</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">接続がタイムアウトしました。両方の端末が確かに同じ Wi-Fi にあるなら、PC の Windows ファイアウォールが TCP %1$d の受信を許可しているか確認してください。</string>
+    <string name="pairing_fail_unreachable_hint_refused">PC 側でそのポートを待ち受けているプログラムがありません。PC で ClipSync が起動していることを確認し、QR コードをもう一度表示してください。</string>
+    <string name="pairing_fail_unreachable_hint_no_route">そのアドレスにホストが見つかりません。PC がスリープ中か、IP が変わったか、QR コードの先頭に仮想アダプターのアドレスが載っている可能性があります。QR コードをもう一度表示して再試行してください。</string>
     <string name="pairing_restart">最初からやり直す</string>
 
     <string name="prefs_title">設定</string>
@@ -424,6 +437,7 @@
     <string name="onboarding_tab_prefs_desc">同期の一時停止、プライベートモード、保持期間 — すべてのスイッチは本当に機能し、即座にディスクへ保存されます。</string>
     <string name="onboarding_honesty_header">最初に正直にお伝えします</string>
     <string name="onboarding_honesty_body">Android はバックグラウンドでのクリップボード読み取りを制限しており、ClipSync はそれを偽りません。フォアグラウンドでは自動アップロードします。バックグラウンド読み取りには「経路」ページでお好みのルートを 1 つ完了する必要があります。すべての能力は実地テストで判定され、できないことはできないと表示します。</string>
+    <string name="onboarding_privacy_doc_link">ご利用前にお読みください：プライバシーとリスクについて</string>
     <string name="onboarding_skip">先に見て回り、後でペアリング</string>
     <string name="onboarding_next">続ける</string>
     <string name="onboarding_back">戻る</string>
@@ -451,6 +465,9 @@
     <string name="prefs_group_help">ヘルプ</string>
     <string name="prefs_replay_onboarding">チュートリアルをもう一度見る</string>
     <string name="prefs_replay_onboarding_desc">ようこそページから初回設定チュートリアルをもう一度たどります。設定やペアリングは変更しません。</string>
+    <string name="prefs_privacy_doc_title">プライバシーとリスクについて</string>
+    <string name="prefs_privacy_doc_desc">ご利用前にお読みいただく文書をブラウザーで開きます（GitHub）。</string>
+    <string name="open_url_failed">利用できるブラウザーがありません。</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">情報</string>

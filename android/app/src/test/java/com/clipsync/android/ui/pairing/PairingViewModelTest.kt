@@ -2,6 +2,9 @@ package com.clipsync.android.ui.pairing
 
 import com.clipsync.android.pairing.FakeKeyValueStore
 import com.clipsync.android.pairing.FakeSecretProtector
+import com.clipsync.android.pairing.HostAttempt
+import com.clipsync.android.pairing.LocalIpv4
+import com.clipsync.android.pairing.LocalNetworkSource
 import com.clipsync.android.pairing.PairingConfirmApi
 import com.clipsync.android.pairing.PairingConfirmOutcome
 import com.clipsync.android.pairing.PairingConfirmRequest
@@ -9,8 +12,11 @@ import com.clipsync.android.pairing.PairingConfirmResponse
 import com.clipsync.android.pairing.PairingDocumentKinds
 import com.clipsync.android.pairing.PairingErrorCodes
 import com.clipsync.android.pairing.PairingJson
+import com.clipsync.android.pairing.PairingPhase
 import com.clipsync.android.pairing.PairingQrPayload
 import com.clipsync.android.pairing.PairingStore
+import com.clipsync.android.pairing.UnreachableReason
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -28,25 +34,39 @@ import org.junit.Test
 class PairingViewModelTest {
     private val keyValues = FakeKeyValueStore()
     private val store = PairingStore(keyValues, FakeSecretProtector())
+    private val dispatcher = UnconfinedTestDispatcher()
 
-    /** Scripted confirm API; records the request the ViewModel actually built. */
-    private class FakeConfirmApi(var outcome: (PairingConfirmRequest) -> PairingConfirmOutcome) : PairingConfirmApi {
+    /**
+     * Scripted confirm API; records the request the ViewModel actually built. When [gate] is
+     * set the call suspends until it completes, so tests can watch the Submitting state live
+     * and drive [onPhase] themselves.
+     */
+    private class FakeConfirmApi(
+        var outcome: (PairingConfirmRequest) -> PairingConfirmOutcome,
+    ) : PairingConfirmApi {
         var lastRequest: PairingConfirmRequest? = null
+        var gate: CompletableDeferred<Unit>? = null
+        var onPhase: ((PairingPhase) -> Unit)? = null
 
         override suspend fun confirm(
             qr: PairingQrPayload,
             request: PairingConfirmRequest,
+            onPhase: (PairingPhase) -> Unit,
         ): PairingConfirmOutcome {
             lastRequest = request
+            this.onPhase = onPhase
+            gate?.await()
             return outcome(request)
         }
     }
 
     private val api = FakeConfirmApi { approvedOutcome() }
 
+    private var localIpv4: LocalIpv4? = null
+
     @Before
     fun installMainDispatcher() {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
+        Dispatchers.setMain(dispatcher)
     }
 
     @After
@@ -54,24 +74,33 @@ class PairingViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun viewModel() = PairingViewModel(store, api, localNameFallback = "Pixel 8", nowMs = { 1_755_000_000_000 })
+    private fun viewModel() =
+        PairingViewModel(
+            store,
+            api,
+            localNameFallback = "Pixel 8",
+            nowMs = { 1_755_000_000_000 },
+            localNetwork = LocalNetworkSource { localIpv4 },
+        )
 
     private fun qrJson(
         deviceId: String = WINDOWS_ID,
         cert: String = CERT_A,
-    ): String = PairingJson.serialize(
-        PairingQrPayload(
-            kind = PairingDocumentKinds.QR,
-            version = 1,
-            hosts = listOf("192.168.1.23"),
-            port = 47654,
-            deviceId = deviceId,
-            displayName = "DESKTOP-WIN",
-            certSha256 = cert,
-            token = TOKEN,
-            expiresAtMs = 1_755_064_500_000,
-        ),
-    )
+        hosts: List<String> = listOf("192.168.1.23"),
+    ): String =
+        PairingJson.serialize(
+            PairingQrPayload(
+                kind = PairingDocumentKinds.QR,
+                version = 1,
+                hosts = hosts,
+                port = 47654,
+                deviceId = deviceId,
+                displayName = "DESKTOP-WIN",
+                certSha256 = cert,
+                token = TOKEN,
+                expiresAtMs = 1_755_064_500_000,
+            ),
+        )
 
     private fun approvedOutcome(
         deviceId: String = WINDOWS_ID,
@@ -89,6 +118,11 @@ class PairingViewModelTest {
         ),
         viaHost = "192.168.1.23",
     )
+
+    private fun advanceSeconds(seconds: Int) {
+        dispatcher.scheduler.advanceTimeBy(seconds * 1_000L)
+        dispatcher.scheduler.runCurrent()
+    }
 
     @Test
     fun `garbage payload fails without leaving idle permanently`() {
@@ -126,6 +160,80 @@ class PairingViewModelTest {
 
         // The stored secret round-trips to the exact announced bytes.
         assertEquals(SECRET, PairingJson.encodeBase64Url(requireNotNull(store.pairSecret())))
+    }
+
+    @Test
+    fun `submitting starts in the connecting phase and counts the seconds waited`() {
+        api.gate = CompletableDeferred()
+        val model = viewModel()
+        model.onPayload(qrJson(hosts = listOf("192.168.1.23", "10.0.0.5", "100.64.0.9")))
+        model.confirm()
+
+        val connecting = PairingUiState.Submitting("DESKTOP-WIN", hostCount = 3)
+        assertEquals(connecting, model.state.value)
+
+        advanceSeconds(2)
+        assertEquals(connecting.copy(elapsedSeconds = 2), model.state.value)
+
+        // The client reports that a host has the request; the counter keeps running across it.
+        requireNotNull(api.onPhase)(PairingPhase.AWAITING_APPROVAL)
+        assertEquals(
+            connecting.copy(phase = PairingPhase.AWAITING_APPROVAL, elapsedSeconds = 2),
+            model.state.value,
+        )
+        advanceSeconds(1)
+        assertEquals(3, (model.state.value as PairingUiState.Submitting).elapsedSeconds)
+
+        requireNotNull(api.gate).complete(Unit)
+        assertTrue(model.state.value is PairingUiState.Paired)
+
+        // The ticker died with the submission: more time changes nothing.
+        advanceSeconds(5)
+        assertTrue(model.state.value is PairingUiState.Paired)
+    }
+
+    @Test
+    fun `a failed submission also stops the counter`() {
+        api.gate = CompletableDeferred()
+        api.outcome = { PairingConfirmOutcome.Denied(PairingErrorCodes.REJECTED) }
+        val model = viewModel()
+        model.onPayload(qrJson())
+        model.confirm()
+        advanceSeconds(4)
+        assertEquals(4, (model.state.value as PairingUiState.Submitting).elapsedSeconds)
+
+        requireNotNull(api.gate).complete(Unit)
+        assertEquals(PairingUiState.Failed(PairingFailure.REJECTED), model.state.value)
+        advanceSeconds(5)
+        assertEquals(PairingUiState.Failed(PairingFailure.REJECTED), model.state.value)
+    }
+
+    @Test
+    fun `reset while submitting abandons the attempt instead of letting its outcome land later`() {
+        api.gate = CompletableDeferred()
+        val model = viewModel()
+        model.onPayload(qrJson())
+        model.confirm()
+        advanceSeconds(1)
+
+        model.reset()
+        assertEquals(PairingUiState.Idle(pairedPeer = null), model.state.value)
+
+        requireNotNull(api.gate).complete(Unit)
+        advanceSeconds(2)
+        assertEquals(PairingUiState.Idle(pairedPeer = null), model.state.value)
+        assertNull(store.peer())
+    }
+
+    @Test
+    fun `a late phase report after the outcome landed is ignored`() {
+        val model = viewModel()
+        model.onPayload(qrJson())
+        model.confirm()
+        assertTrue(model.state.value is PairingUiState.Paired)
+
+        requireNotNull(api.onPhase)(PairingPhase.AWAITING_APPROVAL)
+        assertTrue(model.state.value is PairingUiState.Paired)
     }
 
     @Test
@@ -184,13 +292,16 @@ class PairingViewModelTest {
 
     @Test
     fun `denied outcomes map to stable failure buckets`() {
-        val expectations = mapOf(
-            PairingErrorCodes.REJECTED to PairingFailure.REJECTED,
-            PairingErrorCodes.TIMEOUT to PairingFailure.TIMEOUT,
-            PairingErrorCodes.TOKEN_INVALID to PairingFailure.TOKEN_INVALID,
-            PairingErrorCodes.TOKEN_EXPIRED to PairingFailure.TOKEN_EXPIRED,
-            PairingErrorCodes.SCHEMA_VIOLATION to PairingFailure.PROTOCOL,
-        )
+        val expectations =
+            mapOf(
+                PairingErrorCodes.REJECTED to PairingFailure.REJECTED,
+                PairingErrorCodes.TIMEOUT to PairingFailure.TIMEOUT,
+                PairingErrorCodes.TOKEN_INVALID to PairingFailure.TOKEN_INVALID,
+                PairingErrorCodes.TOKEN_EXPIRED to PairingFailure.TOKEN_EXPIRED,
+                // 429 from the listener: a throttle, not a protocol mismatch.
+                PairingErrorCodes.RATE_LIMITED to PairingFailure.RATE_LIMITED,
+                PairingErrorCodes.SCHEMA_VIOLATION to PairingFailure.PROTOCOL,
+            )
         for ((code, expected) in expectations) {
             api.outcome = { PairingConfirmOutcome.Denied(code) }
             val model = viewModel()
@@ -201,18 +312,70 @@ class PairingViewModelTest {
     }
 
     @Test
-    fun `certificate mismatch and unreachable map to their own failures`() {
+    fun `certificate mismatch maps to its own failure`() {
         api.outcome = { PairingConfirmOutcome.CertificateMismatch("192.168.1.23") }
-        var model = viewModel()
+        val model = viewModel()
         model.onPayload(qrJson())
         model.confirm()
         assertEquals(PairingUiState.Failed(PairingFailure.CERTIFICATE_MISMATCH), model.state.value)
+    }
 
-        api.outcome = { PairingConfirmOutcome.Unreachable(listOf("192.168.1.23")) }
-        model = viewModel()
+    @Test
+    fun `unreachable carries the primary reason, the subnet verdict and the port`() {
+        localIpv4 = LocalIpv4("192.168.1.5", prefixLength = 24)
+        api.outcome = {
+            PairingConfirmOutcome.Unreachable(
+                listOf(
+                    HostAttempt("10.0.0.5", UnreachableReason.NO_ROUTE),
+                    HostAttempt("192.168.1.23", UnreachableReason.TIMEOUT),
+                ),
+            )
+        }
+        val model = viewModel()
+        model.onPayload(qrJson(hosts = listOf("10.0.0.5", "192.168.1.23")))
+        model.confirm()
+        assertEquals(
+            PairingUiState.Failed(
+                PairingFailure.UNREACHABLE,
+                UnreachableDetail(reason = UnreachableReason.TIMEOUT, sameSubnet = true, port = 47654),
+            ),
+            model.state.value,
+        )
+    }
+
+    @Test
+    fun `a refusal on any host outranks timeouts elsewhere`() {
+        localIpv4 = LocalIpv4("10.20.30.40", prefixLength = 16)
+        api.outcome = {
+            PairingConfirmOutcome.Unreachable(
+                listOf(
+                    HostAttempt("192.168.1.23", UnreachableReason.TIMEOUT),
+                    HostAttempt("100.64.0.9", UnreachableReason.REFUSED),
+                ),
+            )
+        }
+        val model = viewModel()
+        model.onPayload(qrJson(hosts = listOf("192.168.1.23", "100.64.0.9")))
+        model.confirm()
+        val failed = model.state.value as PairingUiState.Failed
+        assertEquals(PairingFailure.UNREACHABLE, failed.reason)
+        assertEquals(UnreachableReason.REFUSED, requireNotNull(failed.unreachable).reason)
+        assertEquals(false, failed.unreachable?.sameSubnet)
+    }
+
+    @Test
+    fun `an unreadable local address leaves the subnet verdict unknown`() {
+        localIpv4 = null
+        api.outcome = {
+            PairingConfirmOutcome.Unreachable(listOf(HostAttempt("192.168.1.23", UnreachableReason.TIMEOUT)))
+        }
+        val model = viewModel()
         model.onPayload(qrJson())
         model.confirm()
-        assertEquals(PairingUiState.Failed(PairingFailure.UNREACHABLE), model.state.value)
+        assertEquals(
+            UnreachableDetail(reason = UnreachableReason.TIMEOUT, sameSubnet = null, port = 47654),
+            (model.state.value as PairingUiState.Failed).unreachable,
+        )
     }
 
     @Test

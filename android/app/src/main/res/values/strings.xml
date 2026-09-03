@@ -217,7 +217,7 @@
     <string name="network_cert_mismatch_detail">已与「%1$s」配对，但对端出示了不同的证书。</string>
     <string name="network_cert_mismatch_error">对端证书与固定指纹不符，连接已被阻止。若非你重装了 Windows 端，请检查网络环境；重新配对可更新指纹。</string>
     <string name="network_unreachable_detail">已与「%1$s」配对，当前探测不可达。</string>
-    <string name="network_unreachable_fact">确认两台设备在同一局域网 / VPN，且 Windows 端正在运行。</string>
+    <string name="network_unreachable_fact">确认两台设备在同一局域网 / VPN，Windows 端正在运行，且电脑防火墙已放行 TCP 47654 入站。</string>
     <string name="network_not_connected_detail">已与「%1$s」配对；同步通道尚未接入。</string>
     <string name="network_waiting_detail">已与「%1$s」配对，正在等待连接。</string>
 
@@ -336,20 +336,35 @@
     <string name="pairing_confirm_match">指纹一致 — 配对</string>
     <string name="pairing_fingerprint_header">证书指纹</string>
     <string name="pairing_address_header">地址</string>
+    <!-- 等待页分两阶段：还在拨号（CONNECTING） vs 电脑已拿到请求、等人批准（AWAITING_APPROVAL）；下方一行显示已等待秒数 -->
+    <string name="pairing_connecting_title">正在连接电脑…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="other">正在尝试二维码里的 %1$d 个地址，每个最多等 6 秒。</item>
+    </plurals>
     <string name="pairing_waiting_title">等待批准…</string>
     <string name="pairing_waiting_body">请在「%1$s」的剪剪相传窗口中批准此手机。</string>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="other">已等待 %1$d 秒</item>
+    </plurals>
     <string name="pairing_done_title">已配对</string>
     <string name="pairing_done_body">信任与密钥已安全存储，网络段就此接通。</string>
     <string name="pairing_failed_title">配对失败</string>
     <string name="pairing_fail_invalid">这不是有效的剪剪相传配对码。</string>
     <string name="pairing_fail_own_device">这个码标识的是本机自己。</string>
     <string name="pairing_fail_cert_mismatch">电脑出示的证书与二维码承诺的不一致，配对已被阻止。请检查网络，并在 Windows 上重新打开二维码窗口。</string>
-    <string name="pairing_fail_unreachable">无法连接到电脑。请确认两台设备在同一网络。</string>
+    <string name="pairing_fail_unreachable">无法连接到电脑。请确认两台设备在同一 Wi-Fi。</string>
     <string name="pairing_fail_rejected">请求在电脑上被拒绝。</string>
     <string name="pairing_fail_timeout">电脑未在限时内批准。请出示新的二维码后重试。</string>
     <string name="pairing_fail_token_invalid">这个码已被使用或已取消。请出示新的二维码。</string>
     <string name="pairing_fail_token_expired">这个码已过期。出示新的二维码后请尽快扫描。</string>
     <string name="pairing_fail_protocol">电脑的应答超出配对协议。请将两端更新到匹配的版本。</string>
+    <string name="pairing_fail_rate_limited">电脑暂时拒绝了过多的配对请求。请等一分钟后重新出示二维码再试。</string>
+    <!-- 不可达的第二段：按主原因（超时 × 是否同网段 / 拒绝 / 无路由）说最可能的病灶；%1$d 为二维码里的端口 -->
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">连接超时，但手机与电脑地址在同一网段。最常见原因是电脑的 Windows 防火墙没有放行 TCP %1$d 入站，或路由器开启了 AP 隔离。放行方法见电脑端「通路」页或安装指南。</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">手机当前网络与二维码里的电脑地址不在同一网段。请确认两台设备连的是同一个 Wi-Fi，或在电脑端「额外监听地址」里填入手机能访问的地址。</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">连接超时。若两台设备确在同一 Wi-Fi，请检查电脑的 Windows 防火墙是否放行了 TCP %1$d 入站。</string>
+    <string name="pairing_fail_unreachable_hint_refused">电脑上没有程序在监听该端口。请确认剪剪相传正在电脑上运行，然后重新出示二维码。</string>
+    <string name="pairing_fail_unreachable_hint_no_route">找不到该地址的主机。电脑可能已休眠、IP 已变化，或二维码里排在前面的是虚拟网卡地址。请重新出示二维码后再试。</string>
     <string name="pairing_restart">重新开始</string>
 
     <!-- 偏好 -->
@@ -456,6 +471,8 @@
     <string name="onboarding_tab_prefs_desc">暂停同步、私密模式、保留期——每个开关都真实生效，改动立即落盘。</string>
     <string name="onboarding_honesty_header">先说清楚</string>
     <string name="onboarding_honesty_body">Android 限制应用在后台读取剪贴板，剪剪相传不会假装做到：应用在前台时可自动上行；后台读取需要在「通路」页任选一条路线完成授权，每一段能力都以实测为准，做不到就直说。</string>
+    <!-- 使用前必读：点击后用系统浏览器打开 GitHub 上对应语言的 docs/privacy-and-risks 文档；只在用户点击时打开 -->
+    <string name="onboarding_privacy_doc_link">使用前必读：隐私与风险说明</string>
     <string name="onboarding_skip">先看看，稍后配对</string>
     <string name="onboarding_next">继续</string>
     <string name="onboarding_back">上一步</string>
@@ -484,6 +501,10 @@
     <string name="prefs_group_help">帮助</string>
     <string name="prefs_replay_onboarding">重新查看引导</string>
     <string name="prefs_replay_onboarding_desc">从欢迎页重新过一遍首次设置教程；不改动任何设置与配对。</string>
+    <string name="prefs_privacy_doc_title">隐私与风险说明</string>
+    <string name="prefs_privacy_doc_desc">在浏览器中打开使用前必读文档（GitHub）。</string>
+    <!-- 外部链接打开失败（设备上没有能处理 https 的浏览器） -->
+    <string name="open_url_failed">没有可用的浏览器。</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">关于</string>

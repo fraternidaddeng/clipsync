@@ -1,5 +1,7 @@
 package com.clipsync.android.pairing
 
+import okhttp3.EventListener
+import okhttp3.OkHttpClient
 import java.io.IOException
 import java.net.ConnectException
 import java.net.NoRouteToHostException
@@ -15,7 +17,6 @@ import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLException
 import javax.net.ssl.X509TrustManager
-import okhttp3.OkHttpClient
 
 /**
  * TLS that trusts exactly one certificate: the peer whose lowercase SHA-256 fingerprint was
@@ -25,11 +26,18 @@ import okhttp3.OkHttpClient
 internal object PinnedTls {
     const val PIN_MISMATCH_MARKER = "clipsync.pin.mismatch"
 
-    fun client(pin: String, connectTimeoutMs: Long, readTimeoutMs: Long): OkHttpClient {
+    fun client(
+        pin: String,
+        connectTimeoutMs: Long,
+        readTimeoutMs: Long,
+        eventListener: EventListener = EventListener.NONE,
+    ): OkHttpClient {
         val trustManager = PinnedTrustManager(pin)
         val sslContext = SSLContext.getInstance("TLS")
         sslContext.init(null, arrayOf(trustManager), SecureRandom())
-        return OkHttpClient.Builder()
+        return OkHttpClient
+            .Builder()
+            .eventListener(eventListener)
             .sslSocketFactory(sslContext.socketFactory, trustManager)
             // Pairing and health probes talk to private LAN or Tailscale addresses only,
             // never public hostnames, so a device-level HTTP(S) proxy (Wi-Fi proxy setting,
@@ -66,23 +74,31 @@ internal object PinnedTls {
         return false
     }
 
-    fun isConnectivityFailure(exception: IOException): Boolean = when (exception) {
-        is ConnectException, is UnknownHostException, is NoRouteToHostException -> true
-        // A timeout while WAITING for a response must not roll over to the next host when the
-        // request has side effects. Only the connect phase may fail over.
-        is SocketTimeoutException -> exception.message?.contains("connect", ignoreCase = true) == true
-        is SSLException -> false
-        is SocketException -> true
-        else -> false
-    }
+    fun isConnectivityFailure(exception: IOException): Boolean =
+        when (exception) {
+            is ConnectException, is UnknownHostException, is NoRouteToHostException -> true
+            // A timeout while WAITING for a response must not roll over to the next host when the
+            // request has side effects. Only the connect phase may fail over.
+            is SocketTimeoutException -> exception.message?.contains("connect", ignoreCase = true) == true
+            is SSLException -> false
+            is SocketException -> true
+            else -> false
+        }
 
-    private class PinnedTrustManager(pin: String) : X509TrustManager {
+    private class PinnedTrustManager(
+        pin: String,
+    ) : X509TrustManager {
         private val expected = pin.lowercase()
 
-        override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) =
-            throw CertificateException("client certificates are not used")
+        override fun checkClientTrusted(
+            chain: Array<X509Certificate>,
+            authType: String,
+        ) = throw CertificateException("client certificates are not used")
 
-        override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
+        override fun checkServerTrusted(
+            chain: Array<X509Certificate>,
+            authType: String,
+        ) {
             val leaf = chain.firstOrNull() ?: throw CertificateException(PIN_MISMATCH_MARKER)
             val digest = MessageDigest.getInstance("SHA-256").digest(leaf.encoded)
             val fingerprint = digest.joinToString(separator = "") { byte -> "%02x".format(byte) }

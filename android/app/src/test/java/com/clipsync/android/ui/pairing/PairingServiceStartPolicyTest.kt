@@ -45,7 +45,8 @@ class PairingServiceStartPolicyTest {
     fun `only a truly forgotten peer stops the service`() {
         assertTrue(PairingServiceStartPolicy.shouldStopService(idleUnpaired))
         assertFalse(PairingServiceStartPolicy.shouldStopService(paired))
-        assertFalse(PairingServiceStartPolicy.shouldStopService(PairingUiState.Submitting("DESKTOP-WIN")))
+        val submitting = PairingUiState.Submitting("DESKTOP-WIN", hostCount = 1)
+        assertFalse(PairingServiceStartPolicy.shouldStopService(submitting))
     }
 
     @Test
@@ -53,7 +54,7 @@ class PairingServiceStartPolicyTest {
         val inFlight =
             listOf(
                 PairingUiState.Review(qr(), certificateChanged = false),
-                PairingUiState.Submitting("DESKTOP-WIN"),
+                PairingUiState.Submitting("DESKTOP-WIN", hostCount = 1),
                 PairingUiState.Failed(PairingFailure.TIMEOUT),
             )
         inFlight.forEach { state ->

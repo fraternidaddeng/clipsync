@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -65,7 +66,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.clipsync.android.R
+import com.clipsync.android.i18n.string
 import com.clipsync.android.pairing.PairedPeer
+import com.clipsync.android.pairing.PairingPhase
 import com.clipsync.android.pairing.PairingQrPayload
 import com.clipsync.android.ui.theme.CharterMotion
 import com.clipsync.android.ui.theme.CharterShapes
@@ -87,77 +90,54 @@ private val ControlShape = CharterShapes.control
 private val RitualTitle = ClipSyncType.pageTitle.copy(fontSize = 20.sp)
 
 @Composable
-fun PairingScreen(viewModel: PairingViewModel, modifier: Modifier = Modifier) {
+fun PairingScreen(
+    viewModel: PairingViewModel,
+    modifier: Modifier = Modifier,
+) {
     val state by viewModel.state.collectAsState()
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         when (val current = state) {
             is PairingUiState.Idle -> IdleContent(current.pairedPeer, viewModel)
             is PairingUiState.Review -> ReviewContent(current, viewModel)
-            is PairingUiState.Submitting -> SubmittingContent(current.peerName)
+            is PairingUiState.Submitting -> SubmittingContent(current)
             is PairingUiState.Paired -> PairedContent(current.peer, viewModel)
-            is PairingUiState.Failed -> FailedContent(current.reason, viewModel)
+            is PairingUiState.Failed -> FailedContent(current, viewModel)
         }
     }
 }
 
 @Composable
-private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
+private fun IdleContent(
+    peer: PairedPeer?,
+    viewModel: PairingViewModel,
+) {
     val c = clipSyncColors
     var scanning by remember { mutableStateOf(false) }
     var manualPayload by remember { mutableStateOf("") }
     val context = LocalContext.current
     var cameraDenied by remember { mutableStateOf(false) }
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { granted ->
-        cameraDenied = !granted
-        scanning = granted
-    }
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { granted ->
+            cameraDenied = !granted
+            scanning = granted
+        }
 
     Text(stringResource(R.string.pairing_title), style = RitualTitle, color = c.t1)
 
     if (peer != null) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .charterCard()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(peer.displayName, fontWeight = FontWeight.SemiBold, color = c.t1)
-            Text(
-                stringResource(R.string.pairing_cert_prefix, groupFingerprint(peer.certSha256).take(19)),
-                style = MaterialTheme.typography.bodySmall,
-                fontFamily = ClipSyncFonts.mono,
-                color = c.t2,
-            )
-            Text(
-                stringResource(R.string.pairing_trust_epoch, peer.trustEpoch),
-                style = MaterialTheme.typography.bodySmall,
-                color = c.t3,
-            )
-            // 解除配对是灰的事实级操作；红色留给真正的 error。
-            TextButton(onClick = viewModel::forgetPeer) {
-                Text(stringResource(R.string.pairing_forget), color = c.t3)
-            }
-        }
-        Text(
-            stringResource(R.string.pairing_rescan_hint),
-            style = MaterialTheme.typography.bodySmall,
-            color = c.t3,
-        )
+        PairedPeerCard(peer, onForget = viewModel::forgetPeer)
+        Text(stringResource(R.string.pairing_rescan_hint), style = MaterialTheme.typography.bodySmall, color = c.t3)
     } else {
-        Text(
-            stringResource(R.string.pairing_intro),
-            style = MaterialTheme.typography.bodyMedium,
-            color = c.t2,
-        )
+        Text(stringResource(R.string.pairing_intro), style = MaterialTheme.typography.bodyMedium, color = c.t2)
     }
 
     if (scanning) {
@@ -169,59 +149,122 @@ private fun IdleContent(peer: PairedPeer?, viewModel: PairingViewModel) {
         )
         GhostButton(text = stringResource(R.string.pairing_stop_scan), onClick = { scanning = false })
     } else {
-        Button(
+        ScanButton(
+            cameraDenied = cameraDenied,
             onClick = {
-                val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
-                    PackageManager.PERMISSION_GRANTED
+                val granted =
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+                        PackageManager.PERMISSION_GRANTED
                 if (granted) {
                     scanning = true
                 } else {
                     permissionLauncher.launch(Manifest.permission.CAMERA)
                 }
             },
-            shape = ControlShape,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(stringResource(R.string.pairing_scan_qr))
-        }
-        if (cameraDenied) {
-            // 缺相机权限不是错误：粘贴通路仍然可用，赭色提示需要你选择。
-            Text(
-                stringResource(R.string.pairing_camera_denied),
-                color = c.act,
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
+        )
     }
 
-    OutlinedTextField(
+    ManualPayloadEntry(
         value = manualPayload,
         onValueChange = { manualPayload = it },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text(stringResource(R.string.pairing_paste_label)) },
-        shape = ControlShape,
-        minLines = 2,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = c.flowLn,
-            unfocusedBorderColor = c.ln,
-            focusedLabelColor = c.flow,
-            unfocusedLabelColor = c.t4,
-            focusedContainerColor = c.sfIn,
-            unfocusedContainerColor = c.sfIn,
-        ),
-    )
-    GhostButton(
-        text = stringResource(R.string.pairing_use_pasted),
-        enabled = manualPayload.isNotBlank(),
-        onClick = {
+        onUse = {
             viewModel.onPayload(manualPayload)
             manualPayload = ""
         },
     )
 }
 
+/** The saved peer as stated facts; forgetting it is a grey action, red stays reserved for errors. */
 @Composable
-private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewModel) {
+private fun PairedPeerCard(
+    peer: PairedPeer,
+    onForget: () -> Unit,
+) {
+    val c = clipSyncColors
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .charterCard()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Text(peer.displayName, fontWeight = FontWeight.SemiBold, color = c.t1)
+        Text(
+            stringResource(R.string.pairing_cert_prefix, groupFingerprint(peer.certSha256).take(19)),
+            style = MaterialTheme.typography.bodySmall,
+            fontFamily = ClipSyncFonts.mono,
+            color = c.t2,
+        )
+        Text(
+            stringResource(R.string.pairing_trust_epoch, peer.trustEpoch),
+            style = MaterialTheme.typography.bodySmall,
+            color = c.t3,
+        )
+        TextButton(onClick = onForget) {
+            Text(stringResource(R.string.pairing_forget), color = c.t3)
+        }
+    }
+}
+
+/**
+ * 扫描二维码, with the ochre note once the camera was refused: not an error, since pasting
+ * still works — the colour only marks that a choice is now yours.
+ */
+@Composable
+private fun ScanButton(
+    cameraDenied: Boolean,
+    onClick: () -> Unit,
+) {
+    val c = clipSyncColors
+    Button(onClick = onClick, shape = ControlShape, modifier = Modifier.fillMaxWidth()) {
+        Text(stringResource(R.string.pairing_scan_qr))
+    }
+    if (cameraDenied) {
+        Text(
+            stringResource(R.string.pairing_camera_denied),
+            color = c.act,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
+}
+
+/** The camera-free pairing path: paste the payload the Windows app offers next to its QR code. */
+@Composable
+private fun ManualPayloadEntry(
+    value: String,
+    onValueChange: (String) -> Unit,
+    onUse: () -> Unit,
+) {
+    val c = clipSyncColors
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text(stringResource(R.string.pairing_paste_label)) },
+        shape = ControlShape,
+        minLines = 2,
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = c.flowLn,
+                unfocusedBorderColor = c.ln,
+                focusedLabelColor = c.flow,
+                unfocusedLabelColor = c.t4,
+                focusedContainerColor = c.sfIn,
+                unfocusedContainerColor = c.sfIn,
+            ),
+    )
+    GhostButton(
+        text = stringResource(R.string.pairing_use_pasted),
+        enabled = value.isNotBlank(),
+        onClick = onUse,
+    )
+}
+
+@Composable
+private fun ReviewContent(
+    review: PairingUiState.Review,
+    viewModel: PairingViewModel,
+) {
     val c = clipSyncColors
     Text(stringResource(R.string.pairing_confirm_title), style = RitualTitle, color = c.t1)
     Text(
@@ -259,12 +302,13 @@ private fun ReviewContent(review: PairingUiState.Review, viewModel: PairingViewM
         onClick = viewModel::confirm,
         shape = ControlShape,
         modifier = Modifier.fillMaxWidth(),
-        colors = if (review.certificateChanged) {
-            // 责任确认按钮：文案本身是一次动作复述（「我已核实」，不是「确认」）。
-            ButtonDefaults.buttonColors(containerColor = c.act, contentColor = c.onFlow)
-        } else {
-            ButtonDefaults.buttonColors()
-        },
+        colors =
+            if (review.certificateChanged) {
+                // 责任确认按钮：文案本身是一次动作复述（「我已核实」，不是「确认」）。
+                ButtonDefaults.buttonColors(containerColor = c.act, contentColor = c.onFlow)
+            } else {
+                ButtonDefaults.buttonColors()
+            },
     ) {
         Text(
             if (review.certificateChanged) {
@@ -311,13 +355,14 @@ private fun PeerFacts(qr: PairingQrPayload) {
 }
 
 @Composable
-private fun SubmittingContent(peerName: String) {
+private fun SubmittingContent(state: PairingUiState.Submitting) {
     val c = clipSyncColors
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .charterCard()
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .charterCard()
+                .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CircularProgressIndicator(
@@ -326,19 +371,33 @@ private fun SubmittingContent(peerName: String) {
             strokeWidth = 3.dp,
             modifier = Modifier.padding(end = 16.dp),
         )
-        Column {
-            Text(stringResource(R.string.pairing_waiting_title), fontWeight = FontWeight.SemiBold, color = c.t1)
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            // 两个阶段说两件不同的事：还在拨号，还是电脑已经拿到请求、等人点批准。
+            val (title, body) =
+                when (state.phase) {
+                    PairingPhase.CONNECTING ->
+                        stringResource(R.string.pairing_connecting_title) to
+                            pluralStringResource(R.plurals.pairing_connecting_body, state.hostCount, state.hostCount)
+                    PairingPhase.AWAITING_APPROVAL ->
+                        stringResource(R.string.pairing_waiting_title) to
+                            stringResource(R.string.pairing_waiting_body, state.peerName)
+                }
+            Text(title, fontWeight = FontWeight.SemiBold, color = c.t1)
+            Text(body, style = MaterialTheme.typography.bodyMedium, color = c.t2)
             Text(
-                stringResource(R.string.pairing_waiting_body, peerName),
-                style = MaterialTheme.typography.bodyMedium,
-                color = c.t2,
+                pluralStringResource(R.plurals.pairing_elapsed_format, state.elapsedSeconds, state.elapsedSeconds),
+                style = MaterialTheme.typography.bodySmall,
+                color = c.t3,
             )
         }
     }
 }
 
 @Composable
-private fun PairedContent(peer: PairedPeer, viewModel: PairingViewModel) {
+private fun PairedContent(
+    peer: PairedPeer,
+    viewModel: PairingViewModel,
+) {
     val c = clipSyncColors
     Text(stringResource(R.string.pairing_done_title), style = RitualTitle, color = c.t1)
     Column(
@@ -362,22 +421,30 @@ private fun PairedContent(peer: PairedPeer, viewModel: PairingViewModel) {
 }
 
 @Composable
-private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel) {
+private fun FailedContent(
+    state: PairingUiState.Failed,
+    viewModel: PairingViewModel,
+) {
     val c = clipSyncColors
+    val reason = state.reason
     Text(stringResource(R.string.pairing_failed_title), style = RitualTitle, color = c.t1)
-    val message = stringResource(
-        when (reason) {
-            PairingFailure.INVALID_PAYLOAD -> R.string.pairing_fail_invalid
-            PairingFailure.OWN_DEVICE -> R.string.pairing_fail_own_device
-            PairingFailure.CERTIFICATE_MISMATCH -> R.string.pairing_fail_cert_mismatch
-            PairingFailure.UNREACHABLE -> R.string.pairing_fail_unreachable
-            PairingFailure.REJECTED -> R.string.pairing_fail_rejected
-            PairingFailure.TIMEOUT -> R.string.pairing_fail_timeout
-            PairingFailure.TOKEN_INVALID -> R.string.pairing_fail_token_invalid
-            PairingFailure.TOKEN_EXPIRED -> R.string.pairing_fail_token_expired
-            PairingFailure.PROTOCOL -> R.string.pairing_fail_protocol
-        },
-    )
+    val message =
+        stringResource(
+            when (reason) {
+                PairingFailure.INVALID_PAYLOAD -> R.string.pairing_fail_invalid
+                PairingFailure.OWN_DEVICE -> R.string.pairing_fail_own_device
+                PairingFailure.CERTIFICATE_MISMATCH -> R.string.pairing_fail_cert_mismatch
+                PairingFailure.UNREACHABLE -> R.string.pairing_fail_unreachable
+                PairingFailure.REJECTED -> R.string.pairing_fail_rejected
+                PairingFailure.TIMEOUT -> R.string.pairing_fail_timeout
+                PairingFailure.TOKEN_INVALID -> R.string.pairing_fail_token_invalid
+                PairingFailure.TOKEN_EXPIRED -> R.string.pairing_fail_token_expired
+                PairingFailure.RATE_LIMITED -> R.string.pairing_fail_rate_limited
+                PairingFailure.PROTOCOL -> R.string.pairing_fail_protocol
+            },
+        )
+    // 不可达时追加第二段：按主原因说最可能的病灶（防火墙 / 不同网段 / 没人监听 / 找不到主机）。
+    val hint = state.unreachable?.let(::unreachableHint)?.string()
     if (reason == PairingFailure.CERTIFICATE_MISMATCH) {
         // 证书不一致是真正的 error（可能的中间人）：红色着色盒唯一出场处。
         val shape = CharterShapes.card
@@ -398,8 +465,12 @@ private fun FailedContent(reason: PairingFailure, viewModel: PairingViewModel) {
                 .fillMaxWidth()
                 .charterCard()
                 .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(message, style = MaterialTheme.typography.bodyMedium, color = c.t2)
+            if (hint != null) {
+                Text(hint, style = MaterialTheme.typography.bodySmall, color = c.t3)
+            }
         }
     }
     Button(onClick = viewModel::reset, shape = ControlShape, modifier = Modifier.fillMaxWidth()) {
@@ -453,13 +524,14 @@ private fun Modifier.pairingSuccessSheen(): Modifier {
         val left = size.width * (SHEEN_TRAVEL_START_FRACTION + SHEEN_TRAVEL_WIDTH_FRACTION * value)
         rotate(degrees = SHEEN_ANGLE_DEGREES, pivot = Offset(left + band / 2f, size.height / 2f)) {
             drawRect(
-                brush = Brush.horizontalGradient(
-                    0f to Color.Transparent,
-                    SHEEN_PEAK_STOP to Color.White.copy(alpha = SHEEN_PEAK_ALPHA),
-                    1f to Color.Transparent,
-                    startX = left,
-                    endX = left + band,
-                ),
+                brush =
+                    Brush.horizontalGradient(
+                        0f to Color.Transparent,
+                        SHEEN_PEAK_STOP to Color.White.copy(alpha = SHEEN_PEAK_ALPHA),
+                        1f to Color.Transparent,
+                        startX = left,
+                        endX = left + band,
+                    ),
                 // 竖向大幅超采样：18° 旋转后仍盖满整卡，多余部分被卡面 clip 裁掉。
                 topLeft = Offset(left, -size.height),
                 size = Size(band, size.height * SHEEN_OVERDRAW_FACTOR),
@@ -470,7 +542,11 @@ private fun Modifier.pairingSuccessSheen(): Modifier {
 
 /** Quiet outlined action: charter ghost button (t3 text, ln2 border). */
 @Composable
-private fun GhostButton(text: String, onClick: () -> Unit, enabled: Boolean = true) {
+private fun GhostButton(
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+) {
     val c = clipSyncColors
     OutlinedButton(
         onClick = onClick,
@@ -507,14 +583,21 @@ private fun ScannerFrame(onResult: (String) -> Unit) {
             val stroke = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round)
             val w = size.width
             val h = size.height
-            fun corner(ox: Float, oy: Float, sx: Float, sy: Float) {
+
+            fun corner(
+                ox: Float,
+                oy: Float,
+                sx: Float,
+                sy: Float,
+            ) {
                 // One L-shaped corner with a small arc, mirrored via sx/sy.
-                val path = Path().apply {
-                    moveTo(ox, oy + sy * leg)
-                    lineTo(ox, oy + sy * radius)
-                    quadraticTo(ox, oy, ox + sx * radius, oy)
-                    lineTo(ox + sx * leg, oy)
-                }
+                val path =
+                    Path().apply {
+                        moveTo(ox, oy + sy * leg)
+                        lineTo(ox, oy + sy * radius)
+                        quadraticTo(ox, oy, ox + sx * radius, oy)
+                        lineTo(ox + sx * leg, oy)
+                    }
                 drawPath(path, color = c.flow, style = stroke)
             }
             corner(inset, inset, 1f, 1f)
@@ -526,7 +609,10 @@ private fun ScannerFrame(onResult: (String) -> Unit) {
 }
 
 @Composable
-private fun QrScannerView(onResult: (String) -> Unit, modifier: Modifier = Modifier) {
+private fun QrScannerView(
+    onResult: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     AndroidView(
@@ -535,12 +621,15 @@ private fun QrScannerView(onResult: (String) -> Unit, modifier: Modifier = Modif
             val providerFuture = ProcessCameraProvider.getInstance(viewContext)
             providerFuture.addListener({
                 val provider = providerFuture.get()
-                val preview = Preview.Builder().build().also {
-                    it.setSurfaceProvider(previewView.surfaceProvider)
-                }
-                val analysis = ImageAnalysis.Builder()
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build()
+                val preview =
+                    Preview.Builder().build().also {
+                        it.setSurfaceProvider(previewView.surfaceProvider)
+                    }
+                val analysis =
+                    ImageAnalysis
+                        .Builder()
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build()
                 analysis.setAnalyzer(ContextCompat.getMainExecutor(viewContext), QrAnalyzer(onResult))
                 provider.unbindAll()
                 provider.bindToLifecycle(
@@ -561,10 +650,13 @@ private fun QrScannerView(onResult: (String) -> Unit, modifier: Modifier = Modif
     }
 }
 
-private class QrAnalyzer(private val onResult: (String) -> Unit) : ImageAnalysis.Analyzer {
-    private val scanner = BarcodeScanning.getClient(
-        BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build(),
-    )
+private class QrAnalyzer(
+    private val onResult: (String) -> Unit,
+) : ImageAnalysis.Analyzer {
+    private val scanner =
+        BarcodeScanning.getClient(
+            BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build(),
+        )
     private val delivered = AtomicBoolean(false)
 
     @androidx.annotation.OptIn(ExperimentalGetImage::class)
@@ -575,21 +667,22 @@ private class QrAnalyzer(private val onResult: (String) -> Unit) : ImageAnalysis
             return
         }
         val input = InputImage.fromMediaImage(mediaImage, image.imageInfo.rotationDegrees)
-        scanner.process(input)
+        scanner
+            .process(input)
             .addOnSuccessListener { barcodes ->
                 val raw = barcodes.firstOrNull { !it.rawValue.isNullOrEmpty() }?.rawValue
                 if (raw != null && delivered.compareAndSet(false, true)) {
                     onResult(raw)
                 }
-            }
-            .addOnCompleteListener { image.close() }
+            }.addOnCompleteListener { image.close() }
     }
 }
 
-private fun groupFingerprint(fingerprint: String): String =
-    fingerprint.chunked(4).joinToString(separator = " ")
+private fun groupFingerprint(fingerprint: String): String = fingerprint.chunked(4).joinToString(separator = " ")
 
 /** Four-character groups, eight per line: humans compare groups, not character streams. */
 private fun twoLineFingerprint(fingerprint: String): String =
-    fingerprint.chunked(4).chunked(8)
+    fingerprint
+        .chunked(4)
+        .chunked(8)
         .joinToString(separator = "\n") { line -> line.joinToString(" ") }

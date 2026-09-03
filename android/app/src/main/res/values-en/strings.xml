@@ -197,7 +197,7 @@
     <string name="network_cert_mismatch_detail">Paired with “%1$s”, but the peer presented a different certificate.</string>
     <string name="network_cert_mismatch_error">The peer’s certificate does not match the pinned fingerprint, so the connection was blocked. If you did not reinstall the Windows app, check your network; pairing again updates the fingerprint.</string>
     <string name="network_unreachable_detail">Paired with “%1$s”; currently unreachable by probe.</string>
-    <string name="network_unreachable_fact">Confirm both devices are on the same LAN / VPN and the Windows app is running.</string>
+    <string name="network_unreachable_fact">Confirm both devices are on the same LAN / VPN, the Windows app is running, and the PC’s firewall allows inbound TCP 47654.</string>
     <string name="network_not_connected_detail">Paired with “%1$s”; the sync channel is not wired up yet.</string>
     <string name="network_waiting_detail">Paired with “%1$s”; waiting for a connection.</string>
 
@@ -311,20 +311,35 @@
     <string name="pairing_confirm_match">Fingerprints match — pair</string>
     <string name="pairing_fingerprint_header">Certificate fingerprint</string>
     <string name="pairing_address_header">Address</string>
+    <string name="pairing_connecting_title">Connecting to the PC…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="one">Trying the %1$d address in the QR code, waiting up to 6 seconds for it.</item>
+        <item quantity="other">Trying the %1$d addresses in the QR code in turn, waiting up to 6 seconds for each.</item>
+    </plurals>
     <string name="pairing_waiting_title">Waiting for approval…</string>
     <string name="pairing_waiting_body">Approve this phone in the ClipSync window on “%1$s”.</string>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="one">Waited %1$d second</item>
+        <item quantity="other">Waited %1$d seconds</item>
+    </plurals>
     <string name="pairing_done_title">Paired</string>
     <string name="pairing_done_body">Trust and keys are stored securely; the network segment is now connected.</string>
     <string name="pairing_failed_title">Pairing failed</string>
     <string name="pairing_fail_invalid">This is not a valid ClipSync pairing code.</string>
     <string name="pairing_fail_own_device">This code identifies this device itself.</string>
     <string name="pairing_fail_cert_mismatch">The PC presented a certificate different from what the QR code promised; pairing was blocked. Check the network and reopen the QR window on Windows.</string>
-    <string name="pairing_fail_unreachable">Could not reach the PC. Confirm both devices are on the same network.</string>
+    <string name="pairing_fail_unreachable">Could not reach the PC. Confirm both devices are on the same Wi-Fi.</string>
     <string name="pairing_fail_rejected">The request was declined on the PC.</string>
     <string name="pairing_fail_timeout">The PC did not approve in time. Show a new QR code and retry.</string>
     <string name="pairing_fail_token_invalid">This code was already used or cancelled. Show a new QR code.</string>
     <string name="pairing_fail_token_expired">This code has expired. Scan promptly after showing a new QR code.</string>
     <string name="pairing_fail_protocol">The PC’s response is outside the pairing protocol. Update both ends to matching versions.</string>
+    <string name="pairing_fail_rate_limited">The PC is temporarily refusing pairing requests because too many arrived. Wait a minute, show a new QR code and try again.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">The connection timed out even though the phone and the PC are on the same subnet. Most often the Windows Firewall on the PC is not allowing inbound TCP %1$d, or the router has AP isolation turned on. The Conduit page in the Windows app and the install guide show how to allow it.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">The phone’s current network is not on the same subnet as the PC addresses in the QR code. Make sure both devices are on the same Wi-Fi, or add an address the phone can reach under “Extra listen addresses” in the Windows app.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">The connection timed out. If both devices really are on the same Wi-Fi, check that the Windows Firewall on the PC allows inbound TCP %1$d.</string>
+    <string name="pairing_fail_unreachable_hint_refused">Nothing on the PC is listening on that port. Make sure ClipSync is running on the PC, then show the QR code again.</string>
+    <string name="pairing_fail_unreachable_hint_no_route">No host was found at that address. The PC may be asleep, its IP may have changed, or the QR code may list a virtual adapter’s address first. Show the QR code again and retry.</string>
     <string name="pairing_restart">Start over</string>
 
     <string name="prefs_title">Preferences</string>
@@ -432,6 +447,7 @@
     <string name="onboarding_tab_prefs_desc">Pause sync, private mode, retention — every switch truly works and lands on disk immediately.</string>
     <string name="onboarding_honesty_header">To be clear up front</string>
     <string name="onboarding_honesty_body">Android restricts background clipboard reading, and ClipSync does not pretend otherwise: it uploads automatically while in the foreground; background reading requires completing one route of your choice on the Conduit page. Every capability is judged by live testing — if something cannot be done, it says so.</string>
+    <string name="onboarding_privacy_doc_link">Read before use: privacy and risks</string>
     <string name="onboarding_skip">Look around first, pair later</string>
     <string name="onboarding_next">Continue</string>
     <string name="onboarding_back">Back</string>
@@ -459,6 +475,9 @@
     <string name="prefs_group_help">Help</string>
     <string name="prefs_replay_onboarding">Replay the introduction</string>
     <string name="prefs_replay_onboarding_desc">Walk the first-run tutorial again from the welcome page; changes no settings or pairing.</string>
+    <string name="prefs_privacy_doc_title">Privacy and risks</string>
+    <string name="prefs_privacy_doc_desc">Opens the read-before-use document in your browser (GitHub).</string>
+    <string name="open_url_failed">No browser is available.</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">About</string>

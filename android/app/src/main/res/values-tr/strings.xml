@@ -196,7 +196,7 @@
     <string name="network_cert_mismatch_detail">“%1$s” ile eşleştirildi, ancak karşı taraf farklı bir sertifika sundu.</string>
     <string name="network_cert_mismatch_error">Karşı tarafın sertifikası sabitlenmiş parmak iziyle uyuşmuyor, bu yüzden bağlantı engellendi. Windows uygulamasını yeniden kurmadıysanız ağınızı denetleyin; yeniden eşleştirmek parmak izini günceller.</string>
     <string name="network_unreachable_detail">“%1$s” ile eşleştirildi; şu anda yoklamayla erişilemiyor.</string>
-    <string name="network_unreachable_fact">İki cihazın aynı LAN / VPN üzerinde olduğunu ve Windows uygulamasının çalıştığını doğrulayın.</string>
+    <string name="network_unreachable_fact">İki cihazın aynı LAN / VPN üzerinde olduğunu, Windows uygulamasının çalıştığını ve PC güvenlik duvarının TCP 47654 gelen bağlantılarına izin verdiğini doğrulayın.</string>
     <string name="network_not_connected_detail">“%1$s” ile eşleştirildi; eşitleme kanalı henüz kurulmadı.</string>
     <string name="network_waiting_detail">“%1$s” ile eşleştirildi; bağlantı bekleniyor.</string>
 
@@ -310,6 +310,15 @@
     <string name="pairing_confirm_match">Parmak izleri uyuşuyor — eşleştir</string>
     <string name="pairing_fingerprint_header">Sertifika parmak izi</string>
     <string name="pairing_address_header">Adres</string>
+    <string name="pairing_connecting_title">PC’ye bağlanıyor…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="one">QR koddaki %1$d adres deneniyor; en fazla 6 saniye bekleniyor.</item>
+        <item quantity="other">QR koddaki %1$d adres sırayla deneniyor; her biri için en fazla 6 saniye bekleniyor.</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="one">%1$d saniyedir bekleniyor</item>
+        <item quantity="other">%1$d saniyedir bekleniyor</item>
+    </plurals>
     <string name="pairing_waiting_title">Onay bekleniyor…</string>
     <string name="pairing_waiting_body">“%1$s” üzerindeki ClipSync penceresinde bu telefonu onaylayın.</string>
     <string name="pairing_done_title">Eşleştirildi</string>
@@ -318,12 +327,18 @@
     <string name="pairing_fail_invalid">Bu geçerli bir ClipSync eşleştirme kodu değil.</string>
     <string name="pairing_fail_own_device">Bu kod bu cihazın kendisini tanımlıyor.</string>
     <string name="pairing_fail_cert_mismatch">PC, QR kodun vaat ettiğinden farklı bir sertifika sundu; eşleştirme engellendi. Ağı denetleyin ve Windows’ta QR penceresini yeniden açın.</string>
-    <string name="pairing_fail_unreachable">PC’ye ulaşılamadı. İki cihazın aynı ağda olduğunu doğrulayın.</string>
+    <string name="pairing_fail_unreachable">PC’ye ulaşılamadı. İki cihazın aynı Wi-Fi ağında olduğunu doğrulayın.</string>
     <string name="pairing_fail_rejected">İstek PC’de reddedildi.</string>
     <string name="pairing_fail_timeout">PC zamanında onaylamadı. Yeni bir QR kod gösterip yeniden deneyin.</string>
     <string name="pairing_fail_token_invalid">Bu kod zaten kullanıldı veya iptal edildi. Yeni bir QR kod gösterin.</string>
     <string name="pairing_fail_token_expired">Bu kodun süresi doldu. Yeni QR kod gösterildikten hemen sonra tarayın.</string>
     <string name="pairing_fail_protocol">PC’nin yanıtı eşleştirme protokolünün dışında. İki ucu da uyumlu sürümlere güncelleyin.</string>
+    <string name="pairing_fail_rate_limited">Çok fazla eşleştirme isteği geldiği için PC istekleri geçici olarak reddediyor. Bir dakika bekleyin, yeni bir QR kod gösterip yeniden deneyin.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">Telefon ile PC aynı alt ağda olsa da bağlantı zaman aşımına uğradı. En sık neden, PC’deki Windows Güvenlik Duvarı’nın TCP %1$d gelen bağlantılarına izin vermemesi veya yönlendiricide AP yalıtımının açık olmasıdır. İzin verme adımları Windows uygulamasının “Kanal” sayfasında ve kurulum kılavuzunda anlatılır.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">Telefonun geçerli ağı, QR koddaki PC adresleriyle aynı alt ağda değil. İki cihazın aynı Wi-Fi’ye bağlı olduğundan emin olun ya da Windows uygulamasındaki “Ek dinleme adresleri” alanına telefonun erişebildiği bir adres ekleyin.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">Bağlantı zaman aşımına uğradı. İki cihaz gerçekten aynı Wi-Fi’deyse PC’deki Windows Güvenlik Duvarı’nın TCP %1$d gelen bağlantılarına izin verdiğini denetleyin.</string>
+    <string name="pairing_fail_unreachable_hint_refused">PC’de bu bağlantı noktasını dinleyen bir program yok. ClipSync’in PC’de çalıştığından emin olun, sonra QR kodu yeniden gösterin.</string>
+    <string name="pairing_fail_unreachable_hint_no_route">Bu adreste bir ana makine bulunamadı. PC uyku modunda olabilir, IP adresi değişmiş olabilir ya da QR kodda ilk sırada bir sanal bağdaştırıcının adresi yer alıyor olabilir. QR kodu yeniden gösterip tekrar deneyin.</string>
     <string name="pairing_restart">Baştan başla</string>
 
     <string name="prefs_title">Tercihler</string>
@@ -431,6 +446,7 @@
     <string name="onboarding_tab_prefs_desc">Eşitlemeyi duraklatma, özel mod, saklama — her anahtar gerçekten çalışır ve anında diske yazılır.</string>
     <string name="onboarding_honesty_header">Baştan açık olalım</string>
     <string name="onboarding_honesty_body">Android arka planda pano okumayı kısıtlar ve ClipSync aksini iddia etmez: ön plandayken otomatik yükler; arka plan okuması Kanal sayfasında seçeceğiniz bir yolu tamamlamayı gerektirir. Her yetenek gerçek testle değerlendirilir — bir şey yapılamıyorsa açıkça söylenir.</string>
+    <string name="onboarding_privacy_doc_link">Kullanmadan önce okuyun: gizlilik ve riskler</string>
     <string name="onboarding_skip">Önce bakının, sonra eşleştirin</string>
     <string name="onboarding_next">Devam</string>
     <string name="onboarding_back">Geri</string>
@@ -458,6 +474,9 @@
     <string name="prefs_group_help">Yardım</string>
     <string name="prefs_replay_onboarding">Tanıtımı yeniden izle</string>
     <string name="prefs_replay_onboarding_desc">İlk kurulum eğitimini karşılama sayfasından yeniden gezin; hiçbir ayarı veya eşleştirmeyi değiştirmez.</string>
+    <string name="prefs_privacy_doc_title">Gizlilik ve riskler</string>
+    <string name="prefs_privacy_doc_desc">Kullanmadan önce okunması gereken belgeyi tarayıcıda açar (GitHub).</string>
+    <string name="open_url_failed">Kullanılabilir tarayıcı yok.</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">Hakkında</string>

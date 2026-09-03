@@ -84,6 +84,8 @@ fun PreferencesScreen(
     onLanguageChange: (String) -> Unit = {},
     /** 重新查看引导: replays the first-run tutorial; changes no settings. */
     onReplayOnboarding: () -> Unit = {},
+    /** 隐私与风险说明: opens the 使用前必读 document in the system browser, only on tap. */
+    onOpenPrivacyDoc: () -> Unit = {},
     onCheckUpdate: () -> Unit = {},
     onDownloadUpdate: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -381,6 +383,12 @@ fun PreferencesScreen(
                 title = stringResource(R.string.prefs_replay_onboarding),
                 description = stringResource(R.string.prefs_replay_onboarding_desc),
                 onClick = onReplayOnboarding,
+            )
+            RowDivider()
+            ActionRow(
+                title = stringResource(R.string.prefs_privacy_doc_title),
+                description = stringResource(R.string.prefs_privacy_doc_desc),
+                onClick = onOpenPrivacyDoc,
             )
         }
 

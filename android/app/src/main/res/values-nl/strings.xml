@@ -197,7 +197,7 @@
     <string name="network_cert_mismatch_detail">Gekoppeld met “%1$s”, maar de peer toonde een ander certificaat.</string>
     <string name="network_cert_mismatch_error">Het certificaat van de peer komt niet overeen met de vastgezette vingerafdruk, dus de verbinding is geblokkeerd. Als je de Windows-app niet opnieuw hebt geïnstalleerd, controleer dan je netwerk; opnieuw koppelen werkt de vingerafdruk bij.</string>
     <string name="network_unreachable_detail">Gekoppeld met “%1$s”; momenteel niet bereikbaar via peiling.</string>
-    <string name="network_unreachable_fact">Controleer of beide apparaten op hetzelfde LAN/VPN zitten en of de Windows-app draait.</string>
+    <string name="network_unreachable_fact">Controleer of beide apparaten op hetzelfde LAN/VPN zitten, of de Windows-app draait en of de firewall van de pc inkomende verbindingen op TCP 47654 doorlaat.</string>
     <string name="network_not_connected_detail">Gekoppeld met “%1$s”; het synchronisatiekanaal is nog niet aangesloten.</string>
     <string name="network_waiting_detail">Gekoppeld met “%1$s”; wacht op een verbinding.</string>
 
@@ -311,6 +311,15 @@
     <string name="pairing_confirm_match">Vingerafdrukken komen overeen — koppelen</string>
     <string name="pairing_fingerprint_header">Certificaatvingerafdruk</string>
     <string name="pairing_address_header">Adres</string>
+    <string name="pairing_connecting_title">Verbinden met de pc…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="one">%1$d adres uit de QR-code wordt geprobeerd, met hoogstens 6 seconden wachten.</item>
+        <item quantity="other">%1$d adressen uit de QR-code worden na elkaar geprobeerd, met hoogstens 6 seconden wachten per adres.</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="one">Al %1$d seconde gewacht</item>
+        <item quantity="other">Al %1$d seconden gewacht</item>
+    </plurals>
     <string name="pairing_waiting_title">Wachten op goedkeuring…</string>
     <string name="pairing_waiting_body">Keur deze telefoon goed in het ClipSync-venster op “%1$s”.</string>
     <string name="pairing_done_title">Gekoppeld</string>
@@ -319,12 +328,18 @@
     <string name="pairing_fail_invalid">Dit is geen geldige ClipSync-koppelcode.</string>
     <string name="pairing_fail_own_device">Deze code identificeert dit apparaat zelf.</string>
     <string name="pairing_fail_cert_mismatch">De pc toonde een ander certificaat dan de QR-code beloofde; het koppelen is geblokkeerd. Controleer het netwerk en open het QR-venster op Windows opnieuw.</string>
-    <string name="pairing_fail_unreachable">Kon de pc niet bereiken. Controleer of beide apparaten op hetzelfde netwerk zitten.</string>
+    <string name="pairing_fail_unreachable">Kon de pc niet bereiken. Controleer of beide apparaten op hetzelfde wifinetwerk zitten.</string>
     <string name="pairing_fail_rejected">Het verzoek is op de pc geweigerd.</string>
     <string name="pairing_fail_timeout">De pc keurde niet op tijd goed. Toon een nieuwe QR-code en probeer opnieuw.</string>
     <string name="pairing_fail_token_invalid">Deze code is al gebruikt of geannuleerd. Toon een nieuwe QR-code.</string>
     <string name="pairing_fail_token_expired">Deze code is verlopen. Scan direct na het tonen van een nieuwe QR-code.</string>
     <string name="pairing_fail_protocol">Het antwoord van de pc valt buiten het koppelprotocol. Werk beide kanten bij naar overeenkomende versies.</string>
+    <string name="pairing_fail_rate_limited">De pc weigert koppelverzoeken tijdelijk omdat er te veel binnenkwamen. Wacht een minuut, toon een nieuwe QR-code en probeer het opnieuw.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">De verbinding is verlopen, terwijl telefoon en pc wel in hetzelfde subnet zitten. Meestal laat Windows Firewall op de pc inkomende verbindingen op TCP %1$d niet door, of staat AP-isolatie aan op de router. Hoe je dit toestaat staat op de pagina “Kanaal” in de Windows-app en in de installatiehandleiding.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">Het huidige netwerk van de telefoon zit niet in hetzelfde subnet als de pc-adressen in de QR-code. Zorg dat beide apparaten hetzelfde wifinetwerk gebruiken, of voeg onder “Extra luisteradressen” in de Windows-app een adres toe dat de telefoon kan bereiken.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">De verbinding is verlopen. Zitten beide apparaten echt op hetzelfde wifinetwerk, controleer dan of Windows Firewall op de pc inkomende verbindingen op TCP %1$d doorlaat.</string>
+    <string name="pairing_fail_unreachable_hint_refused">Op de pc luistert geen programma op die poort. Controleer of ClipSync op de pc draait en toon de QR-code opnieuw.</string>
+    <string name="pairing_fail_unreachable_hint_no_route">Op dat adres is geen host gevonden. Misschien slaapt de pc, is het IP-adres veranderd, of staat in de QR-code het adres van een virtuele adapter vooraan. Toon de QR-code opnieuw en probeer het nog eens.</string>
     <string name="pairing_restart">Opnieuw beginnen</string>
 
     <string name="prefs_title">Voorkeuren</string>
@@ -432,6 +447,7 @@
     <string name="onboarding_tab_prefs_desc">Synchronisatie pauzeren, privémodus, bewaartermijn — elke schakelaar werkt echt en wordt direct op schijf opgeslagen.</string>
     <string name="onboarding_honesty_header">Om vooraf duidelijk te zijn</string>
     <string name="onboarding_honesty_body">Android beperkt klembordlezen op de achtergrond, en ClipSync doet niet alsof dat anders is: het uploadt automatisch op de voorgrond; achtergrondlezen vereist het voltooien van één route naar keuze op de Kanaal-pagina. Elk vermogen wordt beoordeeld met livetests — als iets niet kan, staat dat er.</string>
+    <string name="onboarding_privacy_doc_link">Lees dit vóór gebruik: privacy en risico’s</string>
     <string name="onboarding_skip">Eerst rondkijken, later koppelen</string>
     <string name="onboarding_next">Doorgaan</string>
     <string name="onboarding_back">Terug</string>
@@ -459,6 +475,9 @@
     <string name="prefs_group_help">Hulp</string>
     <string name="prefs_replay_onboarding">Rondleiding opnieuw bekijken</string>
     <string name="prefs_replay_onboarding_desc">Doorloop de rondleiding van de eerste start opnieuw vanaf de welkomstpagina; er verandert niets aan instellingen of koppeling.</string>
+    <string name="prefs_privacy_doc_title">Privacy en risico’s</string>
+    <string name="prefs_privacy_doc_desc">Opent het document dat je vóór gebruik zou moeten lezen in de browser (GitHub).</string>
+    <string name="open_url_failed">Er is geen browser beschikbaar.</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">Over</string>

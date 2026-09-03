@@ -106,6 +106,12 @@ object OnboardingContent {
 
     @StringRes val HONESTY_BODY = R.string.onboarding_honesty_body
 
+    /**
+     * 使用前必读: the privacy-and-risks document on GitHub, offered right under the honesty
+     * note and opened in the system browser only on the user's tap — never ahead of time.
+     */
+    @StringRes val PRIVACY_DOC_LINK = R.string.onboarding_privacy_doc_link
+
     // -- 2 · pair with the PC ----------------------------------------------
 
     /** Same words as the pairing ritual itself, so nothing drifts. */

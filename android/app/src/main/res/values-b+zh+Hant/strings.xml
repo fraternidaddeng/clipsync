@@ -195,7 +195,7 @@
     <string name="network_cert_mismatch_detail">已與「%1$s」配對，但對端出示了不同的憑證。</string>
     <string name="network_cert_mismatch_error">對端憑證與固定指紋不符，連線已被阻止。若非你重裝了 Windows 端，請檢查網路環境；重新配對可更新指紋。</string>
     <string name="network_unreachable_detail">已與「%1$s」配對，目前探測不可達。</string>
-    <string name="network_unreachable_fact">確認兩台裝置在同一區域網路 / VPN，且 Windows 端正在執行。</string>
+    <string name="network_unreachable_fact">確認兩台裝置在同一區域網路 / VPN，Windows 端正在執行，且電腦防火牆已放行 TCP 47654 傳入。</string>
     <string name="network_not_connected_detail">已與「%1$s」配對；同步通道尚未接入。</string>
     <string name="network_waiting_detail">已與「%1$s」配對，正在等待連線。</string>
 
@@ -308,6 +308,13 @@
     <string name="pairing_confirm_match">指紋一致 — 配對</string>
     <string name="pairing_fingerprint_header">憑證指紋</string>
     <string name="pairing_address_header">位址</string>
+    <string name="pairing_connecting_title">正在連線到電腦…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="other">正在嘗試 QR 碼裡的 %1$d 個位址，每個最多等 6 秒。</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="other">已等待 %1$d 秒</item>
+    </plurals>
     <string name="pairing_waiting_title">等待批准…</string>
     <string name="pairing_waiting_body">請在「%1$s」的剪剪相傳視窗中批准此手機。</string>
     <string name="pairing_done_title">已配對</string>
@@ -316,12 +323,18 @@
     <string name="pairing_fail_invalid">這不是有效的剪剪相傳配對碼。</string>
     <string name="pairing_fail_own_device">這個碼標識的是本機自己。</string>
     <string name="pairing_fail_cert_mismatch">電腦出示的憑證與 QR 碼承諾的不一致，配對已被阻止。請檢查網路，並在 Windows 上重新開啟 QR 碼視窗。</string>
-    <string name="pairing_fail_unreachable">無法連線到電腦。請確認兩台裝置在同一網路。</string>
+    <string name="pairing_fail_unreachable">無法連線到電腦。請確認兩台裝置在同一 Wi-Fi。</string>
     <string name="pairing_fail_rejected">請求在電腦上被拒絕。</string>
     <string name="pairing_fail_timeout">電腦未在限時內批准。請出示新的 QR 碼後重試。</string>
     <string name="pairing_fail_token_invalid">這個碼已被使用或已取消。請出示新的 QR 碼。</string>
     <string name="pairing_fail_token_expired">這個碼已過期。出示新的 QR 碼後請盡快掃描。</string>
     <string name="pairing_fail_protocol">電腦的應答超出配對協定。請將兩端更新到相符的版本。</string>
+    <string name="pairing_fail_rate_limited">電腦暫時拒絕了過多的配對請求。請等一分鐘後重新出示 QR 碼再試。</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">連線逾時，但手機與電腦位址在同一網段。最常見的原因是電腦的 Windows 防火牆沒有放行 TCP %1$d 傳入，或路由器開啟了 AP 隔離。放行方法見電腦端「通路」頁或安裝指南。</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">手機目前的網路與 QR 碼裡的電腦位址不在同一網段。請確認兩台裝置連的是同一個 Wi-Fi，或在電腦端「額外監聽位址」裡填入手機能存取的位址。</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">連線逾時。若兩台裝置確實在同一 Wi-Fi，請檢查電腦的 Windows 防火牆是否放行了 TCP %1$d 傳入。</string>
+    <string name="pairing_fail_unreachable_hint_refused">電腦上沒有程式在監聽該連接埠。請確認剪剪相傳正在電腦上執行，然後重新出示 QR 碼。</string>
+    <string name="pairing_fail_unreachable_hint_no_route">找不到該位址的主機。電腦可能已休眠、IP 已變更，或 QR 碼裡排在前面的是虛擬網路卡位址。請重新出示 QR 碼後再試。</string>
     <string name="pairing_restart">重新開始</string>
 
     <string name="prefs_title">偏好</string>
@@ -424,6 +437,7 @@
     <string name="onboarding_tab_prefs_desc">暫停同步、私密模式、保留期——每個開關都真實生效，改動立即落盤。</string>
     <string name="onboarding_honesty_header">先說清楚</string>
     <string name="onboarding_honesty_body">Android 限制應用程式在背景讀取剪貼簿，剪剪相傳不會假裝做到：應用程式在前景時可自動上行；背景讀取需要在「通路」頁任選一條路線完成授權，每一段能力都以實測為準，做不到就直說。</string>
+    <string name="onboarding_privacy_doc_link">使用前必讀：隱私與風險說明</string>
     <string name="onboarding_skip">先看看，稍後配對</string>
     <string name="onboarding_next">繼續</string>
     <string name="onboarding_back">上一步</string>
@@ -451,6 +465,9 @@
     <string name="prefs_group_help">說明</string>
     <string name="prefs_replay_onboarding">重新查看引導</string>
     <string name="prefs_replay_onboarding_desc">從歡迎頁重新過一遍首次設定教學；不改動任何設定與配對。</string>
+    <string name="prefs_privacy_doc_title">隱私與風險說明</string>
+    <string name="prefs_privacy_doc_desc">在瀏覽器中開啟使用前必讀文件（GitHub）。</string>
+    <string name="open_url_failed">沒有可用的瀏覽器。</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">關於</string>

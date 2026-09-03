@@ -197,7 +197,7 @@
     <string name="network_cert_mismatch_detail">Associato a «%1$s», ma l’altro lato ha presentato un certificato diverso.</string>
     <string name="network_cert_mismatch_error">Il certificato dell’altro lato non corrisponde all’impronta bloccata, quindi la connessione è stata bloccata. Se non hai reinstallato l’app Windows, controlla la rete; ripetere l’associazione aggiorna l’impronta.</string>
     <string name="network_unreachable_detail">Associato a «%1$s»; al momento irraggiungibile dall’esame.</string>
-    <string name="network_unreachable_fact">Verifica che entrambi i dispositivi siano sulla stessa LAN / VPN e che l’app Windows sia in esecuzione.</string>
+    <string name="network_unreachable_fact">Verifica che entrambi i dispositivi siano sulla stessa LAN / VPN, che l’app Windows sia in esecuzione e che il firewall del PC consenta le connessioni in ingresso sulla porta TCP 47654.</string>
     <string name="network_not_connected_detail">Associato a «%1$s»; il canale di sincronizzazione non è ancora configurato.</string>
     <string name="network_waiting_detail">Associato a «%1$s»; in attesa di una connessione.</string>
 
@@ -312,6 +312,17 @@
     <string name="pairing_confirm_match">Impronte corrispondenti — associa</string>
     <string name="pairing_fingerprint_header">Impronta del certificato</string>
     <string name="pairing_address_header">Indirizzo</string>
+    <string name="pairing_connecting_title">Connessione al PC…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="one">Tentativo su %1$d indirizzo del codice QR, con attesa massima di 6 secondi.</item>
+        <item quantity="many">Tentativo in sequenza su %1$d di indirizzi del codice QR, con attesa massima di 6 secondi ciascuno.</item>
+        <item quantity="other">Tentativo in sequenza su %1$d indirizzi del codice QR, con attesa massima di 6 secondi ciascuno.</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="one">In attesa da %1$d secondo</item>
+        <item quantity="many">In attesa da %1$d di secondi</item>
+        <item quantity="other">In attesa da %1$d secondi</item>
+    </plurals>
     <string name="pairing_waiting_title">In attesa di approvazione…</string>
     <string name="pairing_waiting_body">Approva questo telefono nella finestra ClipSync su «%1$s».</string>
     <string name="pairing_done_title">Associato</string>
@@ -320,12 +331,18 @@
     <string name="pairing_fail_invalid">Questo non è un codice di associazione ClipSync valido.</string>
     <string name="pairing_fail_own_device">Questo codice identifica questo stesso dispositivo.</string>
     <string name="pairing_fail_cert_mismatch">Il PC ha presentato un certificato diverso da quello promesso dal codice QR; l’associazione è stata bloccata. Controlla la rete e riapri la finestra QR su Windows.</string>
-    <string name="pairing_fail_unreachable">Impossibile raggiungere il PC. Verifica che entrambi i dispositivi siano sulla stessa rete.</string>
+    <string name="pairing_fail_unreachable">Impossibile raggiungere il PC. Verifica che entrambi i dispositivi siano sulla stessa rete Wi-Fi.</string>
     <string name="pairing_fail_rejected">La richiesta è stata rifiutata sul PC.</string>
     <string name="pairing_fail_timeout">Il PC non ha approvato in tempo. Mostra un nuovo codice QR e riprova.</string>
     <string name="pairing_fail_token_invalid">Questo codice è già stato usato o annullato. Mostra un nuovo codice QR.</string>
     <string name="pairing_fail_token_expired">Questo codice è scaduto. Scansiona subito dopo aver mostrato un nuovo codice QR.</string>
     <string name="pairing_fail_protocol">La risposta del PC è fuori dal protocollo di associazione. Aggiorna entrambe le estremità a versioni compatibili.</string>
+    <string name="pairing_fail_rate_limited">Il PC sta rifiutando temporaneamente le richieste di associazione perché ne sono arrivate troppe. Attendi un minuto, mostra un nuovo codice QR e riprova.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">La connessione è andata in timeout anche se telefono e PC sono nella stessa sottorete. Di solito il Windows Firewall del PC non consente le connessioni in ingresso sulla porta TCP %1$d, oppure il router ha l’isolamento AP attivo. Come consentirlo è spiegato nella pagina «Condotto» dell’app Windows e nella guida all’installazione.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">La rete attuale del telefono non è nella stessa sottorete degli indirizzi del PC nel codice QR. Verifica che entrambi i dispositivi usino la stessa rete Wi-Fi, oppure aggiungi un indirizzo raggiungibile dal telefono in «Indirizzi di ascolto aggiuntivi» nell’app Windows.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">La connessione è andata in timeout. Se i due dispositivi sono davvero sulla stessa rete Wi-Fi, controlla che il Windows Firewall del PC consenta le connessioni in ingresso sulla porta TCP %1$d.</string>
+    <string name="pairing_fail_unreachable_hint_refused">Sul PC nessun programma è in ascolto su quella porta. Verifica che ClipSync sia in esecuzione sul PC, poi mostra di nuovo il codice QR.</string>
+    <string name="pairing_fail_unreachable_hint_no_route">Nessun host trovato a quell’indirizzo. Il PC potrebbe essere in sospensione, il suo IP potrebbe essere cambiato, oppure il codice QR elenca per primo l’indirizzo di una scheda virtuale. Mostra di nuovo il codice QR e riprova.</string>
     <string name="pairing_restart">Ricomincia</string>
 
     <string name="prefs_title">Preferenze</string>
@@ -438,6 +455,7 @@
     <string name="onboarding_tab_prefs_desc">Pausa sincronizzazione, modalità privata, conservazione: ogni interruttore funziona davvero e viene salvato subito su disco.</string>
     <string name="onboarding_honesty_header">Per essere chiari fin da subito</string>
     <string name="onboarding_honesty_body">Android limita la lettura degli appunti in background e ClipSync non finge il contrario: carica automaticamente quando è in primo piano; la lettura in background richiede di completare un percorso a tua scelta nella pagina Condotto. Ogni capacità è giudicata con test reali: se qualcosa non si può fare, lo dice.</string>
+    <string name="onboarding_privacy_doc_link">Da leggere prima dell’uso: privacy e rischi</string>
     <string name="onboarding_skip">Prima guarda in giro, associa dopo</string>
     <string name="onboarding_next">Continua</string>
     <string name="onboarding_back">Indietro</string>
@@ -465,6 +483,9 @@
     <string name="prefs_group_help">Aiuto</string>
     <string name="prefs_replay_onboarding">Rivedi il tutorial</string>
     <string name="prefs_replay_onboarding_desc">Ripercorri il tutorial del primo avvio dalla pagina di benvenuto; non modifica impostazioni né associazione.</string>
+    <string name="prefs_privacy_doc_title">Privacy e rischi</string>
+    <string name="prefs_privacy_doc_desc">Apre nel browser il documento da leggere prima dell’uso (GitHub).</string>
+    <string name="open_url_failed">Nessun browser disponibile.</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">Informazioni</string>

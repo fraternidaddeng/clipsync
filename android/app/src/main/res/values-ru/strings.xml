@@ -198,7 +198,7 @@
     <string name="network_cert_mismatch_detail">Сопряжено с «%1$s», но другая сторона предъявила другой сертификат.</string>
     <string name="network_cert_mismatch_error">Сертификат другой стороны не совпадает с закреплённым отпечатком, поэтому соединение заблокировано. Если вы не переустанавливали приложение на Windows, проверьте сеть; повторное сопряжение обновит отпечаток.</string>
     <string name="network_unreachable_detail">Сопряжено с «%1$s»; сейчас недоступно при проверке.</string>
-    <string name="network_unreachable_fact">Убедитесь, что оба устройства в одной LAN / VPN и приложение на Windows запущено.</string>
+    <string name="network_unreachable_fact">Убедитесь, что оба устройства в одной LAN / VPN, приложение на Windows запущено, а брандмауэр ПК разрешает входящие подключения по TCP 47654.</string>
     <string name="network_not_connected_detail">Сопряжено с «%1$s»; канал синхронизации ещё не настроен.</string>
     <string name="network_waiting_detail">Сопряжено с «%1$s»; ожидание соединения.</string>
 
@@ -314,6 +314,19 @@
     <string name="pairing_confirm_match">Отпечатки совпадают — сопрячь</string>
     <string name="pairing_fingerprint_header">Отпечаток сертификата</string>
     <string name="pairing_address_header">Адрес</string>
+    <string name="pairing_connecting_title">Подключение к ПК…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="one">Пробуем %1$d адрес из QR-кода, ожидание до 6 секунд.</item>
+        <item quantity="few">Пробуем по очереди %1$d адреса из QR-кода, до 6 секунд на каждый.</item>
+        <item quantity="many">Пробуем по очереди %1$d адресов из QR-кода, до 6 секунд на каждый.</item>
+        <item quantity="other">Пробуем по очереди %1$d адреса из QR-кода, до 6 секунд на каждый.</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="one">Ожидание: %1$d секунда</item>
+        <item quantity="few">Ожидание: %1$d секунды</item>
+        <item quantity="many">Ожидание: %1$d секунд</item>
+        <item quantity="other">Ожидание: %1$d секунды</item>
+    </plurals>
     <string name="pairing_waiting_title">Ожидание одобрения…</string>
     <string name="pairing_waiting_body">Одобрите этот телефон в окне ClipSync на «%1$s».</string>
     <string name="pairing_done_title">Сопряжено</string>
@@ -322,12 +335,18 @@
     <string name="pairing_fail_invalid">Это не действительный код сопряжения ClipSync.</string>
     <string name="pairing_fail_own_device">Этот код указывает на само это устройство.</string>
     <string name="pairing_fail_cert_mismatch">ПК предъявил сертификат, отличный от обещанного QR-кодом; сопряжение заблокировано. Проверьте сеть и заново откройте окно QR на Windows.</string>
-    <string name="pairing_fail_unreachable">Не удалось связаться с ПК. Убедитесь, что оба устройства в одной сети.</string>
+    <string name="pairing_fail_unreachable">Не удалось связаться с ПК. Убедитесь, что оба устройства подключены к одной сети Wi-Fi.</string>
     <string name="pairing_fail_rejected">Запрос отклонён на ПК.</string>
     <string name="pairing_fail_timeout">ПК не одобрил вовремя. Покажите новый QR-код и повторите попытку.</string>
     <string name="pairing_fail_token_invalid">Этот код уже использован или отменён. Покажите новый QR-код.</string>
     <string name="pairing_fail_token_expired">Срок действия кода истёк. Сканируйте сразу после показа нового QR-кода.</string>
     <string name="pairing_fail_protocol">Ответ ПК выходит за рамки протокола сопряжения. Обновите обе стороны до совместимых версий.</string>
+    <string name="pairing_fail_rate_limited">ПК временно отклоняет запросы на сопряжение — их пришло слишком много. Подождите минуту, покажите новый QR-код и повторите попытку.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">Время ожидания соединения истекло, хотя телефон и ПК находятся в одной подсети. Чаще всего брандмауэр Windows на ПК не разрешает входящие подключения по TCP %1$d или на роутере включена изоляция точки доступа. Как разрешить — см. страницу «Канал» в приложении для Windows или руководство по установке.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">Текущая сеть телефона не совпадает по подсети с адресами ПК из QR-кода. Убедитесь, что оба устройства подключены к одной сети Wi-Fi, или добавьте адрес, доступный с телефона, в «Дополнительные адреса прослушивания» в приложении для Windows.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">Время ожидания соединения истекло. Если оба устройства действительно в одной сети Wi-Fi, проверьте, разрешает ли брандмауэр Windows на ПК входящие подключения по TCP %1$d.</string>
+    <string name="pairing_fail_unreachable_hint_refused">На ПК ни одна программа не слушает этот порт. Убедитесь, что ClipSync запущен на ПК, и покажите QR-код ещё раз.</string>
+    <string name="pairing_fail_unreachable_hint_no_route">По этому адресу не найден хост. Возможно, ПК спит, его IP изменился или первым в QR-коде стоит адрес виртуального адаптера. Покажите QR-код ещё раз и повторите попытку.</string>
     <string name="pairing_restart">Начать заново</string>
 
     <string name="prefs_title">Настройки</string>
@@ -445,6 +464,7 @@
     <string name="onboarding_tab_prefs_desc">Пауза синхронизации, приватный режим, срок хранения — каждый переключатель действительно работает и сразу сохраняется на диск.</string>
     <string name="onboarding_honesty_header">Скажем честно с самого начала</string>
     <string name="onboarding_honesty_body">Android ограничивает фоновое чтение буфера обмена, и ClipSync не делает вид, что это не так: на переднем плане он загружает автоматически; для фонового чтения нужно завершить один путь по вашему выбору на странице «Канал». Каждая возможность оценивается реальной проверкой — если что-то нельзя сделать, об этом сказано прямо.</string>
+    <string name="onboarding_privacy_doc_link">Прочитайте перед использованием: конфиденциальность и риски</string>
     <string name="onboarding_skip">Сначала осмотреться, сопрячься позже</string>
     <string name="onboarding_next">Продолжить</string>
     <string name="onboarding_back">Назад</string>
@@ -472,6 +492,9 @@
     <string name="prefs_group_help">Справка</string>
     <string name="prefs_replay_onboarding">Показать обучение снова</string>
     <string name="prefs_replay_onboarding_desc">Пройти обучение первого запуска заново со страницы приветствия; настройки и сопряжение не меняются.</string>
+    <string name="prefs_privacy_doc_title">Конфиденциальность и риски</string>
+    <string name="prefs_privacy_doc_desc">Открывает в браузере документ, который стоит прочитать перед использованием (GitHub).</string>
+    <string name="open_url_failed">Нет доступного браузера.</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">О приложении</string>

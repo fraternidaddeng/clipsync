@@ -196,7 +196,7 @@
     <string name="network_cert_mismatch_detail">Mit „%1$s“ gekoppelt, aber die Gegenseite hat ein anderes Zertifikat vorgelegt.</string>
     <string name="network_cert_mismatch_error">Das Zertifikat der Gegenseite passt nicht zum angepinnten Fingerabdruck, deshalb wurde die Verbindung blockiert. Wenn Sie die Windows-App nicht neu installiert haben, prüfen Sie Ihr Netzwerk; erneutes Koppeln aktualisiert den Fingerabdruck.</string>
     <string name="network_unreachable_detail">Mit „%1$s“ gekoppelt; per Prüfung derzeit unerreichbar.</string>
-    <string name="network_unreachable_fact">Prüfen Sie, ob beide Geräte im selben LAN / VPN sind und die Windows-App läuft.</string>
+    <string name="network_unreachable_fact">Prüfen Sie, ob beide Geräte im selben LAN / VPN sind, die Windows-App läuft und die Firewall des PCs eingehende Verbindungen auf TCP 47654 zulässt.</string>
     <string name="network_not_connected_detail">Mit „%1$s“ gekoppelt; der Sync-Kanal ist noch nicht eingerichtet.</string>
     <string name="network_waiting_detail">Mit „%1$s“ gekoppelt; warte auf eine Verbindung.</string>
 
@@ -310,6 +310,15 @@
     <string name="pairing_confirm_match">Fingerabdrücke stimmen überein – koppeln</string>
     <string name="pairing_fingerprint_header">Zertifikat-Fingerabdruck</string>
     <string name="pairing_address_header">Adresse</string>
+    <string name="pairing_connecting_title">Verbindung mit dem PC wird hergestellt…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="one">%1$d Adresse aus dem QR-Code wird versucht, mit höchstens 6 Sekunden Wartezeit.</item>
+        <item quantity="other">%1$d Adressen aus dem QR-Code werden nacheinander versucht, mit höchstens 6 Sekunden Wartezeit je Adresse.</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="one">Seit %1$d Sekunde gewartet</item>
+        <item quantity="other">Seit %1$d Sekunden gewartet</item>
+    </plurals>
     <string name="pairing_waiting_title">Warte auf Bestätigung…</string>
     <string name="pairing_waiting_body">Bestätigen Sie dieses Telefon im ClipSync-Fenster auf „%1$s“.</string>
     <string name="pairing_done_title">Gekoppelt</string>
@@ -318,12 +327,18 @@
     <string name="pairing_fail_invalid">Dies ist kein gültiger ClipSync-Kopplungscode.</string>
     <string name="pairing_fail_own_device">Dieser Code identifiziert dieses Gerät selbst.</string>
     <string name="pairing_fail_cert_mismatch">Der PC hat ein anderes Zertifikat vorgelegt als vom QR-Code versprochen; die Kopplung wurde blockiert. Prüfen Sie das Netzwerk und öffnen Sie das QR-Fenster unter Windows erneut.</string>
-    <string name="pairing_fail_unreachable">PC nicht erreichbar. Prüfen Sie, ob beide Geräte im selben Netzwerk sind.</string>
+    <string name="pairing_fail_unreachable">PC nicht erreichbar. Prüfen Sie, ob beide Geräte im selben WLAN sind.</string>
     <string name="pairing_fail_rejected">Die Anfrage wurde auf dem PC abgelehnt.</string>
     <string name="pairing_fail_timeout">Der PC hat nicht rechtzeitig bestätigt. Zeigen Sie einen neuen QR-Code an und versuchen Sie es erneut.</string>
     <string name="pairing_fail_token_invalid">Dieser Code wurde bereits verwendet oder storniert. Zeigen Sie einen neuen QR-Code an.</string>
     <string name="pairing_fail_token_expired">Dieser Code ist abgelaufen. Scannen Sie zügig, nachdem ein neuer QR-Code angezeigt wurde.</string>
     <string name="pairing_fail_protocol">Die Antwort des PCs liegt außerhalb des Kopplungsprotokolls. Aktualisieren Sie beide Seiten auf passende Versionen.</string>
+    <string name="pairing_fail_rate_limited">Der PC lehnt Kopplungsanfragen vorübergehend ab, weil zu viele eingingen. Warten Sie eine Minute, zeigen Sie einen neuen QR-Code an und versuchen Sie es erneut.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">Die Verbindung ist abgelaufen, obwohl Telefon und PC im selben Subnetz sind. Meist lässt die Windows-Firewall des PCs eingehende Verbindungen auf TCP %1$d nicht zu, oder der Router hat die AP-Isolation aktiviert. Wie Sie das freigeben, zeigen die Seite „Kanal“ in der Windows-App und die Installationsanleitung.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">Das aktuelle Netzwerk des Telefons liegt nicht im selben Subnetz wie die PC-Adressen im QR-Code. Stellen Sie sicher, dass beide Geräte im selben WLAN sind, oder tragen Sie in der Windows-App unter „Zusätzliche Lauschadressen“ eine Adresse ein, die das Telefon erreichen kann.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">Die Verbindung ist abgelaufen. Wenn beide Geräte tatsächlich im selben WLAN sind, prüfen Sie, ob die Windows-Firewall des PCs eingehende Verbindungen auf TCP %1$d zulässt.</string>
+    <string name="pairing_fail_unreachable_hint_refused">Auf dem PC lauscht kein Programm an diesem Port. Stellen Sie sicher, dass ClipSync auf dem PC läuft, und zeigen Sie den QR-Code erneut an.</string>
+    <string name="pairing_fail_unreachable_hint_no_route">Unter dieser Adresse wurde kein Host gefunden. Der PC schläft vielleicht, seine IP hat sich geändert, oder der QR-Code führt zuerst die Adresse eines virtuellen Adapters auf. Zeigen Sie den QR-Code erneut an und versuchen Sie es noch einmal.</string>
     <string name="pairing_restart">Von vorn beginnen</string>
 
     <string name="prefs_title">Einstellungen</string>
@@ -431,6 +446,7 @@
     <string name="onboarding_tab_prefs_desc">Sync pausieren, privater Modus, Aufbewahrung – jeder Schalter funktioniert wirklich und landet sofort auf der Platte.</string>
     <string name="onboarding_honesty_header">Um es vorweg klar zu sagen</string>
     <string name="onboarding_honesty_body">Android beschränkt das Lesen der Zwischenablage im Hintergrund, und ClipSync tut nicht so, als wäre es anders: Im Vordergrund lädt es automatisch hoch; Hintergrundlesen erfordert das Abschließen einer Route Ihrer Wahl auf der Kanal-Seite. Jede Fähigkeit wird per Praxistest beurteilt – wenn etwas nicht geht, steht es da.</string>
+    <string name="onboarding_privacy_doc_link">Vor der Nutzung lesen: Datenschutz und Risiken</string>
     <string name="onboarding_skip">Erst umsehen, später koppeln</string>
     <string name="onboarding_next">Weiter</string>
     <string name="onboarding_back">Zurück</string>
@@ -458,6 +474,9 @@
     <string name="prefs_group_help">Hilfe</string>
     <string name="prefs_replay_onboarding">Einführung erneut ansehen</string>
     <string name="prefs_replay_onboarding_desc">Das Erststart-Tutorial ab der Willkommensseite erneut durchlaufen; ändert keine Einstellungen und keine Kopplung.</string>
+    <string name="prefs_privacy_doc_title">Datenschutz und Risiken</string>
+    <string name="prefs_privacy_doc_desc">Öffnet das Dokument „Vor der Nutzung lesen“ im Browser (GitHub).</string>
+    <string name="open_url_failed">Kein Browser verfügbar.</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">Info</string>

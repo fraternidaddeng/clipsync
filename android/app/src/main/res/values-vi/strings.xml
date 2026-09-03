@@ -195,7 +195,7 @@
     <string name="network_cert_mismatch_detail">Đã ghép nối với “%1$s”, nhưng phía bên kia đưa ra chứng chỉ khác.</string>
     <string name="network_cert_mismatch_error">Chứng chỉ của phía bên kia không khớp với dấu vân tay đã ghim nên kết nối bị chặn. Nếu bạn không cài lại ứng dụng Windows, hãy kiểm tra mạng; ghép nối lại sẽ cập nhật dấu vân tay.</string>
     <string name="network_unreachable_detail">Đã ghép nối với “%1$s”; hiện không dò tới được.</string>
-    <string name="network_unreachable_fact">Xác nhận hai thiết bị cùng LAN / VPN và ứng dụng Windows đang chạy.</string>
+    <string name="network_unreachable_fact">Xác nhận hai thiết bị cùng LAN / VPN, ứng dụng Windows đang chạy và tường lửa của PC đã cho phép kết nối vào qua TCP 47654.</string>
     <string name="network_not_connected_detail">Đã ghép nối với “%1$s”; kênh đồng bộ chưa được thiết lập.</string>
     <string name="network_waiting_detail">Đã ghép nối với “%1$s”; đang chờ kết nối.</string>
 
@@ -308,6 +308,13 @@
     <string name="pairing_confirm_match">Dấu vân tay khớp — ghép nối</string>
     <string name="pairing_fingerprint_header">Dấu vân tay chứng chỉ</string>
     <string name="pairing_address_header">Địa chỉ</string>
+    <string name="pairing_connecting_title">Đang kết nối với PC…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="other">Đang lần lượt thử %1$d địa chỉ trong mã QR, mỗi địa chỉ chờ tối đa 6 giây.</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="other">Đã chờ %1$d giây</item>
+    </plurals>
     <string name="pairing_waiting_title">Đang chờ phê duyệt…</string>
     <string name="pairing_waiting_body">Phê duyệt điện thoại này trong cửa sổ ClipSync trên “%1$s”.</string>
     <string name="pairing_done_title">Đã ghép nối</string>
@@ -316,12 +323,18 @@
     <string name="pairing_fail_invalid">Đây không phải mã ghép nối ClipSync hợp lệ.</string>
     <string name="pairing_fail_own_device">Mã này trỏ đến chính thiết bị này.</string>
     <string name="pairing_fail_cert_mismatch">PC đưa ra chứng chỉ khác với mã QR đã hứa; ghép nối bị chặn. Kiểm tra mạng và mở lại cửa sổ QR trên Windows.</string>
-    <string name="pairing_fail_unreachable">Không thể liên lạc với PC. Xác nhận hai thiết bị cùng một mạng.</string>
+    <string name="pairing_fail_unreachable">Không thể liên lạc với PC. Xác nhận hai thiết bị đang dùng cùng một mạng Wi-Fi.</string>
     <string name="pairing_fail_rejected">Yêu cầu bị từ chối trên PC.</string>
     <string name="pairing_fail_timeout">PC không phê duyệt kịp thời. Hiển thị mã QR mới và thử lại.</string>
     <string name="pairing_fail_token_invalid">Mã này đã được dùng hoặc bị hủy. Hãy hiển thị mã QR mới.</string>
     <string name="pairing_fail_token_expired">Mã này đã hết hạn. Quét ngay sau khi hiển thị mã QR mới.</string>
     <string name="pairing_fail_protocol">Phản hồi của PC nằm ngoài giao thức ghép nối. Cập nhật cả hai đầu lên phiên bản tương thích.</string>
+    <string name="pairing_fail_rate_limited">PC đang tạm từ chối vì nhận quá nhiều yêu cầu ghép nối. Hãy chờ khoảng một phút, hiển thị mã QR mới rồi thử lại.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">Kết nối hết thời gian chờ dù điện thoại và PC cùng một mạng con. Nguyên nhân thường gặp nhất là Tường lửa Windows trên PC chưa cho phép kết nối vào qua TCP %1$d, hoặc bộ định tuyến đang bật cách ly AP. Cách cho phép có trong trang “Đường dẫn” của ứng dụng Windows hoặc hướng dẫn cài đặt.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">Mạng hiện tại của điện thoại không cùng mạng con với các địa chỉ PC trong mã QR. Hãy chắc chắn hai thiết bị dùng cùng một Wi-Fi, hoặc thêm một địa chỉ mà điện thoại truy cập được vào “Địa chỉ lắng nghe bổ sung” trong ứng dụng Windows.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">Kết nối hết thời gian chờ. Nếu hai thiết bị thực sự cùng một Wi-Fi, hãy kiểm tra xem Tường lửa Windows trên PC đã cho phép kết nối vào qua TCP %1$d chưa.</string>
+    <string name="pairing_fail_unreachable_hint_refused">Không có chương trình nào trên PC đang lắng nghe cổng đó. Hãy chắc chắn ClipSync đang chạy trên PC, rồi hiển thị lại mã QR.</string>
+    <string name="pairing_fail_unreachable_hint_no_route">Không tìm thấy máy nào ở địa chỉ đó. PC có thể đang ngủ, IP đã thay đổi, hoặc địa chỉ đứng đầu trong mã QR là của một bộ điều hợp mạng ảo. Hãy hiển thị lại mã QR rồi thử lại.</string>
     <string name="pairing_restart">Bắt đầu lại</string>
 
     <string name="prefs_title">Tùy chọn</string>
@@ -424,6 +437,7 @@
     <string name="onboarding_tab_prefs_desc">Tạm dừng đồng bộ, chế độ riêng tư, thời gian lưu giữ — mọi công tắc đều thật sự hoạt động và lưu xuống đĩa ngay.</string>
     <string name="onboarding_honesty_header">Nói rõ ngay từ đầu</string>
     <string name="onboarding_honesty_body">Android hạn chế đọc bảng nhớ tạm ở nền, và ClipSync không giả vờ khác đi: nó tự động tải lên khi đang mở; đọc nền cần hoàn thành một tuyến bạn chọn ở trang Đường dẫn. Mọi khả năng đều được đánh giá bằng kiểm tra thực tế — nếu điều gì không làm được, nó sẽ nói thẳng.</string>
+    <string name="onboarding_privacy_doc_link">Đọc trước khi dùng: quyền riêng tư và rủi ro</string>
     <string name="onboarding_skip">Xem quanh trước, ghép nối sau</string>
     <string name="onboarding_next">Tiếp tục</string>
     <string name="onboarding_back">Quay lại</string>
@@ -451,6 +465,9 @@
     <string name="prefs_group_help">Trợ giúp</string>
     <string name="prefs_replay_onboarding">Xem lại hướng dẫn</string>
     <string name="prefs_replay_onboarding_desc">Đi lại toàn bộ hướng dẫn lần đầu từ trang chào mừng; không thay đổi cài đặt hay ghép nối nào.</string>
+    <string name="prefs_privacy_doc_title">Quyền riêng tư và rủi ro</string>
+    <string name="prefs_privacy_doc_desc">Mở tài liệu cần đọc trước khi dùng trong trình duyệt (GitHub).</string>
+    <string name="open_url_failed">Không có trình duyệt nào khả dụng.</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">Giới thiệu</string>

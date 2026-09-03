@@ -198,7 +198,7 @@
     <string name="network_cert_mismatch_detail">Sparowano z „%1$s”, ale druga strona przedstawiła inny certyfikat.</string>
     <string name="network_cert_mismatch_error">Certyfikat drugiej strony nie pasuje do przypiętego odcisku, więc połączenie zablokowano. Jeśli nie przeinstalowano aplikacji Windows, sprawdź sieć; ponowne sparowanie aktualizuje odcisk.</string>
     <string name="network_unreachable_detail">Sparowano z „%1$s”; obecnie nieosiągalne przez sondowanie.</string>
-    <string name="network_unreachable_fact">Upewnij się, że oba urządzenia są w tej samej sieci LAN / VPN i że aplikacja Windows działa.</string>
+    <string name="network_unreachable_fact">Upewnij się, że oba urządzenia są w tej samej sieci LAN / VPN, aplikacja Windows działa, a zapora PC przepuszcza połączenia przychodzące na TCP 47654.</string>
     <string name="network_not_connected_detail">Sparowano z „%1$s”; kanał synchronizacji nie jest jeszcze skonfigurowany.</string>
     <string name="network_waiting_detail">Sparowano z „%1$s”; oczekiwanie na połączenie.</string>
 
@@ -314,6 +314,19 @@
     <string name="pairing_confirm_match">Odciski się zgadzają — sparuj</string>
     <string name="pairing_fingerprint_header">Odcisk certyfikatu</string>
     <string name="pairing_address_header">Adres</string>
+    <string name="pairing_connecting_title">Łączenie z PC…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="one">Próba połączenia z %1$d adresem z kodu QR, z oczekiwaniem do 6 sekund.</item>
+        <item quantity="few">Kolejno próbowane są %1$d adresy z kodu QR, do 6 sekund na każdy.</item>
+        <item quantity="many">Kolejno próbowanych jest %1$d adresów z kodu QR, do 6 sekund na każdy.</item>
+        <item quantity="other">Kolejno próbowanych jest %1$d adresu z kodu QR, do 6 sekund na każdy.</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="one">Oczekiwanie trwa %1$d sekundę</item>
+        <item quantity="few">Oczekiwanie trwa %1$d sekundy</item>
+        <item quantity="many">Oczekiwanie trwa %1$d sekund</item>
+        <item quantity="other">Oczekiwanie trwa %1$d sekundy</item>
+    </plurals>
     <string name="pairing_waiting_title">Oczekiwanie na zatwierdzenie…</string>
     <string name="pairing_waiting_body">Zatwierdź ten telefon w oknie ClipSync na „%1$s”.</string>
     <string name="pairing_done_title">Sparowano</string>
@@ -322,12 +335,18 @@
     <string name="pairing_fail_invalid">To nie jest prawidłowy kod parowania ClipSync.</string>
     <string name="pairing_fail_own_device">Ten kod wskazuje na to właśnie urządzenie.</string>
     <string name="pairing_fail_cert_mismatch">PC przedstawił certyfikat inny niż obiecany przez kod QR; parowanie zablokowano. Sprawdź sieć i otwórz ponownie okno QR w Windows.</string>
-    <string name="pairing_fail_unreachable">Nie udało się połączyć z PC. Upewnij się, że oba urządzenia są w tej samej sieci.</string>
+    <string name="pairing_fail_unreachable">Nie udało się połączyć z PC. Upewnij się, że oba urządzenia są w tej samej sieci Wi-Fi.</string>
     <string name="pairing_fail_rejected">Żądanie odrzucono na PC.</string>
     <string name="pairing_fail_timeout">PC nie zatwierdził na czas. Wyświetl nowy kod QR i spróbuj ponownie.</string>
     <string name="pairing_fail_token_invalid">Ten kod został już użyty lub anulowany. Wyświetl nowy kod QR.</string>
     <string name="pairing_fail_token_expired">Ten kod wygasł. Skanuj zaraz po wyświetleniu nowego kodu QR.</string>
     <string name="pairing_fail_protocol">Odpowiedź PC wykracza poza protokół parowania. Zaktualizuj oba końce do zgodnych wersji.</string>
+    <string name="pairing_fail_rate_limited">PC tymczasowo odrzuca żądania parowania, bo przyszło ich za dużo. Odczekaj minutę, wyświetl nowy kod QR i spróbuj ponownie.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">Upłynął limit czasu połączenia, choć telefon i PC są w tej samej podsieci. Najczęstsza przyczyna: Zapora Windows na PC nie przepuszcza połączeń przychodzących na TCP %1$d albo router ma włączoną izolację AP. Jak to odblokować, opisują strona „Kanał” w aplikacji Windows i instrukcja instalacji.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">Bieżąca sieć telefonu nie jest w tej samej podsieci co adresy PC z kodu QR. Upewnij się, że oba urządzenia korzystają z tej samej sieci Wi-Fi, albo dodaj adres osiągalny z telefonu w polu „Dodatkowe adresy nasłuchu” w aplikacji Windows.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">Upłynął limit czasu połączenia. Jeśli oba urządzenia naprawdę są w tej samej sieci Wi-Fi, sprawdź, czy Zapora Windows na PC przepuszcza połączenia przychodzące na TCP %1$d.</string>
+    <string name="pairing_fail_unreachable_hint_refused">Na PC żaden program nie nasłuchuje na tym porcie. Upewnij się, że ClipSync działa na PC, a potem wyświetl kod QR ponownie.</string>
+    <string name="pairing_fail_unreachable_hint_no_route">Pod tym adresem nie znaleziono hosta. PC może być uśpiony, jego IP mogło się zmienić albo pierwszy adres w kodzie QR należy do wirtualnej karty sieciowej. Wyświetl kod QR ponownie i spróbuj jeszcze raz.</string>
     <string name="pairing_restart">Zacznij od nowa</string>
 
     <string name="prefs_title">Preferencje</string>
@@ -445,6 +464,7 @@
     <string name="onboarding_tab_prefs_desc">Wstrzymanie synchronizacji, tryb prywatny, przechowywanie — każdy przełącznik naprawdę działa i od razu ląduje na dysku.</string>
     <string name="onboarding_honesty_header">Żeby było jasne od początku</string>
     <string name="onboarding_honesty_body">Android ogranicza odczyt schowka w tle, a ClipSync nie udaje, że jest inaczej: na pierwszym planie wysyła automatycznie; odczyt w tle wymaga ukończenia jednej wybranej ścieżki na stronie Kanał. Każdą zdolność ocenia rzeczywisty test — jeśli czegoś nie da się zrobić, jest to powiedziane wprost.</string>
+    <string name="onboarding_privacy_doc_link">Przeczytaj przed użyciem: prywatność i ryzyka</string>
     <string name="onboarding_skip">Najpierw się rozejrzyj, sparuj później</string>
     <string name="onboarding_next">Dalej</string>
     <string name="onboarding_back">Wstecz</string>
@@ -472,6 +492,9 @@
     <string name="prefs_group_help">Pomoc</string>
     <string name="prefs_replay_onboarding">Obejrzyj samouczek ponownie</string>
     <string name="prefs_replay_onboarding_desc">Przejdź samouczek pierwszego uruchomienia od strony powitalnej; nie zmienia żadnych ustawień ani parowania.</string>
+    <string name="prefs_privacy_doc_title">Prywatność i ryzyka</string>
+    <string name="prefs_privacy_doc_desc">Otwiera w przeglądarce dokument, który warto przeczytać przed użyciem (GitHub).</string>
+    <string name="open_url_failed">Brak dostępnej przeglądarki.</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">Informacje</string>

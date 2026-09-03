@@ -78,6 +78,13 @@ class OnboardingContentTest {
         assertEquals(R.string.onboarding_honesty_body, OnboardingContent.HONESTY_BODY)
     }
 
+    @Test
+    fun `the read-before-use document is offered on the welcome step`() {
+        // 使用前必读 sits right under the honesty note; the note's own words stay untouched.
+        assertEquals(R.string.onboarding_privacy_doc_link, OnboardingContent.PRIVACY_DOC_LINK)
+        assertFalse(OnboardingContent.PRIVACY_DOC_LINK == OnboardingContent.HONESTY_BODY)
+    }
+
     // -- 2 · pairing ----------------------------------------------------------
 
     @Test

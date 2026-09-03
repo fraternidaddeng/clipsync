@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.clipsync.android.ui.rememberPrivacyDocOpener
 import com.clipsync.android.ui.theme.CharterMotion
 import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncIcons
@@ -321,6 +322,11 @@ private fun WelcomeStep() {
     QuietNote(
         header = stringResource(OnboardingContent.HONESTY_HEADER),
         body = stringResource(OnboardingContent.HONESTY_BODY),
+    )
+    Spacer(Modifier.height(8.dp))
+    ExternalLink(
+        label = stringResource(OnboardingContent.PRIVACY_DOC_LINK),
+        onClick = rememberPrivacyDocOpener(),
     )
 }
 
@@ -674,6 +680,31 @@ private fun DoneMark(
             color = c.flow,
         )
     }
+}
+
+/**
+ * A link that leaves the app for the system browser: flow text, no fill, and the arrow says
+ * where it goes. Nothing is fetched before the tap.
+ */
+@Composable
+private fun ExternalLink(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val c = clipSyncColors
+    Text(
+        text = "$label ↗",
+        style = ClipSyncType.caption,
+        fontWeight = FontWeight.SemiBold,
+        color = c.flow,
+        textAlign = TextAlign.Center,
+        modifier =
+            modifier
+                .clip(CharterShapes.control)
+                .clickable(onClick = onClick)
+                .padding(horizontal = 10.dp, vertical = 6.dp),
+    )
 }
 
 /** A stated fact on a quiet face — honesty is not a warning, so no ochre here. */

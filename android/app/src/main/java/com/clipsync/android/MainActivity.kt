@@ -68,6 +68,7 @@ import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingConfirmClient
 import com.clipsync.android.pairing.PairingStore
 import com.clipsync.android.pairing.PeerHealthClient
+import com.clipsync.android.platform.ConnectivityLocalNetwork
 import com.clipsync.android.platform.KeystoreSecretProtector
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.SyncSettingsChanges
@@ -101,6 +102,7 @@ import com.clipsync.android.ui.pairing.PairingViewModel
 import com.clipsync.android.ui.prefs.BondedBluetoothDevice
 import com.clipsync.android.ui.prefs.PreferencesScreen
 import com.clipsync.android.ui.prefs.PreferencesViewModel
+import com.clipsync.android.ui.rememberPrivacyDocOpener
 import com.clipsync.android.ui.theme.CharterMotion
 import com.clipsync.android.ui.theme.ClipSyncIcons
 import com.clipsync.android.ui.theme.ClipSyncTheme
@@ -138,6 +140,9 @@ class MainActivity : AppCompatActivity() {
             pairingStore,
             PairingConfirmClient(),
             localNameFallback = deviceLabel(),
+            // Only consulted after an unreachable pairing attempt, to say whether the phone
+            // and the QR addresses even share a network; never used to pick or probe hosts.
+            localNetwork = ConnectivityLocalNetwork(applicationContext),
         )
     }
 
@@ -875,6 +880,7 @@ private fun ClipSyncApp(
                             onClearHistory = preferencesViewModel::clearHistory,
                             onLanguageChange = preferencesViewModel::setLanguage,
                             onReplayOnboarding = { onboardingOpen = true },
+                            onOpenPrivacyDoc = rememberPrivacyDocOpener(),
                             onCheckUpdate = preferencesViewModel::checkForUpdates,
                             onDownloadUpdate = preferencesViewModel::downloadUpdate,
                             modifier = Modifier.padding(padding),

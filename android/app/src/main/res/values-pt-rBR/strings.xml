@@ -197,7 +197,7 @@
     <string name="network_cert_mismatch_detail">Pareado com “%1$s”, mas o outro lado apresentou um certificado diferente.</string>
     <string name="network_cert_mismatch_error">O certificado do outro lado não confere com a impressão digital fixada, então a conexão foi bloqueada. Se você não reinstalou o app do Windows, verifique sua rede; parear novamente atualiza a impressão digital.</string>
     <string name="network_unreachable_detail">Pareado com “%1$s”; atualmente inacessível pela sondagem.</string>
-    <string name="network_unreachable_fact">Confirme que os dois aparelhos estão na mesma LAN / VPN e que o app do Windows está em execução.</string>
+    <string name="network_unreachable_fact">Confirme que os dois aparelhos estão na mesma LAN / VPN, que o app do Windows está em execução e que o firewall do PC permite a entrada em TCP 47654.</string>
     <string name="network_not_connected_detail">Pareado com “%1$s”; o canal de sincronização ainda não foi configurado.</string>
     <string name="network_waiting_detail">Pareado com “%1$s”; aguardando uma conexão.</string>
 
@@ -312,6 +312,17 @@
     <string name="pairing_confirm_match">Impressões digitais conferem — parear</string>
     <string name="pairing_fingerprint_header">Impressão digital do certificado</string>
     <string name="pairing_address_header">Endereço</string>
+    <string name="pairing_connecting_title">Conectando ao PC…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="one">Tentando %1$d endereço do código QR, com espera de até 6 segundos.</item>
+        <item quantity="many">Tentando um a um %1$d de endereços do código QR, com espera de até 6 segundos para cada um.</item>
+        <item quantity="other">Tentando um a um %1$d endereços do código QR, com espera de até 6 segundos para cada um.</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="one">Aguardando há %1$d segundo</item>
+        <item quantity="many">Aguardando há %1$d de segundos</item>
+        <item quantity="other">Aguardando há %1$d segundos</item>
+    </plurals>
     <string name="pairing_waiting_title">Aguardando aprovação…</string>
     <string name="pairing_waiting_body">Aprove este telefone na janela do ClipSync em “%1$s”.</string>
     <string name="pairing_done_title">Pareado</string>
@@ -320,12 +331,18 @@
     <string name="pairing_fail_invalid">Este não é um código de pareamento válido do ClipSync.</string>
     <string name="pairing_fail_own_device">Este código identifica este próprio aparelho.</string>
     <string name="pairing_fail_cert_mismatch">O PC apresentou um certificado diferente do prometido pelo código QR; o pareamento foi bloqueado. Verifique a rede e reabra a janela do QR no Windows.</string>
-    <string name="pairing_fail_unreachable">Não foi possível alcançar o PC. Confirme que os dois aparelhos estão na mesma rede.</string>
+    <string name="pairing_fail_unreachable">Não foi possível alcançar o PC. Confirme que os dois aparelhos estão no mesmo Wi-Fi.</string>
     <string name="pairing_fail_rejected">A solicitação foi recusada no PC.</string>
     <string name="pairing_fail_timeout">O PC não aprovou a tempo. Mostre um código QR novo e tente de novo.</string>
     <string name="pairing_fail_token_invalid">Este código já foi usado ou cancelado. Mostre um código QR novo.</string>
     <string name="pairing_fail_token_expired">Este código expirou. Escaneie logo após mostrar um código QR novo.</string>
     <string name="pairing_fail_protocol">A resposta do PC está fora do protocolo de pareamento. Atualize os dois lados para versões compatíveis.</string>
+    <string name="pairing_fail_rate_limited">O PC está recusando temporariamente pedidos de pareamento porque chegaram muitos. Espere um minuto, mostre um código QR novo e tente de novo.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">A conexão expirou, embora o telefone e o PC estejam na mesma sub-rede. O mais comum é o Firewall do Windows no PC não permitir a entrada em TCP %1$d, ou o roteador estar com o isolamento de AP ativado. A página “Conduíte” do app do Windows e o guia de instalação mostram como liberar.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">A rede atual do telefone não está na mesma sub-rede dos endereços do PC no código QR. Confira se os dois aparelhos estão no mesmo Wi-Fi ou adicione um endereço que o telefone alcance em “Endereços de escuta adicionais” no app do Windows.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">A conexão expirou. Se os dois aparelhos estão de fato no mesmo Wi-Fi, verifique se o Firewall do Windows no PC permite a entrada em TCP %1$d.</string>
+    <string name="pairing_fail_unreachable_hint_refused">Nada no PC está escutando nessa porta. Confira se o ClipSync está em execução no PC e mostre o código QR de novo.</string>
+    <string name="pairing_fail_unreachable_hint_no_route">Nenhum host foi encontrado nesse endereço. O PC pode estar em suspensão, o IP pode ter mudado, ou o código QR pode listar primeiro o endereço de um adaptador virtual. Mostre o código QR de novo e tente novamente.</string>
     <string name="pairing_restart">Começar de novo</string>
 
     <string name="prefs_title">Preferências</string>
@@ -438,6 +455,7 @@
     <string name="onboarding_tab_prefs_desc">Pausar sincronização, modo privado, retenção — cada interruptor funciona de verdade e vai para o disco na hora.</string>
     <string name="onboarding_honesty_header">Para deixar claro desde o início</string>
     <string name="onboarding_honesty_body">O Android restringe a leitura da área de transferência em segundo plano, e o ClipSync não finge o contrário: envia automaticamente em primeiro plano; a leitura em segundo plano exige concluir uma rota de sua escolha na página Conduíte. Cada capacidade é julgada por teste real — se algo não dá, ele diz.</string>
+    <string name="onboarding_privacy_doc_link">Leia antes de usar: privacidade e riscos</string>
     <string name="onboarding_skip">Olhar primeiro, parear depois</string>
     <string name="onboarding_next">Continuar</string>
     <string name="onboarding_back">Voltar</string>
@@ -465,6 +483,9 @@
     <string name="prefs_group_help">Ajuda</string>
     <string name="prefs_replay_onboarding">Rever o tutorial</string>
     <string name="prefs_replay_onboarding_desc">Percorra novamente o tutorial de primeiro uso desde a página de boas-vindas; nenhum ajuste ou pareamento é alterado.</string>
+    <string name="prefs_privacy_doc_title">Privacidade e riscos</string>
+    <string name="prefs_privacy_doc_desc">Abre no navegador o documento para ler antes de usar (GitHub).</string>
+    <string name="open_url_failed">Nenhum navegador disponível.</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">Sobre</string>

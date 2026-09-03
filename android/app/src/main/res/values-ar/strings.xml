@@ -200,7 +200,7 @@
     <string name="network_cert_mismatch_detail">مقترن بـ«%1$s»، لكن الطرف الآخر قدّم شهادة مختلفة.</string>
     <string name="network_cert_mismatch_error">شهادة الطرف الآخر لا تطابق البصمة المثبَّتة، لذلك حُظر الاتصال. إن لم تكن أعدت تثبيت تطبيق Windows فافحص شبكتك؛ إعادة الاقتران تُحدّث البصمة.</string>
     <string name="network_unreachable_detail">مقترن بـ«%1$s»؛ يتعذّر الوصول إليه حاليًا بالفحص.</string>
-    <string name="network_unreachable_fact">تأكد أن الجهازين على الشبكة المحلية / VPN نفسها وأن تطبيق Windows يعمل.</string>
+    <string name="network_unreachable_fact">تأكد أن الجهازين على الشبكة المحلية / VPN نفسها، وأن تطبيق Windows يعمل، وأن جدار حماية الحاسوب يسمح بالاتصالات الواردة على TCP 47654.</string>
     <string name="network_not_connected_detail">مقترن بـ«%1$s»؛ قناة المزامنة لم تُهيَّأ بعد.</string>
     <string name="network_waiting_detail">مقترن بـ«%1$s»؛ بانتظار اتصال.</string>
 
@@ -318,6 +318,23 @@
     <string name="pairing_confirm_match">البصمتان متطابقتان — اقتران</string>
     <string name="pairing_fingerprint_header">بصمة الشهادة</string>
     <string name="pairing_address_header">العنوان</string>
+    <string name="pairing_connecting_title">جارٍ الاتصال بالحاسوب…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="zero">تجربة %1$d عناوين من رمز QR بالتتابع، بانتظار 6 ثوانٍ كحدّ أقصى لكل عنوان.</item>
+        <item quantity="one">تجربة %1$d عنوان من رمز QR، بانتظار 6 ثوانٍ كحدّ أقصى.</item>
+        <item quantity="two">تجربة %1$d عنوانَين من رمز QR بالتتابع، بانتظار 6 ثوانٍ كحدّ أقصى لكل عنوان.</item>
+        <item quantity="few">تجربة %1$d عناوين من رمز QR بالتتابع، بانتظار 6 ثوانٍ كحدّ أقصى لكل عنوان.</item>
+        <item quantity="many">تجربة %1$d عنوانًا من رمز QR بالتتابع، بانتظار 6 ثوانٍ كحدّ أقصى لكل عنوان.</item>
+        <item quantity="other">تجربة %1$d عنوان من رمز QR بالتتابع، بانتظار 6 ثوانٍ كحدّ أقصى لكل عنوان.</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="zero">مضت %1$d ثانية من الانتظار</item>
+        <item quantity="one">مضت %1$d ثانية من الانتظار</item>
+        <item quantity="two">مضت %1$d ثانيتان من الانتظار</item>
+        <item quantity="few">مضت %1$d ثوانٍ من الانتظار</item>
+        <item quantity="many">مضت %1$d ثانية من الانتظار</item>
+        <item quantity="other">مضت %1$d ثانية من الانتظار</item>
+    </plurals>
     <string name="pairing_waiting_title">بانتظار الموافقة…</string>
     <string name="pairing_waiting_body">وافق على هذا الهاتف في نافذة ClipSync على «%1$s».</string>
     <string name="pairing_done_title">تم الاقتران</string>
@@ -326,12 +343,18 @@
     <string name="pairing_fail_invalid">هذا ليس رمز اقتران ClipSync صالحًا.</string>
     <string name="pairing_fail_own_device">هذا الرمز يعرّف هذا الجهاز نفسه.</string>
     <string name="pairing_fail_cert_mismatch">قدّم الحاسوب شهادة مختلفة عمّا وعد به رمز QR؛ حُظر الاقتران. افحص الشبكة وأعد فتح نافذة QR على Windows.</string>
-    <string name="pairing_fail_unreachable">تعذّر الوصول إلى الحاسوب. تأكد أن الجهازين على الشبكة نفسها.</string>
+    <string name="pairing_fail_unreachable">تعذّر الوصول إلى الحاسوب. تأكد أن الجهازين متصلان بشبكة Wi-Fi نفسها.</string>
     <string name="pairing_fail_rejected">رُفض الطلب على الحاسوب.</string>
     <string name="pairing_fail_timeout">لم يوافق الحاسوب في الوقت المحدد. اعرض رمز QR جديدًا وأعد المحاولة.</string>
     <string name="pairing_fail_token_invalid">هذا الرمز استُخدم أو أُلغي بالفعل. اعرض رمز QR جديدًا.</string>
     <string name="pairing_fail_token_expired">انتهت صلاحية هذا الرمز. امسحه فور عرض رمز QR جديد.</string>
     <string name="pairing_fail_protocol">استجابة الحاسوب خارج بروتوكول الاقتران. حدّث الطرفين إلى نسختين متوافقتين.</string>
+    <string name="pairing_fail_rate_limited">يرفض الحاسوب طلبات الاقتران مؤقتًا لأن عددها كان كبيرًا جدًا. انتظر دقيقة، ثم اعرض رمز QR جديدًا وأعد المحاولة.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">انتهت مهلة الاتصال رغم أن الهاتف والحاسوب في الشبكة الفرعية نفسها. السبب الأكثر شيوعًا أن جدار حماية Windows على الحاسوب لا يسمح بالاتصالات الواردة على TCP %1$d، أو أن عزل نقطة الوصول مفعّل في الراوتر. طريقة السماح موضّحة في صفحة «القناة» في تطبيق Windows وفي دليل التثبيت.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">شبكة الهاتف الحالية ليست في الشبكة الفرعية نفسها لعناوين الحاسوب في رمز QR. تأكد أن الجهازين متصلان بشبكة Wi-Fi واحدة، أو أضف عنوانًا يصل إليه الهاتف في «عناوين استماع إضافية» في تطبيق Windows.</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">انتهت مهلة الاتصال. إن كان الجهازان فعلًا على شبكة Wi-Fi واحدة، فتحقّق من أن جدار حماية Windows على الحاسوب يسمح بالاتصالات الواردة على TCP %1$d.</string>
+    <string name="pairing_fail_unreachable_hint_refused">لا يوجد برنامج على الحاسوب يستمع على هذا المنفذ. تأكد أن ClipSync يعمل على الحاسوب، ثم اعرض رمز QR من جديد.</string>
+    <string name="pairing_fail_unreachable_hint_no_route">لم يُعثر على مضيف بهذا العنوان. قد يكون الحاسوب في وضع السكون، أو تغيّر عنوان IP الخاص به، أو أن أول عنوان في رمز QR يعود إلى محوّل شبكة افتراضي. اعرض رمز QR من جديد وأعد المحاولة.</string>
     <string name="pairing_restart">البدء من جديد</string>
 
     <string name="prefs_title">التفضيلات</string>
@@ -459,6 +482,7 @@
     <string name="onboarding_tab_prefs_desc">إيقاف المزامنة مؤقتًا، الوضع الخاص، مدة الاحتفاظ — كل مفتاح يعمل فعلًا ويُحفظ على القرص فورًا.</string>
     <string name="onboarding_honesty_header">لنكن صريحين منذ البداية</string>
     <string name="onboarding_honesty_body">يقيّد Android قراءة الحافظة في الخلفية، وClipSync لا يدّعي غير ذلك: يرفع تلقائيًا أثناء وجوده في المقدمة؛ وتتطلب القراءة في الخلفية إكمال مسار من اختيارك في صفحة القناة. تُقيَّم كل قدرة باختبار فعلي — وإن تعذّر شيء فسيقول ذلك.</string>
+    <string name="onboarding_privacy_doc_link">اقرأ قبل الاستخدام: الخصوصية والمخاطر</string>
     <string name="onboarding_skip">تفقّد أولًا، واقترن لاحقًا</string>
     <string name="onboarding_next">متابعة</string>
     <string name="onboarding_back">السابق</string>
@@ -486,6 +510,9 @@
     <string name="prefs_group_help">مساعدة</string>
     <string name="prefs_replay_onboarding">إعادة عرض الدليل التمهيدي</string>
     <string name="prefs_replay_onboarding_desc">أعد المرور على دليل التشغيل الأول من صفحة الترحيب؛ لا يغيّر أي إعدادات أو اقتران.</string>
+    <string name="prefs_privacy_doc_title">الخصوصية والمخاطر</string>
+    <string name="prefs_privacy_doc_desc">يفتح في المتصفح المستند الذي يُستحسن قراءته قبل الاستخدام (GitHub).</string>
+    <string name="open_url_failed">لا يوجد متصفح متاح.</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">حول</string>

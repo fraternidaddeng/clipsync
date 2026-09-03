@@ -196,7 +196,7 @@
     <string name="network_cert_mismatch_detail">“%1$s” से जुड़ा है, पर दूसरे छोर ने अलग प्रमाणपत्र दिखाया।</string>
     <string name="network_cert_mismatch_error">दूसरे छोर का प्रमाणपत्र पिन किए फ़िंगरप्रिंट से मेल नहीं खाता, इसलिए कनेक्शन रोका गया। यदि आपने Windows ऐप फिर से इंस्टॉल नहीं किया, तो नेटवर्क जाँचें; दोबारा जोड़ने से फ़िंगरप्रिंट अपडेट होगा।</string>
     <string name="network_unreachable_detail">“%1$s” से जुड़ा है; फ़िलहाल जाँच से पहुँच नहीं हो पा रही।</string>
-    <string name="network_unreachable_fact">पक्का करें कि दोनों डिवाइस एक ही LAN / VPN पर हैं और Windows ऐप चल रहा है।</string>
+    <string name="network_unreachable_fact">पक्का करें कि दोनों डिवाइस एक ही LAN / VPN पर हैं, Windows ऐप चल रहा है, और PC का फ़ायरवॉल TCP 47654 पर आने वाले कनेक्शन की अनुमति देता है।</string>
     <string name="network_not_connected_detail">“%1$s” से जुड़ा है; सिंक चैनल अभी सेट नहीं हुआ।</string>
     <string name="network_waiting_detail">“%1$s” से जुड़ा है; कनेक्शन की प्रतीक्षा।</string>
 
@@ -310,6 +310,15 @@
     <string name="pairing_confirm_match">फ़िंगरप्रिंट मेल खाते हैं — जोड़ें</string>
     <string name="pairing_fingerprint_header">प्रमाणपत्र फ़िंगरप्रिंट</string>
     <string name="pairing_address_header">पता</string>
+    <string name="pairing_connecting_title">PC से कनेक्ट हो रहा है…</string>
+    <plurals name="pairing_connecting_body">
+        <item quantity="one">QR कोड का %1$d पता आज़माया जा रहा है, अधिकतम 6 सेकंड प्रतीक्षा।</item>
+        <item quantity="other">QR कोड के %1$d पते एक-एक कर आज़माए जा रहे हैं, हर एक के लिए अधिकतम 6 सेकंड प्रतीक्षा।</item>
+    </plurals>
+    <plurals name="pairing_elapsed_format">
+        <item quantity="one">%1$d सेकंड से प्रतीक्षा</item>
+        <item quantity="other">%1$d सेकंड से प्रतीक्षा</item>
+    </plurals>
     <string name="pairing_waiting_title">मंज़ूरी की प्रतीक्षा…</string>
     <string name="pairing_waiting_body">“%1$s” पर ClipSync विंडो में इस फ़ोन को मंज़ूरी दें।</string>
     <string name="pairing_done_title">जुड़ गया</string>
@@ -318,12 +327,18 @@
     <string name="pairing_fail_invalid">यह मान्य ClipSync पेयरिंग कोड नहीं है।</string>
     <string name="pairing_fail_own_device">यह कोड इसी डिवाइस की पहचान करता है।</string>
     <string name="pairing_fail_cert_mismatch">PC ने QR कोड के वादे से अलग प्रमाणपत्र दिखाया; पेयरिंग रोक दी गई। नेटवर्क जाँचें और Windows पर QR विंडो फिर खोलें।</string>
-    <string name="pairing_fail_unreachable">PC तक पहुँच नहीं हो सकी। पक्का करें कि दोनों डिवाइस एक ही नेटवर्क पर हैं।</string>
+    <string name="pairing_fail_unreachable">PC तक पहुँच नहीं हो सकी। पक्का करें कि दोनों डिवाइस एक ही Wi-Fi पर हैं।</string>
     <string name="pairing_fail_rejected">PC पर अनुरोध अस्वीकार हुआ।</string>
     <string name="pairing_fail_timeout">PC ने समय पर मंज़ूरी नहीं दी। नया QR कोड दिखाकर फिर कोशिश करें।</string>
     <string name="pairing_fail_token_invalid">यह कोड पहले ही उपयोग या रद्द हो चुका है। नया QR कोड दिखाएँ।</string>
     <string name="pairing_fail_token_expired">इस कोड की मियाद ख़त्म हो गई। नया QR कोड दिखते ही तुरंत स्कैन करें।</string>
     <string name="pairing_fail_protocol">PC का जवाब पेयरिंग प्रोटोकॉल से बाहर है। दोनों छोर मेल खाते संस्करणों पर अपडेट करें।</string>
+    <string name="pairing_fail_rate_limited">बहुत ज़्यादा पेयरिंग अनुरोध आने से PC फ़िलहाल अनुरोध अस्वीकार कर रहा है। एक मिनट रुकें, नया QR कोड दिखाएँ और फिर कोशिश करें।</string>
+    <string name="pairing_fail_unreachable_hint_timeout_same_subnet">कनेक्शन का समय समाप्त हो गया, जबकि फ़ोन और PC एक ही सबनेट पर हैं। सबसे आम कारण: PC का Windows फ़ायरवॉल TCP %1$d पर आने वाले कनेक्शन की अनुमति नहीं दे रहा, या राउटर में AP आइसोलेशन चालू है। अनुमति देने का तरीका Windows ऐप के “मार्ग” पेज या इंस्टॉल गाइड में देखें।</string>
+    <string name="pairing_fail_unreachable_hint_timeout_other_subnet">फ़ोन का वर्तमान नेटवर्क QR कोड में दिए PC पतों के सबनेट पर नहीं है। पक्का करें कि दोनों डिवाइस एक ही Wi-Fi से जुड़े हैं, या Windows ऐप में “अतिरिक्त श्रवण पते” में ऐसा पता जोड़ें जहाँ फ़ोन पहुँच सके।</string>
+    <string name="pairing_fail_unreachable_hint_timeout_unknown">कनेक्शन का समय समाप्त हो गया। यदि दोनों डिवाइस सच में एक ही Wi-Fi पर हैं, तो जाँचें कि PC का Windows फ़ायरवॉल TCP %1$d पर आने वाले कनेक्शन की अनुमति देता है।</string>
+    <string name="pairing_fail_unreachable_hint_refused">PC पर कोई प्रोग्राम उस पोर्ट पर सुन नहीं रहा। पक्का करें कि PC पर ClipSync चल रहा है, फिर QR कोड दोबारा दिखाएँ।</string>
+    <string name="pairing_fail_unreachable_hint_no_route">उस पते पर कोई होस्ट नहीं मिला। हो सकता है PC स्लीप में हो, उसका IP बदल गया हो, या QR कोड में पहला पता किसी वर्चुअल अडैप्टर का हो। QR कोड दोबारा दिखाकर फिर कोशिश करें।</string>
     <string name="pairing_restart">फिर से शुरू करें</string>
 
     <string name="prefs_title">प्राथमिकताएँ</string>
@@ -431,6 +446,7 @@
     <string name="onboarding_tab_prefs_desc">सिंक रोकना, निजी मोड, रखने की अवधि — हर स्विच वाक़ई काम करता है और तुरंत डिस्क पर सहेजा जाता है।</string>
     <string name="onboarding_honesty_header">पहले ही साफ़ कर दें</string>
     <string name="onboarding_honesty_body">Android पृष्ठभूमि में क्लिपबोर्ड पढ़ने पर रोक लगाता है, और ClipSync इसका दिखावा नहीं करता: अग्रभूमि में यह अपने आप अपलोड करता है; पृष्ठभूमि पठन के लिए मार्ग पृष्ठ पर अपनी पसंद का एक मार्ग पूरा करना होता है। हर क्षमता असली जाँच से आँकी जाती है — जो नहीं हो सकता, वह साफ़ कहा जाता है।</string>
+    <string name="onboarding_privacy_doc_link">उपयोग से पहले पढ़ें: गोपनीयता और जोखिम</string>
     <string name="onboarding_skip">पहले देख लें, बाद में जोड़ें</string>
     <string name="onboarding_next">जारी रखें</string>
     <string name="onboarding_back">पिछला</string>
@@ -458,6 +474,9 @@
     <string name="prefs_group_help">सहायता</string>
     <string name="prefs_replay_onboarding">परिचय फिर से देखें</string>
     <string name="prefs_replay_onboarding_desc">स्वागत पेज से पहली बार वाला ट्यूटोरियल दोबारा देखें; कोई सेटिंग या जोड़ी नहीं बदलती।</string>
+    <string name="prefs_privacy_doc_title">गोपनीयता और जोखिम</string>
+    <string name="prefs_privacy_doc_desc">उपयोग से पहले पढ़ने वाला दस्तावेज़ ब्राउज़र में खोलता है (GitHub)।</string>
+    <string name="open_url_failed">कोई ब्राउज़र उपलब्ध नहीं है।</string>
 
     <!-- 偏好 · 关于 / 内置更新 -->
     <string name="prefs_group_about">परिचय</string>
