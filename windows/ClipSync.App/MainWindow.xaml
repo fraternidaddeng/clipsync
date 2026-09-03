@@ -431,6 +431,47 @@
             <Setter Property="Margin" Value="0,2,0,16" />
         </Style>
 
+        <!-- 开关旁的事实行：陈述系统此刻真正处于什么状态（不是开关自身的开/关外观）。
+             与快捷键行既有的注册结果行同一语汇——t4 灰 = 事实，通行色 = 内容正在流动，
+             赭 + 半粗 = 设置已开但系统未按它执行（需要你操作）。空文本 = 缺省即隐藏。 -->
+        <Style x:Key="FactLine" TargetType="ContentControl">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Margin" Value="0,5,0,0" />
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock FontSize="10.5"
+                                   Text="{Binding Text}"
+                                   TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource CsText4Brush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Tone}" Value="Flow">
+                                            <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Tone}" Value="Attention">
+                                            <Setter Property="Foreground" Value="{DynamicResource CsActBrush}" />
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Content" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Trigger>
+                <DataTrigger Binding="{Binding Content.IsEmpty, RelativeSource={RelativeSource Self}}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <!-- 偏好行：名 + 说明 -->
         <Style x:Key="RowName" TargetType="TextBlock">
             <Setter Property="FontSize" Value="13" />
@@ -1618,13 +1659,17 @@
                                                         FontSize="10"
                                                         Style="{StaticResource GhostQuietButton}" />
                                             </Grid>
-                                            <!-- 蓝牙备援一行：正在承载会话时用通行色，其余状态保持 detail 灰 -->
+                                            <!-- 蓝牙备援一行：正在承载会话时用通行色，开了却起不来（适配器不可用）用赭，
+                                                 其余状态保持 detail 灰 -->
                                             <TextBlock Margin="0,4,0,0" Text="{Binding BluetoothStatus}">
                                                 <TextBlock.Style>
                                                     <Style BasedOn="{StaticResource SegDetail}" TargetType="TextBlock">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding BluetoothSessionActive}" Value="True">
                                                                 <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding BluetoothToggleStatus.Tone}" Value="Attention">
+                                                                <Setter Property="Foreground" Value="{DynamicResource CsActBrush}" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -2017,6 +2062,8 @@
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Conduit_Bluetooth_Title}" />
                                             <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Conduit_Bluetooth_Desc}" />
+                                            <!-- 开关开了不等于监听起来了：适配器不可用时这里变赭，承载会话时用通行色 -->
+                                            <ContentControl Content="{Binding BluetoothToggleStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -2037,10 +2084,9 @@
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Conduit_ExtraBind_Title}" />
                                             <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Conduit_ExtraBind_Desc}" />
-                                            <!-- 「重启后生效」用赭色说明，不用弹窗 -->
-                                            <TextBlock Margin="0,5,0,0" FontSize="10.5" Foreground="{DynamicResource CsText4Brush}">
-                                                <Run FontWeight="SemiBold" Foreground="{DynamicResource CsActBrush}" Text="{x:Static loc:Strings.Conduit_ExtraBind_RestartNote}" /><Run Text="{x:Static loc:Strings.Conduit_ExtraBind_CommaNote}" />
-                                            </TextBlock>
+                                            <!-- 「重启后生效」随实际状态变化：与本次启动所用地址一致时是灰色说明，
+                                                 保存了尚未生效的改动时才变赭（需要你重启） -->
+                                            <ContentControl Content="{Binding ExtraBindStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <TextBox Grid.Column="1"
                                                  Width="220"
@@ -2560,9 +2606,10 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Language_Title}" />
-                                            <TextBlock Style="{StaticResource RowDesc}"><Run Text="{x:Static loc:Strings.Prefs_Language_Desc}" /><Run FontWeight="SemiBold"
-     Foreground="{DynamicResource CsActBrush}"
-     Text="{x:Static loc:Strings.Prefs_Language_RestartNote}" /></TextBlock>
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Language_Desc}" />
+                                            <!-- 「重启后生效」随实际状态变化：与本次启动所用语言一致时是灰色说明，
+                                                 改选并保存后才变赭（需要你重启） -->
+                                            <ContentControl Content="{Binding LanguageStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <ComboBox Grid.Column="1"
                                                   MinWidth="176"
@@ -2591,6 +2638,7 @@
                                     <StackPanel Margin="0,0,16,0">
                                         <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Common_PauseCapture}" />
                                         <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Capture_Pause_Desc}" />
+                                        <ContentControl Content="{Binding PauseStatus}" Style="{StaticResource FactLine}" />
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"
@@ -2610,6 +2658,7 @@
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Common_PrivateMode}" />
                                             <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Capture_Private_Desc}" />
+                                            <ContentControl Content="{Binding PrivateModeStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -2636,6 +2685,8 @@
                                                  TextWrapping="Wrap"
                                                  VerticalContentAlignment="Top"
                                                  VerticalScrollBarVisibility="Auto" />
+                                        <!-- 失焦才保存：编辑中与已生效两态说清楚，生效后报出屏蔽了几个进程名 -->
+                                        <ContentControl Content="{Binding BlockedProcessesStatus}" Style="{StaticResource FactLine}" />
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
@@ -2653,6 +2704,8 @@
                                     <StackPanel Margin="0,0,16,0">
                                         <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApply_Title}" />
                                         <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApply_Desc}" />
+                                        <!-- 开着≠在写：暂停/私密期间的闸门用赭说明；否则报本次运行最近一次写入的实际结果 -->
+                                        <ContentControl Content="{Binding AutoApplyStatus}" Style="{StaticResource FactLine}" />
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"
@@ -2672,6 +2725,7 @@
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Sync_ImageSync_Title}" />
                                             <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Sync_ImageSync_Desc}" />
+                                            <ContentControl Content="{Binding ImageSyncStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -2692,6 +2746,7 @@
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApplyImages_Title}" />
                                             <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Sync_AutoApplyImages_Desc}" />
+                                            <ContentControl Content="{Binding AutoApplyImagesStatus}" Style="{StaticResource FactLine}" />
                                         </StackPanel>
                                         <ToggleButton Grid.Column="1"
                                                       VerticalAlignment="Top"
@@ -2823,6 +2878,8 @@
                                     <StackPanel Margin="0,0,16,0">
                                         <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Startup_Launch_Title}" />
                                         <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Startup_Launch_Desc}" />
+                                        <!-- 开关只是意图；这里读回注册表说事实：已登记 / 写入失败 / 被任务管理器停用 -->
+                                        <ContentControl Content="{Binding StartupStatus}" Style="{StaticResource FactLine}" />
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
                                                   VerticalAlignment="Top"

@@ -1,5 +1,6 @@
 using ClipSync.App.Firewall;
 using ClipSync.App.Localization;
+using ClipSync.App.Startup;
 using ClipSync.App.Update;
 using ClipSync.Core.Clipboard;
 using ClipSync.Core.Clipboard.PrivilegedHost;
@@ -49,7 +50,8 @@ public partial class MainViewModel(
     WindowsAppUpdater? appUpdater = null,
     IFirewallInspector? firewallInspector = null,
     IFirewallRuleElevator? firewallElevator = null,
-    Func<FirewallRulePromptRequest, FirewallRuleCommand?>? firewallRulePrompt = null) : ObservableObject
+    Func<FirewallRulePromptRequest, FirewallRuleCommand?>? firewallRulePrompt = null,
+    Func<StartupRegistrationState>? startupRegistrationProbe = null) : ObservableObject
 {
     private bool initialized;
 
@@ -515,13 +517,17 @@ public partial class MainViewModel(
         : remoteApplyEvidence;
 
     /// <summary>Records whether a real remote text apply reached the system clipboard.</summary>
-    public void RecordRemoteApplyOutcome(bool ok) =>
+    public void RecordRemoteApplyOutcome(bool ok)
+    {
         remoteApplyEvidence = ok ? ClipboardApplyStates.Applied : ClipboardApplyStates.Failed;
+        RefreshAutoApplyStatuses();
+    }
 
     /// <summary>
-    /// Surfaces a capture rejection the user must hear about. Only the oversize case speaks:
-    /// paused/private/duplicate/suppressed rejections are expected behaviour, but a silently
-    /// dropped 1 MiB+ copy would break the 明确提示 promise (manual-qa-checklist §3).
+    /// Surfaces a capture rejection. Only the oversize case gets the banner: paused/private/
+    /// duplicate/suppressed rejections are expected behaviour, but a silently dropped 1 MiB+
+    /// copy would break the 明确提示 promise (manual-qa-checklist §3). Paused/private
+    /// rejections are counted for the "本次已跳过 N 条" fact under those switches.
     /// </summary>
     public void NoteCaptureRejected(CaptureRejectionReason reason)
     {
@@ -529,6 +535,8 @@ public partial class MainViewModel(
         {
             CaptureNotice = Strings.Capture_OversizeNotice;
         }
+
+        NoteSuppressedCapture(reason);
     }
 
     /// <summary>An accepted capture supersedes the local-only fact; the strip retires.</summary>
@@ -1188,7 +1196,11 @@ public partial class MainViewModel(
     /// </summary>
     public event Action? ImageSyncEnabledChanged;
 
-    partial void OnImageSyncEnabledChanged(bool value) => ImageSyncEnabledChanged?.Invoke();
+    partial void OnImageSyncEnabledChanged(bool value)
+    {
+        RefreshImageSyncStatus();
+        ImageSyncEnabledChanged?.Invoke();
+    }
 
     /// <summary>Raised when the user asks to see the full body of the selected clip.</summary>
     public event Action? DetailRequested;
@@ -1246,6 +1258,12 @@ public partial class MainViewModel(
             : PrivilegedAdbAvailable
                 ? Strings.Conduit_Privileged_TapDetect
                 : Strings.Conduit_Privileged_AdbMissing;
+        // The listener and the UI culture start from the values just loaded: from here on,
+        // a saved change to either is "重启后生效" until the process restarts.
+        CaptureActiveRestartBoundValues();
+        RefreshStartupStatus();
+        RefreshImageSyncStatus();
+        RefreshCaptureGateStatuses();
         ApplySettings();
         await store.CleanupAsync(
             new ClipboardRetentionPolicy(
@@ -1286,6 +1304,7 @@ public partial class MainViewModel(
     public void UpdateBluetoothStatus(bool enabled, bool listening, string? connectedDeviceName, string? failureReason)
     {
         BluetoothSessionActive = enabled && connectedDeviceName is not null;
+        bluetoothUnavailable = enabled && failureReason is not null;
         BluetoothStatus = !enabled
             ? Strings.Bt_Disabled
             : failureReason is not null
@@ -1295,6 +1314,7 @@ public partial class MainViewModel(
                     : listening
                         ? Strings.Bt_Armed
                         : Strings.Bt_Starting;
+        RefreshBluetoothToggleStatus();
     }
 
     /// <summary>Re-reads the outbox depth and last peer ack for the conduit local-service segment.</summary>
@@ -1654,6 +1674,8 @@ public partial class MainViewModel(
         await store.SetSettingAsync("extra_bind_addresses", ExtraBindAddresses);
         await store.SetSettingAsync("bluetooth_fallback", BluetoothFallbackEnabled.ToString());
         ApplySettings();
+        // The app layer wrote the Run entry on the property change that preceded this save.
+        RefreshStartupStatus();
         await store.CleanupAsync(
             new ClipboardRetentionPolicy(
                 maximumEntries: RetentionMaxEntries,
@@ -1948,13 +1970,14 @@ public partial class MainViewModel(
 
     private void ApplySettings()
     {
-        var blocked = BlockedProcesses
-            .Split([',', ';', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var blocked = SettingStatusMapper.SplitProcessNames(BlockedProcesses);
         capturePolicy.UpdateSettings(new CaptureSettings(
             IsPaused,
             IsPrivateMode,
             blocked,
             TimeSpan.FromDays(RetentionDays),
             ImageSyncEnabled));
+        appliedBlockedProcesses = blocked;
+        RefreshBlockedProcessesStatus();
     }
 }

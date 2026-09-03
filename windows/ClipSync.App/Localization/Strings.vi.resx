@@ -1121,4 +1121,64 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>Không áp dụng được bản cập nhật.</value>
   </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Đã đăng ký · khởi động cùng Windows ở lần đăng nhập tới</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Đã đăng ký · nhưng bị tắt trong Trình quản lý tác vụ › Ứng dụng khởi động, nên sẽ không khởi động khi đăng nhập</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>Không ghi được mục khởi động · sẽ không tự khởi động ở lần đăng nhập tới</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>Mục khởi động vẫn còn · việc gỡ chưa có hiệu lực, lần đăng nhập tới vẫn sẽ khởi động</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>Không đọc được trạng thái mục khởi động</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Đã lưu · có hiệu lực sau khi khởi động lại</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>Đã tạm dừng · đã bỏ qua {0} mục trong lần này</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Chế độ riêng tư · đã bỏ qua {0} mục trong lần này</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>Đang bật · khi tạm dừng không ghi vào bảng nhớ tạm, nội dung nhận được chỉ nằm trong lịch sử</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>Đang bật · trong chế độ riêng tư không ghi vào bảng nhớ tạm, nội dung nhận được chỉ nằm trong lịch sử</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>Đang bật · lần chạy này chưa nhận được văn bản từ điện thoại</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>Đang bật · văn bản nhận gần nhất đã được ghi vào bảng nhớ tạm của PC này</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>Đang bật · lần ghi bảng nhớ tạm gần nhất không thành công, nội dung vẫn ở trong lịch sử</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Đang tắt · PC này chỉ gửi nhận văn bản, hình ảnh ở lại trên thiết bị của nó</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>Đang bật · đang chờ điện thoại kết nối; chỉ truyền hình ảnh khi phía điện thoại cũng bật</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>Đang bật · {0} thiết bị đã kết nối; chỉ truyền hình ảnh khi phía điện thoại cũng bật</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>Đã hiệu lực · sao chép từ {0} tên tiến trình sẽ không được ghi lại</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>Đã hiệu lực · không chặn tiến trình nào, mọi lần sao chép đều được ghi lại</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>Đang chỉnh sửa · có hiệu lực khi rời khỏi ô nhập</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>Tường lửa chưa cho phép TCP 47654 · điện thoại có thể không kết nối được; hãy cho phép ở trang Đường dẫn</value>
+  </data>
 </root>

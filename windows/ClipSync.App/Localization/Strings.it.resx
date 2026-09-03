@@ -1121,4 +1121,64 @@ Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuot
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>Impossibile applicare l’aggiornamento.</value>
   </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Registrato · si avvia con Windows al prossimo accesso</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Registrato · ma disattivato in Gestione attività › App di avvio, quindi non si avvierà all’accesso</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>Impossibile scrivere la voce di avvio · non si avvierà automaticamente al prossimo accesso</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>La voce di avvio è ancora presente · la rimozione non ha avuto effetto, si avvierà ancora al prossimo accesso</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>Impossibile leggere lo stato della voce di avvio</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Salvato · si applica dopo il riavvio</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>In pausa · {0} elementi saltati finora</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Modalità privata · {0} elementi saltati finora</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>Attivo · in pausa non viene scritto nulla negli appunti; ciò che arriva resta solo nella cronologia</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>Attivo · in modalità privata non viene scritto nulla negli appunti; ciò che arriva resta solo nella cronologia</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>Attivo · in questa esecuzione non è ancora arrivato testo dal telefono</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>Attivo · l’ultimo testo ricevuto è stato scritto negli appunti di questo PC</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>Attivo · l’ultima scrittura negli appunti non è riuscita; il contenuto è nella cronologia</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Disattivato · questo PC invia e riceve solo testo; le immagini restano sul proprio dispositivo</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>Attivo · in attesa che il telefono si connetta; le immagini passano solo se è attivo anche sul telefono</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>Attivo · {0} dispositivo/i connesso/i; le immagini passano solo se è attivo anche sul telefono</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>In vigore · le copie da {0} nome/i di processo non vengono registrate</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>In vigore · nessun processo bloccato; ogni copia viene registrata</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>In modifica · si applica quando esci dal campo</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>Il firewall non consente TCP 47654 · il telefono potrebbe non connettersi; consentilo nella pagina Condotto</value>
+  </data>
 </root>

@@ -1121,4 +1121,64 @@
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>更新を適用できませんでした。</value>
   </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>登録済み · 次回サインイン時に Windows と一緒に起動します</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>登録済み · ただしタスクマネージャーの「スタートアップアプリ」で無効化されているため、サインイン時に起動しません</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>スタートアップ項目を書き込めませんでした · 次回サインイン時に自動起動しません</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>スタートアップ項目が残っています · 削除が反映されず、次回サインイン時にも起動します</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>スタートアップ項目の状態を読み取れません</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>保存済み · 再起動後に有効</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>一時停止中 · これまでに {0} 件をスキップしました</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>プライベートモード · これまでに {0} 件をスキップしました</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>オン · 一時停止中はクリップボードに書き込まず、受信内容は履歴にのみ残ります</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>オン · プライベートモード中はクリップボードに書き込まず、受信内容は履歴にのみ残ります</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>オン · 今回の起動中、スマートフォンからのテキストはまだ届いていません</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>オン · 直近に受信したテキストはこの PC のクリップボードに書き込まれました</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>オン · 直近のクリップボード書き込みは成功しませんでした。内容は履歴にあります</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>オフ · この PC はテキストのみ送受信し、画像は各デバイスに留まります</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>オン · スマートフォンの接続を待っています。スマートフォン側もオンのときだけ画像を送受信します</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>オン · {0} 台が接続中。スマートフォン側もオンのときだけ画像を送受信します</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>有効 · {0} 件のプロセス名からのコピーは記録しません</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>有効 · ブロック中のプロセスはなく、すべてのコピーを記録します</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>編集中 · 入力欄から離れると有効になります</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>ファイアウォールが TCP 47654 を許可していません · スマートフォンが接続できない可能性があります。「経路」ページで許可してください</value>
+  </data>
 </root>

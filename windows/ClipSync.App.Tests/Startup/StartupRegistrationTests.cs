@@ -24,6 +24,16 @@ public sealed class StartupRegistrationTests
         Assert.False(StartupRegistration.IsMinimizedLaunch(["minimized"]));
     }
 
+    [Theory]
+    [InlineData(null, false)]
+    [InlineData(new byte[0], false)]
+    [InlineData(new byte[] { 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, false)]
+    [InlineData(new byte[] { 0x06, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, false)]
+    [InlineData(new byte[] { 0x03, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, true)]
+    [InlineData(new byte[] { 0x07, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, true)]
+    public void TaskManagerDisableFlagIsTheLowBitOfTheFirstByte(byte[]? flags, bool disabled) =>
+        Assert.Equal(disabled, StartupRegistration.IsDisabledByStartupApproval(flags));
+
     [Fact]
     public void RunEntryRoundTripsThroughThePerUserRegistry()
     {
@@ -32,9 +42,12 @@ public sealed class StartupRegistrationTests
         try
         {
             Assert.False(StartupRegistration.IsEnabled(valueName));
+            Assert.Equal(StartupRegistrationState.NotRegistered, StartupRegistration.Probe(valueName));
 
             StartupRegistration.SetEnabled(true, "C:\\Test\\ClipSync.App.exe", valueName);
             Assert.True(StartupRegistration.IsEnabled(valueName));
+            // Task Manager has never touched a fresh test entry, so Windows will honour it.
+            Assert.Equal(StartupRegistrationState.Registered, StartupRegistration.Probe(valueName));
 
             // Re-asserting is idempotent and refreshes the stored path.
             StartupRegistration.SetEnabled(true, "C:\\Moved\\ClipSync.App.exe", valueName);

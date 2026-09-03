@@ -1121,4 +1121,64 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>De update kon niet worden toegepast.</value>
   </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Geregistreerd · start met Windows bij de volgende aanmelding</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Geregistreerd · maar uitgeschakeld onder Taakbeheer › Opstart-apps, dus start niet bij aanmelden</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>Opstartvermelding kon niet worden geschreven · start niet automatisch bij de volgende aanmelding</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>Opstartvermelding is er nog · verwijderen had geen effect, start bij de volgende aanmelding alsnog</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>Status van de opstartvermelding kon niet worden gelezen</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Opgeslagen · geldt na herstart</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>Gepauzeerd · tot nu toe {0} items overgeslagen</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Privémodus · tot nu toe {0} items overgeslagen</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>Aan · tijdens de pauze wordt niets naar het klembord geschreven; ontvangen inhoud blijft alleen in de geschiedenis</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>Aan · in de privémodus wordt niets naar het klembord geschreven; ontvangen inhoud blijft alleen in de geschiedenis</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>Aan · tijdens deze sessie is nog geen tekst van de telefoon binnengekomen</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>Aan · de laatst ontvangen tekst is naar het klembord van deze pc geschreven</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>Aan · de laatste klembordschrijfactie is mislukt; de inhoud staat in de geschiedenis</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Uit · deze pc verzendt en ontvangt alleen tekst; afbeeldingen blijven op hun eigen apparaat</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>Aan · wacht tot de telefoon verbindt; afbeeldingen gaan alleen over als het op de telefoon ook aanstaat</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>Aan · {0} apparaat/apparaten verbonden; afbeeldingen gaan alleen over als het op de telefoon ook aanstaat</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>Van kracht · kopieën uit {0} procesna(a)m(en) worden niet vastgelegd</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>Van kracht · geen proces geblokkeerd; elke kopie wordt vastgelegd</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>Bewerken · geldt zodra u het vak verlaat</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>Firewall staat TCP 47654 niet toe · de telefoon kan mogelijk niet verbinden; sta het toe op de pagina Kanaal</value>
+  </data>
 </root>

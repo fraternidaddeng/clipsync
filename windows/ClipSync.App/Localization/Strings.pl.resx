@@ -1121,4 +1121,64 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>Nie udało się zastosować aktualizacji.</value>
   </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Zarejestrowano · uruchomi się z Windows przy następnym logowaniu</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Zarejestrowano · ale wyłączono w Menedżerze zadań › Aplikacje autostartu, więc nie uruchomi się przy logowaniu</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>Nie udało się zapisać wpisu autostartu · nie uruchomi się automatycznie przy następnym logowaniu</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>Wpis autostartu nadal istnieje · usunięcie nie zadziałało, przy następnym logowaniu i tak się uruchomi</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>Nie udało się odczytać stanu wpisu autostartu</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Zapisano · działa po ponownym uruchomieniu</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>Wstrzymano · pominięto dotąd {0} wpisów</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Tryb prywatny · pominięto dotąd {0} wpisów</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>Włączone · podczas wstrzymania nic nie trafia do schowka; odebrana treść zostaje tylko w historii</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>Włączone · w trybie prywatnym nic nie trafia do schowka; odebrana treść zostaje tylko w historii</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>Włączone · w tej sesji nie nadszedł jeszcze żaden tekst z telefonu</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>Włączone · ostatnio odebrany tekst zapisano w schowku tego komputera</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>Włączone · ostatni zapis do schowka się nie powiódł; treść jest w historii</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Wyłączone · ten komputer wysyła i odbiera tylko tekst; obrazy zostają na swoim urządzeniu</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>Włączone · oczekiwanie na połączenie telefonu; obrazy przechodzą tylko, gdy po stronie telefonu też jest włączone</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>Włączone · połączone urządzenia: {0}; obrazy przechodzą tylko, gdy po stronie telefonu też jest włączone</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>Obowiązuje · kopie z {0} nazw procesów nie są zapisywane</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>Obowiązuje · żaden proces nie jest blokowany; każda kopia jest zapisywana</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>Edycja · zadziała po opuszczeniu pola</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>Zapora nie przepuszcza TCP 47654 · telefon może się nie połączyć; zezwól na stronie Kanał</value>
+  </data>
 </root>

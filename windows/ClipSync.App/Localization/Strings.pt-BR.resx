@@ -1121,4 +1121,64 @@ Todas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A 
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>Não foi possível aplicar a atualização.</value>
   </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Registrado · inicia com o Windows no próximo login</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Registrado · mas desativado em Gerenciador de Tarefas › Aplicativos de inicialização, então não inicia no login</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>Não foi possível gravar a entrada de inicialização · não iniciará automaticamente no próximo login</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>A entrada de inicialização ainda existe · a remoção não teve efeito, ainda iniciará no próximo login</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>Não foi possível ler o estado da entrada de inicialização</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Salvo · vale após reiniciar</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>Pausado · {0} itens ignorados até agora</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Modo privado · {0} itens ignorados até agora</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>Ativado · em pausa nada é gravado na área de transferência; o que chega fica só no histórico</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>Ativado · no modo privado nada é gravado na área de transferência; o que chega fica só no histórico</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>Ativado · nesta execução ainda não chegou texto do telefone</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>Ativado · o último texto recebido foi gravado na área de transferência deste PC</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>Ativado · a última gravação na área de transferência não deu certo; o conteúdo está no histórico</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Desativado · este PC só envia e recebe texto; imagens ficam no próprio dispositivo</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>Ativado · aguardando o telefone conectar; imagens só passam se o telefone também estiver ativado</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>Ativado · {0} dispositivo(s) conectado(s); imagens só passam se o telefone também estiver ativado</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>Em vigor · cópias de {0} nome(s) de processo não são registradas</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>Em vigor · nenhum processo bloqueado; toda cópia é registrada</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>Editando · vale ao sair do campo</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>O firewall não permite TCP 47654 · o telefone pode não conectar; permita na página Conduíte</value>
+  </data>
 </root>

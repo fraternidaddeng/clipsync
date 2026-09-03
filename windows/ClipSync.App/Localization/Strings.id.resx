@@ -1121,4 +1121,64 @@ Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>Tidak dapat menerapkan pembaruan.</value>
   </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Terdaftar · mulai bersama Windows saat masuk berikutnya</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Terdaftar · tetapi dinonaktifkan di Pengelola Tugas › Aplikasi startup, jadi tidak akan mulai saat masuk</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>Entri startup tidak dapat ditulis · tidak akan mulai otomatis saat masuk berikutnya</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>Entri startup masih ada · penghapusan tidak berlaku, tetap akan mulai saat masuk berikutnya</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>Status entri startup tidak dapat dibaca</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Tersimpan · berlaku setelah mulai ulang</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>Dijeda · {0} item dilewati sejauh ini</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Mode privat · {0} item dilewati sejauh ini</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>Aktif · saat dijeda tidak ada yang ditulis ke papan klip; konten yang diterima hanya tinggal di riwayat</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>Aktif · dalam mode privat tidak ada yang ditulis ke papan klip; konten yang diterima hanya tinggal di riwayat</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>Aktif · belum ada teks dari ponsel yang masuk pada sesi ini</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>Aktif · teks terbaru yang diterima telah ditulis ke papan klip PC ini</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>Aktif · penulisan papan klip terakhir tidak berhasil; kontennya ada di riwayat</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Nonaktif · PC ini hanya mengirim dan menerima teks; gambar tetap di perangkat masing-masing</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>Aktif · menunggu ponsel terhubung; gambar hanya berpindah jika sisi ponsel juga aktif</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>Aktif · {0} perangkat terhubung; gambar hanya berpindah jika sisi ponsel juga aktif</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>Berlaku · salinan dari {0} nama proses tidak direkam</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>Berlaku · tidak ada proses yang diblokir; setiap salinan direkam</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>Sedang diedit · berlaku saat Anda meninggalkan kotak</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>Firewall belum mengizinkan TCP 47654 · ponsel mungkin tidak terhubung; izinkan di halaman Saluran</value>
+  </data>
 </root>

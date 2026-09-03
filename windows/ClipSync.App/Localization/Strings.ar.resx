@@ -1121,4 +1121,64 @@
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>تعذّر تطبيق التحديث.</value>
   </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>مسجَّل · يبدأ مع Windows عند تسجيل الدخول التالي</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>مسجَّل · لكنه معطَّل في مدير المهام › تطبيقات بدء التشغيل، لذا لن يبدأ عند تسجيل الدخول</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>تعذّر كتابة عنصر بدء التشغيل · لن يبدأ تلقائيًا عند تسجيل الدخول التالي</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>عنصر بدء التشغيل ما زال موجودًا · لم تنجح الإزالة، وسيبدأ مجددًا عند تسجيل الدخول التالي</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>تعذّر قراءة حالة عنصر بدء التشغيل</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>تم الحفظ · يسري بعد إعادة التشغيل</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>متوقف مؤقتًا · تم تخطي {0} من العناصر حتى الآن</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>الوضع الخاص · تم تخطي {0} من العناصر حتى الآن</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>مفعّل · أثناء الإيقاف المؤقت لا يُكتب شيء في الحافظة، ويبقى ما يصل في السجل فقط</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>مفعّل · في الوضع الخاص لا يُكتب شيء في الحافظة، ويبقى ما يصل في السجل فقط</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>مفعّل · لم يصل أي نص من الهاتف بعد في هذه الجلسة</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>مفعّل · آخر نص مستلَم كُتب في حافظة هذا الكمبيوتر</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>مفعّل · لم تنجح آخر كتابة في الحافظة، والمحتوى موجود في السجل</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>معطّل · هذا الكمبيوتر يرسل ويستلم النص فقط، وتبقى الصور على جهازها</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>مفعّل · بانتظار اتصال الهاتف؛ تنتقل الصور فقط حين يكون مفعّلًا على الهاتف أيضًا</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>مفعّل · {0} من الأجهزة متصل؛ تنتقل الصور فقط حين يكون مفعّلًا على الهاتف أيضًا</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>ساري · لا يُسجَّل النسخ من {0} من أسماء العمليات</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>ساري · لا توجد عمليات محجوبة، ويُسجَّل كل نسخ</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>قيد التحرير · يسري عند مغادرة الحقل</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>جدار الحماية لا يسمح بـ TCP 47654 · قد لا يتصل الهاتف؛ اسمح به من صفحة «القناة»</value>
+  </data>
 </root>

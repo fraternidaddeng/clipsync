@@ -1121,4 +1121,64 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>Güncelleme uygulanamadı.</value>
   </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Kayıtlı · bir sonraki oturum açmada Windows ile başlar</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Kayıtlı · ancak Görev Yöneticisi › Başlangıç uygulamaları altında devre dışı, bu yüzden oturum açmada başlamaz</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>Başlangıç kaydı yazılamadı · bir sonraki oturum açmada otomatik başlamaz</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>Başlangıç kaydı hâlâ duruyor · kaldırma etkili olmadı, bir sonraki oturum açmada yine başlar</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>Başlangıç kaydının durumu okunamadı</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Kaydedildi · yeniden başlatınca geçerli olur</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>Duraklatıldı · şimdiye kadar {0} öğe atlandı</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Özel mod · şimdiye kadar {0} öğe atlandı</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>Açık · duraklatılmışken panoya hiçbir şey yazılmaz; gelen içerik yalnızca geçmişte kalır</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>Açık · özel modda panoya hiçbir şey yazılmaz; gelen içerik yalnızca geçmişte kalır</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>Açık · bu çalıştırmada telefondan henüz metin gelmedi</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>Açık · en son alınan metin bu PC’nin panosuna yazıldı</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>Açık · en son pano yazımı başarılı olmadı; içerik geçmişte duruyor</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Kapalı · bu PC yalnızca metin alıp gönderir; görseller kendi cihazında kalır</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>Açık · telefonun bağlanması bekleniyor; görseller yalnızca telefon tarafı da açıksa aktarılır</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>Açık · {0} cihaz bağlı; görseller yalnızca telefon tarafı da açıksa aktarılır</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>Etkin · {0} işlem adından yapılan kopyalar kaydedilmez</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>Etkin · hiçbir işlem engellenmiyor; her kopya kaydedilir</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>Düzenleniyor · kutudan çıkınca geçerli olur</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>Güvenlik duvarı TCP 47654’e izin vermiyor · telefon bağlanamayabilir; Kanal sayfasından izin verin</value>
+  </data>
 </root>

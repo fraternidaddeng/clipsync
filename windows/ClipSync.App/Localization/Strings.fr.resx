@@ -1121,4 +1121,64 @@ Toutes les entrées de ce PC (images comprises) seront supprimées en une fois. 
   <data name="Prefs_Update_Error_Apply" xml:space="preserve">
     <value>Impossible d’appliquer la mise à jour.</value>
   </data>
+  <data name="Status_Startup_Registered" xml:space="preserve">
+    <value>Enregistré · démarre avec Windows à la prochaine connexion</value>
+  </data>
+  <data name="Status_Startup_DisabledByTaskManager" xml:space="preserve">
+    <value>Enregistré · mais désactivé dans Gestionnaire des tâches › Applications de démarrage, il ne démarrera donc pas à la connexion</value>
+  </data>
+  <data name="Status_Startup_WriteFailed" xml:space="preserve">
+    <value>L’entrée de démarrage n’a pas pu être écrite · ne démarrera pas automatiquement à la prochaine connexion</value>
+  </data>
+  <data name="Status_Startup_RemoveFailed" xml:space="preserve">
+    <value>L’entrée de démarrage est toujours présente · la suppression n’a pas pris effet, il démarrera encore à la prochaine connexion</value>
+  </data>
+  <data name="Status_Startup_Unreadable" xml:space="preserve">
+    <value>Impossible de lire l’état de l’entrée de démarrage</value>
+  </data>
+  <data name="Status_RestartPending" xml:space="preserve">
+    <value>Enregistré · prend effet après redémarrage</value>
+  </data>
+  <data name="Status_Paused_SkippedFormat" xml:space="preserve">
+    <value>En pause · {0} éléments ignorés jusqu’ici</value>
+  </data>
+  <data name="Status_Private_SkippedFormat" xml:space="preserve">
+    <value>Mode privé · {0} éléments ignorés jusqu’ici</value>
+  </data>
+  <data name="Status_AutoApply_PausedGate" xml:space="preserve">
+    <value>Activé · en pause, rien n’est écrit dans le presse-papiers ; le contenu reçu reste seulement dans l’historique</value>
+  </data>
+  <data name="Status_AutoApply_PrivateGate" xml:space="preserve">
+    <value>Activé · en mode privé, rien n’est écrit dans le presse-papiers ; le contenu reçu reste seulement dans l’historique</value>
+  </data>
+  <data name="Status_AutoApply_Unverified" xml:space="preserve">
+    <value>Activé · aucun texte du téléphone n’est encore arrivé pendant cette exécution</value>
+  </data>
+  <data name="Status_AutoApply_Applied" xml:space="preserve">
+    <value>Activé · le dernier texte reçu a été écrit dans le presse-papiers de ce PC</value>
+  </data>
+  <data name="Status_AutoApply_Failed" xml:space="preserve">
+    <value>Activé · la dernière écriture dans le presse-papiers a échoué ; le contenu est dans l’historique</value>
+  </data>
+  <data name="Status_ImageSync_Off" xml:space="preserve">
+    <value>Désactivé · ce PC n’envoie et ne reçoit que du texte ; les images restent sur leur appareil</value>
+  </data>
+  <data name="Status_ImageSync_OnWaiting" xml:space="preserve">
+    <value>Activé · en attente de la connexion du téléphone ; les images ne circulent que si le téléphone l’a aussi activé</value>
+  </data>
+  <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
+    <value>Activé · {0} appareil(s) connecté(s) ; les images ne circulent que si le téléphone l’a aussi activé</value>
+  </data>
+  <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
+    <value>En vigueur · les copies provenant de {0} nom(s) de processus ne sont pas enregistrées</value>
+  </data>
+  <data name="Status_BlockedProcesses_None" xml:space="preserve">
+    <value>En vigueur · aucun processus bloqué ; chaque copie est enregistrée</value>
+  </data>
+  <data name="Status_BlockedProcesses_Editing" xml:space="preserve">
+    <value>En cours de saisie · s’applique quand vous quittez le champ</value>
+  </data>
+  <data name="Flyout_Detail_FirewallMissing" xml:space="preserve">
+    <value>Le pare-feu n’autorise pas TCP 47654 · le téléphone risque de ne pas se connecter ; autorisez-le sur la page Conduit</value>
+  </data>
 </root>
