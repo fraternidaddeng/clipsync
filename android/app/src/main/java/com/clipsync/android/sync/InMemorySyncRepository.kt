@@ -1,5 +1,6 @@
 package com.clipsync.android.sync
 
+import com.clipsync.android.media.toLowerHex
 import com.clipsync.android.storage.TerminalReasons
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -264,5 +265,5 @@ class InMemorySyncRepository(
 
     private fun sha256Hex(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256")
         .digest(bytes)
-        .joinToString(separator = "") { byte -> "%02x".format(byte) }
+        .toLowerHex()
 }

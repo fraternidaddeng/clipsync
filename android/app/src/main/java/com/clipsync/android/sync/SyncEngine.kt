@@ -1156,15 +1156,13 @@ class SyncEngine(
 
     /** Bounded request-id replay detector per protocol section 2. */
     private class ReplayWindow(private val capacity: Int) {
-        private val hashes = HashMap<String, String>()
+        private val hashes = HashMap<String, ByteArray>()
         private val order = ArrayDeque<String>()
 
         fun classify(requestId: String, rawFrame: String): ReplayVerdict {
-            val hash = MessageDigest.getInstance("SHA-256")
-                .digest(rawFrame.toByteArray(StandardCharsets.UTF_8))
-                .joinToString(separator = "") { byte -> "%02x".format(byte) }
+            val hash = MessageDigest.getInstance("SHA-256").digest(rawFrame.toByteArray(StandardCharsets.UTF_8))
             hashes[requestId]?.let { existing ->
-                return if (existing == hash) ReplayVerdict.IDENTICAL_RETRY else ReplayVerdict.CONFLICT
+                return if (existing.contentEquals(hash)) ReplayVerdict.IDENTICAL_RETRY else ReplayVerdict.CONFLICT
             }
             hashes[requestId] = hash
             order.addLast(requestId)

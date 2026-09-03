@@ -59,23 +59,28 @@ class MediaBlobStore(rootDirectory: File) {
         expectedMime: String? = null,
     ): ValidatedImage {
         pending.stream.flush()
-        val hash = pending.hasher.digest().joinToString("") { "%02x".format(it) }
+        val hash = pending.hasher.digest().toLowerHex()
         pending.close()
         try {
             if (expectedHash != null && expectedHash != hash) {
                 throw MediaStoreException(MEDIA_HASH_MISMATCH, MEDIA_HASH_MISMATCH)
             }
-            val (inspect, image) = ImageCodec.tryInspectFile(
-                pending.tempPath,
-                hash,
-                pending.bytesWritten,
-            )
-            if (inspect != ImageCodecError.OK || image == null) {
+            // The hash was accumulated over exactly the bytes written, so only the header
+            // check remains; re-reading the file to hash it again proved nothing new.
+            val (inspect, header) = ImageCodec.tryInspectFileHeader(pending.tempPath, pending.bytesWritten)
+            if (inspect != ImageCodecError.OK || header == null) {
                 throw MediaStoreException(mapInspect(inspect), mapInspect(inspect))
             }
-            if (expectedMime != null && expectedMime != image.mimeType) {
+            if (expectedMime != null && expectedMime != header.mimeType) {
                 throw MediaStoreException(UNSUPPORTED_MEDIA, UNSUPPORTED_MEDIA)
             }
+            val image = ValidatedImage(
+                mimeType = header.mimeType,
+                contentHash = hash,
+                encodedBytes = header.encodedBytes.toInt(),
+                pixelWidth = header.pixelWidth,
+                pixelHeight = header.pixelHeight,
+            )
             val destination = blobPath(image.contentHash)
             destination.parentFile?.mkdirs()
             if (destination.exists()) {

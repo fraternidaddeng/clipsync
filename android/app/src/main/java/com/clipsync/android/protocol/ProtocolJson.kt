@@ -1,5 +1,6 @@
 package com.clipsync.android.protocol
 
+import com.clipsync.android.media.toLowerHex
 import java.security.MessageDigest
 import java.util.Base64
 import java.util.UUID
@@ -158,10 +159,31 @@ object ProtocolJson {
         val chunkBytes = body.long("chunk_bytes")
         requireProtocol(chunkBytes in 1..MAX_CHUNK_BYTES)
         val data = body.string("data")
-        requireProtocol(BASE64URL_PATTERN.matches(data))
-        val decoded = runCatching { Base64.getUrlDecoder().decode(data) }
-            .getOrElse { throw SerializationException("Chunk data is not valid base64url.", it) }
-        requireProtocol(decoded.size.toLong() == chunkBytes)
+        // Alphabet and length are checked arithmetically: the regex over a 350K-char chunk
+        // and a throwaway 256 KiB decode were 70% of the frame's parse time. The bytes are
+        // decoded exactly once, by the engine, after the frame is accepted.
+        requireProtocol(isBase64UrlAlphabet(data))
+        val decodedLength = base64UrlDecodedLength(data)
+            ?: throw SerializationException("Chunk data is not valid base64url.")
+        requireProtocol(decodedLength.toLong() == chunkBytes)
+    }
+
+    /** Same acceptance as `^[A-Za-z0-9_-]+$`, without the regex engine. */
+    fun isBase64UrlAlphabet(value: String): Boolean =
+        value.isNotEmpty() && value.all { it in 'A'..'Z' || it in 'a'..'z' || it in '0'..'9' || it == '-' || it == '_' }
+
+    /**
+     * Byte count `java.util.Base64.getUrlDecoder()` would produce for an alphabet-only,
+     * unpadded string, or null when the decoder would reject it (a length of 1 mod 4 leaves
+     * a dangling sextet). The decoder does not check trailing bits, so neither does this.
+     */
+    fun base64UrlDecodedLength(value: String): Int? {
+        val remainder = value.length % BASE64_QUANTUM_CHARS
+        if (remainder == 1) {
+            return null
+        }
+        val wholeQuanta = value.length / BASE64_QUANTUM_CHARS * BASE64_QUANTUM_BYTES
+        return wholeQuanta + if (remainder == 0) 0 else remainder - 1
     }
 
     private fun validateSyncState(body: kotlinx.serialization.json.JsonObject) {
@@ -401,7 +423,7 @@ object ProtocolJson {
 
     private fun sha256(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256")
         .digest(bytes)
-        .joinToString(separator = "") { byte -> "%02x".format(byte) }
+        .toLowerHex()
 
     const val PROTOCOL_V1 = 1
     const val PROTOCOL_V2 = 2
@@ -413,6 +435,8 @@ object ProtocolJson {
     private const val MAX_PIXELS = 33_554_432L
     private const val MAX_CHUNK_BYTES = 262_144L
     private const val MAX_CHUNK_COUNT = 64L
+    private const val BASE64_QUANTUM_CHARS = 4
+    private const val BASE64_QUANTUM_BYTES = 3
     private const val MAX_CAPABILITIES = 16
     private const val MAX_SOURCE_APP_LENGTH = 256
     private const val MAX_RETRY_AFTER_MS = 300_000L
@@ -422,7 +446,6 @@ object ProtocolJson {
         "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
     )
     private val CONTENT_HASH_PATTERN = Regex("^[0-9a-f]{64}$")
-    private val BASE64URL_PATTERN = Regex("^[A-Za-z0-9_-]+$")
     private val BASE64URL_256_PATTERN = Regex("^[A-Za-z0-9_-]{43}$")
     private val CLIENT_VERSION_PATTERN = Regex("^[0-9A-Za-z][0-9A-Za-z._+-]{0,63}$")
     private val ERROR_CODES = setOf(
