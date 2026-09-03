@@ -35,6 +35,41 @@ public sealed class WebSocketSyncTransportTests
     }
 
     [Fact]
+    public async Task SingleReceiveTextFrameIsDecodedDirectly()
+    {
+        var socket = ScriptedWebSocket.TextFragments("{\"type\":\"ping\",\"字\":1}");
+        await using var transport = new WebSocketSyncTransport(socket, maxTextMessageBytes: 64);
+
+        var frame = Assert.IsType<TransportFrame.Text>(await transport.ReceiveAsync(CancellationToken.None));
+        Assert.Equal("{\"type\":\"ping\",\"字\":1}", frame.Payload);
+    }
+
+    [Fact]
+    public async Task ManyFragmentsAssembleInOrder()
+    {
+        var socket = ScriptedWebSocket.TextFragments("ab", "cd", "ef", "gh", "字");
+        await using var transport = new WebSocketSyncTransport(socket, maxTextMessageBytes: 64);
+
+        var frame = Assert.IsType<TransportFrame.Text>(await transport.ReceiveAsync(CancellationToken.None));
+        Assert.Equal("abcdefgh字", frame.Payload);
+    }
+
+    [Fact]
+    public async Task SendWritesExactlyTheUtf8Payload()
+    {
+        var socket = new ScriptedWebSocket();
+        await using var transport = new WebSocketSyncTransport(socket, maxTextMessageBytes: 64);
+        var payload = "{\"data\":\"" + new string('x', 5_000) + "字\"}";
+
+        await transport.SendTextAsync(payload, CancellationToken.None);
+
+        var sent = Assert.Single(socket.Sent);
+        Assert.Equal(WebSocketMessageType.Text, sent.Type);
+        Assert.True(sent.EndOfMessage);
+        Assert.Equal(Encoding.UTF8.GetBytes(payload), sent.Bytes);
+    }
+
+    [Fact]
     public async Task CloseFrameIsClosed()
     {
         var socket = ScriptedWebSocket.Close();
@@ -61,6 +96,8 @@ public sealed class WebSocketSyncTransportTests
         private readonly Queue<WebSocketReceiveResult> results = new();
         private readonly Queue<byte[]> payloads = new();
         private WebSocketState state = WebSocketState.Open;
+
+        public List<(byte[] Bytes, WebSocketMessageType Type, bool EndOfMessage)> Sent { get; } = [];
 
         public static ScriptedWebSocket TextFragments(params string[] fragments)
         {
@@ -143,6 +180,10 @@ public sealed class WebSocketSyncTransportTests
             ArraySegment<byte> buffer,
             WebSocketMessageType messageType,
             bool endOfMessage,
-            CancellationToken cancellationToken) => Task.CompletedTask;
+            CancellationToken cancellationToken)
+        {
+            Sent.Add((buffer.ToArray(), messageType, endOfMessage));
+            return Task.CompletedTask;
+        }
     }
 }

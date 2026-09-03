@@ -72,64 +72,91 @@ object ImageCodec {
         expectedHash: String? = null,
         expectedBytes: Long? = null,
     ): Pair<ImageCodecError, ValidatedImage?> {
-        if (!path.isFile) {
-            return ImageCodecError.DECODE_FAILED to null
+        val (headerError, header) = tryInspectFileHeader(path, expectedBytes)
+        if (headerError != ImageCodecError.OK || header == null) {
+            return headerError to null
         }
-        val length = path.length()
-        if (length < 24) {
-            return ImageCodecError.DECODE_FAILED to null
-        }
-        if (length > MediaLimits.MAX_ENCODED_BYTES) {
-            return ImageCodecError.TOO_LARGE to null
-        }
-        if (expectedBytes != null && length != expectedBytes) {
+        val hash = hashFile(path)
+        if (expectedHash != null && expectedHash != hash) {
             return ImageCodecError.HASH_MISMATCH to null
         }
-        val headerSize = minOf(length, 64L * 1024).toInt()
-        val header = ByteArray(headerSize)
+        return ImageCodecError.OK to header.toValidatedImage(hash)
+    }
+
+    /** What the container header alone proves about a file: MIME, size, dimensions — no hash, body never read. */
+    data class ImageHeader(
+        val mimeType: String,
+        val encodedBytes: Long,
+        val pixelWidth: Int,
+        val pixelHeight: Int,
+    ) {
+        /** Pairs the header with a digest the caller obtained over exactly the file's bytes. */
+        fun toValidatedImage(contentHash: String): ValidatedImage =
+            ValidatedImage(
+                mimeType = mimeType,
+                contentHash = contentHash,
+                encodedBytes = encodedBytes.toInt(),
+                pixelWidth = pixelWidth,
+                pixelHeight = pixelHeight,
+            )
+    }
+
+    /**
+     * Header-only file inspect: size gates, magic, dimensions and the pixel budget without
+     * hashing or loading the body. A streamed commit already holds the content hash and
+     * uses this instead of re-reading the file it just wrote.
+     */
+    fun tryInspectFileHeader(
+        path: File,
+        expectedBytes: Long? = null,
+    ): Pair<ImageCodecError, ImageHeader?> {
+        val length = if (path.isFile) path.length() else -1L
+        val sizeGate =
+            when {
+                length < MIN_ENCODED_BYTES -> ImageCodecError.DECODE_FAILED
+                length > MediaLimits.MAX_ENCODED_BYTES -> ImageCodecError.TOO_LARGE
+                expectedBytes != null && length != expectedBytes -> ImageCodecError.HASH_MISMATCH
+                else -> ImageCodecError.OK
+            }
+        if (sizeGate != ImageCodecError.OK) {
+            return sizeGate to null
+        }
+        val dims = readDimensionsBounded(path, length)
+        return when {
+            dims == null -> ImageCodecError.UNSUPPORTED_MEDIA to null
+            !MediaLimits.fitsPixelBudget(dims.width, dims.height) -> ImageCodecError.TOO_LARGE to null
+            else -> ImageCodecError.OK to ImageHeader(dims.mime, length, dims.width, dims.height)
+        }
+    }
+
+    /** First 64 KiB, then (JPEG SOF may sit past huge tables) up to 1 MiB; never the whole file. */
+    private fun readDimensionsBounded(
+        path: File,
+        length: Long,
+    ): ImageDimensions? {
+        val fromPrefix = tryReadDimensions(readPrefix(path, minOf(length, HEADER_PREFIX_BYTES).toInt()))
+        if (fromPrefix != null || length <= HEADER_PREFIX_BYTES) {
+            return fromPrefix
+        }
+        return tryReadDimensions(readPrefix(path, minOf(length, BOUNDED_JPEG_SCAN_BYTES).toInt()))
+    }
+
+    private fun readPrefix(
+        path: File,
+        size: Int,
+    ): ByteArray {
+        val buffer = ByteArray(size)
         path.inputStream().use { stream ->
             var offset = 0
-            while (offset < header.size) {
-                val read = stream.read(header, offset, header.size - offset)
+            while (offset < buffer.size) {
+                val read = stream.read(buffer, offset, buffer.size - offset)
                 if (read <= 0) {
                     break
                 }
                 offset += read
             }
         }
-        var dims = tryReadDimensions(header)
-        if (dims == null && length > header.size) {
-            val bounded = minOf(length, 1024L * 1024).toInt()
-            val buffer = ByteArray(bounded)
-            path.inputStream().use { stream ->
-                var offset = 0
-                while (offset < buffer.size) {
-                    val read = stream.read(buffer, offset, buffer.size - offset)
-                    if (read <= 0) {
-                        break
-                    }
-                    offset += read
-                }
-            }
-            dims = tryReadDimensions(buffer)
-        }
-        if (dims == null) {
-            return ImageCodecError.UNSUPPORTED_MEDIA to null
-        }
-        if (!MediaLimits.fitsPixelBudget(dims.width, dims.height)) {
-            return ImageCodecError.TOO_LARGE to null
-        }
-        val hash = hashFile(path)
-        if (expectedHash != null && expectedHash != hash) {
-            return ImageCodecError.HASH_MISMATCH to null
-        }
-        return ImageCodecError.OK to ValidatedImage(
-            mimeType = dims.mime,
-            contentHash = hash,
-            encodedBytes = length.toInt(),
-            pixelWidth = dims.width,
-            pixelHeight = dims.height,
-        )
+        return buffer
     }
 
     fun tryReadDimensions(encoded: ByteArray): ImageDimensions? {
@@ -144,7 +171,11 @@ object ImageCodec {
         return null
     }
 
-    data class ImageDimensions(val mime: String, val width: Int, val height: Int)
+    data class ImageDimensions(
+        val mime: String,
+        val width: Int,
+        val height: Int,
+    )
 
     private fun tryReadPngSize(encoded: ByteArray): Pair<Int, Int>? {
         if (encoded.size < 24) {
@@ -203,8 +234,7 @@ object ImageCodec {
         return null
     }
 
-    private fun sha256(bytes: ByteArray): String =
-        MessageDigest.getInstance("SHA-256").digest(bytes).toHexLower()
+    private fun sha256(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256").digest(bytes).toHexLower()
 
     private fun ByteArray.startsWith(prefix: ByteArray): Boolean {
         if (size < prefix.size) {
@@ -225,13 +255,14 @@ object ImageCodec {
             (this[offset + 3].toInt() and 0xFF)
 
     private fun ByteArray.readUInt16Be(offset: Int): Int =
-        ((this[offset].toInt() and 0xFF) shl 8) or (this[offset + 1].toInt() and 0xFF)
+        ((this[offset].toInt() and 0xFF) shl 8) or
+            (this[offset + 1].toInt() and 0xFF)
 
-    private fun ByteArray.toHexLower(): String =
-        joinToString(separator = "") { byte -> "%02x".format(byte) }
+    private fun ByteArray.toHexLower(): String = toLowerHex()
 
-    private val SOF_MARKERS = setOf(
-        0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7,
-        0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF,
-    )
+    private const val MIN_ENCODED_BYTES = 24L
+    private const val HEADER_PREFIX_BYTES = 64L * 1024
+    private const val BOUNDED_JPEG_SCAN_BYTES = 1024L * 1024
+
+    private val SOF_MARKERS = setOf(0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF)
 }

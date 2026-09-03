@@ -28,12 +28,48 @@ object ProtocolStrictJson {
     const val MAX_TEXT_MESSAGE_BYTES = 7 * 1_048_576
 
     fun scan(source: String, maxBytes: Int = MAX_TEXT_MESSAGE_BYTES) {
-        val size = source.toByteArray(Charsets.UTF_8).size
-        if (size > maxBytes) {
+        if (utf8ByteCountExceeds(source, maxBytes)) {
             throw ProtocolParseException(ProtocolErrorCodes.MALFORMED_JSON, "document exceeds size limit")
         }
         StrictScanner(source, maxBytes).scanDocument()
     }
+
+    /**
+     * `source.toByteArray(UTF_8).size > maxBytes` without materializing the encoding (a 350K-char
+     * image chunk frame used to allocate a second copy of itself here). An unpaired surrogate
+     * counts as one byte, exactly like the encoder's replacement `?`.
+     */
+    internal fun utf8ByteCountExceeds(
+        text: String,
+        maxBytes: Int,
+    ): Boolean {
+        var bytes = 0L
+        var index = 0
+        while (index < text.length && bytes <= maxBytes) {
+            val character = text[index]
+            bytes +=
+                when {
+                    character.code < UTF8_ONE_BYTE_LIMIT -> 1
+                    character.code < UTF8_TWO_BYTE_LIMIT -> 2
+                    character.isHighSurrogate() && index + 1 < text.length && text[index + 1].isLowSurrogate() -> {
+                        index++
+                        UTF8_SURROGATE_PAIR_BYTES
+                    }
+                    character.isSurrogate() -> 1
+                    else -> UTF8_THREE_BYTES
+                }
+            index++
+        }
+        return bytes > maxBytes
+    }
+
+    private const val UTF8_ONE_BYTE_LIMIT = 0x80
+    private const val UTF8_TWO_BYTE_LIMIT = 0x800
+    private const val UTF8_THREE_BYTES = 3
+    private const val UTF8_SURROGATE_PAIR_BYTES = 4
+    private const val CONTROL_CHARACTER_LIMIT = 0x20
+    private const val UNICODE_ESCAPE_DIGITS = 4
+    private const val HEX_RADIX = 16
 
     private class StrictScanner(
         private val source: String,
@@ -52,7 +88,7 @@ object ProtocolStrictJson {
             when (peek()) {
                 '{' -> scanObject(depth + 1)
                 '[' -> scanArray(depth + 1)
-                '"' -> scanString()
+                '"' -> scanString(builder = null)
                 't' -> literal("true")
                 'f' -> literal("false")
                 'n' -> throw ProtocolParseException(
@@ -72,9 +108,12 @@ object ProtocolStrictJson {
                 return
             }
             val names = HashSet<String>()
+            val nameBuilder = StringBuilder()
             while (true) {
                 skipWhitespace()
-                require(names.add(scanString())) { "duplicate object property" }
+                nameBuilder.setLength(0)
+                scanString(nameBuilder)
+                require(names.add(nameBuilder.toString())) { "duplicate object property" }
                 skipWhitespace()
                 expect(':')
                 skipWhitespace()
@@ -108,30 +147,50 @@ object ProtocolStrictJson {
             }
         }
 
-        private fun scanString(): String {
+        /**
+         * Validates one JSON string. Property names are collected into [builder] for the
+         * duplicate check; values pass `null` and are validated in place — a 350K-char image
+         * chunk is never copied into a StringBuilder just to be thrown away. Lone-surrogate
+         * detection runs over the decoded character stream (raw and escape-produced alike),
+         * which is the same sequence the old post-hoc check walked.
+         */
+        private fun scanString(builder: StringBuilder?) {
             expect('"')
             val start = index
-            val builder = StringBuilder()
+            var expectingLowSurrogate = false
             while (true) {
                 require(index < source.length) { "unterminated string" }
                 val character = source[index]
-                when {
-                    character == '"' -> {
-                        index++
-                        val value = builder.toString()
-                        requireNoLoneSurrogates(value)
-                        return value
+                val decoded =
+                    when {
+                        character == '"' -> {
+                            index++
+                            require(!expectingLowSurrogate) { "lone surrogate" }
+                            return
+                        }
+                        character == '\\' -> {
+                            index++
+                            scanEscape()
+                        }
+                        character.code < CONTROL_CHARACTER_LIMIT ->
+                            throw ProtocolParseException(
+                                ProtocolErrorCodes.MALFORMED_JSON,
+                                "unescaped control character",
+                            )
+                        else -> {
+                            index++
+                            character
+                        }
                     }
-                    character == '\\' -> {
-                        index++
-                        builder.append(scanEscape())
-                    }
-                    character.code < 0x20 -> require(false) { "unescaped control character" }
-                    else -> {
-                        builder.append(character)
-                        index++
-                    }
+                if (expectingLowSurrogate) {
+                    require(decoded.isLowSurrogate()) { "lone surrogate" }
+                    expectingLowSurrogate = false
+                } else if (decoded.isHighSurrogate()) {
+                    expectingLowSurrogate = true
+                } else {
+                    require(!decoded.isLowSurrogate()) { "lone surrogate" }
                 }
+                builder?.append(decoded)
                 require(index - start < maxBytes) { "string too long" }
             }
         }
@@ -148,34 +207,18 @@ object ProtocolStrictJson {
                 'r' -> '\r'
                 't' -> '\t'
                 'u' -> {
-                    require(index + 4 <= source.length) { "truncated unicode escape" }
-                    val hex = source.substring(index, index + 4)
+                    require(index + UNICODE_ESCAPE_DIGITS <= source.length) { "truncated unicode escape" }
+                    val hex = source.substring(index, index + UNICODE_ESCAPE_DIGITS)
                     require(hex.all { it.isDigit() || it in 'a'..'f' || it in 'A'..'F' }) {
                         "invalid unicode escape"
                     }
-                    index += 4
-                    hex.toInt(16).toChar()
+                    index += UNICODE_ESCAPE_DIGITS
+                    hex.toInt(HEX_RADIX).toChar()
                 }
                 else -> throw ProtocolParseException(
                     ProtocolErrorCodes.MALFORMED_JSON,
                     "invalid escape '\\$escape'",
                 )
-            }
-        }
-
-        private fun requireNoLoneSurrogates(value: String) {
-            var position = 0
-            while (position < value.length) {
-                val character = value[position]
-                if (character.isHighSurrogate()) {
-                    require(position + 1 < value.length && value[position + 1].isLowSurrogate()) {
-                        "lone surrogate"
-                    }
-                    position += 2
-                    continue
-                }
-                require(!character.isLowSurrogate()) { "lone surrogate" }
-                position++
             }
         }
 
@@ -237,7 +280,10 @@ object ProtocolStrictJson {
             }
         }
 
-        private inline fun require(condition: Boolean, reason: () -> String) {
+        private inline fun require(
+            condition: Boolean,
+            reason: () -> String,
+        ) {
             if (!condition) {
                 throw ProtocolParseException(ProtocolErrorCodes.MALFORMED_JSON, reason())
             }

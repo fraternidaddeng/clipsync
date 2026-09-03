@@ -158,10 +158,10 @@ object ProtocolJson {
         val chunkBytes = body.long("chunk_bytes")
         requireProtocol(chunkBytes in 1..MAX_CHUNK_BYTES)
         val data = body.string("data")
-        requireProtocol(BASE64URL_PATTERN.matches(data))
-        val decoded = runCatching { Base64.getUrlDecoder().decode(data) }
-            .getOrElse { throw SerializationException("Chunk data is not valid base64url.", it) }
-        requireProtocol(decoded.size.toLong() == chunkBytes)
+        requireProtocol(Base64Url.isAlphabet(data))
+        val decodedLength =
+            Base64Url.decodedLength(data) ?: throw SerializationException("Chunk data is not valid base64url.")
+        requireProtocol(decodedLength.toLong() == chunkBytes)
     }
 
     private fun validateSyncState(body: kotlinx.serialization.json.JsonObject) {
@@ -422,36 +422,58 @@ object ProtocolJson {
         "^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
     )
     private val CONTENT_HASH_PATTERN = Regex("^[0-9a-f]{64}$")
-    private val BASE64URL_PATTERN = Regex("^[A-Za-z0-9_-]+$")
     private val BASE64URL_256_PATTERN = Regex("^[A-Za-z0-9_-]{43}$")
     private val CLIENT_VERSION_PATTERN = Regex("^[0-9A-Za-z][0-9A-Za-z._+-]{0,63}$")
-    private val ERROR_CODES = setOf(
-        "MALFORMED_JSON", "SCHEMA_VIOLATION", "UNSUPPORTED_VERSION", "AUTH_REQUIRED", "AUTH_FAILED",
-        "CHALLENGE_EXPIRED", "REPLAY_DETECTED", "DEVICE_REVOKED", "TRUST_EPOCH_MISMATCH", "MESSAGE_OUT_OF_ORDER",
-        "INVALID_RANGE", "EVENT_CONFLICT", "PAYLOAD_NOT_FOUND", "HASH_MISMATCH", "PAYLOAD_TOO_LARGE",
-        "RATE_LIMITED", "INTERNAL_ERROR",
-    )
-    private val ERROR_CODES_V2 = ERROR_CODES + setOf(
-        "UNSUPPORTED_MEDIA", "MEDIA_TOO_LARGE", "MEDIA_DECODE_FAILED",
-        "MEDIA_HASH_MISMATCH", "MEDIA_OUT_OF_ORDER", "MEDIA_STORAGE_FAILED",
-    )
-    private val MESSAGE_TYPES = setOf(
-        "hello",
-        "challenge",
-        "auth",
-        "known_vector",
-        "want_ranges",
-        "clip_announce",
-        "clip_fetch",
-        "clip_payload",
-        "ack_ranges",
-        "error",
-        "ping",
-        "pong",
-    )
-    private val MESSAGE_TYPES_V2 = MESSAGE_TYPES + setOf(
-        "clip_payload_begin",
-        "clip_payload_chunk",
-        "clip_payload_end",
-    )
+    private val ERROR_CODES =
+        setOf(
+            "MALFORMED_JSON",
+            "SCHEMA_VIOLATION",
+            "UNSUPPORTED_VERSION",
+            "AUTH_REQUIRED",
+            "AUTH_FAILED",
+            "CHALLENGE_EXPIRED",
+            "REPLAY_DETECTED",
+            "DEVICE_REVOKED",
+            "TRUST_EPOCH_MISMATCH",
+            "MESSAGE_OUT_OF_ORDER",
+            "INVALID_RANGE",
+            "EVENT_CONFLICT",
+            "PAYLOAD_NOT_FOUND",
+            "HASH_MISMATCH",
+            "PAYLOAD_TOO_LARGE",
+            "RATE_LIMITED",
+            "INTERNAL_ERROR",
+        )
+    private val ERROR_CODES_V2 =
+        ERROR_CODES +
+            setOf(
+                "UNSUPPORTED_MEDIA",
+                "MEDIA_TOO_LARGE",
+                "MEDIA_DECODE_FAILED",
+                "MEDIA_HASH_MISMATCH",
+                "MEDIA_OUT_OF_ORDER",
+                "MEDIA_STORAGE_FAILED",
+            )
+    private val MESSAGE_TYPES =
+        setOf(
+            "hello",
+            "challenge",
+            "auth",
+            "known_vector",
+            "want_ranges",
+            "clip_announce",
+            "clip_fetch",
+            "clip_payload",
+            "ack_ranges",
+            "error",
+            "ping",
+            "pong",
+        )
+    private val MESSAGE_TYPES_V2 =
+        MESSAGE_TYPES +
+            setOf(
+                "clip_payload_begin",
+                "clip_payload_chunk",
+                "clip_payload_end",
+            )
 }
