@@ -3,7 +3,6 @@ package com.clipsync.android.storage
 import com.clipsync.android.media.ImageCodec
 import com.clipsync.android.media.ImageCodecError
 import com.clipsync.android.media.MediaLimits
-import com.clipsync.android.media.toLowerHex
 import com.clipsync.android.sync.SyncLimits
 import java.security.MessageDigest
 import java.util.Base64
@@ -373,7 +372,7 @@ object HistoryExportFormat {
     private fun sha256Hex(bytes: ByteArray): String = MessageDigest
         .getInstance("SHA-256")
         .digest(bytes)
-        .toLowerHex()
+        .joinToString(separator = "") { byte -> "%02x".format(byte) }
 
     @Serializable
     private data class HeaderDto(

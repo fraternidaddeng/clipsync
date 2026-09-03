@@ -39,27 +39,28 @@ object ProtocolStrictJson {
      * image chunk frame used to allocate a second copy of itself here). An unpaired surrogate
      * counts as one byte, exactly like the encoder's replacement `?`.
      */
-    internal fun utf8ByteCountExceeds(text: String, maxBytes: Int): Boolean {
+    internal fun utf8ByteCountExceeds(
+        text: String,
+        maxBytes: Int,
+    ): Boolean {
         var bytes = 0L
         var index = 0
-        while (index < text.length) {
+        while (index < text.length && bytes <= maxBytes) {
             val character = text[index]
-            bytes += when {
-                character.code < UTF8_ONE_BYTE_LIMIT -> 1
-                character.code < UTF8_TWO_BYTE_LIMIT -> 2
-                character.isHighSurrogate() && index + 1 < text.length && text[index + 1].isLowSurrogate() -> {
-                    index++
-                    UTF8_SURROGATE_PAIR_BYTES
+            bytes +=
+                when {
+                    character.code < UTF8_ONE_BYTE_LIMIT -> 1
+                    character.code < UTF8_TWO_BYTE_LIMIT -> 2
+                    character.isHighSurrogate() && index + 1 < text.length && text[index + 1].isLowSurrogate() -> {
+                        index++
+                        UTF8_SURROGATE_PAIR_BYTES
+                    }
+                    character.isSurrogate() -> 1
+                    else -> UTF8_THREE_BYTES
                 }
-                character.isSurrogate() -> 1
-                else -> UTF8_THREE_BYTES
-            }
-            if (bytes > maxBytes) {
-                return true
-            }
             index++
         }
-        return false
+        return bytes > maxBytes
     }
 
     private const val UTF8_ONE_BYTE_LIMIT = 0x80
@@ -160,25 +161,27 @@ object ProtocolStrictJson {
             while (true) {
                 require(index < source.length) { "unterminated string" }
                 val character = source[index]
-                val decoded = when {
-                    character == '"' -> {
-                        index++
-                        require(!expectingLowSurrogate) { "lone surrogate" }
-                        return
+                val decoded =
+                    when {
+                        character == '"' -> {
+                            index++
+                            require(!expectingLowSurrogate) { "lone surrogate" }
+                            return
+                        }
+                        character == '\\' -> {
+                            index++
+                            scanEscape()
+                        }
+                        character.code < CONTROL_CHARACTER_LIMIT ->
+                            throw ProtocolParseException(
+                                ProtocolErrorCodes.MALFORMED_JSON,
+                                "unescaped control character",
+                            )
+                        else -> {
+                            index++
+                            character
+                        }
                     }
-                    character == '\\' -> {
-                        index++
-                        scanEscape()
-                    }
-                    character.code < CONTROL_CHARACTER_LIMIT -> throw ProtocolParseException(
-                        ProtocolErrorCodes.MALFORMED_JSON,
-                        "unescaped control character",
-                    )
-                    else -> {
-                        index++
-                        character
-                    }
-                }
                 if (expectingLowSurrogate) {
                     require(decoded.isLowSurrogate()) { "lone surrogate" }
                     expectingLowSurrogate = false
@@ -277,7 +280,10 @@ object ProtocolStrictJson {
             }
         }
 
-        private inline fun require(condition: Boolean, reason: () -> String) {
+        private inline fun require(
+            condition: Boolean,
+            reason: () -> String,
+        ) {
             if (!condition) {
                 throw ProtocolParseException(ProtocolErrorCodes.MALFORMED_JSON, reason())
             }

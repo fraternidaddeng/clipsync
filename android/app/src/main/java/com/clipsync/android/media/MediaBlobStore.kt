@@ -65,8 +65,7 @@ class MediaBlobStore(rootDirectory: File) {
             if (expectedHash != null && expectedHash != hash) {
                 throw MediaStoreException(MEDIA_HASH_MISMATCH, MEDIA_HASH_MISMATCH)
             }
-            // The hash was accumulated over exactly the bytes written, so only the header
-            // check remains; re-reading the file to hash it again proved nothing new.
+            // The digest already covers every byte on disk; only the container header is left to prove.
             val (inspect, header) = ImageCodec.tryInspectFileHeader(pending.tempPath, pending.bytesWritten)
             if (inspect != ImageCodecError.OK || header == null) {
                 throw MediaStoreException(mapInspect(inspect), mapInspect(inspect))
@@ -74,13 +73,7 @@ class MediaBlobStore(rootDirectory: File) {
             if (expectedMime != null && expectedMime != header.mimeType) {
                 throw MediaStoreException(UNSUPPORTED_MEDIA, UNSUPPORTED_MEDIA)
             }
-            val image = ValidatedImage(
-                mimeType = header.mimeType,
-                contentHash = hash,
-                encodedBytes = header.encodedBytes.toInt(),
-                pixelWidth = header.pixelWidth,
-                pixelHeight = header.pixelHeight,
-            )
+            val image = header.toValidatedImage(hash)
             val destination = blobPath(image.contentHash)
             destination.parentFile?.mkdirs()
             if (destination.exists()) {
@@ -98,7 +91,10 @@ class MediaBlobStore(rootDirectory: File) {
         }
     }
 
-    fun commitBytes(encoded: ByteArray, expectedHash: String? = null): ValidatedImage {
+    fun commitBytes(
+        encoded: ByteArray,
+        expectedHash: String? = null,
+    ): ValidatedImage {
         val (inspect, image) = ImageCodec.tryInspect(encoded, expectedHash)
         if (inspect != ImageCodecError.OK || image == null) {
             throw MediaStoreException(mapInspect(inspect), mapInspect(inspect))
@@ -130,8 +126,7 @@ class MediaBlobStore(rootDirectory: File) {
 
     fun readAllBytes(contentHash: String): ByteArray = requirePath(contentHash).readBytes()
 
-    fun thumbnailPath(contentHash: String): File =
-        File(thumbs, normalizeHash(contentHash) + ".png")
+    fun thumbnailPath(contentHash: String): File = File(thumbs, normalizeHash(contentHash) + ".png")
 
     fun deleteBlob(contentHash: String) {
         blobPath(contentHash).delete()
@@ -143,19 +138,21 @@ class MediaBlobStore(rootDirectory: File) {
         pending.tempPath.delete()
     }
 
-    fun recoverTemps(nowMs: Long, maximumDeletes: Int = 256): Int {
+    fun recoverTemps(
+        nowMs: Long,
+        maximumDeletes: Int = 256,
+    ): Int {
         val cutoff = nowMs - MediaLimits.UNFINISHED_DOWNLOAD_HOURS * 60L * 60L * 1000L
-        if (!temps.isDirectory) {
-            return 0
-        }
         var removed = 0
-        temps.listFiles { file -> file.isFile && file.name.endsWith(".part") }?.forEach { file ->
-            if (removed >= maximumDeletes) {
-                return removed
-            }
-            if (file.lastModified() <= cutoff) {
-                file.delete()
-                removed++
+        if (temps.isDirectory) {
+            temps.listFiles { file -> file.isFile && file.name.endsWith(".part") }?.forEach { file ->
+                if (removed >= maximumDeletes) {
+                    return removed
+                }
+                if (file.lastModified() <= cutoff) {
+                    file.delete()
+                    removed++
+                }
             }
         }
         return removed
@@ -203,8 +200,7 @@ class MediaBlobStore(rootDirectory: File) {
         const val MEDIA_HASH_MISMATCH = "MEDIA_HASH_MISMATCH"
         const val MEDIA_STORAGE_FAILED = "MEDIA_STORAGE_FAILED"
 
-        fun defaultRootForDatabase(databaseFile: File): File =
-            File(databaseFile.parentFile ?: File("."), "media")
+        fun defaultRootForDatabase(databaseFile: File): File = File(databaseFile.parentFile ?: File("."), "media")
 
         private fun normalizeHash(contentHash: String): String {
             require(contentHash.length == 64 && contentHash.all { it in '0'..'9' || it in 'a'..'f' }) {
@@ -213,13 +209,17 @@ class MediaBlobStore(rootDirectory: File) {
             return contentHash
         }
 
-        private fun mapInspect(error: ImageCodecError): String = when (error) {
-            ImageCodecError.TOO_LARGE -> MEDIA_TOO_LARGE
-            ImageCodecError.HASH_MISMATCH -> MEDIA_HASH_MISMATCH
-            ImageCodecError.UNSUPPORTED_MEDIA -> UNSUPPORTED_MEDIA
-            else -> MEDIA_DECODE_FAILED
-        }
+        private fun mapInspect(error: ImageCodecError): String =
+            when (error) {
+                ImageCodecError.TOO_LARGE -> MEDIA_TOO_LARGE
+                ImageCodecError.HASH_MISMATCH -> MEDIA_HASH_MISMATCH
+                ImageCodecError.UNSUPPORTED_MEDIA -> UNSUPPORTED_MEDIA
+                else -> MEDIA_DECODE_FAILED
+            }
     }
 }
 
-class MediaStoreException(val code: String, message: String) : Exception(message)
+class MediaStoreException(
+    val code: String,
+    message: String,
+) : Exception(message)

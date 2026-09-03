@@ -4,7 +4,6 @@ import com.clipsync.android.media.toLowerHex
 import com.clipsync.android.sync.ClipPayloadChunkBody
 import com.clipsync.android.sync.SyncMessageTypes
 import com.clipsync.android.sync.SyncWire
-import java.util.Base64
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
@@ -15,6 +14,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.Base64
 
 /**
  * The frame codec's hot spots were rewritten to stop regex-matching and decoding a 256 KiB
@@ -31,36 +31,44 @@ class ProtocolFastPathEquivalenceTest {
         var state = 20260903u
         repeat(20_000) {
             val length = 1 + (next(state).also { state = it } % 41u).toInt()
-            val chars = CharArray(length) { alphabet[(next(state).also { state = it } % alphabet.length.toUInt()).toInt()] }
+            val chars =
+                CharArray(length) {
+                    alphabet[(next(state).also { state = it } % alphabet.length.toUInt()).toInt()]
+                }
             val value = String(chars)
 
             val regexOk = base64UrlRegex.matches(value)
-            assertEquals(value, regexOk, ProtocolJson.isBase64UrlAlphabet(value))
+            assertEquals(value, regexOk, Base64Url.isAlphabet(value))
             if (regexOk) {
                 val decoded = runCatching { Base64.getUrlDecoder().decode(value) }.getOrNull()
-                assertEquals(value, decoded?.size, ProtocolJson.base64UrlDecodedLength(value))
+                assertEquals(value, decoded?.size, Base64Url.decodedLength(value))
             }
         }
-        assertFalse(ProtocolJson.isBase64UrlAlphabet(""))
+        assertFalse(Base64Url.isAlphabet(""))
     }
 
     @Test
     fun `chunk frame acceptance is unchanged`() {
         val bytes = ByteArray(1000) { (it * 31).toByte() }
         val data = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)
-        fun frame(chunkBytes: Int, payload: String = data): String = SyncWire.encode(
-            SyncMessageTypes.CLIP_PAYLOAD_CHUNK,
-            SyncWire.newRequestId(),
-            ClipPayloadChunkBody(
-                transferId = "6f1d2c3b-4a5e-4f60-8b9c-0d1e2f3a4b5c",
-                eventId = "7a2e3d4c-5b6f-4a71-9c0d-1e2f3a4b5c6d",
-                chunkIndex = 0,
-                chunkCount = 1,
-                chunkBytes = chunkBytes,
-                data = payload,
-            ),
-            ProtocolJson.PROTOCOL_V2,
-        )
+
+        fun frame(
+            chunkBytes: Int,
+            payload: String = data,
+        ): String =
+            SyncWire.encode(
+                SyncMessageTypes.CLIP_PAYLOAD_CHUNK,
+                SyncWire.newRequestId(),
+                ClipPayloadChunkBody(
+                    transferId = "6f1d2c3b-4a5e-4f60-8b9c-0d1e2f3a4b5c",
+                    eventId = "7a2e3d4c-5b6f-4a71-9c0d-1e2f3a4b5c6d",
+                    chunkIndex = 0,
+                    chunkCount = 1,
+                    chunkBytes = chunkBytes,
+                    data = payload,
+                ),
+                ProtocolJson.PROTOCOL_V2,
+            )
 
         val accepted = ProtocolJson.parseEnvelope(frame(bytes.size), ProtocolJson.PROTOCOL_V2)
         assertEquals("clip_payload_chunk", accepted.type)
@@ -75,16 +83,17 @@ class ProtocolFastPathEquivalenceTest {
 
     @Test
     fun `utf8 byte gate matches the encoder`() {
-        val samples = listOf(
-            "",
-            "ascii only",
-            "字符串 mixed ünïcode",
-            "emoji \uD83D\uDE00 pair",
-            "lone high \uD83D end",
-            "lone low \uDE00 middle x",
-            "\uDE00",
-            "a".repeat(10_000) + "字".repeat(1_000),
-        )
+        val samples =
+            listOf(
+                "",
+                "ascii only",
+                "字符串 mixed ünïcode",
+                "emoji \uD83D\uDE00 pair",
+                "lone high \uD83D end",
+                "lone low \uDE00 middle x",
+                "\uDE00",
+                "a".repeat(10_000) + "字".repeat(1_000),
+            )
         samples.forEach { text ->
             val bytes = text.toByteArray(Charsets.UTF_8).size
             assertFalse(text, ProtocolStrictJson.utf8ByteCountExceeds(text, bytes))
@@ -95,10 +104,13 @@ class ProtocolFastPathEquivalenceTest {
     @Test
     fun `strict scan keeps rejecting what it rejected`() {
         val json = Json
-        fun envelope(value: String) = json.encodeToString(
-            kotlinx.serialization.json.JsonObject.serializer(),
-            buildJsonObject { put("data", JsonPrimitive(value)) },
-        )
+
+        fun envelope(value: String) =
+            json.encodeToString(
+                kotlinx.serialization.json.JsonObject
+                    .serializer(),
+                buildJsonObject { put("data", JsonPrimitive(value)) },
+            )
 
         ProtocolStrictJson.scan(envelope("plain"))
         ProtocolStrictJson.scan(envelope("escapes \" \\ / \b \u000C \n \r \t"))
@@ -110,7 +122,10 @@ class ProtocolFastPathEquivalenceTest {
         assertScanFails("{\"ab\":1,\"a\\u0062\":2}")
         assertEquals(
             "pair \uD83D\uDE00 ok",
-            json.parseToJsonElement(envelope("pair \uD83D\uDE00 ok")).jsonObject["data"]!!.jsonPrimitive.content,
+            json
+                .parseToJsonElement(envelope("pair \uD83D\uDE00 ok"))
+                .jsonObject["data"]!!
+                .jsonPrimitive.content,
         )
 
         assertScanFails("{\"lone\":\"\uD83D\"}")
@@ -140,7 +155,12 @@ class ProtocolFastPathEquivalenceTest {
     private fun assertScanFails(document: String) {
         val error = runCatching { ProtocolStrictJson.scan(document) }.exceptionOrNull()
         assertTrue("expected $document to be rejected", error is ProtocolParseException)
-        val expectedCode = if (document.contains("null")) ProtocolErrorCodes.SCHEMA_VIOLATION else ProtocolErrorCodes.MALFORMED_JSON
+        val expectedCode =
+            if (document.contains("null")) {
+                ProtocolErrorCodes.SCHEMA_VIOLATION
+            } else {
+                ProtocolErrorCodes.MALFORMED_JSON
+            }
         assertEquals(expectedCode, (error as ProtocolParseException).errorCode)
     }
 

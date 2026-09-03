@@ -11,12 +11,10 @@ import com.clipsync.android.sync.ClipPayloadChunkBody
 import com.clipsync.android.sync.ClipPayloadItemDto
 import com.clipsync.android.sync.SyncMessageTypes
 import com.clipsync.android.sync.SyncWire
-import java.io.File
-import java.nio.file.Files
-import java.security.MessageDigest
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
+import java.nio.file.Files
 
 /**
  * Opt-in measurement (`CLIPSYNC_PERF=1 ./gradlew testDebugUnitTest --tests '*PerfTest'`):
@@ -33,24 +31,25 @@ class ProtocolAndMediaPerfTest {
     fun chunkFrameRoundTrip() {
         val chunk = PerfProbe.noise(MediaLimits.MAX_CHUNK_BYTES, seed = 11)
         val data = ImageChunks.encodeBase64Url(chunk)
-        val body = ClipPayloadChunkBody(
-            transferId = TRANSFER_ID,
-            eventId = EVENT_ID,
-            chunkIndex = 3,
-            chunkCount = 8,
-            chunkBytes = chunk.size,
-            data = data,
-        )
-        val frame = SyncWire.encode(SyncMessageTypes.CLIP_PAYLOAD_CHUNK, SyncWire.newRequestId(), body, ProtocolJson.PROTOCOL_V2)
+        val body =
+            ClipPayloadChunkBody(
+                transferId = TRANSFER_ID,
+                eventId = EVENT_ID,
+                chunkIndex = 3,
+                chunkCount = 8,
+                chunkBytes = chunk.size,
+                data = data,
+            )
+        val frame = encodeFrame(SyncMessageTypes.CLIP_PAYLOAD_CHUNK, body)
         println("chunk frame ${frame.length} chars")
 
         PerfProbe.measure("encodeBase64Url 256 KiB", 20) { ImageChunks.encodeBase64Url(chunk) }
         PerfProbe.measure("tryDecodeChunk 256 KiB", 20) { ImageChunks.tryDecodeChunk(data, chunk.size) }
-        PerfProbe.measure("SyncWire.encode chunk frame", 20) {
-            SyncWire.encode(SyncMessageTypes.CLIP_PAYLOAD_CHUNK, SyncWire.newRequestId(), body, ProtocolJson.PROTOCOL_V2)
-        }
+        PerfProbe.measure("SyncWire.encode chunk frame", 20) { encodeFrame(SyncMessageTypes.CLIP_PAYLOAD_CHUNK, body) }
         PerfProbe.measure("ProtocolStrictJson.scan chunk frame", 20) { ProtocolStrictJson.scan(frame) }
-        PerfProbe.measure("ProtocolJson.parseEnvelope chunk frame", 20) { ProtocolJson.parseEnvelope(frame, ProtocolJson.PROTOCOL_V2) }
+        PerfProbe.measure("ProtocolJson.parseEnvelope chunk frame", 20) {
+            ProtocolJson.parseEnvelope(frame, ProtocolJson.PROTOCOL_V2)
+        }
         PerfProbe.measure("SyncWire.decode chunk frame", 20) { SyncWire.decode(frame, ProtocolJson.PROTOCOL_V2) }
         PerfProbe.measure("decode + tryDecodeChunk (receive path per chunk)", 20) {
             val parsed = SyncWire.decode(frame, ProtocolJson.PROTOCOL_V2).body as ClipPayloadChunkBody
@@ -64,29 +63,38 @@ class ProtocolAndMediaPerfTest {
     fun textPayloadFrame() {
         val content = "字".repeat(100_000) + "a".repeat(300_000)
         val utf8 = content.toByteArray(Charsets.UTF_8)
-        val body = ClipPayloadBody(
-            clips = listOf(
-                ClipPayloadItemDto(
-                    eventId = EVENT_ID,
-                    originDeviceId = TRANSFER_ID,
-                    originSeq = 42,
-                    kind = "text",
-                    content = content,
-                    contentHash = MessageDigest.getInstance("SHA-256").digest(utf8).joinToString("") { "%02x".format(it) },
-                    utf8Bytes = utf8.size.toLong(),
-                    createdAtMs = 1_700_000_000_000,
-                ),
-            ),
-        )
-        val frame = SyncWire.encode(SyncMessageTypes.CLIP_PAYLOAD, SyncWire.newRequestId(), body, ProtocolJson.PROTOCOL_V2)
+        val body =
+            ClipPayloadBody(
+                clips =
+                    listOf(
+                        ClipPayloadItemDto(
+                            eventId = EVENT_ID,
+                            originDeviceId = TRANSFER_ID,
+                            originSeq = 42,
+                            kind = "text",
+                            content = content,
+                            contentHash = ImageCodec.hashBytes(utf8),
+                            utf8Bytes = utf8.size.toLong(),
+                            createdAtMs = 1_700_000_000_000,
+                        ),
+                    ),
+            )
+        val frame = encodeFrame(SyncMessageTypes.CLIP_PAYLOAD, body)
         println("text payload frame ${frame.length} chars")
 
         PerfProbe.measure("SyncWire.encode 600 KiB text payload", 10) {
-            SyncWire.encode(SyncMessageTypes.CLIP_PAYLOAD, SyncWire.newRequestId(), body, ProtocolJson.PROTOCOL_V2)
+            encodeFrame(SyncMessageTypes.CLIP_PAYLOAD, body)
         }
         PerfProbe.measure("ProtocolStrictJson.scan 600 KiB text payload", 10) { ProtocolStrictJson.scan(frame) }
-        PerfProbe.measure("SyncWire.decode 600 KiB text payload", 10) { SyncWire.decode(frame, ProtocolJson.PROTOCOL_V2) }
+        PerfProbe.measure("SyncWire.decode 600 KiB text payload", 10) {
+            SyncWire.decode(frame, ProtocolJson.PROTOCOL_V2)
+        }
     }
+
+    private fun encodeFrame(
+        type: String,
+        body: Any,
+    ): String = SyncWire.encode(type, SyncWire.newRequestId(), body, ProtocolJson.PROTOCOL_V2)
 
     @Test
     fun imagePath() {
@@ -129,21 +137,25 @@ class ProtocolAndMediaPerfTest {
 internal object PerfProbe {
     const val ENVIRONMENT_VARIABLE = "CLIPSYNC_PERF"
 
-    fun measure(label: String, iterations: Int, body: () -> Any?) {
+    fun measure(
+        label: String,
+        iterations: Int,
+        body: () -> Any?,
+    ) {
         body()
         val samples = DoubleArray(iterations)
         for (index in 0 until iterations) {
-            System.gc()
             val start = System.nanoTime()
             body()
             samples[index] = (System.nanoTime() - start) / 1_000_000.0
         }
         samples.sort()
-        val median = if (iterations % 2 == 0) {
-            (samples[iterations / 2 - 1] + samples[iterations / 2]) / 2
-        } else {
-            samples[iterations / 2]
-        }
+        val median =
+            if (iterations % 2 == 0) {
+                (samples[iterations / 2 - 1] + samples[iterations / 2]) / 2
+            } else {
+                samples[iterations / 2]
+            }
         println(
             String.format(
                 java.util.Locale.ROOT,
@@ -156,7 +168,10 @@ internal object PerfProbe {
         )
     }
 
-    fun noise(length: Int, seed: Int): ByteArray {
+    fun noise(
+        length: Int,
+        seed: Int,
+    ): ByteArray {
         val bytes = ByteArray(length)
         var state = seed.toUInt()
         for (index in bytes.indices) {
@@ -167,7 +182,11 @@ internal object PerfProbe {
     }
 
     /** Makes a noise buffer pass the PNG header gate (magic + IHDR) so inspect/commit exercise the hash path. */
-    fun stampPngHeader(bytes: ByteArray, width: Int, height: Int) {
+    fun stampPngHeader(
+        bytes: ByteArray,
+        width: Int,
+        height: Int,
+    ) {
         val magic = byteArrayOf(0x89.toByte(), 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A)
         magic.copyInto(bytes)
         writeInt32Be(bytes, 8, 13)
@@ -176,7 +195,11 @@ internal object PerfProbe {
         writeInt32Be(bytes, 20, height)
     }
 
-    private fun writeInt32Be(bytes: ByteArray, offset: Int, value: Int) {
+    private fun writeInt32Be(
+        bytes: ByteArray,
+        offset: Int,
+        value: Int,
+    ) {
         bytes[offset] = (value ushr 24).toByte()
         bytes[offset + 1] = (value ushr 16).toByte()
         bytes[offset + 2] = (value ushr 8).toByte()

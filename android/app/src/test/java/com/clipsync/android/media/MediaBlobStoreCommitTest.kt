@@ -1,7 +1,5 @@
 package com.clipsync.android.media
 
-import java.io.File
-import kotlin.io.path.createTempDirectory
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -10,6 +8,8 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.io.File
+import kotlin.io.path.createTempDirectory
 
 /**
  * `commit` trusts the digest it accumulated while streaming instead of re-reading the file,
@@ -93,7 +93,11 @@ class MediaBlobStoreCommitTest {
     }
 
     /** PNG magic + IHDR over deterministic filler: enough for header/dimension/hash paths. */
-    private fun fakePng(width: Int, height: Int, size: Int): ByteArray {
+    private fun fakePng(
+        width: Int,
+        height: Int,
+        size: Int,
+    ): ByteArray {
         val bytes = ByteArray(size) { (it * 131 + 7).toByte() }
         byteArrayOf(0x89.toByte(), 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A).copyInto(bytes)
         writeInt32Be(bytes, 8, 13)
@@ -103,7 +107,11 @@ class MediaBlobStoreCommitTest {
         return bytes
     }
 
-    private fun writeInt32Be(bytes: ByteArray, offset: Int, value: Int) {
+    private fun writeInt32Be(
+        bytes: ByteArray,
+        offset: Int,
+        value: Int,
+    ) {
         bytes[offset] = (value ushr 24).toByte()
         bytes[offset + 1] = (value ushr 16).toByte()
         bytes[offset + 2] = (value ushr 8).toByte()
