@@ -4,6 +4,7 @@ import com.clipsync.android.i18n.testString
 import com.clipsync.android.platform.clipboard.CaptureGate
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.sync.CaptureTallySnapshot
+import com.clipsync.android.sync.InboxApplyOutcome
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -151,4 +152,77 @@ class PreferencesStatusTest {
         val switchedOff = preferencesStatusLines(PreferencesUiState(inboxNotify = false, runtime = blockedBySystem))
         assertNull(switchedOff.inboxNotify)
     }
+
+    @Test
+    fun `auto-apply lines restate the last real write of their own kind and stay silent otherwise`() {
+        // Nothing attempted yet: the switch position is the whole truth.
+        val untried = preferencesStatusLines(PreferencesUiState(runtime = healthy))
+        assertNull(untried.autoApply)
+        assertNull(untried.autoApplyImages)
+
+        val textApplied = healthy.copy(lastInboxApply = outcome(applied = true, isImage = false))
+        val lines = preferencesStatusLines(PreferencesUiState(runtime = textApplied))
+        assertEquals(FactTone.FLOW, lines.autoApply!!.tone)
+        assertEquals("已开 · 最近一次收到的内容已写入剪贴板", lines.autoApply.text.testString())
+        // A text outcome says nothing about the image switch.
+        assertNull(lines.autoApplyImages)
+
+        val imageFailed = outcome(applied = false, isImage = true, errorCode = "CLIPBOARD_WRITE_DENIED")
+        val failed = preferencesStatusLines(PreferencesUiState(runtime = healthy.copy(lastInboxApply = imageFailed)))
+        assertNull(failed.autoApply)
+        assertEquals(FactTone.ACT, failed.autoApplyImages!!.tone)
+        assertEquals(
+            "已开 · 最近一次写入剪贴板失败（CLIPBOARD_WRITE_DENIED），内容留在历史里",
+            failed.autoApplyImages.text.testString(),
+        )
+
+        // Off, or paused (that row already states the pause), says nothing.
+        assertNull(preferencesStatusLines(PreferencesUiState(autoApplyRemote = false, runtime = textApplied)).autoApply)
+        assertNull(preferencesStatusLines(PreferencesUiState(pauseSync = true, runtime = textApplied)).autoApply)
+    }
+
+    @Test
+    fun `image sync on a text-only IP session says the PC side is off, as a quiet fact`() {
+        fun imageSyncLine(
+            version: Int?,
+            enabled: Boolean = true,
+        ) = preferencesStatusLines(
+            PreferencesUiState(imageSync = enabled, runtime = healthy.copy(ipSessionProtocolVersion = version)),
+        ).imageSync
+
+        val v1 = imageSyncLine(version = 1)!!
+        assertEquals(FactTone.QUIET, v1.tone)
+        assertEquals("已开 · 电脑端未开启图片同步，本次会话只同步文本", v1.text.testString())
+
+        assertNull(imageSyncLine(version = 2))
+        assertNull(imageSyncLine(version = null))
+        // With the local switch off the line is about images kept local, never about the PC.
+        assertNull(imageSyncLine(version = 1, enabled = false))
+    }
+
+    @Test
+    fun `bluetooth fallback warns in ochre only when on and the permission is denied`() {
+        fun bluetoothLine(
+            enabled: Boolean,
+            granted: Boolean?,
+        ): FactLine? {
+            val runtime = healthy.copy(bluetoothPermissionGranted = granted)
+            val state = PreferencesUiState(bluetoothFallback = enabled, runtime = runtime)
+            return preferencesStatusLines(state).bluetoothFallback
+        }
+
+        val line = bluetoothLine(enabled = true, granted = false)!!
+        assertEquals(FactTone.ACT, line.tone)
+        assertEquals("蓝牙权限未授予 · 备援不可用，去系统设置授权", line.text.testString())
+
+        assertNull(bluetoothLine(enabled = false, granted = false))
+        assertNull(bluetoothLine(enabled = true, granted = true))
+        assertNull(bluetoothLine(enabled = true, granted = null))
+    }
+
+    private fun outcome(
+        applied: Boolean,
+        isImage: Boolean,
+        errorCode: String? = null,
+    ) = InboxApplyOutcome(applied = applied, isImage = isImage, errorCode = errorCode, atEpochMillis = 1L)
 }

@@ -1175,6 +1175,15 @@
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>オン · {0} 台が接続中。スマートフォン側もオンのときだけ画像を送受信します</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>オン · 接続中のスマートフォンは画像同期がオフです。このセッションはテキストのみ同期します</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>オン · 直近に受信した画像はこの PC のクリップボードに書き込まれました</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>オン · 直近の画像のクリップボード書き込みは成功しませんでした。画像は履歴にあります</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>有効 · {0} 件のプロセス名からのコピーは記録しません</value>
   </data>

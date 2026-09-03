@@ -5,6 +5,7 @@ import com.clipsync.android.sync.SyncConnectionState
 import com.clipsync.android.sync.SyncTransportKind
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 
 /**
  * What the conduit needs to know about the sync engine, and nothing more.
@@ -34,6 +35,11 @@ data class SyncHealth(
      * (text only, slower, IP probed for the switch back).
      */
     val bluetoothFallback: Boolean = false,
+    /**
+     * When clipboard content last crossed the link in either direction (epoch millis), or null
+     * when nothing has moved since process start. Rendered as 「最近同步 HH:mm」 on the device row.
+     */
+    val lastSyncAtMs: Long? = null,
 )
 
 /**
@@ -54,29 +60,34 @@ fun interface SyncHealthSource {
  * emission the 本机服务 segment would keep showing the stale 启动失败 fact instead
  * of the chosen 已停用 one.
  */
+@Suppress("LongParameterList")
 fun syncHealthFlow(
     serviceRunning: Flow<Boolean>,
     connectionStates: Flow<SyncConnectionState>,
     startErrorCodes: Flow<String?>,
     peerThrottled: Flow<Boolean>,
     serviceEnabled: Flow<Boolean>,
+    lastSyncAtMs: Flow<Long?> = flowOf(null),
 ): Flow<SyncHealth> =
     combine(
-        serviceRunning,
-        connectionStates,
-        startErrorCodes,
-        peerThrottled,
-        serviceEnabled,
-    ) { running, connection, startError, throttled, enabled ->
-        SyncHealth(
-            serviceRunning = running,
-            serviceEnabled = enabled,
-            connected = connection is SyncConnectionState.Connected,
-            serviceErrorCode = startError,
-            peerThrottled = throttled,
-            // The conduit must state the degraded bt1 path honestly (ADR 0005).
-            bluetoothFallback =
-                connection is SyncConnectionState.Connected &&
-                    connection.transport == SyncTransportKind.BLUETOOTH,
-        )
-    }
+        combine(
+            serviceRunning,
+            connectionStates,
+            startErrorCodes,
+            peerThrottled,
+            serviceEnabled,
+        ) { running, connection, startError, throttled, enabled ->
+            SyncHealth(
+                serviceRunning = running,
+                serviceEnabled = enabled,
+                connected = connection is SyncConnectionState.Connected,
+                serviceErrorCode = startError,
+                peerThrottled = throttled,
+                // The conduit must state the degraded bt1 path honestly (ADR 0005).
+                bluetoothFallback =
+                    connection is SyncConnectionState.Connected &&
+                        connection.transport == SyncTransportKind.BLUETOOTH,
+            )
+        },
+        lastSyncAtMs,
+    ) { health, lastSync -> health.copy(lastSyncAtMs = lastSync) }

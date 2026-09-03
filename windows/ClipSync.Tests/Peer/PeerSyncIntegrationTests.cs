@@ -185,6 +185,34 @@ public sealed class PeerSyncIntegrationTests
     }
 
     [Fact]
+    public async Task ImageCapableDeviceCountFollowsTheNegotiatedWireVersion()
+    {
+        // The 图片同步 fact line says "phone has image sync off" only when every connected
+        // device sits on text-only v1; a v2 session (both peers opted in) counts as capable.
+        await using var pair = await PeerPair.CreateAsync();
+        Assert.Equal(0, pair.Server.ImageCapableDeviceCount);
+
+        var textOnly = await pair.DialAsync(PeerPair.DialerOptions() with { ProtocolVersion = ProtocolLimits.ProtocolVersion });
+        await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ConnectedDeviceCount == 1));
+        Assert.Equal(ProtocolLimits.ProtocolVersion, textOnly.Engine.ProtocolVersion);
+        Assert.Equal(1, pair.Server.ConnectedDeviceCount);
+        Assert.Equal(0, pair.Server.ImageCapableDeviceCount);
+
+        var imageCapable = await pair.DialAsync();
+        await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ImageCapableDeviceCount == 1));
+        Assert.Equal(ProtocolLimits.ProtocolVersionV2, imageCapable.Engine.ProtocolVersion);
+        // Same device on both wires: still one connected device, one image-capable device.
+        Assert.Equal(1, pair.Server.ConnectedDeviceCount);
+
+        await imageCapable.CloseAsync();
+        await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ImageCapableDeviceCount == 0));
+        Assert.Equal(1, pair.Server.ConnectedDeviceCount);
+
+        await textOnly.CloseAsync();
+        await pair.WaitUntilAsync(() => Task.FromResult(pair.Server.ConnectedDeviceCount == 0));
+    }
+
+    [Fact]
     public async Task DialerRaisesSessionReadyWithThePeerDeviceId()
     {
         await using var pair = await PeerPair.CreateAsync();

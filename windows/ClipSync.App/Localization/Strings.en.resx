@@ -1175,6 +1175,15 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>On · {0} device(s) connected; images travel only when the phone side is on too</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>On · the connected phone has image sync off; this session carries text only</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>On · the most recent image from the phone was written to this PC’s clipboard</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>On · the most recent image write to the clipboard did not succeed; the image is in history</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>In effect · copies from {0} process name(s) are not recorded</value>
   </data>

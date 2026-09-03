@@ -67,6 +67,13 @@ class SyncEngine(
     private val repository: SyncRepository,
     private val config: SyncSessionConfig,
     pairSecret: ByteArray,
+    /**
+     * Fired each time content actually crossed the link in either direction: a remote batch
+     * committed locally, or the peer acknowledged sequences this device sent. Handshake and
+     * heartbeat traffic never count — the "最近同步" fact must mean clipboard content moved.
+     */
+    private val onContentSynced: () -> Unit = {},
+    /** Last so existing call sites keep passing it as the trailing lambda. */
     private val onRemoteClipsCommitted: (List<RemoteClipApplied>) -> Unit = {},
 ) {
     private val pairSecret = pairSecret.copyOf()
@@ -720,6 +727,9 @@ class SyncEngine(
             OriginSequenceRanges(ack.originDeviceId, ack.ranges.map { SequenceRange(it.startSeq, it.endSeq) })
         }
         repository.applyPeerAckRanges(config.peerDeviceId, ranges, config.nowMs())
+        if (ranges.any { it.ranges.isNotEmpty() }) {
+            onContentSynced()
+        }
         return true
     }
 
@@ -796,6 +806,7 @@ class SyncEngine(
 
     private fun raiseCommitted(committed: List<RemoteClipApplied>) {
         if (committed.isNotEmpty()) {
+            onContentSynced()
             onRemoteClipsCommitted(committed)
         }
     }

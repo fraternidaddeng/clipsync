@@ -1175,6 +1175,15 @@
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>켜짐 · {0}대 연결됨. 휴대폰 쪽도 켜져 있을 때만 이미지를 주고받습니다</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>켜짐 · 연결된 휴대폰에서 이미지 동기화가 꺼져 있어 이번 세션은 텍스트만 동기화합니다</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>켜짐 · 가장 최근에 받은 이미지가 이 PC의 클립보드에 기록되었습니다</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>켜짐 · 가장 최근 이미지 클립보드 쓰기가 실패했습니다. 이미지는 기록에 있습니다</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>적용됨 · {0}개 프로세스 이름에서 온 복사는 기록하지 않습니다</value>
   </data>

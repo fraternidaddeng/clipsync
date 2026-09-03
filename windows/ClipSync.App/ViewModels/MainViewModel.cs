@@ -236,6 +236,13 @@ public partial class MainViewModel(
     [NotifyPropertyChangedFor(nameof(TrayStatusText))]
     private int connectedDeviceCount;
 
+    /// <summary>
+    /// Connected devices whose session negotiated image frames (protocol v2). Null while the
+    /// endpoint has not reported it, so the 图片同步 fact line claims nothing about the phones.
+    /// </summary>
+    [ObservableProperty]
+    private int? imageCapableDeviceCount;
+
     /// <summary>Outbox rows not yet acked by any peer (conduit local-service segment).</summary>
     [ObservableProperty]
     private int outboxPendingCount;
@@ -263,6 +270,12 @@ public partial class MainViewModel(
     /// threads — a plain string reference swap is safe cross-thread.
     /// </summary>
     private volatile string remoteApplyEvidence = ClipboardApplyStates.Unverified;
+
+    /// <summary>
+    /// Evidence of the most recent real remote image apply this session (自动写入 · 图片 fact
+    /// line only; the health endpoint reports text applies). Dispatcher-only.
+    /// </summary>
+    private string remoteImageApplyEvidence = ClipboardApplyStates.Unverified;
 
     /// <summary>Local certificate fingerprint, pre-formatted in groups of four for human comparison.</summary>
     [ObservableProperty]
@@ -486,6 +499,13 @@ public partial class MainViewModel(
     public void RecordRemoteApplyOutcome(bool ok)
     {
         remoteApplyEvidence = ok ? ClipboardApplyStates.Applied : ClipboardApplyStates.Failed;
+        RefreshAutoApplyStatuses();
+    }
+
+    /// <summary>Records whether a real remote image apply reached the system clipboard.</summary>
+    public void RecordRemoteImageApplyOutcome(bool ok)
+    {
+        remoteImageApplyEvidence = ok ? ClipboardApplyStates.Applied : ClipboardApplyStates.Failed;
         RefreshAutoApplyStatuses();
     }
 
@@ -1081,14 +1101,16 @@ public partial class MainViewModel(
     public Task SaveSettingsFromUiAsync() => SaveSettingsAsync();
 
     /// <summary>
-    /// Applies a live peer-endpoint snapshot: online flag, listening port, and how many
-    /// paired devices hold an authenticated session. Recomputes the network segment text.
+    /// Applies a live peer-endpoint snapshot: online flag, listening port, how many paired
+    /// devices hold an authenticated session, and (when the endpoint reports it) how many of
+    /// those negotiated image frames. Recomputes the network segment text.
     /// </summary>
-    public void UpdatePeerStatus(bool online, int port, int connectedCount)
+    public void UpdatePeerStatus(bool online, int port, int connectedCount, int? imageCapableCount = null)
     {
         PeerOnline = online;
         PeerPort = port;
         ConnectedDeviceCount = online ? connectedCount : 0;
+        ImageCapableDeviceCount = online ? imageCapableCount : null;
         SyncStatus = !online
             ? Strings.Sync_StartFailed
             : connectedCount > 0

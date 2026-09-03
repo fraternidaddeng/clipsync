@@ -207,6 +207,8 @@
     <string name="network_unreachable_fact">Prüfen Sie, ob beide Geräte im selben LAN / VPN sind, die Windows-App läuft und die Firewall des PCs eingehende Verbindungen auf TCP 47654 zulässt.</string>
     <string name="network_not_connected_detail">Mit „%1$s“ gekoppelt; der Sync-Kanal ist noch nicht eingerichtet.</string>
     <string name="network_waiting_detail">Mit „%1$s“ gekoppelt; warte auf eine Verbindung.</string>
+    <string name="network_last_sync_format">Letzte Synchronisierung %1$s</string>
+    <string name="network_bt_permission_denied">Bluetooth-Berechtigung nicht erteilt · Ausweichpfad nicht verfügbar; in den Systemeinstellungen erteilen</string>
 
     <string name="peer_write_unprobed_detail">Die Schreibfähigkeit der Gegenseite kann erst nach der Netzwerkverbindung geprüft werden. Fehlende Information ist keine schlechte Nachricht.</string>
     <string name="peer_write_ready_detail">Die Gegenseite kann automatisch in ihre Zwischenablage schreiben.</string>
@@ -462,6 +464,9 @@
         <item quantity="other">%1$d Bilder in diesem Lauf nicht synchronisiert, weil dies aus ist</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">Das System hat die Benachrichtigungen dieser App ausgeschaltet, dieser Schalter wirkt daher noch nicht; die Kanal-Seite führt zur Systemeinstellung</string>
+    <string name="prefs_live_auto_apply_applied">An · der zuletzt empfangene Inhalt wurde in die Zwischenablage geschrieben</string>
+    <string name="prefs_live_auto_apply_failed_format">An · das letzte Schreiben in die Zwischenablage schlug fehl (%1$s); der Inhalt steht im Verlauf</string>
+    <string name="prefs_live_image_sync_peer_text_only">An · am PC ist die Bildsynchronisierung aus; diese Sitzung überträgt nur Text</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">%1$d Eintrag exportiert (Klartext); bewahren Sie die Sicherungsdatei sicher auf.</item>

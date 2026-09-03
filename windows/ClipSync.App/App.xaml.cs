@@ -144,6 +144,9 @@ public partial class App : Application
         // from a tray-only start too. A `--minimized` launch (the autostart path) stays
         // in the tray; a manual launch opens the main window.
         ReconcileLaunchAtStartup(viewModel.LaunchAtStartup);
+        // The 开机自启 fact line must state this launch's re-registration result, not the
+        // registry as InitializeAsync found it a moment before the write.
+        viewModel.RefreshStartupStatus();
         hotkeyManager = new GlobalHotkeyManager();
         hotkeyManager.Pressed += OnGlobalHotkeyPressed;
         ApplyGlobalHotkeys();
@@ -243,7 +246,7 @@ public partial class App : Application
         {
             if (syncHost is { IsRunning: true })
             {
-                mainViewModel.UpdatePeerStatus(true, syncHost.Port, syncHost.ConnectedDeviceCount);
+                mainViewModel.UpdatePeerStatus(true, syncHost.Port, syncHost.ConnectedDeviceCount, syncHost.ImageCapableDeviceCount);
             }
 
             await mainViewModel.RefreshOutboxAsync();
@@ -484,7 +487,8 @@ public partial class App : Application
                 new WpfPairingApprover(
                     Dispatcher,
                     onRequestShown: name => trayIcon?.ShowPairingRequestNotice(name),
-                    onRequestTimedOut: () => trayIcon?.ShowPairingTimeoutNotice()),
+                    onRequestTimedOut: () => trayIcon?.ShowPairingTimeoutNotice(),
+                    onRequestAborted: () => trayIcon?.ShowPairingAbortedNotice()),
                 new PairingServiceOptions { LocalDisplayName = LocalDisplayName() },
                 diagnosticsLogs.CreateLogger("ClipSync.Peer.Pairing"));
             pairingService.PairingCompleted += OnPairingCompleted;
@@ -515,7 +519,7 @@ public partial class App : Application
             syncHost.PeerStatusChanged += OnPeerStatusChanged;
             await syncHost.StartAsync(viewModel.ExtraBindAddresses);
             viewModel.LocalFingerprint = FormatFingerprint(syncHost.CertificateFingerprint);
-            viewModel.UpdatePeerStatus(true, syncHost.Port, syncHost.ConnectedDeviceCount);
+            viewModel.UpdatePeerStatus(true, syncHost.Port, syncHost.ConnectedDeviceCount, syncHost.ImageCapableDeviceCount);
         }
         catch (Exception exception)
         {
@@ -646,7 +650,7 @@ public partial class App : Application
                 return;
             }
 
-            mainViewModel.UpdatePeerStatus(true, host.Port, host.ConnectedDeviceCount);
+            mainViewModel.UpdatePeerStatus(true, host.Port, host.ConnectedDeviceCount, host.ImageCapableDeviceCount);
             await mainViewModel.RefreshDevicesCommand.ExecuteAsync(null);
         });
     }
@@ -665,7 +669,8 @@ public partial class App : Application
                 return;
             }
 
-            mainViewModel.UpdatePeerStatus(syncHost.IsRunning, syncHost.Port, syncHost.ConnectedDeviceCount);
+            mainViewModel.UpdatePeerStatus(
+                syncHost.IsRunning, syncHost.Port, syncHost.ConnectedDeviceCount, syncHost.ImageCapableDeviceCount);
             // The network changed under us (new addresses, resume, rebind): the active firewall
             // profile may have changed with it, so the 防火墙 line is re-read as well.
             _ = RefreshFirewallStatusAsync();
@@ -883,7 +888,19 @@ public partial class App : Application
                             image.Clip.ContentHash!,
                             DateTimeOffset.UtcNow,
                             ClipboardDataAccessor.TryPixelDigest(bytes));
-                        adapter.WriteImage(bytes);
+                        // WriteImage throws on any native failure (open/alloc/set), so the
+                        // 自动写入 · 图片 fact line records exactly what this attempt did.
+                        try
+                        {
+                            adapter.WriteImage(bytes);
+                        }
+                        catch
+                        {
+                            viewModel.RecordRemoteImageApplyOutcome(ok: false);
+                            throw;
+                        }
+
+                        viewModel.RecordRemoteImageApplyOutcome(ok: true);
                         LocalDiagnostics.Write("remote_image_applied");
                     }
                     else if (decision is RemoteApplyDecision.ApplyText text)
@@ -1022,15 +1039,14 @@ public partial class App : Application
             else if (result is CaptureResult.Rejected rejected)
             {
                 LocalDiagnostics.Write($"capture_rejected_{rejected.Reason}");
-                if (rejected.Reason == CaptureRejectionReason.TooLarge)
+                // Every rejection reaches the view model: it shows the 超限 banner for TooLarge
+                // only, and counts Paused/PrivateMode for the "本次已跳过 N 条" fact line.
+                mainViewModel?.NoteCaptureRejected(rejected.Reason);
+                if (rejected.Reason == CaptureRejectionReason.TooLarge && MainWindow is not { IsVisible: true })
                 {
                     // 超限内容本机保留 + 明确提示，绝不静默（manual-qa-checklist §3）: banner in
                     // the main window, and a balloon when the window is hidden in the tray.
-                    mainViewModel?.NoteCaptureRejected(rejected.Reason);
-                    if (MainWindow is not { IsVisible: true })
-                    {
-                        trayIcon?.ShowOversizeClipNotice();
-                    }
+                    trayIcon?.ShowOversizeClipNotice();
                 }
             }
         }

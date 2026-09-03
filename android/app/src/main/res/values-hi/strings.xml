@@ -207,6 +207,8 @@
     <string name="network_unreachable_fact">पक्का करें कि दोनों डिवाइस एक ही LAN / VPN पर हैं, Windows ऐप चल रहा है, और PC का फ़ायरवॉल TCP 47654 पर आने वाले कनेक्शन की अनुमति देता है।</string>
     <string name="network_not_connected_detail">“%1$s” से जुड़ा है; सिंक चैनल अभी सेट नहीं हुआ।</string>
     <string name="network_waiting_detail">“%1$s” से जुड़ा है; कनेक्शन की प्रतीक्षा।</string>
+    <string name="network_last_sync_format">अंतिम समन्वयन %1$s</string>
+    <string name="network_bt_permission_denied">ब्लूटूथ अनुमति नहीं दी गई · वैकल्पिक मार्ग उपलब्ध नहीं; सिस्टम सेटिंग में अनुमति दें</string>
 
     <string name="peer_write_unprobed_detail">दूसरे छोर की लेखन क्षमता नेटवर्क जुड़ने के बाद ही जाँची जा सकती है। जानकारी न होना बुरी खबर नहीं है।</string>
     <string name="peer_write_ready_detail">दूसरा छोर अपने क्लिपबोर्ड में अपने आप लिख सकता है।</string>
@@ -462,6 +464,9 @@
         <item quantity="other">इस सत्र में %1$d छवियाँ सिंक नहीं हुईं क्योंकि यह बंद है</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">सिस्टम ने इस ऐप की सूचनाएँ बंद की हैं, इसलिए यह स्विच अभी प्रभावी नहीं; मार्ग पृष्ठ से सिस्टम सेटिंग तक जाया जा सकता है</string>
+    <string name="prefs_live_auto_apply_applied">चालू · हाल में मिली सामग्री क्लिपबोर्ड में लिख दी गई</string>
+    <string name="prefs_live_auto_apply_failed_format">चालू · क्लिपबोर्ड में पिछली बार लिखना विफल रहा (%1$s); सामग्री इतिहास में है</string>
+    <string name="prefs_live_image_sync_peer_text_only">चालू · PC पर चित्र समन्वयन बंद है; इस सत्र में केवल टेक्स्ट समन्वयित होता है</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">%1$d रिकॉर्ड निर्यात हुआ (सादा टेक्स्ट); बैकअप फ़ाइल सुरक्षित रखें।</item>

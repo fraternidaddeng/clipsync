@@ -451,6 +451,40 @@ class CapabilityRoutesTest {
         assertTrue(state.localService.detail.testString().contains("FGS_START_REJECTED"))
     }
 
+    // ---- device row: last exchange ------------------------------------------------------------
+
+    @Test
+    fun `the device row states the last exchange time only once content has moved`() {
+        val quiet =
+            buildHealthScreenState(
+                peer = peer(),
+                clipboard = null,
+                sync = SyncHealth(serviceRunning = true, connected = true),
+            )
+        assertNull(quiet.pairedDevices.single().lastSyncLine)
+
+        val synced =
+            buildHealthScreenState(
+                peer = peer(),
+                clipboard = null,
+                sync = SyncHealth(serviceRunning = true, connected = true, lastSyncAtMs = 1_755_000_000_000),
+                formatClock = { "14:32" },
+            )
+        val syncedRow = synced.pairedDevices.single()
+        assertEquals("最近同步 14:32", syncedRow.lastSyncLine?.testString())
+
+        // The time survives a dropped session: it is when content last moved, not a connection flag.
+        val dropped =
+            buildHealthScreenState(
+                peer = peer(),
+                clipboard = null,
+                sync = SyncHealth(serviceRunning = true, connected = false, lastSyncAtMs = 1_755_000_000_000),
+                formatClock = { "14:32" },
+            )
+        val droppedRow = dropped.pairedDevices.single()
+        assertEquals("最近同步 14:32", droppedRow.lastSyncLine?.testString())
+    }
+
     // ---- helpers ------------------------------------------------------------------------
 
     private fun baseFacts() = CapabilityFacts(

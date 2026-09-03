@@ -32,8 +32,12 @@ data class PreferencesStatusLines(
     val privateMode: FactLine? = null,
     val pauseCapture: FactLine? = null,
     val skipSensitive: FactLine? = null,
+    val autoApply: FactLine? = null,
+    val autoApplyImages: FactLine? = null,
     val imageSync: FactLine? = null,
     val inboxNotify: FactLine? = null,
+    /** Under 蓝牙备援 (rendered on the conduit): the runtime permission the fallback needs is missing. */
+    val bluetoothFallback: FactLine? = null,
 )
 
 /**
@@ -53,10 +57,51 @@ fun preferencesStatusLines(state: PreferencesUiState): PreferencesStatusLines {
                 .takeIf { state.privateMode },
         pauseCapture = captureLine(state.pauseCapture, runtime),
         skipSensitive = sensitiveLine(state.skipSensitive, runtime),
+        autoApply = autoApplyLine(state.autoApplyRemote, state.pauseSync, isImage = false, runtime),
+        autoApplyImages = autoApplyLine(state.autoApplyImages, state.pauseSync, isImage = true, runtime),
         imageSync = imageSyncLine(state.imageSync, runtime),
         inboxNotify = inboxNotifyLine(state.inboxNotify, runtime),
+        bluetoothFallback = bluetoothLine(state.bluetoothFallback, runtime),
     )
 }
+
+/**
+ * Under 自动写入剪贴板 / 图片自动写入: the most recent real write of a received clip of that
+ * kind — applied (flow) or failed with its error category (ochre). Nothing is said while the
+ * switch is off, while 暂停同步 holds the write (that row already states the pause), or before
+ * any clip of that kind was actually attempted.
+ */
+private fun autoApplyLine(
+    enabled: Boolean,
+    paused: Boolean,
+    isImage: Boolean,
+    runtime: PreferencesRuntimeFacts,
+): FactLine? {
+    val last = runtime.lastInboxApply?.takeIf { enabled && !paused && it.isImage == isImage }
+    return when {
+        last == null -> null
+        last.applied -> FactLine(UiText.Res(R.string.prefs_live_auto_apply_applied), FactTone.FLOW)
+        else ->
+            FactLine(
+                UiText.Res(R.string.prefs_live_auto_apply_failed_format, last.errorCode ?: "UNKNOWN"),
+                FactTone.ACT,
+            )
+    }
+}
+
+/**
+ * Under 蓝牙备援: on API 31+ the fallback cannot open a socket without BLUETOOTH_CONNECT, so an
+ * enabled switch with the permission denied is ochre — the user can fix it in system settings.
+ */
+private fun bluetoothLine(
+    enabled: Boolean,
+    runtime: PreferencesRuntimeFacts,
+): FactLine? =
+    if (enabled && runtime.bluetoothPermissionGranted == false) {
+        FactLine(UiText.Res(R.string.network_bt_permission_denied), FactTone.ACT)
+    } else {
+        null
+    }
 
 private fun serviceLine(
     enabled: Boolean,
@@ -113,17 +158,25 @@ private fun sensitiveLine(
         else -> FactLine(UiText.Res(R.string.prefs_live_skipped_sensitive_none), FactTone.QUIET)
     }
 
+/**
+ * Under 图片同步: off states how many images stayed local; on, with a live IP session that the
+ * PC only accepted on text-only v1 (the dialer tries v2 first and falls back when the PC's
+ * listener refuses it because its own image sync is off), the line says the PC side is off.
+ * A quiet fact, not ochre — the setting is the other device's, not something to fix here.
+ */
 private fun imageSyncLine(
     enabled: Boolean,
     runtime: PreferencesRuntimeFacts,
 ): FactLine? =
-    if (!enabled && runtime.tally.skippedImageSyncOff > 0) {
-        FactLine(
-            UiText.Plural(R.plurals.prefs_live_images_skipped, runtime.tally.skippedImageSyncOff),
-            FactTone.QUIET,
-        )
-    } else {
-        null
+    when {
+        !enabled && runtime.tally.skippedImageSyncOff > 0 ->
+            FactLine(
+                UiText.Plural(R.plurals.prefs_live_images_skipped, runtime.tally.skippedImageSyncOff),
+                FactTone.QUIET,
+            )
+        enabled && runtime.ipSessionProtocolVersion == 1 ->
+            FactLine(UiText.Res(R.string.prefs_live_image_sync_peer_text_only), FactTone.QUIET)
+        else -> null
     }
 
 private fun inboxNotifyLine(

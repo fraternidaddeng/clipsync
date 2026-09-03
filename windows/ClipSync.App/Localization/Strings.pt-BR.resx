@@ -1175,6 +1175,15 @@ Todas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A 
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Ativado · {0} dispositivo(s) conectado(s); imagens só passam se o telefone também estiver ativado</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>Ativado · o telefone conectado está com a sincronização de imagens desligada; esta sessão sincroniza só texto</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>Ativado · a última imagem recebida foi gravada na área de transferência deste PC</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>Ativado · a última gravação de imagem na área de transferência não deu certo; a imagem está no histórico</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>Em vigor · cópias de {0} nome(s) de processo não são registradas</value>
   </data>

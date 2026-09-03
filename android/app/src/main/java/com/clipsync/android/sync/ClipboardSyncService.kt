@@ -34,6 +34,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 /**
@@ -323,6 +324,11 @@ class ClipboardSyncService : Service() {
             }
         }
         scope.launch {
+            // Only ever moves forward: a fresh supervisor's initial null must not erase the
+            // last exchange this process already showed.
+            supervisor.lastSyncAtMs.filterNotNull().collect { mutableLastSyncAtMs.value = it }
+        }
+        scope.launch {
             drainShareOutbox(repository) // catch up entries queued while the service was down
             for (nudge in syncNudges) {
                 drainShareOutbox(repository)
@@ -484,6 +490,7 @@ class ClipboardSyncService : Service() {
         private val mutableConnectionStates = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)
         private val mutableStartErrorCodes = MutableStateFlow<String?>(null)
         private val mutablePeerThrottled = MutableStateFlow(false)
+        private val mutableLastSyncAtMs = MutableStateFlow<Long?>(null)
 
         /** Whether the foreground service is alive; feeds the conduit's SyncHealthSource. */
         val serviceRunning: StateFlow<Boolean> = mutableServiceRunning.asStateFlow()
@@ -499,6 +506,12 @@ class ClipboardSyncService : Service() {
          * authentication; cleared when a session authenticates. Feeds the conduit page.
          */
         val peerThrottled: StateFlow<Boolean> = mutablePeerThrottled.asStateFlow()
+
+        /**
+         * When clipboard content last crossed the link (epoch millis); null until the first
+         * exchange since process start. Feeds the conduit's device row 「最近同步 HH:mm」.
+         */
+        val lastSyncAtMs: StateFlow<Long?> = mutableLastSyncAtMs.asStateFlow()
 
         @Volatile
         private var sharedRepository: SyncRepository? = null

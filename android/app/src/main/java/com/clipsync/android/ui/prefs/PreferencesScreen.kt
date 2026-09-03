@@ -195,6 +195,7 @@ fun PreferencesScreen(
                 description = stringResource(R.string.prefs_auto_apply_desc),
                 checked = state.autoApplyRemote,
                 onCheckedChange = onAutoApplyRemoteChange,
+                fact = facts.autoApply,
             )
             RowDivider()
             ToggleRow(
@@ -210,6 +211,7 @@ fun PreferencesScreen(
                 description = stringResource(R.string.prefs_auto_apply_images_desc),
                 checked = state.autoApplyImages,
                 onCheckedChange = onAutoApplyImagesChange,
+                fact = facts.autoApplyImages,
             )
         }
 
@@ -544,7 +546,10 @@ private fun ToggleRow(
  * stated fact or the user's own choice. Never red — none of these are errors.
  */
 @Composable
-private fun FactRow(fact: FactLine) {
+fun FactRow(
+    fact: FactLine,
+    modifier: Modifier = Modifier,
+) {
     val c = clipSyncColors
     val tint =
         when (fact.tone) {
@@ -552,7 +557,7 @@ private fun FactRow(fact: FactLine) {
             FactTone.ACT -> c.act
             FactTone.QUIET -> c.t3
         }
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Spacer(
             Modifier
                 .width(4.dp)

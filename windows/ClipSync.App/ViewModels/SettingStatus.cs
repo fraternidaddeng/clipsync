@@ -108,9 +108,31 @@ public static class SettingStatusMapper
         };
     }
 
-    /// <summary>自动写入（图片）: only the gate is knowable — image applies leave no evidence record yet.</summary>
-    public static SettingStatus AutoApplyImages(bool enabled, bool paused, bool privateMode) =>
-        !enabled ? SettingStatus.None : ApplyGate(paused, privateMode) ?? SettingStatus.None;
+    /// <summary>
+    /// 自动写入（图片）: the user's gate first, then the most recent real image apply this session.
+    /// Unverified says nothing — an image that has not arrived yet is not a fact about the switch.
+    /// </summary>
+    public static SettingStatus AutoApplyImages(bool enabled, bool paused, bool privateMode, string evidence)
+    {
+        ArgumentNullException.ThrowIfNull(evidence);
+        if (!enabled)
+        {
+            return SettingStatus.None;
+        }
+
+        var gate = ApplyGate(paused, privateMode);
+        if (gate is not null)
+        {
+            return gate;
+        }
+
+        return evidence switch
+        {
+            ClipboardApplyStates.Applied => SettingStatus.Flow(Strings.Status_AutoApplyImages_Applied),
+            ClipboardApplyStates.Failed => SettingStatus.Attention(Strings.Status_AutoApplyImages_Failed),
+            _ => SettingStatus.None,
+        };
+    }
 
     private static SettingStatus? ApplyGate(bool paused, bool privateMode) =>
         privateMode ? SettingStatus.Attention(Strings.Status_AutoApply_PrivateGate)
@@ -118,15 +140,28 @@ public static class SettingStatusMapper
         : null;
 
     /// <summary>
-    /// 图片同步: off means this PC is a text-only peer; on states how many phones are connected
-    /// and that the phone side must be on too — whether a given session actually negotiated
-    /// image frames is not surfaced by the sync layer, so it is not claimed here.
+    /// 图片同步: off means this PC is a text-only peer; on states how many phones are connected.
+    /// When the endpoint reports that none of the connected phones negotiated image frames
+    /// (every session is on text-only v1), the line says so — the phone side is off, and this
+    /// session carries text only. Null <paramref name="imageCapableDevices"/> means the sync
+    /// layer has not reported it, so nothing is claimed about the phones.
     /// </summary>
-    public static SettingStatus ImageSync(bool enabled, int connectedDevices) =>
-        !enabled ? SettingStatus.Quiet(Strings.Status_ImageSync_Off)
-        : connectedDevices > 0
-            ? SettingStatus.Quiet(Strings.Format(nameof(Strings.Status_ImageSync_OnConnectedFormat), connectedDevices))
-            : SettingStatus.Quiet(Strings.Status_ImageSync_OnWaiting);
+    public static SettingStatus ImageSync(bool enabled, int connectedDevices, int? imageCapableDevices = null)
+    {
+        if (!enabled)
+        {
+            return SettingStatus.Quiet(Strings.Status_ImageSync_Off);
+        }
+
+        if (connectedDevices <= 0)
+        {
+            return SettingStatus.Quiet(Strings.Status_ImageSync_OnWaiting);
+        }
+
+        return imageCapableDevices == 0
+            ? SettingStatus.Quiet(Strings.Status_ImageSync_PeerTextOnly)
+            : SettingStatus.Quiet(Strings.Format(nameof(Strings.Status_ImageSync_OnConnectedFormat), connectedDevices));
+    }
 
     /// <summary>
     /// 蓝牙备援 toggle row: the listener's own words, coloured by outcome — carrying a session

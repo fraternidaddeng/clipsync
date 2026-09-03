@@ -102,6 +102,13 @@ public sealed class SyncSessionEngine : IDisposable
     public bool IsReady => state == SessionState.Ready;
 
     /// <summary>
+    /// The wire contract this session was dialed on (1 = text only, 2 = image_clip_v2). A v2
+    /// session exists only when both peers opted in: the dialer picks /v2 only with its own
+    /// image sync on, and the listener refuses /v2 while its gate is off.
+    /// </summary>
+    public int ProtocolVersion => protocolVersion;
+
+    /// <summary>
     /// True only when both directions confirmed the handshake: the listener verified the proof,
     /// or the dialer saw the listener continue past auth with a data message.
     /// </summary>

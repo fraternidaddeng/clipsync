@@ -208,6 +208,8 @@
     <string name="network_unreachable_fact">Vérifiez que les deux appareils sont sur le même LAN / VPN, que l’application Windows est lancée et que le pare-feu du PC autorise les connexions entrantes sur le port TCP 47654.</string>
     <string name="network_not_connected_detail">Appairé avec « %1$s » ; le canal de synchronisation n’est pas encore mis en place.</string>
     <string name="network_waiting_detail">Appairé avec « %1$s » ; en attente d’une connexion.</string>
+    <string name="network_last_sync_format">Dernière synchronisation %1$s</string>
+    <string name="network_bt_permission_denied">Autorisation Bluetooth non accordée · secours indisponible ; accordez-la dans les réglages système</string>
 
     <string name="peer_write_unprobed_detail">La capacité d’écriture distante ne peut être sondée qu’après la connexion réseau. L’absence d’information n’est pas une mauvaise nouvelle.</string>
     <string name="peer_write_ready_detail">L’autre appareil peut écrire automatiquement dans son presse-papiers.</string>
@@ -471,6 +473,9 @@
         <item quantity="other">%1$d images non synchronisées dans cette session car ceci est désactivé</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">Le système a désactivé les notifications de cette application, cet interrupteur n’a donc pas encore d’effet ; la page Conduit mène au réglage système</string>
+    <string name="prefs_live_auto_apply_applied">Activé · le dernier contenu reçu a été écrit dans le presse-papiers</string>
+    <string name="prefs_live_auto_apply_failed_format">Activé · la dernière écriture dans le presse-papiers a échoué (%1$s) ; le contenu est dans l’historique</string>
+    <string name="prefs_live_image_sync_peer_text_only">Activé · le PC a désactivé la synchronisation des images ; cette session ne transporte que du texte</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">%1$d enregistrement exporté (en clair) ; gardez le fichier de sauvegarde en lieu sûr.</item>

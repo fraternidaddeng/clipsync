@@ -104,6 +104,7 @@ import com.clipsync.android.ui.prefs.BondedBluetoothDevice
 import com.clipsync.android.ui.prefs.PreferencesScreen
 import com.clipsync.android.ui.prefs.PreferencesViewModel
 import com.clipsync.android.ui.prefs.preferencesRuntimeFacts
+import com.clipsync.android.ui.prefs.preferencesStatusLines
 import com.clipsync.android.ui.rememberPrivacyDocOpener
 import com.clipsync.android.ui.theme.CharterMotion
 import com.clipsync.android.ui.theme.ClipSyncIcons
@@ -176,6 +177,7 @@ class MainActivity : AppCompatActivity() {
                         startErrorCodes = ClipboardSyncService.startErrorCodes,
                         peerThrottled = ClipboardSyncService.peerThrottled,
                         serviceEnabled = serviceEnabledStates(),
+                        lastSyncAtMs = ClipboardSyncService.lastSyncAtMs,
                     )
                 },
             capability =
@@ -239,7 +241,13 @@ class MainActivity : AppCompatActivity() {
             appVersion = readAppVersionName(this),
             updater = appUpdater,
             runtimeFacts =
-                preferencesRuntimeFacts(captureStack) {
+                preferencesRuntimeFacts(
+                    captureStack,
+                    // Permissions have no flow of their own: re-sample them each time the
+                    // Activity returns to the foreground (the user may have just granted one).
+                    refreshTicks = visibilityTicks.map { },
+                    bluetoothPermissionGranted = { BluetoothSyncConnector.hasConnectPermission(this) },
+                ) {
                     NotificationManagerCompat.from(this).areNotificationsEnabled()
                 },
             sideEffects =
@@ -326,6 +334,9 @@ class MainActivity : AppCompatActivity() {
     /** Bonded devices for the 蓝牙目标设备 chooser; null keeps the inline chooser collapsed. */
     private val bluetoothDeviceChoices = MutableStateFlow<List<BondedBluetoothDevice>?>(null)
 
+    /** Bumped on every onResume so permission-backed facts are re-sampled once per return. */
+    private val visibilityTicks = MutableStateFlow(0)
+
     /** Set when the permission ask came from the device chooser, so a grant opens it. */
     private var showDevicesAfterBluetoothGrant = false
 
@@ -404,6 +415,7 @@ class MainActivity : AppCompatActivity() {
                         bluetoothDeviceChoices.value = null
                     },
                     onDismissBluetoothDevices = { bluetoothDeviceChoices.value = null },
+                    onOpenAppPermissionSettings = ::openAppPermissionSettings,
                     imageThumbnail = { contentHash ->
                         SyncStore.repository(applicationContext).media?.let { store ->
                             ImageThumbnail.decodePreview(store, contentHash)
@@ -540,6 +552,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         // Grants change outside the app (Settings, adb, privileged host); re-probe every return.
         healthViewModel.refresh()
+        visibilityTicks.value += 1
     }
 
     override fun onDestroy() {
@@ -604,6 +617,14 @@ class MainActivity : AppCompatActivity() {
         startActivitySafely(
             Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
                 .putExtra(Settings.EXTRA_APP_PACKAGE, packageName),
+        )
+    }
+
+    /** The app's system permission page: where a denied BLUETOOTH_CONNECT can be granted again. */
+    private fun openAppPermissionSettings() {
+        startActivitySafely(
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                .setData(Uri.fromParts("package", packageName, null)),
         )
     }
 
@@ -695,6 +716,7 @@ private fun ClipSyncApp(
     onRequestBluetoothDevices: () -> Unit = {},
     onBluetoothDeviceChosen: (BondedBluetoothDevice) -> Unit = {},
     onDismissBluetoothDevices: () -> Unit = {},
+    onOpenAppPermissionSettings: (() -> Unit)? = null,
     imageThumbnail: suspend (String) -> android.graphics.Bitmap? = { null },
     tabRequests: StateFlow<Int?> = MutableStateFlow(null),
     onTabRequestConsumed: () -> Unit = {},
@@ -853,12 +875,15 @@ private fun ClipSyncApp(
                                 BluetoothFallbackUi(
                                     enabled = preferencesState.bluetoothFallback,
                                     deviceName = preferencesState.bluetoothDeviceName,
+                                    // 蓝牙权限未授予: the same runtime facts the preferences rows use.
+                                    fact = preferencesStatusLines(preferencesState).bluetoothFallback,
                                 ),
                             onBluetoothFallbackChange = preferencesViewModel::setBluetoothFallback,
                             bluetoothDevices = bluetoothDeviceChoices,
                             onRequestBluetoothDevices = onRequestBluetoothDevices,
                             onBluetoothDeviceChosen = onBluetoothDeviceChosen,
                             onDismissBluetoothDevices = onDismissBluetoothDevices,
+                            onOpenBluetoothPermissionSettings = onOpenAppPermissionSettings,
                             modifier = Modifier.padding(padding),
                         )
                     else ->

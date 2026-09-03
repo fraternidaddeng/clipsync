@@ -159,7 +159,15 @@ class SyncEngineTest {
     fun `full session - handshake, pull, push, and acks`() = runTest {
         val repository = InMemorySyncRepository(LOCAL_ID)
         val committed = mutableListOf<RemoteClipApplied>()
-        val engine = SyncEngine(repository, config(), SECRET) { committed.addAll(it) }
+        var contentSynced = 0
+        val engine =
+            SyncEngine(
+                repository,
+                config(),
+                SECRET,
+                onRemoteClipsCommitted = { committed.addAll(it) },
+                onContentSynced = { contentSynced++ },
+            )
         val transport = FakeTransport()
         val result = CompletableDeferred<SyncSessionResult>()
         backgroundScope.launchEngine(engine, transport, result)
@@ -226,6 +234,8 @@ class SyncEngineTest {
         assertEquals(listOf(eventId1), fetch.eventIds)
         val terminalAck = transport.awaitSent(SyncMessageTypes.ACK_RANGES).body as AckRangesBody
         assertEquals(listOf(OriginRangesDto(PEER_ID, listOf(RangeDto(2, 2)))), terminalAck.acks)
+        // Handshake, vectors and a content-free terminal marker are not "content synced".
+        assertEquals(0, contentSynced)
 
         // 6. Payload commits, is acknowledged, and reaches the committed callback.
         transport.deliver(
@@ -250,6 +260,8 @@ class SyncEngineTest {
         assertEquals(listOf(OriginRangesDto(PEER_ID, listOf(RangeDto(1, 1)))), payloadAck.acks)
         assertEquals(listOf(content), committed.map { it.content })
         assertEquals(2, repository.knownVector().getValue(PEER_ID).contiguousSeq)
+        // A remote body committed locally: content moved (PC -> phone).
+        assertEquals(1, contentSynced)
 
         // 7. A local clip is announced by the outbox drain (phone -> PC push).
         val local = repository.recordLocalClip("phone clip", sourceApp = null, nowMs = 1_776_000_001_000)!!
@@ -271,6 +283,8 @@ class SyncEngineTest {
         transport.deliver(SyncMessageTypes.PING, PingBody(sentAtMs = 1)) // fence: ack processed
         transport.awaitSent(SyncMessageTypes.PONG)
         assertTrue(repository.getOutboxBatch(PEER_ID, 10).isEmpty())
+        // The peer acknowledged this device's clip: content moved (phone -> PC).
+        assertEquals(2, contentSynced)
 
         // 9. Peer closes; the session ends authenticated.
         transport.peerCloses()

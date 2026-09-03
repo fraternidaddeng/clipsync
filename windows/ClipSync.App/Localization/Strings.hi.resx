@@ -1175,6 +1175,15 @@
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>चालू · {0} डिवाइस कनेक्टेड; चित्र तभी जाते हैं जब फ़ोन पर भी चालू हो</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>चालू · कनेक्टेड फ़ोन पर चित्र समन्वयन बंद है; इस सत्र में केवल टेक्स्ट समन्वयित होता है</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>चालू · हाल में मिला चित्र इस PC के क्लिपबोर्ड में लिख दिया गया</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>चालू · क्लिपबोर्ड में पिछली बार चित्र लिखना सफल नहीं हुआ; चित्र इतिहास में है</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>प्रभावी · {0} प्रोसेस नामों से कॉपी दर्ज नहीं होती</value>
   </data>

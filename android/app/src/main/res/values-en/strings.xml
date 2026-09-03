@@ -208,6 +208,8 @@
     <string name="network_unreachable_fact">Confirm both devices are on the same LAN / VPN, the Windows app is running, and the PC’s firewall allows inbound TCP 47654.</string>
     <string name="network_not_connected_detail">Paired with “%1$s”; the sync channel is not wired up yet.</string>
     <string name="network_waiting_detail">Paired with “%1$s”; waiting for a connection.</string>
+    <string name="network_last_sync_format">Last sync %1$s</string>
+    <string name="network_bt_permission_denied">Bluetooth permission not granted · fallback unavailable; grant it in system settings</string>
 
     <string name="peer_write_unprobed_detail">Peer write capability can only be probed after the network connects. Missing information is not bad news.</string>
     <string name="peer_write_ready_detail">The peer can write to its clipboard automatically.</string>
@@ -463,6 +465,9 @@
         <item quantity="other">%1$d images not synced this run because this is off</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">The system has notifications for this app turned off, so this switch has no effect yet; the Conduit page links to the system setting</string>
+    <string name="prefs_live_auto_apply_applied">On · the most recent received content was written to the clipboard</string>
+    <string name="prefs_live_auto_apply_failed_format">On · the most recent clipboard write failed (%1$s); the content is in history</string>
+    <string name="prefs_live_image_sync_peer_text_only">On · the PC has image sync off; this session carries text only</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">Exported %1$d record (plaintext); keep the backup file safe.</item>

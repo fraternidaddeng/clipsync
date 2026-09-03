@@ -126,6 +126,9 @@ public sealed class PeerSyncHost : IAsyncDisposable
 
     public int ConnectedDeviceCount => server?.ConnectedDeviceCount ?? 0;
 
+    /// <summary>Connected devices whose session negotiated image frames (v2); see <see cref="PeerServer.ImageCapableDeviceCount"/>.</summary>
+    public int ImageCapableDeviceCount => server?.ImageCapableDeviceCount ?? 0;
+
     /// <summary>Claimed device ids rate-limited right now; empty when none.</summary>
     public IReadOnlyList<string> ThrottledDeviceIds => server?.ThrottledDeviceIds ?? [];
 

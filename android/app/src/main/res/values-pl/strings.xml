@@ -209,6 +209,8 @@
     <string name="network_unreachable_fact">Upewnij się, że oba urządzenia są w tej samej sieci LAN / VPN, aplikacja Windows działa, a zapora PC przepuszcza połączenia przychodzące na TCP 47654.</string>
     <string name="network_not_connected_detail">Sparowano z „%1$s”; kanał synchronizacji nie jest jeszcze skonfigurowany.</string>
     <string name="network_waiting_detail">Sparowano z „%1$s”; oczekiwanie na połączenie.</string>
+    <string name="network_last_sync_format">Ostatnia synchronizacja %1$s</string>
+    <string name="network_bt_permission_denied">Brak uprawnienia Bluetooth · ścieżka zapasowa niedostępna; nadaj je w ustawieniach systemu</string>
 
     <string name="peer_write_unprobed_detail">Zdolność zapisu drugiej strony można sondować dopiero po połączeniu sieci. Brak informacji to nie zła wiadomość.</string>
     <string name="peer_write_ready_detail">Druga strona może automatycznie zapisywać do swojego schowka.</string>
@@ -480,6 +482,9 @@
         <item quantity="other">W tej sesji %1$d obrazu nie zostało zsynchronizowane, bo to jest wyłączone</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">System wyłączył powiadomienia tej aplikacji, więc ten przełącznik jeszcze nie działa; strona Kanał prowadzi do ustawienia systemowego</string>
+    <string name="prefs_live_auto_apply_applied">Włączone · ostatnio odebraną treść zapisano w schowku</string>
+    <string name="prefs_live_auto_apply_failed_format">Włączone · ostatni zapis do schowka się nie powiódł (%1$s); treść jest w historii</string>
+    <string name="prefs_live_image_sync_peer_text_only">Włączone · komputer ma wyłączoną synchronizację obrazów; ta sesja przenosi tylko tekst</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">Wyeksportowano %1$d rekord (jawny tekst); przechowuj plik kopii bezpiecznie.</item>

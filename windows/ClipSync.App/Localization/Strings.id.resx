@@ -1175,6 +1175,15 @@ Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Aktif · {0} perangkat terhubung; gambar hanya berpindah jika sisi ponsel juga aktif</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>Aktif · ponsel yang terhubung mematikan sinkronisasi gambar; sesi ini hanya menyinkronkan teks</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>Aktif · gambar terbaru yang diterima telah ditulis ke papan klip PC ini</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>Aktif · penulisan gambar ke papan klip terakhir tidak berhasil; gambarnya ada di riwayat</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>Berlaku · salinan dari {0} nama proses tidak direkam</value>
   </data>

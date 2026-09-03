@@ -1175,6 +1175,15 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Aan · {0} apparaat/apparaten verbonden; afbeeldingen gaan alleen over als het op de telefoon ook aanstaat</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>Aan · de verbonden telefoon heeft afbeeldingssynchronisatie uit; deze sessie draagt alleen tekst over</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>Aan · de laatst ontvangen afbeelding is naar het klembord van deze pc geschreven</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>Aan · de laatste schrijfactie van een afbeelding naar het klembord is mislukt; de afbeelding staat in de geschiedenis</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>Van kracht · kopieën uit {0} procesna(a)m(en) worden niet vastgelegd</value>
   </data>

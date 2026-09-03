@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clipsync.android.R
 import com.clipsync.android.ui.prefs.BondedBluetoothDevice
+import com.clipsync.android.ui.prefs.FactLine
+import com.clipsync.android.ui.prefs.FactRow
 import com.clipsync.android.ui.theme.ClipSyncType
 import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.clipSyncColors
@@ -37,6 +39,11 @@ data class BluetoothFallbackUi(
     val enabled: Boolean,
     /** 用户选定的蓝牙目标设备名；null 表示尚未选择（备援不会拨号）。 */
     val deviceName: String? = null,
+    /**
+     * The live fact under the switch (蓝牙权限未授予 · 备援不可用): ochre when the switch is on
+     * but the runtime permission the dialer needs is missing. Null hides the line.
+     */
+    val fact: FactLine? = null,
 )
 
 @Composable
@@ -49,6 +56,8 @@ fun BluetoothFallbackCard(
     onDeviceChosen: (BondedBluetoothDevice) -> Unit,
     onDismissDevices: () -> Unit,
     modifier: Modifier = Modifier,
+    /** Opens the app's system permission page; wired when the fact line asks for a grant. */
+    onOpenPermissionSettings: (() -> Unit)? = null,
 ) {
     val c = clipSyncColors
     Column(
@@ -78,6 +87,18 @@ fun BluetoothFallbackCard(
                     style = ClipSyncType.caption,
                     color = c.t3,
                 )
+                state.fact?.let { fact ->
+                    Spacer(Modifier.height(5.dp))
+                    FactRow(
+                        fact = fact,
+                        modifier =
+                            if (onOpenPermissionSettings != null) {
+                                Modifier.clickable(onClick = onOpenPermissionSettings)
+                            } else {
+                                Modifier
+                            },
+                    )
+                }
             }
             Spacer(Modifier.width(12.dp))
             Switch(

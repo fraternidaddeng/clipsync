@@ -1175,6 +1175,15 @@
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>เปิดอยู่ · เชื่อมต่อแล้ว {0} เครื่อง จะส่งรูปภาพก็ต่อเมื่อฝั่งโทรศัพท์เปิดด้วย</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>เปิดอยู่ · โทรศัพท์ที่เชื่อมต่อปิดการซิงก์รูปภาพไว้ เซสชันนี้จึงซิงก์เฉพาะข้อความ</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>เปิดอยู่ · รูปภาพล่าสุดที่ได้รับถูกเขียนลงคลิปบอร์ดของพีซีนี้แล้ว</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>เปิดอยู่ · การเขียนรูปภาพลงคลิปบอร์ดครั้งล่าสุดไม่สำเร็จ รูปภาพอยู่ในประวัติ</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>มีผลแล้ว · การคัดลอกจาก {0} ชื่อโปรเซสจะไม่ถูกบันทึก</value>
   </data>

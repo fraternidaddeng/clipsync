@@ -1175,6 +1175,15 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Açık · {0} cihaz bağlı; görseller yalnızca telefon tarafı da açıksa aktarılır</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>Açık · bağlı telefonda görsel eşitleme kapalı; bu oturumda yalnızca metin eşitlenir</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>Açık · en son alınan görsel bu PC’nin panosuna yazıldı</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>Açık · en son görsel pano yazımı başarılı olmadı; görsel geçmişte duruyor</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>Etkin · {0} işlem adından yapılan kopyalar kaydedilmez</value>
   </data>

@@ -206,6 +206,8 @@
     <string name="network_unreachable_fact">Pastikan kedua perangkat berada di LAN / VPN yang sama, aplikasi Windows sedang berjalan, dan firewall PC mengizinkan koneksi masuk TCP 47654.</string>
     <string name="network_not_connected_detail">Terpasang dengan “%1$s”; kanal sinkronisasi belum disiapkan.</string>
     <string name="network_waiting_detail">Terpasang dengan “%1$s”; menunggu koneksi.</string>
+    <string name="network_last_sync_format">Sinkronisasi terakhir %1$s</string>
+    <string name="network_bt_permission_denied">Izin Bluetooth belum diberikan · jalur cadangan tidak tersedia; berikan di pengaturan sistem</string>
 
     <string name="peer_write_unprobed_detail">Kemampuan tulis pihak seberang hanya bisa diperiksa setelah jaringan terhubung. Tidak adanya informasi bukan kabar buruk.</string>
     <string name="peer_write_ready_detail">Pihak seberang bisa menulis ke papan klipnya secara otomatis.</string>
@@ -453,6 +455,9 @@
         <item quantity="other">%1$d gambar tidak disinkronkan dalam sesi ini karena ini mati</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">Sistem mematikan notifikasi aplikasi ini, jadi sakelar ini belum berpengaruh; halaman Saluran menautkan ke pengaturan sistem</string>
+    <string name="prefs_live_auto_apply_applied">Aktif · konten terbaru yang diterima telah ditulis ke papan klip</string>
+    <string name="prefs_live_auto_apply_failed_format">Aktif · penulisan papan klip terakhir gagal (%1$s); kontennya ada di riwayat</string>
+    <string name="prefs_live_image_sync_peer_text_only">Aktif · PC mematikan sinkronisasi gambar; sesi ini hanya menyinkronkan teks</string>
 
     <plurals name="transfer_export_done">
         <item quantity="other">%1$d catatan diekspor (teks polos); simpan berkas cadangan baik-baik.</item>

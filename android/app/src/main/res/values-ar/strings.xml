@@ -211,6 +211,8 @@
     <string name="network_unreachable_fact">تأكد أن الجهازين على الشبكة المحلية / VPN نفسها، وأن تطبيق Windows يعمل، وأن جدار حماية الحاسوب يسمح بالاتصالات الواردة على TCP 47654.</string>
     <string name="network_not_connected_detail">مقترن بـ«%1$s»؛ قناة المزامنة لم تُهيَّأ بعد.</string>
     <string name="network_waiting_detail">مقترن بـ«%1$s»؛ بانتظار اتصال.</string>
+    <string name="network_last_sync_format">آخر مزامنة %1$s</string>
+    <string name="network_bt_permission_denied">إذن البلوتوث غير ممنوح · المسار الاحتياطي غير متاح؛ امنحه من إعدادات النظام</string>
 
     <string name="peer_write_unprobed_detail">لا يمكن فحص قدرة الكتابة لدى الطرف الآخر إلا بعد اتصال الشبكة. غياب المعلومة ليس خبرًا سيئًا.</string>
     <string name="peer_write_ready_detail">يستطيع الطرف الآخر الكتابة في حافظته تلقائيًا.</string>
@@ -498,6 +500,9 @@
         <item quantity="other">%1$d صورة لم تُزامَن في هذه الجلسة لأن هذا معطّل</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">أوقف النظام إشعارات هذا التطبيق، لذا لا أثر لهذا المفتاح بعد؛ صفحة القناة تقود إلى إعداد النظام</string>
+    <string name="prefs_live_auto_apply_applied">مفعّل · آخر محتوى مستلَم كُتب في الحافظة</string>
+    <string name="prefs_live_auto_apply_failed_format">مفعّل · فشلت آخر كتابة في الحافظة (%1$s)؛ المحتوى موجود في السجل</string>
+    <string name="prefs_live_image_sync_peer_text_only">مفعّل · مزامنة الصور متوقفة على الكمبيوتر؛ هذه الجلسة تنقل النص فقط</string>
 
     <plurals name="transfer_export_done">
         <item quantity="zero">صُدّرت %1$d سجلات (نص مكشوف)؛ احفظ ملف النسخ الاحتياطي بأمان.</item>

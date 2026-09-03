@@ -7,6 +7,28 @@ import com.clipsync.android.platform.clipboard.ClipboardWriter
 import com.clipsync.android.platform.clipboard.SharedClipboardWrites
 import com.clipsync.android.platform.notify.SyncNotifications
 import com.clipsync.android.storage.SyncSettingsStore
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+/**
+ * What happened the last time this process tried to write a received clip to the system
+ * clipboard automatically. Only real attempts are recorded — a clip that the gates kept from
+ * being applied (auto-apply off, paused, not the newest of its batch) leaves no outcome, so the
+ * 自动写入剪贴板 fact line never claims a write that was never tried. Never carries content.
+ */
+data class InboxApplyOutcome(
+    val applied: Boolean,
+    val isImage: Boolean,
+    /** Stable error code from the writer (or a delivery-side code) when [applied] is false. */
+    val errorCode: String?,
+    val atEpochMillis: Long,
+) {
+    companion object {
+        /** The image blob or its mime type was missing when the write was attempted. */
+        const val ERROR_IMAGE_UNAVAILABLE = "IMAGE_UNAVAILABLE"
+    }
+}
 
 /**
  * Single entry point the sync engine calls when a remote clip event has been persisted.
@@ -50,6 +72,32 @@ object InboxDelivery {
      */
     var notificationGate: InboxNotificationGate = InboxNotificationGate()
 
+    private val mutableLastApplyOutcomes = MutableStateFlow<InboxApplyOutcome?>(null)
+
+    /** The most recent real auto-apply attempt this process; null until one has run. */
+    val lastApplyOutcomes: StateFlow<InboxApplyOutcome?> = mutableLastApplyOutcomes.asStateFlow()
+
+    /** Test seam: the outcome is process-wide state on this object, like the notification gate. */
+    fun clearLastApplyOutcome() {
+        mutableLastApplyOutcomes.value = null
+    }
+
+    private fun recordApply(
+        result: ClipboardWriteResult,
+        isImage: Boolean,
+        atEpochMillis: Long,
+    ): Boolean {
+        val applied = result is ClipboardWriteResult.Success
+        mutableLastApplyOutcomes.value =
+            InboxApplyOutcome(
+                applied = applied,
+                isImage = isImage,
+                errorCode = (result as? ClipboardWriteResult.Failure)?.errorCode,
+                atEpochMillis = atEpochMillis,
+            )
+        return applied
+    }
+
     /**
      * Plan 3.4 gate: inbound auto-apply obeys both the auto_apply_remote preference and the
      * pause switch. Receiving into the inbox is never gated — only the automatic write is.
@@ -81,7 +129,9 @@ object InboxDelivery {
         notify: Boolean = true,
     ): Boolean {
         SyncServices.inbox.record(eventId, text, receivedAtEpochMillis)
-        if (autoApply && writerFactory(context).writeText(text, eventId) is ClipboardWriteResult.Success) {
+        if (autoApply &&
+            recordApply(writerFactory(context).writeText(text, eventId), isImage = false, receivedAtEpochMillis)
+        ) {
             if (notify) {
                 notifyGated(context) { SyncNotifications.notifyAutoApplied(context, eventId) }
             }
@@ -141,14 +191,21 @@ object InboxDelivery {
         contentHash: String?,
         mimeType: String?,
     ): Boolean {
-        if (contentHash == null || mimeType == null) {
-            return false
-        }
+        val now = System.currentTimeMillis()
         val bytes =
-            SyncStore.repository(context).media?.let { media ->
-                runCatching { media.readAllBytes(contentHash) }.getOrNull()
+            if (contentHash == null || mimeType == null) {
+                null
+            } else {
+                SyncStore.repository(context).media?.let { media ->
+                    runCatching { media.readAllBytes(contentHash) }.getOrNull()
+                }
             }
-        return bytes != null &&
-            writerFactory(context).writeImage(bytes, mimeType, eventId) is ClipboardWriteResult.Success
+        val result =
+            if (bytes == null || mimeType == null) {
+                ClipboardWriteResult.Failure(InboxApplyOutcome.ERROR_IMAGE_UNAVAILABLE)
+            } else {
+                writerFactory(context).writeImage(bytes, mimeType, eventId)
+            }
+        return recordApply(result, isImage = true, now)
     }
 }

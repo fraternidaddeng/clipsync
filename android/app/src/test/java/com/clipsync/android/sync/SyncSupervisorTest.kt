@@ -461,7 +461,7 @@ class SyncSupervisorTest {
             assertEquals(listOf(HOST_A, HOST_B), connector.calls)
             assertEquals(1, dialer.dials)
             assertEquals(
-                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH),
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH, protocolVersion = 1),
                 supervisor.state.value,
             )
         }
@@ -536,7 +536,7 @@ class SyncSupervisorTest {
 
             runCurrent()
             assertEquals(
-                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP, protocolVersion = 1),
                 supervisor.state.value,
             )
             assertEquals(0, dialer.dials)
@@ -575,7 +575,7 @@ class SyncSupervisorTest {
 
             runCurrent()
             assertEquals(
-                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH),
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH, protocolVersion = 1),
                 supervisor.state.value,
             )
 
@@ -583,7 +583,7 @@ class SyncSupervisorTest {
             advanceTimeBy(30_001)
             runCurrent()
             assertEquals(
-                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH),
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH, protocolVersion = 1),
                 supervisor.state.value,
             )
             assertTrue(!bluetoothTransport.disposed)
@@ -594,7 +594,7 @@ class SyncSupervisorTest {
             runCurrent()
             assertTrue(bluetoothTransport.disposed)
             assertEquals(
-                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP, protocolVersion = 1),
                 supervisor.state.value,
             )
             // One Bluetooth dial total: the switchback reused the probe's socket, no re-dial.
@@ -630,10 +630,11 @@ class SyncSupervisorTest {
             backgroundScope.launch { supervisor.run() }
 
             runCurrent()
-            // Image sync was off at dial time, so the session runs on text-only v1.
+            // Image sync was off at dial time, so the session runs on text-only v1 — and the
+            // state says so, which is what the 图片同步 fact line reads.
             assertEquals(listOf(1), connector.versions)
             assertEquals(
-                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP, protocolVersion = 1),
                 supervisor.state.value,
             )
 
@@ -652,7 +653,7 @@ class SyncSupervisorTest {
             runCurrent()
             assertEquals(listOf(1, 2), connector.versions)
             assertEquals(
-                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP, protocolVersion = 2),
                 supervisor.state.value,
             )
         }
@@ -712,7 +713,7 @@ class SyncSupervisorTest {
             dialGate.send(Unit)
             runCurrent()
             assertEquals(
-                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP, protocolVersion = 2),
                 supervisor.state.value,
             )
         }
@@ -770,7 +771,7 @@ class SyncSupervisorTest {
 
             runCurrent()
             assertEquals(
-                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH),
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.BLUETOOTH, protocolVersion = 1),
                 supervisor.state.value,
             )
 
@@ -779,7 +780,7 @@ class SyncSupervisorTest {
             supervisor.nudgeReconnect()
             runCurrent()
             assertEquals(
-                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP),
+                SyncConnectionState.Connected("DESKTOP-WIN", SyncTransportKind.IP, protocolVersion = 1),
                 supervisor.state.value,
             )
         }

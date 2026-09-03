@@ -208,6 +208,8 @@
     <string name="network_unreachable_fact">Confirme que os dois aparelhos estão na mesma LAN / VPN, que o app do Windows está em execução e que o firewall do PC permite a entrada em TCP 47654.</string>
     <string name="network_not_connected_detail">Pareado com “%1$s”; o canal de sincronização ainda não foi configurado.</string>
     <string name="network_waiting_detail">Pareado com “%1$s”; aguardando uma conexão.</string>
+    <string name="network_last_sync_format">Última sincronização %1$s</string>
+    <string name="network_bt_permission_denied">Permissão de Bluetooth não concedida · reserva indisponível; conceda nos ajustes do sistema</string>
 
     <string name="peer_write_unprobed_detail">A capacidade de gravação remota só pode ser sondada após a rede conectar. Falta de informação não é má notícia.</string>
     <string name="peer_write_ready_detail">O outro lado consegue gravar na área de transferência dele automaticamente.</string>
@@ -471,6 +473,9 @@
         <item quantity="other">%1$d imagens não sincronizadas nesta execução porque isto está desligado</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">O sistema desligou as notificações deste app, então esta chave ainda não tem efeito; a página Conduíte leva ao ajuste do sistema</string>
+    <string name="prefs_live_auto_apply_applied">Ativado · o último conteúdo recebido foi gravado na área de transferência</string>
+    <string name="prefs_live_auto_apply_failed_format">Ativado · a última gravação na área de transferência falhou (%1$s); o conteúdo está no histórico</string>
+    <string name="prefs_live_image_sync_peer_text_only">Ativado · o PC está com a sincronização de imagens desligada; esta sessão sincroniza só texto</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">%1$d registro exportado (texto puro); guarde o arquivo de backup com segurança.</item>

@@ -136,6 +136,8 @@ data class ConduitDeviceUi(
     val accentSlot: Int,
     /** The slot pairing order assigns — the value 「跟随配对顺位」 returns to. */
     val defaultSlot: Int,
+    /** 「最近同步 HH:mm」 once content has crossed the link this process; null hides the line. */
+    val lastSyncLine: UiText? = null,
 )
 
 /**
@@ -196,6 +198,8 @@ fun HealthScreen(
     onRequestBluetoothDevices: () -> Unit = {},
     onBluetoothDeviceChosen: (BondedBluetoothDevice) -> Unit = {},
     onDismissBluetoothDevices: () -> Unit = {},
+    /** Opens the app's system permission page from the 蓝牙权限未授予 fact line; null = plain text. */
+    onOpenBluetoothPermissionSettings: (() -> Unit)? = null,
     // 设备色手动改（settings-roadmap P1#14）：slot 1..5 pins a colour, null = 跟随配对顺位.
     onDeviceAccentChange: ((deviceId: String, slot: Int?) -> Unit)? = null,
 ) {
@@ -342,6 +346,7 @@ fun HealthScreen(
                 onRequestDevices = onRequestBluetoothDevices,
                 onDeviceChosen = onBluetoothDeviceChosen,
                 onDismissDevices = onDismissBluetoothDevices,
+                onOpenPermissionSettings = onOpenBluetoothPermissionSettings,
             )
         }
         Spacer(Modifier.height(8.dp))
@@ -451,6 +456,14 @@ private fun ConduitDeviceRow(
                     style = ClipSyncType.meta,
                     fontSize = 10.sp,
                     color = c.t4,
+                )
+            }
+            device.lastSyncLine?.let { line ->
+                Text(
+                    text = line.string(),
+                    style = ClipSyncType.meta,
+                    fontSize = 10.sp,
+                    color = c.t3,
                 )
             }
         }

@@ -1175,6 +1175,15 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Đang bật · {0} thiết bị đã kết nối; chỉ truyền hình ảnh khi phía điện thoại cũng bật</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>Đang bật · điện thoại đã kết nối đang tắt đồng bộ hình ảnh; phiên này chỉ đồng bộ văn bản</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>Đang bật · hình ảnh nhận gần nhất đã được ghi vào bảng nhớ tạm của PC này</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>Đang bật · lần ghi hình ảnh vào bảng nhớ tạm gần nhất không thành công, hình ảnh vẫn ở trong lịch sử</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>Đã hiệu lực · sao chép từ {0} tên tiến trình sẽ không được ghi lại</value>
   </data>

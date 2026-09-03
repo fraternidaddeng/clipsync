@@ -208,6 +208,8 @@
     <string name="network_unreachable_fact">Confirma que ambos dispositivos están en la misma LAN / VPN, que la app de Windows está en marcha y que el firewall del PC permite la entrada por TCP 47654.</string>
     <string name="network_not_connected_detail">Emparejado con «%1$s»; el canal de sincronización aún no está configurado.</string>
     <string name="network_waiting_detail">Emparejado con «%1$s»; esperando una conexión.</string>
+    <string name="network_last_sync_format">Última sincronización %1$s</string>
+    <string name="network_bt_permission_denied">Permiso de Bluetooth no concedido · el respaldo no está disponible; concédelo en los ajustes del sistema</string>
 
     <string name="peer_write_unprobed_detail">La capacidad de escritura remota solo puede sondearse tras conectarse la red. La falta de información no es una mala noticia.</string>
     <string name="peer_write_ready_detail">El otro extremo puede escribir en su portapapeles automáticamente.</string>
@@ -471,6 +473,9 @@
         <item quantity="other">%1$d imágenes sin sincronizar en esta ejecución porque esto está desactivado</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">El sistema tiene desactivadas las notificaciones de esta app, así que este interruptor aún no tiene efecto; la página Conducto enlaza al ajuste del sistema</string>
+    <string name="prefs_live_auto_apply_applied">Activado · el último contenido recibido se escribió en el portapapeles</string>
+    <string name="prefs_live_auto_apply_failed_format">Activado · la última escritura en el portapapeles falló (%1$s); el contenido está en el historial</string>
+    <string name="prefs_live_image_sync_peer_text_only">Activado · el PC tiene la sincronización de imágenes desactivada; esta sesión solo sincroniza texto</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">Se exportó %1$d registro (texto plano); guarda bien el archivo de respaldo.</item>

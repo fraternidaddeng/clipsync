@@ -208,6 +208,8 @@
     <string name="network_unreachable_fact">Verifica che entrambi i dispositivi siano sulla stessa LAN / VPN, che l’app Windows sia in esecuzione e che il firewall del PC consenta le connessioni in ingresso sulla porta TCP 47654.</string>
     <string name="network_not_connected_detail">Associato a «%1$s»; il canale di sincronizzazione non è ancora configurato.</string>
     <string name="network_waiting_detail">Associato a «%1$s»; in attesa di una connessione.</string>
+    <string name="network_last_sync_format">Ultima sincronizzazione %1$s</string>
+    <string name="network_bt_permission_denied">Autorizzazione Bluetooth non concessa · riserva non disponibile; concedila nelle impostazioni di sistema</string>
 
     <string name="peer_write_unprobed_detail">La capacità di scrittura remota può essere esaminata solo dopo la connessione di rete. La mancanza di informazioni non è una cattiva notizia.</string>
     <string name="peer_write_ready_detail">L’altro lato può scrivere automaticamente nei propri appunti.</string>
@@ -471,6 +473,9 @@
         <item quantity="other">%1$d immagini non sincronizzate in questa sessione perché questo è disattivato</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">Il sistema ha disattivato le notifiche di questa app, quindi questo interruttore non ha ancora effetto; la pagina Condotto porta all’impostazione di sistema</string>
+    <string name="prefs_live_auto_apply_applied">Attivo · l’ultimo contenuto ricevuto è stato scritto negli appunti</string>
+    <string name="prefs_live_auto_apply_failed_format">Attivo · l’ultima scrittura negli appunti non è riuscita (%1$s); il contenuto è nella cronologia</string>
+    <string name="prefs_live_image_sync_peer_text_only">Attivo · il PC ha la sincronizzazione immagini disattivata; questa sessione sincronizza solo testo</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">Esportato %1$d record (in chiaro); custodisci bene il file di backup.</item>

@@ -1175,6 +1175,15 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Włączone · połączone urządzenia: {0}; obrazy przechodzą tylko, gdy po stronie telefonu też jest włączone</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>Włączone · połączony telefon ma wyłączoną synchronizację obrazów; ta sesja przenosi tylko tekst</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>Włączone · ostatnio odebrany obraz zapisano w schowku tego komputera</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>Włączone · ostatni zapis obrazu do schowka się nie powiódł; obraz jest w historii</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>Obowiązuje · kopie z {0} nazw procesów nie są zapisywane</value>
   </data>

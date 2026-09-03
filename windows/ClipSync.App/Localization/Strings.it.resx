@@ -1175,6 +1175,15 @@ Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuot
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Attivo · {0} dispositivo/i connesso/i; le immagini passano solo se è attivo anche sul telefono</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>Attivo · il telefono connesso ha la sincronizzazione immagini disattivata; questa sessione sincronizza solo testo</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>Attivo · l’ultima immagine ricevuta è stata scritta negli appunti di questo PC</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>Attivo · l’ultima scrittura di un’immagine negli appunti non è riuscita; l’immagine è nella cronologia</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>In vigore · le copie da {0} nome/i di processo non vengono registrate</value>
   </data>

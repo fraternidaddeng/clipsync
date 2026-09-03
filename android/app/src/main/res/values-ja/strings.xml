@@ -206,6 +206,8 @@
     <string name="network_unreachable_fact">両方の端末が同じ LAN / VPN 上にあり、Windows アプリが実行中で、PC のファイアウォールが TCP 47654 の受信を許可していることを確認してください。</string>
     <string name="network_not_connected_detail">「%1$s」とペアリング済みです。同期チャネルはまだ設定されていません。</string>
     <string name="network_waiting_detail">「%1$s」とペアリング済みです。接続を待っています。</string>
+    <string name="network_last_sync_format">最終同期 %1$s</string>
+    <string name="network_bt_permission_denied">Bluetooth の権限が未許可 · フォールバックは使えません。システム設定で許可してください</string>
 
     <string name="peer_write_unprobed_detail">相手側の書き込み能力は、ネットワーク接続後にのみ検出できます。情報がないことは悪い知らせではありません。</string>
     <string name="peer_write_ready_detail">相手側はクリップボードへ自動で書き込めます。</string>
@@ -453,6 +455,9 @@
         <item quantity="other">今回の起動でオフのため同期されなかった画像：%1$d 枚</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">システムがこのアプリの通知をオフにしているため、このスイッチはまだ効きません。「経路」ページからシステム設定を開けます</string>
+    <string name="prefs_live_auto_apply_applied">オン · 直近に受信した内容はクリップボードに書き込まれました</string>
+    <string name="prefs_live_auto_apply_failed_format">オン · 直近のクリップボード書き込みは失敗しました（%1$s）。内容は履歴にあります</string>
+    <string name="prefs_live_image_sync_peer_text_only">オン · PC 側は画像同期がオフです。このセッションはテキストのみ同期します</string>
 
     <plurals name="transfer_export_done">
         <item quantity="other">%1$d 件をエクスポートしました（平文）。バックアップファイルは大切に保管してください。</item>

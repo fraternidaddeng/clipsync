@@ -207,6 +207,8 @@
     <string name="network_unreachable_fact">İki cihazın aynı LAN / VPN üzerinde olduğunu, Windows uygulamasının çalıştığını ve PC güvenlik duvarının TCP 47654 gelen bağlantılarına izin verdiğini doğrulayın.</string>
     <string name="network_not_connected_detail">“%1$s” ile eşleştirildi; eşitleme kanalı henüz kurulmadı.</string>
     <string name="network_waiting_detail">“%1$s” ile eşleştirildi; bağlantı bekleniyor.</string>
+    <string name="network_last_sync_format">Son eşitleme %1$s</string>
+    <string name="network_bt_permission_denied">Bluetooth izni verilmedi · yedek yol kullanılamıyor; sistem ayarlarından izin verin</string>
 
     <string name="peer_write_unprobed_detail">Karşı tarafın yazma yeteneği ancak ağ bağlandıktan sonra yoklanabilir. Bilgi eksikliği kötü haber değildir.</string>
     <string name="peer_write_ready_detail">Karşı taraf panosuna otomatik yazabilir.</string>
@@ -462,6 +464,9 @@
         <item quantity="other">Bu oturumda %1$d görsel, bu kapalı olduğu için eşitlenmedi</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">Sistem bu uygulamanın bildirimlerini kapattı, bu yüzden bu anahtar henüz etkili değil; Kanal sayfası sistem ayarına götürür</string>
+    <string name="prefs_live_auto_apply_applied">Açık · en son alınan içerik panoya yazıldı</string>
+    <string name="prefs_live_auto_apply_failed_format">Açık · en son pano yazımı başarısız oldu (%1$s); içerik geçmişte duruyor</string>
+    <string name="prefs_live_image_sync_peer_text_only">Açık · PC’de görsel eşitleme kapalı; bu oturumda yalnızca metin eşitlenir</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">%1$d kayıt dışa aktarıldı (düz metin); yedek dosyasını güvenle saklayın.</item>

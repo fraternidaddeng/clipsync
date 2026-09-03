@@ -206,6 +206,8 @@
     <string name="network_unreachable_fact">ยืนยันว่าอุปกรณ์ทั้งสองอยู่ใน LAN / VPN เดียวกัน แอป Windows กำลังทำงาน และไฟร์วอลล์ของพีซีอนุญาตการเชื่อมต่อขาเข้าทาง TCP 47654 แล้ว</string>
     <string name="network_not_connected_detail">จับคู่กับ “%1$s” แล้ว ช่องซิงค์ยังไม่ได้ตั้งค่า</string>
     <string name="network_waiting_detail">จับคู่กับ “%1$s” แล้ว กำลังรอการเชื่อมต่อ</string>
+    <string name="network_last_sync_format">ซิงก์ล่าสุด %1$s</string>
+    <string name="network_bt_permission_denied">ยังไม่ได้ให้สิทธิ์บลูทูธ · เส้นทางสำรองใช้ไม่ได้ ไปให้สิทธิ์ในการตั้งค่าระบบ</string>
 
     <string name="peer_write_unprobed_detail">ตรวจความสามารถการเขียนของฝั่งโน้นได้หลังเครือข่ายเชื่อมต่อเท่านั้น การไม่มีข้อมูลไม่ใช่ข่าวร้าย</string>
     <string name="peer_write_ready_detail">ฝั่งโน้นเขียนลงคลิปบอร์ดของตัวเองอัตโนมัติได้</string>
@@ -453,6 +455,9 @@
         <item quantity="other">รอบนี้มีรูป %1$d รูปที่ไม่ได้ซิงค์เพราะปิดไว้</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">ระบบปิดการแจ้งเตือนของแอปนี้ สวิตช์นี้จึงยังไม่มีผล หน้าเส้นทางมีทางไปยังการตั้งค่าระบบ</string>
+    <string name="prefs_live_auto_apply_applied">เปิดอยู่ · เนื้อหาล่าสุดที่ได้รับถูกเขียนลงคลิปบอร์ดแล้ว</string>
+    <string name="prefs_live_auto_apply_failed_format">เปิดอยู่ · การเขียนคลิปบอร์ดครั้งล่าสุดล้มเหลว (%1$s) เนื้อหาอยู่ในประวัติ</string>
+    <string name="prefs_live_image_sync_peer_text_only">เปิดอยู่ · พีซีปิดการซิงก์รูปภาพไว้ เซสชันนี้จึงซิงก์เฉพาะข้อความ</string>
 
     <plurals name="transfer_export_done">
         <item quantity="other">ส่งออก %1$d รายการแล้ว (ข้อความเปล่า) เก็บไฟล์สำรองให้ดี</item>

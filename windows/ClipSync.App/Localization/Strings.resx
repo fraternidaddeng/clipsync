@@ -1175,6 +1175,15 @@
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>已开 · {0} 台设备已连接；手机端也开启时才互传图片</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>已开 · 已连接的手机未开启图片同步，本次会话只同步文本</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>已开 · 最近一次收到的图片已写入本机剪贴板</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>已开 · 最近一次图片写入剪贴板未成功，图片留在历史里</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>已生效 · 来自 {0} 个进程的复制不记录</value>
   </data>

@@ -1175,6 +1175,15 @@ Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelö
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>An · {0} Gerät(e) verbunden; Bilder gehen nur hin und her, wenn es auch am Telefon an ist</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>An · am verbundenen Telefon ist die Bildsynchronisierung aus; diese Sitzung überträgt nur Text</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>An · das zuletzt empfangene Bild wurde in die Zwischenablage dieses PCs geschrieben</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>An · das letzte Schreiben eines Bildes in die Zwischenablage gelang nicht; das Bild steht im Verlauf</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>Wirksam · Kopien aus {0} Prozessname(n) werden nicht aufgezeichnet</value>
   </data>

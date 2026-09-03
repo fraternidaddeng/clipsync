@@ -109,11 +109,11 @@ public partial class MainViewModel
     private void RefreshAutoApplyStatuses()
     {
         AutoApplyStatus = SettingStatusMapper.AutoApplyText(AutoApplyRemote, IsPaused, IsPrivateMode, remoteApplyEvidence);
-        AutoApplyImagesStatus = SettingStatusMapper.AutoApplyImages(AutoApplyImages, IsPaused, IsPrivateMode);
+        AutoApplyImagesStatus = SettingStatusMapper.AutoApplyImages(AutoApplyImages, IsPaused, IsPrivateMode, remoteImageApplyEvidence);
     }
 
     private void RefreshImageSyncStatus() =>
-        ImageSyncStatus = SettingStatusMapper.ImageSync(ImageSyncEnabled, ConnectedDeviceCount);
+        ImageSyncStatus = SettingStatusMapper.ImageSync(ImageSyncEnabled, ConnectedDeviceCount, ImageCapableDeviceCount);
 
     private void RefreshBluetoothToggleStatus()
     {
@@ -168,6 +168,8 @@ public partial class MainViewModel
     partial void OnAutoApplyImagesChanged(bool value) => RefreshAutoApplyStatuses();
 
     partial void OnConnectedDeviceCountChanged(int value) => RefreshImageSyncStatus();
+
+    partial void OnImageCapableDeviceCountChanged(int? value) => RefreshImageSyncStatus();
 
     partial void OnExtraBindAddressesChanged(string value) => RefreshRestartBoundStatuses();
 

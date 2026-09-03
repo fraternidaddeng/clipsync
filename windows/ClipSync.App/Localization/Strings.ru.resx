@@ -1175,6 +1175,15 @@
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Включено · подключено устройств: {0}; изображения передаются, только если включено и на телефоне</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>Включено · на подключённом телефоне синхронизация изображений выключена; в этом сеансе передаётся только текст</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>Включено · последнее полученное изображение записано в буфер обмена этого ПК</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>Включено · последняя запись изображения в буфер обмена не удалась, изображение осталось в истории</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>Действует · копирование из процессов ({0}) не записывается</value>
   </data>

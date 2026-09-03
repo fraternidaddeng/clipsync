@@ -129,6 +129,30 @@ public sealed class MainViewModelSettingStatusTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task AutoApplyImagesRowFollowsTheLastRealImageApply()
+    {
+        var viewModel = CreateViewModel();
+        await viewModel.InitializeAsync();
+        Assert.True(viewModel.AutoApplyImagesStatus.IsEmpty);
+
+        viewModel.RecordRemoteImageApplyOutcome(ok: true);
+        Assert.Equal(SettingStatusTone.Flow, viewModel.AutoApplyImagesStatus.Tone);
+        Assert.Contains("图片已写入", viewModel.AutoApplyImagesStatus.Text, StringComparison.Ordinal);
+        // Image evidence is its own record: the text row is untouched.
+        Assert.Contains("尚未收到", viewModel.AutoApplyStatus.Text, StringComparison.Ordinal);
+
+        viewModel.RecordRemoteImageApplyOutcome(ok: false);
+        Assert.Equal(SettingStatusTone.Attention, viewModel.AutoApplyImagesStatus.Tone);
+
+        viewModel.IsPrivateMode = true;
+        Assert.Contains("私密模式", viewModel.AutoApplyImagesStatus.Text, StringComparison.Ordinal);
+
+        viewModel.IsPrivateMode = false;
+        viewModel.AutoApplyImages = false;
+        Assert.True(viewModel.AutoApplyImagesStatus.IsEmpty);
+    }
+
+    [Fact]
     public async Task ImageSyncRowFollowsTheToggleAndTheConnectedCount()
     {
         var viewModel = CreateViewModel();
@@ -140,6 +164,26 @@ public sealed class MainViewModelSettingStatusTests : IAsyncDisposable
 
         viewModel.ImageSyncEnabled = false;
         Assert.Contains("只收发文本", viewModel.ImageSyncStatus.Text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ImageSyncRowSaysTextOnlyWhenTheConnectedPhoneStayedOnV1()
+    {
+        var viewModel = CreateViewModel();
+        await viewModel.InitializeAsync();
+
+        viewModel.UpdatePeerStatus(online: true, port: 47654, connectedCount: 1, imageCapableCount: 0);
+        Assert.Equal(0, viewModel.ImageCapableDeviceCount);
+        Assert.Contains("未开启图片同步", viewModel.ImageSyncStatus.Text, StringComparison.Ordinal);
+
+        // The phone redialed on /v2: the row goes back to the plain connected count.
+        viewModel.UpdatePeerStatus(online: true, port: 47654, connectedCount: 1, imageCapableCount: 1);
+        Assert.Contains("1 台设备已连接", viewModel.ImageSyncStatus.Text, StringComparison.Ordinal);
+
+        // Offline clears the report along with the count.
+        viewModel.UpdatePeerStatus(online: false, port: 0, connectedCount: 0, imageCapableCount: 0);
+        Assert.Null(viewModel.ImageCapableDeviceCount);
+        Assert.Contains("等待手机连接", viewModel.ImageSyncStatus.Text, StringComparison.Ordinal);
     }
 
     [Fact]

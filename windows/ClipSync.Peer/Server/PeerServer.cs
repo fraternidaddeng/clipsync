@@ -160,6 +160,18 @@ public sealed class PeerServer : IAsyncDisposable
 
     public int ConnectedDeviceCount => ConnectedDeviceIds.Count;
 
+    /// <summary>
+    /// Distinct connected devices whose session negotiated image_clip_v2 (dialed on /v2, which
+    /// this server only accepts while its own image sync is on). Zero with connected devices
+    /// means the phones are on text-only v1 — their image sync is off.
+    /// </summary>
+    public int ImageCapableDeviceCount => sessions.Values
+        .Where(session => session.Engine.IsReady && session.Engine.ProtocolVersion == ProtocolLimits.ProtocolVersionV2)
+        .Select(session => session.Engine.PeerDeviceId)
+        .OfType<string>()
+        .Distinct(StringComparer.Ordinal)
+        .Count();
+
     /// <summary>Claimed device ids that are rate-limited right now; empty when none.</summary>
     public IReadOnlyList<string> ThrottledDeviceIds => authThrottle.ThrottledDevices();
 

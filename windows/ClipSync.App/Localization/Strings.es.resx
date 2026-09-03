@@ -1175,6 +1175,15 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Activado · {0} dispositivo(s) conectado(s); las imágenes solo viajan si el teléfono también lo tiene activado</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>Activado · el teléfono conectado tiene la sincronización de imágenes desactivada; esta sesión solo sincroniza texto</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>Activado · la última imagen recibida se escribió en el portapapeles de este PC</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>Activado · la última escritura de imagen en el portapapeles no tuvo éxito; la imagen está en el historial</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>En vigor · las copias desde {0} nombre(s) de proceso no se registran</value>
   </data>

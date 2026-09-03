@@ -51,6 +51,11 @@ sealed interface SyncConnectionState {
     data class Connected(
         val peerDisplayName: String,
         val transport: SyncTransportKind = SyncTransportKind.IP,
+        /**
+         * The wire contract this session was accepted on: 2 means image frames were negotiated
+         * (both peers opted in), 1 means text only. Null when the dialer did not report it.
+         */
+        val protocolVersion: Int? = null,
     ) : SyncConnectionState
 
     data class WaitingRetry(
@@ -116,6 +121,7 @@ class SyncSupervisor(
     private val ipProbeIntervalMs: Long = 30_000,
 ) {
     private val mutableState = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)
+    private val mutableLastSyncAtMs = MutableStateFlow<Long?>(null)
     private var throttleAnnounced = false
 
     /** The engine of the currently running session, if any; closed by [restartSession]. */
@@ -136,6 +142,13 @@ class SyncSupervisor(
     private val reconnectNudges = Channel<Unit>(Channel.CONFLATED)
 
     val state: StateFlow<SyncConnectionState> = mutableState.asStateFlow()
+
+    /**
+     * When clipboard content last crossed the link in either direction (a remote batch
+     * committed here, or the peer acknowledged this device's clips), as [nowMs] epoch millis.
+     * Null until the first such exchange in this process; survives reconnects.
+     */
+    val lastSyncAtMs: StateFlow<Long?> = mutableLastSyncAtMs.asStateFlow()
 
     /**
      * Asks the loop to skip the remainder of the current backoff wait and dial now. Called when
@@ -197,7 +210,8 @@ class SyncSupervisor(
                 continue
             }
 
-            mutableState.value = SyncConnectionState.Connected(peer.displayName, connected.kind)
+            mutableState.value =
+                SyncConnectionState.Connected(peer.displayName, connected.kind, connected.protocolVersion)
             val engine =
                 SyncEngine(
                     repository = repository,
@@ -219,6 +233,7 @@ class SyncSupervisor(
                         ),
                     pairSecret = secret,
                     onRemoteClipsCommitted = onRemoteClipsCommitted,
+                    onContentSynced = { mutableLastSyncAtMs.value = nowMs() },
                 )
             secret.fill(0)
             activeEngine = engine

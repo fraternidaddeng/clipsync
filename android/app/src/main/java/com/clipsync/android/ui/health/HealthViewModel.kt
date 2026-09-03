@@ -453,6 +453,7 @@ class HealthViewModel(
                 lastSyncHealth,
                 facts,
                 deviceAccent = pairingStore::deviceAccent,
+                formatClock = formatClock,
             ).copy(
                 testResult = testResult,
                 probing = probing,
@@ -545,14 +546,17 @@ private fun tryRecoverNow(
  * appears for "unavailable" (a fact is not an error), and at most one segment
  * beckons — the most upstream NEEDS_ACTION in pipe order.
  */
+@Suppress("LongParameterList")
 internal fun buildHealthScreenState(
     peer: PairedPeer?,
     clipboard: CapabilityReport?,
     sync: SyncHealth?,
     facts: CapabilityFacts? = null,
     deviceAccent: (String) -> Int? = { null },
+    formatClock: (Long) -> String = { HealthViewModel.defaultClockFormat(it) },
 ): HealthScreenState {
     val network = networkSegment(peer, sync, facts)
+    val lastSyncLine = sync?.lastSyncAtMs?.let { UiText.Res(R.string.network_last_sync_format, formatClock(it)) }
     val state =
         HealthScreenState(
             localRead = if (facts != null) localReadSegmentFromFacts(facts) else localReadSegment(clipboard),
@@ -561,7 +565,7 @@ internal fun buildHealthScreenState(
             peerWrite = peerWriteSegment(network.status, sync, facts),
             pairedDeviceCount = if (peer != null) 1 else 0,
             pairedPeerName = peer?.displayName,
-            pairedDevices = conduitDeviceRows(listOfNotNull(peer), deviceAccent),
+            pairedDevices = conduitDeviceRows(listOfNotNull(peer), deviceAccent, lastSyncLine),
             localWrite = facts?.let(::localWriteSegmentFromFacts),
             routes = facts?.let(::buildReadRoutes).orEmpty(),
             serviceRunning = sync?.serviceRunning ?: false,
@@ -577,6 +581,7 @@ internal fun buildHealthScreenState(
 private fun conduitDeviceRows(
     peers: List<PairedPeer>,
     deviceAccent: (String) -> Int?,
+    lastSyncLine: UiText? = null,
 ): List<ConduitDeviceUi> =
     peers.mapIndexed { index, peer ->
         val defaultSlot = DeviceAccents.defaultSlot(index)
@@ -586,6 +591,8 @@ private fun conduitDeviceRows(
             platformLabel = if (peer.platform == "windows") "Windows" else peer.platform,
             accentSlot = deviceAccent(peer.deviceId) ?: defaultSlot,
             defaultSlot = defaultSlot,
+            // One paired peer today, so the session's last exchange belongs to this row.
+            lastSyncLine = lastSyncLine,
         )
     }
 

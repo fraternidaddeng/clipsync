@@ -27,6 +27,7 @@ class SyncHealthFlowTest {
     private val startErrorCodes = MutableStateFlow<String?>(null)
     private val peerThrottled = MutableStateFlow(false)
     private val serviceEnabled = MutableStateFlow(true)
+    private val lastSyncAtMs = MutableStateFlow<Long?>(null)
 
     private fun flowUnderTest() =
         syncHealthFlow(
@@ -35,6 +36,7 @@ class SyncHealthFlowTest {
             startErrorCodes = startErrorCodes,
             peerThrottled = peerThrottled,
             serviceEnabled = serviceEnabled,
+            lastSyncAtMs = lastSyncAtMs,
         )
 
     @Test
@@ -85,6 +87,22 @@ class SyncHealthFlowTest {
             val latest = emissions.last()
             assertTrue(latest.connected)
             assertFalse(latest.bluetoothFallback)
+            collection.cancel()
+        }
+
+    @Test
+    fun `the last exchange time travels as its own fact and re-emits on its own`() =
+        runTest(UnconfinedTestDispatcher()) {
+            serviceRunning.value = true
+            connectionStates.value = SyncConnectionState.Connected("DESKTOP-WIN")
+            val emissions = mutableListOf<SyncHealth>()
+            val collection = launch { flowUnderTest().collect(emissions::add) }
+            assertEquals(null, emissions.last().lastSyncAtMs)
+
+            // Content crossed the link while every other flow stayed quiet.
+            lastSyncAtMs.value = 1_700_000_000_000L
+            assertEquals(1_700_000_000_000L, emissions.last().lastSyncAtMs)
+            assertTrue(emissions.last().connected)
             collection.cancel()
         }
 }

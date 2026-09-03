@@ -229,6 +229,8 @@
     <string name="network_unreachable_fact">确认两台设备在同一局域网 / VPN，Windows 端正在运行，且电脑防火墙已放行 TCP 47654 入站。</string>
     <string name="network_not_connected_detail">已与「%1$s」配对；同步通道尚未接入。</string>
     <string name="network_waiting_detail">已与「%1$s」配对，正在等待连接。</string>
+    <string name="network_last_sync_format">最近同步 %1$s</string>
+    <string name="network_bt_permission_denied">蓝牙权限未授予 · 备援不可用，去系统设置授权</string>
 
     <!-- 通路：对端写入 -->
     <string name="peer_write_unprobed_detail">网络接通后才能探测对端写入能力。缺信息 ≠ 坏消息。</string>
@@ -489,6 +491,9 @@
         <item quantity="other">本次运行已有 %1$d 张图片因关闭而未同步</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">系统已关闭本应用的通知，此开关暂不生效；到「通路」页可跳转系统设置开启</string>
+    <string name="prefs_live_auto_apply_applied">已开 · 最近一次收到的内容已写入剪贴板</string>
+    <string name="prefs_live_auto_apply_failed_format">已开 · 最近一次写入剪贴板失败（%1$s），内容留在历史里</string>
+    <string name="prefs_live_image_sync_peer_text_only">已开 · 电脑端未开启图片同步，本次会话只同步文本</string>
 
     <!-- 数据组操作结果（导出/导入/清空） -->
     <plurals name="transfer_export_done">

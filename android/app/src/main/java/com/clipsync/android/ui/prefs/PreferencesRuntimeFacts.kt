@@ -7,9 +7,13 @@ import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.sync.CaptureStack
 import com.clipsync.android.sync.CaptureTallySnapshot
 import com.clipsync.android.sync.ClipboardSyncService
+import com.clipsync.android.sync.InboxApplyOutcome
+import com.clipsync.android.sync.InboxDelivery
 import com.clipsync.android.sync.SyncConnectionState
+import com.clipsync.android.sync.SyncTransportKind
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 
 /**
  * What the preferences page needs to say under its switches beyond the switch position itself:
@@ -29,58 +33,90 @@ data class PreferencesRuntimeFacts(
     val tally: CaptureTallySnapshot,
     /** Null = not probed on this build; false = the system surface is switched off. */
     val systemNotificationsEnabled: Boolean?,
+    /**
+     * The wire version of the live IP session (2 = image frames negotiated, 1 = text only);
+     * null while not connected over IP or when the dialer did not report it.
+     */
+    val ipSessionProtocolVersion: Int? = null,
+    /** Outcome of the most recent remote clip this process tried to write to the clipboard. */
+    val lastInboxApply: InboxApplyOutcome? = null,
+    /**
+     * Whether the Bluetooth fallback may open connections right now (BLUETOOTH_CONNECT on
+     * API 31+; always true below). Null = not probed on this build.
+     */
+    val bluetoothPermissionGranted: Boolean? = null,
 )
 
 /**
  * Combines the service's live flows with the capture stack's coordinator, session and tally
- * into one fact stream. [notificationsEnabled] is sampled on every emission (the system surface
- * has no flow of its own); the service and coordinator flows default to the process-wide ones.
+ * into one fact stream. [notificationsEnabled] and [bluetoothPermissionGranted] are sampled on
+ * every emission (system permissions have no flow of their own), so [refreshTicks] lets the
+ * host re-sample them when the Activity comes back to the foreground; the service and
+ * coordinator flows default to the process-wide ones.
  */
+@Suppress("LongParameterList")
 fun preferencesRuntimeFacts(
     stack: CaptureStack,
     serviceRunning: Flow<Boolean> = ClipboardSyncService.serviceRunning,
     connectionStates: Flow<SyncConnectionState> = ClipboardSyncService.connectionStates,
     startErrorCodes: Flow<String?> = ClipboardSyncService.startErrorCodes,
+    inboxApplyOutcomes: Flow<InboxApplyOutcome?> = InboxDelivery.lastApplyOutcomes,
+    refreshTicks: Flow<Unit> = flowOf(Unit),
+    bluetoothPermissionGranted: (() -> Boolean)? = null,
     notificationsEnabled: (() -> Boolean)? = null,
 ): Flow<PreferencesRuntimeFacts> {
     val service =
         combine(serviceRunning, connectionStates, startErrorCodes) { running, connection, startError ->
-            Triple(running, connection is SyncConnectionState.Connected, startError)
+            ServiceFacts(running, connection, startError)
         }
     val capture =
         combine(stack.coordinator.states, stack.session.status, stack.tally.snapshots) { access, session, tally ->
             Triple(access, session, tally)
         }
-    return combine(service, capture) { (running, connected, startError), (access, session, tally) ->
+    return combine(service, capture, inboxApplyOutcomes, refreshTicks) { svc, (access, session, tally), inboxApply, _ ->
         runtimeFacts(
-            serviceRunning = running,
-            connected = connected,
-            startError = startError,
+            service = svc,
             access = access,
             session = session,
             tally = tally,
+            inboxApply = inboxApply,
+            bluetoothPermissionGranted = bluetoothPermissionGranted?.invoke(),
             notificationsEnabled = notificationsEnabled?.invoke(),
         )
     }
 }
 
+private data class ServiceFacts(
+    val running: Boolean,
+    val connection: SyncConnectionState,
+    val startError: String?,
+)
+
 @Suppress("LongParameterList")
 private fun runtimeFacts(
-    serviceRunning: Boolean,
-    connected: Boolean,
-    startError: String?,
+    service: ServiceFacts,
     access: ClipboardAccessState,
     session: CaptureSessionStatus,
     tally: CaptureTallySnapshot,
+    inboxApply: InboxApplyOutcome?,
+    bluetoothPermissionGranted: Boolean?,
     notificationsEnabled: Boolean?,
-): PreferencesRuntimeFacts =
-    PreferencesRuntimeFacts(
-        serviceRunning = serviceRunning,
-        connected = connected,
-        serviceStartErrorCode = startError,
+): PreferencesRuntimeFacts {
+    val connection = service.connection
+    return PreferencesRuntimeFacts(
+        serviceRunning = service.running,
+        connected = connection is SyncConnectionState.Connected,
+        serviceStartErrorCode = service.startError,
         activeReadMode = access.activeReadMode,
         captureRunning = session.running,
         captureGate = session.gate,
         tally = tally,
         systemNotificationsEnabled = notificationsEnabled,
+        ipSessionProtocolVersion =
+            (connection as? SyncConnectionState.Connected)
+                ?.takeIf { it.transport == SyncTransportKind.IP }
+                ?.protocolVersion,
+        lastInboxApply = inboxApply,
+        bluetoothPermissionGranted = bluetoothPermissionGranted,
     )
+}

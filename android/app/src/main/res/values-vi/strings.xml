@@ -206,6 +206,8 @@
     <string name="network_unreachable_fact">Xác nhận hai thiết bị cùng LAN / VPN, ứng dụng Windows đang chạy và tường lửa của PC đã cho phép kết nối vào qua TCP 47654.</string>
     <string name="network_not_connected_detail">Đã ghép nối với “%1$s”; kênh đồng bộ chưa được thiết lập.</string>
     <string name="network_waiting_detail">Đã ghép nối với “%1$s”; đang chờ kết nối.</string>
+    <string name="network_last_sync_format">Đồng bộ gần nhất %1$s</string>
+    <string name="network_bt_permission_denied">Chưa cấp quyền Bluetooth · đường dự phòng không dùng được; hãy cấp quyền trong cài đặt hệ thống</string>
 
     <string name="peer_write_unprobed_detail">Chỉ có thể dò khả năng ghi của phía bên kia sau khi mạng kết nối. Thiếu thông tin không phải là tin xấu.</string>
     <string name="peer_write_ready_detail">Phía bên kia có thể tự động ghi vào bảng nhớ tạm của họ.</string>
@@ -453,6 +455,9 @@
         <item quantity="other">%1$d ảnh không được đồng bộ trong lần chạy này vì mục này đang tắt</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">Hệ thống đã tắt thông báo của ứng dụng này nên công tắc này chưa có tác dụng; trang Đường dẫn có lối dẫn đến cài đặt hệ thống</string>
+    <string name="prefs_live_auto_apply_applied">Đang bật · nội dung nhận gần nhất đã được ghi vào bảng nhớ tạm</string>
+    <string name="prefs_live_auto_apply_failed_format">Đang bật · lần ghi bảng nhớ tạm gần nhất thất bại (%1$s); nội dung vẫn ở trong lịch sử</string>
+    <string name="prefs_live_image_sync_peer_text_only">Đang bật · máy tính đang tắt đồng bộ hình ảnh; phiên này chỉ đồng bộ văn bản</string>
 
     <plurals name="transfer_export_done">
         <item quantity="other">Đã xuất %1$d bản ghi (văn bản thường); hãy giữ tệp sao lưu cẩn thận.</item>

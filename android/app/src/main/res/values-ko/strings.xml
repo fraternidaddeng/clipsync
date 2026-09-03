@@ -206,6 +206,8 @@
     <string name="network_unreachable_fact">두 기기가 같은 LAN / VPN에 있고, Windows 앱이 실행 중이며, PC 방화벽이 TCP 47654 인바운드를 허용하는지 확인하세요.</string>
     <string name="network_not_connected_detail">‘%1$s’과(와) 페어링되어 있습니다. 동기화 채널은 아직 연결되지 않았습니다.</string>
     <string name="network_waiting_detail">‘%1$s’과(와) 페어링되어 있습니다. 연결을 기다리는 중입니다.</string>
+    <string name="network_last_sync_format">최근 동기화 %1$s</string>
+    <string name="network_bt_permission_denied">블루투스 권한이 허용되지 않음 · 대체 경로를 사용할 수 없습니다. 시스템 설정에서 허용하세요</string>
 
     <string name="peer_write_unprobed_detail">상대 기기의 쓰기 능력은 네트워크 연결 후에만 탐지할 수 있습니다. 정보가 없는 것은 나쁜 소식이 아닙니다.</string>
     <string name="peer_write_ready_detail">상대 기기가 클립보드에 자동으로 쓸 수 있습니다.</string>
@@ -453,6 +455,9 @@
         <item quantity="other">이번 실행에서 꺼져 있어 동기화되지 않은 이미지 %1$d장</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">시스템에서 이 앱의 알림이 꺼져 있어 이 스위치가 아직 적용되지 않습니다. 통로 페이지에서 시스템 설정으로 이동할 수 있습니다</string>
+    <string name="prefs_live_auto_apply_applied">켜짐 · 가장 최근에 받은 내용이 클립보드에 기록되었습니다</string>
+    <string name="prefs_live_auto_apply_failed_format">켜짐 · 가장 최근 클립보드 쓰기가 실패했습니다(%1$s). 내용은 기록에 있습니다</string>
+    <string name="prefs_live_image_sync_peer_text_only">켜짐 · PC에서 이미지 동기화가 꺼져 있어 이번 세션은 텍스트만 동기화합니다</string>
 
     <plurals name="transfer_export_done">
         <item quantity="other">%1$d개 기록을 내보냈습니다(평문). 백업 파일을 안전하게 보관하세요.</item>

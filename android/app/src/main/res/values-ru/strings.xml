@@ -209,6 +209,8 @@
     <string name="network_unreachable_fact">Убедитесь, что оба устройства в одной LAN / VPN, приложение на Windows запущено, а брандмауэр ПК разрешает входящие подключения по TCP 47654.</string>
     <string name="network_not_connected_detail">Сопряжено с «%1$s»; канал синхронизации ещё не настроен.</string>
     <string name="network_waiting_detail">Сопряжено с «%1$s»; ожидание соединения.</string>
+    <string name="network_last_sync_format">Последняя синхронизация %1$s</string>
+    <string name="network_bt_permission_denied">Разрешение Bluetooth не выдано · резервный путь недоступен; выдайте его в настройках системы</string>
 
     <string name="peer_write_unprobed_detail">Возможность записи на той стороне проверяется только после подключения сети. Отсутствие информации — не плохая новость.</string>
     <string name="peer_write_ready_detail">Другая сторона может автоматически записывать в свой буфер обмена.</string>
@@ -480,6 +482,9 @@
         <item quantity="other">За этот запуск %1$d изображения не синхронизированы, потому что это выключено</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">Система отключила уведомления этого приложения, поэтому переключатель пока не действует; со страницы «Канал» можно перейти к системной настройке</string>
+    <string name="prefs_live_auto_apply_applied">Включено · последнее полученное содержимое записано в буфер обмена</string>
+    <string name="prefs_live_auto_apply_failed_format">Включено · последняя запись в буфер обмена не удалась (%1$s); содержимое осталось в истории</string>
+    <string name="prefs_live_image_sync_peer_text_only">Включено · на ПК синхронизация изображений выключена; в этом сеансе передаётся только текст</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">Экспортирована %1$d запись (открытый текст); храните файл резервной копии надёжно.</item>

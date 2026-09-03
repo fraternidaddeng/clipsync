@@ -30,6 +30,7 @@ class InboxDeliveryTest {
         // Robolectric recreates the application per test; the shared write coordinator must
         // not keep a writer bound to the previous test's clipboard.
         SharedClipboardWrites.reset()
+        InboxDelivery.clearLastApplyOutcome()
         val store =
             com.clipsync.android.platform
                 .SharedPrefsKeyValueStore(context, name = "inbox-delivery-test")
@@ -93,6 +94,33 @@ class InboxDeliveryTest {
 
         assertFalse(applied)
         assertEquals("oem denied", inbox.textFor("e3"))
+    }
+
+    @Test
+    fun lastApplyOutcomeRecordsOnlyRealAttemptsWithTheirErrorCode() {
+        // A gated delivery is not an attempt: the fact line must not claim a write that never ran.
+        InboxDelivery.deliver(context, "o0", "history only", 100L, autoApply = false)
+        assertNull(InboxDelivery.lastApplyOutcomes.value)
+
+        InboxDelivery.deliver(context, "o1", "applied body", 101L, autoApply = true)
+        val applied = InboxDelivery.lastApplyOutcomes.value!!
+        assertTrue(applied.applied)
+        assertFalse(applied.isImage)
+        assertNull(applied.errorCode)
+        assertEquals(101L, applied.atEpochMillis)
+
+        InboxDelivery.writerFactory = { FailingWriter() }
+        InboxDelivery.deliver(context, "o2", "denied body", 102L, autoApply = true)
+        val failed = InboxDelivery.lastApplyOutcomes.value!!
+        assertFalse(failed.applied)
+        assertEquals("CLIPBOARD_WRITE_DENIED", failed.errorCode)
+
+        // An image whose blob is missing is a real, failed image attempt with its own code.
+        InboxDelivery.deliverImage(context, "o3", contentHash = null, mimeType = null, autoApply = true, notify = false)
+        val image = InboxDelivery.lastApplyOutcomes.value!!
+        assertTrue(image.isImage)
+        assertFalse(image.applied)
+        assertEquals(InboxApplyOutcome.ERROR_IMAGE_UNAVAILABLE, image.errorCode)
     }
 
     @Test

@@ -208,6 +208,8 @@
     <string name="network_unreachable_fact">Controleer of beide apparaten op hetzelfde LAN/VPN zitten, of de Windows-app draait en of de firewall van de pc inkomende verbindingen op TCP 47654 doorlaat.</string>
     <string name="network_not_connected_detail">Gekoppeld met “%1$s”; het synchronisatiekanaal is nog niet aangesloten.</string>
     <string name="network_waiting_detail">Gekoppeld met “%1$s”; wacht op een verbinding.</string>
+    <string name="network_last_sync_format">Laatste synchronisatie %1$s</string>
+    <string name="network_bt_permission_denied">Bluetooth-toestemming niet verleend · terugvalpad niet beschikbaar; verleen die in de systeeminstellingen</string>
 
     <string name="peer_write_unprobed_detail">Het schrijfvermogen van de peer kan pas worden gepeild nadat het netwerk verbindt. Ontbrekende informatie is geen slecht nieuws.</string>
     <string name="peer_write_ready_detail">De peer kan automatisch naar zijn klembord schrijven.</string>
@@ -463,6 +465,9 @@
         <item quantity="other">%1$d afbeeldingen niet gesynchroniseerd in deze sessie omdat dit uit staat</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">Het systeem heeft meldingen van deze app uitgeschakeld, dus deze schakelaar heeft nog geen effect; de Kanaal-pagina leidt naar de systeeminstelling</string>
+    <string name="prefs_live_auto_apply_applied">Aan · de laatst ontvangen inhoud is naar het klembord geschreven</string>
+    <string name="prefs_live_auto_apply_failed_format">Aan · de laatste klembordschrijfactie is mislukt (%1$s); de inhoud staat in de geschiedenis</string>
+    <string name="prefs_live_image_sync_peer_text_only">Aan · op de pc staat afbeeldingssynchronisatie uit; deze sessie draagt alleen tekst over</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">%1$d record geëxporteerd (platte tekst); bewaar het back-upbestand veilig.</item>

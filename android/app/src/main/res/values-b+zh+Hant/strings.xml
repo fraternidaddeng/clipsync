@@ -206,6 +206,8 @@
     <string name="network_unreachable_fact">確認兩台裝置在同一區域網路 / VPN，Windows 端正在執行，且電腦防火牆已放行 TCP 47654 傳入。</string>
     <string name="network_not_connected_detail">已與「%1$s」配對；同步通道尚未接入。</string>
     <string name="network_waiting_detail">已與「%1$s」配對，正在等待連線。</string>
+    <string name="network_last_sync_format">最近同步 %1$s</string>
+    <string name="network_bt_permission_denied">藍牙權限未授予 · 備援不可用，前往系統設定授權</string>
 
     <string name="peer_write_unprobed_detail">網路接通後才能探測對端寫入能力。缺資訊 ≠ 壞消息。</string>
     <string name="peer_write_ready_detail">對端可以自動寫入剪貼簿。</string>
@@ -453,6 +455,9 @@
         <item quantity="other">本次運行已有 %1$d 張圖片因關閉而未同步</item>
     </plurals>
     <string name="prefs_live_notifications_blocked">系統已關閉本應用程式的通知，此開關暫不生效；到「通路」頁可跳轉系統設定開啟</string>
+    <string name="prefs_live_auto_apply_applied">已開 · 最近一次收到的內容已寫入剪貼簿</string>
+    <string name="prefs_live_auto_apply_failed_format">已開 · 最近一次寫入剪貼簿失敗（%1$s），內容留在歷史裡</string>
+    <string name="prefs_live_image_sync_peer_text_only">已開 · 電腦端未開啟圖片同步，本次會話只同步文字</string>
 
     <plurals name="transfer_export_done">
         <item quantity="other">已匯出 %1$d 筆記錄（明文），請妥善保管備份檔。</item>

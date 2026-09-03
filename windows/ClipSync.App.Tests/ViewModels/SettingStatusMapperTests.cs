@@ -100,11 +100,23 @@ public sealed class SettingStatusMapperTests
     }
 
     [Fact]
-    public void AutoApplyImagesOnlyKnowsTheGate()
+    public void AutoApplyImagesGatesBeforeEvidenceAndSaysNothingWhileUnverified()
     {
-        Assert.True(SettingStatusMapper.AutoApplyImages(false, true, true).IsEmpty);
-        Assert.True(SettingStatusMapper.AutoApplyImages(true, false, false).IsEmpty);
-        Assert.Equal(SettingStatusTone.Attention, SettingStatusMapper.AutoApplyImages(true, true, false).Tone);
+        Assert.True(SettingStatusMapper.AutoApplyImages(false, true, true, ClipboardApplyStates.Applied).IsEmpty);
+        Assert.True(SettingStatusMapper.AutoApplyImages(true, false, false, ClipboardApplyStates.Unverified).IsEmpty);
+        Assert.Equal(SettingStatusTone.Attention, SettingStatusMapper.AutoApplyImages(true, true, false, ClipboardApplyStates.Applied).Tone);
+    }
+
+    [Fact]
+    public void AutoApplyImagesReportsTheLatestRealApply()
+    {
+        var applied = SettingStatusMapper.AutoApplyImages(true, false, false, ClipboardApplyStates.Applied);
+        Assert.Equal(SettingStatusTone.Flow, applied.Tone);
+        Assert.Contains("图片已写入", applied.Text, StringComparison.Ordinal);
+
+        var failed = SettingStatusMapper.AutoApplyImages(true, false, false, ClipboardApplyStates.Failed);
+        Assert.Equal(SettingStatusTone.Attention, failed.Tone);
+        Assert.Contains("未成功", failed.Text, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -113,8 +125,23 @@ public sealed class SettingStatusMapperTests
         Assert.Contains("只收发文本", SettingStatusMapper.ImageSync(false, 2).Text, StringComparison.Ordinal);
         Assert.Contains("等待手机连接", SettingStatusMapper.ImageSync(true, 0).Text, StringComparison.Ordinal);
         Assert.Contains("2 台设备已连接", SettingStatusMapper.ImageSync(true, 2).Text, StringComparison.Ordinal);
-        // The sync layer does not surface per-session negotiation, so nothing is claimed in colour.
+        // Without a negotiation report nothing is claimed about the phones, and never in colour.
         Assert.Equal(SettingStatusTone.Quiet, SettingStatusMapper.ImageSync(true, 2).Tone);
+        Assert.Contains("2 台设备已连接", SettingStatusMapper.ImageSync(true, 2, imageCapableDevices: 2).Text, StringComparison.Ordinal);
+        Assert.Contains("2 台设备已连接", SettingStatusMapper.ImageSync(true, 2, imageCapableDevices: 1).Text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ImageSyncSaysTextOnlyWhenNoConnectedPhoneNegotiatedImages()
+    {
+        var textOnly = SettingStatusMapper.ImageSync(true, 1, imageCapableDevices: 0);
+
+        Assert.Equal(SettingStatusTone.Quiet, textOnly.Tone);
+        Assert.Contains("未开启图片同步", textOnly.Text, StringComparison.Ordinal);
+        Assert.Contains("只同步文本", textOnly.Text, StringComparison.Ordinal);
+        // Zero capable phones with zero connected phones is still "waiting", not a claim about a phone.
+        Assert.Contains("等待手机连接", SettingStatusMapper.ImageSync(true, 0, imageCapableDevices: 0).Text, StringComparison.Ordinal);
+        Assert.Contains("只收发文本", SettingStatusMapper.ImageSync(false, 1, imageCapableDevices: 0).Text, StringComparison.Ordinal);
     }
 
     [Fact]

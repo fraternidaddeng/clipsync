@@ -1175,6 +1175,15 @@
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>مفعّل · {0} من الأجهزة متصل؛ تنتقل الصور فقط حين يكون مفعّلًا على الهاتف أيضًا</value>
   </data>
+  <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
+    <value>مفعّل · مزامنة الصور متوقفة على الهاتف المتصل؛ هذه الجلسة تنقل النص فقط</value>
+  </data>
+  <data name="Status_AutoApplyImages_Applied" xml:space="preserve">
+    <value>مفعّل · آخر صورة مستلَمة كُتبت في حافظة هذا الكمبيوتر</value>
+  </data>
+  <data name="Status_AutoApplyImages_Failed" xml:space="preserve">
+    <value>مفعّل · لم تنجح آخر كتابة صورة في الحافظة، والصورة موجودة في السجل</value>
+  </data>
   <data name="Status_BlockedProcesses_AppliedFormat" xml:space="preserve">
     <value>ساري · لا يُسجَّل النسخ من {0} من أسماء العمليات</value>
   </data>
