@@ -1,9 +1,11 @@
 package com.clipsync.android.ui.health
 
+import com.clipsync.android.i18n.UiText
 import com.clipsync.android.i18n.testString
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.platform.clipboard.CapabilityReport
 import com.clipsync.android.platform.clipboard.CapabilityState
+import com.clipsync.android.platform.clipboard.CaptureGate
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.clipboard.RoutePrerequisites
 import com.clipsync.android.platform.clipboard.shizuku.ShizukuErrorCodes
@@ -332,6 +334,104 @@ class CapabilityRoutesTest {
         assertEquals(0, route.stepsRemaining)
         assertNull(route.nextAction)
         assertTrue(route.preferred)
+    }
+
+    // ---- live read facts on the segment and the cards --------------------------------------
+
+    private fun live(
+        active: ClipboardReadMode?,
+        degraded: Boolean = false,
+        gate: CaptureGate? = null,
+        recoverable: Boolean = active != null,
+    ) = ReadRouteStatus(
+        headline = UiText.Raw("live headline"),
+        facts = listOf(UiText.Raw("live fact")),
+        activeMode = active,
+        degradedFromPreferred = degraded,
+        stoppedByGate = gate,
+        recoverable = recoverable,
+    )
+
+    @Test
+    fun `the live headline replaces the probe detail and a below-preferred ladder reads degraded`() {
+        // The probe says the privileged route is READY again, but the coordinator still runs
+        // overlay polling: the segment must say so (52% fill), not claim READY.
+        val facts =
+            baseFacts().copy(
+                reports = reports(ClipboardReadMode.SHIZUKU_EVENT to CapabilityState.READY),
+                liveRead = live(active = ClipboardReadMode.OVERLAY_POLLING, degraded = true),
+            )
+        val segment = localReadSegmentFromFacts(facts)
+        assertEquals(ConduitStatus.DEGRADED, segment.status)
+        assertEquals("live headline", segment.detail.testString())
+        assertEquals("live fact", segment.detailLines.last().testString())
+    }
+
+    @Test
+    fun `a closed gate turns the read segment into a grey paused fact, never ochre`() {
+        val facts =
+            baseFacts().copy(
+                reports = reports(ClipboardReadMode.SHIZUKU_EVENT to CapabilityState.READY),
+                liveRead = live(active = null, gate = CaptureGate.PRIVATE_MODE, recoverable = false),
+            )
+        val segment = localReadSegmentFromFacts(facts)
+        assertEquals(ConduitStatus.UNAVAILABLE, segment.status)
+        assertEquals("已暂停", segment.statusLabel.testString())
+    }
+
+    @Test
+    fun `all routes closed keeps beckoning even with a live line attached`() {
+        val facts = allRoutesClosed().copy(liveRead = live(active = ClipboardReadMode.FOREGROUND_ONLY, degraded = true))
+        assertEquals(ConduitStatus.NEEDS_ACTION, localReadSegmentFromFacts(facts).status)
+    }
+
+    @Test
+    fun `cards mark the active route and the preferred card offers the re-probe while displaced`() {
+        val facts = baseFacts().copy(liveRead = live(active = ClipboardReadMode.OVERLAY_POLLING, degraded = true))
+        val routes = buildReadRoutes(facts)
+        val privileged = routes.first { it.id == ReadRouteId.PRIVILEGED }
+        val polling = routes.first { it.id == ReadRouteId.OVERLAY_POLLING }
+
+        assertFalse(privileged.active)
+        assertEquals(RouteActionId.RECOVER_PREFERRED, privileged.recoverAction)
+        assertTrue(polling.active)
+        assertNull(polling.recoverAction)
+    }
+
+    @Test
+    fun `the preferred card offers no re-probe when it is active or when nothing can run`() {
+        val atPreferred = baseFacts().copy(liveRead = live(active = ClipboardReadMode.SHIZUKU_EVENT))
+        assertNull(buildReadRoutes(atPreferred).first { it.id == ReadRouteId.PRIVILEGED }.recoverAction)
+
+        val gatedLive = live(active = null, gate = CaptureGate.SYNC_PAUSED, recoverable = false)
+        val gated = baseFacts().copy(liveRead = gatedLive)
+        assertNull(buildReadRoutes(gated).first { it.id == ReadRouteId.PRIVILEGED }.recoverAction)
+
+        // Without live facts (not wired) the cards stay exactly as before.
+        assertNull(buildReadRoutes(baseFacts()).first { it.id == ReadRouteId.PRIVILEGED }.recoverAction)
+    }
+
+    @Test
+    fun `the service segment states battery exemption and the enabled-but-dead case`() {
+        val restricted =
+            buildHealthScreenState(
+                peer = peer(),
+                clipboard = null,
+                sync = SyncHealth(serviceRunning = false, connected = false),
+                facts = baseFacts(),
+            )
+        val lines = restricted.localService.detailLines.map { it.testString() }
+        assertTrue(lines.any { it.startsWith("开关已开启但服务未在运行") })
+        assertTrue(lines.any { it.startsWith("电池优化：未放行") })
+
+        val exempted =
+            buildHealthScreenState(
+                peer = peer(),
+                clipboard = null,
+                sync = SyncHealth(serviceRunning = true, connected = true),
+                facts = baseFacts().copy(prerequisites = RoutePrerequisites(batteryUnrestricted = true)),
+            )
+        assertTrue(exempted.localService.detailLines.any { it.testString().startsWith("电池优化：已放行") })
     }
 
     // ---- service segment with error code ----------------------------------------------------

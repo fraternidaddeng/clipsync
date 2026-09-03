@@ -11,7 +11,7 @@
     <string name="notification_group_name">Zwischenablage-Sync</string>
     <string name="notification_group_description">Sync-Status, empfangener Text und Wiederherstellungs-Erinnerungen. Benachrichtigungen zeigen niemals den Inhalt der Zwischenablage.</string>
     <string name="notification_channel_inbox_name">Empfangener Text</string>
-    <string name="notification_channel_inbox_description">Meldet, wenn neuer Text von einem gekoppelten PC eintrifft. Benachrichtigungen zeigen niemals den Inhalt der Zwischenablage.</string>
+    <string name="notification_channel_inbox_description">Meldet, wenn neuer Text von einem gekoppelten PC eintrifft.</string>
     <string name="notification_inbox_title">Neuer Text von Ihrem PC</string>
     <string name="notification_inbox_text">Tippen Sie auf „Kopieren“, um ihn in die Zwischenablage zu legen</string>
     <string name="notification_inbox_image_title">Neues Bild von Ihrem PC</string>
@@ -25,7 +25,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Sync-Status</string>
-    <string name="notification_channel_sync_description">Verbindungsstatus mit Ihrem gekoppelten PC. Benachrichtigungen zeigen niemals den Inhalt der Zwischenablage.</string>
+    <string name="notification_channel_sync_description">Verbindungsstatus mit Ihrem gekoppelten PC.</string>
     <string name="notification_sync_connected">Verbunden · Zwischenablage-Sync online</string>
     <string name="notification_sync_connected_bluetooth">Verbunden · Bluetooth-Ausweichweg (nur Text)</string>
     <string name="notification_sync_connecting">Verbindung mit dem PC wird hergestellt…</string>
@@ -42,7 +42,7 @@
     <string name="notification_status_overlay_polling">Overlay-Abfrage läuft</string>
 
     <string name="notification_channel_recovery_name">Wiederherstellungs-Erinnerungen</string>
-    <string name="notification_channel_recovery_description">Erinnert Sie, die App zu öffnen und manuell fortzusetzen, wenn sich der Sync-Dienst nicht selbst erholen kann. Benachrichtigungen zeigen niemals den Inhalt der Zwischenablage.</string>
+    <string name="notification_channel_recovery_description">Erinnert Sie, die App zu öffnen und manuell fortzusetzen, wenn sich der Sync-Dienst nicht selbst erholen kann.</string>
     <string name="notification_recovery_title">Wiederherstellung nötig · Zwischenablage-Sync läuft nicht</string>
     <string name="notification_recovery_text">Der Sync-Dienst konnte nicht automatisch starten. Tippen Sie, um die App zu öffnen und manuell fortzusetzen.</string>
 
@@ -174,6 +174,14 @@
     <string name="read_fact_preferred">Bevorzugte Route: %1$s</string>
     <string name="localread_degraded_pending_detail">Die Voraussetzungen sind erfüllt; der Lesekanal wartet auf einen Praxistest. Das Vordergrundlesen funktioniert währenddessen weiter.</string>
     <string name="localread_needs_action_detail">Das Hintergrundlesen ist noch nicht freigeschaltet. Schließen Sie eine der drei Routen ab; das Kopieren im Vordergrund ist nicht betroffen.</string>
+    <string name="read_live_stopped_by_gate">Hintergrundlesen gestoppt: „%1$s“ ist eingeschaltet, die Zwischenablage wird währenddessen nicht gelesen.</string>
+    <string name="read_live_none">Derzeit läuft keine Leseroute (%1$s); manuelles Senden funktioniert weiterhin, solange die App im Vordergrund ist.</string>
+    <string name="read_live_active_preferred">Aktuelle Leseroute: %1$s (bevorzugt).</string>
+    <string name="read_live_degraded_fallback">Aktuelle Leseroute: %1$s. Die bevorzugte Route %2$s wurde um %3$s nach einem Kanalausfall herabgestuft (%4$s).</string>
+    <string name="read_live_degraded_not_ready">Aktuelle Leseroute: %1$s. Die bevorzugte Route %2$s ist seit %3$s nicht bereit (%4$s).</string>
+    <string name="read_fact_recovery_policy">Die bevorzugte Route wird beim Zurückkehren in die App, alle 5 Minuten und beim Antippen von „Bevorzugte Route neu prüfen“ erneut versucht; sobald sie bereit ist, wird automatisch zurückgewechselt.</string>
+    <string name="read_fact_recovered_at">Letzter Wechsel zurück auf eine höhere Route: %1$s</string>
+    <string name="status_read_paused">Pausiert</string>
 
     <string name="service_ready_no_sync_detail">Die App läuft normal; der Hintergrund-Sync-Dienst kommt in einer späteren Stufe.</string>
     <string name="service_running_detail">Der Sync-Dienst läuft.</string>
@@ -251,6 +259,14 @@
     <string name="route_action_battery_settings">Akku-Einstellungen</string>
     <string name="route_action_set_preferred">Als bevorzugte Route festlegen</string>
     <string name="route_action_read_test">Hintergrundlesen testen</string>
+    <string name="route_action_recover_preferred">Bevorzugte Route neu prüfen</string>
+    <string name="route_live_active">Diese Route ist gerade in Gebrauch</string>
+    <string name="route_live_preferred_inactive">Die bevorzugte Route läuft nicht; sobald sie bereit ist, wird automatisch zurückgewechselt – oder unten jetzt neu prüfen</string>
+    <string name="test_recover_switched">Zurück auf der bevorzugten Route: %1$s</string>
+    <string name="test_recover_not_ready">Die bevorzugte Route %1$s ist weiterhin nicht bereit (%2$s); die aktuelle Route läuft weiter</string>
+    <string name="service_fact_battery_unrestricted">Akku-Optimierung: ausgenommen, das System beendet den Dienst daher seltener.</string>
+    <string name="service_fact_battery_restricted">Akku-Optimierung: nicht ausgenommen, bei ausgeschaltetem Bildschirm beendet das System den Dienst daher leichter; „Akku-Einstellungen öffnen“ in der Routenanleitung erteilt die Ausnahme.</string>
+    <string name="service_fact_enabled_not_running">Der Schalter ist an, aber der Dienst läuft nicht (möglicherweise vom System beendet); „Dienst starten“ antippen, um ihn wieder hochzufahren.</string>
     <string name="priv_hint_not_installed">Die App des privilegierten Kanals ist auf diesem Telefon nicht installiert; installieren und starten Sie sie, und tippen Sie danach auf „Neu prüfen“.</string>
     <string name="priv_hint_not_running">Der privilegierte Kanal läuft nicht; führen Sie einmal den Startbefehl von einem Computer aus (auf der Windows-Seite ein Klick).</string>
     <string name="priv_hint_not_authorized">Der privilegierte Kanal hat diese App noch nicht freigegeben; tippen Sie auf „Privilegiertes Lesen freigeben“.</string>
@@ -409,7 +425,7 @@
     <string name="prefs_boot_restore">Beim Start wiederherstellen</string>
     <string name="prefs_boot_restore_desc">Setzt den Sync-Dienst nach einem Neustart automatisch fort. Blockiert das System den Start, erinnert eine Benachrichtigung ans manuelle Fortsetzen.</string>
     <string name="prefs_inbox_notify">Benachrichtigung bei empfangenen Inhalten</string>
-    <string name="prefs_inbox_notify_desc">Meldet, wenn Inhalte der Gegenseite eintreffen (nie den Inhalt selbst). Wenn aus, laufen Sync und Verlauf weiter; nur die Meldung stoppt.</string>
+    <string name="prefs_inbox_notify_desc">Meldet, wenn Inhalte der Gegenseite eintreffen. Wenn aus, laufen Sync und Verlauf weiter; nur die Meldung stoppt.</string>
     <string name="prefs_group_data">Daten</string>
     <string name="prefs_export">Verlauf exportieren</string>
     <string name="prefs_export_desc">Schreibt den gesamten Verlauf (inklusive Löschmarker) als JSON-Lines-Sicherungsdatei; keine Schlüssel oder Kopplungsdaten. Der Export ist Klartext – bewahren Sie ihn sicher auf.</string>
@@ -426,6 +442,26 @@
     <string name="prefs_conduit_network">Kanal · Netzwerk</string>
     <string name="prefs_no_device">Noch keine gekoppelten Geräte</string>
     <string name="prefs_no_device_hint">Der Kopplungseinstieg liegt im Netzwerkabschnitt der Kanal-Seite; nach der Kopplung erscheint hier der Name der Gegenseite.</string>
+    <string name="prefs_live_service_off">Gestoppt: kein Mithören der Zwischenablage im Hintergrund und keine Verbindung zum PC.</string>
+    <string name="prefs_live_service_connected">Läuft · mit dem PC verbunden</string>
+    <string name="prefs_live_service_waiting">Läuft · nicht mit dem PC verbunden, wartet auf erneute Verbindung</string>
+    <string name="prefs_live_service_start_failed">Läuft nicht: Das System hat den Start verweigert (%1$s); auf der Kanal-Seite „Dienst starten“ antippen, um es erneut zu versuchen</string>
+    <string name="prefs_live_service_not_running">Der Schalter ist an, aber der Dienst läuft nicht (möglicherweise vom System beendet); auf der Kanal-Seite „Dienst starten“ antippen</string>
+    <string name="prefs_live_gate_sync_paused">Wirksam: Das Hintergrundlesen ist gestoppt, Empfangenes landet nur im Verlauf</string>
+    <string name="prefs_live_gate_private">Wirksam: Das Hintergrundlesen ist gestoppt, hier Kopiertes bleibt auf diesem Gerät</string>
+    <string name="prefs_live_gate_capture_paused">Wirksam: Das Mithören im Hintergrund ist gestoppt; während der Pause wird die Zwischenablage nicht gelesen</string>
+    <string name="prefs_live_capture_running">Hintergrundlesen läuft · aktuelle Route %1$s · %2$d in diesem Lauf erfasst</string>
+    <string name="prefs_live_capture_stopped">Das Hintergrundlesen läuft nicht; siehe Kanal · Lokales Lesen</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="one">%1$d als sensibel markierter Eintrag in diesem Lauf übersprungen</item>
+        <item quantity="other">%1$d als sensibel markierte Einträge in diesem Lauf übersprungen</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">In diesem Lauf ist noch kein als sensibel markierter Eintrag aufgetreten</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="one">%1$d Bild in diesem Lauf nicht synchronisiert, weil dies aus ist</item>
+        <item quantity="other">%1$d Bilder in diesem Lauf nicht synchronisiert, weil dies aus ist</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">Das System hat die Benachrichtigungen dieser App ausgeschaltet, dieser Schalter wirkt daher noch nicht; die Kanal-Seite führt zur Systemeinstellung</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">%1$d Eintrag exportiert (Klartext); bewahren Sie die Sicherungsdatei sicher auf.</item>

@@ -102,9 +102,7 @@ class ClipboardSyncServiceCaptureOwnershipTest {
             ClipboardCaptureSession(
                 coordinator = coordinator,
                 onChanged = { captureManager.onClipboardChanged(it) },
-                captureAllowed = {
-                    !settings.syncPaused && !settings.privateMode && !settings.autoCapturePaused
-                },
+                captureGate = { SharedClipboardCapture.captureGate(settings) },
             )
         return CaptureStack(
             capabilityStore = ClipboardCapabilityStore(FakeKeyValueStore()),

@@ -11,7 +11,7 @@
     <string name="notification_group_name">Synchronisation du presse-papiers</string>
     <string name="notification_group_description">État de synchronisation, texte reçu et rappels de reprise. Les notifications n’affichent jamais le contenu du presse-papiers.</string>
     <string name="notification_channel_inbox_name">Texte reçu</string>
-    <string name="notification_channel_inbox_description">Vous avertit quand un nouveau texte arrive d’un PC appairé. Les notifications n’affichent jamais le contenu du presse-papiers.</string>
+    <string name="notification_channel_inbox_description">Vous avertit quand un nouveau texte arrive d’un PC appairé.</string>
     <string name="notification_inbox_title">Nouveau texte depuis votre PC</string>
     <string name="notification_inbox_text">Touchez « Copier » pour le placer dans le presse-papiers</string>
     <string name="notification_inbox_image_title">Nouvelle image depuis votre PC</string>
@@ -26,7 +26,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">État de synchronisation</string>
-    <string name="notification_channel_sync_description">État de connexion avec votre PC appairé. Les notifications n’affichent jamais le contenu du presse-papiers.</string>
+    <string name="notification_channel_sync_description">État de connexion avec votre PC appairé.</string>
     <string name="notification_sync_connected">Connecté · synchronisation du presse-papiers en ligne</string>
     <string name="notification_sync_connected_bluetooth">Connecté · secours Bluetooth (texte uniquement)</string>
     <string name="notification_sync_connecting">Connexion à votre PC…</string>
@@ -43,7 +43,7 @@
     <string name="notification_status_overlay_polling">Lecture par sondage de superposition en cours</string>
 
     <string name="notification_channel_recovery_name">Rappels de reprise</string>
-    <string name="notification_channel_recovery_description">Vous rappelle d’ouvrir l’application et de reprendre manuellement quand le service de synchronisation ne peut pas se rétablir seul. Les notifications n’affichent jamais le contenu du presse-papiers.</string>
+    <string name="notification_channel_recovery_description">Vous rappelle d’ouvrir l’application et de reprendre manuellement quand le service de synchronisation ne peut pas se rétablir seul.</string>
     <string name="notification_recovery_title">Reprise nécessaire · synchronisation à l’arrêt</string>
     <string name="notification_recovery_text">Le service de synchronisation n’a pas pu démarrer automatiquement. Touchez pour ouvrir l’application et reprendre manuellement.</string>
 
@@ -175,6 +175,14 @@
     <string name="read_fact_preferred">Route préférée : %1$s</string>
     <string name="localread_degraded_pending_detail">Les prérequis sont remplis ; le canal de lecture attend un test réel. La lecture au premier plan continue de fonctionner entre-temps.</string>
     <string name="localread_needs_action_detail">La lecture en arrière-plan n’est pas encore ouverte. Terminez n’importe laquelle des trois routes ; la copie au premier plan n’est pas affectée.</string>
+    <string name="read_live_stopped_by_gate">Lecture en arrière-plan arrêtée : « %1$s » est activé, le presse-papiers n’est donc pas lu pendant ce temps.</string>
+    <string name="read_live_none">Aucune route de lecture ne tourne pour l’instant (%1$s) ; l’envoi manuel reste possible quand l’application est au premier plan.</string>
+    <string name="read_live_active_preferred">Route de lecture actuelle : %1$s (préférée).</string>
+    <string name="read_live_degraded_fallback">Route de lecture actuelle : %1$s. La route préférée %2$s a été rétrogradée à %3$s après une panne du canal (%4$s).</string>
+    <string name="read_live_degraded_not_ready">Route de lecture actuelle : %1$s. La route préférée %2$s n’est pas prête depuis %3$s (%4$s).</string>
+    <string name="read_fact_recovery_policy">La route préférée est réessayée au retour dans l’application, toutes les 5 minutes et quand vous touchez « Resonder la route préférée » ; dès qu’elle est prête, on y revient automatiquement.</string>
+    <string name="read_fact_recovered_at">Dernier retour vers une route supérieure : %1$s</string>
+    <string name="status_read_paused">En pause</string>
 
     <string name="service_ready_no_sync_detail">L’application fonctionne normalement ; le service de synchronisation en arrière-plan arrivera à une étape ultérieure.</string>
     <string name="service_running_detail">Le service de synchronisation est en cours d’exécution.</string>
@@ -252,6 +260,14 @@
     <string name="route_action_battery_settings">Réglages de batterie</string>
     <string name="route_action_set_preferred">Définir comme route préférée</string>
     <string name="route_action_read_test">Tester la lecture en arrière-plan</string>
+    <string name="route_action_recover_preferred">Resonder la route préférée</string>
+    <string name="route_live_active">Cette route est utilisée en ce moment</string>
+    <string name="route_live_preferred_inactive">La route préférée ne tourne pas ; elle reprend automatiquement dès qu’elle est prête, ou resondez-la ci-dessous maintenant</string>
+    <string name="test_recover_switched">Retour à la route préférée : %1$s</string>
+    <string name="test_recover_not_ready">La route préférée %1$s n’est toujours pas prête (%2$s) ; la route actuelle continue</string>
+    <string name="service_fact_battery_unrestricted">Optimisation de la batterie : exemptée, le système a donc moins de raisons de fermer le service.</string>
+    <string name="service_fact_battery_restricted">Optimisation de la batterie : non exemptée, écran éteint le système ferme donc le service plus facilement ; « Ouvrir les réglages de batterie » dans le guide des routes accorde l’exemption.</string>
+    <string name="service_fact_enabled_not_running">L’interrupteur est activé mais le service ne tourne pas (le système l’a peut-être fermé) ; touchez « Démarrer le service » pour le relancer.</string>
     <string name="priv_hint_not_installed">L’application du canal privilégié n’est pas installée sur ce téléphone ; installez-la, démarrez-la puis revenez toucher « Resonder ».</string>
     <string name="priv_hint_not_running">Le canal privilégié n’est pas en cours d’exécution ; exécutez une fois la commande de démarrage depuis un ordinateur (un clic côté Windows).</string>
     <string name="priv_hint_not_authorized">Le canal privilégié n’a pas encore autorisé cette application ; touchez « Autoriser la lecture privilégiée » pour l’accorder.</string>
@@ -416,7 +432,7 @@
     <string name="prefs_boot_restore">Restaurer au démarrage</string>
     <string name="prefs_boot_restore_desc">Reprend automatiquement le service de synchronisation après un redémarrage. Si le système bloque le démarrage, une notification vous rappelle de reprendre manuellement.</string>
     <string name="prefs_inbox_notify">Notifications de contenu reçu</string>
-    <string name="prefs_inbox_notify_desc">Notifie quand du contenu distant arrive (n’inclut jamais le contenu lui-même). Désactivé, la synchronisation et l’historique continuent ; seule l’alerte s’arrête.</string>
+    <string name="prefs_inbox_notify_desc">Notifie quand du contenu distant arrive. Désactivé, la synchronisation et l’historique continuent ; seule l’alerte s’arrête.</string>
     <string name="prefs_group_data">Données</string>
     <string name="prefs_export">Exporter l’historique</string>
     <string name="prefs_export_desc">Écrit tout l’historique (y compris les marqueurs de suppression) dans un fichier de sauvegarde JSON Lines ; sans clés ni données d’appairage. L’export est en clair — gardez-le en lieu sûr.</string>
@@ -433,6 +449,28 @@
     <string name="prefs_conduit_network">Conduit · Réseau</string>
     <string name="prefs_no_device">Aucun appareil appairé pour l’instant</string>
     <string name="prefs_no_device_hint">L’entrée d’appairage se trouve dans le segment réseau de la page Conduit ; une fois appairé, le nom de l’autre appareil s’affiche ici.</string>
+    <string name="prefs_live_service_off">Arrêté : aucune écoute du presse-papiers en arrière-plan et aucune connexion au PC.</string>
+    <string name="prefs_live_service_connected">En marche · connecté au PC</string>
+    <string name="prefs_live_service_waiting">En marche · non connecté au PC, en attente de reconnexion</string>
+    <string name="prefs_live_service_start_failed">À l’arrêt : le système a refusé le démarrage (%1$s) ; touchez « Démarrer le service » sur la page Conduit pour réessayer</string>
+    <string name="prefs_live_service_not_running">L’interrupteur est activé mais le service ne tourne pas (le système l’a peut-être fermé) ; touchez « Démarrer le service » sur la page Conduit pour le relancer</string>
+    <string name="prefs_live_gate_sync_paused">En vigueur : la lecture en arrière-plan est arrêtée et ce qui est reçu ne va que dans l’historique</string>
+    <string name="prefs_live_gate_private">En vigueur : la lecture en arrière-plan est arrêtée et ce que vous copiez ici reste sur cet appareil</string>
+    <string name="prefs_live_gate_capture_paused">En vigueur : l’écoute en arrière-plan est arrêtée ; pendant la pause le presse-papiers n’est pas lu</string>
+    <string name="prefs_live_capture_running">Lecture en arrière-plan en marche · route actuelle %1$s · %2$d capturés dans cette session</string>
+    <string name="prefs_live_capture_stopped">La lecture en arrière-plan ne tourne pas ; voir Conduit · Lecture locale</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="one">%1$d élément marqué sensible ignoré dans cette session</item>
+        <item quantity="many">%1$d éléments marqués sensibles ignorés dans cette session</item>
+        <item quantity="other">%1$d éléments marqués sensibles ignorés dans cette session</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">Aucun élément marqué sensible n’est encore apparu dans cette session</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="one">%1$d image non synchronisée dans cette session car ceci est désactivé</item>
+        <item quantity="many">%1$d images non synchronisées dans cette session car ceci est désactivé</item>
+        <item quantity="other">%1$d images non synchronisées dans cette session car ceci est désactivé</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">Le système a désactivé les notifications de cette application, cet interrupteur n’a donc pas encore d’effet ; la page Conduit mène au réglage système</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">%1$d enregistrement exporté (en clair) ; gardez le fichier de sauvegarde en lieu sûr.</item>

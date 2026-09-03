@@ -15,8 +15,11 @@ import com.clipsync.android.pairing.PeerHealthOutcome
 import com.clipsync.android.platform.clipboard.BackgroundClipboardBackend
 import com.clipsync.android.platform.clipboard.CapabilityReport
 import com.clipsync.android.platform.clipboard.CapabilityState
+import com.clipsync.android.platform.clipboard.CaptureSessionStatus
 import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
+import com.clipsync.android.platform.clipboard.ClipboardAccessState
 import com.clipsync.android.platform.clipboard.ClipboardCapabilityStore
+import com.clipsync.android.platform.clipboard.ClipboardCaptureSession
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.platform.clipboard.ClipboardReadResult
 import com.clipsync.android.platform.clipboard.ClipboardSelfTest
@@ -39,6 +42,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 /**
@@ -61,6 +67,14 @@ data class CapabilityWiring(
      */
     val notificationsEnabled: (() -> Boolean)? = null,
     val nowMs: () -> Long = System::currentTimeMillis,
+    /**
+     * The process-wide capture session: says whether a backend runs at all and which user
+     * switch (暂停同步 / 私密 / 暂停捕获) holds it closed, and routes the manual 重新探测首选路线
+     * through the same lock the service's health tick uses. Null = not wired (tests).
+     */
+    val captureSession: ClipboardCaptureSession? = null,
+    /** Renders an epoch instant as the short wall-clock time the status lines quote (HH:mm). */
+    val formatClock: (Long) -> String = { HealthViewModel.defaultClockFormat(it) },
 )
 
 /**
@@ -84,6 +98,8 @@ class HealthViewModel(
      */
     reachabilityRefreshTicker: Flow<Unit>? = null,
 ) : ViewModel() {
+    private val formatClock: (Long) -> String = capability?.formatClock ?: { HealthViewModel.defaultClockFormat(it) }
+
     // Peer presence is known synchronously (same pattern as PairingViewModel);
     // clipboard and sync facts arrive asynchronously via refresh()/snapshots().
     private val mutableState =
@@ -101,6 +117,8 @@ class HealthViewModel(
     private var lastClipboardReport: CapabilityReport? = null
     private var lastSyncHealth: SyncHealth? = null
     private var lastFacts: CapabilityFacts? = null
+    private var lastAccess: ClipboardAccessState = clipboard.state
+    private var lastSession: CaptureSessionStatus? = capability?.captureSession?.status?.value
     private var testResult: ConduitTestResult? = null
     private var refreshJob: Job? = null
     private var refreshQueued = false
@@ -116,6 +134,22 @@ class HealthViewModel(
             viewModelScope.launch {
                 syncHealthSource.snapshots().collect { sync ->
                     lastSyncHealth = sync
+                    publish(pairingStore.peer())
+                }
+            }
+        }
+        // The ladder's live state changes outside any probe pass (the service's health tick
+        // falls back, the timer recovers): the read segment must follow it as it happens.
+        viewModelScope.launch {
+            clipboard.states.collect { access ->
+                lastAccess = access
+                publish(pairingStore.peer())
+            }
+        }
+        capability?.captureSession?.let { session ->
+            viewModelScope.launch {
+                session.status.collect { status ->
+                    lastSession = status
                     publish(pairingStore.peer())
                 }
             }
@@ -294,6 +328,7 @@ class HealthViewModel(
         viewModelScope.launch {
             readTestMode = mode
             publish(pairingStore.peer())
+            var verified = false
             try {
                 val backend = clipboard.backend(mode)
                 val selfTest =
@@ -306,7 +341,7 @@ class HealthViewModel(
                         },
                     )
                 val result = withContext(probeDispatcher) { selfTest.runReadTest() }
-                val verified = result.passed
+                verified = result.passed
                 withContext(probeDispatcher) {
                     wiring.capabilityStore.recordReadTest(
                         mode = mode,
@@ -332,6 +367,11 @@ class HealthViewModel(
             } finally {
                 readTestMode = null
                 publish(pairingStore.peer())
+            }
+            // A passing test is the moment the user expects the route to take over: climb
+            // back right away instead of waiting for the timer or the next foreground return.
+            if (verified) {
+                tryRecoverNow(wiring.captureSession, clipboard)
             }
             // Re-probe so the just-verified route surfaces as READY (or the failure code shows).
             refresh()
@@ -366,32 +406,52 @@ class HealthViewModel(
         publish(pairingStore.peer())
     }
 
-    /** Reachability plus the peer's apply self-report, both from the same health probe. */
-    private data class PeerProbe(
-        val reachability: PeerReachability,
-        val clipboardApply: PeerClipboardApply?,
-    )
-
-    private suspend fun probeReachability(
-        peerHealth: PeerHealthApi,
-        peer: PairedPeer,
-    ): PeerProbe =
-        when (val outcome = peerHealth.probe(peer)) {
-            is PeerHealthOutcome.Reachable ->
-                PeerProbe(PeerReachability.REACHABLE, outcome.clipboardApplyText)
-            PeerHealthOutcome.CertificateMismatch ->
-                PeerProbe(PeerReachability.CERTIFICATE_MISMATCH, clipboardApply = null)
-            PeerHealthOutcome.Unreachable ->
-                PeerProbe(PeerReachability.UNREACHABLE, clipboardApply = null)
-        }
+    /**
+     * 重新探测首选路线: re-probe the preferred rung now and climb back if it is READY (the
+     * manual trigger of the same upward re-probe the foreground return and the service timer
+     * run). Goes through the capture session's lock when wired, so it never races the
+     * service's health tick on the coordinator; the outcome is stated on the result strip.
+     */
+    fun recoverPreferredRoute() {
+        val switched = tryRecoverNow(capability?.captureSession, clipboard)
+        val after = clipboard.state
+        testResult =
+            if (switched) {
+                ConduitTestResult(
+                    UiText.Res(
+                        R.string.test_recover_switched,
+                        readModeTitle(after.activeReadMode ?: after.requestedReadMode),
+                    ),
+                    success = true,
+                )
+            } else {
+                ConduitTestResult(
+                    UiText.Res(
+                        R.string.test_recover_not_ready,
+                        readModeTitle(after.requestedReadMode),
+                        // The reason as of this very probe, not the last refresh pass.
+                        clipboard.backend(after.requestedReadMode)?.probe()?.errorCode
+                            ?: after.shortfall?.errorCode
+                            ?: UiText.Res(R.string.read_state_reason_unknown),
+                    ),
+                    success = true,
+                )
+            }
+        publish(pairingStore.peer())
+        refresh()
+    }
 
     private fun publish(peer: PairedPeer?) {
+        val facts =
+            lastFacts?.copy(
+                liveRead = readRouteStatus(lastAccess, lastSession, formatClock),
+            )
         mutableState.value =
             buildHealthScreenState(
                 peer,
                 lastClipboardReport,
                 lastSyncHealth,
-                lastFacts,
+                facts,
                 deviceAccent = pairingStore::deviceAccent,
             ).copy(
                 testResult = testResult,
@@ -437,7 +497,47 @@ class HealthViewModel(
                     }
                 }
             }
+
+        private val CLOCK_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+        /** Wall-clock HH:mm in the device zone — the status lines quote "已于 14:32 降级". */
+        fun defaultClockFormat(epochMillis: Long): String =
+            CLOCK_FORMAT.format(Instant.ofEpochMilli(epochMillis).atZone(ZoneId.systemDefault()))
     }
+}
+
+/** Reachability plus the peer's apply self-report, both from the same health probe. */
+private data class PeerProbe(
+    val reachability: PeerReachability,
+    val clipboardApply: PeerClipboardApply?,
+)
+
+private suspend fun probeReachability(
+    peerHealth: PeerHealthApi,
+    peer: PairedPeer,
+): PeerProbe =
+    when (val outcome = peerHealth.probe(peer)) {
+        is PeerHealthOutcome.Reachable ->
+            PeerProbe(PeerReachability.REACHABLE, outcome.clipboardApplyText)
+        PeerHealthOutcome.CertificateMismatch ->
+            PeerProbe(PeerReachability.CERTIFICATE_MISMATCH, clipboardApply = null)
+        PeerHealthOutcome.Unreachable ->
+            PeerProbe(PeerReachability.UNREACHABLE, clipboardApply = null)
+    }
+
+/**
+ * Upward re-probe through the session's lock when one is wired (so it never races the service's
+ * health tick on the coordinator), else straight on the coordinator. True when the route changed.
+ */
+private fun tryRecoverNow(
+    session: ClipboardCaptureSession?,
+    coordinator: ClipboardAccessCoordinator,
+): Boolean {
+    if (session != null) {
+        return session.tryRecover()
+    }
+    val before = coordinator.state.activeReadMode
+    return coordinator.tryRecover().activeReadMode != before
 }
 
 /**
@@ -456,7 +556,7 @@ internal fun buildHealthScreenState(
     val state =
         HealthScreenState(
             localRead = if (facts != null) localReadSegmentFromFacts(facts) else localReadSegment(clipboard),
-            localService = localServiceSegment(sync),
+            localService = localServiceSegment(sync, facts),
             network = network,
             peerWrite = peerWriteSegment(network.status, sync, facts),
             pairedDeviceCount = if (peer != null) 1 else 0,
@@ -567,8 +667,23 @@ private fun localReadSegment(report: CapabilityReport?): ConduitSegmentState {
     }
 }
 
-private fun localServiceSegment(sync: SyncHealth?): ConduitSegmentState =
-    when {
+private fun localServiceSegment(
+    sync: SyncHealth?,
+    facts: CapabilityFacts? = null,
+): ConduitSegmentState {
+    // Battery optimisation is the one system lever that decides whether a running service
+    // survives the screen going off; the segment states it whenever the probe pass knows it.
+    val battery =
+        facts?.prerequisites?.let { p ->
+            UiText.Res(
+                if (p.batteryUnrestricted) {
+                    R.string.service_fact_battery_unrestricted
+                } else {
+                    R.string.service_fact_battery_restricted
+                },
+            )
+        }
+    return when {
         sync == null ->
             ConduitSegmentState(
                 statusLabel = UiText.Res(R.string.status_ready),
@@ -581,9 +696,10 @@ private fun localServiceSegment(sync: SyncHealth?): ConduitSegmentState =
                 detail = UiText.Res(R.string.service_running_detail),
                 status = ConduitStatus.READY,
                 detailLines =
-                    listOf(
+                    listOfNotNull(
                         UiText.Res(R.string.service_fact_fgs),
                         UiText.Res(R.string.service_fact_notification),
+                        battery,
                     ),
             )
         // The user switched 后台同步服务 off: a chosen fact (solid grey), not a fault —
@@ -599,6 +715,7 @@ private fun localServiceSegment(sync: SyncHealth?): ConduitSegmentState =
                 statusLabel = UiText.Res(R.string.status_start_failed),
                 detail = UiText.Res(R.string.service_start_failed_detail, sync.serviceErrorCode),
                 status = ConduitStatus.DEGRADED,
+                detailLines = listOfNotNull(battery),
             )
         else ->
             ConduitSegmentState(
@@ -606,12 +723,17 @@ private fun localServiceSegment(sync: SyncHealth?): ConduitSegmentState =
                 detail = UiText.Res(R.string.service_not_running_detail),
                 status = ConduitStatus.DEGRADED,
                 detailLines =
-                    listOf(
+                    listOfNotNull(
+                        // The switch is on yet nothing runs: name the likely cause (system
+                        // reclaim) so the state reads as "needs a restart", not as a mystery.
+                        UiText.Res(R.string.service_fact_enabled_not_running),
+                        battery,
                         UiText.Res(R.string.service_fact_fgs),
                         UiText.Res(R.string.service_fact_start_notification),
                     ),
             )
     }
+}
 
 private fun networkSegment(
     peer: PairedPeer?,

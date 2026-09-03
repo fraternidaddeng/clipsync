@@ -110,8 +110,7 @@ fun OnboardingScreen(
                     OnboardingStep.PAIR -> PairStep(paired = progress.paired)
                     OnboardingStep.READ_ROUTES ->
                         ReadRoutesStep(privilegedReady = progress.privilegedChannelReady)
-                    OnboardingStep.PERMISSIONS ->
-                        PermissionsStep(notificationsEnabled = progress.notificationsEnabled)
+                    OnboardingStep.PERMISSIONS -> PermissionsStep(progress)
                     OnboardingStep.FINISH -> FinishStep()
                 }
             }
@@ -487,7 +486,7 @@ private fun QualityDots(
 // ---------------------------------------------------------------------------
 
 @Composable
-private fun PermissionsStep(notificationsEnabled: Boolean) {
+private fun PermissionsStep(progress: OnboardingProgress) {
     val c = clipSyncColors
     StepHeading(
         icon = ClipSyncIcons.Service,
@@ -503,11 +502,14 @@ private fun PermissionsStep(notificationsEnabled: Boolean) {
     ) {
         OnboardingContent.permissions.forEachIndexed { index, permission ->
             if (index > 0) CardDivider()
-            // Notifications is the one grant detectable without side effects;
-            // overlay/battery stay unmarked rather than guess (honesty first).
+            // Each mark is the conduit's own probe of that grant — the same facts the wizard
+            // steps show — so an already-granted permission states so instead of asking again.
             val granted =
-                permission.id == OnboardingPermissionId.NOTIFICATIONS &&
-                    notificationsEnabled
+                when (permission.id) {
+                    OnboardingPermissionId.NOTIFICATIONS -> progress.notificationsEnabled
+                    OnboardingPermissionId.OVERLAY -> progress.overlayGranted
+                    OnboardingPermissionId.BATTERY -> progress.batteryUnrestricted
+                }
             Column(
                 modifier =
                     Modifier

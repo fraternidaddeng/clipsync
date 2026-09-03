@@ -11,7 +11,7 @@
     <string name="notification_group_name">クリップボード同期</string>
     <string name="notification_group_description">同期状態・受信テキスト・復旧リマインダー。通知にクリップボードの内容が表示されることはありません。</string>
     <string name="notification_channel_inbox_name">受信テキスト</string>
-    <string name="notification_channel_inbox_description">ペアリング済みの PC から新しいテキストが届いたときに通知します。通知にクリップボードの内容が表示されることはありません。</string>
+    <string name="notification_channel_inbox_description">ペアリング済みの PC から新しいテキストが届いたときに通知します。</string>
     <string name="notification_inbox_title">PC から新しいテキスト</string>
     <string name="notification_inbox_text">「コピー」をタップするとクリップボードに入ります</string>
     <string name="notification_inbox_image_title">PC から新しい画像</string>
@@ -24,7 +24,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">同期状態</string>
-    <string name="notification_channel_sync_description">ペアリング済みの PC との接続状態。通知にクリップボードの内容が表示されることはありません。</string>
+    <string name="notification_channel_sync_description">ペアリング済みの PC との接続状態。</string>
     <string name="notification_sync_connected">接続中 · クリップボード同期オンライン</string>
     <string name="notification_sync_connected_bluetooth">接続中 · Bluetooth フォールバック（テキストのみ）</string>
     <string name="notification_sync_connecting">PC に接続しています…</string>
@@ -41,7 +41,7 @@
     <string name="notification_status_overlay_polling">オーバーレイポーリング読み取りを実行中</string>
 
     <string name="notification_channel_recovery_name">同期復旧リマインダー</string>
-    <string name="notification_channel_recovery_description">同期サービスが自動復旧できないとき、アプリを開いて手動で再開するようお知らせします。通知にクリップボードの内容が表示されることはありません。</string>
+    <string name="notification_channel_recovery_description">同期サービスが自動復旧できないとき、アプリを開いて手動で再開するようお知らせします。</string>
     <string name="notification_recovery_title">復旧が必要 · クリップボード同期が停止中</string>
     <string name="notification_recovery_text">同期サービスを自動起動できませんでした。タップしてアプリを開き、手動で再開してください。</string>
 
@@ -173,6 +173,14 @@
     <string name="read_fact_preferred">優先ルート：%1$s</string>
     <string name="localread_degraded_pending_detail">前提条件は満たされています。読み取りチャネルは実地テスト待ちです。その間もフォアグラウンド読み取りは動作します。</string>
     <string name="localread_needs_action_detail">バックグラウンド読み取りはまだ開通していません。3 つのルートのいずれか 1 つを完了してください。フォアグラウンドのコピーには影響しません。</string>
+    <string name="read_live_stopped_by_gate">バックグラウンド読み取りは停止中：「%1$s」がオンのため、この間クリップボードは読み取りません。</string>
+    <string name="read_live_none">現在動作中の読み取りルートはありません（%1$s）。アプリがフォアグラウンドにあれば手動送信はできます。</string>
+    <string name="read_live_active_preferred">現在の読み取りルート：%1$s（優先）。</string>
+    <string name="read_live_degraded_fallback">現在の読み取りルート：%1$s。優先の %2$s はチャネル障害（%4$s）のため %3$s に降格しました。</string>
+    <string name="read_live_degraded_not_ready">現在の読み取りルート：%1$s。優先の %2$s は %3$s から準備できていません（%4$s）。</string>
+    <string name="read_fact_recovery_policy">アプリに戻ったとき、5 分ごと、そして「優先ルートを再探索」をタップしたときに優先ルートを再試行し、準備できしだい自動で切り戻します。</string>
+    <string name="read_fact_recovered_at">上位ルートへの最後の切り戻し：%1$s</string>
+    <string name="status_read_paused">一時停止中</string>
 
     <string name="service_ready_no_sync_detail">アプリは正常に動作しています。バックグラウンド同期サービスは後の段階で追加されます。</string>
     <string name="service_running_detail">同期サービスは実行中です。</string>
@@ -250,6 +258,14 @@
     <string name="route_action_battery_settings">電池設定</string>
     <string name="route_action_set_preferred">優先ルートに設定</string>
     <string name="route_action_read_test">バックグラウンド読み取りをテスト</string>
+    <string name="route_action_recover_preferred">優先ルートを再探索</string>
+    <string name="route_live_active">現在このルートを使用中</string>
+    <string name="route_live_preferred_inactive">優先ルートは動作していません。準備できれば自動で切り戻します。下のボタンで今すぐ再探索もできます</string>
+    <string name="test_recover_switched">優先ルートに切り戻しました：%1$s</string>
+    <string name="test_recover_not_ready">優先ルート %1$s はまだ準備できていません（%2$s）。現在のルートを継続します</string>
+    <string name="service_fact_battery_unrestricted">電池の最適化：除外済み。サービスがシステムに回収されにくくなっています。</string>
+    <string name="service_fact_battery_restricted">電池の最適化：未除外。画面が消えるとサービスがシステムに回収されやすくなります。ルートガイドの「電池設定を開く」で除外できます。</string>
+    <string name="service_fact_enabled_not_running">スイッチはオンですがサービスは動作していません（システムに回収された可能性）。「サービスを開始」で再起動してください。</string>
     <string name="priv_hint_not_installed">この端末に特権チャネルアプリがインストールされていません。インストールして起動したら、「再検出」をタップしてください。</string>
     <string name="priv_hint_not_running">特権チャネルが起動していません。PC から起動コマンドを一度実行してください（Windows 側ならワンクリックで起動できます）。</string>
     <string name="priv_hint_not_authorized">特権チャネルはまだこのアプリを承認していません。「特権読み取りを承認」をタップして許可してください。</string>
@@ -402,7 +418,7 @@
     <string name="prefs_boot_restore">起動時に復元</string>
     <string name="prefs_boot_restore_desc">再起動後に同期サービスを自動で再開します。システムが起動をブロックした場合は、手動で再開するよう通知でお知らせします。</string>
     <string name="prefs_inbox_notify">受信通知</string>
-    <string name="prefs_inbox_notify_desc">相手側の内容が届いたときに通知します（内容そのものは含みません）。オフでも同期と履歴は続き、通知だけが止まります。</string>
+    <string name="prefs_inbox_notify_desc">相手側の内容が届いたときに通知します。オフでも同期と履歴は続き、通知だけが止まります。</string>
     <string name="prefs_group_data">データ</string>
     <string name="prefs_export">履歴をエクスポート</string>
     <string name="prefs_export_desc">履歴全体（削除マーカーを含む）を JSON Lines のバックアップファイルに書き出します。鍵やペアリングデータは含みません。エクスポートは平文です — 大切に保管してください。</string>
@@ -419,6 +435,24 @@
     <string name="prefs_conduit_network">経路 · ネットワーク</string>
     <string name="prefs_no_device">ペアリング済みの端末はまだありません</string>
     <string name="prefs_no_device_hint">ペアリングの入口は「経路」ページのネットワーク区間にあります。ペアリングすると相手側の名前がここに表示されます。</string>
+    <string name="prefs_live_service_off">停止中：バックグラウンドでクリップボードを監視せず、PC にも接続しません。</string>
+    <string name="prefs_live_service_connected">動作中 · PC に接続済み</string>
+    <string name="prefs_live_service_waiting">動作中 · PC に未接続、再接続を待機中</string>
+    <string name="prefs_live_service_start_failed">停止中：システムが起動を拒否しました（%1$s）。「経路」ページの「サービスを開始」で再試行してください</string>
+    <string name="prefs_live_service_not_running">スイッチはオンですがサービスは動作していません（システムに回収された可能性）。「経路」ページの「サービスを開始」で再起動してください</string>
+    <string name="prefs_live_gate_sync_paused">有効：バックグラウンド読み取りは停止し、受信した内容は履歴にだけ入ります</string>
+    <string name="prefs_live_gate_private">有効：バックグラウンド読み取りは停止し、この端末でコピーした内容は端末内に留まります</string>
+    <string name="prefs_live_gate_capture_paused">有効：バックグラウンド監視は停止中。一時停止の間クリップボードは読み取りません</string>
+    <string name="prefs_live_capture_running">バックグラウンド読み取り動作中 · 現在のルート %1$s · 今回の起動で %2$d 件を取得</string>
+    <string name="prefs_live_capture_stopped">バックグラウンド読み取りは動作していません。「経路 · ローカル読み取り」を参照</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="other">今回の起動で機密マーク付きの内容を %1$d 件スキップしました</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">今回の起動では機密マーク付きの内容はまだありません</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="other">今回の起動でオフのため同期されなかった画像：%1$d 枚</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">システムがこのアプリの通知をオフにしているため、このスイッチはまだ効きません。「経路」ページからシステム設定を開けます</string>
 
     <plurals name="transfer_export_done">
         <item quantity="other">%1$d 件をエクスポートしました（平文）。バックアップファイルは大切に保管してください。</item>

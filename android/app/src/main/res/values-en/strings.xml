@@ -12,7 +12,7 @@
     <string name="notification_group_name">Clipboard sync</string>
     <string name="notification_group_description">Sync status, received text, and recovery reminders. Notifications never show clipboard content.</string>
     <string name="notification_channel_inbox_name">Received text</string>
-    <string name="notification_channel_inbox_description">Alerts when new text arrives from a paired PC. Notifications never show clipboard content.</string>
+    <string name="notification_channel_inbox_description">Alerts when new text arrives from a paired PC.</string>
     <string name="notification_inbox_title">New text from your PC</string>
     <string name="notification_inbox_text">Tap “Copy” to put it on the clipboard</string>
     <string name="notification_inbox_image_title">New image from your PC</string>
@@ -26,7 +26,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Sync status</string>
-    <string name="notification_channel_sync_description">Connection status with your paired PC. Notifications never show clipboard content.</string>
+    <string name="notification_channel_sync_description">Connection status with your paired PC.</string>
     <string name="notification_sync_connected">Connected · clipboard sync online</string>
     <string name="notification_sync_connected_bluetooth">Connected · Bluetooth fallback (text only)</string>
     <string name="notification_sync_connecting">Connecting to your PC…</string>
@@ -43,7 +43,7 @@
     <string name="notification_status_overlay_polling">Overlay polling read is running</string>
 
     <string name="notification_channel_recovery_name">Sync recovery reminders</string>
-    <string name="notification_channel_recovery_description">Reminds you to open the app and resume manually when the sync service cannot recover on its own. Notifications never show clipboard content.</string>
+    <string name="notification_channel_recovery_description">Reminds you to open the app and resume manually when the sync service cannot recover on its own.</string>
     <string name="notification_recovery_title">Needs recovery · clipboard sync not running</string>
     <string name="notification_recovery_text">The sync service could not start automatically. Tap to open the app and resume manually.</string>
 
@@ -175,6 +175,14 @@
     <string name="read_fact_preferred">Preferred route: %1$s</string>
     <string name="localread_degraded_pending_detail">Prerequisites are met; the read channel awaits a live test. Foreground reading keeps working meanwhile.</string>
     <string name="localread_needs_action_detail">Background reading is not open yet. Complete any one of the three routes; foreground copy is unaffected.</string>
+    <string name="read_live_stopped_by_gate">Background reading is stopped: “%1$s” is on, so the clipboard is not read meanwhile.</string>
+    <string name="read_live_none">No read route is running right now (%1$s); manual send still works while the app is in the foreground.</string>
+    <string name="read_live_active_preferred">Current read route: %1$s (preferred).</string>
+    <string name="read_live_degraded_fallback">Current read route: %1$s. The preferred %2$s fell back at %3$s after a channel failure (%4$s).</string>
+    <string name="read_live_degraded_not_ready">Current read route: %1$s. The preferred %2$s has not been ready since %3$s (%4$s).</string>
+    <string name="read_fact_recovery_policy">The preferred route is retried when you return to the app, every 5 minutes, and when you tap “Re-probe preferred route”; it switches back as soon as it is ready.</string>
+    <string name="read_fact_recovered_at">Last switch back to a higher route: %1$s</string>
+    <string name="status_read_paused">Paused</string>
 
     <string name="service_ready_no_sync_detail">The app is running normally; the background sync service arrives in a later stage.</string>
     <string name="service_running_detail">Sync service is running.</string>
@@ -252,6 +260,14 @@
     <string name="route_action_battery_settings">Battery settings</string>
     <string name="route_action_set_preferred">Set as preferred route</string>
     <string name="route_action_read_test">Test background read</string>
+    <string name="route_action_recover_preferred">Re-probe preferred route</string>
+    <string name="route_live_active">This route is in use right now</string>
+    <string name="route_live_preferred_inactive">The preferred route is not running; it switches back automatically once ready, or re-probe it below now</string>
+    <string name="test_recover_switched">Switched back to the preferred route: %1$s</string>
+    <string name="test_recover_not_ready">Preferred route %1$s is still not ready (%2$s); the current route keeps running</string>
+    <string name="service_fact_battery_unrestricted">Battery optimisation: exempted, so the system is less likely to reclaim the service.</string>
+    <string name="service_fact_battery_restricted">Battery optimisation: not exempted, so the system reclaims the service more easily once the screen is off; “Open battery settings” in the route guide grants the exemption.</string>
+    <string name="service_fact_enabled_not_running">The switch is on but the service is not running (the system may have reclaimed it); tap “Start service” to bring it back.</string>
     <string name="priv_hint_not_installed">The privileged channel app is not installed on this phone; install and start it, then come back and tap “Re-probe”.</string>
     <string name="priv_hint_not_running">The privileged channel is not running; run the one-line start command from a computer (one click on the Windows side).</string>
     <string name="priv_hint_not_authorized">The privileged channel has not authorized this app yet; tap “Authorize privileged read” to grant it.</string>
@@ -410,7 +426,7 @@
     <string name="prefs_boot_restore">Restore on boot</string>
     <string name="prefs_boot_restore_desc">Resumes the sync service automatically after a reboot. If the system blocks the start, a notification reminds you to resume manually.</string>
     <string name="prefs_inbox_notify">Received-content notifications</string>
-    <string name="prefs_inbox_notify_desc">Notifies when peer content arrives (never includes the content itself). When off, sync and history continue; only the alert stops.</string>
+    <string name="prefs_inbox_notify_desc">Notifies when peer content arrives. When off, sync and history continue; only the alert stops.</string>
     <string name="prefs_group_data">Data</string>
     <string name="prefs_export">Export history</string>
     <string name="prefs_export_desc">Writes the whole history (including deletion markers) as a JSON Lines backup file; no keys or pairing data. The export is plaintext — keep it safe.</string>
@@ -427,6 +443,26 @@
     <string name="prefs_conduit_network">Conduit · Network</string>
     <string name="prefs_no_device">No paired devices yet</string>
     <string name="prefs_no_device_hint">The pairing entrance is in the network segment of the Conduit page; once paired, the peer’s name shows here.</string>
+    <string name="prefs_live_service_off">Stopped: no background clipboard listening and no connection to the PC.</string>
+    <string name="prefs_live_service_connected">Running · connected to the PC</string>
+    <string name="prefs_live_service_waiting">Running · not connected to the PC, waiting to reconnect</string>
+    <string name="prefs_live_service_start_failed">Not running: the system refused to start it (%1$s); tap “Start service” on the Conduit page to retry</string>
+    <string name="prefs_live_service_not_running">The switch is on but the service is not running (the system may have reclaimed it); tap “Start service” on the Conduit page to bring it back</string>
+    <string name="prefs_live_gate_sync_paused">In effect: background reading is stopped and received content only goes to history</string>
+    <string name="prefs_live_gate_private">In effect: background reading is stopped and what you copy here stays on this device</string>
+    <string name="prefs_live_gate_capture_paused">In effect: background listening is stopped; the clipboard is not read while paused</string>
+    <string name="prefs_live_capture_running">Background reading is running · current route %1$s · %2$d captured this run</string>
+    <string name="prefs_live_capture_stopped">Background reading is not running; see Conduit · Local read</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="one">%1$d clip marked sensitive skipped this run</item>
+        <item quantity="other">%1$d clips marked sensitive skipped this run</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">No clip marked sensitive has come up this run</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="one">%1$d image not synced this run because this is off</item>
+        <item quantity="other">%1$d images not synced this run because this is off</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">The system has notifications for this app turned off, so this switch has no effect yet; the Conduit page links to the system setting</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">Exported %1$d record (plaintext); keep the backup file safe.</item>

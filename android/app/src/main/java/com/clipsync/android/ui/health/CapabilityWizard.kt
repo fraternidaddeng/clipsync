@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -131,7 +132,13 @@ private fun RouteCardHeader(route: ReadRouteUi) {
     )
 }
 
-/** Steps remaining (or readiness) on the left, the 当前路线 mark on the right. */
+/**
+ * Steps remaining (or readiness) on the left, the 当前首选 mark on the right — and below it the
+ * live fact: whether this card is the route actually listening. The preferred card that is *not*
+ * listening is the one place that may reach out in ochre: when its channel needs the user (PC
+ * restart, a grant) the line says so; when it merely awaits a re-probe it stays in flow blue and
+ * the recover button below does the work.
+ */
 @Composable
 private fun RouteProgressRow(route: ReadRouteUi) {
     val c = clipSyncColors
@@ -157,6 +164,32 @@ private fun RouteProgressRow(route: ReadRouteUi) {
                 style = ClipSyncType.meta,
                 fontWeight = FontWeight.SemiBold,
                 color = c.flow,
+            )
+        }
+    }
+    val live: Pair<String, Color>? =
+        when {
+            route.active -> stringResource(R.string.route_live_active) to c.flow
+            route.recoverAction != null && route.readState == CapabilityState.READY ->
+                stringResource(R.string.route_live_preferred_inactive) to c.flow
+            route.recoverAction != null -> stringResource(R.string.route_live_preferred_inactive) to c.act
+            else -> null
+        }
+    if (live != null) {
+        val (text, tint) = live
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                Modifier
+                    .size(4.dp)
+                    .clip(CircleShape)
+                    .background(tint),
+            )
+            Spacer(Modifier.width(7.dp))
+            Text(
+                text = text,
+                style = ClipSyncType.caption,
+                fontWeight = FontWeight.SemiBold,
+                color = tint,
             )
         }
     }
@@ -208,6 +241,14 @@ private fun RouteActions(
                 },
             primary = true,
             busy = readTestBusy,
+            onClick = { onAction(action) },
+        )
+    }
+    route.recoverAction?.let { action ->
+        // Ghost, not solid: the read test (when offered) stays the card's one protagonist.
+        RouteActionButton(
+            label = routeActionLabel(action).string(),
+            primary = false,
             onClick = { onAction(action) },
         )
     }

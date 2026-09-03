@@ -18,7 +18,7 @@
     <string name="notification_group_name">剪贴同步</string>
     <string name="notification_group_description">同步状态、收到的文本与恢复提醒。所有通知均不显示剪贴板内容。</string>
     <string name="notification_channel_inbox_name">收到的文本</string>
-    <string name="notification_channel_inbox_description">收到来自已配对电脑的新文本时提醒。通知从不显示剪贴板内容。</string>
+    <string name="notification_channel_inbox_description">收到来自已配对电脑的新文本时提醒。</string>
     <string name="notification_inbox_title">来自电脑的新文本</string>
     <string name="notification_inbox_text">点按“复制”即可放入剪贴板</string>
     <string name="notification_inbox_image_title">来自电脑的新图片</string>
@@ -32,7 +32,7 @@
 
     <!-- 同步前台服务通知：只描述连接状态 -->
     <string name="notification_channel_sync_name">同步状态</string>
-    <string name="notification_channel_sync_description">与已配对电脑的连接状态。通知从不显示剪贴板内容。</string>
+    <string name="notification_channel_sync_description">与已配对电脑的连接状态。</string>
     <string name="notification_sync_connected">已连接 · 剪贴同步在线</string>
     <string name="notification_sync_connected_bluetooth">已连接 · 蓝牙备援（仅文本）</string>
     <string name="notification_sync_connecting">正在连接电脑…</string>
@@ -51,7 +51,7 @@
 
     <!-- 需要恢复：同步服务未能自动启动（开机恢复失败或系统拒绝前台服务） -->
     <string name="notification_channel_recovery_name">同步恢复提醒</string>
-    <string name="notification_channel_recovery_description">同步服务无法自动恢复时提醒你打开应用手动恢复。通知从不显示剪贴板内容。</string>
+    <string name="notification_channel_recovery_description">同步服务无法自动恢复时提醒你打开应用手动恢复。</string>
     <string name="notification_recovery_title">需要恢复 · 剪贴同步未运行</string>
     <string name="notification_recovery_text">同步服务未能自动启动。点按打开应用手动恢复。</string>
 
@@ -193,6 +193,15 @@
     <string name="read_fact_preferred">首选路线：%1$s</string>
     <string name="localread_degraded_pending_detail">前提已就绪，读取通道等待实测验证；期间前台读取仍可用。</string>
     <string name="localread_needs_action_detail">后台读取尚未打通。三条路线任选一条完成即可；前台复制不受影响。</string>
+    <!-- 通路：本机读取的实时状态（来自协调器当前实际运行的路线，而非探测结果） -->
+    <string name="read_live_stopped_by_gate">后台读取已停止：「%1$s」开启中，期间不读取剪贴板。</string>
+    <string name="read_live_none">当前没有读取路线在运行（%1$s）；应用在前台时仍可手动发送。</string>
+    <string name="read_live_active_preferred">当前读取路线：%1$s（首选）。</string>
+    <string name="read_live_degraded_fallback">当前读取路线：%1$s。首选 %2$s 已于 %3$s 因通道故障降级（%4$s）。</string>
+    <string name="read_live_degraded_not_ready">当前读取路线：%1$s。首选 %2$s 自 %3$s 起未就绪（%4$s）。</string>
+    <string name="read_fact_recovery_policy">回到应用、每 5 分钟、以及点「重新探测首选路线」时都会重试首选路线，就绪即自动切回。</string>
+    <string name="read_fact_recovered_at">最近一次切回更高路线：%1$s</string>
+    <string name="status_read_paused">已暂停</string>
 
     <!-- 通路：本机服务 -->
     <string name="service_ready_no_sync_detail">应用运行正常；后台同步服务将在后续阶段接入。</string>
@@ -276,6 +285,14 @@
     <string name="route_action_battery_settings">去设置电池</string>
     <string name="route_action_set_preferred">设为首选路线</string>
     <string name="route_action_read_test">测试后台读取</string>
+    <string name="route_action_recover_preferred">重新探测首选路线</string>
+    <string name="route_live_active">当前正在使用此路线</string>
+    <string name="route_live_preferred_inactive">首选路线未在运行；就绪后会自动切回，也可在下方立即重新探测</string>
+    <string name="test_recover_switched">已切回首选路线：%1$s</string>
+    <string name="test_recover_not_ready">首选路线 %1$s 仍未就绪（%2$s）；当前路线继续运行</string>
+    <string name="service_fact_battery_unrestricted">电池优化：已放行，服务较不易被系统回收。</string>
+    <string name="service_fact_battery_restricted">电池优化：未放行，屏幕熄灭后服务更容易被系统回收；可在路线引导里点「去设置电池」放行。</string>
+    <string name="service_fact_enabled_not_running">开关已开启但服务未在运行（可能被系统回收）；点「启动服务」重新拉起。</string>
     <string name="priv_hint_not_installed">手机上还没有特权通道应用；安装并启动后回来点「重新探测」。</string>
     <string name="priv_hint_not_running">特权通道未在运行；用电脑执行一次启动命令即可（Windows 端可一键启动）。</string>
     <string name="priv_hint_not_authorized">特权通道尚未授权本应用；点「授权特权直读」完成授权。</string>
@@ -435,7 +452,7 @@
     <string name="prefs_boot_restore">开机恢复</string>
     <string name="prefs_boot_restore_desc">设备重启后自动恢复同步服务。若系统阻止启动，会以通知提醒你手动恢复。</string>
     <string name="prefs_inbox_notify">收到内容通知</string>
-    <string name="prefs_inbox_notify_desc">收到对端内容时发出通知（永不含内容正文）。关闭后同步与历史照常，仅不再提醒。</string>
+    <string name="prefs_inbox_notify_desc">收到对端内容时发出通知。关闭后同步与历史照常，仅不再提醒。</string>
     <string name="prefs_group_data">数据</string>
     <string name="prefs_export">导出历史</string>
     <string name="prefs_export_desc">把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥与配对信息。导出内容为明文，请妥善保管。</string>
@@ -452,6 +469,26 @@
     <string name="prefs_conduit_network">通路 · 网络</string>
     <string name="prefs_no_device">尚无已配对设备</string>
     <string name="prefs_no_device_hint">配对入口在「通路」页的网络段；配对后这里会显示对端名称。</string>
+
+    <!-- 偏好：开关下方的实时事实行（来自服务/协调器/捕获计数，不由开关值推断） -->
+    <string name="prefs_live_service_off">已停止：不后台监听剪贴板，也不与电脑连接。</string>
+    <string name="prefs_live_service_connected">运行中 · 已与电脑连接</string>
+    <string name="prefs_live_service_waiting">运行中 · 未连接电脑，等待重连</string>
+    <string name="prefs_live_service_start_failed">未运行：系统拒绝启动（%1$s）；到「通路」页点「启动服务」重试</string>
+    <string name="prefs_live_service_not_running">开关已开启但服务未在运行（可能被系统回收）；到「通路」页点「启动服务」重新拉起</string>
+    <string name="prefs_live_gate_sync_paused">生效中：后台读取已停止，收到的内容只进历史</string>
+    <string name="prefs_live_gate_private">生效中：后台读取已停止，本机复制的内容留在本机</string>
+    <string name="prefs_live_gate_capture_paused">生效中：后台监听已停止，暂停期间不读取剪贴板</string>
+    <string name="prefs_live_capture_running">后台读取运行中 · 当前路线 %1$s · 本次运行已捕获 %2$d 条</string>
+    <string name="prefs_live_capture_stopped">后台读取未在运行；详见「通路 · 本机读取」</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="other">本次运行已跳过 %1$d 条标记为敏感的内容</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">本次运行尚未遇到标记为敏感的内容</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="other">本次运行已有 %1$d 张图片因关闭而未同步</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">系统已关闭本应用的通知，此开关暂不生效；到「通路」页可跳转系统设置开启</string>
 
     <!-- 数据组操作结果（导出/导入/清空） -->
     <plurals name="transfer_export_done">

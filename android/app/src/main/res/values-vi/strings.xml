@@ -11,7 +11,7 @@
     <string name="notification_group_name">Đồng bộ bảng nhớ tạm</string>
     <string name="notification_group_description">Trạng thái đồng bộ, văn bản nhận được và nhắc khôi phục. Thông báo không bao giờ hiển thị nội dung bảng nhớ tạm.</string>
     <string name="notification_channel_inbox_name">Văn bản nhận được</string>
-    <string name="notification_channel_inbox_description">Báo khi có văn bản mới đến từ PC đã ghép nối. Thông báo không bao giờ hiển thị nội dung bảng nhớ tạm.</string>
+    <string name="notification_channel_inbox_description">Báo khi có văn bản mới đến từ PC đã ghép nối.</string>
     <string name="notification_inbox_title">Văn bản mới từ PC của bạn</string>
     <string name="notification_inbox_text">Nhấn “Sao chép” để đưa vào bảng nhớ tạm</string>
     <string name="notification_inbox_image_title">Hình ảnh mới từ PC của bạn</string>
@@ -24,7 +24,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Trạng thái đồng bộ</string>
-    <string name="notification_channel_sync_description">Trạng thái kết nối với PC đã ghép nối. Thông báo không bao giờ hiển thị nội dung bảng nhớ tạm.</string>
+    <string name="notification_channel_sync_description">Trạng thái kết nối với PC đã ghép nối.</string>
     <string name="notification_sync_connected">Đã kết nối · đồng bộ bảng nhớ tạm trực tuyến</string>
     <string name="notification_sync_connected_bluetooth">Đã kết nối · dự phòng Bluetooth (chỉ văn bản)</string>
     <string name="notification_sync_connecting">Đang kết nối với PC…</string>
@@ -41,7 +41,7 @@
     <string name="notification_status_overlay_polling">Đang đọc bằng thăm dò lớp phủ</string>
 
     <string name="notification_channel_recovery_name">Nhắc khôi phục đồng bộ</string>
-    <string name="notification_channel_recovery_description">Nhắc bạn mở ứng dụng và tiếp tục thủ công khi dịch vụ đồng bộ không thể tự khôi phục. Thông báo không bao giờ hiển thị nội dung bảng nhớ tạm.</string>
+    <string name="notification_channel_recovery_description">Nhắc bạn mở ứng dụng và tiếp tục thủ công khi dịch vụ đồng bộ không thể tự khôi phục.</string>
     <string name="notification_recovery_title">Cần khôi phục · đồng bộ bảng nhớ tạm không chạy</string>
     <string name="notification_recovery_text">Dịch vụ đồng bộ không thể tự khởi động. Nhấn để mở ứng dụng và tiếp tục thủ công.</string>
 
@@ -173,6 +173,14 @@
     <string name="read_fact_preferred">Tuyến ưu tiên: %1$s</string>
     <string name="localread_degraded_pending_detail">Điều kiện tiên quyết đã đủ; kênh đọc đang chờ kiểm tra thực tế. Trong lúc đó đọc khi mở ứng dụng vẫn hoạt động.</string>
     <string name="localread_needs_action_detail">Đọc nền chưa được mở. Hoàn thành bất kỳ một trong ba tuyến; sao chép khi mở ứng dụng không bị ảnh hưởng.</string>
+    <string name="read_live_stopped_by_gate">Đọc nền đã dừng: “%1$s” đang bật, nên trong lúc này bảng nhớ tạm không được đọc.</string>
+    <string name="read_live_none">Hiện không có tuyến đọc nào đang chạy (%1$s); gửi thủ công vẫn dùng được khi ứng dụng ở nền trước.</string>
+    <string name="read_live_active_preferred">Tuyến đọc hiện tại: %1$s (ưu tiên).</string>
+    <string name="read_live_degraded_fallback">Tuyến đọc hiện tại: %1$s. Tuyến ưu tiên %2$s đã bị hạ cấp lúc %3$s do lỗi kênh (%4$s).</string>
+    <string name="read_live_degraded_not_ready">Tuyến đọc hiện tại: %1$s. Tuyến ưu tiên %2$s chưa sẵn sàng kể từ %3$s (%4$s).</string>
+    <string name="read_fact_recovery_policy">Tuyến ưu tiên được thử lại khi bạn quay về ứng dụng, mỗi 5 phút, và khi nhấn “Dò lại tuyến ưu tiên”; sẵn sàng là tự động chuyển về ngay.</string>
+    <string name="read_fact_recovered_at">Lần chuyển về tuyến cao hơn gần nhất: %1$s</string>
+    <string name="status_read_paused">Đã tạm dừng</string>
 
     <string name="service_ready_no_sync_detail">Ứng dụng đang chạy bình thường; dịch vụ đồng bộ nền sẽ đến ở giai đoạn sau.</string>
     <string name="service_running_detail">Dịch vụ đồng bộ đang chạy.</string>
@@ -250,6 +258,14 @@
     <string name="route_action_battery_settings">Cài đặt pin</string>
     <string name="route_action_set_preferred">Đặt làm tuyến ưu tiên</string>
     <string name="route_action_read_test">Kiểm tra đọc nền</string>
+    <string name="route_action_recover_preferred">Dò lại tuyến ưu tiên</string>
+    <string name="route_live_active">Tuyến này đang được dùng</string>
+    <string name="route_live_preferred_inactive">Tuyến ưu tiên không đang chạy; sẵn sàng sẽ tự chuyển về, hoặc dò lại ngay ở bên dưới</string>
+    <string name="test_recover_switched">Đã chuyển về tuyến ưu tiên: %1$s</string>
+    <string name="test_recover_not_ready">Tuyến ưu tiên %1$s vẫn chưa sẵn sàng (%2$s); tuyến hiện tại tiếp tục chạy</string>
+    <string name="service_fact_battery_unrestricted">Tối ưu pin: đã miễn trừ, hệ thống ít khi thu hồi dịch vụ.</string>
+    <string name="service_fact_battery_restricted">Tối ưu pin: chưa miễn trừ, khi tắt màn hình hệ thống dễ thu hồi dịch vụ hơn; “Mở cài đặt pin” trong hướng dẫn tuyến sẽ cấp miễn trừ.</string>
+    <string name="service_fact_enabled_not_running">Công tắc đang bật nhưng dịch vụ không chạy (có thể hệ thống đã thu hồi); nhấn “Khởi động dịch vụ” để chạy lại.</string>
     <string name="priv_hint_not_installed">Điện thoại này chưa cài ứng dụng kênh đặc quyền; hãy cài và khởi động nó rồi quay lại nhấn “Dò lại”.</string>
     <string name="priv_hint_not_running">Kênh đặc quyền chưa chạy; chỉ cần chạy lệnh khởi động một lần từ máy tính (phía Windows chỉ một cú nhấp).</string>
     <string name="priv_hint_not_authorized">Kênh đặc quyền chưa cấp quyền cho ứng dụng này; nhấn “Cấp quyền đọc đặc quyền” để cấp.</string>
@@ -402,7 +418,7 @@
     <string name="prefs_boot_restore">Khôi phục khi khởi động máy</string>
     <string name="prefs_boot_restore_desc">Tự động tiếp tục dịch vụ đồng bộ sau khi khởi động lại. Nếu hệ thống chặn khởi động, một thông báo sẽ nhắc bạn tiếp tục thủ công.</string>
     <string name="prefs_inbox_notify">Thông báo nội dung nhận được</string>
-    <string name="prefs_inbox_notify_desc">Báo khi nội dung từ phía bên kia đến (không bao giờ kèm chính nội dung). Khi tắt, đồng bộ và lịch sử vẫn tiếp tục; chỉ dừng phần báo.</string>
+    <string name="prefs_inbox_notify_desc">Báo khi nội dung từ phía bên kia đến. Khi tắt, đồng bộ và lịch sử vẫn tiếp tục; chỉ dừng phần báo.</string>
     <string name="prefs_group_data">Dữ liệu</string>
     <string name="prefs_export">Xuất lịch sử</string>
     <string name="prefs_export_desc">Ghi toàn bộ lịch sử (bao gồm dấu xóa) thành tệp sao lưu JSON Lines; không có khóa hay dữ liệu ghép nối. Bản xuất là văn bản thường — hãy giữ cẩn thận.</string>
@@ -419,6 +435,24 @@
     <string name="prefs_conduit_network">Đường dẫn · Mạng</string>
     <string name="prefs_no_device">Chưa có thiết bị nào được ghép nối</string>
     <string name="prefs_no_device_hint">Lối vào ghép nối nằm ở đoạn mạng của trang Đường dẫn; sau khi ghép nối, tên của phía bên kia sẽ hiện ở đây.</string>
+    <string name="prefs_live_service_off">Đã dừng: không nghe bảng nhớ tạm ở nền và không kết nối với PC.</string>
+    <string name="prefs_live_service_connected">Đang chạy · đã kết nối với PC</string>
+    <string name="prefs_live_service_waiting">Đang chạy · chưa kết nối với PC, đang chờ kết nối lại</string>
+    <string name="prefs_live_service_start_failed">Không chạy: hệ thống từ chối khởi động (%1$s); nhấn “Khởi động dịch vụ” ở trang Đường dẫn để thử lại</string>
+    <string name="prefs_live_service_not_running">Công tắc đang bật nhưng dịch vụ không chạy (có thể hệ thống đã thu hồi); nhấn “Khởi động dịch vụ” ở trang Đường dẫn để chạy lại</string>
+    <string name="prefs_live_gate_sync_paused">Đang hiệu lực: đọc nền đã dừng, nội dung nhận được chỉ vào lịch sử</string>
+    <string name="prefs_live_gate_private">Đang hiệu lực: đọc nền đã dừng, nội dung sao chép ở đây ở lại thiết bị này</string>
+    <string name="prefs_live_gate_capture_paused">Đang hiệu lực: nghe nền đã dừng; trong lúc tạm dừng không đọc bảng nhớ tạm</string>
+    <string name="prefs_live_capture_running">Đọc nền đang chạy · tuyến hiện tại %1$s · đã bắt %2$d mục trong lần chạy này</string>
+    <string name="prefs_live_capture_stopped">Đọc nền không đang chạy; xem Đường dẫn · Đọc cục bộ</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="other">Đã bỏ qua %1$d mục được đánh dấu nhạy cảm trong lần chạy này</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">Lần chạy này chưa gặp mục nào được đánh dấu nhạy cảm</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="other">%1$d ảnh không được đồng bộ trong lần chạy này vì mục này đang tắt</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">Hệ thống đã tắt thông báo của ứng dụng này nên công tắc này chưa có tác dụng; trang Đường dẫn có lối dẫn đến cài đặt hệ thống</string>
 
     <plurals name="transfer_export_done">
         <item quantity="other">Đã xuất %1$d bản ghi (văn bản thường); hãy giữ tệp sao lưu cẩn thận.</item>

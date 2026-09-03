@@ -54,6 +54,13 @@ enum class RouteActionId {
      * DEGRADED (授权但待实测).
      */
     RUN_READ_TEST,
+
+    /**
+     * Re-probe the preferred route right now and switch back to it if it is READY. Offered on
+     * the preferred card while a lower rung (or nothing) is running — the manual counterpart of
+     * the automatic upward re-probe on foreground return and on the service's timer.
+     */
+    RECOVER_PREFERRED,
 }
 
 data class ReadRouteUi(
@@ -74,6 +81,13 @@ data class ReadRouteUi(
      */
     val readTestAction: RouteActionId? = null,
     val preferred: Boolean,
+    /** This route is the one actually listening right now (live coordinator state). */
+    val active: Boolean = false,
+    /**
+     * [RouteActionId.RECOVER_PREFERRED] when this is the preferred route, a backend is running,
+     * and it is not this one — the tap re-probes and climbs back if the route is READY.
+     */
+    val recoverAction: RouteActionId? = null,
 )
 
 /** Result of the last pinned `/v1/peer/health` reachability probe. */
@@ -102,6 +116,11 @@ data class CapabilityFacts(
     val peerClipboardApply: PeerClipboardApply? = null,
     /** Null = notification probe not wired; false = the surface is off right now. */
     val notificationsEnabled: Boolean? = null,
+    /**
+     * The ladder as it runs right now (active route, shortfall, gate), derived from the
+     * coordinator's live state rather than from this probe pass. Null until wired.
+     */
+    val liveRead: ReadRouteStatus? = null,
 )
 
 private val BACKGROUND_READ_MODES = listOf(
@@ -116,6 +135,31 @@ private val BACKGROUND_READ_MODES = listOf(
  * wizard instead of pretending "unavailable" is fate.
  */
 internal fun localReadSegmentFromFacts(facts: CapabilityFacts): ConduitSegmentState {
+    val probed = probedReadSegment(facts)
+    val live = facts.liveRead ?: return probed
+    // The probe pass says what *could* run; the coordinator says what *does*. The headline
+    // states the latter, and a running-but-below-preferred ladder is the charter's 52% fill
+    // even when a probe would call the preferred route READY again.
+    val gate = live.stoppedByGate
+    val withLive = probed.copy(detail = live.headline, detailLines = probed.detailLines + live.facts)
+    return when {
+        // All routes closed still beckons toward the wizard; the live line only adds the fact.
+        probed.status == ConduitStatus.NEEDS_ACTION -> withLive
+        gate != null ->
+            withLive.copy(
+                statusLabel = UiText.Res(R.string.status_read_paused),
+                status = ConduitStatus.UNAVAILABLE,
+            )
+        live.degradedFromPreferred ->
+            withLive.copy(
+                statusLabel = UiText.Res(R.string.status_degraded),
+                status = ConduitStatus.DEGRADED,
+            )
+        else -> withLive
+    }
+}
+
+private fun probedReadSegment(facts: CapabilityFacts): ConduitSegmentState {
     val background = BACKGROUND_READ_MODES.mapNotNull { facts.reports[it] }
     val detailLines = buildList {
         BACKGROUND_READ_MODES.forEach { mode ->
@@ -295,6 +339,12 @@ private fun readRoute(
     // choosing the preferred route and verifying it stay independent.
     val readTestAction = RouteActionId.RUN_READ_TEST
         .takeIf { remaining == 0 && (readState == CapabilityState.DEGRADED || channelDead) }
+    // Live facts: the card says whether it is the route actually listening, and the preferred
+    // card offers the upward re-probe whenever something else (or nothing) runs in its place.
+    val live = facts.liveRead
+    val active = live?.activeMode == mode
+    val recoverAction =
+        RouteActionId.RECOVER_PREFERRED.takeIf { preferred && !active && live?.recoverable == true }
     return ReadRouteUi(
         id = id,
         mode = mode,
@@ -308,6 +358,8 @@ private fun readRoute(
         nextAction = nextAction,
         readTestAction = readTestAction,
         preferred = preferred,
+        active = active,
+        recoverAction = recoverAction,
     )
 }
 
@@ -351,6 +403,7 @@ fun routeActionLabel(action: RouteActionId): UiText = when (action) {
     RouteActionId.OPEN_BATTERY_SETTINGS -> UiText.Res(R.string.route_action_battery_settings)
     RouteActionId.SET_PREFERRED -> UiText.Res(R.string.route_action_set_preferred)
     RouteActionId.RUN_READ_TEST -> UiText.Res(R.string.route_action_read_test)
+    RouteActionId.RECOVER_PREFERRED -> UiText.Res(R.string.route_action_recover_preferred)
 }
 
 private fun readStateWord(report: CapabilityReport?): UiText = when (report?.readState) {

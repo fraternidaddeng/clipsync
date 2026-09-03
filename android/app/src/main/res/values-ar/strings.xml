@@ -11,7 +11,7 @@
     <string name="notification_group_name">مزامنة الحافظة</string>
     <string name="notification_group_description">حالة المزامنة والنص المستلَم وتذكيرات الاستعادة. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>
     <string name="notification_channel_inbox_name">النص المستلَم</string>
-    <string name="notification_channel_inbox_description">ينبّهك عند وصول نص جديد من حاسوب مقترن. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>
+    <string name="notification_channel_inbox_description">ينبّهك عند وصول نص جديد من حاسوب مقترن.</string>
     <string name="notification_inbox_title">نص جديد من حاسوبك</string>
     <string name="notification_inbox_text">انقر على «نسخ» لوضعه في الحافظة</string>
     <string name="notification_inbox_image_title">صورة جديدة من حاسوبك</string>
@@ -29,7 +29,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">حالة المزامنة</string>
-    <string name="notification_channel_sync_description">حالة الاتصال بالحاسوب المقترن. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>
+    <string name="notification_channel_sync_description">حالة الاتصال بالحاسوب المقترن.</string>
     <string name="notification_sync_connected">متصل · مزامنة الحافظة تعمل</string>
     <string name="notification_sync_connected_bluetooth">متصل · مسار بلوتوث الاحتياطي (نص فقط)</string>
     <string name="notification_sync_connecting">جارٍ الاتصال بحاسوبك…</string>
@@ -46,7 +46,7 @@
     <string name="notification_status_overlay_polling">قراءة الاستطلاع بالنافذة العائمة جارية</string>
 
     <string name="notification_channel_recovery_name">تذكيرات استعادة المزامنة</string>
-    <string name="notification_channel_recovery_description">يذكّرك بفتح التطبيق والاستئناف يدويًا عندما تعجز خدمة المزامنة عن التعافي وحدها. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>
+    <string name="notification_channel_recovery_description">يذكّرك بفتح التطبيق والاستئناف يدويًا عندما تعجز خدمة المزامنة عن التعافي وحدها.</string>
     <string name="notification_recovery_title">يلزم استعادة · مزامنة الحافظة متوقفة</string>
     <string name="notification_recovery_text">تعذّر بدء خدمة المزامنة تلقائيًا. انقر لفتح التطبيق والاستئناف يدويًا.</string>
 
@@ -178,6 +178,14 @@
     <string name="read_fact_preferred">المسار المفضّل: %1$s</string>
     <string name="localread_degraded_pending_detail">الشروط المسبقة مستوفاة؛ قناة القراءة بانتظار اختبار فعلي. القراءة في المقدمة تستمر في العمل خلال ذلك.</string>
     <string name="localread_needs_action_detail">القراءة في الخلفية لم تُفتح بعد. أكمل أي مسار من المسارات الثلاثة؛ النسخ في المقدمة غير متأثر.</string>
+    <string name="read_live_stopped_by_gate">القراءة في الخلفية متوقفة: «%1$s» مفعّل، لذا لا تُقرأ الحافظة في هذه الأثناء.</string>
+    <string name="read_live_none">لا يعمل أي مسار قراءة حاليًا (%1$s)؛ الإرسال اليدوي لا يزال يعمل ما دام التطبيق في المقدمة.</string>
+    <string name="read_live_active_preferred">مسار القراءة الحالي: %1$s (المفضّل).</string>
+    <string name="read_live_degraded_fallback">مسار القراءة الحالي: %1$s. تراجع المسار المفضّل %2$s في %3$s بعد تعطّل القناة (%4$s).</string>
+    <string name="read_live_degraded_not_ready">مسار القراءة الحالي: %1$s. المسار المفضّل %2$s غير جاهز منذ %3$s (%4$s).</string>
+    <string name="read_fact_recovery_policy">تُعاد محاولة المسار المفضّل عند العودة إلى التطبيق، وكل 5 دقائق، وعند النقر على «إعادة فحص المسار المفضّل»؛ وحين يصبح جاهزًا يُعاد التبديل إليه تلقائيًا.</string>
+    <string name="read_fact_recovered_at">آخر عودة إلى مسار أعلى: %1$s</string>
+    <string name="status_read_paused">متوقف مؤقتًا</string>
 
     <string name="service_ready_no_sync_detail">التطبيق يعمل بشكل طبيعي؛ خدمة المزامنة في الخلفية ستأتي في مرحلة لاحقة.</string>
     <string name="service_running_detail">خدمة المزامنة تعمل.</string>
@@ -255,6 +263,14 @@
     <string name="route_action_battery_settings">إعدادات البطارية</string>
     <string name="route_action_set_preferred">تعيينه المسار المفضّل</string>
     <string name="route_action_read_test">اختبار القراءة في الخلفية</string>
+    <string name="route_action_recover_preferred">إعادة فحص المسار المفضّل</string>
+    <string name="route_live_active">هذا المسار قيد الاستخدام الآن</string>
+    <string name="route_live_preferred_inactive">المسار المفضّل لا يعمل؛ يُعاد التبديل إليه تلقائيًا حين يصبح جاهزًا، أو أعد فحصه أدناه الآن</string>
+    <string name="test_recover_switched">تمت العودة إلى المسار المفضّل: %1$s</string>
+    <string name="test_recover_not_ready">المسار المفضّل %1$s لا يزال غير جاهز (%2$s)؛ يستمر المسار الحالي في العمل</string>
+    <string name="service_fact_battery_unrestricted">تحسين البطارية: مستثنى، فالنظام أقل ميلًا لإنهاء الخدمة.</string>
+    <string name="service_fact_battery_restricted">تحسين البطارية: غير مستثنى، فعند انطفاء الشاشة ينهي النظام الخدمة بسهولة أكبر؛ «فتح إعدادات البطارية» في دليل المسارات يمنح الاستثناء.</string>
+    <string name="service_fact_enabled_not_running">المفتاح مفعّل لكن الخدمة لا تعمل (ربما أنهاها النظام)؛ انقر «بدء الخدمة» لإعادة تشغيلها.</string>
     <string name="priv_hint_not_installed">تطبيق القناة ذات الامتيازات غير مثبّت على هذا الهاتف؛ ثبّته وشغّله ثم عد واضغط «إعادة الفحص».</string>
     <string name="priv_hint_not_running">القناة ذات الامتيازات لا تعمل؛ نفّذ أمر التشغيل مرة واحدة من حاسوب (بنقرة واحدة من جانب Windows).</string>
     <string name="priv_hint_not_authorized">القناة ذات الامتيازات لم تصرّح لهذا التطبيق بعد؛ اضغط «التصريح بالقراءة بامتيازات» لمنح التصريح.</string>
@@ -437,7 +453,7 @@
     <string name="prefs_boot_restore">الاستعادة عند الإقلاع</string>
     <string name="prefs_boot_restore_desc">يستأنف خدمة المزامنة تلقائيًا بعد إعادة التشغيل. إذا منع النظام البدء، يذكّرك إشعار بالاستئناف يدويًا.</string>
     <string name="prefs_inbox_notify">إشعارات المحتوى المستلَم</string>
-    <string name="prefs_inbox_notify_desc">ينبّه عند وصول محتوى من الطرف الآخر (دون تضمين المحتوى نفسه أبدًا). عند الإيقاف تستمر المزامنة والسجل؛ يتوقف التنبيه فقط.</string>
+    <string name="prefs_inbox_notify_desc">ينبّه عند وصول محتوى من الطرف الآخر. عند الإيقاف تستمر المزامنة والسجل؛ يتوقف التنبيه فقط.</string>
     <string name="prefs_group_data">البيانات</string>
     <string name="prefs_export">تصدير السجل</string>
     <string name="prefs_export_desc">يكتب السجل كاملًا (بما فيه علامات الحذف) كملف نسخ احتياطي بصيغة JSON Lines؛ دون مفاتيح أو بيانات اقتران. التصدير نص مكشوف — احفظه بأمان.</string>
@@ -454,6 +470,34 @@
     <string name="prefs_conduit_network">القناة · الشبكة</string>
     <string name="prefs_no_device">لا توجد أجهزة مقترنة بعد</string>
     <string name="prefs_no_device_hint">مدخل الاقتران في مقطع الشبكة بصفحة القناة؛ بعد الاقتران يظهر اسم الطرف الآخر هنا.</string>
+    <string name="prefs_live_service_off">متوقفة: لا استماع للحافظة في الخلفية ولا اتصال بالحاسوب.</string>
+    <string name="prefs_live_service_connected">تعمل · متصلة بالحاسوب</string>
+    <string name="prefs_live_service_waiting">تعمل · غير متصلة بالحاسوب، بانتظار إعادة الاتصال</string>
+    <string name="prefs_live_service_start_failed">لا تعمل: رفض النظام تشغيلها (%1$s)؛ انقر «بدء الخدمة» في صفحة القناة لإعادة المحاولة</string>
+    <string name="prefs_live_service_not_running">المفتاح مفعّل لكن الخدمة لا تعمل (ربما أنهاها النظام)؛ انقر «بدء الخدمة» في صفحة القناة لإعادة تشغيلها</string>
+    <string name="prefs_live_gate_sync_paused">ساري: القراءة في الخلفية متوقفة وما يصل يذهب إلى السجل فقط</string>
+    <string name="prefs_live_gate_private">ساري: القراءة في الخلفية متوقفة وما تنسخه هنا يبقى على هذا الجهاز</string>
+    <string name="prefs_live_gate_capture_paused">ساري: الاستماع في الخلفية متوقف؛ لا تُقرأ الحافظة أثناء الإيقاف المؤقت</string>
+    <string name="prefs_live_capture_running">القراءة في الخلفية تعمل · المسار الحالي %1$s · التُقط %2$d في هذه الجلسة</string>
+    <string name="prefs_live_capture_stopped">القراءة في الخلفية لا تعمل؛ انظر القناة · القراءة المحلية</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="zero">تُخطّي %1$d عناصر مُعلَّمة كحساسة في هذه الجلسة</item>
+        <item quantity="one">تُخطّي عنصر واحد مُعلَّم كحساس في هذه الجلسة (%1$d)</item>
+        <item quantity="two">تُخطّي عنصران مُعلَّمان كحساسين في هذه الجلسة (%1$d)</item>
+        <item quantity="few">تُخطّي %1$d عناصر مُعلَّمة كحساسة في هذه الجلسة</item>
+        <item quantity="many">تُخطّي %1$d عنصرًا مُعلَّمًا كحساس في هذه الجلسة</item>
+        <item quantity="other">تُخطّي %1$d عنصر مُعلَّم كحساس في هذه الجلسة</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">لم يظهر بعد أي عنصر مُعلَّم كحساس في هذه الجلسة</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="zero">%1$d صور لم تُزامَن في هذه الجلسة لأن هذا معطّل</item>
+        <item quantity="one">صورة واحدة لم تُزامَن في هذه الجلسة لأن هذا معطّل (%1$d)</item>
+        <item quantity="two">صورتان لم تُزامَنا في هذه الجلسة لأن هذا معطّل (%1$d)</item>
+        <item quantity="few">%1$d صور لم تُزامَن في هذه الجلسة لأن هذا معطّل</item>
+        <item quantity="many">%1$d صورةً لم تُزامَن في هذه الجلسة لأن هذا معطّل</item>
+        <item quantity="other">%1$d صورة لم تُزامَن في هذه الجلسة لأن هذا معطّل</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">أوقف النظام إشعارات هذا التطبيق، لذا لا أثر لهذا المفتاح بعد؛ صفحة القناة تقود إلى إعداد النظام</string>
 
     <plurals name="transfer_export_done">
         <item quantity="zero">صُدّرت %1$d سجلات (نص مكشوف)؛ احفظ ملف النسخ الاحتياطي بأمان.</item>

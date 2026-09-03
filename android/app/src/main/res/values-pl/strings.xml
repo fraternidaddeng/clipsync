@@ -11,7 +11,7 @@
     <string name="notification_group_name">Synchronizacja schowka</string>
     <string name="notification_group_description">Stan synchronizacji, odebrany tekst i przypomnienia o odzyskiwaniu. Powiadomienia nigdy nie pokazują zawartości schowka.</string>
     <string name="notification_channel_inbox_name">Odebrany tekst</string>
-    <string name="notification_channel_inbox_description">Powiadamia, gdy nowy tekst nadejdzie ze sparowanego PC. Powiadomienia nigdy nie pokazują zawartości schowka.</string>
+    <string name="notification_channel_inbox_description">Powiadamia, gdy nowy tekst nadejdzie ze sparowanego PC.</string>
     <string name="notification_inbox_title">Nowy tekst z Twojego PC</string>
     <string name="notification_inbox_text">Dotknij „Kopiuj”, aby umieścić go w schowku</string>
     <string name="notification_inbox_image_title">Nowy obraz z Twojego PC</string>
@@ -27,7 +27,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Stan synchronizacji</string>
-    <string name="notification_channel_sync_description">Stan połączenia ze sparowanym PC. Powiadomienia nigdy nie pokazują zawartości schowka.</string>
+    <string name="notification_channel_sync_description">Stan połączenia ze sparowanym PC.</string>
     <string name="notification_sync_connected">Połączono · synchronizacja schowka online</string>
     <string name="notification_sync_connected_bluetooth">Połączono · zapasowy Bluetooth (tylko tekst)</string>
     <string name="notification_sync_connecting">Łączenie z PC…</string>
@@ -44,7 +44,7 @@
     <string name="notification_status_overlay_polling">Trwa odczyt przez odpytywanie z nakładką</string>
 
     <string name="notification_channel_recovery_name">Przypomnienia o odzyskiwaniu</string>
-    <string name="notification_channel_recovery_description">Przypomina o otwarciu aplikacji i ręcznym wznowieniu, gdy usługa synchronizacji nie może odzyskać się sama. Powiadomienia nigdy nie pokazują zawartości schowka.</string>
+    <string name="notification_channel_recovery_description">Przypomina o otwarciu aplikacji i ręcznym wznowieniu, gdy usługa synchronizacji nie może odzyskać się sama.</string>
     <string name="notification_recovery_title">Wymaga odzyskania · synchronizacja schowka nie działa</string>
     <string name="notification_recovery_text">Usługa synchronizacji nie mogła uruchomić się automatycznie. Dotknij, aby otworzyć aplikację i wznowić ręcznie.</string>
 
@@ -176,6 +176,14 @@
     <string name="read_fact_preferred">Preferowana ścieżka: %1$s</string>
     <string name="localread_degraded_pending_detail">Warunki wstępne są spełnione; kanał odczytu czeka na rzeczywisty test. W międzyczasie odczyt na pierwszym planie nadal działa.</string>
     <string name="localread_needs_action_detail">Odczyt w tle nie jest jeszcze otwarty. Ukończ dowolną z trzech ścieżek; kopiowanie na pierwszym planie pozostaje bez zmian.</string>
+    <string name="read_live_stopped_by_gate">Odczyt w tle zatrzymany: „%1$s” jest włączone, więc w tym czasie schowek nie jest czytany.</string>
+    <string name="read_live_none">Żadna ścieżka odczytu nie działa w tej chwili (%1$s); ręczne wysyłanie działa nadal, gdy aplikacja jest na pierwszym planie.</string>
+    <string name="read_live_active_preferred">Bieżąca ścieżka odczytu: %1$s (preferowana).</string>
+    <string name="read_live_degraded_fallback">Bieżąca ścieżka odczytu: %1$s. Preferowana %2$s została obniżona o %3$s po awarii kanału (%4$s).</string>
+    <string name="read_live_degraded_not_ready">Bieżąca ścieżka odczytu: %1$s. Preferowana %2$s nie jest gotowa od %3$s (%4$s).</string>
+    <string name="read_fact_recovery_policy">Preferowana ścieżka jest ponawiana po powrocie do aplikacji, co 5 minut i po dotknięciu „Sprawdź ponownie preferowaną ścieżkę”; gdy tylko jest gotowa, następuje automatyczny powrót.</string>
+    <string name="read_fact_recovered_at">Ostatni powrót na wyższą ścieżkę: %1$s</string>
+    <string name="status_read_paused">Wstrzymano</string>
 
     <string name="service_ready_no_sync_detail">Aplikacja działa normalnie; usługa synchronizacji w tle pojawi się w późniejszym etapie.</string>
     <string name="service_running_detail">Usługa synchronizacji działa.</string>
@@ -253,6 +261,14 @@
     <string name="route_action_battery_settings">Ustawienia baterii</string>
     <string name="route_action_set_preferred">Ustaw jako preferowaną ścieżkę</string>
     <string name="route_action_read_test">Testuj odczyt w tle</string>
+    <string name="route_action_recover_preferred">Sprawdź ponownie preferowaną ścieżkę</string>
+    <string name="route_live_active">Ta ścieżka jest teraz w użyciu</string>
+    <string name="route_live_preferred_inactive">Preferowana ścieżka nie działa; powrót nastąpi automatycznie, gdy będzie gotowa — lub sprawdź ją ponownie poniżej już teraz</string>
+    <string name="test_recover_switched">Powrót na preferowaną ścieżkę: %1$s</string>
+    <string name="test_recover_not_ready">Preferowana ścieżka %1$s wciąż nie jest gotowa (%2$s); bieżąca ścieżka działa dalej</string>
+    <string name="service_fact_battery_unrestricted">Optymalizacja baterii: wyłączona dla aplikacji, więc system rzadziej zamyka usługę.</string>
+    <string name="service_fact_battery_restricted">Optymalizacja baterii: nie wyłączona, więc po zgaszeniu ekranu system łatwiej zamyka usługę; „Otwórz ustawienia baterii” w przewodniku ścieżek nadaje wyjątek.</string>
+    <string name="service_fact_enabled_not_running">Przełącznik jest włączony, ale usługa nie działa (system mógł ją zamknąć); dotknij „Uruchom usługę”, aby ją podnieść.</string>
     <string name="priv_hint_not_installed">Na tym telefonie nie ma aplikacji kanału uprzywilejowanego; zainstaluj ją i uruchom, a potem wróć i stuknij „Sonduj ponownie”.</string>
     <string name="priv_hint_not_running">Kanał uprzywilejowany nie działa; wykonaj raz polecenie startowe z komputera (po stronie Windows jedno kliknięcie).</string>
     <string name="priv_hint_not_authorized">Kanał uprzywilejowany nie autoryzował jeszcze tej aplikacji; stuknij „Zezwól na odczyt uprzywilejowany”.</string>
@@ -423,7 +439,7 @@
     <string name="prefs_boot_restore">Przywracaj po uruchomieniu</string>
     <string name="prefs_boot_restore_desc">Automatycznie wznawia usługę synchronizacji po restarcie. Jeśli system zablokuje start, powiadomienie przypomni o ręcznym wznowieniu.</string>
     <string name="prefs_inbox_notify">Powiadomienia o odebranych treściach</string>
-    <string name="prefs_inbox_notify_desc">Powiadamia, gdy nadejdą treści z drugiej strony (nigdy nie zawiera samej treści). Gdy wyłączone, synchronizacja i historia trwają; ustaje tylko alert.</string>
+    <string name="prefs_inbox_notify_desc">Powiadamia, gdy nadejdą treści z drugiej strony. Gdy wyłączone, synchronizacja i historia trwają; ustaje tylko alert.</string>
     <string name="prefs_group_data">Dane</string>
     <string name="prefs_export">Eksportuj historię</string>
     <string name="prefs_export_desc">Zapisuje całą historię (wraz ze znacznikami usunięcia) jako plik kopii zapasowej JSON Lines; bez kluczy i danych parowania. Eksport jest jawnym tekstem — przechowuj go bezpiecznie.</string>
@@ -440,6 +456,30 @@
     <string name="prefs_conduit_network">Kanał · Sieć</string>
     <string name="prefs_no_device">Nie ma jeszcze sparowanych urządzeń</string>
     <string name="prefs_no_device_hint">Wejście do parowania jest w segmencie sieci na stronie Kanał; po sparowaniu nazwa drugiej strony pojawi się tutaj.</string>
+    <string name="prefs_live_service_off">Zatrzymana: brak nasłuchu schowka w tle i brak połączenia z PC.</string>
+    <string name="prefs_live_service_connected">Działa · połączono z PC</string>
+    <string name="prefs_live_service_waiting">Działa · brak połączenia z PC, oczekiwanie na ponowne połączenie</string>
+    <string name="prefs_live_service_start_failed">Nie działa: system odmówił uruchomienia (%1$s); dotknij „Uruchom usługę” na stronie Kanał, aby spróbować ponownie</string>
+    <string name="prefs_live_service_not_running">Przełącznik jest włączony, ale usługa nie działa (system mógł ją zamknąć); dotknij „Uruchom usługę” na stronie Kanał, aby ją podnieść</string>
+    <string name="prefs_live_gate_sync_paused">Obowiązuje: odczyt w tle jest zatrzymany, a odebrane treści trafiają tylko do historii</string>
+    <string name="prefs_live_gate_private">Obowiązuje: odczyt w tle jest zatrzymany, a to, co kopiujesz tutaj, zostaje na tym urządzeniu</string>
+    <string name="prefs_live_gate_capture_paused">Obowiązuje: nasłuch w tle jest zatrzymany; podczas pauzy schowek nie jest czytany</string>
+    <string name="prefs_live_capture_running">Odczyt w tle działa · bieżąca ścieżka %1$s · przechwycono %2$d w tej sesji</string>
+    <string name="prefs_live_capture_stopped">Odczyt w tle nie działa; zobacz Kanał · Odczyt lokalny</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="one">W tej sesji pominięto %1$d element oznaczony jako wrażliwy</item>
+        <item quantity="few">W tej sesji pominięto %1$d elementy oznaczone jako wrażliwe</item>
+        <item quantity="many">W tej sesji pominięto %1$d elementów oznaczonych jako wrażliwe</item>
+        <item quantity="other">W tej sesji pominięto %1$d elementu oznaczonego jako wrażliwy</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">W tej sesji nie pojawił się jeszcze żaden element oznaczony jako wrażliwy</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="one">W tej sesji %1$d obraz nie został zsynchronizowany, bo to jest wyłączone</item>
+        <item quantity="few">W tej sesji %1$d obrazy nie zostały zsynchronizowane, bo to jest wyłączone</item>
+        <item quantity="many">W tej sesji %1$d obrazów nie zostało zsynchronizowanych, bo to jest wyłączone</item>
+        <item quantity="other">W tej sesji %1$d obrazu nie zostało zsynchronizowane, bo to jest wyłączone</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">System wyłączył powiadomienia tej aplikacji, więc ten przełącznik jeszcze nie działa; strona Kanał prowadzi do ustawienia systemowego</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">Wyeksportowano %1$d rekord (jawny tekst); przechowuj plik kopii bezpiecznie.</item>

@@ -11,7 +11,7 @@
     <string name="notification_group_name">클립보드 동기화</string>
     <string name="notification_group_description">동기화 상태, 수신 텍스트, 복구 알림. 알림에 클립보드 내용이 표시되지 않습니다.</string>
     <string name="notification_channel_inbox_name">수신 텍스트</string>
-    <string name="notification_channel_inbox_description">페어링된 PC에서 새 텍스트가 도착하면 알립니다. 알림에 클립보드 내용이 표시되지 않습니다.</string>
+    <string name="notification_channel_inbox_description">페어링된 PC에서 새 텍스트가 도착하면 알립니다.</string>
     <string name="notification_inbox_title">PC에서 새 텍스트 도착</string>
     <string name="notification_inbox_text">‘복사’를 누르면 클립보드에 들어갑니다</string>
     <string name="notification_inbox_image_title">PC에서 새 이미지 도착</string>
@@ -24,7 +24,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">동기화 상태</string>
-    <string name="notification_channel_sync_description">페어링된 PC와의 연결 상태. 알림에 클립보드 내용이 표시되지 않습니다.</string>
+    <string name="notification_channel_sync_description">페어링된 PC와의 연결 상태.</string>
     <string name="notification_sync_connected">연결됨 · 클립보드 동기화 온라인</string>
     <string name="notification_sync_connected_bluetooth">연결됨 · 블루투스 대체 경로(텍스트만)</string>
     <string name="notification_sync_connecting">PC에 연결하는 중…</string>
@@ -41,7 +41,7 @@
     <string name="notification_status_overlay_polling">오버레이 폴링 읽기 진행 중</string>
 
     <string name="notification_channel_recovery_name">동기화 복구 알림</string>
-    <string name="notification_channel_recovery_description">동기화 서비스가 스스로 복구하지 못할 때 앱을 열어 수동으로 재개하도록 알립니다. 알림에 클립보드 내용이 표시되지 않습니다.</string>
+    <string name="notification_channel_recovery_description">동기화 서비스가 스스로 복구하지 못할 때 앱을 열어 수동으로 재개하도록 알립니다.</string>
     <string name="notification_recovery_title">복구 필요 · 클립보드 동기화가 실행되지 않음</string>
     <string name="notification_recovery_text">동기화 서비스를 자동으로 시작하지 못했습니다. 눌러서 앱을 열고 수동으로 재개하세요.</string>
 
@@ -173,6 +173,14 @@
     <string name="read_fact_preferred">우선 경로: %1$s</string>
     <string name="localread_degraded_pending_detail">전제 조건은 충족되었고 읽기 채널은 실측 테스트를 기다리고 있습니다. 그동안 포그라운드 읽기는 계속 동작합니다.</string>
     <string name="localread_needs_action_detail">백그라운드 읽기가 아직 열리지 않았습니다. 세 경로 중 하나만 완료하면 됩니다. 포그라운드 복사에는 영향이 없습니다.</string>
+    <string name="read_live_stopped_by_gate">백그라운드 읽기 중지됨: “%1$s”이(가) 켜져 있어 그동안 클립보드를 읽지 않습니다.</string>
+    <string name="read_live_none">현재 실행 중인 읽기 경로가 없습니다(%1$s). 앱이 포그라운드에 있으면 수동 전송은 가능합니다.</string>
+    <string name="read_live_active_preferred">현재 읽기 경로: %1$s(우선).</string>
+    <string name="read_live_degraded_fallback">현재 읽기 경로: %1$s. 우선 경로 %2$s은(는) 채널 장애(%4$s)로 %3$s에 하향되었습니다.</string>
+    <string name="read_live_degraded_not_ready">현재 읽기 경로: %1$s. 우선 경로 %2$s은(는) %3$s부터 준비되지 않았습니다(%4$s).</string>
+    <string name="read_fact_recovery_policy">앱으로 돌아올 때, 5분마다, 그리고 “우선 경로 다시 탐지”를 누를 때 우선 경로를 재시도하며 준비되면 자동으로 되돌아갑니다.</string>
+    <string name="read_fact_recovered_at">상위 경로로 마지막 복귀: %1$s</string>
+    <string name="status_read_paused">일시중지됨</string>
 
     <string name="service_ready_no_sync_detail">앱은 정상 동작 중입니다. 백그라운드 동기화 서비스는 이후 단계에서 제공됩니다.</string>
     <string name="service_running_detail">동기화 서비스가 실행 중입니다.</string>
@@ -250,6 +258,14 @@
     <string name="route_action_battery_settings">배터리 설정</string>
     <string name="route_action_set_preferred">우선 경로로 설정</string>
     <string name="route_action_read_test">백그라운드 읽기 테스트</string>
+    <string name="route_action_recover_preferred">우선 경로 다시 탐지</string>
+    <string name="route_live_active">현재 이 경로를 사용 중</string>
+    <string name="route_live_preferred_inactive">우선 경로가 실행 중이 아닙니다. 준비되면 자동으로 되돌아가며, 아래에서 지금 다시 탐지할 수도 있습니다</string>
+    <string name="test_recover_switched">우선 경로로 되돌아갔습니다: %1$s</string>
+    <string name="test_recover_not_ready">우선 경로 %1$s이(가) 아직 준비되지 않았습니다(%2$s). 현재 경로를 계속 사용합니다</string>
+    <string name="service_fact_battery_unrestricted">배터리 최적화: 제외됨. 시스템이 서비스를 회수할 가능성이 낮습니다.</string>
+    <string name="service_fact_battery_restricted">배터리 최적화: 제외되지 않음. 화면이 꺼지면 시스템이 서비스를 더 쉽게 회수합니다. 경로 안내의 “배터리 설정으로 이동”에서 제외할 수 있습니다.</string>
+    <string name="service_fact_enabled_not_running">스위치는 켜져 있지만 서비스가 실행 중이 아닙니다(시스템이 회수했을 수 있음). “서비스 시작”을 눌러 다시 시작하세요.</string>
     <string name="priv_hint_not_installed">휴대폰에 특권 채널 앱이 설치되어 있지 않습니다. 설치하고 실행한 뒤 ‘다시 탐지’를 누르세요.</string>
     <string name="priv_hint_not_running">특권 채널이 실행 중이 아닙니다. 컴퓨터에서 시작 명령을 한 번 실행하면 됩니다(Windows 쪽에서는 클릭 한 번).</string>
     <string name="priv_hint_not_authorized">특권 채널이 아직 이 앱을 승인하지 않았습니다. ‘특권 읽기 승인’을 눌러 승인하세요.</string>
@@ -402,7 +418,7 @@
     <string name="prefs_boot_restore">부팅 시 복원</string>
     <string name="prefs_boot_restore_desc">재부팅 후 동기화 서비스를 자동으로 재개합니다. 시스템이 시작을 차단하면 알림으로 수동 재개를 안내합니다.</string>
     <string name="prefs_inbox_notify">수신 콘텐츠 알림</string>
-    <string name="prefs_inbox_notify_desc">상대 기기의 내용이 도착하면 알립니다(내용 자체는 포함하지 않음). 끄면 동기화와 기록은 계속되고 알림만 멈춥니다.</string>
+    <string name="prefs_inbox_notify_desc">상대 기기의 내용이 도착하면 알립니다. 끄면 동기화와 기록은 계속되고 알림만 멈춥니다.</string>
     <string name="prefs_group_data">데이터</string>
     <string name="prefs_export">기록 내보내기</string>
     <string name="prefs_export_desc">전체 기록(삭제 표시 포함)을 JSON Lines 백업 파일로 씁니다. 키나 페어링 데이터는 포함하지 않습니다. 내보내기는 평문입니다 — 안전하게 보관하세요.</string>
@@ -419,6 +435,24 @@
     <string name="prefs_conduit_network">통로 · 네트워크</string>
     <string name="prefs_no_device">아직 페어링된 기기가 없습니다</string>
     <string name="prefs_no_device_hint">페어링 입구는 통로 페이지의 네트워크 구간에 있습니다. 페어링하면 상대 기기의 이름이 여기에 표시됩니다.</string>
+    <string name="prefs_live_service_off">중지됨: 백그라운드에서 클립보드를 감시하지 않고 PC에도 연결하지 않습니다.</string>
+    <string name="prefs_live_service_connected">실행 중 · PC에 연결됨</string>
+    <string name="prefs_live_service_waiting">실행 중 · PC에 연결되지 않음, 재연결 대기 중</string>
+    <string name="prefs_live_service_start_failed">실행 중 아님: 시스템이 시작을 거부했습니다(%1$s). 통로 페이지에서 “서비스 시작”을 눌러 다시 시도하세요</string>
+    <string name="prefs_live_service_not_running">스위치는 켜져 있지만 서비스가 실행 중이 아닙니다(시스템이 회수했을 수 있음). 통로 페이지에서 “서비스 시작”을 눌러 다시 시작하세요</string>
+    <string name="prefs_live_gate_sync_paused">적용 중: 백그라운드 읽기가 중지되고 받은 내용은 기록에만 들어갑니다</string>
+    <string name="prefs_live_gate_private">적용 중: 백그라운드 읽기가 중지되고 이 기기에서 복사한 내용은 기기 안에 남습니다</string>
+    <string name="prefs_live_gate_capture_paused">적용 중: 백그라운드 감시가 중지되었고, 일시중지 동안 클립보드를 읽지 않습니다</string>
+    <string name="prefs_live_capture_running">백그라운드 읽기 실행 중 · 현재 경로 %1$s · 이번 실행에서 %2$d개 캡처</string>
+    <string name="prefs_live_capture_stopped">백그라운드 읽기가 실행 중이 아닙니다. 통로 · 로컬 읽기를 참고하세요</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="other">이번 실행에서 민감으로 표시된 내용 %1$d개를 건너뛰었습니다</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">이번 실행에서는 민감으로 표시된 내용이 아직 없습니다</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="other">이번 실행에서 꺼져 있어 동기화되지 않은 이미지 %1$d장</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">시스템에서 이 앱의 알림이 꺼져 있어 이 스위치가 아직 적용되지 않습니다. 통로 페이지에서 시스템 설정으로 이동할 수 있습니다</string>
 
     <plurals name="transfer_export_done">
         <item quantity="other">%1$d개 기록을 내보냈습니다(평문). 백업 파일을 안전하게 보관하세요.</item>

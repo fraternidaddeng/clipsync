@@ -11,7 +11,7 @@
     <string name="notification_group_name">क्लिपबोर्ड सिंक</string>
     <string name="notification_group_description">सिंक स्थिति, प्राप्त टेक्स्ट और रिकवरी अनुस्मारक। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>
     <string name="notification_channel_inbox_name">प्राप्त टेक्स्ट</string>
-    <string name="notification_channel_inbox_description">जोड़े गए PC से नया टेक्स्ट आने पर सूचित करता है। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>
+    <string name="notification_channel_inbox_description">जोड़े गए PC से नया टेक्स्ट आने पर सूचित करता है।</string>
     <string name="notification_inbox_title">आपके PC से नया टेक्स्ट</string>
     <string name="notification_inbox_text">क्लिपबोर्ड में डालने के लिए “कॉपी करें” पर टैप करें</string>
     <string name="notification_inbox_image_title">आपके PC से नई छवि</string>
@@ -25,7 +25,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">सिंक स्थिति</string>
-    <string name="notification_channel_sync_description">जोड़े गए PC से कनेक्शन की स्थिति। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>
+    <string name="notification_channel_sync_description">जोड़े गए PC से कनेक्शन की स्थिति।</string>
     <string name="notification_sync_connected">कनेक्टेड · क्लिपबोर्ड सिंक ऑनलाइन</string>
     <string name="notification_sync_connected_bluetooth">कनेक्टेड · ब्लूटूथ फ़ॉलबैक (केवल टेक्स्ट)</string>
     <string name="notification_sync_connecting">आपके PC से कनेक्ट हो रहा है…</string>
@@ -42,7 +42,7 @@
     <string name="notification_status_overlay_polling">ओवरले पोलिंग से पठन चल रहा है</string>
 
     <string name="notification_channel_recovery_name">सिंक रिकवरी अनुस्मारक</string>
-    <string name="notification_channel_recovery_description">जब सिंक सेवा खुद नहीं उबर पाती, तो ऐप खोलकर हाथ से फिर शुरू करने की याद दिलाता है। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>
+    <string name="notification_channel_recovery_description">जब सिंक सेवा खुद नहीं उबर पाती, तो ऐप खोलकर हाथ से फिर शुरू करने की याद दिलाता है।</string>
     <string name="notification_recovery_title">रिकवरी चाहिए · क्लिपबोर्ड सिंक नहीं चल रहा</string>
     <string name="notification_recovery_text">सिंक सेवा अपने आप शुरू नहीं हो सकी। ऐप खोलने और हाथ से फिर शुरू करने के लिए टैप करें।</string>
 
@@ -174,6 +174,14 @@
     <string name="read_fact_preferred">पसंदीदा मार्ग: %1$s</string>
     <string name="localread_degraded_pending_detail">पूर्व-शर्तें पूरी हैं; पठन चैनल असली जाँच की प्रतीक्षा में है। इस बीच अग्रभूमि पठन चलता रहेगा।</string>
     <string name="localread_needs_action_detail">पृष्ठभूमि पठन अभी खुला नहीं है। तीन मार्गों में से कोई एक पूरा करें; अग्रभूमि कॉपी अप्रभावित है।</string>
+    <string name="read_live_stopped_by_gate">पृष्ठभूमि पठन रुका है: “%1$s” चालू है, इसलिए इस दौरान क्लिपबोर्ड नहीं पढ़ा जाता।</string>
+    <string name="read_live_none">अभी कोई पठन मार्ग चल नहीं रहा (%1$s); ऐप अग्रभूमि में हो तो हाथ से भेजना अब भी चलता है।</string>
+    <string name="read_live_active_preferred">वर्तमान पठन मार्ग: %1$s (पसंदीदा)।</string>
+    <string name="read_live_degraded_fallback">वर्तमान पठन मार्ग: %1$s। पसंदीदा %2$s चैनल विफलता (%4$s) के कारण %3$s पर नीचे उतर गया।</string>
+    <string name="read_live_degraded_not_ready">वर्तमान पठन मार्ग: %1$s। पसंदीदा %2$s %3$s से तैयार नहीं है (%4$s)।</string>
+    <string name="read_fact_recovery_policy">ऐप में वापस आने पर, हर 5 मिनट पर, और “पसंदीदा मार्ग फिर जाँचें” छूने पर पसंदीदा मार्ग फिर आज़माया जाता है; तैयार होते ही अपने आप वापस बदल जाता है।</string>
+    <string name="read_fact_recovered_at">ऊँचे मार्ग पर पिछली वापसी: %1$s</string>
+    <string name="status_read_paused">रुका हुआ</string>
 
     <string name="service_ready_no_sync_detail">ऐप सामान्य रूप से चल रहा है; पृष्ठभूमि सिंक सेवा बाद के चरण में आएगी।</string>
     <string name="service_running_detail">सिंक सेवा चल रही है।</string>
@@ -251,6 +259,14 @@
     <string name="route_action_battery_settings">बैटरी सेटिंग</string>
     <string name="route_action_set_preferred">पसंदीदा मार्ग बनाएं</string>
     <string name="route_action_read_test">पृष्ठभूमि पठन जाँचें</string>
+    <string name="route_action_recover_preferred">पसंदीदा मार्ग फिर जाँचें</string>
+    <string name="route_live_active">यह मार्ग अभी उपयोग में है</string>
+    <string name="route_live_preferred_inactive">पसंदीदा मार्ग चल नहीं रहा; तैयार होते ही अपने आप वापस बदल जाएगा, या नीचे अभी फिर जाँचें</string>
+    <string name="test_recover_switched">पसंदीदा मार्ग पर वापस: %1$s</string>
+    <string name="test_recover_not_ready">पसंदीदा मार्ग %1$s अभी भी तैयार नहीं (%2$s); वर्तमान मार्ग चलता रहेगा</string>
+    <string name="service_fact_battery_unrestricted">बैटरी अनुकूलन: छूट मिली है, इसलिए सिस्टम सेवा को कम ही बंद करता है।</string>
+    <string name="service_fact_battery_restricted">बैटरी अनुकूलन: छूट नहीं मिली, इसलिए स्क्रीन बंद होने पर सिस्टम सेवा को आसानी से बंद कर देता है; मार्ग गाइड में “बैटरी सेटिंग खोलें” छूट देता है।</string>
+    <string name="service_fact_enabled_not_running">स्विच चालू है पर सेवा चल नहीं रही (सिस्टम ने बंद की हो सकती है); फिर चलाने के लिए “सेवा शुरू करें” छुएँ।</string>
     <string name="priv_hint_not_installed">इस फ़ोन पर विशेषाधिकार चैनल ऐप इंस्टॉल नहीं है; उसे इंस्टॉल करके चालू करें, फिर लौटकर “फिर जाँचें” दबाएँ।</string>
     <string name="priv_hint_not_running">विशेषाधिकार चैनल चल नहीं रहा; कंप्यूटर से एक बार स्टार्ट कमांड चलाएँ (Windows की ओर से एक क्लिक)।</string>
     <string name="priv_hint_not_authorized">विशेषाधिकार चैनल ने अभी इस ऐप को अनुमति नहीं दी; “विशेषाधिकार पठन की अनुमति दें” दबाएँ।</string>
@@ -409,7 +425,7 @@
     <string name="prefs_boot_restore">बूट पर बहाल करें</string>
     <string name="prefs_boot_restore_desc">रीबूट के बाद सिंक सेवा अपने आप फिर शुरू होती है। सिस्टम रोक दे तो एक सूचना हाथ से शुरू करने की याद दिलाती है।</string>
     <string name="prefs_inbox_notify">प्राप्त सामग्री की सूचनाएँ</string>
-    <string name="prefs_inbox_notify_desc">दूसरे छोर की सामग्री आने पर सूचित करता है (सामग्री कभी शामिल नहीं)। बंद रहने पर सिंक और इतिहास चलते रहते हैं; केवल सूचना रुकती है।</string>
+    <string name="prefs_inbox_notify_desc">दूसरे छोर की सामग्री आने पर सूचित करता है। बंद रहने पर सिंक और इतिहास चलते रहते हैं; केवल सूचना रुकती है।</string>
     <string name="prefs_group_data">डेटा</string>
     <string name="prefs_export">इतिहास निर्यात करें</string>
     <string name="prefs_export_desc">पूरा इतिहास (हटाने के चिह्नों समेत) JSON Lines बैकअप फ़ाइल में लिखता है; कोई कुंजी या पेयरिंग डेटा नहीं। निर्यात सादा टेक्स्ट है — सुरक्षित रखें।</string>
@@ -426,6 +442,26 @@
     <string name="prefs_conduit_network">मार्ग · नेटवर्क</string>
     <string name="prefs_no_device">अभी कोई डिवाइस नहीं जुड़ा</string>
     <string name="prefs_no_device_hint">जोड़ने का रास्ता मार्ग पृष्ठ के नेटवर्क खंड में है; जुड़ने पर दूसरे छोर का नाम यहाँ दिखेगा।</string>
+    <string name="prefs_live_service_off">रुकी हुई: पृष्ठभूमि में क्लिपबोर्ड नहीं सुनती और PC से नहीं जुड़ती।</string>
+    <string name="prefs_live_service_connected">चल रही है · PC से जुड़ी</string>
+    <string name="prefs_live_service_waiting">चल रही है · PC से नहीं जुड़ी, फिर जुड़ने की प्रतीक्षा</string>
+    <string name="prefs_live_service_start_failed">चल नहीं रही: सिस्टम ने शुरू करने से इनकार किया (%1$s); फिर कोशिश के लिए मार्ग पृष्ठ पर “सेवा शुरू करें” छुएँ</string>
+    <string name="prefs_live_service_not_running">स्विच चालू है पर सेवा चल नहीं रही (सिस्टम ने बंद की हो सकती है); फिर चलाने के लिए मार्ग पृष्ठ पर “सेवा शुरू करें” छुएँ</string>
+    <string name="prefs_live_gate_sync_paused">प्रभावी: पृष्ठभूमि पठन रुका है और आई सामग्री केवल इतिहास में जाती है</string>
+    <string name="prefs_live_gate_private">प्रभावी: पृष्ठभूमि पठन रुका है और यहाँ कॉपी की सामग्री इसी डिवाइस पर रहती है</string>
+    <string name="prefs_live_gate_capture_paused">प्रभावी: पृष्ठभूमि सुनना रुका है; विराम के दौरान क्लिपबोर्ड नहीं पढ़ा जाता</string>
+    <string name="prefs_live_capture_running">पृष्ठभूमि पठन चल रहा है · वर्तमान मार्ग %1$s · इस सत्र में %2$d कैप्चर</string>
+    <string name="prefs_live_capture_stopped">पृष्ठभूमि पठन चल नहीं रहा; मार्ग · स्थानीय पठन देखें</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="one">इस सत्र में संवेदनशील चिह्नित %1$d आइटम छोड़ा गया</item>
+        <item quantity="other">इस सत्र में संवेदनशील चिह्नित %1$d आइटम छोड़े गए</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">इस सत्र में अभी तक कोई संवेदनशील चिह्नित आइटम नहीं आया</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="one">इस सत्र में %1$d छवि सिंक नहीं हुई क्योंकि यह बंद है</item>
+        <item quantity="other">इस सत्र में %1$d छवियाँ सिंक नहीं हुईं क्योंकि यह बंद है</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">सिस्टम ने इस ऐप की सूचनाएँ बंद की हैं, इसलिए यह स्विच अभी प्रभावी नहीं; मार्ग पृष्ठ से सिस्टम सेटिंग तक जाया जा सकता है</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">%1$d रिकॉर्ड निर्यात हुआ (सादा टेक्स्ट); बैकअप फ़ाइल सुरक्षित रखें।</item>

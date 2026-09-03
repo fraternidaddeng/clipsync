@@ -290,9 +290,21 @@ class ClipboardSyncService : Service() {
             // Periodic active-backend health check: a dead privileged binder or a revoked
             // grant makes the coordinator fall down the capability ladder (when the user
             // allows fallback) instead of silently capturing nothing until the next launch.
+            // Every few ticks, while the ladder sits below the preferred rung, the coordinator
+            // also re-probes upward so a restarted privileged host is picked up without the
+            // user having to reopen the app (probes are permission checks only; a switch
+            // happens solely when a higher rung reports READY).
+            var ticks = 0
             while (true) {
                 delay(BACKEND_HEALTH_CHECK_INTERVAL_MS)
-                mainHandler.post { captureSession.checkHealth() }
+                ticks += 1
+                val recoveryDue = ticks % RECOVERY_PROBE_EVERY_TICKS == 0
+                mainHandler.post {
+                    captureSession.checkHealth()
+                    if (recoveryDue && captureStack.coordinator.state.belowRequested) {
+                        captureSession.tryRecover()
+                    }
+                }
             }
         }
         // Network-available events cut the reconnect backoff short (plan: "网络恢复后立即触发
@@ -460,6 +472,13 @@ class ClipboardSyncService : Service() {
 
         /** How often the active read backend's health is checked while the service is alive. */
         private const val BACKEND_HEALTH_CHECK_INTERVAL_MS = 30_000L
+
+        /**
+         * Every this many health ticks (10 × 30 s = 5 min) a degraded ladder re-probes the
+         * preferred rung. Conservative on purpose: a probe is cheap, but the switch it may
+         * trigger reads the clipboard once to refresh the baseline hash.
+         */
+        private const val RECOVERY_PROBE_EVERY_TICKS = 10
 
         private val mutableServiceRunning = MutableStateFlow(false)
         private val mutableConnectionStates = MutableStateFlow<SyncConnectionState>(SyncConnectionState.NotPaired)

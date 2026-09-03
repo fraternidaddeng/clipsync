@@ -11,7 +11,7 @@
     <string name="notification_group_name">Sincronizzazione appunti</string>
     <string name="notification_group_description">Stato di sincronizzazione, testo ricevuto e promemoria di ripristino. Le notifiche non mostrano mai il contenuto degli appunti.</string>
     <string name="notification_channel_inbox_name">Testo ricevuto</string>
-    <string name="notification_channel_inbox_description">Avvisa quando arriva nuovo testo da un PC associato. Le notifiche non mostrano mai il contenuto degli appunti.</string>
+    <string name="notification_channel_inbox_description">Avvisa quando arriva nuovo testo da un PC associato.</string>
     <string name="notification_inbox_title">Nuovo testo dal tuo PC</string>
     <string name="notification_inbox_text">Tocca «Copia» per metterlo negli appunti</string>
     <string name="notification_inbox_image_title">Nuova immagine dal tuo PC</string>
@@ -26,7 +26,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Stato di sincronizzazione</string>
-    <string name="notification_channel_sync_description">Stato della connessione con il PC associato. Le notifiche non mostrano mai il contenuto degli appunti.</string>
+    <string name="notification_channel_sync_description">Stato della connessione con il PC associato.</string>
     <string name="notification_sync_connected">Connesso · sincronizzazione appunti online</string>
     <string name="notification_sync_connected_bluetooth">Connesso · ripiego Bluetooth (solo testo)</string>
     <string name="notification_sync_connecting">Connessione al PC…</string>
@@ -43,7 +43,7 @@
     <string name="notification_status_overlay_polling">Lettura con polling overlay in corso</string>
 
     <string name="notification_channel_recovery_name">Promemoria di ripristino</string>
-    <string name="notification_channel_recovery_description">Ti ricorda di aprire l’app e riprendere manualmente quando il servizio di sincronizzazione non riesce a ripristinarsi da solo. Le notifiche non mostrano mai il contenuto degli appunti.</string>
+    <string name="notification_channel_recovery_description">Ti ricorda di aprire l’app e riprendere manualmente quando il servizio di sincronizzazione non riesce a ripristinarsi da solo.</string>
     <string name="notification_recovery_title">Serve un ripristino · sincronizzazione ferma</string>
     <string name="notification_recovery_text">Il servizio di sincronizzazione non è riuscito ad avviarsi automaticamente. Tocca per aprire l’app e riprendere manualmente.</string>
 
@@ -175,6 +175,14 @@
     <string name="read_fact_preferred">Percorso preferito: %1$s</string>
     <string name="localread_degraded_pending_detail">I prerequisiti sono soddisfatti; il canale di lettura attende un test reale. Nel frattempo la lettura in primo piano continua a funzionare.</string>
     <string name="localread_needs_action_detail">La lettura in background non è ancora aperta. Completa uno qualsiasi dei tre percorsi; la copia in primo piano non è toccata.</string>
+    <string name="read_live_stopped_by_gate">Lettura in background ferma: «%1$s» è attivo, quindi nel frattempo gli appunti non vengono letti.</string>
+    <string name="read_live_none">Al momento nessun percorso di lettura è in esecuzione (%1$s); l’invio manuale funziona comunque con l’app in primo piano.</string>
+    <string name="read_live_active_preferred">Percorso di lettura attuale: %1$s (preferito).</string>
+    <string name="read_live_degraded_fallback">Percorso di lettura attuale: %1$s. Il preferito %2$s è stato declassato alle %3$s per un guasto del canale (%4$s).</string>
+    <string name="read_live_degraded_not_ready">Percorso di lettura attuale: %1$s. Il preferito %2$s non è pronto dalle %3$s (%4$s).</string>
+    <string name="read_fact_recovery_policy">Il percorso preferito viene ritentato quando torni nell’app, ogni 5 minuti e quando tocchi «Risonda percorso preferito»; appena è pronto si torna automaticamente a usarlo.</string>
+    <string name="read_fact_recovered_at">Ultimo ritorno a un percorso superiore: %1$s</string>
+    <string name="status_read_paused">In pausa</string>
 
     <string name="service_ready_no_sync_detail">L’app funziona normalmente; il servizio di sincronizzazione in background arriverà in una fase successiva.</string>
     <string name="service_running_detail">Il servizio di sincronizzazione è in esecuzione.</string>
@@ -252,6 +260,14 @@
     <string name="route_action_battery_settings">Impostazioni batteria</string>
     <string name="route_action_set_preferred">Imposta come percorso preferito</string>
     <string name="route_action_read_test">Prova lettura in background</string>
+    <string name="route_action_recover_preferred">Risonda percorso preferito</string>
+    <string name="route_live_active">Questo percorso è in uso adesso</string>
+    <string name="route_live_preferred_inactive">Il percorso preferito non è in esecuzione; tornerà automaticamente appena pronto, oppure risondalo subito qui sotto</string>
+    <string name="test_recover_switched">Tornati al percorso preferito: %1$s</string>
+    <string name="test_recover_not_ready">Il percorso preferito %1$s non è ancora pronto (%2$s); il percorso attuale continua</string>
+    <string name="service_fact_battery_unrestricted">Ottimizzazione batteria: esente, quindi il sistema ha meno motivi per chiudere il servizio.</string>
+    <string name="service_fact_battery_restricted">Ottimizzazione batteria: non esente, quindi a schermo spento il sistema chiude il servizio più facilmente; «Apri impostazioni batteria» nella guida ai percorsi concede l’esenzione.</string>
+    <string name="service_fact_enabled_not_running">L’interruttore è attivo ma il servizio non è in esecuzione (forse il sistema lo ha chiuso); tocca «Avvia servizio» per rimetterlo in piedi.</string>
     <string name="priv_hint_not_installed">L’app del canale privilegiato non è installata su questo telefono; installala, avviala e poi tocca «Riesamina».</string>
     <string name="priv_hint_not_running">Il canale privilegiato non è in esecuzione; esegui una volta il comando di avvio da un computer (un clic sul lato Windows).</string>
     <string name="priv_hint_not_authorized">Il canale privilegiato non ha ancora autorizzato questa app; tocca «Autorizza lettura privilegiata» per concederla.</string>
@@ -416,7 +432,7 @@
     <string name="prefs_boot_restore">Ripristina all’avvio</string>
     <string name="prefs_boot_restore_desc">Riprende automaticamente il servizio di sincronizzazione dopo un riavvio. Se il sistema blocca l’avvio, una notifica ti ricorda di riprendere manualmente.</string>
     <string name="prefs_inbox_notify">Notifiche contenuti ricevuti</string>
-    <string name="prefs_inbox_notify_desc">Avvisa quando arrivano contenuti remoti (mai il contenuto stesso). Se disattivata, sincronizzazione e cronologia continuano; si ferma solo l’avviso.</string>
+    <string name="prefs_inbox_notify_desc">Avvisa quando arrivano contenuti remoti. Se disattivata, sincronizzazione e cronologia continuano; si ferma solo l’avviso.</string>
     <string name="prefs_group_data">Dati</string>
     <string name="prefs_export">Esporta cronologia</string>
     <string name="prefs_export_desc">Scrive l’intera cronologia (inclusi i contrassegni di eliminazione) come file di backup JSON Lines; senza chiavi né dati di associazione. L’esportazione è in chiaro: custodiscila bene.</string>
@@ -433,6 +449,28 @@
     <string name="prefs_conduit_network">Condotto · Rete</string>
     <string name="prefs_no_device">Nessun dispositivo associato per ora</string>
     <string name="prefs_no_device_hint">L’ingresso per l’associazione è nel segmento rete della pagina Condotto; una volta associato, il nome dell’altro lato compare qui.</string>
+    <string name="prefs_live_service_off">Fermo: nessun ascolto degli appunti in background e nessuna connessione al PC.</string>
+    <string name="prefs_live_service_connected">In esecuzione · connesso al PC</string>
+    <string name="prefs_live_service_waiting">In esecuzione · non connesso al PC, in attesa di riconnessione</string>
+    <string name="prefs_live_service_start_failed">Non in esecuzione: il sistema ha rifiutato l’avvio (%1$s); tocca «Avvia servizio» nella pagina Condotto per riprovare</string>
+    <string name="prefs_live_service_not_running">L’interruttore è attivo ma il servizio non è in esecuzione (forse il sistema lo ha chiuso); tocca «Avvia servizio» nella pagina Condotto per rimetterlo in piedi</string>
+    <string name="prefs_live_gate_sync_paused">In vigore: la lettura in background è ferma e ciò che arriva va solo nella cronologia</string>
+    <string name="prefs_live_gate_private">In vigore: la lettura in background è ferma e ciò che copi qui resta su questo dispositivo</string>
+    <string name="prefs_live_gate_capture_paused">In vigore: l’ascolto in background è fermo; durante la pausa gli appunti non vengono letti</string>
+    <string name="prefs_live_capture_running">Lettura in background in esecuzione · percorso attuale %1$s · %2$d catturati in questa sessione</string>
+    <string name="prefs_live_capture_stopped">La lettura in background non è in esecuzione; vedi Condotto · Lettura locale</string>
+    <plurals name="prefs_live_skipped_sensitive">
+        <item quantity="one">%1$d elemento contrassegnato come sensibile saltato in questa sessione</item>
+        <item quantity="many">%1$d elementi contrassegnati come sensibili saltati in questa sessione</item>
+        <item quantity="other">%1$d elementi contrassegnati come sensibili saltati in questa sessione</item>
+    </plurals>
+    <string name="prefs_live_skipped_sensitive_none">In questa sessione non è ancora comparso alcun elemento contrassegnato come sensibile</string>
+    <plurals name="prefs_live_images_skipped">
+        <item quantity="one">%1$d immagine non sincronizzata in questa sessione perché questo è disattivato</item>
+        <item quantity="many">%1$d immagini non sincronizzate in questa sessione perché questo è disattivato</item>
+        <item quantity="other">%1$d immagini non sincronizzate in questa sessione perché questo è disattivato</item>
+    </plurals>
+    <string name="prefs_live_notifications_blocked">Il sistema ha disattivato le notifiche di questa app, quindi questo interruttore non ha ancora effetto; la pagina Condotto porta all’impostazione di sistema</string>
 
     <plurals name="transfer_export_done">
         <item quantity="one">Esportato %1$d record (in chiaro); custodisci bene il file di backup.</item>
