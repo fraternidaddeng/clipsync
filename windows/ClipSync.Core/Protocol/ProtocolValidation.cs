@@ -1,3 +1,6 @@
+using System.Buffers;
+using System.Buffers.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -43,60 +46,140 @@ public static partial class ProtocolValidation
         }
 
         bytes = decoded;
-        return string.Equals(EncodeBase64Url(bytes), value, StringComparison.Ordinal);
+        return true;
     }
 
     /// <summary>Decodes unpadded base64url. Rejects padding characters and non-canonical encodings.</summary>
     public static bool TryDecodeBase64Url(string? value, out byte[] bytes)
     {
         bytes = Array.Empty<byte>();
-        if (string.IsNullOrEmpty(value) || value.IndexOfAny(['+', '/', '=']) >= 0)
+        if (!TryGetBase64UrlDecodedLength(value, out var decodedLength))
         {
             return false;
         }
 
-        foreach (var character in value)
-        {
-            if (character is not ((>= 'A' and <= 'Z') or (>= 'a' and <= 'z') or (>= '0' and <= '9') or '-' or '_'))
-            {
-                return false;
-            }
-        }
-
-        var padded = value.Replace('-', '+').Replace('_', '/');
-        var remainder = padded.Length % 4;
-        if (remainder == 1)
-        {
-            return false;
-        }
-
-        if (remainder > 0)
-        {
-            padded += remainder == 2 ? "==" : "=";
-        }
-
+        // The alphabet check above proved every char is ASCII, so narrowing to UTF-8 is a
+        // straight copy; the '-'/'_' → '+'/'/' swap and the decode then run vectorized.
+        var paddedLength = (value.Length + 3) & ~3;
+        var decoded = new byte[decodedLength];
+        var rented = ArrayPool<byte>.Shared.Rent(paddedLength);
         try
         {
-            var decoded = Convert.FromBase64String(padded);
-            if (!string.Equals(EncodeBase64Url(decoded), value, StringComparison.Ordinal))
+            var utf8 = rented.AsSpan(0, paddedLength);
+            var narrowed = Encoding.ASCII.GetBytes(value, utf8);
+            var payload = utf8[..narrowed];
+            payload.Replace((byte)'-', (byte)'+');
+            payload.Replace((byte)'_', (byte)'/');
+            utf8[narrowed..].Fill((byte)'=');
+            var status = Base64.DecodeFromUtf8(utf8, decoded, out var consumed, out var written);
+            if (status != OperationStatus.Done || consumed != paddedLength || written != decodedLength)
             {
                 return false;
             }
-
-            bytes = decoded;
-            return true;
         }
-        catch (FormatException)
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(rented);
+        }
+
+        bytes = decoded;
+        return true;
+    }
+
+    /// <summary>
+    /// Validates an unpadded base64url string without materializing the bytes and reports
+    /// the decoded length. Accepts exactly the inputs <see cref="TryDecodeBase64Url"/> decodes:
+    /// the base64url alphabet only, a length that is not 1 mod 4, and zeroed trailing bits
+    /// (so a value round-trips to the same text). Lets frame validation size-check a chunk
+    /// once and leave the single real decode to the consumer.
+    /// </summary>
+    public static bool TryGetBase64UrlDecodedLength([NotNullWhen(true)] string? value, out int decodedLength)
+    {
+        decodedLength = 0;
+        if (string.IsNullOrEmpty(value))
         {
             return false;
+        }
+
+        if (value.AsSpan().ContainsAnyExcept(Base64UrlAlphabet))
+        {
+            return false;
+        }
+
+        var lastSextet = Base64UrlSextet(value[^1]);
+        var remainder = value.Length % 4;
+        switch (remainder)
+        {
+            case 1:
+                return false;
+            case 2 when (lastSextet & 0x0F) != 0:
+            case 3 when (lastSextet & 0x03) != 0:
+                return false;
+        }
+
+        decodedLength = ((value.Length / 4) * 3) + (remainder == 0 ? 0 : remainder - 1);
+        return true;
+    }
+
+    public static string EncodeBase64Url(ReadOnlySpan<byte> bytes)
+    {
+        if (bytes.IsEmpty)
+        {
+            return string.Empty;
+        }
+
+        var paddedLength = Base64.GetMaxEncodedToUtf8Length(bytes.Length);
+        var unpaddedLength = paddedLength - ((3 - (bytes.Length % 3)) % 3);
+        var rented = ArrayPool<byte>.Shared.Rent(paddedLength);
+        try
+        {
+            var utf8 = rented.AsSpan(0, paddedLength);
+            var status = Base64.EncodeToUtf8(bytes, utf8, out _, out var written);
+            if (status != OperationStatus.Done || written != paddedLength)
+            {
+                throw new InvalidOperationException("base64 encoding produced an unexpected length");
+            }
+
+            var unpadded = utf8[..unpaddedLength];
+            unpadded.Replace((byte)'+', (byte)'-');
+            unpadded.Replace((byte)'/', (byte)'_');
+            return Encoding.ASCII.GetString(unpadded);
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(rented);
         }
     }
 
-    public static string EncodeBase64Url(ReadOnlySpan<byte> bytes) =>
-        Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+    private static readonly SearchValues<char> Base64UrlAlphabet =
+        SearchValues.Create("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_");
 
-    public static string ComputeContentHash(string content) =>
-        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(content))).ToLowerInvariant();
+    private static int Base64UrlSextet(char character) => character switch
+    {
+        >= 'A' and <= 'Z' => character - 'A',
+        >= 'a' and <= 'z' => character - 'a' + 26,
+        >= '0' and <= '9' => character - '0' + 52,
+        '-' => 62,
+        '_' => 63,
+        _ => -1
+    };
+
+    public static string ComputeContentHash(string content)
+    {
+        ArgumentNullException.ThrowIfNull(content);
+        var rented = ArrayPool<byte>.Shared.Rent(Encoding.UTF8.GetMaxByteCount(content.Length));
+        try
+        {
+            var written = Encoding.UTF8.GetBytes(content, rented);
+            Span<byte> digest = stackalloc byte[SHA256.HashSizeInBytes];
+            SHA256.HashData(rented.AsSpan(0, written), digest);
+            return Convert.ToHexString(digest).ToLowerInvariant();
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(rented);
+        }
+    }
 
     public static string? Validate(string messageType, object body) => body switch
     {
@@ -833,7 +916,7 @@ public static partial class ProtocolValidation
             return "clip_payload_chunk chunk_bytes is out of bounds";
         }
 
-        if (!TryDecodeBase64Url(chunk.Data, out var decoded) || decoded.Length != chunk.ChunkBytes)
+        if (!TryGetBase64UrlDecodedLength(chunk.Data, out var decodedLength) || decodedLength != chunk.ChunkBytes)
         {
             return "clip_payload_chunk data is not unpadded base64url of chunk_bytes";
         }

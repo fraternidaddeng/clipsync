@@ -1,4 +1,5 @@
 using System.Net.WebSockets;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using ClipSync.Core.Media;
@@ -1803,15 +1804,18 @@ public sealed class SyncSessionEngine : IDisposable
     /// <summary>Bounded request-id replay detector per protocol section 2.</summary>
     private sealed class ReplayWindow(int capacity)
     {
-        private readonly Dictionary<Guid, string> hashes = [];
+        private readonly Dictionary<Guid, byte[]> hashes = [];
         private readonly Queue<Guid> order = [];
 
         public ReplayVerdict Classify(Guid requestId, string rawFrame)
         {
-            var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(rawFrame)));
+            // Two frames are identical exactly when their UTF-16 code units are, so the
+            // digest is taken over the string's own memory instead of a UTF-8 re-encode
+            // (which cost a second copy of every frame, 350 KiB per image chunk).
+            var hash = SHA256.HashData(MemoryMarshal.AsBytes(rawFrame.AsSpan()));
             if (hashes.TryGetValue(requestId, out var existing))
             {
-                return string.Equals(existing, hash, StringComparison.Ordinal)
+                return existing.AsSpan().SequenceEqual(hash)
                     ? ReplayVerdict.IdenticalRetry
                     : ReplayVerdict.Conflict;
             }

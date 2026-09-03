@@ -20,8 +20,16 @@ public sealed record ValidatedImage(
     int PixelWidth,
     int PixelHeight);
 
+/// <summary>What the container header alone proves about a file: no hash, body never read.</summary>
+public sealed record ImageHeader(
+    string MimeType,
+    long EncodedBytes,
+    int PixelWidth,
+    int PixelHeight);
+
 public static class ImageCodec
 {
+    private const int ChunkOverhead = 4 + 4 + 4;
     private static readonly byte[] PngMagic = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
     private static readonly byte[] JpegMagic = [0xFF, 0xD8];
 
@@ -74,6 +82,33 @@ public static class ImageCodec
         long? expectedBytes = null)
     {
         image = null;
+        var headerError = TryInspectFileHeader(path, out var header, expectedBytes);
+        if (headerError != ImageCodecError.Ok || header is null)
+        {
+            return headerError;
+        }
+
+        var hash = HashFile(path);
+        if (expectedHash is not null && !string.Equals(expectedHash, hash, StringComparison.Ordinal))
+        {
+            return ImageCodecError.HashMismatch;
+        }
+
+        image = new ValidatedImage(header.MimeType, hash, checked((int)header.EncodedBytes), header.PixelWidth, header.PixelHeight);
+        return ImageCodecError.Ok;
+    }
+
+    /// <summary>
+    /// Header-only file inspect: size gates, magic, dimensions and the pixel budget, without
+    /// hashing or loading the body. Callers that already hold the content hash (a streamed
+    /// commit) or only need dimensions (thumbnail sizing) use this and skip a full read.
+    /// </summary>
+    public static ImageCodecError TryInspectFileHeader(
+        string path,
+        out ImageHeader? header,
+        long? expectedBytes = null)
+    {
+        header = null;
         var info = new FileInfo(path);
         if (!info.Exists)
         {
@@ -93,15 +128,15 @@ public static class ImageCodec
         }
 
         // Header-only inspect: do not load the full file into memory.
-        Span<byte> header = stackalloc byte[Math.Min(checked((int)info.Length), 64 * 1024)];
+        Span<byte> prefix = stackalloc byte[Math.Min(checked((int)info.Length), 64 * 1024)];
         using (var stream = File.OpenRead(path))
         {
-            var read = stream.Read(header);
-            header = header[..read];
+            var read = stream.Read(prefix);
+            prefix = prefix[..read];
         }
 
-        if (!TryReadDimensions(header, out var mime, out var width, out var height)
-            && info.Length > header.Length)
+        if (!TryReadDimensions(prefix, out var mime, out var width, out var height)
+            && info.Length > prefix.Length)
         {
             // JPEG SOF may sit past the first 64 KiB for huge tables; read more, still bounded.
             var bounded = (int)Math.Min(info.Length, 1024 * 1024);
@@ -113,7 +148,7 @@ public static class ImageCodec
                 return ImageCodecError.UnsupportedMedia;
             }
         }
-        else if (!TryReadDimensions(header, out mime, out width, out height))
+        else if (!TryReadDimensions(prefix, out mime, out width, out height))
         {
             return ImageCodecError.UnsupportedMedia;
         }
@@ -123,13 +158,7 @@ public static class ImageCodec
             return ImageCodecError.TooLarge;
         }
 
-        var hash = HashFile(path);
-        if (expectedHash is not null && !string.Equals(expectedHash, hash, StringComparison.Ordinal))
-        {
-            return ImageCodecError.HashMismatch;
-        }
-
-        image = new ValidatedImage(mime, hash, checked((int)info.Length), width, height);
+        header = new ImageHeader(mime, info.Length, width, height);
         return ImageCodecError.Ok;
     }
 
@@ -186,32 +215,31 @@ public static class ImageCodec
             throw new InvalidDataException("BGRA buffer is shorter than width*height*4.");
         }
 
-        var raw = new byte[checked((stride + 1) * height)];
-        for (var y = 0; y < height; y++)
+        // One filtered scanline (filter byte + RGBA) is swizzled and fed to the compressor
+        // per row; the full filtered image is never materialized. Deflate output does not
+        // depend on how the input is chunked, so the encoded bytes are unchanged.
+        using var idat = new MemoryStream(Math.Max(4096, checked((stride + 1) * height) / 8));
+        using (var deflate = new ZLibStream(idat, CompressionLevel.SmallestSize, leaveOpen: true))
         {
-            var destRow = y * (stride + 1);
-            raw[destRow] = 0;
-            var src = bgra.Slice(y * stride, stride);
-            for (var x = 0; x < width; x++)
+            var row = new byte[stride + 1];
+            for (var y = 0; y < height; y++)
             {
-                var srcIndex = x * 4;
-                var destIndex = destRow + 1 + (x * 4);
-                raw[destIndex] = src[srcIndex + 2];
-                raw[destIndex + 1] = src[srcIndex + 1];
-                raw[destIndex + 2] = src[srcIndex];
-                raw[destIndex + 3] = src[srcIndex + 3];
+                var src = bgra.Slice(y * stride, stride);
+                for (var x = 0; x < width; x++)
+                {
+                    var srcIndex = x * 4;
+                    var destIndex = 1 + (x * 4);
+                    row[destIndex] = src[srcIndex + 2];
+                    row[destIndex + 1] = src[srcIndex + 1];
+                    row[destIndex + 2] = src[srcIndex];
+                    row[destIndex + 3] = src[srcIndex + 3];
+                }
+
+                deflate.Write(row);
             }
         }
 
-        using var idat = new MemoryStream();
-        using (var deflate = new ZLibStream(idat, CompressionLevel.SmallestSize, leaveOpen: true))
-        {
-            deflate.Write(raw);
-        }
-
-        var compressed = idat.ToArray();
-        using var png = new MemoryStream();
-        png.Write(PngMagic);
+        var compressed = idat.GetBuffer().AsSpan(0, checked((int)idat.Length));
         Span<byte> ihdr = stackalloc byte[13];
         BinaryPrimitives.WriteInt32BigEndian(ihdr, width);
         BinaryPrimitives.WriteInt32BigEndian(ihdr[4..], height);
@@ -220,26 +248,26 @@ public static class ImageCodec
         ihdr[10] = 0;
         ihdr[11] = 0;
         ihdr[12] = 0;
-        WriteChunk(png, "IHDR"u8, ihdr);
-        WriteChunk(png, "IDAT"u8, compressed);
-        WriteChunk(png, "IEND"u8, ReadOnlySpan<byte>.Empty);
-        return png.ToArray();
+
+        var png = new byte[checked(PngMagic.Length + ChunkOverhead + ihdr.Length + ChunkOverhead + compressed.Length + ChunkOverhead)];
+        var output = png.AsSpan();
+        PngMagic.CopyTo(output);
+        var offset = PngMagic.Length;
+        offset += WriteChunk(output[offset..], "IHDR"u8, ihdr);
+        offset += WriteChunk(output[offset..], "IDAT"u8, compressed);
+        offset += WriteChunk(output[offset..], "IEND"u8, ReadOnlySpan<byte>.Empty);
+        return offset == png.Length ? png : throw new InvalidOperationException("PNG chunk layout mismatch.");
     }
 
-    private static void WriteChunk(Stream stream, ReadOnlySpan<byte> type, ReadOnlySpan<byte> data)
+    /// <summary>Writes length, type, data, CRC into <paramref name="destination"/>; returns the bytes written.</summary>
+    private static int WriteChunk(Span<byte> destination, ReadOnlySpan<byte> type, ReadOnlySpan<byte> data)
     {
-        Span<byte> length = stackalloc byte[4];
-        BinaryPrimitives.WriteInt32BigEndian(length, data.Length);
-        stream.Write(length);
-        stream.Write(type);
-        stream.Write(data);
-        Span<byte> crcBuffer = stackalloc byte[type.Length + data.Length];
-        type.CopyTo(crcBuffer);
-        data.CopyTo(crcBuffer[type.Length..]);
-        var crc = Crc32(crcBuffer);
-        Span<byte> crcBytes = stackalloc byte[4];
-        BinaryPrimitives.WriteUInt32BigEndian(crcBytes, crc);
-        stream.Write(crcBytes);
+        BinaryPrimitives.WriteInt32BigEndian(destination, data.Length);
+        type.CopyTo(destination[4..]);
+        data.CopyTo(destination[8..]);
+        var crc = Crc32Update(Crc32Update(0xFFFFFFFF, type), data) ^ 0xFFFFFFFF;
+        BinaryPrimitives.WriteUInt32BigEndian(destination[(8 + data.Length)..], crc);
+        return ChunkOverhead + data.Length;
     }
 
     private static bool TryReadPngSize(ReadOnlySpan<byte> encoded, out int width, out int height)
@@ -331,19 +359,34 @@ public static class ImageCodec
         return false;
     }
 
-    private static uint Crc32(ReadOnlySpan<byte> data)
+    private static readonly uint[] Crc32Table = BuildCrc32Table();
+
+    private static uint[] BuildCrc32Table()
     {
-        var crc = 0xFFFFFFFF;
-        foreach (var b in data)
+        var table = new uint[256];
+        for (uint n = 0; n < table.Length; n++)
         {
-            crc ^= b;
-            for (var i = 0; i < 8; i++)
+            var c = n;
+            for (var k = 0; k < 8; k++)
             {
-                var mask = (uint)-(crc & 1);
-                crc = (crc >> 1) ^ (0xEDB88320 & mask);
+                c = (c & 1) != 0 ? 0xEDB88320 ^ (c >> 1) : c >> 1;
             }
+
+            table[n] = c;
         }
 
-        return crc ^ 0xFFFFFFFF;
+        return table;
+    }
+
+    /// <summary>Standard PNG CRC-32 (reflected, poly 0xEDB88320); caller pre-conditions and finalizes with 0xFFFFFFFF.</summary>
+    private static uint Crc32Update(uint crc, ReadOnlySpan<byte> data)
+    {
+        var table = Crc32Table;
+        foreach (var b in data)
+        {
+            crc = table[(byte)(crc ^ b)] ^ (crc >> 8);
+        }
+
+        return crc;
     }
 }

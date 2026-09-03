@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Net.WebSockets;
 using System.Text;
 using ClipSync.Core.Protocol;
@@ -16,7 +17,7 @@ public sealed class WebSocketSyncTransport(
 
     public async ValueTask<TransportFrame> ReceiveAsync(CancellationToken cancellationToken)
     {
-        var message = new MemoryStream();
+        MemoryStream? message = null;
         try
         {
             while (true)
@@ -32,11 +33,20 @@ public sealed class WebSocketSyncTransport(
                     return new TransportFrame.Binary();
                 }
 
-                if (message.Length + result.Count > maxTextMessageBytes)
+                var accumulated = message?.Length ?? 0;
+                if (accumulated + result.Count > maxTextMessageBytes)
                 {
                     return new TransportFrame.TooLarge();
                 }
 
+                if (result.EndOfMessage && message is null)
+                {
+                    // Most frames (announces, acks, pings) arrive in one receive: decode
+                    // straight from the receive buffer without an intermediate stream.
+                    return new TransportFrame.Text(Encoding.UTF8.GetString(receiveBuffer, 0, result.Count));
+                }
+
+                message ??= new MemoryStream(Math.Min(maxTextMessageBytes, receiveBuffer.Length * 4));
                 message.Write(receiveBuffer, 0, result.Count);
 
                 if (result.EndOfMessage)
@@ -58,8 +68,21 @@ public sealed class WebSocketSyncTransport(
 
     public async ValueTask SendTextAsync(string payload, CancellationToken cancellationToken)
     {
-        var bytes = Encoding.UTF8.GetBytes(payload);
-        await socket.SendAsync(bytes, WebSocketMessageType.Text, endOfMessage: true, cancellationToken).ConfigureAwait(false);
+        ArgumentNullException.ThrowIfNull(payload);
+        var rented = ArrayPool<byte>.Shared.Rent(Encoding.UTF8.GetMaxByteCount(payload.Length));
+        try
+        {
+            var written = Encoding.UTF8.GetBytes(payload, rented);
+            await socket.SendAsync(
+                new ReadOnlyMemory<byte>(rented, 0, written),
+                WebSocketMessageType.Text,
+                endOfMessage: true,
+                cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(rented);
+        }
     }
 
     public async ValueTask CloseAsync(WebSocketCloseStatus status, string description, CancellationToken cancellationToken)

@@ -210,7 +210,7 @@ internal static class ImageThumbnail
 
     private static BitmapSource? DecodeBounded(string blobPath)
     {
-        var inspect = ImageCodec.TryInspectFile(blobPath, out var image);
+        var inspect = ImageCodec.TryInspectFileHeader(blobPath, out var image);
         if (inspect != ImageCodecError.Ok || image is null)
         {
             return null;

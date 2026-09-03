@@ -32,6 +32,63 @@ public sealed class MediaBlobStoreTests
         Assert.Empty(Directory.EnumerateFiles(Path.Combine(root.Path, MediaBlobStore.BlobsDirectoryName)));
     }
 
+    /// <summary>
+    /// Commit trusts the hash it accumulated while streaming (no second read of the file),
+    /// so the result must still carry the file's real digest and still reject a peer whose
+    /// announced hash does not match what actually arrived.
+    /// </summary>
+    [Fact]
+    public void StreamedCommitReportsTheStreamedHashAndRejectsMismatch()
+    {
+        using var root = new TemporaryMediaRoot();
+        var store = new MediaBlobStore(root.Path);
+        var png = ImageCodec.EncodePngBgra(300, 7, new byte[300 * 7 * 4]);
+        var expectedHash = ImageCodec.HashBytes(png);
+
+        var pending = store.BeginWrite();
+        foreach (var chunk in png.Chunk(1000))
+        {
+            MediaBlobStore.Append(pending, chunk);
+        }
+
+        var image = store.Commit(pending, expectedHash, "image/png");
+        Assert.Equal(expectedHash, image.ContentHash);
+        Assert.Equal(ImageCodec.HashFile(store.RequirePath(expectedHash)), image.ContentHash);
+        Assert.Equal(png.Length, image.EncodedBytes);
+        Assert.Equal(300, image.PixelWidth);
+        Assert.Equal(7, image.PixelHeight);
+
+        var mismatch = store.BeginWrite();
+        MediaBlobStore.Append(mismatch, png);
+        var error = Assert.Throws<InvalidDataException>(() => store.Commit(mismatch, new string('0', 64), "image/png"));
+        Assert.Equal("MEDIA_HASH_MISMATCH", error.Message);
+
+        var truncated = store.BeginWrite();
+        MediaBlobStore.Append(truncated, "not an image at all, just twenty-eight bytes"u8);
+        var unsupported = Assert.Throws<InvalidDataException>(() => store.Commit(truncated));
+        Assert.Equal("UNSUPPORTED_MEDIA", unsupported.Message);
+        Assert.Empty(Directory.EnumerateFiles(Path.Combine(root.Path, MediaBlobStore.TempDirectoryName)));
+    }
+
+    [Fact]
+    public void HeaderInspectAgreesWithFullInspectWithoutHashing()
+    {
+        using var root = new TemporaryMediaRoot();
+        var store = new MediaBlobStore(root.Path);
+        var png = ImageCodec.EncodePngBgra(640, 360, new byte[640 * 360 * 4]);
+        var committed = store.CommitBytes(png);
+        var path = store.RequirePath(committed.ContentHash);
+
+        Assert.Equal(ImageCodecError.Ok, ImageCodec.TryInspectFileHeader(path, out var header));
+        Assert.Equal(ImageCodecError.Ok, ImageCodec.TryInspectFile(path, out var full));
+        Assert.Equal(full!.MimeType, header!.MimeType);
+        Assert.Equal(full.EncodedBytes, header.EncodedBytes);
+        Assert.Equal(full.PixelWidth, header.PixelWidth);
+        Assert.Equal(full.PixelHeight, header.PixelHeight);
+        Assert.Equal(ImageCodecError.HashMismatch, ImageCodec.TryInspectFileHeader(path, out _, expectedBytes: png.Length + 1));
+        Assert.Equal(ImageCodecError.DecodeFailed, ImageCodec.TryInspectFileHeader(path + ".missing", out _));
+    }
+
     [Fact]
     public void RecoverTempsDeletesExpiredPartsOnly()
     {

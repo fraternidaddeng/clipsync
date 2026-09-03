@@ -1,7 +1,7 @@
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using ClipSync.Core.Media;
+using ClipSync.Core.Protocol;
 
 namespace ClipSync.Core.Clipboard;
 
@@ -203,7 +203,7 @@ public sealed class ClipboardCapturePolicy
 
     private void PurgeSuppressions(DateTimeOffset now) => suppressions.RemoveAll(item => item.ExpiresAt <= now);
 
-    private static string Hash(string text) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(text))).ToLowerInvariant();
+    private static string Hash(string text) => ProtocolValidation.ComputeContentHash(text);
 
     private sealed record Suppression(string Hash, DateTimeOffset ExpiresAt, string? PixelDigest = null);
 }

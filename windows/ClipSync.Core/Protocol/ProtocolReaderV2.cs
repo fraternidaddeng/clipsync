@@ -31,10 +31,13 @@ public static class ProtocolReaderV2
     public static ProtocolParseOutcome Parse(string text)
     {
         ArgumentNullException.ThrowIfNull(text);
-        return Parse(Encoding.UTF8.GetBytes(text));
+        return ParseOwned(Encoding.UTF8.GetBytes(text));
     }
 
-    public static ProtocolParseOutcome Parse(ReadOnlySpan<byte> utf8)
+    public static ProtocolParseOutcome Parse(ReadOnlySpan<byte> utf8) => ParseOwned(utf8.ToArray());
+
+    /// <summary>The buffer is private to this call, so the document may reference it instead of copying.</summary>
+    private static ProtocolParseOutcome ParseOwned(byte[] utf8)
     {
         var scanFailure = ProtocolReader.ScanStrictJson(utf8);
         if (scanFailure is not null)
@@ -49,7 +52,9 @@ public static class ProtocolReaderV2
         JsonDocument document;
         try
         {
-            document = JsonDocument.Parse(utf8.ToArray(), new JsonDocumentOptions { MaxDepth = ProtocolLimits.MaxJsonDepth });
+            document = JsonDocument.Parse(
+                new ReadOnlyMemory<byte>(utf8),
+                new JsonDocumentOptions { MaxDepth = ProtocolLimits.MaxJsonDepth });
         }
         catch (JsonException)
         {

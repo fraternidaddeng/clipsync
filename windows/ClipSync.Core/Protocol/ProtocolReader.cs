@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -50,10 +51,13 @@ public static class ProtocolReader
     public static ProtocolParseOutcome Parse(string text)
     {
         ArgumentNullException.ThrowIfNull(text);
-        return Parse(Encoding.UTF8.GetBytes(text));
+        return ParseOwned(Encoding.UTF8.GetBytes(text));
     }
 
-    public static ProtocolParseOutcome Parse(ReadOnlySpan<byte> utf8)
+    public static ProtocolParseOutcome Parse(ReadOnlySpan<byte> utf8) => ParseOwned(utf8.ToArray());
+
+    /// <summary>The buffer is private to this call, so the document may reference it instead of copying.</summary>
+    private static ProtocolParseOutcome ParseOwned(byte[] utf8)
     {
         var scanFailure = ScanTokens(utf8);
         if (scanFailure is not null)
@@ -64,7 +68,9 @@ public static class ProtocolReader
         JsonDocument document;
         try
         {
-            document = JsonDocument.Parse(utf8.ToArray(), new JsonDocumentOptions { MaxDepth = ProtocolLimits.MaxJsonDepth });
+            document = JsonDocument.Parse(
+                new ReadOnlyMemory<byte>(utf8),
+                new JsonDocumentOptions { MaxDepth = ProtocolLimits.MaxJsonDepth });
         }
         catch (JsonException)
         {
@@ -254,8 +260,8 @@ public static class ProtocolWriter
             throw new ArgumentException("A sender generates a fresh non-nil request ID.", nameof(requestId));
         }
 
-        using var stream = new MemoryStream();
-        using (var writer = new Utf8JsonWriter(stream))
+        var buffer = new ArrayBufferWriter<byte>(1024);
+        using (var writer = new Utf8JsonWriter(buffer))
         {
             writer.WriteStartObject();
             writer.WriteNumber("version", version);
@@ -266,6 +272,6 @@ public static class ProtocolWriter
             writer.WriteEndObject();
         }
 
-        return Encoding.UTF8.GetString(stream.ToArray());
+        return Encoding.UTF8.GetString(buffer.WrittenSpan);
     }
 }

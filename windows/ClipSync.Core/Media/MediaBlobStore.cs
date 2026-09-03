@@ -119,8 +119,11 @@ public sealed class MediaBlobStore
                 throw new InvalidDataException("MEDIA_HASH_MISMATCH");
             }
 
-            var inspect = ImageCodec.TryInspectFile(pending.TempPath, out var image, hash, pending.BytesWritten);
-            if (inspect != ImageCodecError.Ok || image is null)
+            // The hash was accumulated over exactly the bytes written to the temp file, so
+            // the header check is all that remains; re-reading the file to hash it again
+            // would only prove the same thing a second time.
+            var inspect = ImageCodec.TryInspectFileHeader(pending.TempPath, out var header, pending.BytesWritten);
+            if (inspect != ImageCodecError.Ok || header is null)
             {
                 throw new InvalidDataException(inspect switch
                 {
@@ -131,10 +134,17 @@ public sealed class MediaBlobStore
                 });
             }
 
-            if (expectedMime is not null && !string.Equals(expectedMime, image.MimeType, StringComparison.Ordinal))
+            if (expectedMime is not null && !string.Equals(expectedMime, header.MimeType, StringComparison.Ordinal))
             {
                 throw new InvalidDataException("UNSUPPORTED_MEDIA");
             }
+
+            var image = new ValidatedImage(
+                header.MimeType,
+                hash,
+                checked((int)header.EncodedBytes),
+                header.PixelWidth,
+                header.PixelHeight);
 
             var destination = BlobPath(image.ContentHash);
             Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
