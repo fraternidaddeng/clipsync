@@ -97,7 +97,9 @@ Windows 监听端旁证（`*_listener_side`）：
 
 ## 附录 A：Windows spike 完整日志
 
-### 轮次 1（`spike-logs/win-round1.log`）
+> 原始日志文件（`spike-logs/win-round*.log`、`android-round*.log`）未入库，2026-09-03 随根目录清理删除；以下摘录即全文。
+
+### 轮次 1（原 `spike-logs/win-round1.log`）
 
 ```text
 SPIKE_RESULT:spike=windows-listener
@@ -137,7 +139,7 @@ SPIKE_RESULT:session=completed
 SPIKE_RESULT:exit=0
 ```
 
-### 轮次 2（`spike-logs/win-round2.log`）
+### 轮次 2（原 `spike-logs/win-round2.log`）
 
 ```text
 SPIKE_RESULT:spike=windows-listener
@@ -171,7 +173,7 @@ SPIKE_RESULT:session=completed
 SPIKE_RESULT:exit=0
 ```
 
-### 轮次 3（`spike-logs/win-round3.log`）
+### 轮次 3（原 `spike-logs/win-round3.log`）
 
 ```text
 SPIKE_RESULT:spike=windows-listener
