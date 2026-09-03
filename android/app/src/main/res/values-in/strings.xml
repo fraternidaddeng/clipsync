@@ -11,7 +11,7 @@
     <string name="notification_group_name">Sinkronisasi papan klip</string>
     <string name="notification_group_description">Status sinkronisasi, teks yang diterima, dan pengingat pemulihan. Notifikasi tidak pernah menampilkan isi papan klip.</string>
     <string name="notification_channel_inbox_name">Teks diterima</string>
-    <string name="notification_channel_inbox_description">Memberi tahu saat teks baru tiba dari PC yang dipasangkan. Notifikasi tidak pernah menampilkan isi papan klip.</string>
+    <string name="notification_channel_inbox_description">Memberi tahu saat teks baru tiba dari PC yang dipasangkan.</string>
     <string name="notification_inbox_title">Teks baru dari PC Anda</string>
     <string name="notification_inbox_text">Ketuk “Salin” untuk menaruhnya di papan klip</string>
     <string name="notification_inbox_image_title">Gambar baru dari PC Anda</string>
@@ -24,7 +24,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Status sinkronisasi</string>
-    <string name="notification_channel_sync_description">Status koneksi dengan PC yang dipasangkan. Notifikasi tidak pernah menampilkan isi papan klip.</string>
+    <string name="notification_channel_sync_description">Status koneksi dengan PC yang dipasangkan.</string>
     <string name="notification_sync_connected">Terhubung · sinkronisasi papan klip daring</string>
     <string name="notification_sync_connected_bluetooth">Terhubung · cadangan Bluetooth (hanya teks)</string>
     <string name="notification_sync_connecting">Menghubungkan ke PC…</string>
@@ -41,7 +41,7 @@
     <string name="notification_status_overlay_polling">Pembacaan polling lewat overlay sedang berjalan</string>
 
     <string name="notification_channel_recovery_name">Pengingat pemulihan sinkronisasi</string>
-    <string name="notification_channel_recovery_description">Mengingatkan Anda membuka aplikasi dan melanjutkan secara manual saat layanan sinkronisasi tidak bisa pulih sendiri. Notifikasi tidak pernah menampilkan isi papan klip.</string>
+    <string name="notification_channel_recovery_description">Mengingatkan Anda membuka aplikasi dan melanjutkan secara manual saat layanan sinkronisasi tidak bisa pulih sendiri.</string>
     <string name="notification_recovery_title">Perlu pemulihan · sinkronisasi papan klip tidak berjalan</string>
     <string name="notification_recovery_text">Layanan sinkronisasi gagal mulai otomatis. Ketuk untuk membuka aplikasi dan melanjutkan secara manual.</string>
 
@@ -395,7 +395,7 @@
     <string name="prefs_boot_restore">Pulihkan saat boot</string>
     <string name="prefs_boot_restore_desc">Melanjutkan layanan sinkronisasi otomatis setelah reboot. Jika sistem memblokir mulainya, notifikasi mengingatkan Anda melanjutkan manual.</string>
     <string name="prefs_inbox_notify">Notifikasi konten diterima</string>
-    <string name="prefs_inbox_notify_desc">Memberi tahu saat konten pihak seberang tiba (tidak pernah menyertakan isinya). Jika mati, sinkronisasi dan riwayat berlanjut; hanya pemberitahuan yang berhenti.</string>
+    <string name="prefs_inbox_notify_desc">Memberi tahu saat konten pihak seberang tiba. Jika mati, sinkronisasi dan riwayat berlanjut; hanya pemberitahuan yang berhenti.</string>
     <string name="prefs_group_data">Data</string>
     <string name="prefs_export">Ekspor riwayat</string>
     <string name="prefs_export_desc">Menulis seluruh riwayat (termasuk penanda penghapusan) sebagai berkas cadangan JSON Lines; tanpa kunci atau data pemasangan. Ekspor berupa teks polos — simpan baik-baik.</string>

@@ -11,7 +11,7 @@
     <string name="notification_group_name">Đồng bộ bảng nhớ tạm</string>
     <string name="notification_group_description">Trạng thái đồng bộ, văn bản nhận được và nhắc khôi phục. Thông báo không bao giờ hiển thị nội dung bảng nhớ tạm.</string>
     <string name="notification_channel_inbox_name">Văn bản nhận được</string>
-    <string name="notification_channel_inbox_description">Báo khi có văn bản mới đến từ PC đã ghép nối. Thông báo không bao giờ hiển thị nội dung bảng nhớ tạm.</string>
+    <string name="notification_channel_inbox_description">Báo khi có văn bản mới đến từ PC đã ghép nối.</string>
     <string name="notification_inbox_title">Văn bản mới từ PC của bạn</string>
     <string name="notification_inbox_text">Nhấn “Sao chép” để đưa vào bảng nhớ tạm</string>
     <string name="notification_inbox_image_title">Hình ảnh mới từ PC của bạn</string>
@@ -24,7 +24,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Trạng thái đồng bộ</string>
-    <string name="notification_channel_sync_description">Trạng thái kết nối với PC đã ghép nối. Thông báo không bao giờ hiển thị nội dung bảng nhớ tạm.</string>
+    <string name="notification_channel_sync_description">Trạng thái kết nối với PC đã ghép nối.</string>
     <string name="notification_sync_connected">Đã kết nối · đồng bộ bảng nhớ tạm trực tuyến</string>
     <string name="notification_sync_connected_bluetooth">Đã kết nối · dự phòng Bluetooth (chỉ văn bản)</string>
     <string name="notification_sync_connecting">Đang kết nối với PC…</string>
@@ -41,7 +41,7 @@
     <string name="notification_status_overlay_polling">Đang đọc bằng thăm dò lớp phủ</string>
 
     <string name="notification_channel_recovery_name">Nhắc khôi phục đồng bộ</string>
-    <string name="notification_channel_recovery_description">Nhắc bạn mở ứng dụng và tiếp tục thủ công khi dịch vụ đồng bộ không thể tự khôi phục. Thông báo không bao giờ hiển thị nội dung bảng nhớ tạm.</string>
+    <string name="notification_channel_recovery_description">Nhắc bạn mở ứng dụng và tiếp tục thủ công khi dịch vụ đồng bộ không thể tự khôi phục.</string>
     <string name="notification_recovery_title">Cần khôi phục · đồng bộ bảng nhớ tạm không chạy</string>
     <string name="notification_recovery_text">Dịch vụ đồng bộ không thể tự khởi động. Nhấn để mở ứng dụng và tiếp tục thủ công.</string>
 
@@ -395,7 +395,7 @@
     <string name="prefs_boot_restore">Khôi phục khi khởi động máy</string>
     <string name="prefs_boot_restore_desc">Tự động tiếp tục dịch vụ đồng bộ sau khi khởi động lại. Nếu hệ thống chặn khởi động, một thông báo sẽ nhắc bạn tiếp tục thủ công.</string>
     <string name="prefs_inbox_notify">Thông báo nội dung nhận được</string>
-    <string name="prefs_inbox_notify_desc">Báo khi nội dung từ phía bên kia đến (không bao giờ kèm chính nội dung). Khi tắt, đồng bộ và lịch sử vẫn tiếp tục; chỉ dừng phần báo.</string>
+    <string name="prefs_inbox_notify_desc">Báo khi nội dung từ phía bên kia đến. Khi tắt, đồng bộ và lịch sử vẫn tiếp tục; chỉ dừng phần báo.</string>
     <string name="prefs_group_data">Dữ liệu</string>
     <string name="prefs_export">Xuất lịch sử</string>
     <string name="prefs_export_desc">Ghi toàn bộ lịch sử (bao gồm dấu xóa) thành tệp sao lưu JSON Lines; không có khóa hay dữ liệu ghép nối. Bản xuất là văn bản thường — hãy giữ cẩn thận.</string>

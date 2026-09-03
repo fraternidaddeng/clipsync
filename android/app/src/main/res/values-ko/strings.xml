@@ -11,7 +11,7 @@
     <string name="notification_group_name">클립보드 동기화</string>
     <string name="notification_group_description">동기화 상태, 수신 텍스트, 복구 알림. 알림에 클립보드 내용이 표시되지 않습니다.</string>
     <string name="notification_channel_inbox_name">수신 텍스트</string>
-    <string name="notification_channel_inbox_description">페어링된 PC에서 새 텍스트가 도착하면 알립니다. 알림에 클립보드 내용이 표시되지 않습니다.</string>
+    <string name="notification_channel_inbox_description">페어링된 PC에서 새 텍스트가 도착하면 알립니다.</string>
     <string name="notification_inbox_title">PC에서 새 텍스트 도착</string>
     <string name="notification_inbox_text">‘복사’를 누르면 클립보드에 들어갑니다</string>
     <string name="notification_inbox_image_title">PC에서 새 이미지 도착</string>
@@ -24,7 +24,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">동기화 상태</string>
-    <string name="notification_channel_sync_description">페어링된 PC와의 연결 상태. 알림에 클립보드 내용이 표시되지 않습니다.</string>
+    <string name="notification_channel_sync_description">페어링된 PC와의 연결 상태.</string>
     <string name="notification_sync_connected">연결됨 · 클립보드 동기화 온라인</string>
     <string name="notification_sync_connected_bluetooth">연결됨 · 블루투스 대체 경로(텍스트만)</string>
     <string name="notification_sync_connecting">PC에 연결하는 중…</string>
@@ -41,7 +41,7 @@
     <string name="notification_status_overlay_polling">오버레이 폴링 읽기 진행 중</string>
 
     <string name="notification_channel_recovery_name">동기화 복구 알림</string>
-    <string name="notification_channel_recovery_description">동기화 서비스가 스스로 복구하지 못할 때 앱을 열어 수동으로 재개하도록 알립니다. 알림에 클립보드 내용이 표시되지 않습니다.</string>
+    <string name="notification_channel_recovery_description">동기화 서비스가 스스로 복구하지 못할 때 앱을 열어 수동으로 재개하도록 알립니다.</string>
     <string name="notification_recovery_title">복구 필요 · 클립보드 동기화가 실행되지 않음</string>
     <string name="notification_recovery_text">동기화 서비스를 자동으로 시작하지 못했습니다. 눌러서 앱을 열고 수동으로 재개하세요.</string>
 
@@ -395,7 +395,7 @@
     <string name="prefs_boot_restore">부팅 시 복원</string>
     <string name="prefs_boot_restore_desc">재부팅 후 동기화 서비스를 자동으로 재개합니다. 시스템이 시작을 차단하면 알림으로 수동 재개를 안내합니다.</string>
     <string name="prefs_inbox_notify">수신 콘텐츠 알림</string>
-    <string name="prefs_inbox_notify_desc">상대 기기의 내용이 도착하면 알립니다(내용 자체는 포함하지 않음). 끄면 동기화와 기록은 계속되고 알림만 멈춥니다.</string>
+    <string name="prefs_inbox_notify_desc">상대 기기의 내용이 도착하면 알립니다. 끄면 동기화와 기록은 계속되고 알림만 멈춥니다.</string>
     <string name="prefs_group_data">데이터</string>
     <string name="prefs_export">기록 내보내기</string>
     <string name="prefs_export_desc">전체 기록(삭제 표시 포함)을 JSON Lines 백업 파일로 씁니다. 키나 페어링 데이터는 포함하지 않습니다. 내보내기는 평문입니다 — 안전하게 보관하세요.</string>

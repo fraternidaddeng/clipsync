@@ -11,7 +11,7 @@
     <string name="notification_group_name">مزامنة الحافظة</string>
     <string name="notification_group_description">حالة المزامنة والنص المستلَم وتذكيرات الاستعادة. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>
     <string name="notification_channel_inbox_name">النص المستلَم</string>
-    <string name="notification_channel_inbox_description">ينبّهك عند وصول نص جديد من حاسوب مقترن. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>
+    <string name="notification_channel_inbox_description">ينبّهك عند وصول نص جديد من حاسوب مقترن.</string>
     <string name="notification_inbox_title">نص جديد من حاسوبك</string>
     <string name="notification_inbox_text">انقر على «نسخ» لوضعه في الحافظة</string>
     <string name="notification_inbox_image_title">صورة جديدة من حاسوبك</string>
@@ -29,7 +29,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">حالة المزامنة</string>
-    <string name="notification_channel_sync_description">حالة الاتصال بالحاسوب المقترن. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>
+    <string name="notification_channel_sync_description">حالة الاتصال بالحاسوب المقترن.</string>
     <string name="notification_sync_connected">متصل · مزامنة الحافظة تعمل</string>
     <string name="notification_sync_connected_bluetooth">متصل · مسار بلوتوث الاحتياطي (نص فقط)</string>
     <string name="notification_sync_connecting">جارٍ الاتصال بحاسوبك…</string>
@@ -46,7 +46,7 @@
     <string name="notification_status_overlay_polling">قراءة الاستطلاع بالنافذة العائمة جارية</string>
 
     <string name="notification_channel_recovery_name">تذكيرات استعادة المزامنة</string>
-    <string name="notification_channel_recovery_description">يذكّرك بفتح التطبيق والاستئناف يدويًا عندما تعجز خدمة المزامنة عن التعافي وحدها. لا تعرض الإشعارات محتوى الحافظة أبدًا.</string>
+    <string name="notification_channel_recovery_description">يذكّرك بفتح التطبيق والاستئناف يدويًا عندما تعجز خدمة المزامنة عن التعافي وحدها.</string>
     <string name="notification_recovery_title">يلزم استعادة · مزامنة الحافظة متوقفة</string>
     <string name="notification_recovery_text">تعذّر بدء خدمة المزامنة تلقائيًا. انقر لفتح التطبيق والاستئناف يدويًا.</string>
 
@@ -430,7 +430,7 @@
     <string name="prefs_boot_restore">الاستعادة عند الإقلاع</string>
     <string name="prefs_boot_restore_desc">يستأنف خدمة المزامنة تلقائيًا بعد إعادة التشغيل. إذا منع النظام البدء، يذكّرك إشعار بالاستئناف يدويًا.</string>
     <string name="prefs_inbox_notify">إشعارات المحتوى المستلَم</string>
-    <string name="prefs_inbox_notify_desc">ينبّه عند وصول محتوى من الطرف الآخر (دون تضمين المحتوى نفسه أبدًا). عند الإيقاف تستمر المزامنة والسجل؛ يتوقف التنبيه فقط.</string>
+    <string name="prefs_inbox_notify_desc">ينبّه عند وصول محتوى من الطرف الآخر. عند الإيقاف تستمر المزامنة والسجل؛ يتوقف التنبيه فقط.</string>
     <string name="prefs_group_data">البيانات</string>
     <string name="prefs_export">تصدير السجل</string>
     <string name="prefs_export_desc">يكتب السجل كاملًا (بما فيه علامات الحذف) كملف نسخ احتياطي بصيغة JSON Lines؛ دون مفاتيح أو بيانات اقتران. التصدير نص مكشوف — احفظه بأمان.</string>

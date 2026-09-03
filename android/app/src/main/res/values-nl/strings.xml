@@ -12,7 +12,7 @@
     <string name="notification_group_name">Klembordsynchronisatie</string>
     <string name="notification_group_description">Synchronisatiestatus, ontvangen tekst en herstelherinneringen. Meldingen tonen nooit klembordinhoud.</string>
     <string name="notification_channel_inbox_name">Ontvangen tekst</string>
-    <string name="notification_channel_inbox_description">Waarschuwt wanneer nieuwe tekst van een gekoppelde pc binnenkomt. Meldingen tonen nooit klembordinhoud.</string>
+    <string name="notification_channel_inbox_description">Waarschuwt wanneer nieuwe tekst van een gekoppelde pc binnenkomt.</string>
     <string name="notification_inbox_title">Nieuwe tekst van je pc</string>
     <string name="notification_inbox_text">Tik op “Kopiëren” om het op het klembord te zetten</string>
     <string name="notification_inbox_image_title">Nieuwe afbeelding van je pc</string>
@@ -26,7 +26,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Synchronisatiestatus</string>
-    <string name="notification_channel_sync_description">Verbindingsstatus met je gekoppelde pc. Meldingen tonen nooit klembordinhoud.</string>
+    <string name="notification_channel_sync_description">Verbindingsstatus met je gekoppelde pc.</string>
     <string name="notification_sync_connected">Verbonden · klembordsynchronisatie actief</string>
     <string name="notification_sync_connected_bluetooth">Verbonden · Bluetooth-terugval (alleen tekst)</string>
     <string name="notification_sync_connecting">Verbinden met je pc…</string>
@@ -43,7 +43,7 @@
     <string name="notification_status_overlay_polling">Overlay-polling-lezen is actief</string>
 
     <string name="notification_channel_recovery_name">Herstelherinneringen</string>
-    <string name="notification_channel_recovery_description">Herinnert je eraan de app te openen en handmatig te hervatten wanneer de synchronisatieservice zichzelf niet kan herstellen. Meldingen tonen nooit klembordinhoud.</string>
+    <string name="notification_channel_recovery_description">Herinnert je eraan de app te openen en handmatig te hervatten wanneer de synchronisatieservice zichzelf niet kan herstellen.</string>
     <string name="notification_recovery_title">Herstel nodig · klembordsynchronisatie draait niet</string>
     <string name="notification_recovery_text">De synchronisatieservice kon niet automatisch starten. Tik om de app te openen en handmatig te hervatten.</string>
 
@@ -403,7 +403,7 @@
     <string name="prefs_boot_restore">Herstellen bij opstarten</string>
     <string name="prefs_boot_restore_desc">Hervat de synchronisatieservice automatisch na een herstart. Als het systeem de start blokkeert, herinnert een melding je eraan handmatig te hervatten.</string>
     <string name="prefs_inbox_notify">Meldingen voor ontvangen inhoud</string>
-    <string name="prefs_inbox_notify_desc">Meldt wanneer inhoud van de peer binnenkomt (bevat nooit de inhoud zelf). Uitgeschakeld gaan synchronisatie en geschiedenis door; alleen de waarschuwing stopt.</string>
+    <string name="prefs_inbox_notify_desc">Meldt wanneer inhoud van de peer binnenkomt. Uitgeschakeld gaan synchronisatie en geschiedenis door; alleen de waarschuwing stopt.</string>
     <string name="prefs_group_data">Gegevens</string>
     <string name="prefs_export">Geschiedenis exporteren</string>
     <string name="prefs_export_desc">Schrijft de hele geschiedenis (inclusief verwijdermarkeringen) als een JSON Lines-back-upbestand; geen sleutels of koppelgegevens. De export is platte tekst — bewaar hem veilig.</string>

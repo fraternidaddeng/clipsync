@@ -11,7 +11,7 @@
     <string name="notification_group_name">การซิงค์คลิปบอร์ด</string>
     <string name="notification_group_description">สถานะการซิงค์ ข้อความที่ได้รับ และการเตือนให้กู้คืน การแจ้งเตือนจะไม่แสดงเนื้อหาคลิปบอร์ดเด็ดขาด</string>
     <string name="notification_channel_inbox_name">ข้อความที่ได้รับ</string>
-    <string name="notification_channel_inbox_description">แจ้งเมื่อมีข้อความใหม่มาจากพีซีที่จับคู่ไว้ การแจ้งเตือนจะไม่แสดงเนื้อหาคลิปบอร์ดเด็ดขาด</string>
+    <string name="notification_channel_inbox_description">แจ้งเมื่อมีข้อความใหม่มาจากพีซีที่จับคู่ไว้</string>
     <string name="notification_inbox_title">ข้อความใหม่จากพีซีของคุณ</string>
     <string name="notification_inbox_text">แตะ “คัดลอก” เพื่อนำไปไว้ในคลิปบอร์ด</string>
     <string name="notification_inbox_image_title">รูปภาพใหม่จากพีซีของคุณ</string>
@@ -24,7 +24,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">สถานะการซิงค์</string>
-    <string name="notification_channel_sync_description">สถานะการเชื่อมต่อกับพีซีที่จับคู่ไว้ การแจ้งเตือนจะไม่แสดงเนื้อหาคลิปบอร์ดเด็ดขาด</string>
+    <string name="notification_channel_sync_description">สถานะการเชื่อมต่อกับพีซีที่จับคู่ไว้</string>
     <string name="notification_sync_connected">เชื่อมต่อแล้ว · การซิงค์คลิปบอร์ดออนไลน์</string>
     <string name="notification_sync_connected_bluetooth">เชื่อมต่อแล้ว · ช่องสำรองบลูทูธ (ข้อความเท่านั้น)</string>
     <string name="notification_sync_connecting">กำลังเชื่อมต่อกับพีซี…</string>
@@ -41,7 +41,7 @@
     <string name="notification_status_overlay_polling">กำลังอ่านแบบสำรวจด้วยหน้าต่างลอย</string>
 
     <string name="notification_channel_recovery_name">การเตือนกู้คืนการซิงค์</string>
-    <string name="notification_channel_recovery_description">เตือนให้เปิดแอปและกลับมาทำงานต่อด้วยตนเองเมื่อบริการซิงค์กู้คืนเองไม่ได้ การแจ้งเตือนจะไม่แสดงเนื้อหาคลิปบอร์ดเด็ดขาด</string>
+    <string name="notification_channel_recovery_description">เตือนให้เปิดแอปและกลับมาทำงานต่อด้วยตนเองเมื่อบริการซิงค์กู้คืนเองไม่ได้</string>
     <string name="notification_recovery_title">ต้องกู้คืน · การซิงค์คลิปบอร์ดไม่ทำงาน</string>
     <string name="notification_recovery_text">บริการซิงค์เริ่มอัตโนมัติไม่สำเร็จ แตะเพื่อเปิดแอปแล้วกลับมาทำงานต่อด้วยตนเอง</string>
 
@@ -395,7 +395,7 @@
     <string name="prefs_boot_restore">กู้คืนตอนเปิดเครื่อง</string>
     <string name="prefs_boot_restore_desc">กลับมารันบริการซิงค์อัตโนมัติหลังรีบูต หากระบบบล็อกการเริ่ม การแจ้งเตือนจะเตือนให้กลับมารันเอง</string>
     <string name="prefs_inbox_notify">แจ้งเตือนเนื้อหาที่ได้รับ</string>
-    <string name="prefs_inbox_notify_desc">แจ้งเมื่อเนื้อหาจากฝั่งโน้นมาถึง (ไม่รวมตัวเนื้อหาเด็ดขาด) หากปิด การซิงค์และประวัติยังทำงาน หยุดแค่การแจ้ง</string>
+    <string name="prefs_inbox_notify_desc">แจ้งเมื่อเนื้อหาจากฝั่งโน้นมาถึง หากปิด การซิงค์และประวัติยังทำงาน หยุดแค่การแจ้ง</string>
     <string name="prefs_group_data">ข้อมูล</string>
     <string name="prefs_export">ส่งออกประวัติ</string>
     <string name="prefs_export_desc">เขียนประวัติทั้งหมด (รวมเครื่องหมายการลบ) เป็นไฟล์สำรอง JSON Lines ไม่มีกุญแจหรือข้อมูลจับคู่ ไฟล์ส่งออกเป็นข้อความเปล่า — เก็บให้ดี</string>

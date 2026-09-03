@@ -11,7 +11,7 @@
     <string name="notification_group_name">Sincronizzazione appunti</string>
     <string name="notification_group_description">Stato di sincronizzazione, testo ricevuto e promemoria di ripristino. Le notifiche non mostrano mai il contenuto degli appunti.</string>
     <string name="notification_channel_inbox_name">Testo ricevuto</string>
-    <string name="notification_channel_inbox_description">Avvisa quando arriva nuovo testo da un PC associato. Le notifiche non mostrano mai il contenuto degli appunti.</string>
+    <string name="notification_channel_inbox_description">Avvisa quando arriva nuovo testo da un PC associato.</string>
     <string name="notification_inbox_title">Nuovo testo dal tuo PC</string>
     <string name="notification_inbox_text">Tocca «Copia» per metterlo negli appunti</string>
     <string name="notification_inbox_image_title">Nuova immagine dal tuo PC</string>
@@ -26,7 +26,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Stato di sincronizzazione</string>
-    <string name="notification_channel_sync_description">Stato della connessione con il PC associato. Le notifiche non mostrano mai il contenuto degli appunti.</string>
+    <string name="notification_channel_sync_description">Stato della connessione con il PC associato.</string>
     <string name="notification_sync_connected">Connesso · sincronizzazione appunti online</string>
     <string name="notification_sync_connected_bluetooth">Connesso · ripiego Bluetooth (solo testo)</string>
     <string name="notification_sync_connecting">Connessione al PC…</string>
@@ -43,7 +43,7 @@
     <string name="notification_status_overlay_polling">Lettura con polling overlay in corso</string>
 
     <string name="notification_channel_recovery_name">Promemoria di ripristino</string>
-    <string name="notification_channel_recovery_description">Ti ricorda di aprire l’app e riprendere manualmente quando il servizio di sincronizzazione non riesce a ripristinarsi da solo. Le notifiche non mostrano mai il contenuto degli appunti.</string>
+    <string name="notification_channel_recovery_description">Ti ricorda di aprire l’app e riprendere manualmente quando il servizio di sincronizzazione non riesce a ripristinarsi da solo.</string>
     <string name="notification_recovery_title">Serve un ripristino · sincronizzazione ferma</string>
     <string name="notification_recovery_text">Il servizio di sincronizzazione non è riuscito ad avviarsi automaticamente. Tocca per aprire l’app e riprendere manualmente.</string>
 
@@ -409,7 +409,7 @@
     <string name="prefs_boot_restore">Ripristina all’avvio</string>
     <string name="prefs_boot_restore_desc">Riprende automaticamente il servizio di sincronizzazione dopo un riavvio. Se il sistema blocca l’avvio, una notifica ti ricorda di riprendere manualmente.</string>
     <string name="prefs_inbox_notify">Notifiche contenuti ricevuti</string>
-    <string name="prefs_inbox_notify_desc">Avvisa quando arrivano contenuti remoti (mai il contenuto stesso). Se disattivata, sincronizzazione e cronologia continuano; si ferma solo l’avviso.</string>
+    <string name="prefs_inbox_notify_desc">Avvisa quando arrivano contenuti remoti. Se disattivata, sincronizzazione e cronologia continuano; si ferma solo l’avviso.</string>
     <string name="prefs_group_data">Dati</string>
     <string name="prefs_export">Esporta cronologia</string>
     <string name="prefs_export_desc">Scrive l’intera cronologia (inclusi i contrassegni di eliminazione) come file di backup JSON Lines; senza chiavi né dati di associazione. L’esportazione è in chiaro: custodiscila bene.</string>

@@ -12,7 +12,7 @@
     <string name="notification_group_name">Clipboard sync</string>
     <string name="notification_group_description">Sync status, received text, and recovery reminders. Notifications never show clipboard content.</string>
     <string name="notification_channel_inbox_name">Received text</string>
-    <string name="notification_channel_inbox_description">Alerts when new text arrives from a paired PC. Notifications never show clipboard content.</string>
+    <string name="notification_channel_inbox_description">Alerts when new text arrives from a paired PC.</string>
     <string name="notification_inbox_title">New text from your PC</string>
     <string name="notification_inbox_text">Tap “Copy” to put it on the clipboard</string>
     <string name="notification_inbox_image_title">New image from your PC</string>
@@ -26,7 +26,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Sync status</string>
-    <string name="notification_channel_sync_description">Connection status with your paired PC. Notifications never show clipboard content.</string>
+    <string name="notification_channel_sync_description">Connection status with your paired PC.</string>
     <string name="notification_sync_connected">Connected · clipboard sync online</string>
     <string name="notification_sync_connected_bluetooth">Connected · Bluetooth fallback (text only)</string>
     <string name="notification_sync_connecting">Connecting to your PC…</string>
@@ -43,7 +43,7 @@
     <string name="notification_status_overlay_polling">Overlay polling read is running</string>
 
     <string name="notification_channel_recovery_name">Sync recovery reminders</string>
-    <string name="notification_channel_recovery_description">Reminds you to open the app and resume manually when the sync service cannot recover on its own. Notifications never show clipboard content.</string>
+    <string name="notification_channel_recovery_description">Reminds you to open the app and resume manually when the sync service cannot recover on its own.</string>
     <string name="notification_recovery_title">Needs recovery · clipboard sync not running</string>
     <string name="notification_recovery_text">The sync service could not start automatically. Tap to open the app and resume manually.</string>
 
@@ -403,7 +403,7 @@
     <string name="prefs_boot_restore">Restore on boot</string>
     <string name="prefs_boot_restore_desc">Resumes the sync service automatically after a reboot. If the system blocks the start, a notification reminds you to resume manually.</string>
     <string name="prefs_inbox_notify">Received-content notifications</string>
-    <string name="prefs_inbox_notify_desc">Notifies when peer content arrives (never includes the content itself). When off, sync and history continue; only the alert stops.</string>
+    <string name="prefs_inbox_notify_desc">Notifies when peer content arrives. When off, sync and history continue; only the alert stops.</string>
     <string name="prefs_group_data">Data</string>
     <string name="prefs_export">Export history</string>
     <string name="prefs_export_desc">Writes the whole history (including deletion markers) as a JSON Lines backup file; no keys or pairing data. The export is plaintext — keep it safe.</string>

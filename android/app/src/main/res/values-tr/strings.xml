@@ -11,7 +11,7 @@
     <string name="notification_group_name">Pano eşitleme</string>
     <string name="notification_group_description">Eşitleme durumu, alınan metin ve kurtarma hatırlatıcıları. Bildirimler pano içeriğini asla göstermez.</string>
     <string name="notification_channel_inbox_name">Alınan metin</string>
-    <string name="notification_channel_inbox_description">Eşleştirilmiş PC’den yeni metin geldiğinde bildirir. Bildirimler pano içeriğini asla göstermez.</string>
+    <string name="notification_channel_inbox_description">Eşleştirilmiş PC’den yeni metin geldiğinde bildirir.</string>
     <string name="notification_inbox_title">PC’nizden yeni metin</string>
     <string name="notification_inbox_text">Panoya koymak için “Kopyala”ya dokunun</string>
     <string name="notification_inbox_image_title">PC’nizden yeni görsel</string>
@@ -25,7 +25,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Eşitleme durumu</string>
-    <string name="notification_channel_sync_description">Eşleştirilmiş PC ile bağlantı durumu. Bildirimler pano içeriğini asla göstermez.</string>
+    <string name="notification_channel_sync_description">Eşleştirilmiş PC ile bağlantı durumu.</string>
     <string name="notification_sync_connected">Bağlı · pano eşitleme çevrimiçi</string>
     <string name="notification_sync_connected_bluetooth">Bağlı · Bluetooth yedeği (yalnızca metin)</string>
     <string name="notification_sync_connecting">PC’nize bağlanıyor…</string>
@@ -42,7 +42,7 @@
     <string name="notification_status_overlay_polling">Yer paylaşımıyla yoklama okuması sürüyor</string>
 
     <string name="notification_channel_recovery_name">Kurtarma hatırlatıcıları</string>
-    <string name="notification_channel_recovery_description">Eşitleme hizmeti kendi başına toparlanamadığında uygulamayı açıp elle devam etmenizi hatırlatır. Bildirimler pano içeriğini asla göstermez.</string>
+    <string name="notification_channel_recovery_description">Eşitleme hizmeti kendi başına toparlanamadığında uygulamayı açıp elle devam etmenizi hatırlatır.</string>
     <string name="notification_recovery_title">Kurtarma gerekli · pano eşitleme çalışmıyor</string>
     <string name="notification_recovery_text">Eşitleme hizmeti otomatik başlatılamadı. Uygulamayı açıp elle devam etmek için dokunun.</string>
 
@@ -402,7 +402,7 @@
     <string name="prefs_boot_restore">Açılışta geri yükle</string>
     <string name="prefs_boot_restore_desc">Yeniden başlatma sonrası eşitleme hizmetini otomatik sürdürür. Sistem başlatmayı engellerse bir bildirim elle sürdürmenizi hatırlatır.</string>
     <string name="prefs_inbox_notify">Alınan içerik bildirimleri</string>
-    <string name="prefs_inbox_notify_desc">Karşı taraf içeriği geldiğinde bildirir (içeriğin kendisini asla içermez). Kapalıyken eşitleme ve geçmiş sürer; yalnızca uyarı durur.</string>
+    <string name="prefs_inbox_notify_desc">Karşı taraf içeriği geldiğinde bildirir. Kapalıyken eşitleme ve geçmiş sürer; yalnızca uyarı durur.</string>
     <string name="prefs_group_data">Veri</string>
     <string name="prefs_export">Geçmişi dışa aktar</string>
     <string name="prefs_export_desc">Tüm geçmişi (silme işaretleri dahil) JSON Lines yedek dosyası olarak yazar; anahtar veya eşleştirme verisi içermez. Dışa aktarım düz metindir — güvenle saklayın.</string>

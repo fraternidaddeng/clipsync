@@ -11,7 +11,7 @@
     <string name="notification_group_name">Sincronização da área de transferência</string>
     <string name="notification_group_description">Status de sincronização, texto recebido e lembretes de recuperação. As notificações nunca mostram o conteúdo da área de transferência.</string>
     <string name="notification_channel_inbox_name">Texto recebido</string>
-    <string name="notification_channel_inbox_description">Avisa quando um novo texto chega de um PC pareado. As notificações nunca mostram o conteúdo da área de transferência.</string>
+    <string name="notification_channel_inbox_description">Avisa quando um novo texto chega de um PC pareado.</string>
     <string name="notification_inbox_title">Novo texto do seu PC</string>
     <string name="notification_inbox_text">Toque em “Copiar” para colocá-lo na área de transferência</string>
     <string name="notification_inbox_image_title">Nova imagem do seu PC</string>
@@ -26,7 +26,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Status de sincronização</string>
-    <string name="notification_channel_sync_description">Status da conexão com o PC pareado. As notificações nunca mostram o conteúdo da área de transferência.</string>
+    <string name="notification_channel_sync_description">Status da conexão com o PC pareado.</string>
     <string name="notification_sync_connected">Conectado · sincronização da área de transferência online</string>
     <string name="notification_sync_connected_bluetooth">Conectado · alternativa Bluetooth (somente texto)</string>
     <string name="notification_sync_connecting">Conectando ao seu PC…</string>
@@ -43,7 +43,7 @@
     <string name="notification_status_overlay_polling">Leitura por sondagem de sobreposição em andamento</string>
 
     <string name="notification_channel_recovery_name">Lembretes de recuperação</string>
-    <string name="notification_channel_recovery_description">Lembra você de abrir o app e retomar manualmente quando o serviço de sincronização não consegue se recuperar sozinho. As notificações nunca mostram o conteúdo da área de transferência.</string>
+    <string name="notification_channel_recovery_description">Lembra você de abrir o app e retomar manualmente quando o serviço de sincronização não consegue se recuperar sozinho.</string>
     <string name="notification_recovery_title">Precisa de recuperação · sincronização parada</string>
     <string name="notification_recovery_text">O serviço de sincronização não pôde iniciar automaticamente. Toque para abrir o app e retomar manualmente.</string>
 
@@ -409,7 +409,7 @@
     <string name="prefs_boot_restore">Restaurar ao iniciar</string>
     <string name="prefs_boot_restore_desc">Retoma o serviço de sincronização automaticamente após reiniciar. Se o sistema bloquear o início, uma notificação lembra de retomar manualmente.</string>
     <string name="prefs_inbox_notify">Notificações de conteúdo recebido</string>
-    <string name="prefs_inbox_notify_desc">Notifica quando conteúdo remoto chega (nunca inclui o conteúdo em si). Desligado, sincronização e histórico continuam; só o aviso para.</string>
+    <string name="prefs_inbox_notify_desc">Notifica quando conteúdo remoto chega. Desligado, sincronização e histórico continuam; só o aviso para.</string>
     <string name="prefs_group_data">Dados</string>
     <string name="prefs_export">Exportar histórico</string>
     <string name="prefs_export_desc">Grava todo o histórico (incluindo marcadores de exclusão) como arquivo de backup JSON Lines; sem chaves nem dados de pareamento. A exportação é texto puro — guarde com segurança.</string>

@@ -11,7 +11,7 @@
     <string name="notification_group_name">Synchronizacja schowka</string>
     <string name="notification_group_description">Stan synchronizacji, odebrany tekst i przypomnienia o odzyskiwaniu. Powiadomienia nigdy nie pokazują zawartości schowka.</string>
     <string name="notification_channel_inbox_name">Odebrany tekst</string>
-    <string name="notification_channel_inbox_description">Powiadamia, gdy nowy tekst nadejdzie ze sparowanego PC. Powiadomienia nigdy nie pokazują zawartości schowka.</string>
+    <string name="notification_channel_inbox_description">Powiadamia, gdy nowy tekst nadejdzie ze sparowanego PC.</string>
     <string name="notification_inbox_title">Nowy tekst z Twojego PC</string>
     <string name="notification_inbox_text">Dotknij „Kopiuj”, aby umieścić go w schowku</string>
     <string name="notification_inbox_image_title">Nowy obraz z Twojego PC</string>
@@ -27,7 +27,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Stan synchronizacji</string>
-    <string name="notification_channel_sync_description">Stan połączenia ze sparowanym PC. Powiadomienia nigdy nie pokazują zawartości schowka.</string>
+    <string name="notification_channel_sync_description">Stan połączenia ze sparowanym PC.</string>
     <string name="notification_sync_connected">Połączono · synchronizacja schowka online</string>
     <string name="notification_sync_connected_bluetooth">Połączono · zapasowy Bluetooth (tylko tekst)</string>
     <string name="notification_sync_connecting">Łączenie z PC…</string>
@@ -44,7 +44,7 @@
     <string name="notification_status_overlay_polling">Trwa odczyt przez odpytywanie z nakładką</string>
 
     <string name="notification_channel_recovery_name">Przypomnienia o odzyskiwaniu</string>
-    <string name="notification_channel_recovery_description">Przypomina o otwarciu aplikacji i ręcznym wznowieniu, gdy usługa synchronizacji nie może odzyskać się sama. Powiadomienia nigdy nie pokazują zawartości schowka.</string>
+    <string name="notification_channel_recovery_description">Przypomina o otwarciu aplikacji i ręcznym wznowieniu, gdy usługa synchronizacji nie może odzyskać się sama.</string>
     <string name="notification_recovery_title">Wymaga odzyskania · synchronizacja schowka nie działa</string>
     <string name="notification_recovery_text">Usługa synchronizacji nie mogła uruchomić się automatycznie. Dotknij, aby otworzyć aplikację i wznowić ręcznie.</string>
 
@@ -416,7 +416,7 @@
     <string name="prefs_boot_restore">Przywracaj po uruchomieniu</string>
     <string name="prefs_boot_restore_desc">Automatycznie wznawia usługę synchronizacji po restarcie. Jeśli system zablokuje start, powiadomienie przypomni o ręcznym wznowieniu.</string>
     <string name="prefs_inbox_notify">Powiadomienia o odebranych treściach</string>
-    <string name="prefs_inbox_notify_desc">Powiadamia, gdy nadejdą treści z drugiej strony (nigdy nie zawiera samej treści). Gdy wyłączone, synchronizacja i historia trwają; ustaje tylko alert.</string>
+    <string name="prefs_inbox_notify_desc">Powiadamia, gdy nadejdą treści z drugiej strony. Gdy wyłączone, synchronizacja i historia trwają; ustaje tylko alert.</string>
     <string name="prefs_group_data">Dane</string>
     <string name="prefs_export">Eksportuj historię</string>
     <string name="prefs_export_desc">Zapisuje całą historię (wraz ze znacznikami usunięcia) jako plik kopii zapasowej JSON Lines; bez kluczy i danych parowania. Eksport jest jawnym tekstem — przechowuj go bezpiecznie.</string>

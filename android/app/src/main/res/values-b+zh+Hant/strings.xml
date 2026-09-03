@@ -11,7 +11,7 @@
     <string name="notification_group_name">剪貼同步</string>
     <string name="notification_group_description">同步狀態、收到的文字與復原提醒。所有通知均不顯示剪貼簿內容。</string>
     <string name="notification_channel_inbox_name">收到的文字</string>
-    <string name="notification_channel_inbox_description">收到來自已配對電腦的新文字時提醒。通知絕不顯示剪貼簿內容。</string>
+    <string name="notification_channel_inbox_description">收到來自已配對電腦的新文字時提醒。</string>
     <string name="notification_inbox_title">來自電腦的新文字</string>
     <string name="notification_inbox_text">點按「複製」即可放入剪貼簿</string>
     <string name="notification_inbox_image_title">來自電腦的新圖片</string>
@@ -24,7 +24,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">同步狀態</string>
-    <string name="notification_channel_sync_description">與已配對電腦的連線狀態。通知絕不顯示剪貼簿內容。</string>
+    <string name="notification_channel_sync_description">與已配對電腦的連線狀態。</string>
     <string name="notification_sync_connected">已連線 · 剪貼同步上線</string>
     <string name="notification_sync_connected_bluetooth">已連線 · 藍牙備援（僅文字）</string>
     <string name="notification_sync_connecting">正在連線到電腦…</string>
@@ -41,7 +41,7 @@
     <string name="notification_status_overlay_polling">懸浮窗輪詢讀取進行中</string>
 
     <string name="notification_channel_recovery_name">同步復原提醒</string>
-    <string name="notification_channel_recovery_description">同步服務無法自動復原時提醒你開啟應用程式手動復原。通知絕不顯示剪貼簿內容。</string>
+    <string name="notification_channel_recovery_description">同步服務無法自動復原時提醒你開啟應用程式手動復原。</string>
     <string name="notification_recovery_title">需要復原 · 剪貼同步未執行</string>
     <string name="notification_recovery_text">同步服務未能自動啟動。點按開啟應用程式手動復原。</string>
 
@@ -395,7 +395,7 @@
     <string name="prefs_boot_restore">開機恢復</string>
     <string name="prefs_boot_restore_desc">裝置重啟後自動恢復同步服務。若系統阻止啟動，會以通知提醒你手動恢復。</string>
     <string name="prefs_inbox_notify">收到內容通知</string>
-    <string name="prefs_inbox_notify_desc">收到對端內容時發出通知（永不含內容正文）。關閉後同步與歷史照常，僅不再提醒。</string>
+    <string name="prefs_inbox_notify_desc">收到對端內容時發出通知。關閉後同步與歷史照常，僅不再提醒。</string>
     <string name="prefs_group_data">資料</string>
     <string name="prefs_export">匯出歷史</string>
     <string name="prefs_export_desc">把全部歷史（含刪除標記）寫成 JSON Lines 備份檔；不含金鑰與配對資訊。匯出內容為明文，請妥善保管。</string>

@@ -11,7 +11,7 @@
     <string name="notification_group_name">Синхронизация буфера обмена</string>
     <string name="notification_group_description">Статус синхронизации, полученный текст и напоминания о восстановлении. Уведомления никогда не показывают содержимое буфера обмена.</string>
     <string name="notification_channel_inbox_name">Полученный текст</string>
-    <string name="notification_channel_inbox_description">Сообщает, когда с сопряжённого ПК приходит новый текст. Уведомления никогда не показывают содержимое буфера обмена.</string>
+    <string name="notification_channel_inbox_description">Сообщает, когда с сопряжённого ПК приходит новый текст.</string>
     <string name="notification_inbox_title">Новый текст с вашего ПК</string>
     <string name="notification_inbox_text">Нажмите «Копировать», чтобы поместить его в буфер обмена</string>
     <string name="notification_inbox_image_title">Новое изображение с вашего ПК</string>
@@ -27,7 +27,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Статус синхронизации</string>
-    <string name="notification_channel_sync_description">Состояние соединения с сопряжённым ПК. Уведомления никогда не показывают содержимое буфера обмена.</string>
+    <string name="notification_channel_sync_description">Состояние соединения с сопряжённым ПК.</string>
     <string name="notification_sync_connected">Подключено · синхронизация буфера обмена в сети</string>
     <string name="notification_sync_connected_bluetooth">Подключено · резервный Bluetooth (только текст)</string>
     <string name="notification_sync_connecting">Подключение к ПК…</string>
@@ -44,7 +44,7 @@
     <string name="notification_status_overlay_polling">Идёт чтение опросом через оверлей</string>
 
     <string name="notification_channel_recovery_name">Напоминания о восстановлении</string>
-    <string name="notification_channel_recovery_description">Напоминает открыть приложение и возобновить вручную, когда служба синхронизации не может восстановиться сама. Уведомления никогда не показывают содержимое буфера обмена.</string>
+    <string name="notification_channel_recovery_description">Напоминает открыть приложение и возобновить вручную, когда служба синхронизации не может восстановиться сама.</string>
     <string name="notification_recovery_title">Нужно восстановление · синхронизация не работает</string>
     <string name="notification_recovery_text">Службу синхронизации не удалось запустить автоматически. Нажмите, чтобы открыть приложение и возобновить вручную.</string>
 
@@ -416,7 +416,7 @@
     <string name="prefs_boot_restore">Восстанавливать при загрузке</string>
     <string name="prefs_boot_restore_desc">Автоматически возобновляет службу синхронизации после перезагрузки. Если система заблокирует запуск, уведомление напомнит возобновить вручную.</string>
     <string name="prefs_inbox_notify">Уведомления о полученном</string>
-    <string name="prefs_inbox_notify_desc">Сообщает, когда приходит содержимое с той стороны (само содержимое никогда не включается). Если выключено, синхронизация и история продолжаются; прекращается только оповещение.</string>
+    <string name="prefs_inbox_notify_desc">Сообщает, когда приходит содержимое с той стороны. Если выключено, синхронизация и история продолжаются; прекращается только оповещение.</string>
     <string name="prefs_group_data">Данные</string>
     <string name="prefs_export">Экспорт истории</string>
     <string name="prefs_export_desc">Записывает всю историю (включая метки удаления) в файл резервной копии JSON Lines; без ключей и данных сопряжения. Экспорт в открытом виде — храните его надёжно.</string>

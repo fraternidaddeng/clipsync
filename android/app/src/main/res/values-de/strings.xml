@@ -11,7 +11,7 @@
     <string name="notification_group_name">Zwischenablage-Sync</string>
     <string name="notification_group_description">Sync-Status, empfangener Text und Wiederherstellungs-Erinnerungen. Benachrichtigungen zeigen niemals den Inhalt der Zwischenablage.</string>
     <string name="notification_channel_inbox_name">Empfangener Text</string>
-    <string name="notification_channel_inbox_description">Meldet, wenn neuer Text von einem gekoppelten PC eintrifft. Benachrichtigungen zeigen niemals den Inhalt der Zwischenablage.</string>
+    <string name="notification_channel_inbox_description">Meldet, wenn neuer Text von einem gekoppelten PC eintrifft.</string>
     <string name="notification_inbox_title">Neuer Text von Ihrem PC</string>
     <string name="notification_inbox_text">Tippen Sie auf „Kopieren“, um ihn in die Zwischenablage zu legen</string>
     <string name="notification_inbox_image_title">Neues Bild von Ihrem PC</string>
@@ -25,7 +25,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Sync-Status</string>
-    <string name="notification_channel_sync_description">Verbindungsstatus mit Ihrem gekoppelten PC. Benachrichtigungen zeigen niemals den Inhalt der Zwischenablage.</string>
+    <string name="notification_channel_sync_description">Verbindungsstatus mit Ihrem gekoppelten PC.</string>
     <string name="notification_sync_connected">Verbunden · Zwischenablage-Sync online</string>
     <string name="notification_sync_connected_bluetooth">Verbunden · Bluetooth-Ausweichweg (nur Text)</string>
     <string name="notification_sync_connecting">Verbindung mit dem PC wird hergestellt…</string>
@@ -42,7 +42,7 @@
     <string name="notification_status_overlay_polling">Overlay-Abfrage läuft</string>
 
     <string name="notification_channel_recovery_name">Wiederherstellungs-Erinnerungen</string>
-    <string name="notification_channel_recovery_description">Erinnert Sie, die App zu öffnen und manuell fortzusetzen, wenn sich der Sync-Dienst nicht selbst erholen kann. Benachrichtigungen zeigen niemals den Inhalt der Zwischenablage.</string>
+    <string name="notification_channel_recovery_description">Erinnert Sie, die App zu öffnen und manuell fortzusetzen, wenn sich der Sync-Dienst nicht selbst erholen kann.</string>
     <string name="notification_recovery_title">Wiederherstellung nötig · Zwischenablage-Sync läuft nicht</string>
     <string name="notification_recovery_text">Der Sync-Dienst konnte nicht automatisch starten. Tippen Sie, um die App zu öffnen und manuell fortzusetzen.</string>
 
@@ -402,7 +402,7 @@
     <string name="prefs_boot_restore">Beim Start wiederherstellen</string>
     <string name="prefs_boot_restore_desc">Setzt den Sync-Dienst nach einem Neustart automatisch fort. Blockiert das System den Start, erinnert eine Benachrichtigung ans manuelle Fortsetzen.</string>
     <string name="prefs_inbox_notify">Benachrichtigung bei empfangenen Inhalten</string>
-    <string name="prefs_inbox_notify_desc">Meldet, wenn Inhalte der Gegenseite eintreffen (nie den Inhalt selbst). Wenn aus, laufen Sync und Verlauf weiter; nur die Meldung stoppt.</string>
+    <string name="prefs_inbox_notify_desc">Meldet, wenn Inhalte der Gegenseite eintreffen. Wenn aus, laufen Sync und Verlauf weiter; nur die Meldung stoppt.</string>
     <string name="prefs_group_data">Daten</string>
     <string name="prefs_export">Verlauf exportieren</string>
     <string name="prefs_export_desc">Schreibt den gesamten Verlauf (inklusive Löschmarker) als JSON-Lines-Sicherungsdatei; keine Schlüssel oder Kopplungsdaten. Der Export ist Klartext – bewahren Sie ihn sicher auf.</string>

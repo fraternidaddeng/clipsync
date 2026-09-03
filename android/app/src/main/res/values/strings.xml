@@ -18,7 +18,7 @@
     <string name="notification_group_name">剪贴同步</string>
     <string name="notification_group_description">同步状态、收到的文本与恢复提醒。所有通知均不显示剪贴板内容。</string>
     <string name="notification_channel_inbox_name">收到的文本</string>
-    <string name="notification_channel_inbox_description">收到来自已配对电脑的新文本时提醒。通知从不显示剪贴板内容。</string>
+    <string name="notification_channel_inbox_description">收到来自已配对电脑的新文本时提醒。</string>
     <string name="notification_inbox_title">来自电脑的新文本</string>
     <string name="notification_inbox_text">点按“复制”即可放入剪贴板</string>
     <string name="notification_inbox_image_title">来自电脑的新图片</string>
@@ -32,7 +32,7 @@
 
     <!-- 同步前台服务通知：只描述连接状态 -->
     <string name="notification_channel_sync_name">同步状态</string>
-    <string name="notification_channel_sync_description">与已配对电脑的连接状态。通知从不显示剪贴板内容。</string>
+    <string name="notification_channel_sync_description">与已配对电脑的连接状态。</string>
     <string name="notification_sync_connected">已连接 · 剪贴同步在线</string>
     <string name="notification_sync_connected_bluetooth">已连接 · 蓝牙备援（仅文本）</string>
     <string name="notification_sync_connecting">正在连接电脑…</string>
@@ -51,7 +51,7 @@
 
     <!-- 需要恢复：同步服务未能自动启动（开机恢复失败或系统拒绝前台服务） -->
     <string name="notification_channel_recovery_name">同步恢复提醒</string>
-    <string name="notification_channel_recovery_description">同步服务无法自动恢复时提醒你打开应用手动恢复。通知从不显示剪贴板内容。</string>
+    <string name="notification_channel_recovery_description">同步服务无法自动恢复时提醒你打开应用手动恢复。</string>
     <string name="notification_recovery_title">需要恢复 · 剪贴同步未运行</string>
     <string name="notification_recovery_text">同步服务未能自动启动。点按打开应用手动恢复。</string>
 
@@ -427,7 +427,7 @@
     <string name="prefs_boot_restore">开机恢复</string>
     <string name="prefs_boot_restore_desc">设备重启后自动恢复同步服务。若系统阻止启动，会以通知提醒你手动恢复。</string>
     <string name="prefs_inbox_notify">收到内容通知</string>
-    <string name="prefs_inbox_notify_desc">收到对端内容时发出通知（永不含内容正文）。关闭后同步与历史照常，仅不再提醒。</string>
+    <string name="prefs_inbox_notify_desc">收到对端内容时发出通知。关闭后同步与历史照常，仅不再提醒。</string>
     <string name="prefs_group_data">数据</string>
     <string name="prefs_export">导出历史</string>
     <string name="prefs_export_desc">把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥与配对信息。导出内容为明文，请妥善保管。</string>

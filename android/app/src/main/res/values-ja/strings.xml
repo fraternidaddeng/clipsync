@@ -11,7 +11,7 @@
     <string name="notification_group_name">クリップボード同期</string>
     <string name="notification_group_description">同期状態・受信テキスト・復旧リマインダー。通知にクリップボードの内容が表示されることはありません。</string>
     <string name="notification_channel_inbox_name">受信テキスト</string>
-    <string name="notification_channel_inbox_description">ペアリング済みの PC から新しいテキストが届いたときに通知します。通知にクリップボードの内容が表示されることはありません。</string>
+    <string name="notification_channel_inbox_description">ペアリング済みの PC から新しいテキストが届いたときに通知します。</string>
     <string name="notification_inbox_title">PC から新しいテキスト</string>
     <string name="notification_inbox_text">「コピー」をタップするとクリップボードに入ります</string>
     <string name="notification_inbox_image_title">PC から新しい画像</string>
@@ -24,7 +24,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">同期状態</string>
-    <string name="notification_channel_sync_description">ペアリング済みの PC との接続状態。通知にクリップボードの内容が表示されることはありません。</string>
+    <string name="notification_channel_sync_description">ペアリング済みの PC との接続状態。</string>
     <string name="notification_sync_connected">接続中 · クリップボード同期オンライン</string>
     <string name="notification_sync_connected_bluetooth">接続中 · Bluetooth フォールバック（テキストのみ）</string>
     <string name="notification_sync_connecting">PC に接続しています…</string>
@@ -41,7 +41,7 @@
     <string name="notification_status_overlay_polling">オーバーレイポーリング読み取りを実行中</string>
 
     <string name="notification_channel_recovery_name">同期復旧リマインダー</string>
-    <string name="notification_channel_recovery_description">同期サービスが自動復旧できないとき、アプリを開いて手動で再開するようお知らせします。通知にクリップボードの内容が表示されることはありません。</string>
+    <string name="notification_channel_recovery_description">同期サービスが自動復旧できないとき、アプリを開いて手動で再開するようお知らせします。</string>
     <string name="notification_recovery_title">復旧が必要 · クリップボード同期が停止中</string>
     <string name="notification_recovery_text">同期サービスを自動起動できませんでした。タップしてアプリを開き、手動で再開してください。</string>
 
@@ -395,7 +395,7 @@
     <string name="prefs_boot_restore">起動時に復元</string>
     <string name="prefs_boot_restore_desc">再起動後に同期サービスを自動で再開します。システムが起動をブロックした場合は、手動で再開するよう通知でお知らせします。</string>
     <string name="prefs_inbox_notify">受信通知</string>
-    <string name="prefs_inbox_notify_desc">相手側の内容が届いたときに通知します（内容そのものは含みません）。オフでも同期と履歴は続き、通知だけが止まります。</string>
+    <string name="prefs_inbox_notify_desc">相手側の内容が届いたときに通知します。オフでも同期と履歴は続き、通知だけが止まります。</string>
     <string name="prefs_group_data">データ</string>
     <string name="prefs_export">履歴をエクスポート</string>
     <string name="prefs_export_desc">履歴全体（削除マーカーを含む）を JSON Lines のバックアップファイルに書き出します。鍵やペアリングデータは含みません。エクスポートは平文です — 大切に保管してください。</string>

@@ -11,7 +11,7 @@
     <string name="notification_group_name">क्लिपबोर्ड सिंक</string>
     <string name="notification_group_description">सिंक स्थिति, प्राप्त टेक्स्ट और रिकवरी अनुस्मारक। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>
     <string name="notification_channel_inbox_name">प्राप्त टेक्स्ट</string>
-    <string name="notification_channel_inbox_description">जोड़े गए PC से नया टेक्स्ट आने पर सूचित करता है। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>
+    <string name="notification_channel_inbox_description">जोड़े गए PC से नया टेक्स्ट आने पर सूचित करता है।</string>
     <string name="notification_inbox_title">आपके PC से नया टेक्स्ट</string>
     <string name="notification_inbox_text">क्लिपबोर्ड में डालने के लिए “कॉपी करें” पर टैप करें</string>
     <string name="notification_inbox_image_title">आपके PC से नई छवि</string>
@@ -25,7 +25,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">सिंक स्थिति</string>
-    <string name="notification_channel_sync_description">जोड़े गए PC से कनेक्शन की स्थिति। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>
+    <string name="notification_channel_sync_description">जोड़े गए PC से कनेक्शन की स्थिति।</string>
     <string name="notification_sync_connected">कनेक्टेड · क्लिपबोर्ड सिंक ऑनलाइन</string>
     <string name="notification_sync_connected_bluetooth">कनेक्टेड · ब्लूटूथ फ़ॉलबैक (केवल टेक्स्ट)</string>
     <string name="notification_sync_connecting">आपके PC से कनेक्ट हो रहा है…</string>
@@ -42,7 +42,7 @@
     <string name="notification_status_overlay_polling">ओवरले पोलिंग से पठन चल रहा है</string>
 
     <string name="notification_channel_recovery_name">सिंक रिकवरी अनुस्मारक</string>
-    <string name="notification_channel_recovery_description">जब सिंक सेवा खुद नहीं उबर पाती, तो ऐप खोलकर हाथ से फिर शुरू करने की याद दिलाता है। सूचनाओं में क्लिपबोर्ड की सामग्री कभी नहीं दिखती।</string>
+    <string name="notification_channel_recovery_description">जब सिंक सेवा खुद नहीं उबर पाती, तो ऐप खोलकर हाथ से फिर शुरू करने की याद दिलाता है।</string>
     <string name="notification_recovery_title">रिकवरी चाहिए · क्लिपबोर्ड सिंक नहीं चल रहा</string>
     <string name="notification_recovery_text">सिंक सेवा अपने आप शुरू नहीं हो सकी। ऐप खोलने और हाथ से फिर शुरू करने के लिए टैप करें।</string>
 
@@ -402,7 +402,7 @@
     <string name="prefs_boot_restore">बूट पर बहाल करें</string>
     <string name="prefs_boot_restore_desc">रीबूट के बाद सिंक सेवा अपने आप फिर शुरू होती है। सिस्टम रोक दे तो एक सूचना हाथ से शुरू करने की याद दिलाती है।</string>
     <string name="prefs_inbox_notify">प्राप्त सामग्री की सूचनाएँ</string>
-    <string name="prefs_inbox_notify_desc">दूसरे छोर की सामग्री आने पर सूचित करता है (सामग्री कभी शामिल नहीं)। बंद रहने पर सिंक और इतिहास चलते रहते हैं; केवल सूचना रुकती है।</string>
+    <string name="prefs_inbox_notify_desc">दूसरे छोर की सामग्री आने पर सूचित करता है। बंद रहने पर सिंक और इतिहास चलते रहते हैं; केवल सूचना रुकती है।</string>
     <string name="prefs_group_data">डेटा</string>
     <string name="prefs_export">इतिहास निर्यात करें</string>
     <string name="prefs_export_desc">पूरा इतिहास (हटाने के चिह्नों समेत) JSON Lines बैकअप फ़ाइल में लिखता है; कोई कुंजी या पेयरिंग डेटा नहीं। निर्यात सादा टेक्स्ट है — सुरक्षित रखें।</string>

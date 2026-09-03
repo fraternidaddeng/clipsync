@@ -11,7 +11,7 @@
     <string name="notification_group_name">Sincronización del portapapeles</string>
     <string name="notification_group_description">Estado de sincronización, texto recibido y recordatorios de recuperación. Las notificaciones nunca muestran el contenido del portapapeles.</string>
     <string name="notification_channel_inbox_name">Texto recibido</string>
-    <string name="notification_channel_inbox_description">Avisa cuando llega texto nuevo desde un PC emparejado. Las notificaciones nunca muestran el contenido del portapapeles.</string>
+    <string name="notification_channel_inbox_description">Avisa cuando llega texto nuevo desde un PC emparejado.</string>
     <string name="notification_inbox_title">Texto nuevo desde tu PC</string>
     <string name="notification_inbox_text">Toca «Copiar» para ponerlo en el portapapeles</string>
     <string name="notification_inbox_image_title">Imagen nueva desde tu PC</string>
@@ -26,7 +26,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">Estado de sincronización</string>
-    <string name="notification_channel_sync_description">Estado de conexión con tu PC emparejado. Las notificaciones nunca muestran el contenido del portapapeles.</string>
+    <string name="notification_channel_sync_description">Estado de conexión con tu PC emparejado.</string>
     <string name="notification_sync_connected">Conectado · sincronización del portapapeles en línea</string>
     <string name="notification_sync_connected_bluetooth">Conectado · respaldo Bluetooth (solo texto)</string>
     <string name="notification_sync_connecting">Conectando con tu PC…</string>
@@ -43,7 +43,7 @@
     <string name="notification_status_overlay_polling">Lectura por sondeo con superposición en curso</string>
 
     <string name="notification_channel_recovery_name">Recordatorios de recuperación</string>
-    <string name="notification_channel_recovery_description">Te recuerda abrir la app y reanudar manualmente cuando el servicio de sincronización no puede recuperarse solo. Las notificaciones nunca muestran el contenido del portapapeles.</string>
+    <string name="notification_channel_recovery_description">Te recuerda abrir la app y reanudar manualmente cuando el servicio de sincronización no puede recuperarse solo.</string>
     <string name="notification_recovery_title">Necesita recuperación · la sincronización no está en marcha</string>
     <string name="notification_recovery_text">El servicio de sincronización no pudo iniciarse automáticamente. Toca para abrir la app y reanudarlo manualmente.</string>
 
@@ -409,7 +409,7 @@
     <string name="prefs_boot_restore">Restaurar al arrancar</string>
     <string name="prefs_boot_restore_desc">Reanuda el servicio de sincronización automáticamente tras un reinicio. Si el sistema bloquea el arranque, una notificación te recuerda reanudarlo manualmente.</string>
     <string name="prefs_inbox_notify">Notificaciones de contenido recibido</string>
-    <string name="prefs_inbox_notify_desc">Notifica cuando llega contenido del otro extremo (nunca incluye el contenido en sí). Si está desactivado, la sincronización y el historial continúan; solo se detiene el aviso.</string>
+    <string name="prefs_inbox_notify_desc">Notifica cuando llega contenido del otro extremo. Si está desactivado, la sincronización y el historial continúan; solo se detiene el aviso.</string>
     <string name="prefs_group_data">Datos</string>
     <string name="prefs_export">Exportar historial</string>
     <string name="prefs_export_desc">Escribe todo el historial (incluidos los marcadores de borrado) como archivo de respaldo JSON Lines; sin claves ni datos de emparejamiento. La exportación es texto plano: guárdala bien.</string>

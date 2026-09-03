@@ -11,7 +11,7 @@
     <string name="notification_group_name">Synchronisation du presse-papiers</string>
     <string name="notification_group_description">État de synchronisation, texte reçu et rappels de reprise. Les notifications n’affichent jamais le contenu du presse-papiers.</string>
     <string name="notification_channel_inbox_name">Texte reçu</string>
-    <string name="notification_channel_inbox_description">Vous avertit quand un nouveau texte arrive d’un PC appairé. Les notifications n’affichent jamais le contenu du presse-papiers.</string>
+    <string name="notification_channel_inbox_description">Vous avertit quand un nouveau texte arrive d’un PC appairé.</string>
     <string name="notification_inbox_title">Nouveau texte depuis votre PC</string>
     <string name="notification_inbox_text">Touchez « Copier » pour le placer dans le presse-papiers</string>
     <string name="notification_inbox_image_title">Nouvelle image depuis votre PC</string>
@@ -26,7 +26,7 @@
     </plurals>
 
     <string name="notification_channel_sync_name">État de synchronisation</string>
-    <string name="notification_channel_sync_description">État de connexion avec votre PC appairé. Les notifications n’affichent jamais le contenu du presse-papiers.</string>
+    <string name="notification_channel_sync_description">État de connexion avec votre PC appairé.</string>
     <string name="notification_sync_connected">Connecté · synchronisation du presse-papiers en ligne</string>
     <string name="notification_sync_connected_bluetooth">Connecté · secours Bluetooth (texte uniquement)</string>
     <string name="notification_sync_connecting">Connexion à votre PC…</string>
@@ -43,7 +43,7 @@
     <string name="notification_status_overlay_polling">Lecture par sondage de superposition en cours</string>
 
     <string name="notification_channel_recovery_name">Rappels de reprise</string>
-    <string name="notification_channel_recovery_description">Vous rappelle d’ouvrir l’application et de reprendre manuellement quand le service de synchronisation ne peut pas se rétablir seul. Les notifications n’affichent jamais le contenu du presse-papiers.</string>
+    <string name="notification_channel_recovery_description">Vous rappelle d’ouvrir l’application et de reprendre manuellement quand le service de synchronisation ne peut pas se rétablir seul.</string>
     <string name="notification_recovery_title">Reprise nécessaire · synchronisation à l’arrêt</string>
     <string name="notification_recovery_text">Le service de synchronisation n’a pas pu démarrer automatiquement. Touchez pour ouvrir l’application et reprendre manuellement.</string>
 
@@ -409,7 +409,7 @@
     <string name="prefs_boot_restore">Restaurer au démarrage</string>
     <string name="prefs_boot_restore_desc">Reprend automatiquement le service de synchronisation après un redémarrage. Si le système bloque le démarrage, une notification vous rappelle de reprendre manuellement.</string>
     <string name="prefs_inbox_notify">Notifications de contenu reçu</string>
-    <string name="prefs_inbox_notify_desc">Notifie quand du contenu distant arrive (n’inclut jamais le contenu lui-même). Désactivé, la synchronisation et l’historique continuent ; seule l’alerte s’arrête.</string>
+    <string name="prefs_inbox_notify_desc">Notifie quand du contenu distant arrive. Désactivé, la synchronisation et l’historique continuent ; seule l’alerte s’arrête.</string>
     <string name="prefs_group_data">Données</string>
     <string name="prefs_export">Exporter l’historique</string>
     <string name="prefs_export_desc">Écrit tout l’historique (y compris les marqueurs de suppression) dans un fichier de sauvegarde JSON Lines ; sans clés ni données d’appairage. L’export est en clair — gardez-le en lieu sûr.</string>
