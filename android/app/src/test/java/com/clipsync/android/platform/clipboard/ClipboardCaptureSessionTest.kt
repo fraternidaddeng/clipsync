@@ -31,7 +31,7 @@ class ClipboardCaptureSessionTest {
                     hasher = ContentHasher { "hash:$it" },
                 ),
             onChanged = { emitted += it.text },
-            captureAllowed = { captureAllowed },
+            captureGate = { if (captureAllowed) CaptureGate.OPEN else CaptureGate.SYNC_PAUSED },
         )
 
     @Test
@@ -131,6 +131,81 @@ class ClipboardCaptureSessionTest {
         calls.clear()
         session.checkHealth()
         assertEquals(listOf("SHIZUKU_EVENT.health"), calls)
+    }
+
+    @Test
+    fun `status names the gate that holds the backends closed`() {
+        val gate = mutableListOf(CaptureGate.PRIVATE_MODE)
+        val gated =
+            ClipboardCaptureSession(
+                coordinator = ClipboardAccessCoordinator(listOf(shizuku, foreground)),
+                onChanged = { },
+                captureGate = { gate.first() },
+            )
+        gated.acquire(Owner.FOREGROUND_SERVICE)
+        assertEquals(
+            CaptureSessionStatus(
+                running = false,
+                owners = setOf(Owner.FOREGROUND_SERVICE),
+                gate = CaptureGate.PRIVATE_MODE,
+            ),
+            gated.status.value,
+        )
+
+        gate[0] = CaptureGate.OPEN
+        gated.refreshGates()
+        assertEquals(
+            CaptureSessionStatus(
+                running = true,
+                owners = setOf(Owner.FOREGROUND_SERVICE),
+                gate = CaptureGate.OPEN,
+            ),
+            gated.status.value,
+        )
+    }
+
+    @Test
+    fun `the activity coming to the foreground climbs a degraded ladder back up`() {
+        session.acquire(Owner.FOREGROUND_SERVICE)
+        shizuku.backendHealth =
+            BackendHealth(
+                state = BackendHealthState.FAILED,
+                checkedAtEpochMillis = 50L,
+                errorCode = "PRIV_HOST_USERSERVICE_DEAD",
+            )
+        session.checkHealth()
+        shizuku.backendHealth = BackendHealth(BackendHealthState.HEALTHY, checkedAtEpochMillis = 60L)
+        calls.clear()
+
+        // onStart: the service still owns the session, so this acquire changes no owner state —
+        // but it is the moment to re-probe the preferred rung, which is READY again.
+        session.acquire(Owner.ACTIVITY)
+
+        assertEquals(
+            listOf("SHIZUKU_EVENT.probe", "FOREGROUND_ONLY.stop", "SHIZUKU_EVENT.read", "SHIZUKU_EVENT.start"),
+            calls,
+        )
+        shizuku.emit("after recovery", "hash:after recovery")
+        assertEquals(listOf("after recovery"), emitted)
+    }
+
+    @Test
+    fun `tryRecover reports whether the route changed and does nothing while stopped`() {
+        assertFalse(session.tryRecover())
+        assertTrue(calls.isEmpty())
+
+        session.acquire(Owner.FOREGROUND_SERVICE)
+        assertFalse(session.tryRecover())
+
+        shizuku.backendHealth =
+            BackendHealth(
+                state = BackendHealthState.FAILED,
+                checkedAtEpochMillis = 50L,
+                errorCode = "PRIV_HOST_USERSERVICE_DEAD",
+            )
+        session.checkHealth()
+        shizuku.backendHealth = BackendHealth(BackendHealthState.HEALTHY, checkedAtEpochMillis = 60L)
+        assertTrue(session.tryRecover())
     }
 
     @Test

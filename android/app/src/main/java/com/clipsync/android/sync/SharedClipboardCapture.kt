@@ -9,6 +9,7 @@ import com.clipsync.android.R
 import com.clipsync.android.platform.SharedPrefsKeyValueStore
 import com.clipsync.android.platform.clipboard.AdbLogOverlayBackend
 import com.clipsync.android.platform.clipboard.AndroidRouteProbes
+import com.clipsync.android.platform.clipboard.CaptureGate
 import com.clipsync.android.platform.clipboard.ClipboardAccessCoordinator
 import com.clipsync.android.platform.clipboard.ClipboardCapabilityStore
 import com.clipsync.android.platform.clipboard.ClipboardCaptureSession
@@ -20,6 +21,10 @@ import com.clipsync.android.platform.clipboard.RouteProbes
 import com.clipsync.android.platform.clipboard.SharedClipboardWrites
 import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
 import com.clipsync.android.storage.SyncSettingsStore
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 /**
  * The full local capture stack, built once per process: the capability ladder backends, the
@@ -31,6 +36,7 @@ import com.clipsync.android.storage.SyncSettingsStore
  * coordinator, two backends could listen at once and double-announce every copy. The conduit
  * page (probes, read tests, mode choice) and both lifecycle owners must see the same objects.
  */
+@Suppress("LongParameterList")
 class CaptureStack(
     val capabilityStore: ClipboardCapabilityStore,
     val routeProbes: RouteProbes,
@@ -38,7 +44,52 @@ class CaptureStack(
     val foregroundBackend: ForegroundClipboardBackend,
     val coordinator: ClipboardAccessCoordinator,
     val session: ClipboardCaptureSession,
+    val tally: CaptureTally = CaptureTally(),
 )
+
+/** In-memory counts of what the capture policy did with clipboard changes since process start. */
+data class CaptureTallySnapshot(
+    val captured: Int = 0,
+    val skippedSensitive: Int = 0,
+    val skippedImageSyncOff: Int = 0,
+    val rejectedTooLarge: Int = 0,
+    /** Changes that arrived while a pause/private gate was closed (a race with the gate flip). */
+    val skippedByGate: Int = 0,
+    val lastCapturedAtEpochMillis: Long? = null,
+)
+
+/**
+ * Tallies [CaptureOutcome]s for the preferences and conduit pages: the only way a user can see
+ * that 跳过敏感内容 or a switched-off 图片同步 actually did something. Counts only — never content,
+ * never persisted (a process restart starts from zero, and the UI says so).
+ */
+class CaptureTally(
+    private val nowEpochMillis: () -> Long = System::currentTimeMillis,
+) {
+    private val mutableSnapshots = MutableStateFlow(CaptureTallySnapshot())
+
+    val snapshots: StateFlow<CaptureTallySnapshot> = mutableSnapshots.asStateFlow()
+
+    fun record(outcome: CaptureOutcome) {
+        mutableSnapshots.update { current ->
+            when (outcome) {
+                CaptureOutcome.CAPTURED ->
+                    current.copy(captured = current.captured + 1, lastCapturedAtEpochMillis = nowEpochMillis())
+                CaptureOutcome.SKIPPED_SENSITIVE -> current.copy(skippedSensitive = current.skippedSensitive + 1)
+                CaptureOutcome.SKIPPED_IMAGE_SYNC_OFF ->
+                    current.copy(skippedImageSyncOff = current.skippedImageSyncOff + 1)
+                CaptureOutcome.REJECTED_TOO_LARGE -> current.copy(rejectedTooLarge = current.rejectedTooLarge + 1)
+                CaptureOutcome.SKIPPED_PRIVATE_MODE,
+                CaptureOutcome.SKIPPED_SYNC_PAUSED,
+                CaptureOutcome.SKIPPED_CAPTURE_PAUSED,
+                -> current.copy(skippedByGate = current.skippedByGate + 1)
+                CaptureOutcome.SKIPPED_OWN_WRITE,
+                CaptureOutcome.REJECTED_BY_OUTBOX,
+                -> current
+            }
+        }
+    }
+}
 
 /**
  * Process-wide holder for the [CaptureStack] (same pattern as
@@ -104,6 +155,7 @@ object SharedClipboardCapture {
                 },
             )
         val mainHandler = Handler(Looper.getMainLooper())
+        val tally = CaptureTally()
         return CaptureStack(
             capabilityStore = capabilityStore,
             routeProbes = routeProbes,
@@ -115,6 +167,7 @@ object SharedClipboardCapture {
                     coordinator = coordinator,
                     onChanged = { change ->
                         val outcome = captureManager.onClipboardChanged(change)
+                        tally.record(outcome)
                         if (outcome == CaptureOutcome.REJECTED_TOO_LARGE) {
                             announceOversizeRejection(appContext, mainHandler)
                         }
@@ -122,12 +175,21 @@ object SharedClipboardCapture {
                     // Backend-level gate: while sync or auto-capture is paused, or private mode
                     // is on, nothing may even read the clipboard in the background (the
                     // per-event gates above remain the authority for anything that arrives).
-                    captureAllowed = {
-                        !settings.syncPaused && !settings.privateMode && !settings.autoCapturePaused
-                    },
+                    // Same precedence as the policy engine so both surfaces name the same gate.
+                    captureGate = { captureGate(settings) },
                 ),
+            tally = tally,
         )
     }
+
+    /** The backend-level gate in policy-engine precedence (暂停同步 → 私密 → 暂停捕获). */
+    fun captureGate(settings: SyncSettingsStore): CaptureGate =
+        when {
+            settings.syncPaused -> CaptureGate.SYNC_PAUSED
+            settings.privateMode -> CaptureGate.PRIVATE_MODE
+            settings.autoCapturePaused -> CaptureGate.CAPTURE_PAUSED
+            else -> CaptureGate.OPEN
+        }
 
     /**
      * 超限内容本机保留 + 明确提示，不得静默 (plan 3.3 rule 9): the copy stays on the

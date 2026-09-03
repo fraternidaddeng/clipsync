@@ -2,6 +2,7 @@ package com.clipsync.android.platform.clipboard
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ClipboardAccessCoordinatorTest {
@@ -329,6 +330,209 @@ class ClipboardAccessCoordinatorTest {
             listOf(ClipboardReadMode.SHIZUKU_EVENT, ClipboardReadMode.FOREGROUND_ONLY, null),
             announced,
         )
+    }
+
+    // ---- recovery: climbing back up the ladder ---------------------------------------------
+
+    private fun degradedLadder(
+        calls: MutableList<String>,
+        clock: () -> Long,
+    ): Triple<ClipboardAccessCoordinator, FakeBackgroundClipboardBackend, FakeBackgroundClipboardBackend> {
+        val shizuku =
+            FakeBackgroundClipboardBackend(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                readResult = ClipboardReadResult.Success("baseline"),
+                backendHealth =
+                    BackendHealth(
+                        state = BackendHealthState.FAILED,
+                        checkedAtEpochMillis = 50L,
+                        errorCode = "PRIV_HOST_USERSERVICE_DEAD",
+                    ),
+                callLog = calls,
+            )
+        val overlay =
+            FakeBackgroundClipboardBackend(
+                mode = ClipboardReadMode.OVERLAY_POLLING,
+                readResult = ClipboardReadResult.Success("baseline"),
+                callLog = calls,
+            )
+        val coordinator =
+            ClipboardAccessCoordinator(
+                backends = listOf(shizuku, overlay),
+                hasher = ContentHasher { "hash:$it" },
+                nowEpochMillis = clock,
+            )
+        return Triple(coordinator, shizuku, overlay)
+    }
+
+    @Test
+    fun `health fallback records the shortfall with its cause, code and time`() {
+        var now = 1_000L
+        val (coordinator, _, _) = degradedLadder(mutableListOf()) { now }
+        coordinator.start { }
+        assertNull(coordinator.state.shortfall)
+
+        now = 2_000L
+        val state = coordinator.checkHealth()
+
+        assertEquals(ClipboardReadMode.OVERLAY_POLLING, state.activeReadMode)
+        assertEquals(
+            ReadRouteShortfall(
+                cause = ReadRouteShortfallCause.HEALTH_FALLBACK,
+                fromMode = ClipboardReadMode.SHIZUKU_EVENT,
+                errorCode = "PRIV_HOST_USERSERVICE_DEAD",
+                sinceEpochMillis = 2_000L,
+            ),
+            state.shortfall,
+        )
+        assertEquals(true, state.belowRequested)
+    }
+
+    @Test
+    fun `a start that misses the preferred rung records a preferred-not-ready shortfall`() {
+        val shizuku =
+            FakeBackgroundClipboardBackend(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                report =
+                    FakeBackgroundClipboardBackend.capabilityReport(
+                        mode = ClipboardReadMode.SHIZUKU_EVENT,
+                        state = CapabilityState.UNAVAILABLE,
+                        errorCode = "PRIVILEGED_CHANNEL_OFFLINE",
+                    ),
+            )
+        val overlay = FakeBackgroundClipboardBackend(ClipboardReadMode.OVERLAY_POLLING)
+        val state = ClipboardAccessCoordinator(listOf(shizuku, overlay), nowEpochMillis = { 7L }).start { }
+
+        assertEquals(
+            ReadRouteShortfall(
+                cause = ReadRouteShortfallCause.PREFERRED_NOT_READY,
+                fromMode = ClipboardReadMode.SHIZUKU_EVENT,
+                errorCode = "PRIVILEGED_CHANNEL_OFFLINE",
+                sinceEpochMillis = 7L,
+            ),
+            state.shortfall,
+        )
+    }
+
+    @Test
+    fun `recovery climbs back once the preferred rung is ready and never double-captures`() {
+        var now = 1_000L
+        val calls = mutableListOf<String>()
+        val (coordinator, shizuku, overlay) = degradedLadder(calls) { now }
+        val emitted = mutableListOf<String>()
+        val announced = mutableListOf<ClipboardReadMode?>()
+        coordinator.onActiveReadModeChanged = { announced += it }
+        coordinator.start { emitted += it.text }
+        coordinator.checkHealth()
+        assertEquals(ClipboardReadMode.OVERLAY_POLLING, coordinator.state.activeReadMode)
+
+        // The privileged host is still dead: the recovery probe leaves the ladder alone.
+        shizuku.report =
+            FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.UNAVAILABLE,
+                errorCode = "PRIV_HOST_USERSERVICE_DEAD",
+            )
+        calls.clear()
+        coordinator.tryRecover()
+        assertEquals(ClipboardReadMode.OVERLAY_POLLING, coordinator.state.activeReadMode)
+        assertEquals(listOf("SHIZUKU_EVENT.probe"), calls)
+        assertEquals(ReadRouteShortfallCause.HEALTH_FALLBACK, coordinator.state.shortfall?.cause)
+
+        // The user restarted the host from the PC and the read test passed: READY again.
+        shizuku.report =
+            FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.READY,
+            )
+        shizuku.backendHealth = BackendHealth(BackendHealthState.HEALTHY, checkedAtEpochMillis = 3_000L)
+        now = 3_000L
+        calls.clear()
+        val state = coordinator.tryRecover()
+
+        assertEquals(ClipboardReadMode.SHIZUKU_EVENT, state.activeReadMode)
+        assertNull(state.shortfall)
+        assertEquals(3_000L, state.lastRecoveryAtEpochMillis)
+        // Same switch order as a fallback: probe, stop the old rung, refresh baseline, start new.
+        assertEquals(
+            listOf("SHIZUKU_EVENT.probe", "OVERLAY_POLLING.stop", "SHIZUKU_EVENT.read", "SHIZUKU_EVENT.start"),
+            calls,
+        )
+        assertEquals(
+            listOf(ClipboardReadMode.SHIZUKU_EVENT, ClipboardReadMode.OVERLAY_POLLING, ClipboardReadMode.SHIZUKU_EVENT),
+            announced,
+        )
+
+        // Only the recovered backend feeds the listener; the stopped rung is deaf, and the
+        // clip already on the clipboard at switch time is a baseline, not a new copy.
+        overlay.emit("stale from the old rung", "hash:stale")
+        shizuku.emit("baseline", "hash:baseline")
+        shizuku.emit("fresh copy", "hash:fresh copy")
+        assertEquals(listOf("fresh copy"), emitted)
+    }
+
+    @Test
+    fun `recovery is a no-op at the preferred rung, when stopped, and below a not-ready preference`() {
+        val calls = mutableListOf<String>()
+        val shizuku = FakeBackgroundClipboardBackend(ClipboardReadMode.SHIZUKU_EVENT, callLog = calls)
+        val overlay = FakeBackgroundClipboardBackend(ClipboardReadMode.OVERLAY_POLLING, callLog = calls)
+        val coordinator = ClipboardAccessCoordinator(listOf(shizuku, overlay))
+
+        // Stopped: nothing to recover, nothing probed.
+        coordinator.tryRecover()
+        assertTrue(calls.isEmpty())
+        assertNull(coordinator.state.activeReadMode)
+
+        // At the preferred rung: no probe at all.
+        coordinator.start { }
+        calls.clear()
+        coordinator.tryRecover()
+        assertTrue(calls.isEmpty())
+        assertEquals(ClipboardReadMode.SHIZUKU_EVENT, coordinator.state.activeReadMode)
+    }
+
+    @Test
+    fun `recovery with nothing running re-runs the selection from the requested rung`() {
+        val shizuku =
+            FakeBackgroundClipboardBackend(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                report =
+                    FakeBackgroundClipboardBackend.capabilityReport(
+                        mode = ClipboardReadMode.SHIZUKU_EVENT,
+                        state = CapabilityState.UNAVAILABLE,
+                        errorCode = "PRIVILEGED_CHANNEL_OFFLINE",
+                    ),
+            )
+        val coordinator = ClipboardAccessCoordinator(listOf(shizuku))
+        coordinator.start { }
+        assertNull(coordinator.state.activeReadMode)
+
+        shizuku.report =
+            FakeBackgroundClipboardBackend.capabilityReport(
+                mode = ClipboardReadMode.SHIZUKU_EVENT,
+                state = CapabilityState.READY,
+            )
+        val state = coordinator.tryRecover()
+
+        assertEquals(ClipboardReadMode.SHIZUKU_EVENT, state.activeReadMode)
+        assertNull(state.shortfall)
+    }
+
+    @Test
+    fun `stop clears the shortfall and the states flow mirrors every change`() {
+        var now = 1L
+        val (coordinator, _, _) = degradedLadder(mutableListOf()) { now }
+        coordinator.start { }
+        now = 2L
+        coordinator.checkHealth()
+        assertEquals(coordinator.state, coordinator.states.value)
+        assertEquals(true, coordinator.states.value.belowRequested)
+
+        coordinator.stop()
+
+        assertNull(coordinator.state.activeReadMode)
+        assertNull(coordinator.state.shortfall)
+        assertEquals(coordinator.state, coordinator.states.value)
     }
 
     @Test

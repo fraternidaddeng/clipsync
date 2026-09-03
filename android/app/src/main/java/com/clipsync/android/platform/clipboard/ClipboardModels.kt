@@ -96,10 +96,41 @@ data class ClipboardWriteOutcome(
     val writerKind: ClipboardWriterKind?,
 )
 
+/** Why the active read route sits below the requested one. */
+enum class ReadRouteShortfallCause {
+    /** The requested route did not probe READY when the coordinator (re)selected a backend. */
+    PREFERRED_NOT_READY,
+
+    /** A health check found the running backend FAILED and the ladder fell to a lower rung. */
+    HEALTH_FALLBACK,
+}
+
+/**
+ * The active route is lower on the capability ladder than [ClipboardAccessState.requestedReadMode].
+ * Carried in the access state so the conduit can say which route actually runs, since when, and
+ * why — the fact the 特权直读 channel-stuck bug hid for weeks. Null when the active route is the
+ * requested one or nothing runs.
+ */
+data class ReadRouteShortfall(
+    val cause: ReadRouteShortfallCause,
+    /** The route the ladder fell from ([ReadRouteShortfallCause.HEALTH_FALLBACK]) or the requested one. */
+    val fromMode: ClipboardReadMode,
+    /** Stable error code of the failing health check or the failed probe; null when the probe gave none. */
+    val errorCode: String?,
+    val sinceEpochMillis: Long,
+)
+
 data class ClipboardAccessState(
     val requestedReadMode: ClipboardReadMode,
     val activeReadMode: ClipboardReadMode?,
     val autoFallbackAllowed: Boolean,
     val lastErrorCode: String?,
     val lastHealthAtEpochMillis: Long?,
-)
+    val shortfall: ReadRouteShortfall? = null,
+    /** When the coordinator last climbed back to a higher rung; null until a recovery happened. */
+    val lastRecoveryAtEpochMillis: Long? = null,
+) {
+    /** True while a backend runs below the requested rung — the state recovery probes try to leave. */
+    val belowRequested: Boolean
+        get() = shortfall != null
+}
