@@ -9,6 +9,23 @@ namespace ClipSync.Peer.Bluetooth;
 /// </summary>
 public static partial class BluetoothLog
 {
+    /// <summary>The session's inner engine finished without a protocol error code.</summary>
+    public const string SessionEndClean = "clean";
+
+    /// <summary>The host stopped (or is disposing) while the session was live.</summary>
+    public const string SessionEndCancelled = "cancelled";
+
+    /// <summary>
+    /// The closed set of non-protocol values <see cref="SessionEnded"/> may carry as its code;
+    /// protocol error codes make up the rest. Diagnostics mapping allow-lists exactly this
+    /// union, so a transport exception name never becomes part of a code.
+    /// </summary>
+    public static readonly IReadOnlySet<string> SessionEndOutcomes = new HashSet<string>(StringComparer.Ordinal)
+    {
+        SessionEndClean,
+        SessionEndCancelled
+    };
+
     [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "bluetooth listener started")]
     public static partial void ListenerStarted(ILogger logger);
 

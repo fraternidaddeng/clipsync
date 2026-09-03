@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using ClipSync.App.Diagnostics;
 using ClipSync.App.Localization;
+using ClipSync.Peer.Pairing;
 
 namespace ClipSync.App.Tray;
 
@@ -171,10 +172,31 @@ internal sealed class TrayIconController : IDisposable
     }
 
     /// <summary>
-    /// The approval window closed unanswered after the phone's 90-second wait. Fires from
-    /// the approval timeout up to 90 s after the request, so it may land during teardown.
+    /// The approval window closed unanswered after the phone's approval wait. Fires from the
+    /// approval timeout up to that long after the request, so it may land during teardown.
+    /// The wait named in the balloon is the pairing service's configured value (the shared
+    /// default when the caller passes none), never a literal.
     /// </summary>
-    public void ShowPairingTimeoutNotice()
+    public void ShowPairingTimeoutNotice(TimeSpan? approvalTimeout = null)
+    {
+        if (disposed)
+        {
+            return;
+        }
+
+        var seconds = (int)Math.Round((approvalTimeout ?? PairingServiceOptions.DefaultApprovalTimeout).TotalSeconds);
+        taskbarIcon.ShowBalloonTip(
+            Strings.Tray_PairingTimeout_Title,
+            Strings.Format(nameof(Strings.Tray_PairingTimeout_BodyFormat), seconds),
+            BalloonIcon.Warning);
+    }
+
+    /// <summary>
+    /// The phone dropped its confirm request before the user answered (it gave up on the
+    /// connection, or the user cancelled on the phone). Distinct from the timeout balloon so
+    /// the wording does not blame a wait that never ran out.
+    /// </summary>
+    public void ShowPairingAbortedNotice()
     {
         if (disposed)
         {
@@ -182,8 +204,8 @@ internal sealed class TrayIconController : IDisposable
         }
 
         taskbarIcon.ShowBalloonTip(
-            Strings.Tray_PairingTimeout_Title,
-            Strings.Tray_PairingTimeout_Body,
+            Strings.Tray_PairingAborted_Title,
+            Strings.Tray_PairingAborted_Body,
             BalloonIcon.Warning);
     }
 

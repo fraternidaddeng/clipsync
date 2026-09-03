@@ -5,7 +5,7 @@ namespace ClipSync.App.Diagnostics;
 
 /// <summary>
 /// The <see cref="ILoggerFactory"/> handed to the Peer components (<c>PeerServer</c>,
-/// <c>PairingService</c>). Every admitted event becomes one <see cref="LocalDiagnostics"/>
+/// <c>PairingService</c>, <c>BluetoothSyncHost</c>). Every admitted event becomes one <see cref="LocalDiagnostics"/>
 /// code via <see cref="DiagnosticsLogCodes"/>; categories outside <c>ClipSync.*</c> get a
 /// null logger so framework chatter never reaches the ring buffer.
 /// </summary>

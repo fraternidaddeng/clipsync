@@ -128,11 +128,21 @@ public sealed record PairingCandidate(
     string DisplayName,
     string Platform,
     bool IsRepair,
-    bool ReplacesSameNamePeer = false);
+    bool ReplacesSameNamePeer = false)
+{
+    /// <summary>
+    /// Fires only when the approval window (<see cref="PairingServiceOptions.ApprovalTimeout"/>)
+    /// elapsed. The token handed to <see cref="IPairingApprover.ApproveAsync"/> also fires when
+    /// the phone gave up first; an approver that wants to word the two differently checks this
+    /// one. Default (never cancels) for candidates built outside <see cref="PairingService"/>.
+    /// </summary>
+    public CancellationToken ApprovalTimeout { get; init; }
+}
 
 /// <summary>
 /// Bridges the confirm endpoint to the user. Implementations show the candidate's name and
-/// platform and return the explicit decision; cancellation means the approval window elapsed.
+/// platform and return the explicit decision; cancellation means the approval window elapsed
+/// or the requesting phone aborted (<see cref="PairingCandidate.ApprovalTimeout"/> tells which).
 /// </summary>
 public interface IPairingApprover
 {

@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>ペアリング要求がタイムアウトしました</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>スマートフォンは 90 秒待ちましたが承認されませんでした。スマートフォンで新しい QR コードをもう一度スキャンしてください。</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>スマートフォンは {0} 秒待ちましたが承認されませんでした。スマートフォンで新しい QR コードをもう一度スキャンしてください。</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>ペアリング要求が中止されました</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>承認前にスマートフォンが接続を切りました。自分で取り消したのでなければ、QR コードをもう一度表示してスキャンしてください。</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>監視中 · 同期は未起動</value>

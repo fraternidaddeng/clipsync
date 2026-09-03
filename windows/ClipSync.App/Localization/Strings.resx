@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>配对请求已超时</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>手机等待了 90 秒未获批准。请在手机上重新扫描新的二维码。</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>手机等待了 {0} 秒未获批准。请在手机上重新扫描新的二维码。</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>配对请求已中止</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>手机在批准前断开了连接。若不是你主动取消，请重新出示二维码再扫。</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>监听中 · 同步未启动</value>

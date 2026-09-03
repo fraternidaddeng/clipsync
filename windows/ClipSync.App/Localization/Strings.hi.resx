@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>पेयरिंग अनुरोध का समय समाप्त हो गया</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>फ़ोन ने 90 सेकंड प्रतीक्षा की, पर स्वीकृति नहीं मिली। फिर से कोशिश करने के लिए फ़ोन पर नया QR कोड स्कैन करें।</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>फ़ोन ने {0} सेकंड प्रतीक्षा की, पर स्वीकृति नहीं मिली। फिर से कोशिश करने के लिए फ़ोन पर नया QR कोड स्कैन करें।</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>पेयरिंग अनुरोध रद्द हो गया</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>स्वीकृति से पहले फ़ोन का कनेक्शन टूट गया। अगर आपने खुद रद्द नहीं किया है, तो QR कोड फिर से दिखाएँ और दोबारा स्कैन करें।</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>सुन रहा है · समन्वयन चालू नहीं</value>

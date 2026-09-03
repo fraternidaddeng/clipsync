@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>페어링 요청 시간이 초과되었습니다</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>휴대폰이 90초 동안 기다렸지만 승인되지 않았습니다. 휴대폰에서 새 QR 코드를 다시 스캔하세요.</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>휴대폰이 {0}초 동안 기다렸지만 승인되지 않았습니다. 휴대폰에서 새 QR 코드를 다시 스캔하세요.</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>페어링 요청이 중단되었습니다</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>승인 전에 휴대폰의 연결이 끊어졌습니다. 직접 취소한 것이 아니라면 QR 코드를 다시 표시하고 스캔하세요.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>감지 중 · 동기화 시작 안 됨</value>

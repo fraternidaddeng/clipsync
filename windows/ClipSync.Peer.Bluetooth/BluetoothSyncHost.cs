@@ -269,11 +269,11 @@ public sealed class BluetoothSyncHost : IAsyncDisposable
         {
             await using var transport = new Bt1SyncTransport(connection.Stream, channel.Send, channel.Receive);
             var result = await engine.RunAsync(transport, token).ConfigureAwait(false);
-            BluetoothLog.SessionEnded(logger, deviceId, result.ErrorCode ?? "clean");
+            BluetoothLog.SessionEnded(logger, deviceId, result.ErrorCode ?? BluetoothLog.SessionEndClean);
         }
         catch (OperationCanceledException)
         {
-            BluetoothLog.SessionEnded(logger, deviceId, "cancelled");
+            BluetoothLog.SessionEnded(logger, deviceId, BluetoothLog.SessionEndCancelled);
         }
         catch (Exception exception) when (exception is IOException or ObjectDisposedException)
         {

@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>Yêu cầu ghép nối đã hết hạn</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>Điện thoại đã chờ 90 giây mà không được phê duyệt. Hãy quét lại mã QR mới trên điện thoại để thử lại.</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>Điện thoại đã chờ {0} giây mà không được phê duyệt. Hãy quét lại mã QR mới trên điện thoại để thử lại.</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>Yêu cầu ghép nối đã bị hủy</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>Điện thoại đã ngắt kết nối trước khi được phê duyệt. Nếu không phải bạn chủ động hủy, hãy hiển thị lại mã QR và quét lại.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Đang lắng nghe · đồng bộ chưa chạy</value>

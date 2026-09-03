@@ -266,7 +266,9 @@ public static partial class Strings
     public static string Tray_PairingRequest_TitleFormat => Get(nameof(Tray_PairingRequest_TitleFormat));
     public static string Tray_PairingRequest_Body => Get(nameof(Tray_PairingRequest_Body));
     public static string Tray_PairingTimeout_Title => Get(nameof(Tray_PairingTimeout_Title));
-    public static string Tray_PairingTimeout_Body => Get(nameof(Tray_PairingTimeout_Body));
+    public static string Tray_PairingTimeout_BodyFormat => Get(nameof(Tray_PairingTimeout_BodyFormat));
+    public static string Tray_PairingAborted_Title => Get(nameof(Tray_PairingAborted_Title));
+    public static string Tray_PairingAborted_Body => Get(nameof(Tray_PairingAborted_Body));
     public static string Tray_Status_ListeningNoSync => Get(nameof(Tray_Status_ListeningNoSync));
     public static string Tray_Status_ConnectedFormat => Get(nameof(Tray_Status_ConnectedFormat));
     public static string Tray_Status_Waiting => Get(nameof(Tray_Status_Waiting));

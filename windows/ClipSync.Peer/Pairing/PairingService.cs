@@ -17,8 +17,11 @@ public sealed record PairingServiceOptions
     /// <summary>Protocol section 9: the token expires within five minutes.</summary>
     public TimeSpan TicketLifetime { get; init; } = TimeSpan.FromMinutes(5);
 
+    /// <summary>The approval wait every production host uses; UI copy that names the wait reads this.</summary>
+    public static readonly TimeSpan DefaultApprovalTimeout = TimeSpan.FromSeconds(90);
+
     /// <summary>How long a confirm request waits for the user's explicit approval.</summary>
-    public TimeSpan ApprovalTimeout { get; init; } = TimeSpan.FromSeconds(90);
+    public TimeSpan ApprovalTimeout { get; init; } = DefaultApprovalTimeout;
 
     public TimeProvider TimeProvider { get; init; } = TimeProvider.System;
 }
@@ -53,6 +56,9 @@ public sealed class PairingService
         this.logger = logger ?? NullLogger.Instance;
         clock = options.TimeProvider;
     }
+
+    /// <summary>How long a confirm request waits for the user's explicit approval.</summary>
+    public TimeSpan ApprovalTimeout => options.ApprovalTimeout;
 
     /// <summary>Raised after a pairing (or re-pairing) commits, for UI refresh.</summary>
     public event Action<PairedDevice>? PairingCompleted;
@@ -141,15 +147,20 @@ public sealed class PairingService
                 && !string.Equals(device.DeviceId, request.DeviceId, StringComparison.Ordinal)
                 && string.Equals(device.DisplayName, displayName, StringComparison.Ordinal)
                 && string.Equals(device.Platform, request.Platform, StringComparison.Ordinal));
+        // The approver sees the timeout token on its own so it can tell "user never answered"
+        // from "the phone hung up first" — the linked token below fires for both.
+        using var timeoutSource = new CancellationTokenSource(options.ApprovalTimeout, clock);
         var candidate = new PairingCandidate(
             request.DeviceId,
             displayName,
             request.Platform,
             IsRepair: existing is not null,
-            ReplacesSameNamePeer: replacesSameNamePeer);
+            ReplacesSameNamePeer: replacesSameNamePeer)
+        {
+            ApprovalTimeout = timeoutSource.Token
+        };
 
         bool approved;
-        using var timeoutSource = new CancellationTokenSource(options.ApprovalTimeout, clock);
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutSource.Token);
         try
         {

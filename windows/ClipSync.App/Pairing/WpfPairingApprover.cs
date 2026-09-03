@@ -14,17 +14,29 @@ namespace ClipSync.App.Pairing;
 /// <remarks>
 /// The window alone is easy to miss: Activate() from a non-foreground process is refused by
 /// the Windows foreground lock, so the taskbar button flashes until the user reaches the
-/// window, and the two optional callbacks let the App add a tray balloon when the request
-/// shows and when it lapses. Both callbacks run on the UI thread and receive at most the
-/// candidate's display name (cut to <see cref="NoticeNameMaxLength"/> characters).
+/// window, and the optional callbacks let the App add a tray balloon when the request shows,
+/// when it lapses unanswered, and when the phone hangs up before an answer. All callbacks run
+/// on the UI thread and receive at most the candidate's display name (cut to
+/// <see cref="NoticeNameMaxLength"/> characters).
 /// </remarks>
 public sealed class WpfPairingApprover(
     Dispatcher dispatcher,
     Action<string>? onRequestShown = null,
-    Action? onRequestTimedOut = null) : IPairingApprover
+    Action? onRequestTimedOut = null,
+    Action? onRequestAborted = null) : IPairingApprover
 {
     /// <summary>Balloon titles have little room; the approval window still shows the full name.</summary>
     internal const int NoticeNameMaxLength = 40;
+
+    /// <summary>Why an approval request went away without a decision.</summary>
+    internal enum CancellationKind
+    {
+        /// <summary>The approval wait elapsed while the phone was still holding the line.</summary>
+        Timeout,
+
+        /// <summary>The phone dropped the confirm request (or the host is shutting down) before the wait elapsed.</summary>
+        Aborted,
+    }
 
     public Task<bool> ApproveAsync(PairingCandidate candidate, CancellationToken cancellationToken)
     {
@@ -35,12 +47,15 @@ public sealed class WpfPairingApprover(
             var registration = cancellationToken.Register(() =>
             {
                 var lapsed = completion.TrySetCanceled(cancellationToken);
+                // Read the timeout token here, inside the cancellation callback: the service
+                // disposes its sources once ApproveAsync observes the cancellation.
+                var kind = Classify(candidate);
                 _ = window.Dispatcher.InvokeAsync(() =>
                 {
                     window.Close();
                     if (lapsed)
                     {
-                        onRequestTimedOut?.Invoke();
+                        NoticeFor(kind, onRequestTimedOut, onRequestAborted)?.Invoke();
                     }
                 });
             });
@@ -94,6 +109,24 @@ public sealed class WpfPairingApprover(
         };
         _ = NativeMethods.FlashWindowEx(ref info);
     }
+
+    /// <summary>
+    /// Timeout when the candidate's approval-timeout token has fired. A candidate without a
+    /// distinguishable timeout token (built outside <c>PairingService</c>) keeps the historical
+    /// reading: any cancellation is a timeout.
+    /// </summary>
+    internal static CancellationKind Classify(PairingCandidate candidate)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+        var timeout = candidate.ApprovalTimeout;
+        return !timeout.CanBeCanceled || timeout.IsCancellationRequested
+            ? CancellationKind.Timeout
+            : CancellationKind.Aborted;
+    }
+
+    /// <summary>The balloon callback for a cancellation kind; null when the App wired none for it.</summary>
+    internal static Action? NoticeFor(CancellationKind kind, Action? onTimedOut, Action? onAborted) =>
+        kind == CancellationKind.Timeout ? onTimedOut : onAborted;
 
     /// <summary>The name as it may appear in a balloon: trimmed, cut with an ellipsis, never split inside a surrogate pair.</summary>
     internal static string NoticeName(string displayName)

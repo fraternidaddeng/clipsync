@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>Prośba o sparowanie wygasła</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>Telefon czekał 90 sekund bez zatwierdzenia. Zeskanuj na telefonie nowy kod QR, aby spróbować ponownie.</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>Telefon czekał {0} sekund bez zatwierdzenia. Zeskanuj na telefonie nowy kod QR, aby spróbować ponownie.</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>Prośba o sparowanie przerwana</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>Telefon rozłączył się przed zatwierdzeniem. Jeśli nie anulowano tego ręcznie, pokaż kod QR ponownie i zeskanuj go jeszcze raz.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Nasłuchuje · synchronizacja nie działa</value>
