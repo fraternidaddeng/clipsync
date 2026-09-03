@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>Koppelverzoek verlopen</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>De telefoon heeft 90 seconden gewacht zonder goedkeuring. Scan een nieuwe QR-code op de telefoon om het opnieuw te proberen.</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>De telefoon heeft {0} seconden gewacht zonder goedkeuring. Scan een nieuwe QR-code op de telefoon om het opnieuw te proberen.</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>Koppelverzoek afgebroken</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>De telefoon verbrak de verbinding vóór de goedkeuring. Als je dit niet zelf hebt geannuleerd, toon de QR-code opnieuw en scan nog eens.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Luistert · synchronisatie niet actief</value>

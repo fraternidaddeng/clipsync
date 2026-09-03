@@ -1,4 +1,6 @@
 using ClipSync.App.Diagnostics;
+using ClipSync.Core.Security.Bt1;
+using ClipSync.Peer.Bluetooth;
 using ClipSync.Peer.Diagnostics;
 using ClipSync.Peer.Pairing;
 using Microsoft.Extensions.Logging;
@@ -8,14 +10,15 @@ namespace ClipSync.App.Tests.Diagnostics;
 
 /// <summary>
 /// The Peer-layer log events reach the tray diagnostics as codes only. These tests pin the
-/// hygiene contract: event names become snake_case codes, a state value follows the code
-/// solely when it belongs to a constant allow list, and messages, device ids, names, and
-/// free text never leak — whatever the state carries.
+/// hygiene contract: event names become snake_case codes under a category-chosen prefix, a
+/// state value follows the code solely when it belongs to a constant allow list, and messages,
+/// device ids, names, MACs, and free text never leak — whatever the state carries.
 /// </summary>
 public sealed class DiagnosticsLogCodesTests
 {
     private const string PairingCategory = "ClipSync.Peer.Pairing";
     private const string ServerCategory = "ClipSync.Peer.Server";
+    private const string BluetoothCategory = "ClipSync.Peer.Bluetooth";
 
     [Theory]
     [InlineData("PairingConfirmReceived", "peer_pairing_confirm_received")]
@@ -224,6 +227,125 @@ public sealed class DiagnosticsLogCodesTests
     {
         Assert.Same(NullLogger.Instance, DiagnosticsLoggerFactory.Instance.CreateLogger("Microsoft.AspNetCore.Server.Kestrel"));
         Assert.IsType<DiagnosticsLogger>(DiagnosticsLoggerFactory.Instance.CreateLogger(ServerCategory));
+        Assert.IsType<DiagnosticsLogger>(DiagnosticsLoggerFactory.Instance.CreateLogger(BluetoothCategory));
+    }
+
+    [Theory]
+    [InlineData("ClipSync.Peer", "peer_")]
+    [InlineData("ClipSync.Peer.Server", "peer_")]
+    [InlineData("ClipSync.Peer.Session", "peer_")]
+    [InlineData("ClipSync.Peer.Pairing", "peer_")]
+    [InlineData("ClipSync.Peer.Bluetooth", "bt_")]
+    [InlineData("ClipSync.Peer.Bluetooth.Session", "bt_")]
+    [InlineData("ClipSync.App.Startup", "app_")]
+    [InlineData("ClipSync.Core.Storage", "app_")]
+    [InlineData("ClipSync.PeerX", "app_")] // a lookalike category is not the peer namespace
+    public void PrefixFollowsTheLoggerCategory(string category, string expectedPrefix)
+    {
+        Assert.Equal(expectedPrefix, DiagnosticsLogCodes.PrefixFor(category));
+        Assert.StartsWith(expectedPrefix, DiagnosticsLogCodes.For(category, new EventId(1, "ListenerStarted"), null), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ForeignCategoriesHaveNoPrefix()
+    {
+        Assert.Null(DiagnosticsLogCodes.PrefixFor("Microsoft.Hosting.Lifetime"));
+        Assert.Null(DiagnosticsLogCodes.PrefixFor("ClipSyncOther"));
+    }
+
+    [Theory]
+    [InlineData("ListenerStarted", "bt_listener_started")]
+    [InlineData("ListenerStopped", "bt_listener_stopped")]
+    [InlineData("AcceptRateLimited", "bt_accept_rate_limited")]
+    [InlineData("SessionStarted", "bt_session_started")]
+    public void BluetoothEventNamesBecomeBtCodes(string eventName, string expected)
+    {
+        Assert.Equal(expected, DiagnosticsLogCodes.For(BluetoothCategory, new EventId(1, eventName), null));
+    }
+
+    [Fact]
+    public void BluetoothSessionEndedKeepsProtocolCodesAndTheDeclaredOutcomesOnly()
+    {
+        var eventId = new EventId(6, "SessionEnded");
+
+        Assert.Equal(
+            "bt_session_ended_clean",
+            DiagnosticsLogCodes.For(BluetoothCategory, eventId, State(("DeviceId", "SECRET-device"), ("Code", BluetoothLog.SessionEndClean))));
+        Assert.Equal(
+            "bt_session_ended_cancelled",
+            DiagnosticsLogCodes.For(BluetoothCategory, eventId, State(("DeviceId", "SECRET-device"), ("Code", BluetoothLog.SessionEndCancelled))));
+        Assert.Equal(
+            "bt_session_ended_auth_failed",
+            DiagnosticsLogCodes.For(BluetoothCategory, eventId, State(("DeviceId", "SECRET-device"), ("Code", "AUTH_FAILED"))));
+        // Transport exception names are not a declared set: they read unknown.
+        Assert.Equal(
+            "bt_session_ended_unknown",
+            DiagnosticsLogCodes.For(BluetoothCategory, eventId, State(("DeviceId", "SECRET-device"), ("Code", "IOException"))));
+        Assert.Equal(
+            "bt_session_ended_unknown",
+            DiagnosticsLogCodes.For(BluetoothCategory, eventId, State(("DeviceId", "SECRET-device"), ("Code", "SECRET"))));
+    }
+
+    [Fact]
+    public void BluetoothOutcomesDoNotLeakIntoTheIpSessionAllowList()
+    {
+        Assert.Equal(
+            "peer_session_ended_unknown",
+            DiagnosticsLogCodes.For("ClipSync.Peer.Session", new EventId(1, "SessionEnded"), State(("Code", BluetoothLog.SessionEndClean))));
+    }
+
+    [Fact]
+    public void BluetoothHandshakeRefusedCarriesOnlyWireErrorCodes()
+    {
+        var eventId = new EventId(4, "HandshakeRefused");
+
+        Assert.All(Bt1ErrorCodes.WireCodes, code =>
+            Assert.Equal(
+                "bt_handshake_refused_" + code.ToLowerInvariant(),
+                DiagnosticsLogCodes.For(BluetoothCategory, eventId, State(("Code", code), ("Reason", "SECRET reason")))));
+        // DecryptFailed is local-only and never on the wire; the reason text is never a code.
+        Assert.Equal(
+            "bt_handshake_refused_unknown",
+            DiagnosticsLogCodes.For(BluetoothCategory, eventId, State(("Code", Bt1ErrorCodes.DecryptFailed), ("Reason", "SECRET"))));
+        Assert.Equal(
+            "bt_handshake_refused_unknown",
+            DiagnosticsLogCodes.For(BluetoothCategory, eventId, State(("Code", "SECRET"), ("Reason", "unknown_device"))));
+    }
+
+    [Fact]
+    public void BluetoothIdentifyingAndFreeTextStateNeverReachesTheCode()
+    {
+        var started = DiagnosticsLogCodes.For(
+            BluetoothCategory,
+            new EventId(5, "SessionStarted"),
+            State(("DeviceId", "SECRET-device"), ("RemoteAddress", "SECRET-MAC")));
+        Assert.Equal("bt_session_started", started);
+
+        var failed = DiagnosticsLogCodes.For(
+            BluetoothCategory,
+            new EventId(3, "ListenerFailed"),
+            State(("ExceptionKind", "SECRET-kind")));
+        Assert.Equal("bt_listener_failed", failed);
+    }
+
+    [Fact]
+    public void BluetoothLoggerRecordsSourceGeneratedEventsAndDropsTheDebugAbort()
+    {
+        var logger = DiagnosticsLoggerFactory.Instance.CreateLogger(BluetoothCategory);
+
+        BluetoothLog.ListenerStarted(logger);
+        BluetoothLog.HandshakeRefused(logger, Bt1ErrorCodes.AuthFailed, "SECRET reason");
+        BluetoothLog.SessionStarted(logger, "SECRET-device");
+        BluetoothLog.SessionEnded(logger, "SECRET-device", BluetoothLog.SessionEndClean);
+        BluetoothLog.HandshakeAborted(logger, "SECRET-DEBUG-KIND");
+
+        var codes = LocalDiagnostics.Snapshot().Select(entry => entry.Code).ToList();
+        Assert.Contains("bt_listener_started", codes);
+        Assert.Contains("bt_handshake_refused_bt1_auth_failed", codes);
+        Assert.Contains("bt_session_started", codes);
+        Assert.Contains("bt_session_ended_clean", codes);
+        Assert.DoesNotContain(codes, code => code.Contains("SECRET", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(codes, code => code.Contains("handshake_aborted", StringComparison.Ordinal));
     }
 
     private static List<KeyValuePair<string, object?>> State(params (string Key, object? Value)[] pairs) =>

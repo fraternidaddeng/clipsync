@@ -580,7 +580,8 @@ public partial class App : Application
                         // stops immediately on either transport.
                         OutboundAllowed = () => !viewModel.IsPaused && !viewModel.IsPrivateMode
                     }
-                });
+                },
+                loggerFactory: DiagnosticsLoggerFactory.Instance);
             host.RemoteClipsCommitted += OnRemoteClipsCommitted;
             host.LocalOnlyMarksChanged += OnLocalOnlyMarksChanged;
             host.SessionsChanged += OnBluetoothSessionsChanged;

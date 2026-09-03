@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>คำขอจับคู่หมดเวลาแล้ว</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>โทรศัพท์รอ 90 วินาทีแล้วแต่ยังไม่ได้รับการอนุมัติ สแกนคิวอาร์โค้ดใหม่บนโทรศัพท์เพื่อลองอีกครั้ง</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>โทรศัพท์รอ {0} วินาทีแล้วแต่ยังไม่ได้รับการอนุมัติ สแกนคิวอาร์โค้ดใหม่บนโทรศัพท์เพื่อลองอีกครั้ง</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>คำขอจับคู่ถูกยกเลิก</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>โทรศัพท์ตัดการเชื่อมต่อก่อนได้รับการอนุมัติ หากคุณไม่ได้ยกเลิกเอง ให้แสดงคิวอาร์โค้ดอีกครั้งแล้วสแกนใหม่</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>กำลังเฝ้าฟัง · การซิงค์ยังไม่ทำงาน</value>

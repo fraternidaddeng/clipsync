@@ -163,6 +163,66 @@ public sealed class PairingServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task ApproverSeesTheTimeoutTokenFireOnApprovalTimeout()
+    {
+        var timeoutSeenByApprover = false;
+        var service = CreateService(
+            new DelegateApprover(async (candidate, ct) =>
+            {
+                Assert.True(candidate.ApprovalTimeout.CanBeCanceled);
+                try
+                {
+                    await Task.Delay(Timeout.InfiniteTimeSpan, ct);
+                }
+                catch (OperationCanceledException)
+                {
+                    timeoutSeenByApprover = candidate.ApprovalTimeout.IsCancellationRequested;
+                    throw;
+                }
+
+                return true;
+            }),
+            approvalTimeout: TimeSpan.FromMilliseconds(120));
+
+        var outcome = await service.ConfirmAsync(Request(service.IssueTicket().Token), CancellationToken.None);
+
+        Assert.Equal(PairingErrorCodes.Timeout, Assert.IsType<PairingConfirmOutcome.Failed>(outcome).ErrorCode);
+        Assert.True(timeoutSeenByApprover);
+    }
+
+    [Fact]
+    public async Task ApproverSeesTheTimeoutTokenQuietWhenThePhoneAbortsFirst()
+    {
+        using var requestAborted = new CancellationTokenSource();
+        var approverEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        bool? timeoutSeenByApprover = null;
+        var service = CreateService(new DelegateApprover(async (candidate, ct) =>
+        {
+            approverEntered.SetResult();
+            try
+            {
+                await Task.Delay(Timeout.InfiniteTimeSpan, ct);
+            }
+            catch (OperationCanceledException)
+            {
+                timeoutSeenByApprover = candidate.ApprovalTimeout.IsCancellationRequested;
+                throw;
+            }
+
+            return true;
+        }));
+        var confirm = service.ConfirmAsync(Request(service.IssueTicket().Token), requestAborted.Token);
+        await approverEntered.Task;
+
+        // Kestrel's RequestAborted: the phone hung up long before the approval wait elapsed.
+        await requestAborted.CancelAsync();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => confirm);
+        Assert.False(timeoutSeenByApprover);
+        Assert.Null(await store.GetDeviceAsync(AndroidDeviceId));
+    }
+
+    [Fact]
     public async Task RepairBumpsEpochClearsRevocationAndTellsTheApprover()
     {
         PairingCandidate? seen = null;

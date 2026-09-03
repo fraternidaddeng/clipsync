@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>O pedido de pareamento expirou</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>O telefone esperou 90 segundos sem aprovação. Escaneie um novo código QR no telefone para tentar de novo.</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>O telefone esperou {0} segundos sem aprovação. Escaneie um novo código QR no telefone para tentar de novo.</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>Pedido de pareamento interrompido</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>O telefone desconectou antes da aprovação. Se não foi você quem cancelou, mostre o código QR de novo e escaneie outra vez.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Escutando · sincronização não iniciada</value>

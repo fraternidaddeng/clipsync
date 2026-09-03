@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>Kopplungsanfrage abgelaufen</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>Das Telefon hat 90 Sekunden ohne Genehmigung gewartet. Scannen Sie auf dem Telefon einen neuen QR-Code, um es erneut zu versuchen.</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>Das Telefon hat {0} Sekunden ohne Genehmigung gewartet. Scannen Sie auf dem Telefon einen neuen QR-Code, um es erneut zu versuchen.</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>Kopplungsanfrage abgebrochen</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>Das Telefon hat die Verbindung vor der Genehmigung getrennt. Falls Sie nicht selbst abgebrochen haben, zeigen Sie den QR-Code erneut an und scannen Sie ihn noch einmal.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Lauscht · Sync nicht gestartet</value>

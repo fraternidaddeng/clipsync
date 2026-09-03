@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>انتهت مهلة طلب الاقتران</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>انتظر الهاتف 90 ثانية دون موافقة. امسح رمز QR جديدًا على الهاتف للمحاولة مجددًا.</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>انتظر الهاتف {0} ثانية دون موافقة. امسح رمز QR جديدًا على الهاتف للمحاولة مجددًا.</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>تم إلغاء طلب الاقتران</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>انقطع اتصال الهاتف قبل الموافقة. إن لم تكن أنت من ألغى الطلب، فاعرض رمز QR مرة أخرى وامسحه مجددًا.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>يستمع · المزامنة غير مشغّلة</value>

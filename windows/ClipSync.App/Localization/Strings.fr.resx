@@ -789,8 +789,14 @@
   <data name="Tray_PairingTimeout_Title" xml:space="preserve">
     <value>La demande d’appairage a expiré</value>
   </data>
-  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
-    <value>Le téléphone a attendu 90 secondes sans approbation. Scannez un nouveau code QR sur le téléphone pour réessayer.</value>
+  <data name="Tray_PairingTimeout_BodyFormat" xml:space="preserve">
+    <value>Le téléphone a attendu {0} secondes sans approbation. Scannez un nouveau code QR sur le téléphone pour réessayer.</value>
+  </data>
+  <data name="Tray_PairingAborted_Title" xml:space="preserve">
+    <value>Demande d’appairage interrompue</value>
+  </data>
+  <data name="Tray_PairingAborted_Body" xml:space="preserve">
+    <value>Le téléphone s’est déconnecté avant l’approbation. Si vous n’avez pas annulé vous-même, affichez de nouveau le code QR et rescannez-le.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>À l’écoute · synchro non démarrée</value>

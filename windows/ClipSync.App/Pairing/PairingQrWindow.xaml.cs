@@ -38,6 +38,7 @@ public partial class PairingQrWindow : Window
     private readonly DispatcherTimer countdown;
     private DateTimeOffset expiresAt;
     private string? currentPayloadJson;
+    private IDisposable? pairingBeacon;
 
     /// <param name="firewallSource">
     /// The main view model whose last firewall check drives the 未放行 hint under the QR
@@ -80,6 +81,7 @@ public partial class PairingQrWindow : Window
             // Without a reachable address a phone cannot connect; keep the token cancelled
             // rather than rendering a code that can only fail.
             pairing.CancelTicket();
+            StopPairingBeacon();
             currentPayloadJson = null;
             QrImage.Source = null;
             NoHostsBox.Visibility = Visibility.Visible;
@@ -94,9 +96,18 @@ public partial class PairingQrWindow : Window
         var payload = pairing.BuildQrPayload(ticket, hosts, host.Port, host.CertificateFingerprint);
         currentPayloadJson = PairingJson.Serialize(payload);
         RenderQr();
+        // A scannable code is on screen: beacon densely so the phone's pairing page hears
+        // this PC within seconds (firewall evidence + address ordering on its side).
+        pairingBeacon ??= host.BeginPairingBeacon();
 
         UpdateCountdownText();
         countdown.Start();
+    }
+
+    private void StopPairingBeacon()
+    {
+        pairingBeacon?.Dispose();
+        pairingBeacon = null;
     }
 
     /// <summary>
@@ -172,8 +183,10 @@ public partial class PairingQrWindow : Window
     /// </summary>
     private void CelebrateThenClose()
     {
-        // The pairing is done: no fresh ticket may replace the success beat.
+        // The pairing is done: no fresh ticket may replace the success beat, and the
+        // dense beacon has served its purpose.
         countdown.Stop();
+        StopPairingBeacon();
         if (!SystemParameters.ClientAreaAnimation)
         {
             Close();
@@ -229,5 +242,6 @@ public partial class PairingQrWindow : Window
         countdown.Tick -= OnCountdownTick;
         pairing.PairingCompleted -= OnPairingCompleted;
         pairing.CancelTicket();
+        StopPairingBeacon();
     }
 }

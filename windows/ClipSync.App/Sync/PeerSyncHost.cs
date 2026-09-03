@@ -20,7 +20,8 @@ namespace ClipSync.App.Sync;
 /// <summary>
 /// Hosts the peer endpoint inside the WPF process: binds loopback plus private LAN addresses
 /// (plus user-configured extras such as Tailscale IPs), and broadcasts the discovery beacon
-/// on start, on network changes, and periodically. Recovers from suspend/resume and from
+/// on start, on network changes, periodically, and densely while a pairing QR window is open
+/// (<see cref="BeginPairingBeacon"/>). Recovers from suspend/resume and from
 /// interface churn via <see cref="SyncResilienceController"/>: the beacon restarts, bind
 /// addresses re-resolve, and the server rebinds when its addresses went stale.
 /// </summary>
@@ -28,8 +29,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
 {
     public const int DefaultPort = 47654;
 
-    private static readonly TimeSpan BeaconInterval = TimeSpan.FromMinutes(5);
-
+    private readonly DiscoveryBeaconSchedule beaconSchedule = new();
     private readonly SqliteClipboardEventStore store;
     private readonly ISecretProtector secretProtector;
     private readonly X509Certificate2 certificate;
@@ -156,7 +156,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
 
         broadcaster = new UdpDiscoveryBroadcaster(store.LocalDeviceId, server.Port, CertificateFingerprint);
         await BroadcastQuietlyAsync().ConfigureAwait(false);
-        beaconTimer = new Timer(_ => _ = BroadcastQuietlyAsync(), null, BeaconInterval, BeaconInterval);
+        var interval = beaconSchedule.CurrentInterval;
+        beaconTimer = new Timer(_ => _ = BroadcastQuietlyAsync(), null, interval, interval);
 
         var systemEvents = systemEventsOverride;
         if (systemEvents is null)
@@ -172,7 +173,66 @@ public sealed class PeerSyncHost : IAsyncDisposable
             resilienceOptions,
             onSuspend: EnterSuspend);
         started = true;
-        LocalDiagnostics.Write($"peer_server_started_port_{server.Port}");
+    }
+
+    /// <summary>True while a pairing beacon hold is outstanding (dense two-second cadence).</summary>
+    internal bool PairingBeaconActive => beaconSchedule.PairingActive;
+
+    /// <summary>
+    /// Switches the discovery beacon to the dense pairing cadence for as long as the returned
+    /// handle lives: one beacon goes out immediately, then every
+    /// <see cref="DiscoveryBeaconSchedule.PairingInterval"/>. Holds are reference-counted, so a
+    /// second QR window neither restarts nor cuts short the cadence; disposing the last handle
+    /// returns to <see cref="DiscoveryBeaconSchedule.IdleInterval"/>. Disposing a handle twice
+    /// is harmless. Safe to call before <see cref="StartAsync"/> or after disposal (no timer
+    /// exists then, so only the schedule changes).
+    /// </summary>
+    public IDisposable BeginPairingBeacon()
+    {
+        if (beaconSchedule.BeginPairing())
+        {
+            RearmBeaconTimer();
+            _ = BroadcastQuietlyAsync();
+            LocalDiagnostics.Write("pairing_beacon_started");
+        }
+
+        return new PairingBeaconHold(this);
+    }
+
+    private void EndPairingBeacon()
+    {
+        if (beaconSchedule.EndPairing())
+        {
+            RearmBeaconTimer();
+            LocalDiagnostics.Write("pairing_beacon_stopped");
+        }
+    }
+
+    /// <summary>Re-anchors the periodic timer on the schedule's current interval, if a timer exists.</summary>
+    private void RearmBeaconTimer()
+    {
+        var interval = beaconSchedule.CurrentInterval;
+        try
+        {
+            beaconTimer?.Change(interval, interval);
+        }
+        catch (ObjectDisposedException)
+        {
+            // A QR window closing during shutdown may race DisposeAsync; nothing to re-arm.
+        }
+    }
+
+    private sealed class PairingBeaconHold(PeerSyncHost host) : IDisposable
+    {
+        private int released;
+
+        public void Dispose()
+        {
+            if (Interlocked.Exchange(ref released, 1) == 0)
+            {
+                host.EndPairingBeacon();
+            }
+        }
     }
 
     /// <summary>
@@ -252,8 +312,9 @@ public sealed class PeerSyncHost : IAsyncDisposable
 
         if (afterResume)
         {
-            // The periodic timer's due time drifts across suspend; re-anchor the cadence.
-            beaconTimer?.Change(BeaconInterval, BeaconInterval);
+            // The periodic timer's due time drifts across suspend; re-anchor the cadence
+            // (still the dense one when a QR window survived the sleep).
+            RearmBeaconTimer();
         }
 
         await BroadcastQuietlyAsync().ConfigureAwait(false);
@@ -382,10 +443,14 @@ public sealed class PeerSyncHost : IAsyncDisposable
         }
     }
 
-    /// <summary>Loopback and private LAN IPv4 addresses by default, plus explicit user extras.</summary>
+    /// <summary>
+    /// Loopback and private LAN IPv4 addresses by default, plus explicit user extras. The
+    /// set is what gets bound; the order (after loopback) is what the QR payload advertises,
+    /// so it runs through <see cref="ReachableHostOrdering"/> to keep virtual adapters last.
+    /// </summary>
     internal static List<IPAddress> ResolveBindAddresses(string? extraBindAddresses)
     {
-        var addresses = new List<IPAddress> { IPAddress.Loopback };
+        var candidates = new List<CandidateAddress>();
         foreach (var networkInterface in NetworkInterface.GetAllNetworkInterfaces())
         {
             if (networkInterface.OperationalStatus != OperationalStatus.Up
@@ -394,14 +459,22 @@ public sealed class PeerSyncHost : IAsyncDisposable
                 continue;
             }
 
-            foreach (var unicast in networkInterface.GetIPProperties().UnicastAddresses)
+            var properties = networkInterface.GetIPProperties();
+            var hasGateway = properties.GatewayAddresses.Any(gateway =>
+                gateway.Address.AddressFamily == AddressFamily.InterNetwork
+                && !gateway.Address.Equals(IPAddress.Any));
+            foreach (var unicast in properties.UnicastAddresses)
             {
                 var address = unicast.Address;
-                if (address.AddressFamily == AddressFamily.InterNetwork
-                    && IsPrivateIpv4(address)
-                    && !addresses.Contains(address))
+                if (address.AddressFamily == AddressFamily.InterNetwork && IsPrivateIpv4(address))
                 {
-                    addresses.Add(address);
+                    candidates.Add(new CandidateAddress(
+                        address,
+                        networkInterface.Name,
+                        networkInterface.Description,
+                        networkInterface.NetworkInterfaceType,
+                        hasGateway,
+                        IsUp: true));
                 }
             }
         }
@@ -413,10 +486,21 @@ public sealed class PeerSyncHost : IAsyncDisposable
                 StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             foreach (var extra in extras)
             {
-                if (IPAddress.TryParse(extra, out var parsed) && !addresses.Contains(parsed))
+                if (IPAddress.TryParse(extra, out var parsed))
                 {
-                    addresses.Add(parsed);
+                    candidates.Add(CandidateAddress.User(parsed));
                 }
+            }
+        }
+
+        // Deduplicate after ordering so an address the user typed keeps its user-tier slot
+        // even when an interface also carries it.
+        var addresses = new List<IPAddress> { IPAddress.Loopback };
+        foreach (var candidate in ReachableHostOrdering.Order(candidates))
+        {
+            if (!addresses.Contains(candidate.Address))
+            {
+                addresses.Add(candidate.Address);
             }
         }
 
