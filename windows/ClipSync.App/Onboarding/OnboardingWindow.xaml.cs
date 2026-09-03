@@ -295,6 +295,14 @@ public partial class OnboardingWindow : Window
 
     private void OnCloseClicked(object sender, RoutedEventArgs e) => Close();
 
+    // 使用前必读：只在点击时打开浏览器（按界面语言选文档版本）；打不开就在行内说明。
+    private void OnOpenPrivacyDocClicked(object sender, RoutedEventArgs e)
+    {
+        var opened = Docs.ExternalLinks.TryOpen(
+            Docs.PrivacyDocLink.For(System.Globalization.CultureInfo.CurrentUICulture.Name));
+        PrivacyDocOpenFailedText.Visibility = opened ? Visibility.Collapsed : Visibility.Visible;
+    }
+
     private void OnClosed(object? sender, EventArgs e)
     {
         LeavePairStep();

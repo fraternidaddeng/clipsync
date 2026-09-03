@@ -217,10 +217,10 @@
     <value>特権ダイレクト読み取り</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Android のバックグラウンド読み取り段階で最も品質の高い経路です。PC が adb でペア済みのスマートフォンの内蔵特権ホストを起動し、以後はバックグラウンドのコピーが即時アップロードされます。すべての手順であなたの明示的な同意が必要で、決して黙って実行しません。</value>
+    <value>Android のバックグラウンド読み取り段階で最も品質の高い経路です。PC が adb でペア済みのスマートフォンの内蔵特権ホストを起動し、以後はバックグラウンドのコピーが即時アップロードされます。起動は毎回、ここでのあなたのクリックによって行われます。</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>許可すると、この PC は adb（Android Debug Bridge）を呼び出してスマートフォンに 1 つの起動コマンドを送ります。adb は毎回あなたがクリックしたときだけ実行され、常駐も黙って実行することもありません。初回はスマートフォンで「USB デバッグ」を有効にし、adb 認証のダイアログを手動で承認する必要があります。この手順は Android では自動化できません。</value>
+    <value>許可すると、この PC は adb（Android Debug Bridge）を呼び出してスマートフォンに 1 つの起動コマンドを送ります。adb が実行されるのは「特権ダイレクト読み取りを開始」をクリックしたときの 1 回だけで、そのときスマートフォンに起動コマンドを 1 つ送ります。それ以外のときに adb を呼び出すことはありません。初回はスマートフォンで「USB デバッグ」を有効にし、adb 認証のダイアログを手動で承認する必要があります。この手順は Android では自動化できません。</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>理解して adb を許可</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>相手側サービスが起動していないため、このセッションでは表示できるフィンガープリントがありません。</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>ファイアウォール</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>TCP 47654 の受信を許可済み（{0}）</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>TCP 47654 の受信許可ルールが見つかりません。スマートフォンが接続できない可能性があります</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>判断できません（サードパーティ製ファイアウォールまたはグループ ポリシーが管理しています）</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>このプログラムを対象とするブロック ルールがあります：{0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>今回はポート {0} で待ち受けており、ポート指定のルールは適用されません。47654 を空けてから再起動してください</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>現在のネットワークは Windows で「パブリック」に分類されています。プライベート ネットワークのみを許可するルールはここでは効きません。設定 → ネットワークとインターネット → このネットワークのプロパティ で「プライベート ネットワーク」に変えるか、許可時にパブリック ネットワークにチェックを入れてください。</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>ルールがあるのはファイアウォールが遮断しないという意味だけです。ルーターの AP 分離や VPN/TUN が接続を妨げることは依然あります。</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>再検出</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>検出中…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>ドメイン ネットワーク</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>プライベート ネットワーク</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>パブリック ネットワーク</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>TCP 47654 の受信を許可</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>ポートを許可しないとスマートフォンはこの PC に接続できません。Windows 標準の netsh を管理者として実行し、「ClipSync TCP 47654」という名前のファイアウォール ルールを 1 つ作成します。実行される完全なコマンドは下に表示され、コピーして管理者の PowerShell で自分で実行することもできます。ルールはプログラムのフォルダーを削除しても消えません。ここから削除できます。</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>コマンドをコピー</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>コピーしました</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>許可（管理者権限が必要）</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>ルールを削除（管理者権限が必要）</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>ファイアウォールのポートを許可</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>以下のコマンドを管理者として実行します。UAC ダイアログに表示されるプログラムは Windows 標準の netsh.exe（Microsoft 署名）で、引数は表示されません。引数はまさに下の 1 行です。</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>プライベート ネットワーク（自宅や職場の Wi-Fi）</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>パブリック ネットワーク（ホテルやカフェの Wi-Fi。同じセグメントの端末がこのポートに到達できますが、内容を読むにはペアリングが必要です）</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>確認して管理者権限を要求</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>ルールを作成し、再検出しました。</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>キャンセルしました：管理者の承認が得られませんでした。</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>実行に失敗しました（終了コード {0}）。コマンドをコピーして管理者の PowerShell で手動実行できます。</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>ルールを削除しました。</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>取り消し済み</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>ようこそページから初回設定チュートリアルをもう一度たどります。設定やペアリングは変更しません。</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>プライバシーとリスクの説明</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>ご利用前に必読の文書をブラウザーで開きます（GitHub）。</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>開く</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>使用できるブラウザーがありません。</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · 最近のクリップ</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>「{0}」の認証失敗が繰り返し検出されたため、この端末を一時的に制限しています。</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>「{0}」がペアリングを要求しています</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>開いた承認ウィンドウで承認または拒否してください。ウィンドウはタスクバーで点滅しています。</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>ペアリング要求がタイムアウトしました</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>スマートフォンは 90 秒待ちましたが承認されませんでした。スマートフォンで新しい QR コードをもう一度スキャンしてください。</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>監視中 · 同期は未起動</value>
@@ -815,6 +926,9 @@
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>LAN アドレスが見つかりません。この PC とスマートフォンを同じネットワークに接続し（または設定で Tailscale アドレスを追加し）、このウィンドウを開き直してください。</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>この PC のファイアウォールに TCP 47654 の許可ルールがなく、スマートフォンはおそらく接続できません。先に「経路」ページで許可してください。</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>承認する前にスマートフォンで確認</value>
   </data>
@@ -911,8 +1025,14 @@
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android はスマートフォンのバックグラウンドでのクリップボード読み取りを制限しており、ClipSync はそれを偽りません。スマホは前面にある間は自動アップロードします。バックグラウンド読み取りには一度だけ追加設定が必要で、品質最高の「特権ダイレクト読み取り」はまさにこの PC がスマホの起動を手伝う方式です。すべての能力は実地テストで判定され、できないことはできないと表示します。</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>ご利用前に必読：プライバシーとリスクの説明</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>スマートフォンで ClipSync の「経路」ページを開き、ネットワーク区間の「ペアリングする」をタップして、下のコードをスキャンしてください。承認する前に PC 名と証明書フィンガープリントを確認しましょう。</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>スマートフォンが接続できないと表示する場合、たいていはこの PC のファイアウォールが TCP 47654 を許可していないためです。案内のあと、「経路」ページでワンクリックで許可できます。</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>ペアリングが完了しました。経路はつながっています。残りの案内を続けましょう。</value>
@@ -933,7 +1053,7 @@
     <value>ケーブルがないときは、スマホと PC を同じ Wi-Fi につなぎ、「開発者向けオプション → ワイヤレスデバッグ」を有効にして QR コードで一度ペアリングします。その後は USB と同じように動作します。</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb はあなたがクリックしたときだけ実行され、常駐も静かな実行も決してありません。どの手順にも明確な同意が必要です。案内のあとは、「経路」ページの特権ダイレクト読み取りカードからいつでも開始・取り消しできます。</value>
+    <value>adb はあなたがクリックしたときだけ実行され、スマートフォンに起動コマンドを 1 つ送ります。それ以外のときに adb を呼び出すことはありません。案内のあとは、「経路」ページの特権ダイレクト読み取りカードからいつでも開始・取り消しできます。</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>既定でオフの予備チャネルです。LAN が VPN やファイアウォールで遮断されたとき、Windows の設定で Bluetooth ペアリング済みのスマホはテキストの同期を続けられます（画像なし、低速）。</value>

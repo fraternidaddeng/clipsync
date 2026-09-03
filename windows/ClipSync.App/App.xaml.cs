@@ -1,5 +1,6 @@
 using ClipSync.App.Clipboard;
 using ClipSync.App.Diagnostics;
+using ClipSync.App.Firewall;
 using ClipSync.App.Localization;
 using ClipSync.App.Onboarding;
 using ClipSync.App.Pairing;
@@ -53,8 +54,21 @@ public partial class App : Application
     private System.Windows.Threading.DispatcherTimer? liveRefreshTimer;
     private bool peerEndpointUnavailable;
 
+    /// <summary>
+    /// Set the moment exit is requested. WPF's own flag is internal and
+    /// <see cref="System.Windows.Threading.Dispatcher.HasShutdownStarted"/> only flips after
+    /// <see cref="OnExit"/> returns, so nothing public covers the teardown window in which the
+    /// tray icon is still clickable and any <c>Window.Show()</c> throws.
+    /// </summary>
+    private bool isExiting;
+
     protected override async void OnStartup(StartupEventArgs e)
     {
+        // Last-resort sinks go in before the first await: an async void OnStartup that
+        // faults after an await surfaces only through the dispatcher.
+        DispatcherUnhandledException += OnDispatcherUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += OnDomainUnhandledException;
+        TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
         base.OnStartup(e);
 
         // Tray-only contract: when a console-subsystem launcher (e.g. `dotnet
@@ -92,6 +106,10 @@ public partial class App : Application
         collection.AddSingleton<IAdbRunner>(_ => new ProcessAdbRunner());
         collection.AddSingleton<PrivilegedHostAssistant>();
         collection.AddSingleton<WindowsAppUpdater>();
+        // 防火墙（ADR 0006）: read-only COM inspection at standard rights; the elevator runs
+        // Windows' netsh through UAC only from the confirmed 放行/移除 click.
+        collection.AddSingleton<IFirewallInspector, FirewallInspector>();
+        collection.AddSingleton<IFirewallRuleElevator, FirewallRuleElevator>();
         collection.AddSingleton<MainViewModel>();
         collection.AddSingleton<MainWindow>();
         services = collection.BuildServiceProvider();
@@ -114,7 +132,7 @@ public partial class App : Application
         var mainWindow = services.GetRequiredService<MainWindow>();
         MainWindow = mainWindow;
         trayFlyout = new TrayFlyoutWindow(viewModel);
-        trayIcon = TrayIconController.Create(mainWindow, Shutdown, () => trayFlyout?.ShowFlyout());
+        trayIcon = TrayIconController.Create(mainWindow, RequestExit, ShowFlyoutIfRunning);
         mainViewModel = viewModel;
         viewModel.PropertyChanged += OnViewModelPropertyChanged;
         viewModel.Devices.CollectionChanged += OnDevicesChanged;
@@ -145,6 +163,9 @@ public partial class App : Application
         LocalDiagnostics.Write("listener_started");
 
         await StartPeerEndpointAsync(dataDirectory, deviceId, store, viewModel);
+        // 防火墙（ADR 0006）: one read-only check once the listener's port is known; runs on a
+        // pool thread and never blocks startup — the network segment fills in when it returns.
+        _ = RefreshFirewallStatusAsync();
         await SyncBluetoothHostAsync();
         UpdateTrayState();
 
@@ -346,11 +367,59 @@ public partial class App : Application
     {
         if (hotkey == GlobalHotkey.Flyout)
         {
-            trayFlyout?.ShowFlyout();
+            ShowFlyoutIfRunning();
             return;
         }
 
         TogglePauseFromHotkey();
+    }
+
+    /// <summary>
+    /// Tray click / 呼出快捷键 entry for the flyout. During teardown (tray 退出 was clicked
+    /// but OnExit is still blocking) the icon stays live for seconds; showing the window then
+    /// throws, so the request is simply dropped. <see cref="TrayFlyoutWindow.ShowFlyout"/>
+    /// still absorbs the residual race for anything this gate cannot see.
+    /// </summary>
+    private void ShowFlyoutIfRunning()
+    {
+        if (!TrayFlyoutGate.CanShowFlyout(isExiting, Dispatcher.HasShutdownStarted))
+        {
+            return;
+        }
+
+        trayFlyout?.ShowFlyout();
+    }
+
+    /// <summary>The one exit path: records the intent first, since Shutdown() itself exposes nothing public.</summary>
+    private void RequestExit()
+    {
+        isExiting = true;
+        Shutdown();
+    }
+
+    /// <summary>
+    /// Unhandled UI-thread exception. While running, record and exit cleanly rather than
+    /// leave a half-broken tray process; while already exiting, swallow so a clean exit does
+    /// not end in a crash dump. Code only — never the message (possible clipboard text).
+    /// </summary>
+    private void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+    {
+        LocalDiagnostics.Write(UnhandledExceptionCodes.ForDispatcher(e.Exception));
+        e.Handled = true;
+        if (!isExiting)
+        {
+            RequestExit();
+        }
+    }
+
+    /// <summary>Non-UI thread crash: the runtime terminates regardless, so this only leaves evidence.</summary>
+    private static void OnDomainUnhandledException(object sender, UnhandledExceptionEventArgs e) =>
+        LocalDiagnostics.Write(UnhandledExceptionCodes.ForDomain(e.ExceptionObject));
+
+    private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    {
+        LocalDiagnostics.Write(UnhandledExceptionCodes.ForUnobservedTask(e.Exception));
+        e.SetObserved();
     }
 
     /// <summary>
@@ -403,11 +472,21 @@ public partial class App : Application
         {
             var protector = services!.GetRequiredService<ISecretProtector>();
             var certificate = PeerCertificateProvider.GetOrCreate(dataDirectory, deviceId, protector);
+            // Pairing/session events land in the tray diagnostics as codes only (see
+            // DiagnosticsLogCodes), so a scan that ends in "pairing failed" on the phone can
+            // be answered with whether the confirm request ever reached this PC.
+            var diagnosticsLogs = DiagnosticsLoggerFactory.Instance;
+            // The approver's balloons read the tray field when they fire, not when the
+            // approver is built, so the tray/pairing construction order stays irrelevant.
             pairingService = new PairingService(
                 store,
                 protector,
-                new WpfPairingApprover(Dispatcher),
-                new PairingServiceOptions { LocalDisplayName = LocalDisplayName() });
+                new WpfPairingApprover(
+                    Dispatcher,
+                    onRequestShown: name => trayIcon?.ShowPairingRequestNotice(name),
+                    onRequestTimedOut: () => trayIcon?.ShowPairingTimeoutNotice()),
+                new PairingServiceOptions { LocalDisplayName = LocalDisplayName() },
+                diagnosticsLogs.CreateLogger("ClipSync.Peer.Pairing"));
             pairingService.PairingCompleted += OnPairingCompleted;
             pairingService.PeersSuperseded += OnPeersSuperseded;
             viewModel.DeviceRevoked += OnDeviceRevoked;
@@ -427,7 +506,8 @@ public partial class App : Application
                 imageSyncEnabled: () => viewModel.ImageSyncEnabled,
                 // Health-endpoint self-report: the phone's 对端写入 segment reads this instead
                 // of sitting on 未探测 while sync visibly works. Posture + real-apply evidence.
-                clipboardApplyState: () => viewModel.ClipboardApplyState);
+                clipboardApplyState: () => viewModel.ClipboardApplyState,
+                loggerFactory: diagnosticsLogs);
             syncHost.RemoteClipsCommitted += OnRemoteClipsCommitted;
             syncHost.LocalOnlyMarksChanged += OnLocalOnlyMarksChanged;
             syncHost.SessionsChanged += OnPeerSessionsChanged;
@@ -585,7 +665,32 @@ public partial class App : Application
             }
 
             mainViewModel.UpdatePeerStatus(syncHost.IsRunning, syncHost.Port, syncHost.ConnectedDeviceCount);
+            // The network changed under us (new addresses, resume, rebind): the active firewall
+            // profile may have changed with it, so the 防火墙 line is re-read as well.
+            _ = RefreshFirewallStatusAsync();
         });
+    }
+
+    /// <summary>
+    /// Runs the view model's read-only firewall check without letting a surprise from the COM
+    /// layer take the process down; the inspector already folds known failures into 无法判断.
+    /// Skipped while a check or an elevated run is in flight.
+    /// </summary>
+    private async Task RefreshFirewallStatusAsync()
+    {
+        if (mainViewModel is null || !mainViewModel.RefreshFirewallStatusCommand.CanExecute(null))
+        {
+            return;
+        }
+
+        try
+        {
+            await mainViewModel.RefreshFirewallStatusCommand.ExecuteAsync(null);
+        }
+        catch (Exception exception)
+        {
+            LocalDiagnostics.Write($"firewall_refresh_failed_{exception.GetType().Name}");
+        }
     }
 
     /// <summary>Groups the hex fingerprint by four, eight groups per line — humans compare groups, not character streams.</summary>
@@ -624,7 +729,7 @@ public partial class App : Application
             return;
         }
 
-        pairingWindow = new PairingQrWindow(pairingService, syncHost) { Owner = owner };
+        pairingWindow = new PairingQrWindow(pairingService, syncHost, mainViewModel) { Owner = owner };
         pairingWindow.Closed += (_, _) => pairingWindow = null;
         pairingWindow.Show();
     }
@@ -684,7 +789,7 @@ public partial class App : Application
             return;
         }
 
-        Shutdown();
+        RequestExit();
     }
 
     /// <summary>
@@ -824,6 +929,8 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        // Also reached when WPF shuts down on its own (SessionEnding), bypassing RequestExit.
+        isExiting = true;
         CharterThemeManager.Shutdown();
         if (liveRefreshTimer is not null)
         {

@@ -1,12 +1,14 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using ClipSync.App.Localization;
 using ClipSync.App.Sync;
+using ClipSync.App.ViewModels;
 using ClipSync.Core.Storage;
 using ClipSync.Peer.Pairing;
 
@@ -37,7 +39,11 @@ public partial class PairingQrWindow : Window
     private DateTimeOffset expiresAt;
     private string? currentPayloadJson;
 
-    public PairingQrWindow(PairingService pairing, PeerSyncHost host)
+    /// <param name="firewallSource">
+    /// The main view model whose last firewall check drives the 未放行 hint under the QR
+    /// (ADR 0006); null leaves the hint collapsed.
+    /// </param>
+    public PairingQrWindow(PairingService pairing, PeerSyncHost host, MainViewModel? firewallSource = null)
     {
         InitializeComponent();
         // 阿拉伯语 RTL（P1#16）：整窗镜像；二维码与指纹是机器文本，XAML 里钉回 LTR。
@@ -47,6 +53,15 @@ public partial class PairingQrWindow : Window
 
         DeviceNameText.Text = Environment.MachineName;
         FingerprintText.Text = TwoLineFingerprint(host.CertificateFingerprint);
+
+        if (firewallSource is not null)
+        {
+            FirewallHintBox.DataContext = firewallSource;
+            FirewallHintBox.SetBinding(VisibilityProperty, new Binding(nameof(MainViewModel.FirewallRuleMissing))
+            {
+                Converter = new BooleanToVisibilityConverter(),
+            });
+        }
 
         countdown = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         countdown.Tick += OnCountdownTick;

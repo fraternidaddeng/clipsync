@@ -217,10 +217,10 @@
     <value>विशेषाधिकार पठन</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Android बैकग्राउंड-रीड सीढ़ी की सबसे उच्च-गुणवत्ता वाली पायदान: PC adb से युग्मित फ़ोन को उसका अंतर्निहित विशेषाधिकार होस्ट शुरू करने में मदद करता है, इसके बाद फ़ोन की बैकग्राउंड कॉपियाँ तुरंत अपलोड होती हैं। हर चरण के लिए आपकी स्पष्ट सहमति ज़रूरी है — कभी चुपचाप नहीं।</value>
+    <value>Android बैकग्राउंड-रीड सीढ़ी की सबसे उच्च-गुणवत्ता वाली पायदान: PC adb से युग्मित फ़ोन को उसका अंतर्निहित विशेषाधिकार होस्ट शुरू करने में मदद करता है, इसके बाद फ़ोन की बैकग्राउंड कॉपियाँ तुरंत अपलोड होती हैं। हर शुरुआत यहाँ आपके क्लिक से ही होती है।</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>अनुमति देने पर यह PC फ़ोन को एक स्टार्ट कमांड भेजने के लिए adb (Android Debug Bridge) को कॉल करेगा। adb हर बार केवल आपके क्लिक पर चलता है — कभी स्थायी नहीं, कभी चुपचाप नहीं। पहली बार आपको फ़ोन पर USB डिबगिंग चालू करना होगा और उसके adb प्राधिकरण संकेत को हाथ से स्वीकार करना होगा — Android इस चरण को स्वचालित करने की अनुमति नहीं देता।</value>
+    <value>अनुमति देने पर यह PC फ़ोन को एक स्टार्ट कमांड भेजने के लिए adb (Android Debug Bridge) को कॉल करेगा। जब आप “विशेषाधिकार पठन शुरू करें” पर क्लिक करते हैं, यह PC adb से फ़ोन को एक स्टार्ट कमांड भेजता है; किसी और समय adb नहीं चलाया जाता। पहली बार आपको फ़ोन पर USB डिबगिंग चालू करना होगा और उसके adb प्राधिकरण संकेत को हाथ से स्वीकार करना होगा — Android इस चरण को स्वचालित करने की अनुमति नहीं देता।</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>समझ गया — adb की अनुमति दें</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>पीयर सेवा चालू नहीं है; इस सत्र में दिखाने को कोई फ़िंगरप्रिंट नहीं।</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>फ़ायरवॉल</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>इनबाउंड TCP 47654 अनुमत ({0})</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>TCP 47654 के लिए कोई इनबाउंड अनुमति नियम नहीं मिला; फ़ोन शायद कनेक्ट न हो पाए</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>निर्धारित नहीं किया जा सकता (तृतीय-पक्ष फ़ायरवॉल या समूह नीति नियंत्रण में है)</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>इस प्रोग्राम को लक्षित करने वाला एक ब्लॉक नियम है: {0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>इस बार पोर्ट {0} पर सुन रहा है, जिसे पोर्ट-आधारित नियम कवर नहीं करता; पोर्ट 47654 खाली करके पुनः प्रारंभ करें</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>Windows वर्तमान नेटवर्क को सार्वजनिक मानता है। केवल निजी नेटवर्क के लिए बना नियम यहाँ काम नहीं करेगा; सेटिंग्स → नेटवर्क और इंटरनेट → इस नेटवर्क के गुण में इसे निजी नेटवर्क करें, या अनुमति देते समय सार्वजनिक नेटवर्क चुनें।</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>नियम होने का मतलब सिर्फ़ यह है कि फ़ायरवॉल नहीं रोकता; राउटर का AP आइसोलेशन या VPN/TUN एडेप्टर अब भी कनेक्शन रोक सकते हैं।</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>फिर से जाँचें</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>जाँच हो रही है…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>डोमेन नेटवर्क</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>निजी नेटवर्क</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>सार्वजनिक नेटवर्क</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>इनबाउंड TCP 47654 की अनुमति दें</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>पोर्ट की अनुमति के बाद ही फ़ोन इस PC तक पहुँच सकता है। Windows का अपना netsh प्रशासक के रूप में चलकर “ClipSync TCP 47654” नाम का एक फ़ायरवॉल नियम बनाएगा; चलने वाला पूरा कमांड नीचे दिखाया गया है, और आप इसे कॉपी करके प्रशासक PowerShell में स्वयं भी चला सकते हैं। प्रोग्राम फ़ोल्डर हटाने पर नियम नहीं मिटता; इसे यहाँ से हटाएँ।</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>कमांड कॉपी करें</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>कॉपी हो गया</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>अनुमति दें (प्रशासक आवश्यक)</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>नियम हटाएँ (प्रशासक आवश्यक)</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>फ़ायरवॉल पोर्ट की अनुमति दें</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>निम्न कमांड प्रशासक के रूप में चलने वाला है। UAC संवाद में Windows का अपना netsh.exe (Microsoft द्वारा हस्ताक्षरित) दिखेगा और तर्क नहीं दिखेंगे — तर्क ठीक नीचे वाली पंक्ति हैं।</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>निजी नेटवर्क (घर या कार्यालय का Wi-Fi)</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>सार्वजनिक नेटवर्क (होटल या कैफ़े का Wi-Fi; उसी सेगमेंट के डिवाइस पोर्ट तक पहुँच सकते हैं, पर कुछ भी पढ़ने के लिए अब भी पेयरिंग ज़रूरी है)</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>पुष्टि करें और प्रशासक अधिकार माँगें</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>रद्द करें</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>नियम बन गया; फिर से जाँच ली गई।</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>रद्द: प्रशासक की अनुमति नहीं मिली।</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>निष्पादन विफल (निकास कोड {0})। आप कमांड कॉपी करके प्रशासक PowerShell में हाथ से चला सकते हैं।</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>नियम हटा दिया गया।</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>निरस्त</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>स्वागत पेज से पहली बार वाला ट्यूटोरियल दोबारा देखें; कोई सेटिंग या जोड़ी नहीं बदलती।</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>गोपनीयता और जोखिम</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>उपयोग से पहले पढ़ने वाला दस्तावेज़ ब्राउज़र में खोलता है (GitHub)।</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>खोलें</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>कोई ब्राउज़र उपलब्ध नहीं है।</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · हाल की क्लिपें</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>«{0}» से बार-बार प्रमाणीकरण विफलताएँ मिलीं; डिवाइस अस्थायी रूप से सीमित किया गया है।</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>«{0}» पेयरिंग का अनुरोध कर रहा है</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>अभी खुली स्वीकृति विंडो में स्वीकृत करें या अस्वीकारें; विंडो टास्कबार में झपक रही है।</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>पेयरिंग अनुरोध का समय समाप्त हो गया</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>फ़ोन ने 90 सेकंड प्रतीक्षा की, पर स्वीकृति नहीं मिली। फिर से कोशिश करने के लिए फ़ोन पर नया QR कोड स्कैन करें।</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>सुन रहा है · समन्वयन चालू नहीं</value>
@@ -815,6 +926,9 @@
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>कोई LAN पता नहीं मिला। इस PC और फ़ोन को एक ही नेटवर्क पर लाएँ (या प्राथमिकताओं में Tailscale पता जोड़ें), फिर यह विंडो दोबारा खोलें।</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>इस PC के फ़ायरवॉल में TCP 47654 के लिए अनुमति नियम नहीं है; फ़ोन बहुत संभव है कनेक्ट न हो पाए। पहले “मार्ग” पेज पर अनुमति दें।</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>स्वीकृति से पहले फ़ोन पर मिलान करें</value>
   </data>
@@ -911,8 +1025,14 @@
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android फ़ोन पर पृष्ठभूमि में क्लिपबोर्ड पढ़ने पर रोक लगाता है, और ClipSync इसका दिखावा नहीं करता: अग्रभूमि में फ़ोन अपने आप अपलोड करता है; पृष्ठभूमि पठन के लिए एक अतिरिक्त सेटअप चाहिए — सबसे उच्च गुणवत्ता वाला मार्ग, विशेषाधिकार पठन, वही है जिसे यह PC फ़ोन के लिए शुरू करने में मदद करता है। हर क्षमता असली जाँच से आँकी जाती है — जो नहीं हो सकता, वह साफ़ कहा जाता है।</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>उपयोग से पहले पढ़ें: गोपनीयता और जोखिम</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>फ़ोन पर ClipSync का “मार्ग” पेज खोलें, नेटवर्क खंड में “अभी जोड़ें” टैप करें और नीचे दिया कोड स्कैन करें; स्वीकृति से पहले PC का नाम और प्रमाणपत्र फ़िंगरप्रिंट मिला लें।</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>यदि फ़ोन कहे कि कनेक्ट नहीं हो पा रहा, तो बहुत संभव है इस PC के फ़ायरवॉल ने TCP 47654 की अनुमति नहीं दी है; इस परिचय के बाद “मार्ग” पेज पर एक क्लिक में अनुमति दे सकते हैं।</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>आपका फ़ोन जुड़ गया — मार्ग खुल गया है। बाक़ी परिचय जारी रखें।</value>
@@ -933,7 +1053,7 @@
     <value>केबल पास नहीं है: फ़ोन और इस PC को एक ही Wi-Fi से जोड़ें, डेवलपर विकल्प → वायरलेस डिबगिंग चालू करें और QR कोड से एक बार पेयर करें — इसके बाद यह USB जैसा ही काम करता है।</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb केवल आपके हर क्लिक पर चलता है — कभी स्थायी नहीं, कभी चुपचाप नहीं — और हर चरण के लिए आपकी स्पष्ट सहमति चाहिए। इस परिचय के बाद, “मार्ग” पेज का विशेषाधिकार पठन कार्ड ही वह जगह है जहाँ आप इसे कभी भी शुरू या वापस ले सकते हैं।</value>
+    <value>adb केवल आपके क्लिक पर चलता है और फ़ोन को एक स्टार्ट कमांड भेजता है; किसी और समय adb नहीं चलाया जाता। इस परिचय के बाद, “मार्ग” पेज का विशेषाधिकार पठन कार्ड ही वह जगह है जहाँ आप इसे कभी भी शुरू या वापस ले सकते हैं।</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>डिफ़ॉल्ट रूप से बंद एक बैकअप चैनल: जब LAN को VPN या फ़ायरवॉल रोक दे, तो Windows सेटिंग्स में पहले से ब्लूटूथ-युग्मित फ़ोन पाठ का समन्वयन जारी रखता है (चित्र नहीं, धीमा)।</value>

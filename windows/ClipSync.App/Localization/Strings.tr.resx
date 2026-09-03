@@ -217,10 +217,10 @@
     <value>Ayrıcalıklı okuma</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Android arka plan okuma merdiveninin en kaliteli basamağı: PC, eşleştirilmiş bir telefonun yerleşik ayrıcalıklı ana bilgisayarını başlatmasına adb ile yardım eder; ardından telefonun arka plan kopyaları anında yüklenir. Her adım açık onayınızı gerektirir; asla sessizce yapılmaz.</value>
+    <value>Android arka plan okuma merdiveninin en kaliteli basamağı: PC, eşleştirilmiş bir telefonun yerleşik ayrıcalıklı ana bilgisayarını başlatmasına adb ile yardım eder; ardından telefonun arka plan kopyaları anında yüklenir. Her başlatma burada sizin tıklamanızla tetiklenir.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>İzin verildiğinde bu PC, telefona tek bir başlatma komutu göndermek için adb’yi (Android Debug Bridge) çağırır. adb yalnızca her tıklamanızda çalışır — asla kalıcı değildir, asla sessiz değildir. İlk kez telefonda USB hata ayıklamayı da etkinleştirmeli ve adb yetkilendirme istemini elle kabul etmelisiniz — Android bu adımın otomatikleştirilmesine izin vermez.</value>
+    <value>İzin verildiğinde bu PC, telefona tek bir başlatma komutu göndermek için adb’yi (Android Debug Bridge) çağırır. “Ayrıcalıklı okumayı başlat”a tıkladığınızda bu PC, adb üzerinden telefona tek bir başlatma komutu gönderir; başka hiçbir zaman adb çağrılmaz. İlk kez telefonda USB hata ayıklamayı da etkinleştirmeli ve adb yetkilendirme istemini elle kabul etmelisiniz — Android bu adımın otomatikleştirilmesine izin vermez.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Anladım — adb’ye izin ver</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>Karşı taraf hizmeti çalışmıyor; bu oturumda gösterilecek parmak izi yok.</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>Güvenlik duvarı</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>Gelen TCP 47654 izinli ({0})</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>TCP 47654 için gelen izin kuralı bulunamadı; telefon bağlanamayabilir</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>Belirlenemiyor (üçüncü taraf bir güvenlik duvarı veya Grup İlkesi denetimde)</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>Bu programı hedefleyen bir engelleme kuralı var: {0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>Bu çalıştırma {0} portunda dinliyor; port tabanlı kural bunu kapsamaz. 47654 portunu boşaltıp yeniden başlatın</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>Windows geçerli ağı genel olarak sınıflandırıyor. Yalnızca özel ağlar için olan bir kural burada işe yaramaz; Ayarlar → Ağ ve internet → bu ağın özellikleri üzerinden ağı Özel yapın veya izin verirken Genel ağ’ı işaretleyin.</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>Kuralın olması yalnızca güvenlik duvarının engellemediği anlamına gelir; yönlendiricinin AP yalıtımı veya bir VPN/TUN bağdaştırıcısı bağlantıyı yine de durdurabilir.</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>Yeniden denetle</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>Denetleniyor…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>Etki alanı ağı</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>Özel ağ</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>Genel ağ</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>Gelen TCP 47654’e izin ver</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>Telefon bu bilgisayara yalnızca port izinli olduğunda ulaşabilir. Windows’un kendi netsh’i yönetici olarak çalışıp “ClipSync TCP 47654” adlı tek bir güvenlik duvarı kuralı oluşturur; çalışacak tam komut aşağıda gösterilir, dilerseniz kopyalayıp yönetici PowerShell’de kendiniz de çalıştırabilirsiniz. Kural, program klasörü silinince kaybolmaz; buradan kaldırın.</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>Komutu kopyala</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>Kopyalandı</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>İzin ver (yönetici gerekir)</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>Kuralı kaldır (yönetici gerekir)</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>Güvenlik duvarı portuna izin ver</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>Aşağıdaki komut yönetici olarak çalıştırılacak. UAC iletişim kutusunda Windows’un kendi netsh.exe’si (Microsoft imzalı) görünür ve bağımsız değişkenler gösterilmez — bağımsız değişkenler tam olarak aşağıdaki satırdır.</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>Özel ağ (ev veya ofis Wi-Fi’ı)</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>Genel ağ (otel veya kafe Wi-Fi’ı; aynı ağ bölümündeki cihazlar porta ulaşabilir ama içerik okumak için yine eşleştirme gerekir)</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>Onayla ve yönetici hakları iste</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>İptal</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>Kural oluşturuldu; yeniden denetlendi.</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>İptal edildi: yönetici onayı verilmedi.</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>Çalıştırma başarısız (çıkış kodu {0}). Komutu kopyalayıp yönetici PowerShell’de elle çalıştırabilirsiniz.</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>Kural kaldırıldı.</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>İptal edildi</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>İlk kurulum eğitimini karşılama sayfasından yeniden gezin; hiçbir ayarı veya eşleştirmeyi değiştirmez.</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>Gizlilik ve riskler</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>Kullanmadan önce okunacak belgeyi tarayıcıda açar (GitHub).</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>Aç</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>Kullanılabilir tarayıcı yok.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · son kayıtlar</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>«{0}» cihazından art arda kimlik doğrulama hataları algılandı; cihaz geçici olarak kısıtlandı.</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>«{0}» eşleştirme istiyor</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>Az önce açılan onay penceresinde onayla veya reddet; pencere görev çubuğunda yanıp sönüyor.</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>Eşleştirme isteği zaman aşımına uğradı</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>Telefon 90 saniye bekledi ancak onay gelmedi. Yeniden denemek için telefonda yeni bir QR kodu tara.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Dinleniyor · eşitleme çalışmıyor</value>
@@ -815,6 +926,9 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>LAN adresi algılanmadı. Bu bilgisayarı ve telefonu aynı ağa bağla (veya Tercihler'e bir Tailscale adresi ekle), sonra bu pencereyi yeniden aç.</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>Bu bilgisayarın güvenlik duvarında TCP 47654 için izin kuralı yok; telefon büyük olasılıkla bağlanamaz. Önce Kanal sayfasından izin verin.</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>Onaylamadan önce telefonda doğrula</value>
   </data>
@@ -911,8 +1025,14 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android, telefonda arka planda pano okumayı kısıtlar ve ClipSync aksini iddia etmez: telefon ön plandayken otomatik yükler; arka plan okuması tek seferlik bir ek kurulum gerektirir — en yüksek kaliteli yol olan ayrıcalıklı okuma, tam da bu PC'nin telefonun başlatmasına yardım ettiği yoldur. Her yetenek gerçek testle değerlendirilir — bir şey yapılamıyorsa açıkça söylenir.</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>Kullanmadan önce okuyun: gizlilik ve riskler</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>Telefonda ClipSync'in “Kanal” sayfasını açın, ağ bölümündeki “Şimdi eşleştir”e dokunun ve aşağıdaki kodu tarayın; onaylamadan önce PC adını ve sertifika parmak izini karşılaştırın.</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>Telefon bağlanamadığını söylüyorsa büyük olasılıkla bu bilgisayarın güvenlik duvarı TCP 47654’e izin vermemiştir; bu turdan sonra Kanal sayfasında tek tıkla izin verebilirsiniz.</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>Telefonunuz eşleşti — kanal açık. Turun kalanına devam edin.</value>
@@ -933,7 +1053,7 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
     <value>Elinizde kablo yoksa: telefonu ve bu PC'yi aynı Wi-Fi'ye bağlayın, Geliştirici seçenekleri → Kablosuz hata ayıklamayı açın ve QR koduyla bir kez eşleştirin — sonrası USB ile birebir aynıdır.</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb yalnızca her tıklamanızda çalışır — asla yerleşik değil, asla sessiz değil — ve her adım açık onayınızı gerektirir. Bu turdan sonra, Kanal sayfasındaki ayrıcalıklı okuma kartından istediğiniz zaman başlatabilir veya geri alabilirsiniz.</value>
+    <value>adb yalnızca tıkladığınızda çalışır ve telefona tek bir başlatma komutu gönderir; başka hiçbir zaman adb çağrılmaz. Bu turdan sonra, Kanal sayfasındaki ayrıcalıklı okuma kartından istediğiniz zaman başlatabilir veya geri alabilirsiniz.</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>Varsayılan olarak kapalı bir yedek kanal: LAN bir VPN veya güvenlik duvarı tarafından engellendiğinde, Windows ayarlarında zaten Bluetooth ile eşleştirilmiş bir telefon metni eşitlemeye devam eder (görsel yok, daha yavaş).</value>

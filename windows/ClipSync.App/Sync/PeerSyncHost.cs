@@ -12,6 +12,8 @@ using ClipSync.Peer.Resilience;
 using ClipSync.Peer.Security;
 using ClipSync.Peer.Server;
 using ClipSync.Peer.Sessions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ClipSync.App.Sync;
 
@@ -37,6 +39,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
     private readonly Func<bool> outboundAllowed;
     private readonly Func<bool> imageSyncEnabled;
     private readonly Func<string?>? clipboardApplyState;
+    private readonly ILoggerFactory loggerFactory;
     private PeerServer? server;
     private UdpDiscoveryBroadcaster? broadcaster;
     private Timer? beaconTimer;
@@ -55,7 +58,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
         SyncResilienceOptions? resilienceOptions = null,
         Func<bool>? outboundAllowed = null,
         Func<bool>? imageSyncEnabled = null,
-        Func<string?>? clipboardApplyState = null)
+        Func<string?>? clipboardApplyState = null,
+        ILoggerFactory? loggerFactory = null)
     {
         this.store = store ?? throw new ArgumentNullException(nameof(store));
         this.secretProtector = secretProtector ?? throw new ArgumentNullException(nameof(secretProtector));
@@ -76,6 +80,9 @@ public sealed class PeerSyncHost : IAsyncDisposable
         // Health-endpoint self-report of the local clipboard apply posture, so the paired
         // phone's 对端写入 segment can state facts. Null keeps the field off the wire.
         this.clipboardApplyState = clipboardApplyState;
+        // The App passes its diagnostics-code sink so the listener's pairing/session events
+        // become visible in the tray diagnostics viewer; tests may leave it null.
+        this.loggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
         CertificateFingerprint = PeerCertificate.Fingerprint(certificate);
     }
 
@@ -320,7 +327,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
             BindAddresses = addresses,
             Port = preferredPort,
             ClipboardApplyState = clipboardApplyState
-        }, pairingService: pairingService);
+        }, loggerFactory, pairingService);
         try
         {
             await candidate.StartAsync(cancellationToken).ConfigureAwait(false);
@@ -337,7 +344,7 @@ public sealed class PeerSyncHost : IAsyncDisposable
                 BindAddresses = addresses,
                 Port = 0,
                 ClipboardApplyState = clipboardApplyState
-            }, pairingService: pairingService);
+            }, loggerFactory, pairingService);
             await candidate.StartAsync(cancellationToken).ConfigureAwait(false);
         }
 

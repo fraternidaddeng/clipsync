@@ -226,6 +226,14 @@ public partial class MainWindow : Window
     private void OnReplayOnboardingClicked(object sender, RoutedEventArgs e) =>
         ((App)Application.Current).ShowOnboardingWindow(this);
 
+    // 帮助 · 使用前必读：只在点击时打开浏览器（按界面语言选文档版本）；打不开就在行内说明。
+    private void OnOpenPrivacyDocClicked(object sender, RoutedEventArgs e)
+    {
+        var opened = Docs.ExternalLinks.TryOpen(
+            Docs.PrivacyDocLink.For(System.Globalization.CultureInfo.CurrentUICulture.Name));
+        PrivacyDocOpenFailedText.Visibility = opened ? Visibility.Collapsed : Visibility.Visible;
+    }
+
     // 自绘 chrome 的窗控三钮（WindowChrome 去掉了系统标题栏）。
     private void OnMinimizeClicked(object sender, RoutedEventArgs e) =>
         WindowState = WindowState.Minimized;

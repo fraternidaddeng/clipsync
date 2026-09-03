@@ -71,7 +71,19 @@ internal sealed class TrayIconController : IDisposable
         }
         else
         {
-            taskbarIcon.TrayLeftMouseUp += (_, _) => showFlyout();
+            // Tray mouse events arrive straight from the icon's native WndProc, outside the
+            // WPF dispatcher's exception handling: anything thrown here kills the process.
+            taskbarIcon.TrayLeftMouseUp += (_, _) =>
+            {
+                try
+                {
+                    showFlyout();
+                }
+                catch (InvalidOperationException)
+                {
+                    LocalDiagnostics.Write("tray_flyout_failed");
+                }
+            };
             taskbarIcon.TrayMouseDoubleClick += (_, _) => Show(mainWindow);
         }
 
@@ -141,6 +153,40 @@ internal sealed class TrayIconController : IDisposable
             BalloonIcon.Warning);
     }
 
+    /// <summary>
+    /// Points at the approval window a phone just summoned (it flashes in the taskbar but may
+    /// sit behind whatever the user is doing). Names the candidate only — no id, no platform.
+    /// </summary>
+    public void ShowPairingRequestNotice(string displayName)
+    {
+        if (disposed)
+        {
+            return;
+        }
+
+        taskbarIcon.ShowBalloonTip(
+            Strings.Format(nameof(Strings.Tray_PairingRequest_TitleFormat), displayName),
+            Strings.Tray_PairingRequest_Body,
+            BalloonIcon.Info);
+    }
+
+    /// <summary>
+    /// The approval window closed unanswered after the phone's 90-second wait. Fires from
+    /// the approval timeout up to 90 s after the request, so it may land during teardown.
+    /// </summary>
+    public void ShowPairingTimeoutNotice()
+    {
+        if (disposed)
+        {
+            return;
+        }
+
+        taskbarIcon.ShowBalloonTip(
+            Strings.Tray_PairingTimeout_Title,
+            Strings.Tray_PairingTimeout_Body,
+            BalloonIcon.Warning);
+    }
+
     /// <summary>Opens (or re-focuses) the read-only diagnostics viewer.</summary>
     public void ShowDiagnostics()
     {
@@ -150,9 +196,20 @@ internal sealed class TrayIconController : IDisposable
             return;
         }
 
-        diagnosticsWindow = new DiagnosticsWindow();
-        diagnosticsWindow.Closed += (_, _) => diagnosticsWindow = null;
-        diagnosticsWindow.Show();
+        var window = new DiagnosticsWindow();
+        try
+        {
+            window.Show();
+        }
+        catch (InvalidOperationException)
+        {
+            // Application shutdown won the race; the viewer stays closed and nothing is retained.
+            LocalDiagnostics.Write("diagnostics_show_refused");
+            return;
+        }
+
+        diagnosticsWindow = window;
+        window.Closed += (_, _) => diagnosticsWindow = null;
     }
 
     public void Dispose()
@@ -244,15 +301,27 @@ internal sealed class TrayIconController : IDisposable
         return metric > 0 ? metric : 16;
     }
 
+    /// <summary>
+    /// Brings the main window up from the tray (menu 打开, double click, or the single-click
+    /// fallback). The same native-WndProc caveat as the flyout applies: a Show() refused
+    /// during shutdown must be absorbed here or it takes the process down.
+    /// </summary>
     private static void Show(Window window)
     {
-        window.Show();
-        if (window.WindowState == WindowState.Minimized)
+        try
         {
-            window.WindowState = WindowState.Normal;
-        }
+            window.Show();
+            if (window.WindowState == WindowState.Minimized)
+            {
+                window.WindowState = WindowState.Normal;
+            }
 
-        window.Activate();
+            window.Activate();
+        }
+        catch (InvalidOperationException)
+        {
+            LocalDiagnostics.Write("tray_open_refused");
+        }
     }
 
     private static class NativeMethods

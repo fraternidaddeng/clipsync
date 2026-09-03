@@ -101,6 +101,35 @@
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Margin" Value="0,2,0,0" />
         </Style>
+        <!-- 链接样式按钮（使用前必读）：流动蓝文字，悬停加下划线；不是主动作，不用实心钮 -->
+        <Style x:Key="ObLinkButton" TargetType="Button">
+            <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
+            <Setter Property="FontSize" Value="11.5" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Padding" Value="6,4" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Padding="{TemplateBinding Padding}" Background="Transparent">
+                            <TextBlock x:Name="Label"
+                                       Text="{TemplateBinding Content}"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Label" Property="TextDecorations" Value="Underline" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Label" Property="TextDecorations" Value="Underline" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <DockPanel Background="{DynamicResource CsBgBrush}">
@@ -288,6 +317,19 @@
                                            TextWrapping="Wrap" />
                             </StackPanel>
                         </Border>
+                        <!-- 使用前必读：在浏览器打开隐私与风险说明（GitHub，按界面语言选版本）；只在点击时打开 -->
+                        <Button Margin="0,10,0,0"
+                                Click="OnOpenPrivacyDocClicked"
+                                Content="{x:Static loc:Strings.Onboarding_PrivacyDoc_Link}"
+                                Style="{StaticResource ObLinkButton}" />
+                        <TextBlock x:Name="PrivacyDocOpenFailedText"
+                                   Margin="0,2,0,0"
+                                   HorizontalAlignment="Center"
+                                   FontSize="10.5"
+                                   Foreground="{DynamicResource CsActBrush}"
+                                   Text="{x:Static loc:Strings.Open_Url_Failed}"
+                                   TextWrapping="Wrap"
+                                   Visibility="Collapsed" />
                     </StackPanel>
                 </Grid>
 
@@ -305,6 +347,12 @@
                                    Style="{StaticResource ObStepTitle}"
                                    Text="{x:Static loc:Strings.Pairing_Title}" />
                         <TextBlock Style="{StaticResource ObStepBody}" Text="{x:Static loc:Strings.Onboarding_Pair_Body}" />
+                        <!-- 防火墙（ADR 0006）：手机连不上的常见原因，先说在配对步里；一键放行在通路页 -->
+                        <TextBlock Margin="4,6,4,0"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource CsText4Brush}"
+                                   Style="{StaticResource ObStepBody}"
+                                   Text="{x:Static loc:Strings.Onboarding_Pair_Firewall}" />
 
                         <!-- 二维码：静区必须纯白；机器像素钉回 LTR -->
                         <StackPanel x:Name="QrPanel" Margin="0,16,0,0">

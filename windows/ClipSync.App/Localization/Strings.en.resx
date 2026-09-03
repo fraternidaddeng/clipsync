@@ -217,10 +217,10 @@
     <value>Privileged read</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>The highest-quality rung of the Android background-read ladder: the PC uses adb to help a paired phone start its built-in privileged host, after which the phone's background copies upload instantly. Every step needs your explicit consent — never silent.</value>
+    <value>The highest-quality rung of the Android background-read ladder: the PC uses adb to help a paired phone start its built-in privileged host, after which the phone's background copies upload instantly. Every start is triggered by your click here.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Once allowed, this PC will call adb (the Android Debug Bridge) to send the phone one start command. adb runs only on your click each time — never resident, never silent. The first time you must also enable USB debugging on the phone and accept its adb authorization prompt by hand — Android does not allow automating that step.</value>
+    <value>Once allowed, this PC will call adb (the Android Debug Bridge) to send the phone one start command. When you click Start privileged read, this PC sends one start command to the phone over adb; adb is not invoked at any other time. The first time you must also enable USB debugging on the phone and accept its adb authorization prompt by hand — Android does not allow automating that step.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>I understand — allow adb</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>The peer service is not running; no fingerprint to show this session.</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>Firewall</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>Inbound TCP 47654 allowed ({0})</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>No inbound allow rule for TCP 47654 found; the phone may not be able to connect</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>Cannot tell (a third-party firewall or Group Policy is in charge)</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>A block rule targets this program: {0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>This run listens on port {0}, which the per-port rule does not cover; free port 47654 and restart</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>Windows classes the current network as Public. A rule for private networks only has no effect here; switch the network to Private under Settings → Network &amp; internet → this network's properties, or tick Public network when allowing.</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>A rule only means the firewall does not block; router AP isolation or a VPN/TUN adapter can still stop the connection.</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>Re-check</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>Checking…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>Domain network</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>Private network</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>Public network</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>Allow inbound TCP 47654</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>The phone can only reach this PC once the port is allowed. Windows' own netsh runs as administrator to create one firewall rule named “ClipSync TCP 47654”; the full command it will run is shown below, and you can also copy it and run it yourself in an administrator PowerShell. The rule does not disappear when the program folder is deleted; remove it here.</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>Copy command</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>Copied</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>Allow (administrator required)</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>Remove rule (administrator required)</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>Allow the firewall port</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>The following command is about to run as administrator. The UAC dialog will name Windows' own netsh.exe (signed by Microsoft) and will not show the arguments — the arguments are exactly the line below.</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>Private network (home or office Wi-Fi)</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>Public network (hotel or café Wi-Fi; devices on the same segment can reach the port, but still need pairing to read anything)</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>Confirm and request administrator rights</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>Rule created; re-checked.</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>Cancelled: administrator approval was not given.</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>Failed (exit code {0}). You can copy the command and run it in an administrator PowerShell by hand.</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>Rule removed.</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Revoked</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>Walk the first-run tutorial again from the welcome page; changes no settings or pairing.</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>Privacy and risks</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>Opens the read-before-use document in your browser (GitHub).</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>No browser is available.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · recent clips</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>Repeated authentication failures from “{0}”; the device is temporarily throttled.</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>“{0}” requests pairing</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>Approve or decline in the approval window that just opened; it is flashing in the taskbar.</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>Pairing request timed out</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>The phone waited 90 seconds without approval. Scan a fresh QR code on the phone to try again.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Listening · sync not running</value>
@@ -815,6 +926,9 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>No LAN address detected. Put this PC and the phone on the same network (or add a Tailscale address in Preferences), then reopen this window.</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>This PC's firewall has no allow rule for TCP 47654; the phone will most likely fail to connect. Allow it on the Conduit page first.</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>Verify on the phone before approving</value>
   </data>
@@ -911,8 +1025,14 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android restricts background clipboard reading on the phone, and ClipSync does not pretend otherwise: the phone uploads automatically while in the foreground; background reading takes one extra setup — the highest-quality route, privileged read, is exactly what this PC helps the phone start. Every capability is judged by live testing — if something cannot be done, it says so.</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>Read before use: privacy and risks</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>On your phone, open ClipSync's Conduit page, tap "Pair now" in the network segment, and scan the code below; before approving, check the PC name and certificate fingerprint.</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>If the phone says it cannot connect, this PC's firewall most likely has not allowed TCP 47654; after this tour you can allow it with one click on the Conduit page.</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>Your phone is paired — the conduit is open. Carry on with the rest of the tour.</value>
@@ -933,7 +1053,7 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
     <value>No cable at hand: put the phone and this PC on the same Wi-Fi, enable Developer options → Wireless debugging, and pair once by QR code — afterwards it works exactly as over USB.</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb runs only on your click each time — never resident, never silent — and every step needs your explicit consent. After this tour, the privileged-read card on the Conduit page is where you start it, or take it back, anytime.</value>
+    <value>adb runs only when you click, sending the phone one start command; adb is not invoked at any other time. After this tour, the privileged-read card on the Conduit page is where you start it, or take it back, anytime.</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>A backup channel that is off by default: when the LAN is blocked by a VPN or firewall, a phone already Bluetooth-paired in Windows settings keeps syncing text (no images, slower).</value>

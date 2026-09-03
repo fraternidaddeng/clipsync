@@ -1,0 +1,195 @@
+<Window x:Class="ClipSync.App.Firewall.FirewallRuleWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:ClipSync.App.Localization"
+        Title="{x:Static loc:Strings.FirewallRule_Window_Title}"
+        Icon="/Assets/Icons/app.ico"
+        Width="500"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        Background="{DynamicResource CsBgSolidBrush}"
+        FontFamily="{StaticResource CsSans}"
+        UseLayoutRounding="True"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+    <!-- 与配对批准窗同一自绘 chrome：第一次碰系统级配置，先把要执行的命令原样摆出来 -->
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="42"
+                      CornerRadius="0"
+                      GlassFrameThickness="-1"
+                      ResizeBorderThickness="0"
+                      UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <!-- 配置文件复选：宪章语汇的方框（流动蓝勾选），不用系统默认样式 -->
+        <Style x:Key="CharterCheckBox" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="Box"
+                                    Width="16"
+                                    Height="16"
+                                    Margin="0,1,0,0"
+                                    VerticalAlignment="Top"
+                                    Background="{DynamicResource CsSurfaceInBrush}"
+                                    BorderBrush="{DynamicResource CsLine2Brush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                <Path x:Name="Mark"
+                                      Data="M3.5,8.5 L6.8,11.5 L12.5,4.8"
+                                      Stroke="{DynamicResource CsOnFlowBrush}"
+                                      StrokeThickness="1.8"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round"
+                                      Visibility="Collapsed" />
+                            </Border>
+                            <ContentPresenter Grid.Column="1"
+                                              Margin="10,0,0,0"
+                                              VerticalAlignment="Top"
+                                              RecognizesAccessKey="True" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Box" Property="Background" Value="{DynamicResource CsFlowBrush}" />
+                                <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource CsFlowBrush}" />
+                                <Setter TargetName="Mark" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource CsFlowLineBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel Background="{DynamicResource CsBgBrush}">
+
+        <!-- 标题栏：关闭 = 取消（不执行任何命令） -->
+        <Border DockPanel.Dock="Top"
+                Height="42"
+                Padding="16,0,0,0"
+                Background="{DynamicResource CsSurface3Brush}"
+                BorderBrush="{DynamicResource CsLineBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Viewbox Width="15" Height="15">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="{StaticResource IconConduit}"
+                                  Stroke="{DynamicResource CsFlowBrush}"
+                                  StrokeThickness="1.9"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  StrokeLineJoin="Round" />
+                        </Canvas>
+                    </Viewbox>
+                    <TextBlock x:Name="TitleText"
+                               Margin="9,0,0,0"
+                               VerticalAlignment="Center"
+                               FontFamily="{StaticResource CsSerif}"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource CsText1Brush}"
+                               Text="{x:Static loc:Strings.FirewallRule_Window_Title}" />
+                </StackPanel>
+                <Button Grid.Column="1"
+                        AutomationProperties.Name="{x:Static loc:Strings.FirewallRule_Cancel}"
+                        Click="OnCancelClicked"
+                        Style="{StaticResource CsCaptionCloseButton}">
+                    <Path Data="{StaticResource CsGlyphClose}" Style="{StaticResource CsCaptionGlyph}" />
+                </Button>
+            </Grid>
+        </Border>
+
+        <StackPanel Margin="24,18,24,20">
+            <TextBlock FontSize="11.5"
+                       Foreground="{DynamicResource CsText2Brush}"
+                       Text="{x:Static loc:Strings.FirewallRule_Window_Body}"
+                       TextWrapping="Wrap" />
+
+            <!-- 将要执行的命令，原样、等宽、可选中复制；机器文本在 RTL 下钉回 LTR -->
+            <Border Margin="0,12,0,0"
+                    Padding="12,10"
+                    Background="{DynamicResource CsSurfaceInBrush}"
+                    BorderBrush="{DynamicResource CsLineBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                <TextBox x:Name="CommandBox"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         FlowDirection="LeftToRight"
+                         FontFamily="{StaticResource CsMono}"
+                         FontSize="11.5"
+                         Foreground="{DynamicResource CsText1Brush}"
+                         IsReadOnly="True"
+                         IsReadOnlyCaretVisible="False"
+                         Padding="0"
+                         TextWrapping="Wrap" />
+            </Border>
+
+            <!-- 配置文件范围：默认仅专用网络；公用网络需明确勾选，就地说明暴露面 -->
+            <StackPanel x:Name="ProfilePanel" Margin="0,14,0,0">
+                <CheckBox x:Name="PrivateBox"
+                          Checked="OnProfileChanged"
+                          IsChecked="True"
+                          Style="{StaticResource CharterCheckBox}"
+                          Unchecked="OnProfileChanged">
+                    <TextBlock Text="{x:Static loc:Strings.FirewallRule_Profile_Private}" TextWrapping="Wrap" />
+                </CheckBox>
+                <CheckBox x:Name="PublicBox"
+                          Margin="0,8,0,0"
+                          Checked="OnProfileChanged"
+                          Style="{StaticResource CharterCheckBox}"
+                          Unchecked="OnProfileChanged">
+                    <TextBlock Text="{x:Static loc:Strings.FirewallRule_Profile_Public}" TextWrapping="Wrap" />
+                </CheckBox>
+            </StackPanel>
+
+            <!-- 当前网络被归为「公用」= 需要你操作（赭色着色盒），不是错误 -->
+            <Border x:Name="PublicHintBox"
+                    Margin="0,12,0,0"
+                    Padding="12,10"
+                    Background="{DynamicResource CsActBgBrush}"
+                    BorderBrush="{DynamicResource CsActLineBrush}"
+                    BorderThickness="1"
+                    CornerRadius="9"
+                    Visibility="Collapsed">
+                <TextBlock FontSize="11"
+                           Foreground="{DynamicResource CsActBrush}"
+                           Text="{x:Static loc:Strings.Conduit_Firewall_PublicHint}"
+                           TextWrapping="Wrap" />
+            </Border>
+
+            <StackPanel Margin="0,20,0,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <Button MinWidth="100"
+                        Click="OnCancelClicked"
+                        Content="{x:Static loc:Strings.FirewallRule_Cancel}"
+                        Style="{StaticResource GhostQuietButton}" />
+                <Button x:Name="ConfirmButton"
+                        MinWidth="120"
+                        Margin="10,0,0,0"
+                        Click="OnConfirmClicked"
+                        Content="{x:Static loc:Strings.FirewallRule_Confirm}"
+                        Style="{StaticResource PrimaryButton}" />
+            </StackPanel>
+        </StackPanel>
+    </DockPanel>
+</Window>

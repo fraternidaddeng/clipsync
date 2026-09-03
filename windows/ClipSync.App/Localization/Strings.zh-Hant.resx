@@ -217,10 +217,10 @@
     <value>特權直讀</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Android 背景讀取階梯裡品質最高的一檔：電腦透過 adb 幫已配對的手機啟動內建特權宿主，之後手機在背景複製即時上行。全程需你明確同意，絕不靜默。</value>
+    <value>Android 背景讀取階梯裡品質最高的一檔：電腦透過 adb 幫已配對的手機啟動內建特權宿主，之後手機在背景複製即時上行。每次啟動都由你在這裡點擊觸發。</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>啟用後，本機會呼叫 adb（Android 偵錯橋）向手機傳送一條啟動命令。adb 只在你每次點擊時執行，不會常駐或靜默執行。首次還需在手機上開啟「USB 偵錯」並手動確認 adb 授權彈窗——這一步 Android 不允許自動化。</value>
+    <value>啟用後，本機會呼叫 adb（Android 偵錯橋）向手機傳送一條啟動命令。adb 只在你點擊「啟動特權直讀」時執行一次，向手機傳送一條啟動命令；其他時候不呼叫 adb。首次還需在手機上開啟「USB 偵錯」並手動確認 adb 授權彈窗——這一步 Android 不允許自動化。</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>了解並允許使用 adb</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>對端服務未啟動，本次工作階段無指紋可示。</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>防火牆</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>已放行 TCP 47654 傳入（{0}）</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>未發現 TCP 47654 的傳入放行規則，手機可能連不上</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>無法判斷（第三方防火牆或群組原則接管）</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>存在針對本程式的封鎖規則：{0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>本次執行監聽在連接埠 {0}，按連接埠的規則對它無效；請釋放 47654 後重新啟動</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>目前網路被 Windows 歸為「公用」。只放行私人網路時在此網路上不生效；可在 設定 → 網路和網際網路 → 該網路屬性 中改為「私人網路」，或在放行時勾選公用網路。</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>規則存在只說明防火牆不攔；路由器 AP 隔離、VPN/TUN 仍可能阻斷。</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>重新檢測</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>正在檢測…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>網域網路</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>私人網路</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>公用網路</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>放行 TCP 47654 傳入</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>放行後手機才能連到本機。會以管理員身分執行 Windows 內建的 netsh 建立一條名為「ClipSync TCP 47654」的防火牆規則，下方是將要執行的完整命令；也可以複製後自己在管理員 PowerShell 裡執行。規則不會隨刪除程式目錄消失，可在此處移除。</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>複製命令</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>已複製</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>放行（需要管理員）</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>移除規則（需要管理員）</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>放行防火牆連接埠</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>即將以管理員身分執行以下命令。UAC 對話方塊裡顯示的程式是 Windows 內建的 netsh.exe（微軟簽章），不會顯示參數——參數就是下面這一行。</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>私人網路（家庭/公司 Wi-Fi）</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>公用網路（飯店/咖啡館 Wi-Fi；同網段裝置可連到該連接埠，但仍需配對才能讀到內容）</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>確認並要求管理員權限</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>規則已建立，已重新檢測。</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>已取消：未取得管理員授權。</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>執行失敗（結束代碼 {0}）。可複製命令後在管理員 PowerShell 裡手動執行。</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>規則已移除。</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>已撤銷</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>從歡迎頁重新過一遍首次設定教學；不改動任何設定與配對。</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>隱私與風險說明</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>在瀏覽器中開啟使用前必讀文件（GitHub）。</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>開啟</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>沒有可用的瀏覽器。</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>剪剪相傳 · 最近剪貼</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>偵測到「{0}」反覆驗證失敗，已暫時限流該裝置。</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>「{0}」請求配對</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>請在彈出的批准視窗中確認或拒絕。視窗在工作列閃爍。</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>配對請求已逾時</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>手機等待了 90 秒未獲批准。請在手機上重新掃描新的 QR 碼。</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>監聽中 · 同步未啟動</value>
@@ -815,6 +926,9 @@
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>未偵測到區域網路位址。請把本機和手機接入同一網路（或在偏好裡新增 Tailscale 位址），再重新開啟此視窗。</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>本機防火牆未發現 TCP 47654 放行規則，手機很可能連不上。請先到「通路」頁放行。</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>確 認 前 請 在 手 機 上 核 對</value>
   </data>
@@ -911,8 +1025,14 @@
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android 限制手機應用程式在背景讀取剪貼簿，剪剪相傳不會假裝做到：手機在前景時自動上行；背景讀取需要一次額外設定——品質最高的「特權直讀」正是由這台電腦幫手機啟動。每一段能力都以實測為準，做不到就直說。</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>使用前必讀：隱私與風險說明</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>在手機上打開剪剪相傳的「通路」頁，點按網路段的「去配對」，掃描下方二維碼；確認前請核對電腦名稱與憑證指紋。</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>若手機提示無法連線，多半是本機防火牆未放行 TCP 47654；引導結束後可在「通路」頁一鍵放行。</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>手機已完成配對——通路已經打通，繼續看看剩下的部分吧。</value>
@@ -933,7 +1053,7 @@
     <value>不方便接線時：手機與電腦接入同一 Wi-Fi，開啟「開發人員選項 → 無線偵錯」，掃碼配對一次即可，之後與 USB 完全相同。</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb 只在你每次點擊時執行，絕不常駐或靜默執行，每一步都需要你的明確同意。引導結束後，「通路」頁的特權直讀卡隨時可以開始或收回。</value>
+    <value>adb 只在你點擊時執行，向手機傳送一條啟動命令；其他時候不呼叫 adb。引導結束後，「通路」頁的特權直讀卡隨時可以開始或收回。</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>預設關閉的備用通道：區域網路被 VPN 或防火牆阻斷時，已在 Windows 系統設定中藍牙配對的手機可繼續同步文字（不含圖片，速度較慢）。</value>

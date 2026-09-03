@@ -217,10 +217,10 @@
     <value>القراءة المميزة</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>أعلى درجات جودة سلّم القراءة في الخلفية على أندرويد: يستخدم الحاسوب adb لمساعدة هاتف مقترن على بدء المضيف المميز المدمج، وبعدها تُرفع النسخ في الخلفية من الهاتف فورًا. تتطلب كل خطوة موافقتك الصريحة، ولا تحدث بصمت أبدًا.</value>
+    <value>أعلى درجات جودة سلّم القراءة في الخلفية على أندرويد: يستخدم الحاسوب adb لمساعدة هاتف مقترن على بدء المضيف المميز المدمج، وبعدها تُرفع النسخ في الخلفية من الهاتف فورًا. كل بدء يحدث بنقرة منك هنا.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>بعد السماح، سيستدعي هذا الحاسوب adb (جسر تصحيح أندرويد) لإرسال أمر بدء واحد إلى الهاتف. لا يعمل adb إلا عند كل نقرة منك — لا يبقى مقيمًا ولا يعمل بصمت. في المرة الأولى عليك أيضًا تفعيل «تصحيح أخطاء USB» على الهاتف وقبول نافذة تفويض adb يدويًا — لا يسمح أندرويد بأتمتة هذه الخطوة.</value>
+    <value>بعد السماح، سيستدعي هذا الحاسوب adb (جسر تصحيح أندرويد) لإرسال أمر بدء واحد إلى الهاتف. عند نقرك على «بدء القراءة المميزة» يرسل هذا الحاسوب أمر بدء واحدًا إلى الهاتف عبر adb؛ ولا يُستدعى adb في أي وقت آخر. في المرة الأولى عليك أيضًا تفعيل «تصحيح أخطاء USB» على الهاتف وقبول نافذة تفويض adb يدويًا — لا يسمح أندرويد بأتمتة هذه الخطوة.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>فهمت — اسمح بـ adb</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>خدمة الطرف الآخر غير مشغّلة؛ لا بصمة لعرضها في هذه الجلسة.</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>جدار الحماية</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>مسموح بالوارد على TCP 47654 ({0})</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>لم يُعثر على قاعدة واردة تسمح بـ TCP 47654؛ قد لا يتمكن الهاتف من الاتصال</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>لا يمكن التحديد (جدار حماية من جهة خارجية أو نهج المجموعة هو المتحكم)</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>توجد قاعدة حظر تستهدف هذا البرنامج: {0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>يستمع هذا التشغيل على المنفذ {0} الذي لا تغطيه قاعدة المنفذ؛ حرّر المنفذ 47654 ثم أعد التشغيل</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>يصنّف Windows الشبكة الحالية كشبكة عامة. القاعدة المقتصرة على الشبكات الخاصة لا أثر لها هنا؛ غيّر الشبكة إلى «خاصة» من الإعدادات → الشبكة والإنترنت → خصائص هذه الشبكة، أو حدّد «شبكة عامة» عند السماح.</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>وجود القاعدة يعني فقط أن جدار الحماية لا يحجب؛ عزل نقاط الوصول في الراوتر أو محوّل VPN/TUN قد يمنعان الاتصال رغم ذلك.</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>إعادة الفحص</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>جارٍ الفحص…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>شبكة المجال</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>شبكة خاصة</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>شبكة عامة</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>السماح بالوارد على TCP 47654</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>لا يستطيع الهاتف الوصول إلى هذا الحاسوب إلا بعد السماح بالمنفذ. سيُشغَّل netsh المدمج في Windows بصلاحيات المسؤول لإنشاء قاعدة جدار حماية واحدة باسم «ClipSync TCP 47654»؛ الأمر الكامل الذي سيُنفَّذ معروض أدناه، ويمكنك أيضًا نسخه وتشغيله بنفسك في PowerShell بصلاحيات المسؤول. لا تزول القاعدة بحذف مجلد البرنامج؛ يمكن إزالتها من هنا.</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>نسخ الأمر</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>تم النسخ</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>السماح (يتطلب صلاحيات المسؤول)</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>إزالة القاعدة (يتطلب صلاحيات المسؤول)</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>السماح بالمنفذ في جدار الحماية</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>سيُشغَّل الأمر التالي بصلاحيات المسؤول. سيعرض مربع حوار UAC برنامج netsh.exe المدمج في Windows (موقَّع من Microsoft) ولن يعرض الوسائط — الوسائط هي بالضبط السطر أدناه.</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>شبكة خاصة (Wi-Fi المنزل أو المكتب)</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>شبكة عامة (Wi-Fi الفندق أو المقهى؛ يمكن للأجهزة في الجزء نفسه من الشبكة الوصول إلى المنفذ، لكنها تظل بحاجة إلى الاقتران لقراءة أي محتوى)</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>تأكيد وطلب صلاحيات المسؤول</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>تم إنشاء القاعدة وأُعيد الفحص.</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>أُلغي: لم يُمنح إذن المسؤول.</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>فشل التنفيذ (رمز الخروج {0}). يمكنك نسخ الأمر وتشغيله يدويًا في PowerShell بصلاحيات المسؤول.</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>تمت إزالة القاعدة.</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>أُبطل</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>أعد المرور على دليل التشغيل الأول من صفحة الترحيب؛ لا يغيّر أي إعدادات أو اقتران.</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>الخصوصية والمخاطر</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>يفتح في المتصفح وثيقة «اقرأ قبل الاستخدام» (GitHub).</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>لا يوجد متصفح متاح.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · أحدث المقتطفات</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>إخفاقات مصادقة متكررة من «{0}»؛ قُيّد الجهاز مؤقتًا.</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>«{0}» يطلب الاقتران</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>وافق أو ارفض في نافذة الموافقة التي فُتحت للتو؛ وهي تومض في شريط المهام.</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>انتهت مهلة طلب الاقتران</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>انتظر الهاتف 90 ثانية دون موافقة. امسح رمز QR جديدًا على الهاتف للمحاولة مجددًا.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>يستمع · المزامنة غير مشغّلة</value>
@@ -815,6 +926,9 @@
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>لم يُكتشف عنوان شبكة محلية. صِل هذا الحاسوب والهاتف بالشبكة نفسها (أو أضف عنوان Tailscale في التفضيلات)، ثم افتح هذه النافذة من جديد.</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>لا توجد في جدار حماية هذا الحاسوب قاعدة تسمح بـ TCP 47654؛ على الأرجح لن يتمكن الهاتف من الاتصال. اسمح به أولًا في صفحة «القناة».</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>تحقق على الهاتف قبل الموافقة</value>
   </data>
@@ -911,8 +1025,14 @@
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>يقيّد Android قراءة الحافظة في الخلفية على الهاتف، وClipSync لا يدّعي غير ذلك: يرفع الهاتف تلقائيًا أثناء وجوده في المقدمة؛ وتحتاج القراءة في الخلفية إلى إعداد إضافي لمرة واحدة — والمسار الأعلى جودة، القراءة المميزة، هو بالضبط ما يساعد هذا الحاسوب الهاتف على بدئه. تُقيَّم كل قدرة باختبار فعلي — وإن تعذّر شيء فسيقول ذلك.</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>اقرأ قبل الاستخدام: الخصوصية والمخاطر</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>على الهاتف، افتح صفحة «القناة» في ClipSync، وانقر «الاقتران الآن» في مقطع الشبكة، ثم امسح الرمز أدناه؛ قبل الموافقة تحقق من اسم الحاسوب وبصمة الشهادة.</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>إذا قال الهاتف إنه لا يستطيع الاتصال، فالأرجح أن جدار حماية هذا الحاسوب لم يسمح بـ TCP 47654؛ بعد هذه الجولة يمكنك السماح به بنقرة واحدة في صفحة «القناة».</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>اقترن هاتفك — القناة مفتوحة الآن. تابع بقية الجولة.</value>
@@ -933,7 +1053,7 @@
     <value>لا كابل في متناولك: صل الهاتف وهذا الحاسوب بشبكة Wi-Fi نفسها، وفعّل «خيارات المطور ← تصحيح الأخطاء اللاسلكي»، وأجرِ الاقتران مرة واحدة برمز QR — بعدها يعمل تمامًا كما عبر USB.</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>لا يعمل adb إلا عند نقرك في كل مرة — لا يبقى مقيمًا ولا يعمل بصمت — وكل خطوة تحتاج موافقتك الصريحة. بعد هذه الجولة، بطاقة القراءة المميزة في صفحة «القناة» هي حيث تبدأه أو تسحبه في أي وقت.</value>
+    <value>لا يعمل adb إلا عند نقرك، فيرسل إلى الهاتف أمر بدء واحدًا؛ ولا يُستدعى adb في أي وقت آخر. بعد هذه الجولة، بطاقة القراءة المميزة في صفحة «القناة» هي حيث تبدأه أو تسحبه في أي وقت.</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>قناة احتياطية متوقفة افتراضيًا: عندما تُحجب الشبكة المحلية بواسطة VPN أو جدار حماية، يواصل الهاتف المقترن مسبقًا عبر البلوتوث في إعدادات Windows مزامنة النص (بلا صور، وأبطأ).</value>

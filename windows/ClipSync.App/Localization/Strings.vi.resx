@@ -217,10 +217,10 @@
     <value>Đọc đặc quyền</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Bậc chất lượng cao nhất trong thang đọc nền của Android: máy tính dùng adb để giúp điện thoại đã ghép nối khởi động host đặc quyền tích hợp, sau đó các bản sao chép nền của điện thoại được tải lên tức thì. Mỗi bước đều cần bạn đồng ý rõ ràng, không bao giờ âm thầm.</value>
+    <value>Bậc chất lượng cao nhất trong thang đọc nền của Android: máy tính dùng adb để giúp điện thoại đã ghép nối khởi động host đặc quyền tích hợp, sau đó các bản sao chép nền của điện thoại được tải lên tức thì. Mỗi lần khởi động đều do bạn nhấp tại đây.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Sau khi cho phép, máy tính này sẽ gọi adb (Android Debug Bridge) để gửi điện thoại một lệnh khởi động. adb chỉ chạy mỗi khi bạn nhấp — không thường trú, không âm thầm. Lần đầu bạn cũng phải bật Gỡ lỗi USB trên điện thoại và tự tay chấp nhận hộp thoại ủy quyền adb — Android không cho phép tự động hóa bước này.</value>
+    <value>Sau khi cho phép, máy tính này sẽ gọi adb (Android Debug Bridge) để gửi điện thoại một lệnh khởi động. Khi bạn nhấp “Bắt đầu đọc đặc quyền”, máy tính này gửi một lệnh khởi động tới điện thoại qua adb; ngoài lúc đó không gọi adb. Lần đầu bạn cũng phải bật Gỡ lỗi USB trên điện thoại và tự tay chấp nhận hộp thoại ủy quyền adb — Android không cho phép tự động hóa bước này.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Đã hiểu — cho phép adb</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>Dịch vụ phía đối diện chưa chạy; phiên này không có dấu vân tay để hiển thị.</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>Tường lửa</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>Đã cho phép TCP 47654 vào ({0})</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>Không tìm thấy quy tắc cho phép TCP 47654 vào; điện thoại có thể không kết nối được</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>Không xác định được (tường lửa bên thứ ba hoặc Chính sách nhóm đang kiểm soát)</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>Có quy tắc chặn nhắm vào chương trình này: {0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>Lần chạy này lắng nghe trên cổng {0}, quy tắc theo cổng không áp dụng cho nó; hãy giải phóng cổng 47654 rồi khởi động lại</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>Windows xếp mạng hiện tại vào loại công cộng. Quy tắc chỉ dành cho mạng riêng không có hiệu lực ở đây; hãy đổi mạng sang riêng trong Cài đặt → Mạng và Internet → thuộc tính mạng này, hoặc tích Mạng công cộng khi cho phép.</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>Có quy tắc chỉ có nghĩa là tường lửa không chặn; cách ly AP của bộ định tuyến hoặc bộ điều hợp VPN/TUN vẫn có thể cản kết nối.</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>Kiểm tra lại</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>Đang kiểm tra…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>Mạng miền</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>Mạng riêng</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>Mạng công cộng</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>Cho phép TCP 47654 vào</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>Điện thoại chỉ kết nối được với PC này sau khi cổng được cho phép. netsh có sẵn của Windows sẽ chạy với quyền quản trị viên để tạo một quy tắc tường lửa tên “ClipSync TCP 47654”; lệnh đầy đủ sắp chạy hiển thị bên dưới, bạn cũng có thể sao chép và tự chạy trong PowerShell quản trị viên. Quy tắc không biến mất khi xóa thư mục chương trình; có thể gỡ tại đây.</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>Sao chép lệnh</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>Đã sao chép</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>Cho phép (cần quản trị viên)</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>Gỡ quy tắc (cần quản trị viên)</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>Cho phép cổng qua tường lửa</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>Lệnh sau sắp chạy với quyền quản trị viên. Hộp thoại UAC sẽ hiển thị netsh.exe có sẵn của Windows (do Microsoft ký) và không hiển thị đối số — đối số chính là dòng bên dưới.</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>Mạng riêng (Wi-Fi nhà hoặc công ty)</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>Mạng công cộng (Wi-Fi khách sạn hoặc quán cà phê; thiết bị cùng đoạn mạng có thể tới được cổng, nhưng vẫn phải ghép nối mới đọc được nội dung)</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>Xác nhận và yêu cầu quyền quản trị viên</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>Hủy</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>Đã tạo quy tắc; đã kiểm tra lại.</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>Đã hủy: không được cấp quyền quản trị viên.</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>Thực thi thất bại (mã thoát {0}). Bạn có thể sao chép lệnh và tự chạy trong PowerShell quản trị viên.</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>Đã gỡ quy tắc.</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Đã thu hồi</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>Đi lại toàn bộ hướng dẫn lần đầu từ trang chào mừng; không thay đổi cài đặt hay ghép nối nào.</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>Quyền riêng tư và rủi ro</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>Mở tài liệu đọc trước khi dùng trong trình duyệt (GitHub).</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>Mở</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>Không có trình duyệt khả dụng.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · mẩu gần đây</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>Phát hiện “{0}” liên tục xác thực thất bại; thiết bị bị hạn chế tạm thời.</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>“{0}” yêu cầu ghép nối</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>Hãy phê duyệt hoặc từ chối trong cửa sổ phê duyệt vừa mở; cửa sổ đang nhấp nháy trên thanh tác vụ.</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>Yêu cầu ghép nối đã hết hạn</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>Điện thoại đã chờ 90 giây mà không được phê duyệt. Hãy quét lại mã QR mới trên điện thoại để thử lại.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Đang lắng nghe · đồng bộ chưa chạy</value>
@@ -815,6 +926,9 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>Không phát hiện địa chỉ mạng LAN. Hãy đưa PC này và điện thoại vào cùng một mạng (hoặc thêm địa chỉ Tailscale trong Tùy chọn), rồi mở lại cửa sổ này.</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>Tường lửa của PC này không có quy tắc cho phép TCP 47654; điện thoại rất có thể không kết nối được. Hãy cho phép trước ở trang “Đường dẫn”.</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>Đối chiếu trên điện thoại trước khi phê duyệt</value>
   </data>
@@ -911,8 +1025,14 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android hạn chế đọc bảng nhớ tạm ở nền trên điện thoại, và ClipSync không giả vờ khác đi: điện thoại tự động tải lên khi đang mở; đọc nền cần một lần thiết lập thêm — tuyến chất lượng cao nhất, đọc đặc quyền, chính là tuyến mà PC này giúp điện thoại khởi động. Mọi khả năng đều được đánh giá bằng kiểm tra thực tế — nếu điều gì không làm được, nó sẽ nói thẳng.</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>Đọc trước khi dùng: quyền riêng tư và rủi ro</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>Trên điện thoại, mở trang “Đường dẫn” của ClipSync, nhấn “Ghép nối ngay” ở đoạn mạng rồi quét mã bên dưới; trước khi chấp thuận, hãy đối chiếu tên PC và vân tay chứng chỉ.</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>Nếu điện thoại báo không kết nối được, phần lớn là do tường lửa của PC này chưa cho phép TCP 47654; sau phần giới thiệu bạn có thể cho phép bằng một cú nhấp ở trang “Đường dẫn”.</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>Điện thoại đã ghép nối — đường dẫn đã thông. Hãy tiếp tục phần còn lại của phần giới thiệu.</value>
@@ -933,7 +1053,7 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
     <value>Không tiện cắm cáp: cho điện thoại và PC này cùng một mạng Wi-Fi, bật Tùy chọn nhà phát triển → Gỡ lỗi không dây, rồi ghép nối một lần bằng mã QR — sau đó hoạt động giống hệt qua USB.</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb chỉ chạy mỗi khi bạn bấm — không bao giờ thường trú hay chạy ngầm — và mỗi bước đều cần sự đồng ý rõ ràng của bạn. Sau phần giới thiệu, thẻ đọc đặc quyền trên trang “Đường dẫn” là nơi bạn có thể bắt đầu hoặc thu hồi bất cứ lúc nào.</value>
+    <value>adb chỉ chạy khi bạn bấm, gửi điện thoại một lệnh khởi động; ngoài lúc đó không gọi adb. Sau phần giới thiệu, thẻ đọc đặc quyền trên trang “Đường dẫn” là nơi bạn có thể bắt đầu hoặc thu hồi bất cứ lúc nào.</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>Kênh dự phòng mặc định tắt: khi LAN bị VPN hoặc tường lửa chặn, điện thoại đã ghép nối Bluetooth trong cài đặt Windows vẫn tiếp tục đồng bộ văn bản (không có hình ảnh, chậm hơn).</value>

@@ -123,6 +123,22 @@
                            TextWrapping="Wrap" />
             </Border>
 
+            <!-- 防火墙未放行（ADR 0006）= 同一类「需要你操作」：跟着主视图模型的检测结果显示；
+                 DataContext 由代码在有视图模型时设置，没有则保持折叠 -->
+            <Border x:Name="FirewallHintBox"
+                    Margin="0,12,0,0"
+                    Padding="12,10"
+                    Background="{DynamicResource CsActBgBrush}"
+                    BorderBrush="{DynamicResource CsActLineBrush}"
+                    BorderThickness="1"
+                    CornerRadius="9"
+                    Visibility="Collapsed">
+                <TextBlock FontSize="11"
+                           Foreground="{DynamicResource CsActBrush}"
+                           Text="{x:Static loc:Strings.Pairing_FirewallHint}"
+                           TextWrapping="Wrap" />
+            </Border>
+
             <!-- 核对卡：指纹是全应用风险最高的比对，四位一组、等宽、t1 最高对比 -->
             <Border Margin="0,16,0,0"
                     Padding="14,11"

@@ -75,4 +75,8 @@ public static partial class PeerLog
     [LoggerMessage(EventId = 20, Level = LogLevel.Warning,
         Message = "closing session: inbound frame rate limit exhausted")]
     public static partial void FrameRateLimited(ILogger logger);
+
+    [LoggerMessage(EventId = 21, Level = LogLevel.Information,
+        Message = "pairing confirm request received")]
+    public static partial void PairingConfirmReceived(ILogger logger);
 }

@@ -217,10 +217,10 @@
     <value>Odczyt uprzywilejowany</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Najwyższej jakości szczebel drabiny odczytu w tle Androida: komputer używa adb, aby pomóc sparowanemu telefonowi uruchomić wbudowany uprzywilejowany host, po czym kopie w tle z telefonu są przesyłane natychmiast. Każdy krok wymaga Twojej wyraźnej zgody — nigdy po cichu.</value>
+    <value>Najwyższej jakości szczebel drabiny odczytu w tle Androida: komputer używa adb, aby pomóc sparowanemu telefonowi uruchomić wbudowany uprzywilejowany host, po czym kopie w tle z telefonu są przesyłane natychmiast. Każde uruchomienie wyzwalasz Ty kliknięciem tutaj.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Po zezwoleniu ten komputer wywoła adb (Android Debug Bridge), aby wysłać do telefonu jedno polecenie startu. adb działa tylko przy każdym Twoim kliknięciu — nigdy nie rezyduje i nie działa po cichu. Za pierwszym razem musisz też włączyć debugowanie USB w telefonie i ręcznie zaakceptować jego monit autoryzacji adb — Android nie pozwala zautomatyzować tego kroku.</value>
+    <value>Po zezwoleniu ten komputer wywoła adb (Android Debug Bridge), aby wysłać do telefonu jedno polecenie startu. Gdy klikniesz „Uruchom odczyt uprzywilejowany”, ten komputer wysyła do telefonu jedno polecenie startu przez adb; w żadnym innym momencie adb nie jest wywoływane. Za pierwszym razem musisz też włączyć debugowanie USB w telefonie i ręcznie zaakceptować jego monit autoryzacji adb — Android nie pozwala zautomatyzować tego kroku.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Rozumiem — zezwól na adb</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>Usługa dla drugiej strony nie działa; w tej sesji nie ma odcisku do pokazania.</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>Zapora</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>Ruch przychodzący TCP 47654 dozwolony ({0})</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>Brak reguły zezwalającej na ruch przychodzący TCP 47654; telefon może nie nawiązać połączenia</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>Nie można ustalić (kontrolę ma zapora innej firmy lub zasady grupy)</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>Istnieje reguła blokująca ten program: {0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>Ten przebieg nasłuchuje na porcie {0}, którego reguła portowa nie obejmuje; zwolnij port 47654 i uruchom ponownie</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>Windows klasyfikuje bieżącą sieć jako publiczną. Reguła tylko dla sieci prywatnych nie działa tutaj; przełącz sieć na prywatną w Ustawienia → Sieć i Internet → właściwości tej sieci albo zaznacz Sieć publiczna podczas zezwalania.</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>Reguła oznacza tylko, że zapora nie blokuje; izolacja AP w routerze lub karta VPN/TUN nadal mogą zatrzymać połączenie.</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>Sprawdź ponownie</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>Sprawdzanie…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>Sieć domenowa</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>Sieć prywatna</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>Sieć publiczna</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>Zezwól na ruch przychodzący TCP 47654</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>Telefon dotrze do tego komputera dopiero po zezwoleniu na port. Wbudowany w Windows netsh uruchomi się jako administrator i utworzy jedną regułę zapory o nazwie „ClipSync TCP 47654”; pełne polecenie, które zostanie wykonane, widać poniżej, możesz je też skopiować i uruchomić samodzielnie w PowerShell administratora. Reguła nie znika po usunięciu folderu programu; usuń ją tutaj.</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>Kopiuj polecenie</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>Skopiowano</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>Zezwól (wymaga administratora)</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>Usuń regułę (wymaga administratora)</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>Zezwól na port w zaporze</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>Poniższe polecenie zostanie uruchomione jako administrator. Okno UAC wskaże wbudowany w Windows netsh.exe (podpisany przez Microsoft) i nie pokaże argumentów — argumenty to dokładnie wiersz poniżej.</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>Sieć prywatna (Wi-Fi w domu lub w firmie)</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>Sieć publiczna (Wi-Fi w hotelu lub kawiarni; urządzenia w tym samym segmencie dosięgną portu, ale do odczytu czegokolwiek nadal potrzebują parowania)</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>Potwierdź i poproś o uprawnienia administratora</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>Reguła utworzona; sprawdzono ponownie.</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>Anulowano: nie udzielono zgody administratora.</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>Wykonanie nie powiodło się (kod wyjścia {0}). Możesz skopiować polecenie i uruchomić je ręcznie w PowerShell administratora.</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>Reguła usunięta.</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Unieważniono</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>Przejdź samouczek pierwszego uruchomienia od strony powitalnej; nie zmienia żadnych ustawień ani parowania.</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>Prywatność i ryzyka</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>Otwiera w przeglądarce dokument do przeczytania przed użyciem (GitHub).</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>Otwórz</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>Brak dostępnej przeglądarki.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · ostatnie wpisy</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>Wykryto powtarzające się błędy uwierzytelniania od „{0}”; urządzenie zostało tymczasowo ograniczone.</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>„{0}” prosi o sparowanie</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>Zatwierdź lub odrzuć w otwartym właśnie oknie zatwierdzania; okno miga na pasku zadań.</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>Prośba o sparowanie wygasła</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>Telefon czekał 90 sekund bez zatwierdzenia. Zeskanuj na telefonie nowy kod QR, aby spróbować ponownie.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Nasłuchuje · synchronizacja nie działa</value>
@@ -815,6 +926,9 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>Nie wykryto adresu LAN. Podłącz ten komputer i telefon do tej samej sieci (albo dodaj adres Tailscale w Preferencjach), a potem otwórz to okno ponownie.</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>Zapora tego komputera nie ma reguły zezwalającej na TCP 47654; telefon najpewniej nie nawiąże połączenia. Najpierw zezwól na stronie Kanał.</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>Sprawdź na telefonie przed zatwierdzeniem</value>
   </data>
@@ -911,8 +1025,14 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android ogranicza odczyt schowka w tle na telefonie, a ClipSync nie udaje, że jest inaczej: na pierwszym planie telefon wysyła automatycznie; odczyt w tle wymaga jednej dodatkowej konfiguracji — ścieżka najwyższej jakości, odczyt uprzywilejowany, to właśnie ta, którą ten komputer pomaga telefonowi uruchomić. Każdą zdolność ocenia rzeczywisty test — jeśli czegoś nie da się zrobić, jest to powiedziane wprost.</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>Przeczytaj przed użyciem: prywatność i ryzyka</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>W telefonie otwórz stronę „Kanał” w ClipSync, dotknij „Sparuj teraz” w segmencie sieci i zeskanuj poniższy kod; przed zatwierdzeniem sprawdź nazwę komputera i odcisk certyfikatu.</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>Jeśli telefon zgłasza, że nie może się połączyć, najpewniej zapora tego komputera nie zezwoliła na TCP 47654; po tym przewodniku zezwolisz na to jednym kliknięciem na stronie Kanał.</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>Telefon sparowany — kanał jest otwarty. Kontynuuj resztę przewodnika.</value>
@@ -933,7 +1053,7 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
     <value>Brak kabla pod ręką: podłącz telefon i ten komputer do tej samej sieci Wi-Fi, włącz Opcje programisty → Debugowanie bezprzewodowe i sparuj raz kodem QR — potem działa dokładnie tak jak przez USB.</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb działa tylko przy każdym Twoim kliknięciu — nigdy nie rezyduje, nigdy po cichu — a każdy krok wymaga Twojej wyraźnej zgody. Po tym przewodniku karta odczytu uprzywilejowanego na stronie Kanał pozwala w każdej chwili go uruchomić lub cofnąć zgodę.</value>
+    <value>adb działa tylko wtedy, gdy klikniesz, wysyłając do telefonu jedno polecenie startu; w żadnym innym momencie adb nie jest wywoływane. Po tym przewodniku karta odczytu uprzywilejowanego na stronie Kanał pozwala w każdej chwili go uruchomić lub cofnąć zgodę.</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>Zapasowy kanał domyślnie wyłączony: gdy sieć LAN jest blokowana przez VPN lub zaporę, telefon sparowany już przez Bluetooth w ustawieniach Windows nadal synchronizuje tekst (bez obrazów, wolniej).</value>

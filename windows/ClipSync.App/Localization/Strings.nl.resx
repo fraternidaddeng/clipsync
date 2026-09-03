@@ -217,10 +217,10 @@
     <value>Bevoorrecht lezen</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>De hoogste kwaliteitstrede van de Android-achtergrondleesladder: de pc gebruikt adb om een gekoppelde telefoon te helpen zijn ingebouwde bevoorrechte host te starten, waarna achtergrondkopieën van de telefoon direct worden geüpload. Elke stap vereist je uitdrukkelijke toestemming — nooit stil.</value>
+    <value>De hoogste kwaliteitstrede van de Android-achtergrondleesladder: de pc gebruikt adb om een gekoppelde telefoon te helpen zijn ingebouwde bevoorrechte host te starten, waarna achtergrondkopieën van de telefoon direct worden geüpload. Elke start wordt door jouw klik hier in gang gezet.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Eenmaal toegestaan roept deze pc adb (de Android Debug Bridge) aan om de telefoon één startcommando te sturen. adb draait alleen bij elke klik van jou — nooit residentieel, nooit stil. De eerste keer moet je ook USB-foutopsporing op de telefoon inschakelen en het adb-autorisatievenster met de hand accepteren — Android staat het automatiseren van die stap niet toe.</value>
+    <value>Eenmaal toegestaan roept deze pc adb (de Android Debug Bridge) aan om de telefoon één startcommando te sturen. Wanneer je op ‘Bevoorrecht lezen starten’ klikt, stuurt deze pc via adb één startcommando naar de telefoon; op geen enkel ander moment wordt adb aangeroepen. De eerste keer moet je ook USB-foutopsporing op de telefoon inschakelen en het adb-autorisatievenster met de hand accepteren — Android staat het automatiseren van die stap niet toe.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Ik begrijp het — adb toestaan</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>De peer-service draait niet; er is deze sessie geen vingerafdruk te tonen.</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>Firewall</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>Inkomend TCP 47654 toegestaan ({0})</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>Geen inkomende toestaan-regel voor TCP 47654 gevonden; de telefoon kan mogelijk geen verbinding maken</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>Niet vast te stellen (een firewall van derden of groepsbeleid heeft de controle)</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>Er is een blokkeerregel gericht op dit programma: {0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>Deze sessie luistert op poort {0}, die de poortregel niet dekt; maak poort 47654 vrij en start opnieuw</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>Windows deelt het huidige netwerk in als openbaar. Een regel alleen voor particuliere netwerken heeft hier geen effect; zet het netwerk op Particulier via Instellingen → Netwerk en internet → eigenschappen van dit netwerk, of vink Openbaar netwerk aan bij het toestaan.</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>Een regel betekent alleen dat de firewall niet blokkeert; AP-isolatie van de router of een VPN/TUN-adapter kunnen de verbinding nog steeds tegenhouden.</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>Opnieuw controleren</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>Controleren…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>Domeinnetwerk</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>Particulier netwerk</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>Openbaar netwerk</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>Inkomend TCP 47654 toestaan</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>De telefoon kan deze pc pas bereiken als de poort is toegestaan. Het in Windows ingebouwde netsh draait als beheerder om één firewallregel met de naam “ClipSync TCP 47654” te maken; de volledige opdracht die wordt uitgevoerd staat hieronder, en je kunt hem ook kopiëren en zelf in een beheerder-PowerShell uitvoeren. De regel verdwijnt niet als de programmamap wordt verwijderd; verwijder hem hier.</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>Opdracht kopiëren</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>Gekopieerd</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>Toestaan (beheerder vereist)</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>Regel verwijderen (beheerder vereist)</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>Firewallpoort toestaan</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>De volgende opdracht wordt zo als beheerder uitgevoerd. Het UAC-venster noemt het in Windows ingebouwde netsh.exe (ondertekend door Microsoft) en toont de argumenten niet — de argumenten zijn precies de regel hieronder.</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>Particulier netwerk (wifi thuis of op kantoor)</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>Openbaar netwerk (wifi in hotel of café; apparaten in hetzelfde segment kunnen de poort bereiken, maar hebben nog steeds koppeling nodig om iets te lezen)</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>Bevestigen en beheerdersrechten aanvragen</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>Annuleren</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>Regel gemaakt; opnieuw gecontroleerd.</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>Geannuleerd: geen beheerdersgoedkeuring gegeven.</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>Uitvoeren mislukt (exitcode {0}). Je kunt de opdracht kopiëren en handmatig in een beheerder-PowerShell uitvoeren.</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>Regel verwijderd.</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Ingetrokken</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>Doorloop de rondleiding van de eerste start opnieuw vanaf de welkomstpagina; er verandert niets aan instellingen of koppeling.</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>Privacy en risico's</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>Opent het document ‘lees dit voor gebruik’ in je browser (GitHub).</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>Openen</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>Er is geen browser beschikbaar.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · recente clips</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>Herhaalde authenticatiefouten van “{0}”; het apparaat is tijdelijk afgeremd.</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>“{0}” vraagt om koppeling</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>Keur goed of weiger in het zojuist geopende goedkeuringsvenster; het knippert in de taakbalk.</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>Koppelverzoek verlopen</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>De telefoon heeft 90 seconden gewacht zonder goedkeuring. Scan een nieuwe QR-code op de telefoon om het opnieuw te proberen.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Luistert · synchronisatie niet actief</value>
@@ -815,6 +926,9 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>Geen LAN-adres gedetecteerd. Zet deze pc en de telefoon op hetzelfde netwerk (of voeg een Tailscale-adres toe in Voorkeuren) en open dit venster opnieuw.</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>De firewall van deze pc heeft geen toestaan-regel voor TCP 47654; de telefoon zal zeer waarschijnlijk geen verbinding krijgen. Sta het eerst toe op de Kanaal-pagina.</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>Controleer op de telefoon vóór goedkeuring</value>
   </data>
@@ -911,8 +1025,14 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android beperkt klembordlezen op de achtergrond op de telefoon, en ClipSync doet niet alsof dat anders is: de telefoon uploadt automatisch op de voorgrond; achtergrondlezen vraagt één extra set-up — de route van de hoogste kwaliteit, bevoorrecht lezen, is precies wat deze pc de telefoon helpt starten. Elk vermogen wordt beoordeeld met livetests — als iets niet kan, staat dat er.</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>Lees dit voor gebruik: privacy en risico's</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>Open op de telefoon de pagina “Kanaal” van ClipSync, tik op “Nu koppelen” in het netwerksegment en scan de code hieronder; controleer vóór het goedkeuren de pc-naam en de certificaatvingerafdruk.</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>Als de telefoon meldt dat hij geen verbinding kan maken, heeft de firewall van deze pc TCP 47654 zeer waarschijnlijk niet toegestaan; na deze rondleiding kun je dat met één klik doen op de Kanaal-pagina.</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>Je telefoon is gekoppeld — het kanaal is open. Ga verder met de rest van de rondleiding.</value>
@@ -933,7 +1053,7 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
     <value>Geen kabel bij de hand: zet de telefoon en deze pc op dezelfde wifi, schakel Ontwikkelaarsopties → Draadloze foutopsporing in en koppel één keer via QR-code — daarna werkt het precies zoals via USB.</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb draait alleen bij elke klik van jou — nooit permanent, nooit stil — en elke stap vereist je uitdrukkelijke toestemming. Na deze rondleiding kun je het op de kaart voor bevoorrecht lezen op de Kanaal-pagina altijd starten of weer intrekken.</value>
+    <value>adb draait alleen wanneer je klikt en stuurt de telefoon één startcommando; op geen enkel ander moment wordt adb aangeroepen. Na deze rondleiding kun je het op de kaart voor bevoorrecht lezen op de Kanaal-pagina altijd starten of weer intrekken.</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>Een reservekanaal dat standaard uitstaat: wanneer het LAN wordt geblokkeerd door een VPN of firewall, blijft een telefoon die al via Bluetooth in de Windows-instellingen is gekoppeld tekst synchroniseren (geen afbeeldingen, langzamer).</value>

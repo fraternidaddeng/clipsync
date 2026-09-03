@@ -256,7 +256,6 @@
                                 BorderThickness="1"
                                 CornerRadius="8">
                             <ScrollViewer x:Name="PART_ContentHost"
-                                          Margin="{TemplateBinding Padding}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Border>
                         <ControlTemplate.Triggers>
@@ -327,6 +326,8 @@
                                                       VerticalAlignment="Center"
                                                       Content="{TemplateBinding SelectionBoxItem}"
                                                       ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                      ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
                                                       IsHitTestVisible="False" />
                                     <Path Grid.Column="1"
                                           Margin="0,1,10,0"
@@ -1574,6 +1575,49 @@
                                             BorderThickness="0,1,0,0">
                                         <StackPanel>
                                             <TextBlock Style="{StaticResource SegDetail}" Text="{Binding SyncStatus}" />
+                                            <!-- 防火墙（ADR 0006）：只读检测三态如实陈述——未发现规则是「需要你操作」（赭色），
+                                                 已放行用通行色，无法判断保持 detail 灰；规则存在≠一定可达，细节行说明 -->
+                                            <Grid Margin="0,6,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource CsText2Brush}"
+                                                               Style="{StaticResource SegDetail}"
+                                                               Text="{x:Static loc:Strings.Conduit_Firewall_Label}" />
+                                                    <TextBlock Margin="0,2,0,0" Text="{Binding FirewallStatus}">
+                                                        <TextBlock.Style>
+                                                            <Style BasedOn="{StaticResource SegDetail}" TargetType="TextBlock">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding FirewallRuleMissing}" Value="True">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource CsActBrush}" />
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding FirewallAllowed}" Value="True">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding FirewallStatus}" Value="">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                    <TextBlock Margin="0,2,0,0"
+                                                               Style="{StaticResource SegDetail}"
+                                                               Text="{Binding FirewallDetail}"
+                                                               Visibility="{Binding FirewallDetail, Converter={StaticResource StringNotEmptyToVisibility}}" />
+                                                </StackPanel>
+                                                <Button Grid.Column="1"
+                                                        Margin="6,0,0,0"
+                                                        Padding="8,2"
+                                                        VerticalAlignment="Top"
+                                                        Command="{Binding RefreshFirewallStatusCommand}"
+                                                        Content="{x:Static loc:Strings.Conduit_Firewall_Recheck}"
+                                                        FontSize="10"
+                                                        Style="{StaticResource GhostQuietButton}" />
+                                            </Grid>
                                             <!-- 蓝牙备援一行：正在承载会话时用通行色，其余状态保持 detail 灰 -->
                                             <TextBlock Margin="0,4,0,0" Text="{Binding BluetoothStatus}">
                                                 <TextBlock.Style>
@@ -1910,7 +1954,6 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <TextBox Height="30"
-                                                 FontFamily="{StaticResource CsMono}"
                                                  Style="{StaticResource InsetTextBox}"
                                                  Text="{Binding RenameText, UpdateSourceTrigger=PropertyChanged}" />
                                         <Button Grid.Column="1"
@@ -2010,6 +2053,67 @@
                                                  Style="{StaticResource InsetTextBox}"
                                                  Text="{Binding ExtraBindAddresses, UpdateSourceTrigger=PropertyChanged}" />
                                     </Grid>
+                                </Border>
+                                <!-- 放行 TCP 47654 入站（ADR 0006）：先原样展示将要执行的 netsh 命令；放行/移除都经
+                                     确认窗 + netsh.exe 的 UAC，用户点了才执行；移除只在检测到本应用命名的规则时出现。
+                                     「复制命令」走与历史复制相同的抑制路径，自己的写入不会被当成新剪贴。 -->
+                                <Border Padding="16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Conduit_FirewallRule_Title}" />
+                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Conduit_FirewallRule_Desc}" />
+                                        <!-- 命令是机器文本：Mono、只读可选中；RTL 下钉回 LTR -->
+                                        <TextBox Margin="0,8,0,0"
+                                                 FlowDirection="LeftToRight"
+                                                 FontFamily="{StaticResource CsMono}"
+                                                 FontSize="11"
+                                                 IsReadOnly="True"
+                                                 IsReadOnlyCaretVisible="False"
+                                                 Style="{StaticResource InsetTextBox}"
+                                                 Text="{Binding FirewallAllowCommandText, Mode=OneWay}"
+                                                 TextWrapping="Wrap" />
+                                        <TextBlock Margin="0,4,0,0"
+                                                   FlowDirection="LeftToRight"
+                                                   FontFamily="{StaticResource CsMono}"
+                                                   FontSize="10"
+                                                   Foreground="{DynamicResource CsText4Brush}"
+                                                   Text="{Binding FirewallAllowPowerShellText, Mode=OneWay}"
+                                                   TextWrapping="Wrap" />
+                                        <!-- 当前网络被归为「公用」= 需要你操作（赭色着色盒），不是错误 -->
+                                        <Border Margin="0,10,0,0"
+                                                Padding="12,10"
+                                                Background="{DynamicResource CsActBgBrush}"
+                                                BorderBrush="{DynamicResource CsActLineBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="9"
+                                                Visibility="{Binding FirewallPublicHintNeeded, Converter={StaticResource BoolToVisibility}}">
+                                            <TextBlock FontSize="11"
+                                                       Foreground="{DynamicResource CsActBrush}"
+                                                       Text="{x:Static loc:Strings.Conduit_Firewall_PublicHint}"
+                                                       TextWrapping="Wrap" />
+                                        </Border>
+                                        <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                                            <Button Command="{Binding CopyFirewallRuleCommandTextCommand}"
+                                                    Content="{x:Static loc:Strings.Conduit_FirewallRule_Copy}"
+                                                    Style="{StaticResource GhostQuietButton}" />
+                                            <Button Margin="8,0,0,0"
+                                                    Command="{Binding AllowFirewallPortCommand}"
+                                                    Content="{x:Static loc:Strings.Conduit_FirewallRule_Allow}"
+                                                    Style="{StaticResource GhostFlowButton}" />
+                                            <Button Margin="8,0,0,0"
+                                                    Command="{Binding RemoveFirewallRuleCommand}"
+                                                    Content="{x:Static loc:Strings.Conduit_FirewallRule_Remove}"
+                                                    Style="{StaticResource GhostQuietButton}"
+                                                    Visibility="{Binding FirewallManagedRuleExists, Converter={StaticResource BoolToVisibility}}" />
+                                        </StackPanel>
+                                        <TextBlock Margin="0,8,0,0"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource CsText3Brush}"
+                                                   Text="{Binding FirewallActionResult}"
+                                                   TextWrapping="Wrap"
+                                                   Visibility="{Binding FirewallActionResult, Converter={StaticResource StringNotEmptyToVisibility}}" />
+                                    </StackPanel>
                                 </Border>
                                 <!-- 指纹只在配对仪式中被核对，住在配对所在的网络段旁 -->
                                 <Border Padding="16,12,16,14"
@@ -2925,6 +3029,33 @@
                                             Content="{x:Static loc:Strings.Prefs_ReplayOnboarding}"
                                             Style="{StaticResource GhostQuietButton}" />
                                 </Grid>
+                                <!-- 使用前必读：在浏览器打开 GitHub 上的隐私与风险说明（按界面语言选版本）。
+                                     只在点击时打开，不预取；打不开就在行内如实陈述。 -->
+                                <Border Padding="16,12"
+                                        BorderBrush="{DynamicResource CsLineBrush}"
+                                        BorderThickness="0,1,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,16,0">
+                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_PrivacyDoc_Title}" />
+                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_PrivacyDoc_Desc}" />
+                                            <TextBlock x:Name="PrivacyDocOpenFailedText"
+                                                       Margin="0,5,0,0"
+                                                       FontSize="10.5"
+                                                       Foreground="{DynamicResource CsActBrush}"
+                                                       Text="{x:Static loc:Strings.Open_Url_Failed}"
+                                                       Visibility="Collapsed" />
+                                        </StackPanel>
+                                        <Button Grid.Column="1"
+                                                VerticalAlignment="Top"
+                                                Click="OnOpenPrivacyDocClicked"
+                                                Content="{x:Static loc:Strings.Prefs_PrivacyDoc_Open}"
+                                                Style="{StaticResource GhostQuietButton}" />
+                                    </Grid>
+                                </Border>
                             </StackPanel>
                         </ContentControl>
 

@@ -226,6 +226,26 @@ public sealed class PairingHttpTests
         }
     }
 
+    [Fact]
+    public async Task ConfirmArrivalAndMalformedBodiesLeaveLogEvidence()
+    {
+        await using var pair = await PeerPair.CreateAsync(
+            pairAndroidSide: false,
+            pairWindowsSide: false,
+            pairingApprover: new DelegateApprover((_, _) => Task.FromResult(true)));
+        using var client = pair.CreatePinnedHttpClient();
+
+        // A body that is not a confirm document still proves the request reached the listener.
+        using var malformed = await client.PostAsync(
+            new Uri("/v1/pair/confirm", UriKind.Relative),
+            JsonBody("{\"kind\":\"not_a_confirm\"}"));
+        Assert.Equal(HttpStatusCode.BadRequest, malformed.StatusCode);
+
+        Assert.Contains(pair.Logs.Lines, line => line.Contains("pairing confirm request received", StringComparison.Ordinal));
+        Assert.Contains(pair.Logs.Lines, line => line.Contains(
+            $"pairing confirm failed code={PairingErrorCodes.SchemaViolation}", StringComparison.Ordinal));
+    }
+
     private static string ConfirmRequestJson(string token) =>
         PairingJson.Serialize(new PairingConfirmRequest
         {

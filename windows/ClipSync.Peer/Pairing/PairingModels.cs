@@ -20,6 +20,11 @@ public static class PairingErrorCodes
     public const string Rejected = "PAIRING_REJECTED";
     public const string Timeout = "PAIRING_TIMEOUT";
     public const string RateLimited = "PAIRING_RATE_LIMITED";
+
+    public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
+    {
+        SchemaViolation, TokenInvalid, TokenExpired, Rejected, Timeout, RateLimited
+    };
 }
 
 /// <summary>The JSON object rendered inside the pairing QR code. Never contains the pair secret.</summary>

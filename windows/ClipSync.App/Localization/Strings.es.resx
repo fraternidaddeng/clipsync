@@ -217,10 +217,10 @@
     <value>Lectura privilegiada</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>El nivel de mayor calidad de la escalera de lectura en segundo plano de Android: el PC usa adb para ayudar a un teléfono emparejado a iniciar su host privilegiado integrado, tras lo cual las copias en segundo plano del teléfono se suben al instante. Cada paso requiere tu consentimiento explícito, nunca en silencio.</value>
+    <value>El nivel de mayor calidad de la escalera de lectura en segundo plano de Android: el PC usa adb para ayudar a un teléfono emparejado a iniciar su host privilegiado integrado, tras lo cual las copias en segundo plano del teléfono se suben al instante. Cada inicio lo desencadenas tú con un clic aquí.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Una vez permitido, este PC llamará a adb (el puente de depuración de Android) para enviar al teléfono un único comando de inicio. adb se ejecuta solo cuando haces clic cada vez — nunca residente, nunca en silencio. La primera vez también debes activar la depuración USB en el teléfono y aceptar a mano su aviso de autorización adb — Android no permite automatizar ese paso.</value>
+    <value>Una vez permitido, este PC llamará a adb (el puente de depuración de Android) para enviar al teléfono un único comando de inicio. Cuando haces clic en Iniciar lectura privilegiada, este PC envía al teléfono un comando de inicio por adb; adb no se invoca en ningún otro momento. La primera vez también debes activar la depuración USB en el teléfono y aceptar a mano su aviso de autorización adb — Android no permite automatizar ese paso.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Entiendo: permitir adb</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>El servicio del par no está en marcha; no hay huella que mostrar en esta sesión.</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>Firewall</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>Entrada TCP 47654 permitida ({0})</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>No se encontró ninguna regla de entrada que permita TCP 47654; es posible que el teléfono no pueda conectarse</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>No se puede determinar (un firewall de terceros o la directiva de grupo tiene el control)</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>Hay una regla de bloqueo dirigida a este programa: {0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>Esta ejecución escucha en el puerto {0}, que la regla por puerto no cubre; libera el puerto 47654 y reinicia</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>Windows clasifica la red actual como pública. Una regla solo para redes privadas no tiene efecto aquí; cambia la red a privada en Configuración → Red e Internet → propiedades de esta red, o marca Red pública al permitir.</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>Que exista la regla solo significa que el firewall no bloquea; el aislamiento de AP del router o un adaptador VPN/TUN aún pueden impedir la conexión.</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>Volver a comprobar</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>Comprobando…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>Red de dominio</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>Red privada</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>Red pública</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>Permitir la entrada TCP 47654</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>El teléfono solo podrá conectarse a este PC cuando el puerto esté permitido. Se ejecutará como administrador el netsh propio de Windows para crear una regla de firewall llamada «ClipSync TCP 47654»; abajo se muestra el comando completo que se ejecutará, y también puedes copiarlo y ejecutarlo tú mismo en un PowerShell de administrador. La regla no desaparece al borrar la carpeta del programa; puedes quitarla desde aquí.</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>Copiar comando</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>Copiado</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>Permitir (requiere administrador)</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>Quitar regla (requiere administrador)</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>Permitir el puerto en el firewall</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>El siguiente comando se ejecutará como administrador. El cuadro de diálogo de UAC mostrará el netsh.exe propio de Windows (firmado por Microsoft) y no mostrará los argumentos: los argumentos son exactamente la línea de abajo.</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>Red privada (Wi-Fi de casa o de la oficina)</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>Red pública (Wi-Fi de hotel o cafetería; los dispositivos del mismo segmento pueden alcanzar el puerto, pero siguen necesitando emparejarse para leer algo)</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>Confirmar y solicitar permisos de administrador</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>Regla creada; se volvió a comprobar.</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>Cancelado: no se obtuvo la autorización de administrador.</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>Error al ejecutar (código de salida {0}). Puedes copiar el comando y ejecutarlo a mano en un PowerShell de administrador.</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>Regla quitada.</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Revocado</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>Recorre de nuevo el tutorial de primer uso desde la página de bienvenida; no cambia ningún ajuste ni el emparejamiento.</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>Privacidad y riesgos</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>Abre en el navegador el documento de lectura obligada antes de usar (GitHub).</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>Abrir</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>No hay ningún navegador disponible.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · clips recientes</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>Fallos de autenticación repetidos de «{0}»; el dispositivo está limitado temporalmente.</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>«{0}» solicita emparejarse</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>Aprueba o rechaza en la ventana de aprobación que se acaba de abrir; parpadea en la barra de tareas.</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>La solicitud de emparejamiento ha caducado</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>El teléfono esperó 90 segundos sin recibir aprobación. Escanea un código QR nuevo en el teléfono para volver a intentarlo.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Escuchando · sincronización no iniciada</value>
@@ -815,6 +926,9 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>No se detectó ninguna dirección LAN. Conecta este PC y el teléfono a la misma red (o añade una dirección de Tailscale en Preferencias) y vuelve a abrir esta ventana.</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>El firewall de este PC no tiene ninguna regla que permita TCP 47654; lo más probable es que el teléfono no pueda conectarse. Permítelo primero en la página Conducto.</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>Verifica en el teléfono antes de aprobar</value>
   </data>
@@ -911,8 +1025,14 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android restringe la lectura del portapapeles en segundo plano en el teléfono, y ClipSync no finge lo contrario: el teléfono sube automáticamente mientras está en primer plano; la lectura en segundo plano requiere una configuración adicional única — la ruta de mayor calidad, la lectura privilegiada, es justo la que este PC ayuda al teléfono a iniciar. Cada capacidad se juzga con pruebas reales: si algo no se puede hacer, lo dice.</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>Lectura obligada antes de usar: privacidad y riesgos</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>En el teléfono, abre la página «Conducto» de ClipSync, toca «Emparejar ahora» en el segmento de red y escanea el código de abajo; antes de aprobar, comprueba el nombre del PC y la huella del certificado.</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>Si el teléfono dice que no puede conectarse, lo más probable es que el firewall de este PC no haya permitido TCP 47654; tras este recorrido puedes permitirlo con un clic en la página Conducto.</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>Tu teléfono ya está emparejado: el conducto está abierto. Sigue con el resto del recorrido.</value>
@@ -933,7 +1053,7 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
     <value>Sin cable a mano: pon el teléfono y este PC en la misma Wi-Fi, activa Opciones de desarrollador → Depuración inalámbrica y empareja una vez con código QR; después funciona igual que por USB.</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb se ejecuta solo cuando haces clic, nunca residente ni en silencio, y cada paso requiere tu consentimiento explícito. Tras este recorrido, la tarjeta de lectura privilegiada de la página Conducto es donde puedes iniciarla o revocarla en cualquier momento.</value>
+    <value>adb se ejecuta solo cuando haces clic y envía al teléfono un comando de inicio; adb no se invoca en ningún otro momento. Tras este recorrido, la tarjeta de lectura privilegiada de la página Conducto es donde puedes iniciarla o revocarla en cualquier momento.</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>Un canal de respaldo apagado por defecto: cuando una VPN o un cortafuegos bloquea la LAN, un teléfono ya emparejado por Bluetooth en los ajustes de Windows sigue sincronizando texto (sin imágenes, más lento).</value>

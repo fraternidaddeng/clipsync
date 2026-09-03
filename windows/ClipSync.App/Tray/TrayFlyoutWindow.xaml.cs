@@ -1,3 +1,4 @@
+using ClipSync.App.Diagnostics;
 using ClipSync.App.ViewModels;
 using System.Windows;
 using System.Windows.Threading;
@@ -41,7 +42,17 @@ public partial class TrayFlyoutWindow : Window
     /// <summary>Shows the flyout anchored to the bottom-right work-area corner (near the tray).</summary>
     public void ShowFlyout()
     {
-        Show();
+        try
+        {
+            Show();
+        }
+        catch (InvalidOperationException)
+        {
+            // Application shutdown or a closed window won the race; the flyout simply stays away.
+            LocalDiagnostics.Write("flyout_show_refused");
+            return;
+        }
+
         // SizeToContent resolves during layout; measure first so Top is right on first show.
         UpdateLayout();
         var area = SystemParameters.WorkArea;

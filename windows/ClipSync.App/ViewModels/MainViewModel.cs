@@ -1,3 +1,4 @@
+using ClipSync.App.Firewall;
 using ClipSync.App.Localization;
 using ClipSync.App.Update;
 using ClipSync.Core.Clipboard;
@@ -45,7 +46,10 @@ public partial class MainViewModel(
     Func<string?>? importPathPicker = null,
     Func<bool>? clearHistoryConfirmer = null,
     PrivilegedHostAssistant? privilegedHost = null,
-    WindowsAppUpdater? appUpdater = null) : ObservableObject
+    WindowsAppUpdater? appUpdater = null,
+    IFirewallInspector? firewallInspector = null,
+    IFirewallRuleElevator? firewallElevator = null,
+    Func<FirewallRulePromptRequest, FirewallRuleCommand?>? firewallRulePrompt = null) : ObservableObject
 {
     private bool initialized;
 
@@ -415,6 +419,70 @@ public partial class MainViewModel(
     /// drift after 息屏/切网/重启) is stated on the card instead of the stale "已连接" line.
     /// </summary>
     private WirelessAdbEndpoint? lastWirelessConnectEndpoint;
+
+    // ===== 防火墙（ADR 0006）：只读检测 · 展示命令 · 经 UAC 放行/移除 =====
+    // 检测用普通用户权限读 Windows 防火墙；写规则只在用户点击、看过完整命令并确认后，
+    // 以管理员身份运行 Windows 自带的 netsh.exe。检测三态如实陈述，不把「规则存在」说成「一定可达」。
+
+    private readonly IFirewallInspector firewall = firewallInspector ?? new FirewallInspector();
+    private readonly IFirewallRuleElevator firewallElevation = firewallElevator ?? new FirewallRuleElevator();
+
+    /// <summary>The exact netsh line the default 放行 (private profile only) runs; shown read-only and offered for copying.</summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Performance",
+        "CA1822:Mark members as static",
+        Justification = "WPF {Binding} 只解析实例属性；命令展示框绑在 DataContext 上。")]
+    public string FirewallAllowCommandText => FirewallRuleCommand.Allow(FirewallProfiles.Private).ToDisplayString();
+
+    /// <summary>The same rule as a NetSecurity cmdlet (what docs/install.md quotes), for people who prefer PowerShell.</summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Performance",
+        "CA1822:Mark members as static",
+        Justification = "WPF {Binding} 只解析实例属性；命令展示框绑在 DataContext 上。")]
+    public string FirewallAllowPowerShellText => FirewallRuleCommand.Allow(FirewallProfiles.Private).ToPowerShellString();
+
+    /// <summary>One line for the conduit network segment: 正在检测… / 已放行 / 未发现规则 / 无法判断.</summary>
+    [ObservableProperty]
+    private string firewallStatus = string.Empty;
+
+    /// <summary>Facts under the status line (port mismatch, block rules aimed at this exe, the reachability caveat); empty = hidden.</summary>
+    [ObservableProperty]
+    private string firewallDetail = string.Empty;
+
+    /// <summary>True when the last check found no covering rule: act-coloured status, hint in the QR window.</summary>
+    [ObservableProperty]
+    private bool firewallRuleMissing;
+
+    /// <summary>True when the last check found the port allowed on every active profile.</summary>
+    [ObservableProperty]
+    private bool firewallAllowed;
+
+    /// <summary>
+    /// True when a rule named ClipSync TCP 47654 exists (whatever its state): the 移除 button shows
+    /// and 放行 is disabled — netsh would otherwise add a second rule under the same name.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(AllowFirewallPortCommand))]
+    [NotifyCanExecuteChangedFor(nameof(RemoveFirewallRuleCommand))]
+    private bool firewallManagedRuleExists;
+
+    /// <summary>True when Windows classes the current network as Public and the port is not allowed there: the profile hint shows.</summary>
+    [ObservableProperty]
+    private bool firewallPublicHintNeeded;
+
+    /// <summary>Result line of the last 放行/移除/复制; empty until one runs.</summary>
+    [ObservableProperty]
+    private string firewallActionResult = string.Empty;
+
+    /// <summary>True while a check or an elevated run is in flight; freezes the firewall buttons.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RefreshFirewallStatusCommand))]
+    [NotifyCanExecuteChangedFor(nameof(AllowFirewallPortCommand))]
+    [NotifyCanExecuteChangedFor(nameof(RemoveFirewallRuleCommand))]
+    private bool firewallBusy;
+
+    /// <summary>Active profiles from the last check, handed to the confirmation window for its Public-network hint.</summary>
+    private FirewallProfiles firewallActiveProfiles = FirewallProfiles.Private;
 
     public ObservableCollection<HistoryItemViewModel> History { get; } = new();
 
@@ -941,6 +1009,172 @@ public partial class MainViewModel(
             // keep talking about a wireless connection the user just walked away from.
             lastWirelessConnectEndpoint = null;
         }
+    }
+
+    // ===== 防火墙命令（ADR 0006）=====
+
+    private bool CanRefreshFirewall() => !FirewallBusy;
+
+    /// <summary>
+    /// Re-reads the Windows Firewall (read-only, standard user rights) and restates the network
+    /// segment's 防火墙 line. The app layer runs it after the listener starts and after every
+    /// network-change recovery pass; 重新检测 and each 放行/移除 run it again.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanRefreshFirewall))]
+    private async Task RefreshFirewallStatusAsync()
+    {
+        FirewallBusy = true;
+        try
+        {
+            await InspectFirewallAsync();
+        }
+        finally
+        {
+            FirewallBusy = false;
+        }
+    }
+
+    private async Task InspectFirewallAsync()
+    {
+        FirewallStatus = Strings.Conduit_Firewall_Checking;
+        var report = await firewall.InspectAsync(
+            FirewallRuleCommand.Port,
+            PeerOnline ? PeerPort : 0,
+            Environment.ProcessPath ?? string.Empty,
+            CancellationToken.None);
+        ApplyFirewallReport(report);
+    }
+
+    /// <summary>Maps a report onto the segment's observable state; every sentence is a fact the check established.</summary>
+    private void ApplyFirewallReport(FirewallReport report)
+    {
+        FirewallAllowed = report.Verdict == FirewallVerdict.Allowed;
+        FirewallRuleMissing = report.Verdict == FirewallVerdict.NoRuleFound;
+        FirewallManagedRuleExists = report.NamedRuleExists;
+        firewallActiveProfiles = report.ActiveProfiles;
+        FirewallPublicHintNeeded = report.Verdict != FirewallVerdict.Allowed
+            && (report.ActiveProfiles & FirewallProfiles.Public) != 0;
+        FirewallStatus = report.Verdict switch
+        {
+            FirewallVerdict.Allowed => Strings.Format(
+                nameof(Strings.Conduit_Firewall_AllowedFormat), DescribeAllowSource(report)),
+            FirewallVerdict.NoRuleFound => Strings.Conduit_Firewall_NoRule,
+            _ => Strings.Conduit_Firewall_Undetermined,
+        };
+
+        var details = new List<string>(3);
+        if (report.PortMismatch && report.Verdict != FirewallVerdict.Allowed)
+        {
+            details.Add(Strings.Format(nameof(Strings.Conduit_Firewall_PortMismatchFormat), report.ActualPort));
+        }
+
+        if (report.BlockingRuleNames.Count > 0)
+        {
+            details.Add(Strings.Format(
+                nameof(Strings.Conduit_Firewall_BlockRuleFormat), string.Join(", ", report.BlockingRuleNames)));
+        }
+
+        if (report.Verdict == FirewallVerdict.Allowed)
+        {
+            details.Add(Strings.Conduit_Firewall_Caveat);
+        }
+
+        FirewallDetail = string.Join('\n', details);
+    }
+
+    /// <summary>What let the port through: the covering rule names, else the active profiles (firewall off or default-allow there).</summary>
+    private static string DescribeAllowSource(FirewallReport report) =>
+        report.MatchingAllowRuleNames.Count > 0
+            ? string.Join(", ", report.MatchingAllowRuleNames)
+            : string.Join(" / ", ProfileNames(report.ActiveProfiles));
+
+    private static IEnumerable<string> ProfileNames(FirewallProfiles profiles)
+    {
+        if ((profiles & FirewallProfiles.Domain) != 0)
+        {
+            yield return Strings.Firewall_Profile_Domain;
+        }
+
+        if ((profiles & FirewallProfiles.Private) != 0)
+        {
+            yield return Strings.Firewall_Profile_Private;
+        }
+
+        if ((profiles & FirewallProfiles.Public) != 0)
+        {
+            yield return Strings.Firewall_Profile_Public;
+        }
+    }
+
+    /// <summary>Copies the netsh line through the same suppression path as history copies, so the capture loop ignores the write.</summary>
+    [RelayCommand]
+    private void CopyFirewallRuleCommandText()
+    {
+        CopyText(FirewallAllowCommandText);
+        FirewallActionResult = Strings.Conduit_FirewallRule_Copied;
+    }
+
+    private bool CanAllowFirewallPort() => !FirewallBusy && !FirewallManagedRuleExists;
+
+    /// <summary>
+    /// 放行: the confirmation window shows the exact command and the profile choice first
+    /// (ADR 0006 §2), then Windows' own netsh runs through the system UAC prompt. A declined
+    /// prompt is stated as such — never as success — and every outcome is followed by a fresh
+    /// read-only check so the status line states what the firewall now holds.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAllowFirewallPort))]
+    private Task AllowFirewallPortAsync() =>
+        RunFirewallRuleAsync(new FirewallRulePromptRequest(IsRemoval: false, firewallActiveProfiles));
+
+    private bool CanRemoveFirewallRule() => !FirewallBusy && FirewallManagedRuleExists;
+
+    /// <summary>移除: same confirmation and UAC path; deletes only the rule this app named (ADR 0006 §3).</summary>
+    [RelayCommand(CanExecute = nameof(CanRemoveFirewallRule))]
+    private Task RemoveFirewallRuleAsync() =>
+        RunFirewallRuleAsync(new FirewallRulePromptRequest(IsRemoval: true, firewallActiveProfiles));
+
+    private async Task RunFirewallRuleAsync(FirewallRulePromptRequest request)
+    {
+        var command = (firewallRulePrompt ?? PromptFirewallRule)(request);
+        if (command is null)
+        {
+            return;
+        }
+
+        FirewallBusy = true;
+        try
+        {
+            var outcome = await firewallElevation.RunAsync(command, CancellationToken.None);
+            await InspectFirewallAsync();
+            FirewallActionResult = outcome.Status switch
+            {
+                ElevationStatus.Applied => command.IsRemoval
+                    ? Strings.FirewallRule_Result_Removed
+                    : Strings.FirewallRule_Result_Applied,
+                ElevationStatus.Cancelled => Strings.FirewallRule_Result_Cancelled,
+                _ => Strings.Format(
+                    nameof(Strings.FirewallRule_Result_FailedFormat),
+                    outcome.ExitCode?.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                        ?? outcome.FailureType
+                        ?? "?"),
+            };
+        }
+        finally
+        {
+            FirewallBusy = false;
+        }
+    }
+
+    /// <summary>The default prompt: the modal confirmation window; null when the user cancelled it.</summary>
+    private static FirewallRuleCommand? PromptFirewallRule(FirewallRulePromptRequest request)
+    {
+        var owner = System.Windows.Application.Current?.MainWindow;
+        var window = new FirewallRuleWindow(request)
+        {
+            Owner = owner is { IsVisible: true } ? owner : null,
+        };
+        window.ShowDialog();
+        return window.ConfirmedCommand;
     }
 
     /// <summary>Raised after a device is revoked so the app layer can drop its live sessions.</summary>

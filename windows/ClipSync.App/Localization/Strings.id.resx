@@ -217,10 +217,10 @@
     <value>Baca istimewa</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Anak tangga berkualitas tertinggi pada tangga baca latar Android: PC memakai adb untuk membantu ponsel yang sudah dipasangkan memulai host istimewa bawaannya, setelah itu salinan latar ponsel terunggah seketika. Setiap langkah memerlukan persetujuan eksplisit Anda — tidak pernah diam-diam.</value>
+    <value>Anak tangga berkualitas tertinggi pada tangga baca latar Android: PC memakai adb untuk membantu ponsel yang sudah dipasangkan memulai host istimewa bawaannya, setelah itu salinan latar ponsel terunggah seketika. Setiap mulai dipicu oleh klik Anda di sini.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Setelah diizinkan, PC ini akan memanggil adb (Android Debug Bridge) untuk mengirim satu perintah start ke ponsel. adb berjalan hanya saat Anda mengeklik tiap kali — tidak menetap, tidak diam-diam. Pertama kali Anda juga harus mengaktifkan USB debugging di ponsel dan menyetujui dialog otorisasi adb secara manual — Android tidak mengizinkan otomatisasi langkah ini.</value>
+    <value>Setelah diizinkan, PC ini akan memanggil adb (Android Debug Bridge) untuk mengirim satu perintah start ke ponsel. Saat Anda mengeklik Mulai baca istimewa, PC ini mengirim satu perintah start ke ponsel lewat adb; adb tidak dipanggil di waktu lain. Pertama kali Anda juga harus mengaktifkan USB debugging di ponsel dan menyetujui dialog otorisasi adb secara manual — Android tidak mengizinkan otomatisasi langkah ini.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Saya paham — izinkan adb</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>Layanan peer tidak berjalan; tidak ada sidik jari untuk ditampilkan sesi ini.</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>Firewall</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>TCP 47654 masuk diizinkan ({0})</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>Tidak ada aturan izin masuk untuk TCP 47654; ponsel mungkin tidak dapat terhubung</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>Tidak dapat dipastikan (firewall pihak ketiga atau Kebijakan Grup yang mengendalikan)</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>Ada aturan blokir yang menyasar program ini: {0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>Kali ini memantau porta {0}, yang tidak dicakup aturan per porta; bebaskan porta 47654 lalu mulai ulang</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>Windows menggolongkan jaringan saat ini sebagai publik. Aturan yang hanya untuk jaringan pribadi tidak berlaku di sini; ubah jaringan menjadi pribadi di Pengaturan → Jaringan &amp; internet → properti jaringan ini, atau centang Jaringan publik saat mengizinkan.</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>Adanya aturan hanya berarti firewall tidak memblokir; isolasi AP router atau adaptor VPN/TUN masih bisa menghalangi koneksi.</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>Periksa lagi</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>Memeriksa…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>Jaringan domain</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>Jaringan pribadi</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>Jaringan publik</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>Izinkan TCP 47654 masuk</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>Ponsel baru bisa menjangkau PC ini setelah porta diizinkan. netsh bawaan Windows dijalankan sebagai administrator untuk membuat satu aturan firewall bernama “ClipSync TCP 47654”; perintah lengkap yang akan dijalankan tampil di bawah, dan Anda juga bisa menyalinnya lalu menjalankannya sendiri di PowerShell administrator. Aturan tidak hilang saat folder program dihapus; hapus dari sini.</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>Salin perintah</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>Tersalin</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>Izinkan (perlu administrator)</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>Hapus aturan (perlu administrator)</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>Izinkan porta di firewall</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>Perintah berikut akan dijalankan sebagai administrator. Dialog UAC akan menampilkan netsh.exe bawaan Windows (ditandatangani Microsoft) dan tidak menampilkan argumennya — argumennya persis baris di bawah.</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>Jaringan pribadi (Wi-Fi rumah atau kantor)</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>Jaringan publik (Wi-Fi hotel atau kafe; perangkat di segmen yang sama bisa menjangkau porta, tetapi tetap perlu dipasangkan untuk membaca apa pun)</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>Konfirmasi dan minta hak administrator</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>Batal</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>Aturan dibuat; sudah diperiksa lagi.</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>Dibatalkan: persetujuan administrator tidak diberikan.</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>Gagal dijalankan (kode keluar {0}). Anda bisa menyalin perintah dan menjalankannya manual di PowerShell administrator.</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>Aturan dihapus.</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Dicabut</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>Jalani lagi tutorial pertama kali dari halaman sambutan; tidak mengubah setelan atau pemasangan apa pun.</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>Privasi dan risiko</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>Membuka dokumen baca-sebelum-memakai di browser (GitHub).</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>Buka</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>Tidak ada browser yang tersedia.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · klip terkini</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>Kegagalan autentikasi berulang dari “{0}”; perangkat itu dibatasi sementara.</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>“{0}” meminta pemasangan</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>Setujui atau tolak di jendela persetujuan yang baru terbuka; jendela itu berkedip di bilah tugas.</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>Permintaan pemasangan kedaluwarsa</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>Ponsel menunggu 90 detik tanpa persetujuan. Pindai kode QR baru di ponsel untuk mencoba lagi.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Memantau · sinkronisasi tidak berjalan</value>
@@ -815,6 +926,9 @@ Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>Tak terdeteksi alamat LAN. Sambungkan PC ini dan ponsel ke jaringan yang sama (atau tambahkan alamat Tailscale di Preferensi), lalu buka lagi jendela ini.</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>Firewall PC ini tidak punya aturan izin untuk TCP 47654; ponsel kemungkinan besar gagal terhubung. Izinkan dulu di halaman Saluran.</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>Cocokkan di ponsel sebelum menyetujui</value>
   </data>
@@ -911,8 +1025,14 @@ Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android membatasi pembacaan papan klip di latar belakang pada ponsel, dan ClipSync tidak berpura-pura sebaliknya: ponsel mengunggah otomatis saat di latar depan; pembacaan latar belakang butuh satu penyiapan ekstra — rute berkualitas tertinggi, baca istimewa, justru rute yang dibantu PC ini agar dimulai ponsel. Setiap kemampuan dinilai lewat uji nyata — jika sesuatu tidak bisa, ia akan bilang begitu.</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>Baca sebelum memakai: privasi dan risiko</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>Di ponsel, buka halaman “Saluran” di ClipSync, ketuk “Pasangkan sekarang” di segmen jaringan, lalu pindai kode di bawah; sebelum menyetujui, cocokkan nama PC dan sidik jari sertifikat.</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>Jika ponsel bilang tidak bisa terhubung, kemungkinan besar firewall PC ini belum mengizinkan TCP 47654; setelah tur ini Anda bisa mengizinkannya dengan sekali klik di halaman Saluran.</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>Ponsel Anda sudah terpasang — saluran telah terbuka. Lanjutkan sisa tur ini.</value>
@@ -933,7 +1053,7 @@ Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan
     <value>Tidak ada kabel: sambungkan ponsel dan PC ini ke Wi-Fi yang sama, aktifkan Opsi pengembang → Debugging nirkabel, lalu sandingkan sekali lewat kode QR — setelah itu bekerja persis seperti lewat USB.</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb hanya berjalan saat Anda mengeklik — tidak pernah menetap, tidak pernah diam-diam — dan setiap langkah butuh persetujuan eksplisit Anda. Setelah tur ini, kartu baca istimewa di halaman Saluran adalah tempat memulainya, atau menariknya kembali, kapan saja.</value>
+    <value>adb hanya berjalan saat Anda mengeklik, mengirim satu perintah start ke ponsel; adb tidak dipanggil di waktu lain. Setelah tur ini, kartu baca istimewa di halaman Saluran adalah tempat memulainya, atau menariknya kembali, kapan saja.</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>Saluran cadangan yang mati secara bawaan: saat LAN diblokir VPN atau firewall, ponsel yang sudah dipasangkan Bluetooth di pengaturan Windows tetap menyinkronkan teks (tanpa gambar, lebih lambat).</value>

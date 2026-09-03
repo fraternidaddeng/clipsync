@@ -351,6 +351,10 @@ public sealed class PeerServer : IAsyncDisposable
             return;
         }
 
+        // Evidence that the phone's request reached this process at all, before the body
+        // can still fail parsing: the first question when a scan ends in "pairing failed".
+        PeerLog.PairingConfirmReceived(logger);
+
         // The version middleware already enforced X-Protocol-Version. Read at most the
         // document limit plus one byte; anything longer is rejected without buffering it.
         var buffer = new byte[PairingJson.MaxDocumentBytes + 1];
@@ -370,6 +374,7 @@ public sealed class PeerServer : IAsyncDisposable
 
         if (total > PairingJson.MaxDocumentBytes)
         {
+            PeerLog.PairingConfirmFailed(logger, PairingErrorCodes.SchemaViolation);
             await WritePairingErrorAsync(context, 400, PairingErrorCodes.SchemaViolation).ConfigureAwait(false);
             return;
         }
@@ -377,6 +382,7 @@ public sealed class PeerServer : IAsyncDisposable
         var request = PairingJson.ParseConfirmRequest(buffer.AsSpan(0, total), out _);
         if (request is null)
         {
+            PeerLog.PairingConfirmFailed(logger, PairingErrorCodes.SchemaViolation);
             await WritePairingErrorAsync(context, 400, PairingErrorCodes.SchemaViolation).ConfigureAwait(false);
             return;
         }

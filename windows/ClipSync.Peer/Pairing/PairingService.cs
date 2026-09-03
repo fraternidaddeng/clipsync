@@ -120,6 +120,7 @@ public sealed class PairingService
         ArgumentNullException.ThrowIfNull(request);
         if (string.Equals(request.DeviceId, store.LocalDeviceId, StringComparison.Ordinal))
         {
+            PeerLog.PairingConfirmFailed(logger, PairingErrorCodes.SchemaViolation);
             return new PairingConfirmOutcome.Failed(400, PairingErrorCodes.SchemaViolation);
         }
 

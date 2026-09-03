@@ -217,10 +217,10 @@
     <value>การอ่านสิทธิ์พิเศษ</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>ขั้นคุณภาพสูงสุดของบันไดการอ่านเบื้องหลังของ Android: พีซีใช้ adb ช่วยให้โทรศัพท์ที่จับคู่แล้วเริ่มโฮสต์สิทธิ์พิเศษในตัว จากนั้นการคัดลอกเบื้องหลังของโทรศัพท์จะอัปโหลดทันที ทุกขั้นตอนต้องได้รับความยินยอมอย่างชัดเจนจากคุณ ไม่ทำงานเงียบ ๆ เด็ดขาด</value>
+    <value>ขั้นคุณภาพสูงสุดของบันไดการอ่านเบื้องหลังของ Android: พีซีใช้ adb ช่วยให้โทรศัพท์ที่จับคู่แล้วเริ่มโฮสต์สิทธิ์พิเศษในตัว จากนั้นการคัดลอกเบื้องหลังของโทรศัพท์จะอัปโหลดทันที ทุกครั้งที่เริ่มเกิดจากการคลิกของคุณที่นี่</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>เมื่ออนุญาตแล้ว พีซีนี้จะเรียก adb (Android Debug Bridge) เพื่อส่งคำสั่งเริ่มต้นหนึ่งคำสั่งไปยังโทรศัพท์ adb จะทำงานเฉพาะตอนที่คุณคลิกแต่ละครั้งเท่านั้น ไม่ค้างอยู่และไม่ทำงานเงียบ ๆ ครั้งแรกคุณต้องเปิด «การแก้จุดบกพร่อง USB» บนโทรศัพท์และยอมรับหน้าต่างอนุญาต adb ด้วยตนเอง — Android ไม่อนุญาตให้ทำขั้นตอนนี้อัตโนมัติ</value>
+    <value>เมื่ออนุญาตแล้ว พีซีนี้จะเรียก adb (Android Debug Bridge) เพื่อส่งคำสั่งเริ่มต้นหนึ่งคำสั่งไปยังโทรศัพท์ เมื่อคุณคลิก “เริ่มการอ่านสิทธิ์พิเศษ” พีซีนี้จะส่งคำสั่งเริ่มต้นหนึ่งคำสั่งไปยังโทรศัพท์ผ่าน adb และจะไม่เรียก adb ในเวลาอื่น ครั้งแรกคุณต้องเปิด «การแก้จุดบกพร่อง USB» บนโทรศัพท์และยอมรับหน้าต่างอนุญาต adb ด้วยตนเอง — Android ไม่อนุญาตให้ทำขั้นตอนนี้อัตโนมัติ</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>เข้าใจแล้ว — อนุญาต adb</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>บริการฝั่งโน้นยังไม่ทำงาน รอบนี้ไม่มีลายนิ้วมือให้แสดง</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>ไฟร์วอลล์</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>อนุญาต TCP 47654 ขาเข้าแล้ว ({0})</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>ไม่พบกฎอนุญาตขาเข้าสำหรับ TCP 47654 โทรศัพท์อาจเชื่อมต่อไม่ได้</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>ไม่สามารถระบุได้ (ไฟร์วอลล์ของบุคคลที่สามหรือนโยบายกลุ่มควบคุมอยู่)</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>มีกฎบล็อกที่มุ่งไปที่โปรแกรมนี้: {0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>การทำงานครั้งนี้เฝ้าฟังที่พอร์ต {0} ซึ่งกฎแบบระบุพอร์ตไม่ครอบคลุม ให้ปล่อยพอร์ต 47654 แล้วรีสตาร์ต</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>Windows จัดเครือข่ายปัจจุบันเป็น “สาธารณะ” กฎที่อนุญาตเฉพาะเครือข่ายส่วนตัวจึงไม่มีผลที่นี่ เปลี่ยนเครือข่ายเป็นส่วนตัวได้ที่ การตั้งค่า → เครือข่ายและอินเทอร์เน็ต → คุณสมบัติของเครือข่ายนี้ หรือติ๊กเครือข่ายสาธารณะตอนอนุญาต</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>การมีกฎแค่แปลว่าไฟร์วอลล์ไม่บล็อก การแยก AP ของเราเตอร์หรืออะแดปเตอร์ VPN/TUN ยังอาจขวางการเชื่อมต่อได้</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>ตรวจอีกครั้ง</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>กำลังตรวจ…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>เครือข่ายโดเมน</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>เครือข่ายส่วนตัว</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>เครือข่ายสาธารณะ</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>อนุญาต TCP 47654 ขาเข้า</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>โทรศัพท์จะเชื่อมถึงพีซีนี้ได้ก็ต่อเมื่ออนุญาตพอร์ตแล้ว netsh ที่มากับ Windows จะรันในสิทธิ์ผู้ดูแลระบบเพื่อสร้างกฎไฟร์วอลล์หนึ่งข้อชื่อ “ClipSync TCP 47654” คำสั่งเต็มที่จะรันแสดงอยู่ด้านล่าง และคุณคัดลอกไปรันเองใน PowerShell แบบผู้ดูแลระบบก็ได้ กฎนี้ไม่หายไปเมื่อลบโฟลเดอร์โปรแกรม ลบได้จากที่นี่</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>คัดลอกคำสั่ง</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>คัดลอกแล้ว</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>อนุญาต (ต้องใช้สิทธิ์ผู้ดูแลระบบ)</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>ลบกฎ (ต้องใช้สิทธิ์ผู้ดูแลระบบ)</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>อนุญาตพอร์ตในไฟร์วอลล์</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>คำสั่งต่อไปนี้กำลังจะรันในสิทธิ์ผู้ดูแลระบบ กล่องโต้ตอบ UAC จะแสดงโปรแกรม netsh.exe ที่มากับ Windows (ลงนามโดย Microsoft) และไม่แสดงอาร์กิวเมนต์ — อาร์กิวเมนต์ก็คือบรรทัดด้านล่างนี้</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>เครือข่ายส่วนตัว (Wi-Fi บ้านหรือที่ทำงาน)</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>เครือข่ายสาธารณะ (Wi-Fi โรงแรมหรือคาเฟ่ อุปกรณ์ในเครือข่ายเดียวกันเข้าถึงพอร์ตนี้ได้ แต่ยังต้องจับคู่ก่อนจึงจะอ่านเนื้อหาได้)</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>ยืนยันและขอสิทธิ์ผู้ดูแลระบบ</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>ยกเลิก</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>สร้างกฎแล้ว ตรวจซ้ำแล้ว</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>ยกเลิกแล้ว: ไม่ได้รับการอนุมัติจากผู้ดูแลระบบ</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>ทำงานล้มเหลว (รหัสออก {0}) คุณคัดลอกคำสั่งไปรันเองใน PowerShell แบบผู้ดูแลระบบได้</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>ลบกฎแล้ว</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>เพิกถอนแล้ว</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>เดินผ่านบทแนะนำการใช้งานครั้งแรกอีกรอบตั้งแต่หน้าต้อนรับ โดยไม่เปลี่ยนการตั้งค่าหรือการจับคู่ใด ๆ</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>ความเป็นส่วนตัวและความเสี่ยง</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>เปิดเอกสารอ่านก่อนใช้ในเบราว์เซอร์ (GitHub)</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>เปิด</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>ไม่มีเบราว์เซอร์ที่ใช้ได้</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · รายการล่าสุด</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>พบการยืนยันตัวตนล้มเหลวซ้ำ ๆ จาก «{0}» จึงจำกัดอุปกรณ์นั้นชั่วคราว</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>«{0}» ขอจับคู่</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>อนุมัติหรือปฏิเสธในหน้าต่างอนุมัติที่เพิ่งเปิดขึ้น หน้าต่างกำลังกะพริบอยู่บนแถบงาน</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>คำขอจับคู่หมดเวลาแล้ว</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>โทรศัพท์รอ 90 วินาทีแล้วแต่ยังไม่ได้รับการอนุมัติ สแกนคิวอาร์โค้ดใหม่บนโทรศัพท์เพื่อลองอีกครั้ง</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>กำลังเฝ้าฟัง · การซิงค์ยังไม่ทำงาน</value>
@@ -815,6 +926,9 @@
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>ไม่พบที่อยู่ LAN ให้พีซีนี้กับโทรศัพท์อยู่เครือข่ายเดียวกัน (หรือเพิ่มที่อยู่ Tailscale ในการตั้งค่า) แล้วเปิดหน้าต่างนี้อีกครั้ง</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>ไฟร์วอลล์ของพีซีนี้ไม่มีกฎอนุญาต TCP 47654 โทรศัพท์น่าจะเชื่อมต่อไม่ได้ ให้อนุญาตในหน้า “เส้นทาง” ก่อน</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>ตรวจบนโทรศัพท์ก่อนอนุมัติ</value>
   </data>
@@ -911,8 +1025,14 @@
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android จำกัดการอ่านคลิปบอร์ดเบื้องหลังบนโทรศัพท์ และ ClipSync ไม่แสร้งว่าเป็นอย่างอื่น: โทรศัพท์อัปโหลดอัตโนมัติเมื่อเปิดแอปอยู่ ส่วนการอ่านเบื้องหลังต้องตั้งค่าเพิ่มอีกครั้งเดียว — เส้นทางคุณภาพสูงสุด «การอ่านสิทธิ์พิเศษ» คือสิ่งที่พีซีนี้ช่วยโทรศัพท์เริ่มให้ ทุกความสามารถถูกตัดสินด้วยการทดสอบจริง — ถ้าทำไม่ได้ก็จะบอกตรง ๆ</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>อ่านก่อนใช้: ความเป็นส่วนตัวและความเสี่ยง</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>บนโทรศัพท์ เปิดหน้า “เส้นทาง” ของ ClipSync แตะ “จับคู่เลย” ในช่วงเครือข่าย แล้วสแกนโค้ดด้านล่าง ก่อนยืนยันโปรดตรวจชื่อพีซีและลายนิ้วมือใบรับรอง</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>ถ้าโทรศัพท์แจ้งว่าเชื่อมต่อไม่ได้ ส่วนใหญ่เป็นเพราะไฟร์วอลล์ของพีซีนี้ยังไม่อนุญาต TCP 47654 หลังจบการแนะนำ คุณอนุญาตได้ในคลิกเดียวที่หน้า “เส้นทาง”</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>จับคู่โทรศัพท์เสร็จแล้ว — เส้นทางเปิดแล้ว เดินต่อในส่วนที่เหลือได้เลย</value>
@@ -933,7 +1053,7 @@
     <value>ไม่มีสายใกล้ตัว: ให้โทรศัพท์และพีซีนี้อยู่บน Wi-Fi เดียวกัน เปิด «ตัวเลือกนักพัฒนา → การแก้ไขข้อบกพร่องแบบไร้สาย» แล้วจับคู่ครั้งเดียวด้วยคิวอาร์โค้ด — หลังจากนั้นทำงานเหมือน USB ทุกประการ</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb ทำงานเฉพาะเมื่อคุณคลิกแต่ละครั้ง — ไม่ฝังตัว ไม่ทำงานเงียบ ๆ — และทุกขั้นต้องได้รับความยินยอมชัดเจนจากคุณ หลังจบการแนะนำ การ์ดการอ่านสิทธิ์พิเศษในหน้า “เส้นทาง” คือที่ที่คุณเริ่มหรือถอนได้ทุกเมื่อ</value>
+    <value>adb ทำงานเฉพาะเมื่อคุณคลิก โดยส่งคำสั่งเริ่มต้นหนึ่งคำสั่งไปยังโทรศัพท์ และจะไม่เรียก adb ในเวลาอื่น หลังจบการแนะนำ การ์ดการอ่านสิทธิ์พิเศษในหน้า “เส้นทาง” คือที่ที่คุณเริ่มหรือถอนได้ทุกเมื่อ</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>ช่องสำรองที่ปิดเป็นค่าเริ่มต้น: เมื่อ LAN ถูก VPN หรือไฟร์วอลล์ขวาง โทรศัพท์ที่จับคู่บลูทูธในการตั้งค่า Windows ไว้แล้วจะซิงค์ข้อความต่อได้ (ไม่มีรูป ช้ากว่า)</value>

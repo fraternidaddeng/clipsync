@@ -217,10 +217,10 @@
     <value>Привилегированное чтение</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Самая качественная ступень лестницы фонового чтения Android: ПК с помощью adb помогает сопряжённому телефону запустить встроенный привилегированный хост, после чего фоновые копии телефона выгружаются мгновенно. Каждый шаг требует вашего явного согласия — никогда не молча.</value>
+    <value>Самая качественная ступень лестницы фонового чтения Android: ПК с помощью adb помогает сопряжённому телефону запустить встроенный привилегированный хост, после чего фоновые копии телефона выгружаются мгновенно. Каждый запуск происходит только по вашему нажатию здесь.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>После разрешения этот ПК вызовет adb (Android Debug Bridge), чтобы отправить телефону одну команду запуска. adb выполняется только при каждом вашем нажатии — никогда не остаётся в памяти и не работает молча. В первый раз нужно также включить отладку по USB на телефоне и вручную принять его запрос авторизации adb — Android не позволяет автоматизировать этот шаг.</value>
+    <value>После разрешения этот ПК вызовет adb (Android Debug Bridge), чтобы отправить телефону одну команду запуска. Когда вы нажимаете «Запустить привилегированное чтение», этот ПК отправляет телефону одну команду запуска через adb; в другое время adb не вызывается. В первый раз нужно также включить отладку по USB на телефоне и вручную принять его запрос авторизации adb — Android не позволяет автоматизировать этот шаг.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Понятно — разрешить adb</value>
@@ -410,6 +410,93 @@
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>Служба обмена не запущена; в этом сеансе отпечаток недоступен.</value>
+  </data>
+  <data name="Conduit_Firewall_Label" xml:space="preserve">
+    <value>Брандмауэр</value>
+  </data>
+  <data name="Conduit_Firewall_AllowedFormat" xml:space="preserve">
+    <value>Входящий TCP 47654 разрешён ({0})</value>
+  </data>
+  <data name="Conduit_Firewall_NoRule" xml:space="preserve">
+    <value>Не найдено входящего разрешающего правила для TCP 47654; телефон может не подключиться</value>
+  </data>
+  <data name="Conduit_Firewall_Undetermined" xml:space="preserve">
+    <value>Невозможно определить (управляет сторонний брандмауэр или групповая политика)</value>
+  </data>
+  <data name="Conduit_Firewall_BlockRuleFormat" xml:space="preserve">
+    <value>Есть блокирующее правило для этой программы: {0}</value>
+  </data>
+  <data name="Conduit_Firewall_PortMismatchFormat" xml:space="preserve">
+    <value>Сейчас программа слушает порт {0}, на который правило по порту не действует; освободите порт 47654 и перезапустите</value>
+  </data>
+  <data name="Conduit_Firewall_PublicHint" xml:space="preserve">
+    <value>Windows относит текущую сеть к общедоступным. Правило только для частных сетей здесь не действует; переключите сеть на «Частная» в Параметры → Сеть и Интернет → свойства этой сети или отметьте «Общедоступная сеть» при разрешении.</value>
+  </data>
+  <data name="Conduit_Firewall_Caveat" xml:space="preserve">
+    <value>Наличие правила означает лишь, что брандмауэр не блокирует; изоляция точки доступа на роутере или VPN/TUN-адаптер всё ещё могут мешать подключению.</value>
+  </data>
+  <data name="Conduit_Firewall_Recheck" xml:space="preserve">
+    <value>Проверить снова</value>
+  </data>
+  <data name="Conduit_Firewall_Checking" xml:space="preserve">
+    <value>Проверка…</value>
+  </data>
+  <data name="Firewall_Profile_Domain" xml:space="preserve">
+    <value>Доменная сеть</value>
+  </data>
+  <data name="Firewall_Profile_Private" xml:space="preserve">
+    <value>Частная сеть</value>
+  </data>
+  <data name="Firewall_Profile_Public" xml:space="preserve">
+    <value>Общедоступная сеть</value>
+  </data>
+  <data name="Conduit_FirewallRule_Title" xml:space="preserve">
+    <value>Разрешить входящий TCP 47654</value>
+  </data>
+  <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
+    <value>Телефон сможет подключиться к этому ПК только после разрешения порта. Встроенный в Windows netsh запустится от имени администратора и создаст одно правило брандмауэра с именем «ClipSync TCP 47654»; полная команда показана ниже, её можно также скопировать и выполнить самостоятельно в PowerShell от администратора. Правило не исчезает при удалении папки программы; удалить его можно здесь.</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
+    <value>Копировать команду</value>
+  </data>
+  <data name="Conduit_FirewallRule_Copied" xml:space="preserve">
+    <value>Скопировано</value>
+  </data>
+  <data name="Conduit_FirewallRule_Allow" xml:space="preserve">
+    <value>Разрешить (нужен администратор)</value>
+  </data>
+  <data name="Conduit_FirewallRule_Remove" xml:space="preserve">
+    <value>Удалить правило (нужен администратор)</value>
+  </data>
+  <data name="FirewallRule_Window_Title" xml:space="preserve">
+    <value>Разрешить порт в брандмауэре</value>
+  </data>
+  <data name="FirewallRule_Window_Body" xml:space="preserve">
+    <value>Следующая команда будет выполнена от имени администратора. В диалоге UAC будет указан встроенный в Windows netsh.exe (подписан Microsoft), а аргументы показаны не будут — аргументы и есть строка ниже.</value>
+  </data>
+  <data name="FirewallRule_Profile_Private" xml:space="preserve">
+    <value>Частная сеть (домашний или рабочий Wi-Fi)</value>
+  </data>
+  <data name="FirewallRule_Profile_Public" xml:space="preserve">
+    <value>Общедоступная сеть (Wi-Fi в отеле или кафе; устройства в том же сегменте достучатся до порта, но без сопряжения ничего не прочитают)</value>
+  </data>
+  <data name="FirewallRule_Confirm" xml:space="preserve">
+    <value>Подтвердить и запросить права администратора</value>
+  </data>
+  <data name="FirewallRule_Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="FirewallRule_Result_Applied" xml:space="preserve">
+    <value>Правило создано; проверка выполнена снова.</value>
+  </data>
+  <data name="FirewallRule_Result_Cancelled" xml:space="preserve">
+    <value>Отменено: разрешение администратора не получено.</value>
+  </data>
+  <data name="FirewallRule_Result_FailedFormat" xml:space="preserve">
+    <value>Не удалось выполнить (код выхода {0}). Можно скопировать команду и выполнить её вручную в PowerShell от администратора.</value>
+  </data>
+  <data name="FirewallRule_Result_Removed" xml:space="preserve">
+    <value>Правило удалено.</value>
   </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Отозвано</value>
@@ -627,6 +714,18 @@
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
     <value>Пройти обучение первого запуска заново со страницы приветствия; настройки и сопряжение не меняются.</value>
   </data>
+  <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
+    <value>Конфиденциальность и риски</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Desc" xml:space="preserve">
+    <value>Открывает в браузере документ «Прочтите перед использованием» (GitHub).</value>
+  </data>
+  <data name="Prefs_PrivacyDoc_Open" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
+  <data name="Open_Url_Failed" xml:space="preserve">
+    <value>Нет доступного браузера.</value>
+  </data>
   <data name="Flyout_WindowTitle" xml:space="preserve">
     <value>ClipSync · недавние записи</value>
   </data>
@@ -680,6 +779,18 @@
   </data>
   <data name="Tray_AuthThrottleFormat" xml:space="preserve">
     <value>Повторные сбои аутентификации у «{0}»; устройство временно ограничено.</value>
+  </data>
+  <data name="Tray_PairingRequest_TitleFormat" xml:space="preserve">
+    <value>«{0}» запрашивает сопряжение</value>
+  </data>
+  <data name="Tray_PairingRequest_Body" xml:space="preserve">
+    <value>Одобрите или отклоните запрос в открывшемся окне подтверждения; оно мигает на панели задач.</value>
+  </data>
+  <data name="Tray_PairingTimeout_Title" xml:space="preserve">
+    <value>Время запроса на сопряжение истекло</value>
+  </data>
+  <data name="Tray_PairingTimeout_Body" xml:space="preserve">
+    <value>Телефон ждал 90 секунд, но одобрения не было. Отсканируйте на телефоне новый QR-код, чтобы повторить попытку.</value>
   </data>
   <data name="Tray_Status_ListeningNoSync" xml:space="preserve">
     <value>Слушаем · синхронизация не запущена</value>
@@ -815,6 +926,9 @@
   <data name="Pairing_NoLanAddress" xml:space="preserve">
     <value>Адрес локальной сети не обнаружен. Подключите этот ПК и телефон к одной сети (или добавьте адрес Tailscale в настройках) и снова откройте это окно.</value>
   </data>
+  <data name="Pairing_FirewallHint" xml:space="preserve">
+    <value>В брандмауэре этого ПК нет разрешающего правила для TCP 47654; телефон, скорее всего, не подключится. Сначала разрешите порт на странице «Канал».</value>
+  </data>
   <data name="Pairing_VerifyHeading" xml:space="preserve">
     <value>Перед одобрением сверьте на телефоне</value>
   </data>
@@ -911,8 +1025,14 @@
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
     <value>Android ограничивает фоновое чтение буфера обмена на телефоне, и ClipSync не делает вид, что это не так: на переднем плане телефон загружает автоматически; для фонового чтения нужна одна дополнительная настройка — самый качественный путь, привилегированное чтение, запускается как раз с помощью этого ПК. Каждая возможность оценивается реальной проверкой — если что-то нельзя сделать, об этом сказано прямо.</value>
   </data>
+  <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
+    <value>Прочтите перед использованием: конфиденциальность и риски</value>
+  </data>
   <data name="Onboarding_Pair_Body" xml:space="preserve">
     <value>На телефоне откройте страницу «Канал» в ClipSync, нажмите «Сопрячь сейчас» в сетевом сегменте и отсканируйте код ниже; перед подтверждением сверьте имя ПК и отпечаток сертификата.</value>
+  </data>
+  <data name="Onboarding_Pair_Firewall" xml:space="preserve">
+    <value>Если телефон сообщает, что не может подключиться, скорее всего брандмауэр этого ПК не разрешил TCP 47654; после знакомства это можно сделать одним нажатием на странице «Канал».</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
     <value>Телефон сопряжён — канал открыт. Продолжайте знакомство дальше.</value>
@@ -933,7 +1053,7 @@
     <value>Нет кабеля под рукой: подключите телефон и этот ПК к одной сети Wi-Fi, включите «Параметры разработчика → Беспроводная отладка» и выполните сопряжение один раз по QR-коду — дальше всё работает так же, как по USB.</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb запускается только по вашему клику — никогда не работает в фоне и не выполняется незаметно, и каждый шаг требует вашего явного согласия. После знакомства карточка привилегированного чтения на странице «Канал» позволит в любой момент запустить его или отозвать согласие.</value>
+    <value>adb запускается только по вашему клику и отправляет телефону одну команду запуска; в другое время adb не вызывается. После знакомства карточка привилегированного чтения на странице «Канал» позволит в любой момент запустить его или отозвать согласие.</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>Резервный канал, по умолчанию выключенный: когда LAN блокируется VPN или брандмауэром, телефон, уже сопряжённый по Bluetooth в настройках Windows, продолжает синхронизировать текст (без изображений, медленнее).</value>
