@@ -8,9 +8,11 @@ using ClipSync.Core.Storage;
 namespace ClipSync.App.Tests.ViewModels;
 
 /// <summary>
-/// The conduit page's 防火墙 line and 放行/移除 flow (ADR 0006) against fakes: the view model
-/// states the inspector's verdict as facts, never runs netsh without a confirmed command, and
-/// re-checks after every elevated run so the result line matches what the firewall now holds.
+/// The conduit page's 防火墙 line and 放行/移除 flow (ADR 0006) against fakes, driven through
+/// <see cref="MainViewModel.Firewall"/> so the wiring (live listener port, copy path, the
+/// forwarded members the QR window and app layer bind) is covered too: the child states the
+/// inspector's verdict as facts, never runs netsh without a confirmed command, and re-checks
+/// after every elevated run so the result line matches what the firewall now holds.
 /// </summary>
 public sealed class MainViewModelFirewallTests : IAsyncDisposable
 {
@@ -24,6 +26,7 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
     private FirewallRuleCommand? promptAnswer;
     private FirewallRulePromptRequest? lastPrompt;
     private readonly MainViewModel viewModel;
+    private readonly FirewallViewModel firewall;
 
     public MainViewModelFirewallTests()
     {
@@ -41,6 +44,7 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
                 lastPrompt = request;
                 return promptAnswer;
             });
+        firewall = viewModel.Firewall;
     }
 
     [Fact]
@@ -49,15 +53,35 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
         viewModel.UpdatePeerStatus(online: true, port: 50123, connectedCount: 0);
         inspector.Report = Report(FirewallVerdict.NoRuleFound, actualPort: 50123, blocking: ["Blocked by user"]);
 
+        await firewall.RefreshStatusCommand.ExecuteAsync(null);
+
+        // The child reads the live listener port from the parent at check time.
+        Assert.Equal((47654, 50123), inspector.LastPorts);
+        Assert.True(firewall.RuleMissing);
+        Assert.False(firewall.Allowed);
+        Assert.Contains("未发现 TCP 47654", firewall.Status, StringComparison.Ordinal);
+        Assert.Contains("监听在端口 50123", firewall.Detail, StringComparison.Ordinal);
+        Assert.Contains("Blocked by user", firewall.Detail, StringComparison.Ordinal);
+        Assert.False(firewall.Busy);
+    }
+
+    [Fact]
+    public async Task ForwardedMembersMirrorTheChildForTheQrWindowAndAppLayer()
+    {
+        var raised = new List<string?>();
+        viewModel.PropertyChanged += (_, e) => raised.Add(e.PropertyName);
+        inspector.Report = Report(FirewallVerdict.NoRuleFound);
+
+        // App.xaml.cs drives re-checks through this forwarded command.
+        Assert.Same(firewall.RefreshStatusCommand, viewModel.RefreshFirewallStatusCommand);
         await viewModel.RefreshFirewallStatusCommand.ExecuteAsync(null);
 
-        Assert.Equal((47654, 50123), inspector.LastPorts);
+        // PairingQrWindow binds nameof(MainViewModel.FirewallRuleMissing) on the main view model.
         Assert.True(viewModel.FirewallRuleMissing);
-        Assert.False(viewModel.FirewallAllowed);
-        Assert.Contains("未发现 TCP 47654", viewModel.FirewallStatus, StringComparison.Ordinal);
-        Assert.Contains("监听在端口 50123", viewModel.FirewallDetail, StringComparison.Ordinal);
-        Assert.Contains("Blocked by user", viewModel.FirewallDetail, StringComparison.Ordinal);
-        Assert.False(viewModel.FirewallBusy);
+        Assert.Contains(nameof(MainViewModel.FirewallRuleMissing), raised);
+        // And the flyout's second line picks the firewall fact up from the same change.
+        Assert.Equal(SettingStatusTone.Attention, viewModel.TrayDetailStatus.Tone);
+        Assert.Contains("TCP 47654", viewModel.TrayDetailStatus.Text, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -65,14 +89,14 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
     {
         inspector.Report = Report(FirewallVerdict.Allowed, allowing: [FirewallRuleCommand.RuleName], namedRuleExists: true);
 
-        await viewModel.RefreshFirewallStatusCommand.ExecuteAsync(null);
+        await firewall.RefreshStatusCommand.ExecuteAsync(null);
 
-        Assert.True(viewModel.FirewallAllowed);
-        Assert.False(viewModel.FirewallRuleMissing);
-        Assert.True(viewModel.FirewallManagedRuleExists);
-        Assert.True(viewModel.RemoveFirewallRuleCommand.CanExecute(null));
-        Assert.Contains("ClipSync TCP 47654", viewModel.FirewallStatus, StringComparison.Ordinal);
-        Assert.Contains("AP 隔离", viewModel.FirewallDetail, StringComparison.Ordinal);
+        Assert.True(firewall.Allowed);
+        Assert.False(firewall.RuleMissing);
+        Assert.True(firewall.ManagedRuleExists);
+        Assert.True(firewall.RemoveRuleCommand.CanExecute(null));
+        Assert.Contains("ClipSync TCP 47654", firewall.Status, StringComparison.Ordinal);
+        Assert.Contains("AP 隔离", firewall.Detail, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -80,9 +104,9 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
     {
         inspector.Report = Report(FirewallVerdict.Allowed, active: FirewallProfiles.Private | FirewallProfiles.Public);
 
-        await viewModel.RefreshFirewallStatusCommand.ExecuteAsync(null);
+        await firewall.RefreshStatusCommand.ExecuteAsync(null);
 
-        Assert.Contains("专用网络 / 公用网络", viewModel.FirewallStatus, StringComparison.Ordinal);
+        Assert.Contains("专用网络 / 公用网络", firewall.Status, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -90,13 +114,13 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
     {
         inspector.Report = Report(FirewallVerdict.Undetermined, active: FirewallProfiles.Public);
 
-        await viewModel.RefreshFirewallStatusCommand.ExecuteAsync(null);
+        await firewall.RefreshStatusCommand.ExecuteAsync(null);
 
-        Assert.False(viewModel.FirewallAllowed);
-        Assert.False(viewModel.FirewallRuleMissing);
-        Assert.True(viewModel.FirewallPublicHintNeeded);
-        Assert.Contains("无法判断", viewModel.FirewallStatus, StringComparison.Ordinal);
-        Assert.False(viewModel.RemoveFirewallRuleCommand.CanExecute(null));
+        Assert.False(firewall.Allowed);
+        Assert.False(firewall.RuleMissing);
+        Assert.True(firewall.PublicHintNeeded);
+        Assert.Contains("无法判断", firewall.Status, StringComparison.Ordinal);
+        Assert.False(firewall.RemoveRuleCommand.CanExecute(null));
     }
 
     [Fact]
@@ -104,32 +128,32 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
     {
         promptAnswer = null;
 
-        await viewModel.AllowFirewallPortCommand.ExecuteAsync(null);
+        await firewall.AllowPortCommand.ExecuteAsync(null);
 
         Assert.NotNull(lastPrompt);
         Assert.False(lastPrompt!.IsRemoval);
         Assert.Empty(elevator.Commands);
-        Assert.Equal(string.Empty, viewModel.FirewallActionResult);
+        Assert.Equal(string.Empty, firewall.ActionResult);
     }
 
     [Fact]
     public async Task ConfirmedAllowRunsTheChosenCommandThenRechecks()
     {
         inspector.Report = Report(FirewallVerdict.NoRuleFound, active: FirewallProfiles.Public);
-        await viewModel.RefreshFirewallStatusCommand.ExecuteAsync(null);
+        await firewall.RefreshStatusCommand.ExecuteAsync(null);
         promptAnswer = FirewallRuleCommand.Allow(FirewallProfiles.Private | FirewallProfiles.Public);
         elevator.Outcome = ElevationOutcome.AppliedOutcome;
         inspector.Report = Report(FirewallVerdict.Allowed, allowing: [FirewallRuleCommand.RuleName], namedRuleExists: true);
 
-        await viewModel.AllowFirewallPortCommand.ExecuteAsync(null);
+        await firewall.AllowPortCommand.ExecuteAsync(null);
 
         Assert.Equal(FirewallProfiles.Public, lastPrompt!.ActiveProfiles);
         var ran = Assert.Single(elevator.Commands);
         Assert.Equal("profile=private,public", ran.Arguments[^1]);
         Assert.Equal(2, inspector.Calls);
-        Assert.True(viewModel.FirewallAllowed);
-        Assert.True(viewModel.FirewallManagedRuleExists);
-        Assert.Contains("规则已创建", viewModel.FirewallActionResult, StringComparison.Ordinal);
+        Assert.True(firewall.Allowed);
+        Assert.True(firewall.ManagedRuleExists);
+        Assert.Contains("规则已创建", firewall.ActionResult, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -139,10 +163,10 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
         elevator.Outcome = ElevationOutcome.CancelledOutcome;
         inspector.Report = Report(FirewallVerdict.NoRuleFound);
 
-        await viewModel.AllowFirewallPortCommand.ExecuteAsync(null);
+        await firewall.AllowPortCommand.ExecuteAsync(null);
 
-        Assert.Contains("未获得管理员授权", viewModel.FirewallActionResult, StringComparison.Ordinal);
-        Assert.True(viewModel.FirewallRuleMissing);
+        Assert.Contains("未获得管理员授权", firewall.ActionResult, StringComparison.Ordinal);
+        Assert.True(firewall.RuleMissing);
     }
 
     [Fact]
@@ -152,52 +176,52 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
         elevator.Outcome = new ElevationOutcome(ElevationStatus.Failed, 1);
         inspector.Report = Report(FirewallVerdict.NoRuleFound);
 
-        await viewModel.AllowFirewallPortCommand.ExecuteAsync(null);
+        await firewall.AllowPortCommand.ExecuteAsync(null);
 
-        Assert.Contains("退出码 1", viewModel.FirewallActionResult, StringComparison.Ordinal);
+        Assert.Contains("退出码 1", firewall.ActionResult, StringComparison.Ordinal);
     }
 
     [Fact]
     public async Task RemoveIsOnlyOfferedForTheManagedRuleAndStatesRemoval()
     {
-        Assert.False(viewModel.RemoveFirewallRuleCommand.CanExecute(null));
+        Assert.False(firewall.RemoveRuleCommand.CanExecute(null));
         inspector.Report = Report(FirewallVerdict.Allowed, allowing: [FirewallRuleCommand.RuleName], namedRuleExists: true);
-        await viewModel.RefreshFirewallStatusCommand.ExecuteAsync(null);
-        Assert.True(viewModel.RemoveFirewallRuleCommand.CanExecute(null));
+        await firewall.RefreshStatusCommand.ExecuteAsync(null);
+        Assert.True(firewall.RemoveRuleCommand.CanExecute(null));
 
         promptAnswer = FirewallRuleCommand.Remove();
         elevator.Outcome = ElevationOutcome.AppliedOutcome;
         inspector.Report = Report(FirewallVerdict.NoRuleFound);
-        await viewModel.RemoveFirewallRuleCommand.ExecuteAsync(null);
+        await firewall.RemoveRuleCommand.ExecuteAsync(null);
 
         Assert.True(lastPrompt!.IsRemoval);
         Assert.True(Assert.Single(elevator.Commands).IsRemoval);
-        Assert.Contains("规则已移除", viewModel.FirewallActionResult, StringComparison.Ordinal);
-        Assert.False(viewModel.FirewallManagedRuleExists);
-        Assert.False(viewModel.RemoveFirewallRuleCommand.CanExecute(null));
+        Assert.Contains("规则已移除", firewall.ActionResult, StringComparison.Ordinal);
+        Assert.False(firewall.ManagedRuleExists);
+        Assert.False(firewall.RemoveRuleCommand.CanExecute(null));
     }
 
     [Fact]
     public async Task ExistingManagedRuleDisablesAllowUntilItIsRemoved()
     {
-        Assert.True(viewModel.AllowFirewallPortCommand.CanExecute(null));
+        Assert.True(firewall.AllowPortCommand.CanExecute(null));
 
         // 规则存在但被禁用/被 Block 压过：仍不许再「放行」——netsh 会在同名下再建一条。
         inspector.Report = Report(FirewallVerdict.NoRuleFound, namedRuleExists: true);
-        await viewModel.RefreshFirewallStatusCommand.ExecuteAsync(null);
+        await firewall.RefreshStatusCommand.ExecuteAsync(null);
 
-        Assert.True(viewModel.FirewallManagedRuleExists);
-        Assert.False(viewModel.AllowFirewallPortCommand.CanExecute(null));
-        Assert.True(viewModel.RemoveFirewallRuleCommand.CanExecute(null));
+        Assert.True(firewall.ManagedRuleExists);
+        Assert.False(firewall.AllowPortCommand.CanExecute(null));
+        Assert.True(firewall.RemoveRuleCommand.CanExecute(null));
 
         promptAnswer = FirewallRuleCommand.Remove();
         elevator.Outcome = ElevationOutcome.AppliedOutcome;
         inspector.Report = Report(FirewallVerdict.NoRuleFound);
-        await viewModel.RemoveFirewallRuleCommand.ExecuteAsync(null);
+        await firewall.RemoveRuleCommand.ExecuteAsync(null);
 
-        Assert.False(viewModel.FirewallManagedRuleExists);
-        Assert.True(viewModel.AllowFirewallPortCommand.CanExecute(null));
-        Assert.False(viewModel.RemoveFirewallRuleCommand.CanExecute(null));
+        Assert.False(firewall.ManagedRuleExists);
+        Assert.True(firewall.AllowPortCommand.CanExecute(null));
+        Assert.False(firewall.RemoveRuleCommand.CanExecute(null));
     }
 
     [Fact]
@@ -205,8 +229,8 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
     {
         Assert.Equal(
             "netsh advfirewall firewall add rule name=\"ClipSync TCP 47654\" dir=in action=allow protocol=TCP localport=47654 profile=private",
-            viewModel.FirewallAllowCommandText);
-        Assert.StartsWith("New-NetFirewallRule ", viewModel.FirewallAllowPowerShellText, StringComparison.Ordinal);
+            firewall.AllowCommandText);
+        Assert.StartsWith("New-NetFirewallRule ", firewall.AllowPowerShellText, StringComparison.Ordinal);
     }
 
     public async ValueTask DisposeAsync()

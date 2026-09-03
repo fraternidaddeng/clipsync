@@ -1347,17 +1347,17 @@
                                                                Foreground="{DynamicResource CsText2Brush}"
                                                                Style="{StaticResource SegDetail}"
                                                                Text="{x:Static loc:Strings.Conduit_Firewall_Label}" />
-                                                    <TextBlock Margin="0,2,0,0" Text="{Binding FirewallStatus}">
+                                                    <TextBlock Margin="0,2,0,0" Text="{Binding Firewall.Status}">
                                                         <TextBlock.Style>
                                                             <Style BasedOn="{StaticResource SegDetail}" TargetType="TextBlock">
                                                                 <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding FirewallRuleMissing}" Value="True">
+                                                                    <DataTrigger Binding="{Binding Firewall.RuleMissing}" Value="True">
                                                                         <Setter Property="Foreground" Value="{DynamicResource CsActBrush}" />
                                                                     </DataTrigger>
-                                                                    <DataTrigger Binding="{Binding FirewallAllowed}" Value="True">
+                                                                    <DataTrigger Binding="{Binding Firewall.Allowed}" Value="True">
                                                                         <Setter Property="Foreground" Value="{DynamicResource CsFlowBrush}" />
                                                                     </DataTrigger>
-                                                                    <DataTrigger Binding="{Binding FirewallStatus}" Value="">
+                                                                    <DataTrigger Binding="{Binding Firewall.Status}" Value="">
                                                                         <Setter Property="Visibility" Value="Collapsed" />
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
@@ -1366,14 +1366,14 @@
                                                     </TextBlock>
                                                     <TextBlock Margin="0,2,0,0"
                                                                Style="{StaticResource SegDetail}"
-                                                               Text="{Binding FirewallDetail}"
-                                                               Visibility="{Binding FirewallDetail, Converter={StaticResource StringNotEmptyToVisibility}}" />
+                                                               Text="{Binding Firewall.Detail}"
+                                                               Visibility="{Binding Firewall.Detail, Converter={StaticResource StringNotEmptyToVisibility}}" />
                                                 </StackPanel>
                                                 <Button Grid.Column="1"
                                                         Margin="6,0,0,0"
                                                         Padding="8,2"
                                                         VerticalAlignment="Top"
-                                                        Command="{Binding RefreshFirewallStatusCommand}"
+                                                        Command="{Binding Firewall.RefreshStatusCommand}"
                                                         Content="{x:Static loc:Strings.Conduit_Firewall_Recheck}"
                                                         FontSize="10"
                                                         Style="{StaticResource GhostQuietButton}" />
@@ -1836,14 +1836,14 @@
                                                  IsReadOnly="True"
                                                  IsReadOnlyCaretVisible="False"
                                                  Style="{StaticResource InsetTextBox}"
-                                                 Text="{Binding FirewallAllowCommandText, Mode=OneWay}"
+                                                 Text="{Binding Firewall.AllowCommandText, Mode=OneWay}"
                                                  TextWrapping="Wrap" />
                                         <TextBlock Margin="0,4,0,0"
                                                    FlowDirection="LeftToRight"
                                                    FontFamily="{StaticResource CsMono}"
                                                    FontSize="10"
                                                    Foreground="{DynamicResource CsText4Brush}"
-                                                   Text="{Binding FirewallAllowPowerShellText, Mode=OneWay}"
+                                                   Text="{Binding Firewall.AllowPowerShellText, Mode=OneWay}"
                                                    TextWrapping="Wrap" />
                                         <!-- 当前网络被归为「公用」= 需要你操作（赭色着色盒），不是错误 -->
                                         <Border Margin="0,10,0,0"
@@ -1852,32 +1852,32 @@
                                                 BorderBrush="{DynamicResource CsActLineBrush}"
                                                 BorderThickness="1"
                                                 CornerRadius="9"
-                                                Visibility="{Binding FirewallPublicHintNeeded, Converter={StaticResource BoolToVisibility}}">
+                                                Visibility="{Binding Firewall.PublicHintNeeded, Converter={StaticResource BoolToVisibility}}">
                                             <TextBlock FontSize="11"
                                                        Foreground="{DynamicResource CsActBrush}"
                                                        Text="{x:Static loc:Strings.Conduit_Firewall_PublicHint}"
                                                        TextWrapping="Wrap" />
                                         </Border>
                                         <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
-                                            <Button Command="{Binding CopyFirewallRuleCommandTextCommand}"
+                                            <Button Command="{Binding Firewall.CopyRuleCommandTextCommand}"
                                                     Content="{x:Static loc:Strings.Conduit_FirewallRule_Copy}"
                                                     Style="{StaticResource GhostQuietButton}" />
                                             <Button Margin="8,0,0,0"
-                                                    Command="{Binding AllowFirewallPortCommand}"
+                                                    Command="{Binding Firewall.AllowPortCommand}"
                                                     Content="{x:Static loc:Strings.Conduit_FirewallRule_Allow}"
                                                     Style="{StaticResource GhostFlowButton}" />
                                             <Button Margin="8,0,0,0"
-                                                    Command="{Binding RemoveFirewallRuleCommand}"
+                                                    Command="{Binding Firewall.RemoveRuleCommand}"
                                                     Content="{x:Static loc:Strings.Conduit_FirewallRule_Remove}"
                                                     Style="{StaticResource GhostQuietButton}"
-                                                    Visibility="{Binding FirewallManagedRuleExists, Converter={StaticResource BoolToVisibility}}" />
+                                                    Visibility="{Binding Firewall.ManagedRuleExists, Converter={StaticResource BoolToVisibility}}" />
                                         </StackPanel>
                                         <TextBlock Margin="0,8,0,0"
                                                    FontSize="11"
                                                    Foreground="{DynamicResource CsText3Brush}"
-                                                   Text="{Binding FirewallActionResult}"
+                                                   Text="{Binding Firewall.ActionResult}"
                                                    TextWrapping="Wrap"
-                                                   Visibility="{Binding FirewallActionResult, Converter={StaticResource StringNotEmptyToVisibility}}" />
+                                                   Visibility="{Binding Firewall.ActionResult, Converter={StaticResource StringNotEmptyToVisibility}}" />
                                     </StackPanel>
                                 </Border>
                                 <!-- 指纹只在配对仪式中被核对，住在配对所在的网络段旁 -->
@@ -2853,7 +2853,7 @@
                                                FontFamily="{StaticResource CsMono}"
                                                FontSize="13"
                                                Foreground="{DynamicResource CsText2Brush}"
-                                               Text="{Binding AppVersion}" />
+                                               Text="{Binding Update.AppVersion}" />
                                 </Grid>
                                 <Border Padding="16,12"
                                         BorderBrush="{DynamicResource CsLineBrush}"
@@ -2869,7 +2869,7 @@
                                         </StackPanel>
                                         <Button Grid.Column="1"
                                                 VerticalAlignment="Top"
-                                                Command="{Binding CheckForUpdatesCommand}"
+                                                Command="{Binding Update.CheckCommand}"
                                                 Content="{x:Static loc:Strings.Prefs_CheckUpdate}"
                                                 Style="{StaticResource GhostQuietButton}" />
                                     </Grid>
@@ -2878,14 +2878,14 @@
                                         BorderBrush="{DynamicResource CsLineBrush}"
                                         BorderThickness="0,1,0,0">
                                     <Button HorizontalAlignment="Left"
-                                            Command="{Binding DownloadUpdateCommand}"
+                                            Command="{Binding Update.DownloadCommand}"
                                             Content="{x:Static loc:Strings.Prefs_Update_Download}"
                                             Style="{StaticResource GhostQuietButton}" />
                                     <Border.Style>
                                         <Style TargetType="Border">
                                             <Setter Property="Visibility" Value="Visible" />
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding UpdateAvailable}" Value="False">
+                                                <DataTrigger Binding="{Binding Update.Available}" Value="False">
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -2898,12 +2898,12 @@
                                     <TextBlock FontFamily="{StaticResource CsMono}"
                                                FontSize="11"
                                                Foreground="{DynamicResource CsText3Brush}"
-                                               Text="{Binding UpdateStatus}"
+                                               Text="{Binding Update.Status}"
                                                TextWrapping="Wrap" />
                                     <Border.Style>
                                         <Style TargetType="Border">
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding UpdateStatus}" Value="">
+                                                <DataTrigger Binding="{Binding Update.Status}" Value="">
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                 </DataTrigger>
                                             </Style.Triggers>

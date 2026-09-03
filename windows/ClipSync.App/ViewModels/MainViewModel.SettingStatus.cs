@@ -179,6 +179,4 @@ public partial class MainViewModel
         StartupStatus = SettingStatusMapper.Startup(value, startupRegistry);
 
     partial void OnBluetoothFallbackEnabledChanged(bool value) => RefreshBluetoothToggleStatus();
-
-    partial void OnFirewallRuleMissingChanged(bool value) => RefreshTrayDetailStatus();
 }
