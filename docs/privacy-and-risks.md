@@ -58,6 +58,8 @@ What you can do: watch your surroundings while the QR code is on screen and do n
 
 ClipSync announces its presence on the local network (device ID, port, certificate fingerprint) and answers any device that connects to its port with a health status (protocol version, port, device ID, and a status word saying whether clipboard writing is ready). An unpaired device on the same network learns only this much: there is a ClipSync here, on this port, with this device ID and this certificate fingerprint. It cannot read content and cannot inject content — a sync session requires the pairing secret; starting a pairing requires the token from the QR code plus your approval on the PC, and pairing requests are rate-limited.
 
+While the pairing page is open, the phone listens for this LAN beacon from the PC (receive only, never replies; the beacon carries only the device ID, port and certificate fingerprint) to confirm "the PC is on this network" and to move the PC's real address to the front of the list — listening stops as soon as you leave the pairing page. This needs the normal `CHANGE_WIFI_MULTICAST_STATE` permission on Android (granted at install time, no prompt). While the QR window is open, the PC shortens its broadcast interval from 5 minutes to 2 seconds and returns to normal when the window closes; the broadcast content is unchanged.
+
 ## 7. What allowing the firewall means
 
 The phone is the side that connects to the PC, so the PC has to allow inbound connections on TCP port 47654 in Windows Firewall. On first run Windows usually shows a firewall alert; tick "Private networks" and allow.
