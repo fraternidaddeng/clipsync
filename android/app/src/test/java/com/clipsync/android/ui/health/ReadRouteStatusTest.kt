@@ -74,12 +74,48 @@ class ReadRouteStatusTest {
                 clock,
             )
 
+        // The code is rendered as the conduit's phrase, never as the machine constant.
         assertEquals(
-            "当前读取路线：悬浮窗轮询。首选 特权直读 已于 14:32 因通道故障降级（PRIV_HOST_USERSERVICE_DEAD）。",
+            "当前读取路线：悬浮窗轮询。首选 特权直读 已于 14:32 因通道故障降级（与特权通道的连接已断开）。",
             status.headline.testString(),
         )
         assertTrue(status.degradedFromPreferred)
         assertTrue(status.facts.any { it.testString().contains("每 5 分钟") })
+    }
+
+    @Test
+    fun `a shortfall code without a phrase drops the parenthetical instead of printing the constant`() {
+        fun headline(
+            cause: ReadRouteShortfallCause,
+            code: String?,
+        ) = readRouteStatus(
+            access(
+                active = ClipboardReadMode.OVERLAY_POLLING,
+                shortfall =
+                    ReadRouteShortfall(
+                        cause = cause,
+                        fromMode = ClipboardReadMode.SHIZUKU_EVENT,
+                        errorCode = code,
+                        sinceEpochMillis = 1L,
+                    ),
+            ),
+            running(),
+            clock,
+        ).headline.testString()
+
+        assertEquals(
+            "当前读取路线：悬浮窗轮询。首选 特权直读 已于 14:32 因通道故障降级。",
+            headline(ReadRouteShortfallCause.HEALTH_FALLBACK, "SOME_FUTURE_CODE"),
+        )
+        assertEquals(
+            "当前读取路线：悬浮窗轮询。首选 特权直读 自 14:32 起未就绪。",
+            headline(ReadRouteShortfallCause.PREFERRED_NOT_READY, "CLIPBOARD_READ_NOT_READY"),
+        )
+        // The observed device case: the host was not started yet.
+        assertEquals(
+            "当前读取路线：悬浮窗轮询。首选 特权直读 自 14:32 起未就绪（特权通道未运行）。",
+            headline(ReadRouteShortfallCause.PREFERRED_NOT_READY, "PRIVILEGED_CHANNEL_OFFLINE"),
+        )
     }
 
     @Test
@@ -101,7 +137,7 @@ class ReadRouteStatusTest {
             )
 
         assertEquals(
-            "当前读取路线：前台/手动。首选 特权直读 自 14:32 起未就绪（原因未知）。",
+            "当前读取路线：前台/手动。首选 特权直读 自 14:32 起未就绪。",
             status.headline.testString(),
         )
         assertTrue(status.degradedFromPreferred)
@@ -133,10 +169,21 @@ class ReadRouteStatusTest {
             )
 
         assertEquals(
-            "当前没有读取路线在运行（PRIVILEGED_CHANNEL_OFFLINE）；应用在前台时仍可手动发送。",
+            "当前没有读取路线在运行（特权通道未运行）；应用在前台时仍可手动发送。",
             status.headline.testString(),
         )
         assertFalse(status.recoverable)
+
+        val unknown =
+            readRouteStatus(
+                access(active = null, lastErrorCode = "CLIPBOARD_READ_BACKEND_MISSING"),
+                CaptureSessionStatus(running = false, owners = emptySet(), gate = CaptureGate.OPEN),
+                clock,
+            )
+        assertEquals(
+            "当前没有读取路线在运行（原因未知）；应用在前台时仍可手动发送。",
+            unknown.headline.testString(),
+        )
     }
 
     @Test

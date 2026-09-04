@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>Unknown device</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>Last seen {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>Never connected</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · {1} pending in the outbox</value>
   </data>
@@ -1174,6 +1180,9 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>On · {0} device(s) connected; images travel only when the phone side is on too</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>On · {0} device(s) connected; images sync both ways</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>On · the connected phone has image sync off; this session carries text only</value>

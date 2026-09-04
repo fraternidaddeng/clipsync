@@ -96,7 +96,7 @@ class HealthViewModelLiveRouteTest {
 
         assertEquals(ConduitStatus.DEGRADED, read.status)
         assertEquals(
-            "当前读取路线：前台/手动。首选 特权直读 已于 09:15 因通道故障降级（PRIV_HOST_USERSERVICE_DEAD）。",
+            "当前读取路线：前台/手动。首选 特权直读 已于 09:15 因通道故障降级（与特权通道的连接已断开）。",
             read.detail.testString(),
         )
         val routes = harness.model.state.value.routes

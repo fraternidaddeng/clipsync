@@ -223,6 +223,56 @@ public sealed class PairingServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task PhoneAbortingBeforeAnAnswerLeavesAnAbortedCodeInTheLog()
+    {
+        var logs = new CollectingLoggerFactory();
+        using var requestAborted = new CancellationTokenSource();
+        var approverEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var service = CreateService(
+            new DelegateApprover(async (_, ct) =>
+            {
+                approverEntered.SetResult();
+                await Task.Delay(Timeout.InfiniteTimeSpan, ct);
+                return true;
+            }),
+            logger: logs.CreateLogger("ClipSync.Peer.Pairing"));
+        var confirm = service.ConfirmAsync(Request(service.IssueTicket().Token), requestAborted.Token);
+        await approverEntered.Task;
+
+        await requestAborted.CancelAsync();
+
+        // The request still unwinds as aborted (nothing can reach the phone), but the local
+        // log now says how the confirm ended instead of stopping at "request received".
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => confirm);
+        Assert.Contains(logs.Lines, line => line.Contains(
+            $"pairing confirm failed code={PairingErrorCodes.PeerAborted}", StringComparison.Ordinal));
+        Assert.DoesNotContain(logs.Lines, line => line.Contains(
+            $"pairing confirm failed code={PairingErrorCodes.Timeout}", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ApprovalTimeoutLogsTimeoutNotAborted()
+    {
+        var logs = new CollectingLoggerFactory();
+        var service = CreateService(
+            new DelegateApprover(async (_, ct) =>
+            {
+                await Task.Delay(Timeout.InfiniteTimeSpan, ct);
+                return true;
+            }),
+            approvalTimeout: TimeSpan.FromMilliseconds(120),
+            logger: logs.CreateLogger("ClipSync.Peer.Pairing"));
+
+        var outcome = await service.ConfirmAsync(Request(service.IssueTicket().Token), CancellationToken.None);
+
+        Assert.Equal(PairingErrorCodes.Timeout, Assert.IsType<PairingConfirmOutcome.Failed>(outcome).ErrorCode);
+        Assert.Contains(logs.Lines, line => line.Contains(
+            $"pairing confirm failed code={PairingErrorCodes.Timeout}", StringComparison.Ordinal));
+        Assert.DoesNotContain(logs.Lines, line => line.Contains(
+            $"pairing confirm failed code={PairingErrorCodes.PeerAborted}", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task RepairBumpsEpochClearsRevocationAndTellsTheApprover()
     {
         PairingCandidate? seen = null;
@@ -324,7 +374,10 @@ public sealed class PairingServiceTests : IAsyncDisposable
         Assert.Equal(PairingErrorCodes.SchemaViolation, outcome.ErrorCode);
     }
 
-    private PairingService CreateService(IPairingApprover approver, TimeSpan? approvalTimeout = null) =>
+    private PairingService CreateService(
+        IPairingApprover approver,
+        TimeSpan? approvalTimeout = null,
+        Microsoft.Extensions.Logging.ILogger? logger = null) =>
         new(
             store,
             protector,
@@ -334,7 +387,8 @@ public sealed class PairingServiceTests : IAsyncDisposable
                 LocalDisplayName = "DESKTOP-WIN",
                 TimeProvider = clock,
                 ApprovalTimeout = approvalTimeout ?? TimeSpan.FromSeconds(5)
-            });
+            },
+            logger);
 
     private static DelegateApprover AutoApprove() => new((_, _) => Task.FromResult(true));
 

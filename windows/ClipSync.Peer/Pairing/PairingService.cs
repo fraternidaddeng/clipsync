@@ -171,6 +171,14 @@ public sealed class PairingService
             PeerLog.PairingConfirmFailed(logger, PairingErrorCodes.Timeout);
             return new PairingConfirmOutcome.Failed(403, PairingErrorCodes.Timeout);
         }
+        catch (OperationCanceledException)
+        {
+            // The phone hung up (or the host is shutting down) before the user answered. No
+            // response can reach the peer anymore, so only the local log learns how this
+            // confirm ended; the request itself still unwinds as an aborted request.
+            PeerLog.PairingConfirmFailed(logger, PairingErrorCodes.PeerAborted);
+            throw;
+        }
 
         if (!approved)
         {

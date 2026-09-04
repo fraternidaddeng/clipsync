@@ -39,7 +39,7 @@ public sealed class DeviceManagementViewModelTests : IAsyncDisposable
         Assert.Equal("Pixel 8", device.DisplayName);
         Assert.Equal("Android", device.Platform);
         Assert.False(device.IsRevoked);
-        Assert.Equal("Never connected", device.LastSeenText);
+        Assert.Equal("尚未连接过", device.LastSeenText);
 
         // A freshly paired device is healthy: no stale badge, no cleanup banner.
         Assert.False(device.IsStale);

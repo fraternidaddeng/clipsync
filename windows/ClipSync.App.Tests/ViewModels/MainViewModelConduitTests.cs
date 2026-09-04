@@ -102,11 +102,11 @@ public sealed class MainViewModelConduitTests : IAsyncDisposable
     {
         await SeedDeviceAsync();
         await viewModel.InitializeAsync();
-        Assert.Equal("Never connected", Assert.Single(viewModel.Devices).LastSeenText);
+        Assert.Equal("尚未连接过", Assert.Single(viewModel.Devices).LastSeenText);
 
         await viewModel.NotifyRemoteActivityAsync([PeerDeviceId, LocalDeviceId], DateTimeOffset.UtcNow);
 
-        Assert.StartsWith("Last seen", Assert.Single(viewModel.Devices).LastSeenText, StringComparison.Ordinal);
+        Assert.StartsWith("最近在线 ", Assert.Single(viewModel.Devices).LastSeenText, StringComparison.Ordinal);
         var stored = await store.GetDeviceAsync(PeerDeviceId);
         Assert.NotNull(stored!.LastSeenAt);
     }
@@ -170,7 +170,7 @@ public sealed class MainViewModelConduitTests : IAsyncDisposable
         Assert.Equal(0, viewModel.ConnectedDeviceCount);
         Assert.Equal(1, viewModel.OutboxPendingCount);
         Assert.Equal("尚未收到对端确认", viewModel.LastAckText);
-        Assert.Equal("Never connected", Assert.Single(viewModel.Devices).LastSeenText);
+        Assert.Equal("尚未连接过", Assert.Single(viewModel.Devices).LastSeenText);
 
         // The phone captured something of its own, then dials in.
         var phoneBytes = Encoding.UTF8.GetBytes("sent from phone");
@@ -228,7 +228,7 @@ public sealed class MainViewModelConduitTests : IAsyncDisposable
             var remote = Assert.Single(viewModel.History, item => item.Text == "sent from phone");
             Assert.True(remote.IsRemote);
             Assert.Equal("Pixel 8", remote.OriginLabel);
-            Assert.StartsWith("Last seen", Assert.Single(viewModel.Devices).LastSeenText, StringComparison.Ordinal);
+            Assert.StartsWith("最近在线 ", Assert.Single(viewModel.Devices).LastSeenText, StringComparison.Ordinal);
         }
         finally
         {

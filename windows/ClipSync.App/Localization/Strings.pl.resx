@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>Nieznane urządzenie</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>Ostatnio widziano {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>Nigdy nie połączono</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · {1} do wysłania</value>
   </data>
@@ -1174,6 +1180,9 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Włączone · połączone urządzenia: {0}; obrazy przechodzą tylko, gdy po stronie telefonu też jest włączone</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>Włączone · połączone urządzenia: {0}; obrazy synchronizują się w obie strony</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>Włączone · połączony telefon ma wyłączoną synchronizację obrazów; ta sesja przenosi tylko tekst</value>

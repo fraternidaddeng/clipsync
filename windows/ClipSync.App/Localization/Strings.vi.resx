@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>Thiết bị không rõ</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>Lần cuối trực tuyến {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>Chưa từng kết nối</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · {1} mục chờ gửi</value>
   </data>
@@ -1174,6 +1180,9 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Đang bật · {0} thiết bị đã kết nối; chỉ truyền hình ảnh khi phía điện thoại cũng bật</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>Đang bật · {0} thiết bị đã kết nối; hình ảnh đồng bộ hai chiều</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>Đang bật · điện thoại đã kết nối đang tắt đồng bộ hình ảnh; phiên này chỉ đồng bộ văn bản</value>

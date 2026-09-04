@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>Perangkat tak dikenal</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>Terakhir terlihat {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>Belum pernah terhubung</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · {1} menunggu di antrean kirim</value>
   </data>
@@ -1174,6 +1180,9 @@ Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Aktif · {0} perangkat terhubung; gambar hanya berpindah jika sisi ponsel juga aktif</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>Aktif · {0} perangkat terhubung; gambar tersinkron dua arah</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>Aktif · ponsel yang terhubung mematikan sinkronisasi gambar; sesi ini hanya menyinkronkan teks</value>

@@ -7,7 +7,7 @@ import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.sync.CaptureStack
 import com.clipsync.android.sync.CaptureTallySnapshot
 import com.clipsync.android.sync.ClipboardSyncService
-import com.clipsync.android.sync.InboxApplyOutcome
+import com.clipsync.android.sync.InboxApplyOutcomes
 import com.clipsync.android.sync.InboxDelivery
 import com.clipsync.android.sync.SyncConnectionState
 import com.clipsync.android.sync.SyncTransportKind
@@ -38,8 +38,8 @@ data class PreferencesRuntimeFacts(
      * null while not connected over IP or when the dialer did not report it.
      */
     val ipSessionProtocolVersion: Int? = null,
-    /** Outcome of the most recent remote clip this process tried to write to the clipboard. */
-    val lastInboxApply: InboxApplyOutcome? = null,
+    /** Outcome of the most recent remote clip of each kind this process tried to write to the clipboard. */
+    val lastInboxApply: InboxApplyOutcomes = InboxApplyOutcomes(),
     /**
      * Whether the Bluetooth fallback may open connections right now (BLUETOOTH_CONNECT on
      * API 31+; always true below). Null = not probed on this build.
@@ -60,7 +60,7 @@ fun preferencesRuntimeFacts(
     serviceRunning: Flow<Boolean> = ClipboardSyncService.serviceRunning,
     connectionStates: Flow<SyncConnectionState> = ClipboardSyncService.connectionStates,
     startErrorCodes: Flow<String?> = ClipboardSyncService.startErrorCodes,
-    inboxApplyOutcomes: Flow<InboxApplyOutcome?> = InboxDelivery.lastApplyOutcomes,
+    inboxApplyOutcomes: Flow<InboxApplyOutcomes> = InboxDelivery.lastApplyOutcomes,
     refreshTicks: Flow<Unit> = flowOf(Unit),
     bluetoothPermissionGranted: (() -> Boolean)? = null,
     notificationsEnabled: (() -> Boolean)? = null,
@@ -98,7 +98,7 @@ private fun runtimeFacts(
     access: ClipboardAccessState,
     session: CaptureSessionStatus,
     tally: CaptureTallySnapshot,
-    inboxApply: InboxApplyOutcome?,
+    inboxApply: InboxApplyOutcomes,
     bluetoothPermissionGranted: Boolean?,
     notificationsEnabled: Boolean?,
 ): PreferencesRuntimeFacts {

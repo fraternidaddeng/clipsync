@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>Dispositivo sconosciuto</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>Ultima connessione {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>Mai connesso</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · {1} in attesa di invio</value>
   </data>
@@ -1174,6 +1180,9 @@ Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuot
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Attivo · {0} dispositivo/i connesso/i; le immagini passano solo se è attivo anche sul telefono</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>Attivo · {0} dispositivo/i connesso/i; le immagini si sincronizzano in entrambe le direzioni</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>Attivo · il telefono connesso ha la sincronizzazione immagini disattivata; questa sessione sincronizza solo testo</value>

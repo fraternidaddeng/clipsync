@@ -127,8 +127,22 @@ public sealed class SettingStatusMapperTests
         Assert.Contains("2 台设备已连接", SettingStatusMapper.ImageSync(true, 2).Text, StringComparison.Ordinal);
         // Without a negotiation report nothing is claimed about the phones, and never in colour.
         Assert.Equal(SettingStatusTone.Quiet, SettingStatusMapper.ImageSync(true, 2).Tone);
-        Assert.Contains("2 台设备已连接", SettingStatusMapper.ImageSync(true, 2, imageCapableDevices: 2).Text, StringComparison.Ordinal);
-        Assert.Contains("2 台设备已连接", SettingStatusMapper.ImageSync(true, 2, imageCapableDevices: 1).Text, StringComparison.Ordinal);
+        Assert.Contains("手机端也开启时才互传图片", SettingStatusMapper.ImageSync(true, 2).Text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ImageSyncStopsHedgingOnceAConnectedPhoneNegotiatedImages()
+    {
+        var capable = SettingStatusMapper.ImageSync(true, 2, imageCapableDevices: 1);
+
+        Assert.Equal(SettingStatusTone.Quiet, capable.Tone);
+        Assert.Equal("已开 · 2 台设备已连接，图片互传可用", capable.Text);
+        Assert.DoesNotContain("手机端也开启时", capable.Text, StringComparison.Ordinal);
+        Assert.Equal("已开 · 2 台设备已连接，图片互传可用", SettingStatusMapper.ImageSync(true, 2, imageCapableDevices: 2).Text);
+        Assert.Equal("已开 · 1 台设备已连接，图片互传可用", SettingStatusMapper.ImageSync(true, 1, imageCapableDevices: 1).Text);
+        // The report only matters while something is connected; the switch itself still wins when off.
+        Assert.Contains("等待手机连接", SettingStatusMapper.ImageSync(true, 0, imageCapableDevices: 1).Text, StringComparison.Ordinal);
+        Assert.Contains("只收发文本", SettingStatusMapper.ImageSync(false, 1, imageCapableDevices: 1).Text, StringComparison.Ordinal);
     }
 
     [Fact]

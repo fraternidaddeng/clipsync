@@ -143,8 +143,9 @@ public static class SettingStatusMapper
     /// 图片同步: off means this PC is a text-only peer; on states how many phones are connected.
     /// When the endpoint reports that none of the connected phones negotiated image frames
     /// (every session is on text-only v1), the line says so — the phone side is off, and this
-    /// session carries text only. Null <paramref name="imageCapableDevices"/> means the sync
-    /// layer has not reported it, so nothing is claimed about the phones.
+    /// session carries text only; when at least one did, images are known to travel both ways
+    /// and the line stops hedging about the phone side. Null <paramref name="imageCapableDevices"/>
+    /// means the sync layer has not reported it, so nothing is claimed about the phones.
     /// </summary>
     public static SettingStatus ImageSync(bool enabled, int connectedDevices, int? imageCapableDevices = null)
     {
@@ -158,9 +159,12 @@ public static class SettingStatusMapper
             return SettingStatus.Quiet(Strings.Status_ImageSync_OnWaiting);
         }
 
-        return imageCapableDevices == 0
-            ? SettingStatus.Quiet(Strings.Status_ImageSync_PeerTextOnly)
-            : SettingStatus.Quiet(Strings.Format(nameof(Strings.Status_ImageSync_OnConnectedFormat), connectedDevices));
+        return imageCapableDevices switch
+        {
+            0 => SettingStatus.Quiet(Strings.Status_ImageSync_PeerTextOnly),
+            >= 1 => SettingStatus.Quiet(Strings.Format(nameof(Strings.Status_ImageSync_OnImageCapableFormat), connectedDevices)),
+            _ => SettingStatus.Quiet(Strings.Format(nameof(Strings.Status_ImageSync_OnConnectedFormat), connectedDevices)),
+        };
     }
 
     /// <summary>

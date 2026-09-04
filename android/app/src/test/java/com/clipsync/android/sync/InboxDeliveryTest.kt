@@ -100,27 +100,58 @@ class InboxDeliveryTest {
     fun lastApplyOutcomeRecordsOnlyRealAttemptsWithTheirErrorCode() {
         // A gated delivery is not an attempt: the fact line must not claim a write that never ran.
         InboxDelivery.deliver(context, "o0", "history only", 100L, autoApply = false)
-        assertNull(InboxDelivery.lastApplyOutcomes.value)
+        assertEquals(InboxApplyOutcomes(), InboxDelivery.lastApplyOutcomes.value)
 
         InboxDelivery.deliver(context, "o1", "applied body", 101L, autoApply = true)
-        val applied = InboxDelivery.lastApplyOutcomes.value!!
+        val applied = InboxDelivery.lastApplyOutcomes.value.text!!
         assertTrue(applied.applied)
         assertFalse(applied.isImage)
         assertNull(applied.errorCode)
         assertEquals(101L, applied.atEpochMillis)
+        assertNull(InboxDelivery.lastApplyOutcomes.value.image)
 
         InboxDelivery.writerFactory = { FailingWriter() }
         InboxDelivery.deliver(context, "o2", "denied body", 102L, autoApply = true)
-        val failed = InboxDelivery.lastApplyOutcomes.value!!
+        val failed = InboxDelivery.lastApplyOutcomes.value.text!!
         assertFalse(failed.applied)
         assertEquals("CLIPBOARD_WRITE_DENIED", failed.errorCode)
 
         // An image whose blob is missing is a real, failed image attempt with its own code.
         InboxDelivery.deliverImage(context, "o3", contentHash = null, mimeType = null, autoApply = true, notify = false)
-        val image = InboxDelivery.lastApplyOutcomes.value!!
+        val image = InboxDelivery.lastApplyOutcomes.value.image!!
         assertTrue(image.isImage)
         assertFalse(image.applied)
         assertEquals(InboxApplyOutcome.ERROR_IMAGE_UNAVAILABLE, image.errorCode)
+    }
+
+    @Test
+    fun textAndImageOutcomesKeepTheirOwnSlots() {
+        // Image first, then text: the image line must still have its fact to show.
+        InboxDelivery.deliverImage(context, "s1", contentHash = null, mimeType = null, autoApply = true, notify = false)
+        InboxDelivery.deliver(context, "s2", "text after image", 201L, autoApply = true, notify = false)
+
+        val outcomes = InboxDelivery.lastApplyOutcomes.value
+        assertEquals(InboxApplyOutcome.ERROR_IMAGE_UNAVAILABLE, outcomes.image!!.errorCode)
+        assertTrue(outcomes.text!!.applied)
+        assertEquals(201L, outcomes.text.atEpochMillis)
+
+        // A later text attempt moves only the text slot.
+        InboxDelivery.writerFactory = { FailingWriter() }
+        InboxDelivery.deliver(context, "s3", "denied text", 202L, autoApply = true, notify = false)
+        val afterText = InboxDelivery.lastApplyOutcomes.value
+        assertEquals("CLIPBOARD_WRITE_DENIED", afterText.text!!.errorCode)
+        assertEquals(outcomes.image, afterText.image)
+
+        // A gated image arrival (auto-apply off) moves neither slot.
+        InboxDelivery.deliverImage(
+            context,
+            "s4",
+            contentHash = null,
+            mimeType = null,
+            autoApply = false,
+            notify = false,
+        )
+        assertEquals(afterText, InboxDelivery.lastApplyOutcomes.value)
     }
 
     @Test

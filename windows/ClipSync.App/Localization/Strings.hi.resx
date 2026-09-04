@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>अज्ञात डिवाइस</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>अंतिम बार ऑनलाइन {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>कभी नहीं जुड़ा</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · {1} भेजने हेतु लंबित</value>
   </data>
@@ -1174,6 +1180,9 @@
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>चालू · {0} डिवाइस कनेक्टेड; चित्र तभी जाते हैं जब फ़ोन पर भी चालू हो</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>चालू · {0} डिवाइस कनेक्टेड; चित्र दोनों दिशाओं में समन्वयित होते हैं</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>चालू · कनेक्टेड फ़ोन पर चित्र समन्वयन बंद है; इस सत्र में केवल टेक्स्ट समन्वयित होता है</value>

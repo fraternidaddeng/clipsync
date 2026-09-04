@@ -64,8 +64,10 @@ public sealed record PairedDeviceViewModel(
         device.DisplayName,
         device.Platform switch { "android" => "Android", "windows" => "Windows", _ => device.Platform },
         device.LastSeenAt is { } seen
-            ? $"Last seen {seen.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture)}"
-            : "Never connected",
+            ? Localization.Strings.Format(
+                nameof(Localization.Strings.Device_LastSeenFormat),
+                seen.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture))
+            : Localization.Strings.Device_NeverConnected,
         device.IsRevoked ? "Revoked — scan a new QR code to re-pair" : "Paired",
         device.IsRevoked,
         device.AccentOverride ?? DeviceAccent.ForPairingPosition(pairingPosition),

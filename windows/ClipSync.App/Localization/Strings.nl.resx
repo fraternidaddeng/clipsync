@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>Onbekend apparaat</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>Laatst gezien {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>Nooit verbonden</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · {1} in de wachtrij</value>
   </data>
@@ -1174,6 +1180,9 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Aan · {0} apparaat/apparaten verbonden; afbeeldingen gaan alleen over als het op de telefoon ook aanstaat</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>Aan · {0} apparaat/apparaten verbonden; afbeeldingen synchroniseren in beide richtingen</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>Aan · de verbonden telefoon heeft afbeeldingssynchronisatie uit; deze sessie draagt alleen tekst over</value>

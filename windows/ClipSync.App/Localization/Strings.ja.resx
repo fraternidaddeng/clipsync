@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>不明な端末</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>最終接続 {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>未接続</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · 送信待ち {1} 件が滞留</value>
   </data>
@@ -1174,6 +1180,9 @@
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>オン · {0} 台が接続中。スマートフォン側もオンのときだけ画像を送受信します</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>オン · {0} 台が接続中。画像を双方向に同期できます</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>オン · 接続中のスマートフォンは画像同期がオフです。このセッションはテキストのみ同期します</value>

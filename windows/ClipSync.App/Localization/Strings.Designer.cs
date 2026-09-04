@@ -179,6 +179,8 @@ public static partial class Strings
     public static string Device_UnknownRemote => Get(nameof(Device_UnknownRemote));
     public static string Device_PairedFallback => Get(nameof(Device_PairedFallback));
     public static string Device_UnknownFallback => Get(nameof(Device_UnknownFallback));
+    public static string Device_LastSeenFormat => Get(nameof(Device_LastSeenFormat));
+    public static string Device_NeverConnected => Get(nameof(Device_NeverConnected));
     public static string Stale_BacklogSuffixFormat => Get(nameof(Stale_BacklogSuffixFormat));
     public static string Stale_BannerBacklogFormat => Get(nameof(Stale_BannerBacklogFormat));
     public static string Stale_BannerFormat => Get(nameof(Stale_BannerFormat));
@@ -394,6 +396,7 @@ public static partial class Strings
     public static string Status_ImageSync_Off => Get(nameof(Status_ImageSync_Off));
     public static string Status_ImageSync_OnWaiting => Get(nameof(Status_ImageSync_OnWaiting));
     public static string Status_ImageSync_OnConnectedFormat => Get(nameof(Status_ImageSync_OnConnectedFormat));
+    public static string Status_ImageSync_OnImageCapableFormat => Get(nameof(Status_ImageSync_OnImageCapableFormat));
     public static string Status_ImageSync_PeerTextOnly => Get(nameof(Status_ImageSync_PeerTextOnly));
     public static string Status_AutoApplyImages_Applied => Get(nameof(Status_AutoApplyImages_Applied));
     public static string Status_AutoApplyImages_Failed => Get(nameof(Status_AutoApplyImages_Failed));

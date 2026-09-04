@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>Bilinmeyen cihaz</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>Son görülme {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>Hiç bağlanmadı</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · giden kutusunda {1} bekliyor</value>
   </data>
@@ -1174,6 +1180,9 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Açık · {0} cihaz bağlı; görseller yalnızca telefon tarafı da açıksa aktarılır</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>Açık · {0} cihaz bağlı; görseller iki yönlü eşitlenir</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>Açık · bağlı telefonda görsel eşitleme kapalı; bu oturumda yalnızca metin eşitlenir</value>

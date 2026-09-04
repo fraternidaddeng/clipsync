@@ -71,6 +71,14 @@ public sealed class DiagnosticsLogCodesTests
             DiagnosticsLogCodes.For(PairingCategory, new EventId(14, "PairingConfirmFailed"), State(("Code", PairingErrorCodes.Timeout))));
     }
 
+    [Fact]
+    public void PairingConfirmFailedWithPeerAbortReadsAsTheLogOnlyConstant()
+    {
+        Assert.Equal(
+            "peer_pairing_confirm_failed_pairing_aborted",
+            DiagnosticsLogCodes.For(PairingCategory, new EventId(14, "PairingConfirmFailed"), State(("Code", PairingErrorCodes.PeerAborted))));
+    }
+
     [Theory]
     [InlineData("SECRET clipboard text")]
     [InlineData("pairing_timeout")] // case matters: only the exact constant passes

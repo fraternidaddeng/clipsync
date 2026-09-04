@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>Aparelho desconhecido</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>Última conexão {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>Nunca conectou</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · {1} pendentes na fila</value>
   </data>
@@ -1174,6 +1180,9 @@ Todas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A 
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Ativado · {0} dispositivo(s) conectado(s); imagens só passam se o telefone também estiver ativado</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>Ativado · {0} dispositivo(s) conectado(s); imagens sincronizam nos dois sentidos</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>Ativado · o telefone conectado está com a sincronização de imagens desligada; esta sessão sincroniza só texto</value>

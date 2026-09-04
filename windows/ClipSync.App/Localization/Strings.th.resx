@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>อุปกรณ์ไม่รู้จัก</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>ออนไลน์ล่าสุด {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>ไม่เคยเชื่อมต่อ</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · ค้างส่ง {1} รายการ</value>
   </data>
@@ -1174,6 +1180,9 @@
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>เปิดอยู่ · เชื่อมต่อแล้ว {0} เครื่อง จะส่งรูปภาพก็ต่อเมื่อฝั่งโทรศัพท์เปิดด้วย</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>เปิดอยู่ · เชื่อมต่อแล้ว {0} เครื่อง ซิงก์รูปภาพได้ทั้งสองทาง</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>เปิดอยู่ · โทรศัพท์ที่เชื่อมต่อปิดการซิงก์รูปภาพไว้ เซสชันนี้จึงซิงก์เฉพาะข้อความ</value>

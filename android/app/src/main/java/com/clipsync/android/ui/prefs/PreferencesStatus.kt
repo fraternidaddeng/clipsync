@@ -77,7 +77,7 @@ private fun autoApplyLine(
     isImage: Boolean,
     runtime: PreferencesRuntimeFacts,
 ): FactLine? {
-    val last = runtime.lastInboxApply?.takeIf { enabled && !paused && it.isImage == isImage }
+    val last = runtime.lastInboxApply.forKind(isImage)?.takeIf { enabled && !paused }
     return when {
         last == null -> null
         last.applied -> FactLine(UiText.Res(R.string.prefs_live_auto_apply_applied), FactTone.FLOW)

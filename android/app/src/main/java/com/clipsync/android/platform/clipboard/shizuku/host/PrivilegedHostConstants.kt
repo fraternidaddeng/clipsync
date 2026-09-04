@@ -25,6 +25,7 @@ internal object PrivilegedHostConstants {
     const val USER_SERVICE_START_TIMEOUT_MS = 30_000L
     const val BINDER_RESEND_FAST_MS = 1_000L
     const val BINDER_RESEND_SLOW_MS = 10_000L
+    const val BINDER_RESEND_KEEPALIVE_MS = 30_000L
     const val BINDER_RESEND_FAST_TICKS = 30
     const val SEND_USER_SERVICE_TIMEOUT_SEC = 5L
     const val EXIT_FATAL_UID = 6

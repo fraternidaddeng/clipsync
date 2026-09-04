@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>جهاز مجهول</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>آخر اتصال {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>لم يتصل قط</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · {1} بانتظار الإرسال</value>
   </data>
@@ -1174,6 +1180,9 @@
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>مفعّل · {0} من الأجهزة متصل؛ تنتقل الصور فقط حين يكون مفعّلًا على الهاتف أيضًا</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>مفعّل · {0} من الأجهزة متصل؛ تتزامن الصور في الاتجاهين</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>مفعّل · مزامنة الصور متوقفة على الهاتف المتصل؛ هذه الجلسة تنقل النص فقط</value>

@@ -37,12 +37,12 @@ class PrivilegedHostService : IShizukuService.Stub() {
     private val resend = object : Runnable {
         override fun run() {
             sendBinderToApp()
-            resendTicks += 1
-            val delay = if (resendTicks < PrivilegedHostConstants.BINDER_RESEND_FAST_TICKS) {
-                PrivilegedHostConstants.BINDER_RESEND_FAST_MS
-            } else {
-                PrivilegedHostConstants.BINDER_RESEND_SLOW_MS
-            }
+            val delay =
+                synchronized(this@PrivilegedHostService) {
+                    resendTicks += 1
+                    val attached = clients.isNotEmpty()
+                    BinderResendPolicy.nextDelayMillis(resendTicks, clientAttached = attached)
+                }
             handler.postDelayed(this, delay)
         }
     }
@@ -204,14 +204,11 @@ class PrivilegedHostService : IShizukuService.Stub() {
         val queuedCodes = synchronized(this) {
             clients.removeAll { it.uid == uid && it.pid == pid }
             clients.add(client)
-            resendTicks = 0
             pendingPermissionCodes.remove(uid)?.toList().orEmpty()
         }
         runCatching {
             application.asBinder().linkToDeath(
-                {
-                    synchronized(this) { clients.remove(client) }
-                },
+                { onClientDied(client) },
                 0,
             )
         }
@@ -222,6 +219,9 @@ class PrivilegedHostService : IShizukuService.Stub() {
                 dispatchPermissionResult(client, code)
             }
         }
+        // The attached process holds the binder now: drop from the fast hand-off cadence to the
+        // keepalive one right away instead of waiting out the currently scheduled fast tick.
+        rescheduleResend(PrivilegedHostConstants.BINDER_RESEND_KEEPALIVE_MS)
     }
 
     override fun exit() {
@@ -614,6 +614,30 @@ class PrivilegedHostService : IShizukuService.Stub() {
             binder = null
             val suffix = processNameSuffix
             executor.execute { killUserServiceProcess(suffix) }
+        }
+    }
+
+    /** A replacement app process needs its binder quickly: restart the fast hand-off cadence. */
+    private fun onClientDied(client: Client) {
+        val stillAttached =
+            synchronized(this) {
+                clients.remove(client)
+                resendTicks = 0
+                clients.isNotEmpty()
+            }
+        if (!stillAttached) {
+            rescheduleResend(0L)
+        }
+    }
+
+    /**
+     * Re-arms the resend loop from the looper thread that runs it, so a tick that is executing
+     * right now cannot re-post itself after the removal and leave two loops running.
+     */
+    private fun rescheduleResend(delayMillis: Long) {
+        handler.post {
+            handler.removeCallbacks(resend)
+            handler.postDelayed(resend, delayMillis)
         }
     }
 

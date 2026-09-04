@@ -5,6 +5,7 @@ import com.clipsync.android.platform.clipboard.CaptureGate
 import com.clipsync.android.platform.clipboard.ClipboardReadMode
 import com.clipsync.android.sync.CaptureTallySnapshot
 import com.clipsync.android.sync.InboxApplyOutcome
+import com.clipsync.android.sync.InboxApplyOutcomes
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -160,7 +161,8 @@ class PreferencesStatusTest {
         assertNull(untried.autoApply)
         assertNull(untried.autoApplyImages)
 
-        val textApplied = healthy.copy(lastInboxApply = outcome(applied = true, isImage = false))
+        val textOk = outcome(applied = true, isImage = false)
+        val textApplied = healthy.copy(lastInboxApply = InboxApplyOutcomes(text = textOk))
         val lines = preferencesStatusLines(PreferencesUiState(runtime = textApplied))
         assertEquals(FactTone.FLOW, lines.autoApply!!.tone)
         assertEquals("已开 · 最近一次收到的内容已写入剪贴板", lines.autoApply.text.testString())
@@ -168,13 +170,26 @@ class PreferencesStatusTest {
         assertNull(lines.autoApplyImages)
 
         val imageFailed = outcome(applied = false, isImage = true, errorCode = "CLIPBOARD_WRITE_DENIED")
-        val failed = preferencesStatusLines(PreferencesUiState(runtime = healthy.copy(lastInboxApply = imageFailed)))
+        val failed =
+            preferencesStatusLines(
+                PreferencesUiState(runtime = healthy.copy(lastInboxApply = InboxApplyOutcomes(image = imageFailed))),
+            )
         assertNull(failed.autoApply)
         assertEquals(FactTone.ACT, failed.autoApplyImages!!.tone)
         assertEquals(
             "已开 · 最近一次写入剪贴板失败（CLIPBOARD_WRITE_DENIED），内容留在历史里",
             failed.autoApplyImages.text.testString(),
         )
+
+        // Both kinds attempted: each row keeps its own fact instead of the latest one winning.
+        val both =
+            preferencesStatusLines(
+                PreferencesUiState(
+                    runtime = healthy.copy(lastInboxApply = InboxApplyOutcomes(text = textOk, image = imageFailed)),
+                ),
+            )
+        assertEquals(FactTone.FLOW, both.autoApply!!.tone)
+        assertEquals(FactTone.ACT, both.autoApplyImages!!.tone)
 
         // Off, or paused (that row already states the pause), says nothing.
         assertNull(preferencesStatusLines(PreferencesUiState(autoApplyRemote = false, runtime = textApplied)).autoApply)

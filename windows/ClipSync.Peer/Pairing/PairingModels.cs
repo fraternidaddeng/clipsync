@@ -12,6 +12,11 @@ public static class PairingDocumentKinds
     public const string Error = "pairing_error";
 }
 
+/// <summary>
+/// Pairing outcome codes. All but <see cref="PeerAborted"/> travel in the <c>pairing_error</c>
+/// document (the wire set is enumerated in pairing.schema.json and checked by
+/// <c>PairingJson</c>); <see cref="PeerAborted"/> only ever reaches the local diagnostics log.
+/// </summary>
 public static class PairingErrorCodes
 {
     public const string SchemaViolation = "SCHEMA_VIOLATION";
@@ -21,9 +26,16 @@ public static class PairingErrorCodes
     public const string Timeout = "PAIRING_TIMEOUT";
     public const string RateLimited = "PAIRING_RATE_LIMITED";
 
+    /// <summary>
+    /// The phone dropped the confirm request (or the host shut down) before the user answered.
+    /// Log-only: no response can reach the peer anymore, so this is never written to the wire.
+    /// </summary>
+    public const string PeerAborted = "PAIRING_ABORTED";
+
+    /// <summary>Every code the diagnostics log may append to <c>peer_pairing_confirm_failed</c>.</summary>
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
     {
-        SchemaViolation, TokenInvalid, TokenExpired, Rejected, Timeout, RateLimited
+        SchemaViolation, TokenInvalid, TokenExpired, Rejected, Timeout, RateLimited, PeerAborted
     };
 }
 

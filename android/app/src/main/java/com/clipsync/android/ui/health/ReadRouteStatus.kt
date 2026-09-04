@@ -48,7 +48,8 @@ fun readRouteStatus(
             active == null ->
                 UiText.Res(
                     R.string.read_live_none,
-                    access.lastErrorCode ?: UiText.Res(R.string.read_state_reason_unknown),
+                    ReadRouteReasons.phraseFor(access.lastErrorCode)
+                        ?: UiText.Res(R.string.read_state_reason_unknown),
                 )
             shortfall == null -> UiText.Res(R.string.read_live_active_preferred, readModeTitle(active))
             else -> degradedHeadline(active, access.requestedReadMode, shortfall, formatClock)
@@ -77,23 +78,29 @@ private fun liveFacts(
         }
     }
 
-/** "Running X; preferred Y fell back at / not ready since HH:mm (code)" — the two shortfall causes. */
+/**
+ * "Running X; preferred Y fell back at / not ready since HH:mm (reason)" — the two shortfall
+ * causes. The reason is the human phrase for the shortfall's code; a code without one drops the
+ * parenthetical instead of printing the constant.
+ */
 private fun degradedHeadline(
     active: ClipboardReadMode,
     requested: ClipboardReadMode,
     shortfall: ReadRouteShortfall,
     formatClock: (Long) -> String,
-): UiText =
-    UiText.Res(
+): UiText {
+    val reason = ReadRouteReasons.phraseFor(shortfall.errorCode)
+    val (withReason, plain) =
         when (shortfall.cause) {
-            ReadRouteShortfallCause.HEALTH_FALLBACK -> R.string.read_live_degraded_fallback
-            ReadRouteShortfallCause.PREFERRED_NOT_READY -> R.string.read_live_degraded_not_ready
-        },
-        readModeTitle(active),
-        readModeTitle(requested),
-        formatClock(shortfall.sinceEpochMillis),
-        shortfall.errorCode ?: UiText.Res(R.string.read_state_reason_unknown),
-    )
+            ReadRouteShortfallCause.HEALTH_FALLBACK ->
+                R.string.read_live_degraded_fallback to R.string.read_live_degraded_fallback_plain
+            ReadRouteShortfallCause.PREFERRED_NOT_READY ->
+                R.string.read_live_degraded_not_ready to R.string.read_live_degraded_not_ready_plain
+        }
+    val args =
+        listOfNotNull(readModeTitle(active), readModeTitle(requested), formatClock(shortfall.sinceEpochMillis), reason)
+    return UiText.Res(if (reason == null) plain else withReason, args)
+}
 
 /** The preferences-page title of the switch behind [gate]; the same words the user flipped. */
 fun gateTitle(gate: CaptureGate): UiText =

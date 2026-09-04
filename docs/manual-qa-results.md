@@ -184,6 +184,55 @@
 - **拦截与安全语义不动**：暂停同步仍同时关断文本与图片的自动写入（Android `InboxDelivery.autoApplyImagesAllowed`、Windows `RemoteApplyDecision`），Windows 私密模式照旧一并停下自动写入；图片写入门与文本自动应用继续互相独立；回声抑制与 MIME 魔数/尺寸/哈希校验、未接线宿主库层 fail-closed 闸全部原样。
 - **测试随裁决更新**：Android `ImageSyncDefaultAlignmentTest` 改钉「`auto_apply_images` 默认开、坏值回落为开、显式 False 仍关、与文本闸互不连坐」，`InboxDeliveryTest` 闸例改钉「默认即放行、显式退出关闸、暂停仍双杀」；Windows `MainViewModelBasicSettingsTests` 新增「默认开（与 Android 对齐）+ 显式退出跨重启存活」两例。偏好页文案（Windows `Prefs_Sync_AutoApplyImages_Desc` / Android `prefs_auto_apply_images_desc`，19 语）本就只描述行为、未声称默认值，无需改动。
 
+## 2026-09-04 真机验证（第二批）
+
+- 环境：Windows 11（`DENG`，WLAN `192.168.2.135`；另有 WSL 虚拟网卡 `172.17.0.1` 与 Clash Meta TUN 网卡）+ Xiaomi Redmi Note 11T Pro `22041216C`（Android 13），同一 /23 网段；**Windows 防火墙三个配置文件均关闭，故防火墙拦截 / 一键放行 UAC 流程未覆盖**。
+- 对象：`CHANGELOG.md` `[Unreleased]` 第二批（信标、地址排序、超时 / 中止区分、双端状态事实行、路线回升、取消按钮、本批集成接线）。整个会话诊断日志无任何 `unhandled_*` 码。
+
+### 通过
+
+| 清单条目（`docs/manual-qa-checklist.md`） | 结果 | 证据（诊断码 / 界面文案） |
+| --- | --- | --- |
+| §2 二维码地址顺序：真实 Wi-Fi 在前、虚拟网卡在后 | 通过 | 二维码 `hosts` = `["192.168.2.135","172.17.0.1"]`（WLAN 在前，WSL 虚拟网卡在后） |
+| §2 配对信标：手机配对页几秒内收到电脑信号 | 通过 | 手机「已在当前网络上收到「DENG」的信号」；电脑 `pairing_beacon_started` → 批准后 `pairing_beacon_stopped` |
+| §2 等待页分阶段 + 秒计 | 通过 | 「等待批准… · 已等待 N 秒 · 取消」 |
+| §2 / §5 配对请求到达 → 批准窗口 → 批准成功 | 通过 | 电脑批准窗口弹出并批准；`peer_pairing_confirm_received → peer_pairing_confirmed → pairing_beacon_stopped` |
+| §2 等待页「取消」：手机回未配对态、电脑批准窗口随之关闭 | 通过 | 手机「已取消。这枚二维码已被使用…」；电脑批准窗口自动关闭（另见「发现并已修复」问题 3：诊断日志此前无结束码） |
+| §3 双向文本同步 | 通过 | Windows → 手机、手机 → Windows 均入历史 |
+| §3 PC → 手机图片同步 | 通过 | 手机收到图片并自动写入剪贴板 |
+| §3 回环抑制 | 通过 | `capture_rejected_SuppressedWrite` |
+| §1 通路页「防火墙」状态行 | 通过（防火墙关闭态） | 「已放行 TCP 47654 入站（公用网络）」——三配置文件关闭时判定为已放行，与 ADR 0006 三态一致 |
+| [Unreleased] 语言下拉框闭合态 | 通过 | 闭合态显示「跟随系统」而非 record `ToString()` |
+| [第二批] `Prefs_Subtitle` 去口号位 | 通过 | 偏好页副标题为本页事实 |
+| §3 Windows 事实行：屏蔽进程 | 通过 | 「已生效 · 来自 4 个进程的复制不记录」 |
+| §3 Windows 事实行：自动写入（文本） | 通过 | 「已开 · 最近一次收到的文本已写入本机剪贴板」 |
+| §3 Android 读取路线降级 → 回升 | 通过 | 「当前读取路线：悬浮窗轮询。首选 特权直读 自 08:45 起未就绪（PRIVILEGED_CHANNEL_OFFLINE）」→ 执行 start.sh 后点「重新探测首选路线」→「已切回首选路线：特权直读」（原始错误码外露见「发现并已修复」问题 2） |
+| §3 Android 事实行：设备行「最近同步」 | 通过 | 「DENG · Windows · 最近同步 09:13」 |
+| §3 Android 偏好页事实行 | 通过 | 「运行中 · 已与电脑连接」「后台读取运行中 · 当前路线 悬浮窗轮询 · 本次运行已捕获 1 条」「本次运行尚未遇到标记为敏感的内容」 |
+
+### 未覆盖
+
+- 防火墙拦截与一键放行 / 移除的 UAC 全流程（三配置文件均关闭，无拦截可复现）。
+- 电脑端 90 秒不批准的超时气泡（本轮均在超时前批准或取消）。
+- 退出过程中连点托盘图标 / 快捷键 / 诊断的竞态。
+- Windows 开机自启 / 呼出快捷键状态行（两项均未开启，故无事实行可看）。
+- Android 不可达失败分层提示（本机始终可达，未触发）。
+- Android 蓝牙权限被拒的赭色事实行。
+
+### 发现并已修复（2026-09-04，本节定稿同日）
+
+1. **Android 自动写入结果只有一个槽位**：`InboxDelivery.lastApplyOutcomes` 只保存最后一次结果，收到图片再收到文本后偏好页图片行消失、文本行出现，同一时间只有一行。改为按类别各自保留（`InboxApplyOutcomes(text, image)`），`recordApply` 只更新对应槽，`preferencesRuntimeFacts` / `preferencesStatusLines` 改为两路读取；单测覆盖两类互不覆盖、门控投递不动任何槽。
+2. **Android 路线状态行外露原始错误码**（`PRIVILEGED_CHANNEL_OFFLINE`）：新增纯函数 `ReadRouteReasons.phraseFor` 把全部可能进入 `shortfall.errorCode` / `lastErrorCode` 的码映射为短语（特权通道未运行 / 未授权 / 连接已断开、READ_LOGS 尚未授予 / 授权已失效、悬浮窗权限未开启、屏幕未亮起、电池优化未放行、尚未完成实测……），未知码改用不带括号的 `read_live_degraded_fallback_plain` / `read_live_degraded_not_ready_plain`；14 条短语 + 2 条 plain × 19 语；单测覆盖映射与回退。
+3. **Windows 对端中止配对未留记录**：手机在批准前取消时诊断日志止于 `peer_pairing_confirm_received`。`PairingService.ConfirmAsync` 在 `ApproveAsync` 因非超时取消抛出时记 `PairingConfirmFailed(PAIRING_ABORTED)` 后继续抛（HTTP 响应已无人接收，协议与返回值不变）；`PairingErrorCodes.PeerAborted` 仅日志用、不入线格式，诊断码 `peer_pairing_confirm_failed_pairing_aborted`；单测覆盖中止路径与超时路径互不误报。
+4. **Windows 设备行英文 "Last seen"**：`PairedDeviceViewModel` 的两处字面量改为 `Device_LastSeenFormat`「最近在线 {0}」/ `Device_NeverConnected`「尚未连接过」，19 语。
+5. **Windows 图片同步状态在对端已支持图片时仍说「手机端也开启时才互传图片」**：`SettingStatusMapper.ImageSync` 在 `imageCapableDevices ≥ 1` 时改用 `Status_ImageSync_OnImageCapableFormat`「已开 · {0} 台设备已连接，图片互传可用」；`0` 保持 PeerTextOnly、`null` 保持原句；单测随改。
+6. **Android 特权宿主附着后仍每秒重发 binder**（logcat `ShizukuProvider: sendBinder is called when already a living binder` 持续 ≥ 20 秒）：判定为我方 `PrivilegedHostService` 的重发循环——`attachApplication` 成功时把 `resendTicks` 归零，反而把节奏重置回 1 秒快档 30 次，之后才退到 10 秒。改为 `BinderResendPolicy`：无客户端附着时 1 秒 × 30 次再退 10 秒（宿主先于应用启动、或推送本身拉起应用的场景），已附着后改为 30 秒保活，附着即刻切换（经 looper 线程重排，不会留下两条循环），客户端死亡则归零重回快档以便替代进程一秒内拿到 binder；`start.sh` 只负责一次 spawn，无循环。单测覆盖三种节奏。
+
+### 测试方法备注
+
+- 手机输入法会把 `adb shell input text` 的拉丁字符转成中文候选，合成标记建议用剪贴板写入或 base64 传递而非 `input text`。
+- `adb shell ime set …` 切换输入法会触发 Activity 重建，Compose `remember` 状态随之清空——不是应用缺陷。
+
 ## 签核（2026-08-26）：用户确认真机验证已全部完成
 
 - 2026-08-26，仓库所有者确认：**真机验证已全部完成**（覆盖本记录「未做（若要出 RC 还需）」清单与 `docs/manual-qa-checklist.md` 的剩余项）。据此，2026-08-25 的「本轮不能出 RC」判定**不再构成发布阻断**，RC 门槛视为已过。

@@ -31,6 +31,26 @@ data class InboxApplyOutcome(
 }
 
 /**
+ * The last real auto-apply attempt per kind. The preferences page renders 自动写入剪贴板 and
+ * 自动写入远端图片 as two independent fact lines, so a text arrival must not erase what the
+ * image line has to say (and vice versa); each slot only moves when a clip of its own kind
+ * is actually written.
+ */
+data class InboxApplyOutcomes(
+    val text: InboxApplyOutcome? = null,
+    val image: InboxApplyOutcome? = null,
+) {
+    fun forKind(isImage: Boolean): InboxApplyOutcome? = if (isImage) image else text
+
+    fun with(outcome: InboxApplyOutcome): InboxApplyOutcomes =
+        if (outcome.isImage) {
+            copy(image = outcome)
+        } else {
+            copy(text = outcome)
+        }
+}
+
+/**
  * Single entry point the sync engine calls when a remote clip event has been persisted.
  * The inbox record always happens first, so a disabled or failed apply degrades to the
  * manual copy path without losing the event (plan 5.6). With [autoApply] on, the public
@@ -72,14 +92,14 @@ object InboxDelivery {
      */
     var notificationGate: InboxNotificationGate = InboxNotificationGate()
 
-    private val mutableLastApplyOutcomes = MutableStateFlow<InboxApplyOutcome?>(null)
+    private val mutableLastApplyOutcomes = MutableStateFlow(InboxApplyOutcomes())
 
-    /** The most recent real auto-apply attempt this process; null until one has run. */
-    val lastApplyOutcomes: StateFlow<InboxApplyOutcome?> = mutableLastApplyOutcomes.asStateFlow()
+    /** The most recent real auto-apply attempt of each kind this process; a slot stays null until one has run. */
+    val lastApplyOutcomes: StateFlow<InboxApplyOutcomes> = mutableLastApplyOutcomes.asStateFlow()
 
-    /** Test seam: the outcome is process-wide state on this object, like the notification gate. */
+    /** Test seam: the outcomes are process-wide state on this object, like the notification gate. */
     fun clearLastApplyOutcome() {
-        mutableLastApplyOutcomes.value = null
+        mutableLastApplyOutcomes.value = InboxApplyOutcomes()
     }
 
     private fun recordApply(
@@ -89,11 +109,13 @@ object InboxDelivery {
     ): Boolean {
         val applied = result is ClipboardWriteResult.Success
         mutableLastApplyOutcomes.value =
-            InboxApplyOutcome(
-                applied = applied,
-                isImage = isImage,
-                errorCode = (result as? ClipboardWriteResult.Failure)?.errorCode,
-                atEpochMillis = atEpochMillis,
+            mutableLastApplyOutcomes.value.with(
+                InboxApplyOutcome(
+                    applied = applied,
+                    isImage = isImage,
+                    errorCode = (result as? ClipboardWriteResult.Failure)?.errorCode,
+                    atEpochMillis = atEpochMillis,
+                ),
             )
         return applied
     }

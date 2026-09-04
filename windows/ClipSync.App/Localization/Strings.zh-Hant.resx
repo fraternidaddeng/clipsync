@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>未知裝置</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>最近上線 {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>尚未連線過</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · 積壓 {1} 筆待傳</value>
   </data>
@@ -1174,6 +1180,9 @@
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>已開 · {0} 台裝置已連線；手機端也開啟時才互傳圖片</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>已開 · {0} 台裝置已連線，圖片互傳可用</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>已開 · 已連線的手機未開啟圖片同步，本次會話只同步文字</value>

@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>未知设备</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>最近在线 {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>尚未连接过</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · 积压 {1} 条待发</value>
   </data>
@@ -1174,6 +1180,9 @@
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>已开 · {0} 台设备已连接；手机端也开启时才互传图片</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>已开 · {0} 台设备已连接，图片互传可用</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>已开 · 已连接的手机未开启图片同步，本次会话只同步文本</value>

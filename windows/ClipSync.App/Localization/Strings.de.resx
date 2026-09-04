@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>Unbekanntes Gerät</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>Zuletzt online {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>Nie verbunden</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · {1} ausstehend in der Warteschlange</value>
   </data>
@@ -1174,6 +1180,9 @@ Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelö
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>An · {0} Gerät(e) verbunden; Bilder gehen nur hin und her, wenn es auch am Telefon an ist</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>An · {0} Gerät(e) verbunden; Bilder werden in beide Richtungen synchronisiert</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>An · am verbundenen Telefon ist die Bildsynchronisierung aus; diese Sitzung überträgt nur Text</value>

@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>Неизвестное устройство</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>Последний раз в сети {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>Ни разу не подключалось</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · в очереди {1} к отправке</value>
   </data>
@@ -1174,6 +1180,9 @@
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>Включено · подключено устройств: {0}; изображения передаются, только если включено и на телефоне</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>Включено · подключено устройств: {0}; изображения передаются в обе стороны</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>Включено · на подключённом телефоне синхронизация изображений выключена; в этом сеансе передаётся только текст</value>

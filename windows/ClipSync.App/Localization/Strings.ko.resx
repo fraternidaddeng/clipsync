@@ -528,6 +528,12 @@
   <data name="Device_UnknownFallback" xml:space="preserve">
     <value>알 수 없는 기기</value>
   </data>
+  <data name="Device_LastSeenFormat" xml:space="preserve">
+    <value>최근 접속 {0}</value>
+  </data>
+  <data name="Device_NeverConnected" xml:space="preserve">
+    <value>연결된 적 없음</value>
+  </data>
   <data name="Stale_BacklogSuffixFormat" xml:space="preserve">
     <value>{0} · 발신 대기 {1}건 적체</value>
   </data>
@@ -1174,6 +1180,9 @@
   </data>
   <data name="Status_ImageSync_OnConnectedFormat" xml:space="preserve">
     <value>켜짐 · {0}대 연결됨. 휴대폰 쪽도 켜져 있을 때만 이미지를 주고받습니다</value>
+  </data>
+  <data name="Status_ImageSync_OnImageCapableFormat" xml:space="preserve">
+    <value>켜짐 · {0}대 연결됨. 이미지를 양방향으로 주고받습니다</value>
   </data>
   <data name="Status_ImageSync_PeerTextOnly" xml:space="preserve">
     <value>켜짐 · 연결된 휴대폰에서 이미지 동기화가 꺼져 있어 이번 세션은 텍스트만 동기화합니다</value>
