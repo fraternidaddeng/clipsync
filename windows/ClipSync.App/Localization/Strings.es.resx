@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>Regla quitada.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>También se eliminarán las reglas de bloqueo que Windows creó para este programa al descartar la alerta de seguridad: {0}. Mientras existan, ninguna regla de permiso tiene efecto.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>No se tocaron las reglas de bloqueo cuyo nombre contiene comillas: {0}. Elimínalas a mano en el Firewall de Windows.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Revocado</value>
   </data>

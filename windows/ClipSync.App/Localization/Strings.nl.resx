@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>Regel verwijderd.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>Hiermee worden ook de blokkeerregels verwijderd die Windows voor dit programma heeft gemaakt toen de beveiligingswaarschuwing werd geannuleerd: {0}. Zolang ze bestaan, heeft geen enkele toestaanregel effect.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>Blokkeerregels met een aanhalingsteken in de naam zijn niet aangeraakt: {0}. Verwijder ze handmatig in Windows Firewall.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Ingetrokken</value>
   </data>

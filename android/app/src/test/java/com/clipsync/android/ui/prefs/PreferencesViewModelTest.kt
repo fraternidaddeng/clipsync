@@ -13,12 +13,16 @@ import com.clipsync.android.update.UpdatePlatform
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withTimeoutOrNull
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
@@ -143,24 +147,6 @@ class PreferencesViewModelTest {
     }
 
     @Test
-    fun `retention changes trigger one immediate cleanup pass`() {
-        var cleanups = 0
-        val model =
-            PreferencesViewModel(
-                settings,
-                PreferencesViewModel.SideEffects(onRetentionChanged = { cleanups++ }),
-            )
-
-        model.setRetentionDays(7)
-        model.setAutoExpire(false)
-
-        assertEquals(2, cleanups)
-        // Unrelated toggles never trigger cleanup.
-        model.setPauseSync(true)
-        assertEquals(2, cleanups)
-    }
-
-    @Test
     fun `display, capture and notify settings persist under the roadmap keys`() {
         val model = viewModel()
         model.setHistoryFontScale(SyncSettingsStore.HISTORY_FONT_SCALE_LARGE)
@@ -208,19 +194,13 @@ class PreferencesViewModelTest {
     }
 
     @Test
-    fun `max entries persists, clamps to the stepper bounds and cleans up immediately`() {
-        var cleanups = 0
-        val model =
-            PreferencesViewModel(
-                settings,
-                PreferencesViewModel.SideEffects(onRetentionChanged = { cleanups++ }),
-            )
+    fun `max entries persists and clamps to the stepper bounds`() {
+        val model = viewModel()
         assertEquals(SyncSettingsStore.DEFAULT_MAX_ENTRIES, model.state.value.maxEntries)
 
         model.setMaxEntries(500)
         assertEquals("500", keyValues.map["sync.retention.max_entries"])
         assertEquals(500, model.state.value.maxEntries)
-        assertEquals(1, cleanups)
 
         // The stepper bounds hold even against programmatic extremes.
         model.setMaxEntries(1)
@@ -266,6 +246,66 @@ class PreferencesViewModelTest {
         assertTrue(model.state.value.serviceEnabled)
         assertEquals(listOf(false, true), hostCalls)
     }
+
+    @Test
+    fun `enabling bluetooth fallback without BLUETOOTH_CONNECT asks the host exactly once`() =
+        runTest {
+            val model =
+                PreferencesViewModel(
+                    settings,
+                    permissions = PreferencesViewModel.Permissions(bluetoothConnect = { false }),
+                )
+
+            // Nobody collects yet — the gap between a destroyed Activity and its successor —
+            // so the ask must wait for the next collector instead of hitting a dead launcher.
+            model.setBluetoothFallback(true)
+
+            assertEquals("true", keyValues.map["sync.bluetooth_fallback"])
+            assertTrue(model.state.value.bluetoothFallback)
+            assertEquals(PreferencesViewModel.HostRequest.BluetoothPermission, model.hostRequests.first())
+            // Delivered once only, and turning the fallback off never asks.
+            model.setBluetoothFallback(false)
+            assertNull(withTimeoutOrNull(1_000) { model.hostRequests.first() })
+        }
+
+    @Test
+    fun `enabling bluetooth fallback with BLUETOOTH_CONNECT held asks nothing`() =
+        runTest {
+            val model =
+                PreferencesViewModel(
+                    settings,
+                    permissions = PreferencesViewModel.Permissions(bluetoothConnect = { true }),
+                )
+
+            model.setBluetoothFallback(true)
+
+            assertTrue(model.state.value.bluetoothFallback)
+            assertNull(withTimeoutOrNull(1_000) { model.hostRequests.first() })
+        }
+
+    @Test
+    fun `explicit sync enable moments ask for POST_NOTIFICATIONS only while it is missing`() =
+        runTest {
+            var granted = false
+            val model =
+                PreferencesViewModel(
+                    settings,
+                    permissions = PreferencesViewModel.Permissions(postNotifications = { granted }),
+                )
+
+            model.setServiceEnabled(true)
+            assertEquals(PreferencesViewModel.HostRequest.NotificationsPermission, model.hostRequests.first())
+            model.setBootRestore(true)
+            assertEquals(PreferencesViewModel.HostRequest.NotificationsPermission, model.hostRequests.first())
+
+            // Turning either off never asks; neither does enabling once the permission is held.
+            model.setServiceEnabled(false)
+            model.setBootRestore(false)
+            granted = true
+            model.setServiceEnabled(true)
+            model.setBootRestore(true)
+            assertNull(withTimeoutOrNull(1_000) { model.hostRequests.first() })
+        }
 
     @Test
     fun `turning the service off flips no pause gate — stop and pause stay distinct`() {

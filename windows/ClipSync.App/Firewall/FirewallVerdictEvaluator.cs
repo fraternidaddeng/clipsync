@@ -114,8 +114,26 @@ internal static class FirewallVerdictEvaluator
             GroupPolicyOverride: snapshot.LocalPolicyModifyState == FirewallComValues.ModifyStateGroupPolicyOverride,
             NamedRuleExists: snapshot.Rules.Any(rule => string.Equals(rule.Name, ManagedRuleName, StringComparison.Ordinal)),
             targetPort,
-            actualPort);
+            actualPort)
+        {
+            ProgramBlockRules = ProgramBlockRules(snapshot.Rules, exePath),
+        };
     }
+
+    /// <summary>
+    /// The dismissed-alert artefacts: every enabled inbound Block rule naming this exe, on any
+    /// profile and protocol (the delete that removes them filters by name + program only), with
+    /// the stored path kept verbatim for that delete.
+    /// </summary>
+    private static List<FirewallProgramBlockRule> ProgramBlockRules(IReadOnlyList<FirewallRuleInfo> rules, string exePath) =>
+        rules
+            .Where(rule => rule.Enabled
+                && rule.Direction == FirewallComValues.DirectionIn
+                && rule.Action == FirewallComValues.ActionBlock
+                && ApplicationEquals(rule.ApplicationName, exePath))
+            .Select(rule => new FirewallProgramBlockRule(rule.Name, rule.ApplicationName!.Trim()))
+            .Distinct()
+            .ToList();
 
     /// <summary>
     /// Whether a LocalPorts string covers one port. Accepts the forms the firewall writes:
@@ -159,8 +177,12 @@ internal static class FirewallVerdictEvaluator
         return false;
     }
 
+    // Store/packaged-app rules (Protocol Any, no ports, no program, an owner SID or package id)
+    // read like blanket allows but only ever apply to that package's traffic — verified on a real
+    // machine where such rules coexisted with a blocked listener.
     private static bool IsInboundTcpRuleForPort(FirewallRuleInfo rule, int port) =>
         rule.Enabled
+        && !rule.IsScopedToUserOrPackage
         && rule.Direction == FirewallComValues.DirectionIn
         && rule.Protocol is FirewallComValues.ProtocolTcp or FirewallComValues.ProtocolAny
         && LocalPortsCover(rule.LocalPorts, port);

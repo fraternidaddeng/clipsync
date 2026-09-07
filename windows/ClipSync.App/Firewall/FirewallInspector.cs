@@ -139,7 +139,11 @@ public sealed class FirewallInspector : IFirewallInspector
                         localPorts,
                         applicationName,
                         action,
-                        ruleProfiles));
+                        ruleProfiles)
+                    {
+                        LocalUserOwner = ReadScopeMember(ruleObject, static r => (string?)r.LocalUserOwner),
+                        LocalAppPackageId = ReadScopeMember(ruleObject, static r => (string?)r.LocalAppPackageId),
+                    });
                 }
                 finally
                 {
@@ -153,6 +157,35 @@ public sealed class FirewallInspector : IFirewallInspector
         }
 
         return rules;
+    }
+
+    /// <summary>
+    /// INetFwRule3 scoping members (user owner, app package) are dispatched by name; a rule object
+    /// that predates that interface answers with a binder or COM error, which reads as "unscoped".
+    /// </summary>
+    private static string? ReadScopeMember(object rule, Func<dynamic, string?> read)
+    {
+        try
+        {
+            var value = read(rule);
+            return string.IsNullOrWhiteSpace(value) ? null : value;
+        }
+        catch (RuntimeBinderException)
+        {
+            return null;
+        }
+        catch (COMException)
+        {
+            return null;
+        }
+        catch (InvalidCastException)
+        {
+            return null;
+        }
+        catch (MissingMemberException)
+        {
+            return null;
+        }
     }
 
     /// <summary>

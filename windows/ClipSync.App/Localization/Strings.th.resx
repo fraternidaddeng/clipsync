@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>ลบกฎแล้ว</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>จะลบกฎบล็อกที่ Windows สร้างให้โปรแกรมนี้เมื่อการแจ้งเตือนความปลอดภัยถูกยกเลิกไปด้วย: {0} ตราบใดที่กฎเหล่านี้ยังอยู่ กฎอนุญาตใด ๆ จะไม่มีผล</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>ยังไม่ได้จัดการกฎบล็อกที่ชื่อมีอัญประกาศ: {0} โปรดลบด้วยตนเองในไฟร์วอลล์ Windows</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>เพิกถอนแล้ว</value>
   </data>

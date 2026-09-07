@@ -62,7 +62,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.clipsync.android.media.ImageThumbnail
 import com.clipsync.android.pairing.PairedPeer
 import com.clipsync.android.pairing.PairingConfirmClient
@@ -115,7 +117,6 @@ import com.clipsync.android.ui.theme.filmGrain
 import com.clipsync.android.update.AppUpdateInstaller
 import com.clipsync.android.update.GitHubReleaseClient
 import com.clipsync.android.update.readAppVersionName
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -231,6 +232,10 @@ class MainActivity : AppCompatActivity() {
         AppUpdateInstaller(applicationContext, GitHubReleaseClient(currentVersion = version))
     }
 
+    // The ViewModel outlives this instance across recreation (rotation, IME or locale change),
+    // so every lambda below keeps running on whichever instance built it — possibly a destroyed
+    // one. They may use Context APIs that stay valid after onDestroy and process-wide objects,
+    // never a result launcher or lifecycleScope; that work arrives via hostRequests instead.
     private val preferencesViewModel: PreferencesViewModel by viewModels {
         PreferencesViewModel.factory(
             syncSettings,
@@ -240,47 +245,31 @@ class MainActivity : AppCompatActivity() {
             settingsChanges = SyncSettingsChanges.changes(this),
             appVersion = readAppVersionName(this),
             updater = appUpdater,
-            runtimeFacts =
+            runtimeFacts = { refreshTicks ->
                 preferencesRuntimeFacts(
                     captureStack,
                     // Permissions have no flow of their own: re-sample them each time the
                     // Activity returns to the foreground (the user may have just granted one).
-                    refreshTicks = visibilityTicks.map { },
+                    refreshTicks = refreshTicks,
                     bluetoothPermissionGranted = { BluetoothSyncConnector.hasConnectPermission(this) },
                 ) {
                     NotificationManagerCompat.from(this).areNotificationsEnabled()
-                },
+                }
+            },
+            permissions =
+                PreferencesViewModel.Permissions(
+                    bluetoothConnect = { BluetoothSyncConnector.hasConnectPermission(this) },
+                    postNotifications = ::hasPostNotificationsPermission,
+                ),
             sideEffects =
                 PreferencesViewModel.SideEffects(
                     onBootRestoreChanged = { enabled ->
                         BootCompletedReceiver.setReceiverEnabled(this, enabled)
-                        if (enabled) {
-                            // The recovery path speaks through a notification; ask honestly up front.
-                            requestNotificationsPermissionIfMissing()
-                        }
-                    },
-                    onRetentionChanged = {
-                        // Mirror Windows: a changed retention applies now, not at the next service start.
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            runCatching {
-                                SyncStore
-                                    .repository(applicationContext)
-                                    .cleanup(syncSettings.effectiveRetentionPolicy(), System.currentTimeMillis())
-                            }
-                        }
                     },
                     // 暂停同步/私密模式 gate the read backends themselves, not just the per-event
                     // policy: re-evaluate the capture session so a background reader stops (or
                     // resumes) on the very toggle, without waiting for the next lifecycle edge.
                     onCaptureGatesChanged = { captureStack.session.refreshGates() },
-                    // The fallback needs BLUETOOTH_CONNECT on API 31+; ask on the explicit
-                    // enable moment, never per app open. Denial keeps the toggle honest —
-                    // the dialer re-checks the permission per dial and simply stays off.
-                    onBluetoothFallbackChanged = { enabled ->
-                        if (enabled) {
-                            requestBluetoothPermissionIfMissing(thenShowDevices = false)
-                        }
-                    },
                     // 后台同步服务 master switch: off stops the foreground service right now
                     // (background listening ends, resident notification disappears); on
                     // starts it again — but only when a peer is paired, since an unpaired
@@ -289,14 +278,8 @@ class MainActivity : AppCompatActivity() {
                         if (!enabled) {
                             ClipboardSyncService.stop(this)
                         } else if (pairingStore.peer() != null) {
-                            startSyncService()
+                            ClipboardSyncService.start(this)
                         }
-                    },
-                    onInstallApk = { apk ->
-                        startActivity(appUpdater.installIntent(apk))
-                    },
-                    onNeedInstallPermission = {
-                        runCatching { startActivity(appUpdater.manageUnknownSourcesIntent()) }
                     },
                 ),
             historyRepository = { SyncStore.repository(applicationContext) },
@@ -334,9 +317,6 @@ class MainActivity : AppCompatActivity() {
     /** Bonded devices for the 蓝牙目标设备 chooser; null keeps the inline chooser collapsed. */
     private val bluetoothDeviceChoices = MutableStateFlow<List<BondedBluetoothDevice>?>(null)
 
-    /** Bumped on every onResume so permission-backed facts are re-sampled once per return. */
-    private val visibilityTicks = MutableStateFlow(0)
-
     /** Set when the permission ask came from the device chooser, so a grant opens it. */
     private var showDevicesAfterBluetoothGrant = false
 
@@ -365,6 +345,7 @@ class MainActivity : AppCompatActivity() {
         }
         // The FGS notification's 打开故障状态 tap lands here with the 通路 tab requested.
         handleOpenTabIntent(intent)
+        collectHostRequests()
         // Decided before composition: reading it may mark an already-paired
         // install as seen, which must not happen as a composition side effect.
         val showOnboarding =
@@ -472,25 +453,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * The user just enabled sync (paired, or tapped 启动服务): start the service and, on
-     * Android 13+, ask for POST_NOTIFICATIONS so the status/inbox surfaces can appear. The
-     * service starts either way — the permission is never a precondition (plan 5.2).
+     * The preferences ViewModel's one-shot asks, served by this instance's launchers only
+     * while it is started. Restarted per onCreate: the ViewModel outlives recreation, and
+     * a destroyed instance's launchers are unregistered.
      */
-    private fun startSyncService() {
-        requestNotificationsPermissionIfMissing()
-        ClipboardSyncService.start(this)
+    private fun collectHostRequests() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                preferencesViewModel.hostRequests.collect { request -> serveHostRequest(request) }
+            }
+        }
     }
 
-    private fun requestNotificationsPermissionIfMissing() {
-        if (Build.VERSION.SDK_INT < 33) {
-            return
+    private fun serveHostRequest(request: PreferencesViewModel.HostRequest) {
+        when (request) {
+            PreferencesViewModel.HostRequest.BluetoothPermission ->
+                requestBluetoothPermissionIfMissing(thenShowDevices = false)
+            PreferencesViewModel.HostRequest.NotificationsPermission ->
+                requestNotificationsPermissionIfMissing()
+            is PreferencesViewModel.HostRequest.InstallApk ->
+                startActivity(appUpdater.installIntent(request.apk))
+            PreferencesViewModel.HostRequest.InstallPermissionSettings ->
+                runCatching { startActivity(appUpdater.manageUnknownSourcesIntent()) }
         }
-        val granted =
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS,
-            ) == PackageManager.PERMISSION_GRANTED
-        if (!granted) {
+    }
+
+    /** POST_NOTIFICATIONS exists only on API 33+; below that there is nothing to ask for. */
+    private fun hasPostNotificationsPermission(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
+
+    private fun requestNotificationsPermissionIfMissing() {
+        if (!hasPostNotificationsPermission()) {
             // After two denials the system returns immediately; we never nag beyond that.
             notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
@@ -552,7 +547,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         // Grants change outside the app (Settings, adb, privileged host); re-probe every return.
         healthViewModel.refresh()
-        visibilityTicks.value += 1
+        preferencesViewModel.refreshRuntimeFacts()
     }
 
     override fun onDestroy() {

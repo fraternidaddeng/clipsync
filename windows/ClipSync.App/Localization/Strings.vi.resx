@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>Đã gỡ quy tắc.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>Đồng thời sẽ xóa các quy tắc chặn mà Windows đã tạo cho chương trình này khi cảnh báo bảo mật bị hủy: {0}. Khi chúng còn tồn tại, không quy tắc cho phép nào có hiệu lực.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>Các quy tắc chặn có dấu ngoặc kép trong tên chưa được xử lý: {0}. Hãy xóa thủ công trong Tường lửa Windows.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Đã thu hồi</value>
   </data>

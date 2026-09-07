@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>Aturan dihapus.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>Ini juga menghapus aturan blokir yang dibuat Windows untuk program ini saat peringatan keamanan dibatalkan: {0}. Selama aturan itu ada, tidak ada aturan izin yang berlaku.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>Aturan blokir yang namanya mengandung tanda kutip tidak diubah: {0}. Hapus secara manual di Windows Firewall.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Dicabut</value>
   </data>

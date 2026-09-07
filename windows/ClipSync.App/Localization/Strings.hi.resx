@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>नियम हटा दिया गया।</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>इससे वे ब्लॉक नियम भी हट जाएँगे जो सुरक्षा चेतावनी रद्द किए जाने पर Windows ने इस प्रोग्राम के लिए बनाए थे: {0}। जब तक वे मौजूद हैं, कोई भी अनुमति नियम प्रभावी नहीं होता।</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>जिन ब्लॉक नियमों के नाम में उद्धरण चिह्न है, उन्हें नहीं छुआ गया: {0}। इन्हें Windows फ़ायरवॉल में हाथ से हटाएँ।</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>निरस्त</value>
   </data>

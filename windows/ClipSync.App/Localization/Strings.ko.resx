@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>규칙을 제거했습니다.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>Windows 보안 경고를 취소했을 때 이 프로그램에 대해 생성된 차단 규칙도 함께 삭제합니다: {0}. 이 규칙이 있는 동안에는 어떤 허용 규칙도 효력이 없습니다.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>이름에 따옴표가 포함된 차단 규칙은 처리하지 않았습니다: {0}. Windows 방화벽에서 직접 삭제하세요.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>해지됨</value>
   </data>

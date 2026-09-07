@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>تمت إزالة القاعدة.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>سيؤدي هذا أيضًا إلى حذف قواعد الحظر التي أنشأها Windows لهذا البرنامج عند إلغاء تنبيه الأمان: {0}. وما دامت موجودة، لا تسري أي قاعدة سماح.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>لم تُعالَج قواعد الحظر التي تحتوي أسماؤها على علامات اقتباس: {0}. احذفها يدويًا من جدار حماية Windows.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>أُبطل</value>
   </data>

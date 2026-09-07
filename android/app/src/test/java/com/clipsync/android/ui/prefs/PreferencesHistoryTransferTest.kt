@@ -151,9 +151,31 @@ class PreferencesHistoryTransferTest {
         capturedAtMs = NOW,
     )
 
+    @Test
+    fun retentionChangesExpireOldEntriesImmediately() =
+        runBlocking {
+            repository.storeLocalEvent(draft("stale").copy(capturedAtMs = NOW - THIRTY_DAYS_MS), emptyList())
+            repository.storeLocalEvent(draft("fresh"), emptyList())
+            val model =
+                PreferencesViewModel(
+                    settings = SyncSettingsStore(FakeKeyValueStore()),
+                    historyRepository = { repository },
+                    ioDispatcher = Dispatchers.IO,
+                    nowMs = { NOW },
+                )
+
+            // Mirrors Windows: a shortened retention applies now, not at the next service start —
+            // and keeps doing so after the Activity that built the ViewModel is gone.
+            model.setRetentionDays(7)
+
+            val remaining = withTimeout(5_000) { repository.observeHistory().first { it.size == 1 } }
+            assertEquals("fresh", remaining.single().content)
+        }
+
     private companion object {
         const val LOCAL_DEVICE = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
         const val OTHER_DEVICE = "cccccccc-cccc-4ccc-8ccc-cccccccccccc"
         const val NOW = 1_700_000_000_000L
+        const val THIRTY_DAYS_MS = 30L * 24 * 60 * 60 * 1_000
     }
 }

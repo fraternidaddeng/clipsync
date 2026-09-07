@@ -17,6 +17,10 @@ namespace ClipSync.App.Tests.ViewModels;
 public sealed class MainViewModelFirewallTests : IAsyncDisposable
 {
     private const string LocalDeviceId = "11111111-1111-4111-8111-111111111111";
+    private const string StoredExePath = @"d:\apps\clipsync\clipsync.app.exe";
+
+    /// <summary>The pair the security alert writes after 取消, as the check reports it (one entry for TCP + UDP).</summary>
+    private static readonly FirewallProgramBlockRule AlertBlockRule = new("ClipSync.App", StoredExePath);
 
     private readonly string directory;
     private readonly SqliteClipboardEventStore store;
@@ -225,12 +229,119 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task ManagedRuleShadowedByProgramBlocksKeepsAllowReachableAndReplacesItself()
+    {
+        // 真机 09-04：放行规则已在，但安全警报留下的程序级 Block 仍压着它——此时「放行」必须还能按，
+        // 且请求要带 ReplaceExisting，脚本先删本应用的旧规则再建，不留两条同名。
+        var block = new FirewallProgramBlockRule("ClipSync.App", @"d:\apps\clipsync.app.exe");
+        inspector.Report = Report(FirewallVerdict.NoRuleFound, namedRuleExists: true, programBlocks: [block]);
+        await firewall.RefreshStatusCommand.ExecuteAsync(null);
+
+        Assert.True(firewall.ManagedRuleExists);
+        Assert.True(firewall.AllowPortCommand.CanExecute(null));
+        Assert.True(firewall.RemoveRuleCommand.CanExecute(null));
+
+        promptAnswer = FirewallRuleCommand.Allow(FirewallProfiles.Private | FirewallProfiles.Public, [block], replaceExisting: true);
+        elevator.Outcome = ElevationOutcome.AppliedOutcome;
+        inspector.Report = Report(FirewallVerdict.Allowed, allowing: [FirewallRuleCommand.RuleName], namedRuleExists: true);
+        await firewall.AllowPortCommand.ExecuteAsync(null);
+
+        Assert.NotNull(lastPrompt);
+        Assert.False(lastPrompt!.IsRemoval);
+        Assert.True(lastPrompt.ReplaceExisting);
+        Assert.Equal([block], lastPrompt.BlockRules);
+        Assert.True(firewall.Allowed);
+        // Blocks gone, own rule in place: nothing left for 放行 to do until the state changes again.
+        Assert.False(firewall.AllowPortCommand.CanExecute(null));
+    }
+
+    [Fact]
     public void CommandTextsShowTheDefaultPrivateOnlyRule()
     {
         Assert.Equal(
             "netsh advfirewall firewall add rule name=\"ClipSync TCP 47654\" dir=in action=allow protocol=TCP localport=47654 profile=private",
             firewall.AllowCommandText);
         Assert.StartsWith("New-NetFirewallRule ", firewall.AllowPowerShellText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task BlockRulesFromTheCheckLeadThePreviewAndRideIntoThePrompt()
+    {
+        var raised = new List<string?>();
+        firewall.PropertyChanged += (_, e) => raised.Add(e.PropertyName);
+        inspector.Report = Report(
+            FirewallVerdict.NoRuleFound,
+            active: FirewallProfiles.Public,
+            blocking: ["ClipSync.App"],
+            programBlocks: [AlertBlockRule]);
+
+        await firewall.RefreshStatusCommand.ExecuteAsync(null);
+
+        Assert.Contains(nameof(FirewallViewModel.AllowCommandText), raised);
+        Assert.Contains(nameof(FirewallViewModel.AllowPowerShellText), raised);
+        Assert.Equal(
+            "netsh advfirewall firewall delete rule name=ClipSync.App dir=in program=" + StoredExePath + Environment.NewLine
+            + "netsh advfirewall firewall add rule name=\"ClipSync TCP 47654\" dir=in action=allow protocol=TCP localport=47654 profile=private",
+            firewall.AllowCommandText);
+        Assert.StartsWith("Remove-NetFirewallRule -DisplayName \"ClipSync.App\"" + Environment.NewLine + "New-NetFirewallRule ", firewall.AllowPowerShellText, StringComparison.Ordinal);
+
+        promptAnswer = FirewallRuleCommand.Allow(FirewallProfiles.Private | FirewallProfiles.Public, [AlertBlockRule]);
+        elevator.Outcome = ElevationOutcome.AppliedOutcome;
+        inspector.Report = Report(FirewallVerdict.Allowed, active: FirewallProfiles.Public, allowing: [FirewallRuleCommand.RuleName], namedRuleExists: true);
+
+        await firewall.AllowPortCommand.ExecuteAsync(null);
+
+        Assert.Equal(AlertBlockRule, Assert.Single(lastPrompt!.BlockRules));
+        var ran = Assert.Single(elevator.Commands);
+        Assert.True(ran.RequiresScript);
+        Assert.Equal("ClipSync.App", Assert.Single(ran.BlockRuleNames));
+        Assert.Contains("规则已创建", firewall.ActionResult, StringComparison.Ordinal);
+        Assert.True(firewall.Allowed);
+        // The re-check found no Block rule left, so the preview is back to the single add.
+        Assert.StartsWith("netsh advfirewall firewall add rule", firewall.AllowCommandText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task RemovePromptCarriesNoBlockRules()
+    {
+        inspector.Report = Report(FirewallVerdict.Allowed, allowing: [FirewallRuleCommand.RuleName], namedRuleExists: true, programBlocks: [AlertBlockRule]);
+        await firewall.RefreshStatusCommand.ExecuteAsync(null);
+        promptAnswer = null;
+
+        await firewall.RemoveRuleCommand.ExecuteAsync(null);
+
+        Assert.True(lastPrompt!.IsRemoval);
+        Assert.Empty(lastPrompt.BlockRules);
+    }
+
+    [Fact]
+    public async Task SkippedBlockRuleNamesAreStatedInTheResultAfterARun()
+    {
+        promptAnswer = FirewallRuleCommand.Allow(
+            FirewallProfiles.Private,
+            [new FirewallProgramBlockRule("Say \"no\"", StoredExePath), AlertBlockRule]);
+        elevator.Outcome = ElevationOutcome.AppliedOutcome;
+        inspector.Report = Report(FirewallVerdict.Allowed, allowing: [FirewallRuleCommand.RuleName], namedRuleExists: true);
+
+        await firewall.AllowPortCommand.ExecuteAsync(null);
+
+        Assert.Contains("规则已创建", firewall.ActionResult, StringComparison.Ordinal);
+        Assert.Contains("未处理名称含引号的阻止规则：Say \"no\"", firewall.ActionResult, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task SkippedBlockRuleNamesAreNotMentionedWhenNothingRan()
+    {
+        promptAnswer = FirewallRuleCommand.Allow(
+            FirewallProfiles.Private,
+            [new FirewallProgramBlockRule("Say \"no\"", StoredExePath)]);
+        elevator.Outcome = ElevationOutcome.CancelledOutcome;
+        inspector.Report = Report(FirewallVerdict.NoRuleFound);
+
+        await firewall.AllowPortCommand.ExecuteAsync(null);
+
+        Assert.Contains("未获得管理员授权", firewall.ActionResult, StringComparison.Ordinal);
+        Assert.DoesNotContain("Say", firewall.ActionResult, StringComparison.Ordinal);
     }
 
     public async ValueTask DisposeAsync()
@@ -247,7 +358,8 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
         int actualPort = 47654,
         string[]? allowing = null,
         string[]? blocking = null,
-        bool namedRuleExists = false) =>
+        bool namedRuleExists = false,
+        FirewallProgramBlockRule[]? programBlocks = null) =>
         new(
             verdict,
             active,
@@ -260,7 +372,10 @@ public sealed class MainViewModelFirewallTests : IAsyncDisposable
             GroupPolicyOverride: false,
             NamedRuleExists: namedRuleExists,
             47654,
-            actualPort);
+            actualPort)
+        {
+            ProgramBlockRules = programBlocks ?? [],
+        };
 
     private sealed class FakeInspector : IFirewallInspector
     {

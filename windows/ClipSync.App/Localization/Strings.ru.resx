@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>Правило удалено.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>Также будут удалены правила блокировки, которые Windows создала для этой программы при отмене предупреждения безопасности: {0}. Пока они существуют, ни одно разрешающее правило не действует.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>Правила блокировки с кавычками в имени не были затронуты: {0}. Удалите их вручную в брандмауэре Windows.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Отозвано</value>
   </data>

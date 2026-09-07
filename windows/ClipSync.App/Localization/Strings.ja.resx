@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>ルールを削除しました。</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>Windows セキュリティの警告をキャンセルしたときにこのプログラム向けに作成されたブロック規則も同時に削除します：{0}。これらが存在する間は、どの許可規則も効きません。</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>名前に引用符を含むブロック規則は処理していません：{0}。Windows ファイアウォールで手動で削除してください。</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>取り消し済み</value>
   </data>

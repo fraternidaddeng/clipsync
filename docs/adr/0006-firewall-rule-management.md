@@ -26,7 +26,7 @@
   - **未发现放行规则**：没有这样的规则，或规则存在但被禁用 / 配置文件不匹配（如只放专用、当前网络为公用）——原因随状态一起显示。
   - **无法判断**：防火墙由第三方产品或组策略接管、COM 接口不可用、或查询抛错。此态不伪装成前两态。
 - 状态行明说「**规则存在 ≠ 一定可达**」：第三方防火墙、路由器 AP 隔离、VPN/TUN 接管都在本检测的视野之外；可达性最终以手机能否连上为准。
-- 检测同时列出针对 `ClipSync.App.exe` 的 Block 规则（用户此前点「取消」的产物），并提示其影响。
+- 检测同时列出针对 `ClipSync.App.exe` 的 Block 规则（用户此前点「取消」的产物），并提示其影响；放行时在同一次 UAC 里代删（见第 2 条末项）。
 
 ### 2. 一键放行：先展示命令，再以 UAC 执行
 
@@ -40,6 +40,13 @@
 - 执行方式：以 `runas` 动词启动 `netsh.exe`，触发系统 UAC 对话框。用户在 UAC 上拒绝时，应用如实回显「未获得管理员权限，规则未创建」，随后重新检测；不把拒绝写成成功，也不重试骚扰。
 - 规则名固定为 `ClipSync TCP 47654`，与 `docs/install.md` §3 手动命令使用的名字一致，便于用户在系统里辨认与删除。
 - 展示区旁提供「复制命令」，用户可自行在管理员终端执行，不经应用提权。
+- **放行同时删除本程序的程序级 Block 规则**（2026-09-04 真机补充）。「Windows 安全中心警报」被取消/关闭时，Windows 会为本程序路径生成两条入站 Block 规则（名 `ClipSync.App`，TCP 与 UDP 各一条，Profile=Public，LocalPort=Any）；Windows 防火墙里 Block 优先于 Allow，只加放行规则对这条最常见的路径**无效**（真机：`firewall_rule_add_applied` 之后重新检测仍是 `firewall_inspect_no_rule`）。因此检测把「启用的入站 Block 规则且程序 = 本 exe」单列为 `FirewallReport.ProgramBlockRules`（任何配置文件、任何协议，按名称 + 记录的程序路径去重），放行时对每一条先执行
+
+  ```text
+  netsh advfirewall firewall delete rule name="ClipSync.App" dir=in program="<防火墙里记录的本程序路径>"
+  ```
+
+  再执行原来的 add。`program=` 用检测时从规则里读回的原样路径而不是 `Environment.ProcessPath`——安全警报把路径写成全小写，两者大小写不同；按 name + program 过滤也保证只删 Windows 为本程序生成的那对，用户自己建的同名或无程序的端口 Block 规则照旧只列出不代删。多条命令**只弹一次 UAC**：写成临时脚本 `%TEMP%\clipsync-firewall-<guid>.txt`（每行一条不带 `netsh` 前缀的命令，UTF-8 无 BOM——实测 netsh 的脚本读取器只认这一种编码，带 BOM 或 UTF-16 会让首条命令解析失败），以 `runas` 启动 `netsh.exe -f "<脚本>"`，退出后立即删除脚本；UAC 显示的仍是微软签名的 netsh.exe。实测 `netsh -f` 某行失败后仍继续执行余下各行、任一行失败退出码为 1，因而结果判定不变（退出码 → 三态 → 重新检测），诊断码 `firewall_rule_add_with_block_cleanup_applied / _cancelled / _failed_<code>` 与原 `firewall_rule_add_*` 并列。确认窗与主页面预览、复制命令、PowerShell 等价命令（`Remove-NetFirewallRule -DisplayName`，仅展示）都列出全部命令；确认窗正文追加一句点名将删除的规则。名称含 `"` 或换行的规则无法写进 netsh 行，跳过并在结果行说明，请用户手动删除。无 Block 规则时保持单条 add 走 argv，不用脚本。
 
 ### 3. 配套「移除该规则」
 
@@ -49,7 +56,7 @@
   netsh advfirewall firewall delete rule name="ClipSync TCP 47654"
   ```
 
-- 只删应用自己命名的规则；用户手动建的其他规则不碰，检测中如实列出但不代删。
+- 只删应用自己命名的规则；用户手动建的其他规则不碰，检测中如实列出但不代删。唯一例外是放行时顺带删除的、Windows 为本程序路径生成的 Block 规则（第 2 条末项）——它们不是用户的决定，而是安全警报被取消的副产物。
 - 卸载路径写进 `docs/install.md` §3 第 4 步：用过放行的，卸载前在应用内移除或手动删除。
 
 ### 4. 按端口放行，不按程序路径

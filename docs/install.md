@@ -41,7 +41,7 @@
      ```
 
    - **检查网络类型。** 只放行「专用网络」的规则在「公用网络」上不生效，而 Windows 11 把新连接的 Wi-Fi 默认归为**公用**。查看当前类型：`Get-NetConnectionProfile`（看 `NetworkCategory`）。若为 `Public`，两种改法：设置 → 网络和 Internet → Wi-Fi → 该网络的属性 → 选「专用网络」；或把规则改为 `-Profile Private,Public`——代价是酒店/咖啡馆 Wi-Fi 上同网段设备也能连到该端口（读内容仍需配对；暴露面见 `docs/privacy-and-risks.zh-CN.md` §7）。
-   - **之前在弹窗点过「取消」**：Windows 会为 `ClipSync.App.exe` 建一条阻止规则并不再弹窗。查找并删除它：
+   - **之前在弹窗点过「取消」**：Windows 会为 `ClipSync.App.exe` 建阻止规则（名为 `ClipSync.App`，TCP、UDP 各一条）并不再弹窗；阻止规则优先于放行规则，**只加放行规则无效**。应用内「放行」检测到这些规则时会在同一次管理员授权里先删掉它们再加放行规则（确认窗里会点名列出，无需手动处理）；手动路径是查找并删除：
 
      ```powershell
      Get-NetFirewallApplicationFilter | Where-Object Program -like '*ClipSync.App.exe' | Get-NetFirewallRule
@@ -49,7 +49,7 @@
      ```
 
    - `Test-NetConnection` 在本机连本机走回环、绕过入站规则，**不能证明手机能连上**；要用手机或另一台设备测。
-   - **应用内放行（Windows 通路页）**：网络段的「防火墙」状态行三态显示「已放行 / 未发现放行规则 / 无法判断（第三方防火墙或组策略接管）」，旁有「重新检测」；连接卡的「放行 TCP 47654 入站」一行原样展示将执行的 `netsh` 命令，提供「复制命令 / 放行 / 移除」——默认仅专用网络、可勾选公用；点「放行」先弹确认窗看完整命令，再请求管理员权限（UAC）。二维码窗口与首次引导的配对页在检测到未放行时也会提示。它创建的是一条系统防火墙规则，卸载时需在应用内「移除」或手动执行 `Remove-NetFirewallRule -DisplayName "ClipSync TCP 47654"`。设计记录见 `docs/adr/0006-firewall-rule-management.md`。
+   - **应用内放行（Windows 通路页）**：网络段的「防火墙」状态行三态显示「已放行 / 未发现放行规则 / 无法判断（第三方防火墙或组策略接管）」，旁有「重新检测」；连接卡的「放行 TCP 47654 入站」一行原样展示将执行的 `netsh` 命令（检测到本程序的阻止规则时会多出对应的 `delete rule` 行），提供「复制命令 / 放行 / 移除」——默认仅专用网络、可勾选公用；点「放行」先弹确认窗看完整命令，再请求管理员权限（UAC，多条命令也只请求一次）。二维码窗口与首次引导的配对页在检测到未放行时也会提示。它创建的是一条系统防火墙规则，卸载时需在应用内「移除」或手动执行 `Remove-NetFirewallRule -DisplayName "ClipSync TCP 47654"`。设计记录见 `docs/adr/0006-firewall-rule-management.md`。
 4. 应用常驻托盘（托盘右键：打开剪剪相传 / 诊断日志 / 退出）。数据在 `%LOCALAPPDATA%\ClipSync`（可用环境变量 `CLIPSYNC_DATA_DIR` 改）。卸载 = 删程序目录 + 删数据目录；另有两处按需清理：开过「开机自启」的，先在偏好里关掉（它写的是当前用户的 `Run` 启动项）；用应用内放行或手动加过防火墙规则的，先在应用内「移除」或手动删除规则。除此之外不写任何系统级配置。
 
 ## 4. 安装 Android 端
@@ -186,7 +186,7 @@ Android 11 起系统支持**无线调试**：手机与电脑连同一 Wi-Fi 即�
 | 现象 | 排查顺序 |
 |---|---|
 | 扫码报「码已过期」 | 一次性令牌超时，Windows 端重新出示二维码即可 |
-| 扫码后连不上；手机等约 90 秒后报「配对失败」，电脑没弹批准窗口 | ① 两台设备是否同一网段（AP 隔离/访客网络会挡；`ping` 电脑 IP 通只说明网络层没问题）② Windows 防火墙是否放行 TCP 47654 **入站**：`Get-NetFirewallRule -Direction Inbound -Enabled True \| Get-NetFirewallPortFilter \| Where-Object LocalPort -eq 47654` 无输出即未放行，按第 3 节手动加规则 ③ 当前网络类型是否为「专用」：`Get-NetConnectionProfile` 显示 `Public` 时仅专用的规则不生效 ④ 是否存在针对 `ClipSync.App.exe` 的 Block 规则（之前在弹窗点过「取消」），按第 3 节查删 ⑤ Tailscale 场景是否已填「额外监听地址」并重启 ⑥ 任一台开着 Clash/Surge/v2rayN 等代理的 TUN/VPN/全局模式时见第 5 节 ⑦ 托盘「诊断日志」里没有配对请求到达的记录，说明请求根本没到电脑（网络或防火墙）；有记录但没看到批准窗口，检查它是否被别的窗口遮住（批准超时 90 秒，超时后手机端才报失败） ⑧ 手机配对页若已显示「已在当前网络上收到「<电脑名>」的信号」却仍连接超时，网络层已经通了，几乎可以确定是电脑防火墙没放行 TCP 47654 入站——直接按第 3 节处理，不必再查网段 |
+| 扫码后连不上；手机等约 90 秒后报「配对失败」，电脑没弹批准窗口 | ① 两台设备是否同一网段（AP 隔离/访客网络会挡；`ping` 电脑 IP 通只说明网络层没问题）② Windows 防火墙是否放行 TCP 47654 **入站**：`Get-NetFirewallRule -Direction Inbound -Enabled True \| Get-NetFirewallPortFilter \| Where-Object LocalPort -eq 47654` 无输出即未放行，按第 3 节手动加规则 ③ 当前网络类型是否为「专用」：`Get-NetConnectionProfile` 显示 `Public` 时仅专用的规则不生效 ④ 是否存在针对 `ClipSync.App.exe` 的 Block 规则（之前在弹窗点过「取消」）：应用内「放行」会连带删除，或按第 3 节手动查删 ⑤ Tailscale 场景是否已填「额外监听地址」并重启 ⑥ 任一台开着 Clash/Surge/v2rayN 等代理的 TUN/VPN/全局模式时见第 5 节 ⑦ 托盘「诊断日志」里没有配对请求到达的记录，说明请求根本没到电脑（网络或防火墙）；有记录但没看到批准窗口，检查它是否被别的窗口遮住（批准超时 90 秒，超时后手机端才报失败） ⑧ 手机配对页若已显示「已在当前网络上收到「<电脑名>」的信号」却仍连接超时，网络层已经通了，几乎可以确定是电脑防火墙没放行 TCP 47654 入站——直接按第 3 节处理，不必再查网段 |
 | 开着 Clash/Surge/v2rayN 等代理时连不上或不同步 | 见第 5 节代理小节：开启「绕过局域网」，或给电脑 IP 与 47654 端口加直连规则；TUN/VPN/全局模式必须放行局域网，且两端都要配 |
 | 配对成功但不同步 | ① 两端「暂停」「私密模式」开关 ② Android 通路页当前档位状态 ③ 超过 1 MiB 的文本按协议「仅本地保留」，不属于丢失 |
 | 特权直读启动失败 / 一直不就绪 | ① 手机是否已开 USB 调试、且已在 RSA 指纹框点「一律允许」 ② 电脑 `adb devices` 是否显示 `device`（显示 `unauthorized` 就是没过 RSA 确认；`offline` 有线场景重插线或重启 adb，无线场景是会话失效——回手机无线调试页核对当前 IP:端口 重新连接）③ Windows 卡片是否已勾选 adb 授权同意、adb 位置是否显示已找到（未找到需装 Google platform-tools）④ **设备重启后需重新执行启动命令** ⑤ 实在不便用电脑就改用「悬浮窗轮询」档，无需电脑 |

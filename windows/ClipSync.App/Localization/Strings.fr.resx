@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>Règle retirée.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>Cela supprime aussi les règles de blocage que Windows a créées pour ce programme lorsque l’alerte de sécurité a été fermée : {0}. Tant qu’elles existent, aucune règle d’autorisation ne prend effet.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>Les règles de blocage dont le nom contient un guillemet n’ont pas été traitées : {0}. Supprimez-les à la main dans le Pare-feu Windows.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Révoqué</value>
   </data>

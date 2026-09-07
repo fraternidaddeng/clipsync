@@ -169,6 +169,8 @@ public static partial class Strings
     public static string FirewallRule_Result_Cancelled => Get(nameof(FirewallRule_Result_Cancelled));
     public static string FirewallRule_Result_FailedFormat => Get(nameof(FirewallRule_Result_FailedFormat));
     public static string FirewallRule_Result_Removed => Get(nameof(FirewallRule_Result_Removed));
+    public static string FirewallRule_Window_BlockNoteFormat => Get(nameof(FirewallRule_Window_BlockNoteFormat));
+    public static string FirewallRule_Result_BlockSkippedFormat => Get(nameof(FirewallRule_Result_BlockSkippedFormat));
     public static string Device_RevokedBadge => Get(nameof(Device_RevokedBadge));
     public static string Device_AccentLabel => Get(nameof(Device_AccentLabel));
     public static string Device_AccentManual => Get(nameof(Device_AccentManual));

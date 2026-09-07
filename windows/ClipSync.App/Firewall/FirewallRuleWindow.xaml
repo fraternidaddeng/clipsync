@@ -123,6 +123,14 @@
                        Text="{x:Static loc:Strings.FirewallRule_Window_Body}"
                        TextWrapping="Wrap" />
 
+            <!-- 检测到针对本程序的阻止规则（安全警报被取消的产物）时：说明同一次运行会先删掉它们 -->
+            <TextBlock x:Name="BlockNoteText"
+                       Margin="0,8,0,0"
+                       FontSize="11.5"
+                       Foreground="{DynamicResource CsText2Brush}"
+                       TextWrapping="Wrap"
+                       Visibility="Collapsed" />
+
             <!-- 将要执行的命令，原样、等宽、可选中复制；机器文本在 RTL 下钉回 LTR -->
             <Border Margin="0,12,0,0"
                     Padding="12,10"

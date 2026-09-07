@@ -21,19 +21,14 @@ public partial class FirewallViewModel(
     Func<int> listeningPort,
     Action<string> copyText) : ObservableObject
 {
-    /// <summary>The exact netsh line the default 放行 (private profile only) runs; shown read-only and offered for copying.</summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Performance",
-        "CA1822:Mark members as static",
-        Justification = "WPF {Binding} 只解析实例属性；命令展示框绑在 DataContext 上。")]
-    public string AllowCommandText => FirewallRuleCommand.Allow(FirewallProfiles.Private).ToDisplayString();
+    /// <summary>
+    /// The exact netsh lines the default 放行 (private profile only) runs — the deletes of this
+    /// program's Block rules the last check found, then the add; shown read-only and offered for copying.
+    /// </summary>
+    public string AllowCommandText => FirewallRuleCommand.Allow(FirewallProfiles.Private, programBlockRules).ToDisplayString();
 
-    /// <summary>The same rule as a NetSecurity cmdlet (what docs/install.md quotes), for people who prefer PowerShell.</summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "Performance",
-        "CA1822:Mark members as static",
-        Justification = "WPF {Binding} 只解析实例属性；命令展示框绑在 DataContext 上。")]
-    public string AllowPowerShellText => FirewallRuleCommand.Allow(FirewallProfiles.Private).ToPowerShellString();
+    /// <summary>The same sequence as NetSecurity cmdlets (what docs/install.md quotes), for people who prefer PowerShell.</summary>
+    public string AllowPowerShellText => FirewallRuleCommand.Allow(FirewallProfiles.Private, programBlockRules).ToPowerShellString();
 
     /// <summary>One line for the conduit network segment: 正在检测… / 已放行 / 未发现规则 / 无法判断.</summary>
     [ObservableProperty]
@@ -78,6 +73,9 @@ public partial class FirewallViewModel(
     /// <summary>Active profiles from the last check, handed to the confirmation window for its Public-network hint.</summary>
     private FirewallProfiles activeProfiles = FirewallProfiles.Private;
 
+    /// <summary>This program's Block rules from the last check (the dismissed alert's artefacts); 放行 deletes them in the same elevated run.</summary>
+    private IReadOnlyList<FirewallProgramBlockRule> programBlockRules = [];
+
     private bool CanRefresh() => !Busy;
 
     /// <summary>
@@ -117,6 +115,10 @@ public partial class FirewallViewModel(
         RuleMissing = report.Verdict == FirewallVerdict.NoRuleFound;
         ManagedRuleExists = report.NamedRuleExists;
         activeProfiles = report.ActiveProfiles;
+        programBlockRules = report.ProgramBlockRules;
+        OnPropertyChanged(nameof(AllowCommandText));
+        OnPropertyChanged(nameof(AllowPowerShellText));
+        AllowPortCommand.NotifyCanExecuteChanged();
         PublicHintNeeded = report.Verdict != FirewallVerdict.Allowed
             && (report.ActiveProfiles & FirewallProfiles.Public) != 0;
         Status = report.Verdict switch
@@ -179,24 +181,28 @@ public partial class FirewallViewModel(
         ActionResult = Strings.Conduit_FirewallRule_Copied;
     }
 
-    private bool CanAllowPort() => !Busy && !ManagedRuleExists;
+    // Re-running 放行 stays possible while Block rules aimed at this exe remain: they defeat the
+    // app's own rule no matter how many times it is added, so the cleanup run must be reachable.
+    private bool CanAllowPort() => !Busy && (!ManagedRuleExists || programBlockRules.Count > 0);
 
     /// <summary>
-    /// 放行: the confirmation window shows the exact command and the profile choice first
-    /// (ADR 0006 §2), then Windows' own netsh runs through the system UAC prompt. A declined
-    /// prompt is stated as such — never as success — and every outcome is followed by a fresh
-    /// read-only check so the status line states what the firewall now holds.
+    /// 放行: the confirmation window shows the exact commands and the profile choice first
+    /// (ADR 0006 §2), then Windows' own netsh runs through the system UAC prompt. When the last
+    /// check found Block rules aimed at this exe, the same run deletes them before adding — an
+    /// Allow rule alone would change nothing while they exist. A declined prompt is stated as
+    /// such — never as success — and every outcome is followed by a fresh read-only check so the
+    /// status line states what the firewall now holds.
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanAllowPort))]
     private Task AllowPortAsync() =>
-        RunRuleAsync(new FirewallRulePromptRequest(IsRemoval: false, activeProfiles));
+        RunRuleAsync(new FirewallRulePromptRequest(IsRemoval: false, activeProfiles, programBlockRules, ReplaceExisting: ManagedRuleExists));
 
     private bool CanRemoveRule() => !Busy && ManagedRuleExists;
 
     /// <summary>移除: same confirmation and UAC path; deletes only the rule this app named (ADR 0006 §3).</summary>
     [RelayCommand(CanExecute = nameof(CanRemoveRule))]
     private Task RemoveRuleAsync() =>
-        RunRuleAsync(new FirewallRulePromptRequest(IsRemoval: true, activeProfiles));
+        RunRuleAsync(new FirewallRulePromptRequest(IsRemoval: true, activeProfiles, []));
 
     private async Task RunRuleAsync(FirewallRulePromptRequest request)
     {
@@ -211,7 +217,7 @@ public partial class FirewallViewModel(
         {
             var outcome = await elevator.RunAsync(command, CancellationToken.None);
             await InspectAsync();
-            ActionResult = outcome.Status switch
+            var result = outcome.Status switch
             {
                 ElevationStatus.Applied => command.IsRemoval
                     ? Strings.FirewallRule_Result_Removed
@@ -223,6 +229,14 @@ public partial class FirewallViewModel(
                         ?? outcome.FailureType
                         ?? "?"),
             };
+            if (outcome.Status != ElevationStatus.Cancelled && command.SkippedBlockRuleNames.Count > 0)
+            {
+                result += "\n" + Strings.Format(
+                    nameof(Strings.FirewallRule_Result_BlockSkippedFormat),
+                    string.Join(", ", command.SkippedBlockRuleNames));
+            }
+
+            ActionResult = result;
         }
         finally
         {

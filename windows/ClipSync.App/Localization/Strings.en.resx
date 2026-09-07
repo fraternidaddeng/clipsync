@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>Rule removed.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>This also deletes the block rules Windows created for this program when the security alert was dismissed: {0}. While they exist, no allow rule takes effect.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>Block rules whose names contain a quote were left untouched: {0}. Delete them by hand in Windows Firewall.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Revoked</value>
   </data>

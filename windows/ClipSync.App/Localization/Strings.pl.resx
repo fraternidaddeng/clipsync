@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>Reguła usunięta.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>Usunięte zostaną też reguły blokowania, które Windows utworzył dla tego programu po anulowaniu alertu zabezpieczeń: {0}. Dopóki istnieją, żadna reguła zezwalająca nie działa.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>Reguły blokowania z cudzysłowem w nazwie pozostały nietknięte: {0}. Usuń je ręcznie w Zaporze systemu Windows.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Unieważniono</value>
   </data>

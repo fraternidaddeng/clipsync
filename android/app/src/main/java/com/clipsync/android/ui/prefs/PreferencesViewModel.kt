@@ -15,13 +15,15 @@ import com.clipsync.android.update.AppUpdater
 import com.clipsync.android.update.UpdateCheckResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -84,13 +86,15 @@ data class BondedBluetoothDevice(
  * 过期, 开机恢复) through [SyncSettingsStore] — the single authority for setting
  * keys, so the sync engine and retention cleanup read exactly what the user
  * toggled. Every change lands on disk immediately; this ViewModel only mirrors
- * it. Three side effects are delegated to the host via [SideEffects]:
- * [SideEffects.onBootRestoreChanged] flips the BOOT_COMPLETED receiver
- * component, [SideEffects.onRetentionChanged] runs one cleanup pass so a
- * shortened retention applies now, not at the next service start (mirrors the
- * Windows settings-save behaviour), and [SideEffects.onCaptureGatesChanged]
- * re-evaluates the capture session after 暂停同步 or 私密模式 flips so
- * background read backends stop or resume on the toggle.
+ * it. A changed retention also runs one cleanup pass right away so it applies
+ * now, not at the next service start (mirrors the Windows settings-save
+ * behaviour). Process-level reactions are delegated to the host via
+ * [SideEffects]: [SideEffects.onBootRestoreChanged] flips the BOOT_COMPLETED
+ * receiver component and [SideEffects.onCaptureGatesChanged] re-evaluates the
+ * capture session after 暂停同步 or 私密模式 flips so background read backends
+ * stop or resume on the toggle. Anything only a live Activity can do — runtime
+ * permission dialogs, launching the installer — is emitted through
+ * [hostRequests] instead.
  *
  * 导出历史/导入历史 (docs/export-format-v1.md / docs/export-format-v2.md) run
  * against [historyRepository] on [ioDispatcher]; the host opens the SAF streams
@@ -101,6 +105,7 @@ data class BondedBluetoothDevice(
 class PreferencesViewModel(
     private val settings: SyncSettingsStore,
     private val sideEffects: SideEffects = SideEffects(),
+    private val permissions: Permissions = Permissions(),
     /**
      * One tick per external write to the settings file. The store is also written by
      * surfaces outside this ViewModel — the resident notification's 暂停同步/暂停捕获
@@ -116,25 +121,57 @@ class PreferencesViewModel(
     private val appVersion: String = "0.0.0",
     private val updater: AppUpdater? = null,
     /**
-     * Live service / capture facts rendered under the switches (see [PreferencesRuntimeFacts]);
-     * each emission re-derives the fact lines. Null (tests, previews) shows the switches alone.
+     * Live service / capture facts rendered under the switches (see [PreferencesRuntimeFacts]),
+     * built over a flow that ticks on every [refreshRuntimeFacts] so permission-backed facts
+     * re-sample when the host returns to the foreground; each emission re-derives the fact
+     * lines. Null (tests, previews) shows the switches alone.
      */
-    runtimeFacts: Flow<PreferencesRuntimeFacts>? = null,
+    runtimeFacts: ((refreshTicks: Flow<Unit>) -> Flow<PreferencesRuntimeFacts>)? = null,
 ) : ViewModel() {
-    /** The host-owned reactions to toggles; each defaults to a no-op for tests. */
+    /**
+     * Process-level reactions to toggles; each defaults to a no-op for tests. This ViewModel
+     * outlives the Activity across recreation (rotation, IME or locale change), so these must
+     * only reach process-wide objects — never an Activity's result launchers, lifecycleScope
+     * or UI. Work that needs the live Activity goes through [hostRequests].
+     */
     data class SideEffects(
         val onBootRestoreChanged: (Boolean) -> Unit = {},
-        val onRetentionChanged: () -> Unit = {},
         val onCaptureGatesChanged: () -> Unit = {},
-        /** Enabling asks the host for the BLUETOOTH_CONNECT runtime permission (API 31+). */
-        val onBluetoothFallbackChanged: (Boolean) -> Unit = {},
         /** 后台同步服务 flipped: the host stops the foreground service, or starts it (if paired). */
         val onServiceEnabledChanged: (Boolean) -> Unit = {},
-        /** Verified APK is ready; the host launches the system installer. */
-        val onInstallApk: (File) -> Unit = {},
-        /** Android 8+ unknown-sources grant is missing; the host opens the settings page. */
-        val onNeedInstallPermission: () -> Unit = {},
     )
+
+    /**
+     * Live answers to "does the app hold this runtime permission right now" (true where the
+     * API level has none to ask). Consulted on the explicit enable moments only; a missing
+     * permission becomes a [HostRequest], never a dialog per app open.
+     */
+    data class Permissions(
+        val bluetoothConnect: () -> Boolean = { true },
+        val postNotifications: () -> Boolean = { true },
+    )
+
+    /**
+     * One-shot work only the Activity currently on screen can do: a permission dialog goes
+     * through the ActivityResultLauncher registered on that very instance, and the installer
+     * is an Activity start. A callback captured at construction would keep pointing at the
+     * first instance, whose launchers are unregistered once it is recreated.
+     */
+    sealed interface HostRequest {
+        /** 蓝牙备援 was enabled while BLUETOOTH_CONNECT is missing (API 31+). */
+        data object BluetoothPermission : HostRequest
+
+        /** Sync or 开机恢复 was enabled while POST_NOTIFICATIONS is missing (API 33+). */
+        data object NotificationsPermission : HostRequest
+
+        /** A verified APK is ready for the system installer. */
+        data class InstallApk(
+            val apk: File,
+        ) : HostRequest
+
+        /** The Android 8+ unknown-sources grant is missing; open its settings page. */
+        data object InstallPermissionSettings : HostRequest
+    }
 
     private var pendingUpdate: UpdateCheckResult? = null
     private var updateStatus: UiText? = null
@@ -145,6 +182,17 @@ class PreferencesViewModel(
 
     val state: StateFlow<PreferencesUiState> = mutableState.asStateFlow()
 
+    private val hostRequestChannel = Channel<HostRequest>(Channel.BUFFERED)
+
+    /**
+     * Requests for the Activity currently on screen, buffered until one collects them, so a
+     * request raised across a recreation reaches the new instance instead of a destroyed one.
+     */
+    val hostRequests: Flow<HostRequest> = hostRequestChannel.receiveAsFlow()
+
+    /** Bumped per host resume; system permissions have no flow of their own to re-sample on. */
+    private val resumeTicks = MutableStateFlow(0)
+
     init {
         if (settingsChanges != null) {
             viewModelScope.launch {
@@ -153,12 +201,17 @@ class PreferencesViewModel(
         }
         if (runtimeFacts != null) {
             viewModelScope.launch {
-                runtimeFacts.collect { facts ->
+                runtimeFacts(resumeTicks.map { }).collect { facts ->
                     runtime = facts
                     mutableState.update { it.copy(runtime = facts) }
                 }
             }
         }
+    }
+
+    /** The host is visible again: re-sample the permission-backed runtime facts. */
+    fun refreshRuntimeFacts() {
+        resumeTicks.value += 1
     }
 
     /**
@@ -212,11 +265,17 @@ class PreferencesViewModel(
      * (app open, boot restore) until the user turns it back on. Distinct from [setPauseSync]
      * and [setPauseCapture], which pause behaviour inside a still-running service. The
      * setting is persisted first so the host's start/stop side effect reads the new value.
+     * Enabling is an explicit "enable sync" moment: on Android 13+ it asks for
+     * POST_NOTIFICATIONS so the status/inbox surfaces can appear; the service starts either
+     * way — the permission is never a precondition (plan 5.2).
      */
     fun setServiceEnabled(enabled: Boolean) {
         settings.serviceEnabled = enabled
         mutableState.update { it.copy(serviceEnabled = enabled) }
         sideEffects.onServiceEnabledChanged(enabled)
+        if (enabled) {
+            requestNotificationsPermissionIfMissing()
+        }
     }
 
     /** The setting is persisted first so the session's gate re-check reads the new value. */
@@ -255,14 +314,14 @@ class PreferencesViewModel(
     fun setAutoExpire(enabled: Boolean) {
         settings.autoExpireEnabled = enabled
         mutableState.update { it.copy(autoExpire = enabled) }
-        sideEffects.onRetentionChanged()
+        cleanupHistoryNow()
     }
 
     fun setRetentionDays(days: Int) {
         val clamped = days.coerceIn(SyncSettingsStore.MIN_RETENTION_DAYS, SyncSettingsStore.MAX_RETENTION_DAYS)
         settings.retentionMaxAgeDays = clamped
         mutableState.update { it.copy(retentionDays = clamped) }
-        sideEffects.onRetentionChanged()
+        cleanupHistoryNow()
     }
 
     /** 保留条数上限 (settings-roadmap P1-15): the cap always applies; a lowered cap cleans now. */
@@ -270,7 +329,15 @@ class PreferencesViewModel(
         val clamped = entries.coerceIn(SyncSettingsStore.MIN_MAX_ENTRIES, SyncSettingsStore.MAX_MAX_ENTRIES)
         settings.retentionMaxEntries = clamped
         mutableState.update { it.copy(maxEntries = clamped) }
-        sideEffects.onRetentionChanged()
+        cleanupHistoryNow()
+    }
+
+    /** One cleanup pass under the retention just persisted; a failure here must not surface as a crash. */
+    private fun cleanupHistoryNow() {
+        val repository = historyRepository() ?: return
+        viewModelScope.launch(ioDispatcher) {
+            runCatching { repository.cleanup(settings.effectiveRetentionPolicy(), nowMs()) }
+        }
     }
 
     /** 历史字号 (settings-roadmap P0-1): content-text-only scale, one of the three roadmap steps. */
@@ -331,11 +398,23 @@ class PreferencesViewModel(
         mutableState.update { it.copy(languageTag = settings.languageTag) }
     }
 
-    /** The preference is written first so the receiver's boot-time re-check agrees. */
+    /**
+     * The preference is written first so the receiver's boot-time re-check agrees. The
+     * recovery path speaks through a notification, so enabling asks for it honestly up front.
+     */
     fun setBootRestore(enabled: Boolean) {
         settings.bootRestoreEnabled = enabled
         mutableState.update { it.copy(bootRestore = enabled) }
         sideEffects.onBootRestoreChanged(enabled)
+        if (enabled) {
+            requestNotificationsPermissionIfMissing()
+        }
+    }
+
+    private fun requestNotificationsPermissionIfMissing() {
+        if (!permissions.postNotifications()) {
+            hostRequestChannel.trySend(HostRequest.NotificationsPermission)
+        }
     }
 
     /**
@@ -359,11 +438,16 @@ class PreferencesViewModel(
     /**
      * 蓝牙备援 (ADR 0005, 默认关): the supervisor's fallback dialer re-reads the toggle per
      * reconnect cycle, so flipping it applies to the next dial without a service restart.
+     * The fallback needs BLUETOOTH_CONNECT on API 31+; enabling without it asks once, on this
+     * explicit moment. Denial keeps the toggle honest — the dialer re-checks the permission
+     * per dial and simply stays off, and the fact line under the switch says so.
      */
     fun setBluetoothFallback(enabled: Boolean) {
         settings.bluetoothFallbackEnabled = enabled
         mutableState.update { it.copy(bluetoothFallback = enabled) }
-        sideEffects.onBluetoothFallbackChanged(enabled)
+        if (enabled && !permissions.bluetoothConnect()) {
+            hostRequestChannel.trySend(HostRequest.BluetoothPermission)
+        }
     }
 
     /** Persists the fallback's dial target, chosen from the system-bonded device list. */
@@ -475,7 +559,7 @@ class PreferencesViewModel(
             !installer.canRequestInstall() -> {
                 updateStatus = UiText.Res(R.string.prefs_update_download_desc)
                 mutableState.update { stateFromStore(transferStatus = it.transferStatus) }
-                sideEffects.onNeedInstallPermission()
+                hostRequestChannel.trySend(HostRequest.InstallPermissionSettings)
             }
             else ->
                 viewModelScope.launch(ioDispatcher) {
@@ -496,9 +580,7 @@ class PreferencesViewModel(
                             }
                         updateStatus = UiText.Res(R.string.prefs_update_installing)
                         mutableState.update { stateFromStore(transferStatus = it.transferStatus) }
-                        withContext(Dispatchers.Main.immediate) {
-                            sideEffects.onInstallApk(apk)
-                        }
+                        hostRequestChannel.trySend(HostRequest.InstallApk(apk))
                     } catch (exception: IOException) {
                         updateStatus =
                             if (exception.message?.contains("SHA-256") == true) {
@@ -553,11 +635,12 @@ class PreferencesViewModel(
         fun factory(
             settings: SyncSettingsStore,
             sideEffects: SideEffects = SideEffects(),
+            permissions: Permissions = Permissions(),
             settingsChanges: Flow<Unit>? = null,
             historyRepository: () -> ClipSyncRepository? = { null },
             appVersion: String = "0.0.0",
             updater: AppUpdater? = null,
-            runtimeFacts: Flow<PreferencesRuntimeFacts>? = null,
+            runtimeFacts: ((refreshTicks: Flow<Unit>) -> Flow<PreferencesRuntimeFacts>)? = null,
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
@@ -565,6 +648,7 @@ class PreferencesViewModel(
                     PreferencesViewModel(
                         settings,
                         sideEffects,
+                        permissions,
                         settingsChanges,
                         historyRepository,
                         appVersion = appVersion,

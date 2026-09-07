@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>規則已移除。</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>同時會刪除 Windows 安全性警示被取消時為本程式產生的封鎖規則：{0}。它們的存在會讓任何放行規則失效。</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>未處理名稱含引號的封鎖規則：{0}。請在 Windows 防火牆裡手動刪除。</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>已撤銷</value>
   </data>

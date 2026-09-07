@@ -41,6 +41,49 @@ public sealed class FirewallVerdictEvaluatorTests
         Assert.Equal(FirewallVerdict.Allowed, report.Verdict);
     }
 
+    // 真机 09-04：Store/打包应用的规则（协议 Any、无端口、无程序、三配置文件全允许）挂着用户 SID 或包 ID，
+    // 只对该包的流量生效；评估器曾把它们当成全局放行而误报"已放行"，手机实测仍被拦。
+    [Theory]
+    [InlineData("S-1-5-21-4261912661-680185022-1787628989-1002", null)]
+    [InlineData(null, "S-1-15-2-1234567890-1-2-3-4-5-6")]
+    [InlineData("S-1-5-21-1-2-3-1002", "S-1-15-2-1234567890-1-2-3-4-5-6")]
+    public void StorePackageRulesScopedToAUserOrPackageNeverCountAsAllowing(string? userOwner, string? packageId)
+    {
+        var storeRule = Rule(
+            "ChatGPT",
+            protocol: FirewallComValues.ProtocolAny,
+            localPorts: null,
+            applicationName: null) with
+        {
+            LocalUserOwner = userOwner,
+            LocalAppPackageId = packageId,
+        };
+
+        var report = Evaluate(storeRule);
+
+        Assert.Equal(FirewallVerdict.NoRuleFound, report.Verdict);
+        Assert.Empty(report.MatchingAllowRuleNames);
+    }
+
+    [Fact]
+    public void StorePackageBlockRulesDoNotCountAgainstTheListenerEither()
+    {
+        var storeBlock = Rule(
+            "Some package",
+            protocol: FirewallComValues.ProtocolAny,
+            localPorts: null,
+            applicationName: null,
+            action: FirewallComValues.ActionBlock) with
+        {
+            LocalAppPackageId = "S-1-15-2-1-2-3-4-5-6-7",
+        };
+
+        var report = Evaluate(storeBlock, Rule("Custom allow"));
+
+        Assert.Equal(FirewallVerdict.Allowed, report.Verdict);
+        Assert.Empty(report.BlockingRuleNames);
+    }
+
     [Fact]
     public void AllowedRuleForAnotherProgramDoesNotCount()
     {
@@ -129,6 +172,40 @@ public sealed class FirewallVerdictEvaluatorTests
 
         Assert.Equal(FirewallVerdict.Allowed, report.Verdict);
         Assert.Empty(report.BlockingRuleNames);
+        Assert.Empty(report.ProgramBlockRules);
+    }
+
+    [Fact]
+    public void ProgramBlockRulesListTheDismissedAlertsPairOnceWithTheStoredPath()
+    {
+        // What the security alert writes after 取消: TCP + UDP, Public only, path lower-cased, any port.
+        const string storedPath = @"c:\apps\clipsync\clipsync.app.exe";
+        var report = Evaluate(
+            Rule("Allow port"),
+            Rule("ClipSync.App", protocol: FirewallComValues.ProtocolTcp, localPorts: null, applicationName: storedPath, action: FirewallComValues.ActionBlock, profiles: (int)FirewallProfiles.Public),
+            Rule("ClipSync.App", protocol: FirewallComValues.ProtocolUdp, localPorts: null, applicationName: storedPath, action: FirewallComValues.ActionBlock, profiles: (int)FirewallProfiles.Public));
+
+        // On the active Private profile nothing blocks — yet the pair is reported for the cleanup,
+        // since it would defeat the Allow rule the moment the network is classed Public.
+        Assert.Equal(FirewallVerdict.Allowed, report.Verdict);
+        Assert.Empty(report.BlockingRuleNames);
+        Assert.Equal(new FirewallProgramBlockRule("ClipSync.App", storedPath), Assert.Single(report.ProgramBlockRules));
+    }
+
+    [Fact]
+    public void ProgramBlockRulesSkipWhatTheDeleteMustNotTouch()
+    {
+        var report = Evaluate(
+            Rule("Disabled", enabled: false, applicationName: ExePath, action: FirewallComValues.ActionBlock),
+            Rule("Outbound", direction: FirewallComValues.DirectionOut, applicationName: ExePath, action: FirewallComValues.ActionBlock),
+            Rule("Other program", applicationName: @"C:\Other\other.exe", action: FirewallComValues.ActionBlock),
+            Rule("Port block without program", localPorts: "47654", action: FirewallComValues.ActionBlock),
+            Rule("Allow for this exe", applicationName: ExePath));
+
+        // The program-less port block still counts against the verdict but is the user's own rule.
+        Assert.Equal(FirewallVerdict.NoRuleFound, report.Verdict);
+        Assert.Equal("Port block without program", Assert.Single(report.BlockingRuleNames));
+        Assert.Empty(report.ProgramBlockRules);
     }
 
     [Fact]

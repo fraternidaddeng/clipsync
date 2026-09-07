@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>Kural kaldırıldı.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>Bu işlem, güvenlik uyarısı iptal edildiğinde Windows’un bu program için oluşturduğu engelleme kurallarını da siler: {0}. Bunlar var olduğu sürece hiçbir izin kuralı etkili olmaz.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>Adında tırnak işareti bulunan engelleme kuralları işlenmedi: {0}. Bunları Windows Güvenlik Duvarı’nda elle silin.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>İptal edildi</value>
   </data>

@@ -210,14 +210,26 @@
 | §3 Android 事实行：设备行「最近同步」 | 通过 | 「DENG · Windows · 最近同步 09:13」 |
 | §3 Android 偏好页事实行 | 通过 | 「运行中 · 已与电脑连接」「后台读取运行中 · 当前路线 悬浮窗轮询 · 本次运行已捕获 1 条」「本次运行尚未遇到标记为敏感的内容」 |
 
+### 下午续测（同日，临时开启 Windows 防火墙公用配置文件复现拦截）
+
+用管理员 PowerShell 把公用配置文件设为 `Enabled=True / DefaultInboundAction=Block`（测试后由用户关回），同一手机、同一网段。
+
+| 项 | 结果 | 证据 |
+|---|---|---|
+| §2 防火墙拦截下的配对：电脑不弹批准窗、手机分层提示 | 通过 | 电脑 `firewall_inspect_no_rule`，二维码窗口出现赭色「本机防火墙未发现 TCP 47654 放行规则…」；手机核对页仍收到信标，确认后约 15 秒失败：「无法连接到电脑… / 手机已收到这台电脑在当前网络上的信号，但连接超时——几乎可以确定是电脑的 Windows 防火墙没有放行 TCP 47654 入站」；电脑无 `peer_pairing_confirm_received` |
+| §1 检测识别安全警报生成的阻止规则 | 通过 | 应用开始监听时 Windows 弹安全警报被取消，系统为 `clipsync.app.exe` 生成 TCP/UDP 两条 Public 入站 Block；通路页「存在针对本程序的阻止规则：ClipSync.App」 |
+| §1 一键放行（含阻止规则清理）→ 已放行 | 通过（修复后） | 修复前：`firewall_rule_add_applied` 后仍 `firewall_inspect_no_rule`（Block 优先于 Allow）；修复后确认窗列出 delete ×2 + add 三条命令，一次 UAC，`firewall_rule_add_with_block_cleanup_applied → firewall_inspect_allowed`，`Get-NetFirewallRule` 仅剩 `ClipSync TCP 47654`（Private, Public） |
+| §1 检测不被 Store 应用规则误导 | 通过（修复后） | 修复前：规则只放专用、当前公用，检测报「已放行」而手机实测超时——本机 ChatGPT / Microsoft Store / Xbox Game Bar 等打包应用规则（协议 Any、无端口、无程序）被算作全局放行；读取 `INetFwRule3.LocalUserOwner/LocalAppPackageId` 排除后报 `firewall_inspect_no_rule` |
+| §3 Android 蓝牙权限被拒事实行 | 通过 | `BLUETOOTH_CONNECT` 未授予时打开备援开关：「蓝牙权限未授予 · 备援不可用，去系统设置授权」（赭色）+「蓝牙目标设备 · 未选择」 |
+| §3 Android 路线状态行人话 | 通过（修复后） | 装入修复包后显示「首选 特权直读 自 12:18 起未就绪（特权通道未运行）」而非 `PRIVILEGED_CHANNEL_OFFLINE`；降级事件行「已于 10:25 因通道故障降级」在特权宿主死掉后如实出现 |
+
 ### 未覆盖
 
-- 防火墙拦截与一键放行 / 移除的 UAC 全流程（三配置文件均关闭，无拦截可复现）。
 - 电脑端 90 秒不批准的超时气泡（本轮均在超时前批准或取消）。
 - 退出过程中连点托盘图标 / 快捷键 / 诊断的竞态。
 - Windows 开机自启 / 呼出快捷键状态行（两项均未开启，故无事实行可看）。
-- Android 不可达失败分层提示（本机始终可达，未触发）。
-- Android 蓝牙权限被拒的赭色事实行。
+- Android 不可达失败中「连接被拒绝 / 无路由」两个分支（本轮只触发了「超时 + 已收到信标」分支）。
+- 蓝牙开关崩溃修复后的装机复验（修复包已构建，待重新授权 USB 调试后安装）。
 
 ### 发现并已修复（2026-09-04，本节定稿同日）
 
@@ -228,9 +240,15 @@
 5. **Windows 图片同步状态在对端已支持图片时仍说「手机端也开启时才互传图片」**：`SettingStatusMapper.ImageSync` 在 `imageCapableDevices ≥ 1` 时改用 `Status_ImageSync_OnImageCapableFormat`「已开 · {0} 台设备已连接，图片互传可用」；`0` 保持 PeerTextOnly、`null` 保持原句；单测随改。
 6. **Android 特权宿主附着后仍每秒重发 binder**（logcat `ShizukuProvider: sendBinder is called when already a living binder` 持续 ≥ 20 秒）：判定为我方 `PrivilegedHostService` 的重发循环——`attachApplication` 成功时把 `resendTicks` 归零，反而把节奏重置回 1 秒快档 30 次，之后才退到 10 秒。改为 `BinderResendPolicy`：无客户端附着时 1 秒 × 30 次再退 10 秒（宿主先于应用启动、或推送本身拉起应用的场景），已附着后改为 30 秒保活，附着即刻切换（经 looper 线程重排，不会留下两条循环），客户端死亡则归零重回快档以便替代进程一秒内拿到 binder；`start.sh` 只负责一次 spawn，无循环。单测覆盖三种节奏。
 
+7. **Windows 一键放行对「安全警报点过取消」无效**：放行规则建好后仍被两条程序级 Block 压制。放行流程改为同一次 UAC 用 `netsh -f` 脚本先删本程序的阻止规则再建放行规则，确认窗与命令预览如实列出；规则已存在但仍被阻止时「放行」保持可用并先删旧规则再建。
+8. **Windows 防火墙检测把 Store / 打包应用规则当成全局放行**（误报「已放行」，手机实测被拦）：读取 `INetFwRule3.LocalUserOwner` / `LocalAppPackageId`，带用户或包作用域的规则不再计入放行或阻止。
+9. **Android 重建后打开「蓝牙备援」崩溃**（`IllegalStateException: Attempting to launch an unregistered ActivityResultLauncher`）：`PreferencesViewModel` 工厂 lambda 捕获了首个 Activity 的权限启动器；改为 ViewModel 发出 `HostRequest` 事件、当前 Activity 收集执行，同路径的通知权限请求、保留期清理、权限事实重采样一并脱离旧实例。
+
 ### 测试方法备注
 
 - 手机输入法会把 `adb shell input text` 的拉丁字符转成中文候选，合成标记建议用剪贴板写入或 base64 传递而非 `input text`。
+- 在同一个 shell 里跑 `dotnet test` 时若仍设着 `CLIPSYNC_DIAGNOSTICS_PATH`，测试进程会把用例里的诊断码写进同一个文件（例如 `firewall_rule_remove_failed_InvalidOperationException` 与蓝牙/缩略图码在两秒内成串出现），不是真实操作。
+- Windows 安全警报被取消后生成的 Block 规则被删除后，应用下次监听时警报会再次弹出；再取消就再生成——测试期间出现过两轮。
 - `adb shell ime set …` 切换输入法会触发 Activity 重建，Compose `remember` 状态随之清空——不是应用缺陷。
 
 ## 签核（2026-08-26）：用户确认真机验证已全部完成

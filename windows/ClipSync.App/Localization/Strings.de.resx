@@ -498,6 +498,12 @@
   <data name="FirewallRule_Result_Removed" xml:space="preserve">
     <value>Regel entfernt.</value>
   </data>
+  <data name="FirewallRule_Window_BlockNoteFormat" xml:space="preserve">
+    <value>Dabei werden auch die Blockierregeln gelöscht, die Windows für dieses Programm angelegt hat, als die Sicherheitswarnung abgebrochen wurde: {0}. Solange sie bestehen, wirkt keine Erlaubnisregel.</value>
+  </data>
+  <data name="FirewallRule_Result_BlockSkippedFormat" xml:space="preserve">
+    <value>Blockierregeln mit Anführungszeichen im Namen wurden nicht angetastet: {0}. Löschen Sie sie von Hand in der Windows-Firewall.</value>
+  </data>
   <data name="Device_RevokedBadge" xml:space="preserve">
     <value>Widerrufen</value>
   </data>
