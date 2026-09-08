@@ -231,6 +231,7 @@
 |---|---|---|
 | §5 开机自启开 / 关 | 通过（修复后） | 修复前开启后事实行为「未能登记启动项」而注册表已写入（状态按写入前快照计算）；修复后开 → HKCU `Run\ClipSync` = `"…\ClipSync.App.exe" --minimized`，行文案「已登记 · 下次登录随 Windows 启动」；关 → 键删除、行回落 |
 | §5 退出期间连点托盘图标 | 通过 | 30 次连点全部落在守卫上：诊断只有十余条 `tray_open_refused`，无 `unhandled_*`，`%LOCALAPPDATA%\CrashDumps` 无 ClipSync 转储 —— 原报告的托盘退出崩溃在真机上确认已修 |
+| §3 Android 悬浮窗轮询与前台输入法共存（用户报告 QQ 转发 / B 站分享时键盘闪烁） | **失败 → 修复后通过** | 复现：设置搜索框弹出键盘，`dumpsys window` 连续采样 80 次。修复前：焦点落在我方悬浮窗 6 次、输入法目标（`imeLayeringTarget/imeInputTarget`）落在我方悬浮窗 6 次，`dumpsys input_method` 中每秒一条 `startInput reason=WINDOW_FOCUS_GAIN targetWin=[com.clipsync.android] inputType=0x0`——每次获焦都把键盘从前台应用手里抢走再还回去。修复后（读取窗口 `FLAG_ALT_FOCUSABLE_IM` + `SOFT_INPUT_STATE_UNCHANGED`）：获焦 6–7 次、输入法目标落在我方 **0** 次、键盘弹出期间 `startInput` 0 条；复制 `markerA1005` 后手机历史 10:06 即出现，读取路线未受影响 |
 | §5 退出后进程结束 | **失败 → 修复后通过** | 第一次（跑了 15 小时、跨 4 次 Modern Standby 的实例）点退出后进程 3 分钟仍在：`dotnet-stack` 显示 UI 线程停在 `App.OnExit → syncHost.DisposeAsync().GetAwaiter().GetResult()`，其余线程无任何 ClipSync 帧（即被等待的异步链在等一个永不完成的东西，而非线程互锁）。修复（释放改到线程池 + 15 秒上限；恢复通道加 30 秒有界超时）后重启实例复测两次：从调用「退出」到进程消失 110 毫秒，退出码 0，无 `exit_dispose_timeout_*` |
 
 ### 未覆盖
@@ -259,6 +260,7 @@
 10. **Windows 开机自启事实行误报「未能登记启动项」**：`OnLaunchAtStartupChanged` 在 App 写注册表之前就按旧快照算状态；App 在 `ReconcileLaunchAtStartup` 后调用 `RefreshStartupStatus()`，行文案改为陈述写入的实际结果。
 11. **Windows 托盘退出后进程永不结束**：`OnExit` 在 UI 线程上同步等待 `DisposeAsync()`，被等待的链条里一次卡住的恢复回调（`SyncResilienceController` 门闸永不释放）让等待无界。`OnExit` 三处异步释放改到线程池、`Task.Wait` 上限 15 秒并记 `exit_dispose_timeout_<what>`；`SyncResilienceController` 加 `RecoveryTimeout`（默认 30 秒）——回调 token 超时取消、`WaitAsync` 兜底放弃不看 token 的回调并释放门闸（`peer_recovery_timed_out`），此前一次卡住会静默关掉之后所有唤醒/网络恢复；UDP 信标单次发送加 5 秒上限（`peer_beacon_send_timed_out`）。
 12. **睡眠/唤醒通知注册结果与信号原本不可观测**：新增 `power_notify_registered / power_notify_register_failed_<code>`、`power_suspend_signal / power_resume_signal`，用来区分「系统没投递」和「注册失败」。
+13. **Android 悬浮窗轮询让前台输入法每秒闪一次**：读取窗口切成可获焦时默认也是输入法客户端，系统每次都把它当成新的、没有编辑框的输入目标，键盘收起再弹出。`OverlayFocusController.readSpec` 加 `FLAG_ALT_FOCUSABLE_IM`，`AndroidOverlayPlatform` 的窗口参数加 `SOFT_INPUT_STATE_UNCHANGED`；空闲态不加该标志（与 `FLAG_NOT_FOCUSABLE` 叠加语义反转）。
 
 ### 测试方法备注
 
@@ -267,6 +269,7 @@
 - Windows 安全警报被取消后生成的 Block 规则被删除后，应用下次监听时警报会再次弹出；再取消就再生成——测试期间出现过两轮。
 - `adb shell ime set …` 切换输入法会触发 Activity 重建，Compose `remember` 状态随之清空——不是应用缺陷。
 - 退出挂起这类「进程还在但什么都不做」的问题，`dotnet tool install -g dotnet-stack` 后 `dotnet-stack report -p <pid>` 一条命令就能拿到全部托管线程栈，比猜快得多；本轮就是靠它把问题定位到 `OnExit` 的同步等待。
+- 键盘闪烁这类「看得见但抓不住」的问题，`dumpsys input_method` 的 `mStartInputHistory`（谁、何时、因何原因成为输入目标）和 `dumpsys window` 的 `imeLayeringTarget / imeInputTarget` 是最直接的证据；每秒一条 `WINDOW_FOCUS_GAIN` 且 `inputType=0x0` 的记录几乎必然是某个悬浮窗在抢焦点。手机端拿不到剪贴板"复制"菜单时，`input keycombination 113 29`（Ctrl+A）/ `113 31`（Ctrl+C）可替代。
 - 安全软件（火绒）会静默吞掉对 HKCU `Run` 键中它记住的「值名 + 路径」组合的写入（本轮用反射探针写过一次 `C:\probe\…` 后即被记住），真实 exe 路径的写入不受影响——排查开机自启时先确认这一点，不是应用缺陷。
 
 ## 签核（2026-08-26）：用户确认真机验证已全部完成

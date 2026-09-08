@@ -113,11 +113,42 @@ class OverlayFocusControllerTest {
         val readSpec = platform.windowHistory.first { spec ->
             spec.flags and OverlayFocusController.FLAG_NOT_FOCUSABLE == 0
         }
-        assertEquals(OverlayFocusController.FLAG_NOT_TOUCHABLE, readSpec.flags)
+        assertEquals(
+            OverlayFocusController.FLAG_NOT_TOUCHABLE or OverlayFocusController.FLAG_ALT_FOCUSABLE_IM,
+            readSpec.flags,
+        )
         assertEquals(1, readSpec.widthPx)
         assertEquals(1, readSpec.heightPx)
         assertEquals(0f, readSpec.alpha, 0f)
         assertEquals(OverlayFocusController.TYPE_APPLICATION_OVERLAY, readSpec.type)
+    }
+
+    @Test
+    fun `the focused read window never presents itself as an input-method client`() {
+        // Real-device regression: without FLAG_ALT_FOCUSABLE_IM each poll tick restarted the
+        // front app's keyboard (one non-restarting startInput per second), visible as the IME
+        // flickering while typing. The idle window must NOT carry the flag: combined with
+        // FLAG_NOT_FOCUSABLE it would invert into "may use the IME" and make the idle overlay
+        // an IME-target candidate.
+        val platform = FakeOverlayPlatform()
+        platform.clip = OverlayClipRead.Text("hello")
+        val controller = OverlayFocusController(platform)
+
+        controller.readText()
+
+        val focusableSpecs =
+            platform.windowHistory.filter { spec ->
+                spec.flags and OverlayFocusController.FLAG_NOT_FOCUSABLE == 0
+            }
+        assertTrue(focusableSpecs.isNotEmpty())
+        focusableSpecs.forEach { spec ->
+            assertTrue(spec.flags and OverlayFocusController.FLAG_ALT_FOCUSABLE_IM != 0)
+        }
+        platform.windowHistory
+            .filter { spec -> spec.flags and OverlayFocusController.FLAG_NOT_FOCUSABLE != 0 }
+            .forEach { spec ->
+                assertEquals(0, spec.flags and OverlayFocusController.FLAG_ALT_FOCUSABLE_IM)
+            }
     }
 
     @Test

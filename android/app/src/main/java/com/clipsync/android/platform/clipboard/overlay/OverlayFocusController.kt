@@ -192,12 +192,20 @@ class OverlayFocusController internal constructor(
         type = TYPE_APPLICATION_OVERLAY,
     )
 
+    // FLAG_ALT_FOCUSABLE_IM on a focusable window means "takes window focus but never
+    // talks to the input method". Without it every poll tick made the front app's
+    // keyboard restart: the framework reported our focus gain to InputMethodManagerService
+    // as a new client with no editor, and when focus bounced back the app's editor got a
+    // fresh non-restarting startInput — on a real device that showed up as the keyboard
+    // flickering once a second while typing (QQ 转发, B 站分享). With the flag the
+    // framework treats this window as having no IME focus at all, so the app's IME session
+    // is never interrupted; WindowManager focus (what the clipboard check needs) is unchanged.
     private fun readSpec(bars: OverlaySystemBarSample): OverlayWindowSpec =
         OverlayWindowSpec(
             widthPx = WINDOW_WIDTH_PX,
             heightPx = WINDOW_HEIGHT_PX,
             alpha = WINDOW_ALPHA,
-            flags = FLAG_NOT_TOUCHABLE,
+            flags = FLAG_NOT_TOUCHABLE or FLAG_ALT_FOCUSABLE_IM,
             type = TYPE_APPLICATION_OVERLAY,
             hiddenBars = barRequestFor(bars),
         )
@@ -231,6 +239,7 @@ class OverlayFocusController internal constructor(
 
         const val FLAG_NOT_FOCUSABLE = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
         const val FLAG_NOT_TOUCHABLE = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        const val FLAG_ALT_FOCUSABLE_IM = WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
         const val TYPE_APPLICATION_OVERLAY = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
     }
 }
@@ -338,6 +347,10 @@ internal class AndroidOverlayPlatform(
         val layout = params ?: WindowManager.LayoutParams().also { fresh ->
             fresh.gravity = Gravity.TOP or Gravity.START
             fresh.format = PixelFormat.TRANSLUCENT
+            // Second line of defence next to FLAG_ALT_FOCUSABLE_IM: even if a ROM did route
+            // our focus gain to the input method service, "unchanged" tells it to leave the
+            // soft keyboard exactly as the front app had it.
+            fresh.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
             params = fresh
         }
         layout.width = spec.widthPx
