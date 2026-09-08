@@ -234,13 +234,22 @@
 | §3 Android 悬浮窗轮询与前台输入法共存（用户报告 QQ 转发 / B 站分享时键盘闪烁） | **失败 → 修复后通过** | 复现：设置搜索框弹出键盘，`dumpsys window` 连续采样 80 次。修复前：焦点落在我方悬浮窗 6 次、输入法目标（`imeLayeringTarget/imeInputTarget`）落在我方悬浮窗 6 次，`dumpsys input_method` 中每秒一条 `startInput reason=WINDOW_FOCUS_GAIN targetWin=[com.clipsync.android] inputType=0x0`——每次获焦都把键盘从前台应用手里抢走再还回去。修复后（读取窗口 `FLAG_ALT_FOCUSABLE_IM` + `SOFT_INPUT_STATE_UNCHANGED`）：获焦 6–7 次、输入法目标落在我方 **0** 次、键盘弹出期间 `startInput` 0 条；复制 `markerA1005` 后手机历史 10:06 即出现，读取路线未受影响 |
 | §5 退出后进程结束 | **失败 → 修复后通过** | 第一次（跑了 15 小时、跨 4 次 Modern Standby 的实例）点退出后进程 3 分钟仍在：`dotnet-stack` 显示 UI 线程停在 `App.OnExit → syncHost.DisposeAsync().GetAwaiter().GetResult()`，其余线程无任何 ClipSync 帧（即被等待的异步链在等一个永不完成的东西，而非线程互锁）。修复（释放改到线程池 + 15 秒上限；恢复通道加 30 秒有界超时）后重启实例复测两次：从调用「退出」到进程消失 110 毫秒，退出码 0，无 `exit_dispose_timeout_*` |
 
-### 未覆盖
+### 09-08 下午续测（手机重新授权 USB 调试后）
 
-- 电脑端 90 秒不批准的超时气泡（本轮均在超时前批准或取消）。
+手机端全部经 adb 驱动，且脚本带前台守卫（当前窗口不是本应用则拒绝点击）。电脑测试实例经二维码窗口的「换一个码」刷新票据（票据 5 分钟有效期），配对载荷从窗口二维码截图解码。
+
+| 项 | 结果 | 证据 |
+|---|---|---|
+| §2 蓝牙开关崩溃修复装机复验 | 通过 | 切输入法触发 Activity 重建后在通路页打开「蓝牙备援」：进程 pid 不变（未崩溃），弹出系统权限对话框；点「拒绝」后事实行「蓝牙权限未授予 · 备援不可用，去系统设置授权」（原报告 `IllegalStateException: unregistered ActivityResultLauncher` 确认已修） |
+| §2 电脑端 90 秒批准超时 | 通过 | 手机点「指纹一致 — 配对」后电脑弹批准窗（`peer_pairing_confirm_received` 14:15:26），90 秒不操作 → 电脑 14:16:56 精确记 `peer_pairing_confirm_failed_pairing_timeout`、批准窗自动关闭；手机显示「电脑未在限时内批准。请出示新的二维码后重试。」；超时气泡确认已投递（Windows 推送通知平台 Operational 日志 14:16:56 `Toast delivered to NotifyIconGeneratedAumid_…`） |
+| §2 Android「连接被拒绝」提示（电脑没在监听） | 通过 | 停掉电脑测试实例（47654 无人监听）后手机确认配对：约 6 秒失败，第二段提示「电脑上没有程序在监听该端口。请确认剪剪相传正在电脑上运行……」（`UnreachableReason.REFUSED` → `pairing_fail_unreachable_hint_refused`） |
+
+### 未覆盖 / 交接给后续 QA
+
+- **Android「无路由」提示分支未确证，疑似误分类（交接重点）**：手机关 Wi-Fi + 移动数据后连 `192.168.2.135` 时，`nc` 探针在系统层返回 `ENETUNREACH`（"Network is unreachable"），但界面第二段显示的仍是「连接被拒绝」文案而非 `pairing_fail_unreachable_hint_no_route`。**尚未经应用自身的分类日志确证**——用来观测的几次真机跑动都被前台守卫（通知栏 / 权限对话框抢占前台）中止。可能原因：`ENETUNREACH` 的连接失败被 OkHttp 包成不携带 `ErrnoException` 的 `ConnectException`，`errnoOf` 取不到 errno，落到 `UnreachableReasons.fromExceptionType` 的兜底，而它对无 "refused" 字样的 `ConnectException` 返回 `UNKNOWN`（`unreachableHint` 对 `UNKNOWN` 返回 null，不该出现「连接被拒绝」段——所以现状与代码预期不符，值得专门查）。排查建议：`adb shell setprop log.tag.ClipSyncPairing DEBUG` 后在 `AndroidConnectFailures.classify` 临时打一行「reason + errno + 异常类型链」（只记类型名和 errno，不记 message，以免带出主机地址），断网复现看真实落点；若确为 errno 丢失，可在 `fromExceptionType` 用 `ConnectException` 的消息补充匹配 "ENETUNREACH"/"unreachable"，或在 `PinnedTls` 保留底层 `ErrnoException` 于 cause 链。
 - 呼出快捷键状态行（未开启，故无事实行可看）。
-- Android 不可达失败中「连接被拒绝 / 无路由」两个分支（本轮只触发了「超时 + 已收到信标」分支）。
-- 蓝牙开关崩溃修复后的装机复验（修复包已构建，手机 USB 调试授权在电脑重启后失效，待重新允许后安装）。
 - **Modern Standby 下的睡眠/唤醒通知投递**：09-07 的实例存活 15 小时，内核电源日志（Kernel-Power 506/507）记了 4 次 Modern Standby，应用诊断里没有一条 `peer_suspend_sessions_gated` / `peer_resume_recovered_*`。`PowerRegisterSuspendResumeNotification` 注册本机成功（新码 `power_notify_registered`），投递与否留待下一次自然待机：修复后的实例已最小化常驻（诊断文件 `diag5.log`），届时看 `power_suspend_signal / power_resume_signal` 是否出现。
+- **测试环境遗留（不是缺陷）**：手机通路页「网络」卡片显示「证书不匹配」，因为本轮用电脑测试实例（独立数据目录、证书指纹 `ef0a…`）反复配对，而手机上更早钉住的是另一目录的指纹 `e074…`；生产实例（`%LOCALAPPDATA%\ClipSync`，指纹 `d79c…`）证书未变。收尾时手机需与生产实例重新扫码配对一次即可恢复。
 
 ### 发现并已修复（2026-09-04，本节定稿同日）
 
