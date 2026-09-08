@@ -32,6 +32,14 @@ public sealed class Win32SuspendResumeNotificationSource : ISuspendResumeSource
         callback = OnDeviceNotify;
     }
 
+    /// <summary>
+    /// Outcome of the last <c>PowerRegisterSuspendResumeNotification</c> call: 0 when the
+    /// registration is live, the Win32 error otherwise, null before any attempt (or off
+    /// Windows). Surfaced so the host can record a silent registration failure — without it,
+    /// a machine that never reports sleep looks exactly like one that never slept.
+    /// </summary>
+    public uint? RegistrationStatus { get; private set; }
+
     public void Subscribe(Action onSuspend, Action onResume)
     {
         ArgumentNullException.ThrowIfNull(onSuspend);
@@ -94,6 +102,7 @@ public sealed class Win32SuspendResumeNotificationSource : ISuspendResumeSource
             DeviceNotifySubscribeCallback,
             memory,
             out var handle);
+        RegistrationStatus = status == 0 && handle == nint.Zero ? uint.MaxValue : status;
         if (status != 0 || handle == nint.Zero)
         {
             Marshal.FreeHGlobal(memory);

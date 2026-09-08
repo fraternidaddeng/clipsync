@@ -290,6 +290,9 @@ public partial class App : Application
         if (e.PropertyName is nameof(MainViewModel.LaunchAtStartup) && mainViewModel is not null)
         {
             ReconcileLaunchAtStartup(mainViewModel.LaunchAtStartup);
+            // The fact row must state the write's real result, not the pre-write registry state
+            // the property setter saw a moment ago.
+            mainViewModel.RefreshStartupStatus();
         }
 
         if (e.PropertyName is nameof(MainViewModel.FlyoutHotkey) or nameof(MainViewModel.PauseHotkey))
@@ -965,7 +968,8 @@ public partial class App : Application
         if (bluetoothHost is not null)
         {
             DetachBluetoothHost(bluetoothHost);
-            bluetoothHost.DisposeAsync().AsTask().GetAwaiter().GetResult();
+            var host = bluetoothHost;
+            DisposeOffDispatcher(() => host.DisposeAsync(), "bluetooth_host");
             bluetoothHost = null;
         }
         if (syncHost is not null)
@@ -975,7 +979,8 @@ public partial class App : Application
             syncHost.SessionsChanged -= OnPeerSessionsChanged;
             syncHost.DeviceLockedOut -= OnDeviceLockedOut;
             syncHost.PeerStatusChanged -= OnPeerStatusChanged;
-            syncHost.DisposeAsync().AsTask().GetAwaiter().GetResult();
+            var host = syncHost;
+            DisposeOffDispatcher(() => host.DisposeAsync(), "sync_host");
         }
         if (clipboardAdapter is not null)
         {
@@ -997,9 +1002,39 @@ public partial class App : Application
         }
         trayFlyout?.Close();
         trayIcon?.Dispose();
-        services?.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        if (services is not null)
+        {
+            var container = services;
+            DisposeOffDispatcher(() => container.DisposeAsync(), "services");
+        }
         base.OnExit(e);
     }
+
+    /// <summary>
+    /// Exit-time disposals run on the thread pool, never inline on the UI thread: any await
+    /// inside them that captured the dispatcher's synchronization context would otherwise wait
+    /// for a UI thread that is itself blocked here (seen on a real machine as 退出 leaving the
+    /// process alive forever while the peer was unreachable). The wait is bounded so a stuck
+    /// dependency degrades to a diagnostics code instead of a hang.
+    /// </summary>
+    private static void DisposeOffDispatcher(Func<ValueTask> dispose, string what)
+    {
+        try
+        {
+            var task = Task.Run(async () => await dispose().ConfigureAwait(false));
+            if (!task.Wait(ExitDisposeTimeout))
+            {
+                LocalDiagnostics.Write($"exit_dispose_timeout_{what}");
+            }
+        }
+        catch (AggregateException aggregate)
+        {
+            var inner = aggregate.Flatten().InnerExceptions.FirstOrDefault() ?? aggregate;
+            LocalDiagnostics.Write($"exit_dispose_failed_{what}_{inner.GetType().Name}");
+        }
+    }
+
+    private static readonly TimeSpan ExitDisposeTimeout = TimeSpan.FromSeconds(15);
 
     private async void OnClipboardTextChanged(object? sender, ClipboardTextChangedEventArgs e)
     {

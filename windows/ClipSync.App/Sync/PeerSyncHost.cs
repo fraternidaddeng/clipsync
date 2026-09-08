@@ -174,7 +174,8 @@ public sealed class PeerSyncHost : IAsyncDisposable
             onResume: token => RecoverAsync(afterResume: true, token),
             onNetworkChanged: token => RecoverAsync(afterResume: false, token),
             resilienceOptions,
-            onSuspend: EnterSuspend);
+            onSuspend: EnterSuspend,
+            onRecoveryTimedOut: () => LocalDiagnostics.Write("peer_recovery_timed_out"));
         started = true;
     }
 
@@ -434,17 +435,26 @@ public sealed class PeerSyncHost : IAsyncDisposable
         {
             if (broadcaster is not null)
             {
-                await broadcaster.BroadcastOnceAsync().ConfigureAwait(false);
+                // A datagram send normally completes at once; the bound is for a virtual
+                // adapter that stops completing I/O, so one beacon can never pin its caller.
+                using var bound = new CancellationTokenSource(BeaconSendTimeout);
+                await broadcaster.BroadcastOnceAsync(bound.Token).ConfigureAwait(false);
             }
         }
         catch (SocketException)
         {
             // No usable interface right now; the periodic timer will try again.
         }
+        catch (OperationCanceledException)
+        {
+            LocalDiagnostics.Write("peer_beacon_send_timed_out");
+        }
         catch (ObjectDisposedException)
         {
         }
     }
+
+    private static readonly TimeSpan BeaconSendTimeout = TimeSpan.FromSeconds(5);
 
     /// <summary>
     /// Loopback and private LAN IPv4 addresses by default, plus explicit user extras. The

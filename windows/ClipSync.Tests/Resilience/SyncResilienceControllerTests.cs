@@ -288,6 +288,70 @@ public sealed class SyncResilienceControllerTests
         Assert.Equal(0, controller.ResumeRecoveryCount);
     }
 
+    [Fact]
+    public async Task AWedgedRecoveryIsAbandonedAfterTheTimeoutAndLaterSignalsStillRecover()
+    {
+        var events = new FakeSystemStateEvents();
+        var attempts = 0;
+        var timedOutHooks = 0;
+        CancellationToken wedgedToken = default;
+        var wedgedStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        await using var controller = new SyncResilienceController(
+            events,
+            onResume: _ => Task.CompletedTask,
+            onNetworkChanged: token =>
+            {
+                if (Interlocked.Increment(ref attempts) == 1)
+                {
+                    // Ignores its token entirely, like a socket call stuck inside a driver.
+                    wedgedToken = token;
+                    wedgedStarted.TrySetResult();
+                    return new TaskCompletionSource().Task;
+                }
+
+                return Task.CompletedTask;
+            },
+            FastOptions with { RecoveryTimeout = TimeSpan.FromMilliseconds(150) },
+            onRecoveryTimedOut: () => Interlocked.Increment(ref timedOutHooks));
+
+        events.RaiseNetworkChanged();
+        await wedgedStarted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        await WaitUntilAsync(() => controller.TimedOutRecoveryCount == 1);
+        Assert.Equal(1, Volatile.Read(ref timedOutHooks));
+        Assert.Equal(0, controller.NetworkRecoveryCount);
+        // The abandoned pass at least gets told to stop, should it ever look.
+        Assert.True(wedgedToken.IsCancellationRequested);
+
+        // The gate is free again: the next transition recovers normally.
+        events.RaiseNetworkChanged();
+        await WaitUntilAsync(() => controller.NetworkRecoveryCount == 1);
+        Assert.Equal(2, Volatile.Read(ref attempts));
+    }
+
+    [Fact]
+    public async Task DisposeDoesNotWaitForeverOnAWedgedRecovery()
+    {
+        var events = new FakeSystemStateEvents();
+        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var controller = new SyncResilienceController(
+            events,
+            onResume: _ =>
+            {
+                started.TrySetResult();
+                return new TaskCompletionSource().Task;
+            },
+            onNetworkChanged: _ => Task.CompletedTask,
+            FastOptions with { RecoveryTimeout = TimeSpan.FromMilliseconds(150) });
+
+        events.RaiseResume();
+        await started.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        // Before the bound, this waited on recoveryGate forever and hung the app's exit.
+        await controller.DisposeAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+        Assert.Equal(0, controller.ResumeRecoveryCount);
+    }
+
     private static void InterlockedMax(ref int target, int value)
     {
         int current;

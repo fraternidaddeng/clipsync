@@ -223,13 +223,23 @@
 | §3 Android 蓝牙权限被拒事实行 | 通过 | `BLUETOOTH_CONNECT` 未授予时打开备援开关：「蓝牙权限未授予 · 备援不可用，去系统设置授权」（赭色）+「蓝牙目标设备 · 未选择」 |
 | §3 Android 路线状态行人话 | 通过（修复后） | 装入修复包后显示「首选 特权直读 自 12:18 起未就绪（特权通道未运行）」而非 `PRIVILEGED_CHANNEL_OFFLINE`；降级事件行「已于 10:25 因通道故障降级」在特权宿主死掉后如实出现 |
 
+### 09-08 续测（开机自启、托盘退出竞态）
+
+同一测试实例（`CLIPSYNC_DATA_DIR` 独立目录）。托盘操作用 UIA 定位任务栏通知区按钮 → 右键 → 调用菜单项「退出」→ 之后 4 秒内以约 130 毫秒间隔在图标位置连点左键。
+
+| 项 | 结果 | 证据 |
+|---|---|---|
+| §5 开机自启开 / 关 | 通过（修复后） | 修复前开启后事实行为「未能登记启动项」而注册表已写入（状态按写入前快照计算）；修复后开 → HKCU `Run\ClipSync` = `"…\ClipSync.App.exe" --minimized`，行文案「已登记 · 下次登录随 Windows 启动」；关 → 键删除、行回落 |
+| §5 退出期间连点托盘图标 | 通过 | 30 次连点全部落在守卫上：诊断只有十余条 `tray_open_refused`，无 `unhandled_*`，`%LOCALAPPDATA%\CrashDumps` 无 ClipSync 转储 —— 原报告的托盘退出崩溃在真机上确认已修 |
+| §5 退出后进程结束 | **失败 → 修复后通过** | 第一次（跑了 15 小时、跨 4 次 Modern Standby 的实例）点退出后进程 3 分钟仍在：`dotnet-stack` 显示 UI 线程停在 `App.OnExit → syncHost.DisposeAsync().GetAwaiter().GetResult()`，其余线程无任何 ClipSync 帧（即被等待的异步链在等一个永不完成的东西，而非线程互锁）。修复（释放改到线程池 + 15 秒上限；恢复通道加 30 秒有界超时）后重启实例复测两次：从调用「退出」到进程消失 110 毫秒，退出码 0，无 `exit_dispose_timeout_*` |
+
 ### 未覆盖
 
 - 电脑端 90 秒不批准的超时气泡（本轮均在超时前批准或取消）。
-- 退出过程中连点托盘图标 / 快捷键 / 诊断的竞态。
-- Windows 开机自启 / 呼出快捷键状态行（两项均未开启，故无事实行可看）。
+- 呼出快捷键状态行（未开启，故无事实行可看）。
 - Android 不可达失败中「连接被拒绝 / 无路由」两个分支（本轮只触发了「超时 + 已收到信标」分支）。
-- 蓝牙开关崩溃修复后的装机复验（修复包已构建，待重新授权 USB 调试后安装）。
+- 蓝牙开关崩溃修复后的装机复验（修复包已构建，手机 USB 调试授权在电脑重启后失效，待重新允许后安装）。
+- **Modern Standby 下的睡眠/唤醒通知投递**：09-07 的实例存活 15 小时，内核电源日志（Kernel-Power 506/507）记了 4 次 Modern Standby，应用诊断里没有一条 `peer_suspend_sessions_gated` / `peer_resume_recovered_*`。`PowerRegisterSuspendResumeNotification` 注册本机成功（新码 `power_notify_registered`），投递与否留待下一次自然待机：修复后的实例已最小化常驻（诊断文件 `diag5.log`），届时看 `power_suspend_signal / power_resume_signal` 是否出现。
 
 ### 发现并已修复（2026-09-04，本节定稿同日）
 
@@ -244,12 +254,20 @@
 8. **Windows 防火墙检测把 Store / 打包应用规则当成全局放行**（误报「已放行」，手机实测被拦）：读取 `INetFwRule3.LocalUserOwner` / `LocalAppPackageId`，带用户或包作用域的规则不再计入放行或阻止。
 9. **Android 重建后打开「蓝牙备援」崩溃**（`IllegalStateException: Attempting to launch an unregistered ActivityResultLauncher`）：`PreferencesViewModel` 工厂 lambda 捕获了首个 Activity 的权限启动器；改为 ViewModel 发出 `HostRequest` 事件、当前 Activity 收集执行，同路径的通知权限请求、保留期清理、权限事实重采样一并脱离旧实例。
 
+#### 09-08 续测新增
+
+10. **Windows 开机自启事实行误报「未能登记启动项」**：`OnLaunchAtStartupChanged` 在 App 写注册表之前就按旧快照算状态；App 在 `ReconcileLaunchAtStartup` 后调用 `RefreshStartupStatus()`，行文案改为陈述写入的实际结果。
+11. **Windows 托盘退出后进程永不结束**：`OnExit` 在 UI 线程上同步等待 `DisposeAsync()`，被等待的链条里一次卡住的恢复回调（`SyncResilienceController` 门闸永不释放）让等待无界。`OnExit` 三处异步释放改到线程池、`Task.Wait` 上限 15 秒并记 `exit_dispose_timeout_<what>`；`SyncResilienceController` 加 `RecoveryTimeout`（默认 30 秒）——回调 token 超时取消、`WaitAsync` 兜底放弃不看 token 的回调并释放门闸（`peer_recovery_timed_out`），此前一次卡住会静默关掉之后所有唤醒/网络恢复；UDP 信标单次发送加 5 秒上限（`peer_beacon_send_timed_out`）。
+12. **睡眠/唤醒通知注册结果与信号原本不可观测**：新增 `power_notify_registered / power_notify_register_failed_<code>`、`power_suspend_signal / power_resume_signal`，用来区分「系统没投递」和「注册失败」。
+
 ### 测试方法备注
 
 - 手机输入法会把 `adb shell input text` 的拉丁字符转成中文候选，合成标记建议用剪贴板写入或 base64 传递而非 `input text`。
 - 在同一个 shell 里跑 `dotnet test` 时若仍设着 `CLIPSYNC_DIAGNOSTICS_PATH`，测试进程会把用例里的诊断码写进同一个文件（例如 `firewall_rule_remove_failed_InvalidOperationException` 与蓝牙/缩略图码在两秒内成串出现），不是真实操作。
 - Windows 安全警报被取消后生成的 Block 规则被删除后，应用下次监听时警报会再次弹出；再取消就再生成——测试期间出现过两轮。
 - `adb shell ime set …` 切换输入法会触发 Activity 重建，Compose `remember` 状态随之清空——不是应用缺陷。
+- 退出挂起这类「进程还在但什么都不做」的问题，`dotnet tool install -g dotnet-stack` 后 `dotnet-stack report -p <pid>` 一条命令就能拿到全部托管线程栈，比猜快得多；本轮就是靠它把问题定位到 `OnExit` 的同步等待。
+- 安全软件（火绒）会静默吞掉对 HKCU `Run` 键中它记住的「值名 + 路径」组合的写入（本轮用反射探针写过一次 `C:\probe\…` 后即被记住），真实 exe 路径的写入不受影响——排查开机自启时先确认这一点，不是应用缺陷。
 
 ## 签核（2026-08-26）：用户确认真机验证已全部完成
 

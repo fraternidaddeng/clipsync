@@ -14,6 +14,15 @@ public sealed record SyncResilienceOptions
     /// the recovery callback always reads the *current* interface state.
     /// </summary>
     public TimeSpan NetworkChangeThrottle { get; init; } = TimeSpan.FromSeconds(2);
+
+    /// <summary>
+    /// Upper bound for one recovery pass. A pass that neither finishes nor honours its
+    /// cancellation token within this window (a wedged virtual adapter pinning a socket
+    /// operation, say) is abandoned: the gate frees up for the next signal and for disposal
+    /// while the stuck pass is left to run detached. Without this bound a single wedged pass
+    /// silently disabled every later recovery and made disposal wait forever.
+    /// </summary>
+    public TimeSpan RecoveryTimeout { get; init; } = TimeSpan.FromSeconds(30);
 }
 
 /// <summary>
@@ -30,6 +39,7 @@ public sealed class SyncResilienceController : IAsyncDisposable
     private readonly Func<CancellationToken, Task> onResume;
     private readonly Func<CancellationToken, Task> onNetworkChanged;
     private readonly Action? onSuspend;
+    private readonly Action? onRecoveryTimedOut;
     private readonly SyncResilienceOptions options;
     private readonly CancellationTokenSource disposal = new();
     private readonly CancellationToken disposalToken;
@@ -41,6 +51,7 @@ public sealed class SyncResilienceController : IAsyncDisposable
     private long resumeRecoveries;
     private long networkRecoveries;
     private long suspendSignals;
+    private long timedOutRecoveries;
     private volatile bool disposed;
 
     public SyncResilienceController(
@@ -48,12 +59,14 @@ public sealed class SyncResilienceController : IAsyncDisposable
         Func<CancellationToken, Task> onResume,
         Func<CancellationToken, Task> onNetworkChanged,
         SyncResilienceOptions? options = null,
-        Action? onSuspend = null)
+        Action? onSuspend = null,
+        Action? onRecoveryTimedOut = null)
     {
         this.source = source ?? throw new ArgumentNullException(nameof(source));
         this.onResume = onResume ?? throw new ArgumentNullException(nameof(onResume));
         this.onNetworkChanged = onNetworkChanged ?? throw new ArgumentNullException(nameof(onNetworkChanged));
         this.onSuspend = onSuspend;
+        this.onRecoveryTimedOut = onRecoveryTimedOut;
         this.options = options ?? new SyncResilienceOptions();
         disposalToken = disposal.Token;
         resumeTimer = new Timer(_ => _ = RunRecoveryAsync(resume: true), null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
@@ -71,6 +84,9 @@ public sealed class SyncResilienceController : IAsyncDisposable
 
     /// <summary>Suspend signals whose synchronous callback ran without throwing.</summary>
     public long SuspendSignalCount => Interlocked.Read(ref suspendSignals);
+
+    /// <summary>Recovery passes abandoned because they outlived <see cref="SyncResilienceOptions.RecoveryTimeout"/>.</summary>
+    public long TimedOutRecoveryCount => Interlocked.Read(ref timedOutRecoveries);
 
     /// <summary>
     /// Runs inline (no settle delay, no coalescing timer): the OS grants only a short window
@@ -134,20 +150,33 @@ public sealed class SyncResilienceController : IAsyncDisposable
             return;
         }
 
+        // The pass token is cancelled on disposal and when the pass is abandoned, so a stuck
+        // callback that does check its token can still unwind; the WaitAsync is the backstop
+        // for one that cannot. The source is deliberately left to the GC: disposing it while
+        // the abandoned callback still holds the token would tear the timer out from under it.
+        var pass = CancellationTokenSource.CreateLinkedTokenSource(disposalToken);
+        var abandoned = false;
         try
         {
             if (resume)
             {
                 Volatile.Write(ref resumePending, 0);
-                await onResume(disposalToken).ConfigureAwait(false);
+                await onResume(pass.Token).WaitAsync(options.RecoveryTimeout).ConfigureAwait(false);
                 Interlocked.Increment(ref resumeRecoveries);
             }
             else
             {
                 Volatile.Write(ref networkPending, 0);
-                await onNetworkChanged(disposalToken).ConfigureAwait(false);
+                await onNetworkChanged(pass.Token).WaitAsync(options.RecoveryTimeout).ConfigureAwait(false);
                 Interlocked.Increment(ref networkRecoveries);
             }
+        }
+        catch (TimeoutException)
+        {
+            abandoned = true;
+            pass.Cancel();
+            Interlocked.Increment(ref timedOutRecoveries);
+            InvokeQuietly(onRecoveryTimedOut);
         }
         catch (OperationCanceledException)
         {
@@ -159,7 +188,24 @@ public sealed class SyncResilienceController : IAsyncDisposable
         }
         finally
         {
+            if (!abandoned)
+            {
+                pass.Dispose();
+            }
+
             recoveryGate.Release();
+        }
+    }
+
+    private static void InvokeQuietly(Action? callback)
+    {
+        try
+        {
+            callback?.Invoke();
+        }
+        catch
+        {
+            // Diagnostics hooks never get to break recovery bookkeeping.
         }
     }
 
@@ -178,9 +224,13 @@ public sealed class SyncResilienceController : IAsyncDisposable
         await resumeTimer.DisposeAsync().ConfigureAwait(false);
         await networkTimer.DisposeAsync().ConfigureAwait(false);
 
-        // Wait for an in-flight recovery to observe the cancellation and drain out.
-        await recoveryGate.WaitAsync().ConfigureAwait(false);
-        recoveryGate.Release();
+        // Wait for an in-flight recovery to observe the cancellation and drain out. The pass
+        // itself is bounded by RecoveryTimeout, so this cannot wait longer than that.
+        if (await recoveryGate.WaitAsync(options.RecoveryTimeout).ConfigureAwait(false))
+        {
+            recoveryGate.Release();
+        }
+
         disposal.Dispose();
     }
 }

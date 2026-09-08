@@ -1,4 +1,5 @@
 using System.Net.NetworkInformation;
+using ClipSync.App.Diagnostics;
 using ClipSync.Peer.Resilience;
 using Microsoft.Win32;
 
@@ -21,11 +22,28 @@ public sealed class WindowsSystemStateEvents : ISystemStateEvents, IDisposable
 
     public WindowsSystemStateEvents()
     {
+        var win32Source = new Win32SuspendResumeNotificationSource();
         powerMonitor = new SessionPowerMonitor(
-            [new SystemEventsSuspendResumeSource(), new Win32SuspendResumeNotificationSource()],
+            [new SystemEventsSuspendResumeSource(), win32Source],
             ownsSources: true);
-        powerMonitor.OnSuspend += () => SuspendingToSleep?.Invoke();
-        powerMonitor.OnResume += () => ResumedFromSuspend?.Invoke();
+        // A machine that logs standby cycles in the kernel power log but never a suspend
+        // here is either not being notified or failed to register; these codes tell which.
+        LocalDiagnostics.Write(win32Source.RegistrationStatus switch
+        {
+            0 => "power_notify_registered",
+            null => "power_notify_not_attempted",
+            var status => $"power_notify_register_failed_{status}"
+        });
+        powerMonitor.OnSuspend += () =>
+        {
+            LocalDiagnostics.Write("power_suspend_signal");
+            SuspendingToSleep?.Invoke();
+        };
+        powerMonitor.OnResume += () =>
+        {
+            LocalDiagnostics.Write("power_resume_signal");
+            ResumedFromSuspend?.Invoke();
+        };
         addressChanged = (_, _) => NetworkAddressChanged?.Invoke();
         NetworkChange.NetworkAddressChanged += addressChanged;
     }
