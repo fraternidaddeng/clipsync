@@ -129,6 +129,7 @@
     <string name="conduit_band_ready">Đường dẫn thông suốt</string>
     <string name="conduit_band_partial">Đường dẫn thông một phần</string>
     <string name="conduit_band_blocked_sub">Chưa ghép nối với PC · nhấn để xử lý</string>
+    <string name="conduit_band_blocked_paired_sub">Có bước cần bạn xử lý · nhấn để xem</string>
     <string name="conduit_band_ready_sub">Nội dung đang chảy theo cả hai chiều</string>
     <string name="conduit_band_partial_sub">Một số đoạn suy giảm hoặc chưa dò</string>
     <string name="device_accent_label">Màu thiết bị</string>

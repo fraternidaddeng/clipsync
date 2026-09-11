@@ -129,6 +129,7 @@
     <string name="conduit_band_ready">통로 개통</string>
     <string name="conduit_band_partial">통로 부분 연결</string>
     <string name="conduit_band_blocked_sub">아직 PC와 페어링하지 않음 · 눌러서 해결</string>
+    <string name="conduit_band_blocked_paired_sub">처리할 항목이 있습니다 · 눌러서 확인</string>
     <string name="conduit_band_ready_sub">콘텐츠가 양방향으로 흐르고 있습니다</string>
     <string name="conduit_band_partial_sub">일부 구간이 저하되었거나 미탐지 상태입니다</string>
     <string name="device_accent_label">기기 색상</string>

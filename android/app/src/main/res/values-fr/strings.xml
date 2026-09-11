@@ -131,6 +131,7 @@
     <string name="conduit_band_ready">Conduit dégagé</string>
     <string name="conduit_band_partial">Conduit partiellement connecté</string>
     <string name="conduit_band_blocked_sub">Pas encore appairé avec un PC · touchez pour corriger</string>
+    <string name="conduit_band_blocked_paired_sub">Une étape demande votre attention · touchez pour voir</string>
     <string name="conduit_band_ready_sub">Le contenu circule dans les deux sens</string>
     <string name="conduit_band_partial_sub">Certains segments dégradés ou non sondés</string>
     <string name="device_accent_label">Couleur de l’appareil</string>

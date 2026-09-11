@@ -131,6 +131,7 @@
     <string name="conduit_band_ready">Conducto despejado</string>
     <string name="conduit_band_partial">Conducto parcialmente conectado</string>
     <string name="conduit_band_blocked_sub">Aún sin emparejar con un PC · toca para resolverlo</string>
+    <string name="conduit_band_blocked_paired_sub">Hay un paso que requiere tu atención · toca para ver</string>
     <string name="conduit_band_ready_sub">El contenido fluye en ambos sentidos</string>
     <string name="conduit_band_partial_sub">Algunos segmentos degradados o sin sondear</string>
     <string name="device_accent_label">Color del dispositivo</string>

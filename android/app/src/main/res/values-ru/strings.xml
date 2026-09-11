@@ -132,6 +132,7 @@
     <string name="conduit_band_ready">Канал открыт</string>
     <string name="conduit_band_partial">Канал соединён частично</string>
     <string name="conduit_band_blocked_sub">Сопряжение с ПК ещё не выполнено · нажмите, чтобы исправить</string>
+    <string name="conduit_band_blocked_paired_sub">Есть шаг, который нужно обработать · нажмите, чтобы посмотреть</string>
     <string name="conduit_band_ready_sub">Содержимое движется в обе стороны</string>
     <string name="conduit_band_partial_sub">Некоторые сегменты ослаблены или не проверены</string>
     <string name="device_accent_label">Цвет устройства</string>

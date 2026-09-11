@@ -134,6 +134,7 @@
     <string name="conduit_band_ready">القناة سالكة</string>
     <string name="conduit_band_partial">القناة متصلة جزئيًا</string>
     <string name="conduit_band_blocked_sub">لم يتم الاقتران بحاسوب بعد · انقر للإصلاح</string>
+    <string name="conduit_band_blocked_paired_sub">هناك خطوة تحتاج إلى تدخل · انقر للعرض</string>
     <string name="conduit_band_ready_sub">المحتوى ينساب في الاتجاهين</string>
     <string name="conduit_band_partial_sub">بعض المقاطع متدهورة أو غير مفحوصة</string>
     <string name="device_accent_label">لون الجهاز</string>

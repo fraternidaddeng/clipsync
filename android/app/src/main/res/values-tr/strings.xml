@@ -130,6 +130,7 @@
     <string name="conduit_band_ready">Kanal açık</string>
     <string name="conduit_band_partial">Kanal kısmen bağlı</string>
     <string name="conduit_band_blocked_sub">Henüz PC ile eşleştirilmedi · düzeltmek için dokunun</string>
+    <string name="conduit_band_blocked_paired_sub">İlgi isteyen bir adım var · görmek için dokunun</string>
     <string name="conduit_band_ready_sub">İçerik iki yönde akıyor</string>
     <string name="conduit_band_partial_sub">Bazı bölümler zayıflamış veya yoklanmamış</string>
     <string name="device_accent_label">Cihaz rengi</string>

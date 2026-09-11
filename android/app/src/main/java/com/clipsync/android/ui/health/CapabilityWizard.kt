@@ -196,13 +196,14 @@ private fun RouteProgressRow(route: ReadRouteUi) {
 }
 
 /**
- * The closed 特权直读 code set gets a one-line human hint; the stable machine
- * code stays visible below it as the anchor for reports.
+ * Privileged-host codes keep their dedicated hint; other closed read-route
+ * codes fall back to the live-route phrase. The machine code stays below as
+ * the report anchor either way.
  */
 @Composable
 private fun RouteErrorCode(code: String) {
     val c = clipSyncColors
-    PrivHostErrorHints.hintFor(code)?.let { hint ->
+    routeErrorHint(code)?.let { hint ->
         Text(
             text = hint.string(),
             style = ClipSyncType.caption,

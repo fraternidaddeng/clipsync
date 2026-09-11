@@ -130,6 +130,7 @@
     <string name="conduit_band_ready">Kanal frei</string>
     <string name="conduit_band_partial">Kanal teilweise verbunden</string>
     <string name="conduit_band_blocked_sub">Noch nicht mit einem PC gekoppelt · zum Beheben tippen</string>
+    <string name="conduit_band_blocked_paired_sub">Ein Schritt braucht dich · zum Prüfen tippen</string>
     <string name="conduit_band_ready_sub">Inhalte fließen in beide Richtungen</string>
     <string name="conduit_band_partial_sub">Einige Abschnitte beeinträchtigt oder ungeprüft</string>
     <string name="device_accent_label">Gerätefarbe</string>

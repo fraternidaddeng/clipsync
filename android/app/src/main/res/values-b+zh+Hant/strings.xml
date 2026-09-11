@@ -129,6 +129,7 @@
     <string name="conduit_band_ready">通路暢通</string>
     <string name="conduit_band_partial">通路部分接通</string>
     <string name="conduit_band_blocked_sub">尚未與電腦配對 · 輕觸處理</string>
+    <string name="conduit_band_blocked_paired_sub">有環節需要你處理 · 輕觸查看</string>
     <string name="conduit_band_ready_sub">內容正在兩端流動</string>
     <string name="conduit_band_partial_sub">有環節降級或未探測</string>
     <string name="device_accent_label">裝置色</string>

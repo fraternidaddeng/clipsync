@@ -131,6 +131,7 @@
     <string name="conduit_band_ready">Conduit clear</string>
     <string name="conduit_band_partial">Conduit partially connected</string>
     <string name="conduit_band_blocked_sub">Not paired with a PC yet · tap to fix</string>
+    <string name="conduit_band_blocked_paired_sub">Something needs your attention · tap to review</string>
     <string name="conduit_band_ready_sub">Content is flowing both ways</string>
     <string name="conduit_band_partial_sub">Some segments degraded or unprobed</string>
     <string name="device_accent_label">Device colour</string>

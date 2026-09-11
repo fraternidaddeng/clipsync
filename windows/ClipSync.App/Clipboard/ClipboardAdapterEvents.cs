@@ -6,7 +6,8 @@ public sealed class ClipboardTextChangedEventArgs(
     DateTimeOffset capturedAt,
     byte[]? imageBytes = null,
     string? imageMimeType = null,
-    string? pixelDigest = null) : EventArgs
+    string? pixelDigest = null,
+    bool exceedsCaptureBudget = false) : EventArgs
 {
     public string Text { get; } = text;
 
@@ -19,6 +20,8 @@ public sealed class ClipboardTextChangedEventArgs(
     public string? ImageMimeType { get; } = imageMimeType;
 
     public string? PixelDigest { get; } = pixelDigest;
+
+    public bool ExceedsCaptureBudget { get; } = exceedsCaptureBudget;
 }
 
 public enum ClipboardAdapterOperation

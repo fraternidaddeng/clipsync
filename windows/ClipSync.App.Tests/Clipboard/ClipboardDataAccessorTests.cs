@@ -72,7 +72,7 @@ public sealed class ClipboardDataAccessorTests
     }
 
     [Fact]
-    public void ReadRejectsOversizedNativeAllocationBeforeLockingIt()
+    public void ReadSignalsOversizedNativeAllocationWithoutLockingIt()
     {
         using var nativeApi = new FakeClipboardNativeApi
         {
@@ -81,8 +81,11 @@ public sealed class ClipboardDataAccessorTests
         };
         var accessor = CreateAccessor(nativeApi);
 
-        _ = Assert.Throws<InvalidDataException>(() => accessor.ReadText(nint.Zero));
+        var result = accessor.ReadText(nint.Zero);
 
+        Assert.NotNull(result);
+        Assert.True(result.ExceedsCaptureBudget);
+        Assert.Equal(string.Empty, result.Text);
         Assert.Equal(0, nativeApi.GlobalLockCount);
         Assert.Equal(1, nativeApi.CloseCount);
     }

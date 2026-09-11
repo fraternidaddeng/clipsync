@@ -132,6 +132,7 @@
     <string name="conduit_band_ready">Kanał drożny</string>
     <string name="conduit_band_partial">Kanał częściowo połączony</string>
     <string name="conduit_band_blocked_sub">Nie sparowano jeszcze z PC · dotknij, aby naprawić</string>
+    <string name="conduit_band_blocked_paired_sub">Jest krok wymagający działania · dotknij, aby zobaczyć</string>
     <string name="conduit_band_ready_sub">Treści płyną w obu kierunkach</string>
     <string name="conduit_band_partial_sub">Niektóre segmenty osłabione lub niesondowane</string>
     <string name="device_accent_label">Kolor urządzenia</string>

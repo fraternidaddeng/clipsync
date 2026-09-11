@@ -88,6 +88,14 @@ public sealed class ClipboardCapturePolicy
             }
         }
 
+        // The Win32 reader refuses to materialize a multi-mebibyte HGLOBAL. That
+        // allocation already exceeds MaximumUtf8Bytes for any UTF-16 payload, so
+        // treat it as TooLarge here — never as an adapter fault, never as EmptyText.
+        if (candidate.ExceedsCaptureBudget)
+        {
+            return new CaptureDecision.Reject(CaptureRejectionReason.TooLarge);
+        }
+
         if (string.IsNullOrEmpty(candidate.Text))
         {
             return new CaptureDecision.Reject(CaptureRejectionReason.EmptyText);

@@ -131,6 +131,7 @@
     <string name="conduit_band_ready">Kanaal vrij</string>
     <string name="conduit_band_partial">Kanaal gedeeltelijk verbonden</string>
     <string name="conduit_band_blocked_sub">Nog niet gekoppeld met een pc · tik om op te lossen</string>
+    <string name="conduit_band_blocked_paired_sub">Er is een stap die aandacht nodig heeft · tik om te bekijken</string>
     <string name="conduit_band_ready_sub">Inhoud stroomt in beide richtingen</string>
     <string name="conduit_band_partial_sub">Sommige segmenten verminderd of niet gepeild</string>
     <string name="device_accent_label">Apparaatkleur</string>

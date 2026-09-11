@@ -129,6 +129,7 @@
     <string name="conduit_band_ready">Saluran lancar</string>
     <string name="conduit_band_partial">Saluran tersambung sebagian</string>
     <string name="conduit_band_blocked_sub">Belum dipasangkan dengan PC · ketuk untuk memperbaiki</string>
+    <string name="conduit_band_blocked_paired_sub">Ada langkah yang perlu ditangani · ketuk untuk melihat</string>
     <string name="conduit_band_ready_sub">Konten mengalir dua arah</string>
     <string name="conduit_band_partial_sub">Beberapa segmen menurun atau belum diperiksa</string>
     <string name="device_accent_label">Warna perangkat</string>

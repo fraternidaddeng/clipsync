@@ -712,18 +712,24 @@ fun ConduitStatusBand(
         animationSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
         label = "bandLn",
     )
+    val copy = ConduitBandCopy.of(
+        needsAction = needsAction,
+        allReady = allReady,
+        paired = state.pairedDeviceCount > 0,
+    )
     val title = stringResource(
-        when {
-            needsAction -> R.string.conduit_band_blocked
-            allReady -> R.string.conduit_band_ready
-            else -> R.string.conduit_band_partial
+        when (copy.tone) {
+            ConduitBandTone.BLOCKED -> R.string.conduit_band_blocked
+            ConduitBandTone.READY -> R.string.conduit_band_ready
+            ConduitBandTone.PARTIAL -> R.string.conduit_band_partial
         },
     )
     val subtitle = stringResource(
-        when {
-            needsAction -> R.string.conduit_band_blocked_sub
-            allReady -> R.string.conduit_band_ready_sub
-            else -> R.string.conduit_band_partial_sub
+        when (copy.subtitle) {
+            ConduitBandSubtitle.BLOCKED_UNPAIRED -> R.string.conduit_band_blocked_sub
+            ConduitBandSubtitle.BLOCKED_PAIRED -> R.string.conduit_band_blocked_paired_sub
+            ConduitBandSubtitle.READY -> R.string.conduit_band_ready_sub
+            ConduitBandSubtitle.PARTIAL -> R.string.conduit_band_partial_sub
         },
     )
     val shape = CharterShapes.control

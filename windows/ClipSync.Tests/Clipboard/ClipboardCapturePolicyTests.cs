@@ -52,6 +52,27 @@ public sealed class ClipboardCapturePolicyTests
     }
 
     [Fact]
+    public void EvaluateRejectsAnUnmaterializedOversizeAllocationAsTooLargeNotEmpty()
+    {
+        var result = new ClipboardCapturePolicy().Evaluate(
+            new ClipboardCandidate(null, null, BaseTime, ExceedsCaptureBudget: true));
+
+        Assert.Equal(CaptureRejectionReason.TooLarge, Assert.IsType<CaptureDecision.Reject>(result).Reason);
+    }
+
+    [Fact]
+    public void EvaluateStillAcceptsAnImageWhenCompanionTextAllocationIsOversize()
+    {
+        var png = Convert.FromHexString("89504E470D0A1A0A0000000D49484452000000010000000108060000001F15C4890000000A49444154789C63000100000500010D0A2DB40000000049454E44AE426082");
+        var policy = new ClipboardCapturePolicy(new CaptureSettings(ImageSyncEnabled: true));
+
+        var result = policy.Evaluate(
+            new ClipboardCandidate(null, null, BaseTime, png, "image/png", ExceedsCaptureBudget: true));
+
+        Assert.IsType<CaptureDecision.AcceptImage>(result);
+    }
+
+    [Fact]
     public void EvaluateDeduplicatesSameContentInsideTwoSecondWindow()
     {
         var policy = new ClipboardCapturePolicy();

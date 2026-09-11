@@ -130,6 +130,7 @@
     <string name="conduit_band_ready">मार्ग खुला है</string>
     <string name="conduit_band_partial">मार्ग आंशिक रूप से जुड़ा</string>
     <string name="conduit_band_blocked_sub">अभी PC से नहीं जुड़ा · ठीक करने के लिए टैप करें</string>
+    <string name="conduit_band_blocked_paired_sub">एक चरण पर आपका ध्यान चाहिए · देखने के लिए टैप करें</string>
     <string name="conduit_band_ready_sub">सामग्री दोनों दिशाओं में बह रही है</string>
     <string name="conduit_band_partial_sub">कुछ खंड कमज़ोर या बिना जाँचे हैं</string>
     <string name="device_accent_label">डिवाइस रंग</string>

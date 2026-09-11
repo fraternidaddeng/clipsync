@@ -129,6 +129,7 @@
     <string name="conduit_band_ready">経路は開通</string>
     <string name="conduit_band_partial">経路は一部接続</string>
     <string name="conduit_band_blocked_sub">まだ PC とペアリングしていません · タップして解決</string>
+    <string name="conduit_band_blocked_paired_sub">対応が必要な項目があります · タップして確認</string>
     <string name="conduit_band_ready_sub">コンテンツは双方向に流れています</string>
     <string name="conduit_band_partial_sub">一部の区間が劣化または未検出です</string>
     <string name="device_accent_label">端末カラー</string>

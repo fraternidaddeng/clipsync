@@ -247,8 +247,8 @@
 ### 未覆盖 / 交接给后续 QA
 
 - **Android「无路由」提示分支：已在 2026-09-11 闭环，不是误分类**（见下方「09-11 续测」）。上一轮看到的「连接被拒绝」第二段未能在完整跑通的断网复现里再现；应用自身分类日志证明 errno 在、原因是 `NO_ROUTE`、界面走 `pairing_fail_unreachable_hint_no_route`。
-- 呼出快捷键状态行（本轮 Windows 无常驻实例，未开启快捷键，故无事实行可看）。
-- **Modern Standby 下的睡眠/唤醒通知投递**：上一轮修复后的最小化实例（`diag5.log`）本机已不在；生产目录 `%LOCALAPPDATA%\ClipSync\diagnostics.log` 停在 2026-08-20，早于 `power_suspend_signal` 码。仍待下一次自然待机、且诊断文件还在的实例上核对 `power_suspend_signal / power_resume_signal`。
+- 呼出快捷键状态行：**登记/冲突路径已在 09-11 下午用独立 `--minimized` 实例后台测过**（见下方）；未开主窗、未点偏好页，故没有把「已生效 · …」那一行拍进 UI，但 `ApplyGlobalHotkeys` 写事实行的三个出口都落到了对应诊断码 / `RegisterHotKey` 占用。
+- **Modern Standby 投递仍待自然待机**：同日后台实例已记下 `power_notify_registered`（注册成功，不是「没登记」）。本轮没有把这台电脑睡眠，因此 `power_suspend_signal / power_resume_signal` 仍未出现——投递与否还是要等下一次自然待机。
 - **测试环境遗留（不是缺陷）**：本轮手机配对页仍钉着 DENG 证书 `e074 3d9b 52f1 19ac…`（与 09-08 交接一致）；生产实例未启动，未做「与生产实例重新扫码」收尾。通路网络段在电脑未监听时显示「已配对 · 不可达 / 已与「DENG」配对，当前探测不可达」。
 
 ### 09-11 续测（交接重点：无路由分类）
@@ -273,6 +273,32 @@
 - `adb shell input text` 即使当前 IME 是 Gboard Latin 也会把 JSON 标点/片段收成中文（`pairing_qr` → `pairing＿确认`）。载荷用 UiAutomation `set_text` 注入，不走输入法。
 - 小米 `cmd clipboard set` 返回 `No shell command implementation.`，不要靠它喂配对 JSON。
 - 分类日志已留在 `AndroidConnectFailures.classify`（`Log.i("ClipSyncPairing", …)`），以后断网复现不用再打临时包。
+
+### 09-11 下午续测（Windows 后台：快捷键事实行 + 电源注册）
+
+- 操作者：本机会话（Cursor 代操作）。独立数据目录 `tmp-qa-win11/data`，`CLIPSYNC_DIAGNOSTICS_PATH` 指向该目录的 `diag.log`；`ClipSync.App.exe --minimized`（09-08 Debug 构建）。不点托盘/主窗，不睡眠本机。测完 `taskkill`，未动生产 `%LOCALAPPDATA%\ClipSync`。
+- 配套单测：`HotkeyGestureTests` + `MainViewModelBasicSettingsTests` 相关例 **19/19 通过**（含 `hotkey_flyout` / `hotkey_pause` 存取往返）。
+
+| 项 | 结果 | 证据 |
+| --- | --- | --- |
+| 默认关闭：无事实行、不占全局热键 | 通过 | 未写 `hotkey_*` 时诊断无 `flyout_hotkey_*` / `pause_hotkey_*`。本进程 `RegisterHotKey(Ctrl+Alt+F24)` 成功（组合空闲）。对应 `FlyoutHotkeyStatus=""`（偏好行不出现事实句）。 |
+| 开启呼出 + 暂停：登记成功 → 事实行「已生效」出口 | 通过 | 库内预置 `hotkey_flyout=Ctrl+Alt+F24`、`hotkey_pause=Ctrl+Alt+F23` 后重启。诊断无 `*_unavailable` / `*_self_conflict`。随后本进程再 `RegisterHotKey` 两条均为 Win32 `1409`（`ERROR_HOTKEY_ALREADY_REGISTERED`）——实例已占住组合，即 `ApplyGlobalHotkeys` 走了 `Strings.Hotkey_Applied` / `Hotkey_PauseApplied`（「已生效 · 在任意应用按下即呼出浮窗 / 暂停或恢复同步」）。 |
+| 两条快捷键相同 → 自冲突事实行 | 通过 | 双键都写成 `Ctrl+Alt+F24` 后重启，诊断首条即 `pause_hotkey_self_conflict`；F24 仍被呼出键占着（再登记 1409）。对应 `PauseHotkeyStatus = Hotkey_ConflictSelf`（「该组合已用于本应用的另一条快捷键…」）。 |
+| 组合被其他进程占用 → 冲突事实行 | 通过 | 测试进程先占住 `Ctrl+Alt+F24`，再启动实例：诊断 `flyout_hotkey_unavailable`。对应 `FlyoutHotkeyStatus = Hotkey_Conflict`（「该组合已被其他程序占用…」）。 |
+| 睡眠/唤醒通知**注册** | 通过 | `listener_started` 之后约 200 ms：`peer_server_listening_port_47654` → `power_notify_registered` → `firewall_inspect_allowed`。`PowerRegisterSuspendResumeNotification` 本机成功。 |
+| 睡眠/唤醒通知**投递** | 未测 | 未让本机进入 Modern Standby / S3。诊断无 `power_suspend_signal` / `power_resume_signal`（预期：没睡就不会有）。 |
+
+### 09-11 傍晚 debug（应用层，不是再跑清单）
+
+独立 `--minimized` 实例（`tmp-qa-win11/data` + `diag-debug.log`）。不点托盘/主窗，不睡眠，不碰生产 `%LOCALAPPDATA%\ClipSync`，不改手机 DENG 配对。
+
+| 项 | 结果 | 证据 |
+| --- | --- | --- |
+| 短文本 `Set-Clipboard` → 入库 | 通过 | `text_changed` → `capture_stored` |
+| `QA-OVERSIZE-` + 1 MiB+64 ASCII → 超限提示 | **失败 → 修复后通过** | 修复前：无 `capture_rejected_TooLarge`，连续两条 `adapter_fault_Read_ClipboardAdapterException`，`CaptureFaulted=true`（赭色「捕获故障」），清单 §3「明确提示、不静默」未兑现。根因：原生 UTF-16 上限与策略 UTF-8 上限对齐后，ASCII 超限正文无法物化，读取抛 `InvalidDataException`。装入本轮构建后再写同样大小：`new_codes=capture_rejected_TooLarge`，`faults=none`，进程仍在。 |
+| 呼出快捷键 SendInput 不杀进程 | 通过 | `Ctrl+Alt+F24` 后进程仍在，无 `unhandled_*` |
+| Android 通路条在已配对 + 悬浮窗 beckon 时说「尚未与电脑配对」 | **失败 → 修复后通过** | 09-11 上午真机：网络段「已配对 · 不可达」，主页条副标题仍是 `conduit_band_blocked_sub`。任一段 `NEEDS_ACTION` 都复用未配对句。装入本轮 APK 后 `SYSTEM_ALERT_WINDOW=ignore` 冷启动：条为「通路未接通 / 有环节需要你处理 · 轻触查看」，不再出现「尚未与电脑配对」。测完已 `allow` 并重新拉起应用。DENG 配对未动。 |
+| 向导路线卡只显示 `OVERLAY_PERMISSION_MISSING` 等机器码 | **失败（已修）** | `RouteErrorCode` 仅对特权宿主码有人话提示；其余码只剩报告锚点。回落 `ReadRouteReasons.phraseFor`。 |
 
 ### 发现并已修复（2026-09-04，本节定稿同日）
 

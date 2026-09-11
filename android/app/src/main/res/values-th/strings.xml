@@ -129,6 +129,7 @@
     <string name="conduit_band_ready">เส้นทางโล่ง</string>
     <string name="conduit_band_partial">เส้นทางเชื่อมบางส่วน</string>
     <string name="conduit_band_blocked_sub">ยังไม่ได้จับคู่กับพีซี · แตะเพื่อแก้ไข</string>
+    <string name="conduit_band_blocked_paired_sub">มีขั้นตอนที่ต้องจัดการ · แตะเพื่อดู</string>
     <string name="conduit_band_ready_sub">เนื้อหากำลังไหลทั้งสองทาง</string>
     <string name="conduit_band_partial_sub">บางช่วงเสื่อมถอยหรือยังไม่ได้ตรวจ</string>
     <string name="device_accent_label">สีอุปกรณ์</string>

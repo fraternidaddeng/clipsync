@@ -303,7 +303,8 @@ public sealed class Win32ClipboardAdapter : IDisposable
             capturedAt,
             snapshot.ImageBytes,
             snapshot.ImageMimeType,
-            snapshot.PixelDigest);
+            snapshot.PixelDigest,
+            snapshot.ExceedsCaptureBudget);
         var handlers = TextChanged;
         if (handlers is null)
         {

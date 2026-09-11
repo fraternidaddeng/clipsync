@@ -131,6 +131,7 @@
     <string name="conduit_band_ready">Condotto libero</string>
     <string name="conduit_band_partial">Condotto parzialmente connesso</string>
     <string name="conduit_band_blocked_sub">Non ancora associato a un PC · tocca per risolvere</string>
+    <string name="conduit_band_blocked_paired_sub">Un passaggio richiede attenzione · tocca per vedere</string>
     <string name="conduit_band_ready_sub">I contenuti fluiscono in entrambe le direzioni</string>
     <string name="conduit_band_partial_sub">Alcuni segmenti degradati o non esaminati</string>
     <string name="device_accent_label">Colore del dispositivo</string>

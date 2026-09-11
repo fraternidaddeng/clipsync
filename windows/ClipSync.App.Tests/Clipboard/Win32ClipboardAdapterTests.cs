@@ -99,6 +99,29 @@ public sealed class Win32ClipboardAdapterTests
     }
 
     [Fact]
+    public void OversizeNativeAllocationRaisesTextChangedWithoutFaulting()
+    {
+        var window = new FakeMessageWindow();
+        var dataAccess = new FakeDataAccess
+        {
+            Snapshot = new ClipboardTextSnapshot(string.Empty, "powershell", ExceedsCaptureBudget: true)
+        };
+        using var adapter = CreateAdapter(window, dataAccess);
+        ClipboardTextChangedEventArgs? received = null;
+        ClipboardAdapterFaultEventArgs? fault = null;
+        adapter.TextChanged += (_, eventArgs) => received = eventArgs;
+        adapter.Faulted += (_, eventArgs) => fault = eventArgs;
+
+        adapter.Start();
+        window.RaiseClipboardUpdated();
+
+        Assert.NotNull(received);
+        Assert.True(received.ExceedsCaptureBudget);
+        Assert.Equal(string.Empty, received.Text);
+        Assert.Null(fault);
+    }
+
+    [Fact]
     public void ReadFailureIsReportedWithoutEscapingWindowProcedure()
     {
         var window = new FakeMessageWindow();

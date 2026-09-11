@@ -6,7 +6,8 @@ public sealed record ClipboardCandidate(
     DateTimeOffset CapturedAt,
     byte[]? ImageBytes = null,
     string? ImageMimeType = null,
-    string? PixelDigest = null);
+    string? PixelDigest = null,
+    bool ExceedsCaptureBudget = false);
 
 public sealed record CaptureSettings(
     bool IsPaused = false,

@@ -1060,7 +1060,8 @@ public partial class App : Application
                 e.CapturedAt,
                 e.ImageBytes,
                 e.ImageMimeType,
-                e.PixelDigest));
+                e.PixelDigest,
+                e.ExceedsCaptureBudget));
             if (result is CaptureResult.Stored or CaptureResult.StoredImage)
             {
                 LocalDiagnostics.Write(result is CaptureResult.StoredImage ? "capture_image_stored" : "capture_stored");
@@ -1094,7 +1095,7 @@ public partial class App : Application
 
     private void OnClipboardFaulted(object? sender, ClipboardAdapterFaultEventArgs e)
     {
-        LocalDiagnostics.Write($"adapter_fault_{e.Operation}_{e.Exception.GetType().Name}");
+        LocalDiagnostics.Write($"adapter_fault_{e.Operation}_{e.ErrorType}");
         _ = Dispatcher.InvokeAsync(() =>
         {
             if (mainViewModel is not null)

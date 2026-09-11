@@ -15,7 +15,8 @@ internal sealed record ClipboardTextSnapshot(
     uint SequenceNumber = 0,
     byte[]? ImageBytes = null,
     string? ImageMimeType = null,
-    string? PixelDigest = null);
+    string? PixelDigest = null,
+    bool ExceedsCaptureBudget = false);
 
 internal interface IClipboardDataAccess
 {
@@ -82,6 +83,8 @@ internal sealed class ClipboardDataAccessor : IClipboardDataAccess
     internal const uint DibV5Format = 17;
     // The Core policy enforces the 1 MiB UTF-8 limit. This native guard prevents
     // an untrusted HGLOBAL from forcing a multi-gigabyte managed allocation first.
+    // Crossing it is a TooLarge capture, not a malformed clipboard: the reader
+    // returns ExceedsCaptureBudget without locking or copying the payload.
     internal const nuint MaximumUnicodeTextBytes = (2u * 1024u * 1024u) + sizeof(char);
     internal const nuint MaximumImageBytes = 32u * 1024u * 1024u;
     private const uint MoveableZeroInitializedMemory = 0x0002 | 0x0040;
@@ -132,6 +135,7 @@ internal sealed class ClipboardDataAccessor : IClipboardDataAccess
         byte[]? imageBytes = null;
         string? imageMime = null;
         string? pixelDigest = null;
+        var exceedsCaptureBudget = false;
         var ownerProcessId = ResolveClipboardOwnerProcessId();
         uint sequenceNumber = 0;
         OpenClipboardWithRetry(listenerWindow);
@@ -140,7 +144,7 @@ internal sealed class ClipboardDataAccessor : IClipboardDataAccess
             TryReadImage(out imageBytes, out imageMime, out pixelDigest);
             if (nativeApi.IsClipboardFormatAvailable(UnicodeTextFormat))
             {
-                text = ReadUnicodeTextLocked();
+                text = ReadUnicodeTextLocked(out exceedsCaptureBudget);
             }
 
             sequenceNumber = nativeApi.GetClipboardSequenceNumber();
@@ -150,7 +154,7 @@ internal sealed class ClipboardDataAccessor : IClipboardDataAccess
             _ = nativeApi.CloseClipboard();
         }
 
-        if (text is null && imageBytes is null)
+        if (text is null && imageBytes is null && !exceedsCaptureBudget)
         {
             return null;
         }
@@ -161,11 +165,13 @@ internal sealed class ClipboardDataAccessor : IClipboardDataAccess
             sequenceNumber,
             imageBytes,
             imageMime,
-            pixelDigest);
+            pixelDigest,
+            exceedsCaptureBudget);
     }
 
-    private string ReadUnicodeTextLocked()
+    private string? ReadUnicodeTextLocked(out bool exceedsCaptureBudget)
     {
+        exceedsCaptureBudget = false;
         var memory = nativeApi.GetClipboardData(UnicodeTextFormat);
         if (memory == nint.Zero)
         {
@@ -173,9 +179,15 @@ internal sealed class ClipboardDataAccessor : IClipboardDataAccess
         }
 
         var byteCount = nativeApi.GlobalSize(memory);
-        if (byteCount < sizeof(char) || byteCount % sizeof(char) != 0 || byteCount > MaximumUnicodeTextBytes)
+        if (byteCount < sizeof(char) || byteCount % sizeof(char) != 0)
         {
             throw new InvalidDataException("The clipboard text allocation has an invalid size.");
+        }
+
+        if (byteCount > MaximumUnicodeTextBytes)
+        {
+            exceedsCaptureBudget = true;
+            return null;
         }
 
         var pointer = nativeApi.GlobalLock(memory);

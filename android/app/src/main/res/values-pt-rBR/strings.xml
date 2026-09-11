@@ -131,6 +131,7 @@
     <string name="conduit_band_ready">Conduíte livre</string>
     <string name="conduit_band_partial">Conduíte parcialmente conectado</string>
     <string name="conduit_band_blocked_sub">Ainda não pareado com um PC · toque para resolver</string>
+    <string name="conduit_band_blocked_paired_sub">Há uma etapa que precisa de você · toque para ver</string>
     <string name="conduit_band_ready_sub">O conteúdo flui nos dois sentidos</string>
     <string name="conduit_band_partial_sub">Alguns segmentos degradados ou não sondados</string>
     <string name="device_accent_label">Cor do aparelho</string>
