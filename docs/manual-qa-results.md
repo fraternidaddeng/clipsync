@@ -246,10 +246,33 @@
 
 ### 未覆盖 / 交接给后续 QA
 
-- **Android「无路由」提示分支未确证，疑似误分类（交接重点）**：手机关 Wi-Fi + 移动数据后连 `192.168.2.135` 时，`nc` 探针在系统层返回 `ENETUNREACH`（"Network is unreachable"），但界面第二段显示的仍是「连接被拒绝」文案而非 `pairing_fail_unreachable_hint_no_route`。**尚未经应用自身的分类日志确证**——用来观测的几次真机跑动都被前台守卫（通知栏 / 权限对话框抢占前台）中止。可能原因：`ENETUNREACH` 的连接失败被 OkHttp 包成不携带 `ErrnoException` 的 `ConnectException`，`errnoOf` 取不到 errno，落到 `UnreachableReasons.fromExceptionType` 的兜底，而它对无 "refused" 字样的 `ConnectException` 返回 `UNKNOWN`（`unreachableHint` 对 `UNKNOWN` 返回 null，不该出现「连接被拒绝」段——所以现状与代码预期不符，值得专门查）。排查建议：`adb shell setprop log.tag.ClipSyncPairing DEBUG` 后在 `AndroidConnectFailures.classify` 临时打一行「reason + errno + 异常类型链」（只记类型名和 errno，不记 message，以免带出主机地址），断网复现看真实落点；若确为 errno 丢失，可在 `fromExceptionType` 用 `ConnectException` 的消息补充匹配 "ENETUNREACH"/"unreachable"，或在 `PinnedTls` 保留底层 `ErrnoException` 于 cause 链。
-- 呼出快捷键状态行（未开启，故无事实行可看）。
-- **Modern Standby 下的睡眠/唤醒通知投递**：09-07 的实例存活 15 小时，内核电源日志（Kernel-Power 506/507）记了 4 次 Modern Standby，应用诊断里没有一条 `peer_suspend_sessions_gated` / `peer_resume_recovered_*`。`PowerRegisterSuspendResumeNotification` 注册本机成功（新码 `power_notify_registered`），投递与否留待下一次自然待机：修复后的实例已最小化常驻（诊断文件 `diag5.log`），届时看 `power_suspend_signal / power_resume_signal` 是否出现。
-- **测试环境遗留（不是缺陷）**：手机通路页「网络」卡片显示「证书不匹配」，因为本轮用电脑测试实例（独立数据目录、证书指纹 `ef0a…`）反复配对，而手机上更早钉住的是另一目录的指纹 `e074…`；生产实例（`%LOCALAPPDATA%\ClipSync`，指纹 `d79c…`）证书未变。收尾时手机需与生产实例重新扫码配对一次即可恢复。
+- **Android「无路由」提示分支：已在 2026-09-11 闭环，不是误分类**（见下方「09-11 续测」）。上一轮看到的「连接被拒绝」第二段未能在完整跑通的断网复现里再现；应用自身分类日志证明 errno 在、原因是 `NO_ROUTE`、界面走 `pairing_fail_unreachable_hint_no_route`。
+- 呼出快捷键状态行（本轮 Windows 无常驻实例，未开启快捷键，故无事实行可看）。
+- **Modern Standby 下的睡眠/唤醒通知投递**：上一轮修复后的最小化实例（`diag5.log`）本机已不在；生产目录 `%LOCALAPPDATA%\ClipSync\diagnostics.log` 停在 2026-08-20，早于 `power_suspend_signal` 码。仍待下一次自然待机、且诊断文件还在的实例上核对 `power_suspend_signal / power_resume_signal`。
+- **测试环境遗留（不是缺陷）**：本轮手机配对页仍钉着 DENG 证书 `e074 3d9b 52f1 19ac…`（与 09-08 交接一致）；生产实例未启动，未做「与生产实例重新扫码」收尾。通路网络段在电脑未监听时显示「已配对 · 不可达 / 已与「DENG」配对，当前探测不可达」。
+
+### 09-11 续测（交接重点：无路由分类）
+
+- 操作者：本机会话（Cursor 代操作，真机 + 真 Windows）
+- 日期：2026-09-11
+- 分支：`main` @ `0ab2c54`
+- 设备：Windows `DENG` WLAN `192.168.2.135` + 红米 Note 11T Pro `22041216C`（`192.168.2.250`，SSID `OVL-5G`）
+- 构建：在 09-08 `app-debug.apk` 之上仅加 `AndroidConnectFailures.classify` 的消毒日志（`reason` + `errno` + 异常类型链，不记 message），`assembleDebug` 后 `adb install -r`。分类逻辑未改。
+- **结论：无路由分支按设计工作，不需要改 `fromExceptionType` / 保留 errno 的补丁。**
+
+| 项 | 结果 | 证据 |
+| --- | --- | --- |
+| 系统层 `nc` 在断 Wi-Fi 后对 `192.168.2.135:47654` | 通过（ENETUNREACH） | `nc: connect: Network is unreachable`，`RC:1`。`svc wifi disable` 后 `wifi_on=0`。`svc data disable` 后 MIUI 的 `mobile_data` 键仍为 1，但对 RFC1918 地址已无路由，本分支不依赖蜂窝是否真关。 |
+| 应用分类日志 | 通过 | `ClipSyncPairing: classify reason=NO_ROUTE errno=101 types=ConnectException>ConnectException>ErrnoException`。101 即 bionic `ENETUNREACH`；`ErrnoException` 在 cause 链第三层，`errnoOf` 取得到。 |
+| 失败页第二段 | 通过 | 第一段「无法连接到电脑。请确认两台设备在同一 Wi-Fi。」；第二段「找不到该地址的主机。电脑可能已休眠、IP 已变化，或二维码里排在前面的是虚拟网卡地址。请重新出示二维码后再试。」= `pairing_fail_unreachable_hint_no_route`。不是 `pairing_fail_unreachable_hint_refused`。 |
+| 既有配对未被替换 | 通过 | 合成载荷 `display_name=QA-NOROUTE`、`device_id=aaaaaaaa-bbbb-4ccc-8ddd-…`，TCP 阶段失败，未写出新 peer。确认后点「重新开始」回 Idle，DENG / `e074…` 仍在。 |
+
+方法备注（补 09-08）：
+
+- 悬浮窗（`SYSTEM_ALERT_WINDOW`）在时 `uiautomator dump` 会 `could not get idle state`。本轮测试期间 `appops … ignore`，结束后已 `allow`，动画倍率已改回 1。
+- `adb shell input text` 即使当前 IME 是 Gboard Latin 也会把 JSON 标点/片段收成中文（`pairing_qr` → `pairing＿确认`）。载荷用 UiAutomation `set_text` 注入，不走输入法。
+- 小米 `cmd clipboard set` 返回 `No shell command implementation.`，不要靠它喂配对 JSON。
+- 分类日志已留在 `AndroidConnectFailures.classify`（`Log.i("ClipSyncPairing", …)`），以后断网复现不用再打临时包。
 
 ### 发现并已修复（2026-09-04，本节定稿同日）
 

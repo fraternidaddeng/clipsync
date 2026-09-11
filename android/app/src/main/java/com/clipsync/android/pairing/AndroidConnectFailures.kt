@@ -2,6 +2,7 @@ package com.clipsync.android.pairing
 
 import android.system.ErrnoException
 import android.system.OsConstants
+import android.util.Log
 import java.io.IOException
 
 /**
@@ -11,6 +12,8 @@ import java.io.IOException
  * plain-JVM unit tests — whose sockets throw JDK exceptions — never touch the Android stubs.
  */
 internal object AndroidConnectFailures {
+    private const val TAG = "ClipSyncPairing"
+
     private val errnos: ConnectErrnos by lazy {
         ConnectErrnos(
             connectionRefused = OsConstants.ECONNREFUSED,
@@ -23,7 +26,20 @@ internal object AndroidConnectFailures {
     fun classify(exception: IOException): UnreachableReason {
         val errno = errnoOf(exception)
         val constants = if (errno == null) null else runCatching { errnos }.getOrNull()
-        return UnreachableReasons.classify(exception, errno, constants)
+        val reason = UnreachableReasons.classify(exception, errno, constants)
+        // Types + errno only — never the exception message (it can carry the peer host).
+        Log.i(TAG, "classify reason=$reason errno=$errno types=${typeChain(exception)}")
+        return reason
+    }
+
+    private fun typeChain(exception: Throwable): String {
+        val names = ArrayList<String>(4)
+        var current: Throwable? = exception
+        while (current != null) {
+            names += current.javaClass.simpleName
+            current = current.cause
+        }
+        return names.joinToString(">")
     }
 
     private fun errnoOf(exception: Throwable): Int? {
