@@ -68,4 +68,20 @@ public sealed class AdbDeviceListParserTests
         Assert.Equal("ABC123", device.Serial);
         Assert.Equal(AdbDeviceState.Ready, device.State);
     }
+
+    [Fact]
+    public void ParsesAdb37MdnsConnectSerialAsItsOwnDeviceRow()
+    {
+        const string output =
+            "List of devices attached\n" +
+            "HUHYEYDQDMVONZDU       device usb:1-1 product:x model:Redmi_Note device:y\n" +
+            "adb-HUHYEYDQDMVONZDU-MTq7h0._adb-tls-connect._tcp device product:x model:Redmi_Note device:y\n";
+        var devices = AdbDeviceListParser.Parse(output);
+        Assert.Equal(2, devices.Count);
+        Assert.Equal("HUHYEYDQDMVONZDU", devices[0].Serial);
+        Assert.Equal("adb-HUHYEYDQDMVONZDU-MTq7h0._adb-tls-connect._tcp", devices[1].Serial);
+        Assert.Equal(AdbDeviceState.Ready, devices[1].State);
+        Assert.True(WirelessSessionDiagnosis.IsWirelessSerial(devices[1].Serial));
+        Assert.False(WirelessSessionDiagnosis.IsWirelessSerial(devices[0].Serial));
+    }
 }

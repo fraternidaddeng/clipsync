@@ -123,6 +123,29 @@ public sealed class WirelessAdbAssistantTests
     }
 
     [Fact]
+    public async Task VerifiedConnectAcceptsAlreadyConnectedWhenAdb37ListsTheMdnsSerial()
+    {
+        var runner = new FakeAdbRunner();
+        runner.OnArgs(
+            ["connect", "192.168.1.10:40331"],
+            new AdbCommandResult(0, "already connected to 192.168.1.10:40331\n", string.Empty));
+        runner.OnArgs(
+            ["devices", "-l"],
+            new AdbCommandResult(
+                0,
+                "List of devices attached\n" +
+                "adb-HUHYEYDQDMVONZDU-MTq7h0._adb-tls-connect._tcp device product:x model:Redmi device:y\n",
+                string.Empty));
+        var assistant = new PrivilegedHostAssistant(runner);
+
+        var result = await assistant.ConnectWirelessVerifiedAsync(new WirelessAdbEndpoint("192.168.1.10", 40331));
+
+        Assert.Equal(AdbConnectStatus.AlreadyConnected, result.Outcome.Status);
+        Assert.False(result.RecoveredStaleSession);
+        Assert.DoesNotContain(runner.Invocations, args => args[0] == "disconnect");
+    }
+
+    [Fact]
     public async Task VerifiedConnectRedialsAStaleAlreadyConnectedSession()
     {
         // adb keeps answering "already connected" from its session table after wireless port
@@ -176,6 +199,18 @@ public sealed class WirelessAdbAssistantTests
     {
         var runner = new FakeAdbRunner();
         runner.OnArgs(["mdns", "check"], new AdbCommandResult(0, "mdns daemon version [10970003]\n", string.Empty));
+        var assistant = new PrivilegedHostAssistant(runner);
+
+        Assert.True(await assistant.CheckMdnsSupportAsync());
+    }
+
+    [Fact]
+    public async Task MdnsCheckMapsAdb37DiscoveryDaemonToTrue()
+    {
+        var runner = new FakeAdbRunner();
+        runner.OnArgs(
+            ["mdns", "check"],
+            new AdbCommandResult(0, "mdns daemon version [adb discovery 0.0.0]\n", string.Empty));
         var assistant = new PrivilegedHostAssistant(runner);
 
         Assert.True(await assistant.CheckMdnsSupportAsync());

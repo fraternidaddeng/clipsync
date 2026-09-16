@@ -197,6 +197,53 @@ public sealed class MainViewModelWirelessTests : IAsyncDisposable
         Assert.DoesNotContain("无线连接已断开", viewModel.WirelessStatus, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task ShowWirelessQrStatesAdbMissingInsteadOfMdnsUnsupportedWhenAdbIsAbsent()
+    {
+        adb.Available = false;
+
+        await viewModel.ShowWirelessQrCommand.ExecuteAsync(null);
+
+        Assert.Contains("未找到 adb", viewModel.WirelessStatus, StringComparison.Ordinal);
+        Assert.DoesNotContain("mDNS", viewModel.WirelessStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Empty(adb.Invocations);
+    }
+
+    [Fact]
+    public async Task ShowWirelessQrStatesMdnsUnsupportedWhenAdbIsPresentButDiscoveryIsOff()
+    {
+        adb.OnArgs(
+            ["mdns", "check"],
+            new AdbCommandResult(0, "ERROR: mdns discovery disabled\n", string.Empty));
+
+        await viewModel.ShowWirelessQrCommand.ExecuteAsync(null);
+
+        Assert.Contains("mDNS", viewModel.WirelessStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("未找到 adb", viewModel.WirelessStatus, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task SuccessfulConnectSurvivesALaterProbeThatListsOnlyTheAdb37MdnsSerial()
+    {
+        const string mdnsListing =
+            "List of devices attached\n" +
+            "adb-HUHYEYDQDMVONZDU-MTq7h0._adb-tls-connect._tcp device product:x model:Redmi device:y\n";
+        adb.OnArgs(
+            ["connect", Endpoint],
+            new AdbCommandResult(0, $"connected to {Endpoint}\n", string.Empty));
+        adb.OnArgs(["devices", "-l"], new AdbCommandResult(0, mdnsListing, string.Empty));
+        adb.OnArgs(
+            ["-s", "adb-HUHYEYDQDMVONZDU-MTq7h0._adb-tls-connect._tcp", "shell", "pgrep", "-f", "clipsync_priv_server"],
+            new AdbCommandResult(0, "1234\n", string.Empty));
+
+        viewModel.WirelessConnectEndpointText = Endpoint;
+        await viewModel.ConnectWirelessCommand.ExecuteAsync(null);
+
+        Assert.Contains("已连接 " + Endpoint, viewModel.WirelessStatus, StringComparison.Ordinal);
+        Assert.DoesNotContain("无线连接已断开", viewModel.WirelessStatus, StringComparison.Ordinal);
+        Assert.Contains("特权直读通道运行中", viewModel.PrivilegedStatus, StringComparison.Ordinal);
+    }
+
     /// <summary>
     /// A scripted adb: exact argv match, one or more queued results (the last repeats), plus
     /// pending tasks for holding a call open across a consent revocation.
@@ -207,7 +254,9 @@ public sealed class MainViewModelWirelessTests : IAsyncDisposable
 
         public List<string[]> Invocations { get; } = new();
 
-        public bool IsAvailable => true;
+        public bool Available { get; set; } = true;
+
+        public bool IsAvailable => Available;
 
         public string LocationDescription => "adb: /scripted/adb";
 

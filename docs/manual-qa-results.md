@@ -288,6 +288,16 @@
 | 睡眠/唤醒通知**注册** | 通过 | `listener_started` 之后约 200 ms：`peer_server_listening_port_47654` → `power_notify_registered` → `firewall_inspect_allowed`。`PowerRegisterSuspendResumeNotification` 本机成功。 |
 | 睡眠/唤醒通知**投递** | 未测 | 未让本机进入 Modern Standby / S3。诊断无 `power_suspend_signal` / `power_resume_signal`（预期：没睡就不会有）。 |
 
+### 09-16 特权直读无线配对（应用层，不是再跑清单）
+
+生产实例（`%LOCALAPPDATA%\ClipSync`，Debug exe pid 当时为 33160）点通路 · 特权直读 · 无线配对不可用。未改手机 DENG 配对。
+
+| 项 | 结果 | 证据 |
+| --- | --- | --- |
+| 本机 Debug 进程能否找到 adb | **失败 → 已修并重启实例** | `where.exe adb` 空；`CLIPSYNC_ADB_PATH` / `ANDROID_*` / `%LOCALAPPDATA%\Android\Sdk` 均无。仓库 `D:\paste\.tools\android-sdk\platform-tools\adb.exe`（37.0.1）与 `android/local.properties` → `D:\paste-tools\android-sdk` 可用：`adb mdns check` 为 `mdns daemon version [adb discovery 0.0.0]`，`mdns services` 见 `_adb-tls-connect._tcp 192.168.2.250:34347`。Locator 此前不走祖先目录。旧进程 33160 占着输出目录，已换为同路径 Debug exe（pid 54068，15:04）。 |
+| 出示二维码在缺 adb 时的文案 | **失败 → 已修** | `CheckMdnsSupportAsync` 在 `!IsAvailable` 时回 false，卡片说「此 adb 不支持 mDNS」。现先判 `AdbAvailable`，缺 adb 用 `Conduit_Privileged_AdbMissing`。 |
+| 连上后卡片是否立刻报「无线连接已断开」 | **会（adb 37）→ 已修** | 真机 `adb devices -l` 同时列出 USB serial 与 `adb-HUHYEYDQDMVONZDU-MTq7h0._adb-tls-connect._tcp`，**没有** `192.168.2.250:34347`。对账只认 host:port → Vanished。现认 mDNS connect serial 为同一条活会话。 |
+
 ### 09-11 傍晚 debug（应用层，不是再跑清单）
 
 独立 `--minimized` 实例（`tmp-qa-win11/data` + `diag-debug.log`）。不点托盘/主窗，不睡眠，不碰生产 `%LOCALAPPDATA%\ClipSync`，不改手机 DENG 配对。

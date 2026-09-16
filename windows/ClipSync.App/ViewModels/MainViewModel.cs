@@ -707,8 +707,17 @@ public partial class MainViewModel(
     [RelayCommand(CanExecute = nameof(CanStartWirelessAction))]
     private async Task ShowWirelessQrAsync()
     {
-        if (!PrivilegedAdbConsent || privilegedHost is null)
+        if (!PrivilegedAdbConsent)
         {
+            return;
+        }
+
+        // Missing adb is not "this build has no mDNS". The QR wait would never fire either
+        // way, but the next step is installing platform-tools, not typing a pairing code.
+        if (privilegedHost is null || !privilegedHost.AdbAvailable)
+        {
+            ResetWirelessFlow(clearInputs: false);
+            WirelessStatus = Strings.Conduit_Privileged_AdbMissing;
             return;
         }
 
@@ -976,8 +985,9 @@ public partial class MainViewModel(
         WirelessHint = result.RecoveredStaleSession
             ? Strings.Conduit_Wireless_StaleSessionRedialed
             : string.Empty;
-        // The wireless device now shows up in the ordinary probe (serial = ip:port), so the
-        // existing 检测手机 → 启动特权直读 pair of buttons takes over from here.
+        // The wireless device now shows up in the ordinary probe — as host:port on older
+        // adb, or as adb-…._adb-tls-connect._tcp on platform-tools 37+. Either form is a
+        // live session; 检测手机 → 启动特权直读 takes over from here.
         await DetectPhoneAsync();
     }
 
