@@ -1201,30 +1201,28 @@
         <error line="579" column="20" source="standard:multiline-expression-wrapping" />
         <error line="633" column="24" source="standard:multiline-expression-wrapping" />
         <error line="653" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="715" column="17" source="standard:multiline-expression-wrapping" />
-        <error line="722" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="731" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="769" column="31" source="standard:multiline-expression-wrapping" />
-        <error line="775" column="43" source="standard:multiline-expression-wrapping" />
-        <error line="813" column="16" source="standard:multiline-expression-wrapping" />
-        <error line="819" column="19" source="standard:multiline-expression-wrapping" />
-        <error line="832" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="838" column="13" source="standard:chain-method-continuation" />
-        <error line="888" column="21" source="standard:multiline-expression-wrapping" />
-        <error line="890" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="936" column="55" source="standard:function-signature" />
-        <error line="945" column="16" source="standard:multiline-expression-wrapping" />
-        <error line="950" column="14" source="standard:multiline-expression-wrapping" />
-        <error line="955" column="16" source="standard:multiline-expression-wrapping" />
-        <error line="966" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="1001" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="1028" column="24" source="standard:multiline-expression-wrapping" />
-        <error line="1046" column="25" source="standard:multiline-expression-wrapping" />
-        <error line="1053" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="1082" column="20" source="standard:multiline-expression-wrapping" />
-        <error line="1092" column="26" source="standard:multiline-expression-wrapping" />
-        <error line="1116" column="29" source="standard:multiline-expression-wrapping" />
-        <error line="1147" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="740" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="778" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="784" column="43" source="standard:multiline-expression-wrapping" />
+        <error line="822" column="16" source="standard:multiline-expression-wrapping" />
+        <error line="828" column="19" source="standard:multiline-expression-wrapping" />
+        <error line="841" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="847" column="13" source="standard:chain-method-continuation" />
+        <error line="897" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="899" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="945" column="55" source="standard:function-signature" />
+        <error line="954" column="16" source="standard:multiline-expression-wrapping" />
+        <error line="959" column="14" source="standard:multiline-expression-wrapping" />
+        <error line="964" column="16" source="standard:multiline-expression-wrapping" />
+        <error line="975" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="1010" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="1037" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="1055" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="1062" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="1091" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="1101" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="1125" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="1156" column="30" source="standard:multiline-expression-wrapping" />
     </file>
     <file name="src/main/java/com/clipsync/android/ui/health/CapabilityRoutes.kt">
         <error line="126" column="37" source="standard:multiline-expression-wrapping" />

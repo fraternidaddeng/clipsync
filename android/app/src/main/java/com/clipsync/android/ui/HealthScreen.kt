@@ -712,26 +712,29 @@ fun ConduitStatusBand(
         animationSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
         label = "bandLn",
     )
-    val copy = ConduitBandCopy.of(
-        needsAction = needsAction,
-        allReady = allReady,
-        paired = state.pairedDeviceCount > 0,
-    )
-    val title = stringResource(
-        when (copy.tone) {
-            ConduitBandTone.BLOCKED -> R.string.conduit_band_blocked
-            ConduitBandTone.READY -> R.string.conduit_band_ready
-            ConduitBandTone.PARTIAL -> R.string.conduit_band_partial
-        },
-    )
-    val subtitle = stringResource(
-        when (copy.subtitle) {
-            ConduitBandSubtitle.BLOCKED_UNPAIRED -> R.string.conduit_band_blocked_sub
-            ConduitBandSubtitle.BLOCKED_PAIRED -> R.string.conduit_band_blocked_paired_sub
-            ConduitBandSubtitle.READY -> R.string.conduit_band_ready_sub
-            ConduitBandSubtitle.PARTIAL -> R.string.conduit_band_partial_sub
-        },
-    )
+    val copy =
+        ConduitBandCopy.of(
+            needsAction = needsAction,
+            allReady = allReady,
+            paired = state.pairedDeviceCount > 0,
+        )
+    val title =
+        stringResource(
+            when (copy.tone) {
+                ConduitBandTone.BLOCKED -> R.string.conduit_band_blocked
+                ConduitBandTone.READY -> R.string.conduit_band_ready
+                ConduitBandTone.PARTIAL -> R.string.conduit_band_partial
+            },
+        )
+    val subtitle =
+        stringResource(
+            when (copy.subtitle) {
+                ConduitBandSubtitle.BLOCKED_UNPAIRED -> R.string.conduit_band_blocked_sub
+                ConduitBandSubtitle.BLOCKED_PAIRED -> R.string.conduit_band_blocked_paired_sub
+                ConduitBandSubtitle.READY -> R.string.conduit_band_ready_sub
+                ConduitBandSubtitle.PARTIAL -> R.string.conduit_band_partial_sub
+            },
+        )
     val shape = CharterShapes.control
     Row(
         modifier = modifier
