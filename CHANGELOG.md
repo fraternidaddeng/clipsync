@@ -4,9 +4,25 @@
 
 ## [Unreleased]
 
-本节全部改动源自 2026-09-01 的一份 v0.2.0 真机测试报告（Windows 11 Pro 非管理员会话 + vivo Android，同一局域网），报告原文与逐条核实处置已归档为 `docs/field-test-report-v0.2.0.md`（第六节为核实结论表）。六个问题：防火墙未放行导致配对静默失败、退出时点托盘图标崩溃、UI 负向文案过多、输入框字符纵向裁剪、TUN 模式影响同步、语言下拉框闭合态显示代码格式。
+## [0.4.0] - 2026-09-16
 
-2026-09-03 第二批（各小节末尾以「【第二批】」起头的条目）：五个并行工作流在独立分支完成后合入——Windows 配对信标与诊断跟进（`4362f5c`）、Windows 开关实际生效状态与技术债（`a1e8f81`…`7564fde`）、Android 配对期间监听信标（`bf587d0`）、Android 读取路线回升与实时状态行（`246aab5`…`92a1416`）、双端非 UI 层性能（`ff9c94e`、`e750c6b`，审计记录 `docs/performance-audit.md` 第二轮）——再加一轮跨工作流接线与合并后的双端全量验证。
+### 动效与微交互升级（重点）
+
+- [双端] **交互动效与质感全量升级（丝绸重力垂坠与空间连续性）**：
+  - 彻底解决并摒弃列表增删时的「高度由 0 挤出 / 抽缩坍塌」反模式，改用稳定视口与 FLIP 空间位移让位（`Modifier.animateItem`）。
+  - **交付交互式动效预览实验室**（`docs/design/animation_preview.html`），提供 12 组物理动效实机模拟，内置 A/B 质感切换（软羽入舱 vs 生硬挤压，槽位腾挪 vs 原地压缩），支持 1.0x / 0.4x / 1.5x 速率与 GSAP 物理阻尼参数实时调校。
+- [Windows] **核心控件微交互重构**：
+  - `CharterToggle`：摒弃瞬移机制，引入莱卡相机凸轮过中点机制（`TranslateTransform.X: 0 → 20`、第 70ms 预冲微压 `Scale 1.12 / 0.94`、`SplineDoubleKeyFrame 0.16,1 0.3,1` 双层轨道底色渐变）。
+  - `FoldToggle`：Chevron 箭头引入 220ms `CubicEase` 故事板平滑回旋（0° ↔ 90°）。
+  - `TrayFlyoutWindow`：托盘小窗实现 8px 气压升降进出舱与卡片触觉微压反馈（`Scale 0.992`）。
+  - `PairingApprovalWindow`：补齐审批通过后的 18° 倾斜镜面流光扫过礼赞仪式，对齐移动端。
+- [Android] **Compose 交互平滑度优化**：
+  - `HomeScreen`：分类筛选药丸引入 `animateColorAsState` 与 `CharterMotion.spec(CharterMotion.DUR_QUICK_MS)`，选中有温润平滑过渡。
+  - `PreferencesScreen`：语言与分段选择药丸引入 `animateColorAsState` 与 `CharterMotion.spec` 缓动过渡。
+
+本节全部改动亦包含自 2026-09-01 起的真机测试处置：防火墙未放行导致配对静默失败、退出时点托盘图标崩溃、UI 负向文案过多、输入框字符纵向裁剪、TUN 模式影响同步、语言下拉框闭合态显示代码格式。
+
+2026-09-03 第二批：五个并行工作流在独立分支完成后合入——Windows 配对信标与诊断跟进（`4362f5c`）、Windows 开关实际生效状态与技术债（`a1e8f81`…`7564fde`）、Android 配对期间监听信标（`bf587d0`）、Android 读取路线回升与实时状态行（`246aab5`…`92a1416`）、双端非 UI 层性能（`ff9c94e`、`e750c6b`，审计记录 `docs/performance-audit.md` 第二轮）——再加一轮跨工作流接线与合并后的双端全量验证。
 
 ### 新增
 
