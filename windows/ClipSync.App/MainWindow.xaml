@@ -257,7 +257,7 @@
                                 <Setter TargetName="Fill" Property="Effect" Value="{DynamicResource CsSh2Effect}" />
                                 <Setter TargetName="Root" Property="RenderTransform">
                                     <Setter.Value>
-                                        <TranslateTransform Y="-1" />
+                                        <TranslateTransform Y="-1.5" />
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>

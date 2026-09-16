@@ -61,6 +61,11 @@
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="Card" Property="BorderBrush" Value="{StaticResource CsFlowLineBrush}" />
+                                <Setter TargetName="Root" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.992" ScaleY="0.992" CenterX="200" CenterY="20" />
+                                    </Setter.Value>
+                                </Setter>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -105,8 +110,11 @@
         </Style>
     </Window.Resources>
 
-    <!-- 外留 12px 给 sh-2 阴影；卡片本体 440px -->
-    <Grid Margin="12">
+    <!-- 外留 12px 给 sh-2 阴影；卡片本体 440px，带气压升降变换 -->
+    <Grid x:Name="FlyoutRoot" Margin="12" RenderTransformOrigin="0.5,1">
+        <Grid.RenderTransform>
+            <TranslateTransform x:Name="FlyoutTranslate" Y="0" />
+        </Grid.RenderTransform>
         <Border Background="{StaticResource CsSurfaceBrush}"
                 CornerRadius="14"
                 Effect="{StaticResource CsSh2Effect}" />

@@ -1,5 +1,6 @@
 package com.clipsync.android.ui.prefs
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -41,6 +42,7 @@ import com.clipsync.android.R
 import com.clipsync.android.i18n.LanguageCatalog
 import com.clipsync.android.i18n.string
 import com.clipsync.android.storage.SyncSettingsStore
+import com.clipsync.android.ui.theme.CharterMotion
 import com.clipsync.android.ui.theme.CharterShapes
 import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.ClipSyncType
@@ -608,16 +610,31 @@ private fun LanguageRow(
             val shape = CharterShapes.control
             options.forEach { (tag, label) ->
                 val isSelected = tag == selectedTag
+                val textColor by animateColorAsState(
+                    targetValue = if (isSelected) c.flow else c.t3,
+                    animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+                    label = "langChipTextColor",
+                )
+                val bgColor by animateColorAsState(
+                    targetValue = if (isSelected) c.flowBg else c.sf3,
+                    animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+                    label = "langChipBgColor",
+                )
+                val borderColor by animateColorAsState(
+                    targetValue = if (isSelected) c.flowLn else c.ln2,
+                    animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+                    label = "langChipBorderColor",
+                )
                 Text(
                     text = label,
                     fontSize = 13.sp,
                     fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                    color = if (isSelected) c.flow else c.t3,
+                    color = textColor,
                     modifier =
                         Modifier
                             .clip(shape)
-                            .background(if (isSelected) c.flowBg else c.sf3)
-                            .border(1.dp, if (isSelected) c.flowLn else c.ln2, shape)
+                            .background(bgColor)
+                            .border(1.dp, borderColor, shape)
                             .clickable { onSelect(tag) }
                             .padding(horizontal = 12.dp, vertical = 6.dp),
                 )
@@ -653,16 +670,31 @@ private fun <T> ChoiceRow(
             val shape = CharterShapes.control
             options.forEach { (label, value) ->
                 val isSelected = value == selected
+                val textColor by animateColorAsState(
+                    targetValue = if (isSelected) c.flow else c.t3,
+                    animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+                    label = "choiceChipTextColor",
+                )
+                val bgColor by animateColorAsState(
+                    targetValue = if (isSelected) c.flowBg else c.sf3,
+                    animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+                    label = "choiceChipBgColor",
+                )
+                val borderColor by animateColorAsState(
+                    targetValue = if (isSelected) c.flowLn else c.ln2,
+                    animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+                    label = "choiceChipBorderColor",
+                )
                 Text(
                     text = label,
                     fontSize = 13.sp,
                     fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                    color = if (isSelected) c.flow else c.t3,
+                    color = textColor,
                     modifier =
                         Modifier
                             .clip(shape)
-                            .background(if (isSelected) c.flowBg else c.sf3)
-                            .border(1.dp, if (isSelected) c.flowLn else c.ln2, shape)
+                            .background(bgColor)
+                            .border(1.dp, borderColor, shape)
                             .clickable { onSelect(value) }
                             .padding(horizontal = 14.dp, vertical = 6.dp),
                 )

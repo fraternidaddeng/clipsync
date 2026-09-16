@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -332,16 +333,31 @@ private fun FormatFilterRow(
         options.forEach { option ->
             val active = option == selected
             val shape = CharterShapes.control
+            val textColor by animateColorAsState(
+                targetValue = if (active) c.flow else c.t3,
+                animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+                label = "filterChipTextColor",
+            )
+            val bgColor by animateColorAsState(
+                targetValue = if (active) c.flowBg else c.sf3,
+                animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+                label = "filterChipBgColor",
+            )
+            val borderColor by animateColorAsState(
+                targetValue = if (active) c.flowLn else c.ln,
+                animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+                label = "filterChipBorderColor",
+            )
             Text(
                 text = stringResource(formatLabelRes(option)),
                 fontSize = 12.sp,
                 fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
-                color = if (active) c.flow else c.t3,
+                color = textColor,
                 modifier =
                     Modifier
                         .clip(shape)
-                        .background(if (active) c.flowBg else c.sf3)
-                        .border(1.dp, if (active) c.flowLn else c.ln, shape)
+                        .background(bgColor)
+                        .border(1.dp, borderColor, shape)
                         .clickable { onSelect(option) }
                         .padding(horizontal = 11.dp, vertical = 5.dp),
             )
