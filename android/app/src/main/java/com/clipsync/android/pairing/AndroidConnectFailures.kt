@@ -28,12 +28,14 @@ internal object AndroidConnectFailures {
         val constants = if (errno == null) null else runCatching { errnos }.getOrNull()
         val reason = UnreachableReasons.classify(exception, errno, constants)
         // Types + errno only — never the exception message (it can carry the peer host).
-        Log.i(TAG, "classify reason=$reason errno=$errno types=${typeChain(exception)}")
+        // android.util.Log is an unmocked stub on the JVM unit-test classpath; swallow
+        // that so classify stays usable from PairingConfirmClientTest.
+        runCatching { Log.i(TAG, "classify reason=$reason errno=$errno types=${typeChain(exception)}") }
         return reason
     }
 
     private fun typeChain(exception: Throwable): String {
-        val names = ArrayList<String>(4)
+        val names = mutableListOf<String>()
         var current: Throwable? = exception
         while (current != null) {
             names += current.javaClass.simpleName

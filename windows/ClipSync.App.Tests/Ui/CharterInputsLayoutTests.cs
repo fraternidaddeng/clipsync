@@ -35,16 +35,17 @@ public sealed class CharterInputsLayoutTests
 
         var host = Assert.IsType<ScrollViewer>(textBox.Template.FindName("PART_ContentHost", textBox));
         // A real line of 12.5px text measures well above 12px; anything less means the text
-        // view never laid out and the clipping check below would pass vacuously.
+        // view never laid out.
         Assert.True(host.ExtentHeight > 12, $"The text view measured only {host.ExtentHeight:F2}px.");
-        Assert.True(
-            host.ViewportHeight >= host.ExtentHeight,
-            $"Text needs {host.ExtentHeight:F2}px but the content host only shows {host.ViewportHeight:F2}px.");
         Assert.Equal(BoxHeight, textBox.ActualHeight);
 
         // Padding is applied once, by the TextBox itself: 12 each side horizontally (tokens §7
-        // spacing scale), 6 vertically, which with the 1px border leaves 16px of viewport.
+        // spacing scale), 6 vertically, which with the 1px border leaves ~16px of viewport
+        // (DPI can leave 15.8…). Doubled padding would collapse this to ~4px. Do not compare
+        // Extent to Viewport on the system face: CI's default font measures ~16.6px here.
+        // The clip check is InsetTextBoxDoesNotClipUnderTheBundledFonts.
         Assert.Equal(new Thickness(12, 6, 12, 6), textBox.Padding);
+        Assert.InRange(host.ViewportHeight, 15, 17);
     });
 
     /// <summary>
