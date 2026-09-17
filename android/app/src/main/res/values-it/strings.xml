@@ -558,7 +558,7 @@
     <string name="prefs_group_about">Informazioni</string>
     <string name="prefs_current_version">Versione attuale</string>
     <string name="prefs_check_update">Controlla aggiornamenti</string>
-    <string name="prefs_check_update_desc">Confronta con l’ultima pubblicazione stabile su GitHub. Il download viene verificato con SHA-256 e poi passato all’installer di sistema.</string>
+    <string name="prefs_check_update_desc">Confronta con l’ultima pubblicazione stabile su GitHub. Se GitHub non risponde, prova uno specchio raggiungibile dalla Cina. Il download viene verificato con SHA-256 e poi passato all’installer di sistema.</string>
     <string name="prefs_update_download">Scarica e installa</string>
     <string name="prefs_update_download_desc">Prima scarica e verifica, poi apre l’installer di sistema. Questa app deve poter installare origini sconosciute.</string>
     <string name="prefs_update_checking">Controllo dell’ultima pubblicazione…</string>
@@ -566,7 +566,7 @@
     <string name="prefs_update_available">Trovata la nuova versione %1$s (attuale %2$s)</string>
     <string name="prefs_update_downloading">Download… %1$d%%</string>
     <string name="prefs_update_installing">Pronto per l’installazione</string>
-    <string name="prefs_update_error_network">Impossibile raggiungere GitHub. Controlla la rete e riprova.</string>
+    <string name="prefs_update_error_network">Impossibile raggiungere GitHub o i suoi specchi. Controlla la rete e riprova.</string>
     <string name="prefs_update_error_parse">Impossibile interpretare le informazioni sull’ultima pubblicazione.</string>
     <string name="prefs_update_error_no_asset">L’ultima pubblicazione non ha un pacchetto per questa piattaforma.</string>
     <string name="prefs_update_error_hash">Lo SHA-256 del download non corrisponde alla pubblicazione. Il file è stato scartato.</string>

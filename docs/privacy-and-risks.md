@@ -4,7 +4,7 @@
 
 This page is written for people who use ClipSync, not for engineers. It answers three questions: where the things you copy go, who can see them, and what you should keep an eye on yourself. Each section first says what the app does, then what you can do. Engineering details are linked at the end.
 
-Last updated: 2026-09-03.
+Last updated: 2026-09-17.
 
 ## 1. Where your content goes
 
@@ -102,6 +102,8 @@ What you can do: keep it off when you do not need it; the app switches back to W
 The diagnostic log records only status codes, counts, and timestamps, to answer "is it connected, and where is it stuck". Clipboard content, pairing secrets, and QR tokens stay out of the log; dedicated automated tests guard this. The file exported from the tray menu "Diagnostics" can be attached to a bug report as is.
 
 When the app crashes, the crash information stays on the device and is not uploaded anywhere. There is no telemetry and no usage statistics.
+
+Checking for updates contacts GitHub's latest-release API first; if that is unreachable, a third-party China-accessible mirror is tried. The mirror can see your IP and that you asked for a ClipSync release, not clipboard contents. Downloaded packages are still checked against the release SHA-256 and discarded on mismatch.
 
 ## 11. The export file is plaintext
 

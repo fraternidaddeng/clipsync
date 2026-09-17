@@ -65,6 +65,28 @@ public sealed class GitHubReleaseClientTests
     }
 
     [Fact]
+    public async Task FetchLatestFallsBackToTheFirstPrefixWhenOfficialReturnsForbidden()
+    {
+        var official =
+            $"https://api.github.com/repos/{GitHubReleaseClient.DefaultOwner}/{GitHubReleaseClient.DefaultRepo}{GitHubReleaseClient.LatestPath}";
+        var mirror = GitHubUrlMirrors.Prefixes[0] + official;
+        var json =
+            """{"tag_name":"v0.4.0","html_url":"https://github.com/fraternidaddeng/clipsync/releases/tag/v0.4.0","assets":[]}""";
+        var seen = new List<string>();
+        using var client = new GitHubReleaseClient(
+            currentVersion: "0.3.0",
+            handler: new UrlMapHandler(seen)
+            {
+                [official] = (HttpStatusCode.Forbidden, "rate limited"),
+                [mirror] = (HttpStatusCode.OK, json),
+            },
+            latestUri: new Uri(official));
+        var release = await client.FetchLatestAsync();
+        Assert.Equal("0.4.0", release.VersionLabel);
+        Assert.Equal(new[] { official, mirror }, seen);
+    }
+
+    [Fact]
     public void ComputeSha256HexDoesNotSignExtendHighBytes()
     {
         // 00 80 FF — a naive "%02x".format(signedByte) would emit ffffff80 / ffffffff.
@@ -95,6 +117,36 @@ public sealed class GitHubReleaseClientTests
             Assert.True(replies.Count > 0, $"unexpected {request.Method} {request.RequestUri}");
             var (method, body, status) = replies.Dequeue();
             Assert.Equal(method, request.Method.Method);
+            return Task.FromResult(new HttpResponseMessage(status)
+            {
+                Content = new StringContent(body, Encoding.UTF8, "application/json"),
+            });
+        }
+    }
+
+    private sealed class UrlMapHandler : HttpMessageHandler
+    {
+        private readonly List<string> seen;
+        private readonly Dictionary<string, (HttpStatusCode Status, string Body)> replies = new(StringComparer.Ordinal);
+
+        public UrlMapHandler(List<string> seen)
+        {
+            this.seen = seen;
+        }
+
+        public (HttpStatusCode Status, string Body) this[string url]
+        {
+            set => replies[url] = value;
+        }
+
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
+        {
+            var url = request.RequestUri?.ToString() ?? "";
+            seen.Add(url);
+            Assert.True(replies.ContainsKey(url), $"unexpected {url}");
+            var (status, body) = replies[url];
             return Task.FromResult(new HttpResponseMessage(status)
             {
                 Content = new StringContent(body, Encoding.UTF8, "application/json"),

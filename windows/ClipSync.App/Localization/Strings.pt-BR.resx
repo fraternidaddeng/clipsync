@@ -1104,7 +1104,7 @@ Todas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A 
     <value>Verificar atualizações</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Compara com a publicação estável mais recente no GitHub. O download é verificado por SHA-256; esta pasta portátil é substituída e o app reinicia.</value>
+    <value>Compara com a publicação estável mais recente no GitHub. Se o GitHub não responder, tenta um espelho acessível da China. O download é verificado por SHA-256; esta pasta portátil é substituída e o app reinicia.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Baixar e instalar</value>
@@ -1125,7 +1125,7 @@ Todas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A 
     <value>O app vai sair, substituir os arquivos e reiniciar.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Não foi possível contatar o GitHub. Verifique a rede e tente de novo.</value>
+    <value>Não foi possível contatar o GitHub nem os espelhos. Verifique a rede e tente de novo.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Não foi possível interpretar as informações da publicação mais recente.</value>

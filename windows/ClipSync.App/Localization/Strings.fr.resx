@@ -1104,7 +1104,7 @@ Toutes les entrées de ce PC (images comprises) seront supprimées en une fois. 
     <value>Rechercher des mises à jour</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Compare avec la dernière publication stable sur GitHub. Le téléchargement est vérifié par SHA-256, puis ce dossier portable est remplacé et l’appli redémarre.</value>
+    <value>Compare avec la dernière publication stable sur GitHub. S’il est injoignable, un miroir accessible depuis la Chine est tenté. Le téléchargement est vérifié par SHA-256, puis ce dossier portable est remplacé et l’appli redémarre.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Télécharger et installer</value>
@@ -1125,7 +1125,7 @@ Toutes les entrées de ce PC (images comprises) seront supprimées en une fois. 
     <value>L’appli va quitter, remplacer ses fichiers, puis redémarrer.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Impossible de joindre GitHub. Vérifiez le réseau et réessayez.</value>
+    <value>Impossible de joindre GitHub ni ses miroirs. Vérifiez le réseau et réessayez.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Les informations de la dernière publication n’ont pas pu être lues.</value>

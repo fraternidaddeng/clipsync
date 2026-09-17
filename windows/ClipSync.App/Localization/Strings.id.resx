@@ -1104,7 +1104,7 @@ Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan
     <value>Periksa pembaruan</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Membandingkan dengan rilis resmi terbaru di GitHub. Unduhan diverifikasi SHA-256, lalu folder portabel ini diganti dan aplikasi dimulai ulang.</value>
+    <value>Membandingkan dengan rilis resmi terbaru di GitHub. Jika GitHub tidak terjangkau, dicoba cermin yang bisa diakses dari Tiongkok. Unduhan diverifikasi SHA-256, lalu folder portabel ini diganti dan aplikasi dimulai ulang.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Unduh dan pasang</value>
@@ -1125,7 +1125,7 @@ Ini menghapus setiap entri di PC ini (termasuk gambar) sekali jalan. Pembersihan
     <value>Aplikasi akan keluar, mengganti berkasnya, lalu mulai ulang.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Tidak dapat menghubungi GitHub. Periksa jaringan lalu coba lagi.</value>
+    <value>Tidak dapat menghubungi GitHub maupun cerminnya. Periksa jaringan lalu coba lagi.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Informasi rilis terbaru tidak dapat diurai.</value>

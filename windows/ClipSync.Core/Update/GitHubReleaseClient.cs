@@ -27,7 +27,13 @@ public sealed class GitHubReleaseClient : IDisposable
             $"https://api.github.com/repos/{DefaultOwner}/{DefaultRepo}{LatestPath}");
         if (handler is null)
         {
-            http = new HttpClient { Timeout = TimeSpan.FromMinutes(15) };
+            http = new HttpClient(new SocketsHttpHandler
+            {
+                ConnectTimeout = TimeSpan.FromSeconds(12),
+            })
+            {
+                Timeout = TimeSpan.FromMinutes(15),
+            };
             ownsHttp = true;
         }
         else
@@ -43,14 +49,7 @@ public sealed class GitHubReleaseClient : IDisposable
 
     public async Task<GitHubLatestRelease> FetchLatestAsync(CancellationToken cancellationToken = default)
     {
-        using var response = await http.GetAsync(latestUri, cancellationToken).ConfigureAwait(false);
-        var body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new HttpRequestException(
-                $"GitHub latest release returned {(int)response.StatusCode}: {TrimForError(body)}");
-        }
-
+        var body = await GetTextAsync(latestUri.ToString(), cancellationToken).ConfigureAwait(false);
         return GitHubReleaseParser.Parse(body);
     }
 
@@ -73,10 +72,7 @@ public sealed class GitHubReleaseClient : IDisposable
         var sidecar = release.FindSidecar(payload)
             ?? throw new InvalidOperationException(
                 $"Release {release.TagName} has no SHA-256 for '{payload.Name}'.");
-        using var response = await http.GetAsync(new Uri(sidecar.BrowserDownloadUrl), cancellationToken)
-            .ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-        var text = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        var text = await GetTextAsync(sidecar.BrowserDownloadUrl, cancellationToken).ConfigureAwait(false);
         return GitHubReleaseParser.ParseSha256Sidecar(text)
             ?? throw new InvalidOperationException($"Could not parse SHA-256 sidecar for '{payload.Name}'.");
     }
@@ -87,24 +83,80 @@ public sealed class GitHubReleaseClient : IDisposable
         IProgress<UpdateDownloadProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        using var response = await http.GetAsync(
-                new Uri(asset.BrowserDownloadUrl),
-                HttpCompletionOption.ResponseHeadersRead,
+        await GetSuccessfulAsync(
+                asset.BrowserDownloadUrl,
+                async (response, token) =>
+                {
+                    var total = response.Content.Headers.ContentLength ?? asset.SizeBytes;
+                    await using var source = await response.Content
+                        .ReadAsStreamAsync(token)
+                        .ConfigureAwait(false);
+                    var buffer = new byte[81_920];
+                    long received = 0;
+                    int read;
+                    while ((read = await source.ReadAsync(buffer.AsMemory(0, buffer.Length), token)
+                               .ConfigureAwait(false)) > 0)
+                    {
+                        await destination.WriteAsync(buffer.AsMemory(0, read), token).ConfigureAwait(false);
+                        received += read;
+                        progress?.Report(new UpdateDownloadProgress(received, total));
+                    }
+                },
                 cancellationToken)
             .ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-        var total = response.Content.Headers.ContentLength ?? asset.SizeBytes;
-        await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        var buffer = new byte[81_920];
-        long received = 0;
-        int read;
-        while ((read = await source.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken)
-                   .ConfigureAwait(false)) > 0)
+    }
+
+    private async Task<string> GetTextAsync(string url, CancellationToken cancellationToken)
+    {
+        string? body = null;
+        await GetSuccessfulAsync(
+                url,
+                async (response, token) =>
+                {
+                    body = await response.Content.ReadAsStringAsync(token).ConfigureAwait(false);
+                },
+                cancellationToken)
+            .ConfigureAwait(false);
+        return body ?? "";
+    }
+
+    private async Task GetSuccessfulAsync(
+        string url,
+        Func<HttpResponseMessage, CancellationToken, Task> handle,
+        CancellationToken cancellationToken)
+    {
+        Exception? lastError = null;
+        foreach (var candidate in GitHubUrlMirrors.Candidates(url))
         {
-            await destination.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
-            received += read;
-            progress?.Report(new UpdateDownloadProgress(received, total));
+            try
+            {
+                using var response = await http.GetAsync(
+                        new Uri(candidate),
+                        HttpCompletionOption.ResponseHeadersRead,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken)
+                        .ConfigureAwait(false);
+                    throw new HttpRequestException(
+                        $"GitHub request returned {(int)response.StatusCode}: {TrimForError(errorBody)}");
+                }
+
+                await handle(response, cancellationToken).ConfigureAwait(false);
+                return;
+            }
+            catch (Exception exception) when (
+                exception is HttpRequestException
+                or TaskCanceledException
+                or IOException
+                or HttpIOException)
+            {
+                lastError = exception;
+            }
         }
+
+        throw lastError ?? new HttpRequestException("No URL candidates.");
     }
 
     public static string ComputeSha256Hex(Stream stream)

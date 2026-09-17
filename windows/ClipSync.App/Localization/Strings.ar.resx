@@ -1104,7 +1104,7 @@
     <value>التحقق من التحديثات</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>يقارن بأحدث إصدار رسمي على GitHub. يُتحقق من التنزيل بـ SHA-256 ثم يُستبدل هذا المجلد المحمول ويُعاد التشغيل.</value>
+    <value>يقارن بأحدث إصدار رسمي على GitHub. إن تعذّر الوصول تُجرَّب مرآة يمكن الوصول إليها من الصين. يُتحقق من التنزيل بـ SHA-256 ثم يُستبدل هذا المجلد المحمول ويُعاد التشغيل.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>تنزيل وتثبيت</value>
@@ -1125,7 +1125,7 @@
     <value>سيُغلق التطبيق ويستبدل ملفاته ثم يُعاد تشغيله.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>تعذّر الوصول إلى GitHub. تحقق من الشبكة ثم أعد المحاولة.</value>
+    <value>تعذّر الوصول إلى GitHub ومراياه. تحقق من الشبكة ثم أعد المحاولة.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>تعذّر تفسير معلومات أحدث إصدار.</value>

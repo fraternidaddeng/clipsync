@@ -558,7 +558,7 @@
     <string name="prefs_group_about">Acerca de</string>
     <string name="prefs_current_version">Versión actual</string>
     <string name="prefs_check_update">Buscar actualizaciones</string>
-    <string name="prefs_check_update_desc">Compara con la última publicación estable de GitHub. La descarga se verifica con SHA-256 y luego pasa al instalador del sistema.</string>
+    <string name="prefs_check_update_desc">Compara con la última publicación estable de GitHub. Si GitHub no responde, se prueba un espejo accesible desde China. La descarga se verifica con SHA-256 y luego pasa al instalador del sistema.</string>
     <string name="prefs_update_download">Descargar e instalar</string>
     <string name="prefs_update_download_desc">Primero descarga y verifica, luego abre el instalador del sistema. Hay que permitir que esta app instale orígenes desconocidos.</string>
     <string name="prefs_update_checking">Consultando la última publicación…</string>
@@ -566,7 +566,7 @@
     <string name="prefs_update_available">Hay una versión nueva %1$s (actual %2$s)</string>
     <string name="prefs_update_downloading">Descargando… %1$d%%</string>
     <string name="prefs_update_installing">Listo para instalar</string>
-    <string name="prefs_update_error_network">No se pudo contactar con GitHub. Comprueba la red e inténtalo de nuevo.</string>
+    <string name="prefs_update_error_network">No se pudo contactar con GitHub ni con sus espejos. Comprueba la red e inténtalo de nuevo.</string>
     <string name="prefs_update_error_parse">No se pudo interpretar la información de la última publicación.</string>
     <string name="prefs_update_error_no_asset">La última publicación no incluye un paquete para esta plataforma.</string>
     <string name="prefs_update_error_hash">El SHA-256 de la descarga no coincide con la publicación. Se descartó el archivo.</string>

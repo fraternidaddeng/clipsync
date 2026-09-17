@@ -1104,7 +1104,7 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
     <value>Check for updates</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Compare with the latest stable GitHub Release. Downloads are SHA-256 checked, then this portable folder is replaced and the app restarts.</value>
+    <value>Compare with the latest stable GitHub Release. If GitHub is unreachable, a China-accessible mirror is tried. Downloads are SHA-256 checked, then this portable folder is replaced and the app restarts.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Download and install</value>
@@ -1125,7 +1125,7 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
     <value>The app will quit, replace its files, and restart.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Could not reach GitHub. Check the network and try again.</value>
+    <value>Could not reach GitHub or its mirrors. Check the network and try again.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>The latest release information could not be parsed.</value>

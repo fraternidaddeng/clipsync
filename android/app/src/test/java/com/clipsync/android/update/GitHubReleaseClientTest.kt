@@ -1,5 +1,12 @@
 package com.clipsync.android.update
 
+import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.fail
@@ -55,4 +62,48 @@ class GitHubReleaseClientTest {
             assertFalse(file.exists())
         }
     }
+
+    @Test
+    fun fetchLatestFallsBackToTheFirstPrefixWhenOfficialReturnsForbidden() {
+        val official = GitHubReleaseClient.DEFAULT_LATEST_URL
+        val mirror = GitHubUrlMirrors.prefixes.first() + official
+        val json =
+            """
+            {"tag_name":"v0.4.0",
+             "html_url":"https://github.com/fraternidaddeng/clipsync/releases/tag/v0.4.0",
+             "assets":[]}
+            """.trimIndent()
+        val seen = mutableListOf<String>()
+        val http =
+            OkHttpClient
+                .Builder()
+                .addInterceptor { chain ->
+                    val request = chain.request()
+                    val url = request.url.toString()
+                    seen += url
+                    when (url) {
+                        official -> fakeResponse(request, 403, "rate limited")
+                        mirror -> fakeResponse(request, 200, json)
+                        else -> error("unexpected $url")
+                    }
+                }.build()
+        val client = GitHubReleaseClient(currentVersion = "0.3.0", http = http)
+        val release = runBlocking { client.fetchLatest() }
+        assertEquals("0.4.0", release.versionLabel)
+        assertEquals(listOf(official, mirror), seen)
+    }
+
+    private fun fakeResponse(
+        request: Request,
+        code: Int,
+        body: String,
+    ): Response =
+        Response
+            .Builder()
+            .request(request)
+            .protocol(Protocol.HTTP_1_1)
+            .code(code)
+            .message(if (code == 200) "OK" else "ERR")
+            .body(body.toResponseBody("application/json".toMediaType()))
+            .build()
 }

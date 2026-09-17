@@ -1104,7 +1104,7 @@
     <value>檢查更新</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>對照 GitHub 儲存庫的最新正式發布。下載後會校驗 SHA-256，再取代本機便攜目錄並重啟。</value>
+    <value>對照 GitHub 儲存庫的最新正式發布；國內網路連不上時改走鏡像。下載後會校驗 SHA-256，再取代本機便攜目錄並重啟。</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>下載並安裝</value>
@@ -1125,7 +1125,7 @@
     <value>即將退出並取代程式檔，隨後自動重啟。</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>無法聯繫 GitHub。請檢查網路後重試。</value>
+    <value>無法聯繫 GitHub 及國內鏡像。請檢查網路後重試。</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>最新發布資訊無法解析。</value>

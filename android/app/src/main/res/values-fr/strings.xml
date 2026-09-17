@@ -558,7 +558,7 @@
     <string name="prefs_group_about">À propos</string>
     <string name="prefs_current_version">Version actuelle</string>
     <string name="prefs_check_update">Rechercher des mises à jour</string>
-    <string name="prefs_check_update_desc">Compare avec la dernière publication stable sur GitHub. Le téléchargement est vérifié par SHA-256, puis remis à l’installateur système.</string>
+    <string name="prefs_check_update_desc">Compare avec la dernière publication stable sur GitHub. S’il est injoignable, un miroir accessible depuis la Chine est tenté. Le téléchargement est vérifié par SHA-256, puis remis à l’installateur système.</string>
     <string name="prefs_update_download">Télécharger et installer</string>
     <string name="prefs_update_download_desc">Télécharge et vérifie d’abord, puis ouvre l’installateur système. Il faut autoriser cette appli à installer des sources inconnues.</string>
     <string name="prefs_update_checking">Interrogation de la dernière publication…</string>
@@ -566,7 +566,7 @@
     <string name="prefs_update_available">Nouvelle version %1$s trouvée (actuelle %2$s)</string>
     <string name="prefs_update_downloading">Téléchargement… %1$d%%</string>
     <string name="prefs_update_installing">Prêt à installer</string>
-    <string name="prefs_update_error_network">Impossible de joindre GitHub. Vérifiez le réseau et réessayez.</string>
+    <string name="prefs_update_error_network">Impossible de joindre GitHub ni ses miroirs. Vérifiez le réseau et réessayez.</string>
     <string name="prefs_update_error_parse">Les informations de la dernière publication n’ont pas pu être lues.</string>
     <string name="prefs_update_error_no_asset">La dernière publication n’a pas de paquet pour cette plateforme.</string>
     <string name="prefs_update_error_hash">Le SHA-256 du téléchargement ne correspond pas à la publication. Le fichier a été jeté.</string>

@@ -1104,7 +1104,7 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
     <value>Controleren op updates</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Vergelijkt met de nieuwste stabiele GitHub-release. Downloads worden met SHA-256 gecontroleerd, daarna wordt deze draagbare map vervangen en de app herstart.</value>
+    <value>Vergelijkt met de nieuwste stabiele GitHub-release. Als GitHub onbereikbaar is, wordt een vanuit China bereikbare spiegel geprobeerd. Downloads worden met SHA-256 gecontroleerd, daarna wordt deze draagbare map vervangen en de app herstart.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Downloaden en installeren</value>
@@ -1125,7 +1125,7 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
     <value>De app sluit, vervangt zijn bestanden en start opnieuw.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>GitHub is niet bereikbaar. Controleer het netwerk en probeer opnieuw.</value>
+    <value>GitHub en zijn spiegels zijn niet bereikbaar. Controleer het netwerk en probeer opnieuw.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>De gegevens van de nieuwste release konden niet worden gelezen.</value>

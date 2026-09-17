@@ -1104,7 +1104,7 @@
     <value>检查更新</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>对照 GitHub 仓库的最新正式发布。下载后会校验 SHA-256，再替换本机便携目录并重启。</value>
+    <value>对照 GitHub 仓库的最新正式发布；国内网络连不上时改走镜像。下载后会校验 SHA-256，再替换本机便携目录并重启。</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>下载并安装</value>
@@ -1125,7 +1125,7 @@
     <value>即将退出并替换程序文件，随后自动重启。</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>无法联系 GitHub。请检查网络后重试。</value>
+    <value>无法联系 GitHub 及国内镜像。请检查网络后重试。</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>最新发布信息无法解析。</value>

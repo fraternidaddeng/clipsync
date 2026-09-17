@@ -4,6 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import java.io.File
 import java.io.IOException
 import java.security.MessageDigest
@@ -22,21 +23,7 @@ class GitHubReleaseClient(
 ) {
     suspend fun fetchLatest(): GitHubLatestRelease =
         withContext(ioContext) {
-            val request =
-                Request
-                    .Builder()
-                    .url(latestUrl)
-                    .header("User-Agent", userAgent(currentVersion))
-                    .header("Accept", "application/vnd.github+json")
-                    .get()
-                    .build()
-            http.newCall(request).execute().use { response ->
-                val body = response.body?.string().orEmpty()
-                if (!response.isSuccessful) {
-                    throw IOException(
-                        "GitHub latest release returned ${response.code}: ${body.trim().take(ERROR_BODY_CHARS)}",
-                    )
-                }
+            getText(latestUrl, acceptGithubJson = true) { body ->
                 GitHubReleaseParser.parse(body)
             }
         }
@@ -56,18 +43,8 @@ class GitHubReleaseClient(
             val sidecar =
                 release.findSidecar(payload)
                     ?: throw IOException("Release ${release.tagName} has no SHA-256 for '${payload.name}'.")
-            val request =
-                Request
-                    .Builder()
-                    .url(sidecar.browserDownloadUrl)
-                    .header("User-Agent", userAgent(currentVersion))
-                    .get()
-                    .build()
-            http.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    throw IOException("SHA-256 sidecar returned ${response.code}.")
-                }
-                GitHubReleaseParser.parseSha256Sidecar(response.body?.string().orEmpty())
+            getText(sidecar.browserDownloadUrl, acceptGithubJson = false) { body ->
+                GitHubReleaseParser.parseSha256Sidecar(body)
                     ?: throw IOException("Could not parse SHA-256 sidecar for '${payload.name}'.")
             }
         }
@@ -77,20 +54,13 @@ class GitHubReleaseClient(
         destination: File,
         onProgress: (received: Long, total: Long) -> Unit = { _, _ -> },
     ) = withContext(ioContext) {
-        val request =
-            Request
-                .Builder()
-                .url(asset.browserDownloadUrl)
-                .header("User-Agent", userAgent(currentVersion))
-                .get()
-                .build()
-        http.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) {
-                throw IOException("Download returned ${response.code}.")
-            }
+        getSuccessful(asset.browserDownloadUrl, acceptGithubJson = false) { response ->
             val body = response.body ?: throw IOException("Download had no body.")
             val total = body.contentLength().takeIf { it > 0 } ?: asset.sizeBytes
             destination.parentFile?.mkdirs()
+            if (destination.exists()) {
+                destination.delete()
+            }
             destination.outputStream().use { output ->
                 body.byteStream().use { input ->
                     val buffer = ByteArray(COPY_BUFFER_BYTES)
@@ -109,6 +79,56 @@ class GitHubReleaseClient(
         }
     }
 
+    private fun <T> getText(
+        url: String,
+        acceptGithubJson: Boolean,
+        parse: (String) -> T,
+    ): T =
+        getSuccessful(url, acceptGithubJson) { response ->
+            parse(response.body?.string().orEmpty())
+        }
+
+    private fun <T> getSuccessful(
+        url: String,
+        acceptGithubJson: Boolean,
+        handle: (Response) -> T,
+    ): T {
+        var lastError: IOException? = null
+        for (candidate in GitHubUrlMirrors.candidates(url)) {
+            try {
+                return executeCandidate(candidate, acceptGithubJson, handle)
+            } catch (exception: IOException) {
+                lastError = exception
+            }
+        }
+        throw lastError ?: IOException("No URL candidates.")
+    }
+
+    private fun <T> executeCandidate(
+        candidate: String,
+        acceptGithubJson: Boolean,
+        handle: (Response) -> T,
+    ): T {
+        val builder =
+            Request
+                .Builder()
+                .url(candidate)
+                .header("User-Agent", userAgent(currentVersion))
+                .get()
+        if (acceptGithubJson) {
+            builder.header("Accept", "application/vnd.github+json")
+        }
+        return http.newCall(builder.build()).execute().use { response ->
+            if (!response.isSuccessful) {
+                val errorBody = response.body?.string().orEmpty()
+                throw IOException(
+                    "GitHub request returned ${response.code}: ${errorBody.trim().take(ERROR_BODY_CHARS)}",
+                )
+            }
+            handle(response)
+        }
+    }
+
     companion object {
         const val DEFAULT_OWNER = "fraternidaddeng"
         const val DEFAULT_REPO = "clipsync"
@@ -116,7 +136,7 @@ class GitHubReleaseClient(
             "https://api.github.com/repos/$DEFAULT_OWNER/$DEFAULT_REPO/releases/latest"
         private const val COPY_BUFFER_BYTES = 81_920
         private const val ERROR_BODY_CHARS = 180
-        private const val CONNECT_TIMEOUT_SECONDS = 20L
+        private const val CONNECT_TIMEOUT_SECONDS = 12L
         private const val TRANSFER_TIMEOUT_MINUTES = 15L
         private const val BYTE_MASK = 0xFF
         private const val NIBBLE_MASK = 0x0F

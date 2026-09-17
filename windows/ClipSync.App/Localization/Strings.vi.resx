@@ -1104,7 +1104,7 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
     <value>Kiểm tra cập nhật</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Đối chiếu với bản phát hành chính thức mới nhất trên GitHub. Tệp tải về được kiểm SHA-256, rồi thư mục xách tay này được thay và ứng dụng khởi động lại.</value>
+    <value>Đối chiếu với bản phát hành chính thức mới nhất trên GitHub. Nếu không liên hệ được thì thử gương truy cập được từ Trung Quốc. Tệp tải về được kiểm SHA-256, rồi thư mục xách tay này được thay và ứng dụng khởi động lại.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Tải và cài đặt</value>
@@ -1125,7 +1125,7 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
     <value>Ứng dụng sẽ thoát, thay tệp rồi tự khởi động lại.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Không liên hệ được GitHub. Kiểm tra mạng rồi thử lại.</value>
+    <value>Không liên hệ được GitHub và các gương. Kiểm tra mạng rồi thử lại.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Không đọc được thông tin bản phát hành mới nhất.</value>

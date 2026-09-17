@@ -1104,7 +1104,7 @@ Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuot
     <value>Controlla aggiornamenti</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Confronta con l’ultima pubblicazione stabile su GitHub. Il download viene verificato con SHA-256, poi questa cartella portatile viene sostituita e l’app si riavvia.</value>
+    <value>Confronta con l’ultima pubblicazione stabile su GitHub. Se GitHub non risponde, prova uno specchio raggiungibile dalla Cina. Il download viene verificato con SHA-256, poi questa cartella portatile viene sostituita e l’app si riavvia.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Scarica e installa</value>
@@ -1125,7 +1125,7 @@ Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuot
     <value>L’app si chiuderà, sostituirà i file e si riavvierà.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Impossibile raggiungere GitHub. Controlla la rete e riprova.</value>
+    <value>Impossibile raggiungere GitHub o i suoi specchi. Controlla la rete e riprova.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Impossibile interpretare le informazioni sull’ultima pubblicazione.</value>

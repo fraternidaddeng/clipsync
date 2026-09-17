@@ -1104,7 +1104,7 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
     <value>Güncellemeleri denetle</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>GitHub’daki en son kararlı sürümle karşılaştırır. İndirme SHA-256 ile doğrulanır, bu taşınabilir klasör değiştirilir ve uygulama yeniden başlar.</value>
+    <value>GitHub’daki en son kararlı sürümle karşılaştırır. GitHub’a ulaşılamazsa Çin’den erişilebilir bir yansı denenir. İndirme SHA-256 ile doğrulanır, bu taşınabilir klasör değiştirilir ve uygulama yeniden başlar.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>İndir ve yükle</value>
@@ -1125,7 +1125,7 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
     <value>Uygulama kapanacak, dosyalarını değiştirecek ve yeniden başlayacak.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>GitHub’a ulaşılamadı. Ağı kontrol edip yeniden deneyin.</value>
+    <value>GitHub’a ve yansılarına ulaşılamadı. Ağı kontrol edip yeniden deneyin.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>En son sürüm bilgisi çözümlenemedi.</value>

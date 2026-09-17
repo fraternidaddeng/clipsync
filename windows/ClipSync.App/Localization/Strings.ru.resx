@@ -1104,7 +1104,7 @@
     <value>Проверить обновления</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Сверяет с последним стабильным выпуском на GitHub. Загрузка проверяется SHA-256, затем эта переносная папка заменяется и приложение перезапускается.</value>
+    <value>Сверяет с последним стабильным выпуском на GitHub. Если GitHub недоступен, пробуется зеркало, доступное из Китая. Загрузка проверяется SHA-256, затем эта переносная папка заменяется и приложение перезапускается.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Скачать и установить</value>
@@ -1125,7 +1125,7 @@
     <value>Приложение закроется, заменит свои файлы и перезапустится.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Не удалось связаться с GitHub. Проверьте сеть и повторите.</value>
+    <value>Не удалось связаться с GitHub и зеркалами. Проверьте сеть и повторите.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Не удалось разобрать сведения о последнем выпуске.</value>

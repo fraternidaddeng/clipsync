@@ -1104,7 +1104,7 @@
     <value>更新を確認</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>GitHub の最新正式リリースと照合します。ダウンロード後に SHA-256 を検証し、このポータブルフォルダーを置き換えて再起動します。</value>
+    <value>GitHub の最新正式リリースと照合します。届かない場合は国内向けミラーを試します。ダウンロード後に SHA-256 を検証し、このポータブルフォルダーを置き換えて再起動します。</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>ダウンロードしてインストール</value>
@@ -1125,7 +1125,7 @@
     <value>終了してファイルを置き換えたあと、自動的に再起動します。</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>GitHub に接続できません。ネットワークを確認して再試行してください。</value>
+    <value>GitHub とミラーのいずれにも接続できません。ネットワークを確認して再試行してください。</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>最新リリース情報を解析できませんでした。</value>

@@ -1104,7 +1104,7 @@
     <value>업데이트 확인</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>GitHub의 최신 정식 릴리스와 대조합니다. 다운로드 후 SHA-256을 확인한 뒤 이 휴대용 폴더를 교체하고 다시 시작합니다.</value>
+    <value>GitHub의 최신 정식 릴리스와 대조합니다. 연결되지 않으면 중국에서 접근 가능한 미러를 시도합니다. 다운로드 후 SHA-256을 확인한 뒤 이 휴대용 폴더를 교체하고 다시 시작합니다.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>다운로드 후 설치</value>
@@ -1125,7 +1125,7 @@
     <value>종료한 뒤 파일을 교체하고 자동으로 다시 시작합니다.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>GitHub에 연결할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.</value>
+    <value>GitHub과 미러에 연결할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>최신 릴리스 정보를 해석할 수 없습니다.</value>

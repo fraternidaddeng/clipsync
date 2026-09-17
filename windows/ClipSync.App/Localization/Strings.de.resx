@@ -1104,7 +1104,7 @@ Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelö
     <value>Nach Updates suchen</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Vergleicht mit der neuesten stabilen GitHub-Veröffentlichung. Downloads werden per SHA-256 geprüft, dann wird dieser portable Ordner ersetzt und neu gestartet.</value>
+    <value>Vergleicht mit der neuesten stabilen GitHub-Veröffentlichung. Ist GitHub nicht erreichbar, wird ein aus China erreichbarer Spiegel versucht. Downloads werden per SHA-256 geprüft, dann wird dieser portable Ordner ersetzt und neu gestartet.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Herunterladen und installieren</value>
@@ -1125,7 +1125,7 @@ Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelö
     <value>Die App beendet sich, ersetzt ihre Dateien und startet neu.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>GitHub ist nicht erreichbar. Netzwerk prüfen und erneut versuchen.</value>
+    <value>GitHub und seine Spiegel sind nicht erreichbar. Netzwerk prüfen und erneut versuchen.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Die Angaben zur neuesten Veröffentlichung konnten nicht gelesen werden.</value>

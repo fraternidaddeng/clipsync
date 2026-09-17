@@ -1104,7 +1104,7 @@
     <value>ตรวจสอบการอัปเดต</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>เทียบกับรุ่นทางการล่าสุดบน GitHub หลังตรวจ SHA-256 จะแทนที่โฟลเดอร์พกพานี้แล้วเปิดใหม่</value>
+    <value>เทียบกับรุ่นทางการล่าสุดบน GitHub ถ้าติดต่อไม่ได้จะลองกระจกที่เข้าถึงได้จากจีน หลังตรวจ SHA-256 จะแทนที่โฟลเดอร์พกพานี้แล้วเปิดใหม่</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>ดาวน์โหลดแล้วติดตั้ง</value>
@@ -1125,7 +1125,7 @@
     <value>แอปจะปิด แทนที่ไฟล์ แล้วเปิดใหม่เอง</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>ติดต่อ GitHub ไม่ได้ ตรวจเครือข่ายแล้วลองใหม่</value>
+    <value>ติดต่อ GitHub และกระจกไม่ได้ ตรวจเครือข่ายแล้วลองใหม่</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>อ่านข้อมูลรุ่นล่าสุดไม่ได้</value>

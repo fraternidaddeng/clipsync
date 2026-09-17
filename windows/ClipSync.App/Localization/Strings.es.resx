@@ -1104,7 +1104,7 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
     <value>Buscar actualizaciones</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Compara con la última publicación estable de GitHub. La descarga se verifica con SHA-256; luego se sustituye esta carpeta portátil y se reinicia.</value>
+    <value>Compara con la última publicación estable de GitHub. Si GitHub no responde, se prueba un espejo accesible desde China. La descarga se verifica con SHA-256; luego se sustituye esta carpeta portátil y se reinicia.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Descargar e instalar</value>
@@ -1125,7 +1125,7 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
     <value>La aplicación se cerrará, sustituirá sus archivos y se reiniciará.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>No se pudo contactar con GitHub. Comprueba la red e inténtalo de nuevo.</value>
+    <value>No se pudo contactar con GitHub ni con sus espejos. Comprueba la red e inténtalo de nuevo.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>No se pudo interpretar la información de la última publicación.</value>
