@@ -5,6 +5,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -16,6 +17,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -51,6 +54,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -77,6 +81,7 @@ import com.clipsync.android.ui.theme.ClipSyncType
 import com.clipsync.android.ui.theme.LocalReducedMotion
 import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.clipSyncColors
+import com.clipsync.android.ui.theme.tactilePress
 
 /**
  * Five-fill status encoding (tokens.md §10): one shape, five fill degrees,
@@ -209,15 +214,17 @@ fun HealthScreen(
         mutableStateOf(state.localRead.beckoning)
     }
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 2.dp, bottom = 14.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 2.dp, bottom = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -237,10 +244,11 @@ fun HealthScreen(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = if (state.probing) c.t3 else c.flow,
-                    modifier = Modifier
-                        .clip(CharterShapes.control)
-                        .clickable(enabled = !state.probing, onClick = onRefresh)
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    modifier =
+                        Modifier
+                            .clip(CharterShapes.control)
+                            .clickable(enabled = !state.probing, onClick = onRefresh)
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
                 )
             }
         }
@@ -265,28 +273,31 @@ fun HealthScreen(
             title = stringResource(R.string.conduit_segment_local_read),
             icon = ClipSyncIcons.History,
             segment = state.localRead,
-            actions = buildList {
-                if (state.routes.isNotEmpty()) {
-                    add(
-                        SegmentActionUi(
-                            label =
-                                stringResource(
-                                    if (wizardOpen) R.string.conduit_wizard_close else R.string.conduit_wizard_open,
-                                ),
-                            emphasized = !wizardOpen && state.localRead.beckoning,
-                            onClick = { wizardOpen = !wizardOpen },
-                        ),
-                    )
-                }
-            },
+            actions =
+                buildList {
+                    if (state.routes.isNotEmpty()) {
+                        add(
+                            SegmentActionUi(
+                                label =
+                                    stringResource(
+                                        if (wizardOpen) R.string.conduit_wizard_close else R.string.conduit_wizard_open,
+                                    ),
+                                emphasized = !wizardOpen && state.localRead.beckoning,
+                                onClick = { wizardOpen = !wizardOpen },
+                            ),
+                        )
+                    }
+                },
         )
         if (state.routes.isNotEmpty() && onRouteAction != null) {
             AnimatedVisibility(
                 visible = wizardOpen,
-                enter = fadeIn(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
-                    expandVertically(CharterMotion.spec(CharterMotion.DUR_EMPHASIS_MS)),
-                exit = fadeOut(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
-                    shrinkVertically(CharterMotion.spec(CharterMotion.DUR_EMPHASIS_MS)),
+                enter =
+                    fadeIn(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                        expandVertically(CharterMotion.spec(CharterMotion.DUR_EMPHASIS_MS)),
+                exit =
+                    fadeOut(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                        shrinkVertically(CharterMotion.spec(CharterMotion.DUR_EMPHASIS_MS)),
             ) {
                 Column {
                     Spacer(Modifier.height(8.dp))
@@ -303,39 +314,46 @@ fun HealthScreen(
             title = stringResource(R.string.conduit_segment_local_service),
             icon = ClipSyncIcons.Service,
             segment = state.localService,
-            actions = buildList {
-                if (state.serviceRunning && onServiceStop != null) {
-                    add(SegmentActionUi(label = stringResource(R.string.conduit_service_stop), onClick = onServiceStop))
-                } else if (!state.serviceRunning && state.pairedDeviceCount > 0 && onServiceStart != null) {
-                    add(
-                        SegmentActionUi(
-                            label = stringResource(R.string.conduit_service_start),
-                            emphasized = true,
-                            onClick = onServiceStart,
-                        ),
-                    )
-                }
-            },
+            actions =
+                buildList {
+                    if (state.serviceRunning && onServiceStop != null) {
+                        add(
+                            SegmentActionUi(
+                                label = stringResource(R.string.conduit_service_stop),
+                                onClick = onServiceStop,
+                            ),
+                        )
+                    } else if (!state.serviceRunning && state.pairedDeviceCount > 0 && onServiceStart != null) {
+                        add(
+                            SegmentActionUi(
+                                label = stringResource(R.string.conduit_service_start),
+                                emphasized = true,
+                                onClick = onServiceStart,
+                            ),
+                        )
+                    }
+                },
         )
         Spacer(Modifier.height(8.dp))
         PipelineSegment(
             title = stringResource(R.string.conduit_segment_network),
             icon = ClipSyncIcons.Network,
             segment = state.network,
-            actions = listOf(
-                SegmentActionUi(
-                    label =
-                        stringResource(
-                            if (state.pairedDeviceCount > 0) {
-                                R.string.conduit_manage_pairing
-                            } else {
-                                R.string.action_go_pair
-                            },
-                        ),
-                    emphasized = state.network.beckoning,
-                    onClick = onPairRequest,
+            actions =
+                listOf(
+                    SegmentActionUi(
+                        label =
+                            stringResource(
+                                if (state.pairedDeviceCount > 0) {
+                                    R.string.conduit_manage_pairing
+                                } else {
+                                    R.string.action_go_pair
+                                },
+                            ),
+                        emphasized = state.network.beckoning,
+                        onClick = onPairRequest,
+                    ),
                 ),
-            ),
         )
         bluetoothFallback?.let { fallback ->
             Spacer(Modifier.height(8.dp))
@@ -361,24 +379,25 @@ fun HealthScreen(
                 title = stringResource(R.string.conduit_segment_local_write),
                 icon = ClipSyncIcons.Conduit,
                 segment = localWrite,
-                actions = buildList {
-                    if (onTestWrite != null) {
-                        add(
-                            SegmentActionUi(
-                                label =
-                                    stringResource(
-                                        if (state.writeTestRunning) {
-                                            R.string.conduit_testing
-                                        } else {
-                                            R.string.conduit_test_write
-                                        },
-                                    ),
-                                busy = state.writeTestRunning,
-                                onClick = onTestWrite,
-                            ),
-                        )
-                    }
-                },
+                actions =
+                    buildList {
+                        if (onTestWrite != null) {
+                            add(
+                                SegmentActionUi(
+                                    label =
+                                        stringResource(
+                                            if (state.writeTestRunning) {
+                                                R.string.conduit_testing
+                                            } else {
+                                                R.string.conduit_test_write
+                                            },
+                                        ),
+                                    busy = state.writeTestRunning,
+                                    onClick = onTestWrite,
+                                ),
+                            )
+                        }
+                    },
             )
         }
         FlowLine(modifier = Modifier.padding(vertical = 12.dp))
@@ -392,9 +411,10 @@ fun HealthScreen(
                 text = stringResource(R.string.conduit_paired_devices_count, state.pairedDeviceCount),
                 style = ClipSyncType.groupHeader,
                 color = c.t4,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
                 textAlign = TextAlign.Center,
             )
             state.pairedDevices.forEach { device ->
@@ -421,19 +441,21 @@ private fun ConduitDeviceRow(
 ) {
     val c = clipSyncColors
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .charterCard()
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .charterCard()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             val boxShape = RoundedCornerShape(9.dp)
             Box(
-                modifier = Modifier
-                    .size(30.dp)
-                    .clip(boxShape)
-                    .background(c.deviceBg(device.accentSlot))
-                    .border(1.dp, c.deviceLn(device.accentSlot), boxShape),
+                modifier =
+                    Modifier
+                        .size(30.dp)
+                        .clip(boxShape)
+                        .background(c.deviceBg(device.accentSlot))
+                        .border(1.dp, c.deviceLn(device.accentSlot), boxShape),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -481,21 +503,21 @@ private fun ConduitDeviceRow(
                 for (slot in 1..DEVICE_ACCENT_SLOTS) {
                     val selected = slot == device.accentSlot
                     Box(
-                        modifier = Modifier
-                            .size(18.dp)
-                            .clip(CircleShape)
-                            .background(c.device(slot))
-                            .border(
-                                width = if (selected) 2.dp else 1.dp,
-                                color = if (selected) c.t1 else c.deviceLn(slot),
-                                shape = CircleShape,
-                            )
-                            .clickable {
-                                onAccentChange(
-                                    device.deviceId,
-                                    slot.takeIf { it != device.defaultSlot },
-                                )
-                            },
+                        modifier =
+                            Modifier
+                                .size(18.dp)
+                                .clip(CircleShape)
+                                .background(c.device(slot))
+                                .border(
+                                    width = if (selected) 2.dp else 1.dp,
+                                    color = if (selected) c.t1 else c.deviceLn(slot),
+                                    shape = CircleShape,
+                                ).clickable {
+                                    onAccentChange(
+                                        device.deviceId,
+                                        slot.takeIf { it != device.defaultSlot },
+                                    )
+                                },
                     )
                 }
                 Spacer(Modifier.weight(1f))
@@ -532,12 +554,13 @@ private fun NotificationsOffBanner(
     val c = clipSyncColors
     val shape = CharterShapes.control
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(c.sf3)
-            .border(1.dp, c.ln, shape)
-            .padding(horizontal = 12.dp, vertical = 9.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(c.sf3)
+                .border(1.dp, c.ln, shape)
+                .padding(horizontal = 12.dp, vertical = 9.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         Text(
@@ -557,10 +580,11 @@ private fun NotificationsOffBanner(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = c.flow,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
-                    .clickable(onClick = onOpenSettings)
-                    .padding(vertical = 2.dp),
+                modifier =
+                    Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .clickable(onClick = onOpenSettings)
+                        .padding(vertical = 2.dp),
             )
         }
     }
@@ -576,12 +600,13 @@ private fun InboxNotifyOffBanner(modifier: Modifier = Modifier) {
     val c = clipSyncColors
     val shape = CharterShapes.control
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(c.sf3)
-            .border(1.dp, c.ln, shape)
-            .padding(horizontal = 12.dp, vertical = 9.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(c.sf3)
+                .border(1.dp, c.ln, shape)
+                .padding(horizontal = 12.dp, vertical = 9.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         Text(
@@ -630,11 +655,12 @@ private fun PairedDevicesEmptyState(
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
             color = c.flow,
-            modifier = Modifier
-                .clip(shape)
-                .border(1.dp, c.flowLn, shape)
-                .clickable(onClick = onPairRequest)
-                .padding(horizontal = 14.dp, vertical = 7.dp),
+            modifier =
+                Modifier
+                    .clip(shape)
+                    .border(1.dp, c.flowLn, shape)
+                    .clickable(onClick = onPairRequest)
+                    .padding(horizontal = 14.dp, vertical = 7.dp),
         )
     }
 }
@@ -650,13 +676,14 @@ private fun TestResultRow(
     val tint = if (result.success) c.flow else c.err
     val shape = CharterShapes.control
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(if (result.success) c.flowBg else c.errBg)
-            .border(1.dp, if (result.success) c.flowLn else c.errLn, shape)
-            .clickable(onClick = onDismiss)
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(if (result.success) c.flowBg else c.errBg)
+                .border(1.dp, if (result.success) c.flowLn else c.errLn, shape)
+                .clickable(onClick = onDismiss)
+                .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
@@ -736,15 +763,21 @@ fun ConduitStatusBand(
             },
         )
     val shape = CharterShapes.control
+    val interactionSource = remember { MutableInteractionSource() }
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(44.dp)
-            .clip(shape)
-            .background(bandBg)
-            .border(1.dp, bandLn, shape)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 13.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(44.dp)
+                .tactilePress(interactionSource = interactionSource, targetScale = 0.985f)
+                .clip(shape)
+                .background(bandBg)
+                .border(1.dp, bandLn, shape)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = onClick,
+                ).padding(horizontal = 13.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ConduitRail(statuses = state.statuses)
@@ -775,22 +808,24 @@ fun ConduitRail(
     val c = clipSyncColors
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
         statuses.forEach { status ->
-            val segModifier = Modifier
-                .size(width = 14.dp, height = 4.dp)
-                .clip(RoundedCornerShape(2.dp))
+            val segModifier =
+                Modifier
+                    .size(width = 14.dp, height = 4.dp)
+                    .clip(RoundedCornerShape(2.dp))
             when (status) {
                 ConduitStatus.READY -> Box(segModifier.background(c.flow))
                 ConduitStatus.NEEDS_ACTION -> Box(segModifier.background(c.act))
-                ConduitStatus.DEGRADED -> Box(
-                    segModifier.background(
-                        Brush.horizontalGradient(
-                            0f to c.flow,
-                            0.52f to c.flow,
-                            0.52f to c.ln2,
-                            1f to c.ln2,
+                ConduitStatus.DEGRADED ->
+                    Box(
+                        segModifier.background(
+                            Brush.horizontalGradient(
+                                0f to c.flow,
+                                0.52f to c.flow,
+                                0.52f to c.ln2,
+                                1f to c.ln2,
+                            ),
                         ),
-                    ),
-                )
+                    )
                 else -> Box(segModifier.background(c.ln2))
             }
         }
@@ -818,33 +853,55 @@ private fun PipelineSegment(
     val beckons = segment.beckoning
     val expandable = segment.detailLines.isNotEmpty() || segment.errorDetail != null
     var expanded by rememberSaveable(title) { mutableStateOf(false) }
+    val chevronAngle by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = CharterMotion.bouncySpring(),
+        label = "segmentChevronAngle",
+    )
+    val interactionSource = remember { MutableInteractionSource() }
     val shape = CharterShapes.card
-    val tint = when {
-        segment.status == ConduitStatus.NEEDS_ACTION -> c.act
-        segment.status == ConduitStatus.READY -> c.flow
-        segment.status == ConduitStatus.DEGRADED -> c.flow.copy(alpha = 0.8f)
-        else -> c.t4
-    }
-    val surface = if (beckons) {
-        // The beckoning card keeps the same z1 depth (sh-1 + face) with the
-        // ochre wash composited on top — a tinted card, not a flat strip.
-        Modifier
-            .shadow(elevation = 3.dp, shape = shape, ambientColor = c.shadow, spotColor = c.shadow)
-            .clip(shape)
-            .background(c.sf)
-            .background(c.actBg)
-            .border(1.dp, c.actLn, shape)
-    } else {
-        Modifier.charterCard(corner = 16.dp)
-    }
+    val tint =
+        when {
+            segment.status == ConduitStatus.NEEDS_ACTION -> c.act
+            segment.status == ConduitStatus.READY -> c.flow
+            segment.status == ConduitStatus.DEGRADED -> c.flow.copy(alpha = 0.8f)
+            else -> c.t4
+        }
+    val surface =
+        if (beckons) {
+            // The beckoning card keeps the same z1 depth (sh-1 + face) with the
+            // ochre wash composited on top — a tinted card, not a flat strip.
+            Modifier
+                .shadow(elevation = 3.dp, shape = shape, ambientColor = c.shadow, spotColor = c.shadow)
+                .clip(shape)
+                .background(c.sf)
+                .background(c.actBg)
+                .border(1.dp, c.actLn, shape)
+        } else {
+            Modifier.charterCard(corner = 16.dp)
+        }
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .then(surface)
-            .then(
-                if (expandable) Modifier.clickable { expanded = !expanded } else Modifier,
-            )
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .then(
+                    if (expandable) {
+                        Modifier.tactilePress(interactionSource = interactionSource, targetScale = 0.988f)
+                    } else {
+                        Modifier
+                    },
+                ).then(surface)
+                .then(
+                    if (expandable) {
+                        Modifier.clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = { expanded = !expanded },
+                        )
+                    } else {
+                        Modifier
+                    },
+                ).padding(horizontal = 14.dp, vertical = 12.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -871,9 +928,10 @@ private fun PipelineSegment(
             )
             if (expandable) {
                 Text(
-                    text = if (expanded) "⌃" else "⌄",
-                    fontSize = 12.sp,
+                    text = "⌄",
+                    fontSize = 13.sp,
                     color = c.t4,
+                    modifier = Modifier.graphicsLayer { rotationZ = chevronAngle },
                 )
             }
         }
@@ -894,10 +952,12 @@ private fun PipelineSegment(
         )
         AnimatedVisibility(
             visible = expanded,
-            enter = fadeIn(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
-                expandVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
-            exit = fadeOut(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
-                shrinkVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
+            enter =
+                fadeIn(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                    expandVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
+            exit =
+                fadeOut(CharterMotion.spec(CharterMotion.DUR_QUICK_MS)) +
+                    shrinkVertically(CharterMotion.spec(CharterMotion.DUR_STANDARD_MS)),
         ) {
             Column {
                 segment.detailLines.forEach { line ->
@@ -943,7 +1003,10 @@ private fun PipelineSegment(
  * not pulse; render it with the unprobed dashed bar instead.
  */
 private fun ConduitStatus.quietened(): ConduitStatus =
-    if (this == ConduitStatus.NEEDS_ACTION) ConduitStatus.UNPROBED else this
+    when (this) {
+        ConduitStatus.NEEDS_ACTION -> ConduitStatus.UNPROBED
+        else -> this
+    }
 
 @Composable
 private fun SegmentActionChip(action: SegmentActionUi) {
@@ -951,33 +1014,48 @@ private fun SegmentActionChip(action: SegmentActionUi) {
     // A busy action states its progress on a quiet face: no invite chevron, no
     // flow tint, no click — the work is already running (charter: feedback
     // within 100ms, and a button must never pretend a second tap would help).
-    val tint = when {
-        action.busy -> c.t3
-        action.emphasized -> c.act
-        else -> c.flow
-    }
-    val bg = when {
-        action.busy -> c.sf3
-        action.emphasized -> c.actBg
-        else -> c.flowBg
-    }
-    val line = when {
-        action.busy -> c.ln2
-        action.emphasized -> c.actLn
-        else -> c.flowLn
-    }
+    val tint =
+        when {
+            action.busy -> c.t3
+            action.emphasized -> c.act
+            else -> c.flow
+        }
+    val bg =
+        when {
+            action.busy -> c.sf3
+            action.emphasized -> c.actBg
+            else -> c.flowBg
+        }
+    val line =
+        when {
+            action.busy -> c.ln2
+            action.emphasized -> c.actLn
+            else -> c.flowLn
+        }
     val shape = CharterShapes.control
+    val interactionSource = remember { MutableInteractionSource() }
     Text(
         text = if (action.busy) action.label else "${action.label} ›",
         fontSize = 13.sp,
         fontWeight = FontWeight.SemiBold,
         color = tint,
-        modifier = Modifier
-            .clip(shape)
-            .background(bg)
-            .border(1.dp, line, shape)
-            .clickable(enabled = !action.busy, onClick = action.onClick)
-            .padding(horizontal = 12.dp, vertical = 7.dp),
+        modifier =
+            Modifier
+                .then(
+                    if (!action.busy) {
+                        Modifier.tactilePress(interactionSource = interactionSource, targetScale = 0.94f)
+                    } else {
+                        Modifier
+                    },
+                ).clip(shape)
+                .background(bg)
+                .border(1.dp, line, shape)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    enabled = !action.busy,
+                    onClick = action.onClick,
+                ).padding(horizontal = 12.dp, vertical = 7.dp),
     )
 }
 
@@ -1007,12 +1085,13 @@ private fun FilledTrack(
     val c = clipSyncColors
     val shape = RoundedCornerShape(2.dp)
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(4.dp)
-            .clip(shape)
-            .background(c.sfIn)
-            .then(if (border != null) Modifier.border(1.dp, border, shape) else Modifier),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .clip(shape)
+                .background(c.sfIn)
+                .then(if (border != null) Modifier.border(1.dp, border, shape) else Modifier),
     ) {
         Box(
             Modifier
@@ -1034,9 +1113,10 @@ private fun PulsingBar(modifier: Modifier = Modifier) {
     val c = clipSyncColors
     if (LocalReducedMotion.current) {
         Canvas(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(4.dp),
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .height(4.dp),
         ) {
             val radius = CornerRadius(size.height / 2f)
             drawRoundRect(color = c.actBg, cornerRadius = radius)
@@ -1052,16 +1132,18 @@ private fun PulsingBar(modifier: Modifier = Modifier) {
     val pulse by transition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = CharterMotion.PULSE_MS, easing = CharterMotion.Ease),
-            repeatMode = RepeatMode.Restart,
-        ),
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = CharterMotion.PULSE_MS, easing = CharterMotion.Ease),
+                repeatMode = RepeatMode.Restart,
+            ),
         label = "pulse",
     )
     Canvas(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(4.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(4.dp),
     ) {
         val radius = CornerRadius(size.height / 2f)
         drawRoundRect(color = c.actBg, cornerRadius = radius)
@@ -1088,9 +1170,10 @@ private fun PulsingBar(modifier: Modifier = Modifier) {
 private fun DashedBar(modifier: Modifier = Modifier) {
     val c = clipSyncColors
     Canvas(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(4.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(4.dp),
     ) {
         drawLine(
             color = c.ln2,
@@ -1098,11 +1181,29 @@ private fun DashedBar(modifier: Modifier = Modifier) {
             end = Offset(size.width - 2.dp.toPx(), size.height / 2f),
             strokeWidth = 1.5.dp.toPx(),
             cap = StrokeCap.Round,
-            pathEffect = PathEffect.dashPathEffect(
-                floatArrayOf(6.dp.toPx(), 5.dp.toPx()),
-            ),
+            pathEffect =
+                PathEffect.dashPathEffect(
+                    floatArrayOf(6.dp.toPx(), 5.dp.toPx()),
+                ),
         )
     }
+}
+
+@Composable
+private fun rememberFlowTime(reducedMotion: Boolean): Float {
+    if (reducedMotion) return 0f
+    val transition = rememberInfiniteTransition(label = "flowLine")
+    val flowTime by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = 1800, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart,
+            ),
+        label = "flowTime",
+    )
+    return flowTime
 }
 
 /**
@@ -1114,22 +1215,7 @@ private fun DashedBar(modifier: Modifier = Modifier) {
 private fun FlowLine(modifier: Modifier = Modifier) {
     val c = clipSyncColors
     val reducedMotion = LocalReducedMotion.current
-    val time: Float
-    if (reducedMotion) {
-        time = 0f
-    } else {
-        val transition = rememberInfiniteTransition(label = "flowLine")
-        val flowTime by transition.animateFloat(
-            initialValue = 0f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 1800, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart,
-            ),
-            label = "flowTime",
-        )
-        time = flowTime
-    }
+    val time = rememberFlowTime(reducedMotion)
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -1153,10 +1239,11 @@ private fun FlowLine(modifier: Modifier = Modifier) {
                 drawCircle(
                     color = c.flow,
                     radius = 2.4.dp.toPx(),
-                    center = Offset(
-                        x = 3.dp.toPx() + index * spacing + (phase - 0.5f) * 2f * drift,
-                        y = size.height / 2f,
-                    ),
+                    center =
+                        Offset(
+                            x = 3.dp.toPx() + index * spacing + (phase - 0.5f) * 2f * drift,
+                            y = size.height / 2f,
+                        ),
                     alpha = alpha.coerceIn(0f, 1f),
                 )
             }

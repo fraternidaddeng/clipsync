@@ -3,10 +3,15 @@ package com.clipsync.android.ui.theme
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -444,8 +450,40 @@ object CharterMotion {
 
     /** A charter-eased tween for interaction transitions. */
     fun <T> spec(durationMillis: Int = DUR_STANDARD_MS): FiniteAnimationSpec<T> =
-        tween(durationMillis = durationMillis, easing = Ease)
+        tween(
+            durationMillis = durationMillis,
+            easing = Ease,
+        )
+
+    /** Tactile soft press spring: damping 0.75, medium-low stiffness for responsive physical rebound. */
+    fun <T> pressSpring(): SpringSpec<T> = spring(dampingRatio = 0.75f, stiffness = Spring.StiffnessMediumLow)
+
+    /** Subtle playful spring for tab icons and badges: damping 0.68. */
+    fun <T> bouncySpring(): SpringSpec<T> = spring(dampingRatio = 0.68f, stiffness = Spring.StiffnessMediumLow)
 }
+
+/**
+ * 触觉微压修饰符 (Tactile Micro-press):
+ * 按下时产生物理弹性微压与软弹回弹，为移动端卡片和控制条提供沉稳有质感的机械手感。
+ * 减弱动效开启时自动静止（返回原修饰符）。
+ */
+fun Modifier.tactilePress(
+    interactionSource: MutableInteractionSource,
+    targetScale: Float = 0.982f,
+): Modifier =
+    composed {
+        if (LocalReducedMotion.current) return@composed this
+        val isPressed by interactionSource.collectIsPressedAsState()
+        val scale by animateFloatAsState(
+            targetValue = if (isPressed) targetScale else 1f,
+            animationSpec = CharterMotion.pressSpring(),
+            label = "tactilePressScale",
+        )
+        this.graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+        }
+    }
 
 // ---------------------------------------------------------------------------
 // Type — the three voices (tokens.md §6), bundled in res/font

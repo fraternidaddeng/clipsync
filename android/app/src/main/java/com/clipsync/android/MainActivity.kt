@@ -18,6 +18,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,6 +40,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -53,8 +57,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -114,6 +120,7 @@ import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.LocalReducedMotion
 import com.clipsync.android.ui.theme.clipSyncColors
 import com.clipsync.android.ui.theme.filmGrain
+import com.clipsync.android.ui.theme.tactilePress
 import com.clipsync.android.update.AppUpdateInstaller
 import com.clipsync.android.update.GitHubReleaseClient
 import com.clipsync.android.update.readAppVersionName
@@ -936,12 +943,17 @@ private fun BackRow(
     onBack: () -> Unit,
 ) {
     val c = clipSyncColors
+    val interactionSource = remember { MutableInteractionSource() }
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onBack)
-                .padding(horizontal = 16.dp, vertical = 10.dp),
+                .tactilePress(interactionSource = interactionSource, targetScale = 0.98f)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = onBack,
+                ).padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(text = "‹", fontSize = 18.sp, color = c.flow)
@@ -1016,14 +1028,31 @@ private fun DockItem(
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
-    val tint = if (active) c.flow else c.t4
+    val interactionSource = remember { MutableInteractionSource() }
+    val tint by animateColorAsState(
+        targetValue = if (active) c.flow else c.t4,
+        animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+        label = "dockTint",
+    )
+    val iconScale by animateFloatAsState(
+        targetValue = if (active) 1.10f else 1.0f,
+        animationSpec = CharterMotion.bouncySpring(),
+        label = "dockIconScale",
+    )
+    val indicatorWidth by animateDpAsState(
+        targetValue = if (active) 16.dp else 0.dp,
+        animationSpec = CharterMotion.bouncySpring(),
+        label = "dockIndicatorWidth",
+    )
     Column(
         modifier =
-            modifier.clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick,
-            ),
+            modifier
+                .tactilePress(interactionSource = interactionSource, targetScale = 0.90f)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = onClick,
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
@@ -1031,13 +1060,27 @@ private fun DockItem(
             imageVector = icon,
             contentDescription = label,
             tint = tint,
-            modifier = Modifier.size(20.dp),
+            modifier =
+                Modifier
+                    .size(20.dp)
+                    .graphicsLayer {
+                        scaleX = iconScale
+                        scaleY = iconScale
+                    },
         )
         Text(
             text = label,
             fontSize = 11.sp,
             fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
             color = tint,
+        )
+        Box(
+            modifier =
+                Modifier
+                    .width(indicatorWidth)
+                    .height(2.5.dp)
+                    .clip(RoundedCornerShape(1.5.dp))
+                    .background(c.flow),
         )
     }
 }

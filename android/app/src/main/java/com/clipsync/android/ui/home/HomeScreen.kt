@@ -14,6 +14,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -76,6 +77,7 @@ import com.clipsync.android.ui.theme.ClipSyncType
 import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.charterSunken
 import com.clipsync.android.ui.theme.clipSyncColors
+import com.clipsync.android.ui.theme.tactilePress
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -194,7 +196,7 @@ fun HomeScreen(
                             modifier =
                                 Modifier.animateItem(
                                     fadeInSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
-                                    placementSpec = CharterMotion.spec(CharterMotion.DUR_STANDARD_MS),
+                                    placementSpec = CharterMotion.bouncySpring(),
                                     fadeOutSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
                                 ),
                         )
@@ -250,15 +252,16 @@ private fun SearchField(
         if (query.isNotEmpty()) {
             Spacer(Modifier.width(2.dp))
             val clearLabel = stringResource(R.string.home_search_clear)
-            // The glyph stays a quiet ×, but the target is a full 44dp square
-            // (a 15sp mark alone is far too small to hit) and TalkBack hears a
-            // named button — 清除搜索 — rather than an unlabeled letter.
+            val clearInteractionSource = remember { MutableInteractionSource() }
             Box(
                 modifier =
                     Modifier
                         .size(SEARCH_CLEAR_TOUCH_TARGET)
+                        .tactilePress(interactionSource = clearInteractionSource, targetScale = 0.88f)
                         .clip(CircleShape)
                         .clickable(
+                            interactionSource = clearInteractionSource,
+                            indication = null,
                             onClick = { onQueryChange("") },
                             role = Role.Button,
                             onClickLabel = clearLabel,
@@ -333,6 +336,7 @@ private fun FormatFilterRow(
         options.forEach { option ->
             val active = option == selected
             val shape = CharterShapes.control
+            val interactionSource = remember { MutableInteractionSource() }
             val textColor by animateColorAsState(
                 targetValue = if (active) c.flow else c.t3,
                 animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
@@ -355,11 +359,15 @@ private fun FormatFilterRow(
                 color = textColor,
                 modifier =
                     Modifier
+                        .tactilePress(interactionSource = interactionSource, targetScale = 0.94f)
                         .clip(shape)
                         .background(bgColor)
                         .border(1.dp, borderColor, shape)
-                        .clickable { onSelect(option) }
-                        .padding(horizontal = 11.dp, vertical = 5.dp),
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = { onSelect(option) },
+                        ).padding(horizontal = 11.dp, vertical = 5.dp),
             )
         }
     }
@@ -479,13 +487,18 @@ private fun ClipCard(
     modifier: Modifier = Modifier,
 ) {
     val c = clipSyncColors
+    val interactionSource = remember { MutableInteractionSource() }
     Column(
         modifier =
             modifier
                 .fillMaxWidth()
+                .tactilePress(interactionSource = interactionSource, targetScale = 0.982f)
                 .charterCard()
-                .clickable(onClick = onCopy)
-                .padding(horizontal = 13.dp, vertical = 10.dp),
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = onCopy,
+                ).padding(horizontal = 13.dp, vertical = 10.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

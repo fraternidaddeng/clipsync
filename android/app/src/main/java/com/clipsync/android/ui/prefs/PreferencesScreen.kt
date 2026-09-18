@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -48,6 +49,7 @@ import com.clipsync.android.ui.theme.ClipSyncTheme
 import com.clipsync.android.ui.theme.ClipSyncType
 import com.clipsync.android.ui.theme.charterCard
 import com.clipsync.android.ui.theme.clipSyncColors
+import com.clipsync.android.ui.theme.tactilePress
 
 /**
  * 偏好: the key product commitments (product-scope.md) grouped per
@@ -607,40 +609,60 @@ private fun LanguageRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val shape = CharterShapes.control
             options.forEach { (tag, label) ->
-                val isSelected = tag == selectedTag
-                val textColor by animateColorAsState(
-                    targetValue = if (isSelected) c.flow else c.t3,
-                    animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
-                    label = "langChipTextColor",
-                )
-                val bgColor by animateColorAsState(
-                    targetValue = if (isSelected) c.flowBg else c.sf3,
-                    animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
-                    label = "langChipBgColor",
-                )
-                val borderColor by animateColorAsState(
-                    targetValue = if (isSelected) c.flowLn else c.ln2,
-                    animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
-                    label = "langChipBorderColor",
-                )
-                Text(
-                    text = label,
-                    fontSize = 13.sp,
-                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                    color = textColor,
-                    modifier =
-                        Modifier
-                            .clip(shape)
-                            .background(bgColor)
-                            .border(1.dp, borderColor, shape)
-                            .clickable { onSelect(tag) }
-                            .padding(horizontal = 12.dp, vertical = 6.dp),
+                LanguageChip(
+                    tag = tag,
+                    label = label,
+                    isSelected = tag == selectedTag,
+                    onSelect = onSelect,
                 )
             }
         }
     }
+}
+
+@Composable
+private fun LanguageChip(
+    tag: String,
+    label: String,
+    isSelected: Boolean,
+    onSelect: (String) -> Unit,
+) {
+    val c = clipSyncColors
+    val shape = CharterShapes.control
+    val interactionSource = remember { MutableInteractionSource() }
+    val textColor by animateColorAsState(
+        targetValue = if (isSelected) c.flow else c.t3,
+        animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+        label = "langChipTextColor",
+    )
+    val bgColor by animateColorAsState(
+        targetValue = if (isSelected) c.flowBg else c.sf3,
+        animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+        label = "langChipBgColor",
+    )
+    val borderColor by animateColorAsState(
+        targetValue = if (isSelected) c.flowLn else c.ln2,
+        animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
+        label = "langChipBorderColor",
+    )
+    Text(
+        text = label,
+        fontSize = 13.sp,
+        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+        color = textColor,
+        modifier =
+            Modifier
+                .tactilePress(interactionSource = interactionSource, targetScale = 0.94f)
+                .clip(shape)
+                .background(bgColor)
+                .border(1.dp, borderColor, shape)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = { onSelect(tag) },
+                ).padding(horizontal = 12.dp, vertical = 6.dp),
+    )
 }
 
 /**
@@ -670,6 +692,7 @@ private fun <T> ChoiceRow(
             val shape = CharterShapes.control
             options.forEach { (label, value) ->
                 val isSelected = value == selected
+                val interactionSource = remember { MutableInteractionSource() }
                 val textColor by animateColorAsState(
                     targetValue = if (isSelected) c.flow else c.t3,
                     animationSpec = CharterMotion.spec(CharterMotion.DUR_QUICK_MS),
@@ -692,11 +715,15 @@ private fun <T> ChoiceRow(
                     color = textColor,
                     modifier =
                         Modifier
+                            .tactilePress(interactionSource = interactionSource, targetScale = 0.94f)
                             .clip(shape)
                             .background(bgColor)
                             .border(1.dp, borderColor, shape)
-                            .clickable { onSelect(value) }
-                            .padding(horizontal = 14.dp, vertical = 6.dp),
+                            .clickable(
+                                interactionSource = interactionSource,
+                                indication = null,
+                                onClick = { onSelect(value) },
+                            ).padding(horizontal = 14.dp, vertical = 6.dp),
                 )
             }
         }
@@ -752,6 +779,7 @@ private fun StepperButton(
 ) {
     val c = clipSyncColors
     val shape = CharterShapes.control
+    val interactionSource = remember { MutableInteractionSource() }
     Text(
         text = label,
         fontSize = 14.sp,
@@ -760,11 +788,21 @@ private fun StepperButton(
         textAlign = TextAlign.Center,
         modifier =
             Modifier
-                .clip(shape)
+                .then(
+                    if (enabled) {
+                        Modifier.tactilePress(interactionSource = interactionSource, targetScale = 0.90f)
+                    } else {
+                        Modifier
+                    },
+                ).clip(shape)
                 .background(if (enabled) c.sf3 else c.sfIn)
                 .border(1.dp, c.ln2, shape)
-                .clickable(enabled = enabled, onClick = onClick)
-                .padding(horizontal = 12.dp, vertical = 5.dp),
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    enabled = enabled,
+                    onClick = onClick,
+                ).padding(horizontal = 12.dp, vertical = 5.dp),
     )
 }
 
@@ -775,7 +813,6 @@ private fun StepperButton(
  */
 @Composable
 private fun ClearHistoryRow(onClearHistory: () -> Unit) {
-    val c = clipSyncColors
     var confirming by remember { mutableStateOf(false) }
     if (!confirming) {
         ActionRow(
@@ -784,49 +821,72 @@ private fun ClearHistoryRow(onClearHistory: () -> Unit) {
             onClick = { confirming = true },
         )
     } else {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
-        ) {
-            Text(text = stringResource(R.string.prefs_clear_confirm_title), fontSize = 14.sp, color = c.t1)
-            Spacer(Modifier.height(2.dp))
+        ClearHistoryConfirmation(
+            onConfirm = {
+                confirming = false
+                onClearHistory()
+            },
+            onCancel = { confirming = false },
+        )
+    }
+}
+
+@Composable
+private fun ClearHistoryConfirmation(
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit,
+) {
+    val c = clipSyncColors
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+    ) {
+        Text(text = stringResource(R.string.prefs_clear_confirm_title), fontSize = 14.sp, color = c.t1)
+        Spacer(Modifier.height(2.dp))
+        Text(
+            text = stringResource(R.string.prefs_clear_confirm_body),
+            style = ClipSyncType.caption,
+            color = c.t3,
+        )
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            val shape = CharterShapes.control
+            val clearSource = remember { MutableInteractionSource() }
+            val cancelSource = remember { MutableInteractionSource() }
             Text(
-                text = stringResource(R.string.prefs_clear_confirm_body),
-                style = ClipSyncType.caption,
-                color = c.t3,
+                text = stringResource(R.string.prefs_clear_confirm_action),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = c.t1,
+                modifier =
+                    Modifier
+                        .tactilePress(interactionSource = clearSource, targetScale = 0.94f)
+                        .clip(shape)
+                        .background(c.sfIn)
+                        .border(1.dp, c.ln2, shape)
+                        .clickable(
+                            interactionSource = clearSource,
+                            indication = null,
+                            onClick = onConfirm,
+                        ).padding(horizontal = 14.dp, vertical = 7.dp),
             )
-            Spacer(Modifier.height(10.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                val shape = CharterShapes.control
-                Text(
-                    text = stringResource(R.string.prefs_clear_confirm_action),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = c.t1,
-                    modifier =
-                        Modifier
-                            .clip(shape)
-                            .background(c.sfIn)
-                            .border(1.dp, c.ln2, shape)
-                            .clickable {
-                                confirming = false
-                                onClearHistory()
-                            }.padding(horizontal = 14.dp, vertical = 7.dp),
-                )
-                Text(
-                    text = stringResource(R.string.common_cancel),
-                    fontSize = 13.sp,
-                    color = c.flow,
-                    modifier =
-                        Modifier
-                            .clip(shape)
-                            .border(1.dp, c.flowLn, shape)
-                            .clickable { confirming = false }
-                            .padding(horizontal = 14.dp, vertical = 7.dp),
-                )
-            }
+            Text(
+                text = stringResource(R.string.common_cancel),
+                fontSize = 13.sp,
+                color = c.flow,
+                modifier =
+                    Modifier
+                        .tactilePress(interactionSource = cancelSource, targetScale = 0.94f)
+                        .clip(shape)
+                        .border(1.dp, c.flowLn, shape)
+                        .clickable(
+                            interactionSource = cancelSource,
+                            indication = null,
+                            onClick = onCancel,
+                        ).padding(horizontal = 14.dp, vertical = 7.dp),
+            )
         }
     }
 }
@@ -866,12 +926,23 @@ private fun ActionRow(
     enabled: Boolean = true,
 ) {
     val c = clipSyncColors
+    val interactionSource = remember { MutableInteractionSource() }
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(enabled = enabled, onClick = onClick)
-                .padding(horizontal = 14.dp, vertical = 12.dp),
+                .then(
+                    if (enabled) {
+                        Modifier.tactilePress(interactionSource = interactionSource, targetScale = 0.985f)
+                    } else {
+                        Modifier
+                    },
+                ).clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    enabled = enabled,
+                    onClick = onClick,
+                ).padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
@@ -892,12 +963,17 @@ private fun LinkRow(
     onClick: () -> Unit,
 ) {
     val c = clipSyncColors
+    val interactionSource = remember { MutableInteractionSource() }
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(horizontal = 14.dp, vertical = 14.dp),
+                .tactilePress(interactionSource = interactionSource, targetScale = 0.985f)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = onClick,
+                ).padding(horizontal = 14.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -933,6 +1009,7 @@ private fun DeviceEmptyState(onOpenConduit: () -> Unit) {
             color = c.t3,
         )
         val shape = CharterShapes.control
+        val interactionSource = remember { MutableInteractionSource() }
         Text(
             text = stringResource(R.string.action_go_pair) + " ›",
             fontSize = 13.sp,
@@ -940,10 +1017,14 @@ private fun DeviceEmptyState(onOpenConduit: () -> Unit) {
             color = c.flow,
             modifier =
                 Modifier
+                    .tactilePress(interactionSource = interactionSource, targetScale = 0.94f)
                     .clip(shape)
                     .border(1.dp, c.flowLn, shape)
-                    .clickable(onClick = onOpenConduit)
-                    .padding(horizontal = 14.dp, vertical = 7.dp),
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null,
+                        onClick = onOpenConduit,
+                    ).padding(horizontal = 14.dp, vertical = 7.dp),
         )
     }
 }
