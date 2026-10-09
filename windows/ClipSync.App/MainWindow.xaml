@@ -2838,7 +2838,6 @@
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Margin="0,0,16,0">
                                         <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_CurrentVersion}" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_CurrentVersion_Desc}" />
                                     </StackPanel>
                                     <TextBlock Grid.Column="1"
                                                VerticalAlignment="Top"
@@ -2857,7 +2856,6 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_CheckUpdate}" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_CheckUpdate_Desc}" />
                                         </StackPanel>
                                         <Button Grid.Column="1"
                                                 VerticalAlignment="Top"

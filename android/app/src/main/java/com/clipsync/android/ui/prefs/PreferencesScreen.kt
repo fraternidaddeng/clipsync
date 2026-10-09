@@ -422,7 +422,6 @@ fun PreferencesScreen(
             RowDivider()
             ActionRow(
                 title = stringResource(R.string.prefs_check_update),
-                description = stringResource(R.string.prefs_check_update_desc),
                 enabled = !state.updateBusy,
                 onClick = onCheckUpdate,
             )
@@ -921,8 +920,8 @@ private fun ValueRow(
 @Composable
 private fun ActionRow(
     title: String,
-    description: String,
     onClick: () -> Unit,
+    description: String? = null,
     enabled: Boolean = true,
 ) {
     val c = clipSyncColors
@@ -947,8 +946,10 @@ private fun ActionRow(
     ) {
         Column(Modifier.weight(1f)) {
             Text(text = title, fontSize = 14.sp, color = if (enabled) c.t1 else c.t4)
-            Spacer(Modifier.height(2.dp))
-            Text(text = description, style = ClipSyncType.caption, color = if (enabled) c.t3 else c.t4)
+            if (description != null) {
+                Spacer(Modifier.height(2.dp))
+                Text(text = description, style = ClipSyncType.caption, color = if (enabled) c.t3 else c.t4)
+            }
         }
         Spacer(Modifier.width(12.dp))
         Text(text = "›", fontSize = 16.sp, color = if (enabled) c.flow else c.t4)
