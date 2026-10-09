@@ -558,7 +558,7 @@
     <string name="prefs_group_about">Informazioni</string>
     <string name="prefs_current_version">Versione attuale</string>
     <string name="prefs_check_update">Controlla aggiornamenti</string>
-    <string name="prefs_check_update_desc">Controlla se c'è una versione nuova.</string>
+    <string name="prefs_check_update_desc">Controlla se esiste una versione nuova.</string>
     <string name="prefs_update_download">Scarica e installa</string>
     <string name="prefs_update_download_desc">Prima scarica e verifica, poi apre l’installer di sistema. Questa app deve poter installare origini sconosciute.</string>
     <string name="prefs_update_checking">Controllo dell’ultima pubblicazione…</string>

@@ -558,7 +558,7 @@
     <string name="prefs_group_about">À propos</string>
     <string name="prefs_current_version">Version actuelle</string>
     <string name="prefs_check_update">Rechercher des mises à jour</string>
-    <string name="prefs_check_update_desc">Vérifier s'il existe une nouvelle version.</string>
+    <string name="prefs_check_update_desc">Chercher une nouvelle version.</string>
     <string name="prefs_update_download">Télécharger et installer</string>
     <string name="prefs_update_download_desc">Télécharge et vérifie d’abord, puis ouvre l’installateur système. Il faut autoriser cette appli à installer des sources inconnues.</string>
     <string name="prefs_update_checking">Interrogation de la dernière publication…</string>

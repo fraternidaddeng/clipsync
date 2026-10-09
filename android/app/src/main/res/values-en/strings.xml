@@ -556,7 +556,7 @@
     <string name="prefs_update_available">New version %1$s found (current %2$s)</string>
     <string name="prefs_update_downloading">Downloading… %1$d%%</string>
     <string name="prefs_update_installing">Ready to install</string>
-    <string name="prefs_update_error_network">Can't reach the server right now. Try again later.</string>
+    <string name="prefs_update_error_network">Cannot reach the server right now. Try again later.</string>
     <string name="prefs_update_error_parse">The latest release information could not be parsed.</string>
     <string name="prefs_update_error_no_asset">The latest release has no package for this platform.</string>
     <string name="prefs_update_error_hash">The download’s SHA-256 did not match the release. The file was discarded.</string>
