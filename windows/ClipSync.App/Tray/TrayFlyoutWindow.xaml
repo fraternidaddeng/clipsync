@@ -23,14 +23,20 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <ui:DeviceAccentBrushConverter x:Key="DeviceAccentBrush" />
 
-        <!-- 最近剪贴卡：z2 面浮在 z1 浮窗里（charter-preview .cd），点击即复制 -->
+        <!-- 最近剪贴卡：z2 面浮在 z1 浮窗里（charter-preview .cd），点击即复制，带软弹微按压与悬停微浮 -->
         <Style x:Key="ClipCard" TargetType="Button">
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Grid x:Name="Root" Margin="0,0,0,7">
+                        <Grid x:Name="Root" Margin="0,0,0,7" RenderTransformOrigin="0.5,0.5">
+                            <Grid.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                                    <TranslateTransform X="0" Y="0" />
+                                </TransformGroup>
+                            </Grid.RenderTransform>
                             <Border x:Name="Fill"
                                     Background="{StaticResource CsSurfaceUpBrush}"
                                     CornerRadius="10"
@@ -53,19 +59,59 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Fill" Property="Effect" Value="{StaticResource CsSh2Effect}" />
-                                <Setter TargetName="Root" Property="RenderTransform">
-                                    <Setter.Value>
-                                        <TranslateTransform Y="-1" />
-                                    </Setter.Value>
-                                </Setter>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)">
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.15" Value="-1.5" KeySpline="0.16,1 0.3,1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)">
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.18" Value="0" KeySpline="0.16,1 0.3,1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="Card" Property="BorderBrush" Value="{StaticResource CsFlowLineBrush}" />
-                                <Setter TargetName="Root" Property="RenderTransform">
-                                    <Setter.Value>
-                                        <ScaleTransform ScaleX="0.992" ScaleY="0.992" CenterX="200" CenterY="20" />
-                                    </Setter.Value>
-                                </Setter>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.07" Value="0.985" KeySpline="0.2,0 0.4,1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.07" Value="0.985" KeySpline="0.2,0 0.4,1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.08" Value="1.005" KeySpline="0.16,1 0.3,1" />
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.20" Value="1.0" KeySpline="0.16,1 0.3,1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.08" Value="1.005" KeySpline="0.16,1 0.3,1" />
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.20" Value="1.0" KeySpline="0.16,1 0.3,1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -88,13 +134,49 @@
                                 Background="{StaticResource CsFlowBgBrush}"
                                 BorderBrush="{StaticResource CsFlowLineBrush}"
                                 BorderThickness="1"
-                                CornerRadius="100">
+                                CornerRadius="100"
+                                RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </Border.RenderTransform>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Bd" Property="Background" Value="{StaticResource CsFlowBrush}" />
                                 <Setter Property="Foreground" Value="{StaticResource CsOnFlowBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Bd"
+                                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.07" Value="0.95" KeySpline="0.2,0 0.4,1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Bd"
+                                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.07" Value="0.95" KeySpline="0.2,0 0.4,1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Bd"
+                                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.08" Value="1.03" KeySpline="0.16,1 0.3,1" />
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.20" Value="1.0" KeySpline="0.16,1 0.3,1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Bd"
+                                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.08" Value="1.03" KeySpline="0.16,1 0.3,1" />
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.20" Value="1.0" KeySpline="0.16,1 0.3,1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
                             </Trigger>
                             <!-- 已暂停 = 陈述事实的灰，不是错误的红 -->
                             <DataTrigger Binding="{Binding IsPaused}" Value="True">

@@ -14,6 +14,7 @@ public partial class MainWindow : Window
         // 指纹、快捷键、监听地址等机器文本在 XAML 里各自钉回 LTR。
         FlowDirection = Localization.LocalizationManager.WindowFlowDirection;
         this.viewModel = viewModel;
+        viewModel.History.CollectionChanged += OnHistoryCollectionChanged;
         DataContext = viewModel;
         Loaded += OnLoaded;
         Closing += OnClosing;
@@ -21,6 +22,10 @@ public partial class MainWindow : Window
         // 无线配对二维码：payload 是数据（VM），像素是视图的事——文本一变就按当前 DPI 重栅格。
         viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
+
+    private readonly System.Collections.Generic.Dictionary<System.Guid, double> flipFirstPositions = new();
+    private readonly System.Collections.Generic.HashSet<System.Guid> flipNewlyAddedIds = new();
+    private bool flipPending;
 
     /// <summary>The wireless pairing QR's intended edge in device-independent units (matches the XAML frame).</summary>
     private const double WirelessQrEdgeDips = 200;
@@ -65,11 +70,14 @@ public partial class MainWindow : Window
     {
         base.OnDpiChanged(oldDpi, newDpi);
         RenderWirelessQr();
+        UpdateNavPillIndicator(animate: false);
     }
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
         Loaded -= OnLoaded;
+        UpdateNavPillIndicator(animate: false);
+        NavStack.SizeChanged += (_, _) => UpdateNavPillIndicator(animate: false);
         await viewModel.InitializeAsync();
 
         // 首启落「通路」页（pc-ui-inventory #14）：还没配对也没有任何历史时，
@@ -78,6 +86,242 @@ public partial class MainWindow : Window
         {
             NavConduit.IsChecked = true;
         }
+    }
+
+    private void OnNavTabChecked(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+        {
+            return;
+        }
+
+        UpdateNavPillIndicator(animate: true);
+    }
+
+    private System.Windows.Controls.RadioButton? GetCheckedNavTab() =>
+        NavHistory.IsChecked == true ? NavHistory :
+        NavConduit.IsChecked == true ? NavConduit :
+        NavPrefs.IsChecked == true ? NavPrefs : null;
+
+    private void UpdateNavPillIndicator(bool animate)
+    {
+        var target = GetCheckedNavTab();
+        if (target is null || target.ActualHeight <= 0 || NavStack.ActualHeight <= 0)
+        {
+            return;
+        }
+
+        var targetY = target.TranslatePoint(new Point(0, 0), NavStack).Y;
+        NavPillIndicator.Height = target.ActualHeight;
+
+        if (!animate || !SystemParameters.ClientAreaAnimation)
+        {
+            NavPillTranslate.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, null);
+            NavPillScale.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, null);
+            NavPillScale.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, null);
+            NavPillTranslate.Y = targetY;
+            NavPillScale.ScaleX = 1.0;
+            NavPillScale.ScaleY = 1.0;
+            return;
+        }
+
+        var currentY = NavPillTranslate.Y;
+        var delta = targetY - currentY;
+        if (System.Math.Abs(delta) < 0.5)
+        {
+            return;
+        }
+
+        var yAnim = new System.Windows.Media.Animation.DoubleAnimationUsingKeyFrames();
+        yAnim.KeyFrames.Add(new System.Windows.Media.Animation.SplineDoubleKeyFrame(
+            targetY + (delta * 0.045),
+            System.Windows.Media.Animation.KeyTime.FromTimeSpan(System.TimeSpan.FromMilliseconds(170)),
+            new System.Windows.Media.Animation.KeySpline(0.16, 1, 0.3, 1)));
+        yAnim.KeyFrames.Add(new System.Windows.Media.Animation.SplineDoubleKeyFrame(
+            targetY,
+            System.Windows.Media.Animation.KeyTime.FromTimeSpan(System.TimeSpan.FromMilliseconds(280)),
+            new System.Windows.Media.Animation.KeySpline(0.16, 1, 0.3, 1)));
+
+        var scaleYAnim = new System.Windows.Media.Animation.DoubleAnimationUsingKeyFrames();
+        scaleYAnim.KeyFrames.Add(new System.Windows.Media.Animation.SplineDoubleKeyFrame(
+            1.10,
+            System.Windows.Media.Animation.KeyTime.FromTimeSpan(System.TimeSpan.FromMilliseconds(95)),
+            new System.Windows.Media.Animation.KeySpline(0.2, 0, 0.4, 1)));
+        scaleYAnim.KeyFrames.Add(new System.Windows.Media.Animation.SplineDoubleKeyFrame(
+            0.97,
+            System.Windows.Media.Animation.KeyTime.FromTimeSpan(System.TimeSpan.FromMilliseconds(195)),
+            new System.Windows.Media.Animation.KeySpline(0.16, 1, 0.3, 1)));
+        scaleYAnim.KeyFrames.Add(new System.Windows.Media.Animation.SplineDoubleKeyFrame(
+            1.0,
+            System.Windows.Media.Animation.KeyTime.FromTimeSpan(System.TimeSpan.FromMilliseconds(280)),
+            new System.Windows.Media.Animation.KeySpline(0.16, 1, 0.3, 1)));
+
+        var scaleXAnim = new System.Windows.Media.Animation.DoubleAnimationUsingKeyFrames();
+        scaleXAnim.KeyFrames.Add(new System.Windows.Media.Animation.SplineDoubleKeyFrame(
+            0.95,
+            System.Windows.Media.Animation.KeyTime.FromTimeSpan(System.TimeSpan.FromMilliseconds(95)),
+            new System.Windows.Media.Animation.KeySpline(0.2, 0, 0.4, 1)));
+        scaleXAnim.KeyFrames.Add(new System.Windows.Media.Animation.SplineDoubleKeyFrame(
+            1.015,
+            System.Windows.Media.Animation.KeyTime.FromTimeSpan(System.TimeSpan.FromMilliseconds(195)),
+            new System.Windows.Media.Animation.KeySpline(0.16, 1, 0.3, 1)));
+        scaleXAnim.KeyFrames.Add(new System.Windows.Media.Animation.SplineDoubleKeyFrame(
+            1.0,
+            System.Windows.Media.Animation.KeyTime.FromTimeSpan(System.TimeSpan.FromMilliseconds(280)),
+            new System.Windows.Media.Animation.KeySpline(0.16, 1, 0.3, 1)));
+
+        NavPillTranslate.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, yAnim);
+        NavPillScale.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, scaleYAnim);
+        NavPillScale.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, scaleXAnim);
+    }
+
+    /// <summary>
+    /// Non-extruding FLIP transition for history items: snapshots pre-layout Y coordinates
+    /// before the ItemsPanel re-arranges, then glides surviving cards via TranslateTransform.Y
+    /// and fades/lifts newly arrived cards without animating Height.
+    /// </summary>
+    private void OnHistoryCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if (!IsLoaded || !SystemParameters.ClientAreaAnimation || !HistoryListBox.IsVisible)
+        {
+            return;
+        }
+
+        if (!flipPending)
+        {
+            flipFirstPositions.Clear();
+            flipNewlyAddedIds.Clear();
+            foreach (var item in viewModel.History)
+            {
+                if (HistoryListBox.ItemContainerGenerator.ContainerFromItem(item) is System.Windows.Controls.ListBoxItem container
+                    && container.IsLoaded
+                    && container.ActualHeight > 0)
+                {
+                    flipFirstPositions[item.EventId] = container.TranslatePoint(new Point(0, 0), HistoryListBox).Y;
+                }
+            }
+
+            flipPending = true;
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new System.Action(PlayHistoryFlip));
+        }
+
+        if (e.NewItems is not null)
+        {
+            foreach (var newItem in e.NewItems)
+            {
+                if (newItem is HistoryItemViewModel vm && !flipFirstPositions.ContainsKey(vm.EventId))
+                {
+                    flipNewlyAddedIds.Add(vm.EventId);
+                }
+            }
+        }
+    }
+
+    private void PlayHistoryFlip()
+    {
+        flipPending = false;
+        if (!SystemParameters.ClientAreaAnimation || !HistoryListBox.IsVisible)
+        {
+            flipFirstPositions.Clear();
+            flipNewlyAddedIds.Clear();
+            return;
+        }
+
+        var hadPriorItems = flipFirstPositions.Count > 0;
+        var maxAnimatedIndex = System.Math.Min(viewModel.History.Count, 14);
+        var easeOut = new System.Windows.Media.Animation.CubicEase
+        {
+            EasingMode = System.Windows.Media.Animation.EasingMode.EaseOut
+        };
+
+        for (var i = 0; i < maxAnimatedIndex; i++)
+        {
+            var item = viewModel.History[i];
+            if (HistoryListBox.ItemContainerGenerator.ContainerFromItem(item) is not System.Windows.Controls.ListBoxItem container
+                || !container.IsLoaded
+                || container.ActualHeight <= 0)
+            {
+                continue;
+            }
+
+            var (scale, translate) = EnsureItemTransform(container);
+            if (hadPriorItems && flipFirstPositions.TryGetValue(item.EventId, out var firstY))
+            {
+                translate.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, null);
+                translate.Y = 0;
+                var lastY = container.TranslatePoint(new Point(0, 0), HistoryListBox).Y;
+                var deltaY = firstY - lastY;
+                if (System.Math.Abs(deltaY) > 1.0 && System.Math.Abs(deltaY) < 420.0)
+                {
+                    var slide = new System.Windows.Media.Animation.DoubleAnimation(
+                        fromValue: deltaY,
+                        toValue: 0,
+                        duration: new Duration(System.TimeSpan.FromMilliseconds(240)))
+                    {
+                        EasingFunction = easeOut
+                    };
+                    translate.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, slide);
+                }
+            }
+            else if (hadPriorItems && flipNewlyAddedIds.Contains(item.EventId) && flipNewlyAddedIds.Count <= 4)
+            {
+                var fade = new System.Windows.Media.Animation.DoubleAnimation(
+                    fromValue: 0,
+                    toValue: 1,
+                    duration: new Duration(System.TimeSpan.FromMilliseconds(200)))
+                {
+                    EasingFunction = easeOut
+                };
+                var lift = new System.Windows.Media.Animation.DoubleAnimation(
+                    fromValue: -12,
+                    toValue: 0,
+                    duration: new Duration(System.TimeSpan.FromMilliseconds(240)))
+                {
+                    EasingFunction = easeOut
+                };
+                var pop = new System.Windows.Media.Animation.DoubleAnimationUsingKeyFrames();
+                pop.KeyFrames.Add(new System.Windows.Media.Animation.DiscreteDoubleKeyFrame(
+                    0.97,
+                    System.Windows.Media.Animation.KeyTime.FromTimeSpan(System.TimeSpan.Zero)));
+                pop.KeyFrames.Add(new System.Windows.Media.Animation.SplineDoubleKeyFrame(
+                    1.008,
+                    System.Windows.Media.Animation.KeyTime.FromTimeSpan(System.TimeSpan.FromMilliseconds(130)),
+                    new System.Windows.Media.Animation.KeySpline(0.16, 1, 0.3, 1)));
+                pop.KeyFrames.Add(new System.Windows.Media.Animation.SplineDoubleKeyFrame(
+                    1.0,
+                    System.Windows.Media.Animation.KeyTime.FromTimeSpan(System.TimeSpan.FromMilliseconds(240)),
+                    new System.Windows.Media.Animation.KeySpline(0.16, 1, 0.3, 1)));
+
+                container.BeginAnimation(UIElement.OpacityProperty, fade);
+                translate.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, lift);
+                scale.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, pop);
+                scale.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, pop);
+            }
+        }
+
+        flipFirstPositions.Clear();
+        flipNewlyAddedIds.Clear();
+    }
+
+    private static (System.Windows.Media.ScaleTransform Scale, System.Windows.Media.TranslateTransform Translate) EnsureItemTransform(
+        System.Windows.Controls.ListBoxItem container)
+    {
+        if (container.RenderTransform is System.Windows.Media.TransformGroup group
+            && group.Children.Count >= 2
+            && group.Children[0] is System.Windows.Media.ScaleTransform existingScale
+            && group.Children[1] is System.Windows.Media.TranslateTransform existingTranslate)
+        {
+            return (existingScale, existingTranslate);
+        }
+
+        var scale = new System.Windows.Media.ScaleTransform(1, 1);
+        var translate = new System.Windows.Media.TranslateTransform(0, 0);
+        var newGroup = new System.Windows.Media.TransformGroup();
+        newGroup.Children.Add(scale);
+        newGroup.Children.Add(translate);
+        container.RenderTransformOrigin = new Point(0.5, 0.5);
+        container.RenderTransform = newGroup;
+        return (scale, translate);
     }
 
     private void OnClosing(object? sender, System.ComponentModel.CancelEventArgs e)

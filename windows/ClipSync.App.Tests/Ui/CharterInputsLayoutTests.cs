@@ -106,6 +106,71 @@ public sealed class CharterInputsLayoutTests
         Assert.Equal(new Thickness(12, 6, 12, 6), comboBox.Padding);
     });
 
+    [Fact]
+    public void MotionTemplatesAndStoryboardsApplyWithoutFreezableErrors() => RunOnSta(() =>
+    {
+        var inputs = LoadDictionary();
+        var controls = (ResourceDictionary)Application.LoadComponent(
+            new Uri("/ClipSync.App;component/Resources/CharterControls.xaml", UriKind.Relative));
+
+        string[] buttonStyles = ["PrimaryButton", "ActSolidButton", "GhostFlowButton", "GhostQuietButton", "GhostDangerButton"];
+        foreach (var styleKey in buttonStyles)
+        {
+            var button = new Button
+            {
+                Style = (Style)controls[styleKey],
+                Content = styleKey,
+            };
+            Layout(button, width: 120, height: 34);
+            var border = Assert.IsType<Border>(button.Template.FindName("Bd", button));
+            Assert.IsType<TransformGroup>(border.RenderTransform);
+        }
+
+        var stepButton = new Button
+        {
+            Style = (Style)inputs["StepButton"],
+            Content = "＋",
+        };
+        Layout(stepButton, width: 26, height: 26);
+        Assert.IsType<ScaleTransform>(Assert.IsType<Border>(stepButton.Template.FindName("Bd", stepButton)).RenderTransform);
+
+        string[] toggleStyles = ["CharterToggle", "FoldToggle"];
+        foreach (var styleKey in toggleStyles)
+        {
+            var toggle = new System.Windows.Controls.Primitives.ToggleButton
+            {
+                Style = (Style)inputs[styleKey],
+                Content = styleKey,
+            };
+            Layout(toggle, width: 90, height: 30);
+            toggle.IsChecked = true;
+            toggle.UpdateLayout();
+            toggle.IsChecked = false;
+            toggle.UpdateLayout();
+        }
+
+        var filterChip = new RadioButton
+        {
+            Style = (Style)inputs["FilterChip"],
+            Content = "全部",
+        };
+        Layout(filterChip, width: 72, height: 28);
+        filterChip.IsChecked = true;
+        filterChip.UpdateLayout();
+        filterChip.IsChecked = false;
+        filterChip.UpdateLayout();
+
+        var pageGrid = new Grid
+        {
+            Style = (Style)controls["PageFadeGrid"],
+            RenderTransform = new TranslateTransform(),
+            Visibility = Visibility.Collapsed,
+        };
+        Layout(pageGrid, width: 300, height: 200);
+        pageGrid.Visibility = Visibility.Visible;
+        pageGrid.UpdateLayout();
+    });
+
     /// <summary>
     /// Application.LoadComponent runs Application's static initialiser, which registers the
     /// pack:// scheme and the compiled-resource container — the test host has no Application

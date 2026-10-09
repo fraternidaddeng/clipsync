@@ -13,6 +13,9 @@
         WindowStartupLocation="CenterOwner">
     <!-- 开窗内容淡入与主窗页面切换同一语汇（PageFadeIn，减弱动效时硬切） -->
     <Grid Margin="24" Style="{StaticResource PageFadeGrid}">
+        <Grid.RenderTransform>
+            <TranslateTransform />
+        </Grid.RenderTransform>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="12" />

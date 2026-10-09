@@ -55,6 +55,14 @@
                                 <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CsSurface3Brush}" />
                                 <Setter Property="Foreground" Value="{DynamicResource CsText1Brush}" />
                             </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="RenderTransformOrigin" Value="0.5,0.5" />
+                                <Setter TargetName="Bd" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.95" ScaleY="0.95" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -233,6 +241,9 @@
 
                 <!-- ============ 1 · 欢迎 ============ -->
                 <Grid x:Name="StepWelcome" Style="{StaticResource PageFadeGrid}">
+                    <Grid.RenderTransform>
+                        <TranslateTransform />
+                    </Grid.RenderTransform>
                     <StackPanel Margin="0,14,0,12">
                         <Viewbox Width="34" Height="34" HorizontalAlignment="Center">
                             <Canvas Width="24" Height="24">
@@ -337,6 +348,9 @@
                 <Grid x:Name="StepPair"
                       Style="{StaticResource PageFadeGrid}"
                       Visibility="Collapsed">
+                    <Grid.RenderTransform>
+                        <TranslateTransform />
+                    </Grid.RenderTransform>
                     <StackPanel Margin="0,14,0,12">
                         <Viewbox Width="28" Height="28" HorizontalAlignment="Center">
                             <Canvas Width="24" Height="24">
@@ -448,6 +462,9 @@
                 <Grid x:Name="StepPrivileged"
                       Style="{StaticResource PageFadeGrid}"
                       Visibility="Collapsed">
+                    <Grid.RenderTransform>
+                        <TranslateTransform />
+                    </Grid.RenderTransform>
                     <StackPanel Margin="0,14,0,12">
                         <Viewbox Width="28" Height="28" HorizontalAlignment="Center">
                             <Canvas Width="24" Height="24">
@@ -486,6 +503,9 @@
                 <Grid x:Name="StepBluetooth"
                       Style="{StaticResource PageFadeGrid}"
                       Visibility="Collapsed">
+                    <Grid.RenderTransform>
+                        <TranslateTransform />
+                    </Grid.RenderTransform>
                     <StackPanel Margin="0,14,0,12">
                         <Viewbox Width="28" Height="28" HorizontalAlignment="Center">
                             <Canvas Width="24" Height="24">
@@ -509,6 +529,9 @@
                 <Grid x:Name="StepFinish"
                       Style="{StaticResource PageFadeGrid}"
                       Visibility="Collapsed">
+                    <Grid.RenderTransform>
+                        <TranslateTransform />
+                    </Grid.RenderTransform>
                     <StackPanel Margin="0,64,0,12">
                         <Viewbox Width="34" Height="34" HorizontalAlignment="Center">
                             <Canvas Width="24" Height="24">
