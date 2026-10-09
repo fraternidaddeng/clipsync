@@ -194,10 +194,10 @@ public sealed class MainViewModelConduitTests : IAsyncDisposable
 
         try
         {
-            // Session authenticated: the snapshot the SessionsChanged handler applies now
-            // reports one connected device on the conduit network segment.
-            await WaitUntilAsync(() => Task.FromResult(server.ConnectedDeviceCount == 1));
-            Assert.True(Volatile.Read(ref sessionEvents) >= 1);
+            // IsReady flips before SessionsChanged is raised, so wait for the event
+            // the app actually consumes rather than the count alone.
+            await WaitUntilAsync(() => Task.FromResult(
+                server.ConnectedDeviceCount == 1 && Volatile.Read(ref sessionEvents) >= 1));
             viewModel.UpdatePeerStatus(true, server.Port, server.ConnectedDeviceCount);
             Assert.Equal(1, viewModel.ConnectedDeviceCount);
             Assert.Contains("已连接 1 台设备", viewModel.SyncStatus, StringComparison.Ordinal);
