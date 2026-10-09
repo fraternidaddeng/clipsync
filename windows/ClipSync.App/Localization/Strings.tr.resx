@@ -394,13 +394,13 @@
     <value>Bluetooth yedeği</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>Varsayılan olarak kapalı. LAN bir VPN veya güvenlik duvarı tarafından engellendiğinde, sistem ayarlarında zaten Bluetooth ile eşleştirilmiş bir telefon metni eşitlemeye devam eder (görsel yok, daha yavaş).</value>
+    <value>Syncs text when the local network is blocked. No images.</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>Ek dinleme adresleri</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>Tailscale / WireGuard gibi sanal bağdaştırıcı adresleri için. Genel aktarma sunucusu sağlanmaz.</value>
+    <value>Addresses of virtual adapters. No public relay.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>Yeniden başlatınca geçerli olur</value>
@@ -412,7 +412,7 @@
     <value>Bu bilgisayarın sertifika parmak izi</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>Eşleştirirken telefonda gösterilen parmak iziyle grup grup karşılaştır. Parmak izi değişirse tüm eşleştirilmiş cihazlar yeniden doğrulama ister.</value>
+    <value>Compare it with the fingerprint on the phone when pairing.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>Karşı taraf hizmeti çalışmıyor; bu oturumda gösterilecek parmak izi yok.</value>
@@ -460,7 +460,7 @@
     <value>Gelen TCP 47654’e izin ver</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>Telefon bu bilgisayara yalnızca port izinli olduğunda ulaşabilir. Windows’un kendi netsh’i yönetici olarak çalışıp “ClipSync TCP 47654” adlı tek bir güvenlik duvarı kuralı oluşturur; çalışacak tam komut aşağıda gösterilir, dilerseniz kopyalayıp yönetici PowerShell’de kendiniz de çalıştırabilirsiniz. Kural, program klasörü silinince kaybolmaz; buradan kaldırın.</value>
+    <value>Asks for administrator approval.</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>Komutu kopyala</value>
@@ -643,37 +643,37 @@
     <value>Duraklatılınca bu bilgisayar yeni içerik kaydetmez; mevcut geçmiş korunur.</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>Açıkken yakalama ve eşitleme tamamen durur, hiçbir iz kalmaz.</value>
+    <value>While on, nothing is captured or synced.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>Engellenen süreçler</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>Bu süreçlerden gelen kopyalar geçmişe girmez ve eşitlenmez. Virgülle veya satır sonuyla ayır.</value>
+    <value>Copies from these processes are ignored. Separate names with commas or new lines.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>Uzak içeriği otomatik uygula</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>Telefondan gelen metin bu bilgisayarın panosuna otomatik yazılır. Kapalıyken yalnızca geçmişte kalır ve elle kopyalanması gerekir.</value>
+    <value>Incoming text goes straight to the clipboard. When off, it stays in history.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>Pano görsellerini eşitle</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Varsayılan olarak açık. Yalnızca PNG/JPEG; ham baytlar EXIF ve başka üst veriler taşıyabilir, iki ucun da v2 oturumu gerekir.</value>
+    <value>PNG and JPEG only. Both devices must have this on.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Uzak görselleri otomatik uygula</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>Telefondan gelen görseller bu bilgisayarın panosuna otomatik yazılır. Kapalıyken yalnızca geçmişte kalır ve elle kopyalanması gerekir.</value>
+    <value>Incoming images go straight to the clipboard. When off, they stay in history.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>Bluetooth yedeği · ek dinleme adresleri · sertifika parmak izi</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>Kanal · ağ bölümüne taşındı — içeriğin karşı tarafa ulaşıp ulaşamayacağını belirledikleri için eşleştirme ve cihaz yönetimiyle birlikte otururlar.</value>
+    <value>On the Conduit page.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>Kanala git</value>
@@ -682,7 +682,7 @@
     <value>Saklama süresi</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>Süresi dolan kayıtlar otomatik silinir. Temizlik yalnızca bu bilgisayarda olur ve karşı tarafın zaten aldığını asla silmez.</value>
+    <value>Clears this device only. The other device keeps what it already received.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>gün</value>
@@ -691,7 +691,7 @@
     <value>Saklama adedi</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>Sınır aşılınca en eski kayıtlar önce silinir (100–2000, 100'er adım). Temizlik yalnızca bu bilgisayarda olur.</value>
+    <value>Drops the oldest entries past the limit. This device only.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>kayıt</value>
@@ -706,22 +706,22 @@
     <value>Tepsi penceresi kısayolu</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>Herhangi bir uygulamada kombinasyona basarak tepsi penceresini çağır. Kutuya tıkla ve istediğin kombinasyona bas (Ctrl, Alt veya Win içermeli); Backspace temizler. Varsayılan olarak kapalı.</value>
+    <value>Click the box, then press the shortcut. Backspace clears it.</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>Eşitlemeyi duraklatma kısayolu</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>Herhangi bir uygulamada kombinasyona basarak eşitlemeyi duraklat; tekrar basınca sürer. Kutuya tıkla ve istediğin kombinasyona bas (Ctrl, Alt veya Win içermeli); Backspace temizler. Varsayılan olarak kapalı.</value>
+    <value>Click the box, then press the shortcut. Press it again to resume.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>Tüm geçmişi (silme işaretleri dahil) JSON Lines yedek dosyası olarak yazar; anahtar, sertifika veya eşleştirme verisi içermez. Dışa aktarım düz metindir — güvenle sakla.</value>
+    <value>A plain-text backup. Pairing secrets are not included.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>Yedek dosyasından geçmişi birleştirir: «kaynak cihaz + sıra numarası» üzerinde idempotenttir, yani yeniden içe aktarma asla kayıt çoğaltmaz ve yerel silmeleri ezmez. Doğrulama hataları hiçbir şeyi değiştirmez.</value>
+    <value>Importing the same file again does not add duplicates. A bad file changes nothing.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>Bu bilgisayardaki tüm kayıtları (görseller dahil) tek adımda siler; iki onay ister ve geri alınamaz. Temizlik yalnızca bu bilgisayarda olur ve karşı tarafın zaten aldığını asla silmez — önce dışa aktarmayı düşün.</value>
+    <value>Deletes history on this device. The other device is left as it is.</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>Yardım</value>
@@ -730,7 +730,7 @@
     <value>Tanıtımı yeniden izle</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>İlk kurulum eğitimini karşılama sayfasından yeniden gezin; hiçbir ayarı veya eşleştirmeyi değiştirmez.</value>
+    <value>Shows the pairing QR code again.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>Gizlilik ve riskler</value>

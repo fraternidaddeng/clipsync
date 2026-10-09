@@ -394,13 +394,13 @@
     <value>Bluetooth-terugval</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>Standaard uit. Wanneer het LAN wordt geblokkeerd door een VPN of firewall, blijft een telefoon die al via Bluetooth in de systeeminstellingen is gekoppeld tekst synchroniseren (geen afbeeldingen, langzamer).</value>
+    <value>Syncs text when the local network is blocked. No images.</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>Extra luisteradressen</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>Voor virtuele-adapteradressen zoals Tailscale / WireGuard. Er is geen publieke relay.</value>
+    <value>Addresses of virtual adapters. No public relay.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>Geldt na herstart</value>
@@ -412,7 +412,7 @@
     <value>Certificaatvingerafdruk van deze pc</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>Vergelijk bij het koppelen groep voor groep met de vingerafdruk op de telefoon. Na een wijziging van de vingerafdruk vraagt elk gekoppeld apparaat om herbevestiging.</value>
+    <value>Compare it with the fingerprint on the phone when pairing.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>De peer-service draait niet; er is deze sessie geen vingerafdruk te tonen.</value>
@@ -460,7 +460,7 @@
     <value>Inkomend TCP 47654 toestaan</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>De telefoon kan deze pc pas bereiken als de poort is toegestaan. Het in Windows ingebouwde netsh draait als beheerder om één firewallregel met de naam “ClipSync TCP 47654” te maken; de volledige opdracht die wordt uitgevoerd staat hieronder, en je kunt hem ook kopiëren en zelf in een beheerder-PowerShell uitvoeren. De regel verdwijnt niet als de programmamap wordt verwijderd; verwijder hem hier.</value>
+    <value>Asks for administrator approval.</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>Opdracht kopiëren</value>
@@ -643,37 +643,37 @@
     <value>Tijdens de pauze registreert deze pc geen nieuwe inhoud; bestaande geschiedenis blijft bewaard.</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>Zolang dit aanstaat, stoppen vastleggen en synchroniseren volledig, zonder sporen na te laten.</value>
+    <value>While on, nothing is captured or synced.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>Geblokkeerde processen</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>Kopieën uit deze processen komen nooit in de geschiedenis en synchroniseren niet. Scheid met komma’s of regeleinden.</value>
+    <value>Copies from these processes are ignored. Separate names with commas or new lines.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>Externe inhoud automatisch toepassen</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>Tekst van de telefoon wordt automatisch naar het klembord van deze pc geschreven. Uitgeschakeld blijft die alleen in de geschiedenis en moet die handmatig worden gekopieerd.</value>
+    <value>Incoming text goes straight to the clipboard. When off, it stays in history.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>Klembordafbeeldingen synchroniseren</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Standaard aan. Alleen PNG/JPEG; ruwe bytes kunnen EXIF en andere metadata bevatten, en beide kanten hebben een v2-sessie nodig.</value>
+    <value>PNG and JPEG only. Both devices must have this on.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Externe afbeeldingen automatisch toepassen</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>Afbeeldingen van de telefoon worden automatisch naar het klembord van deze pc geschreven. Uitgeschakeld blijven ze alleen in de geschiedenis en moeten ze handmatig worden gekopieerd.</value>
+    <value>Incoming images go straight to the clipboard. When off, they stay in history.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>Bluetooth-terugval · extra luisteradressen · certificaatvingerafdruk</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>Verplaatst naar Kanaal · netwerksegment — ze bepalen of inhoud de peer kan bereiken, dus ze wonen bij koppeling en apparaatbeheer.</value>
+    <value>On the Conduit page.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>Naar Kanaal</value>
@@ -682,7 +682,7 @@
     <value>Bewaartermijn</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>Items over de termijn worden automatisch verwijderd. Opschonen gebeurt alleen op deze pc en verwijdert nooit wat de peer al heeft ontvangen.</value>
+    <value>Clears this device only. The other device keeps what it already received.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>dagen</value>
@@ -691,7 +691,7 @@
     <value>Bewaaraantal</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>Boven de limiet worden de oudste items eerst verwijderd (100–2000, stappen van 100). Opschonen gebeurt alleen op deze pc.</value>
+    <value>Drops the oldest entries past the limit. This device only.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>items</value>
@@ -706,22 +706,22 @@
     <value>Sneltoets voor zwevend venster</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>Druk in elke app op de combinatie om het zwevende venster op te roepen. Klik op het vak en druk dan op de gewenste combinatie (moet Ctrl, Alt of Win bevatten); druk op Backspace om te wissen. Standaard uit.</value>
+    <value>Click the box, then press the shortcut. Backspace clears it.</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>Sneltoets voor synchronisatiepauze</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>Druk in elke app op de combinatie om de synchronisatie te pauzeren; druk nogmaals om te hervatten. Klik op het vak en druk dan op de gewenste combinatie (moet Ctrl, Alt of Win bevatten); druk op Backspace om te wissen. Standaard uit.</value>
+    <value>Click the box, then press the shortcut. Press it again to resume.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>Schrijft de hele geschiedenis (inclusief verwijdermarkeringen) als een JSON Lines-back-upbestand; geen sleutels, certificaten of koppelgegevens. De export is platte tekst — bewaar hem veilig.</value>
+    <value>A plain-text backup. Pairing secrets are not included.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>Voegt geschiedenis uit een back-upbestand samen: idempotent op “bronapparaat + volgnummer”, dus opnieuw importeren dupliceert nooit items en overschrijft geen lokale verwijderingen. Bij validatiefouten verandert er niets.</value>
+    <value>Importing the same file again does not add duplicates. A bad file changes nothing.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>Verwijdert in één stap alle items op deze pc (inclusief afbeeldingen); vereist twee bevestigingen en kan niet ongedaan worden gemaakt. Wissen gebeurt alleen op deze pc en verwijdert nooit wat de peer al heeft ontvangen — overweeg eerst te exporteren.</value>
+    <value>Deletes history on this device. The other device is left as it is.</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>Hulp</value>
@@ -730,7 +730,7 @@
     <value>Rondleiding opnieuw bekijken</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>Doorloop de rondleiding van de eerste start opnieuw vanaf de welkomstpagina; er verandert niets aan instellingen of koppeling.</value>
+    <value>Shows the pairing QR code again.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>Privacy en risico's</value>

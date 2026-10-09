@@ -394,13 +394,13 @@
     <value>ช่องสำรองบลูทูธ</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>ปิดเป็นค่าเริ่มต้น เมื่อ LAN ถูก VPN หรือไฟร์วอลล์ขวาง โทรศัพท์ที่จับคู่บลูทูธในการตั้งค่าระบบไว้แล้วจะซิงค์ข้อความต่อได้ (ไม่มีรูป ช้ากว่า)</value>
+    <value>Syncs text when the local network is blocked. No images.</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>ที่อยู่เฝ้าฟังเพิ่มเติม</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>สำหรับที่อยู่ของอะแดปเตอร์เสมือนอย่าง Tailscale / WireGuard ไม่มีรีเลย์สาธารณะให้</value>
+    <value>Addresses of virtual adapters. No public relay.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>มีผลหลังรีสตาร์ต</value>
@@ -412,7 +412,7 @@
     <value>ลายนิ้วมือใบรับรองของพีซีนี้</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>ตอนจับคู่ ให้เทียบกับลายนิ้วมือที่แสดงบนโทรศัพท์ทีละกลุ่ม ถ้าลายนิ้วมือเปลี่ยน อุปกรณ์ที่จับคู่ทุกเครื่องจะขอยืนยันใหม่</value>
+    <value>Compare it with the fingerprint on the phone when pairing.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>บริการฝั่งโน้นยังไม่ทำงาน รอบนี้ไม่มีลายนิ้วมือให้แสดง</value>
@@ -460,7 +460,7 @@
     <value>อนุญาต TCP 47654 ขาเข้า</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>โทรศัพท์จะเชื่อมถึงพีซีนี้ได้ก็ต่อเมื่ออนุญาตพอร์ตแล้ว netsh ที่มากับ Windows จะรันในสิทธิ์ผู้ดูแลระบบเพื่อสร้างกฎไฟร์วอลล์หนึ่งข้อชื่อ “ClipSync TCP 47654” คำสั่งเต็มที่จะรันแสดงอยู่ด้านล่าง และคุณคัดลอกไปรันเองใน PowerShell แบบผู้ดูแลระบบก็ได้ กฎนี้ไม่หายไปเมื่อลบโฟลเดอร์โปรแกรม ลบได้จากที่นี่</value>
+    <value>Asks for administrator approval.</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>คัดลอกคำสั่ง</value>
@@ -643,37 +643,37 @@
     <value>ระหว่างหยุดชั่วคราว พีซีนี้ไม่บันทึกเนื้อหาใหม่ ประวัติที่มีอยู่ยังคงอยู่</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>ระหว่างเปิด การเก็บและการซิงค์หยุดทั้งหมด ไม่ทิ้งร่องรอย</value>
+    <value>While on, nothing is captured or synced.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>โปรเซสที่บล็อก</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>การคัดลอกจากโปรเซสเหล่านี้ไม่เข้าประวัติและไม่ซิงค์ คั่นด้วยจุลภาคหรือขึ้นบรรทัดใหม่</value>
+    <value>Copies from these processes are ignored. Separate names with commas or new lines.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>ใช้เนื้อหาจากระยะไกลอัตโนมัติ</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>ข้อความจากโทรศัพท์ถูกเขียนลงคลิปบอร์ดของพีซีนี้อัตโนมัติ ถ้าปิด จะอยู่แค่ในประวัติและต้องคัดลอกเอง</value>
+    <value>Incoming text goes straight to the clipboard. When off, it stays in history.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>ซิงค์รูปในคลิปบอร์ด</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>เปิดเป็นค่าเริ่มต้น รองรับเฉพาะ PNG/JPEG ไบต์ดิบอาจมี EXIF และเมทาดาทาอื่น และทั้งสองฝั่งต้องใช้เซสชัน v2</value>
+    <value>PNG and JPEG only. Both devices must have this on.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>ใช้รูปจากระยะไกลอัตโนมัติ</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>รูปจากโทรศัพท์ถูกเขียนลงคลิปบอร์ดของพีซีนี้อัตโนมัติ ถ้าปิด จะอยู่แค่ในประวัติและต้องคัดลอกเอง</value>
+    <value>Incoming images go straight to the clipboard. When off, they stay in history.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>ช่องสำรองบลูทูธ · ที่อยู่เฝ้าฟังเพิ่มเติม · ลายนิ้วมือใบรับรอง</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>ย้ายไปที่ «เส้นทาง · ส่วนเครือข่าย» แล้ว — สิ่งเหล่านี้ชี้ขาดว่าเนื้อหาจะถึงอีกฝั่งได้ไหม จึงอยู่ร่วมกับการจับคู่และการจัดการอุปกรณ์</value>
+    <value>On the Conduit page.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>ไปที่เส้นทาง</value>
@@ -682,7 +682,7 @@
     <value>ระยะเวลาเก็บ</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>รายการที่เกินกำหนดถูกลบอัตโนมัติ การล้างเกิดเฉพาะบนพีซีนี้และไม่ลบสิ่งที่อีกฝั่งได้รับไปแล้ว</value>
+    <value>Clears this device only. The other device keeps what it already received.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>วัน</value>
@@ -691,7 +691,7 @@
     <value>จำนวนที่เก็บ</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>เมื่อเกินเพดาน รายการเก่าสุดถูกลบก่อน (100–2000 ทีละ 100) การล้างเกิดเฉพาะบนพีซีนี้</value>
+    <value>Drops the oldest entries past the limit. This device only.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>รายการ</value>
@@ -706,22 +706,22 @@
     <value>คีย์ลัดเรียกหน้าต่างลอย</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>กดคีย์ผสมในแอปไหนก็ได้เพื่อเรียกหน้าต่างลอยที่เทรย์ คลิกช่องแล้วกดคีย์ผสมที่ต้องการ (ต้องมี Ctrl, Alt หรือ Win) กด Backspace เพื่อล้าง ปิดเป็นค่าเริ่มต้น</value>
+    <value>Click the box, then press the shortcut. Backspace clears it.</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>คีย์ลัดหยุดซิงค์ชั่วคราว</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>กดคีย์ผสมในแอปไหนก็ได้เพื่อหยุดซิงค์ชั่วคราว กดอีกครั้งเพื่อซิงค์ต่อ คลิกช่องแล้วกดคีย์ผสมที่ต้องการ (ต้องมี Ctrl, Alt หรือ Win) กด Backspace เพื่อล้าง ปิดเป็นค่าเริ่มต้น</value>
+    <value>Click the box, then press the shortcut. Press it again to resume.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>เขียนประวัติทั้งหมด (รวมเครื่องหมายการลบ) เป็นไฟล์สำรอง JSON Lines ไม่มีกุญแจ ใบรับรอง หรือข้อมูลจับคู่ ไฟล์ส่งออกเป็นข้อความล้วน — เก็บให้ปลอดภัย</value>
+    <value>A plain-text backup. Pairing secrets are not included.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>รวมประวัติจากไฟล์สำรอง: idempotent ตาม «อุปกรณ์ต้นทาง + ลำดับ» นำเข้าซ้ำจึงไม่ทำให้รายการซ้ำ และไม่ทับการลบในเครื่อง ถ้าตรวจสอบไม่ผ่านจะไม่เปลี่ยนอะไรเลย</value>
+    <value>Importing the same file again does not add duplicates. A bad file changes nothing.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>ลบทุกรายการบนพีซีนี้ (รวมรูป) ในขั้นตอนเดียว ต้องยืนยันสองครั้งและย้อนกลับไม่ได้ การล้างเกิดเฉพาะบนพีซีนี้และไม่ลบสิ่งที่อีกฝั่งได้รับไปแล้ว — แนะนำให้ส่งออกก่อน</value>
+    <value>Deletes history on this device. The other device is left as it is.</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>ช่วยเหลือ</value>
@@ -730,7 +730,7 @@
     <value>ดูบทแนะนำอีกครั้ง</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>เดินผ่านบทแนะนำการใช้งานครั้งแรกอีกรอบตั้งแต่หน้าต้อนรับ โดยไม่เปลี่ยนการตั้งค่าหรือการจับคู่ใด ๆ</value>
+    <value>Shows the pairing QR code again.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>ความเป็นส่วนตัวและความเสี่ยง</value>

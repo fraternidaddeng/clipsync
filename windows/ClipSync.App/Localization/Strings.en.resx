@@ -394,13 +394,13 @@
     <value>Bluetooth fallback</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>Off by default. When the LAN is blocked by a VPN or firewall, a phone already Bluetooth-paired in system settings keeps syncing text (no images, slower).</value>
+    <value>Syncs text when the local network is blocked. No images.</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>Extra listen addresses</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>For virtual-adapter addresses such as Tailscale / WireGuard. No public relay is provided.</value>
+    <value>Addresses of virtual adapters. No public relay.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>Applies after restart</value>
@@ -412,7 +412,7 @@
     <value>This PC’s certificate fingerprint</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>When pairing, compare it group by group with the fingerprint shown on the phone. A fingerprint change makes every paired device ask to re-confirm.</value>
+    <value>Compare it with the fingerprint on the phone when pairing.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>The peer service is not running; no fingerprint to show this session.</value>
@@ -460,7 +460,7 @@
     <value>Allow inbound TCP 47654</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>The phone can only reach this PC once the port is allowed. Windows' own netsh runs as administrator to create one firewall rule named “ClipSync TCP 47654”; the full command it will run is shown below, and you can also copy it and run it yourself in an administrator PowerShell. The rule does not disappear when the program folder is deleted; remove it here.</value>
+    <value>Asks for administrator approval.</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>Copy command</value>
@@ -643,37 +643,37 @@
     <value>While paused, this PC stops recording new content; existing history is kept.</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>While on, capture and sync stop entirely, leaving no trace.</value>
+    <value>While on, nothing is captured or synced.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>Blocked processes</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>Copies from these processes never enter history or sync. Separate with commas or line breaks.</value>
+    <value>Copies from these processes are ignored. Separate names with commas or new lines.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>Auto-apply remote content</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>Text from the phone is written to this PC’s clipboard automatically. When off it stays in history only and needs manual copying.</value>
+    <value>Incoming text goes straight to the clipboard. When off, it stays in history.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>Sync clipboard images</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>On by default. PNG/JPEG only; raw bytes may carry EXIF and other metadata, and both ends need a v2 session.</value>
+    <value>PNG and JPEG only. Both devices must have this on.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Auto-apply remote images</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>Images from the phone are written to this PC’s clipboard automatically. When off they stay in history only and need manual copying.</value>
+    <value>Incoming images go straight to the clipboard. When off, they stay in history.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>Bluetooth fallback · extra listen addresses · certificate fingerprint</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>Moved to Conduit · network segment — they decide whether content can reach the peer, so they live with pairing and device management.</value>
+    <value>On the Conduit page.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>Go to Conduit</value>
@@ -682,7 +682,7 @@
     <value>Retention period</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>Entries past the deadline are removed automatically. Cleanup happens on this PC only and never deletes what the peer already received.</value>
+    <value>Clears this device only. The other device keeps what it already received.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>days</value>
@@ -691,7 +691,7 @@
     <value>Retention count</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>When over the cap, the oldest entries are removed first (100–2000, steps of 100). Cleanup happens on this PC only.</value>
+    <value>Drops the oldest entries past the limit. This device only.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>entries</value>
@@ -706,22 +706,22 @@
     <value>Flyout hotkey</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>Press the combination in any app to summon the tray flyout. Click the box, then press the combination you want (must include Ctrl, Alt, or Win); press Backspace to clear. Off by default.</value>
+    <value>Click the box, then press the shortcut. Backspace clears it.</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>Pause-sync hotkey</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>Press the combination in any app to pause sync; press it again to resume. Click the box, then press the combination you want (must include Ctrl, Alt, or Win); press Backspace to clear. Off by default.</value>
+    <value>Click the box, then press the shortcut. Press it again to resume.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>Writes the whole history (including deletion markers) as a JSON Lines backup file; no keys, certificates, or pairing data. The export is plaintext — keep it safe.</value>
+    <value>A plain-text backup. Pairing secrets are not included.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>Merges history from a backup file: idempotent on “source device + sequence”, so re-importing never duplicates entries or overrides local deletions. Validation failures change nothing.</value>
+    <value>Importing the same file again does not add duplicates. A bad file changes nothing.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>Deletes all entries on this PC (including images) in one step; takes two confirmations and cannot be undone. Clearing happens on this PC only and never deletes what the peer already received — consider exporting first.</value>
+    <value>Deletes history on this device. The other device is left as it is.</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>Help</value>
@@ -730,7 +730,7 @@
     <value>Replay the introduction</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>Replay the first-run introduction; it does not change settings by itself. The pairing page shows a new QR code, and a scan still requires the normal fingerprint check and approval.</value>
+    <value>Shows the pairing QR code again.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>Privacy and risks</value>

@@ -394,13 +394,13 @@
     <value>蓝牙备援</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>默认关闭。LAN 被 VPN 或防火墙阻断时，已在系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。</value>
+    <value>局域网不通时只同步文字。</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>额外监听地址</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>用于 Tailscale / WireGuard 等虚拟网卡地址。不提供公网中转。</value>
+    <value>虚拟网卡地址，没有公网中转。</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>重启后生效</value>
@@ -412,7 +412,7 @@
     <value>本机证书指纹</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>配对时请与手机上显示的指纹逐组核对。指纹变更会使所有已配对设备提示重新确认。</value>
+    <value>配对时和手机上的逐组核对。</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>对端服务未启动，本次会话无指纹可示。</value>
@@ -460,7 +460,7 @@
     <value>放行 TCP 47654 入站</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>放行后手机才能连到本机。会以管理员身份运行 Windows 自带的 netsh 创建一条名为「ClipSync TCP 47654」的防火墙规则，下方是将要执行的完整命令；也可以复制后自己在管理员 PowerShell 里运行。规则不会随删除程序目录消失，可在此处移除。</value>
+    <value>需要管理员确认。</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>复制命令</value>
@@ -643,37 +643,37 @@
     <value>暂停后本机不再记录新内容，已有历史保留。</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>开启期间捕获与同步全部停止，不留任何痕迹。</value>
+    <value>开启后不再捕获，也不再同步。</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>屏蔽进程</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>来自这些进程的复制不进入历史，也不同步。逗号或换行分隔。</value>
+    <value>这些进程里的复制不记录。用逗号或换行分隔。</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>自动应用远端内容</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>手机发来的文本自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。</value>
+    <value>收到的文字直接进剪贴板。关掉后留在历史里。</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>同步剪贴板图片</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>默认开启。仅 PNG/JPEG；原始字节可能含 EXIF 等元数据，双端需为 v2 会话。</value>
+    <value>只传 PNG 和 JPEG。两端都要打开。</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>自动应用远端图片</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>手机发来的图片自动写入本机剪贴板。关闭后只保留在历史中，需手动复制。</value>
+    <value>收到的图片直接进剪贴板。关掉后留在历史里。</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>蓝牙备援 · 额外监听地址 · 本机证书指纹</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>已移至「通路 · 网络段」——它们决定内容能否到达对端，与配对、设备管理同住。</value>
+    <value>在「通路」页。</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>前往通路</value>
@@ -682,7 +682,7 @@
     <value>保留期限</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>超期条目自动清除。清理只发生在本机，不远程删除对方已收到的内容。</value>
+    <value>只清理本机，不删对方已经收到的。</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>天</value>
@@ -691,7 +691,7 @@
     <value>保留条数</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>超出上限时最旧的条目先被清除（100–2000，每步 100）。清理只发生在本机。</value>
+    <value>超出后删最旧的。只清理本机。</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>条</value>
@@ -706,22 +706,22 @@
     <value>呼出浮窗快捷键</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>在任意应用按下组合键呼出托盘浮窗。点击输入框后按下想要的组合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。默认关闭。</value>
+    <value>点输入框后按下组合键。Backspace 清除。</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>暂停同步快捷键</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>在任意应用按下组合键暂停同步，再按一次恢复。点击输入框后按下想要的组合（需含 Ctrl、Alt 或 Win）；按 Backspace 清除。默认关闭。</value>
+    <value>点输入框后按下组合键。再按一次恢复。</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>把全部历史（含删除标记）写成 JSON Lines 备份文件；不含密钥、证书与配对信息。导出内容为明文，请妥善保管。</value>
+    <value>明文备份，不含配对信息。</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>从备份文件合并历史：按「来源设备 + 序号」幂等去重，重复导入不产生重复条目，也不会覆盖本机已删除的记录。校验失败时不做任何改动。</value>
+    <value>重复导入不会多出条目。校验失败则不改动。</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>一次性删除本机全部条目（含图片），需两步确认且无法恢复。清空只发生在本机，不会远程删除对方已收到的内容；建议先导出历史留底。</value>
+    <value>删除本机全部历史，对方不受影响。</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>帮助</value>
@@ -730,7 +730,7 @@
     <value>重新查看引导</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>重新查看首启说明；不会自动改动设置。配对页会再次出示二维码，扫描后仍需按正常流程核对并批准。</value>
+    <value>会再次出示配对二维码。</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>隐私与风险说明</value>

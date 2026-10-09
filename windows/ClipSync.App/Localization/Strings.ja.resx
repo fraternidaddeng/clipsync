@@ -394,13 +394,13 @@
     <value>Bluetooth フォールバック</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>既定ではオフ。LAN が VPN やファイアウォールで遮断されたとき、システム設定で Bluetooth ペアリング済みのスマートフォンはテキストの同期を継続できます（画像なし、低速）。</value>
+    <value>ローカルネットワークが使えないとき、文字だけ同期します。</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>追加の待ち受けアドレス</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>Tailscale / WireGuard などの仮想アダプターのアドレス用。公開中継は提供しません。</value>
+    <value>仮想アダプターのアドレスです。公衆中継はありません。</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>再起動後に有効</value>
@@ -412,7 +412,7 @@
     <value>この PC の証明書フィンガープリント</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>ペアリング時はスマートフォンに表示されるフィンガープリントとグループごとに照合してください。フィンガープリントが変わると、すべてのペアリング済み端末に再確認が求められます。</value>
+    <value>ペアリング時にスマホの指紋と照合します。</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>相手側サービスが起動していないため、このセッションでは表示できるフィンガープリントがありません。</value>
@@ -460,7 +460,7 @@
     <value>TCP 47654 の受信を許可</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>ポートを許可しないとスマートフォンはこの PC に接続できません。Windows 標準の netsh を管理者として実行し、「ClipSync TCP 47654」という名前のファイアウォール ルールを 1 つ作成します。実行される完全なコマンドは下に表示され、コピーして管理者の PowerShell で自分で実行することもできます。ルールはプログラムのフォルダーを削除しても消えません。ここから削除できます。</value>
+    <value>管理者の確認が必要です。</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>コマンドをコピー</value>
@@ -643,37 +643,37 @@
     <value>一時停止中はこの PC で新しい内容を記録しません。既存の履歴は保持されます。</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>オンの間はキャプチャと同期を完全に停止し、痕跡を残しません。</value>
+    <value>オンの間は取得も同期もしません。</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>ブロック対象プロセス</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>これらのプロセスからのコピーは履歴に入らず、同期もされません。カンマまたは改行で区切ります。</value>
+    <value>これらのプロセスでのコピーは記録しません。カンマか改行で区切ります。</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>リモート内容の自動適用</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>スマートフォンから届いたテキストをこの PC のクリップボードへ自動で書き込みます。オフの場合は履歴にのみ残り、手動でのコピーが必要です。</value>
+    <value>受け取った文字はクリップボードに入ります。オフだと履歴に残ります。</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>クリップボード画像の同期</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>既定ではオン。PNG/JPEG のみ。元のバイト列には EXIF などのメタデータが含まれる場合があり、両端が v2 セッションである必要があります。</value>
+    <value>PNG と JPEG だけ。両端でオンにする必要があります。</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>リモート画像の自動適用</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>スマートフォンから届いた画像をこの PC のクリップボードへ自動で書き込みます。オフの場合は履歴にのみ残り、手動でのコピーが必要です。</value>
+    <value>受け取った画像はクリップボードに入ります。オフだと履歴に残ります。</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>Bluetooth フォールバック · 追加の待ち受けアドレス · 証明書フィンガープリント</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>「経路 · ネットワーク区間」へ移動しました——内容が相手側に届くかどうかを決める設定のため、ペアリングや端末管理と同居しています。</value>
+    <value>「経路」ページにあります。</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>経路へ</value>
@@ -682,7 +682,7 @@
     <value>保持期間</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>期限を過ぎた項目は自動的に削除されます。削除はこの PC 内でのみ行われ、相手側が受信済みの内容をリモートで削除することはありません。</value>
+    <value>この端末だけを消します。相手が受け取ったものは残ります。</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>日</value>
@@ -691,7 +691,7 @@
     <value>保持件数</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>上限を超えると古い項目から削除されます（100–2000、100 刻み）。削除はこの PC 内でのみ行われます。</value>
+    <value>上限を超えたら古いものから消します。この端末だけです。</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>件</value>
@@ -706,22 +706,22 @@
     <value>フライアウト呼び出しホットキー</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>どのアプリでも組み合わせを押すとトレイのフライアウトを呼び出せます。入力欄をクリックして希望の組み合わせを押してください（Ctrl、Alt、Win のいずれかを含む必要があります）。Backspace で消去。既定ではオフ。</value>
+    <value>入力欄をクリックしてからキーを押します。Backspace で消します。</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>同期一時停止ホットキー</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>どのアプリでも組み合わせを押すと同期を一時停止し、もう一度押すと再開します。入力欄をクリックして希望の組み合わせを押してください（Ctrl、Alt、Win のいずれかを含む必要があります）。Backspace で消去。既定ではオフ。</value>
+    <value>入力欄をクリックしてからキーを押します。もう一度で再開します。</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>全履歴（削除マーカーを含む）を JSON Lines のバックアップファイルとして書き出します。キー、証明書、ペアリング情報は含みません。エクスポートは平文です——大切に保管してください。</value>
+    <value>平文のバックアップです。ペアリング情報は含みません。</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>バックアップファイルから履歴を統合します。「ソース端末 + 連番」で冪等に重複排除するため、再インポートで項目が重複したり、この端末で削除済みの記録が上書きされたりすることはありません。検証に失敗した場合は何も変更しません。</value>
+    <value>同じファイルを再度取り込んでも重複しません。検証に失敗した場合は変更しません。</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>この PC の全項目（画像を含む）を一括削除します。二段階の確認が必要で、元に戻せません。消去はこの PC 内でのみ行われ、相手側が受信済みの内容をリモートで削除することはありません。先に履歴をエクスポートしておくことをおすすめします。</value>
+    <value>この端末の履歴を消します。相手はそのままです。</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>ヘルプ</value>
@@ -730,7 +730,7 @@
     <value>チュートリアルをもう一度見る</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>初回起動の説明をもう一度表示します。設定は自動では変更しません。ペアリングページでは新しい QR コードを表示し、スキャン後は通常どおりフィンガープリントの確認と承認が必要です。</value>
+    <value>ペアリング用 QR コードを再度表示します。</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>プライバシーとリスクの説明</value>

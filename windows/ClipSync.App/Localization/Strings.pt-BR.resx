@@ -394,13 +394,13 @@
     <value>Alternativa Bluetooth</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>Desligado por padrão. Quando a LAN é bloqueada por VPN ou firewall, um telefone já pareado por Bluetooth nas configurações do sistema continua sincronizando texto (sem imagens, mais lento).</value>
+    <value>Syncs text when the local network is blocked. No images.</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>Endereços de escuta adicionais</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>Para endereços de adaptadores virtuais como Tailscale / WireGuard. Nenhum relay público é fornecido.</value>
+    <value>Addresses of virtual adapters. No public relay.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>Vale após reiniciar</value>
@@ -412,7 +412,7 @@
     <value>Impressão digital do certificado deste PC</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>Ao parear, compare-a grupo por grupo com a impressão digital mostrada no telefone. Uma mudança na impressão digital faz todos os aparelhos pareados pedirem nova confirmação.</value>
+    <value>Compare it with the fingerprint on the phone when pairing.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>O serviço do par não está em execução; não há impressão digital para mostrar nesta sessão.</value>
@@ -460,7 +460,7 @@
     <value>Permitir entrada TCP 47654</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>O telefone só consegue alcançar este PC depois que a porta for permitida. O netsh do próprio Windows roda como administrador para criar uma regra de firewall chamada “ClipSync TCP 47654”; o comando completo que será executado aparece abaixo, e você também pode copiá-lo e rodá-lo por conta própria em um PowerShell de administrador. A regra não desaparece ao apagar a pasta do programa; remova-a aqui.</value>
+    <value>Asks for administrator approval.</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>Copiar comando</value>
@@ -643,37 +643,37 @@
     <value>Em pausa, este PC para de registrar conteúdo novo; o histórico existente é mantido.</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>Enquanto ativo, captura e sincronização param por completo, sem deixar rastros.</value>
+    <value>While on, nothing is captured or synced.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>Processos bloqueados</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>Cópias vindas desses processos nunca entram no histórico nem sincronizam. Separe com vírgulas ou quebras de linha.</value>
+    <value>Copies from these processes are ignored. Separate names with commas or new lines.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>Aplicar conteúdo remoto automaticamente</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>O texto vindo do telefone é gravado automaticamente na área de transferência deste PC. Desligado, fica só no histórico e precisa ser copiado à mão.</value>
+    <value>Incoming text goes straight to the clipboard. When off, it stays in history.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>Sincronizar imagens da área de transferência</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Ligado por padrão. Só PNG/JPEG; os bytes originais podem trazer EXIF e outros metadados, e as duas pontas precisam de sessão v2.</value>
+    <value>PNG and JPEG only. Both devices must have this on.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Aplicar imagens remotas automaticamente</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>As imagens vindas do telefone são gravadas automaticamente na área de transferência deste PC. Desligado, ficam só no histórico e precisam ser copiadas à mão.</value>
+    <value>Incoming images go straight to the clipboard. When off, they stay in history.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>Alternativa Bluetooth · endereços de escuta adicionais · impressão digital do certificado</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>Movidos para “Conduíte · segmento de rede” — eles decidem se o conteúdo consegue chegar ao par, então moram junto do pareamento e da gestão de aparelhos.</value>
+    <value>On the Conduit page.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>Ir ao Conduíte</value>
@@ -682,7 +682,7 @@
     <value>Período de retenção</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>Entradas vencidas são removidas automaticamente. A limpeza só acontece neste PC e nunca apaga o que o par já recebeu.</value>
+    <value>Clears this device only. The other device keeps what it already received.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>dias</value>
@@ -691,7 +691,7 @@
     <value>Limite de entradas</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>Acima do teto, as entradas mais antigas saem primeiro (100–2000, em passos de 100). A limpeza só acontece neste PC.</value>
+    <value>Drops the oldest entries past the limit. This device only.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>entradas</value>
@@ -706,22 +706,22 @@
     <value>Atalho da janela rápida</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>Pressione a combinação em qualquer aplicativo para chamar a janela da bandeja. Clique no campo e pressione a combinação desejada (precisa incluir Ctrl, Alt ou Win); Backspace apaga. Desligado por padrão.</value>
+    <value>Click the box, then press the shortcut. Backspace clears it.</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>Atalho para pausar a sincronização</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>Pressione a combinação em qualquer aplicativo para pausar a sincronização; pressione de novo para retomá-la. Clique no campo e pressione a combinação desejada (precisa incluir Ctrl, Alt ou Win); Backspace apaga. Desligado por padrão.</value>
+    <value>Click the box, then press the shortcut. Press it again to resume.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>Grava todo o histórico (incluindo marcadores de exclusão) como arquivo de backup JSON Lines; sem chaves, certificados nem dados de pareamento. A exportação é texto puro — guarde com cuidado.</value>
+    <value>A plain-text backup. Pairing secrets are not included.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>Mescla o histórico de um arquivo de backup: idempotente por “aparelho de origem + sequência”, então reimportar nunca duplica entradas nem sobrescreve exclusões locais. Se a validação falhar, nada muda.</value>
+    <value>Importing the same file again does not add duplicates. A bad file changes nothing.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>Exclui todas as entradas deste PC (imagens incluídas) de uma vez; exige duas confirmações e não pode ser desfeito. A limpeza só acontece neste PC e nunca apaga o que o par já recebeu; considere exportar antes.</value>
+    <value>Deletes history on this device. The other device is left as it is.</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>Ajuda</value>
@@ -730,7 +730,7 @@
     <value>Rever o tutorial</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>Percorra novamente o tutorial de primeiro uso desde a página de boas-vindas; nenhum ajuste ou pareamento é alterado.</value>
+    <value>Shows the pairing QR code again.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>Privacidade e riscos</value>

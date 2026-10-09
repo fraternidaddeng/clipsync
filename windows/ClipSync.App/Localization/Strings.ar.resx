@@ -394,13 +394,13 @@
     <value>احتياطي البلوتوث</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>متوقف افتراضيًا. عندما تُحجب الشبكة المحلية بواسطة VPN أو جدار حماية، يواصل الهاتف المقترن مسبقًا عبر البلوتوث في إعدادات النظام مزامنة النص (بلا صور، وأبطأ).</value>
+    <value>Syncs text when the local network is blocked. No images.</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>عناوين استماع إضافية</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>لعناوين المحولات الافتراضية مثل Tailscale / WireGuard. لا يوجد ممر عام.</value>
+    <value>Addresses of virtual adapters. No public relay.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>يسري بعد إعادة التشغيل</value>
@@ -412,7 +412,7 @@
     <value>بصمة شهادة هذا الحاسوب</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>عند الاقتران، قارنها مجموعةً بمجموعة مع البصمة المعروضة على الهاتف. تغيّر البصمة يجعل كل الأجهزة المقترنة تطلب إعادة التأكيد.</value>
+    <value>Compare it with the fingerprint on the phone when pairing.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>خدمة الطرف الآخر غير مشغّلة؛ لا بصمة لعرضها في هذه الجلسة.</value>
@@ -460,7 +460,7 @@
     <value>السماح بالوارد على TCP 47654</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>لا يستطيع الهاتف الوصول إلى هذا الحاسوب إلا بعد السماح بالمنفذ. سيُشغَّل netsh المدمج في Windows بصلاحيات المسؤول لإنشاء قاعدة جدار حماية واحدة باسم «ClipSync TCP 47654»؛ الأمر الكامل الذي سيُنفَّذ معروض أدناه، ويمكنك أيضًا نسخه وتشغيله بنفسك في PowerShell بصلاحيات المسؤول. لا تزول القاعدة بحذف مجلد البرنامج؛ يمكن إزالتها من هنا.</value>
+    <value>Asks for administrator approval.</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>نسخ الأمر</value>
@@ -643,37 +643,37 @@
     <value>أثناء الإيقاف المؤقت لا يسجل هذا الحاسوب محتوى جديدًا؛ السجل الحالي يبقى.</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>أثناء تفعيله يتوقف الالتقاط والمزامنة تمامًا بلا أي أثر.</value>
+    <value>While on, nothing is captured or synced.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>العمليات المحظورة</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>ما يُنسخ من هذه العمليات لا يدخل السجل ولا يُزامن. افصل بفواصل أو أسطر جديدة.</value>
+    <value>Copies from these processes are ignored. Separate names with commas or new lines.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>تطبيق المحتوى البعيد تلقائيًا</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>النص الوارد من الهاتف يُكتب تلقائيًا في حافظة هذا الحاسوب. عند الإيقاف يبقى في السجل فقط ويحتاج نسخًا يدويًا.</value>
+    <value>Incoming text goes straight to the clipboard. When off, it stays in history.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>مزامنة صور الحافظة</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>مفعّلة افتراضيًا. PNG/JPEG فقط؛ قد تحمل البايتات الأصلية EXIF وبيانات وصفية أخرى، ويحتاج الطرفان جلسة v2.</value>
+    <value>PNG and JPEG only. Both devices must have this on.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>تطبيق الصور البعيدة تلقائيًا</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>الصور الواردة من الهاتف تُكتب تلقائيًا في حافظة هذا الحاسوب. عند الإيقاف تبقى في السجل فقط وتحتاج نسخًا يدويًا.</value>
+    <value>Incoming images go straight to the clipboard. When off, they stay in history.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>احتياطي البلوتوث · عناوين استماع إضافية · بصمة الشهادة</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>نُقلت إلى «القناة · قسم الشبكة» — فهي تقرر وصول المحتوى إلى الطرف الآخر، لذا تسكن مع الاقتران وإدارة الأجهزة.</value>
+    <value>On the Conduit page.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>الذهاب إلى القناة</value>
@@ -682,7 +682,7 @@
     <value>مدة الاحتفاظ</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>العناصر المتجاوزة للمهلة تُزال تلقائيًا. التنظيف يحدث على هذا الحاسوب فقط ولا يحذف عن بُعد ما استلمه الطرف الآخر.</value>
+    <value>Clears this device only. The other device keeps what it already received.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>يوم</value>
@@ -691,7 +691,7 @@
     <value>عدد العناصر المحفوظة</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>عند تجاوز الحد تُزال الأقدم أولًا (100–2000، بخطوة 100). التنظيف يحدث على هذا الحاسوب فقط.</value>
+    <value>Drops the oldest entries past the limit. This device only.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>عنصر</value>
@@ -706,22 +706,22 @@
     <value>اختصار النافذة المنبثقة</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>اضغط التركيبة في أي تطبيق لاستدعاء نافذة الدرج المنبثقة. انقر الحقل ثم اضغط التركيبة المطلوبة (يجب أن تتضمن Ctrl أو Alt أو Win)؛ اضغط Backspace للمسح. متوقف افتراضيًا.</value>
+    <value>Click the box, then press the shortcut. Backspace clears it.</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>اختصار إيقاف المزامنة مؤقتًا</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>اضغط التركيبة في أي تطبيق لإيقاف المزامنة مؤقتًا؛ اضغطها مرة أخرى للاستئناف. انقر الحقل ثم اضغط التركيبة المطلوبة (يجب أن تتضمن Ctrl أو Alt أو Win)؛ اضغط Backspace للمسح. متوقف افتراضيًا.</value>
+    <value>Click the box, then press the shortcut. Press it again to resume.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>يكتب السجل كاملًا (مع علامات الحذف) في ملف نسخ احتياطي بصيغة JSON Lines؛ بلا مفاتيح أو شهادات أو بيانات اقتران. التصدير نص صريح — احفظه بأمان.</value>
+    <value>A plain-text backup. Pairing secrets are not included.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>يدمج السجل من ملف نسخ احتياطي: متكرر آمن وفق «جهاز المصدر + الرقم التسلسلي»، فإعادة الاستيراد لا تكرر العناصر ولا تلغي الحذف المحلي. فشل التحقق لا يغيّر شيئًا.</value>
+    <value>Importing the same file again does not add duplicates. A bad file changes nothing.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>يحذف كل العناصر على هذا الحاسوب (مع الصور) دفعة واحدة؛ يتطلب تأكيدين ولا يمكن التراجع عنه. المسح يحدث على هذا الحاسوب فقط ولا يحذف ما استلمه الطرف الآخر — فكّر في التصدير أولًا.</value>
+    <value>Deletes history on this device. The other device is left as it is.</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>مساعدة</value>
@@ -730,7 +730,7 @@
     <value>إعادة عرض الدليل التمهيدي</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>أعد المرور على دليل التشغيل الأول من صفحة الترحيب؛ لا يغيّر أي إعدادات أو اقتران.</value>
+    <value>Shows the pairing QR code again.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>الخصوصية والمخاطر</value>

@@ -394,13 +394,13 @@
     <value>ब्लूटूथ फ़ॉलबैक</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>डिफ़ॉल्ट रूप से बंद। जब LAN को VPN या फ़ायरवॉल रोक दे, तो सिस्टम सेटिंग्स में पहले से ब्लूटूथ-युग्मित फ़ोन पाठ का समन्वयन जारी रखता है (चित्र नहीं, धीमा)।</value>
+    <value>Syncs text when the local network is blocked. No images.</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>अतिरिक्त श्रवण पते</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>Tailscale / WireGuard जैसे वर्चुअल एडेप्टर पतों के लिए। कोई सार्वजनिक रिले नहीं दिया जाता।</value>
+    <value>Addresses of virtual adapters. No public relay.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>पुनरारंभ के बाद लागू</value>
@@ -412,7 +412,7 @@
     <value>इस PC के प्रमाणपत्र का फ़िंगरप्रिंट</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>पेयरिंग के समय फ़ोन पर दिखे फ़िंगरप्रिंट से समूह-दर-समूह मिलान करें। फ़िंगरप्रिंट बदलने पर हर युग्मित डिवाइस दोबारा पुष्टि माँगता है।</value>
+    <value>Compare it with the fingerprint on the phone when pairing.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>पीयर सेवा चालू नहीं है; इस सत्र में दिखाने को कोई फ़िंगरप्रिंट नहीं।</value>
@@ -460,7 +460,7 @@
     <value>इनबाउंड TCP 47654 की अनुमति दें</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>पोर्ट की अनुमति के बाद ही फ़ोन इस PC तक पहुँच सकता है। Windows का अपना netsh प्रशासक के रूप में चलकर “ClipSync TCP 47654” नाम का एक फ़ायरवॉल नियम बनाएगा; चलने वाला पूरा कमांड नीचे दिखाया गया है, और आप इसे कॉपी करके प्रशासक PowerShell में स्वयं भी चला सकते हैं। प्रोग्राम फ़ोल्डर हटाने पर नियम नहीं मिटता; इसे यहाँ से हटाएँ।</value>
+    <value>Asks for administrator approval.</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>कमांड कॉपी करें</value>
@@ -643,37 +643,37 @@
     <value>रोकने पर यह PC नई सामग्री रिकॉर्ड नहीं करता; मौजूदा इतिहास बना रहता है।</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>चालू रहते हुए कैप्चर और समन्वयन पूरी तरह रुक जाते हैं, कोई निशान नहीं रहता।</value>
+    <value>While on, nothing is captured or synced.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>अवरुद्ध प्रक्रियाएँ</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>इन प्रक्रियाओं की कॉपियाँ न इतिहास में जाती हैं, न समन्वयित होती हैं। अल्पविराम या नई पंक्ति से अलग करें।</value>
+    <value>Copies from these processes are ignored. Separate names with commas or new lines.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>दूरस्थ सामग्री स्वतः लागू करें</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>फ़ोन से आया पाठ इस PC के क्लिपबोर्ड में स्वतः लिखा जाता है। बंद रहने पर केवल इतिहास में रहता है और हाथ से कॉपी करना पड़ता है।</value>
+    <value>Incoming text goes straight to the clipboard. When off, it stays in history.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>क्लिपबोर्ड चित्रों का समन्वयन</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>डिफ़ॉल्ट रूप से चालू। केवल PNG/JPEG; कच्चे बाइट में EXIF आदि मेटाडेटा हो सकता है, और दोनों सिरों को v2 सत्र चाहिए।</value>
+    <value>PNG and JPEG only. Both devices must have this on.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>दूरस्थ चित्र स्वतः लागू करें</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>फ़ोन से आए चित्र इस PC के क्लिपबोर्ड में स्वतः लिखे जाते हैं। बंद रहने पर केवल इतिहास में रहते हैं और हाथ से कॉपी करने पड़ते हैं।</value>
+    <value>Incoming images go straight to the clipboard. When off, they stay in history.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>ब्लूटूथ फ़ॉलबैक · अतिरिक्त श्रवण पते · प्रमाणपत्र फ़िंगरप्रिंट</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>«मार्ग · नेटवर्क खंड» में स्थानांतरित — ये तय करते हैं कि सामग्री दूसरे छोर तक पहुँच सकेगी या नहीं, इसलिए ये पेयरिंग और डिवाइस प्रबंधन के साथ रहते हैं।</value>
+    <value>On the Conduit page.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>मार्ग पर जाएँ</value>
@@ -682,7 +682,7 @@
     <value>संधारण अवधि</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>अवधि पार कर चुकी प्रविष्टियाँ स्वतः हटती हैं। सफ़ाई केवल इसी PC पर होती है और दूसरे छोर को मिली सामग्री कभी नहीं मिटाती।</value>
+    <value>Clears this device only. The other device keeps what it already received.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>दिन</value>
@@ -691,7 +691,7 @@
     <value>संधारण संख्या</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>सीमा पार होने पर सबसे पुरानी प्रविष्टियाँ पहले हटती हैं (100–2000, 100 के चरण)। सफ़ाई केवल इसी PC पर होती है।</value>
+    <value>Drops the oldest entries past the limit. This device only.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>प्रविष्टियाँ</value>
@@ -706,22 +706,22 @@
     <value>फ़्लाईआउट शॉर्टकट</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>किसी भी ऐप में संयोजन दबाकर ट्रे फ़्लाईआउट बुलाएँ। बॉक्स पर क्लिक कर मनचाहा संयोजन दबाएँ (Ctrl, Alt या Win शामिल हो); Backspace से हटाएँ। डिफ़ॉल्ट रूप से बंद।</value>
+    <value>Click the box, then press the shortcut. Backspace clears it.</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>समन्वयन रोकने का शॉर्टकट</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>किसी भी ऐप में संयोजन दबाकर समन्वयन रोकें; फिर दबाने पर फिर शुरू होगा। बॉक्स पर क्लिक कर मनचाहा संयोजन दबाएँ (Ctrl, Alt या Win शामिल हो); Backspace से हटाएँ। डिफ़ॉल्ट रूप से बंद।</value>
+    <value>Click the box, then press the shortcut. Press it again to resume.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>पूरा इतिहास (मिटाने के चिह्नों समेत) JSON Lines बैकअप फ़ाइल में लिखता है; कुंजियाँ, प्रमाणपत्र या पेयरिंग डेटा नहीं। निर्यात सादा पाठ है — सुरक्षित रखें।</value>
+    <value>A plain-text backup. Pairing secrets are not included.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>बैकअप फ़ाइल से इतिहास मिलाता है: «स्रोत डिवाइस + क्रमांक» पर एकसमान, इसलिए दोबारा आयात से न प्रविष्टियाँ दोहराई जाती हैं, न स्थानीय विलोपन बदलते हैं। सत्यापन विफल होने पर कुछ नहीं बदलता।</value>
+    <value>Importing the same file again does not add duplicates. A bad file changes nothing.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>इस PC की सभी प्रविष्टियाँ (चित्रों समेत) एक ही चरण में मिटाता है; दो पुष्टियाँ चाहिए और पूर्ववत नहीं हो सकता। मिटाना केवल इसी PC पर होता है और दूसरे छोर को मिली सामग्री कभी नहीं मिटाता — पहले निर्यात कर लेना अच्छा है।</value>
+    <value>Deletes history on this device. The other device is left as it is.</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>सहायता</value>
@@ -730,7 +730,7 @@
     <value>परिचय फिर से देखें</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>स्वागत पेज से पहली बार वाला ट्यूटोरियल दोबारा देखें; कोई सेटिंग या जोड़ी नहीं बदलती।</value>
+    <value>Shows the pairing QR code again.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>गोपनीयता और जोखिम</value>

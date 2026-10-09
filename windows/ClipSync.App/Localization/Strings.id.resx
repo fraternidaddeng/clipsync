@@ -394,13 +394,13 @@
     <value>Cadangan Bluetooth</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>Mati secara bawaan. Saat LAN diblokir VPN atau firewall, ponsel yang sudah dipasangkan Bluetooth di pengaturan sistem tetap menyinkronkan teks (tanpa gambar, lebih lambat).</value>
+    <value>Syncs text when the local network is blocked. No images.</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>Alamat pantau tambahan</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>Untuk alamat adaptor virtual seperti Tailscale / WireGuard. Tidak ada relai publik.</value>
+    <value>Addresses of virtual adapters. No public relay.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>Berlaku setelah mulai ulang</value>
@@ -412,7 +412,7 @@
     <value>Sidik jari sertifikat PC ini</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>Saat memasangkan, cocokkan kelompok demi kelompok dengan sidik jari yang tampil di ponsel. Perubahan sidik jari membuat semua perangkat yang dipasangkan minta konfirmasi ulang.</value>
+    <value>Compare it with the fingerprint on the phone when pairing.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>Layanan peer tidak berjalan; tidak ada sidik jari untuk ditampilkan sesi ini.</value>
@@ -460,7 +460,7 @@
     <value>Izinkan TCP 47654 masuk</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>Ponsel baru bisa menjangkau PC ini setelah porta diizinkan. netsh bawaan Windows dijalankan sebagai administrator untuk membuat satu aturan firewall bernama “ClipSync TCP 47654”; perintah lengkap yang akan dijalankan tampil di bawah, dan Anda juga bisa menyalinnya lalu menjalankannya sendiri di PowerShell administrator. Aturan tidak hilang saat folder program dihapus; hapus dari sini.</value>
+    <value>Asks for administrator approval.</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>Salin perintah</value>
@@ -643,37 +643,37 @@
     <value>Saat dijeda, PC ini berhenti merekam konten baru; riwayat yang ada tetap tersimpan.</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>Selama aktif, penangkapan dan sinkronisasi berhenti total tanpa meninggalkan jejak.</value>
+    <value>While on, nothing is captured or synced.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>Proses yang diblokir</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>Salinan dari proses ini tak pernah masuk riwayat atau disinkronkan. Pisahkan dengan koma atau baris baru.</value>
+    <value>Copies from these processes are ignored. Separate names with commas or new lines.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>Terapkan konten dari jauh otomatis</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>Teks dari ponsel otomatis ditulis ke papan klip PC ini. Bila mati, hanya tinggal di riwayat dan perlu disalin manual.</value>
+    <value>Incoming text goes straight to the clipboard. When off, it stays in history.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>Sinkronkan gambar papan klip</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Aktif secara bawaan. Hanya PNG/JPEG; byte mentah bisa membawa EXIF dan metadata lain, dan kedua ujung butuh sesi v2.</value>
+    <value>PNG and JPEG only. Both devices must have this on.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Terapkan gambar dari jauh otomatis</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>Gambar dari ponsel otomatis ditulis ke papan klip PC ini. Bila mati, hanya tinggal di riwayat dan perlu disalin manual.</value>
+    <value>Incoming images go straight to the clipboard. When off, they stay in history.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>Cadangan Bluetooth · alamat pantau tambahan · sidik jari sertifikat</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>Dipindah ke Saluran · segmen jaringan — semuanya menentukan apakah konten bisa mencapai pihak seberang, jadi tinggal bersama pemasangan dan pengelolaan perangkat.</value>
+    <value>On the Conduit page.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>Buka Saluran</value>
@@ -682,7 +682,7 @@
     <value>Masa penyimpanan</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>Entri lewat batas dihapus otomatis. Pembersihan hanya terjadi di PC ini dan tak pernah menghapus yang sudah diterima pihak seberang.</value>
+    <value>Clears this device only. The other device keeps what it already received.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>hari</value>
@@ -691,7 +691,7 @@
     <value>Jumlah simpanan</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>Saat melebihi batas, entri tertua dihapus lebih dulu (100–2000, kelipatan 100). Pembersihan hanya terjadi di PC ini.</value>
+    <value>Drops the oldest entries past the limit. This device only.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>entri</value>
@@ -706,22 +706,22 @@
     <value>Pintasan jendela baki</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>Tekan kombinasi di aplikasi mana pun untuk memanggil jendela baki. Klik kotaknya lalu tekan kombinasi yang diinginkan (harus memuat Ctrl, Alt, atau Win); tekan Backspace untuk menghapus. Mati secara bawaan.</value>
+    <value>Click the box, then press the shortcut. Backspace clears it.</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>Pintasan jeda sinkronisasi</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>Tekan kombinasi di aplikasi mana pun untuk menjeda sinkronisasi; tekan lagi untuk melanjutkan. Klik kotaknya lalu tekan kombinasi yang diinginkan (harus memuat Ctrl, Alt, atau Win); tekan Backspace untuk menghapus. Mati secara bawaan.</value>
+    <value>Click the box, then press the shortcut. Press it again to resume.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>Menulis seluruh riwayat (termasuk penanda penghapusan) sebagai berkas cadangan JSON Lines; tanpa kunci, sertifikat, atau data pemasangan. Ekspor berupa teks polos — simpan baik-baik.</value>
+    <value>A plain-text backup. Pairing secrets are not included.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>Menggabungkan riwayat dari berkas cadangan: idempoten pada “perangkat sumber + nomor urut”, jadi impor ulang tak pernah menggandakan entri atau menimpa penghapusan lokal. Kegagalan validasi tak mengubah apa pun.</value>
+    <value>Importing the same file again does not add duplicates. A bad file changes nothing.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>Menghapus semua entri di PC ini (termasuk gambar) sekali jalan; perlu dua konfirmasi dan tak bisa dibatalkan. Pembersihan hanya terjadi di PC ini dan tak pernah menghapus yang sudah diterima pihak seberang — pertimbangkan ekspor dulu.</value>
+    <value>Deletes history on this device. The other device is left as it is.</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>Bantuan</value>
@@ -730,7 +730,7 @@
     <value>Lihat lagi tutorialnya</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>Jalani lagi tutorial pertama kali dari halaman sambutan; tidak mengubah setelan atau pemasangan apa pun.</value>
+    <value>Shows the pairing QR code again.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>Privasi dan risiko</value>

@@ -120,7 +120,6 @@ fun PreferencesScreen(
         ) {
             ChoiceRow(
                 title = stringResource(R.string.prefs_history_font_size),
-                description = stringResource(R.string.prefs_history_font_size_desc),
                 options =
                     listOf(
                         stringResource(R.string.font_small) to SyncSettingsStore.HISTORY_FONT_SCALE_SMALL,
@@ -133,7 +132,6 @@ fun PreferencesScreen(
             RowDivider()
             ChoiceRow(
                 title = stringResource(R.string.prefs_preview_lines),
-                description = stringResource(R.string.prefs_preview_lines_desc),
                 options =
                     SyncSettingsStore.PREVIEW_LINE_CHOICES.map {
                         pluralStringResource(R.plurals.prefs_preview_lines_option, it, it) to it
@@ -145,7 +143,6 @@ fun PreferencesScreen(
             // 外观（settings-roadmap P1-6）：只在两套既有配色之间选择，绝无取色器。
             ChoiceRow(
                 title = stringResource(R.string.prefs_theme),
-                description = stringResource(R.string.prefs_theme_desc),
                 options =
                     listOf(
                         stringResource(R.string.theme_system) to SyncSettingsStore.THEME_SYSTEM,
@@ -180,7 +177,6 @@ fun PreferencesScreen(
             RowDivider()
             ToggleRow(
                 title = stringResource(R.string.prefs_pause_sync),
-                description = stringResource(R.string.prefs_pause_sync_desc),
                 checked = state.pauseSync,
                 onCheckedChange = onPauseSyncChange,
                 fact = facts.pauseSync,
@@ -196,7 +192,6 @@ fun PreferencesScreen(
             RowDivider()
             ToggleRow(
                 title = stringResource(R.string.prefs_auto_apply),
-                description = stringResource(R.string.prefs_auto_apply_desc),
                 checked = state.autoApplyRemote,
                 onCheckedChange = onAutoApplyRemoteChange,
                 fact = facts.autoApply,
@@ -212,7 +207,6 @@ fun PreferencesScreen(
             RowDivider()
             ToggleRow(
                 title = stringResource(R.string.prefs_auto_apply_images),
-                description = stringResource(R.string.prefs_auto_apply_images_desc),
                 checked = state.autoApplyImages,
                 onCheckedChange = onAutoApplyImagesChange,
                 fact = facts.autoApplyImages,
@@ -397,13 +391,11 @@ fun PreferencesScreen(
         ) {
             ActionRow(
                 title = stringResource(R.string.prefs_replay_onboarding),
-                description = stringResource(R.string.prefs_replay_onboarding_desc),
                 onClick = onReplayOnboarding,
             )
             RowDivider()
             ActionRow(
                 title = stringResource(R.string.prefs_privacy_doc_title),
-                description = stringResource(R.string.prefs_privacy_doc_desc),
                 onClick = onOpenPrivacyDoc,
             )
         }
@@ -497,9 +489,9 @@ private fun RowDivider() {
 @Composable
 private fun ToggleRow(
     title: String,
-    description: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    description: String? = null,
     /** The live fact under the description: what the system is actually doing right now. */
     fact: FactLine? = null,
 ) {
@@ -520,8 +512,10 @@ private fun ToggleRow(
     ) {
         Column(Modifier.weight(1f)) {
             Text(text = title, fontSize = 14.sp, color = c.t1)
-            Spacer(Modifier.height(2.dp))
-            Text(text = description, style = ClipSyncType.caption, color = c.t3)
+            if (description != null) {
+                Spacer(Modifier.height(2.dp))
+                Text(text = description, style = ClipSyncType.caption, color = c.t3)
+            }
             if (fact != null) {
                 Spacer(Modifier.height(5.dp))
                 FactRow(fact)
@@ -598,8 +592,6 @@ private fun LanguageRow(
                 .padding(horizontal = 14.dp, vertical = 12.dp),
     ) {
         Text(text = stringResource(R.string.prefs_language), fontSize = 14.sp, color = c.t1)
-        Spacer(Modifier.height(2.dp))
-        Text(text = stringResource(R.string.prefs_language_desc), style = ClipSyncType.caption, color = c.t3)
         Spacer(Modifier.height(8.dp))
         val options =
             listOf(LanguageCatalog.FOLLOW_SYSTEM to stringResource(R.string.prefs_language_follow_system)) +
@@ -671,10 +663,10 @@ private fun LanguageChip(
 @Composable
 private fun <T> ChoiceRow(
     title: String,
-    description: String,
     options: List<Pair<String, T>>,
     selected: T,
     onSelect: (T) -> Unit,
+    description: String? = null,
 ) {
     val c = clipSyncColors
     Column(
@@ -684,8 +676,10 @@ private fun <T> ChoiceRow(
                 .padding(horizontal = 14.dp, vertical = 12.dp),
     ) {
         Text(text = title, fontSize = 14.sp, color = c.t1)
-        Spacer(Modifier.height(2.dp))
-        Text(text = description, style = ClipSyncType.caption, color = c.t3)
+        if (description != null) {
+            Spacer(Modifier.height(2.dp))
+            Text(text = description, style = ClipSyncType.caption, color = c.t3)
+        }
         Spacer(Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             val shape = CharterShapes.control

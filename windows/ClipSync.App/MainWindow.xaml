@@ -2216,7 +2216,6 @@
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Margin="0,0,16,0">
                                         <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_FontScale_Title}" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_FontScale_Desc}" />
                                     </StackPanel>
                                     <StackPanel Grid.Column="1"
                                                 VerticalAlignment="Top"
@@ -2248,7 +2247,6 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_PreviewLines_Title}" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_PreviewLines_Desc}" />
                                         </StackPanel>
                                         <StackPanel Grid.Column="1"
                                                     VerticalAlignment="Top"
@@ -2282,7 +2280,6 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Theme_Title}" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Theme_Desc}" />
                                         </StackPanel>
                                         <StackPanel Grid.Column="1"
                                                     VerticalAlignment="Top"
@@ -2317,7 +2314,6 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Language_Title}" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Language_Desc}" />
                                             <!-- 「重启后生效」随实际状态变化：与本次启动所用语言一致时是灰色说明，
                                                  改选并保存后才变赭（需要你重启） -->
                                             <ContentControl Content="{Binding LanguageStatus}" Style="{StaticResource FactLine}" />
@@ -2348,7 +2344,6 @@
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Margin="0,0,16,0">
                                         <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Common_PauseCapture}" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Capture_Pause_Desc}" />
                                         <ContentControl Content="{Binding PauseStatus}" Style="{StaticResource FactLine}" />
                                     </StackPanel>
                                     <ToggleButton Grid.Column="1"
@@ -2588,7 +2583,6 @@
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Margin="0,0,16,0">
                                         <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Startup_Launch_Title}" />
-                                        <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_Startup_Launch_Desc}" />
                                         <!-- 开关只是意图；这里读回注册表说事实：已登记 / 写入失败 / 被任务管理器停用 -->
                                         <ContentControl Content="{Binding StartupStatus}" Style="{StaticResource FactLine}" />
                                     </StackPanel>
@@ -2809,7 +2803,6 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Margin="0,0,16,0">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_PrivacyDoc_Title}" />
-                                            <TextBlock Style="{StaticResource RowDesc}" Text="{x:Static loc:Strings.Prefs_PrivacyDoc_Desc}" />
                                             <TextBlock x:Name="PrivacyDocOpenFailedText"
                                                        Margin="0,5,0,0"
                                                        FontSize="10.5"

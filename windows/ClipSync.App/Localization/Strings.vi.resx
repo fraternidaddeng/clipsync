@@ -394,13 +394,13 @@
     <value>Dự phòng Bluetooth</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>Mặc định tắt. Khi LAN bị VPN hoặc tường lửa chặn, điện thoại đã ghép nối Bluetooth trong cài đặt hệ thống vẫn tiếp tục đồng bộ văn bản (không có hình ảnh, chậm hơn).</value>
+    <value>Syncs text when the local network is blocked. No images.</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>Địa chỉ lắng nghe bổ sung</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>Dành cho địa chỉ bộ điều hợp ảo như Tailscale / WireGuard. Không cung cấp trung chuyển công cộng.</value>
+    <value>Addresses of virtual adapters. No public relay.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>Có hiệu lực sau khi khởi động lại</value>
@@ -412,7 +412,7 @@
     <value>Dấu vân tay chứng chỉ của PC này</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>Khi ghép nối, hãy đối chiếu từng cụm với dấu vân tay hiển thị trên điện thoại. Dấu vân tay thay đổi sẽ khiến mọi thiết bị đã ghép nối yêu cầu xác nhận lại.</value>
+    <value>Compare it with the fingerprint on the phone when pairing.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>Dịch vụ phía đối diện chưa chạy; phiên này không có dấu vân tay để hiển thị.</value>
@@ -460,7 +460,7 @@
     <value>Cho phép TCP 47654 vào</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>Điện thoại chỉ kết nối được với PC này sau khi cổng được cho phép. netsh có sẵn của Windows sẽ chạy với quyền quản trị viên để tạo một quy tắc tường lửa tên “ClipSync TCP 47654”; lệnh đầy đủ sắp chạy hiển thị bên dưới, bạn cũng có thể sao chép và tự chạy trong PowerShell quản trị viên. Quy tắc không biến mất khi xóa thư mục chương trình; có thể gỡ tại đây.</value>
+    <value>Asks for administrator approval.</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>Sao chép lệnh</value>
@@ -643,37 +643,37 @@
     <value>Khi tạm dừng, PC này ngừng ghi nội dung mới; lịch sử hiện có vẫn được giữ.</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>Khi bật, ghi nhận và đồng bộ dừng hoàn toàn, không để lại dấu vết.</value>
+    <value>While on, nothing is captured or synced.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>Tiến trình bị chặn</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>Nội dung sao chép từ các tiến trình này không vào lịch sử và không đồng bộ. Cách nhau bằng dấu phẩy hoặc xuống dòng.</value>
+    <value>Copies from these processes are ignored. Separate names with commas or new lines.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>Tự động áp dụng nội dung từ xa</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>Văn bản từ điện thoại được tự động ghi vào bảng nhớ tạm của PC này. Khi tắt, nó chỉ nằm trong lịch sử, cần sao chép thủ công.</value>
+    <value>Incoming text goes straight to the clipboard. When off, it stays in history.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>Đồng bộ hình ảnh bảng nhớ tạm</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Mặc định bật. Chỉ PNG/JPEG; byte gốc có thể chứa EXIF và siêu dữ liệu khác, hai đầu cần phiên v2.</value>
+    <value>PNG and JPEG only. Both devices must have this on.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Tự động áp dụng hình ảnh từ xa</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>Hình ảnh từ điện thoại được tự động ghi vào bảng nhớ tạm của PC này. Khi tắt, chúng chỉ nằm trong lịch sử, cần sao chép thủ công.</value>
+    <value>Incoming images go straight to the clipboard. When off, they stay in history.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>Dự phòng Bluetooth · địa chỉ lắng nghe bổ sung · dấu vân tay chứng chỉ</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>Đã chuyển sang “Đường dẫn · đoạn mạng” — chúng quyết định nội dung có đến được phía bên kia hay không, nên ở cùng ghép nối và quản lý thiết bị.</value>
+    <value>On the Conduit page.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>Đến Đường dẫn</value>
@@ -682,7 +682,7 @@
     <value>Thời hạn lưu giữ</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>Mục quá hạn được tự động xóa. Dọn dẹp chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận.</value>
+    <value>Clears this device only. The other device keeps what it already received.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>ngày</value>
@@ -691,7 +691,7 @@
     <value>Số mục lưu giữ</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>Vượt giới hạn thì mục cũ nhất bị xóa trước (100–2000, mỗi bước 100). Dọn dẹp chỉ diễn ra trên PC này.</value>
+    <value>Drops the oldest entries past the limit. This device only.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>mục</value>
@@ -706,22 +706,22 @@
     <value>Phím tắt gọi cửa sổ nổi</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>Nhấn tổ hợp trong bất kỳ ứng dụng nào để gọi cửa sổ nổi ở khay. Bấm vào ô rồi nhấn tổ hợp mong muốn (phải gồm Ctrl, Alt hoặc Win); nhấn Backspace để xóa. Mặc định tắt.</value>
+    <value>Click the box, then press the shortcut. Backspace clears it.</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>Phím tắt tạm dừng đồng bộ</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>Nhấn tổ hợp trong bất kỳ ứng dụng nào để tạm dừng đồng bộ; nhấn lần nữa để tiếp tục. Bấm vào ô rồi nhấn tổ hợp mong muốn (phải gồm Ctrl, Alt hoặc Win); nhấn Backspace để xóa. Mặc định tắt.</value>
+    <value>Click the box, then press the shortcut. Press it again to resume.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>Ghi toàn bộ lịch sử (gồm dấu xóa) thành tệp sao lưu JSON Lines; không chứa khóa, chứng chỉ hay dữ liệu ghép nối. Bản xuất là văn bản thuần — hãy cất giữ cẩn thận.</value>
+    <value>A plain-text backup. Pairing secrets are not included.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>Gộp lịch sử từ tệp sao lưu: khử trùng lặp theo “thiết bị nguồn + số thứ tự”, nhập lại không tạo mục trùng và không ghi đè các bản xóa cục bộ. Kiểm tra thất bại thì không thay đổi gì.</value>
+    <value>Importing the same file again does not add duplicates. A bad file changes nothing.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>Xóa một lần toàn bộ mục trên PC này (gồm hình ảnh); cần xác nhận hai bước và không thể khôi phục. Việc xóa chỉ diễn ra trên PC này, không xóa từ xa những gì phía bên kia đã nhận — nên xuất lịch sử trước.</value>
+    <value>Deletes history on this device. The other device is left as it is.</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>Trợ giúp</value>
@@ -730,7 +730,7 @@
     <value>Xem lại hướng dẫn</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>Đi lại toàn bộ hướng dẫn lần đầu từ trang chào mừng; không thay đổi cài đặt hay ghép nối nào.</value>
+    <value>Shows the pairing QR code again.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>Quyền riêng tư và rủi ro</value>

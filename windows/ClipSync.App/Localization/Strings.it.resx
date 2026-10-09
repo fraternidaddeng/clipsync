@@ -394,13 +394,13 @@
     <value>Riserva Bluetooth</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>Disattivata per impostazione predefinita. Quando la LAN è bloccata da VPN o firewall, un telefono già associato via Bluetooth nelle impostazioni di sistema continua a sincronizzare il testo (niente immagini, più lento).</value>
+    <value>Syncs text when the local network is blocked. No images.</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>Indirizzi di ascolto aggiuntivi</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>Per indirizzi di schede virtuali come Tailscale / WireGuard. Nessun relay pubblico.</value>
+    <value>Addresses of virtual adapters. No public relay.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>Si applica dopo il riavvio</value>
@@ -412,7 +412,7 @@
     <value>Impronta del certificato di questo PC</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>Durante l’associazione confrontala gruppo per gruppo con l’impronta mostrata sul telefono. Se l’impronta cambia, ogni dispositivo associato chiederà una nuova conferma.</value>
+    <value>Compare it with the fingerprint on the phone when pairing.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>Il servizio peer non è attivo; nessuna impronta da mostrare in questa sessione.</value>
@@ -460,7 +460,7 @@
     <value>Consenti TCP 47654 in ingresso</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>Il telefono può raggiungere questo PC solo dopo che la porta è stata consentita. Il netsh integrato in Windows viene eseguito come amministratore per creare una regola del firewall chiamata “ClipSync TCP 47654”; il comando completo che verrà eseguito è mostrato sotto, e puoi anche copiarlo ed eseguirlo tu stesso in un PowerShell da amministratore. La regola non scompare cancellando la cartella del programma; rimuovila da qui.</value>
+    <value>Asks for administrator approval.</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>Copia comando</value>
@@ -643,37 +643,37 @@
     <value>In pausa questo PC smette di registrare nuovi contenuti; la cronologia esistente resta.</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>Quando è attiva, acquisizione e sincronizzazione si fermano del tutto, senza lasciare tracce.</value>
+    <value>While on, nothing is captured or synced.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>Processi bloccati</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>Le copie da questi processi non entrano mai nella cronologia né nella sincronizzazione. Separa con virgole o a capo.</value>
+    <value>Copies from these processes are ignored. Separate names with commas or new lines.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>Applica automaticamente il contenuto remoto</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>Il testo dal telefono viene scritto automaticamente negli appunti di questo PC. Se disattivato resta solo nella cronologia e va copiato a mano.</value>
+    <value>Incoming text goes straight to the clipboard. When off, it stays in history.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>Sincronizza immagini degli appunti</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>Attivata per impostazione predefinita. Solo PNG/JPEG; i byte grezzi possono contenere EXIF e altri metadati, ed entrambe le estremità richiedono una sessione v2.</value>
+    <value>PNG and JPEG only. Both devices must have this on.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Applica automaticamente le immagini remote</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>Le immagini dal telefono vengono scritte automaticamente negli appunti di questo PC. Se disattivato restano solo nella cronologia e vanno copiate a mano.</value>
+    <value>Incoming images go straight to the clipboard. When off, they stay in history.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>Riserva Bluetooth · indirizzi di ascolto aggiuntivi · impronta del certificato</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>Spostati in «Condotto · segmento rete» — decidono se il contenuto può raggiungere il peer, quindi convivono con associazione e gestione dei dispositivi.</value>
+    <value>On the Conduit page.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>Vai al condotto</value>
@@ -682,7 +682,7 @@
     <value>Periodo di conservazione</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>Le voci scadute vengono rimosse automaticamente. La pulizia avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto.</value>
+    <value>Clears this device only. The other device keeps what it already received.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>giorni</value>
@@ -691,7 +691,7 @@
     <value>Numero di voci conservate</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>Oltre il limite si rimuovono prima le voci più vecchie (100–2000, passi di 100). La pulizia avviene solo su questo PC.</value>
+    <value>Drops the oldest entries past the limit. This device only.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>voci</value>
@@ -706,22 +706,22 @@
     <value>Scorciatoia del riquadro</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>Premi la combinazione in qualsiasi app per richiamare il riquadro della tray. Fai clic sul campo, poi premi la combinazione desiderata (deve includere Ctrl, Alt o Win); Backspace per cancellare. Disattivata per impostazione predefinita.</value>
+    <value>Click the box, then press the shortcut. Backspace clears it.</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>Scorciatoia per sospendere la sincronizzazione</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>Premi la combinazione in qualsiasi app per sospendere la sincronizzazione; premila di nuovo per riprenderla. Fai clic sul campo, poi premi la combinazione desiderata (deve includere Ctrl, Alt o Win); Backspace per cancellare. Disattivata per impostazione predefinita.</value>
+    <value>Click the box, then press the shortcut. Press it again to resume.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>Scrive l’intera cronologia (inclusi i contrassegni di eliminazione) in un file di backup JSON Lines; senza chiavi, certificati o dati di associazione. L’export è in chiaro — custodiscilo con cura.</value>
+    <value>A plain-text backup. Pairing secrets are not included.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>Unisce la cronologia da un file di backup: idempotente su «dispositivo di origine + numero», quindi reimportare non duplica voci né annulla le eliminazioni locali. Se la verifica fallisce, nulla cambia.</value>
+    <value>Importing the same file again does not add duplicates. A bad file changes nothing.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>Elimina in un colpo solo tutte le voci su questo PC (immagini incluse); richiede due conferme ed è irreversibile. Lo svuotamento avviene solo su questo PC e non elimina mai ciò che il peer ha già ricevuto — valuta prima un export.</value>
+    <value>Deletes history on this device. The other device is left as it is.</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>Aiuto</value>
@@ -730,7 +730,7 @@
     <value>Rivedi il tutorial</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>Ripercorri il tutorial del primo avvio dalla pagina di benvenuto; non modifica impostazioni né associazione.</value>
+    <value>Shows the pairing QR code again.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>Privacy e rischi</value>

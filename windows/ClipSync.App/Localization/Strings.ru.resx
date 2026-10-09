@@ -394,13 +394,13 @@
     <value>Bluetooth-резерв</value>
   </data>
   <data name="Conduit_Bluetooth_Desc" xml:space="preserve">
-    <value>По умолчанию выключено. Когда LAN блокируется VPN или брандмауэром, телефон, уже сопряжённый по Bluetooth в настройках системы, продолжает синхронизировать текст (без изображений, медленнее).</value>
+    <value>Syncs text when the local network is blocked. No images.</value>
   </data>
   <data name="Conduit_ExtraBind_Title" xml:space="preserve">
     <value>Дополнительные адреса прослушивания</value>
   </data>
   <data name="Conduit_ExtraBind_Desc" xml:space="preserve">
-    <value>Для адресов виртуальных адаптеров, таких как Tailscale / WireGuard. Публичный ретранслятор не предоставляется.</value>
+    <value>Addresses of virtual adapters. No public relay.</value>
   </data>
   <data name="Conduit_ExtraBind_RestartNote" xml:space="preserve">
     <value>Применяется после перезапуска</value>
@@ -412,7 +412,7 @@
     <value>Отпечаток сертификата этого ПК</value>
   </data>
   <data name="Conduit_Fingerprint_Desc" xml:space="preserve">
-    <value>При сопряжении сверяйте его группа за группой с отпечатком на телефоне. После смены отпечатка все сопряжённые устройства попросят подтвердить заново.</value>
+    <value>Compare it with the fingerprint on the phone when pairing.</value>
   </data>
   <data name="Conduit_Fingerprint_Unavailable" xml:space="preserve">
     <value>Служба обмена не запущена; в этом сеансе отпечаток недоступен.</value>
@@ -460,7 +460,7 @@
     <value>Разрешить входящий TCP 47654</value>
   </data>
   <data name="Conduit_FirewallRule_Desc" xml:space="preserve">
-    <value>Телефон сможет подключиться к этому ПК только после разрешения порта. Встроенный в Windows netsh запустится от имени администратора и создаст одно правило брандмауэра с именем «ClipSync TCP 47654»; полная команда показана ниже, её можно также скопировать и выполнить самостоятельно в PowerShell от администратора. Правило не исчезает при удалении папки программы; удалить его можно здесь.</value>
+    <value>Asks for administrator approval.</value>
   </data>
   <data name="Conduit_FirewallRule_Copy" xml:space="preserve">
     <value>Копировать команду</value>
@@ -643,37 +643,37 @@
     <value>Во время паузы этот ПК не записывает новое содержимое; уже накопленная история сохраняется.</value>
   </data>
   <data name="Prefs_Capture_Private_Desc" xml:space="preserve">
-    <value>Пока включён, захват и синхронизация полностью остановлены, следов не остаётся.</value>
+    <value>While on, nothing is captured or synced.</value>
   </data>
   <data name="Prefs_Capture_Blocked_Title" xml:space="preserve">
     <value>Заблокированные процессы</value>
   </data>
   <data name="Prefs_Capture_Blocked_Desc" xml:space="preserve">
-    <value>Скопированное из этих процессов не попадает ни в историю, ни в синхронизацию. Разделяйте запятыми или переводами строки.</value>
+    <value>Copies from these processes are ignored. Separate names with commas or new lines.</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Title" xml:space="preserve">
     <value>Автоприменение удалённого содержимого</value>
   </data>
   <data name="Prefs_Sync_AutoApply_Desc" xml:space="preserve">
-    <value>Текст с телефона автоматически записывается в буфер обмена этого ПК. Если выключено, он остаётся только в истории — копируйте вручную.</value>
+    <value>Incoming text goes straight to the clipboard. When off, it stays in history.</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Title" xml:space="preserve">
     <value>Синхронизировать изображения буфера</value>
   </data>
   <data name="Prefs_Sync_ImageSync_Desc" xml:space="preserve">
-    <value>По умолчанию включено. Только PNG/JPEG; исходные байты могут содержать EXIF и другие метаданные, обеим сторонам нужен сеанс v2.</value>
+    <value>PNG and JPEG only. Both devices must have this on.</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Title" xml:space="preserve">
     <value>Автоприменение удалённых изображений</value>
   </data>
   <data name="Prefs_Sync_AutoApplyImages_Desc" xml:space="preserve">
-    <value>Изображения с телефона автоматически записываются в буфер обмена этого ПК. Если выключено, они остаются только в истории — копируйте вручную.</value>
+    <value>Incoming images go straight to the clipboard. When off, they stay in history.</value>
   </data>
   <data name="Prefs_Moved_Title" xml:space="preserve">
     <value>Bluetooth-резерв · дополнительные адреса · отпечаток сертификата</value>
   </data>
   <data name="Prefs_Moved_Desc" xml:space="preserve">
-    <value>Перенесены в «Канал · сегмент „Сеть“» — они решают, дойдёт ли содержимое до другой стороны, и живут рядом с сопряжением и управлением устройствами.</value>
+    <value>On the Conduit page.</value>
   </data>
   <data name="Prefs_Moved_GoToConduit" xml:space="preserve">
     <value>Открыть канал</value>
@@ -682,7 +682,7 @@
     <value>Срок хранения</value>
   </data>
   <data name="Prefs_Retention_Days_Desc" xml:space="preserve">
-    <value>Просроченные записи удаляются автоматически. Очистка происходит только на этом ПК и никогда не удаляет то, что другая сторона уже получила.</value>
+    <value>Clears this device only. The other device keeps what it already received.</value>
   </data>
   <data name="Prefs_Retention_DaysUnit" xml:space="preserve">
     <value>дн.</value>
@@ -691,7 +691,7 @@
     <value>Число записей</value>
   </data>
   <data name="Prefs_Retention_Entries_Desc" xml:space="preserve">
-    <value>При превышении лимита первыми удаляются самые старые записи (100–2000, шаг 100). Очистка происходит только на этом ПК.</value>
+    <value>Drops the oldest entries past the limit. This device only.</value>
   </data>
   <data name="Prefs_Retention_EntriesUnit" xml:space="preserve">
     <value>записей</value>
@@ -706,22 +706,22 @@
     <value>Горячая клавиша всплывающего окна</value>
   </data>
   <data name="Prefs_Startup_Hotkey_Desc" xml:space="preserve">
-    <value>Нажмите сочетание в любом приложении, чтобы вызвать всплывающее окно у трея. Щёлкните поле и нажмите нужное сочетание (обязательно с Ctrl, Alt или Win); Backspace — очистить. По умолчанию выключено.</value>
+    <value>Click the box, then press the shortcut. Backspace clears it.</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Title" xml:space="preserve">
     <value>Горячая клавиша паузы синхронизации</value>
   </data>
   <data name="Prefs_Startup_PauseHotkey_Desc" xml:space="preserve">
-    <value>Нажмите сочетание в любом приложении, чтобы приостановить синхронизацию; повторное нажатие возобновит её. Щёлкните поле и нажмите нужное сочетание (обязательно с Ctrl, Alt или Win); Backspace — очистить. По умолчанию выключено.</value>
+    <value>Click the box, then press the shortcut. Press it again to resume.</value>
   </data>
   <data name="Prefs_Data_Export_Desc" xml:space="preserve">
-    <value>Записывает всю историю (включая отметки об удалении) в файл резервной копии JSON Lines; без ключей, сертификатов и данных сопряжения. Экспорт в открытом виде — храните бережно.</value>
+    <value>A plain-text backup. Pairing secrets are not included.</value>
   </data>
   <data name="Prefs_Data_Import_Desc" xml:space="preserve">
-    <value>Объединяет историю из файла резервной копии: идемпотентно по «устройство-источник + номер», повторный импорт не создаёт дубликатов и не отменяет локальные удаления. При ошибке проверки ничего не меняется.</value>
+    <value>Importing the same file again does not add duplicates. A bad file changes nothing.</value>
   </data>
   <data name="Prefs_Data_Clear_Desc" xml:space="preserve">
-    <value>Разом удаляет все записи на этом ПК (включая изображения); требует двух подтверждений и необратимо. Очистка происходит только на этом ПК и не удаляет то, что другая сторона уже получила; сначала стоит экспортировать историю.</value>
+    <value>Deletes history on this device. The other device is left as it is.</value>
   </data>
   <data name="Prefs_Group_Help" xml:space="preserve">
     <value>Справка</value>
@@ -730,7 +730,7 @@
     <value>Показать обучение снова</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>Пройти обучение первого запуска заново со страницы приветствия; настройки и сопряжение не меняются.</value>
+    <value>Shows the pairing QR code again.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>Конфиденциальность и риски</value>
