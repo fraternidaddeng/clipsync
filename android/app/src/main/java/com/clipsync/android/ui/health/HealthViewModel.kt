@@ -166,8 +166,7 @@ class HealthViewModel(
                 reachabilityRefreshActive
                     .flatMapLatest { active ->
                         if (active) reachabilityRefreshTicker else emptyFlow()
-                    }
-                    .collect {
+                    }.collect {
                         if (pairingStore.peer() != null && capability?.peerHealth != null) {
                             refresh()
                         }

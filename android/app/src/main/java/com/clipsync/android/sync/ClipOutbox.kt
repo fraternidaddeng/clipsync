@@ -80,45 +80,48 @@ class KeyValueClipOutbox(
     private val dedupWindowMillis: Long = DEDUP_WINDOW_MILLIS,
 ) : ClipOutbox {
 
-    override fun enqueue(text: String, source: ClipSource): EnqueueResult = synchronized(persistenceLock) {
-        if (text.isEmpty()) {
-            return EnqueueResult.EmptyText
+    override fun enqueue(text: String, source: ClipSource): EnqueueResult =
+        synchronized(persistenceLock) {
+            if (text.isEmpty()) {
+                return EnqueueResult.EmptyText
+            }
+            val utf8Bytes = text.toByteArray(StandardCharsets.UTF_8).size
+            if (utf8Bytes > minOf(MAX_UTF8_BYTES, maxUtf8Bytes())) {
+                return EnqueueResult.TooLarge
+            }
+            val contentHash = hasher.hash(text)
+            val now = nowEpochMillis()
+            val entries = load()
+            val last = entries.lastOrNull()
+            if (last != null &&
+                last.contentHash == contentHash &&
+                now - last.createdAtEpochMillis <= dedupWindowMillis
+            ) {
+                return EnqueueResult.DuplicateRecent
+            }
+            val entry =
+                OutboxEntry(
+                    eventId = newEventId(),
+                    text = text,
+                    contentHash = contentHash,
+                    utf8Bytes = utf8Bytes,
+                    source = source,
+                    createdAtEpochMillis = now,
+                )
+            save(entries + entry)
+            return EnqueueResult.Accepted(entry)
         }
-        val utf8Bytes = text.toByteArray(StandardCharsets.UTF_8).size
-        if (utf8Bytes > minOf(MAX_UTF8_BYTES, maxUtf8Bytes())) {
-            return EnqueueResult.TooLarge
-        }
-        val contentHash = hasher.hash(text)
-        val now = nowEpochMillis()
-        val entries = load()
-        val last = entries.lastOrNull()
-        if (last != null &&
-            last.contentHash == contentHash &&
-            now - last.createdAtEpochMillis <= dedupWindowMillis
-        ) {
-            return EnqueueResult.DuplicateRecent
-        }
-        val entry = OutboxEntry(
-            eventId = newEventId(),
-            text = text,
-            contentHash = contentHash,
-            utf8Bytes = utf8Bytes,
-            source = source,
-            createdAtEpochMillis = now,
-        )
-        save(entries + entry)
-        return EnqueueResult.Accepted(entry)
-    }
 
     override fun pending(): List<OutboxEntry> = synchronized(persistenceLock) { load() }
 
-    override fun remove(eventId: String) = synchronized(persistenceLock) {
-        val entries = load()
-        val remaining = entries.filterNot { it.eventId == eventId }
-        if (remaining.size != entries.size) {
-            save(remaining)
+    override fun remove(eventId: String) =
+        synchronized(persistenceLock) {
+            val entries = load()
+            val remaining = entries.filterNot { it.eventId == eventId }
+            if (remaining.size != entries.size) {
+                save(remaining)
+            }
         }
-    }
 
     private fun load(): List<OutboxEntry> {
         val raw = store.read(STORAGE_KEY) ?: return emptyList()
@@ -138,6 +141,7 @@ class KeyValueClipOutbox(
         const val DEDUP_WINDOW_MILLIS: Long = 2_000L
         private const val STORAGE_KEY = "outbox.pending"
         private val json = Json { ignoreUnknownKeys = true }
+
         // The UI captures while the service drains on a worker. SharedPreferences makes a
         // single write atomic, but not this JSON read-modify-write; serializing all adapters
         // also covers a replacement instance sharing the same preferences file.

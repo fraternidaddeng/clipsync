@@ -58,6 +58,7 @@ import kotlinx.coroutines.launch
 class ClipboardSyncService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val syncNudges = Channel<Unit>(Channel.CONFLATED)
+
     @Volatile
     private var started = false
     private var supervisor: SyncSupervisor? = null
@@ -319,7 +320,10 @@ class ClipboardSyncService : Service() {
         }
     }
 
-    private fun checkCaptureHealth(session: ClipboardCaptureSession, recoveryDue: Boolean) {
+    private fun checkCaptureHealth(
+        session: ClipboardCaptureSession,
+        recoveryDue: Boolean,
+    ) {
         // A tick may have posted just as onDestroy() ran. Do not probe or recover a
         // coordinator after its service owner has been released.
         if (!started || captureSession !== session) return

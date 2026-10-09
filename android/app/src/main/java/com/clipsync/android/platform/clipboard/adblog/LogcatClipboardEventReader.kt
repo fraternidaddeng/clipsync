@@ -57,6 +57,7 @@ class LogcatClipboardEventReader(
 
     private val lock = Any()
     private var onSignal: ((ClipboardLogMatch) -> Unit)? = null
+
     @Volatile
     private var started: Boolean = false
     private var readerThread: Thread? = null

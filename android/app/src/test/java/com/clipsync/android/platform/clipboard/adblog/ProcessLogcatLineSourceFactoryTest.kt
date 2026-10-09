@@ -40,19 +40,24 @@ class ProcessLogcatLineSourceFactoryTest {
         val readStarted = CountDownLatch(1)
         private val pipe = PipedInputStream()
         private val producer = PipedOutputStream(pipe)
-        private val input = object : InputStream() {
-            override fun read(): Int {
-                readStarted.countDown()
-                return pipe.read()
-            }
+        private val input =
+            object : InputStream() {
+                override fun read(): Int {
+                    readStarted.countDown()
+                    return pipe.read()
+                }
 
-            override fun read(bytes: ByteArray, offset: Int, length: Int): Int {
-                readStarted.countDown()
-                return pipe.read(bytes, offset, length)
-            }
+                override fun read(
+                    bytes: ByteArray,
+                    offset: Int,
+                    length: Int,
+                ): Int {
+                    readStarted.countDown()
+                    return pipe.read(bytes, offset, length)
+                }
 
-            override fun close() = pipe.close()
-        }
+                override fun close() = pipe.close()
+            }
 
         @Volatile
         var destroyed = false
@@ -62,8 +67,7 @@ class ProcessLogcatLineSourceFactoryTest {
 
         override fun getOutputStream() = ByteArrayOutputStream()
 
-        override fun getErrorStream() =
-            ByteArrayInputStream(byteArrayOf())
+        override fun getErrorStream() = ByteArrayInputStream(byteArrayOf())
 
         override fun waitFor(): Int = 0
 
