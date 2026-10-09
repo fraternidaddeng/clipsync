@@ -217,10 +217,10 @@
     <value>Bevoorrecht lezen</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>De hoogste kwaliteitstrede van de Android-achtergrondleesladder: de pc gebruikt adb om een gekoppelde telefoon te helpen zijn ingebouwde bevoorrechte host te starten, waarna achtergrondkopieën van de telefoon direct worden geüpload. Elke start wordt door jouw klik hier in gang gezet.</value>
+    <value>Laat de telefoon kopieën ook op de achtergrond lezen.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Eenmaal toegestaan roept deze pc adb (de Android Debug Bridge) aan om de telefoon één startcommando te sturen. Wanneer je op ‘Bevoorrecht lezen starten’ klikt, stuurt deze pc via adb één startcommando naar de telefoon; op geen enkel ander moment wordt adb aangeroepen. De eerste keer moet je ook USB-foutopsporing op de telefoon inschakelen en het adb-autorisatievenster met de hand accepteren — Android staat het automatiseren van die stap niet toe.</value>
+    <value>Na toestemming wordt de telefoon alleen benaderd als je hieronder op een knop tikt. Bevestig de eerste keer op de telefoon.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Ik begrijp het — adb toestaan</value>
@@ -280,7 +280,7 @@
     <value>Draadloos koppelen (geen kabel nodig)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11+ ondersteunt draadloos debuggen: met de telefoon en deze pc op dezelfde wifi, zet op de telefoon Ontwikkelaarsopties → Draadloos debuggen aan en koppel één keer met een van de methoden hieronder; daarna werkt het starten van bevoorrecht lezen precies zoals via USB.</value>
+    <value>Zet draadloos debuggen aan en gebruik dezelfde wifi als deze pc.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>Koppel-QR-code tonen</value>
@@ -292,13 +292,13 @@
     <value>Op de telefoon: Draadloos debuggen → "Apparaat koppelen met QR-code" en scan deze code.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>Wachten tot de telefoon scant… Zolang de code zichtbaar is, vraagt deze pc elke twee seconden de mDNS-detectie van adb, hooguit twee minuten — altijd te stoppen.</value>
+    <value>Scan deze code met de telefoon.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>Deze adb heeft geen bruikbare mDNS-detectie (nieuwere platform-tools nodig); de QR-route kan niet werken. Gebruik in plaats daarvan de koppelcode-methode hieronder.</value>
+    <value>Scannen is niet beschikbaar. Gebruik een koppelcode.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>Wachten op de scan is verlopen; de QR-code wordt niet meer getoond (de oude is vervallen). Toon een nieuwe of gebruik de koppelcode.</value>
+    <value>Niets gescand. Toon opnieuw, of gebruik een code.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>Telefoon gevonden ({0}); koppelen…</value>
@@ -316,7 +316,7 @@
     <value>Gekoppeld. Verbindingspoort wordt automatisch opgezocht…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>Gekoppeld, maar de verbindingspoort kon niet automatisch worden gevonden. Vul hieronder het "IP-adres en poort" in dat boven aan de pagina Draadloos debuggen van de telefoon staat en tik op "Verbinden".</value>
+    <value>Gekoppeld. Vul hieronder de poort van de pagina Draadloos debuggen van de telefoon in.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>Verbinden met {0}…</value>
@@ -334,13 +334,13 @@
     <value>De onthouden poort luisterde niet meer, dus er is verbonden met de huidige {0}. De koppeling staat er nog; er is niet opnieuw gekoppeld.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>De draadloze verbinding is verbroken ({0} is offline of uit de apparatenlijst verdwenen). Controleer het actuele "IP-adres en poort" op de pagina Draadloos debuggen van de telefoon, pas het veld aan en tik op "Verbinden" — opnieuw koppelen is niet nodig.</value>
+    <value>Verbinding verbroken. Verbind opnieuw.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>Er is een verlopen draadloze sessie in adb aangetroffen; deze is automatisch verbroken en opnieuw verbonden.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>Het verbindings-IP:poort komt uit de regel "IP-adres en poort" boven aan de pagina Draadloos debuggen van de telefoon (niet de poort van het koppelvenster). Hij verandert vaak nadat het scherm uitgaat, het netwerk wisselt of de telefoon herstart — controleer de actuele waarde en probeer opnieuw. Koppelen hoeft meestal niet opnieuw.</value>
+    <value>Verbinden lukte niet. Controleer de poort op de pagina Draadloos debuggen van de telefoon en verbind opnieuw.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Geen geldige IP:poort (voorbeeld 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>Gestopt; die QR-code is vervallen.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>Koppelen met een koppelcode</value>
+    <value>Code gebruiken</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>Kies op de telefoon "Apparaat koppelen met koppelcode" en vul hier het IP-adres en de poort uit het venster plus de zescijferige code in.</value>
@@ -1110,7 +1110,7 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
     <value>Controleren op updates</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Vergelijkt met de nieuwste stabiele GitHub-release. Als GitHub onbereikbaar is, wordt een vanuit China bereikbare spiegel geprobeerd. Downloads worden met SHA-256 gecontroleerd, daarna wordt deze draagbare map vervangen en de app herstart.</value>
+    <value>Controleren of er een nieuwe versie is.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Downloaden en installeren</value>
@@ -1131,7 +1131,7 @@ Dit verwijdert in één stap elk item op deze pc (inclusief afbeeldingen). Wisse
     <value>De app sluit, vervangt zijn bestanden en start opnieuw.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>GitHub en zijn spiegels zijn niet bereikbaar. Controleer het netwerk en probeer opnieuw.</value>
+    <value>Nu geen verbinding. Probeer het later opnieuw.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>De gegevens van de nieuwste release konden niet worden gelezen.</value>

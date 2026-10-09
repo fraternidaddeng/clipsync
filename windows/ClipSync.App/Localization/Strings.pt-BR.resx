@@ -217,10 +217,10 @@
     <value>Leitura privilegiada</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>O degrau de maior qualidade da escada de leitura em segundo plano do Android: o PC usa o adb para ajudar um telefone pareado a iniciar seu host privilegiado integrado, após o que as cópias em segundo plano do telefone sobem instantaneamente. Cada início é disparado por um clique seu aqui.</value>
+    <value>Permite que o telefone leia o que foi copiado mesmo em segundo plano.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Depois de permitido, este PC chamará o adb (a Android Debug Bridge) para enviar ao telefone um único comando de início. Quando você clica em Iniciar leitura privilegiada, este PC envia ao telefone um comando de início pelo adb; o adb não é invocado em nenhum outro momento. Na primeira vez você também precisa ativar a depuração USB no telefone e aceitar manualmente o aviso de autorização do adb — o Android não permite automatizar essa etapa.</value>
+    <value>Depois de permitir, o telefone só é contactado quando você toca num botão abaixo. Confirme no telefone na primeira vez.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Entendi — permitir o adb</value>
@@ -280,7 +280,7 @@
     <value>Pareamento sem fio (sem cabo)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>O Android 11+ oferece depuração sem fio: com o telefone e este PC na mesma rede Wi-Fi, ative Opções do desenvolvedor → Depuração por Wi-Fi no telefone e pareie uma vez com qualquer método abaixo; depois disso, iniciar a leitura privilegiada funciona igual ao USB.</value>
+    <value>Ative a depuração por Wi-Fi e use a mesma rede deste PC.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>Mostrar QR code de pareamento</value>
@@ -292,13 +292,13 @@
     <value>No telefone: Depuração por Wi-Fi → "Parear dispositivo com QR code" e escaneie este código.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>Aguardando o telefone escanear… Enquanto o código é exibido, este PC consulta a descoberta mDNS do adb a cada dois segundos, por no máximo dois minutos — pare quando quiser.</value>
+    <value>Escaneie este código com o telefone.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>Este adb não tem descoberta mDNS utilizável (são necessárias platform-tools mais novas); o caminho do QR não pode funcionar. Use o método do código de pareamento abaixo.</value>
+    <value>A leitura não está disponível. Use um código de pareamento.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>Tempo de espera do escaneamento esgotado; o QR code não é mais exibido (o antigo foi anulado). Mostre um novo ou use o código de pareamento.</value>
+    <value>Nada foi escaneado. Mostre de novo ou use um código.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>Telefone encontrado ({0}); pareando…</value>
@@ -316,7 +316,7 @@
     <value>Pareado. Procurando a porta de conexão automaticamente…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>Pareado, mas a porta de conexão não pôde ser descoberta automaticamente. Digite abaixo o "endereço IP e porta" mostrado no topo da página Depuração por Wi-Fi do telefone e toque em "Conectar".</value>
+    <value>Pareado. Digite abaixo a porta da depuração por Wi-Fi do telefone.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>Conectando a {0}…</value>
@@ -334,13 +334,13 @@
     <value>A porta lembrada não escutava mais, então a conexão foi para o {0} atual. O pareamento continua; nada foi pareado de novo.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>A conexão sem fio foi perdida ({0} está offline ou sumiu da lista de dispositivos). Confira o "endereço IP e porta" atual na página Depuração por Wi-Fi do telefone, corrija o campo e toque em "Conectar" — não precisa parear de novo.</value>
+    <value>Desconectado. Conecte de novo.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>Uma sessão sem fio obsoleta deixada no adb foi detectada; ela foi desconectada e reconectada automaticamente.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>O IP:porta de conexão vem da linha "endereço IP e porta" no topo da página Depuração por Wi-Fi do telefone (não a porta da caixa de pareamento). Ele costuma mudar quando o telefone apaga a tela, troca de rede ou reinicia — confira o valor atual e tente de novo. Normalmente não é preciso parear de novo.</value>
+    <value>Não foi possível conectar. Confira a porta na depuração por Wi-Fi do telefone e conecte de novo.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Não é um IP:porta válido (exemplo: 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>Interrompido; esse QR code foi anulado.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>Parear com código</value>
+    <value>Usar um código</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>No telefone escolha "Parear dispositivo com código de pareamento" e digite aqui o endereço IP e a porta do diálogo com o código de seis dígitos.</value>
@@ -1110,7 +1110,7 @@ Todas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A 
     <value>Verificar atualizações</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Compara com a publicação estável mais recente no GitHub. Se o GitHub não responder, tenta um espelho acessível da China. O download é verificado por SHA-256; esta pasta portátil é substituída e o app reinicia.</value>
+    <value>Verificar se há uma versão nova.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Baixar e instalar</value>
@@ -1131,7 +1131,7 @@ Todas as entradas deste PC (imagens incluídas) serão excluídas de uma vez. A 
     <value>O app vai sair, substituir os arquivos e reiniciar.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Não foi possível contatar o GitHub nem os espelhos. Verifique a rede e tente de novo.</value>
+    <value>Sem conexão agora. Tente de novo mais tarde.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Não foi possível interpretar as informações da publicação mais recente.</value>

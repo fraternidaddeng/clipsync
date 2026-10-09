@@ -217,10 +217,10 @@
     <value>特权直读</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>通过 adb 启动手机内置的特权服务，供手机后台读取剪贴板。启动后回手机测试；手机重启后需要再次启动。</value>
+    <value>让手机在后台也能读到复制的内容。</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>这一步会调用 adb（Android 调试桥）向手机发送启动命令。你点击「启动特权直读」才会启动该操作；Windows 的「检测手机」、无线配对和连接也会按对应操作调用 adb。首次还需在手机上打开「USB 调试」并手动确认 adb 授权弹窗——这一步 Android 不允许自动化。</value>
+    <value>允许之后，点下面的按钮才会联系手机。第一次要在手机上确认。</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>了解并允许使用 adb</value>
@@ -280,7 +280,7 @@
     <value>无线配对（无需数据线）</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11 及以上支持无线调试：手机与电脑连同一 Wi-Fi，在手机「开发者选项 → 无线调试」打开开关后，用下面任一方式配对一次；之后启动特权直读与 USB 完全相同。</value>
+    <value>手机打开无线调试，和电脑连同一个 Wi-Fi。</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>出示配对二维码</value>
@@ -292,13 +292,13 @@
     <value>手机上：无线调试 → 「使用二维码配对设备」，扫描此码。</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>等待手机扫码……出示期间本机每两秒问一次 adb 的 mDNS 发现，最多两分钟，可随时停止。</value>
+    <value>用手机扫描这个码。</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>此 adb 不支持 mDNS 发现（需要较新的 platform-tools），二维码方式走不通。请改用下方配对码方式。</value>
+    <value>扫码不可用。改用配对码。</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>等待扫码超时，二维码已停止出示（旧码作废）。可重新出示，或改用配对码。</value>
+    <value>没有扫到。可以再出示，或改用配对码。</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>发现手机（{0}），正在配对……</value>
@@ -316,7 +316,7 @@
     <value>已配对，正在自动查找连接端口……</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>已配对，但未能自动发现连接端口。请把手机「无线调试」页顶部显示的「IP 地址和端口」填到下面，点「连接」。</value>
+    <value>配对好了。把手机无线调试页上的端口填到下面。</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>正在连接 {0}……</value>
@@ -334,13 +334,13 @@
     <value>记住的端口已不在监听，已改连当前的 {0}。配对还在，没有重新配对。</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>无线连接已断开（{0} 已离线或不在设备列表）。回手机「无线调试」页核对当前「IP 地址和端口」，改填后点「连接」；配对不用重来。</value>
+    <value>连接断了。再连一次。</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>检测到 adb 里残留的旧无线会话已失效，已自动断开并重新连接。</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>「连接 IP:端口」取手机「无线调试」页顶部的「IP 地址和端口」（与配对弹窗端口不同）；手机息屏、切网或重启后端口常会变，核对当前值后再试。配对通常不用重来。</value>
+    <value>连接失败。看一下手机无线调试页上的端口，再连接。</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>IP:端口 格式不对（示例 192.168.1.23:37123）。</value>
@@ -352,7 +352,7 @@
     <value>已停止出示，该二维码作废。</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>用配对码配对</value>
+    <value>用配对码</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>手机上选「使用配对码配对设备」，把弹窗显示的 IP 地址与端口、六位配对码填到这里。</value>
@@ -1110,7 +1110,7 @@
     <value>检查更新</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>对照 GitHub 仓库的最新正式发布；国内网络连不上时改走镜像。下载后会校验 SHA-256，再替换本机便携目录并重启。</value>
+    <value>查看是否有新版本。</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>下载并安装</value>
@@ -1131,7 +1131,7 @@
     <value>即将退出并替换程序文件，随后自动重启。</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>无法联系 GitHub 及国内镜像。请检查网络后重试。</value>
+    <value>暂时连不上，请稍后再试。</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>最新发布信息无法解析。</value>

@@ -217,10 +217,10 @@
     <value>विशेषाधिकार पठन</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Android बैकग्राउंड-रीड सीढ़ी की सबसे उच्च-गुणवत्ता वाली पायदान: PC adb से युग्मित फ़ोन को उसका अंतर्निहित विशेषाधिकार होस्ट शुरू करने में मदद करता है, इसके बाद फ़ोन की बैकग्राउंड कॉपियाँ तुरंत अपलोड होती हैं। हर शुरुआत यहाँ आपके क्लिक से ही होती है।</value>
+    <value>फ़ोन बैकग्राउंड में भी कॉपी पढ़ सके।</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>अनुमति देने पर यह PC फ़ोन को एक स्टार्ट कमांड भेजने के लिए adb (Android Debug Bridge) को कॉल करेगा। जब आप “विशेषाधिकार पठन शुरू करें” पर क्लिक करते हैं, यह PC adb से फ़ोन को एक स्टार्ट कमांड भेजता है; किसी और समय adb नहीं चलाया जाता। पहली बार आपको फ़ोन पर USB डिबगिंग चालू करना होगा और उसके adb प्राधिकरण संकेत को हाथ से स्वीकार करना होगा — Android इस चरण को स्वचालित करने की अनुमति नहीं देता।</value>
+    <value>अनुमति के बाद फ़ोन से तभी संपर्क होता है जब आप नीचे बटन दबाते हैं। पहली बार फ़ोन पर पुष्टि करें।</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>समझ गया — adb की अनुमति दें</value>
@@ -280,7 +280,7 @@
     <value>वायरलेस पेयरिंग (केबल की ज़रूरत नहीं)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11+ वायरलेस डिबगिंग समर्थित करता है: फ़ोन और इस PC को एक ही Wi-Fi से जोड़ें, फ़ोन पर «डेवलपर विकल्प → वायरलेस डिबगिंग» चालू करें, फिर नीचे दिए किसी भी तरीके से एक बार पेयर करें; इसके बाद विशेषाधिकार पठन शुरू करना USB जैसा ही है।</value>
+    <value>वायरलेस डिबगिंग चालू करें और इस PC वाला ही Wi-Fi इस्तेमाल करें।</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>पेयरिंग QR कोड दिखाएँ</value>
@@ -292,13 +292,13 @@
     <value>फ़ोन पर: वायरलेस डिबगिंग → «QR कोड से डिवाइस पेयर करें», फिर यह कोड स्कैन करें।</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>फ़ोन के स्कैन का इंतज़ार… कोड दिखते समय यह PC हर दो सेकंड में adb की mDNS खोज से पूछता है, अधिकतम दो मिनट — कभी भी रोकें।</value>
+    <value>फ़ोन से यह कोड स्कैन करें।</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>इस adb में उपयोगी mDNS खोज नहीं है (नए platform-tools चाहिए), इसलिए QR रास्ता काम नहीं कर सकता। नीचे पेयरिंग कोड तरीका अपनाएँ।</value>
+    <value>स्कैन उपलब्ध नहीं है। पेयरिंग कोड इस्तेमाल करें।</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>स्कैन का इंतज़ार समय-सीमा पार कर गया; QR कोड अब नहीं दिख रहा (पुराना कोड रद्द)। नया दिखाएँ, या पेयरिंग कोड इस्तेमाल करें।</value>
+    <value>स्कैन नहीं हुआ। फिर दिखाएँ, या कोड इस्तेमाल करें।</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>फ़ोन मिला ({0}); पेयर हो रहा है…</value>
@@ -316,7 +316,7 @@
     <value>पेयर हो गया। कनेक्ट पोर्ट अपने आप खोजा जा रहा है…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>पेयर हो गया, पर कनेक्ट पोर्ट अपने आप नहीं मिला। फ़ोन के वायरलेस डिबगिंग पेज के ऊपर दिख रहा «IP पता और पोर्ट» नीचे भरें, फिर «कनेक्ट» दबाएँ।</value>
+    <value>पेयर हो गया। फ़ोन के वायरलेस डिबगिंग पेज का पोर्ट नीचे भरें।</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>{0} से कनेक्ट हो रहा है…</value>
@@ -334,13 +334,13 @@
     <value>याद रखा पोर्ट अब नहीं सुन रहा था, इसलिए मौजूदा {0} से कनेक्ट किया गया। पेयरिंग अभी भी है; दोबारा पेयर नहीं किया गया।</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>वायरलेस कनेक्शन टूट गया ({0} ऑफ़लाइन है या डिवाइस सूची से गायब है)। फ़ोन के वायरलेस डिबगिंग पेज पर मौजूदा «IP पता और पोर्ट» जाँचें, फ़ील्ड ठीक करें और «कनेक्ट करें» दबाएँ — दोबारा पेयर करने की ज़रूरत नहीं।</value>
+    <value>कनेक्शन टूट गया। फिर कनेक्ट करें।</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>adb में बचा पुराना वायरलेस सत्र मिला; उसे अपने आप डिस्कनेक्ट कर फिर से कनेक्ट कर दिया गया।</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>कनेक्ट वाला IP:पोर्ट फ़ोन के वायरलेस डिबगिंग पेज के ऊपर की «IP पता और पोर्ट» पंक्ति से लें (पेयरिंग डायलॉग का पोर्ट नहीं)। स्क्रीन बंद होने, नेटवर्क बदलने या रीस्टार्ट के बाद यह अक्सर बदल जाता है — मौजूदा मान जाँचकर फिर कोशिश करें। आमतौर पर दोबारा पेयर करने की ज़रूरत नहीं।</value>
+    <value>कनेक्ट नहीं हुआ। फ़ोन के वायरलेस डिबगिंग पेज पर पोर्ट देखकर फिर कनेक्ट करें।</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>यह मान्य IP:पोर्ट नहीं है (उदाहरण 192.168.1.23:37123)।</value>
@@ -352,7 +352,7 @@
     <value>रोक दिया; वह QR कोड अब रद्द है।</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>पेयरिंग कोड से पेयर करें</value>
+    <value>कोड इस्तेमाल करें</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>फ़ोन पर «पेयरिंग कोड से डिवाइस पेयर करें» चुनें, फिर डायलॉग का IP पता व पोर्ट और छह-अंकीय कोड यहाँ भरें।</value>
@@ -1110,7 +1110,7 @@
     <value>अपडेट जाँचें</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>GitHub की नवीनतम स्थिर रिलीज़ से मिलाएँ। न जुड़ने पर चीन से पहुँचने वाला दर्पण आज़माया जाता है। SHA-256 जाँचने के बाद यह पोर्टेबल फ़ोल्डर बदला जाता है और ऐप फिर चलता है।</value>
+    <value>देखें कि नया संस्करण है या नहीं।</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>डाउनलोड कर इंस्टॉल करें</value>
@@ -1131,7 +1131,7 @@
     <value>ऐप बंद होगा, अपनी फ़ाइलें बदलेगा, फिर खुद चलेगा।</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>GitHub या उसके दर्पण से संपर्क नहीं हो सका। नेटवर्क जाँचकर फिर कोशिश करें।</value>
+    <value>अभी कनेक्ट नहीं हो रहा। बाद में कोशिश करें।</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>नवीनतम रिलीज़ जानकारी समझ नहीं आई।</value>

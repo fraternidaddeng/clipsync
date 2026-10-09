@@ -217,10 +217,10 @@
     <value>การอ่านสิทธิ์พิเศษ</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>ขั้นคุณภาพสูงสุดของบันไดการอ่านเบื้องหลังของ Android: พีซีใช้ adb ช่วยให้โทรศัพท์ที่จับคู่แล้วเริ่มโฮสต์สิทธิ์พิเศษในตัว จากนั้นการคัดลอกเบื้องหลังของโทรศัพท์จะอัปโหลดทันที ทุกครั้งที่เริ่มเกิดจากการคลิกของคุณที่นี่</value>
+    <value>ให้โทรศัพท์อ่านสิ่งที่คัดลอกได้แม้จะอยู่เบื้องหลัง</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>เมื่ออนุญาตแล้ว พีซีนี้จะเรียก adb (Android Debug Bridge) เพื่อส่งคำสั่งเริ่มต้นหนึ่งคำสั่งไปยังโทรศัพท์ เมื่อคุณคลิก “เริ่มการอ่านสิทธิ์พิเศษ” พีซีนี้จะส่งคำสั่งเริ่มต้นหนึ่งคำสั่งไปยังโทรศัพท์ผ่าน adb และจะไม่เรียก adb ในเวลาอื่น ครั้งแรกคุณต้องเปิด «การแก้จุดบกพร่อง USB» บนโทรศัพท์และยอมรับหน้าต่างอนุญาต adb ด้วยตนเอง — Android ไม่อนุญาตให้ทำขั้นตอนนี้อัตโนมัติ</value>
+    <value>หลังจากอนุญาต จะติดต่อโทรศัพท์เมื่อคุณกดปุ่มด้านล่างเท่านั้น ครั้งแรกให้ยืนยันบนโทรศัพท์</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>เข้าใจแล้ว — อนุญาต adb</value>
@@ -280,7 +280,7 @@
     <value>การจับคู่ไร้สาย (ไม่ต้องใช้สายเคเบิล)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11 ขึ้นไปรองรับการดีบักไร้สาย: ให้โทรศัพท์และพีซีนี้อยู่บน Wi-Fi เดียวกัน เปิด «ตัวเลือกนักพัฒนา → การแก้ไขข้อบกพร่องแบบไร้สาย» บนโทรศัพท์ แล้วจับคู่หนึ่งครั้งด้วยวิธีใดวิธีหนึ่งด้านล่าง หลังจากนั้นการเริ่มการอ่านสิทธิ์พิเศษทำงานเหมือน USB ทุกประการ</value>
+    <value>เปิดการดีบักไร้สาย และใช้ Wi-Fi เดียวกับพีซีนี้</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>แสดงคิวอาร์โค้ดจับคู่</value>
@@ -292,13 +292,13 @@
     <value>บนโทรศัพท์: การแก้ไขข้อบกพร่องแบบไร้สาย → «จับคู่อุปกรณ์ด้วยคิวอาร์โค้ด» แล้วสแกนโค้ดนี้</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>กำลังรอโทรศัพท์สแกน… ระหว่างแสดงโค้ด พีซีนี้จะสอบถามการค้นหา mDNS ของ adb ทุกสองวินาที นานสุดสองนาที — หยุดได้ตลอดเวลา</value>
+    <value>สแกนโค้ดนี้ด้วยโทรศัพท์</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>adb นี้ไม่มีการค้นหา mDNS ที่ใช้ได้ (ต้องใช้ platform-tools ที่ใหม่กว่า) เส้นทางคิวอาร์โค้ดจึงใช้ไม่ได้ โปรดใช้วิธีรหัสจับคู่ด้านล่างแทน</value>
+    <value>สแกนไม่ได้ ใช้รหัสจับคู่แทน</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>หมดเวลารอสแกน คิวอาร์โค้ดหยุดแสดงแล้ว (โค้ดเก่าใช้ไม่ได้อีก) แสดงโค้ดใหม่หรือใช้รหัสจับคู่แทน</value>
+    <value>ไม่มีการสแกน แสดงอีกครั้งหรือใช้รหัส</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>พบโทรศัพท์ ({0}) กำลังจับคู่…</value>
@@ -316,7 +316,7 @@
     <value>จับคู่แล้ว กำลังค้นหาพอร์ตเชื่อมต่อโดยอัตโนมัติ…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>จับคู่แล้ว แต่ค้นหาพอร์ตเชื่อมต่อโดยอัตโนมัติไม่ได้ กรุณากรอก «ที่อยู่ IP และพอร์ต» ที่แสดงด้านบนของหน้าการแก้ไขข้อบกพร่องแบบไร้สายของโทรศัพท์ลงด้านล่าง แล้วแตะ «เชื่อมต่อ»</value>
+    <value>จับคู่แล้ว กรอกพอร์ตจากหน้าดีบักไร้สายของโทรศัพท์ด้านล่าง</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>กำลังเชื่อมต่อ {0}…</value>
@@ -334,13 +334,13 @@
     <value>พอร์ตที่จำไว้ไม่ได้ฟังอีกต่อไป จึงเชื่อมต่อไปที่ {0} ปัจจุบันแทน การจับคู่ยังอยู่ ไม่ได้จับคู่ใหม่</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>การเชื่อมต่อไร้สายขาดหาย ({0} ออฟไลน์หรือหายไปจากรายการอุปกรณ์) ตรวจ «ที่อยู่ IP และพอร์ต» ปัจจุบันในหน้าการแก้ไขข้อบกพร่องแบบไร้สายของโทรศัพท์ แก้ค่าแล้วกด «เชื่อมต่อ» — ไม่ต้องจับคู่ใหม่</value>
+    <value>หลุดการเชื่อมต่อ เชื่อมต่ออีกครั้ง</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>พบเซสชันไร้สายเก่าที่ค้างอยู่ใน adb จึงตัดการเชื่อมต่อและเชื่อมต่อใหม่ให้อัตโนมัติ</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>IP:พอร์ตสำหรับเชื่อมต่อมาจากบรรทัด «ที่อยู่ IP และพอร์ต» ด้านบนของหน้าการแก้ไขข้อบกพร่องแบบไร้สายของโทรศัพท์ (ไม่ใช่พอร์ตในกล่องจับคู่) ค่านี้มักเปลี่ยนหลังหน้าจอดับ สลับเครือข่าย หรือรีสตาร์ต — ตรวจค่าปัจจุบันแล้วลองใหม่ ปกติไม่ต้องจับคู่ใหม่</value>
+    <value>เชื่อมต่อไม่ได้ ดูพอร์ตในหน้าดีบักไร้สายของโทรศัพท์ แล้วเชื่อมต่ออีกครั้ง</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>รูปแบบ IP:พอร์ต ไม่ถูกต้อง (ตัวอย่าง 192.168.1.23:37123)</value>
@@ -352,7 +352,7 @@
     <value>หยุดแล้ว คิวอาร์โค้ดนั้นใช้ไม่ได้อีก</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>จับคู่ด้วยรหัสจับคู่</value>
+    <value>ใช้รหัส</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>บนโทรศัพท์เลือก «จับคู่อุปกรณ์ด้วยรหัสจับคู่» แล้วกรอกที่อยู่ IP กับพอร์ต และรหัสหกหลักจากกล่องโต้ตอบลงที่นี่</value>
@@ -1110,7 +1110,7 @@
     <value>ตรวจสอบการอัปเดต</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>เทียบกับรุ่นทางการล่าสุดบน GitHub ถ้าติดต่อไม่ได้จะลองกระจกที่เข้าถึงได้จากจีน หลังตรวจ SHA-256 จะแทนที่โฟลเดอร์พกพานี้แล้วเปิดใหม่</value>
+    <value>ตรวจว่ามีรุ่นใหม่หรือไม่</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>ดาวน์โหลดแล้วติดตั้ง</value>
@@ -1131,7 +1131,7 @@
     <value>แอปจะปิด แทนที่ไฟล์ แล้วเปิดใหม่เอง</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>ติดต่อ GitHub และกระจกไม่ได้ ตรวจเครือข่ายแล้วลองใหม่</value>
+    <value>ตอนนี้เชื่อมต่อไม่ได้ ลองใหม่ภายหลัง</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>อ่านข้อมูลรุ่นล่าสุดไม่ได้</value>

@@ -217,10 +217,10 @@
     <value>特權直讀</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Android 背景讀取階梯裡品質最高的一檔：電腦透過 adb 幫已配對的手機啟動內建特權宿主，之後手機在背景複製即時上行。每次啟動都由你在這裡點擊觸發。</value>
+    <value>讓手機在背景也能讀到複製的內容。</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>這一步會呼叫 adb（Android 偵錯橋）向手機傳送啟動命令。你點擊「啟動特權直讀」才會啟動該操作；Windows 的「檢測手機」、無線配對和連接也會按對應操作呼叫 adb。首次還需在手機上開啟「USB 偵錯」並手動確認 adb 授權彈窗——這一步 Android 不允許自動化。</value>
+    <value>允許之後，點下面的按鈕才會聯繫手機。第一次要在手機上確認。</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>了解並允許使用 adb</value>
@@ -280,7 +280,7 @@
     <value>無線配對（無需傳輸線）</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11 及以上支援無線偵錯：手機與電腦連同一 Wi-Fi，在手機「開發人員選項 → 無線偵錯」開啟後，用下面任一方式配對一次；之後啟動特權直讀與 USB 完全相同。</value>
+    <value>手機打開無線偵錯，和電腦連同一個 Wi-Fi。</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>出示配對 QR 碼</value>
@@ -292,13 +292,13 @@
     <value>手機上：無線偵錯 → 「使用 QR 碼配對裝置」，掃描此碼。</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>等待手機掃碼……出示期間本機每兩秒問一次 adb 的 mDNS 探索，最多兩分鐘，可隨時停止。</value>
+    <value>用手機掃描這個碼。</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>此 adb 不支援 mDNS 探索（需要較新的 platform-tools），QR 碼方式走不通。請改用下方配對碼方式。</value>
+    <value>掃碼不可用。改用配對碼。</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>等待掃碼逾時，QR 碼已停止出示（舊碼作廢）。可重新出示，或改用配對碼。</value>
+    <value>沒有掃到。可以再出示，或改用配對碼。</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>發現手機（{0}），正在配對……</value>
@@ -316,7 +316,7 @@
     <value>已配對，正在自動尋找連線連接埠……</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>已配對，但未能自動發現連線連接埠。請把手機「無線偵錯」頁頂部顯示的「IP 位址與連接埠」填到下面，點「連線」。</value>
+    <value>配對好了。把手機無線偵錯頁上的連接埠填到下面。</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>正在連線 {0}……</value>
@@ -334,13 +334,13 @@
     <value>記住的連接埠已不在監聽，已改連目前的 {0}。配對還在，沒有重新配對。</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>無線連線已中斷（{0} 已離線或不在裝置清單）。回手機「無線偵錯」頁核對目前「IP 位址與連接埠」，改填後點「連線」；配對不用重來。</value>
+    <value>連線斷了。再連一次。</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>偵測到 adb 裡殘留的舊無線工作階段已失效，已自動斷開並重新連線。</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>「連線 IP:連接埠」取手機「無線偵錯」頁頂部的「IP 位址與連接埠」（與配對彈窗連接埠不同）；手機熄屏、切換網路或重啟後連接埠常會變，核對目前值後再試。配對通常不用重來。</value>
+    <value>連線失敗。看一下手機無線偵錯頁上的連接埠，再連線。</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>IP:連接埠 格式不對（範例 192.168.1.23:37123）。</value>
@@ -352,7 +352,7 @@
     <value>已停止出示，該 QR 碼作廢。</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>用配對碼配對</value>
+    <value>用配對碼</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>手機上選「使用配對碼配對裝置」，把視窗顯示的 IP 位址與連接埠、六位配對碼填到這裡。</value>
@@ -1110,7 +1110,7 @@
     <value>檢查更新</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>對照 GitHub 儲存庫的最新正式發布；國內網路連不上時改走鏡像。下載後會校驗 SHA-256，再取代本機便攜目錄並重啟。</value>
+    <value>查看是否有新版本。</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>下載並安裝</value>
@@ -1131,7 +1131,7 @@
     <value>即將退出並取代程式檔，隨後自動重啟。</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>無法聯繫 GitHub 及國內鏡像。請檢查網路後重試。</value>
+    <value>暫時連不上，請稍後再試。</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>最新發布資訊無法解析。</value>

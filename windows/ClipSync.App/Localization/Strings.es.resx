@@ -217,10 +217,10 @@
     <value>Lectura privilegiada</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>El nivel de mayor calidad de la escalera de lectura en segundo plano de Android: el PC usa adb para ayudar a un teléfono emparejado a iniciar su host privilegiado integrado, tras lo cual las copias en segundo plano del teléfono se suben al instante. Cada inicio lo desencadenas tú con un clic aquí.</value>
+    <value>Permite que el teléfono lea lo copiado aunque esté en segundo plano.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Una vez permitido, este PC llamará a adb (el puente de depuración de Android) para enviar al teléfono un único comando de inicio. Cuando haces clic en Iniciar lectura privilegiada, este PC envía al teléfono un comando de inicio por adb; adb no se invoca en ningún otro momento. La primera vez también debes activar la depuración USB en el teléfono y aceptar a mano su aviso de autorización adb — Android no permite automatizar ese paso.</value>
+    <value>Después de permitirlo, el teléfono se contacta solo al pulsar un botón de abajo. Confírmalo en el teléfono la primera vez.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Entiendo: permitir adb</value>
@@ -280,7 +280,7 @@
     <value>Emparejamiento inalámbrico (sin cable)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11+ admite la depuración inalámbrica: con el teléfono y este PC en la misma Wi-Fi, activa Opciones de desarrollador → Depuración inalámbrica en el teléfono y empareja una vez con cualquiera de los métodos de abajo; después, iniciar la lectura privilegiada funciona igual que por USB.</value>
+    <value>Activa la depuración inalámbrica y usa la misma Wi-Fi que este PC.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>Mostrar código QR de emparejamiento</value>
@@ -292,13 +292,13 @@
     <value>En el teléfono: Depuración inalámbrica → "Vincular dispositivo con código QR" y escanea este código.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>Esperando a que el teléfono escanee… Mientras se muestra el código, este PC consulta el descubrimiento mDNS de adb cada dos segundos, durante un máximo de dos minutos; puedes parar en cualquier momento.</value>
+    <value>Escanea este código con el teléfono.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>Este adb no tiene descubrimiento mDNS utilizable (se necesitan platform-tools más recientes), así que la vía del QR no puede funcionar. Usa el método del código de emparejamiento de abajo.</value>
+    <value>El escaneo no está disponible. Usa un código de emparejamiento.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>Se agotó el tiempo de espera del escaneo; el código QR ya no se muestra (el antiguo queda anulado). Muestra uno nuevo o usa el código de emparejamiento.</value>
+    <value>No se escaneó. Muéstralo otra vez o usa un código.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>Teléfono encontrado ({0}); emparejando…</value>
@@ -316,7 +316,7 @@
     <value>Emparejado. Buscando el puerto de conexión automáticamente…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>Emparejado, pero no se pudo descubrir automáticamente el puerto de conexión. Escribe abajo la "dirección IP y puerto" que aparece arriba en la página de Depuración inalámbrica del teléfono y pulsa "Conectar".</value>
+    <value>Emparejado. Escribe abajo el puerto de la depuración inalámbrica del teléfono.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>Conectando con {0}…</value>
@@ -334,13 +334,13 @@
     <value>El puerto recordado ya no escuchaba, así que se conectó al actual {0}. El emparejamiento sigue; no se emparejó de nuevo.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>Se perdió la conexión inalámbrica ({0} está sin conexión o desapareció de la lista de dispositivos). Comprueba la "dirección IP y puerto" actual en la página de Depuración inalámbrica del teléfono, corrige el campo y pulsa "Conectar"; no hace falta emparejar de nuevo.</value>
+    <value>Se desconectó. Vuelve a conectar.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>Se detectó una sesión inalámbrica obsoleta que quedó en adb; se desconectó y se volvió a conectar automáticamente.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>La IP:puerto de conexión es la línea "dirección IP y puerto" de arriba de la página de Depuración inalámbrica del teléfono (no el puerto del diálogo de emparejamiento). Suele cambiar cuando el teléfono apaga la pantalla, cambia de red o se reinicia: comprueba el valor actual y reintenta. Normalmente no hace falta emparejar de nuevo.</value>
+    <value>No se pudo conectar. Revisa el puerto en la depuración inalámbrica del teléfono y vuelve a conectar.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>No es un IP:puerto válido (ejemplo: 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>Detenido; ese código QR queda anulado.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>Emparejar con código</value>
+    <value>Usar un código</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>En el teléfono elige "Vincular dispositivo con código", y escribe aquí la dirección IP y el puerto del diálogo junto con su código de seis dígitos.</value>
@@ -1110,7 +1110,7 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
     <value>Buscar actualizaciones</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Compara con la última publicación estable de GitHub. Si GitHub no responde, se prueba un espejo accesible desde China. La descarga se verifica con SHA-256; luego se sustituye esta carpeta portátil y se reinicia.</value>
+    <value>Comprueba si hay una versión nueva.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Descargar e instalar</value>
@@ -1131,7 +1131,7 @@ Se eliminarán todas las entradas de este PC (imágenes incluidas) de una vez. E
     <value>La aplicación se cerrará, sustituirá sus archivos y se reiniciará.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>No se pudo contactar con GitHub ni con sus espejos. Comprueba la red e inténtalo de nuevo.</value>
+    <value>Ahora no hay conexión. Inténtalo más tarde.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>No se pudo interpretar la información de la última publicación.</value>

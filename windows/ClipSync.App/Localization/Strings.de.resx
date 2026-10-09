@@ -217,10 +217,10 @@
     <value>Privilegierter Lesezugriff</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Die Stufe mit der höchsten Qualität auf der Android-Hintergrundlese-Leiter: Der PC hilft einem gekoppelten Telefon per adb, seinen integrierten privilegierten Host zu starten; danach werden Hintergrundkopien des Telefons sofort hochgeladen. Jeder Start wird durch deinen Klick hier ausgelöst.</value>
+    <value>Lässt das Telefon Kopien auch im Hintergrund lesen.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Nach der Erlaubnis ruft dieser PC adb (die Android Debug Bridge) auf, um dem Telefon einen einzigen Startbefehl zu senden. Wenn du auf „Privilegierten Lesezugriff starten“ klickst, sendet dieser PC dem Telefon über adb einen Startbefehl; zu keinem anderen Zeitpunkt wird adb aufgerufen. Beim ersten Mal musst du außerdem am Telefon das USB-Debugging aktivieren und dessen adb-Autorisierungsdialog von Hand bestätigen – diesen Schritt lässt Android nicht automatisieren.</value>
+    <value>Nach der Erlaubnis wird das Telefon nur kontaktiert, wenn du unten auf eine Schaltfläche tippst. Beim ersten Mal auf dem Telefon bestätigen.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Verstanden – adb erlauben</value>
@@ -280,7 +280,7 @@
     <value>Drahtloses Koppeln (ohne Kabel)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11+ unterstützt drahtloses Debugging: Telefon und dieser PC im selben WLAN, auf dem Telefon Entwickleroptionen → Drahtloses Debugging einschalten und einmal mit einer der Methoden unten koppeln; das Starten des privilegierten Lesezugriffs funktioniert danach genau wie über USB.</value>
+    <value>Drahtloses Debugging einschalten und dasselbe WLAN wie dieser PC nutzen.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>Kopplungs-QR-Code anzeigen</value>
@@ -292,13 +292,13 @@
     <value>Auf dem Telefon: Drahtloses Debugging → „Gerät mit QR-Code koppeln“, dann diesen Code scannen.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>Warten auf den Scan… Solange der Code angezeigt wird, fragt dieser PC alle zwei Sekunden die mDNS-Erkennung von adb ab, höchstens zwei Minuten lang — jederzeit stoppbar.</value>
+    <value>Diesen Code mit dem Telefon scannen.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>Dieses adb hat keine nutzbare mDNS-Erkennung (neuere platform-tools nötig), der QR-Weg kann daher nicht funktionieren. Nutzen Sie stattdessen die Kopplungscode-Methode unten.</value>
+    <value>Scannen ist nicht verfügbar. Einen Kopplungscode verwenden.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>Zeitüberschreitung beim Warten auf den Scan; der QR-Code wird nicht mehr angezeigt (der alte ist ungültig). Neu anzeigen oder den Kopplungscode verwenden.</value>
+    <value>Nichts gescannt. Erneut anzeigen oder einen Code verwenden.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>Telefon gefunden ({0}); Kopplung läuft …</value>
@@ -316,7 +316,7 @@
     <value>Gekoppelt. Verbindungsport wird automatisch gesucht …</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>Gekoppelt, aber der Verbindungsport konnte nicht automatisch entdeckt werden. Tragen Sie unten die „IP-Adresse und Port“ vom oberen Rand der Seite Drahtloses Debugging des Telefons ein und tippen Sie auf „Verbinden“.</value>
+    <value>Gekoppelt. Unten den Port von der Seite Drahtloses Debugging des Telefons eintragen.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>Verbindung mit {0} …</value>
@@ -334,13 +334,13 @@
     <value>Der gemerkte Port lauschte nicht mehr, daher wurde stattdessen mit dem aktuellen {0} verbunden. Die Kopplung besteht; es wurde nicht neu gekoppelt.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>Die drahtlose Verbindung ist verloren gegangen ({0} ist offline oder aus der Geräteliste verschwunden). Prüfen Sie „IP-Adresse und Port“ auf der Seite Drahtloses Debugging des Telefons, korrigieren Sie das Feld und tippen Sie auf „Verbinden“ – neu koppeln ist nicht nötig.</value>
+    <value>Verbindung getrennt. Erneut verbinden.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>Eine in adb verbliebene veraltete Drahtlos-Sitzung wurde erkannt; sie wurde automatisch getrennt und neu verbunden.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>Der Verbindungs-IP:Port stammt aus der Zeile „IP-Adresse und Port“ oben auf der Seite Drahtloses Debugging des Telefons (nicht der Port des Kopplungsdialogs). Er ändert sich oft nach Bildschirm-Aus, Netzwerkwechsel oder Neustart – prüfen Sie den aktuellen Wert und versuchen es erneut. Neu koppeln ist meist nicht nötig.</value>
+    <value>Verbindung fehlgeschlagen. Port auf der Seite Drahtloses Debugging des Telefons prüfen und erneut verbinden.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Kein gültiges IP:Port-Format (Beispiel 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>Beendet; dieser QR-Code ist ungültig.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>Mit Kopplungscode koppeln</value>
+    <value>Code verwenden</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>Wählen Sie auf dem Telefon „Gerät mit Kopplungscode koppeln“ und tragen Sie hier IP-Adresse und Port aus dem Dialog sowie den sechsstelligen Code ein.</value>
@@ -1110,7 +1110,7 @@ Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelö
     <value>Nach Updates suchen</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Vergleicht mit der neuesten stabilen GitHub-Veröffentlichung. Ist GitHub nicht erreichbar, wird ein aus China erreichbarer Spiegel versucht. Downloads werden per SHA-256 geprüft, dann wird dieser portable Ordner ersetzt und neu gestartet.</value>
+    <value>Prüfen, ob es eine neue Version gibt.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Herunterladen und installieren</value>
@@ -1131,7 +1131,7 @@ Alle Einträge dieses PCs (einschließlich Bilder) werden in einem Schritt gelö
     <value>Die App beendet sich, ersetzt ihre Dateien und startet neu.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>GitHub und seine Spiegel sind nicht erreichbar. Netzwerk prüfen und erneut versuchen.</value>
+    <value>Gerade keine Verbindung. Später erneut versuchen.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Die Angaben zur neuesten Veröffentlichung konnten nicht gelesen werden.</value>

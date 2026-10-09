@@ -29,6 +29,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <ui:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility" />
         <ui:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibility" />
+        <ui:InverseStringNotEmptyToVisibilityConverter x:Key="InverseStringNotEmptyToVisibility" />
         <!-- 设备邻近色按配对顺位取 dev-1..dev-5（tokens §4）；顺位 0 = 灰（本机/已不在册的来源） -->
         <ui:DeviceAccentBrushConverter x:Key="DeviceAccentBrush" />
         <!-- 字符串键设置 ↔ 单选 chip 组（显示组的历史字号/预览行数） -->
@@ -2046,7 +2047,19 @@
                                                     <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
                                                         <Button Command="{Binding ShowWirelessQrCommand}"
                                                                 Content="{x:Static loc:Strings.Conduit_Wireless_ShowQr}"
-                                                                Style="{StaticResource GhostFlowButton}" />
+                                                                Style="{StaticResource GhostFlowButton}">
+                                                            <Button.Visibility>
+                                                                <Binding Converter="{StaticResource InverseStringNotEmptyToVisibility}" Path="WirelessQrText" />
+                                                            </Button.Visibility>
+                                                        </Button>
+                                                        <Button Margin="8,0,0,0"
+                                                                Command="{Binding ShowWirelessManualCommand}"
+                                                                Content="{x:Static loc:Strings.Conduit_Wireless_ManualTitle}"
+                                                                Style="{StaticResource GhostQuietButton}">
+                                                            <Button.Visibility>
+                                                                <Binding Converter="{StaticResource InverseStringNotEmptyToVisibility}" Path="WirelessQrText" />
+                                                            </Button.Visibility>
+                                                        </Button>
                                                         <Button Margin="8,0,0,0"
                                                                 Command="{Binding StopWirelessQrCommand}"
                                                                 Content="{x:Static loc:Strings.Conduit_Wireless_StopQr}"
@@ -2106,14 +2119,9 @@
                                                                    TextWrapping="Wrap" />
                                                     </Border>
 
-                                                    <!-- 路 B：配对码（无线调试 → 使用配对码配对设备） -->
-                                                    <TextBlock Margin="0,16,0,0"
-                                                               Style="{StaticResource RowName}"
-                                                               Text="{x:Static loc:Strings.Conduit_Wireless_ManualTitle}" />
-                                                    <TextBlock Margin="0,2,0,0"
-                                                               Style="{StaticResource RowDesc}"
-                                                               Text="{x:Static loc:Strings.Conduit_Wireless_ManualDesc}" />
-                                                    <Grid Margin="0,8,0,0">
+                                                    <!-- 配对码：只有这一步才出现 -->
+                                                    <Grid Margin="0,16,0,0"
+                                                          Visibility="{Binding WirelessManualOpen, Converter={StaticResource BoolToVisibility}}">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="*" />
                                                             <ColumnDefinition Width="Auto" />
@@ -2145,20 +2153,10 @@
                                                                 Content="{x:Static loc:Strings.Conduit_Wireless_PairButton}"
                                                                 Style="{StaticResource GhostFlowButton}" />
                                                     </Grid>
-                                                    <TextBlock Margin="0,4,0,0"
-                                                               FontSize="10.5"
-                                                               Foreground="{DynamicResource CsText4Brush}"
-                                                               Text="{x:Static loc:Strings.Conduit_Wireless_PairEndpointLabel}"
-                                                               TextWrapping="Wrap" />
 
-                                                    <!-- 连接：配对完成后（或此前已配对过）adb connect -->
-                                                    <TextBlock Margin="0,14,0,0"
-                                                               Style="{StaticResource RowName}"
-                                                               Text="{x:Static loc:Strings.Conduit_Wireless_ConnectTitle}" />
-                                                    <TextBlock Margin="0,2,0,0"
-                                                               Style="{StaticResource RowDesc}"
-                                                               Text="{x:Static loc:Strings.Conduit_Wireless_ConnectDesc}" />
-                                                    <Grid Margin="0,8,0,0">
+                                                    <!-- 连接：只有需要填端口或已经连过时才出现 -->
+                                                    <Grid Margin="0,16,0,0"
+                                                          Visibility="{Binding WirelessConnectOpen, Converter={StaticResource BoolToVisibility}}">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="*" />
                                                             <ColumnDefinition Width="Auto" />
@@ -2176,11 +2174,6 @@
                                                                 Content="{x:Static loc:Strings.Conduit_Wireless_ConnectButton}"
                                                                 Style="{StaticResource GhostFlowButton}" />
                                                     </Grid>
-                                                    <TextBlock Margin="0,4,0,0"
-                                                               FontSize="10.5"
-                                                               Foreground="{DynamicResource CsText4Brush}"
-                                                               Text="{x:Static loc:Strings.Conduit_Wireless_ConnectEndpointLabel}"
-                                                               TextWrapping="Wrap" />
                                                 </StackPanel>
                                             </StackPanel>
                                         </Border>

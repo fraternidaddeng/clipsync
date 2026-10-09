@@ -217,10 +217,10 @@
     <value>특권 직접 읽기</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Android 백그라운드 읽기 사다리에서 품질이 가장 높은 경로입니다. PC가 adb로 페어링된 휴대폰의 내장 특권 호스트를 시작하도록 돕고, 이후 휴대폰의 백그라운드 복사가 즉시 업로드됩니다. 시작은 매번 여기에서 사용자가 클릭할 때만 이루어집니다.</value>
+    <value>휴대폰이 백그라운드에서도 복사한 내용을 읽게 합니다.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>허용하면 이 PC가 adb(Android 디버그 브리지)를 호출해 휴대폰에 시작 명령 하나를 보냅니다. adb는 ‘특권 직접 읽기 시작’을 클릭할 때 한 번만 실행되어 휴대폰에 시작 명령 하나를 보내며, 그 외에는 adb를 호출하지 않습니다. 처음에는 휴대폰에서 USB 디버깅을 켜고 adb 인증 창을 직접 수락해야 합니다 — Android는 이 단계의 자동화를 허용하지 않습니다.</value>
+    <value>허용한 뒤에는 아래 버튼을 누를 때만 휴대폰에 연락합니다. 처음에는 휴대폰에서 확인하세요.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>이해했고 adb 허용</value>
@@ -280,7 +280,7 @@
     <value>무선 페어링(케이블 불필요)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11 이상은 무선 디버깅을 지원합니다. 휴대폰과 이 PC를 같은 Wi-Fi에 연결하고 휴대폰의 「개발자 옵션 → 무선 디버깅」을 켠 뒤 아래 방법 중 하나로 한 번 페어링하세요. 이후 특권 직접 읽기 시작은 USB와 동일합니다.</value>
+    <value>휴대폰에서 무선 디버깅을 켜고 이 PC와 같은 Wi-Fi에 연결하세요.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>페어링 QR 코드 표시</value>
@@ -292,13 +292,13 @@
     <value>휴대폰에서: 무선 디버깅 → 「QR 코드로 기기 페어링」을 열어 이 코드를 스캔하세요.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>휴대폰 스캔 대기 중… 표시되는 동안 이 PC는 2초마다 adb의 mDNS 검색에 질의합니다. 최대 2분이며 언제든 중지할 수 있습니다.</value>
+    <value>휴대폰으로 이 코드를 스캔하세요.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>이 adb는 mDNS 검색을 사용할 수 없습니다(최신 platform-tools 필요). QR 코드 방식은 동작하지 않으니 아래 페어링 코드 방식을 사용하세요.</value>
+    <value>스캔을 사용할 수 없습니다. 페어링 코드를 사용하세요.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>스캔 대기 시간이 초과되어 QR 코드 표시를 끝냈습니다(이전 코드는 무효). 다시 표시하거나 페어링 코드를 사용하세요.</value>
+    <value>스캔되지 않았습니다. 다시 표시하거나 페어링 코드를 사용하세요.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>휴대폰 발견({0}), 페어링 중…</value>
@@ -316,7 +316,7 @@
     <value>페어링 완료. 연결 포트를 자동으로 찾는 중…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>페어링은 됐지만 연결 포트를 자동으로 찾지 못했습니다. 휴대폰 무선 디버깅 화면 상단의 「IP 주소 및 포트」를 아래에 입력하고 「연결」을 누르세요.</value>
+    <value>페어링되었습니다. 휴대폰 무선 디버깅 화면의 포트를 아래에 입력하세요.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>{0}에 연결 중…</value>
@@ -334,13 +334,13 @@
     <value>기억한 포트가 더 이상 수신하지 않아 현재 {0}(으)로 다시 연결했습니다. 페어링은 그대로이며 다시 페어링하지 않았습니다.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>무선 연결이 끊어졌습니다({0}이(가) 오프라인이거나 기기 목록에서 사라짐). 휴대폰 무선 디버깅 화면에서 현재 「IP 주소 및 포트」를 확인해 값을 고친 뒤 「연결」을 누르세요. 페어링을 다시 할 필요는 없습니다.</value>
+    <value>연결이 끊겼습니다. 다시 연결하세요.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>adb에 남아 있던 만료된 무선 세션을 감지하여 자동으로 끊고 다시 연결했습니다.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>연결용 IP:포트는 휴대폰 무선 디버깅 화면 상단의 「IP 주소 및 포트」입니다(페어링 대화상자의 포트가 아님). 화면 꺼짐·네트워크 전환·재부팅 후 자주 바뀌니 현재 값을 확인한 뒤 다시 시도하세요. 보통 페어링을 다시 할 필요는 없습니다.</value>
+    <value>연결하지 못했습니다. 휴대폰 무선 디버깅 화면의 포트를 확인한 뒤 다시 연결하세요.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>IP:포트 형식이 잘못되었습니다(예: 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>표시를 중지했습니다. 해당 QR 코드는 무효입니다.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>페어링 코드로 페어링</value>
+    <value>코드 사용</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>휴대폰에서 「페어링 코드로 기기 페어링」을 선택한 뒤, 대화상자에 표시된 IP 주소와 포트, 6자리 코드를 여기에 입력하세요.</value>
@@ -1110,7 +1110,7 @@
     <value>업데이트 확인</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>GitHub의 최신 정식 릴리스와 대조합니다. 연결되지 않으면 중국에서 접근 가능한 미러를 시도합니다. 다운로드 후 SHA-256을 확인한 뒤 이 휴대용 폴더를 교체하고 다시 시작합니다.</value>
+    <value>새 버전이 있는지 확인합니다.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>다운로드 후 설치</value>
@@ -1131,7 +1131,7 @@
     <value>종료한 뒤 파일을 교체하고 자동으로 다시 시작합니다.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>GitHub과 미러에 연결할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.</value>
+    <value>지금은 연결할 수 없습니다. 나중에 다시 시도하세요.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>최신 릴리스 정보를 해석할 수 없습니다.</value>

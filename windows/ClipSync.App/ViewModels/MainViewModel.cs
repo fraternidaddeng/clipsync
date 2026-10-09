@@ -408,6 +408,14 @@ public partial class MainViewModel(
     [ObservableProperty]
     private string wirelessConnectEndpointText = string.Empty;
 
+    /// <summary>The pairing-code fields are a step, shown only when the user asks or a code was rejected.</summary>
+    [ObservableProperty]
+    private bool wirelessManualOpen;
+
+    /// <summary>The connect field is a step, shown when a port is already known or still needs typing.</summary>
+    [ObservableProperty]
+    private bool wirelessConnectOpen;
+
     /// <summary>The pure stage machine; guards against stale async completions moving the UI.</summary>
     private readonly WirelessPairingFlow wirelessFlow = new();
 
@@ -697,8 +705,9 @@ public partial class MainViewModel(
             return;
         }
 
-        WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_SessionLostFormat), endpoint.ToString());
-        WirelessHint = Strings.Conduit_Wireless_ConnectFailedHint;
+        WirelessStatus = Strings.Conduit_Wireless_SessionLostFormat;
+        WirelessHint = string.Empty;
+        ShowConnectStep();
     }
 
     // ===== 无线配对命令（Android 11+ 无线调试）=====
@@ -730,6 +739,7 @@ public partial class MainViewModel(
         }
 
         ResetWirelessFlow(clearInputs: false);
+        HideWirelessSteps();
         if (!wirelessFlow.TryApply(WirelessPairingEvent.QrShown))
         {
             return;
@@ -846,7 +856,33 @@ public partial class MainViewModel(
         {
             ResetWirelessFlow(clearInputs: false);
             WirelessStatus = string.Empty;
+            return;
         }
+
+        if (lastWirelessConnectEndpoint is not null)
+        {
+            ShowConnectStep();
+        }
+    }
+
+    /// <summary>Reveals the pairing-code step and puts the connect step away.</summary>
+    [RelayCommand]
+    private void ShowWirelessManual()
+    {
+        WirelessManualOpen = true;
+        WirelessConnectOpen = false;
+    }
+
+    private void ShowConnectStep()
+    {
+        WirelessManualOpen = false;
+        WirelessConnectOpen = true;
+    }
+
+    private void HideWirelessSteps()
+    {
+        WirelessManualOpen = false;
+        WirelessConnectOpen = false;
     }
 
     /// <summary>
@@ -926,7 +962,9 @@ public partial class MainViewModel(
                 WirelessStatus = Strings.Format(
                     nameof(Strings.Conduit_Wireless_PairFailedFormat),
                     pair.Detail ?? Strings.Conduit_Privileged_ReasonUnknown);
-                WirelessHint = Strings.Conduit_Wireless_PairFailedHint;
+                WirelessHint = string.Empty;
+                WirelessManualOpen = true;
+                WirelessConnectOpen = false;
                 return;
             }
 
@@ -942,8 +980,10 @@ public partial class MainViewModel(
             {
                 wirelessFlow.TryApply(WirelessPairingEvent.ConnectFailed);
                 WirelessStatus = Strings.Conduit_Wireless_ConnectPortNotFound;
+                WirelessHint = string.Empty;
                 // Prefill the paired host so the user only types the port from the phone screen.
                 WirelessConnectEndpointText = endpoint.Host + ":";
+                ShowConnectStep();
                 return;
             }
 
@@ -986,13 +1026,9 @@ public partial class MainViewModel(
             }
 
             wirelessFlow.TryApply(WirelessPairingEvent.ConnectFailed);
-            WirelessStatus = AdbOutputEncoding.IsClosedPort(result.Outcome.Detail)
-                ? Strings.Format(nameof(Strings.Conduit_Wireless_PortClosedFormat), endpoint.ToString())
-                : Strings.Format(
-                    nameof(Strings.Conduit_Wireless_ConnectFailedFormat),
-                    result.Outcome.Detail ?? Strings.Conduit_Privileged_ReasonUnknown);
-            // The usual culprit is port drift: the phone's 无线调试 page shows the current value.
-            WirelessHint = Strings.Conduit_Wireless_ConnectFailedHint;
+            WirelessStatus = Strings.Conduit_Wireless_ConnectFailedHint;
+            WirelessHint = string.Empty;
+            ShowConnectStep();
             return;
         }
 
@@ -1000,9 +1036,8 @@ public partial class MainViewModel(
         lastWirelessConnectEndpoint = endpoint;
         await store.SetSettingAsync(WirelessConnectEndpointSetting, endpoint.ToString());
         WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_ConnectOkFormat), endpoint.ToString());
-        WirelessHint = result.RecoveredStaleSession
-            ? Strings.Conduit_Wireless_StaleSessionRedialed
-            : string.Empty;
+        WirelessHint = string.Empty;
+        HideWirelessSteps();
         // The wireless device now shows up in the ordinary probe — as host:port on older
         // adb, or as adb-…._adb-tls-connect._tcp on platform-tools 37+. Either form is a
         // live session; 检测手机 → 启动特权直读 takes over from here.
@@ -1031,9 +1066,7 @@ public partial class MainViewModel(
         await ConnectWirelessCoreAsync(current, session, rediscoverPort: false);
         if (lastWirelessConnectEndpoint == current)
         {
-            WirelessHint = Strings.Format(
-                nameof(Strings.Conduit_Wireless_RememberedReconnectFormat),
-                current.ToString());
+            WirelessHint = string.Empty;
         }
 
         return true;
@@ -1050,6 +1083,7 @@ public partial class MainViewModel(
         wirelessFlow.TryApply(WirelessPairingEvent.Cancelled);
         WirelessQrText = string.Empty;
         WirelessHint = string.Empty;
+        HideWirelessSteps();
         if (clearInputs)
         {
             WirelessStatus = string.Empty;
@@ -1130,6 +1164,7 @@ public partial class MainViewModel(
         {
             lastWirelessConnectEndpoint = rememberedWireless;
             WirelessConnectEndpointText = rememberedWireless!.ToString();
+            WirelessConnectOpen = true;
         }
         if (privilegedHost is not null)
         {

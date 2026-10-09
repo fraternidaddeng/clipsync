@@ -73,9 +73,10 @@ public sealed class MainViewModelWirelessTests : IAsyncDisposable
 
         // The stale "已连接" is replaced by the loss plus the recovery step (核对 IP:端口,
         // 配对不用重来) — on both the wireless section and the card's main status line.
-        Assert.Contains("无线连接已断开", viewModel.WirelessStatus, StringComparison.Ordinal);
-        Assert.Contains(Endpoint, viewModel.WirelessStatus, StringComparison.Ordinal);
-        Assert.Contains("无线调试", viewModel.WirelessHint, StringComparison.Ordinal);
+        Assert.Contains("连接断了", viewModel.WirelessStatus, StringComparison.Ordinal);
+        Assert.True(viewModel.WirelessConnectOpen);
+        Assert.Equal(Endpoint, viewModel.WirelessConnectEndpointText);
+        Assert.Equal(string.Empty, viewModel.WirelessHint);
         Assert.Contains("无线调试会话已失效", viewModel.PrivilegedStatus, StringComparison.Ordinal);
         Assert.DoesNotContain("重新插拔", viewModel.PrivilegedStatus, StringComparison.Ordinal);
     }
@@ -105,7 +106,7 @@ public sealed class MainViewModelWirelessTests : IAsyncDisposable
         await viewModel.ConnectWirelessCommand.ExecuteAsync(null);
 
         Assert.Contains("已连接 " + Endpoint, viewModel.WirelessStatus, StringComparison.Ordinal);
-        Assert.Contains("旧无线会话", viewModel.WirelessHint, StringComparison.Ordinal);
+        Assert.Equal(string.Empty, viewModel.WirelessHint);
         Assert.Contains(
             adb.Invocations.Select(args => string.Join(' ', args)),
             line => line == "disconnect " + Endpoint);
@@ -122,10 +123,9 @@ public sealed class MainViewModelWirelessTests : IAsyncDisposable
         await viewModel.ConnectWirelessCommand.ExecuteAsync(null);
 
         Assert.Contains("连接失败", viewModel.WirelessStatus, StringComparison.Ordinal);
-        Assert.Contains("不用重新配对", viewModel.WirelessStatus, StringComparison.Ordinal);
-        // The hint names the usual culprit (port drift) and where the current value lives.
-        Assert.Contains("无线调试", viewModel.WirelessHint, StringComparison.Ordinal);
-        Assert.Contains("IP 地址和端口", viewModel.WirelessHint, StringComparison.Ordinal);
+        Assert.Contains("无线调试", viewModel.WirelessStatus, StringComparison.Ordinal);
+        Assert.Equal(string.Empty, viewModel.WirelessHint);
+        Assert.True(viewModel.WirelessConnectOpen);
     }
 
     [Fact]
@@ -153,7 +153,7 @@ public sealed class MainViewModelWirelessTests : IAsyncDisposable
         await viewModel.ConnectWirelessCommand.ExecuteAsync(null);
 
         Assert.Contains("已连接 " + drifted, viewModel.WirelessStatus, StringComparison.Ordinal);
-        Assert.Contains("没有重新配对", viewModel.WirelessHint, StringComparison.Ordinal);
+        Assert.Equal(string.Empty, viewModel.WirelessHint);
         Assert.Equal(drifted, await store.GetSettingAsync("wireless_connect_endpoint"));
         Assert.DoesNotContain(adb.Invocations, args => args.Length > 0 && args[0] == "pair");
     }
@@ -265,7 +265,7 @@ public sealed class MainViewModelWirelessTests : IAsyncDisposable
 
         await viewModel.ShowWirelessQrCommand.ExecuteAsync(null);
 
-        Assert.Contains("mDNS", viewModel.WirelessStatus, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("配对码", viewModel.WirelessStatus, StringComparison.Ordinal);
         Assert.DoesNotContain("未找到 adb", viewModel.WirelessStatus, StringComparison.Ordinal);
     }
 

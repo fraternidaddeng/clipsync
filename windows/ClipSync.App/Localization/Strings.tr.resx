@@ -217,10 +217,10 @@
     <value>Ayrıcalıklı okuma</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Android arka plan okuma merdiveninin en kaliteli basamağı: PC, eşleştirilmiş bir telefonun yerleşik ayrıcalıklı ana bilgisayarını başlatmasına adb ile yardım eder; ardından telefonun arka plan kopyaları anında yüklenir. Her başlatma burada sizin tıklamanızla tetiklenir.</value>
+    <value>Telefon arka plandayken de kopyalananı okusun.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>İzin verildiğinde bu PC, telefona tek bir başlatma komutu göndermek için adb’yi (Android Debug Bridge) çağırır. “Ayrıcalıklı okumayı başlat”a tıkladığınızda bu PC, adb üzerinden telefona tek bir başlatma komutu gönderir; başka hiçbir zaman adb çağrılmaz. İlk kez telefonda USB hata ayıklamayı da etkinleştirmeli ve adb yetkilendirme istemini elle kabul etmelisiniz — Android bu adımın otomatikleştirilmesine izin vermez.</value>
+    <value>İzin verdikten sonra telefona yalnızca aşağıdaki bir düğmeye basınca ulaşılır. İlk seferde telefonda onaylayın.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Anladım — adb’ye izin ver</value>
@@ -280,7 +280,7 @@
     <value>Kablosuz eşleştirme (kablo gerekmez)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11+ kablosuz hata ayıklamayı destekler: telefon ve bu PC aynı Wi-Fi'deyken telefonda Geliştirici seçenekleri → Kablosuz hata ayıklama'yı açın, ardından aşağıdaki yöntemlerden biriyle bir kez eşleştirin; sonrasında ayrıcalıklı okumayı başlatmak USB ile birebir aynıdır.</value>
+    <value>Kablosuz hata ayıklamayı açın ve bu PC ile aynı Wi-Fi'ye bağlanın.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>Eşleştirme QR kodunu göster</value>
@@ -292,13 +292,13 @@
     <value>Telefonda: Kablosuz hata ayıklama → «Cihazı QR koduyla eşleştir»i açıp bu kodu tarayın.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>Telefonun taraması bekleniyor… Kod gösterildiği sürece bu PC, adb'nin mDNS keşfine iki saniyede bir sorar; en fazla iki dakika — istediğiniz an durdurun.</value>
+    <value>Bu kodu telefonla tarayın.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>Bu adb'de kullanılabilir mDNS keşfi yok (daha yeni platform-tools gerekir); QR yolu çalışamaz. Bunun yerine aşağıdaki eşleştirme kodu yöntemini kullanın.</value>
+    <value>Tarama kullanılamıyor. Eşleştirme kodu kullanın.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>Tarama beklemesi zaman aşımına uğradı; QR kodu artık gösterilmiyor (eskisi geçersiz). Yenisini gösterin veya eşleştirme kodunu kullanın.</value>
+    <value>Taranmadı. Yeniden gösterin veya kod kullanın.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>Telefon bulundu ({0}); eşleştiriliyor…</value>
@@ -316,7 +316,7 @@
     <value>Eşleştirildi. Bağlantı noktası otomatik aranıyor…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>Eşleştirildi ama bağlantı noktası otomatik bulunamadı. Telefonun Kablosuz hata ayıklama sayfasının üstündeki «IP adresi ve bağlantı noktası»nı aşağıya yazıp «Bağlan»a dokunun.</value>
+    <value>Eşleştirildi. Telefonun kablosuz hata ayıklama sayfasındaki bağlantı noktasını aşağıya yazın.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>{0} adresine bağlanılıyor…</value>
@@ -334,13 +334,13 @@
     <value>Hatırlanan bağlantı noktası artık dinlemiyordu, bu yüzden güncel {0} adresine bağlanıldı. Eşleştirme duruyor; yeniden eşleştirilmedi.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>Kablosuz bağlantı koptu ({0} çevrimdışı veya cihaz listesinden silinmiş). Telefonun Kablosuz hata ayıklama sayfasındaki güncel «IP adresi ve bağlantı noktası»nı doğrulayın, alanı düzeltin ve «Bağlan»a basın — yeniden eşleştirmeye gerek yok.</value>
+    <value>Bağlantı koptu. Yeniden bağlanın.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>adb'de kalmış bayat bir kablosuz oturum algılandı; otomatik olarak kesilip yeniden bağlanıldı.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>Bağlantı IP:bağlantı noktası, telefonun Kablosuz hata ayıklama sayfasının üstündeki «IP adresi ve bağlantı noktası» satırından alınır (eşleştirme penceresindeki bağlantı noktası değil). Ekran kapanınca, ağ değişince veya yeniden başlatınca sık değişir — güncel değeri doğrulayıp yeniden deneyin. Genellikle yeniden eşleştirme gerekmez.</value>
+    <value>Bağlanılamadı. Telefonun kablosuz hata ayıklama sayfasındaki bağlantı noktasına bakıp yeniden bağlanın.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Geçerli bir IP:bağlantı noktası değil (örnek 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>Durduruldu; o QR kodu artık geçersiz.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>Eşleştirme koduyla eşleştir</value>
+    <value>Kod kullan</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>Telefonda «Cihazı eşleştirme koduyla eşleştir»i seçin; penceredeki IP adresi ile bağlantı noktasını ve altı basamaklı kodu buraya girin.</value>
@@ -1110,7 +1110,7 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
     <value>Güncellemeleri denetle</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>GitHub’daki en son kararlı sürümle karşılaştırır. GitHub’a ulaşılamazsa Çin’den erişilebilir bir yansı denenir. İndirme SHA-256 ile doğrulanır, bu taşınabilir klasör değiştirilir ve uygulama yeniden başlar.</value>
+    <value>Yeni sürüm var mı bakın.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>İndir ve yükle</value>
@@ -1131,7 +1131,7 @@ Bu, bu bilgisayardaki her kaydı (görseller dahil) tek adımda siler. Temizlik 
     <value>Uygulama kapanacak, dosyalarını değiştirecek ve yeniden başlayacak.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>GitHub’a ve yansılarına ulaşılamadı. Ağı kontrol edip yeniden deneyin.</value>
+    <value>Şu an bağlanılamıyor. Sonra yeniden deneyin.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>En son sürüm bilgisi çözümlenemedi.</value>

@@ -217,10 +217,10 @@
     <value>Privileged read</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>The highest-quality rung of the Android background-read ladder: the PC uses adb to help a paired phone start its built-in privileged host, after which the phone's background copies upload instantly. Every start is triggered by your click here.</value>
+    <value>Let the phone read copies while it is in the background.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>This step uses adb (the Android Debug Bridge) to send the phone a start command. Clicking Start privileged read starts that operation; Windows' Detect phone, wireless pairing, and wireless connect actions also use adb when you invoke them. The first time, enable USB debugging on the phone and accept its adb authorization prompt by hand — Android does not allow automating that step.</value>
+    <value>After you allow it, the phone is contacted only when you tap a button below. Confirm on the phone the first time.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>I understand — allow adb</value>
@@ -280,7 +280,7 @@
     <value>Wireless pairing (no cable needed)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11+ supports wireless debugging: with the phone and this PC on the same Wi-Fi, turn on Developer options → Wireless debugging on the phone, then pair once using either method below; starting privileged read afterwards works exactly as over USB.</value>
+    <value>Turn on wireless debugging and join the same Wi-Fi as this PC.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>Show pairing QR code</value>
@@ -292,13 +292,13 @@
     <value>On the phone: Wireless debugging → "Pair device with QR code", then scan this code.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>Waiting for the phone to scan… While the code is shown, this PC asks adb's mDNS discovery every two seconds, for at most two minutes — stop anytime.</value>
+    <value>Scan this code with the phone.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>This adb has no usable mDNS discovery (newer platform-tools needed), so the QR path cannot work. Use the pairing-code method below instead.</value>
+    <value>Scanning isn't available. Use a pairing code.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>Timed out waiting for a scan; the QR code is no longer shown (the old secret is dead). Show a new one, or use the pairing code instead.</value>
+    <value>Nothing was scanned. Show it again, or use a pairing code.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>Phone found ({0}); pairing…</value>
@@ -316,7 +316,7 @@
     <value>Paired. Looking up the connect port automatically…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>Paired, but the connect port could not be discovered automatically. Type the "IP address &amp; port" shown at the top of the phone's Wireless debugging page below, then tap "Connect".</value>
+    <value>Paired. Enter the port from the phone's wireless debugging page below.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>Connecting to {0}…</value>
@@ -334,13 +334,13 @@
     <value>The remembered port was no longer listening, so this connected to the current {0} instead. The pairing is still there; nothing was paired again.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>The wireless connection was lost ({0} is offline or gone from the device list). Check the current "IP address &amp; port" on the phone's Wireless debugging page, update the field and hit "Connect" — no need to pair again.</value>
+    <value>Disconnected. Connect again.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>A stale wireless session left in adb was detected; it was disconnected and redialed automatically.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>The connect IP:port comes from the "IP address &amp; port" line at the top of the phone's Wireless debugging page (not the pairing dialog's port). It often changes after the phone sleeps, switches networks or reboots — check the current value and retry. Pairing usually does not need to be redone.</value>
+    <value>Couldn't connect. Check the port on the phone's wireless debugging page, then connect again.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>That is not a valid IP:port (example: 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>Stopped; that QR code is now void.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>Pair with a pairing code</value>
+    <value>Use a code</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>On the phone choose "Pair device with pairing code", then enter the dialog's IP address &amp; port and its six-digit code here.</value>
@@ -1110,7 +1110,7 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
     <value>Check for updates</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Compare with the latest stable GitHub Release. If GitHub is unreachable, a China-accessible mirror is tried. Downloads are SHA-256 checked, then this portable folder is replaced and the app restarts.</value>
+    <value>Check for a new version.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Download and install</value>
@@ -1131,7 +1131,7 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
     <value>The app will quit, replace its files, and restart.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Could not reach GitHub or its mirrors. Check the network and try again.</value>
+    <value>Can't reach the server right now. Try again later.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>The latest release information could not be parsed.</value>

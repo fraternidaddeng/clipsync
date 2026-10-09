@@ -217,10 +217,10 @@
     <value>Odczyt uprzywilejowany</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Najwyższej jakości szczebel drabiny odczytu w tle Androida: komputer używa adb, aby pomóc sparowanemu telefonowi uruchomić wbudowany uprzywilejowany host, po czym kopie w tle z telefonu są przesyłane natychmiast. Każde uruchomienie wyzwalasz Ty kliknięciem tutaj.</value>
+    <value>Pozwól telefonowi czytać kopie także w tle.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Po zezwoleniu ten komputer wywoła adb (Android Debug Bridge), aby wysłać do telefonu jedno polecenie startu. Gdy klikniesz „Uruchom odczyt uprzywilejowany”, ten komputer wysyła do telefonu jedno polecenie startu przez adb; w żadnym innym momencie adb nie jest wywoływane. Za pierwszym razem musisz też włączyć debugowanie USB w telefonie i ręcznie zaakceptować jego monit autoryzacji adb — Android nie pozwala zautomatyzować tego kroku.</value>
+    <value>Po zezwoleniu telefon jest kontaktowany tylko po naciśnięciu przycisku poniżej. Za pierwszym razem potwierdź na telefonie.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Rozumiem — zezwól na adb</value>
@@ -280,7 +280,7 @@
     <value>Parowanie bezprzewodowe (bez kabla)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11+ obsługuje debugowanie bezprzewodowe: telefon i ten komputer w tej samej sieci Wi-Fi, na telefonie włącz Opcje programisty → Debugowanie bezprzewodowe, a następnie sparuj raz jedną z metod poniżej; potem uruchamianie odczytu uprzywilejowanego działa dokładnie tak jak przez USB.</value>
+    <value>Włącz debugowanie bezprzewodowe i tę samą sieć Wi-Fi co ten komputer.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>Pokaż kod QR parowania</value>
@@ -292,13 +292,13 @@
     <value>Na telefonie: Debugowanie bezprzewodowe → „Sparuj urządzenie kodem QR”, następnie zeskanuj ten kod.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>Oczekiwanie na zeskanowanie… Póki kod jest widoczny, ten komputer co dwie sekundy odpytuje odkrywanie mDNS adb, najwyżej przez dwie minuty — można przerwać w każdej chwili.</value>
+    <value>Zeskanuj ten kod telefonem.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>To adb nie ma działającego odkrywania mDNS (potrzebne nowsze platform-tools), więc ścieżka QR nie zadziała. Użyj metody kodu parowania poniżej.</value>
+    <value>Skanowanie jest niedostępne. Użyj kodu parowania.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>Upłynął limit czasu oczekiwania na skan; kod QR nie jest już pokazywany (stary jest unieważniony). Pokaż nowy albo użyj kodu parowania.</value>
+    <value>Nic nie zeskanowano. Pokaż ponownie albo użyj kodu.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>Znaleziono telefon ({0}); parowanie…</value>
@@ -316,7 +316,7 @@
     <value>Sparowano. Automatyczne wyszukiwanie portu połączenia…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>Sparowano, ale nie udało się automatycznie wykryć portu połączenia. Wpisz poniżej „adres IP i port” widoczny u góry strony Debugowanie bezprzewodowe telefonu i naciśnij „Połącz”.</value>
+    <value>Sparowano. Wpisz poniżej port ze strony debugowania bezprzewodowego telefonu.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>Łączenie z {0}…</value>
@@ -334,13 +334,13 @@
     <value>Zapamiętany port już nie nasłuchiwał, więc połączono z aktualnym {0}. Parowanie nadal jest; nie parowano ponownie.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>Połączenie bezprzewodowe zostało utracone ({0} jest offline lub zniknął z listy urządzeń). Sprawdź aktualny „adres IP i port” na stronie Debugowanie bezprzewodowe telefonu, popraw pole i naciśnij „Połącz” — parowania nie trzeba powtarzać.</value>
+    <value>Rozłączono. Połącz ponownie.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>Wykryto przeterminowaną sesję bezprzewodową pozostałą w adb; została automatycznie rozłączona i połączona ponownie.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>IP:port do połączenia pochodzi z wiersza „adres IP i port” u góry strony Debugowanie bezprzewodowe telefonu (nie z portu okna parowania). Często zmienia się po wygaszeniu ekranu, zmianie sieci lub restarcie — sprawdź aktualną wartość i spróbuj ponownie. Zwykle nie trzeba parować od nowa.</value>
+    <value>Nie udało się połączyć. Sprawdź port na stronie debugowania bezprzewodowego telefonu i połącz ponownie.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>To nie jest poprawny adres IP:port (przykład 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>Zatrzymano; ten kod QR jest unieważniony.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>Sparuj kodem parowania</value>
+    <value>Użyj kodu</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>Na telefonie wybierz „Sparuj urządzenie kodem parowania”, a następnie wpisz tutaj adres IP i port z okna oraz sześciocyfrowy kod.</value>
@@ -1110,7 +1110,7 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
     <value>Sprawdź aktualizacje</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Porównuje z najnowszym stabilnym wydaniem na GitHubie. Gdy GitHub jest nieosiągalny, próbowane jest lustro dostępne z Chin. Pobranie jest sprawdzane SHA-256, potem ten folder przenośny jest zastępowany i aplikacja startuje ponownie.</value>
+    <value>Sprawdź, czy jest nowa wersja.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Pobierz i zainstaluj</value>
@@ -1131,7 +1131,7 @@ Spowoduje to usunięcie każdego wpisu na tym komputerze (wraz z obrazami) za je
     <value>Aplikacja zakończy działanie, podmieni pliki i uruchomi się ponownie.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Nie udało się połączyć z GitHubem ani lustrami. Sprawdź sieć i spróbuj ponownie.</value>
+    <value>Teraz nie ma połączenia. Spróbuj później.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Nie udało się odczytać informacji o najnowszym wydaniu.</value>

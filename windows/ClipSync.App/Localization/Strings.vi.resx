@@ -217,10 +217,10 @@
     <value>Đọc đặc quyền</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Bậc chất lượng cao nhất trong thang đọc nền của Android: máy tính dùng adb để giúp điện thoại đã ghép nối khởi động host đặc quyền tích hợp, sau đó các bản sao chép nền của điện thoại được tải lên tức thì. Mỗi lần khởi động đều do bạn nhấp tại đây.</value>
+    <value>Để điện thoại đọc nội dung đã sao chép cả khi ở nền.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Sau khi cho phép, máy tính này sẽ gọi adb (Android Debug Bridge) để gửi điện thoại một lệnh khởi động. Khi bạn nhấp “Bắt đầu đọc đặc quyền”, máy tính này gửi một lệnh khởi động tới điện thoại qua adb; ngoài lúc đó không gọi adb. Lần đầu bạn cũng phải bật Gỡ lỗi USB trên điện thoại và tự tay chấp nhận hộp thoại ủy quyền adb — Android không cho phép tự động hóa bước này.</value>
+    <value>Sau khi cho phép, điện thoại chỉ được liên hệ khi bạn bấm nút bên dưới. Lần đầu hãy xác nhận trên điện thoại.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Đã hiểu — cho phép adb</value>
@@ -280,7 +280,7 @@
     <value>Ghép nối không dây (không cần cáp)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11 trở lên hỗ trợ gỡ lỗi không dây: điện thoại và PC này cùng một mạng Wi-Fi, bật «Tùy chọn nhà phát triển → Gỡ lỗi qua Wi-Fi» trên điện thoại rồi ghép nối một lần bằng một trong hai cách dưới đây; sau đó việc khởi động đọc đặc quyền giống hệt qua USB.</value>
+    <value>Bật gỡ lỗi qua Wi-Fi và cùng mạng với máy tính này.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>Hiện mã QR ghép nối</value>
@@ -292,13 +292,13 @@
     <value>Trên điện thoại: Gỡ lỗi qua Wi-Fi → «Ghép nối thiết bị bằng mã QR», rồi quét mã này.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>Đang chờ điện thoại quét… Trong lúc hiển thị, PC này hỏi tính năng phát hiện mDNS của adb hai giây một lần, tối đa hai phút — dừng bất cứ lúc nào.</value>
+    <value>Quét mã này bằng điện thoại.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>adb này không có tính năng phát hiện mDNS dùng được (cần platform-tools mới hơn), nên đường mã QR không thể hoạt động. Hãy dùng cách mã ghép nối bên dưới.</value>
+    <value>Không quét được. Hãy dùng mã ghép nối.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>Hết thời gian chờ quét; mã QR không còn hiển thị (mã cũ đã vô hiệu). Hiện mã mới, hoặc dùng mã ghép nối.</value>
+    <value>Không quét được. Hiện lại, hoặc dùng mã.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>Đã phát hiện điện thoại ({0}); đang ghép nối…</value>
@@ -316,7 +316,7 @@
     <value>Đã ghép nối. Đang tự động tìm cổng kết nối…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>Đã ghép nối nhưng không tự phát hiện được cổng kết nối. Hãy nhập «Địa chỉ IP và cổng» hiển thị ở đầu trang Gỡ lỗi qua Wi-Fi của điện thoại vào bên dưới rồi bấm «Kết nối».</value>
+    <value>Đã ghép nối. Nhập cổng trên trang gỡ lỗi qua Wi-Fi của điện thoại vào bên dưới.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>Đang kết nối {0}…</value>
@@ -334,13 +334,13 @@
     <value>Cổng đã nhớ không còn lắng nghe, nên đã nối sang {0} hiện tại. Ghép nối vẫn còn, không ghép lại.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>Kết nối không dây đã mất ({0} ngoại tuyến hoặc biến mất khỏi danh sách thiết bị). Kiểm tra «Địa chỉ IP và cổng» hiện tại trên trang Gỡ lỗi qua Wi-Fi của điện thoại, sửa lại ô rồi bấm «Kết nối» — không cần ghép nối lại.</value>
+    <value>Đã ngắt. Kết nối lại.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>Đã phát hiện phiên không dây cũ còn sót trong adb; đã tự động ngắt và kết nối lại.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>IP:cổng để kết nối lấy từ dòng «Địa chỉ IP và cổng» ở đầu trang Gỡ lỗi qua Wi-Fi của điện thoại (không phải cổng trong hộp thoại ghép nối). Nó thường thay đổi sau khi điện thoại tắt màn hình, đổi mạng hoặc khởi động lại — kiểm tra giá trị hiện tại rồi thử lại. Thường không cần ghép nối lại.</value>
+    <value>Không kết nối được. Xem cổng trên trang gỡ lỗi qua Wi-Fi của điện thoại rồi kết nối lại.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Không phải IP:cổng hợp lệ (ví dụ 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>Đã dừng; mã QR đó đã vô hiệu.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>Ghép nối bằng mã</value>
+    <value>Dùng mã</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>Trên điện thoại chọn «Ghép nối thiết bị bằng mã ghép nối», rồi nhập vào đây địa chỉ IP và cổng cùng mã sáu chữ số hiển thị trong hộp thoại.</value>
@@ -1110,7 +1110,7 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
     <value>Kiểm tra cập nhật</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Đối chiếu với bản phát hành chính thức mới nhất trên GitHub. Nếu không liên hệ được thì thử gương truy cập được từ Trung Quốc. Tệp tải về được kiểm SHA-256, rồi thư mục xách tay này được thay và ứng dụng khởi động lại.</value>
+    <value>Kiểm tra phiên bản mới.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Tải và cài đặt</value>
@@ -1131,7 +1131,7 @@ Sẽ xóa một lần toàn bộ mục trên PC này (gồm hình ảnh). Việc
     <value>Ứng dụng sẽ thoát, thay tệp rồi tự khởi động lại.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Không liên hệ được GitHub và các gương. Kiểm tra mạng rồi thử lại.</value>
+    <value>Hiện không kết nối được. Thử lại sau.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Không đọc được thông tin bản phát hành mới nhất.</value>

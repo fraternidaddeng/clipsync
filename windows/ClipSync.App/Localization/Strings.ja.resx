@@ -217,10 +217,10 @@
     <value>特権ダイレクト読み取り</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Android のバックグラウンド読み取り段階で最も品質の高い経路です。PC が adb でペア済みのスマートフォンの内蔵特権ホストを起動し、以後はバックグラウンドのコピーが即時アップロードされます。起動は毎回、ここでのあなたのクリックによって行われます。</value>
+    <value>スマホが背面でもコピーを読めるようにします。</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>この手順では adb（Android Debug Bridge）でスマートフォンに起動コマンドを送ります。「特権ダイレクト読み取りを開始」をクリックすると実行され、Windows の端末検出・ワイヤレスペアリング・接続でも操作時に adb を使います。初回はスマートフォンで「USB デバッグ」を有効にし、adb 認証のダイアログを手動で承認してください。この手順は Android では自動化できません。</value>
+    <value>許可したあと、下のボタンを押したときだけスマホに連絡します。初回はスマホで確認してください。</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>理解して adb を許可</value>
@@ -280,7 +280,7 @@
     <value>ワイヤレスペアリング（ケーブル不要）</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11 以降はワイヤレスデバッグに対応しています。スマホと PC を同じ Wi-Fi につなぎ、スマホの「開発者向けオプション → ワイヤレスデバッグ」をオンにしてから、下のいずれかの方法で一度ペアリングしてください。その後の特権ダイレクト読み取りの起動は USB と同じです。</value>
+    <value>スマホでワイヤレスデバッグを開き、PC と同じ Wi-Fi に接続します。</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>ペアリング QR コードを表示</value>
@@ -292,13 +292,13 @@
     <value>スマホ側：ワイヤレスデバッグ → 「QR コードによるデバイスのペア設定」でこのコードをスキャンしてください。</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>スマホのスキャン待ち……表示中はこの PC が 2 秒ごとに adb の mDNS 探索へ問い合わせます（最長 2 分、いつでも停止できます）。</value>
+    <value>スマホでこのコードをスキャンしてください。</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>この adb は mDNS 探索を使えません（新しめの platform-tools が必要）。QR コード方式は使えないため、下のペアリングコード方式をご利用ください。</value>
+    <value>スキャンは使えません。ペアリングコードを使ってください。</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>スキャン待ちがタイムアウトし、QR コードの表示を終了しました（旧コードは無効）。再表示するか、ペアリングコード方式をご利用ください。</value>
+    <value>スキャンされませんでした。もう一度表示するか、ペアリングコードを使ってください。</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>スマホを検出（{0}）。ペアリング中……</value>
@@ -316,7 +316,7 @@
     <value>ペアリング完了。接続ポートを自動検索中……</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>ペアリングは完了しましたが、接続ポートを自動検出できませんでした。スマホの「ワイヤレスデバッグ」画面上部の「IP アドレスとポート」を下に入力し、「接続」を押してください。</value>
+    <value>ペアリングできました。スマホのワイヤレスデバッグ画面のポートを下に入力してください。</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>{0} に接続中……</value>
@@ -334,13 +334,13 @@
     <value>覚えていたポートは待受していなかったため、現在の {0} に接続し直しました。ペアリングはそのままで、やり直しはしていません。</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>ワイヤレス接続が切断されました（{0} はオフラインか、デバイス一覧から消えています）。スマホの「ワイヤレスデバッグ」画面で現在の「IP アドレスとポート」を確認し、入力し直して「接続」を押してください。ペアリングのやり直しは不要です。</value>
+    <value>接続が切れました。もう一度接続してください。</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>adb に残っていた失効済みのワイヤレスセッションを検出したため、自動的に切断して接続し直しました。</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>接続用の IP:ポート はスマホの「ワイヤレスデバッグ」画面上部の「IP アドレスとポート」です（ペアリングダイアログのポートではありません）。画面消灯・ネットワーク切替・再起動後はよく変わるので、現在の値を確認してからやり直してください。通常、ペアリングのやり直しは不要です。</value>
+    <value>接続できませんでした。スマホのワイヤレスデバッグ画面のポートを確認して、もう一度接続してください。</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>IP:ポート の形式が正しくありません（例 192.168.1.23:37123）。</value>
@@ -352,7 +352,7 @@
     <value>表示を停止しました。その QR コードは無効です。</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>ペアリングコードでペアリング</value>
+    <value>コードを使う</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>スマホで「ペア設定コードによるデバイスのペア設定」を選び、表示された IP アドレスとポート、6 桁のコードをここに入力してください。</value>
@@ -1110,7 +1110,7 @@
     <value>更新を確認</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>GitHub の最新正式リリースと照合します。届かない場合は国内向けミラーを試します。ダウンロード後に SHA-256 を検証し、このポータブルフォルダーを置き換えて再起動します。</value>
+    <value>新しいバージョンがあるか確認します。</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>ダウンロードしてインストール</value>
@@ -1131,7 +1131,7 @@
     <value>終了してファイルを置き換えたあと、自動的に再起動します。</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>GitHub とミラーのいずれにも接続できません。ネットワークを確認して再試行してください。</value>
+    <value>いまは接続できません。あとでもう一度。</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>最新リリース情報を解析できませんでした。</value>

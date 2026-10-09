@@ -217,10 +217,10 @@
     <value>Lecture privilégiée</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Le niveau de plus haute qualité de l’échelle de lecture en arrière-plan d’Android : le PC utilise adb pour aider un téléphone appairé à lancer son hôte privilégié intégré, après quoi les copies en arrière-plan du téléphone se téléversent instantanément. Chaque démarrage est déclenché par votre clic ici.</value>
+    <value>Permet au téléphone de lire les copies même en arrière-plan.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Une fois autorisé, ce PC appellera adb (l’Android Debug Bridge) pour envoyer au téléphone une seule commande de démarrage. Quand vous cliquez sur Démarrer la lecture privilégiée, ce PC envoie au téléphone une commande de démarrage via adb ; adb n’est invoqué à aucun autre moment. La première fois, vous devez aussi activer le débogage USB sur le téléphone et accepter manuellement son invite d’autorisation adb — Android n’autorise pas l’automatisation de cette étape.</value>
+    <value>Après autorisation, le téléphone n'est contacté que lorsque vous appuyez sur un bouton ci-dessous. Confirmez sur le téléphone la première fois.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>J’ai compris — autoriser adb</value>
@@ -280,7 +280,7 @@
     <value>Appairage sans fil (sans câble)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11+ prend en charge le débogage sans fil : avec le téléphone et ce PC sur le même Wi-Fi, activez Options pour les développeurs → Débogage sans fil sur le téléphone, puis appairez une fois avec l'une des méthodes ci-dessous ; le démarrage de la lecture privilégiée fonctionne ensuite exactement comme par USB.</value>
+    <value>Activez le débogage sans fil et le même Wi-Fi que ce PC.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>Afficher le QR code d'appairage</value>
@@ -292,13 +292,13 @@
     <value>Sur le téléphone : Débogage sans fil → « Associer l'appareil avec un QR code », puis scannez ce code.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>En attente du scan… Tant que le code est affiché, ce PC interroge la découverte mDNS d'adb toutes les deux secondes, pendant deux minutes au plus — arrêt possible à tout moment.</value>
+    <value>Scannez ce code avec le téléphone.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>Cet adb n'a pas de découverte mDNS utilisable (platform-tools plus récents requis) : la voie du QR code ne peut pas fonctionner. Utilisez la méthode du code d'appairage ci-dessous.</value>
+    <value>Le scan n'est pas disponible. Utilisez un code d'appairage.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>Délai d'attente du scan dépassé ; le QR code n'est plus affiché (l'ancien est annulé). Affichez-en un nouveau ou utilisez le code d'appairage.</value>
+    <value>Aucun scan. Affichez-le à nouveau, ou utilisez un code.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>Téléphone détecté ({0}) ; appairage…</value>
@@ -316,7 +316,7 @@
     <value>Appairé. Recherche automatique du port de connexion…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>Appairé, mais le port de connexion n'a pas pu être découvert automatiquement. Saisissez ci-dessous l'« adresse IP et port » affichée en haut de la page Débogage sans fil du téléphone, puis appuyez sur « Connecter ».</value>
+    <value>Appairé. Saisissez ci-dessous le port de la page de débogage sans fil du téléphone.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>Connexion à {0}…</value>
@@ -334,13 +334,13 @@
     <value>Le port mémorisé n'écoutait plus, donc connexion au {0} actuel. L'appairage est toujours là ; rien n'a été réappairé.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>La connexion sans fil a été perdue ({0} est hors ligne ou a disparu de la liste des appareils). Vérifiez « adresse IP et port » actuels sur la page Débogage sans fil du téléphone, corrigez le champ puis appuyez sur « Connecter » — inutile de refaire l'appairage.</value>
+    <value>Déconnecté. Connectez-vous à nouveau.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>Une session sans fil périmée restée dans adb a été détectée ; elle a été déconnectée puis reconnectée automatiquement.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>L'IP:port de connexion vient de la ligne « adresse IP et port » en haut de la page Débogage sans fil du téléphone (pas le port de la boîte d'appairage). Il change souvent après extinction de l'écran, changement de réseau ou redémarrage : vérifiez la valeur actuelle et réessayez. Il est rarement nécessaire de refaire l'appairage.</value>
+    <value>Connexion impossible. Vérifiez le port sur la page de débogage sans fil du téléphone, puis reconnectez.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Ce n'est pas un IP:port valide (exemple : 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>Arrêté ; ce QR code est annulé.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>Appairer avec un code</value>
+    <value>Utiliser un code</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>Sur le téléphone, choisissez « Associer l'appareil avec un code », puis saisissez ici l'adresse IP et le port affichés ainsi que le code à six chiffres.</value>
@@ -1110,7 +1110,7 @@ Toutes les entrées de ce PC (images comprises) seront supprimées en une fois. 
     <value>Rechercher des mises à jour</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Compare avec la dernière publication stable sur GitHub. S’il est injoignable, un miroir accessible depuis la Chine est tenté. Le téléchargement est vérifié par SHA-256, puis ce dossier portable est remplacé et l’appli redémarre.</value>
+    <value>Vérifier s'il existe une nouvelle version.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Télécharger et installer</value>
@@ -1131,7 +1131,7 @@ Toutes les entrées de ce PC (images comprises) seront supprimées en une fois. 
     <value>L’appli va quitter, remplacer ses fichiers, puis redémarrer.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Impossible de joindre GitHub ni ses miroirs. Vérifiez le réseau et réessayez.</value>
+    <value>Connexion impossible pour le moment. Réessayez plus tard.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Les informations de la dernière publication n’ont pas pu être lues.</value>

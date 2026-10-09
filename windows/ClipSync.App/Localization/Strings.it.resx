@@ -217,10 +217,10 @@
     <value>Lettura privilegiata</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Il gradino di qualità più alta della scala di lettura in background di Android: il PC usa adb per aiutare un telefono associato ad avviare il suo host privilegiato integrato, dopodiché le copie in background del telefono vengono caricate all’istante. Ogni avvio è attivato da un tuo clic qui.</value>
+    <value>Consente al telefono di leggere le copie anche in background.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Una volta consentito, questo PC chiamerà adb (l’Android Debug Bridge) per inviare al telefono un solo comando di avvio. Quando fai clic su Avvia lettura privilegiata, questo PC invia al telefono un comando di avvio tramite adb; adb non viene invocato in nessun altro momento. La prima volta devi anche attivare il debug USB sul telefono e accettare a mano il suo avviso di autorizzazione adb — Android non consente di automatizzare questo passaggio.</value>
+    <value>Dopo il consenso, il telefono viene contattato solo quando premi un pulsante qui sotto. La prima volta conferma sul telefono.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>Ho capito — consenti adb</value>
@@ -280,7 +280,7 @@
     <value>Associazione wireless (senza cavo)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>Android 11+ supporta il debug wireless: con il telefono e questo PC sulla stessa Wi-Fi, attiva Opzioni sviluppatore → Debug wireless sul telefono e associa una volta con uno dei metodi qui sotto; dopo, avviare la lettura privilegiata funziona esattamente come via USB.</value>
+    <value>Attiva il debug wireless e la stessa Wi-Fi di questo PC.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>Mostra codice QR di associazione</value>
@@ -292,13 +292,13 @@
     <value>Sul telefono: Debug wireless → "Accoppia dispositivo con codice QR", poi scansiona questo codice.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>In attesa della scansione… Finché il codice è mostrato, questo PC interroga la scoperta mDNS di adb ogni due secondi, per al massimo due minuti — puoi fermarti in qualsiasi momento.</value>
+    <value>Scansiona questo codice con il telefono.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>Questo adb non ha una scoperta mDNS utilizzabile (servono platform-tools più recenti): la via del QR non può funzionare. Usa il metodo del codice di associazione qui sotto.</value>
+    <value>La scansione non è disponibile. Usa un codice di associazione.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>Attesa della scansione scaduta; il codice QR non è più mostrato (il vecchio è annullato). Mostrane uno nuovo o usa il codice di associazione.</value>
+    <value>Nessuna scansione. Mostralo di nuovo o usa un codice.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>Telefono trovato ({0}); associazione in corso…</value>
@@ -316,7 +316,7 @@
     <value>Associato. Ricerca automatica della porta di connessione…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>Associato, ma la porta di connessione non è stata scoperta automaticamente. Scrivi qui sotto l'"indirizzo IP e porta" mostrato in cima alla pagina Debug wireless del telefono, poi premi "Connetti".</value>
+    <value>Associato. Inserisci sotto la porta della pagina di debug wireless del telefono.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>Connessione a {0}…</value>
@@ -334,13 +334,13 @@
     <value>La porta ricordata non era più in ascolto, quindi il collegamento è passato all'attuale {0}. L'associazione c'è ancora; non è stata rifatta.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>La connessione wireless è andata persa ({0} è offline o sparito dall'elenco dispositivi). Verifica "indirizzo IP e porta" attuali nella pagina Debug wireless del telefono, correggi il campo e premi "Connetti"; non serve riassociare.</value>
+    <value>Disconnesso. Connettiti di nuovo.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>È stata rilevata una sessione wireless obsoleta rimasta in adb; è stata disconnessa e ricollegata automaticamente.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>L'IP:porta di connessione è quello della riga "indirizzo IP e porta" in cima alla pagina Debug wireless del telefono (non la porta della finestra di associazione). Cambia spesso dopo spegnimento schermo, cambio rete o riavvio: verifica il valore attuale e riprova. Di solito non serve riassociare.</value>
+    <value>Connessione non riuscita. Controlla la porta nella pagina di debug wireless del telefono e riconnettiti.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>Non è un IP:porta valido (esempio: 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>Interrotto; quel codice QR è annullato.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>Associa con un codice</value>
+    <value>Usa un codice</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>Sul telefono scegli "Accoppia dispositivo con codice", poi inserisci qui l'indirizzo IP e la porta della finestra insieme al codice di sei cifre.</value>
@@ -1110,7 +1110,7 @@ Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuot
     <value>Controlla aggiornamenti</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>Confronta con l’ultima pubblicazione stabile su GitHub. Se GitHub non risponde, prova uno specchio raggiungibile dalla Cina. Il download viene verificato con SHA-256, poi questa cartella portatile viene sostituita e l’app si riavvia.</value>
+    <value>Controlla se c'è una versione nuova.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>Scarica e installa</value>
@@ -1131,7 +1131,7 @@ Elimina in un colpo solo tutte le voci su questo PC (immagini incluse). Lo svuot
     <value>L’app si chiuderà, sostituirà i file e si riavvierà.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>Impossibile raggiungere GitHub o i suoi specchi. Controlla la rete e riprova.</value>
+    <value>Nessuna connessione adesso. Riprova più tardi.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>Impossibile interpretare le informazioni sull’ultima pubblicazione.</value>

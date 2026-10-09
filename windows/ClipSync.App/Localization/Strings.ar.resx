@@ -217,10 +217,10 @@
     <value>القراءة المميزة</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>أعلى درجات جودة سلّم القراءة في الخلفية على أندرويد: يستخدم الحاسوب adb لمساعدة هاتف مقترن على بدء المضيف المميز المدمج، وبعدها تُرفع النسخ في الخلفية من الهاتف فورًا. كل بدء يحدث بنقرة منك هنا.</value>
+    <value>يتيح للهاتف قراءة المنسوخ حتى وهو في الخلفية.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>بعد السماح، سيستدعي هذا الحاسوب adb (جسر تصحيح أندرويد) لإرسال أمر بدء واحد إلى الهاتف. عند نقرك على «بدء القراءة المميزة» يرسل هذا الحاسوب أمر بدء واحدًا إلى الهاتف عبر adb؛ ولا يُستدعى adb في أي وقت آخر. في المرة الأولى عليك أيضًا تفعيل «تصحيح أخطاء USB» على الهاتف وقبول نافذة تفويض adb يدويًا — لا يسمح أندرويد بأتمتة هذه الخطوة.</value>
+    <value>بعد السماح، لا يُتصل بالهاتف إلا عند الضغط على زر أدناه. أكّد على الهاتف في المرة الأولى.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>فهمت — اسمح بـ adb</value>
@@ -280,7 +280,7 @@
     <value>الاقتران اللاسلكي (بدون كابل)</value>
   </data>
   <data name="Conduit_Wireless_SectionDesc" xml:space="preserve">
-    <value>يدعم Android 11 والأحدث تصحيح الأخطاء اللاسلكي: مع اتصال الهاتف وهذا الكمبيوتر بشبكة Wi-Fi نفسها، فعّل «خيارات المطوّر ← تصحيح الأخطاء اللاسلكي» على الهاتف ثم أجرِ الاقتران مرة واحدة بأي من الطريقتين أدناه؛ بعد ذلك يعمل بدء القراءة المميزة تمامًا كما عبر USB.</value>
+    <value>فعّل تصحيح الأخطاء اللاسلكي واستخدم شبكة Wi-Fi نفسها لهذا الكمبيوتر.</value>
   </data>
   <data name="Conduit_Wireless_ShowQr" xml:space="preserve">
     <value>عرض رمز QR للاقتران</value>
@@ -292,13 +292,13 @@
     <value>على الهاتف: تصحيح الأخطاء اللاسلكي ← «إقران الجهاز برمز QR»، ثم امسح هذا الرمز.</value>
   </data>
   <data name="Conduit_Wireless_WaitingScan" xml:space="preserve">
-    <value>في انتظار مسح الهاتف… أثناء عرض الرمز يسأل هذا الكمبيوتر اكتشاف mDNS في adb كل ثانيتين، لمدة دقيقتين كحد أقصى — يمكن الإيقاف في أي وقت.</value>
+    <value>امسح هذا الرمز بالهاتف.</value>
   </data>
   <data name="Conduit_Wireless_MdnsUnsupported" xml:space="preserve">
-    <value>هذا الإصدار من adb بلا اكتشاف mDNS صالح (يلزم platform-tools أحدث)، لذا لا يمكن لمسار رمز QR أن يعمل. استخدم طريقة رمز الاقتران أدناه بدلًا منه.</value>
+    <value>المسح غير متاح. استخدم رمز اقتران.</value>
   </data>
   <data name="Conduit_Wireless_ScanTimeout" xml:space="preserve">
-    <value>انتهت مهلة انتظار المسح؛ لم يعد رمز QR معروضًا (الرمز القديم لاغٍ). اعرض رمزًا جديدًا أو استخدم رمز الاقتران.</value>
+    <value>لم يُمسح شيء. أعد العرض أو استخدم رمزًا.</value>
   </data>
   <data name="Conduit_Wireless_DiscoveredFormat" xml:space="preserve">
     <value>تم العثور على الهاتف ({0})؛ جارٍ الاقتران…</value>
@@ -316,7 +316,7 @@
     <value>تم الاقتران. جارٍ البحث تلقائيًا عن منفذ الاتصال…</value>
   </data>
   <data name="Conduit_Wireless_ConnectPortNotFound" xml:space="preserve">
-    <value>تم الاقتران، لكن تعذّر اكتشاف منفذ الاتصال تلقائيًا. أدخل أدناه «عنوان IP والمنفذ» الظاهر أعلى صفحة تصحيح الأخطاء اللاسلكي في الهاتف ثم اضغط «اتصال».</value>
+    <value>تم الاقتران. أدخل أدناه المنفذ من صفحة تصحيح الأخطاء اللاسلكي في الهاتف.</value>
   </data>
   <data name="Conduit_Wireless_ConnectingFormat" xml:space="preserve">
     <value>جارٍ الاتصال بـ {0}…</value>
@@ -334,13 +334,13 @@
     <value>المنفذ المحفوظ لم يعُد يستمع، لذا تم الاتصال بالمنفذ الحالي {0}. الاقتران ما زال قائمًا ولم يُعَد.</value>
   </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
-    <value>فُقد الاتصال اللاسلكي ({0} غير متصل أو اختفى من قائمة الأجهزة). راجع «عنوان IP والمنفذ» الحالي في صفحة تصحيح الأخطاء اللاسلكي بالهاتف، وصحّح الحقل ثم اضغط «اتصال» — لا حاجة لإعادة الاقتران.</value>
+    <value>انقطع الاتصال. أعد الاتصال.</value>
   </data>
   <data name="Conduit_Wireless_StaleSessionRedialed" xml:space="preserve">
     <value>اكتُشفت جلسة لاسلكية قديمة متبقية في adb؛ فقُطع اتصالها وأُعيد الاتصال تلقائيًا.</value>
   </data>
   <data name="Conduit_Wireless_ConnectFailedHint" xml:space="preserve">
-    <value>عنوان IP:المنفذ للاتصال هو سطر «عنوان IP والمنفذ» أعلى صفحة تصحيح الأخطاء اللاسلكي في الهاتف (وليس منفذ نافذة الاقتران). كثيرًا ما يتغيّر بعد انطفاء الشاشة أو تبديل الشبكة أو إعادة التشغيل — راجع القيمة الحالية ثم أعد المحاولة. عادةً لا حاجة لإعادة الاقتران.</value>
+    <value>تعذّر الاتصال. راجع المنفذ في صفحة تصحيح الأخطاء اللاسلكي على الهاتف ثم أعد الاتصال.</value>
   </data>
   <data name="Conduit_Wireless_EndpointInvalid" xml:space="preserve">
     <value>ليست صيغة IP:منفذ صالحة (مثال: 192.168.1.23:37123).</value>
@@ -352,7 +352,7 @@
     <value>تم الإيقاف؛ رمز QR هذا أصبح لاغيًا.</value>
   </data>
   <data name="Conduit_Wireless_ManualTitle" xml:space="preserve">
-    <value>الاقتران برمز اقتران</value>
+    <value>استخدام رمز</value>
   </data>
   <data name="Conduit_Wireless_ManualDesc" xml:space="preserve">
     <value>على الهاتف اختر «إقران الجهاز برمز الاقتران»، ثم أدخل هنا عنوان IP والمنفذ الظاهرين في النافذة مع الرمز المكوّن من ستة أرقام.</value>
@@ -1110,7 +1110,7 @@
     <value>التحقق من التحديثات</value>
   </data>
   <data name="Prefs_CheckUpdate_Desc" xml:space="preserve">
-    <value>يقارن بأحدث إصدار رسمي على GitHub. إن تعذّر الوصول تُجرَّب مرآة يمكن الوصول إليها من الصين. يُتحقق من التنزيل بـ SHA-256 ثم يُستبدل هذا المجلد المحمول ويُعاد التشغيل.</value>
+    <value>التحقق من وجود إصدار جديد.</value>
   </data>
   <data name="Prefs_Update_Download" xml:space="preserve">
     <value>تنزيل وتثبيت</value>
@@ -1131,7 +1131,7 @@
     <value>سيُغلق التطبيق ويستبدل ملفاته ثم يُعاد تشغيله.</value>
   </data>
   <data name="Prefs_Update_Error_Network" xml:space="preserve">
-    <value>تعذّر الوصول إلى GitHub ومراياه. تحقق من الشبكة ثم أعد المحاولة.</value>
+    <value>لا يوجد اتصال الآن. أعد المحاولة لاحقًا.</value>
   </data>
   <data name="Prefs_Update_Error_Parse" xml:space="preserve">
     <value>تعذّر تفسير معلومات أحدث إصدار.</value>
