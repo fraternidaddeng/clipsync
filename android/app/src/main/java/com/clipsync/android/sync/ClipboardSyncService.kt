@@ -58,6 +58,7 @@ import kotlinx.coroutines.launch
 class ClipboardSyncService : Service() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val syncNudges = Channel<Unit>(Channel.CONFLATED)
+    @Volatile
     private var started = false
     private var supervisor: SyncSupervisor? = null
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
@@ -167,6 +168,7 @@ class ClipboardSyncService : Service() {
     }
 
     override fun onDestroy() {
+        started = false
         settingsListener?.let { listener ->
             applicationContext
                 .getSharedPreferences(SyncSettingsStore.PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -185,6 +187,10 @@ class ClipboardSyncService : Service() {
         mutableConnectionStates.value = SyncConnectionState.NotPaired
         mutablePeerThrottled.value = false
         scope.cancel()
+        // Prevent a network callback or a queued Handler runnable from nudging a supervisor
+        // after the service has released its owners. The coroutine scope cancellation alone
+        // cannot retract work already posted to the main looper.
+        supervisor = null
         super.onDestroy()
     }
 
@@ -217,39 +223,7 @@ class ClipboardSyncService : Service() {
                 clientVersion = clientVersion(),
                 onRemoteClipsCommitted = { committed ->
                     // Clipboard writes run on the main thread (mirrors the Windows dispatcher hop).
-                    mainHandler.post {
-                        // Preferences are re-read per batch so toggling applies immediately.
-                        // Paused sync still receives into the inbox but never auto-applies.
-                        // Like Windows, only the newest body of a batch reaches the system
-                        // clipboard; every event still lands in the inbox first. Images have
-                        // their own write gate (ADR 0004), independent of the text one.
-                        val autoApply = InboxDelivery.autoApplyAllowed(settings)
-                        val autoApplyImage = InboxDelivery.autoApplyImagesAllowed(settings)
-                        // 收到内容通知 (settings-roadmap P1-8): re-read per batch like the
-                        // apply gates, so toggling applies to the very next received clip.
-                        val notify = InboxDelivery.inboxNotificationsAllowed(settings)
-                        val newestEventId = committed.lastOrNull()?.eventId
-                        committed.forEach { applied ->
-                            if (applied.isImage) {
-                                InboxDelivery.deliverImage(
-                                    appContext,
-                                    applied.eventId,
-                                    applied.contentHash,
-                                    applied.mimeType,
-                                    autoApply = autoApplyImage && applied.eventId == newestEventId,
-                                    notify = notify,
-                                )
-                            } else {
-                                InboxDelivery.deliver(
-                                    appContext,
-                                    applied.eventId,
-                                    applied.content,
-                                    autoApply = autoApply && applied.eventId == newestEventId,
-                                    notify = notify,
-                                )
-                            }
-                        }
-                    }
+                    mainHandler.post { deliverRemoteClips(appContext, settings, committed) }
                 },
                 // Pause/private stop outbound announces immediately; re-read every drain tick.
                 outboundAllowed = { !settings.syncPaused && !settings.privateMode },
@@ -301,10 +275,7 @@ class ClipboardSyncService : Service() {
                 ticks += 1
                 val recoveryDue = ticks % RECOVERY_PROBE_EVERY_TICKS == 0
                 mainHandler.post {
-                    captureSession.checkHealth()
-                    if (recoveryDue && captureStack.coordinator.state.belowRequested) {
-                        captureSession.tryRecover()
-                    }
+                    checkCaptureHealth(captureSession, recoveryDue)
                 }
             }
         }
@@ -344,6 +315,50 @@ class ClipboardSyncService : Service() {
                     store.cleanup(settings.effectiveRetentionPolicy(), System.currentTimeMillis())
                 }
                 delay(RETENTION_CLEANUP_INTERVAL_MS)
+            }
+        }
+    }
+
+    private fun checkCaptureHealth(session: ClipboardCaptureSession, recoveryDue: Boolean) {
+        // A tick may have posted just as onDestroy() ran. Do not probe or recover a
+        // coordinator after its service owner has been released.
+        if (!started || captureSession !== session) return
+        session.checkHealth()
+        if (recoveryDue && captureCoordinator?.state?.belowRequested == true) {
+            session.tryRecover()
+        }
+    }
+
+    private fun deliverRemoteClips(
+        appContext: Context,
+        settings: SyncSettingsStore,
+        committed: List<RemoteClipApplied>,
+    ) {
+        if (!started) return
+        // Preferences are re-read per batch so toggling applies immediately. Paused sync still
+        // receives into the inbox but never auto-applies; only the newest body reaches clipboard.
+        val autoApply = InboxDelivery.autoApplyAllowed(settings)
+        val autoApplyImage = InboxDelivery.autoApplyImagesAllowed(settings)
+        val notify = InboxDelivery.inboxNotificationsAllowed(settings)
+        val newestEventId = committed.lastOrNull()?.eventId
+        committed.forEach { applied ->
+            if (applied.isImage) {
+                InboxDelivery.deliverImage(
+                    appContext,
+                    applied.eventId,
+                    applied.contentHash,
+                    applied.mimeType,
+                    autoApply = autoApplyImage && applied.eventId == newestEventId,
+                    notify = notify,
+                )
+            } else {
+                InboxDelivery.deliver(
+                    appContext,
+                    applied.eventId,
+                    applied.content,
+                    autoApply = autoApply && applied.eventId == newestEventId,
+                    notify = notify,
+                )
             }
         }
     }
@@ -413,6 +428,7 @@ class ClipboardSyncService : Service() {
     }
 
     private fun updateNotification(state: SyncConnectionState) {
+        if (!started) return
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         // POST_NOTIFICATIONS may be revoked on API 33+; the service keeps running regardless.
         runCatching { manager.notify(NOTIFICATION_ID, notification(stateText(state))) }

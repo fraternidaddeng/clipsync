@@ -55,16 +55,19 @@ public static class PortableUpdateApplier
         string installDirectory)
     {
         Directory.CreateDirectory(stagingRoot);
-        var src = NormalizeCmdPath(payloadDirectory);
-        var dst = NormalizeCmdPath(installDirectory);
-        var staging = NormalizeCmdPath(stagingRoot);
+        var src = EscapeCmdLiteral(NormalizeCmdPath(payloadDirectory));
+        var dst = EscapeCmdLiteral(NormalizeCmdPath(installDirectory));
+        var staging = EscapeCmdLiteral(NormalizeCmdPath(stagingRoot));
         // Sibling of the staging tree so `rmdir /S` can delete the payload
         // without fighting a still-running script inside that folder.
         var scriptPath = staging + "-apply.cmd";
-        var exe = NormalizeCmdPath(Path.Combine(installDirectory, WindowsExeName));
+        var exe = EscapeCmdLiteral(NormalizeCmdPath(Path.Combine(installDirectory, WindowsExeName)));
         var script = new StringBuilder();
         script.AppendLine("@echo off");
         script.AppendLine("setlocal");
+        // Paths are UTF-8 and may contain non-ASCII characters (for example a localized
+        // user profile). Keep cmd's parser in the same code page as the generated script.
+        script.AppendLine("chcp 65001 >nul");
         script.AppendLine("set PID=" + pid.ToString(CultureInfo.InvariantCulture));
         script.AppendLine(":wait");
         script.AppendLine("timeout /t 1 /nobreak >nul");
@@ -75,10 +78,12 @@ public static class PortableUpdateApplier
         script.AppendLine("start \"\" \"" + exe + "\"");
         script.AppendLine("rmdir /S /Q \"" + staging + "\"");
         script.AppendLine("del \"%~f0\"");
-        File.WriteAllText(scriptPath, script.ToString(), Encoding.ASCII);
+        File.WriteAllText(scriptPath, script.ToString(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
         return scriptPath;
     }
 
     private static string NormalizeCmdPath(string path) =>
         Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+    private static string EscapeCmdLiteral(string path) => path.Replace("%", "%%", StringComparison.Ordinal);
 }

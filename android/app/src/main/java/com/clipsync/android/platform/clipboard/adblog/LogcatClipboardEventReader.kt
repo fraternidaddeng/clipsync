@@ -1,6 +1,7 @@
 package com.clipsync.android.platform.clipboard.adblog
 
 import java.io.BufferedReader
+import java.io.IOException
 import java.io.InputStreamReader
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -56,6 +57,7 @@ class LogcatClipboardEventReader(
 
     private val lock = Any()
     private var onSignal: ((ClipboardLogMatch) -> Unit)? = null
+    @Volatile
     private var started: Boolean = false
     private var readerThread: Thread? = null
     private var source: LogcatLineSource? = null
@@ -115,8 +117,11 @@ class LogcatClipboardEventReader(
             thread = readerThread
             readerThread = null
         }
-        opened?.close()
         thread?.interrupt()
+        // Closing a BufferedReader while its readLine() is blocked on a process pipe can
+        // contend on the reader lock and stall the caller. Interrupt first, then let the
+        // source terminate its producer so the read unblocks before the stream is closed.
+        runCatching { opened?.close() }
         if (scheduler is ThreadTaskScheduler) {
             ownedScheduler?.shutdown()
             ownedScheduler = null
@@ -129,7 +134,16 @@ class LogcatClipboardEventReader(
     private fun activeScheduler(): TaskScheduler = ownedScheduler ?: scheduler
 
     fun acceptLine(line: String) {
-        acceptedLines.incrementAndGet()
+        try {
+            processLine(line)
+        } finally {
+            // A completed acceptance includes its debounce scheduling. Publishing before
+            // parsing let awaitAccepted() return while no delivery task existed yet.
+            acceptedLines.incrementAndGet()
+        }
+    }
+
+    private fun processLine(line: String) {
         val match = ClipboardLogParsers.matchKnownChange(line) ?: return
         matchedLines.incrementAndGet()
         lastMatch = match
@@ -165,6 +179,8 @@ class LogcatClipboardEventReader(
             }
         } catch (_: InterruptedException) {
             Thread.currentThread().interrupt()
+        } catch (_: IOException) {
+            // stop() closes the process pipe while readLine() may be blocked in it.
         } catch (_: java.util.concurrent.RejectedExecutionException) {
             // stop() tore down the scheduler while a line was being accepted.
         }
@@ -266,8 +282,12 @@ class ProcessLogcatLineSourceFactory(
             override fun readLine(): String? = reader.readLine()
 
             override fun close() {
-                reader.close()
-                process.destroy()
+                // Terminate the producer before closing its buffered stream. BufferedReader
+                // synchronizes close() with readLine(); destroying the process first releases
+                // the pipe read and prevents stop() from blocking on that monitor.
+                runCatching { process.destroy() }
+                runCatching { process.destroyForcibly() }
+                runCatching { reader.close() }
             }
         }
     }

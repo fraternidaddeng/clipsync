@@ -83,27 +83,59 @@ public sealed class GitHubReleaseClient : IDisposable
         IProgress<UpdateDownloadProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(destination);
+        var canReset = destination.CanSeek;
+        var startPosition = canReset ? destination.Position : 0;
+        var attempt = 0;
+
         await GetSuccessfulAsync(
                 asset.BrowserDownloadUrl,
                 async (response, token) =>
                 {
-                    var total = response.Content.Headers.ContentLength ?? asset.SizeBytes;
-                    await using var source = await response.Content
-                        .ReadAsStreamAsync(token)
-                        .ConfigureAwait(false);
-                    var buffer = new byte[81_920];
-                    long received = 0;
-                    int read;
-                    while ((read = await source.ReadAsync(buffer.AsMemory(0, buffer.Length), token)
-                               .ConfigureAwait(false)) > 0)
+                    if (attempt++ > 0 && !canReset)
                     {
-                        await destination.WriteAsync(buffer.AsMemory(0, read), token).ConfigureAwait(false);
-                        received += read;
-                        progress?.Report(new UpdateDownloadProgress(received, total));
+                        throw new InvalidOperationException(
+                            "A non-seekable download destination cannot be retried safely.");
+                    }
+
+                    ResetDestination(destination, canReset, startPosition);
+                    var total = response.Content.Headers.ContentLength ?? asset.SizeBytes;
+                    try
+                    {
+                        await using var source = await response.Content
+                            .ReadAsStreamAsync(token)
+                            .ConfigureAwait(false);
+                        var buffer = new byte[81_920];
+                        long received = 0;
+                        int read;
+                        while ((read = await source.ReadAsync(buffer.AsMemory(0, buffer.Length), token)
+                                   .ConfigureAwait(false)) > 0)
+                        {
+                            await destination.WriteAsync(buffer.AsMemory(0, read), token).ConfigureAwait(false);
+                            received += read;
+                            progress?.Report(new UpdateDownloadProgress(received, total));
+                        }
+                    }
+                    catch
+                    {
+                        // The mirror retry must replace a partial payload, never append to it.
+                        ResetDestination(destination, canReset, startPosition);
+                        throw;
                     }
                 },
                 cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    private static void ResetDestination(Stream destination, bool canReset, long startPosition)
+    {
+        if (!canReset)
+        {
+            return;
+        }
+
+        destination.Position = startPosition;
+        destination.SetLength(startPosition);
     }
 
     private async Task<string> GetTextAsync(string url, CancellationToken cancellationToken)
@@ -128,6 +160,7 @@ public sealed class GitHubReleaseClient : IDisposable
         Exception? lastError = null;
         foreach (var candidate in GitHubUrlMirrors.Candidates(url))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             try
             {
                 using var response = await http.GetAsync(
@@ -147,10 +180,10 @@ public sealed class GitHubReleaseClient : IDisposable
                 return;
             }
             catch (Exception exception) when (
-                exception is HttpRequestException
+                !cancellationToken.IsCancellationRequested && (exception is HttpRequestException
                 or TaskCanceledException
                 or IOException
-                or HttpIOException)
+                or HttpIOException))
             {
                 lastError = exception;
             }

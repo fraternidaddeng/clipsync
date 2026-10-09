@@ -33,6 +33,7 @@ import com.clipsync.android.ui.HealthScreenState
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -713,7 +714,7 @@ class HealthViewModelTest {
     fun `reachability ticker re-probes the peer while paired`() {
         pair()
         val peerHealth = CountingPeerHealth()
-        modelWithReachabilityTicker(peerHealth, flowOf(Unit))
+        modelWithReachabilityTicker(peerHealth, flowOf(Unit)).reachabilityRefreshActive.value = true
         // The init refresh probes once; the single ticker emission probes again.
         assertEquals(2, peerHealth.probeCount)
     }
@@ -721,9 +722,36 @@ class HealthViewModelTest {
     @Test
     fun `reachability ticker stays quiet when unpaired`() {
         val peerHealth = CountingPeerHealth()
-        modelWithReachabilityTicker(peerHealth, flowOf(Unit))
+        modelWithReachabilityTicker(peerHealth, flowOf(Unit)).reachabilityRefreshActive.value = true
         // No peer: neither the init refresh nor the tick has anything to probe.
         assertEquals(0, peerHealth.probeCount)
+    }
+
+    @Test
+    fun `backgrounding stops peer ticker and foregrounding resumes one subscription`() {
+        pair()
+        val peerHealth = CountingPeerHealth()
+        val ticker = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+        val model = modelWithReachabilityTicker(peerHealth, ticker)
+        assertEquals(1, peerHealth.probeCount)
+        assertEquals(0, ticker.subscriptionCount.value)
+
+        model.reachabilityRefreshActive.value = true
+        model.reachabilityRefreshActive.value = true
+        assertEquals(1, ticker.subscriptionCount.value)
+        ticker.tryEmit(Unit)
+        assertEquals(2, peerHealth.probeCount)
+
+        model.reachabilityRefreshActive.value = false
+        assertEquals(0, ticker.subscriptionCount.value)
+        ticker.tryEmit(Unit)
+        assertEquals(2, peerHealth.probeCount)
+
+        model.reachabilityRefreshActive.value = true
+        assertEquals(1, ticker.subscriptionCount.value)
+        ticker.tryEmit(Unit)
+        assertEquals(3, peerHealth.probeCount)
+        model.reachabilityRefreshActive.value = false
     }
 
     // ---- 对端写入 from the peer's health self-report (manual QA 2026-08-25 defect #3) ------

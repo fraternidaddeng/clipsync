@@ -220,7 +220,7 @@
     <value>Android 背景讀取階梯裡品質最高的一檔：電腦透過 adb 幫已配對的手機啟動內建特權宿主，之後手機在背景複製即時上行。每次啟動都由你在這裡點擊觸發。</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>啟用後，本機會呼叫 adb（Android 偵錯橋）向手機傳送一條啟動命令。adb 只在你點擊「啟動特權直讀」時執行一次，向手機傳送一條啟動命令；其他時候不呼叫 adb。首次還需在手機上開啟「USB 偵錯」並手動確認 adb 授權彈窗——這一步 Android 不允許自動化。</value>
+    <value>這一步會呼叫 adb（Android 偵錯橋）向手機傳送啟動命令。你點擊「啟動特權直讀」才會啟動該操作；Windows 的「檢測手機」、無線配對和連接也會按對應操作呼叫 adb。首次還需在手機上開啟「USB 偵錯」並手動確認 adb 授權彈窗——這一步 Android 不允許自動化。</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>了解並允許使用 adb</value>
@@ -730,7 +730,7 @@
     <value>重新查看引導</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>從歡迎頁重新過一遍首次設定教學；不改動任何設定與配對。</value>
+    <value>重新查看首次啟動說明；不會自動修改設定。配對頁會再次出示 QR 碼，掃描後仍需按正常流程核對並批准。</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>隱私與風險說明</value>
@@ -1047,7 +1047,7 @@
     <value>先說清楚</value>
   </data>
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
-    <value>Android 限制手機應用程式在背景讀取剪貼簿，剪剪相傳不會假裝做到：手機在前景時自動上行；背景讀取需要一次額外設定——品質最高的「特權直讀」正是由這台電腦幫手機啟動。每一段能力都以實測為準，做不到就直說。</value>
+    <value>Android 限制手機應用程式在背景讀取剪貼簿。需要自動擷取其他應用程式複製的內容時，請在手機「通路」頁設定一條讀取路線並測試。未設定時仍可手動分享內容。</value>
   </data>
   <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
     <value>使用前必讀：隱私與風險說明</value>
@@ -1059,7 +1059,7 @@
     <value>若手機提示無法連線，多半是本機防火牆未放行 TCP 47654；引導結束後可在「通路」頁一鍵放行。</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
-    <value>手機已完成配對——通路已經打通，繼續看看剩下的部分吧。</value>
+    <value>手機已完成配對。背景讀取和自動寫入仍需分別確認。</value>
   </data>
   <data name="Onboarding_Privileged_Body" xml:space="preserve">
     <value>背景讀取階梯裡品質最高的一檔：這台電腦透過 adb 幫已配對的手機啟動內建特權宿主，此後手機在背景複製也即時上行。</value>
@@ -1077,7 +1077,7 @@
     <value>不方便接線時：手機與電腦接入同一 Wi-Fi，開啟「開發人員選項 → 無線偵錯」，掃碼配對一次即可，之後與 USB 完全相同。</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb 只在你點擊時執行，向手機傳送一條啟動命令；其他時候不呼叫 adb。引導結束後，「通路」頁的特權直讀卡隨時可以開始或收回。</value>
+    <value>啟動特權直讀、檢測手機、無線配對和連接都在你點擊對應操作時呼叫 adb。引導結束後，「通路」頁的特權直讀卡可再次啟動；無線配對 QR 碼顯示期間會限時查詢裝置，停止出示後即停。</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>預設關閉的備用通道：區域網路被 VPN 或防火牆阻斷時，已在 Windows 系統設定中藍牙配對的手機可繼續同步文字（不含圖片，速度較慢）。</value>
@@ -1086,10 +1086,10 @@
     <value>這一步是可選項，現在無需決定——想啟用時，到「通路」頁的藍牙備援卡打開即可。</value>
   </data>
   <data name="Onboarding_Finish_Title" xml:space="preserve">
-    <value>就緒</value>
+    <value>接下來試一次同步</value>
   </data>
   <data name="Onboarding_Finish_Body" xml:space="preserve">
-    <value>先與手機配對；特權直讀與藍牙備援都在「通路」頁，所有開關都在「偏好」頁，隨時可回來。</value>
+    <value>配對後，電腦複製一段文字，手機從其他應用程式分享另一段文字，檢查兩端歷史是否收到。手機背景自動擷取需在「通路」頁設定讀取路線；同步開關在「偏好」頁。</value>
   </data>
   <data name="Onboarding_OpenConduit" xml:space="preserve">
     <value>前往通路頁</value>

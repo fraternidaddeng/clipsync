@@ -93,6 +93,89 @@ public sealed class TrayFlyoutViewModelTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task UnchangedRefreshPreservesRowsSelectionAndCollections()
+    {
+        await store.InitializeAsync();
+        await CaptureLocalAsync("keep selected", DateTimeOffset.UtcNow);
+        await viewModel.InitializeAsync();
+        var row = Assert.Single(viewModel.History);
+        viewModel.SelectedItem = row;
+        var historyChanges = 0;
+        var recentChanges = 0;
+        viewModel.History.CollectionChanged += (_, _) => historyChanges++;
+        viewModel.RecentHistory.CollectionChanged += (_, _) => recentChanges++;
+
+        await viewModel.RefreshFromCaptureAsync();
+
+        Assert.Same(row, Assert.Single(viewModel.History));
+        Assert.Same(row, Assert.Single(viewModel.RecentHistory));
+        Assert.Same(row, viewModel.SelectedItem);
+        Assert.Equal(0, historyChanges);
+        Assert.Equal(0, recentChanges);
+    }
+
+    [Fact]
+    public async Task NewCaptureInsertsOnlyTheNewRowAndPreservesSelection()
+    {
+        await store.InitializeAsync();
+        await CaptureLocalAsync("keep selected", DateTimeOffset.UtcNow.AddMinutes(-1));
+        await viewModel.InitializeAsync();
+        var row = Assert.Single(viewModel.History);
+        viewModel.SelectedItem = row;
+        var changes = new List<System.Collections.Specialized.NotifyCollectionChangedAction>();
+        viewModel.History.CollectionChanged += (_, args) => changes.Add(args.Action);
+
+        await CaptureLocalAsync("new capture", DateTimeOffset.UtcNow);
+        await viewModel.RefreshFromCaptureAsync();
+
+        Assert.Equal("new capture", viewModel.History[0].Text);
+        Assert.Same(row, viewModel.History[1]);
+        Assert.Same(row, viewModel.SelectedItem);
+        Assert.Equal([System.Collections.Specialized.NotifyCollectionChangedAction.Add], changes);
+    }
+
+    [Fact]
+    public async Task SearchFiltersHistoryButKeepsUnfilteredRecentClips()
+    {
+        await store.InitializeAsync();
+        await CaptureLocalAsync("match this", DateTimeOffset.UtcNow.AddMinutes(-1));
+        await CaptureLocalAsync("newest clip", DateTimeOffset.UtcNow);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedItem = viewModel.History[0];
+        var newest = viewModel.RecentHistory[0];
+
+        viewModel.SearchText = " match ";
+        await viewModel.SearchCommand.ExecuteAsync(null);
+
+        Assert.Equal("match", viewModel.ActiveQuery);
+        Assert.Equal("match this", Assert.Single(viewModel.History).Text);
+        Assert.Null(viewModel.SelectedItem);
+        Assert.Same(newest, viewModel.RecentHistory[0]);
+        Assert.Equal(2, viewModel.RecentHistory.Count);
+    }
+
+    [Fact]
+    public async Task RenamingDeviceUpdatesExistingHistoryOriginLabels()
+    {
+        await store.InitializeAsync();
+        var peerId = DeviceId(2);
+        await store.UpsertDeviceAsync(
+            new NewPairedDevice(peerId, "Old phone", "android", string.Empty, "c2VjcmV0"), DateTimeOffset.UtcNow);
+        await StoreRemoteAsync(peerId, "from phone", 1);
+        await viewModel.InitializeAsync();
+        viewModel.SelectedDevice = Assert.Single(viewModel.Devices);
+        viewModel.SelectedItem = Assert.Single(viewModel.History);
+        var selectedId = viewModel.SelectedItem.EventId;
+        viewModel.RenameText = "New phone";
+
+        await viewModel.RenameDeviceCommand.ExecuteAsync(null);
+
+        Assert.Equal("New phone", Assert.Single(viewModel.History).OriginLabel);
+        Assert.Equal("New phone", Assert.Single(viewModel.RecentHistory).OriginLabel);
+        Assert.Equal(selectedId, viewModel.SelectedItem?.EventId);
+    }
+
+    [Fact]
     public async Task DeviceAccentsFollowPairingOrderAndCycle()
     {
         await store.InitializeAsync();

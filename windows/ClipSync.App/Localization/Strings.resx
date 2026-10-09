@@ -217,10 +217,10 @@
     <value>特权直读</value>
   </data>
   <data name="Conduit_Privileged_Desc" xml:space="preserve">
-    <value>Android 后台读取阶梯里质量最高的一档：电脑通过 adb 帮已配对的手机启动内置特权宿主，之后手机在后台复制即时上行。每次启动都由你在这里点击触发。</value>
+    <value>通过 adb 启动手机内置的特权服务，供手机后台读取剪贴板。启动后回手机测试；手机重启后需要再次启动。</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>启用后，本机会调用 adb（Android 调试桥）向手机发送一条启动命令。adb 只在你点击「启动特权直读」时运行一次，向手机发送一条启动命令；其他时候不调用 adb。首次还需在手机上打开「USB 调试」并手动确认 adb 授权弹窗——这一步 Android 不允许自动化。</value>
+    <value>这一步会调用 adb（Android 调试桥）向手机发送启动命令。你点击「启动特权直读」才会启动该操作；Windows 的「检测手机」、无线配对和连接也会按对应操作调用 adb。首次还需在手机上打开「USB 调试」并手动确认 adb 授权弹窗——这一步 Android 不允许自动化。</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>了解并允许使用 adb</value>
@@ -730,7 +730,7 @@
     <value>重新查看引导</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>从欢迎页重新过一遍首次设置教程；不改动任何设置与配对。</value>
+    <value>重新查看首启说明；不会自动改动设置。配对页会再次出示二维码，扫描后仍需按正常流程核对并批准。</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>隐私与风险说明</value>
@@ -1035,19 +1035,19 @@
     <value>稍后设置</value>
   </data>
   <data name="Onboarding_Tab_History_Desc" xml:space="preserve">
-    <value>两端复制过的内容都汇在这里，选中任意一条即可再次复制到本机。</value>
+    <value>查看两端历史；选中一条后复制到本机。</value>
   </data>
   <data name="Onboarding_Tab_Conduit_Desc" xml:space="preserve">
-    <value>内容流动的每一段都如实显示。与手机配对和特权直读的入口都在这里。</value>
+    <value>查看读取、服务与连接状态；在这里配对和配置特权直读。</value>
   </data>
   <data name="Onboarding_Tab_Prefs_Desc" xml:space="preserve">
-    <value>暂停同步、私密模式、保留期——每个开关都真实生效，改动立即落盘。</value>
+    <value>设置暂停同步、私密模式、图片同步与保留期。</value>
   </data>
   <data name="Onboarding_Honesty_Header" xml:space="preserve">
-    <value>先说清楚</value>
+    <value>手机后台读取</value>
   </data>
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
-    <value>Android 限制手机应用在后台读取剪贴板，剪剪相传不会假装做到：手机在前台时自动上行；后台读取需要一次额外设置——质量最高的「特权直读」正是由这台电脑帮手机启动。每一段能力都以实测为准，做不到就直说。</value>
+    <value>Android 限制应用后台读取剪贴板。需要自动捕获其他应用中复制的内容时，请在手机「通路」页配置一条读取路线并测试。未配置时仍可手动分享内容。</value>
   </data>
   <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
     <value>使用前必读：隐私与风险说明</value>
@@ -1056,13 +1056,13 @@
     <value>在手机上打开剪剪相传的「通路」页，点按网络段的「去配对」，扫描下方二维码；确认前请核对电脑名称与证书指纹。</value>
   </data>
   <data name="Onboarding_Pair_Firewall" xml:space="preserve">
-    <value>若手机提示无法连接，多半是本机防火墙未放行 TCP 47654；引导结束后可在「通路」页一键放行。</value>
+    <value>手机连不上时，先检查两端网络，再到「通路」页检查当前监听端口的防火墙状态。</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
-    <value>手机已完成配对——通路已经打通，继续看看剩下的部分吧。</value>
+    <value>手机已完成配对。后台读取和自动写入仍需分别确认。</value>
   </data>
   <data name="Onboarding_Privileged_Body" xml:space="preserve">
-    <value>后台读取阶梯里质量最高的一档：这台电脑通过 adb 帮已配对的手机启动内置特权宿主，此后手机在后台复制也即时上行。</value>
+    <value>推荐的手机后台读取路线。电脑通过 adb 启动手机内置的特权服务；启动后回手机测试后台读取。手机重启后需要再次启动。</value>
   </data>
   <data name="Onboarding_Privileged_UsbTitle" xml:space="preserve">
     <value>USB 数据线</value>
@@ -1077,19 +1077,19 @@
     <value>不方便连线时：手机与电脑接入同一 Wi-Fi，开启「开发者选项 → 无线调试」，扫码配对一次即可，之后与 USB 完全相同。</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb 只在你点击时运行，向手机发送一条启动命令；其他时候不调用 adb。引导结束后，「通路」页的特权直读卡随时可以开始或收回。</value>
+    <value>启动特权直读、检测手机、无线配对和连接都在你点击对应操作时调用 adb。引导结束后，「通路」页的特权直读卡可再次启动；无线配对二维码显示期间会限时查询设备，停止出示后即停。</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>默认关闭的备用通道：局域网被 VPN 或防火墙阻断时，已在 Windows 系统设置中蓝牙配对的手机可继续同步文本（不含图片，速度较慢）。</value>
   </data>
   <data name="Onboarding_Bt_Note" xml:space="preserve">
-    <value>这一步是可选项，现在无需决定——想启用时，到「通路」页的蓝牙备援卡打开即可。</value>
+    <value>需要时，在两端打开蓝牙备援，并在手机上选择系统已配对的电脑。Windows 入口在「通路」页，Android 的「通路」和「偏好」页均可设置。</value>
   </data>
   <data name="Onboarding_Finish_Title" xml:space="preserve">
-    <value>就绪</value>
+    <value>接下来试一次同步</value>
   </data>
   <data name="Onboarding_Finish_Body" xml:space="preserve">
-    <value>先与手机配对；特权直读与蓝牙备援都在「通路」页，所有开关都在「偏好」页，随时可回来。</value>
+    <value>配对后，电脑复制一段文字，手机从其他应用分享另一段文字，检查两端历史是否收到。手机后台自动捕获需在「通路」页配置读取路线；同步开关在「偏好」页。</value>
   </data>
   <data name="Onboarding_OpenConduit" xml:space="preserve">
     <value>前往通路页</value>

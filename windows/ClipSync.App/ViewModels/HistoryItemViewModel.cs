@@ -115,7 +115,8 @@ public sealed record HistoryItemViewModel(
         ClipboardHistoryEntry entry,
         string localDeviceId,
         Func<string, PairedDeviceViewModel?>? deviceLookup = null,
-        MediaBlobStore? media = null)
+        MediaBlobStore? media = null,
+        HistoryItemViewModel? previous = null)
     {
         var isRemote = !string.Equals(entry.OriginDeviceId, localDeviceId, StringComparison.Ordinal);
         var device = isRemote ? deviceLookup?.Invoke(entry.OriginDeviceId) : null;
@@ -123,13 +124,20 @@ public sealed record HistoryItemViewModel(
         System.Windows.Media.ImageSource? thumbnailImage = null;
         if (entry.IsImage && media is not null && !string.IsNullOrEmpty(entry.ContentHash))
         {
-            // Decode once per refresh and freeze: the frozen bitmap is what the list
-            // binds, so container recycling never re-runs a converter and a transient
-            // file error can't blank an already-loaded row. LoadForList self-heals a
-            // corrupt cached thumbnail and falls back to the blob, so the 无预览
-            // placeholder appears only when no pixels can be produced at all.
-            (thumbnail, thumbnailImage) =
-                ClipSync.App.Media.ImageThumbnail.LoadForList(media, entry.ContentHash, decodePixelWidth: 128);
+            // Reuse decoded pixels while this content-addressed row remains in either
+            // visible collection. Missing previews are retried on the next refresh.
+            if (previous is { HasThumbnail: true } && previous.ContentHash == entry.ContentHash)
+            {
+                thumbnail = previous.ThumbnailPath;
+                thumbnailImage = previous.ThumbnailImage;
+            }
+            else
+            {
+                // Decode once and freeze: container recycling never re-runs a
+                // converter, and a transient file error cannot blank a loaded row.
+                (thumbnail, thumbnailImage) =
+                    ClipSync.App.Media.ImageThumbnail.LoadForList(media, entry.ContentHash, decodePixelWidth: 128);
+            }
         }
 
         var isSourceKnown = !string.IsNullOrWhiteSpace(entry.SourceProcess);

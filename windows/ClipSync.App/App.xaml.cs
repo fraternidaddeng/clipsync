@@ -53,6 +53,7 @@ public partial class App : Application
     private GlobalHotkeyManager? hotkeyManager;
     private System.Windows.Threading.DispatcherTimer? liveRefreshTimer;
     private bool peerEndpointUnavailable;
+    private bool liveRefreshRunning;
 
     /// <summary>
     /// Set the moment exit is requested. WPF's own flag is internal and
@@ -237,11 +238,12 @@ public partial class App : Application
     /// </summary>
     private async void OnLiveRefreshTick(object? sender, EventArgs e)
     {
-        if (mainViewModel is null)
+        if (mainViewModel is null || liveRefreshRunning || isExiting)
         {
             return;
         }
 
+        liveRefreshRunning = true;
         try
         {
             if (syncHost is { IsRunning: true })
@@ -255,6 +257,10 @@ public partial class App : Application
         catch (Exception exception)
         {
             LocalDiagnostics.Write($"live_refresh_failed_{exception.GetType().Name}");
+        }
+        finally
+        {
+            liveRefreshRunning = false;
         }
     }
 

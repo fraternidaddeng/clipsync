@@ -44,17 +44,33 @@ public sealed class PortableUpdateApplierTests : IDisposable
         var install = Path.Combine(root, "install");
         Directory.CreateDirectory(payload);
         var script = PortableUpdateApplier.WriteApplyScript(staging, 4242, payload, install);
-        var text = File.ReadAllText(script, Encoding.ASCII);
+        var text = File.ReadAllText(script, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
         var stagingFull = Path.GetFullPath(staging).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         Assert.Equal(stagingFull + "-apply.cmd", script);
         Assert.False(script.StartsWith(stagingFull + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase));
         Assert.Contains("set PID=4242", text);
+        Assert.Contains("chcp 65001 >nul", text);
         Assert.Contains("robocopy", text, StringComparison.OrdinalIgnoreCase);
         Assert.Contains(PortableUpdateApplier.WindowsExeName, text);
         Assert.Contains("tasklist /FI \"PID eq %PID%\"", text);
         Assert.Contains("del \"%~f0\"", text);
         Assert.Contains("\"" + stagingFull + "\"", text);
         Assert.Contains("\"" + Path.GetFullPath(payload).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + "\"", text);
+    }
+
+    [Fact]
+    public void WriteApplyScriptPreservesUnicodeAndEscapesPercentInPaths()
+    {
+        var staging = Path.Combine(root, "更新 %stage");
+        var payload = Path.Combine(root, "用户 %payload");
+        var install = Path.Combine(root, "安装 %app");
+        var script = PortableUpdateApplier.WriteApplyScript(staging, 7, payload, install);
+        var text = File.ReadAllText(script, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
+
+        Assert.Contains("更新 %%stage", text);
+        Assert.Contains("用户 %%payload", text);
+        Assert.Contains("安装 %%app", text);
+        Assert.Contains("chcp 65001 >nul", text);
     }
 
     [Fact]

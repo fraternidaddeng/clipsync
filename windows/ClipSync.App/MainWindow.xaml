@@ -1143,11 +1143,13 @@
                                         </TextBlock.Style>
                                     </TextBlock>
                                     <Grid Height="4" Margin="0,7,0,0">
-                                        <!-- 脉动光环：仅「需要你操作」时出现——外扩 5px、渐隐、2.6s 循环（tokens §9 pulse），
-                                             缓动逐位对齐 cubic-bezier(.16,1,.3,1)。
+                                        <!-- 脉动光环：仅前台可见且「需要你操作」时播放；RenderTransform 不触发布局。
                                              减弱动效跟随系统（P1#13）：系统关掉「窗口内动画」（SPI_GETCLIENTAREAANIMATION）时
                                              光环不再播，静态 act 描边（下方填充层自带）独自承担「需要你操作」。 -->
-                                        <Border CornerRadius="7">
+                                        <Border CornerRadius="7" RenderTransformOrigin="0.5,0.5" IsHitTestVisible="False">
+                                            <Border.RenderTransform>
+                                                <ScaleTransform />
+                                            </Border.RenderTransform>
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Setter Property="BorderBrush" Value="{DynamicResource CsActBrush}" />
@@ -1159,20 +1161,17 @@
                                                             <MultiDataTrigger.Conditions>
                                                                 <Condition Binding="{Binding CaptureFaulted}" Value="True" />
                                                                 <Condition Binding="{Binding Path=(sys:SystemParameters.ClientAreaAnimation)}" Value="True" />
+                                                                <Condition Binding="{Binding IsVisible, RelativeSource={RelativeSource AncestorType=Grid}}" Value="True" />
+                                                                <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="True" />
                                                             </MultiDataTrigger.Conditions>
                                                             <Setter Property="Visibility" Value="Visible" />
                                                             <MultiDataTrigger.EnterActions>
                                                                 <BeginStoryboard x:Name="CapturePulse">
                                                                     <Storyboard RepeatBehavior="Forever">
-                                                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin">
-                                                                            <DiscreteThicknessKeyFrame KeyTime="0:0:0" Value="0" />
-                                                                            <SplineThicknessKeyFrame KeySpline="0.16,1 0.3,1"
-                                                                                                     KeyTime="0:0:1.3"
-                                                                                                     Value="-5" />
-                                                                            <SplineThicknessKeyFrame KeySpline="0.16,1 0.3,1"
-                                                                                                     KeyTime="0:0:2.6"
-                                                                                                     Value="0" />
-                                                                        </ThicknessAnimationUsingKeyFrames>
+                                                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                                                         From="1" To="1.06" Duration="0:0:1.3" AutoReverse="True" />
+                                                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                                                         From="1" To="3.5" Duration="0:0:1.3" AutoReverse="True" />
                                                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
                                                                             <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.35" />
                                                                             <SplineDoubleKeyFrame KeySpline="0.16,1 0.3,1"

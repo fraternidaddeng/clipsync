@@ -37,9 +37,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -1190,10 +1192,10 @@ private fun DashedBar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun rememberFlowTime(reducedMotion: Boolean): Float {
-    if (reducedMotion) return 0f
+private fun rememberFlowTime(reducedMotion: Boolean): State<Float> {
+    if (reducedMotion) return rememberUpdatedState(0f)
     val transition = rememberInfiniteTransition(label = "flowLine")
-    val flowTime by transition.animateFloat(
+    return transition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec =
@@ -1203,7 +1205,6 @@ private fun rememberFlowTime(reducedMotion: Boolean): Float {
             ),
         label = "flowTime",
     )
-    return flowTime
 }
 
 /**
@@ -1234,7 +1235,8 @@ private fun FlowLine(modifier: Modifier = Modifier) {
                     )
                     return@repeat
                 }
-                val phase = (time + index / 3f) % 1f
+                // Read the changing value in the draw phase, avoiding recomposition per frame.
+                val phase = (time.value + index / 3f) % 1f
                 val alpha = if (phase < 0.4f) phase / 0.4f else 1f - (phase - 0.4f) / 0.6f
                 drawCircle(
                     color = c.flow,

@@ -26,6 +26,7 @@ public partial class TrayFlyoutWindow : Window
     private readonly MainViewModel viewModel;
     private readonly DispatcherTimer autoHideTimer;
     private bool isHiding;
+    private int animationVersion;
 
     public TrayFlyoutWindow(MainViewModel viewModel)
     {
@@ -39,6 +40,11 @@ public partial class TrayFlyoutWindow : Window
         Deactivated += (_, _) => HideFlyout();
         MouseEnter += (_, _) => autoHideTimer.Stop();
         MouseLeave += (_, _) => RestartAutoHide();
+        Closed += (_, _) =>
+        {
+            autoHideTimer.Stop();
+            ResetAnimations();
+        };
     }
 
     /// <summary>Shows the flyout anchored to the bottom-right work-area corner (near the tray).</summary>
@@ -61,9 +67,8 @@ public partial class TrayFlyoutWindow : Window
         Left = area.Right - ActualWidth + ShadowMargin - WorkAreaGap;
         Top = area.Bottom - ActualHeight + ShadowMargin - WorkAreaGap;
         Activate();
-        RestartAutoHide();
-
         AnimatePneumaticEntrance();
+        RestartAutoHide();
     }
 
     public void HideFlyout()
@@ -71,6 +76,15 @@ public partial class TrayFlyoutWindow : Window
         autoHideTimer.Stop();
         if (isHiding || !IsVisible) return;
         isHiding = true;
+        var version = ++animationVersion;
+
+        if (!SystemParameters.ClientAreaAnimation)
+        {
+            Hide();
+            ResetAnimations();
+            isHiding = false;
+            return;
+        }
 
         var anim = new DoubleAnimation(0, new Duration(TimeSpan.FromMilliseconds(160)))
         {
@@ -82,10 +96,10 @@ public partial class TrayFlyoutWindow : Window
         };
         transAnim.Completed += (_, _) =>
         {
-            isHiding = false;
+            if (version != animationVersion) return;
             Hide();
-            Opacity = 1;
-            FlyoutTranslate.Y = 0;
+            ResetAnimations();
+            isHiding = false;
         };
         BeginAnimation(OpacityProperty, anim);
         FlyoutTranslate.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, transAnim);
@@ -94,25 +108,36 @@ public partial class TrayFlyoutWindow : Window
     private void AnimatePneumaticEntrance()
     {
         isHiding = false;
-        Opacity = 0;
-        FlyoutTranslate.Y = 8;
+        ResetAnimations();
+        if (!SystemParameters.ClientAreaAnimation) return;
 
-        var anim = new DoubleAnimation(1, new Duration(TimeSpan.FromMilliseconds(220)))
+        var anim = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(220)))
         {
-            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
+            FillBehavior = FillBehavior.Stop
         };
-        var transAnim = new DoubleAnimation(0, new Duration(TimeSpan.FromMilliseconds(220)))
+        var transAnim = new DoubleAnimation(8, 0, new Duration(TimeSpan.FromMilliseconds(220)))
         {
-            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
+            FillBehavior = FillBehavior.Stop
         };
         BeginAnimation(OpacityProperty, anim);
         FlyoutTranslate.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, transAnim);
     }
 
+    private void ResetAnimations()
+    {
+        animationVersion++;
+        BeginAnimation(OpacityProperty, null);
+        FlyoutTranslate.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, null);
+        Opacity = 1;
+        FlyoutTranslate.Y = 0;
+    }
+
     private void RestartAutoHide()
     {
         autoHideTimer.Stop();
-        autoHideTimer.Start();
+        if (IsVisible && !isHiding && !IsMouseOver) autoHideTimer.Start();
     }
 
     private void OnClipCardClicked(object sender, RoutedEventArgs e)

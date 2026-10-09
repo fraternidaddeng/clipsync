@@ -220,7 +220,7 @@
     <value>The highest-quality rung of the Android background-read ladder: the PC uses adb to help a paired phone start its built-in privileged host, after which the phone's background copies upload instantly. Every start is triggered by your click here.</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>Once allowed, this PC will call adb (the Android Debug Bridge) to send the phone one start command. When you click Start privileged read, this PC sends one start command to the phone over adb; adb is not invoked at any other time. The first time you must also enable USB debugging on the phone and accept its adb authorization prompt by hand — Android does not allow automating that step.</value>
+    <value>This step uses adb (the Android Debug Bridge) to send the phone a start command. Clicking Start privileged read starts that operation; Windows' Detect phone, wireless pairing, and wireless connect actions also use adb when you invoke them. The first time, enable USB debugging on the phone and accept its adb authorization prompt by hand — Android does not allow automating that step.</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>I understand — allow adb</value>
@@ -730,7 +730,7 @@
     <value>Replay the introduction</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>Walk the first-run tutorial again from the welcome page; changes no settings or pairing.</value>
+    <value>Replay the first-run introduction; it does not change settings by itself. The pairing page shows a new QR code, and a scan still requires the normal fingerprint check and approval.</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>Privacy and risks</value>
@@ -1047,7 +1047,7 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
     <value>To be clear up front</value>
   </data>
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
-    <value>Android restricts background clipboard reading on the phone, and ClipSync does not pretend otherwise: the phone uploads automatically while in the foreground; background reading takes one extra setup — the highest-quality route, privileged read, is exactly what this PC helps the phone start. Every capability is judged by live testing — if something cannot be done, it says so.</value>
+    <value>Android restricts background clipboard reading on the phone. To capture copies from other apps automatically, configure and test a read route on the phone's Conduit page. Without a route, you can still share content manually.</value>
   </data>
   <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
     <value>Read before use: privacy and risks</value>
@@ -1059,7 +1059,7 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
     <value>If the phone says it cannot connect, this PC's firewall most likely has not allowed TCP 47654; after this tour you can allow it with one click on the Conduit page.</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
-    <value>Your phone is paired — the conduit is open. Carry on with the rest of the tour.</value>
+    <value>Your phone is paired. Verify background reading and automatic clipboard application separately.</value>
   </data>
   <data name="Onboarding_Privileged_Body" xml:space="preserve">
     <value>The highest-quality rung of the background-read ladder: this PC uses adb to help a paired phone start its built-in privileged host, after which the phone's background copies upload instantly.</value>
@@ -1077,7 +1077,7 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
     <value>No cable at hand: put the phone and this PC on the same Wi-Fi, enable Developer options → Wireless debugging, and pair once by QR code — afterwards it works exactly as over USB.</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb runs only when you click, sending the phone one start command; adb is not invoked at any other time. After this tour, the privileged-read card on the Conduit page is where you start it, or take it back, anytime.</value>
+    <value>Start privileged read, Detect phone, wireless pairing, and wireless connect use adb when you click those actions. After this tour, the privileged-read card on the Conduit page can start it again; wireless QR pairing polls for a limited time and stops when the code is withdrawn.</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>A backup channel that is off by default: when the LAN is blocked by a VPN or firewall, a phone already Bluetooth-paired in Windows settings keeps syncing text (no images, slower).</value>
@@ -1086,10 +1086,10 @@ This deletes every entry on this PC (including images) in one step. Clearing hap
     <value>This one is optional — nothing to decide now. When you want it, switch it on from the Bluetooth fallback card on the Conduit page.</value>
   </data>
   <data name="Onboarding_Finish_Title" xml:space="preserve">
-    <value>Ready</value>
+    <value>Try a first sync</value>
   </data>
   <data name="Onboarding_Finish_Body" xml:space="preserve">
-    <value>Pair with your phone first; privileged read and the Bluetooth fallback live on the Conduit page and every switch in Preferences — you can come back anytime.</value>
+    <value>After pairing, copy text on the PC and share different text from another phone app. Check both histories. Configure a read route on the phone for automatic background capture; sync controls are in Preferences.</value>
   </data>
   <data name="Onboarding_OpenConduit" xml:space="preserve">
     <value>Go to Conduit</value>

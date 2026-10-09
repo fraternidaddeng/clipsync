@@ -1,9 +1,14 @@
 package com.clipsync.android.sync
 
 import com.clipsync.android.pairing.FakeKeyValueStore
+import com.clipsync.android.pairing.KeyValueStore
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class KeyValueClipOutboxTest {
 
@@ -132,6 +137,73 @@ class KeyValueClipOutboxTest {
         outbox.remove(first.entry.eventId)
 
         assertEquals(listOf("two"), outbox.pending().map { it.text })
+    }
+
+    @Test
+    fun `enqueue racing a drain cannot be overwritten by the drain snapshot`() {
+        assertEnqueueSurvivesDrain(useSecondInstance = false)
+    }
+
+    @Test
+    fun `replacement adapter sharing preferences participates in the same queue lock`() {
+        assertEnqueueSurvivesDrain(useSecondInstance = true)
+    }
+
+    private fun assertEnqueueSurvivesDrain(useSecondInstance: Boolean) {
+        val readStarted = CountDownLatch(1)
+        val releaseRead = CountDownLatch(1)
+        val enqueueStarted = CountDownLatch(1)
+        val sharedStore =
+            object : KeyValueStore {
+                @Volatile
+                var raw: String? = null
+
+                @Volatile
+                var pauseNextRead = false
+
+                override fun read(key: String): String? {
+                    val snapshot = raw
+                    if (pauseNextRead) {
+                        pauseNextRead = false
+                        readStarted.countDown()
+                        check(releaseRead.await(2, TimeUnit.SECONDS))
+                    }
+                    return snapshot
+                }
+
+                override fun write(values: Map<String, String?>) {
+                    raw = values.values.single()
+                }
+            }
+        val draining = KeyValueClipOutbox(sharedStore)
+        val enqueuing = if (useSecondInstance) KeyValueClipOutbox(sharedStore) else draining
+        val first = draining.enqueue("already queued", ClipSource.SHARE_SHEET) as EnqueueResult.Accepted
+        val workers = Executors.newFixedThreadPool(2)
+        try {
+            sharedStore.pauseNextRead = true
+            val remove = workers.submit { draining.remove(first.entry.eventId) }
+            assertTrue(readStarted.await(2, TimeUnit.SECONDS))
+            val enqueue =
+                workers.submit {
+                    enqueueStarted.countDown()
+                    enqueuing.enqueue("copied while draining", ClipSource.FOREGROUND_APP)
+                }
+            assertTrue(enqueueStarted.await(2, TimeUnit.SECONDS))
+            try {
+                // A broken adapter completes the competing write before the stale drain
+                // snapshot is released. A correctly serialized adapter waits for the drain.
+                enqueue.get(200, TimeUnit.MILLISECONDS)
+            } catch (_: TimeoutException) {
+                // The queue lock is protecting the in-flight update.
+            }
+            releaseRead.countDown()
+            remove.get(2, TimeUnit.SECONDS)
+            enqueue.get(2, TimeUnit.SECONDS)
+            assertEquals(listOf("copied while draining"), draining.pending().map { it.text })
+        } finally {
+            releaseRead.countDown()
+            workers.shutdownNow()
+        }
     }
 
     @Test

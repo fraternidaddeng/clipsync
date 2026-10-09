@@ -113,6 +113,39 @@ class OverlayPollingBackendTest {
     }
 
     @Test
+    fun `first copy after empty clipboard is emitted`() {
+        val platform = FakeOverlayPlatform()
+        platform.clip = OverlayClipRead.Empty
+        val scheduler = ManualOverlayPollScheduler()
+        val changes = mutableListOf<String>()
+        val backend = backend(platform = platform, scheduler = scheduler)
+
+        backend.start { changes += it.text }
+        platform.clip = OverlayClipRead.Text("first copy")
+        scheduler.fire()
+        scheduler.fire()
+
+        assertEquals(listOf("first copy"), changes)
+    }
+
+    @Test
+    fun `copying the same text after clipboard is cleared emits again`() {
+        val platform = FakeOverlayPlatform()
+        platform.clip = OverlayClipRead.Text("same text")
+        val scheduler = ManualOverlayPollScheduler()
+        val changes = mutableListOf<String>()
+        val backend = backend(platform = platform, scheduler = scheduler)
+
+        backend.start { changes += it.text }
+        platform.clip = OverlayClipRead.Empty
+        scheduler.fire()
+        platform.clip = OverlayClipRead.Text("same text")
+        scheduler.fire()
+
+        assertEquals(listOf("same text"), changes)
+    }
+
+    @Test
     fun `poll is paused when canPollNow is false`() {
         val platform = FakeOverlayPlatform()
         platform.clip = OverlayClipRead.Text("first")

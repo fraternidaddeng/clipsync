@@ -33,12 +33,15 @@ import com.clipsync.android.ui.ConduitTestResult
 import com.clipsync.android.ui.HealthScreenState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -84,6 +87,7 @@ data class CapabilityWiring(
  * peer write). Anything not yet wired shows as degraded or unprobed, never as
  * invented good news.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class HealthViewModel(
     private val pairingStore: PairingStore,
     private val clipboard: ClipboardAccessCoordinator,
@@ -96,7 +100,7 @@ class HealthViewModel(
      * 30s live-refresh timer (App.LiveRefreshInterval). Null disables it; the [factory] wires a
      * real periodic tick, tests inject a finite flow so the behaviour is deterministic.
      */
-    reachabilityRefreshTicker: Flow<Unit>? = null,
+    private val reachabilityRefreshTicker: Flow<Unit>? = null,
 ) : ViewModel() {
     private val formatClock: (Long) -> String = capability?.formatClock ?: { HealthViewModel.defaultClockFormat(it) }
 
@@ -129,6 +133,9 @@ class HealthViewModel(
     private var writeTestRunning = false
     private var readTestMode: ClipboardReadMode? = null
 
+    /** Activity toggles this while visible; a hidden Activity cancels the cold ticker. */
+    val reachabilityRefreshActive = MutableStateFlow(false)
+
     init {
         if (syncHealthSource != null) {
             viewModelScope.launch {
@@ -156,13 +163,15 @@ class HealthViewModel(
         }
         if (reachabilityRefreshTicker != null) {
             viewModelScope.launch {
-                reachabilityRefreshTicker.collect {
-                    // Re-probe only when there is something to probe: a paired peer and a
-                    // reachability probe wired. refresh() itself repeats these guards.
-                    if (pairingStore.peer() != null && capability?.peerHealth != null) {
-                        refresh()
+                reachabilityRefreshActive
+                    .flatMapLatest { active ->
+                        if (active) reachabilityRefreshTicker else emptyFlow()
                     }
-                }
+                    .collect {
+                        if (pairingStore.peer() != null && capability?.peerHealth != null) {
+                            refresh()
+                        }
+                    }
             }
         }
         refresh()

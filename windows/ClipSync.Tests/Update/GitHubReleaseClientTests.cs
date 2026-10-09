@@ -96,6 +96,29 @@ public sealed class GitHubReleaseClientTests
             GitHubReleaseClient.ComputeSha256Hex(stream));
     }
 
+    [Fact]
+    public async Task DownloadRetryReplacesAPartialPayloadInsteadOfAppending()
+    {
+        var official = "https://github.com/fraternidaddeng/clipsync/releases/download/v0.4.0/clip.zip";
+        var mirror = GitHubUrlMirrors.Prefixes[0] + official;
+        var asset = new ReleaseAsset(
+            "ClipSync-windows-x64.zip",
+            official,
+            3,
+            null);
+        using var client = new GitHubReleaseClient(
+            handler: new UrlMapHandlerWithContent(seen: [],
+                (official, new FailingContent("bad")),
+                (mirror, new ByteArrayContent("ok!"u8.ToArray()))));
+        using var destination = new MemoryStream();
+        destination.Write("prefix"u8);
+        destination.Position = destination.Length;
+
+        await client.DownloadAsync(asset, destination);
+
+        Assert.Equal("prefixok!", Encoding.UTF8.GetString(destination.ToArray()));
+    }
+
     private sealed class ScriptedHandler : HttpMessageHandler
     {
         private readonly Queue<(string Method, string Body, HttpStatusCode Status)> replies;
@@ -151,6 +174,76 @@ public sealed class GitHubReleaseClientTests
             {
                 Content = new StringContent(body, Encoding.UTF8, "application/json"),
             });
+        }
+    }
+
+    private sealed class UrlMapHandlerWithContent : HttpMessageHandler
+    {
+        private readonly Dictionary<string, HttpContent> replies;
+        private readonly List<string> seen;
+
+        public UrlMapHandlerWithContent(List<string> seen, params (string Url, HttpContent Content)[] replies)
+        {
+            this.seen = seen;
+            this.replies = replies.ToDictionary(item => item.Url, item => item.Content, StringComparer.Ordinal);
+        }
+
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
+        {
+            var url = request.RequestUri?.ToString() ?? "";
+            seen.Add(url);
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = replies[url],
+            });
+        }
+    }
+
+    private sealed class FailingContent : HttpContent
+    {
+        private readonly byte[] prefix;
+
+        public FailingContent(string prefix) => this.prefix = Encoding.UTF8.GetBytes(prefix);
+
+        protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
+        {
+            throw new NotSupportedException();
+        }
+
+        protected override bool TryComputeLength(out long length)
+        {
+            length = prefix.Length;
+            return true;
+        }
+
+        protected override Task<Stream> CreateContentReadStreamAsync()
+        {
+            return Task.FromResult<Stream>(new ThrowingReadStream(prefix));
+        }
+    }
+
+    private sealed class ThrowingReadStream(byte[] prefix) : MemoryStream(prefix)
+    {
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            if (Position >= Length)
+            {
+                throw new IOException("simulated truncated response");
+            }
+
+            return base.Read(buffer, offset, count);
+        }
+
+        public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            if (Position >= Length)
+            {
+                throw new IOException("simulated truncated response");
+            }
+
+            return base.ReadAsync(buffer, cancellationToken);
         }
     }
 }

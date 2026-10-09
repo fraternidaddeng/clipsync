@@ -52,6 +52,7 @@ public partial class MainViewModel(
     Func<StartupRegistrationState>? startupRegistrationProbe = null) : ObservableObject
 {
     private bool initialized;
+    private int historyRefreshVersion;
 
     [ObservableProperty]
     private string searchText = string.Empty;
@@ -1251,36 +1252,104 @@ public partial class MainViewModel(
     [RelayCommand]
     private async Task RefreshAsync()
     {
-        var entries = await store.SearchAsync(new ClipboardHistoryQuery(SearchText));
-        ActiveQuery = SearchText.Trim();
-        History.Clear();
-        foreach (var entry in entries)
+        var version = Interlocked.Increment(ref historyRefreshVersion);
+        var query = SearchText.Trim();
+        var filter = FormatFilter;
+        var devices = Devices.ToDictionary(device => device.DeviceId, StringComparer.Ordinal);
+        var previous = History.Concat(RecentHistory)
+            .DistinctBy(item => item.EventId)
+            .ToDictionary(item => item.EventId);
+
+        // SQLite's async API can complete synchronously. Keep both its disk access
+        // and thumbnail decoding off the dispatcher, using immutable snapshots.
+        var result = await Task.Run(async () =>
         {
-            var item = HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDevice, store.Media);
-            // Format chips are text-shape filters (ADR 0003): images only show under 全部.
-            if (FormatFilter is { } filter && (item.IsImage || item.Format != filter))
+            var entries = await store.SearchAsync(new ClipboardHistoryQuery(query));
+            var recent = query.Length == 0
+                ? entries
+                : await store.SearchAsync(new ClipboardHistoryQuery(string.Empty, Limit: RecentHistoryLength));
+            var mapped = new Dictionary<Guid, HistoryItemViewModel>();
+            HistoryItemViewModel Map(ClipboardHistoryEntry entry)
             {
-                continue;
+                if (mapped.TryGetValue(entry.EventId, out var existing))
+                {
+                    return existing;
+                }
+
+                previous.TryGetValue(entry.EventId, out var oldItem);
+                var item = HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId,
+                    id => devices.GetValueOrDefault(id), store.Media, oldItem);
+                mapped[entry.EventId] = oldItem == item ? oldItem : item;
+                return mapped[entry.EventId];
             }
 
-            History.Add(item);
+            var history = entries.Select(Map)
+                .Where(item => filter is null || (!item.IsImage && item.Format == filter))
+                .ToArray();
+            return (History: history, Recent: recent.Take(RecentHistoryLength).Select(Map).ToArray());
+        });
+
+        // A slow older search must not overwrite a later filter or capture refresh.
+        if (version != Volatile.Read(ref historyRefreshVersion))
+        {
+            return;
         }
 
-        // The flyout always shows the newest clips regardless of the search box.
-        RecentHistory.Clear();
-        var recent = string.IsNullOrEmpty(SearchText)
-            ? entries
-            : await store.SearchAsync(new ClipboardHistoryQuery(string.Empty));
-        foreach (var entry in recent.Take(RecentHistoryLength))
-        {
-            RecentHistory.Add(HistoryItemViewModel.FromEntry(entry, store.LocalDeviceId, LookupDevice, store.Media));
-        }
+        var selectedId = SelectedItem?.EventId;
+        ActiveQuery = query;
+        ReconcileHistory(History, result.History);
+        ReconcileHistory(RecentHistory, result.Recent);
+        SelectedItem = History.FirstOrDefault(item => item.EventId == selectedId);
 
         await RefreshOutboxAsync();
     }
 
-    private PairedDeviceViewModel? LookupDevice(string deviceId) =>
-        Devices.FirstOrDefault(device => device.DeviceId == deviceId);
+    private static void ReconcileHistory(
+        ObservableCollection<HistoryItemViewModel> target,
+        IReadOnlyList<HistoryItemViewModel> desired)
+    {
+        var desiredIds = desired.Select(item => item.EventId).ToHashSet();
+        for (var index = target.Count - 1; index >= 0; index--)
+        {
+            if (!desiredIds.Contains(target[index].EventId))
+            {
+                target.RemoveAt(index);
+            }
+        }
+
+        for (var index = 0; index < desired.Count; index++)
+        {
+            var item = desired[index];
+            if (index < target.Count && target[index].EventId == item.EventId)
+            {
+                if (!ReferenceEquals(target[index], item))
+                {
+                    target[index] = item;
+                }
+                continue;
+            }
+
+            var oldIndex = -1;
+            for (var candidate = index + 1; candidate < target.Count; candidate++)
+            {
+                if (target[candidate].EventId == item.EventId)
+                {
+                    oldIndex = candidate;
+                    break;
+                }
+            }
+
+            if (oldIndex >= 0)
+            {
+                target.Move(oldIndex, index);
+                if (!ReferenceEquals(target[index], item)) target[index] = item;
+            }
+            else
+            {
+                target.Insert(index, item);
+            }
+        }
+    }
 
     [RelayCommand]
     private async Task SearchAsync() => await RefreshAsync();
@@ -1698,6 +1767,7 @@ public partial class MainViewModel(
         await store.RenameDeviceAsync(target.DeviceId, newName);
         RenameText = string.Empty;
         await RefreshDevicesAsync();
+        await RefreshAsync();
     }
 
     [RelayCommand(CanExecute = nameof(CanRevokeDevice))]

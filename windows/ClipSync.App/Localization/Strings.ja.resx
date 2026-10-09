@@ -220,7 +220,7 @@
     <value>Android のバックグラウンド読み取り段階で最も品質の高い経路です。PC が adb でペア済みのスマートフォンの内蔵特権ホストを起動し、以後はバックグラウンドのコピーが即時アップロードされます。起動は毎回、ここでのあなたのクリックによって行われます。</value>
   </data>
   <data name="Conduit_Privileged_ConsentBody" xml:space="preserve">
-    <value>許可すると、この PC は adb（Android Debug Bridge）を呼び出してスマートフォンに 1 つの起動コマンドを送ります。adb が実行されるのは「特権ダイレクト読み取りを開始」をクリックしたときの 1 回だけで、そのときスマートフォンに起動コマンドを 1 つ送ります。それ以外のときに adb を呼び出すことはありません。初回はスマートフォンで「USB デバッグ」を有効にし、adb 認証のダイアログを手動で承認する必要があります。この手順は Android では自動化できません。</value>
+    <value>この手順では adb（Android Debug Bridge）でスマートフォンに起動コマンドを送ります。「特権ダイレクト読み取りを開始」をクリックすると実行され、Windows の端末検出・ワイヤレスペアリング・接続でも操作時に adb を使います。初回はスマートフォンで「USB デバッグ」を有効にし、adb 認証のダイアログを手動で承認してください。この手順は Android では自動化できません。</value>
   </data>
   <data name="Conduit_Privileged_ConsentAllow" xml:space="preserve">
     <value>理解して adb を許可</value>
@@ -730,7 +730,7 @@
     <value>チュートリアルをもう一度見る</value>
   </data>
   <data name="Prefs_ReplayOnboarding_Desc" xml:space="preserve">
-    <value>ようこそページから初回設定チュートリアルをもう一度たどります。設定やペアリングは変更しません。</value>
+    <value>初回起動の説明をもう一度表示します。設定は自動では変更しません。ペアリングページでは新しい QR コードを表示し、スキャン後は通常どおりフィンガープリントの確認と承認が必要です。</value>
   </data>
   <data name="Prefs_PrivacyDoc_Title" xml:space="preserve">
     <value>プライバシーとリスクの説明</value>
@@ -1047,7 +1047,7 @@
     <value>最初に正直にお伝えします</value>
   </data>
   <data name="Onboarding_Honesty_Body" xml:space="preserve">
-    <value>Android はスマートフォンのバックグラウンドでのクリップボード読み取りを制限しており、ClipSync はそれを偽りません。スマホは前面にある間は自動アップロードします。バックグラウンド読み取りには一度だけ追加設定が必要で、品質最高の「特権ダイレクト読み取り」はまさにこの PC がスマホの起動を手伝う方式です。すべての能力は実地テストで判定され、できないことはできないと表示します。</value>
+    <value>Android はスマートフォンのバックグラウンドでのクリップボード読み取りを制限します。他のアプリのコピーを自動取得するには、スマートフォンの「経路」ページで読み取り経路を設定してテストしてください。設定しなくても手動共有は使えます。</value>
   </data>
   <data name="Onboarding_PrivacyDoc_Link" xml:space="preserve">
     <value>ご利用前に必読：プライバシーとリスクの説明</value>
@@ -1059,7 +1059,7 @@
     <value>スマートフォンが接続できないと表示する場合、たいていはこの PC のファイアウォールが TCP 47654 を許可していないためです。案内のあと、「経路」ページでワンクリックで許可できます。</value>
   </data>
   <data name="Onboarding_Pair_Done" xml:space="preserve">
-    <value>ペアリングが完了しました。経路はつながっています。残りの案内を続けましょう。</value>
+    <value>スマートフォンのペアリングが完了しました。バックグラウンド読み取りと自動書き込みは別々に確認してください。</value>
   </data>
   <data name="Onboarding_Privileged_Body" xml:space="preserve">
     <value>バックグラウンド読み取りの中で品質が最も高い方式です。この PC が adb を使い、ペアリング済みのスマホが内蔵の特権ホストを起動するのを手伝います。以後はスマホがバックグラウンドでコピーしても即時にアップロードされます。</value>
@@ -1077,7 +1077,7 @@
     <value>ケーブルがないときは、スマホと PC を同じ Wi-Fi につなぎ、「開発者向けオプション → ワイヤレスデバッグ」を有効にして QR コードで一度ペアリングします。その後は USB と同じように動作します。</value>
   </data>
   <data name="Onboarding_Privileged_Consent" xml:space="preserve">
-    <value>adb はあなたがクリックしたときだけ実行され、スマートフォンに起動コマンドを 1 つ送ります。それ以外のときに adb を呼び出すことはありません。案内のあとは、「経路」ページの特権ダイレクト読み取りカードからいつでも開始・取り消しできます。</value>
+    <value>特権ダイレクト読み取りの起動、端末検出、ワイヤレスペアリング、接続では対応する操作をクリックしたときに adb を使います。案内のあとは「経路」ページのカードから再び起動できます。ワイヤレス QR ペアリングの検出は表示中だけ一定時間行われ、コードを閉じると停止します。</value>
   </data>
   <data name="Onboarding_Bt_Body" xml:space="preserve">
     <value>既定でオフの予備チャネルです。LAN が VPN やファイアウォールで遮断されたとき、Windows の設定で Bluetooth ペアリング済みのスマホはテキストの同期を続けられます（画像なし、低速）。</value>
@@ -1086,10 +1086,10 @@
     <value>この項目は任意で、いま決める必要はありません。使いたくなったら、「経路」ページの Bluetooth フォールバックカードでオンにしてください。</value>
   </data>
   <data name="Onboarding_Finish_Title" xml:space="preserve">
-    <value>準備完了</value>
+    <value>同期を試してみましょう</value>
   </data>
   <data name="Onboarding_Finish_Body" xml:space="preserve">
-    <value>まずスマートフォンとペアリングしましょう。特権ダイレクト読み取りと Bluetooth フォールバックは「経路」ページ、各スイッチは「設定」ページにあり、いつでも戻れます。</value>
+    <value>ペアリング後、PC でテキストをコピーし、スマートフォンの別のアプリから別のテキストを共有して、両方の履歴を確認してください。バックグラウンドで自動取得するにはスマートフォンの読み取り経路を設定します。同期の切り替えは設定ページにあります。</value>
   </data>
   <data name="Onboarding_OpenConduit" xml:space="preserve">
     <value>経路ページへ</value>

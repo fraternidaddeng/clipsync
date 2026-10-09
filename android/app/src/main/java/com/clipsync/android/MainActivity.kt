@@ -47,7 +47,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -69,6 +68,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.clipsync.android.media.ImageThumbnail
@@ -431,7 +431,7 @@ class MainActivity : AppCompatActivity() {
      */
     @Composable
     private fun rememberEffectiveDarkTheme(): Boolean {
-        val preferencesState by preferencesViewModel.state.collectAsState()
+        val preferencesState by preferencesViewModel.state.collectAsStateWithLifecycle()
         val darkTheme =
             when (preferencesState.themeOverride) {
                 SyncSettingsStore.THEME_DAY -> false
@@ -535,6 +535,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        healthViewModel.reachabilityRefreshActive.value = true
         // While the app is visible, the capability ladder captures copies automatically
         // (stage-4 acceptance). Ownership, not a raw start: when the foreground service is
         // promoted it already holds the same session, and acquiring is then a no-op.
@@ -542,6 +543,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
+        healthViewModel.reachabilityRefreshActive.value = false
         // Release only this owner's stake. With the foreground service promoted, the verified
         // background routes keep capturing (plan 5.2/5.5); without it, the coordinator stops —
         // Android 10+ denies the foreground-only backend's reads to backgrounded apps, and the
@@ -678,7 +680,7 @@ private fun SyncServiceController(
     onStartService: () -> Unit,
     onStopService: () -> Unit,
 ) {
-    val pairingState by pairingViewModel.state.collectAsState()
+    val pairingState by pairingViewModel.state.collectAsStateWithLifecycle()
     // Saved across recreation on purpose: the Paired state is retained by the ViewModel
     // until the user taps 完成, so a rotation/language change would otherwise replay the
     // enable side effect and resurrect a service the user switched off in the meantime
@@ -729,18 +731,18 @@ private fun ClipSyncApp(
     var onboardingOpen by rememberSaveable { mutableStateOf(showOnboarding) }
     // A notification tap (打开故障状态 → 通路) may arrive while the app is already open;
     // the request is consumed once applied so a later same-tab request fires again.
-    val requestedTab by tabRequests.collectAsState()
+    val requestedTab by tabRequests.collectAsStateWithLifecycle()
     LaunchedEffect(requestedTab) {
         val request = requestedTab ?: return@LaunchedEffect
         tab = request
         pairingOpen = false
         onTabRequestConsumed()
     }
-    val healthState by healthViewModel.state.collectAsState()
-    val homeState by homeViewModel.state.collectAsState()
-    val preferencesState by preferencesViewModel.state.collectAsState()
-    val pairingState by pairingViewModel.state.collectAsState()
-    val bluetoothDeviceChoices by bluetoothDevices.collectAsState()
+    val healthState by healthViewModel.state.collectAsStateWithLifecycle()
+    val homeState by homeViewModel.state.collectAsStateWithLifecycle()
+    val preferencesState by preferencesViewModel.state.collectAsStateWithLifecycle()
+    val pairingState by pairingViewModel.state.collectAsStateWithLifecycle()
+    val bluetoothDeviceChoices by bluetoothDevices.collectAsStateWithLifecycle()
 
     // Pairing completing (or the peer being forgotten) must reflect in the
     // conduit and in the history source tags immediately, not on next start.

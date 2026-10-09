@@ -160,7 +160,7 @@ class OverlayPollingBackend internal constructor(
                 val previous = lastHash
                 lastHash = hash
                 lastReadSuccessAtEpochMillis = nowEpochMillis()
-                if (previous != null && previous != hash) {
+                if (previous != hash) {
                     callback?.invoke(
                         ClipboardChange(
                             text = result.text,
@@ -171,7 +171,9 @@ class OverlayPollingBackend internal constructor(
                     )
                 }
             }
-            ClipboardReadResult.Empty -> Unit
+            // Clearing the clipboard resets the baseline too: copying the same text after
+            // a clear is a new change, and the first text after an empty start must be sent.
+            ClipboardReadResult.Empty -> lastHash = null
             is ClipboardReadResult.Failure -> {
                 if (result.errorCode == ERROR_PERMISSION_MISSING) {
                     pauseForPermissionLoss()

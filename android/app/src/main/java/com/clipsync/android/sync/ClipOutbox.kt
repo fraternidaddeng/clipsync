@@ -80,7 +80,7 @@ class KeyValueClipOutbox(
     private val dedupWindowMillis: Long = DEDUP_WINDOW_MILLIS,
 ) : ClipOutbox {
 
-    override fun enqueue(text: String, source: ClipSource): EnqueueResult {
+    override fun enqueue(text: String, source: ClipSource): EnqueueResult = synchronized(persistenceLock) {
         if (text.isEmpty()) {
             return EnqueueResult.EmptyText
         }
@@ -110,9 +110,9 @@ class KeyValueClipOutbox(
         return EnqueueResult.Accepted(entry)
     }
 
-    override fun pending(): List<OutboxEntry> = load()
+    override fun pending(): List<OutboxEntry> = synchronized(persistenceLock) { load() }
 
-    override fun remove(eventId: String) {
+    override fun remove(eventId: String) = synchronized(persistenceLock) {
         val entries = load()
         val remaining = entries.filterNot { it.eventId == eventId }
         if (remaining.size != entries.size) {
@@ -138,5 +138,9 @@ class KeyValueClipOutbox(
         const val DEDUP_WINDOW_MILLIS: Long = 2_000L
         private const val STORAGE_KEY = "outbox.pending"
         private val json = Json { ignoreUnknownKeys = true }
+        // The UI captures while the service drains on a worker. SharedPreferences makes a
+        // single write atomic, but not this JSON read-modify-write; serializing all adapters
+        // also covers a replacement instance sharing the same preferences file.
+        private val persistenceLock = Any()
     }
 }

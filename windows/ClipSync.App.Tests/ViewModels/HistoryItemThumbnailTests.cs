@@ -48,6 +48,20 @@ public sealed class HistoryItemThumbnailTests : IDisposable
     }
 
     [Fact]
+    public void RefreshReusesFrozenPixelsWhileUpdatingRowMetadata()
+    {
+        var image = store.CommitBytes(ImageCodec.EncodePngBgra(
+            32, 20, ImageThumbnailTests.SolidBgra(32, 20, b: 30, g: 140, r: 80)));
+        var entry = ImageEntry(image);
+        var first = HistoryItemViewModel.FromEntry(entry, LocalDeviceId, media: store);
+
+        var refreshed = HistoryItemViewModel.FromEntry(entry, LocalDeviceId, media: store, previous: first);
+
+        Assert.Same(first.ThumbnailImage, refreshed.ThumbnailImage);
+        Assert.Equal(first.ThumbnailPath, refreshed.ThumbnailPath);
+    }
+
+    [Fact]
     public void FromEntryLoadsThumbnailForJpegBlob()
     {
         var image = store.CommitBytes(EncodeJpeg(96, 64, b: 20, g: 60, r: 180));

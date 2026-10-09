@@ -36,6 +36,7 @@ public partial class OnboardingWindow : Window
     private int stepIndex;
     private bool ticketActive;
     private bool pairedDuringOnboarding;
+    private IDisposable? pairingBeacon;
 
     /// <param name="pairing">Null when the peer endpoint failed to start — the pair step then states that fact.</param>
     /// <param name="host">Same lifetime as <paramref name="pairing"/>; carries the addresses, port and fingerprint.</param>
@@ -145,6 +146,7 @@ public partial class OnboardingWindow : Window
     private void LeavePairStep()
     {
         countdown.Stop();
+        StopPairingBeacon();
         CountdownText.Text = string.Empty;
         if (ticketActive)
         {
@@ -169,6 +171,7 @@ public partial class OnboardingWindow : Window
             // Without a reachable address a phone cannot connect; keep the token cancelled
             // rather than rendering a code that can only fail (same rule as the pairing window).
             pairing.CancelTicket();
+            StopPairingBeacon();
             ticketActive = false;
             currentPayloadJson = null;
             QrImage.Source = null;
@@ -187,8 +190,15 @@ public partial class OnboardingWindow : Window
         var payload = pairing.BuildQrPayload(ticket, hosts, host.Port, host.CertificateFingerprint);
         currentPayloadJson = PairingJson.Serialize(payload);
         RenderQr();
+        pairingBeacon ??= host.BeginPairingBeacon();
         UpdateCountdownText();
         countdown.Start();
+    }
+
+    private void StopPairingBeacon()
+    {
+        pairingBeacon?.Dispose();
+        pairingBeacon = null;
     }
 
     /// <summary>

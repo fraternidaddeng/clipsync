@@ -1451,7 +1451,7 @@
       "nl": "Bevoorrecht lezen"
     },
     "Conduit_Privileged_Desc": {
-      "zh-Hans": "Android 后台读取阶梯里质量最高的一档：电脑通过 adb 帮已配对的手机启动内置特权宿主，之后手机在后台复制即时上行。每次启动都由你在这里点击触发。",
+      "zh-Hans": "通过 adb 启动手机内置的特权服务，供手机后台读取剪贴板。启动后回手机测试；手机重启后需要再次启动。",
       "zh-Hant": "Android 背景讀取階梯裡品質最高的一檔：電腦透過 adb 幫已配對的手機啟動內建特權宿主，之後手機在背景複製即時上行。每次啟動都由你在這裡點擊觸發。",
       "en": "The highest-quality rung of the Android background-read ladder: the PC uses adb to help a paired phone start its built-in privileged host, after which the phone's background copies upload instantly. Every start is triggered by your click here.",
       "ja": "Android のバックグラウンド読み取り段階で最も品質の高い経路です。PC が adb でペア済みのスマートフォンの内蔵特権ホストを起動し、以後はバックグラウンドのコピーが即時アップロードされます。起動は毎回、ここでのあなたのクリックによって行われます。",
@@ -1472,10 +1472,10 @@
       "nl": "De hoogste kwaliteitstrede van de Android-achtergrondleesladder: de pc gebruikt adb om een gekoppelde telefoon te helpen zijn ingebouwde bevoorrechte host te starten, waarna achtergrondkopieën van de telefoon direct worden geüpload. Elke start wordt door jouw klik hier in gang gezet."
     },
     "Conduit_Privileged_ConsentBody": {
-      "zh-Hans": "启用后，本机会调用 adb（Android 调试桥）向手机发送一条启动命令。adb 只在你点击「启动特权直读」时运行一次，向手机发送一条启动命令；其他时候不调用 adb。首次还需在手机上打开「USB 调试」并手动确认 adb 授权弹窗——这一步 Android 不允许自动化。",
-      "zh-Hant": "啟用後，本機會呼叫 adb（Android 偵錯橋）向手機傳送一條啟動命令。adb 只在你點擊「啟動特權直讀」時執行一次，向手機傳送一條啟動命令；其他時候不呼叫 adb。首次還需在手機上開啟「USB 偵錯」並手動確認 adb 授權彈窗——這一步 Android 不允許自動化。",
-      "en": "Once allowed, this PC will call adb (the Android Debug Bridge) to send the phone one start command. When you click Start privileged read, this PC sends one start command to the phone over adb; adb is not invoked at any other time. The first time you must also enable USB debugging on the phone and accept its adb authorization prompt by hand — Android does not allow automating that step.",
-      "ja": "許可すると、この PC は adb（Android Debug Bridge）を呼び出してスマートフォンに 1 つの起動コマンドを送ります。adb が実行されるのは「特権ダイレクト読み取りを開始」をクリックしたときの 1 回だけで、そのときスマートフォンに起動コマンドを 1 つ送ります。それ以外のときに adb を呼び出すことはありません。初回はスマートフォンで「USB デバッグ」を有効にし、adb 認証のダイアログを手動で承認する必要があります。この手順は Android では自動化できません。",
+      "zh-Hans": "这一步会调用 adb（Android 调试桥）向手机发送启动命令。你点击「启动特权直读」才会启动该操作；Windows 的「检测手机」、无线配对和连接也会按对应操作调用 adb。首次还需在手机上打开「USB 调试」并手动确认 adb 授权弹窗——这一步 Android 不允许自动化。",
+      "zh-Hant": "這一步會呼叫 adb（Android 偵錯橋）向手機傳送啟動命令。你點擊「啟動特權直讀」才會啟動該操作；Windows 的「檢測手機」、無線配對和連接也會按對應操作呼叫 adb。首次還需在手機上開啟「USB 偵錯」並手動確認 adb 授權彈窗——這一步 Android 不允許自動化。",
+      "en": "This step uses adb (the Android Debug Bridge) to send the phone a start command. Clicking Start privileged read starts that operation; Windows' Detect phone, wireless pairing, and wireless connect actions also use adb when you invoke them. The first time, enable USB debugging on the phone and accept its adb authorization prompt by hand — Android does not allow automating that step.",
+      "ja": "この手順では adb（Android Debug Bridge）でスマートフォンに起動コマンドを送ります。「特権ダイレクト読み取りを開始」をクリックすると実行され、Windows の端末検出・ワイヤレスペアリング・接続でも操作時に adb を使います。初回はスマートフォンで「USB デバッグ」を有効にし、adb 認証のダイアログを手動で承認してください。この手順は Android では自動化できません。",
       "ko": "허용하면 이 PC가 adb(Android 디버그 브리지)를 호출해 휴대폰에 시작 명령 하나를 보냅니다. adb는 ‘특권 직접 읽기 시작’을 클릭할 때 한 번만 실행되어 휴대폰에 시작 명령 하나를 보내며, 그 외에는 adb를 호출하지 않습니다. 처음에는 휴대폰에서 USB 디버깅을 켜고 adb 인증 창을 직접 수락해야 합니다 — Android는 이 단계의 자동화를 허용하지 않습니다.",
       "es": "Una vez permitido, este PC llamará a adb (el puente de depuración de Android) para enviar al teléfono un único comando de inicio. Cuando haces clic en Iniciar lectura privilegiada, este PC envía al teléfono un comando de inicio por adb; adb no se invoca en ningún otro momento. La primera vez también debes activar la depuración USB en el teléfono y aceptar a mano su aviso de autorización adb — Android no permite automatizar ese paso.",
       "fr": "Une fois autorisé, ce PC appellera adb (l’Android Debug Bridge) pour envoyer au téléphone une seule commande de démarrage. Quand vous cliquez sur Démarrer la lecture privilégiée, ce PC envoie au téléphone une commande de démarrage via adb ; adb n’est invoqué à aucun autre moment. La première fois, vous devez aussi activer le débogage USB sur le téléphone et accepter manuellement son invite d’autorisation adb — Android n’autorise pas l’automatisation de cette étape.",
@@ -5042,10 +5042,10 @@
       "nl": "Rondleiding opnieuw bekijken"
     },
     "Prefs_ReplayOnboarding_Desc": {
-      "zh-Hans": "从欢迎页重新过一遍首次设置教程；不改动任何设置与配对。",
-      "zh-Hant": "從歡迎頁重新過一遍首次設定教學；不改動任何設定與配對。",
-      "en": "Walk the first-run tutorial again from the welcome page; changes no settings or pairing.",
-      "ja": "ようこそページから初回設定チュートリアルをもう一度たどります。設定やペアリングは変更しません。",
+      "zh-Hans": "重新查看首启说明；不会自动改动设置。配对页会再次出示二维码，扫描后仍需按正常流程核对并批准。",
+      "zh-Hant": "重新查看首次啟動說明；不會自動修改設定。配對頁會再次出示 QR 碼，掃描後仍需按正常流程核對並批准。",
+      "en": "Replay the first-run introduction; it does not change settings by itself. The pairing page shows a new QR code, and a scan still requires the normal fingerprint check and approval.",
+      "ja": "初回起動の説明をもう一度表示します。設定は自動では変更しません。ペアリングページでは新しい QR コードを表示し、スキャン後は通常どおりフィンガープリントの確認と承認が必要です。",
       "ko": "환영 페이지부터 첫 실행 튜토리얼을 다시 진행합니다. 설정과 페어링은 바꾸지 않습니다.",
       "es": "Recorre de nuevo el tutorial de primer uso desde la página de bienvenida; no cambia ningún ajuste ni el emparejamiento.",
       "fr": "Reparcourez le tutoriel de premier lancement depuis la page d’accueil ; aucun réglage ni appairage n’est modifié.",
@@ -7163,7 +7163,7 @@
       "nl": "Later instellen"
     },
     "Onboarding_Tab_History_Desc": {
-      "zh-Hans": "两端复制过的内容都汇在这里，选中任意一条即可再次复制到本机。",
+      "zh-Hans": "查看两端历史；选中一条后复制到本机。",
       "zh-Hant": "兩端複製過的內容都匯在這裡，選取任一筆即可再次複製到本機。",
       "en": "Everything copied on either end gathers here; select any entry to copy it on this PC again.",
       "ja": "どちらの端末でコピーした内容もここに集まります。項目を選ぶとこの PC で再度コピーできます。",
@@ -7184,7 +7184,7 @@
       "nl": "Alles wat aan beide kanten wordt gekopieerd, verzamelt zich hier; selecteer een item om het op deze pc opnieuw te kopiëren."
     },
     "Onboarding_Tab_Conduit_Desc": {
-      "zh-Hans": "内容流动的每一段都如实显示。与手机配对和特权直读的入口都在这里。",
+      "zh-Hans": "查看读取、服务与连接状态；在这里配对和配置特权直读。",
       "zh-Hant": "內容流動的每一段都如實顯示。與手機配對和特權直讀的入口都在這裡。",
       "en": "Every segment of the flow is shown honestly. Pairing with your phone and privileged read both start here.",
       "ja": "流れのすべての区間を正直に表示します。スマートフォンとのペアリングも特権ダイレクト読み取りも、入口はここです。",
@@ -7205,7 +7205,7 @@
       "nl": "Elk segment van de stroom wordt eerlijk getoond. Koppelen met je telefoon en bevoorrecht lezen beginnen hier."
     },
     "Onboarding_Tab_Prefs_Desc": {
-      "zh-Hans": "暂停同步、私密模式、保留期——每个开关都真实生效，改动立即落盘。",
+      "zh-Hans": "设置暂停同步、私密模式、图片同步与保留期。",
       "zh-Hant": "暫停同步、私密模式、保留期——每個開關都真實生效，改動立即落盤。",
       "en": "Pause sync, private mode, retention — every switch truly works and lands on disk immediately.",
       "ja": "同期の一時停止、プライベートモード、保持期間 — すべてのスイッチは本当に機能し、即座にディスクへ保存されます。",
@@ -7226,7 +7226,7 @@
       "nl": "Synchronisatie pauzeren, privémodus, bewaartermijn — elke schakelaar werkt echt en wordt direct op schijf opgeslagen."
     },
     "Onboarding_Honesty_Header": {
-      "zh-Hans": "先说清楚",
+      "zh-Hans": "手机后台读取",
       "zh-Hant": "先說清楚",
       "en": "To be clear up front",
       "ja": "最初に正直にお伝えします",
@@ -7247,10 +7247,10 @@
       "nl": "Om vooraf duidelijk te zijn"
     },
     "Onboarding_Honesty_Body": {
-      "zh-Hans": "Android 限制手机应用在后台读取剪贴板，剪剪相传不会假装做到：手机在前台时自动上行；后台读取需要一次额外设置——质量最高的「特权直读」正是由这台电脑帮手机启动。每一段能力都以实测为准，做不到就直说。",
-      "zh-Hant": "Android 限制手機應用程式在背景讀取剪貼簿，剪剪相傳不會假裝做到：手機在前景時自動上行；背景讀取需要一次額外設定——品質最高的「特權直讀」正是由這台電腦幫手機啟動。每一段能力都以實測為準，做不到就直說。",
-      "en": "Android restricts background clipboard reading on the phone, and ClipSync does not pretend otherwise: the phone uploads automatically while in the foreground; background reading takes one extra setup — the highest-quality route, privileged read, is exactly what this PC helps the phone start. Every capability is judged by live testing — if something cannot be done, it says so.",
-      "ja": "Android はスマートフォンのバックグラウンドでのクリップボード読み取りを制限しており、ClipSync はそれを偽りません。スマホは前面にある間は自動アップロードします。バックグラウンド読み取りには一度だけ追加設定が必要で、品質最高の「特権ダイレクト読み取り」はまさにこの PC がスマホの起動を手伝う方式です。すべての能力は実地テストで判定され、できないことはできないと表示します。",
+      "zh-Hans": "Android 限制应用后台读取剪贴板。需要自动捕获其他应用中复制的内容时，请在手机「通路」页配置一条读取路线并测试。未配置时仍可手动分享内容。",
+      "zh-Hant": "Android 限制手機應用程式在背景讀取剪貼簿。需要自動擷取其他應用程式複製的內容時，請在手機「通路」頁設定一條讀取路線並測試。未設定時仍可手動分享內容。",
+      "en": "Android restricts background clipboard reading on the phone. To capture copies from other apps automatically, configure and test a read route on the phone's Conduit page. Without a route, you can still share content manually.",
+      "ja": "Android はスマートフォンのバックグラウンドでのクリップボード読み取りを制限します。他のアプリのコピーを自動取得するには、スマートフォンの「経路」ページで読み取り経路を設定してテストしてください。設定しなくても手動共有は使えます。",
       "ko": "Android는 휴대폰의 백그라운드 클립보드 읽기를 제한하며 ClipSync는 이를 숨기지 않습니다. 휴대폰이 포그라운드에 있는 동안은 자동 업로드하고, 백그라운드 읽기에는 한 번의 추가 설정이 필요합니다 — 품질이 가장 높은 ‘특권 직접 읽기’가 바로 이 PC가 휴대폰의 시작을 돕는 경로입니다. 모든 능력은 실측 테스트로 판정되며 안 되는 것은 안 된다고 말합니다.",
       "es": "Android restringe la lectura del portapapeles en segundo plano en el teléfono, y ClipSync no finge lo contrario: el teléfono sube automáticamente mientras está en primer plano; la lectura en segundo plano requiere una configuración adicional única — la ruta de mayor calidad, la lectura privilegiada, es justo la que este PC ayuda al teléfono a iniciar. Cada capacidad se juzga con pruebas reales: si algo no se puede hacer, lo dice.",
       "fr": "Android restreint la lecture du presse-papiers en arrière-plan sur le téléphone, et ClipSync ne prétend pas le contraire : le téléphone téléverse automatiquement au premier plan ; la lecture en arrière-plan demande une configuration supplémentaire unique — la route de plus haute qualité, la lecture privilégiée, est justement celle que ce PC aide le téléphone à démarrer. Chaque capacité est jugée par un test réel — si quelque chose est impossible, c’est dit.",
@@ -7310,7 +7310,7 @@
       "nl": "Open op de telefoon de pagina “Kanaal” van ClipSync, tik op “Nu koppelen” in het netwerksegment en scan de code hieronder; controleer vóór het goedkeuren de pc-naam en de certificaatvingerafdruk."
     },
     "Onboarding_Pair_Firewall": {
-      "zh-Hans": "若手机提示无法连接，多半是本机防火墙未放行 TCP 47654；引导结束后可在「通路」页一键放行。",
+      "zh-Hans": "手机连不上时，先检查两端网络，再到「通路」页检查当前监听端口的防火墙状态。",
       "zh-Hant": "若手機提示無法連線，多半是本機防火牆未放行 TCP 47654；引導結束後可在「通路」頁一鍵放行。",
       "en": "If the phone says it cannot connect, this PC's firewall most likely has not allowed TCP 47654; after this tour you can allow it with one click on the Conduit page.",
       "ja": "スマートフォンが接続できないと表示する場合、たいていはこの PC のファイアウォールが TCP 47654 を許可していないためです。案内のあと、「経路」ページでワンクリックで許可できます。",
@@ -7331,10 +7331,10 @@
       "nl": "Als de telefoon meldt dat hij geen verbinding kan maken, heeft de firewall van deze pc TCP 47654 zeer waarschijnlijk niet toegestaan; na deze rondleiding kun je dat met één klik doen op de Kanaal-pagina."
     },
     "Onboarding_Pair_Done": {
-      "zh-Hans": "手机已完成配对——通路已经打通，继续看看剩下的部分吧。",
-      "zh-Hant": "手機已完成配對——通路已經打通，繼續看看剩下的部分吧。",
-      "en": "Your phone is paired — the conduit is open. Carry on with the rest of the tour.",
-      "ja": "ペアリングが完了しました。経路はつながっています。残りの案内を続けましょう。",
+      "zh-Hans": "手机已完成配对。后台读取和自动写入仍需分别确认。",
+      "zh-Hant": "手機已完成配對。背景讀取和自動寫入仍需分別確認。",
+      "en": "Your phone is paired. Verify background reading and automatic clipboard application separately.",
+      "ja": "スマートフォンのペアリングが完了しました。バックグラウンド読み取りと自動書き込みは別々に確認してください。",
       "ko": "휴대폰 페어링이 끝났습니다 — 통로가 열렸습니다. 남은 안내를 계속 살펴보세요.",
       "es": "Tu teléfono ya está emparejado: el conducto está abierto. Sigue con el resto del recorrido.",
       "fr": "Votre téléphone est appairé — le conduit est ouvert. Poursuivez le reste de la visite.",
@@ -7352,7 +7352,7 @@
       "nl": "Je telefoon is gekoppeld — het kanaal is open. Ga verder met de rest van de rondleiding."
     },
     "Onboarding_Privileged_Body": {
-      "zh-Hans": "后台读取阶梯里质量最高的一档：这台电脑通过 adb 帮已配对的手机启动内置特权宿主，此后手机在后台复制也即时上行。",
+      "zh-Hans": "推荐的手机后台读取路线。电脑通过 adb 启动手机内置的特权服务；启动后回手机测试后台读取。手机重启后需要再次启动。",
       "zh-Hant": "背景讀取階梯裡品質最高的一檔：這台電腦透過 adb 幫已配對的手機啟動內建特權宿主，此後手機在背景複製也即時上行。",
       "en": "The highest-quality rung of the background-read ladder: this PC uses adb to help a paired phone start its built-in privileged host, after which the phone's background copies upload instantly.",
       "ja": "バックグラウンド読み取りの中で品質が最も高い方式です。この PC が adb を使い、ペアリング済みのスマホが内蔵の特権ホストを起動するのを手伝います。以後はスマホがバックグラウンドでコピーしても即時にアップロードされます。",
@@ -7457,10 +7457,10 @@
       "nl": "Geen kabel bij de hand: zet de telefoon en deze pc op dezelfde wifi, schakel Ontwikkelaarsopties → Draadloze foutopsporing in en koppel één keer via QR-code — daarna werkt het precies zoals via USB."
     },
     "Onboarding_Privileged_Consent": {
-      "zh-Hans": "adb 只在你点击时运行，向手机发送一条启动命令；其他时候不调用 adb。引导结束后，「通路」页的特权直读卡随时可以开始或收回。",
-      "zh-Hant": "adb 只在你點擊時執行，向手機傳送一條啟動命令；其他時候不呼叫 adb。引導結束後，「通路」頁的特權直讀卡隨時可以開始或收回。",
-      "en": "adb runs only when you click, sending the phone one start command; adb is not invoked at any other time. After this tour, the privileged-read card on the Conduit page is where you start it, or take it back, anytime.",
-      "ja": "adb はあなたがクリックしたときだけ実行され、スマートフォンに起動コマンドを 1 つ送ります。それ以外のときに adb を呼び出すことはありません。案内のあとは、「経路」ページの特権ダイレクト読み取りカードからいつでも開始・取り消しできます。",
+      "zh-Hans": "启动特权直读、检测手机、无线配对和连接都在你点击对应操作时调用 adb。引导结束后，「通路」页的特权直读卡可再次启动；无线配对二维码显示期间会限时查询设备，停止出示后即停。",
+      "zh-Hant": "啟動特權直讀、檢測手機、無線配對和連接都在你點擊對應操作時呼叫 adb。引導結束後，「通路」頁的特權直讀卡可再次啟動；無線配對 QR 碼顯示期間會限時查詢裝置，停止出示後即停。",
+      "en": "Start privileged read, Detect phone, wireless pairing, and wireless connect use adb when you click those actions. After this tour, the privileged-read card on the Conduit page can start it again; wireless QR pairing polls for a limited time and stops when the code is withdrawn.",
+      "ja": "特権ダイレクト読み取りの起動、端末検出、ワイヤレスペアリング、接続では対応する操作をクリックしたときに adb を使います。案内のあとは「経路」ページのカードから再び起動できます。ワイヤレス QR ペアリングの検出は表示中だけ一定時間行われ、コードを閉じると停止します。",
       "ko": "adb는 클릭할 때만 실행되어 휴대폰에 시작 명령 하나를 보내며, 그 외에는 adb를 호출하지 않습니다. 안내가 끝난 뒤에는 ‘통로’ 페이지의 특권 직접 읽기 카드에서 언제든 시작하거나 철회할 수 있습니다.",
       "es": "adb se ejecuta solo cuando haces clic y envía al teléfono un comando de inicio; adb no se invoca en ningún otro momento. Tras este recorrido, la tarjeta de lectura privilegiada de la página Conducto es donde puedes iniciarla o revocarla en cualquier momento.",
       "fr": "adb ne s’exécute que lorsque vous cliquez et envoie au téléphone une commande de démarrage ; adb n’est invoqué à aucun autre moment. Après cette visite, la carte de lecture privilégiée de la page Conduit permet de la démarrer, ou de la retirer, à tout moment.",
@@ -7499,7 +7499,7 @@
       "nl": "Een reservekanaal dat standaard uitstaat: wanneer het LAN wordt geblokkeerd door een VPN of firewall, blijft een telefoon die al via Bluetooth in de Windows-instellingen is gekoppeld tekst synchroniseren (geen afbeeldingen, langzamer)."
     },
     "Onboarding_Bt_Note": {
-      "zh-Hans": "这一步是可选项，现在无需决定——想启用时，到「通路」页的蓝牙备援卡打开即可。",
+      "zh-Hans": "需要时，在两端打开蓝牙备援，并在手机上选择系统已配对的电脑。Windows 入口在「通路」页，Android 的「通路」和「偏好」页均可设置。",
       "zh-Hant": "這一步是可選項，現在無需決定——想啟用時，到「通路」頁的藍牙備援卡打開即可。",
       "en": "This one is optional — nothing to decide now. When you want it, switch it on from the Bluetooth fallback card on the Conduit page.",
       "ja": "この項目は任意で、いま決める必要はありません。使いたくなったら、「経路」ページの Bluetooth フォールバックカードでオンにしてください。",
@@ -7520,10 +7520,10 @@
       "nl": "Deze stap is optioneel — nu hoef je niets te beslissen. Wanneer je hem wilt, zet je hem aan via de kaart Bluetooth-terugval op de Kanaal-pagina."
     },
     "Onboarding_Finish_Title": {
-      "zh-Hans": "就绪",
-      "zh-Hant": "就緒",
-      "en": "Ready",
-      "ja": "準備完了",
+      "zh-Hans": "接下来试一次同步",
+      "zh-Hant": "接下來試一次同步",
+      "en": "Try a first sync",
+      "ja": "同期を試してみましょう",
       "ko": "준비 완료",
       "es": "Todo listo",
       "fr": "Prêt",
@@ -7541,10 +7541,10 @@
       "nl": "Klaar"
     },
     "Onboarding_Finish_Body": {
-      "zh-Hans": "先与手机配对；特权直读与蓝牙备援都在「通路」页，所有开关都在「偏好」页，随时可回来。",
-      "zh-Hant": "先與手機配對；特權直讀與藍牙備援都在「通路」頁，所有開關都在「偏好」頁，隨時可回來。",
-      "en": "Pair with your phone first; privileged read and the Bluetooth fallback live on the Conduit page and every switch in Preferences — you can come back anytime.",
-      "ja": "まずスマートフォンとペアリングしましょう。特権ダイレクト読み取りと Bluetooth フォールバックは「経路」ページ、各スイッチは「設定」ページにあり、いつでも戻れます。",
+      "zh-Hans": "配对后，电脑复制一段文字，手机从其他应用分享另一段文字，检查两端历史是否收到。手机后台自动捕获需在「通路」页配置读取路线；同步开关在「偏好」页。",
+      "zh-Hant": "配對後，電腦複製一段文字，手機從其他應用程式分享另一段文字，檢查兩端歷史是否收到。手機背景自動擷取需在「通路」頁設定讀取路線；同步開關在「偏好」頁。",
+      "en": "After pairing, copy text on the PC and share different text from another phone app. Check both histories. Configure a read route on the phone for automatic background capture; sync controls are in Preferences.",
+      "ja": "ペアリング後、PC でテキストをコピーし、スマートフォンの別のアプリから別のテキストを共有して、両方の履歴を確認してください。バックグラウンドで自動取得するにはスマートフォンの読み取り経路を設定します。同期の切り替えは設定ページにあります。",
       "ko": "먼저 휴대폰과 페어링하세요. 특권 직접 읽기와 블루투스 대체 경로는 ‘통로’ 페이지에, 모든 스위치는 ‘환경설정’ 페이지에 있으며 언제든 돌아올 수 있습니다.",
       "es": "Empareja primero con tu teléfono; la lectura privilegiada y el respaldo Bluetooth están en la página «Conducto» y todos los interruptores en «Preferencias». Puedes volver cuando quieras.",
       "fr": "Commencez par appairer votre téléphone ; la lecture privilégiée et le secours Bluetooth se trouvent sur la page « Conduit » et chaque réglage dans « Préférences ». Vous pouvez y revenir à tout moment.",
