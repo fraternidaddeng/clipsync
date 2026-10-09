@@ -4,12 +4,17 @@ param()
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $androidRoot = Join-Path $repoRoot 'android'
-$wrapper = Join-Path $androidRoot 'gradlew.bat'
+$isWindowsHost = $IsWindows -or ($env:OS -eq 'Windows_NT')
+$wrapperName = if ($isWindowsHost) { 'gradlew.bat' } else { 'gradlew' }
+$wrapper = Join-Path $androidRoot $wrapperName
 $sdkCandidates = @(
     $env:ANDROID_HOME,
-    $env:ANDROID_SDK_ROOT,
-    (Join-Path $env:LOCALAPPDATA 'Android\Sdk')
-) | Where-Object { $_ -and (Test-Path -LiteralPath $_) }
+    $env:ANDROID_SDK_ROOT
+)
+if ($env:LOCALAPPDATA) {
+    $sdkCandidates += (Join-Path $env:LOCALAPPDATA 'Android\Sdk')
+}
+$sdkCandidates = $sdkCandidates | Where-Object { $_ -and (Test-Path -LiteralPath $_) }
 
 if (-not (Get-Command java -ErrorAction SilentlyContinue)) {
     throw 'JDK 17 is required, but java was not found on PATH.'
@@ -30,7 +35,12 @@ if (-not (Test-Path -LiteralPath $wrapper)) {
 
 Push-Location $androidRoot
 try {
-    & $wrapper testDebugUnitTest assembleDebug --stacktrace
+    if ($isWindowsHost) {
+        & $wrapper testDebugUnitTest assembleDebug --stacktrace
+    }
+    else {
+        & sh $wrapper testDebugUnitTest assembleDebug --stacktrace
+    }
     exit $LASTEXITCODE
 }
 finally {
