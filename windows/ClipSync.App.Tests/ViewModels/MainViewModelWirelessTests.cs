@@ -122,9 +122,56 @@ public sealed class MainViewModelWirelessTests : IAsyncDisposable
         await viewModel.ConnectWirelessCommand.ExecuteAsync(null);
 
         Assert.Contains("连接失败", viewModel.WirelessStatus, StringComparison.Ordinal);
+        Assert.Contains("不用重新配对", viewModel.WirelessStatus, StringComparison.Ordinal);
         // The hint names the usual culprit (port drift) and where the current value lives.
         Assert.Contains("无线调试", viewModel.WirelessHint, StringComparison.Ordinal);
         Assert.Contains("IP 地址和端口", viewModel.WirelessHint, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ClosedPortRedialsTheCurrentMdnsPortWithoutPairingAgain()
+    {
+        const string drifted = "192.168.1.10:45555";
+        const string mdns =
+            "List of discovered mdns services\n" +
+            "adb-phone\t_adb-tls-connect._tcp.\t" + drifted + "\n";
+        adb.OnArgs(
+            ["connect", Endpoint],
+            new AdbCommandResult(1, string.Empty, $"cannot connect to {Endpoint}: actively refused (10061)\n"));
+        adb.OnArgs(["mdns", "services"], new AdbCommandResult(0, mdns, string.Empty));
+        adb.OnArgs(
+            ["connect", drifted],
+            new AdbCommandResult(0, $"connected to {drifted}\n", string.Empty));
+        adb.OnArgs(
+            ["devices", "-l"],
+            new AdbCommandResult(0, ReadyListing.Replace(Endpoint, drifted, StringComparison.Ordinal), string.Empty));
+        adb.OnArgs(
+            ["-s", drifted, "shell", "pgrep", "-f", "clipsync_priv_server"],
+            new AdbCommandResult(0, "1234\n", string.Empty));
+
+        viewModel.WirelessConnectEndpointText = Endpoint;
+        await viewModel.ConnectWirelessCommand.ExecuteAsync(null);
+
+        Assert.Contains("已连接 " + drifted, viewModel.WirelessStatus, StringComparison.Ordinal);
+        Assert.Contains("没有重新配对", viewModel.WirelessHint, StringComparison.Ordinal);
+        Assert.Equal(drifted, await store.GetSettingAsync("wireless_connect_endpoint"));
+        Assert.DoesNotContain(adb.Invocations, args => args.Length > 0 && args[0] == "pair");
+    }
+
+    [Fact]
+    public async Task RememberedEndpointIsRestoredOnTheNextLaunch()
+    {
+        await store.SetSettingAsync("privileged_adb_consent", bool.TrueString);
+        await store.SetSettingAsync("wireless_connect_endpoint", Endpoint);
+        var again = new MainViewModel(
+            store,
+            new ClipboardCapturePolicy(),
+            adapter,
+            privilegedHost: new PrivilegedHostAssistant(adb));
+
+        await again.InitializeAsync();
+
+        Assert.Equal(Endpoint, again.WirelessConnectEndpointText);
     }
 
     [Fact]

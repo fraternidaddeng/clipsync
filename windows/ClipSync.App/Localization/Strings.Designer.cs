@@ -112,6 +112,8 @@ public static partial class Strings
     public static string Conduit_Wireless_ConnectingFormat => Get(nameof(Conduit_Wireless_ConnectingFormat));
     public static string Conduit_Wireless_ConnectOkFormat => Get(nameof(Conduit_Wireless_ConnectOkFormat));
     public static string Conduit_Wireless_ConnectFailedFormat => Get(nameof(Conduit_Wireless_ConnectFailedFormat));
+    public static string Conduit_Wireless_PortClosedFormat => Get(nameof(Conduit_Wireless_PortClosedFormat));
+    public static string Conduit_Wireless_RememberedReconnectFormat => Get(nameof(Conduit_Wireless_RememberedReconnectFormat));
     public static string Conduit_Wireless_SessionLostFormat => Get(nameof(Conduit_Wireless_SessionLostFormat));
     public static string Conduit_Wireless_StaleSessionRedialed => Get(nameof(Conduit_Wireless_StaleSessionRedialed));
     public static string Conduit_Wireless_ConnectFailedHint => Get(nameof(Conduit_Wireless_ConnectFailedHint));

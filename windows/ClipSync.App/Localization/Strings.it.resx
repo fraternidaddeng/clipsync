@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Connessione non riuscita: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>Connessione non riuscita: nessuno è in ascolto su {0} (connessione rifiutata). La porta del debug wireless è cambiata; l'associazione c'è ancora, non riassociare.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>La porta ricordata non era più in ascolto, quindi il collegamento è passato all'attuale {0}. L'associazione c'è ancora; non è stata rifatta.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>La connessione wireless è andata persa ({0} è offline o sparito dall'elenco dispositivi). Verifica "indirizzo IP e porta" attuali nella pagina Debug wireless del telefono, correggi il campo e premi "Connetti"; non serve riassociare.</value>
   </data>

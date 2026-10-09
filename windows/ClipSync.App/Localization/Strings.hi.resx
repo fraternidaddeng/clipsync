@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>कनेक्शन विफल: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>कनेक्शन विफल: {0} पर कोई सुन नहीं रहा (कनेक्शन अस्वीकृत)। वायरलेस डिबगिंग पोर्ट बदल गया; पेयरिंग अभी भी है, दोबारा पेयर न करें।</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>याद रखा पोर्ट अब नहीं सुन रहा था, इसलिए मौजूदा {0} से कनेक्ट किया गया। पेयरिंग अभी भी है; दोबारा पेयर नहीं किया गया।</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>वायरलेस कनेक्शन टूट गया ({0} ऑफ़लाइन है या डिवाइस सूची से गायब है)। फ़ोन के वायरलेस डिबगिंग पेज पर मौजूदा «IP पता और पोर्ट» जाँचें, फ़ील्ड ठीक करें और «कनेक्ट करें» दबाएँ — दोबारा पेयर करने की ज़रूरत नहीं।</value>
   </data>

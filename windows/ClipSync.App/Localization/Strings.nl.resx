@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Verbinding mislukt: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>Verbinding mislukt: er luistert niets op {0} (verbinding geweigerd). De poort voor draadloos debuggen is veranderd; de koppeling staat er nog, koppel niet opnieuw.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>De onthouden poort luisterde niet meer, dus er is verbonden met de huidige {0}. De koppeling staat er nog; er is niet opnieuw gekoppeld.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>De draadloze verbinding is verbroken ({0} is offline of uit de apparatenlijst verdwenen). Controleer het actuele "IP-adres en poort" op de pagina Draadloos debuggen van de telefoon, pas het veld aan en tik op "Verbinden" — opnieuw koppelen is niet nodig.</value>
   </data>

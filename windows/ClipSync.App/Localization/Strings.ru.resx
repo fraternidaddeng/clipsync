@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Сбой подключения: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>Сбой подключения: {0} никто не слушает (соединение отклонено). Порт беспроводной отладки изменился; сопряжение на месте, заново сопрягать не нужно.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>Запомненный порт больше не слушал, поэтому выполнено подключение к текущему {0}. Сопряжение на месте, заново ничего не сопрягалось.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>Беспроводное подключение потеряно ({0} не в сети или исчез из списка устройств). Сверьте текущие «IP-адрес и порт» на странице «Беспроводная отладка» телефона, исправьте поле и нажмите «Подключить» — заново сопрягать не нужно.</value>
   </data>

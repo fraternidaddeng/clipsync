@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>فشل الاتصال: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>فشل الاتصال: لا أحد يستمع على {0} (رُفض الاتصال). تغيّر منفذ تصحيح الأخطاء اللاسلكي؛ الاقتران ما زال قائمًا، لا تعِد الاقتران.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>المنفذ المحفوظ لم يعُد يستمع، لذا تم الاتصال بالمنفذ الحالي {0}. الاقتران ما زال قائمًا ولم يُعَد.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>فُقد الاتصال اللاسلكي ({0} غير متصل أو اختفى من قائمة الأجهزة). راجع «عنوان IP والمنفذ» الحالي في صفحة تصحيح الأخطاء اللاسلكي بالهاتف، وصحّح الحقل ثم اضغط «اتصال» — لا حاجة لإعادة الاقتران.</value>
   </data>

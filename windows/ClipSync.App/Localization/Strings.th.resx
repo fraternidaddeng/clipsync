@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>เชื่อมต่อไม่สำเร็จ: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>เชื่อมต่อไม่สำเร็จ: ไม่มีอะไรฟังที่ {0} (การเชื่อมต่อถูกปฏิเสธ) พอร์ตการแก้ไขข้อบกพร่องแบบไร้สายเปลี่ยนไป การจับคู่ยังอยู่ ไม่ต้องจับคู่ใหม่</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>พอร์ตที่จำไว้ไม่ได้ฟังอีกต่อไป จึงเชื่อมต่อไปที่ {0} ปัจจุบันแทน การจับคู่ยังอยู่ ไม่ได้จับคู่ใหม่</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>การเชื่อมต่อไร้สายขาดหาย ({0} ออฟไลน์หรือหายไปจากรายการอุปกรณ์) ตรวจ «ที่อยู่ IP และพอร์ต» ปัจจุบันในหน้าการแก้ไขข้อบกพร่องแบบไร้สายของโทรศัพท์ แก้ค่าแล้วกด «เชื่อมต่อ» — ไม่ต้องจับคู่ใหม่</value>
   </data>

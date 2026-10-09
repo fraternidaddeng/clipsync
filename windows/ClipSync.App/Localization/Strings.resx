@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>连接失败：{0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>连接失败：{0} 没有在监听（连接被拒绝）。无线调试端口变了，配对还在，不用重新配对。</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>记住的端口已不在监听，已改连当前的 {0}。配对还在，没有重新配对。</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>无线连接已断开（{0} 已离线或不在设备列表）。回手机「无线调试」页核对当前「IP 地址和端口」，改填后点「连接」；配对不用重来。</value>
   </data>

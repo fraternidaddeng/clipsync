@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Koneksi gagal: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>Koneksi gagal: tidak ada yang mendengarkan di {0} (koneksi ditolak). Port debugging nirkabel berubah; penyandingan masih ada, jangan sandingkan ulang.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>Port yang diingat tidak lagi mendengarkan, jadi terhubung ke {0} yang sekarang. Penyandingan masih ada; tidak disandingkan ulang.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>Koneksi nirkabel terputus ({0} luring atau hilang dari daftar perangkat). Periksa «Alamat IP &amp; port» terkini di halaman Debugging nirkabel ponsel, perbarui kolomnya lalu ketuk «Hubungkan» — tidak perlu menyandingkan ulang.</value>
   </data>

@@ -420,7 +420,13 @@ public partial class MainViewModel(
     private int wirelessScanSession;
 
     /// <summary>
-    /// The endpoint of the most recent successful wireless <c>adb connect</c> this app run.
+    /// Last successful wireless <c>adb connect</c> target. Persisted so the next launch
+    /// still knows which phone to redial; the port itself is not stable across screen-off.
+    /// </summary>
+    private const string WirelessConnectEndpointSetting = "wireless_connect_endpoint";
+
+    /// <summary>
+    /// The endpoint of the most recent successful wireless <c>adb connect</c>.
     /// Later probes compare the device list against it so a dropped wireless session (port
     /// drift after 息屏/切网/重启) is stated on the card instead of the stale "已连接" line.
     /// </summary>
@@ -557,6 +563,7 @@ public partial class MainViewModel(
         PrivilegedStatus = string.Empty;
         // The wireless sub-flow lives under the same gate: withdrawing kills its QR wait too.
         ResetWirelessFlow(clearInputs: true);
+        await store.SetSettingAsync(WirelessConnectEndpointSetting, string.Empty);
     }
 
     private bool CanUseAdb() => PrivilegedAdbConsent && !PrivilegedBusy;
@@ -953,7 +960,7 @@ public partial class MainViewModel(
     /// even for a dead wireless transport; the assistant cross-checks the device list and
     /// re-dials a stale session, and that recovery is stated on the card, never silent.
     /// </summary>
-    private async Task ConnectWirelessCoreAsync(WirelessAdbEndpoint endpoint, int session)
+    private async Task ConnectWirelessCoreAsync(WirelessAdbEndpoint endpoint, int session, bool rediscoverPort = true)
     {
         if (privilegedHost is null || !WirelessChainAlive(session))
         {
@@ -970,10 +977,19 @@ public partial class MainViewModel(
 
         if (!result.Outcome.Succeeded)
         {
+            if (rediscoverPort
+                && AdbOutputEncoding.IsClosedPort(result.Outcome.Detail)
+                && await TryRedialCurrentWirelessPortAsync(endpoint, session))
+            {
+                return;
+            }
+
             wirelessFlow.TryApply(WirelessPairingEvent.ConnectFailed);
-            WirelessStatus = Strings.Format(
-                nameof(Strings.Conduit_Wireless_ConnectFailedFormat),
-                result.Outcome.Detail ?? Strings.Conduit_Privileged_ReasonUnknown);
+            WirelessStatus = AdbOutputEncoding.IsClosedPort(result.Outcome.Detail)
+                ? Strings.Format(nameof(Strings.Conduit_Wireless_PortClosedFormat), endpoint.ToString())
+                : Strings.Format(
+                    nameof(Strings.Conduit_Wireless_ConnectFailedFormat),
+                    result.Outcome.Detail ?? Strings.Conduit_Privileged_ReasonUnknown);
             // The usual culprit is port drift: the phone's 无线调试 page shows the current value.
             WirelessHint = Strings.Conduit_Wireless_ConnectFailedHint;
             return;
@@ -981,6 +997,7 @@ public partial class MainViewModel(
 
         wirelessFlow.TryApply(WirelessPairingEvent.ConnectSucceeded);
         lastWirelessConnectEndpoint = endpoint;
+        await store.SetSettingAsync(WirelessConnectEndpointSetting, endpoint.ToString());
         WirelessStatus = Strings.Format(nameof(Strings.Conduit_Wireless_ConnectOkFormat), endpoint.ToString());
         WirelessHint = result.RecoveredStaleSession
             ? Strings.Conduit_Wireless_StaleSessionRedialed
@@ -989,6 +1006,36 @@ public partial class MainViewModel(
         // adb, or as adb-…._adb-tls-connect._tcp on platform-tools 37+. Either form is a
         // live session; 检测手机 → 启动特权直读 takes over from here.
         await DetectPhoneAsync();
+    }
+
+    /// <summary>
+    /// A refused connect to a remembered host:port is usually a rotated wireless-debugging
+    /// port, not a lost pairing. Look up the phone's current connect announcement and dial
+    /// that once. False when nothing new was found, so the caller states the closed port.
+    /// </summary>
+    private async Task<bool> TryRedialCurrentWirelessPortAsync(WirelessAdbEndpoint stale, int session)
+    {
+        if (privilegedHost is null || !WirelessChainAlive(session))
+        {
+            return false;
+        }
+
+        WirelessStatus = Strings.Conduit_Wireless_SearchingConnectPort;
+        var current = await privilegedHost.DiscoverConnectEndpointAsync(stale.Host);
+        if (!WirelessChainAlive(session) || current is null || current == stale)
+        {
+            return false;
+        }
+
+        await ConnectWirelessCoreAsync(current, session, rediscoverPort: false);
+        if (lastWirelessConnectEndpoint == current)
+        {
+            WirelessHint = Strings.Format(
+                nameof(Strings.Conduit_Wireless_RememberedReconnectFormat),
+                current.ToString());
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -1077,6 +1124,12 @@ public partial class MainViewModel(
         ExtraBindAddresses = await store.GetSettingAsync("extra_bind_addresses") ?? string.Empty;
         BluetoothFallbackEnabled = bool.TryParse(await store.GetSettingAsync("bluetooth_fallback"), out var btFallback) && btFallback;
         PrivilegedAdbConsent = bool.TryParse(await store.GetSettingAsync("privileged_adb_consent"), out var adbConsent) && adbConsent;
+        if (PrivilegedAdbConsent
+            && WirelessAdbEndpoint.TryParse(await store.GetSettingAsync(WirelessConnectEndpointSetting), out var rememberedWireless))
+        {
+            lastWirelessConnectEndpoint = rememberedWireless;
+            WirelessConnectEndpointText = rememberedWireless!.ToString();
+        }
         if (privilegedHost is not null)
         {
             // Locating adb is a file-system check, not an adb launch — safe before consent.

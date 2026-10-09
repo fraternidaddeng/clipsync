@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using ClipSync.App.Localization;
 using ClipSync.Core.Clipboard.PrivilegedHost;
 
@@ -45,11 +46,16 @@ public sealed class ProcessAdbRunner : IAdbRunner
             return new AdbCommandResult(-1, string.Empty, Strings.Privileged_AdbNotFound);
         }
 
+        // Latin-1 keeps every pipe byte. adb's own text is decoded afterwards:
+        // UTF-8 first (current platform-tools), ANSI code page if that is invalid.
+        var captureEncoding = Encoding.Latin1;
         var startInfo = new ProcessStartInfo
         {
             FileName = adbPath!,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
+            StandardOutputEncoding = captureEncoding,
+            StandardErrorEncoding = captureEncoding,
             UseShellExecute = false,
             CreateNoWindow = true,
         };
@@ -87,8 +93,8 @@ public sealed class ProcessAdbRunner : IAdbRunner
             // before the deadline. Keeping that output matters: a start script may have
             // already reported "info: spawned" when only the transport wedged afterwards,
             // and discarding it would turn a verifiable start into a bare failure.
-            var partialStdout = await stdoutTask.ConfigureAwait(false);
-            var partialStderr = await stderrTask.ConfigureAwait(false);
+            var partialStdout = Decode(await stdoutTask.ConfigureAwait(false));
+            var partialStderr = Decode(await stderrTask.ConfigureAwait(false));
             var timeoutNote = Strings.Privileged_AdbTimedOut;
             return new AdbCommandResult(
                 -1,
@@ -96,10 +102,13 @@ public sealed class ProcessAdbRunner : IAdbRunner
                 string.IsNullOrWhiteSpace(partialStderr) ? timeoutNote : $"{timeoutNote}\n{partialStderr}");
         }
 
-        var stdout = await stdoutTask.ConfigureAwait(false);
-        var stderr = await stderrTask.ConfigureAwait(false);
+        var stdout = Decode(await stdoutTask.ConfigureAwait(false));
+        var stderr = Decode(await stderrTask.ConfigureAwait(false));
         return new AdbCommandResult(process.ExitCode, stdout, stderr);
     }
+
+    private static string Decode(string capturedAsLatin1) =>
+        AdbOutputEncoding.Decode(Encoding.Latin1.GetBytes(capturedAsLatin1));
 
     private static void TryKill(Process process)
     {

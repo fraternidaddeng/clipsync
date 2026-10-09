@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Connection failed: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>Connection failed: nothing is listening on {0} (connection refused). The wireless debugging port changed; the pairing is still there, so do not pair again.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>The remembered port was no longer listening, so this connected to the current {0} instead. The pairing is still there; nothing was paired again.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>The wireless connection was lost ({0} is offline or gone from the device list). Check the current "IP address &amp; port" on the phone's Wireless debugging page, update the field and hit "Connect" — no need to pair again.</value>
   </data>

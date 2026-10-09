@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Verbindung fehlgeschlagen: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>Verbindung fehlgeschlagen: an {0} lauscht niemand (Verbindung abgelehnt). Der Port für drahtloses Debugging hat sich geändert; die Kopplung besteht weiter, neu koppeln ist unnötig.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>Der gemerkte Port lauschte nicht mehr, daher wurde stattdessen mit dem aktuellen {0} verbunden. Die Kopplung besteht; es wurde nicht neu gekoppelt.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>Die drahtlose Verbindung ist verloren gegangen ({0} ist offline oder aus der Geräteliste verschwunden). Prüfen Sie „IP-Adresse und Port“ auf der Seite Drahtloses Debugging des Telefons, korrigieren Sie das Feld und tippen Sie auf „Verbinden“ – neu koppeln ist nicht nötig.</value>
   </data>

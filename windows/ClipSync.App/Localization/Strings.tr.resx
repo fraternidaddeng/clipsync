@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Bağlantı başarısız: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>Bağlantı başarısız: {0} dinlemiyor (bağlantı reddedildi). Kablosuz hata ayıklama bağlantı noktası değişti; eşleştirme duruyor, yeniden eşleştirmeyin.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>Hatırlanan bağlantı noktası artık dinlemiyordu, bu yüzden güncel {0} adresine bağlanıldı. Eşleştirme duruyor; yeniden eşleştirilmedi.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>Kablosuz bağlantı koptu ({0} çevrimdışı veya cihaz listesinden silinmiş). Telefonun Kablosuz hata ayıklama sayfasındaki güncel «IP adresi ve bağlantı noktası»nı doğrulayın, alanı düzeltin ve «Bağlan»a basın — yeniden eşleştirmeye gerek yok.</value>
   </data>

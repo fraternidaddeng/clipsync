@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Falha na conexão: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>Falha na conexão: nada escuta em {0} (conexão recusada). A porta da depuração por Wi-Fi mudou; o pareamento continua, não pareie de novo.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>A porta lembrada não escutava mais, então a conexão foi para o {0} atual. O pareamento continua; nada foi pareado de novo.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>A conexão sem fio foi perdida ({0} está offline ou sumiu da lista de dispositivos). Confira o "endereço IP e porta" atual na página Depuração por Wi-Fi do telefone, corrija o campo e toque em "Conectar" — não precisa parear de novo.</value>
   </data>

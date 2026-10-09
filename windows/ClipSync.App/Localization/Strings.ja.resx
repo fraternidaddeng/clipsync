@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>接続失敗:{0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>接続失敗: {0} は待受していません（接続拒否）。ワイヤレスデバッグのポートが変わっただけで、ペアリングは残っています。やり直さないでください。</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>覚えていたポートは待受していなかったため、現在の {0} に接続し直しました。ペアリングはそのままで、やり直しはしていません。</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>ワイヤレス接続が切断されました（{0} はオフラインか、デバイス一覧から消えています）。スマホの「ワイヤレスデバッグ」画面で現在の「IP アドレスとポート」を確認し、入力し直して「接続」を押してください。ペアリングのやり直しは不要です。</value>
   </data>

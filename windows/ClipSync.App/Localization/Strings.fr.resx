@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Échec de la connexion : {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>Échec de la connexion : rien n'écoute sur {0} (connexion refusée). Le port du débogage sans fil a changé ; l'appairage est toujours là, inutile de le refaire.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>Le port mémorisé n'écoutait plus, donc connexion au {0} actuel. L'appairage est toujours là ; rien n'a été réappairé.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>La connexion sans fil a été perdue ({0} est hors ligne ou a disparu de la liste des appareils). Vérifiez « adresse IP et port » actuels sur la page Débogage sans fil du téléphone, corrigez le champ puis appuyez sur « Connecter » — inutile de refaire l'appairage.</value>
   </data>

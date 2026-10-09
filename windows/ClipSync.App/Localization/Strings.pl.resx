@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Połączenie nie powiodło się: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>Połączenie nie powiodło się: nic nie nasłuchuje na {0} (połączenie odrzucone). Port debugowania bezprzewodowego się zmienił; parowanie nadal jest, nie paruj ponownie.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>Zapamiętany port już nie nasłuchiwał, więc połączono z aktualnym {0}. Parowanie nadal jest; nie parowano ponownie.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>Połączenie bezprzewodowe zostało utracone ({0} jest offline lub zniknął z listy urządzeń). Sprawdź aktualny „adres IP i port” na stronie Debugowanie bezprzewodowe telefonu, popraw pole i naciśnij „Połącz” — parowania nie trzeba powtarzać.</value>
   </data>

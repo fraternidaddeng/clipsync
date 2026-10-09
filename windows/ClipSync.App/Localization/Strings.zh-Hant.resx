@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>連線失敗：{0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>連線失敗：{0} 沒有在監聽（連線被拒絕）。無線偵錯連接埠變了，配對還在，不用重新配對。</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>記住的連接埠已不在監聽，已改連目前的 {0}。配對還在，沒有重新配對。</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>無線連線已中斷（{0} 已離線或不在裝置清單）。回手機「無線偵錯」頁核對目前「IP 位址與連接埠」，改填後點「連線」；配對不用重來。</value>
   </data>

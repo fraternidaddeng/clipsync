@@ -327,6 +327,12 @@
   <data name="Conduit_Wireless_ConnectFailedFormat" xml:space="preserve">
     <value>Kết nối thất bại: {0}</value>
   </data>
+  <data name="Conduit_Wireless_PortClosedFormat" xml:space="preserve">
+    <value>Kết nối thất bại: không có gì lắng nghe ở {0} (kết nối bị từ chối). Cổng gỡ lỗi qua Wi-Fi đã đổi; ghép nối vẫn còn, không cần ghép lại.</value>
+  </data>
+  <data name="Conduit_Wireless_RememberedReconnectFormat" xml:space="preserve">
+    <value>Cổng đã nhớ không còn lắng nghe, nên đã nối sang {0} hiện tại. Ghép nối vẫn còn, không ghép lại.</value>
+  </data>
   <data name="Conduit_Wireless_SessionLostFormat" xml:space="preserve">
     <value>Kết nối không dây đã mất ({0} ngoại tuyến hoặc biến mất khỏi danh sách thiết bị). Kiểm tra «Địa chỉ IP và cổng» hiện tại trên trang Gỡ lỗi qua Wi-Fi của điện thoại, sửa lại ô rồi bấm «Kết nối» — không cần ghép nối lại.</value>
   </data>
