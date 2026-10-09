@@ -2209,16 +2209,16 @@
                         <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource GroupHeader}" Text="{x:Static loc:Strings.Prefs_Group_Display}" />
-                                <Grid Margin="16,9,16,12">
+                                <Grid Margin="16,12,16,12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel Margin="0,0,16,0">
+                                    <StackPanel Margin="0,0,16,0" VerticalAlignment="Center">
                                         <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_FontScale_Title}" />
                                     </StackPanel>
                                     <StackPanel Grid.Column="1"
-                                                VerticalAlignment="Top"
+                                                VerticalAlignment="Center"
                                                 Orientation="Horizontal">
                                         <RadioButton Click="OnSettingToggled"
                                                      Content="{x:Static loc:Strings.Prefs_FontScale_Small}"
@@ -2245,11 +2245,11 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel Margin="0,0,16,0">
+                                        <StackPanel Margin="0,0,16,0" VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_PreviewLines_Title}" />
                                         </StackPanel>
                                         <StackPanel Grid.Column="1"
-                                                    VerticalAlignment="Top"
+                                                    VerticalAlignment="Center"
                                                     Orientation="Horizontal">
                                             <RadioButton Click="OnSettingToggled"
                                                          Content="{x:Static loc:Strings.Prefs_PreviewLines_Two}"
@@ -2278,11 +2278,11 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel Margin="0,0,16,0">
+                                        <StackPanel Margin="0,0,16,0" VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Theme_Title}" />
                                         </StackPanel>
                                         <StackPanel Grid.Column="1"
-                                                    VerticalAlignment="Top"
+                                                    VerticalAlignment="Center"
                                                     Orientation="Horizontal">
                                             <RadioButton Click="OnSettingToggled"
                                                          Content="{x:Static loc:Strings.Common_FollowSystem}"
@@ -2312,7 +2312,7 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel Margin="0,0,16,0">
+                                        <StackPanel Margin="0,0,16,0" VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_Language_Title}" />
                                             <!-- 「重启后生效」随实际状态变化：与本次启动所用语言一致时是灰色说明，
                                                  改选并保存后才变赭（需要你重启） -->
@@ -2320,7 +2320,7 @@
                                         </StackPanel>
                                         <ComboBox Grid.Column="1"
                                                   MinWidth="176"
-                                                  VerticalAlignment="Top"
+                                                  VerticalAlignment="Center"
                                                   AutomationProperties.Name="{x:Static loc:Strings.Prefs_Language_Title}"
                                                   DisplayMemberPath="DisplayName"
                                                   ItemsSource="{Binding LanguageOptions, Mode=OneTime}"
@@ -2801,7 +2801,7 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel Margin="0,0,16,0">
+                                        <StackPanel Margin="0,0,16,0" VerticalAlignment="Center">
                                             <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_PrivacyDoc_Title}" />
                                             <TextBlock x:Name="PrivacyDocOpenFailedText"
                                                        Margin="0,5,0,0"
@@ -2811,7 +2811,7 @@
                                                        Visibility="Collapsed" />
                                         </StackPanel>
                                         <Button Grid.Column="1"
-                                                VerticalAlignment="Top"
+                                                VerticalAlignment="Center"
                                                 Click="OnOpenPrivacyDocClicked"
                                                 Content="{x:Static loc:Strings.Prefs_PrivacyDoc_Open}"
                                                 Style="{StaticResource GhostQuietButton}" />
@@ -2824,16 +2824,17 @@
                         <ContentControl Style="{StaticResource GroupCard}">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource GroupHeader}" Text="{x:Static loc:Strings.Prefs_Group_About}" />
-                                <Grid Margin="16,9,16,0">
+                                <Grid Margin="16,12,16,12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <StackPanel Margin="0,0,16,0">
-                                        <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_CurrentVersion}" />
-                                    </StackPanel>
+                                    <TextBlock Margin="0,0,16,0"
+                                               VerticalAlignment="Center"
+                                               Style="{StaticResource RowName}"
+                                               Text="{x:Static loc:Strings.Prefs_CurrentVersion}" />
                                     <TextBlock Grid.Column="1"
-                                               VerticalAlignment="Top"
+                                               VerticalAlignment="Center"
                                                FontFamily="{StaticResource CsMono}"
                                                FontSize="13"
                                                Foreground="{DynamicResource CsText2Brush}"
@@ -2847,11 +2848,12 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel Margin="0,0,16,0">
-                                            <TextBlock Style="{StaticResource RowName}" Text="{x:Static loc:Strings.Prefs_CheckUpdate}" />
-                                        </StackPanel>
+                                        <TextBlock Margin="0,0,16,0"
+                                                   VerticalAlignment="Center"
+                                                   Style="{StaticResource RowName}"
+                                                   Text="{x:Static loc:Strings.Prefs_CheckUpdate}" />
                                         <Button Grid.Column="1"
-                                                VerticalAlignment="Top"
+                                                VerticalAlignment="Center"
                                                 Command="{Binding Update.CheckCommand}"
                                                 Content="{x:Static loc:Strings.Prefs_CheckUpdate}"
                                                 Style="{StaticResource GhostQuietButton}" />
