@@ -590,6 +590,29 @@ class SyncEngineTest {
     }
 
     @Test
+    fun `clip_fetch is refused while outbound is gated`() = runTest {
+        val repository = InMemorySyncRepository(LOCAL_ID)
+        val local = repository.recordLocalClip("announced before pause", sourceApp = null, nowMs = 1_776_000_001_000)!!
+        val engine = SyncEngine(repository, config().copy(outboundAllowed = { false }), SECRET)
+        val transport = FakeTransport()
+        val result = CompletableDeferred<SyncSessionResult>()
+        backgroundScope.launchEngine(engine, transport, result)
+
+        transport.awaitSent(SyncMessageTypes.HELLO)
+        transport.deliver(SyncMessageTypes.CHALLENGE, challengeBody())
+        transport.awaitSent(SyncMessageTypes.AUTH)
+        transport.awaitSent(SyncMessageTypes.KNOWN_VECTOR)
+
+        transport.deliver(SyncMessageTypes.CLIP_FETCH, ClipFetchBody(listOf(local.eventId)))
+        val error = transport.awaitSent(SyncMessageTypes.ERROR).body as ErrorBody
+        assertEquals(SyncErrorCodes.PAYLOAD_NOT_FOUND, error.code)
+        assertTrue(error.retryable)
+
+        transport.peerCloses()
+        assertTrue(result.await().authenticated)
+    }
+
+    @Test
     fun `inbound clips still commit while outbound is gated`() = runTest {
         val repository = InMemorySyncRepository(LOCAL_ID)
         val committed = mutableListOf<RemoteClipApplied>()

@@ -29,6 +29,25 @@ object ImageChunks {
         }
     }
 
+    /** Number of chunks [encoded] splits into; validates the same bounds as [split]. */
+    fun chunkCount(encoded: ByteArray): Int {
+        require(encoded.isNotEmpty() && encoded.size <= MediaLimits.MAX_ENCODED_BYTES) {
+            "Encoded image size is out of bounds."
+        }
+        val count = (encoded.size + MediaLimits.MAX_CHUNK_BYTES - 1) / MediaLimits.MAX_CHUNK_BYTES
+        require(count <= MediaLimits.MAX_CHUNK_COUNT) { "Encoded image needs too many chunks." }
+        return count
+    }
+
+    /** Encodes one chunk on demand so a sender never holds every base64 chunk at once. */
+    fun chunkAt(encoded: ByteArray, index: Int, count: Int): ImageChunk {
+        val start = index * MediaLimits.MAX_CHUNK_BYTES
+        val length = minOf(MediaLimits.MAX_CHUNK_BYTES, encoded.size - start)
+        val data = Base64.getUrlEncoder().withoutPadding()
+            .encodeToString(encoded.copyOfRange(start, start + length))
+        return ImageChunk(index = index, count = count, byteCount = length, data = data)
+    }
+
     fun tryDecodeChunk(data: String, expectedBytes: Int): ByteArray? {
         val decoded = try {
             decodeBase64Url(data)

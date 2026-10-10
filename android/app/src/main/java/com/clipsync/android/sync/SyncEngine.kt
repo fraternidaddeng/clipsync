@@ -47,8 +47,9 @@ data class SyncSessionConfig(
     val peerStillTrusted: () -> Boolean = { true },
     /**
      * Re-checked before every announce so pausing sync (or turning private mode on) stops
-     * outbound content immediately. Inbound stays untouched, and in-flight fetches of clips
-     * announced earlier still complete; pending outbox entries flow on the next drain tick
+     * outbound content immediately, including fetches of clips announced before the pause
+     * (answered with a retryable PAYLOAD_NOT_FOUND). Inbound stays untouched; pending outbox
+     * entries flow on the next drain tick
      * after the gate reopens.
      */
     val outboundAllowed: () -> Boolean = { true },
@@ -603,6 +604,19 @@ class SyncEngine(
     }
 
     private suspend fun handleClipFetch(fetch: ClipFetchBody): Boolean {
+        if (!config.outboundAllowed()) {
+            // Paused/private: no clip body leaves this device, not even one announced before
+            // the pause. Retryable, so the peer fetches again after the gate reopens.
+            send(
+                SyncMessageTypes.ERROR,
+                ErrorBody(
+                    code = SyncErrorCodes.PAYLOAD_NOT_FOUND,
+                    retryable = true,
+                    failedType = SyncMessageTypes.CLIP_FETCH,
+                ),
+            )
+            return true
+        }
         val events = repository.getSyncableEventsByIds(fetch.eventIds)
         val byId = events.associateBy { it.eventId }
 
@@ -919,20 +933,30 @@ class SyncEngine(
             fail(SyncErrorCodes.MEDIA_STORAGE_FAILED, "blob_missing")
             return false
         }
-        val chunks = ImageChunks.split(bytes)
+        val chunkCount = try {
+            ImageChunks.chunkCount(bytes)
+        } catch (_: IllegalArgumentException) {
+            fail(SyncErrorCodes.MEDIA_TOO_LARGE, "blob_out_of_bounds")
+            return false
+        }
         val transferId = SyncWire.newRequestId()
         send(
             SyncMessageTypes.CLIP_PAYLOAD_BEGIN,
             ClipPayloadBeginBody(
                 transferId = transferId,
                 eventId = item.eventId,
-                chunkCount = chunks.size,
+                chunkCount = chunkCount,
                 encodedBytes = bytes.size.toLong(),
                 contentHash = hash,
                 mimeType = item.mimeType ?: MediaLimits.MIME_PNG,
             ),
         )
-        for (chunk in chunks) {
+        for (index in 0 until chunkCount) {
+            // OkHttp's send() never blocks and closes the socket once 16 MiB are queued; a
+            // max-size image is ~21 MiB of base64. Wait for the queue to drain below the
+            // high-water mark before each chunk, and encode chunks lazily.
+            awaitSendQueueBelow(SEND_QUEUE_HIGH_WATER_BYTES)
+            val chunk = ImageChunks.chunkAt(bytes, index, chunkCount)
             send(
                 SyncMessageTypes.CLIP_PAYLOAD_CHUNK,
                 ClipPayloadChunkBody(
@@ -951,6 +975,9 @@ class SyncEngine(
         )
         return true
     }
+
+    private suspend fun awaitSendQueueBelow(limitBytes: Long) =
+        SendBackpressure.awaitBelow(limitBytes, SEND_QUEUE_POLL_MS) { transport.queuedBytes }
 
     private suspend fun handleClipPayloadBegin(begin: ClipPayloadBeginBody): Boolean {
         val header = outstandingFetches[begin.eventId]
@@ -1162,6 +1189,12 @@ class SyncEngine(
     }
 
     private enum class State { EXPECT_CHALLENGE, READY }
+
+    internal companion object {
+        /** Well under OkHttp's fixed 16 MiB outgoing queue limit. */
+        const val SEND_QUEUE_HIGH_WATER_BYTES = 4L * 1024 * 1024
+        const val SEND_QUEUE_POLL_MS = 20L
+    }
 
     private enum class ReplayVerdict { FRESH, IDENTICAL_RETRY, CONFLICT }
 
