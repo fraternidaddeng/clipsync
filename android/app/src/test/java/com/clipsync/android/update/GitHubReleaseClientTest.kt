@@ -64,7 +64,7 @@ class GitHubReleaseClientTest {
     }
 
     @Test
-    fun fetchLatestFallsBackToTheFirstPrefixWhenOfficialReturnsForbidden() {
+    fun fetchLatestNeverFallsBackToAThirdPartyMirror() {
         val official = GitHubReleaseClient.DEFAULT_LATEST_URL
         val mirror = GitHubUrlMirrors.prefixes.first() + official
         val json =
@@ -88,9 +88,13 @@ class GitHubReleaseClientTest {
                     }
                 }.build()
         val client = GitHubReleaseClient(currentVersion = "0.3.0", http = http)
-        val release = runBlocking { client.fetchLatest() }
-        assertEquals("0.4.0", release.versionLabel)
-        assertEquals(listOf(official, mirror), seen)
+        // Release metadata carries the trusted digest: GitHub only, never a proxy.
+        try {
+            runBlocking { client.fetchLatest() }
+            fail("expected IOException")
+        } catch (_: IOException) {
+        }
+        assertEquals(listOf(official), seen)
     }
 
     private fun fakeResponse(

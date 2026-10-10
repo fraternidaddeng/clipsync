@@ -7,7 +7,8 @@ public sealed class ClipboardTextChangedEventArgs(
     byte[]? imageBytes = null,
     string? imageMimeType = null,
     string? pixelDigest = null,
-    bool exceedsCaptureBudget = false) : EventArgs
+    bool exceedsCaptureBudget = false,
+    bool isMarkedSensitive = false) : EventArgs
 {
     public string Text { get; } = text;
 
@@ -22,6 +23,8 @@ public sealed class ClipboardTextChangedEventArgs(
     public string? PixelDigest { get; } = pixelDigest;
 
     public bool ExceedsCaptureBudget { get; } = exceedsCaptureBudget;
+
+    public bool IsMarkedSensitive { get; } = isMarkedSensitive;
 }
 
 public enum ClipboardAdapterOperation

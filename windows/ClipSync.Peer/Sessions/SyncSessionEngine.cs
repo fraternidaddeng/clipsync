@@ -900,6 +900,19 @@ public sealed class SyncSessionEngine : IDisposable
 
     private async Task<bool> HandleClipFetchAsync(ClipFetchBody fetch, CancellationToken token)
     {
+        if (!options.OutboundAllowed())
+        {
+            // Paused/private: no clip body leaves this device, not even one announced before
+            // the pause. Retryable, so the peer fetches again once the gate reopens.
+            await SendAsync(ProtocolMessageTypes.Error, new ErrorBody
+            {
+                Code = ProtocolErrorCodes.PayloadNotFound,
+                Retryable = true,
+                FailedType = ProtocolMessageTypes.ClipFetch
+            }, token).ConfigureAwait(false);
+            return true;
+        }
+
         var ids = fetch.EventIds.Select(Guid.Parse).ToArray();
         var events = await store.GetSyncableEventsByIdsAsync(ids, token).ConfigureAwait(false);
         var byId = events.ToDictionary(item => item.EventId);

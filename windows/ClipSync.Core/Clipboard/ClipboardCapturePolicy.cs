@@ -51,6 +51,14 @@ public sealed class ClipboardCapturePolicy
             return new CaptureDecision.Reject(CaptureRejectionReason.PrivateMode);
         }
 
+        // Password managers (KeePass, 1Password, Bitwarden...) tag secrets with
+        // ExcludeClipboardContentFromMonitorProcessing / CanIncludeInClipboardHistory=0 /
+        // Clipboard Viewer Ignore. Honoring that is the Windows twin of Android's IS_SENSITIVE skip.
+        if (candidate.IsMarkedSensitive && settings.SkipSensitive)
+        {
+            return new CaptureDecision.Reject(CaptureRejectionReason.Sensitive);
+        }
+
         if (IsSourceBlocked(candidate.SourceProcess))
         {
             return new CaptureDecision.Reject(CaptureRejectionReason.SourceBlocked);

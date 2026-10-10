@@ -304,7 +304,8 @@ public sealed class Win32ClipboardAdapter : IDisposable
             snapshot.ImageBytes,
             snapshot.ImageMimeType,
             snapshot.PixelDigest,
-            snapshot.ExceedsCaptureBudget);
+            snapshot.ExceedsCaptureBudget,
+            snapshot.IsMarkedSensitive);
         var handlers = TextChanged;
         if (handlers is null)
         {

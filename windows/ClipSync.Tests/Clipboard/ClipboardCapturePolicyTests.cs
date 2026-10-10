@@ -9,6 +9,35 @@ public sealed class ClipboardCapturePolicyTests
     private static readonly string[] BlockedProcesses = ["KeePass", "bank-*"];
 
     [Fact]
+    public void SensitiveMarkedClipIsRejectedByDefault()
+    {
+        var result = new ClipboardCapturePolicy().Evaluate(
+            new ClipboardCandidate("hunter2", "KeePassXC", BaseTime, IsMarkedSensitive: true));
+
+        var rejected = Assert.IsType<CaptureDecision.Reject>(result);
+        Assert.Equal(CaptureRejectionReason.Sensitive, rejected.Reason);
+    }
+
+    [Fact]
+    public void SensitiveMarkedClipIsAcceptedWhenSkipIsTurnedOff()
+    {
+        var policy = new ClipboardCapturePolicy(new CaptureSettings(SkipSensitive: false));
+
+        var result = policy.Evaluate(new ClipboardCandidate("hunter2", "KeePassXC", BaseTime, IsMarkedSensitive: true));
+
+        Assert.IsType<CaptureDecision.Accept>(result);
+    }
+
+    [Fact]
+    public void SensitiveMarkedImageIsRejectedToo()
+    {
+        var result = new ClipboardCapturePolicy(new CaptureSettings(ImageSyncEnabled: true)).Evaluate(
+            new ClipboardCandidate(null, "app", BaseTime, ImageBytes: [0x89, 0x50], IsMarkedSensitive: true));
+
+        Assert.Equal(CaptureRejectionReason.Sensitive, Assert.IsType<CaptureDecision.Reject>(result).Reason);
+    }
+
+    [Fact]
     public void EvaluatePreservesUnicodeAndLineEndings()
     {
         var text = "第一行\r\nsecond line\nemoji 😀";

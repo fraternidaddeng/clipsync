@@ -54,8 +54,14 @@ public sealed class PeerAppWiringTests
             var path = Directory.GetFiles(directory).Single();
             File.WriteAllBytes(path, [1, 2, 3, 4]);
 
-            using var regenerated = PeerCertificateProvider.GetOrCreate(directory, deviceId, protector);
+            using var regenerated = PeerCertificateProvider.GetOrCreate(directory, deviceId, protector, out var replaced);
             Assert.NotEqual(PeerCertificate.Fingerprint(first), PeerCertificate.Fingerprint(regenerated));
+            Assert.True(replaced);
+            // The unusable file is preserved for recovery instead of being overwritten.
+            Assert.Single(Directory.GetFiles(directory, "peer-certificate.bin.bak-*"));
+
+            using var reloaded = PeerCertificateProvider.GetOrCreate(directory, deviceId, protector, out var replacedAgain);
+            Assert.False(replacedAgain);
         }
         finally
         {

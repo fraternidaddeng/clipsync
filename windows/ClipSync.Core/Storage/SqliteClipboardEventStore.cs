@@ -447,6 +447,9 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         return removed;
     }
 
+    /// <summary>Hard cap on pending outbox rows per peer; older rows beyond it are dropped at cleanup.</summary>
+    public const int MaximumOutboxRowsPerPeer = 10_000;
+
     public async ValueTask<int> CleanupAsync(
         ClipboardRetentionPolicy policy,
         DateTimeOffset now,
@@ -462,6 +465,27 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         int removed;
         try
         {
+            // Bound the pending-send queue first: a paired device that never comes back must not
+            // pin history past the retention period (TTL = MaximumAge) nor grow the outbox without
+            // limit (per-peer cap). The peer catches up through known_vector/want_ranges later.
+            await using (var outboxTrim = connection.CreateCommand())
+            {
+                outboxTrim.Transaction = transaction;
+                outboxTrim.CommandText = """
+                    DELETE FROM outbox
+                    WHERE event_id IN (SELECT event_id FROM clips WHERE created_at < $oldest_created_at);
+                    DELETE FROM outbox
+                    WHERE id IN (
+                        SELECT id FROM (
+                            SELECT id, ROW_NUMBER() OVER (PARTITION BY peer_id ORDER BY id DESC) AS rn
+                            FROM outbox)
+                        WHERE rn > $outbox_cap);
+                    """;
+                outboxTrim.Parameters.AddWithValue("$oldest_created_at", (now - policy.MaximumAge).ToUnixTimeMilliseconds());
+                outboxTrim.Parameters.AddWithValue("$outbox_cap", MaximumOutboxRowsPerPeer);
+                await outboxTrim.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+
             await using var command = connection.CreateCommand();
             command.Transaction = transaction;
             command.CommandText = """

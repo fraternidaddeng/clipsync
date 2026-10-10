@@ -54,7 +54,7 @@ class GitHubReleaseClient(
         destination: File,
         onProgress: (received: Long, total: Long) -> Unit = { _, _ -> },
     ) = withContext(ioContext) {
-        getSuccessful(asset.browserDownloadUrl, acceptGithubJson = false) { response ->
+        getSuccessful(asset.browserDownloadUrl, acceptGithubJson = false, allowMirrors = true) { response ->
             val body = response.body ?: throw IOException("Download had no body.")
             val total = body.contentLength().takeIf { it > 0 } ?: asset.sizeBytes
             destination.parentFile?.mkdirs()
@@ -84,17 +84,20 @@ class GitHubReleaseClient(
         acceptGithubJson: Boolean,
         parse: (String) -> T,
     ): T =
-        getSuccessful(url, acceptGithubJson) { response ->
+        // Metadata and SHA-256 are trust-bearing: GitHub only, never a third-party proxy.
+        getSuccessful(url, acceptGithubJson, allowMirrors = false) { response ->
             parse(response.body?.string().orEmpty())
         }
 
     private fun <T> getSuccessful(
         url: String,
         acceptGithubJson: Boolean,
+        allowMirrors: Boolean,
         handle: (Response) -> T,
     ): T {
+        val candidates = if (allowMirrors) GitHubUrlMirrors.candidates(url) else listOf(url.trim())
         var lastError: IOException? = null
-        for (candidate in GitHubUrlMirrors.candidates(url)) {
+        for (candidate in candidates) {
             try {
                 return executeCandidate(candidate, acceptGithubJson, handle)
             } catch (exception: IOException) {
