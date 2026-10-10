@@ -231,6 +231,49 @@ public sealed class ClipboardDataAccessorTests
         Assert.Equal(System.Diagnostics.Process.GetCurrentProcess().ProcessName, result);
     }
 
+    [Theory]
+    [InlineData(ClipboardDataAccessor.ExcludeFromMonitorFormatName)]
+    [InlineData(ClipboardDataAccessor.ViewerIgnoreFormatName)]
+    public void ReadFlagsPasswordManagerExclusionMarkers(string markerFormat)
+    {
+        using var nativeApi = new FakeClipboardNativeApi { ClipboardText = "hunter2" };
+        nativeApi.AvailableFormats.Add(nativeApi.RegisterClipboardFormat(markerFormat));
+
+        var result = CreateAccessor(nativeApi).ReadText(nint.Zero);
+
+        Assert.NotNull(result);
+        Assert.True(result.IsMarkedSensitive);
+    }
+
+    [Theory]
+    [InlineData(0, true)]
+    [InlineData(1, false)]
+    public void ReadHonorsCanIncludeInClipboardHistoryDword(int value, bool expectedSensitive)
+    {
+        using var nativeApi = new FakeClipboardNativeApi { ClipboardText = "hunter2" };
+        var format = nativeApi.RegisterClipboardFormat(ClipboardDataAccessor.IncludeInHistoryFormatName);
+        var memory = nativeApi.GlobalAlloc(0, sizeof(int));
+        Marshal.WriteInt32(memory, value);
+        nativeApi.AvailableFormats.Add(format);
+        nativeApi.FormatData[format] = memory;
+
+        var result = CreateAccessor(nativeApi).ReadText(nint.Zero);
+
+        Assert.NotNull(result);
+        Assert.Equal(expectedSensitive, result.IsMarkedSensitive);
+    }
+
+    [Fact]
+    public void PlainClipIsNotFlaggedSensitive()
+    {
+        using var nativeApi = new FakeClipboardNativeApi { ClipboardText = "hello" };
+
+        var result = CreateAccessor(nativeApi).ReadText(nint.Zero);
+
+        Assert.NotNull(result);
+        Assert.False(result.IsMarkedSensitive);
+    }
+
     private static ClipboardDataAccessor CreateAccessor(FakeClipboardNativeApi nativeApi) =>
         new(nativeApi, new FixedOwnerResolver(null), new RecordingDelay());
 

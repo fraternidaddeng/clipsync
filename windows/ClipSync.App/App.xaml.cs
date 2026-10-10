@@ -1067,7 +1067,8 @@ public partial class App : Application
                 e.ImageBytes,
                 e.ImageMimeType,
                 e.PixelDigest,
-                e.ExceedsCaptureBudget));
+                e.ExceedsCaptureBudget,
+                e.IsMarkedSensitive));
             if (result is CaptureResult.Stored or CaptureResult.StoredImage)
             {
                 LocalDiagnostics.Write(result is CaptureResult.StoredImage ? "capture_image_stored" : "capture_stored");
