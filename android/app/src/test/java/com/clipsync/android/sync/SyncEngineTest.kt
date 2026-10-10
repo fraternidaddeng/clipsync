@@ -133,6 +133,7 @@ private fun deletedReAnnounce(
     ),
 )
 
+@Suppress("LargeClass")
 class SyncEngineTest {
     private fun config(nowMs: () -> Long = { 1_776_000_000_000 }) = SyncSessionConfig(
         localDeviceId = LOCAL_ID,

@@ -603,6 +603,7 @@ class SyncEngine(
         return true
     }
 
+    @Suppress("ReturnCount")
     private suspend fun handleClipFetch(fetch: ClipFetchBody): Boolean {
         if (!config.outboundAllowed()) {
             // Paused/private: no clip body leaves this device, not even one announced before
