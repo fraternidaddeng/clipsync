@@ -361,7 +361,7 @@ public sealed class PeerServer : IAsyncDisposable
         // The dialer picks the contract by path: /v1 keeps the frozen text protocol,
         // /v2 enables image_clip_v2 for this session only.
         var sessionOptions = options.SessionOptions with { ProtocolVersion = protocolVersion };
-        var engine = new SyncSessionEngine(
+        using var engine = new SyncSessionEngine(
             SyncSessionRole.Listener,
             store,
             secretProtector,

@@ -483,7 +483,13 @@ public partial class App : Application
         try
         {
             var protector = services!.GetRequiredService<ISecretProtector>();
-            var certificate = PeerCertificateProvider.GetOrCreate(dataDirectory, deviceId, protector);
+            var certificate = PeerCertificateProvider.GetOrCreate(dataDirectory, deviceId, protector, out var identityReset);
+            if (identityReset)
+            {
+                // Paired phones pin the old fingerprint and will now fail with a pin mismatch;
+                // the old file is kept as .bak-* and the event is visible in tray diagnostics.
+                LocalDiagnostics.Write("peer_certificate_regenerated_repair_required");
+            }
             // Pairing/session events land in the tray diagnostics as codes only (see
             // DiagnosticsLogCodes), so a scan that ends in "pairing failed" on the phone can
             // be answered with whether the confirm request ever reached this PC.
