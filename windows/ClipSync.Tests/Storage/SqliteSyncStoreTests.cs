@@ -140,6 +140,29 @@ public sealed class SqliteSyncStoreTests
     }
 
     [Fact]
+    public async Task CleanupExpiresQueuedClipsOlderThanRetentionForAnOfflinePeer()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+        for (var index = 0; index < 3; index++)
+        {
+            await store.StoreAsync(Content($"old-{index}", BaseTime.AddSeconds(index)));
+        }
+
+        await store.StoreAsync(Content("fresh", BaseTime.AddDays(40)));
+
+        var removed = await store.CleanupAsync(
+            new ClipboardRetentionPolicy(maximumEntries: 100, maximumAge: TimeSpan.FromDays(30)),
+            BaseTime.AddDays(40).AddSeconds(1));
+
+        Assert.Equal(3, removed);
+        var batch = await store.GetOutboxBatchAsync(PhoneDeviceId, 10);
+        Assert.Equal("fresh", Assert.Single(batch).Event.Content);
+        Assert.Equal("fresh", Assert.Single(await store.SearchAsync(new ClipboardHistoryQuery())).Text);
+    }
+
+    [Fact]
     public async Task AlreadyPersistedRestoresReceiveCoverageAfterStateLoss()
     {
         await using var database = new TemporaryDatabase();
