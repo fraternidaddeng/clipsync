@@ -65,8 +65,9 @@ public sealed class GitHubReleaseClientTests
     }
 
     [Fact]
-    public async Task FetchLatestFallsBackToTheFirstPrefixWhenOfficialReturnsForbidden()
+    public async Task FetchLatestNeverFallsBackToAThirdPartyMirror()
     {
+        // Release metadata carries the trusted digest, so it must only come from GitHub.
         var official =
             $"https://api.github.com/repos/{GitHubReleaseClient.DefaultOwner}/{GitHubReleaseClient.DefaultRepo}{GitHubReleaseClient.LatestPath}";
         var mirror = GitHubUrlMirrors.Prefixes[0] + official;
@@ -81,9 +82,26 @@ public sealed class GitHubReleaseClientTests
                 [mirror] = (HttpStatusCode.OK, json),
             },
             latestUri: new Uri(official));
-        var release = await client.FetchLatestAsync();
-        Assert.Equal("0.4.0", release.VersionLabel);
-        Assert.Equal(new[] { official, mirror }, seen);
+        await Assert.ThrowsAsync<HttpRequestException>(() => client.FetchLatestAsync());
+        Assert.Equal(new[] { official }, seen);
+    }
+
+    [Fact]
+    public async Task Sha256SidecarIsNeverFetchedFromAMirror()
+    {
+        var payloadUrl = "https://github.com/fraternidaddeng/clipsync/releases/download/v0.4.0/clip.zip";
+        var sidecarUrl = payloadUrl + ".sha256";
+        var seen = new List<string>();
+        using var client = new GitHubReleaseClient(
+            handler: new UrlMapHandler(seen)
+            {
+                [sidecarUrl] = (HttpStatusCode.BadGateway, "down"),
+                [GitHubUrlMirrors.Prefixes[0] + sidecarUrl] = (HttpStatusCode.OK, new string('a', 64)),
+            });
+        var payload = new ReleaseAsset("clip.zip", payloadUrl, 3, null);
+        var release = new GitHubLatestRelease("v0.4.0", "https://github.com/x", [payload, new ReleaseAsset("clip.zip.sha256", sidecarUrl, 64, null)]);
+        await Assert.ThrowsAsync<HttpRequestException>(() => client.ResolveSha256Async(release, payload));
+        Assert.Equal(new[] { sidecarUrl }, seen);
     }
 
     [Fact]

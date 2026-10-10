@@ -55,6 +55,7 @@ public sealed class WindowsAppUpdater : IDisposable
             {
                 await client.DownloadAsync(check.Payload, file, progress, cancellationToken).ConfigureAwait(false);
                 GitHubReleaseClient.VerifySha256(file, expectedSha);
+                await VerifySignatureAsync(check, file, cancellationToken).ConfigureAwait(false);
             }
 
             var payload = PortableUpdateApplier.ExtractPayloadDirectory(
@@ -86,6 +87,26 @@ public sealed class WindowsAppUpdater : IDisposable
             }
 
             throw;
+        }
+    }
+
+    /// <summary>
+    /// Refuses to install anything not signed by the embedded release key. The SHA-256 above
+    /// only proves the bytes match GitHub's metadata; the signature proves who built them.
+    /// </summary>
+    private async Task VerifySignatureAsync(UpdateCheckResult check, Stream payload, CancellationToken cancellationToken)
+    {
+        if (!UpdateSignature.IsConfigured())
+        {
+            throw new UpdateSignatureException("Release signing key is not configured; automatic install is disabled.");
+        }
+
+        var signatureAsset = UpdateSignature.FindSignature(check.Latest, check.Payload!)
+            ?? throw new UpdateSignatureException($"Release {check.Latest.TagName} has no signature for '{check.Payload!.Name}'.");
+        var signature = await client.DownloadTextFromGitHubAsync(signatureAsset, cancellationToken).ConfigureAwait(false);
+        if (!UpdateSignature.Verify(payload, signature))
+        {
+            throw new UpdateSignatureException("Release signature verification failed.");
         }
     }
 
