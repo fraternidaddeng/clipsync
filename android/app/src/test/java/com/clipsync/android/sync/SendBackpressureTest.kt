@@ -9,21 +9,23 @@ import org.junit.Test
 
 class SendBackpressureTest {
     @Test
-    fun waitsUntilQueueDrainsBelowLimit() = runTest {
-        var queued = 10L * 1024 * 1024
-        SendBackpressure.awaitBelow(limitBytes = 4L * 1024 * 1024, pollMs = 20) {
-            queued -= 1024 * 1024 // the socket writes 1 MiB per poll
-            queued
+    fun waitsUntilQueueDrainsBelowLimit() =
+        runTest {
+            var queued = 10L * 1024 * 1024
+            SendBackpressure.awaitBelow(limitBytes = 4L * 1024 * 1024, pollMs = 20) {
+                queued -= 1024 * 1024 // the socket writes 1 MiB per poll
+                queued
+            }
+            assertEquals(true, queued <= 4L * 1024 * 1024)
+            assertEquals(100L, currentTime) // 5 extra polls of 20 ms
         }
-        assertEquals(true, queued <= 4L * 1024 * 1024)
-        assertEquals(100L, currentTime) // 5 extra polls of 20 ms
-    }
 
     @Test
-    fun returnsImmediatelyWhenQueueIsSmall() = runTest {
-        SendBackpressure.awaitBelow(limitBytes = 1, pollMs = 20) { 0L }
-        assertEquals(0L, currentTime)
-    }
+    fun returnsImmediatelyWhenQueueIsSmall() =
+        runTest {
+            SendBackpressure.awaitBelow(limitBytes = 1, pollMs = 20) { 0L }
+            assertEquals(0L, currentTime)
+        }
 
     @Test
     fun lazyChunksMatchEagerSplitForAMaxSizeImage() {
