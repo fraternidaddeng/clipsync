@@ -40,38 +40,29 @@ object ImageChunks {
     }
 
     /** Encodes one chunk on demand so a sender never holds every base64 chunk at once. */
-    fun chunkAt(
-        encoded: ByteArray,
-        index: Int,
-        count: Int,
-    ): ImageChunk {
+    fun chunkAt(encoded: ByteArray, index: Int, count: Int): ImageChunk {
         val start = index * MediaLimits.MAX_CHUNK_BYTES
         val length = minOf(MediaLimits.MAX_CHUNK_BYTES, encoded.size - start)
-        val data =
-            Base64
-                .getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(encoded.copyOfRange(start, start + length))
+        val data = Base64.getUrlEncoder().withoutPadding()
+            .encodeToString(encoded.copyOfRange(start, start + length))
         return ImageChunk(index = index, count = count, byteCount = length, data = data)
     }
 
-    fun tryDecodeChunk(
-        data: String,
-        expectedBytes: Int,
-    ): ByteArray? {
-        val decoded =
-            try {
-                decodeBase64Url(data)
-            } catch (_: IllegalArgumentException) {
-                return null
-            }
+    fun tryDecodeChunk(data: String, expectedBytes: Int): ByteArray? {
+        val decoded = try {
+            decodeBase64Url(data)
+        } catch (_: IllegalArgumentException) {
+            return null
+        }
         if (decoded.size != expectedBytes || expectedBytes !in 1..MediaLimits.MAX_CHUNK_BYTES) {
             return null
         }
         return decoded
     }
 
-    fun encodeBase64Url(bytes: ByteArray): String = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)
+    fun encodeBase64Url(bytes: ByteArray): String =
+        Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)
 
-    fun decodeBase64Url(value: String): ByteArray = Base64.getUrlDecoder().decode(value)
+    fun decodeBase64Url(value: String): ByteArray =
+        Base64.getUrlDecoder().decode(value)
 }

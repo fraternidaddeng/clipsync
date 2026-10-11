@@ -6,6 +6,10 @@ import com.clipsync.android.media.MediaStoreException
 import com.clipsync.android.media.PendingMediaWrite
 import com.clipsync.android.media.ValidatedImage
 import com.clipsync.android.protocol.ProtocolJson
+import java.io.IOException
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -18,10 +22,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
-import java.util.concurrent.atomic.AtomicInteger
 
 /** Tuning knobs for one session. Defaults follow protocol v1 and match the Windows engine. */
 data class SyncSessionConfig(
@@ -56,11 +56,7 @@ data class SyncSessionConfig(
 )
 
 /** Why the session ended; [errorCode] is a protocol code when one applies. */
-data class SyncSessionResult(
-    val authenticated: Boolean,
-    val errorCode: String?,
-    val detail: String,
-)
+data class SyncSessionResult(val authenticated: Boolean, val errorCode: String?, val detail: String)
 
 /**
  * One protocol v1 sync session in the dialer role, mirroring the Windows SyncSessionEngine:
@@ -125,14 +121,13 @@ class SyncEngine(
                 if (closeRequested) {
                     sessionJob?.cancel()
                 }
-                val watchdog =
-                    launch {
-                        delay(config.handshakeTimeoutMs)
-                        if (state != State.READY) {
-                            complete(SyncSessionResult(false, null, "handshake_timeout"))
-                            requestClose()
-                        }
+                val watchdog = launch {
+                    delay(config.handshakeTimeoutMs)
+                    if (state != State.READY) {
+                        complete(SyncSessionResult(false, null, "handshake_timeout"))
+                        requestClose()
                     }
+                }
                 var pingLoop: Job? = null
                 var outboxLoop: Job? = null
 
@@ -212,16 +207,15 @@ class SyncEngine(
 
     /** Returns false when the session must stop. */
     private suspend fun dispatch(text: String): Boolean {
-        val message =
-            try {
-                SyncWire.decode(text, config.protocolVersion)
-            } catch (_: SerializationException) {
-                fail(SyncErrorCodes.SCHEMA_VIOLATION, "invalid_frame")
-                return false
-            } catch (_: IllegalArgumentException) {
-                fail(SyncErrorCodes.SCHEMA_VIOLATION, "invalid_frame")
-                return false
-            }
+        val message = try {
+            SyncWire.decode(text, config.protocolVersion)
+        } catch (_: SerializationException) {
+            fail(SyncErrorCodes.SCHEMA_VIOLATION, "invalid_frame")
+            return false
+        } catch (_: IllegalArgumentException) {
+            fail(SyncErrorCodes.SCHEMA_VIOLATION, "invalid_frame")
+            return false
+        }
 
         when (replayWindow.classify(message.requestId, text)) {
             ReplayVerdict.IDENTICAL_RETRY -> return true
@@ -291,10 +285,7 @@ class SyncEngine(
         return false
     }
 
-    private suspend fun handleChallenge(
-        body: ChallengeBody,
-        requestId: String,
-    ): Boolean {
+    private suspend fun handleChallenge(body: ChallengeBody, requestId: String): Boolean {
         if (state != State.EXPECT_CHALLENGE) {
             return unexpected()
         }
@@ -320,16 +311,15 @@ class SyncEngine(
             return false
         }
 
-        val proof =
-            PairAuthProof.compute(
-                pairSecret,
-                challengeRequestId = requestId,
-                nonce = nonce,
-                challengerDeviceId = config.peerDeviceId,
-                responderDeviceId = config.localDeviceId,
-                trustEpoch = body.trustEpoch,
-                protocolVersion = config.protocolVersion,
-            )
+        val proof = PairAuthProof.compute(
+            pairSecret,
+            challengeRequestId = requestId,
+            nonce = nonce,
+            challengerDeviceId = config.peerDeviceId,
+            responderDeviceId = config.localDeviceId,
+            trustEpoch = body.trustEpoch,
+            protocolVersion = config.protocolVersion,
+        )
         send(
             SyncMessageTypes.AUTH,
             AuthBody(
@@ -352,11 +342,10 @@ class SyncEngine(
         val parsed = HashMap<String, OriginReceiveState>()
         try {
             for (origin in vector.origins) {
-                parsed[origin.originDeviceId] =
-                    OriginReceiveState(
-                        origin.contiguousSeq,
-                        origin.receivedRanges.orEmpty().map { SequenceRange(it.startSeq, it.endSeq) },
-                    )
+                parsed[origin.originDeviceId] = OriginReceiveState(
+                    origin.contiguousSeq,
+                    origin.receivedRanges.orEmpty().map { SequenceRange(it.startSeq, it.endSeq) },
+                )
             }
         } catch (_: IllegalArgumentException) {
             fail(SyncErrorCodes.SCHEMA_VIOLATION, "vector_invariants")
@@ -368,11 +357,10 @@ class SyncEngine(
         // Their persisted coverage is acknowledgment evidence: prune what they already hold.
         // Coverage proves the peer holds the sequence's long-gone content, not that it heard
         // about a later deletion, so tombstone outbox rows survive this prune (like Windows).
-        val covered =
-            parsed
-                .filterKeys { it != config.peerDeviceId }
-                .map { (origin, held) -> OriginSequenceRanges(origin, held.toCoverage()) }
-                .filter { it.ranges.isNotEmpty() }
+        val covered = parsed
+            .filterKeys { it != config.peerDeviceId }
+            .map { (origin, held) -> OriginSequenceRanges(origin, held.toCoverage()) }
+            .filter { it.ranges.isNotEmpty() }
         if (covered.isNotEmpty()) {
             repository.applyPeerAckRanges(config.peerDeviceId, covered, config.nowMs(), dropTerminalOutbox = false)
         }
@@ -413,10 +401,9 @@ class SyncEngine(
     }
 
     private suspend fun handleWantRanges(wants: WantRangesBody): Boolean {
-        val totalRequested =
-            wants.requests.sumOf { request ->
-                SequenceRangeMath.totalCount(request.ranges.map { SequenceRange(it.startSeq, it.endSeq) })
-            }
+        val totalRequested = wants.requests.sumOf { request ->
+            SequenceRangeMath.totalCount(request.ranges.map { SequenceRange(it.startSeq, it.endSeq) })
+        }
         if (totalRequested > config.maxRequestedSequencesPerMessage) {
             send(
                 SyncMessageTypes.ERROR,
@@ -439,12 +426,11 @@ class SyncEngine(
         for (request in wants.requests) {
             var remaining: List<SequenceRange> = request.ranges.map { SequenceRange(it.startSeq, it.endSeq) }
             while (remaining.isNotEmpty()) {
-                val events =
-                    repository.getSyncableEvents(
-                        request.originDeviceId,
-                        remaining,
-                        SyncLimits.MAX_ANNOUNCE_CLIPS,
-                    )
+                val events = repository.getSyncableEvents(
+                    request.originDeviceId,
+                    remaining,
+                    SyncLimits.MAX_ANNOUNCE_CLIPS,
+                )
                 if (events.isEmpty()) {
                     break
                 }
@@ -488,11 +474,10 @@ class SyncEngine(
             }
 
             if (header.availability == ClipAvailability.UNAVAILABLE) {
-                val stored =
-                    repository.storeRemoteTerminal(
-                        RemoteTerminalMarker(header.eventId, origin, header.originSeq, header.reason!!),
-                        config.peerDeviceId,
-                    )
+                val stored = repository.storeRemoteTerminal(
+                    RemoteTerminalMarker(header.eventId, origin, header.originSeq, header.reason!!),
+                    config.peerDeviceId,
+                )
                 if (stored is RemoteStoreResult.IdentityConflict) {
                     fail(SyncErrorCodes.EVENT_CONFLICT, "terminal_conflict")
                     return false
@@ -526,17 +511,16 @@ class SyncEngine(
 
             val known = repository.findLiveContentByHash(header.contentHash!!)
             if (known != null && known.toByteArray(StandardCharsets.UTF_8).size.toLong() == header.utf8Bytes) {
-                val replay =
-                    RemoteClipEvent(
-                        eventId = header.eventId,
-                        originDeviceId = origin,
-                        originSeq = header.originSeq,
-                        content = known,
-                        contentHash = header.contentHash,
-                        sourceApp = header.sourceApp,
-                        createdAtMs = header.createdAtMs!!,
-                        expiresAtMs = header.expiresAtMs,
-                    )
+                val replay = RemoteClipEvent(
+                    eventId = header.eventId,
+                    originDeviceId = origin,
+                    originSeq = header.originSeq,
+                    content = known,
+                    contentHash = header.contentHash,
+                    sourceApp = header.sourceApp,
+                    createdAtMs = header.createdAtMs!!,
+                    expiresAtMs = header.expiresAtMs,
+                )
                 val stored = repository.storeRemoteEvent(replay, config.peerDeviceId)
                 if (stored is RemoteStoreResult.IdentityConflict) {
                     fail(SyncErrorCodes.EVENT_CONFLICT, "announce_conflict")
@@ -580,25 +564,24 @@ class SyncEngine(
         blob: ValidatedImage,
         committed: MutableList<RemoteClipApplied>,
     ): Boolean {
-        val stored =
-            repository.storeRemoteEvent(
-                RemoteClipEvent(
-                    eventId = header.eventId,
-                    originDeviceId = header.originDeviceId,
-                    originSeq = header.originSeq,
-                    content = "",
-                    contentHash = blob.contentHash,
-                    sourceApp = header.sourceApp,
-                    createdAtMs = header.createdAtMs ?: config.nowMs(),
-                    expiresAtMs = header.expiresAtMs,
-                    kind = MediaLimits.KIND_IMAGE,
-                    mimeType = blob.mimeType,
-                    encodedBytes = blob.encodedBytes,
-                    pixelWidth = blob.pixelWidth,
-                    pixelHeight = blob.pixelHeight,
-                ),
-                config.peerDeviceId,
-            )
+        val stored = repository.storeRemoteEvent(
+            RemoteClipEvent(
+                eventId = header.eventId,
+                originDeviceId = header.originDeviceId,
+                originSeq = header.originSeq,
+                content = "",
+                contentHash = blob.contentHash,
+                sourceApp = header.sourceApp,
+                createdAtMs = header.createdAtMs ?: config.nowMs(),
+                expiresAtMs = header.expiresAtMs,
+                kind = MediaLimits.KIND_IMAGE,
+                mimeType = blob.mimeType,
+                encodedBytes = blob.encodedBytes,
+                pixelWidth = blob.pixelWidth,
+                pixelHeight = blob.pixelHeight,
+            ),
+            config.peerDeviceId,
+        )
         if (stored is RemoteStoreResult.IdentityConflict) {
             fail(SyncErrorCodes.EVENT_CONFLICT, "announce_conflict")
             return false
@@ -676,11 +659,7 @@ class SyncEngine(
                     kind = "text",
                     content = item.content!!,
                     contentHash = item.contentHash!!,
-                    utf8Bytes =
-                        item.content
-                            .toByteArray(StandardCharsets.UTF_8)
-                            .size
-                            .toLong(),
+                    utf8Bytes = item.content.toByteArray(StandardCharsets.UTF_8).size.toLong(),
                     sourceApp = item.sourceApp,
                     createdAtMs = item.createdAtMs,
                     expiresAtMs = item.expiresAtMs,
@@ -727,17 +706,16 @@ class SyncEngine(
                 return false
             }
 
-            val remoteEvent =
-                RemoteClipEvent(
-                    eventId = item.eventId,
-                    originDeviceId = item.originDeviceId,
-                    originSeq = item.originSeq,
-                    content = item.content,
-                    contentHash = item.contentHash,
-                    sourceApp = item.sourceApp,
-                    createdAtMs = item.createdAtMs,
-                    expiresAtMs = item.expiresAtMs,
-                )
+            val remoteEvent = RemoteClipEvent(
+                eventId = item.eventId,
+                originDeviceId = item.originDeviceId,
+                originSeq = item.originSeq,
+                content = item.content,
+                contentHash = item.contentHash,
+                sourceApp = item.sourceApp,
+                createdAtMs = item.createdAtMs,
+                expiresAtMs = item.expiresAtMs,
+            )
             val stored = repository.storeRemoteEvent(remoteEvent, config.peerDeviceId)
             if (stored is RemoteStoreResult.IdentityConflict) {
                 fail(SyncErrorCodes.EVENT_CONFLICT, "payload_conflict")
@@ -760,10 +738,9 @@ class SyncEngine(
     }
 
     private suspend fun handleAckRanges(body: AckRangesBody): Boolean {
-        val ranges =
-            body.acks.map { ack ->
-                OriginSequenceRanges(ack.originDeviceId, ack.ranges.map { SequenceRange(it.startSeq, it.endSeq) })
-            }
+        val ranges = body.acks.map { ack ->
+            OriginSequenceRanges(ack.originDeviceId, ack.ranges.map { SequenceRange(it.startSeq, it.endSeq) })
+        }
         repository.applyPeerAckRanges(config.peerDeviceId, ranges, config.nowMs())
         if (ranges.any { it.ranges.isNotEmpty() }) {
             onContentSynced()
@@ -830,18 +807,15 @@ class SyncEngine(
         if (acks.isEmpty()) {
             return
         }
-        val grouped =
-            acks
-                .groupBy({ it.first }, { it.second })
-                .map { (origin, sequences) ->
-                    OriginRangesDto(
-                        originDeviceId = origin,
-                        ranges =
-                            SequenceRangeMath
-                                .normalize(sequences.map { SequenceRange(it, it) })
-                                .map { RangeDto(it.startSeq, it.endSeq) },
-                    )
-                }
+        val grouped = acks
+            .groupBy({ it.first }, { it.second })
+            .map { (origin, sequences) ->
+                OriginRangesDto(
+                    originDeviceId = origin,
+                    ranges = SequenceRangeMath.normalize(sequences.map { SequenceRange(it, it) })
+                        .map { RangeDto(it.startSeq, it.endSeq) },
+                )
+            }
         send(SyncMessageTypes.ACK_RANGES, AckRangesBody(grouped))
     }
 
@@ -855,19 +829,17 @@ class SyncEngine(
     private suspend fun buildKnownVector(): SyncStateBody {
         val vector = repository.knownVector()
         return SyncStateBody(
-            origins =
-                vector.entries
-                    .sortedBy { it.key }
-                    .map { (origin, held) ->
-                        OriginStateDto(
-                            originDeviceId = origin,
-                            contiguousSeq = held.contiguousSeq,
-                            receivedRanges =
-                                held.receivedRanges
-                                    .takeIf { it.isNotEmpty() }
-                                    ?.map { RangeDto(it.startSeq, it.endSeq) },
-                        )
-                    },
+            origins = vector.entries
+                .sortedBy { it.key }
+                .map { (origin, held) ->
+                    OriginStateDto(
+                        originDeviceId = origin,
+                        contiguousSeq = held.contiguousSeq,
+                        receivedRanges = held.receivedRanges
+                            .takeIf { it.isNotEmpty() }
+                            ?.map { RangeDto(it.startSeq, it.endSeq) },
+                    )
+                },
         )
     }
 
@@ -894,10 +866,7 @@ class SyncEngine(
         }
     }
 
-    private fun buildHeader(
-        item: SyncableClipEvent,
-        marks: ImageLocalOnlyMarks? = null,
-    ): ClipHeaderDto {
+    private fun buildHeader(item: SyncableClipEvent, marks: ImageLocalOnlyMarks? = null): ClipHeaderDto {
         // Images cannot travel a v1 session: announce them as `local_only` terminal markers so
         // the peer's contiguous cursor still advances (docs/protocol-v2.md section 7).
         val v1Image = item.isImage && !isV2
@@ -934,23 +903,18 @@ class SyncEngine(
                     expiresAtMs = item.expiresAtMs,
                 )
             }
-            else ->
-                ClipHeaderDto(
-                    eventId = item.eventId,
-                    originDeviceId = item.originDeviceId,
-                    originSeq = item.originSeq,
-                    availability = ClipAvailability.AVAILABLE,
-                    kind = "text",
-                    contentHash = item.contentHash,
-                    utf8Bytes =
-                        item.content!!
-                            .toByteArray(StandardCharsets.UTF_8)
-                            .size
-                            .toLong(),
-                    sourceApp = item.sourceApp,
-                    createdAtMs = item.createdAtMs,
-                    expiresAtMs = item.expiresAtMs,
-                )
+            else -> ClipHeaderDto(
+                eventId = item.eventId,
+                originDeviceId = item.originDeviceId,
+                originSeq = item.originSeq,
+                availability = ClipAvailability.AVAILABLE,
+                kind = "text",
+                contentHash = item.contentHash,
+                utf8Bytes = item.content!!.toByteArray(StandardCharsets.UTF_8).size.toLong(),
+                sourceApp = item.sourceApp,
+                createdAtMs = item.createdAtMs,
+                expiresAtMs = item.expiresAtMs,
+            )
         }
     }
 
@@ -964,20 +928,18 @@ class SyncEngine(
             fail(SyncErrorCodes.MEDIA_STORAGE_FAILED, "blob_missing")
             return false
         }
-        val bytes =
-            try {
-                store.readAllBytes(hash)
-            } catch (_: Exception) {
-                fail(SyncErrorCodes.MEDIA_STORAGE_FAILED, "blob_missing")
-                return false
-            }
-        val chunkCount =
-            try {
-                ImageChunks.chunkCount(bytes)
-            } catch (_: IllegalArgumentException) {
-                fail(SyncErrorCodes.MEDIA_TOO_LARGE, "blob_out_of_bounds")
-                return false
-            }
+        val bytes = try {
+            store.readAllBytes(hash)
+        } catch (_: Exception) {
+            fail(SyncErrorCodes.MEDIA_STORAGE_FAILED, "blob_missing")
+            return false
+        }
+        val chunkCount = try {
+            ImageChunks.chunkCount(bytes)
+        } catch (_: IllegalArgumentException) {
+            fail(SyncErrorCodes.MEDIA_TOO_LARGE, "blob_out_of_bounds")
+            return false
+        }
         val transferId = SyncWire.newRequestId()
         send(
             SyncMessageTypes.CLIP_PAYLOAD_BEGIN,
@@ -1044,21 +1006,19 @@ class SyncEngine(
             fail(SyncErrorCodes.MEDIA_STORAGE_FAILED, "media_store_unavailable")
             return false
         }
-        val pending =
-            try {
-                store.beginWrite()
-            } catch (_: Exception) {
-                fail(SyncErrorCodes.MEDIA_STORAGE_FAILED, "temp_open_failed")
-                return false
-            }
-        incomingImages[begin.eventId] =
-            IncomingImageTransfer(
-                transferId = begin.transferId,
-                header = header,
-                pending = pending,
-                chunkCount = begin.chunkCount,
-                contentHash = begin.contentHash,
-            )
+        val pending = try {
+            store.beginWrite()
+        } catch (_: Exception) {
+            fail(SyncErrorCodes.MEDIA_STORAGE_FAILED, "temp_open_failed")
+            return false
+        }
+        incomingImages[begin.eventId] = IncomingImageTransfer(
+            transferId = begin.transferId,
+            header = header,
+            pending = pending,
+            chunkCount = begin.chunkCount,
+            contentHash = begin.contentHash,
+        )
         return true
     }
 
@@ -1118,36 +1078,34 @@ class SyncEngine(
         }
         // Validates magic bytes, dimensions, size, and hash, then moves the temp file to its
         // content-addressed home. Only after this commit is the event row persisted and acked.
-        val validated =
-            try {
-                store.commit(transfer.pending, transfer.contentHash, transfer.header.mimeType)
-            } catch (error: MediaStoreException) {
-                fail(error.code, "image_commit_failed")
-                return false
-            } catch (_: Exception) {
-                fail(SyncErrorCodes.MEDIA_STORAGE_FAILED, "image_commit_failed")
-                return false
-            }
+        val validated = try {
+            store.commit(transfer.pending, transfer.contentHash, transfer.header.mimeType)
+        } catch (error: MediaStoreException) {
+            fail(error.code, "image_commit_failed")
+            return false
+        } catch (_: Exception) {
+            fail(SyncErrorCodes.MEDIA_STORAGE_FAILED, "image_commit_failed")
+            return false
+        }
         val header = transfer.header
-        val stored =
-            repository.storeRemoteEvent(
-                RemoteClipEvent(
-                    eventId = end.eventId,
-                    originDeviceId = header.originDeviceId,
-                    originSeq = header.originSeq,
-                    content = "",
-                    contentHash = validated.contentHash,
-                    sourceApp = header.sourceApp,
-                    createdAtMs = header.createdAtMs ?: config.nowMs(),
-                    expiresAtMs = header.expiresAtMs,
-                    kind = MediaLimits.KIND_IMAGE,
-                    mimeType = validated.mimeType,
-                    encodedBytes = validated.encodedBytes,
-                    pixelWidth = validated.pixelWidth,
-                    pixelHeight = validated.pixelHeight,
-                ),
-                config.peerDeviceId,
-            )
+        val stored = repository.storeRemoteEvent(
+            RemoteClipEvent(
+                eventId = end.eventId,
+                originDeviceId = header.originDeviceId,
+                originSeq = header.originSeq,
+                content = "",
+                contentHash = validated.contentHash,
+                sourceApp = header.sourceApp,
+                createdAtMs = header.createdAtMs ?: config.nowMs(),
+                expiresAtMs = header.expiresAtMs,
+                kind = MediaLimits.KIND_IMAGE,
+                mimeType = validated.mimeType,
+                encodedBytes = validated.encodedBytes,
+                pixelWidth = validated.pixelWidth,
+                pixelHeight = validated.pixelHeight,
+            ),
+            config.peerDeviceId,
+        )
         if (stored is RemoteStoreResult.IdentityConflict) {
             fail(SyncErrorCodes.EVENT_CONFLICT, "image_payload_conflict")
             return false
@@ -1192,10 +1150,8 @@ class SyncEngine(
         var batchBytes = 0L
         for (item in items) {
             if (batch.isNotEmpty() &&
-                (
-                    batch.size >= SyncLimits.MAX_PAYLOAD_CLIPS ||
-                        batchBytes + item.utf8Bytes > SyncLimits.MAX_PAYLOAD_BATCH_CONTENT_BYTES
-                )
+                (batch.size >= SyncLimits.MAX_PAYLOAD_CLIPS ||
+                    batchBytes + item.utf8Bytes > SyncLimits.MAX_PAYLOAD_BATCH_CONTENT_BYTES)
             ) {
                 batches.add(batch)
                 batch = mutableListOf()
@@ -1210,10 +1166,7 @@ class SyncEngine(
         return batches
     }
 
-    private suspend fun fail(
-        errorCode: String,
-        detail: String,
-    ) {
+    private suspend fun fail(errorCode: String, detail: String) {
         complete(SyncSessionResult(isAuthenticated, errorCode, detail))
         runCatching {
             send(SyncMessageTypes.ERROR, ErrorBody(code = errorCode, retryable = false))
@@ -1229,10 +1182,7 @@ class SyncEngine(
         }
     }
 
-    private suspend fun send(
-        type: String,
-        body: Any,
-    ) {
+    private suspend fun send(type: String, body: Any) {
         val frame = SyncWire.encode(type, SyncWire.newRequestId(), body, config.protocolVersion)
         sendMutex.withLock {
             transport.send(frame)
@@ -1250,21 +1200,14 @@ class SyncEngine(
     private enum class ReplayVerdict { FRESH, IDENTICAL_RETRY, CONFLICT }
 
     /** Bounded request-id replay detector per protocol section 2. */
-    private class ReplayWindow(
-        private val capacity: Int,
-    ) {
+    private class ReplayWindow(private val capacity: Int) {
         private val hashes = HashMap<String, String>()
         private val order = ArrayDeque<String>()
 
-        fun classify(
-            requestId: String,
-            rawFrame: String,
-        ): ReplayVerdict {
-            val hash =
-                MessageDigest
-                    .getInstance("SHA-256")
-                    .digest(rawFrame.toByteArray(StandardCharsets.UTF_8))
-                    .joinToString(separator = "") { byte -> "%02x".format(byte) }
+        fun classify(requestId: String, rawFrame: String): ReplayVerdict {
+            val hash = MessageDigest.getInstance("SHA-256")
+                .digest(rawFrame.toByteArray(StandardCharsets.UTF_8))
+                .joinToString(separator = "") { byte -> "%02x".format(byte) }
             hashes[requestId]?.let { existing ->
                 return if (existing == hash) ReplayVerdict.IDENTICAL_RETRY else ReplayVerdict.CONFLICT
             }
