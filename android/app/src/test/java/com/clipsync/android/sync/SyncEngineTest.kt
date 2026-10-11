@@ -619,7 +619,12 @@ class SyncEngineTest {
     fun `clip_fetch is refused while outbound is gated`() =
         runTest {
             val repository = InMemorySyncRepository(LOCAL_ID)
-            val local = repository.recordLocalClip("announced before pause", sourceApp = null, nowMs = 1_776_000_001_000)!!
+            val local =
+                repository.recordLocalClip(
+                    "announced before pause",
+                    sourceApp = null,
+                    nowMs = 1_776_000_001_000,
+                )!!
             val engine = SyncEngine(repository, config().copy(outboundAllowed = { false }), SECRET)
             val transport = FakeTransport()
             val result = CompletableDeferred<SyncSessionResult>()
