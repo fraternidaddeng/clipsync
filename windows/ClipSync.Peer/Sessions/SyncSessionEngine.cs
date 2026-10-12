@@ -34,7 +34,7 @@ public sealed class SyncSessionEngine : IDisposable
     private readonly TimeProvider clock;
     private readonly SemaphoreSlim sendLock = new(1, 1);
     private readonly Channel<ClipFetchBody> pendingFetches = Channel.CreateBounded<ClipFetchBody>(
-        new BoundedChannelOptions(32) { SingleReader = true, SingleWriter = true });
+        new BoundedChannelOptions(128) { SingleReader = true, SingleWriter = true });
     private readonly Dictionary<Guid, ClipHeaderDto> outstandingFetches = [];
     private readonly Dictionary<Guid, IncomingImageTransfer> incomingImages = [];
     private readonly SemaphoreSlim imageDownloadSlots = new(MediaLimits.MaxConcurrentDownloads, MediaLimits.MaxConcurrentDownloads);

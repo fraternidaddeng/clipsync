@@ -114,6 +114,31 @@ class SyncFetchBackpressureTest {
         }
 
     @Test
+    fun pausedQueueCanHoldFetchBatchesForAFullOutbox() =
+        runTest {
+            val transport = ReviewTransport()
+            val engine =
+                SyncEngine(
+                    InMemorySyncRepository(REVIEW_LOCAL_ID),
+                    reviewConfig().copy(outboundAllowed = { false }),
+                    ByteArray(32),
+                )
+            val result = CompletableDeferred<SyncSessionResult>()
+            backgroundScope.launch { result.complete(engine.run(transport)) }
+            transport.handshake()
+            runCurrent()
+            val eventIds = List(SyncLimits.MAX_FETCH_EVENT_IDS) { SyncWire.newRequestId() }
+            repeat((10_000 + SyncLimits.MAX_FETCH_EVENT_IDS - 1) / SyncLimits.MAX_FETCH_EVENT_IDS) {
+                transport.deliver(SyncMessageTypes.CLIP_FETCH, ClipFetchBody(eventIds))
+                runCurrent()
+            }
+            transport.deliver(SyncMessageTypes.PING, PingBody(sentAtMs = REVIEW_NOW))
+            runCurrent()
+            assertTrue(transport.sent.any { it.type == SyncMessageTypes.PONG })
+            assertFalse(result.isCompleted)
+        }
+
+    @Test
     fun fetchQueueIsBoundedWhilePaused() =
         runTest {
             val transport = ReviewTransport()

@@ -1235,7 +1235,7 @@ class SyncEngine(
         const val SEND_QUEUE_HIGH_WATER_BYTES = 4L * 1024 * 1024
         const val SEND_QUEUE_POLL_MS = 20L
         const val OUTBOUND_GATE_POLL_MS = 100L
-        const val MAX_PENDING_FETCH_BATCHES = 32
+        const val MAX_PENDING_FETCH_BATCHES = 128 // Covers 10,000 outbox rows in 128-ID batches.
     }
 
     private enum class ReplayVerdict { FRESH, IDENTICAL_RETRY, CONFLICT }
