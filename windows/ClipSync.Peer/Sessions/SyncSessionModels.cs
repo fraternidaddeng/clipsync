@@ -53,9 +53,8 @@ public sealed record SyncSessionOptions
     /// Re-checked before every outbound content announce (outbox drain) and before serving a
     /// peer's want_ranges pull, so pausing sync or turning private mode on stops outbound
     /// content immediately — mirroring the Android engine's outboundAllowed gate. Inbound
-    /// stays untouched, in-flight clip_fetch replies for clips announced earlier still
-    /// complete, and pending outbox entries flow again on the first drain tick after the
-    /// gate reopens.
+    /// stays untouched. Fetch replies wait in a bounded queue while paused and continue
+    /// after resume; pending outbox entries flow again on the first drain tick.
     /// </summary>
     public Func<bool> OutboundAllowed { get; init; } = static () => true;
 

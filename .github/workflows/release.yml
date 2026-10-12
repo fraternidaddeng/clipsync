@@ -1,7 +1,7 @@
 name: Release
 
 # Tag v* -> package the Windows portable ZIP and the Android APK (both with
-# .sha256 sidecars, produced by the stage-7 scripts) and attach everything to a
+# .sha256 sidecars and an ECDSA signature for the Windows ZIP) and attach everything to a
 # GitHub Release. Publishing here is packaging only: it does not claim device
 # QA (see docs/verification-without-device.md and docs/manual-qa-results.md).
 on:
@@ -28,11 +28,46 @@ jobs:
         with:
           global-json-file: global.json
 
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install release signing dependency
+        run: python -m pip install cryptography
+
+      - name: Require the Windows release signing key
+        shell: pwsh
+        env:
+          CLIPSYNC_RELEASE_SIGNING_KEY: ${{ secrets.CLIPSYNC_RELEASE_SIGNING_KEY }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:CLIPSYNC_RELEASE_SIGNING_KEY)) {
+            throw 'Configure CLIPSYNC_RELEASE_SIGNING_KEY before publishing a Windows release.'
+          }
+
       - name: Publish self-contained ZIP + SHA-256
         shell: pwsh
         run: |
           $version = $env:GITHUB_REF_NAME -replace '^v', ''
           ./scripts/package-windows.ps1 -Version $version
+
+      - name: Sign ZIP and verify against the embedded client key
+        shell: pwsh
+        env:
+          CLIPSYNC_RELEASE_SIGNING_KEY: ${{ secrets.CLIPSYNC_RELEASE_SIGNING_KEY }}
+        run: |
+          $keyPath = Join-Path $env:RUNNER_TEMP 'clipsync-release-signing.pem'
+          $publicKeySource = 'windows/ClipSync.Core/Update/UpdateSignature.cs'
+          $zipPath = 'dist/ClipSync-windows-x64.zip'
+          try {
+            [IO.File]::WriteAllText($keyPath, $env:CLIPSYNC_RELEASE_SIGNING_KEY, [Text.UTF8Encoding]::new($false))
+            python scripts/sign-release.py sign --key $keyPath --pub-source $publicKeySource $zipPath
+            if ($LASTEXITCODE -ne 0) { throw 'Windows ZIP signing failed.' }
+            python scripts/sign-release.py verify --pub-source $publicKeySource $zipPath
+            if ($LASTEXITCODE -ne 0) { throw 'Windows ZIP signature verification failed.' }
+          }
+          finally {
+            Remove-Item -LiteralPath $keyPath -Force -ErrorAction SilentlyContinue
+          }
 
       - uses: actions/upload-artifact@v7
         with:

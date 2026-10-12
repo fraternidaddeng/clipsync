@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -48,9 +49,8 @@ data class SyncSessionConfig(
     /**
      * Re-checked before every announce so pausing sync (or turning private mode on) stops
      * outbound content immediately, including fetches of clips announced before the pause
-     * (answered with a retryable PAYLOAD_NOT_FOUND). Inbound stays untouched; pending outbox
-     * entries flow on the next drain tick
-     * after the gate reopens.
+     * (answered with a retryable PAYLOAD_NOT_FOUND and retained until resume). Inbound stays
+     * untouched; pending fetches and outbox entries flow after the gate reopens.
      */
     val outboundAllowed: () -> Boolean = { true },
 )
@@ -79,6 +79,7 @@ class SyncEngine(
 ) {
     private val pairSecret = pairSecret.copyOf()
     private val sendMutex = Mutex()
+    private val pendingFetches = Channel<ClipFetchBody>(MAX_PENDING_FETCH_BATCHES)
     private val replayWindow = ReplayWindow(capacity = 512)
     private val outstandingFetches = HashMap<String, ClipHeaderDto>()
     private val incomingImages = LinkedHashMap<String, IncomingImageTransfer>()
@@ -130,6 +131,7 @@ class SyncEngine(
                 }
                 var pingLoop: Job? = null
                 var outboxLoop: Job? = null
+                var fetchLoop: Job? = null
 
                 sendHello()
                 while (currentCoroutineContext().isActive) {
@@ -160,11 +162,13 @@ class SyncEngine(
                         watchdog.cancel()
                         pingLoop = launch { runPingLoop() }
                         outboxLoop = launch { runOutboxLoop() }
+                        fetchLoop = launch { runFetchLoop() }
                     }
                 }
                 watchdog.cancel()
                 pingLoop?.cancel()
                 outboxLoop?.cancel()
+                fetchLoop?.cancel()
             }
         } catch (_: CancellationException) {
             complete(SyncSessionResult(isAuthenticated, null, "cancelled"))
@@ -603,11 +607,14 @@ class SyncEngine(
         return true
     }
 
-    @Suppress("ReturnCount", "LongMethod", "CyclomaticComplexMethod")
     private suspend fun handleClipFetch(fetch: ClipFetchBody): Boolean {
+        if (!pendingFetches.trySend(fetch).isSuccess) {
+            fail(SyncErrorCodes.RATE_LIMITED, "fetch_queue_full")
+            return false
+        }
         if (!config.outboundAllowed()) {
-            // Paused/private: no clip body leaves this device, not even one announced before
-            // the pause. Retryable, so the peer fetches again after the gate reopens.
+            // Keep the request: retryable errors do not reset the receiver's outstanding
+            // fetch. Our send worker answers it after resume without requiring a reconnect.
             send(
                 SyncMessageTypes.ERROR,
                 ErrorBody(
@@ -616,8 +623,35 @@ class SyncEngine(
                     failedType = SyncMessageTypes.CLIP_FETCH,
                 ),
             )
-            return true
         }
+        return true
+    }
+
+    private suspend fun runFetchLoop() {
+        try {
+            for (fetch in pendingFetches) {
+                awaitOutboundAllowed()
+                if (!serveClipFetch(fetch)) {
+                    requestClose()
+                    return
+                }
+            }
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (_: Exception) {
+            complete(SyncSessionResult(isAuthenticated, null, "send_failed"))
+            requestClose()
+        }
+    }
+
+    private suspend fun awaitOutboundAllowed() {
+        while (!config.outboundAllowed()) {
+            delay(OUTBOUND_GATE_POLL_MS)
+        }
+    }
+
+    @Suppress("ReturnCount", "LongMethod", "CyclomaticComplexMethod")
+    private suspend fun serveClipFetch(fetch: ClipFetchBody): Boolean {
         val events = repository.getSyncableEventsByIds(fetch.eventIds)
         val byId = events.associateBy { it.eventId }
 
@@ -668,9 +702,11 @@ class SyncEngine(
         }
 
         for (chunk in terminalHeaders.chunked(SyncLimits.MAX_ANNOUNCE_CLIPS)) {
+            awaitOutboundAllowed()
             send(SyncMessageTypes.CLIP_ANNOUNCE, ClipAnnounceBody(chunk))
         }
         for (batch in chunkPayloads(payloadItems)) {
+            awaitOutboundAllowed()
             send(SyncMessageTypes.CLIP_PAYLOAD, ClipPayloadBody(batch))
         }
         applyImageLocalOnlyMarks(marks)
@@ -941,6 +977,7 @@ class SyncEngine(
             return false
         }
         val transferId = SyncWire.newRequestId()
+        awaitOutboundAllowed()
         send(
             SyncMessageTypes.CLIP_PAYLOAD_BEGIN,
             ClipPayloadBeginBody(
@@ -957,6 +994,7 @@ class SyncEngine(
             // max-size image is ~21 MiB of base64. Wait for the queue to drain below the
             // high-water mark before each chunk, and encode chunks lazily.
             awaitSendQueueBelow(SEND_QUEUE_HIGH_WATER_BYTES)
+            awaitOutboundAllowed()
             val chunk = ImageChunks.chunkAt(bytes, index, chunkCount)
             send(
                 SyncMessageTypes.CLIP_PAYLOAD_CHUNK,
@@ -970,6 +1008,7 @@ class SyncEngine(
                 ),
             )
         }
+        awaitOutboundAllowed()
         send(
             SyncMessageTypes.CLIP_PAYLOAD_END,
             ClipPayloadEndBody(transferId = transferId, eventId = item.eventId, contentHash = hash),
@@ -1195,6 +1234,8 @@ class SyncEngine(
         /** Well under OkHttp's fixed 16 MiB outgoing queue limit. */
         const val SEND_QUEUE_HIGH_WATER_BYTES = 4L * 1024 * 1024
         const val SEND_QUEUE_POLL_MS = 20L
+        const val OUTBOUND_GATE_POLL_MS = 100L
+        const val MAX_PENDING_FETCH_BATCHES = 32
     }
 
     private enum class ReplayVerdict { FRESH, IDENTICAL_RETRY, CONFLICT }

@@ -1,58 +1,109 @@
 #!/usr/bin/env python3
-"""Release signing for the Windows updater (ECDSA P-256 / SHA-256, DER signature, base64).
+"""Sign Windows update ZIPs with ECDSA P-256 / SHA-256 (base64 DER signatures)."""
 
-  python scripts/sign-release.py keygen  --out ~/clipsync-release-key.pem   # once; NEVER commit
-  python scripts/sign-release.py sign    --key ~/clipsync-release-key.pem ClipSync-windows-x64.zip
-  python scripts/sign-release.py verify  --pub <base64 spki> ClipSync-windows-x64.zip
+import argparse
+import base64
+import os
+import re
+from pathlib import Path
 
-keygen prints the base64 SubjectPublicKeyInfo to paste into
-windows/ClipSync.Core/Update/UpdateSignature.cs (EmbeddedPublicKeySpki).
-sign writes <file>.sig next to the payload; upload it as a release asset.
-Requires: pip install cryptography
-"""
-import argparse, base64, os, sys
+from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric import ec, utils
 
 
-def spki_b64(pub):
-    return base64.b64encode(pub.public_bytes(serialization.Encoding.DER,
-                                             serialization.PublicFormat.SubjectPublicKeyInfo)).decode()
+def spki_b64(public_key):
+    return base64.b64encode(
+        public_key.public_bytes(
+            serialization.Encoding.DER,
+            serialization.PublicFormat.SubjectPublicKeyInfo,
+        )
+    ).decode("ascii")
+
+
+def load_public_key(value=None, source=None):
+    if source is not None:
+        match = re.search(
+            r'public const string EmbeddedPublicKeySpki\s*=\s*"([^"\r\n]*)"\s*;',
+            Path(source).read_text(encoding="utf-8-sig"),
+        )
+        if match is None:
+            raise ValueError("Cannot find the client's embedded release public key.")
+        value = match.group(1)
+    if not value:
+        raise ValueError("The client's release signing public key is not configured.")
+    public_key = serialization.load_der_public_key(base64.b64decode(value, validate=True))
+    if not isinstance(public_key, ec.EllipticCurvePublicKey) or not isinstance(
+        public_key.curve, ec.SECP256R1
+    ):
+        raise ValueError("The release public key must use ECDSA P-256.")
+    return public_key
+
+
+def load_private_key(path):
+    key = serialization.load_pem_private_key(Path(path).read_bytes(), password=None)
+    if not isinstance(key, ec.EllipticCurvePrivateKey) or not isinstance(
+        key.curve, ec.SECP256R1
+    ):
+        raise ValueError("The release private key must use ECDSA P-256.")
+    return key
+
+
+def payload_digest(path):
+    digest = hashes.Hash(hashes.SHA256())
+    with open(path, "rb") as payload:
+        for chunk in iter(lambda: payload.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.finalize()
 
 
 def main():
-    ap = argparse.ArgumentParser()
-    sub = ap.add_subparsers(dest="cmd", required=True)
-    k = sub.add_parser("keygen"); k.add_argument("--out", required=True)
-    s = sub.add_parser("sign"); s.add_argument("--key", required=True); s.add_argument("files", nargs="+")
-    v = sub.add_parser("verify"); v.add_argument("--pub", required=True); v.add_argument("files", nargs="+")
-    a = ap.parse_args()
-    if a.cmd == "keygen":
-        if os.path.exists(a.out):
-            sys.exit(f"refusing to overwrite {a.out}")
-        key = ec.generate_private_key(ec.SECP256R1())
-        pem = key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
-                                serialization.NoEncryption())
-        fd = os.open(a.out, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-        with os.fdopen(fd, "wb") as f:
-            f.write(pem)
-        print("private key:", a.out, "(keep offline / in a CI secret, never commit)")
-        print("EmbeddedPublicKeySpki =", spki_b64(key.public_key()))
-    elif a.cmd == "sign":
-        with open(a.key, "rb") as f:
-            key = serialization.load_pem_private_key(f.read(), password=None)
-        for path in a.files:
-            with open(path, "rb") as f:
-                sig = key.sign(f.read(), ec.ECDSA(hashes.SHA256()))
-            with open(path + ".sig", "w") as f:
-                f.write(base64.b64encode(sig).decode() + "\n")
-            print("signed", path + ".sig")
-    else:
-        pub = serialization.load_der_public_key(base64.b64decode(a.pub))
-        for path in a.files:
-            with open(path, "rb") as f, open(path + ".sig") as g:
-                pub.verify(base64.b64decode(g.read().strip()), f.read(), ec.ECDSA(hashes.SHA256()))
-            print("ok", path)
+    parser = argparse.ArgumentParser(description=__doc__)
+    commands = parser.add_subparsers(dest="command", required=True)
+    keygen = commands.add_parser("keygen")
+    keygen.add_argument("--out", required=True)
+    sign = commands.add_parser("sign")
+    sign.add_argument("--key", required=True)
+    sign.add_argument("--pub-source", help="Reject keys that differ from the client's embedded key.")
+    sign.add_argument("files", nargs="+")
+    verify = commands.add_parser("verify")
+    public_source = verify.add_mutually_exclusive_group(required=True)
+    public_source.add_argument("--pub")
+    public_source.add_argument("--pub-source")
+    verify.add_argument("files", nargs="+")
+    arguments = parser.parse_args()
+
+    try:
+        if arguments.command == "keygen":
+            key = ec.generate_private_key(ec.SECP256R1())
+            pem = key.private_bytes(
+                serialization.Encoding.PEM,
+                serialization.PrivateFormat.PKCS8,
+                serialization.NoEncryption(),
+            )
+            descriptor = os.open(arguments.out, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(descriptor, "wb") as output:
+                output.write(pem)
+            print("Private key saved outside the repository:", arguments.out)
+            print("EmbeddedPublicKeySpki =", spki_b64(key.public_key()))
+        elif arguments.command == "sign":
+            key = load_private_key(arguments.key)
+            if arguments.pub_source:
+                public_key = load_public_key(source=arguments.pub_source)
+                if spki_b64(key.public_key()) != spki_b64(public_key):
+                    raise ValueError("Signing private key does not match the client's embedded public key.")
+            for path in arguments.files:
+                signature = key.sign(payload_digest(path), ec.ECDSA(utils.Prehashed(hashes.SHA256())))
+                Path(path + ".sig").write_text(base64.b64encode(signature).decode("ascii") + "\n", encoding="ascii")
+                print("Signed:", path + ".sig")
+        else:
+            public_key = load_public_key(arguments.pub, arguments.pub_source)
+            for path in arguments.files:
+                signature = base64.b64decode(Path(path + ".sig").read_text(encoding="ascii").strip(), validate=True)
+                public_key.verify(signature, payload_digest(path), ec.ECDSA(utils.Prehashed(hashes.SHA256())))
+                print("Verified:", path)
+    except (OSError, ValueError, InvalidSignature) as error:
+        parser.exit(1, f"Release signing failed: {str(error) or 'Invalid signature.'}\n")
 
 
 if __name__ == "__main__":

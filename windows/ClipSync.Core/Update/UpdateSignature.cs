@@ -11,11 +11,10 @@ namespace ClipSync.Core.Update;
 public static class UpdateSignature
 {
     /// <summary>
-    /// Base64 SubjectPublicKeyInfo of the release signing key. Empty until the maintainer
-    /// generates a keypair (docs/release-signing.md); while empty, every update is refused
-    /// for automatic installation.
+    /// Base64 SubjectPublicKeyInfo of the release signing key. The corresponding private
+    /// key is stored outside the repository and in the release workflow's encrypted secret.
     /// </summary>
-    public const string EmbeddedPublicKeySpki = "";
+    public const string EmbeddedPublicKeySpki = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEaUiPucUla3TUDZLO+OcNn9AKce7MvWyqDZoPtrGuEZgB6Vg92J39g9yqcZ9dYC0Q4tbz5E1mxi95xShE9rbMKA==";
 
     public const string SignatureSuffix = ".sig";
 

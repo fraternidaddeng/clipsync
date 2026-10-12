@@ -11,11 +11,18 @@ namespace ClipSync.App.Update;
 public sealed class WindowsAppUpdater : IDisposable
 {
     private readonly GitHubReleaseClient client;
+    private readonly string? publicKeySpki;
 
     public WindowsAppUpdater(string? currentVersion = null, GitHubReleaseClient? client = null)
+        : this(currentVersion, client, publicKeySpki: null)
+    {
+    }
+
+    internal WindowsAppUpdater(string? currentVersion, GitHubReleaseClient? client, string? publicKeySpki)
     {
         CurrentVersion = currentVersion ?? LocalAppVersion.Read();
         this.client = client ?? new GitHubReleaseClient(CurrentVersion);
+        this.publicKeySpki = publicKeySpki;
     }
 
     public string CurrentVersion { get; }
@@ -38,6 +45,11 @@ public sealed class WindowsAppUpdater : IDisposable
         if (check.Payload is null)
         {
             throw new InvalidOperationException("Latest release has no Windows ZIP.");
+        }
+
+        if (!UpdateSignature.IsConfigured(publicKeySpki))
+        {
+            throw new UpdateSignatureException("Release signing key is not configured; automatic install is disabled.");
         }
 
         var expectedSha = await client.ResolveSha256Async(check.Latest, check.Payload, cancellationToken)
@@ -96,15 +108,10 @@ public sealed class WindowsAppUpdater : IDisposable
     /// </summary>
     private async Task VerifySignatureAsync(UpdateCheckResult check, Stream payload, CancellationToken cancellationToken)
     {
-        if (!UpdateSignature.IsConfigured())
-        {
-            throw new UpdateSignatureException("Release signing key is not configured; automatic install is disabled.");
-        }
-
         var signatureAsset = UpdateSignature.FindSignature(check.Latest, check.Payload!)
             ?? throw new UpdateSignatureException($"Release {check.Latest.TagName} has no signature for '{check.Payload!.Name}'.");
         var signature = await client.DownloadTextFromGitHubAsync(signatureAsset, cancellationToken).ConfigureAwait(false);
-        if (!UpdateSignature.Verify(payload, signature))
+        if (!UpdateSignature.Verify(payload, signature, publicKeySpki))
         {
             throw new UpdateSignatureException("Release signature verification failed.");
         }

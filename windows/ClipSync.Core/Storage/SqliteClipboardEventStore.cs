@@ -467,18 +467,24 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         {
             // Bound the pending-send queue first: a paired device that never comes back must not
             // pin history past the retention period (TTL = MaximumAge) nor grow the outbox without
-            // limit (per-peer cap). The peer catches up through known_vector/want_ranges later.
+            // limit (per-peer cap). A fresh deletion must keep its own TTL: the peer's vector
+            // already covers its sequence and cannot recover a dropped deletion notification.
             await using (var outboxTrim = connection.CreateCommand())
             {
                 outboxTrim.Transaction = transaction;
                 outboxTrim.CommandText = """
                     DELETE FROM outbox
-                    WHERE event_id IN (SELECT event_id FROM clips WHERE created_at < $oldest_created_at);
+                    WHERE event_id IN (
+                        SELECT event_id FROM clips
+                        WHERE COALESCE(deleted_at, created_at) < $oldest_created_at);
                     DELETE FROM outbox
                     WHERE id IN (
                         SELECT id FROM (
-                            SELECT id, ROW_NUMBER() OVER (PARTITION BY peer_id ORDER BY id DESC) AS rn
-                            FROM outbox)
+                            SELECT o.id, ROW_NUMBER() OVER (
+                                PARTITION BY o.peer_id
+                                ORDER BY COALESCE(c.deleted_at, c.created_at) DESC, o.id DESC) AS rn
+                            FROM outbox o
+                            JOIN clips c ON c.event_id = o.event_id)
                         WHERE rn > $outbox_cap);
                     """;
                 outboxTrim.Parameters.AddWithValue("$oldest_created_at", (now - policy.MaximumAge).ToUnixTimeMilliseconds());
