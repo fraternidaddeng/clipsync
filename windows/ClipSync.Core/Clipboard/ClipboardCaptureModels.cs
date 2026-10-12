@@ -7,14 +7,16 @@ public sealed record ClipboardCandidate(
     byte[]? ImageBytes = null,
     string? ImageMimeType = null,
     string? PixelDigest = null,
-    bool ExceedsCaptureBudget = false);
+    bool ExceedsCaptureBudget = false,
+    bool IsMarkedSensitive = false);
 
 public sealed record CaptureSettings(
     bool IsPaused = false,
     bool IsPrivateMode = false,
     IReadOnlyCollection<string>? BlockedSourceProcesses = null,
     TimeSpan? RetentionPeriod = null,
-    bool ImageSyncEnabled = false);
+    bool ImageSyncEnabled = false,
+    bool SkipSensitive = true);
 
 public enum CaptureRejectionReason
 {
@@ -26,7 +28,10 @@ public enum CaptureRejectionReason
     PrivateMode,
     SourceBlocked,
     UnsupportedMedia,
-    DecodeFailed
+    DecodeFailed,
+
+    /// <summary>The source app marked the clip "do not record" (password managers).</summary>
+    Sensitive
 }
 
 public sealed record AcceptedClipboardContent(

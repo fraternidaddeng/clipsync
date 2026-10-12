@@ -63,6 +63,7 @@ public static class PortableUpdateApplier
         var scriptPath = staging + "-apply.cmd";
         var exe = EscapeCmdLiteral(NormalizeCmdPath(Path.Combine(installDirectory, WindowsExeName)));
         var script = new StringBuilder();
+        // No BOM: cmd.exe would read it as part of the first command and "@echo off" would fail.
         script.AppendLine("@echo off");
         script.AppendLine("setlocal");
         // Paths are UTF-8 and may contain non-ASCII characters (for example a localized
@@ -71,14 +72,16 @@ public static class PortableUpdateApplier
         script.AppendLine("set PID=" + pid.ToString(CultureInfo.InvariantCulture));
         script.AppendLine(":wait");
         script.AppendLine("timeout /t 1 /nobreak >nul");
-        script.AppendLine("tasklist /FI \"PID eq %PID%\" | find \"%PID%\" >nul && goto wait");
+        // CSV output quotes each field, so matching "<pid>" (with quotes) cannot hit another
+        // process's PID or memory column the way a bare substring search could.
+        script.AppendLine("tasklist /FI \"PID eq %PID%\" /NH /FO CSV | find \"\"\"%PID%\"\"\" >nul && goto wait");
         script.AppendLine("robocopy \"" + src + "\" \"" + dst + "\" /E /R:2 /W:1 /NFL /NDL /NJH /NJS /NP");
         // robocopy uses 0–7 for success-with-copies; 8+ is a real failure.
         script.AppendLine("if errorlevel 8 exit /b 1");
         script.AppendLine("start \"\" \"" + exe + "\"");
         script.AppendLine("rmdir /S /Q \"" + staging + "\"");
         script.AppendLine("del \"%~f0\"");
-        File.WriteAllText(scriptPath, script.ToString(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
+        File.WriteAllText(scriptPath, script.ToString(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
         return scriptPath;
     }
 

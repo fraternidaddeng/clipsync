@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -47,9 +48,9 @@ data class SyncSessionConfig(
     val peerStillTrusted: () -> Boolean = { true },
     /**
      * Re-checked before every announce so pausing sync (or turning private mode on) stops
-     * outbound content immediately. Inbound stays untouched, and in-flight fetches of clips
-     * announced earlier still complete; pending outbox entries flow on the next drain tick
-     * after the gate reopens.
+     * outbound content immediately, including fetches of clips announced before the pause
+     * (answered with a retryable PAYLOAD_NOT_FOUND and retained until resume). Inbound stays
+     * untouched; pending fetches and outbox entries flow after the gate reopens.
      */
     val outboundAllowed: () -> Boolean = { true },
 )
@@ -78,6 +79,7 @@ class SyncEngine(
 ) {
     private val pairSecret = pairSecret.copyOf()
     private val sendMutex = Mutex()
+    private val pendingFetches = Channel<ClipFetchBody>(MAX_PENDING_FETCH_BATCHES)
     private val replayWindow = ReplayWindow(capacity = 512)
     private val outstandingFetches = HashMap<String, ClipHeaderDto>()
     private val incomingImages = LinkedHashMap<String, IncomingImageTransfer>()
@@ -129,6 +131,7 @@ class SyncEngine(
                 }
                 var pingLoop: Job? = null
                 var outboxLoop: Job? = null
+                var fetchLoop: Job? = null
 
                 sendHello()
                 while (currentCoroutineContext().isActive) {
@@ -159,11 +162,13 @@ class SyncEngine(
                         watchdog.cancel()
                         pingLoop = launch { runPingLoop() }
                         outboxLoop = launch { runOutboxLoop() }
+                        fetchLoop = launch { runFetchLoop() }
                     }
                 }
                 watchdog.cancel()
                 pingLoop?.cancel()
                 outboxLoop?.cancel()
+                fetchLoop?.cancel()
             }
         } catch (_: CancellationException) {
             complete(SyncSessionResult(isAuthenticated, null, "cancelled"))
@@ -603,6 +608,50 @@ class SyncEngine(
     }
 
     private suspend fun handleClipFetch(fetch: ClipFetchBody): Boolean {
+        if (!pendingFetches.trySend(fetch).isSuccess) {
+            fail(SyncErrorCodes.RATE_LIMITED, "fetch_queue_full")
+            return false
+        }
+        if (!config.outboundAllowed()) {
+            // Keep the request: retryable errors do not reset the receiver's outstanding
+            // fetch. Our send worker answers it after resume without requiring a reconnect.
+            send(
+                SyncMessageTypes.ERROR,
+                ErrorBody(
+                    code = SyncErrorCodes.PAYLOAD_NOT_FOUND,
+                    retryable = true,
+                    failedType = SyncMessageTypes.CLIP_FETCH,
+                ),
+            )
+        }
+        return true
+    }
+
+    private suspend fun runFetchLoop() {
+        try {
+            for (fetch in pendingFetches) {
+                awaitOutboundAllowed()
+                if (!serveClipFetch(fetch)) {
+                    requestClose()
+                    return
+                }
+            }
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (_: Exception) {
+            complete(SyncSessionResult(isAuthenticated, null, "send_failed"))
+            requestClose()
+        }
+    }
+
+    private suspend fun awaitOutboundAllowed() {
+        while (!config.outboundAllowed()) {
+            delay(OUTBOUND_GATE_POLL_MS)
+        }
+    }
+
+    @Suppress("ReturnCount", "LongMethod", "CyclomaticComplexMethod")
+    private suspend fun serveClipFetch(fetch: ClipFetchBody): Boolean {
         val events = repository.getSyncableEventsByIds(fetch.eventIds)
         val byId = events.associateBy { it.eventId }
 
@@ -653,9 +702,11 @@ class SyncEngine(
         }
 
         for (chunk in terminalHeaders.chunked(SyncLimits.MAX_ANNOUNCE_CLIPS)) {
+            awaitOutboundAllowed()
             send(SyncMessageTypes.CLIP_ANNOUNCE, ClipAnnounceBody(chunk))
         }
         for (batch in chunkPayloads(payloadItems)) {
+            awaitOutboundAllowed()
             send(SyncMessageTypes.CLIP_PAYLOAD, ClipPayloadBody(batch))
         }
         applyImageLocalOnlyMarks(marks)
@@ -919,20 +970,32 @@ class SyncEngine(
             fail(SyncErrorCodes.MEDIA_STORAGE_FAILED, "blob_missing")
             return false
         }
-        val chunks = ImageChunks.split(bytes)
+        val chunkCount = try {
+            ImageChunks.chunkCount(bytes)
+        } catch (_: IllegalArgumentException) {
+            fail(SyncErrorCodes.MEDIA_TOO_LARGE, "blob_out_of_bounds")
+            return false
+        }
         val transferId = SyncWire.newRequestId()
+        awaitOutboundAllowed()
         send(
             SyncMessageTypes.CLIP_PAYLOAD_BEGIN,
             ClipPayloadBeginBody(
                 transferId = transferId,
                 eventId = item.eventId,
-                chunkCount = chunks.size,
+                chunkCount = chunkCount,
                 encodedBytes = bytes.size.toLong(),
                 contentHash = hash,
                 mimeType = item.mimeType ?: MediaLimits.MIME_PNG,
             ),
         )
-        for (chunk in chunks) {
+        for (index in 0 until chunkCount) {
+            // OkHttp's send() never blocks and closes the socket once 16 MiB are queued; a
+            // max-size image is ~21 MiB of base64. Wait for the queue to drain below the
+            // high-water mark before each chunk, and encode chunks lazily.
+            awaitSendQueueBelow(SEND_QUEUE_HIGH_WATER_BYTES)
+            awaitOutboundAllowed()
+            val chunk = ImageChunks.chunkAt(bytes, index, chunkCount)
             send(
                 SyncMessageTypes.CLIP_PAYLOAD_CHUNK,
                 ClipPayloadChunkBody(
@@ -945,12 +1008,16 @@ class SyncEngine(
                 ),
             )
         }
+        awaitOutboundAllowed()
         send(
             SyncMessageTypes.CLIP_PAYLOAD_END,
             ClipPayloadEndBody(transferId = transferId, eventId = item.eventId, contentHash = hash),
         )
         return true
     }
+
+    private suspend fun awaitSendQueueBelow(limitBytes: Long) =
+        SendBackpressure.awaitBelow(limitBytes, SEND_QUEUE_POLL_MS) { transport.queuedBytes }
 
     private suspend fun handleClipPayloadBegin(begin: ClipPayloadBeginBody): Boolean {
         val header = outstandingFetches[begin.eventId]
@@ -1162,6 +1229,14 @@ class SyncEngine(
     }
 
     private enum class State { EXPECT_CHALLENGE, READY }
+
+    internal companion object {
+        /** Well under OkHttp's fixed 16 MiB outgoing queue limit. */
+        const val SEND_QUEUE_HIGH_WATER_BYTES = 4L * 1024 * 1024
+        const val SEND_QUEUE_POLL_MS = 20L
+        const val OUTBOUND_GATE_POLL_MS = 100L
+        const val MAX_PENDING_FETCH_BATCHES = 128 // Covers 10,000 outbox rows in 128-ID batches.
+    }
 
     private enum class ReplayVerdict { FRESH, IDENTICAL_RETRY, CONFLICT }
 

@@ -90,6 +90,7 @@ public sealed class GitHubReleaseClient : IDisposable
 
         await GetSuccessfulAsync(
                 asset.BrowserDownloadUrl,
+                allowMirrors: true,
                 async (response, token) =>
                 {
                     if (attempt++ > 0 && !canReset)
@@ -138,11 +139,15 @@ public sealed class GitHubReleaseClient : IDisposable
         destination.SetLength(startPosition);
     }
 
+    // Metadata (release JSON, digest, .sha256 sidecar, .sig) is trust-bearing: it is only ever
+    // fetched from GitHub itself. Third-party URL proxies may only carry the payload bytes,
+    // which are then checked against the GitHub-sourced SHA-256 and the embedded-key signature.
     private async Task<string> GetTextAsync(string url, CancellationToken cancellationToken)
     {
         string? body = null;
         await GetSuccessfulAsync(
                 url,
+                allowMirrors: false,
                 async (response, token) =>
                 {
                     body = await response.Content.ReadAsStringAsync(token).ConfigureAwait(false);
@@ -154,11 +159,13 @@ public sealed class GitHubReleaseClient : IDisposable
 
     private async Task GetSuccessfulAsync(
         string url,
+        bool allowMirrors,
         Func<HttpResponseMessage, CancellationToken, Task> handle,
         CancellationToken cancellationToken)
     {
         Exception? lastError = null;
-        foreach (var candidate in GitHubUrlMirrors.Candidates(url))
+        IReadOnlyList<string> candidates = allowMirrors ? GitHubUrlMirrors.Candidates(url) : new[] { url.Trim() };
+        foreach (var candidate in candidates)
         {
             cancellationToken.ThrowIfCancellationRequested();
             try
@@ -191,6 +198,10 @@ public sealed class GitHubReleaseClient : IDisposable
 
         throw lastError ?? new HttpRequestException("No URL candidates.");
     }
+
+    /// <summary>Downloads a small text asset (e.g. the <c>.sig</c> file) from GitHub only, never a mirror.</summary>
+    public Task<string> DownloadTextFromGitHubAsync(ReleaseAsset asset, CancellationToken cancellationToken = default) =>
+        GetTextAsync(asset.BrowserDownloadUrl, cancellationToken);
 
     public static string ComputeSha256Hex(Stream stream)
     {

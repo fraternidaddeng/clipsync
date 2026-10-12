@@ -140,6 +140,88 @@ public sealed class SqliteSyncStoreTests
     }
 
     [Fact]
+    public async Task CleanupExpiresQueuedClipsOlderThanRetentionForAnOfflinePeer()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+        for (var index = 0; index < 3; index++)
+        {
+            await store.StoreAsync(Content($"old-{index}", BaseTime.AddSeconds(index)));
+        }
+
+        await store.StoreAsync(Content("fresh", BaseTime.AddDays(40)));
+
+        var removed = await store.CleanupAsync(
+            new ClipboardRetentionPolicy(maximumEntries: 100, maximumAge: TimeSpan.FromDays(30)),
+            BaseTime.AddDays(40).AddSeconds(1));
+
+        Assert.Equal(3, removed);
+        var batch = await store.GetOutboxBatchAsync(PhoneDeviceId, 10);
+        Assert.Equal("fresh", Assert.Single(batch).Event.Content);
+        Assert.Equal("fresh", Assert.Single(await store.SearchAsync(new ClipboardHistoryQuery())).Text);
+    }
+
+    [Fact]
+    public async Task CleanupUsesDeletionTimeForTheQueuedDeletionTtl()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+        var original = await store.StoreAsync(Content("old", BaseTime));
+        var deletedAt = BaseTime.AddDays(40);
+        await store.DeleteAsync(original.EventId, deletedAt);
+
+        var policy = new ClipboardRetentionPolicy(maximumAge: TimeSpan.FromDays(30));
+        await store.CleanupAsync(policy, deletedAt.AddDays(1));
+        var notification = Assert.Single(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
+        Assert.True(notification.Event.IsTerminal);
+        Assert.Equal("deleted", notification.Event.TerminalReason);
+
+        await store.CleanupAsync(policy, deletedAt.AddDays(31));
+        Assert.Empty(await store.GetOutboxBatchAsync(PhoneDeviceId, 10));
+    }
+
+    [Fact]
+    public async Task OutboxCapKeepsAFreshDeletionAheadOfOlderLiveAnnouncements()
+    {
+        await using var database = new TemporaryDatabase();
+        await using var store = database.CreateStore();
+        await store.UpsertDeviceAsync(Phone(), BaseTime);
+        var old = await store.StoreAsync(Content("old", BaseTime));
+        await using (var connection = new SqliteConnection(new SqliteConnectionStringBuilder { DataSource = database.Path }.ToString()))
+        {
+            await connection.OpenAsync();
+            await using var transaction = await connection.BeginTransactionAsync();
+            await using var command = connection.CreateCommand();
+            command.Transaction = (SqliteTransaction)transaction;
+            command.CommandText = """
+                WITH RECURSIVE queued(seq) AS (
+                    SELECT 2 UNION ALL SELECT seq + 1 FROM queued WHERE seq < 10001)
+                INSERT INTO clips (event_id, origin_device_id, origin_seq, kind, content, content_hash, created_at)
+                SELECT printf('%08x-0000-4000-8000-%012x', seq, seq), $origin, seq, 'text', 'fresh', $hash, $created
+                FROM queued;
+                INSERT INTO outbox (peer_id, event_id, origin_device_id, origin_seq)
+                SELECT $peer, event_id, origin_device_id, origin_seq FROM clips WHERE origin_seq >= 2;
+                UPDATE local_sequences SET next_seq = 10002 WHERE device_id = $origin;
+                UPDATE origin_receive_state SET contiguous_seq = 10001 WHERE origin_device_id = $origin;
+                """;
+            command.Parameters.AddWithValue("$origin", LocalDeviceId);
+            command.Parameters.AddWithValue("$peer", PhoneDeviceId);
+            command.Parameters.AddWithValue("$hash", Hash("fresh"));
+            command.Parameters.AddWithValue("$created", BaseTime.AddDays(1).ToUnixTimeMilliseconds());
+            await command.ExecuteNonQueryAsync();
+            await transaction.CommitAsync();
+        }
+        await store.DeleteAsync(old.EventId, BaseTime.AddDays(2));
+        await store.CleanupAsync(new ClipboardRetentionPolicy(maximumEntries: 20_000), BaseTime.AddDays(2));
+
+        var batch = await store.GetOutboxBatchAsync(PhoneDeviceId, 20_000);
+        Assert.Equal(SqliteClipboardEventStore.MaximumOutboxRowsPerPeer, batch.Count);
+        Assert.Contains(batch, row => row.Event.EventId == old.EventId && row.Event.TerminalReason == "deleted");
+    }
+
+    [Fact]
     public async Task AlreadyPersistedRestoresReceiveCoverageAfterStateLoss()
     {
         await using var database = new TemporaryDatabase();

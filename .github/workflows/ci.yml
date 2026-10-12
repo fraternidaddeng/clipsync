@@ -37,6 +37,9 @@ jobs:
         shell: pwsh
         run: ./scripts/validate-protocol.ps1
 
+      - name: Validate release signing
+        run: python -m unittest discover -s scripts -p test_sign_release.py
+
   build-windows:
     name: Windows build and tests
     runs-on: windows-latest

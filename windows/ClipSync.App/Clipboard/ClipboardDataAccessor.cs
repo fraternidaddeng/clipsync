@@ -16,7 +16,8 @@ internal sealed record ClipboardTextSnapshot(
     byte[]? ImageBytes = null,
     string? ImageMimeType = null,
     string? PixelDigest = null,
-    bool ExceedsCaptureBudget = false);
+    bool ExceedsCaptureBudget = false,
+    bool IsMarkedSensitive = false);
 
 internal interface IClipboardDataAccess
 {
@@ -136,11 +137,13 @@ internal sealed class ClipboardDataAccessor : IClipboardDataAccess
         string? imageMime = null;
         string? pixelDigest = null;
         var exceedsCaptureBudget = false;
+        var markedSensitive = false;
         var ownerProcessId = ResolveClipboardOwnerProcessId();
         uint sequenceNumber = 0;
         OpenClipboardWithRetry(listenerWindow);
         try
         {
+            markedSensitive = IsMarkedSensitiveLocked();
             TryReadImage(out imageBytes, out imageMime, out pixelDigest);
             if (nativeApi.IsClipboardFormatAvailable(UnicodeTextFormat))
             {
@@ -166,7 +169,58 @@ internal sealed class ClipboardDataAccessor : IClipboardDataAccess
             imageBytes,
             imageMime,
             pixelDigest,
-            exceedsCaptureBudget);
+            exceedsCaptureBudget,
+            markedSensitive);
+    }
+
+    internal const string ExcludeFromMonitorFormatName = "ExcludeClipboardContentFromMonitorProcessing";
+    internal const string ViewerIgnoreFormatName = "Clipboard Viewer Ignore";
+    internal const string IncludeInHistoryFormatName = "CanIncludeInClipboardHistory";
+
+    /// <summary>
+    /// The de-facto "do not record" markers clipboard managers are expected to honor:
+    /// presence of ExcludeClipboardContentFromMonitorProcessing or Clipboard Viewer Ignore, or
+    /// CanIncludeInClipboardHistory holding DWORD 0. Must run with the clipboard open.
+    /// </summary>
+    private bool IsMarkedSensitiveLocked()
+    {
+        if (IsRegisteredFormatAvailable(ExcludeFromMonitorFormatName) || IsRegisteredFormatAvailable(ViewerIgnoreFormatName))
+        {
+            return true;
+        }
+
+        var historyFormat = nativeApi.RegisterClipboardFormat(IncludeInHistoryFormatName);
+        if (historyFormat == 0 || !nativeApi.IsClipboardFormatAvailable(historyFormat))
+        {
+            return false;
+        }
+
+        var handle = nativeApi.GetClipboardData(historyFormat);
+        if (handle == 0 || nativeApi.GlobalSize(handle) < sizeof(uint))
+        {
+            return false;
+        }
+
+        var locked = nativeApi.GlobalLock(handle);
+        if (locked == 0)
+        {
+            return false;
+        }
+
+        try
+        {
+            return System.Runtime.InteropServices.Marshal.ReadInt32(locked) == 0;
+        }
+        finally
+        {
+            _ = nativeApi.GlobalUnlock(handle);
+        }
+    }
+
+    private bool IsRegisteredFormatAvailable(string name)
+    {
+        var format = nativeApi.RegisterClipboardFormat(name);
+        return format != 0 && nativeApi.IsClipboardFormatAvailable(format);
     }
 
     private string? ReadUnicodeTextLocked(out bool exceedsCaptureBudget)

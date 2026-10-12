@@ -54,6 +54,12 @@ public sealed class PortableUpdateApplierTests : IDisposable
         Assert.Contains(PortableUpdateApplier.WindowsExeName, text);
         Assert.Contains("tasklist /FI \"PID eq %PID%\"", text);
         Assert.Contains("del \"%~f0\"", text);
+        // Exact quoted CSV match, not a substring search that could hit another process.
+        Assert.Contains("/NH /FO CSV | find \"\"\"%PID%\"\"\"", text);
+        // No UTF-8 BOM: cmd.exe would glue it onto "@echo off".
+        var raw = File.ReadAllBytes(script);
+        Assert.False(raw.Length >= 3 && raw[0] == 0xEF && raw[1] == 0xBB && raw[2] == 0xBF);
+        Assert.StartsWith("@echo off", Encoding.UTF8.GetString(raw), StringComparison.Ordinal);
         Assert.Contains("\"" + stagingFull + "\"", text);
         Assert.Contains("\"" + Path.GetFullPath(payload).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + "\"", text);
     }

@@ -22,7 +22,7 @@ ClipSync pairs like Bluetooth (scan a QR code, compare certificate fingerprints 
 ### Pairing and encryption
 
 - **QR pairing with fingerprint verification.** Windows shows a QR code containing only the address, port, certificate fingerprint, and a one-time token — never the pairing secret. Both screens display the fingerprint; you compare them visually and confirm once.
-- **IP connections use TLS 1.3 with certificate-fingerprint pinning**; a per-pair secret is protected by Windows DPAPI and the Android Keystore. A pin mismatch blocks the connection. Bluetooth fallback uses its own authenticated channel.
+- **IP connections use TLS (1.2 or 1.3) with certificate-fingerprint pinning**; a per-pair secret is protected by Windows DPAPI and the Android Keystore. A pin mismatch blocks the connection. Bluetooth fallback uses its own authenticated channel.
 - **Local networks only.** Devices talk over your LAN or a Tailscale network. There is no cloud database, public relay, or NAT-traversal service — if the devices can't reach each other, they don't sync. That is a design boundary, not a bug.
 - **Revocable trust.** Remove a device on either end and the connection drops immediately. If a peer's fingerprint changes (reinstall, new phone), Android requires an explicit "I verified — replace pairing" confirmation.
 
@@ -76,7 +76,7 @@ The full step-by-step guide — network setup, Tailscale, proxy (Clash/Surge) ca
 ## Privacy and security
 
 - **Read before use**: [Privacy and risks](docs/privacy-and-risks.md) — where your content goes, who can see it, and what to watch for yourself.
-- Content moves only between devices you explicitly paired and fingerprint-verified, over TLS 1.3 with pinned certificates (Bluetooth fallback runs its own authenticated, encrypted channel).
+- Content moves only between devices you explicitly paired and fingerprint-verified, over TLS 1.2/1.3 with pinned certificates (Bluetooth fallback runs its own authenticated, encrypted channel).
 - No account, no cloud storage, no relay servers, no telemetry, no crash uploads.
 - Clipboard text never enters logs or notifications — enforced by dedicated tests; diagnostics exports are safe to share.
 - Android backups and device-to-device migration are fully excluded (clipboard history is sensitive plaintext).

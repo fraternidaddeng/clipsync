@@ -37,6 +37,13 @@ interface SyncTransport {
     /** Sends one text frame; throws [IOException] when the socket cannot accept it. */
     suspend fun send(text: String)
 
+    /**
+     * Bytes accepted by [send] but not yet written to the network. Transports whose send never
+     * blocks (OkHttp queues up to a fixed 16 MiB and then kills the socket) report it so bulk
+     * senders can wait for the queue to drain; blocking transports keep the default 0.
+     */
+    val queuedBytes: Long get() = 0L
+
     /** Starts a graceful WebSocket close. */
     suspend fun close(code: Int, reason: String)
 
@@ -250,6 +257,9 @@ internal class OkHttpSyncTransport(private val client: OkHttpClient) : SyncTrans
             throw IOException("websocket rejected the outgoing frame")
         }
     }
+
+    override val queuedBytes: Long
+        get() = socket?.queueSize() ?: 0L
 
     override suspend fun close(code: Int, reason: String) {
         socket?.close(code, reason.take(120))

@@ -117,6 +117,12 @@ public partial class UpdateViewModel(WindowsAppUpdater updater) : ObservableObje
         {
             Status = Strings.Prefs_Update_Error_Network;
         }
+        catch (UpdateSignatureException)
+        {
+            // Unsigned or badly signed: never auto-install. The hash-failure copy ("校验失败")
+            // is the closest existing string; the user can still download manually from GitHub.
+            Status = Strings.Prefs_Update_Error_Hash;
+        }
         catch (InvalidOperationException exception) when (
             exception.Message.Contains("SHA-256", StringComparison.Ordinal))
         {

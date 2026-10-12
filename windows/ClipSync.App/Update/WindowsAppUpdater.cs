@@ -11,11 +11,18 @@ namespace ClipSync.App.Update;
 public sealed class WindowsAppUpdater : IDisposable
 {
     private readonly GitHubReleaseClient client;
+    private readonly string? publicKeySpki;
 
     public WindowsAppUpdater(string? currentVersion = null, GitHubReleaseClient? client = null)
+        : this(currentVersion, client, publicKeySpki: null)
+    {
+    }
+
+    internal WindowsAppUpdater(string? currentVersion, GitHubReleaseClient? client, string? publicKeySpki)
     {
         CurrentVersion = currentVersion ?? LocalAppVersion.Read();
         this.client = client ?? new GitHubReleaseClient(CurrentVersion);
+        this.publicKeySpki = publicKeySpki;
     }
 
     public string CurrentVersion { get; }
@@ -40,6 +47,11 @@ public sealed class WindowsAppUpdater : IDisposable
             throw new InvalidOperationException("Latest release has no Windows ZIP.");
         }
 
+        if (!UpdateSignature.IsConfigured(publicKeySpki))
+        {
+            throw new UpdateSignatureException("Release signing key is not configured; automatic install is disabled.");
+        }
+
         var expectedSha = await client.ResolveSha256Async(check.Latest, check.Payload, cancellationToken)
             .ConfigureAwait(false);
         var staging = Path.Combine(
@@ -55,6 +67,7 @@ public sealed class WindowsAppUpdater : IDisposable
             {
                 await client.DownloadAsync(check.Payload, file, progress, cancellationToken).ConfigureAwait(false);
                 GitHubReleaseClient.VerifySha256(file, expectedSha);
+                await VerifySignatureAsync(check, file, cancellationToken).ConfigureAwait(false);
             }
 
             var payload = PortableUpdateApplier.ExtractPayloadDirectory(
@@ -86,6 +99,21 @@ public sealed class WindowsAppUpdater : IDisposable
             }
 
             throw;
+        }
+    }
+
+    /// <summary>
+    /// Refuses to install anything not signed by the embedded release key. The SHA-256 above
+    /// only proves the bytes match GitHub's metadata; the signature proves who built them.
+    /// </summary>
+    private async Task VerifySignatureAsync(UpdateCheckResult check, Stream payload, CancellationToken cancellationToken)
+    {
+        var signatureAsset = UpdateSignature.FindSignature(check.Latest, check.Payload!)
+            ?? throw new UpdateSignatureException($"Release {check.Latest.TagName} has no signature for '{check.Payload!.Name}'.");
+        var signature = await client.DownloadTextFromGitHubAsync(signatureAsset, cancellationToken).ConfigureAwait(false);
+        if (!UpdateSignature.Verify(payload, signature, publicKeySpki))
+        {
+            throw new UpdateSignatureException("Release signature verification failed.");
         }
     }
 

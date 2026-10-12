@@ -182,13 +182,61 @@ public sealed class PeerServer : IAsyncDisposable
             throw new InvalidOperationException("The server is already running.");
         }
 
+        // Port 0 with several bind addresses would let Kestrel pick a different ephemeral port
+        // per address, while Port/QR/discovery advertise only the first (loopback) one, so LAN
+        // peers could never connect. Pick one free port and bind every address to it instead.
+        var sharedEphemeral = options.Port == 0 && options.BindAddresses.Count > 1;
+        var attempts = sharedEphemeral ? MaxSharedPortAttempts : 1;
+        for (var attempt = 1; ; attempt++)
+        {
+            var port = sharedEphemeral ? ReserveEphemeralPort() : options.Port;
+            var host = BuildHost(port);
+            try
+            {
+                await host.StartAsync(cancellationToken).ConfigureAwait(false);
+                app = host;
+                break;
+            }
+            catch (IOException) when (attempt < attempts)
+            {
+                await host.DisposeAsync().ConfigureAwait(false);
+            }
+            catch
+            {
+                await host.DisposeAsync().ConfigureAwait(false);
+                throw;
+            }
+        }
+
+        Port = ResolveBoundPort(app!);
+        PeerLog.ServerListening(logger, Port, options.BindAddresses.Count);
+    }
+
+    private const int MaxSharedPortAttempts = 8;
+
+    private static int ReserveEphemeralPort()
+    {
+        var probe = new System.Net.Sockets.TcpListener(IPAddress.Any, 0);
+        probe.Start();
+        try
+        {
+            return ((IPEndPoint)probe.LocalEndpoint).Port;
+        }
+        finally
+        {
+            probe.Stop();
+        }
+    }
+
+    private WebApplication BuildHost(int port)
+    {
         var builder = WebApplication.CreateBuilder();
         builder.Logging.ClearProviders();
         builder.WebHost.ConfigureKestrel(kestrel =>
         {
             foreach (var address in options.BindAddresses)
             {
-                kestrel.Listen(address, options.Port, listen =>
+                kestrel.Listen(address, port, listen =>
                 {
                     listen.UseHttps(https =>
                     {
@@ -259,10 +307,7 @@ public sealed class PeerServer : IAsyncDisposable
             host.MapPost("/v1/pair/confirm", HandlePairConfirmAsync);
         }
 
-        await host.StartAsync(cancellationToken).ConfigureAwait(false);
-        app = host;
-        Port = ResolveBoundPort(host);
-        PeerLog.ServerListening(logger, Port, options.BindAddresses.Count);
+        return host;
     }
 
     private async Task HandleSyncAsync(HttpContext context, int protocolVersion)
@@ -316,7 +361,7 @@ public sealed class PeerServer : IAsyncDisposable
         // The dialer picks the contract by path: /v1 keeps the frozen text protocol,
         // /v2 enables image_clip_v2 for this session only.
         var sessionOptions = options.SessionOptions with { ProtocolVersion = protocolVersion };
-        var engine = new SyncSessionEngine(
+        using var engine = new SyncSessionEngine(
             SyncSessionRole.Listener,
             store,
             secretProtector,

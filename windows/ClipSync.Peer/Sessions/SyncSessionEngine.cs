@@ -2,6 +2,7 @@ using System.Net.WebSockets;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Channels;
 using ClipSync.Core.Media;
 using ClipSync.Core.Protocol;
 using ClipSync.Core.Security;
@@ -32,6 +33,8 @@ public sealed class SyncSessionEngine : IDisposable
     private readonly ILogger logger;
     private readonly TimeProvider clock;
     private readonly SemaphoreSlim sendLock = new(1, 1);
+    private readonly Channel<ClipFetchBody> pendingFetches = Channel.CreateBounded<ClipFetchBody>(
+        new BoundedChannelOptions(128) { SingleReader = true, SingleWriter = true });
     private readonly Dictionary<Guid, ClipHeaderDto> outstandingFetches = [];
     private readonly Dictionary<Guid, IncomingImageTransfer> incomingImages = [];
     private readonly SemaphoreSlim imageDownloadSlots = new(MediaLimits.MaxConcurrentDownloads, MediaLimits.MaxConcurrentDownloads);
@@ -154,6 +157,7 @@ public sealed class SyncSessionEngine : IDisposable
 
         Task? pingLoop = null;
         Task? drainLoop = null;
+        Task? fetchLoop = null;
         try
         {
             if (role == SyncSessionRole.Dialer)
@@ -220,6 +224,7 @@ public sealed class SyncSessionEngine : IDisposable
                 {
                     pingLoop = RunPingLoopAsync(token);
                     drainLoop = RunOutboxLoopAsync(token);
+                    fetchLoop = RunFetchLoopAsync(token);
                 }
             }
         }
@@ -232,6 +237,7 @@ public sealed class SyncSessionEngine : IDisposable
             cts.Cancel();
             await AwaitQuietlyAsync(pingLoop).ConfigureAwait(false);
             await AwaitQuietlyAsync(drainLoop).ConfigureAwait(false);
+            await AwaitQuietlyAsync(fetchLoop).ConfigureAwait(false);
             AbortIncompleteImageTransfers();
             await transport.CloseAsync(WebSocketCloseStatus.NormalClosure, "session_end", CancellationToken.None).ConfigureAwait(false);
             await DrainUntilPeerClosesAsync().ConfigureAwait(false);
@@ -900,6 +906,61 @@ public sealed class SyncSessionEngine : IDisposable
 
     private async Task<bool> HandleClipFetchAsync(ClipFetchBody fetch, CancellationToken token)
     {
+        if (!pendingFetches.Writer.TryWrite(fetch))
+        {
+            await FailAsync(ProtocolErrorCodes.RateLimited, "fetch_queue_full", token).ConfigureAwait(false);
+            return false;
+        }
+
+        if (!options.OutboundAllowed())
+        {
+            // Retain the request until resume: retryable errors leave the receiver's fetch
+            // outstanding, so merely re-announcing the event would not trigger another pull.
+            await SendAsync(ProtocolMessageTypes.Error, new ErrorBody
+            {
+                Code = ProtocolErrorCodes.PayloadNotFound,
+                Retryable = true,
+                FailedType = ProtocolMessageTypes.ClipFetch
+            }, token).ConfigureAwait(false);
+        }
+        return true;
+    }
+
+    private async Task RunFetchLoopAsync(CancellationToken token)
+    {
+        try
+        {
+            await foreach (var fetch in pendingFetches.Reader.ReadAllAsync(token).ConfigureAwait(false))
+            {
+                await AwaitOutboundAllowedAsync(token).ConfigureAwait(false);
+                if (!await ServeClipFetchAsync(fetch, token).ConfigureAwait(false))
+                {
+                    RequestClose();
+                    return;
+                }
+            }
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
+        {
+        }
+        catch (Exception)
+        {
+            Complete(new SyncSessionResult(IsAuthenticated, null, "send_failed"));
+            RequestClose();
+        }
+    }
+
+    private async Task AwaitOutboundAllowedAsync(CancellationToken token)
+    {
+        while (!options.OutboundAllowed())
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(100), clock, token).ConfigureAwait(false);
+        }
+    }
+
+    private async Task<bool> ServeClipFetchAsync(ClipFetchBody fetch, CancellationToken token)
+    {
+
         var ids = fetch.EventIds.Select(Guid.Parse).ToArray();
         var events = await store.GetSyncableEventsByIdsAsync(ids, token).ConfigureAwait(false);
         var byId = events.ToDictionary(item => item.EventId);
@@ -961,11 +1022,13 @@ public sealed class SyncSessionEngine : IDisposable
 
         foreach (var chunk in terminalHeaders.Chunk(ProtocolLimits.MaxAnnounceClips))
         {
+            await AwaitOutboundAllowedAsync(token).ConfigureAwait(false);
             await SendAsync(ProtocolMessageTypes.ClipAnnounce, new ClipAnnounceBody { Clips = chunk }, token).ConfigureAwait(false);
         }
 
         foreach (var batch in ChunkPayloads(payloadItems))
         {
+            await AwaitOutboundAllowedAsync(token).ConfigureAwait(false);
             await SendAsync(ProtocolMessageTypes.ClipPayload, new ClipPayloadBody { Clips = batch }, token).ConfigureAwait(false);
         }
 
@@ -1354,6 +1417,7 @@ public sealed class SyncSessionEngine : IDisposable
 
         var chunks = ImageChunks.Split(bytes);
         var transferId = Guid.NewGuid().ToString("D");
+        await AwaitOutboundAllowedAsync(token).ConfigureAwait(false);
         await SendAsync(ProtocolMessageTypes.ClipPayloadBegin, new ClipPayloadBeginBody
         {
             TransferId = transferId,
@@ -1366,6 +1430,7 @@ public sealed class SyncSessionEngine : IDisposable
 
         foreach (var chunk in chunks)
         {
+            await AwaitOutboundAllowedAsync(token).ConfigureAwait(false);
             await SendAsync(ProtocolMessageTypes.ClipPayloadChunk, new ClipPayloadChunkBody
             {
                 TransferId = transferId,
@@ -1377,6 +1442,7 @@ public sealed class SyncSessionEngine : IDisposable
             }, token).ConfigureAwait(false);
         }
 
+        await AwaitOutboundAllowedAsync(token).ConfigureAwait(false);
         await SendAsync(ProtocolMessageTypes.ClipPayloadEnd, new ClipPayloadEndBody
         {
             TransferId = transferId,

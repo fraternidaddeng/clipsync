@@ -447,6 +447,9 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         return removed;
     }
 
+    /// <summary>Hard cap on pending outbox rows per peer; older rows beyond it are dropped at cleanup.</summary>
+    public const int MaximumOutboxRowsPerPeer = 10_000;
+
     public async ValueTask<int> CleanupAsync(
         ClipboardRetentionPolicy policy,
         DateTimeOffset now,
@@ -462,6 +465,33 @@ public sealed partial class SqliteClipboardEventStore : IClipboardEventStore, IA
         int removed;
         try
         {
+            // Bound the pending-send queue first: a paired device that never comes back must not
+            // pin history past the retention period (TTL = MaximumAge) nor grow the outbox without
+            // limit (per-peer cap). A fresh deletion must keep its own TTL: the peer's vector
+            // already covers its sequence and cannot recover a dropped deletion notification.
+            await using (var outboxTrim = connection.CreateCommand())
+            {
+                outboxTrim.Transaction = transaction;
+                outboxTrim.CommandText = """
+                    DELETE FROM outbox
+                    WHERE event_id IN (
+                        SELECT event_id FROM clips
+                        WHERE COALESCE(deleted_at, created_at) < $oldest_created_at);
+                    DELETE FROM outbox
+                    WHERE id IN (
+                        SELECT id FROM (
+                            SELECT o.id, ROW_NUMBER() OVER (
+                                PARTITION BY o.peer_id
+                                ORDER BY COALESCE(c.deleted_at, c.created_at) DESC, o.id DESC) AS rn
+                            FROM outbox o
+                            JOIN clips c ON c.event_id = o.event_id)
+                        WHERE rn > $outbox_cap);
+                    """;
+                outboxTrim.Parameters.AddWithValue("$oldest_created_at", (now - policy.MaximumAge).ToUnixTimeMilliseconds());
+                outboxTrim.Parameters.AddWithValue("$outbox_cap", MaximumOutboxRowsPerPeer);
+                await outboxTrim.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+
             await using var command = connection.CreateCommand();
             command.Transaction = transaction;
             command.CommandText = """
