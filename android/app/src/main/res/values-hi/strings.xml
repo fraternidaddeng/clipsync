@@ -60,6 +60,7 @@
     <string name="toast_share_image_enqueued">चित्र भेजने की कतार में जोड़ा गया; ऑनलाइन होते ही PC से सिंक होगा</string>
     <string name="toast_share_image_disabled">चित्र सिंक बंद है; प्राथमिकताओं में चालू करें</string>
     <string name="toast_share_image_invalid">केवल आकार-सीमा के भीतर के PNG/JPEG चित्र समर्थित हैं</string>
+    <string name="toast_share_image_failed">चित्र सहेजा नहीं जा सका; कृपया फिर से साझा करें</string>
     <string name="toast_clipboard_empty">भेजने के लिए क्लिपबोर्ड में कोई टेक्स्ट नहीं</string>
     <string name="toast_clipboard_unavailable">क्लिपबोर्ड पढ़ा नहीं जा सका; फिर से कोशिश करें</string>
 

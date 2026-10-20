@@ -60,6 +60,7 @@
     <string name="toast_share_image_enqueued">Bild zum Senden eingereiht; wird mit dem PC synchronisiert, sobald online</string>
     <string name="toast_share_image_disabled">Bild-Sync ist aus; in den Einstellungen aktivieren</string>
     <string name="toast_share_image_invalid">Nur PNG/JPEG-Bilder innerhalb der Größengrenzen werden unterstützt</string>
+    <string name="toast_share_image_failed">Bild konnte nicht gespeichert werden; bitte erneut teilen</string>
     <string name="toast_clipboard_empty">Kein Text in der Zwischenablage zum Senden</string>
     <string name="toast_clipboard_unavailable">Zwischenablage konnte nicht gelesen werden; bitte erneut versuchen</string>
 

@@ -61,6 +61,7 @@
     <string name="toast_share_image_enqueued">Imagem na fila de envio; sincroniza com o PC assim que estiver online</string>
     <string name="toast_share_image_disabled">A sincronização de imagens está desligada; ative nas Preferências</string>
     <string name="toast_share_image_invalid">Apenas imagens PNG/JPEG dentro dos limites de tamanho são aceitas</string>
+    <string name="toast_share_image_failed">Não foi possível salvar a imagem; compartilhe-a novamente</string>
     <string name="toast_clipboard_empty">Não há texto na área de transferência para enviar</string>
     <string name="toast_clipboard_unavailable">Não foi possível ler a área de transferência; tente novamente</string>
 

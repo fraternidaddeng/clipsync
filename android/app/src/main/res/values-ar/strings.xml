@@ -64,6 +64,7 @@
     <string name="toast_share_image_enqueued">أُضيفت الصورة إلى قائمة الإرسال؛ ستُزامَن مع حاسوبك فور الاتصال</string>
     <string name="toast_share_image_disabled">مزامنة الصور متوقفة؛ فعّلها من التفضيلات</string>
     <string name="toast_share_image_invalid">تُدعم فقط صور PNG/JPEG ضمن حدود الحجم</string>
+    <string name="toast_share_image_failed">تعذّر حفظ الصورة؛ يُرجى مشاركتها مرة أخرى</string>
     <string name="toast_clipboard_empty">لا يوجد نص في الحافظة لإرساله</string>
     <string name="toast_clipboard_unavailable">تعذّرت قراءة الحافظة؛ حاول مرة أخرى</string>
 

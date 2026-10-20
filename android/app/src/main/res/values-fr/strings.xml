@@ -61,6 +61,7 @@
     <string name="toast_share_image_enqueued">Image mise en file d’envoi ; synchronisée vers votre PC dès la connexion</string>
     <string name="toast_share_image_disabled">La synchronisation des images est désactivée ; activez-la dans les Préférences</string>
     <string name="toast_share_image_invalid">Seules les images PNG/JPEG dans les limites de taille sont prises en charge</string>
+    <string name="toast_share_image_failed">Impossible d’enregistrer l’image ; veuillez la partager à nouveau</string>
     <string name="toast_clipboard_empty">Aucun texte dans le presse-papiers à envoyer</string>
     <string name="toast_clipboard_unavailable">Impossible de lire le presse-papiers ; réessayez</string>
 

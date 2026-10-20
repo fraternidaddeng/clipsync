@@ -59,6 +59,7 @@
     <string name="toast_share_image_enqueued">Gambar masuk antrean kirim; akan tersinkron ke PC begitu daring</string>
     <string name="toast_share_image_disabled">Sinkronisasi gambar mati; aktifkan di Preferensi</string>
     <string name="toast_share_image_invalid">Hanya gambar PNG/JPEG dalam batas ukuran yang didukung</string>
+    <string name="toast_share_image_failed">Gambar tidak dapat disimpan; silakan bagikan lagi</string>
     <string name="toast_clipboard_empty">Tidak ada teks di papan klip untuk dikirim</string>
     <string name="toast_clipboard_unavailable">Tidak bisa membaca papan klip; silakan coba lagi</string>
 

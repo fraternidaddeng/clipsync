@@ -59,6 +59,7 @@
     <string name="toast_share_image_enqueued">圖片已加入傳送佇列，連線後同步到電腦</string>
     <string name="toast_share_image_disabled">圖片同步未開啟，可在偏好設定中開啟</string>
     <string name="toast_share_image_invalid">僅支援大小合規的 PNG/JPEG 圖片</string>
+    <string name="toast_share_image_failed">無法儲存圖片，請重新分享</string>
     <string name="toast_clipboard_empty">剪貼簿沒有可傳送的文字</string>
     <string name="toast_clipboard_unavailable">無法讀取剪貼簿，請重試</string>
 

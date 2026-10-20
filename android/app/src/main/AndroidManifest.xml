@@ -98,7 +98,7 @@
             android:exported="true"
             android:excludeFromRecents="true"
             android:label="@string/share_target_label"
-            android:theme="@android:style/Theme.NoDisplay">
+            android:theme="@style/Theme.ClipSync.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />

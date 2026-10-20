@@ -21,10 +21,15 @@ import com.clipsync.android.platform.clipboard.RouteProbes
 import com.clipsync.android.platform.clipboard.SharedClipboardWrites
 import com.clipsync.android.platform.clipboard.ShizukuClipboardBackend
 import com.clipsync.android.storage.SyncSettingsStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 /**
  * The full local capture stack, built once per process: the capability ladder backends, the
@@ -99,6 +104,8 @@ class CaptureTally(
  * matters when no service runs.
  */
 object SharedClipboardCapture {
+    private val captureScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
     @Volatile
     private var sharedStack: CaptureStack? = null
 
@@ -166,10 +173,12 @@ object SharedClipboardCapture {
                 ClipboardCaptureSession(
                     coordinator = coordinator,
                     onChanged = { change ->
-                        val outcome = captureManager.onClipboardChanged(change)
-                        tally.record(outcome)
-                        if (outcome == CaptureOutcome.REJECTED_TOO_LARGE) {
-                            announceOversizeRejection(appContext, mainHandler)
+                        captureScope.launch {
+                            val outcome = captureManager.onClipboardChanged(change)
+                            tally.record(outcome)
+                            if (outcome == CaptureOutcome.REJECTED_TOO_LARGE) {
+                                announceOversizeRejection(appContext, mainHandler)
+                            }
                         }
                     },
                     // Backend-level gate: while sync or auto-capture is paused, or private mode
@@ -246,6 +255,7 @@ object SharedClipboardCapture {
 
     /** Test hook: Robolectric recreates the application per test, so drop the cached stack. */
     fun reset() {
+        captureScope.coroutineContext.cancelChildren()
         sharedStack = null
     }
 

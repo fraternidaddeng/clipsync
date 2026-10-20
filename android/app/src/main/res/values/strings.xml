@@ -71,6 +71,7 @@
     <string name="toast_share_image_enqueued">图片已加入发送队列，联机后同步到电脑</string>
     <string name="toast_share_image_disabled">图片同步未开启，可在偏好设置中打开</string>
     <string name="toast_share_image_invalid">仅支持大小合规的 PNG/JPEG 图片</string>
+    <string name="toast_share_image_failed">无法保存图片，请重新分享</string>
     <string name="toast_clipboard_empty">剪贴板没有可发送的文本</string>
     <string name="toast_clipboard_unavailable">无法读取剪贴板，请重试</string>
 

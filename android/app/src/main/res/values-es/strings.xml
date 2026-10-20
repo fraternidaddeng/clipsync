@@ -61,6 +61,7 @@
     <string name="toast_share_image_enqueued">Imagen en cola para enviar; se sincroniza con tu PC en cuanto haya conexión</string>
     <string name="toast_share_image_disabled">La sincronización de imágenes está desactivada; actívala en Preferencias</string>
     <string name="toast_share_image_invalid">Solo se admiten imágenes PNG/JPEG dentro de los límites de tamaño</string>
+    <string name="toast_share_image_failed">No se pudo guardar la imagen; vuelve a compartirla</string>
     <string name="toast_clipboard_empty">No hay texto en el portapapeles para enviar</string>
     <string name="toast_clipboard_unavailable">No se pudo leer el portapapeles; inténtalo de nuevo</string>
 

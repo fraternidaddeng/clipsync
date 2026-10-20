@@ -61,9 +61,9 @@ class ClipboardCaptureManager(
      * Where captured image bytes go (validation + blob commit + Room event). Injectable so
      * unit tests need no Room database; production passes [ImageClipSink.submit].
      */
-    private val imageSink: (ByteArray) -> Boolean = { false },
+    private val imageSink: suspend (ByteArray) -> Boolean = { false },
 ) {
-    fun onClipboardChanged(change: ClipboardChange): CaptureOutcome {
+    suspend fun onClipboardChanged(change: ClipboardChange): CaptureOutcome {
         if (settings.privateMode) {
             return CaptureOutcome.SKIPPED_PRIVATE_MODE
         }

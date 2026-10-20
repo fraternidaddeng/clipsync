@@ -62,6 +62,7 @@
     <string name="toast_share_image_enqueued">Изображение поставлено в очередь; синхронизируется с ПК, как только появится связь</string>
     <string name="toast_share_image_disabled">Синхронизация изображений выключена; включите её в настройках</string>
     <string name="toast_share_image_invalid">Поддерживаются только изображения PNG/JPEG в пределах лимитов размера</string>
+    <string name="toast_share_image_failed">Не удалось сохранить изображение; отправьте его ещё раз</string>
     <string name="toast_clipboard_empty">В буфере обмена нет текста для отправки</string>
     <string name="toast_clipboard_unavailable">Не удалось прочитать буфер обмена; попробуйте ещё раз</string>
 

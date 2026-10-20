@@ -59,6 +59,7 @@
     <string name="toast_share_image_enqueued">Đã xếp ảnh vào hàng gửi; sẽ đồng bộ sang PC ngay khi có mạng</string>
     <string name="toast_share_image_disabled">Đồng bộ ảnh đang tắt; hãy bật trong Tùy chọn</string>
     <string name="toast_share_image_invalid">Chỉ hỗ trợ ảnh PNG/JPEG trong giới hạn kích thước</string>
+    <string name="toast_share_image_failed">Không thể lưu ảnh; vui lòng chia sẻ lại</string>
     <string name="toast_clipboard_empty">Không có văn bản trong bảng nhớ tạm để gửi</string>
     <string name="toast_clipboard_unavailable">Không đọc được bảng nhớ tạm; vui lòng thử lại</string>
 

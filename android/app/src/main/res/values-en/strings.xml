@@ -61,6 +61,7 @@
     <string name="toast_share_image_enqueued">Image queued to send; it syncs to your PC once online</string>
     <string name="toast_share_image_disabled">Image sync is off; enable it in Preferences</string>
     <string name="toast_share_image_invalid">Only PNG/JPEG images within the size limits are supported</string>
+    <string name="toast_share_image_failed">Could not save the image; please share it again</string>
     <string name="toast_clipboard_empty">No text on the clipboard to send</string>
     <string name="toast_clipboard_unavailable">Could not read the clipboard; please try again</string>
 

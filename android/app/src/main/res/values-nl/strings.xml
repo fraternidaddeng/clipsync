@@ -61,6 +61,7 @@
     <string name="toast_share_image_enqueued">Afbeelding in de wachtrij gezet; synchroniseert naar je pc zodra die online is</string>
     <string name="toast_share_image_disabled">Afbeeldingssynchronisatie staat uit; schakel deze in bij Voorkeuren</string>
     <string name="toast_share_image_invalid">Alleen PNG/JPEG-afbeeldingen binnen de groottelimieten worden ondersteund</string>
+    <string name="toast_share_image_failed">Kan de afbeelding niet opslaan; deel deze opnieuw</string>
     <string name="toast_clipboard_empty">Geen tekst op het klembord om te versturen</string>
     <string name="toast_clipboard_unavailable">Kon het klembord niet lezen; probeer het opnieuw</string>
 

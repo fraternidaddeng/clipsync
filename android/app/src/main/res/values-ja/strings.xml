@@ -59,6 +59,7 @@
     <string name="toast_share_image_enqueued">画像を送信キューに追加しました。オンラインになり次第 PC に同期されます</string>
     <string name="toast_share_image_disabled">画像同期がオフです。設定で有効にしてください</string>
     <string name="toast_share_image_invalid">サイズ制限内の PNG/JPEG 画像のみ対応しています</string>
+    <string name="toast_share_image_failed">画像を保存できませんでした。もう一度共有してください</string>
     <string name="toast_clipboard_empty">クリップボードに送信できるテキストがありません</string>
     <string name="toast_clipboard_unavailable">クリップボードを読み取れませんでした。もう一度お試しください</string>
 

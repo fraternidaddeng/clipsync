@@ -60,6 +60,7 @@
     <string name="toast_share_image_enqueued">Görsel gönderim kuyruğuna eklendi; çevrimiçi olur olmaz PC’ye eşitlenir</string>
     <string name="toast_share_image_disabled">Görsel eşitleme kapalı; Tercihler’den açın</string>
     <string name="toast_share_image_invalid">Yalnızca boyut sınırları içindeki PNG/JPEG görseller desteklenir</string>
+    <string name="toast_share_image_failed">Görsel kaydedilemedi; lütfen yeniden paylaşın</string>
     <string name="toast_clipboard_empty">Panoda gönderilecek metin yok</string>
     <string name="toast_clipboard_unavailable">Pano okunamadı; lütfen yeniden deneyin</string>
 

@@ -59,6 +59,7 @@
     <string name="toast_share_image_enqueued">이미지를 보내기 대기열에 추가했습니다. 온라인이 되면 PC로 동기화됩니다</string>
     <string name="toast_share_image_disabled">이미지 동기화가 꺼져 있습니다. 환경설정에서 켜세요</string>
     <string name="toast_share_image_invalid">크기 제한 내의 PNG/JPEG 이미지만 지원합니다</string>
+    <string name="toast_share_image_failed">이미지를 저장하지 못했습니다. 다시 공유해 주세요</string>
     <string name="toast_clipboard_empty">클립보드에 보낼 텍스트가 없습니다</string>
     <string name="toast_clipboard_unavailable">클립보드를 읽지 못했습니다. 다시 시도하세요</string>
 

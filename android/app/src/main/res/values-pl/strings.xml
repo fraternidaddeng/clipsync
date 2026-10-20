@@ -62,6 +62,7 @@
     <string name="toast_share_image_enqueued">Obraz dodano do kolejki wysyłania; zsynchronizuje się z PC, gdy będzie online</string>
     <string name="toast_share_image_disabled">Synchronizacja obrazów jest wyłączona; włącz ją w Preferencjach</string>
     <string name="toast_share_image_invalid">Obsługiwane są tylko obrazy PNG/JPEG w granicach rozmiaru</string>
+    <string name="toast_share_image_failed">Nie udało się zapisać obrazu; udostępnij go ponownie</string>
     <string name="toast_clipboard_empty">W schowku nie ma tekstu do wysłania</string>
     <string name="toast_clipboard_unavailable">Nie udało się odczytać schowka; spróbuj ponownie</string>
 

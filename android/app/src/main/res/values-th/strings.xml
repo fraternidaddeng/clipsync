@@ -59,6 +59,7 @@
     <string name="toast_share_image_enqueued">รูปเข้าคิวส่งแล้ว จะซิงค์ไปพีซีทันทีที่ออนไลน์</string>
     <string name="toast_share_image_disabled">การซิงค์รูปปิดอยู่ เปิดได้ในการตั้งค่า</string>
     <string name="toast_share_image_invalid">รองรับเฉพาะรูป PNG/JPEG ที่อยู่ในขีดจำกัดขนาด</string>
+    <string name="toast_share_image_failed">บันทึกรูปไม่ได้ โปรดแชร์อีกครั้ง</string>
     <string name="toast_clipboard_empty">ไม่มีข้อความในคลิปบอร์ดให้ส่ง</string>
     <string name="toast_clipboard_unavailable">อ่านคลิปบอร์ดไม่ได้ โปรดลองอีกครั้ง</string>
 

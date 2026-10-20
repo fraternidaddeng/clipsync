@@ -21,6 +21,7 @@ import com.clipsync.android.platform.clipboard.RouteProbes
 import com.clipsync.android.storage.ClipSyncDatabase
 import com.clipsync.android.storage.ClipSyncRepository
 import com.clipsync.android.storage.SyncSettingsStore
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -101,7 +102,7 @@ class ClipboardSyncServiceCaptureOwnershipTest {
         session =
             ClipboardCaptureSession(
                 coordinator = coordinator,
-                onChanged = { captureManager.onClipboardChanged(it) },
+                onChanged = { change -> runBlocking { captureManager.onClipboardChanged(change) } },
                 captureGate = { SharedClipboardCapture.captureGate(settings) },
             )
         return CaptureStack(

@@ -61,6 +61,7 @@
     <string name="toast_share_image_enqueued">Immagine in coda per l’invio; si sincronizza con il PC appena online</string>
     <string name="toast_share_image_disabled">La sincronizzazione immagini è disattivata; attivala nelle Preferenze</string>
     <string name="toast_share_image_invalid">Sono supportate solo immagini PNG/JPEG entro i limiti di dimensione</string>
+    <string name="toast_share_image_failed">Impossibile salvare l’immagine; condividila di nuovo</string>
     <string name="toast_clipboard_empty">Nessun testo negli appunti da inviare</string>
     <string name="toast_clipboard_unavailable">Impossibile leggere gli appunti; riprova</string>
 
