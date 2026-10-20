@@ -1,0 +1,11 @@
+* text=auto eol=lf
+
+# Binary assets must never be rewritten as text by Git.
+*.apk binary
+*.ico binary
+*.jar binary
+*.jpeg binary
+*.jpg binary
+*.otf binary
+*.png binary
+*.ttf binary

@@ -38,6 +38,12 @@ dist/
 output/
 .tools/
 
+# Local test and QA output
+__pycache__/
+*.pyc
+**/TestResults/
+tmp-qa-*
+
 # OS / editor
 .DS_Store
 Thumbs.db
