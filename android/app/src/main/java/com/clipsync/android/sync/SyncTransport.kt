@@ -1,5 +1,6 @@
 package com.clipsync.android.sync
 
+import com.clipsync.android.protocol.PeerEndpoint
 import java.io.IOException
 import java.net.Proxy
 import java.security.MessageDigest
@@ -74,6 +75,17 @@ class OkHttpSyncConnector(
 ) : SyncConnector {
     override suspend fun connect(host: String, port: Int, certSha256: String, protocolVersion: Int): SyncTransport {
         require(protocolVersion == 1 || protocolVersion == 2) { "Unknown protocol version." }
+        val url = try {
+            PeerEndpoint.httpsUrl(host, port, "v$protocolVersion/peer/sync")
+        } catch (failure: IllegalArgumentException) {
+            // Stored peers and direct connector callers need the same host fallback as a
+            // failed dial, rather than an unchecked URL exception escaping the supervisor.
+            throw IOException("peer endpoint is invalid", failure)
+        }
+        val request = Request.Builder()
+            .url(url)
+            .header("X-Protocol-Version", protocolVersion.toString())
+            .build()
         val trustManager = PinnedTrustManager(certSha256)
         val sslContext = SSLContext.getInstance("TLS")
         sslContext.init(null, arrayOf(trustManager), SecureRandom())
@@ -95,23 +107,19 @@ class OkHttpSyncConnector(
             .writeTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
             .retryOnConnectionFailure(false)
             .build()
-        val request = Request.Builder()
-            .url("https://$host:$port/v$protocolVersion/peer/sync")
-            .header("X-Protocol-Version", protocolVersion.toString())
-            .build()
-
         val transport = OkHttpSyncTransport(client)
+        var connected = false
         try {
             transport.awaitOpen(request)
-        } catch (failure: Throwable) {
-            transport.dispose()
-            throw when {
-                trustManager.sawPinMismatch -> PinMismatchException(host)
-                failure is IOException -> failure
-                else -> IOException("websocket connect failed", failure)
+            connected = true
+            return transport
+        } catch (failure: IOException) {
+            throw if (trustManager.sawPinMismatch) PinMismatchException(host) else failure
+        } finally {
+            if (!connected) {
+                transport.dispose()
             }
         }
-        return transport
     }
 
     private class PinnedTrustManager(pin: String) : X509TrustManager {

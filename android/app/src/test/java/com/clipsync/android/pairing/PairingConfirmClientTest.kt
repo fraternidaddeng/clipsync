@@ -13,8 +13,10 @@ import okhttp3.tls.HeldCertificate
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeNoException
 import org.junit.Before
 import org.junit.Test
+import java.io.IOException
 import java.net.InetAddress
 import java.security.MessageDigest
 
@@ -113,6 +115,62 @@ class PairingConfirmClientTest {
         // The request body is the strict confirm document, no secret material inside.
         val sent = PairingJson.parseConfirmRequest(recorded.body.readUtf8())
         assertEquals(ANDROID_ID, sent.deviceId)
+    }
+
+    @Test
+    fun `a hostname endpoint completes the pinned exchange`() {
+        server.enqueue(MockResponse().setResponseCode(200).setBody(approvedBody()))
+
+        val outcome = confirm(qr(hosts = listOf("localhost"))) as PairingConfirmOutcome.Approved
+
+        assertEquals("localhost", outcome.viaHost)
+        assertEquals("/v1/pair/confirm", server.takeRequest().path)
+    }
+
+    @Test
+    fun `bare and bracketed IPv6 hosts complete the pinned exchange`() {
+        val ipv6Server = MockWebServer()
+        val handshake = HandshakeCertificates.Builder().heldCertificate(certificate).build()
+        ipv6Server.useHttps(handshake.sslSocketFactory(), false)
+        try {
+            ipv6Server.start(InetAddress.getByName("::1"), 0)
+        } catch (failure: IOException) {
+            assumeNoException("IPv6 loopback is unavailable", failure)
+            return
+        }
+        try {
+            listOf("::1", "[::1]").forEach { host ->
+                ipv6Server.enqueue(MockResponse().setResponseCode(200).setBody(approvedBody()))
+                val outcome = confirm(qr(hosts = listOf(host)).copy(port = ipv6Server.port)) as PairingConfirmOutcome.Approved
+                assertEquals(host, outcome.viaHost)
+                assertEquals("/v1/pair/confirm", ipv6Server.takeRequest().path)
+            }
+        } finally {
+            ipv6Server.shutdown()
+        }
+    }
+
+    @Test
+    fun `direct malformed endpoints are protocol violations before any host is contacted`() {
+        val hosts = listOf(
+            emptyList(), listOf(""), listOf("localhost:443"), listOf("https://localhost"),
+            listOf("user@localhost"), listOf("localhost/path"), listOf("localhost?query"), listOf("localhost#fragment"),
+            listOf("local\nhost"), listOf("[::1]:443"), listOf("2001:db8:::1"),
+            listOf("127.0.0.1", "localhost/path"), listOf("127.0.0.1", "127.0.0.1"),
+            (1..9).map { "127.0.0.$it" },
+        )
+        val phases = mutableListOf<PairingPhase>()
+        hosts.forEachIndexed { index, candidates ->
+            assertTrue(
+                "Invalid endpoint case #$index did not fail safely",
+                confirm(qr(hosts = candidates), onPhase = phases::add) is PairingConfirmOutcome.ProtocolViolation,
+            )
+        }
+        listOf(-1, 0, 65_536, Int.MAX_VALUE).forEach { port ->
+            assertTrue(confirm(qr().copy(port = port), onPhase = phases::add) is PairingConfirmOutcome.ProtocolViolation)
+        }
+        assertTrue(phases.isEmpty())
+        assertEquals(0, server.requestCount)
     }
 
     @Test
@@ -303,7 +361,7 @@ class PairingConfirmClientTest {
 
         val outcome =
             confirm(
-                qr(hosts = listOf("127.0.0.1", "127.0.0.1")),
+                qr(hosts = listOf("127.0.0.1", "127.0.0.99")),
                 client = PairingConfirmClient(readTimeoutMs = 400),
             )
         assertEquals(PairingConfirmOutcome.NoResponse("127.0.0.1", NoResponseKind.READ_TIMEOUT), outcome)

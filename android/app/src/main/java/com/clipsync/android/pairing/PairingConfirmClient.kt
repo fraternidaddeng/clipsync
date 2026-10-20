@@ -1,5 +1,6 @@
 package com.clipsync.android.pairing
 
+import com.clipsync.android.protocol.PeerEndpoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -109,6 +110,11 @@ class PairingConfirmClient(
         onPhase: (PairingPhase) -> Unit,
     ): PairingConfirmOutcome =
         withContext(ioContext) {
+            try {
+                PairingJson.validateQrEndpoint(qr)
+            } catch (_: SerializationException) {
+                return@withContext PairingConfirmOutcome.ProtocolViolation("QR endpoint failed validation")
+            }
             val body = PairingJson.serialize(request)
             val attempts = mutableListOf<HostAttempt>()
             for (host in qr.hosts) {
@@ -141,14 +147,19 @@ class PairingConfirmClient(
         body: String,
         onPhase: (PairingPhase) -> Unit,
     ): HostOutcome {
-        val client = PinnedTls.client(pin, connectTimeoutMs, readTimeoutMs, ConnectedOnceListener(onPhase))
+        val url = try {
+            PeerEndpoint.httpsUrl(host, port, "v1/pair/confirm")
+        } catch (_: IllegalArgumentException) {
+            return HostOutcome.Answered(PairingConfirmOutcome.ProtocolViolation("QR endpoint failed validation"))
+        }
         val request =
             Request
                 .Builder()
-                .url("https://$host:$port/v1/pair/confirm")
+                .url(url)
                 .header("X-Protocol-Version", "1")
                 .post(body.toRequestBody("application/json; charset=utf-8".toMediaType()))
                 .build()
+        val client = PinnedTls.client(pin, connectTimeoutMs, readTimeoutMs, ConnectedOnceListener(onPhase))
         return try {
             client.newCall(request).await().use { response ->
                 HostOutcome.Answered(mapResponse(host, response.code, readBounded(response)))

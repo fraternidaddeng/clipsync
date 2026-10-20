@@ -1,5 +1,6 @@
 package com.clipsync.android.pairing
 
+import com.clipsync.android.protocol.PeerEndpoint
 import java.util.Base64
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -9,7 +10,7 @@ import kotlinx.serialization.json.jsonPrimitive
 /**
  * Strict reader for the pairing documents: the same token-level rules as the Windows
  * implementation (duplicate properties, null values, depth 16, unknown fields, 8 KiB cap)
- * plus the semantic checks from pairing.schema.json, so both clients fail identically.
+ * plus the semantic checks from pairing.schema.json and local host-only endpoint validation.
  * Parsers throw [SerializationException]; callers map that to a stable "invalid document"
  * state without echoing the raw payload anywhere.
  */
@@ -30,16 +31,20 @@ object PairingJson {
         val payload = decode<PairingQrPayload>(text)
         requireDocument(payload.kind == PairingDocumentKinds.QR) { "kind discriminator does not match" }
         validateCommon(payload.version, payload.deviceId, payload.displayName)
-        requireDocument(
-            payload.hosts.size in 1..8 &&
-                payload.hosts.all { it.length in 1..253 } &&
-                payload.hosts.toSet().size == payload.hosts.size,
-        ) { "hosts must be 1..8 unique entries" }
-        requireDocument(payload.port in 1..65535) { "port is out of range" }
+        validateQrEndpoint(payload)
         requireDocument(isLowercaseSha256(payload.certSha256)) { "cert_sha256 is not lowercase SHA-256 hex" }
         requireDocument(decodeBase64Url256(payload.token) != null) { "token is not 32 bytes of unpadded base64url" }
         requireDocument(payload.expiresAtMs >= 1) { "expires_at_ms must be positive" }
         return payload
+    }
+
+    /** Also checked at the transport boundary for callers that construct a payload directly. */
+    internal fun validateQrEndpoint(payload: PairingQrPayload) {
+        requireDocument(
+            payload.hosts.size in 1..8 && payload.hosts.toSet().size == payload.hosts.size,
+        ) { "hosts must be 1..8 unique entries" }
+        requireDocument(payload.hosts.all(PeerEndpoint::isValidHost)) { "hosts must be IP addresses or hostnames" }
+        requireDocument(payload.port in 1..65535) { "port is out of range" }
     }
 
     fun parseConfirmResponse(text: String): PairingConfirmResponse {
