@@ -418,7 +418,7 @@ class PreferencesViewModel(
     }
 
     /**
-     * 图像同步 (protocol v2, 默认关): applies to the next (re)connection — the supervisor
+     * 图像同步 (protocol v2, 默认开): applies to the next (re)connection — the supervisor
      * re-reads the preference per dial attempt, and capture/serve paths re-read it per event.
      */
     fun setImageSync(enabled: Boolean) {
