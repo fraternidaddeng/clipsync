@@ -1,11 +1,11 @@
 package com.clipsync.android.pairing
 
 import com.clipsync.android.protocol.PeerEndpoint
-import java.util.Base64
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.util.Base64
 
 /**
  * Strict reader for the pairing documents: the same token-level rules as the Windows
@@ -18,13 +18,14 @@ object PairingJson {
     const val MAX_DOCUMENT_BYTES = 8 * 1024
     private const val MAX_DEPTH = 16
 
-    private val json = Json {
-        ignoreUnknownKeys = false
-        isLenient = false
-        coerceInputValues = false
-        allowSpecialFloatingPointValues = false
-        explicitNulls = true
-    }
+    private val json =
+        Json {
+            ignoreUnknownKeys = false
+            isLenient = false
+            coerceInputValues = false
+            allowSpecialFloatingPointValues = false
+            explicitNulls = true
+        }
 
     fun parseQrPayload(text: String): PairingQrPayload {
         scanStrict(text)
@@ -78,9 +79,15 @@ object PairingJson {
     }
 
     /** Lenient probe of the kind discriminator, used to dispatch fixtures and responses. */
-    fun peekKind(text: String): String? = runCatching {
-        json.parseToJsonElement(text).jsonObject["kind"]?.jsonPrimitive?.takeIf { it.isString }?.content
-    }.getOrNull()
+    fun peekKind(text: String): String? =
+        runCatching {
+            json
+                .parseToJsonElement(text)
+                .jsonObject["kind"]
+                ?.jsonPrimitive
+                ?.takeIf { it.isString }
+                ?.content
+        }.getOrNull()
 
     fun serialize(request: PairingConfirmRequest): String = json.encodeToString(PairingConfirmRequest.serializer(), request)
 
@@ -104,26 +111,33 @@ object PairingJson {
         return bytes
     }
 
-    fun encodeBase64Url(bytes: ByteArray): String =
-        Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)
+    fun encodeBase64Url(bytes: ByteArray): String = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)
 
     fun isLowercaseSha256(value: String): Boolean = LOWERCASE_SHA256.matches(value)
 
-    private inline fun <reified T> decode(text: String): T = try {
-        json.decodeFromString<T>(text)
-    } catch (exception: SerializationException) {
-        throw SerializationException("document shape is invalid", exception)
-    } catch (exception: IllegalArgumentException) {
-        throw SerializationException("document shape is invalid", exception)
-    }
+    private inline fun <reified T> decode(text: String): T =
+        try {
+            json.decodeFromString<T>(text)
+        } catch (exception: SerializationException) {
+            throw SerializationException("document shape is invalid", exception)
+        } catch (exception: IllegalArgumentException) {
+            throw SerializationException("document shape is invalid", exception)
+        }
 
-    private fun validateCommon(version: Int, deviceId: String, displayName: String) {
+    private fun validateCommon(
+        version: Int,
+        deviceId: String,
+        displayName: String,
+    ) {
         requireDocument(version == PROTOCOL_VERSION) { "version is unsupported" }
         requireDocument(isCanonicalUuid(deviceId)) { "device_id is not a canonical UUID" }
         requireDocument(displayName.trim().length in 1..64) { "display_name must be 1..64 characters" }
     }
 
-    private inline fun requireDocument(condition: Boolean, reason: () -> String) {
+    private inline fun requireDocument(
+        condition: Boolean,
+        reason: () -> String,
+    ) {
         if (!condition) {
             throw SerializationException(reason())
         }
@@ -141,7 +155,9 @@ object PairingJson {
         StrictScanner(text).scanDocument()
     }
 
-    private class StrictScanner(private val source: String) {
+    private class StrictScanner(
+        private val source: String,
+    ) {
         private var index = 0
 
         fun scanDocument() {
@@ -330,7 +346,10 @@ object PairingJson {
             }
         }
 
-        private inline fun require(condition: Boolean, reason: () -> String) {
+        private inline fun require(
+            condition: Boolean,
+            reason: () -> String,
+        ) {
             if (!condition) {
                 throw SerializationException(reason())
             }

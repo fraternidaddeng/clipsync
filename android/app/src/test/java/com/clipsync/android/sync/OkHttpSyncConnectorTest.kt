@@ -1,9 +1,5 @@
 package com.clipsync.android.sync
 
-import java.io.IOException
-import java.net.InetAddress
-import java.security.MessageDigest
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -24,28 +20,41 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeNoException
 import org.junit.Test
+import java.io.IOException
+import java.net.InetAddress
+import java.security.MessageDigest
+import java.util.concurrent.TimeUnit
 
 /** Real TLS + WebSocket upgrade against MockWebServer, with the pairing-style pin. */
 class OkHttpSyncConnectorTest {
-    private fun heldCertificate(): HeldCertificate = HeldCertificate.Builder()
-        .commonName("clipsync-test-peer")
-        .addSubjectAlternativeName("localhost")
-        .build()
+    private fun heldCertificate(): HeldCertificate =
+        HeldCertificate
+            .Builder()
+            .commonName("clipsync-test-peer")
+            .addSubjectAlternativeName("localhost")
+            .build()
 
-    private fun pinOf(certificate: HeldCertificate): String = MessageDigest.getInstance("SHA-256")
-        .digest(certificate.certificate.encoded)
-        .joinToString(separator = "") { byte -> "%02x".format(byte) }
+    private fun pinOf(certificate: HeldCertificate): String =
+        MessageDigest
+            .getInstance("SHA-256")
+            .digest(certificate.certificate.encoded)
+            .joinToString(separator = "") { byte -> "%02x".format(byte) }
 
     private fun tlsServer(certificate: HeldCertificate): MockWebServer {
-        val certificates = HandshakeCertificates.Builder()
-            .heldCertificate(certificate)
-            .build()
+        val certificates =
+            HandshakeCertificates
+                .Builder()
+                .heldCertificate(certificate)
+                .build()
         val server = MockWebServer()
         server.useHttps(certificates.sslSocketFactory(), false)
         return server
     }
 
-    private fun startServer(certificate: HeldCertificate, listener: WebSocketListener): MockWebServer {
+    private fun startServer(
+        certificate: HeldCertificate,
+        listener: WebSocketListener,
+    ): MockWebServer {
         val server = tlsServer(certificate)
         server.enqueue(MockResponse().withWebSocketUpgrade(listener))
         server.start()
@@ -55,18 +64,23 @@ class OkHttpSyncConnectorTest {
     @Test
     fun `connects with the pinned certificate, sends the version header, and exchanges frames`() {
         val certificate = heldCertificate()
-        val server = startServer(
-            certificate,
-            object : WebSocketListener() {
-                override fun onMessage(webSocket: WebSocket, text: String) {
-                    webSocket.send("echo:$text")
-                }
-            },
-        )
+        val server =
+            startServer(
+                certificate,
+                object : WebSocketListener() {
+                    override fun onMessage(
+                        webSocket: WebSocket,
+                        text: String,
+                    ) {
+                        webSocket.send("echo:$text")
+                    }
+                },
+            )
         try {
             runBlocking {
-                val transport = OkHttpSyncConnector()
-                    .connect(server.hostName, server.port, pinOf(certificate), protocolVersion = 1)
+                val transport =
+                    OkHttpSyncConnector()
+                        .connect(server.hostName, server.port, pinOf(certificate), protocolVersion = 1)
                 try {
                     transport.send("hello")
                     val frame = withTimeout(10_000) { transport.receive() }
@@ -86,18 +100,23 @@ class OkHttpSyncConnectorTest {
     @Test
     fun `protocol v2 dials the v2 path with the matching version header`() {
         val certificate = heldCertificate()
-        val server = startServer(
-            certificate,
-            object : WebSocketListener() {
-                override fun onMessage(webSocket: WebSocket, text: String) {
-                    webSocket.send("echo:$text")
-                }
-            },
-        )
+        val server =
+            startServer(
+                certificate,
+                object : WebSocketListener() {
+                    override fun onMessage(
+                        webSocket: WebSocket,
+                        text: String,
+                    ) {
+                        webSocket.send("echo:$text")
+                    }
+                },
+            )
         try {
             runBlocking {
-                val transport = OkHttpSyncConnector()
-                    .connect(server.hostName, server.port, pinOf(certificate), protocolVersion = 2)
+                val transport =
+                    OkHttpSyncConnector()
+                        .connect(server.hostName, server.port, pinOf(certificate), protocolVersion = 2)
                 try {
                     transport.send("hello")
                     withTimeout(10_000) { transport.receive() }
@@ -119,11 +138,12 @@ class OkHttpSyncConnectorTest {
         val server = startServer(certificate, object : WebSocketListener() {})
         try {
             val wrongPin = "0".repeat(64)
-            val failure = runCatching {
-                runBlocking {
-                    OkHttpSyncConnector().connect(server.hostName, server.port, wrongPin, protocolVersion = 1)
-                }
-            }.exceptionOrNull()
+            val failure =
+                runCatching {
+                    runBlocking {
+                        OkHttpSyncConnector().connect(server.hostName, server.port, wrongPin, protocolVersion = 1)
+                    }
+                }.exceptionOrNull()
             assertTrue("Expected PinMismatchException, got $failure", failure is PinMismatchException)
         } finally {
             server.shutdown()
@@ -132,33 +152,54 @@ class OkHttpSyncConnectorTest {
 
     @Test
     fun `a closed port fails with a connectivity error, not a pin error`() {
-        val failure = runCatching {
-            runBlocking {
-                OkHttpSyncConnector(connectTimeoutMs = 1_500)
-                    .connect("127.0.0.1", 1, "0".repeat(64), protocolVersion = 1)
-            }
-        }.exceptionOrNull()
+        val failure =
+            runCatching {
+                runBlocking {
+                    OkHttpSyncConnector(connectTimeoutMs = 1_500)
+                        .connect("127.0.0.1", 1, "0".repeat(64), protocolVersion = 1)
+                }
+            }.exceptionOrNull()
         assertTrue("Expected IOException, got $failure", failure is IOException && failure !is PinMismatchException)
     }
 
     @Test
     fun `malformed direct host and port arguments fail as IOExceptions`() {
-        val hosts = listOf(
-            "", "https://localhost", "user@localhost", "localhost:443", "localhost/path", "localhost\\path",
-            "localhost?query", "localhost#fragment", "local\nhost", "localhost%2fpath",
-            "[::1]:443", "2001:db8:::1", "[::1", "fe80::1%wlan0", "127.0.0.256",
-        )
+        val hosts =
+            listOf(
+                "",
+                "https://localhost",
+                "user@localhost",
+                "localhost:443",
+                "localhost/path",
+                "localhost\\path",
+                "localhost?query",
+                "localhost#fragment",
+                "local\nhost",
+                "localhost%2fpath",
+                "[::1]:443",
+                "2001:db8:::1",
+                "[::1",
+                "fe80::1%wlan0",
+                "127.0.0.256",
+            )
         hosts.forEachIndexed { index, host ->
-            val failure = runCatching {
-                runBlocking { OkHttpSyncConnector().connect(host, 47_654, "0".repeat(64), protocolVersion = 1) }
-            }.exceptionOrNull()
-            assertTrue("Invalid host case #$index escaped: $failure", failure is IOException && failure !is PinMismatchException)
+            val failure =
+                runCatching {
+                    runBlocking { OkHttpSyncConnector().connect(host, 47_654, "0".repeat(64), protocolVersion = 1) }
+                }.exceptionOrNull()
+            assertTrue(
+                "Invalid host case #$index escaped: $failure",
+                failure is IOException && failure !is PinMismatchException,
+            )
             assertTrue("Invalid host case #$index reached the network", failure?.cause is IllegalArgumentException)
         }
         listOf(-1, 0, 65_536, Int.MAX_VALUE).forEach { port ->
-            val failure = runCatching {
-                runBlocking { OkHttpSyncConnector().connect("127.0.0.1", port, "0".repeat(64), protocolVersion = 2) }
-            }.exceptionOrNull()
+            val failure =
+                runCatching {
+                    runBlocking {
+                        OkHttpSyncConnector().connect("127.0.0.1", port, "0".repeat(64), protocolVersion = 2)
+                    }
+                }.exceptionOrNull()
             assertTrue("Invalid port escaped: $failure", failure is IOException && failure !is PinMismatchException)
             assertTrue("Invalid port reached the network", failure?.cause is IllegalArgumentException)
         }
@@ -178,7 +219,9 @@ class OkHttpSyncConnectorTest {
             listOf("::1", "[::1]").forEach { host ->
                 server.enqueue(MockResponse().withWebSocketUpgrade(object : WebSocketListener() {}))
                 runBlocking {
-                    val transport = OkHttpSyncConnector().connect(host, server.port, pinOf(certificate), protocolVersion = 2)
+                    val transport =
+                        OkHttpSyncConnector()
+                            .connect(host, server.port, pinOf(certificate), protocolVersion = 2)
                     transport.dispose()
                 }
                 val recorded = server.takeRequest()
@@ -199,15 +242,17 @@ class OkHttpSyncConnectorTest {
         try {
             runBlocking {
                 val observedFailure = CompletableDeferred<Throwable>()
-                val job = launch {
-                    try {
-                        OkHttpSyncConnector().connect(server.hostName, server.port, pinOf(certificate), protocolVersion = 1)
-                            .dispose()
-                    } catch (failure: Throwable) {
-                        observedFailure.complete(failure)
-                        throw failure
+                val job =
+                    launch {
+                        try {
+                            OkHttpSyncConnector()
+                                .connect(server.hostName, server.port, pinOf(certificate), protocolVersion = 1)
+                                .dispose()
+                        } catch (failure: Throwable) {
+                            observedFailure.complete(failure)
+                            throw failure
+                        }
                     }
-                }
                 try {
                     assertNotNull(withContext(Dispatchers.IO) { server.takeRequest(5, TimeUnit.SECONDS) })
                 } finally {
@@ -223,18 +268,23 @@ class OkHttpSyncConnectorTest {
     @Test
     fun `server-initiated close surfaces as a closed frame`() {
         val certificate = heldCertificate()
-        val server = startServer(
-            certificate,
-            object : WebSocketListener() {
-                override fun onMessage(webSocket: WebSocket, text: String) {
-                    webSocket.close(1000, "bye")
-                }
-            },
-        )
+        val server =
+            startServer(
+                certificate,
+                object : WebSocketListener() {
+                    override fun onMessage(
+                        webSocket: WebSocket,
+                        text: String,
+                    ) {
+                        webSocket.close(1000, "bye")
+                    }
+                },
+            )
         try {
             runBlocking {
-                val transport = OkHttpSyncConnector()
-                    .connect(server.hostName, server.port, pinOf(certificate), protocolVersion = 1)
+                val transport =
+                    OkHttpSyncConnector()
+                        .connect(server.hostName, server.port, pinOf(certificate), protocolVersion = 1)
                 try {
                     transport.send("trigger-close")
                     val frame = withTimeout(10_000) { transport.receive() }

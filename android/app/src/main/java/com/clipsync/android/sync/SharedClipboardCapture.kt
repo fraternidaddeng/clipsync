@@ -150,17 +150,7 @@ object SharedClipboardCapture {
                 realReaders = realReaders,
                 foregroundBackend = foregroundBackend,
             )
-        val captureManager =
-            ClipboardCaptureManager(
-                settings = settings,
-                // One process-wide write coordinator: its suppression table is what keeps
-                // auto-applied remote clips from echoing straight back to the peer.
-                writeCoordinator = SharedClipboardWrites.coordinator(appContext),
-                imageSink = { bytes ->
-                    ImageClipSink.submit(appContext, bytes, "android.app") is
-                        ImageClipSink.Outcome.Accepted
-                },
-            )
+        val captureManager = buildCaptureManager(appContext, settings)
         val mainHandler = Handler(Looper.getMainLooper())
         val tally = CaptureTally()
         return CaptureStack(
@@ -190,6 +180,21 @@ object SharedClipboardCapture {
             tally = tally,
         )
     }
+
+    private fun buildCaptureManager(
+        appContext: Context,
+        settings: SyncSettingsStore,
+    ): ClipboardCaptureManager =
+        ClipboardCaptureManager(
+            settings = settings,
+            // One process-wide write coordinator: its suppression table is what keeps
+            // auto-applied remote clips from echoing straight back to the peer.
+            writeCoordinator = SharedClipboardWrites.coordinator(appContext),
+            imageSink = { bytes ->
+                ImageClipSink.submit(appContext, bytes, "android.app") is
+                    ImageClipSink.Outcome.Accepted
+            },
+        )
 
     /** The backend-level gate in policy-engine precedence (暂停同步 → 私密 → 暂停捕获). */
     fun captureGate(settings: SyncSettingsStore): CaptureGate =

@@ -16,10 +16,6 @@ import com.clipsync.android.sync.SyncRepository
 import com.clipsync.android.sync.SyncRequester
 import com.clipsync.android.sync.SyncServices
 import com.clipsync.android.sync.SyncableClipEvent
-import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.IOException
-import java.util.UUID
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,16 +38,21 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.shadows.ShadowToast
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.IOException
+import java.util.UUID
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class ShareReceiverActivityTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val dispatcher = StandardTestDispatcher()
-    private val png = File(
-        requireNotNull(System.getProperty("protocol.v2.fixtures.dir")),
-        "media/png-8x8.png",
-    ).readBytes()
+    private val png =
+        File(
+            requireNotNull(System.getProperty("protocol.v2.fixtures.dir")),
+            "media/png-8x8.png",
+        ).readBytes()
     private lateinit var root: File
     private lateinit var media: MediaBlobStore
     private lateinit var originalRepositoryProvider: (Context) -> SyncRepository
@@ -65,9 +66,10 @@ class ShareReceiverActivityTest {
         ShadowToast.reset()
         root = File(context.cacheDir, "share-activity-${UUID.randomUUID()}")
         media = MediaBlobStore(root)
-        val settings = SyncSettingsStore(
-            SharedPrefsKeyValueStore(context, name = SyncSettingsStore.PREFERENCES_NAME),
-        )
+        val settings =
+            SyncSettingsStore(
+                SharedPrefsKeyValueStore(context, name = SyncSettingsStore.PREFERENCES_NAME),
+            )
         settings.imageSyncEnabled = true
         settings.privateMode = false
         settings.syncPaused = false
@@ -90,20 +92,25 @@ class ShareReceiverActivityTest {
     fun imageShareCanResumeAndOnlyToastsSuccessAndFinishesAfterPersistence() {
         val entered = CompletableDeferred<Unit>()
         val release = CompletableDeferred<Unit>()
-        val repository = repository {
-            assertFalse(Looper.getMainLooper().thread === Thread.currentThread())
-            assertTrue(media.exists(it.contentHash))
-            entered.complete(Unit)
-            release.await()
-            savedEvent(it)
-        }
+        val repository =
+            repository {
+                assertFalse(Looper.getMainLooper().thread === Thread.currentThread())
+                assertTrue(media.exists(it.contentHash))
+                entered.complete(Unit)
+                release.await()
+                savedEvent(it)
+            }
         ClipboardSyncService.repositoryProvider = { repository }
         var readThread: Thread? = null
         val uri = Uri.parse("content://share-tests/photo.png")
         shadowOf(context.contentResolver).registerInputStream(
             uri,
             object : ByteArrayInputStream(png) {
-                override fun read(buffer: ByteArray, offset: Int, length: Int): Int {
+                override fun read(
+                    buffer: ByteArray,
+                    offset: Int,
+                    length: Int,
+                ): Int {
                     readThread = Thread.currentThread()
                     return super.read(buffer, offset, length)
                 }
@@ -135,15 +142,16 @@ class ShareReceiverActivityTest {
         val entered = CompletableDeferred<Unit>()
         val cancelled = CompletableDeferred<Unit>()
         val release = CompletableDeferred<Unit>()
-        val repository = repository {
-            entered.complete(Unit)
-            try {
-                release.await()
-                savedEvent(it)
-            } finally {
-                cancelled.complete(Unit)
+        val repository =
+            repository {
+                entered.complete(Unit)
+                try {
+                    release.await()
+                    savedEvent(it)
+                } finally {
+                    cancelled.complete(Unit)
+                }
             }
-        }
         ClipboardSyncService.repositoryProvider = { repository }
         startImageShare(serveBytes(png))
         pumpUntil { entered.isCompleted }
@@ -197,8 +205,11 @@ class ShareReceiverActivityTest {
         shadowOf(context.contentResolver).registerInputStream(
             uri,
             object : ByteArrayInputStream(png) {
-                override fun read(buffer: ByteArray, offset: Int, length: Int): Int =
-                    throw IOException("shared stream closed")
+                override fun read(
+                    buffer: ByteArray,
+                    offset: Int,
+                    length: Int,
+                ): Int = throw IOException("shared stream closed")
             },
         )
 
@@ -233,26 +244,33 @@ class ShareReceiverActivityTest {
     }
 
     private fun startImageShare(uri: Uri): ShareReceiverActivity {
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "image/png"
-            putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        return Robolectric.buildActivity(ShareReceiverActivity::class.java, intent)
+        val intent =
+            Intent(Intent.ACTION_SEND).apply {
+                type = "image/png"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+        return Robolectric
+            .buildActivity(ShareReceiverActivity::class.java, intent)
             .also { controller = it }
-            .create().start().resume().visible().get()
+            .create()
+            .start()
+            .resume()
+            .visible()
+            .get()
     }
 
     /** IO is real; only advance the main dispatcher while waiting for an observable boundary. */
-    private fun pumpUntil(condition: () -> Boolean) = runBlocking {
-        withTimeout(10_000) {
-            while (!condition()) {
-                dispatcher.scheduler.runCurrent()
-                delay(10)
+    private fun pumpUntil(condition: () -> Boolean) =
+        runBlocking {
+            withTimeout(10_000) {
+                while (!condition()) {
+                    dispatcher.scheduler.runCurrent()
+                    delay(10)
+                }
             }
+            dispatcher.scheduler.runCurrent()
         }
-        dispatcher.scheduler.runCurrent()
-    }
 
     private fun repository(record: suspend (ValidatedImage) -> SyncableClipEvent?): SyncRepository =
         object : SyncRepository by InMemorySyncRepository("local") {
@@ -265,11 +283,12 @@ class ShareReceiverActivityTest {
             ): SyncableClipEvent? = record(image)
         }
 
-    private fun savedEvent(image: ValidatedImage) = SyncableClipEvent(
-        eventId = "saved-image",
-        originDeviceId = "local",
-        originSeq = 1,
-        isTerminal = false,
-        contentHash = image.contentHash,
-    )
+    private fun savedEvent(image: ValidatedImage) =
+        SyncableClipEvent(
+            eventId = "saved-image",
+            originDeviceId = "local",
+            originSeq = 1,
+            isTerminal = false,
+            contentHash = image.contentHash,
+        )
 }

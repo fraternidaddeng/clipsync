@@ -1,6 +1,14 @@
 package com.clipsync.android.sync
 
 import com.clipsync.android.protocol.PeerEndpoint
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.channels.Channel
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import okio.ByteString
 import java.io.IOException
 import java.net.Proxy
 import java.security.MessageDigest
@@ -10,18 +18,12 @@ import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.channels.Channel
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
-import okio.ByteString
 
 /** One frame as the session engine sees it, mirroring the Windows TransportFrame shapes. */
 sealed interface TransportFrame {
-    data class Text(val payload: String) : TransportFrame
+    data class Text(
+        val payload: String,
+    ) : TransportFrame
 
     data object Binary : TransportFrame
 
@@ -46,7 +48,10 @@ interface SyncTransport {
     val queuedBytes: Long get() = 0L
 
     /** Starts a graceful WebSocket close. */
-    suspend fun close(code: Int, reason: String)
+    suspend fun close(
+        code: Int,
+        reason: String,
+    )
 
     /** Releases the socket immediately; safe to call more than once. */
     fun dispose()
@@ -58,11 +63,18 @@ fun interface SyncConnector {
      * Connects with the given wire version (1 -> `/v1/peer/sync`, 2 -> `/v2/peer/sync`) or
      * throws [IOException]; [PinMismatchException] means a wrong certificate.
      */
-    suspend fun connect(host: String, port: Int, certSha256: String, protocolVersion: Int): SyncTransport
+    suspend fun connect(
+        host: String,
+        port: Int,
+        certSha256: String,
+        protocolVersion: Int,
+    ): SyncTransport
 }
 
 /** The presented TLS certificate did not match the pinned pairing fingerprint. */
-class PinMismatchException(host: String) : IOException("certificate pin mismatch for $host")
+class PinMismatchException(
+    host: String,
+) : IOException("certificate pin mismatch for $host")
 
 /**
  * OkHttp WebSocket dial side of the peer connection, mirroring the Windows PeerSyncClient:
@@ -73,40 +85,50 @@ class PinMismatchException(host: String) : IOException("certificate pin mismatch
 class OkHttpSyncConnector(
     private val connectTimeoutMs: Long = 6_000,
 ) : SyncConnector {
-    override suspend fun connect(host: String, port: Int, certSha256: String, protocolVersion: Int): SyncTransport {
+    override suspend fun connect(
+        host: String,
+        port: Int,
+        certSha256: String,
+        protocolVersion: Int,
+    ): SyncTransport {
         require(protocolVersion == 1 || protocolVersion == 2) { "Unknown protocol version." }
-        val url = try {
-            PeerEndpoint.httpsUrl(host, port, "v$protocolVersion/peer/sync")
-        } catch (failure: IllegalArgumentException) {
-            // Stored peers and direct connector callers need the same host fallback as a
-            // failed dial, rather than an unchecked URL exception escaping the supervisor.
-            throw IOException("peer endpoint is invalid", failure)
-        }
-        val request = Request.Builder()
-            .url(url)
-            .header("X-Protocol-Version", protocolVersion.toString())
-            .build()
+        val url =
+            try {
+                PeerEndpoint.httpsUrl(host, port, "v$protocolVersion/peer/sync")
+            } catch (failure: IllegalArgumentException) {
+                // Stored peers and direct connector callers need the same host fallback as a
+                // failed dial, rather than an unchecked URL exception escaping the supervisor.
+                throw IOException("peer endpoint is invalid", failure)
+            }
+        val request =
+            Request
+                .Builder()
+                .url(url)
+                .header("X-Protocol-Version", protocolVersion.toString())
+                .build()
         val trustManager = PinnedTrustManager(certSha256)
         val sslContext = SSLContext.getInstance("TLS")
         sslContext.init(null, arrayOf(trustManager), SecureRandom())
-        val client = OkHttpClient.Builder()
-            .sslSocketFactory(sslContext.socketFactory, trustManager)
-            // Paired peers are always private LAN or Tailscale (100.64/10) addresses, never
-            // public hostnames, so a device-level HTTP(S) proxy (Wi-Fi proxy setting, or
-            // Clash/Surge running in system-proxy mode) must never sit on this path: it
-            // would either fail the CONNECT to an address only reachable from this device,
-            // or become a man-in-the-middle that the certificate pin then rejects. NO_PROXY
-            // forces a direct socket and also stops OkHttp from consulting the process-wide
-            // ProxySelector, so proxy apps cannot observe or break peer sync.
-            .proxy(Proxy.NO_PROXY)
-            // The pin is the whole identity; hostnames are meaningless for LAN IPs.
-            .hostnameVerifier { _, _ -> true }
-            .connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
-            // The session runs its own protocol-level pings, so reads may be idle for long.
-            .readTimeout(0, TimeUnit.MILLISECONDS)
-            .writeTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
-            .retryOnConnectionFailure(false)
-            .build()
+        val client =
+            OkHttpClient
+                .Builder()
+                .sslSocketFactory(sslContext.socketFactory, trustManager)
+                // Paired peers are always private LAN or Tailscale (100.64/10) addresses, never
+                // public hostnames, so a device-level HTTP(S) proxy (Wi-Fi proxy setting, or
+                // Clash/Surge running in system-proxy mode) must never sit on this path: it
+                // would either fail the CONNECT to an address only reachable from this device,
+                // or become a man-in-the-middle that the certificate pin then rejects. NO_PROXY
+                // forces a direct socket and also stops OkHttp from consulting the process-wide
+                // ProxySelector, so proxy apps cannot observe or break peer sync.
+                .proxy(Proxy.NO_PROXY)
+                // The pin is the whole identity; hostnames are meaningless for LAN IPs.
+                .hostnameVerifier { _, _ -> true }
+                .connectTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
+                // The session runs its own protocol-level pings, so reads may be idle for long.
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .writeTimeout(connectTimeoutMs, TimeUnit.MILLISECONDS)
+                .retryOnConnectionFailure(false)
+                .build()
         val transport = OkHttpSyncTransport(client)
         var connected = false
         try {
@@ -122,22 +144,32 @@ class OkHttpSyncConnector(
         }
     }
 
-    private class PinnedTrustManager(pin: String) : X509TrustManager {
+    private class PinnedTrustManager(
+        pin: String,
+    ) : X509TrustManager {
         private val expected = pin.lowercase()
 
         @Volatile
         var sawPinMismatch = false
             private set
 
-        override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String): Unit =
-            throw CertificateException("client certificates are not used")
+        override fun checkClientTrusted(
+            chain: Array<X509Certificate>,
+            authType: String,
+        ): Unit = throw CertificateException("client certificates are not used")
 
-        override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
+        override fun checkServerTrusted(
+            chain: Array<X509Certificate>,
+            authType: String,
+        ) {
             val leaf = chain.firstOrNull()
-            val fingerprint = leaf?.let {
-                MessageDigest.getInstance("SHA-256").digest(it.encoded)
-                    .joinToString(separator = "") { byte -> "%02x".format(byte) }
-            }
+            val fingerprint =
+                leaf?.let {
+                    MessageDigest
+                        .getInstance("SHA-256")
+                        .digest(it.encoded)
+                        .joinToString(separator = "") { byte -> "%02x".format(byte) }
+                }
             if (fingerprint != expected) {
                 sawPinMismatch = true
                 throw CertificateException("certificate does not match the pinned fingerprint")
@@ -170,7 +202,9 @@ internal class InboundFrameGate(
 ) {
     enum class Verdict { ACCEPT, TOO_LARGE, OVERFLOW }
 
-    private val bufferedChars = java.util.concurrent.atomic.AtomicLong(0)
+    private val bufferedChars =
+        java.util.concurrent.atomic
+            .AtomicLong(0)
 
     fun onText(text: String): Verdict {
         if (SyncLimits.utf8BytesExceed(text, maxMessageBytes)) {
@@ -200,7 +234,9 @@ internal class InboundFrameGate(
  * a channel whose queued text is byte-bounded by [InboundFrameGate]; a peer that overruns the
  * bound is disconnected instead of growing the queue.
  */
-internal class OkHttpSyncTransport(private val client: OkHttpClient) : SyncTransport {
+internal class OkHttpSyncTransport(
+    private val client: OkHttpClient,
+) : SyncTransport {
     private val frames = Channel<TransportFrame>(Channel.UNLIMITED)
     private val opened = CompletableDeferred<Unit>()
     private val inboundGate = InboundFrameGate()
@@ -208,43 +244,65 @@ internal class OkHttpSyncTransport(private val client: OkHttpClient) : SyncTrans
     @Volatile
     private var socket: WebSocket? = null
 
-    private val listener = object : WebSocketListener() {
-        override fun onOpen(webSocket: WebSocket, response: Response) {
-            opened.complete(Unit)
-        }
+    private val listener =
+        object : WebSocketListener() {
+            override fun onOpen(
+                webSocket: WebSocket,
+                response: Response,
+            ) {
+                opened.complete(Unit)
+            }
 
-        override fun onMessage(webSocket: WebSocket, text: String) {
-            when (inboundGate.onText(text)) {
-                InboundFrameGate.Verdict.ACCEPT -> frames.trySend(TransportFrame.Text(text))
-                InboundFrameGate.Verdict.TOO_LARGE -> frames.trySend(TransportFrame.TooLarge)
-                InboundFrameGate.Verdict.OVERFLOW -> {
-                    // The engine sees TooLarge and reports PAYLOAD_TOO_LARGE; the socket is
-                    // cancelled right away so the flood stops at the TCP layer.
-                    frames.trySend(TransportFrame.TooLarge)
-                    webSocket.cancel()
+            override fun onMessage(
+                webSocket: WebSocket,
+                text: String,
+            ) {
+                when (inboundGate.onText(text)) {
+                    InboundFrameGate.Verdict.ACCEPT -> frames.trySend(TransportFrame.Text(text))
+                    InboundFrameGate.Verdict.TOO_LARGE -> frames.trySend(TransportFrame.TooLarge)
+                    InboundFrameGate.Verdict.OVERFLOW -> {
+                        // The engine sees TooLarge and reports PAYLOAD_TOO_LARGE; the socket is
+                        // cancelled right away so the flood stops at the TCP layer.
+                        frames.trySend(TransportFrame.TooLarge)
+                        webSocket.cancel()
+                    }
                 }
             }
-        }
 
-        override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-            frames.trySend(TransportFrame.Binary)
-        }
+            override fun onMessage(
+                webSocket: WebSocket,
+                bytes: ByteString,
+            ) {
+                frames.trySend(TransportFrame.Binary)
+            }
 
-        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-            // Complete the close handshake, then surface the closure to the engine.
-            webSocket.close(code, null)
-            frames.trySend(TransportFrame.Closed)
-        }
+            override fun onClosing(
+                webSocket: WebSocket,
+                code: Int,
+                reason: String,
+            ) {
+                // Complete the close handshake, then surface the closure to the engine.
+                webSocket.close(code, null)
+                frames.trySend(TransportFrame.Closed)
+            }
 
-        override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-            frames.trySend(TransportFrame.Closed)
-        }
+            override fun onClosed(
+                webSocket: WebSocket,
+                code: Int,
+                reason: String,
+            ) {
+                frames.trySend(TransportFrame.Closed)
+            }
 
-        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-            opened.completeExceptionally(t)
-            frames.trySend(TransportFrame.Closed)
+            override fun onFailure(
+                webSocket: WebSocket,
+                t: Throwable,
+                response: Response?,
+            ) {
+                opened.completeExceptionally(t)
+                frames.trySend(TransportFrame.Closed)
+            }
         }
-    }
 
     suspend fun awaitOpen(request: Request) {
         socket = client.newWebSocket(request, listener)
@@ -269,7 +327,10 @@ internal class OkHttpSyncTransport(private val client: OkHttpClient) : SyncTrans
     override val queuedBytes: Long
         get() = socket?.queueSize() ?: 0L
 
-    override suspend fun close(code: Int, reason: String) {
+    override suspend fun close(
+        code: Int,
+        reason: String,
+    ) {
         socket?.close(code, reason.take(120))
     }
 

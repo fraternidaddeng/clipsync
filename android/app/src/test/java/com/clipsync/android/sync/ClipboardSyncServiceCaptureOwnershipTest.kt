@@ -251,6 +251,5 @@ class ClipboardSyncServiceCaptureOwnershipTest {
         controller.destroy()
     }
 
-    private fun actionIntent(action: String): Intent =
-        Intent(context, ClipboardSyncService::class.java).setAction(action)
+    private fun actionIntent(action: String) = Intent(context, ClipboardSyncService::class.java).setAction(action)
 }

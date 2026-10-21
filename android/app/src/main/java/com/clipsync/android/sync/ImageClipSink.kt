@@ -36,13 +36,18 @@ object ImageClipSink {
         data object SaveFailed : Outcome
     }
 
-    suspend fun submit(context: Context, encoded: ByteArray, sourceApp: String?): Outcome =
+    suspend fun submit(
+        context: Context,
+        encoded: ByteArray,
+        sourceApp: String?,
+    ): Outcome =
         withContext(Dispatchers.IO) {
             try {
                 val appContext = context.applicationContext
-                val settings = SyncSettingsStore(
-                    SharedPrefsKeyValueStore(appContext, name = SyncSettingsStore.PREFERENCES_NAME),
-                )
+                val settings =
+                    SyncSettingsStore(
+                        SharedPrefsKeyValueStore(appContext, name = SyncSettingsStore.PREFERENCES_NAME),
+                    )
                 if (!settings.imageSyncEnabled) {
                     return@withContext Outcome.ImageSyncOff
                 }

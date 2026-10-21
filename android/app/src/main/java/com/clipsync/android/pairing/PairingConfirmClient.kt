@@ -147,11 +147,12 @@ class PairingConfirmClient(
         body: String,
         onPhase: (PairingPhase) -> Unit,
     ): HostOutcome {
-        val url = try {
-            PeerEndpoint.httpsUrl(host, port, "v1/pair/confirm")
-        } catch (_: IllegalArgumentException) {
-            return HostOutcome.Answered(PairingConfirmOutcome.ProtocolViolation("QR endpoint failed validation"))
-        }
+        val url =
+            try {
+                PeerEndpoint.httpsUrl(host, port, "v1/pair/confirm")
+            } catch (_: IllegalArgumentException) {
+                return HostOutcome.Answered(PairingConfirmOutcome.ProtocolViolation("QR endpoint failed validation"))
+            }
         val request =
             Request
                 .Builder()

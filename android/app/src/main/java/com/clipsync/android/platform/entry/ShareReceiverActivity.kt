@@ -26,25 +26,26 @@ import kotlinx.coroutines.withContext
  * uploads the entry on the next connection.
  */
 class ShareReceiverActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (intent?.action == Intent.ACTION_SEND && intent?.type.looksLikeImageShare()) {
             handleImageShare(intent.sharedStream())
             return
         }
-        val outcome = ShareTextIntentHandler.classify(
-            action = intent?.action,
-            mimeType = intent?.type,
-            text = intent?.getCharSequenceExtra(Intent.EXTRA_TEXT),
-        )
-        val messageRes = when (outcome) {
-            is ShareTextIntentHandler.Outcome.ShareText -> enqueue(outcome.text)
-            ShareTextIntentHandler.Outcome.NotAShare,
-            ShareTextIntentHandler.Outcome.UnsupportedContent,
-            -> R.string.toast_share_unsupported
-            ShareTextIntentHandler.Outcome.MissingText -> R.string.toast_share_empty
-        }
+        val outcome =
+            ShareTextIntentHandler.classify(
+                action = intent?.action,
+                mimeType = intent?.type,
+                text = intent?.getCharSequenceExtra(Intent.EXTRA_TEXT),
+            )
+        val messageRes =
+            when (outcome) {
+                is ShareTextIntentHandler.Outcome.ShareText -> enqueue(outcome.text)
+                ShareTextIntentHandler.Outcome.NotAShare,
+                ShareTextIntentHandler.Outcome.UnsupportedContent,
+                -> R.string.toast_share_unsupported
+                ShareTextIntentHandler.Outcome.MissingText -> R.string.toast_share_empty
+            }
         Toast.makeText(applicationContext, messageRes, Toast.LENGTH_SHORT).show()
         finish()
     }
@@ -76,27 +77,29 @@ class ShareReceiverActivity : ComponentActivity() {
             return
         }
         lifecycleScope.launch {
-            val messageRes = try {
-                val bytes = withContext(Dispatchers.IO) {
-                    ClipboardMediaReader.readBounded(appContext, stream)
-                }
-                if (bytes == null) {
-                    R.string.toast_share_image_invalid
-                } else {
-                    when (ImageClipSink.submit(appContext, bytes, SOURCE_SHARE)) {
-                        ImageClipSink.Outcome.Accepted -> R.string.toast_share_image_enqueued
-                        ImageClipSink.Outcome.ImageSyncOff -> R.string.toast_share_image_disabled
-                        ImageClipSink.Outcome.PrivateMode -> R.string.toast_share_private_mode
-                        ImageClipSink.Outcome.SyncPaused -> R.string.toast_share_paused
-                        ImageClipSink.Outcome.Invalid -> R.string.toast_share_image_invalid
-                        ImageClipSink.Outcome.SaveFailed -> R.string.toast_share_image_failed
+            val messageRes =
+                try {
+                    val bytes =
+                        withContext(Dispatchers.IO) {
+                            ClipboardMediaReader.readBounded(appContext, stream)
+                        }
+                    if (bytes == null) {
+                        R.string.toast_share_image_invalid
+                    } else {
+                        when (ImageClipSink.submit(appContext, bytes, SOURCE_SHARE)) {
+                            ImageClipSink.Outcome.Accepted -> R.string.toast_share_image_enqueued
+                            ImageClipSink.Outcome.ImageSyncOff -> R.string.toast_share_image_disabled
+                            ImageClipSink.Outcome.PrivateMode -> R.string.toast_share_private_mode
+                            ImageClipSink.Outcome.SyncPaused -> R.string.toast_share_paused
+                            ImageClipSink.Outcome.Invalid -> R.string.toast_share_image_invalid
+                            ImageClipSink.Outcome.SaveFailed -> R.string.toast_share_image_failed
+                        }
                     }
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (_: Exception) {
+                    R.string.toast_share_image_failed
                 }
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (_: Exception) {
-                R.string.toast_share_image_failed
-            }
             Toast.makeText(appContext, messageRes, Toast.LENGTH_SHORT).show()
             finish()
         }

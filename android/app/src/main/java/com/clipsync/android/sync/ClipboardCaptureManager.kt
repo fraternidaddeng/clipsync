@@ -63,39 +63,32 @@ class ClipboardCaptureManager(
      */
     private val imageSink: suspend (ByteArray) -> Boolean = { false },
 ) {
-    suspend fun onClipboardChanged(change: ClipboardChange): CaptureOutcome {
-        if (settings.privateMode) {
-            return CaptureOutcome.SKIPPED_PRIVATE_MODE
-        }
-        if (settings.syncPaused) {
-            return CaptureOutcome.SKIPPED_SYNC_PAUSED
-        }
-        if (settings.autoCapturePaused) {
+    suspend fun onClipboardChanged(change: ClipboardChange): CaptureOutcome =
+        when {
+            settings.privateMode -> CaptureOutcome.SKIPPED_PRIVATE_MODE
+            settings.syncPaused -> CaptureOutcome.SKIPPED_SYNC_PAUSED
             // The narrower gate sits after the global ones: 暂停全部同步 wins the outcome
             // when both are set, and this one stops only local auto-capture — explicit
             // share/tile sends and inbound delivery are gated elsewhere and keep working.
-            return CaptureOutcome.SKIPPED_CAPTURE_PAUSED
-        }
-        if (change.isSensitive && settings.skipSensitiveEnabled) {
+            settings.autoCapturePaused -> CaptureOutcome.SKIPPED_CAPTURE_PAUSED
             // 跳过敏感内容 (settings-roadmap P0-4): a source-app sensitive marker keeps the
             // clip out of history and sync. Only auto-capture is gated here — the share
             // panel is an explicit user action and bypasses this manager entirely.
-            return CaptureOutcome.SKIPPED_SENSITIVE
+            change.isSensitive && settings.skipSensitiveEnabled -> CaptureOutcome.SKIPPED_SENSITIVE
+            change.isImage -> captureImage(change)
+            else -> captureText(change)
         }
-        if (change.isImage) {
-            if (!settings.imageSyncEnabled) {
-                return CaptureOutcome.SKIPPED_IMAGE_SYNC_OFF
-            }
+
+    private suspend fun captureImage(change: ClipboardChange): CaptureOutcome =
+        when {
+            !settings.imageSyncEnabled -> CaptureOutcome.SKIPPED_IMAGE_SYNC_OFF
             // Suppression is hash-keyed: an image this app just auto-applied must not echo.
-            if (writeCoordinator.shouldSuppressContentHash(change.contentHash)) {
-                return CaptureOutcome.SKIPPED_OWN_WRITE
-            }
-            return if (imageSink(change.imageBytes!!)) {
-                CaptureOutcome.CAPTURED
-            } else {
-                CaptureOutcome.REJECTED_BY_OUTBOX
-            }
+            writeCoordinator.shouldSuppressContentHash(change.contentHash) -> CaptureOutcome.SKIPPED_OWN_WRITE
+            imageSink(change.imageBytes!!) -> CaptureOutcome.CAPTURED
+            else -> CaptureOutcome.REJECTED_BY_OUTBOX
         }
+
+    private fun captureText(change: ClipboardChange): CaptureOutcome {
         if (writeCoordinator.shouldSuppressContent(change.text)) {
             return CaptureOutcome.SKIPPED_OWN_WRITE
         }

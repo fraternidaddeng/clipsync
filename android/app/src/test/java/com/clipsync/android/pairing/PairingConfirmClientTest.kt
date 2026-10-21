@@ -141,7 +141,8 @@ class PairingConfirmClientTest {
         try {
             listOf("::1", "[::1]").forEach { host ->
                 ipv6Server.enqueue(MockResponse().setResponseCode(200).setBody(approvedBody()))
-                val outcome = confirm(qr(hosts = listOf(host)).copy(port = ipv6Server.port)) as PairingConfirmOutcome.Approved
+                val outcome =
+                    confirm(qr(hosts = listOf(host)).copy(port = ipv6Server.port)) as PairingConfirmOutcome.Approved
                 assertEquals(host, outcome.viaHost)
                 assertEquals("/v1/pair/confirm", ipv6Server.takeRequest().path)
             }
@@ -152,13 +153,23 @@ class PairingConfirmClientTest {
 
     @Test
     fun `direct malformed endpoints are protocol violations before any host is contacted`() {
-        val hosts = listOf(
-            emptyList(), listOf(""), listOf("localhost:443"), listOf("https://localhost"),
-            listOf("user@localhost"), listOf("localhost/path"), listOf("localhost?query"), listOf("localhost#fragment"),
-            listOf("local\nhost"), listOf("[::1]:443"), listOf("2001:db8:::1"),
-            listOf("127.0.0.1", "localhost/path"), listOf("127.0.0.1", "127.0.0.1"),
-            (1..9).map { "127.0.0.$it" },
-        )
+        val hosts =
+            listOf(
+                emptyList(),
+                listOf(""),
+                listOf("localhost:443"),
+                listOf("https://localhost"),
+                listOf("user@localhost"),
+                listOf("localhost/path"),
+                listOf("localhost?query"),
+                listOf("localhost#fragment"),
+                listOf("local\nhost"),
+                listOf("[::1]:443"),
+                listOf("2001:db8:::1"),
+                listOf("127.0.0.1", "localhost/path"),
+                listOf("127.0.0.1", "127.0.0.1"),
+                (1..9).map { "127.0.0.$it" },
+            )
         val phases = mutableListOf<PairingPhase>()
         hosts.forEachIndexed { index, candidates ->
             assertTrue(
@@ -167,7 +178,9 @@ class PairingConfirmClientTest {
             )
         }
         listOf(-1, 0, 65_536, Int.MAX_VALUE).forEach { port ->
-            assertTrue(confirm(qr().copy(port = port), onPhase = phases::add) is PairingConfirmOutcome.ProtocolViolation)
+            assertTrue(
+                confirm(qr().copy(port = port), onPhase = phases::add) is PairingConfirmOutcome.ProtocolViolation,
+            )
         }
         assertTrue(phases.isEmpty())
         assertEquals(0, server.requestCount)
