@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+## [0.5.7] - 2026-10-21
+
+### 变更
+
+- [Android] **图片同步默认开启**：同步范围为经校验的 PNG/JPEG，文本仍受 1 MiB 限制；蓝牙备援仍只支持文本。
+
+### 修复
+
+- [Android] **分享图片只在持久化完成后报告成功**：blob 与 Room/outbox 写入失败、取消或 Activity 生命周期结束时，不再给出虚假的成功反馈。
+- [Android] **配对与同步端点拒绝恶意或畸形 host**：统一校验 IPv4、IPv6 和合法 DNS 主机名，并安全构造端点 URL，拒绝 scheme、路径、userinfo、端口注入和非法 IPv6 等输入。
+
+### 安全
+
+- [Android] 将 QR 配对 host 校验和同步端点构造集中到 `PeerEndpoint`，并补充 malformed host、IPv6 和 fallback 路径回归测试。
+
 ## [0.5.6] - 2026-10-09
 
 ### 变更
