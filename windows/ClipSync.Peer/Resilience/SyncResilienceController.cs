@@ -175,8 +175,11 @@ public sealed class SyncResilienceController : IAsyncDisposable
         {
             abandoned = true;
             pass.Cancel();
-            Interlocked.Increment(ref timedOutRecoveries);
+            // Complete the timeout hook before publishing the count. Consumers use the count
+            // as the observation point, so publishing it first creates a race where they can
+            // observe a timed-out pass before its diagnostic hook has run.
             InvokeQuietly(onRecoveryTimedOut);
+            Interlocked.Increment(ref timedOutRecoveries);
         }
         catch (OperationCanceledException)
         {
